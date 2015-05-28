@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(24).sql
-Last Modified Date: 05/13/2015
+eCoaching_Log_Create(25).sql
+Last Modified Date: 05/25/2015
 Last Modified By: Susmitha Palacherla
+
+Version 25:
+1. Modified procedures #9 and #45 to support LCSAT feed per SCR 14818.
+
 
 Version 24:
 1. Added new procedure #78 per SCR 14951 to select Reasons records
@@ -1569,10 +1573,8 @@ GO
 --	Description: This procedure selects the Pending e-Coaching records 
 --  for a given Manager in the Manager Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date:  04/16/2015
--- Modified during dashboard redesign SCR 14422.
--- 1. To Replace old style joins.
--- 2. Lan ID association by date.
+-- Last Modified Date:  05/22/2015
+-- Updated per SCR 14818 to support rotating managers for Low CSAT
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending] 
 @strCSRMGRin nvarchar(30),
@@ -1584,6 +1586,11 @@ AS
 BEGIN
 DECLARE	
 @nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(2000),
+@nvcSQL2 nvarchar(20),
+@nvcSQL3 nvarchar(2000),
+@nvcSQL4 nvarchar(100),
+@strReportCode nvarchar(30),
 @strFormStatus1 nvarchar(50),
 @strFormStatus2 nvarchar(50),
 @strFormStatus3 nvarchar(50),
@@ -1593,7 +1600,7 @@ DECLARE
 @nvcMGRID Nvarchar(10),
 @dtmDate datetime
 
-
+ Set @strReportCode = 'LCS%'
  Set @strFormStatus1 = 'Pending Manager Review'
  Set @strFormStatus2 = 'Pending Supervisor Review'
  Set @strFormStatus3 = 'Pending Acknowledgement'
@@ -1603,7 +1610,13 @@ DECLARE
  Set @dtmDate  = GETDATE()   
  Set @nvcMGRID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
 
-SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
+SET @nvcSQL1 = 'select DISTINCT x.strFormID
+        ,x.strCSR
+		,x.strCSRName
+		,x.strCSRSupName
+		,x.strFormStatus
+		,x.submitteddate
+	from (SELECT [cl].[FormName]	strFormID,
 		[eh].[Emp_LanID] strCSR,
 		[eh].[Emp_Name]	strCSRName,
 		[eh].[Sup_Name]	strCSRSupName, 
@@ -1617,16 +1630,50 @@ where ((eh.[Mgr_ID] = '''+@nvcMGRID+''' and ([S].[Status] = '''+@strFormStatus1+
 (eh.[Sup_ID] = '''+@nvcMGRID+'''and ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+''' OR [S].[Status] = '''+@strFormStatus3+''' OR [S].[Status] = '''+@strFormStatus6+''')))
 and [eh].[Emp_Name] Like '''+@strCSRin+'''
 and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
-and (eh.[Mgr_ID] <> ''999999'' and eh.[Sup_ID] <> ''999999'')
-Order By [SubmittedDate] DESC'
+and ([cl].[strReportCode] not like '''+@strReportCode+''' OR [cl].[strReportCode] is NULL)
+and (eh.[Mgr_ID] <> ''999999'' and eh.[Sup_ID] <> ''999999''))X'
+
+		
+SET @nvcSQL2 = ' UNION '
+
+SET @nvcSQL3 = 'select DISTINCT x.strFormID
+        ,x.strCSR
+		,x.strCSRName
+		,x.strCSRSupName
+		,x.strFormStatus
+		,x.submitteddate
+	from (SELECT [cl].[FormName]	strFormID,
+		[eh].[Emp_LanID] strCSR,
+		[eh].[Emp_Name]	strCSRName,
+		[eh].[Sup_Name]	strCSRSupName, 
+		[s].[Status]	strFormStatus,
+		[cl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID
+where cl.[MgrID] = '''+@nvcMGRID+''' 
+and [S].[Status] = '''+@strFormStatus1+''' 
+and [eh].[Emp_Name] Like '''+@strCSRin+'''
+and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
+and [cl].[strReportCode] like '''+@strReportCode+'''
+and cl.[MgrID] <> ''999999'') X'
+
+SET @nvcSQL4 = '  Order By [SubmittedDate] DESC'
+
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 + @nvcSQL4
+
+	
 		
 EXEC (@nvcSQL)	
 --Print @nvcsql
 	    
 END -- sp_SelectFrom_Coaching_Log_MGRPending
 
-GO
 
+
+
+GO
 
 
 
@@ -4218,15 +4265,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 12/17/2014
--- Modified per SCR 14031 to incorporate ETS Outstanding Action (Compliance) reports.
--- Modified per SCR 14066 to translate Quality sources to IQS
-
+-- Last Modified Date: 05/18/2015
+-- Updated per SCR 14818 to support rotation managers for LCS Feed.
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4254,12 +4300,14 @@ DECLARE
 		eh.Sup_LanID strCSRSup,
 		eh.Sup_Name	 strCSRSupName,
 		eh.Sup_Email  strCSRSupEmail,
-		eh.Mgr_LanID  strCSRMgr,
+		CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
+		 ELSE eh.Mgr_LanID END	strCSRMgr,
 		eh.Mgr_Name  strCSRMgrName,
 		eh.Mgr_Email strCSRMgrEmail,
 		ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
-                                    sc.SubCoachingSource	strSource,
-                                    CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey '',''IQS'')
+        sc.SubCoachingSource	strSource,
+        CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey '',''IQS'')
 		THEN 1 ELSE 0 END 	isIQS,
 		cl.isUCID    isUCID,
 		cl.UCID	strUCID,
@@ -4319,6 +4367,7 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
+
 
 
 
