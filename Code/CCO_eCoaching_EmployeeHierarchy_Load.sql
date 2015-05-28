@@ -1,6 +1,9 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (05)
-Date: 11/6/2014
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (06)
+Date: 11/11/2014
+
+Version 06, 11/11/2014
+Additional Updates to sp (#2) to handle apostrophes in name and email addresses for sups and mgrs per SCR 13759.
 
 Version 05, 11/6/2014
 Updated sp (#2) to handle apostrophes in name and email addresses per SCR 13759.
@@ -425,8 +428,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
@@ -436,7 +437,7 @@ GO
 -- Last Modified Date:11/6/2014
 -- updated per SCR 13759 to handle apostrophes in names and email addresses.
 -- =============================================
-CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
+ALTER PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
 BEGIN
 
@@ -495,14 +496,14 @@ BEGIN
 		  ,[Emp_Job_Description] = S.Emp_Job_Description
 		  ,[Emp_Program] = S.Emp_Program
 		  ,[Sup_ID] = S.Sup_EMP_ID
-		  ,[Sup_Name] = S.Sup_Name 
-		  ,[Sup_Email] = S.Sup_Email
+		  ,[Sup_Name] = Replace(S.[Sup_Name],'''', '')
+		  ,[Sup_Email] = Replace(S.[Sup_Email],'''','''''')
 		  ,[Sup_LanID] = S.Sup_LanID
 		  ,[Sup_Job_Code] = S.Sup_Job_Code 
 		  ,[Sup_Job_Description] = S.Sup_Job_Description
 		  ,[Mgr_ID] = S.Mgr_EMP_ID 
-		  ,[Mgr_Name] = S.Mgr_Name
-		  ,[Mgr_Email] = S.Mgr_Email
+		  ,[Mgr_Name] = Replace(S.[Mgr_Name],'''', '')
+		  ,[Mgr_Email] = Replace(S.[Mgr_Email],'''','''''')
 		  ,[Mgr_LanID] = S.Mgr_LanID
 		  ,[Mgr_Job_Code] = S.Mgr_Job_Code 
 		  ,[Mgr_Job_Description] = S.Mgr_Job_Description
@@ -551,14 +552,14 @@ BEGIN
 							  ,S.[Emp_Job_Description]
 							  ,S.[Emp_Program]
 							  ,S.[Sup_Emp_ID]
-							  ,S.[Sup_Name]
-							  ,S.[Sup_Email]
+							  ,Replace(S.[Sup_Name],'''', '')
+							  ,Replace(S.[Sup_Email],'''','''''')
 							  ,S.[Sup_LanID]
 							  ,S.[Sup_Job_Code]
 							  ,S.[Sup_Job_Description]
 							  ,S.[Mgr_Emp_ID]
-							  ,S.[Mgr_Name]
-							  ,S.[Mgr_Email]
+							  ,Replace(S.[Mgr_Name],'''', '')
+							  ,Replace(S.[Mgr_Email],'''','''''')
 							  ,S.[Mgr_LanID]
 							  ,S.[Mgr_Job_Code]
 							  ,S.[Mgr_Job_Description]
@@ -573,10 +574,9 @@ END
 
 
 END --sp_Populate_Employee_Hierarchy
-
-
-
 GO
+
+
 
 
 
