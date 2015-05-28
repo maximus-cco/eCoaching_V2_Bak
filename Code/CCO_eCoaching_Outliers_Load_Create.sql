@@ -1,12 +1,19 @@
 /*
-eCoaching_Outliers_Create(02).sql
-Last Modified Date: 07/22/2014
+eCoaching_Outliers_Create(03).sql
+Last Modified Date: 08/29/2014
 Last Modified By: Susmitha Palacherla
 
+Version 03: 
+08/29/2014
+1. Updated [EC].[sp_InsertInto_Coaching_Log_Outlier]  for Phase II 
+   Modular approach related changes.
+
 Version 02: 
+07/22/2014
 1. Updated per SCR 13213 to map the Coaching Reason ID for the Outlier logs to 9 ('OMR / Exceptions')
 
 Version 01: Initial Revision.
+03/10/2014
 
 Summary
 
@@ -182,12 +189,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
 -- Loads records from [EC].[Outlier_Coaching_Stage]to [EC].[Coaching_Log]
--- Last modified by:    Susmitha Palacherla
--- Modified per SCR 13213 to map to Coaching Reason ID 9.
+-- Last Modified Date: 08/13/2014
+-- Last Updated By: Susmitha Palacherla
+-- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
@@ -213,8 +224,8 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[CSR]
-           ,[CSRID]
+           ,[EmpLanID]
+           ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
            ,[isAvokeID]
@@ -225,8 +236,10 @@ BEGIN TRY
 	       ,[SubmittedDate]
            ,[StartDate]
            ,[isCSRAcknowledged]
+           ,[isCSE]
            ,[numReportID]
            ,[strReportCode]
+           ,[ModuleID]
            )
 select  Distinct LOWER(cs.CSR_LANID)	[FormName],
         CASE cs.Program  
@@ -236,8 +249,8 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
         212                             [SourceID],
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intGetSiteIDFromLanID](cs.CSR_LANID,@dtmDate)[SiteID],
-        LOWER(cs.CSR_LANID)				[CSR],
-        cs.CSR_EMPID                    [CSRID],
+        LOWER(cs.CSR_LANID)				[EmpLanID],
+        cs.CSR_EMPID                    [EmpID],
         [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)[SubmitterID],
 		cs.Event_Date			            [EventDate],
 		 0			[isAvokeID],
@@ -248,8 +261,10 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
 	     cs.Submitted_Date			SubmittedDate,
 		 cs.Start_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
+		 0                          [isCSE],
 		 cs.Report_ID				[numReportID],
-		 cs.Report_Code				[strReportCode]
+		 cs.Report_Code				[strReportCode],
+		 1							[ModuleID]
 	                   
 from [EC].[Outlier_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR_EMPID = csr.Emp_ID
 left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
@@ -316,9 +331,13 @@ END TRY
     ELSE
       RETURN 1
   END CATCH  
-END
+END -- sp_InsertInto_Coaching_Log_Outlier
 
-GO -- sp_InsertInto_Coaching_Log_Outlier
+
+
+GO
+
+
 
 
 
