@@ -1,7 +1,12 @@
 /*
-eCoaching_Quality_Create(06).sql
-Last Modified Date: 10/31/2014
+eCoaching_Quality_Create(07).sql
+Last Modified Date: 11/21/2014
 Last Modified By: Susmitha Palacherla
+
+
+Version 07: 
+1.  Updated [EC].[sp_InsertInto_Coaching_Log_Quality] per 
+     SCR 13826 to insert source ID based on values in feed. 
 
 Version 06: 
 1.  Updated per SCR 13701 to insert new records based on VerintEvalID 
@@ -226,16 +231,18 @@ GO
 
 
 
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      02/23/2014
 --    Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 10/31/2014
+-- Last Modified Date: 11/21/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to revert to using the Verint evalid as the unique identifier for loading new logs in the
--- Coaching table.
+-- Modified to determine source value from Source value in feed instead of 
+-- hardcoding to 211 (IQS)per SCR 13826.
+
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
@@ -247,10 +254,11 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
       
-      DECLARE @maxnumID INT
+      DECLARE @maxnumID INT,
+      @strSourceType NVARCHAR(20)
        -- Fetches the maximum CoachingID before the insert.
       SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])    
-      
+      SET @strSourceType = 'Indirect'
       
       -- Inserts records from the Quality_Coaching_Stage table to the Coaching_Log Table
 
@@ -285,7 +293,7 @@ BEGIN TRY
             WHEN NULL THEN csr.Emp_Program
             WHEN '' THEN csr.Emp_Program
             ELSE qs.Program  END       [ProgramName],
-             211             [SourceID],
+            [EC].[fn_intSourceIDFromSource](@strSourceType, qs.Source)[SourceID],
             [EC].[fn_strStatusIDFromIQSEvalID](qs.CSE, qs.Oppor_Rein )[StatusID],
             [EC].[fn_intSiteIDFromEmpID](LTRIM(qs.User_EMPID))[SiteID],
             lower(csr.Emp_LanID)	[EmpLanID],
@@ -372,6 +380,7 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
+
 
 
 
