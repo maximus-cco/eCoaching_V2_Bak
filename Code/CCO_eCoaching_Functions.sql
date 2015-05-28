@@ -1,7 +1,11 @@
 /*
-File: eCoaching_Functions.sql (06)
+File: eCoaching_Functions.sql (07)
 Last Modified By: Susmitha Palacherla
-Date: 11/14/2014
+Date: 11/21/2014
+
+Version 07, 11/21/2014
+1. Added the following Function to support SCR 13826 for Verint sources.
+   [EC].[fn_intSourceIDFromSource] 
 
 Version 06, 11/14/2014
 1. Added the following Functions 2 functions related to ETS feed SCR 13659.
@@ -58,7 +62,7 @@ List of Functions:
 20. [EC].[fn_Decrypt] -- (Not Being Used)
 21. [EC].[fn_strETSDescriptionFromRptCode] 
 22. [EC].[fn_intSubCoachReasonIDFromETSRptCode] 
-
+23. FUNCTION [EC].[fn_intSourceIDFromSource] 
 */
 
 
@@ -1384,17 +1388,50 @@ GO
 
 ************************************************************************************
 
---23. FUNCTION [EC].[xxxxxx] 
+--23. FUNCTION [EC].[fn_intSourceIDFromSource] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'xxxxx' 
+     AND SPECIFIC_NAME = N'fn_intSourceIDFromSource' 
 )
-   DROP FUNCTION [EC].[xxxxxxx]
+   DROP FUNCTION [EC].[fn_intSourceIDFromSource]
 GO
 
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:         11/21/2014
+-- Description:	  Given the Source value returns the Source ID. 
+-- =============================================
+CREATE FUNCTION [EC].[fn_intSourceIDFromSource] (
+  @strSourceType NVARCHAR(20), @strSource NVARCHAR(60)
+)
+RETURNS INT
+AS
+BEGIN
+  DECLARE @intSourceID INT
+  
+  SET @intSourceID = ( SELECT [SourceID]
+  FROM [EC].[DIM_Source]
+  WHERE [CoachingSource]=@strSourceType
+  AND [SubCoachingSource]= @strSource)
+  
+ IF  @intSourceID  IS NULL SET @intSourceID = -1
+ 
+RETURN @intSourceID
+
+END  -- fn_intSourceIDFromSource()
+
+GO
 
 
 
