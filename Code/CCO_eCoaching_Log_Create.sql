@@ -1,7 +1,12 @@
 /*
-eCoaching_Log_Create(05).sql
-Last Modified Date: 09/11/2014
+eCoaching_Log_Create(06).sql
+Last Modified Date: 10/13/2014
 Last Modified By: Susmitha Palacherla
+
+Version 06:
+1. Updated 2 procedures to support Progressive Warnings functionality
+    per SCR 13479.(SP #'s 56 and 60).
+  
 
 Version 05:
 1. Updated sp_Select_CallID_By_Module(61) to remove sort order per program request.
@@ -4774,12 +4779,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	7/31/14
 --	Description: *	This procedure takes the lan ID of the user and looks up the job code.
 --  If Job code exists in the submisison table returns the valid submission modules.
 --  If job code does not exist in the submisisons table returns 'CSR' as a valid sumission module.
+--  Last Modified By: Susmitha Palacherla
+--  Last Modified Date: 10/02/2014
+--  Modified per SCR 13479 to Incorporate progtessive Warnings for CSRs
 
 --  
 --	=====================================================================
@@ -4804,41 +4813,40 @@ WHERE Emp_ID = @nvcEmpID)
 SET @nvcCSR = (SELECT CASE WHEN [CSR]= 1 THEN N'CSR' ELSE NULL END  as Module FROM [EC].[Module_Submission]
 WHERE Job_Code = @nvcEmpJobCode)
 
+--print @nvcCSR
+
 if @nvcCSR is null
+
 
 /*
  The BySite string below is a combination of the  following
- whether site will be a selection
- Module Name
- Module ID
- Whether CSE will be displayed or not
+ 1. whether site will be a selection
+ 2. Module Name
+ 3. Module ID
+ 4. Whether CSE will be displayed or not
+ 5. Whether warning will be diaplayed for Direct or Not
 */
 
-SET @nvcSQL = 'SELECT TOP 1 CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1'' as BySite
+SET @nvcSQL = 'SELECT TOP 1 CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1-1'' as BySite
 from [EC].[Module_Submission]'
  
 ELSE
 
 SET @nvcSQL = 'SELECT Module, BySite FROM 
-(SELECT CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1'' as BySite from [EC].[Module_Submission] 
+(SELECT CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1-1'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION
-SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, ''0-Supervisor-2-1'' as BySite from [EC].[Module_Submission] 
+SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, ''0-Supervisor-2-1-0'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION 
-SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, ''0-Quality Specialist-3-0'' as BySite from [EC].[Module_Submission] 
+SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, ''0-Quality Specialist-3-0-0'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+''')AS Modulelist
 where Module is not Null '
-
-
----Print @nvcSQL
+--Print @nvcSQL
 
 EXEC (@nvcSQL)	
 END --sp_Select_Modules_By_Job_Code
-
-
 GO
-
 
 
 
@@ -5014,29 +5022,50 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	8/01/14
+--	Create Date:	08/20/2014
 --	Description: *	This procedure takes a Module 
 --  and returns the Coaching Reasons associated with the Module. 
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date: 09/25/2014
+-- Modified per SCR 13479 to add logic for incorporating WARNINGs.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module] 
-@strModulein nvarchar(30), @strSourcein nvarchar(30), @isSplReason BIT
+@strModulein nvarchar(30), @strSourcein nvarchar(30), @isSplReason BIT, @splReasonPrty INT, @strCSRin nvarchar(30), @strSubmitterin nvarchar(30)
 
 AS
 BEGIN
 	DECLARE	
 	
-	@nvcSQL nvarchar(max)
+	@nvcSQL nvarchar(max),
+	@nvcDirectHierarchy nvarchar(10)
 	
-IF @isSplReason = 1
+SET @nvcDirectHierarchy = [EC].[fn_strDirectUserHierarchy] (@strCSRin, @strSubmitterin, GETDATE())
+
+--print @nvcDirectHierarchy
+	
+IF @isSplReason = 1 
+
+IF @nvcDirectHierarchy = 'Yes'
 
 SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [CoachingReason] as CoachingReason from [EC].[Coaching_Reason_Selection]
-Where ' + @strModulein +' = 1 and 
-IsActive = 1 
+Where ' + @strModulein +' = 1 
+AND IsActive = 1 
 AND ' + @strSourcein +' = 1
-AND [splReason]=1
-Order by  [CoachingReason]'
+AND [splReason] = 1
+AND [splReasonPrty] = '''+ CONVERT(NVARCHAR,@splReasonPrty) + '''
+Order by  [CoachingReasonID]'
 
 Else
+
+SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [CoachingReason] as CoachingReason from [EC].[Coaching_Reason_Selection]
+Where ' + @strModulein +' = 1 
+AND IsActive = 1 
+AND ' + @strSourcein +' = 1
+AND [splReason] = 1
+AND [splReasonPrty] = 2
+Order by  [CoachingReason]'
+
+ELSE
 
 SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [CoachingReason] as CoachingReason from [EC].[Coaching_Reason_Selection]
 Where ' + @strModulein +' = 1 and 
@@ -5049,8 +5078,6 @@ Order by  [CoachingReason]'
 
 EXEC (@nvcSQL)	
 END -- sp_Select_CoachingReasons_By_Module
-
-
 GO
 
 
