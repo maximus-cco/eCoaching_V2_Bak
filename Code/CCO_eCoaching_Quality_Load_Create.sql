@@ -1,7 +1,12 @@
 /*
-eCoaching_Quality_Create(02).sql
-Last Modified Date: 07/01/2014
+eCoaching_Quality_Create(03).sql
+Last Modified Date: 07/07/2014
 Last Modified By: Susmitha Palacherla
+
+Version 03: Updated stored procedure [EC].[sp_Update_Coaching_Log_Quality]
+with actually implemented code from production.
+
+
 
 Version 02: Updated per SCR 12963 to modify sp_InsertInto_Coaching_Log_Quality
 to fetch @@rowcount on insert.
@@ -365,6 +370,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      04/23/2014
@@ -385,8 +391,7 @@ BEGIN TRY
 -- Update txtDescription for existing records
 
  UPDATE [EC].[Coaching_Log]
- SET [Description] = EC.fn_nvcHtmlEncode(S.[Summary_CallerIssues]),
-     [StatusID]= EC.fn_strStatusIDFromIQSEvalID(S.CSE, S.Oppor_Rein)
+ SET [Description] = EC.fn_nvcHtmlEncode(S.[Summary_CallerIssues])
  FROM [EC].[Quality_Coaching_Stage]S INNER JOIN [EC].[Coaching_Log]F
  ON S.[Eval_ID] = F.[VerintEvalID]
  AND S.[Journal_ID] = F.[VerintID]
@@ -438,8 +443,10 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_Update_Coaching_Log_Quality
-GO
 
+
+
+GO
 
 
 
