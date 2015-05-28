@@ -1,10 +1,17 @@
 /*
-eCoaching_Outliers_Create(03).sql
-Last Modified Date: 12/15/14
+eCoaching_Outliers_Create(04).sql
+Last Modified Date: 01/12/2015
 Last Modified By: Susmitha Palacherla
 
-Version 03:  12/15/14
+
+Version 04:   01/12/2015
 1. Updated per SCR to increase column size of Time_code column in ETS Rejected, Stage and Fact tables.
+ [EC].[sp_Update_ETS_Coaching_Stage]  
+ [EC].[sp_InsertInto_Coaching_Log_ETS]  
+ [EC].[sp_InsertInto_ETS_Rejected]
+
+Version 03:  12/15/14
+1. Updated the following sps to incorporate the compliance reports per SCr 14031..
 
 
 Version 02:  11/20/14
@@ -275,9 +282,21 @@ period.'),
   Paid leave is not eligible for shift or bilingual premium.  
   All paid leave must be recorded with time code of 01 or *.'),
           ('UTL','Utilization','TBD'),
-          ('UTLA','Utilization (Approver)','TBD')
-      
+          ('UTLA','Utilization (Approver)','TBD'),
+  ('OAE','Outstanding Action (Employee) ',
+  N'The employee either did not sign his or her timecard by the Friday deadline for the period below, or it was signed with errors and rejected. 
+      Please review and take action as necessary.
+
+     The time period and employee name are below:'),
+          ('OAS','Outstanding Action (Supervisor)',
+  N'The supervisor did not approve or reject the timecard below by the Friday deadline.
+      Please review and take action as necessary.
+
+      The time period, manager name, and name of employee whose timecard requires action are below:')
+
 GO
+      
+
 
 **************************************************************
 
@@ -304,6 +323,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 10/30/2014
@@ -313,8 +335,9 @@ GO
 -- Inserts non CSR and supervisor records into Rejected table
 -- Deletes rejected records.
 -- Sets the detailed Description value by concatenating other attributes.
--- Last update: 11/19/2014
--- Modified to populate a Report_ID for non rejected records and Reject_Reason for rejected records
+-- Last Modified Date - 01/05/2015
+-- Last Modified By - Susmitha Palacherla
+-- Modified per scr 14031 to incorporate the compliance reports.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_ETS_Coaching_Stage] 
@@ -393,10 +416,15 @@ WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 BEGIN
 UPDATE [EC].[ETS_Coaching_Stage]
-SET [TextDescription] = ([TextDescription] + CHAR(13) + CHAR (10) + ' ' + CHAR(13) + CHAR (10) +  'The date, project and task numbers, time code, total and daily hours are below:' 
+SET [TextDescription] = 
+CASE WHEN LEFT([Report_Code],LEN([Report_Code])-8)= 'OAE' THEN ([TextDescription] + CHAR(13) + CHAR (10) + ' ' + CHAR(13) + CHAR (10) + 
+LEFT([Event_Date],LEN([Event_Date])-8)+ ' | ' + [EC].[fn_strEmpNameFromEmpID] (Emp_ID))
+WHEN LEFT([Report_Code],LEN([Report_Code])-8)= 'OAS' THEN ([TextDescription] + CHAR(13) + CHAR (10) + ' ' + CHAR(13) + CHAR (10) + 
+LEFT([Event_Date],LEN([Event_Date])-13)+ ' | ' + [EC].[fn_strEmpNameFromEmpID] (Emp_ID)+ ' | ' + [Associated_Person])
+ELSE ([TextDescription] + CHAR(13) + CHAR (10) + ' ' + CHAR(13) + CHAR (10) +  'The date, project and task numbers, time code, total and daily hours are below:' 
 + CHAR(13) + CHAR (10) + ' ' + CHAR(13) + CHAR (10) +  LEFT([Event_Date],LEN([Event_Date])-8)+ ' | ' + [Project_Number]+ ' | ' + [Task_Number] 
       + ' | ' + [Task_Name] + ' | ' + [Time_Code]  + ' | ' + [Associated_Person] + ' | ' + [Hours] 
-      + ' | ' + [Sat] + ' | ' + [Sun] + ' | ' + [Mon] + ' | ' + [Tue] + ' | ' + [Wed] + ' | ' + [Thu] + ' | ' + [Fri] )
+      + ' | ' + [Sat] + ' | ' + [Sun] + ' | ' + [Mon] + ' | ' + [Tue] + ' | ' + [Wed] + ' | ' + [Thu] + ' | ' + [Fri] )END
 
 OPTION (MAXDOP 1)
 END
@@ -404,7 +432,13 @@ END
 WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 END  -- [EC].[sp_Update_ETS_Coaching_Stage]
+
+
+
 GO
+
+
+
 
 
 
@@ -429,15 +463,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      11/07/2014
 --    Description:     This procedure inserts the ETS records into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 11/19/2014
+-- Last Modified Date: 01/06/2015
 -- Last Updated By: Susmitha Palacherla
--- Added IDs to the insert statement with a value of 'False'
+-- Changes for incorporating Compliance Reports per SCR 14031.
 
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_ETS]
@@ -507,8 +543,8 @@ BEGIN TRY
 		    es.Report_Code [strReportCode],
 		    CASE es.emp_role when 'C' THEN 1
             WHEN 'S' THEN 2 ELSE -1 END [ModuleID],
-            es.Emp_SupID [SupID],
-            es.Emp_MgrID [MgrID]
+          	ISNULL(es.[Emp_SupID],'999999')  [SupID],
+		    ISNULL(es.[Emp_MgrID],'999999')  [MgrID]
             
 FROM [EC].[ETS_Coaching_Stage] es 
 left outer join EC.Coaching_Log cf on es.Report_Code = cf.strReportCode
@@ -538,7 +574,12 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     SELECT cf.[CoachingID],
            22,
            [EC].[fn_intSubCoachReasonIDFromETSRptCode](LEFT(cf.strReportCode,LEN(cf.strReportCode)-8)),
-           'Opportunity' 
+           CASE WHEN LEFT(cf.strReportCode,LEN(cf.strReportCode)-8) IN ('OAE','OAS')
+           THEN 'Research Required' ELSE 'Opportunity' END
+          /* CASE LEFT(cf.strReportCode,LEN(cf.strReportCode)-8)
+           WHEN 'OAE' THEN 'Research Required'
+           WHEN 'OAS' THEN 'Research Required'
+           ELSE 'Opportunity' END */
     FROM [EC].[ETS_Coaching_Stage] es  INNER JOIN  [EC].[Coaching_Log] cf      
     ON (es.[Report_Code] = cf.[strReportCode]
    and es.Event_Date = cf.EventDate and es.Emp_ID = cf.EmpID and es.Report_ID = cf.numReportID)
@@ -578,10 +619,9 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_ETS
+
+
 GO
-
-
-
 
 
 
@@ -724,12 +764,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 11/19/14
 -- Description:	Determines rejection Reason for ETS logs.
 -- Populates the records with reject reasons to the Reject table.
-
+-- Last Modified Date - 01/05/2015
+-- Last Modified By - Susmitha Palacherla
+-- Modified per scr 14031 to incorporate the compliance reports.
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_ETS_Rejected] 
 
@@ -769,9 +813,9 @@ WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
 
 BEGIN
 UPDATE [EC].[ETS_Coaching_Stage]
-SET [Reject_Reason]= CASE WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('EA', 'EOT','FWH','HOL','ITD', 'ITI', 'UTL')
+SET [Reject_Reason]= CASE WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('EA', 'EOT','FWH','HOL','ITD', 'ITI', 'UTL', 'OAE')
 AND [Emp_Role]not in ( 'C','S') THEN N'Employee does not have a CSR or Supervisor job code.'
-WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('FWHA','HOLA','ITDA', 'ITIA', 'UTLA') 
+WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('FWHA','HOLA','ITDA', 'ITIA', 'UTLA','OAS') 
 AND [Emp_Role] <> 'S' THEN N'Approver does not have a Supervisor job code.'
 ELSE NULL END
 WHERE [Emp_Role] NOT in ('C','S')AND [Reject_Reason]is NULL
@@ -848,7 +892,11 @@ OPTION (MAXDOP 1)
 END
 
 END  -- [EC].[sp_InsertInto_ETS_Rejected]
+
+
 GO
+
+
 
 
 
