@@ -1,7 +1,12 @@
 /*
-File: eCoaching_Functions.sql (04)
+File: eCoaching_Functions.sql (05)
 Last Modified By: Susmitha Palacherla
-Date:10/13/2014
+Date:10/222014
+
+Version 05, 10/22/2014
+1.  Marked the following Functions as Not being used.
+[EC].[fn_Encrypt] 
+[EC].[fn_Decrypt] 
 
 Version 04, 10/13/2014
 1.  Added  3 new Functions to support DirectHierarchy check, 
@@ -44,8 +49,8 @@ List of Functions:
 16. [EC].[fn_intSourceIDFromOldSource] 
 17. [EC].[fnSplit_WithRowID] 
 18.  [EC].[fn_strDirectUserHierarchy] 
-19. [EC].[fn_Encrypt] 
-20. [EC].[fn_Decrypt] 
+19. [EC].[fn_Encrypt] -- (Not Being Used)
+20. [EC].[fn_Decrypt] -- (Not Being Used)
 
 */
 
