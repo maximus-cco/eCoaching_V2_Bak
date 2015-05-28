@@ -1,6 +1,6 @@
 'variables for database connection and recordset
 Dim myConnection, myCommand, adoRec
-Dim myConnection2, myCommand2
+
 
 'variables for values returned from query
 Dim strPerson
@@ -16,6 +16,9 @@ Dim mailArray
 Dim mailSent
 Dim rCount
 Dim sConn
+Dim strModule
+Dim strSourceID
+Dim isCSE
 
 Dim mainArray
 Dim jMax
@@ -31,13 +34,9 @@ myConnection.Open "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security I
 sql1 = "EC.sp_SelectCoaching4Contact"
 Set adoRec = myConnection.execute(sql1) 
 
-'if not adoRec.Eof then
-
 mainArray = adoRec.GetRows()
 jMax = UBound(mainArray, 2)
 
-
-'end if 
 
 adoRec.Close
 set adoRec = Nothing
@@ -45,31 +44,34 @@ set adoRec = Nothing
 myConnection.Close
 set myConnection = Nothing
 
-'msgbox("starting " & time)
-'msgbox(jMax)
+'change the 5 to jMax to go through the entire list
 
 For j = 0 to jMax
 
-numID = mainArray(0,j)
-strPerson = mainArray(7,j)
-strFormID = mainArray(1,j)
-strEmail = mainArray(3,j) &","& mainArray(4,j) & "," & mainArray(5,j)
-strSource = mainArray(6,j)
-strFormStatus = mainArray(2,j)
+	numID = mainArray(0,j)
+	strPerson = mainArray(7,j)
+	strFormID = mainArray(1,j)
+	strEmail = mainArray(3,j) &","& mainArray(4,j) & "," & mainArray(5,j)
+	strSource = mainArray(6,j)
+	strFormStatus = mainArray(2,j)
+	strModule = mainArray(14,j)
+	strSourceID = mainArray(12,j)
+	isCSE = mainArray(13,j)
 
-'configure the subject line
-strSubject = "eCL: " & strFormStatus & " (" & strPerson & ")"
 
-'send mail
-mailArray = Split(strEmail, ",")
+	'configure the subject line
+	strSubject = "eCL: " & strFormStatus & " (" & strPerson & ")"
 
-if ((len(mailArray(0))> 8) AND (len(mailArray(1))> 8) AND (len(mailArray(2))> 8)) then
+	'send mail
+	mailArray = Split(strEmail, ",")
 
-SendMail strEmail, strSubject, strFormID, strFormStatus, strPerson, strSource, numID
+	if ((len(mailArray(0))> 8) AND (len(mailArray(1))> 8) AND (len(mailArray(2))> 8)) then
 
-end if
+		SendMail strEmail, strSubject, strFormID, strFormStatus, strPerson, strSource, numID, strModule, strSourceID, isCSE
 
-rCount = rCount + 1
+	end if
+
+	rCount = rCount + 1
 
 next
 
@@ -77,17 +79,8 @@ next
 
 
 
-'msgbox("all done " & time & " rCount =" & rCount)
-
-
-
-
-
-
-
-
-Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSource, numID)
-
+Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSource, numID, module, strSourceID, isCSE)
+'msgbox(strFormID)
 
 'variables for sending mail
 Dim htmlbody
@@ -95,10 +88,148 @@ Dim ToCopy
 Dim ToAddress
 Dim ToSubject
 Dim mailArray
+Dim mailTo
+Dim mailCopy
+Dim mailCc
+Dim mailBody
+Dim i
+
 
 'strEmail= "jourdain.augustin@gdit.com,jourdain.augustin@gdit.com,jourdain.augustin@gdit.com"
 'setup an array of possible e-mail addresses
+
 mailArray = Split(strEmail, ",")
+
+
+
+
+
+
+dim objRS, objCmd, arrMail
+
+Set myConnection = CreateObject("ADODB.Connection")
+
+myConnection.Open "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=ecoaching;Data Source=VDENSSDBP07\SCORP01,1436"
+
+
+'objRS.CursorLocation = adUseClient
+'objRS.CursorType = adOpenStatic
+
+set objRS = CreateObject("ADODB.Recordset")
+
+set objCmd = CreateObject("ADODB.Command")
+set objCmd.ActiveConnection = myConnection
+
+objCmd.CommandText = "EC.sp_Select_Email_Attributes"
+objCmd.CommandType = 4 'adCmdStoredProc
+
+'msgbox(strSourceID)
+'msgbox(isCSE)
+objCmd.Parameters("@strModulein") = module
+objCmd.Parameters("@intSourceIDin") = strSourceID
+objCmd.Parameters("@bitisCSEin") = isCSE
+
+Set objRS = objCmd.Execute
+'msgbox("testing1")
+	if (objRS.State = 1) then 'adStateOpen
+'msgbox("testing2")
+		if (NOT objRS.EOF) then
+'msgbox("testing3")
+			arrMail = objRS.GetRows()
+			objRS.Close
+			Set objRS = Nothing
+
+			myConnection.Close
+			set myConnection = Nothing
+			'msgbox(strFormID)
+			'msgbox(UBound(arrMail, 2))
+For i = 0 to UBound(arrMail, 2)
+
+
+	if (strFormStatus = arrMail(1, i)) then
+
+		mailTo = arrMail(2, i)
+		mailCopy = arrMail(4, i)
+		mailCc = arrMail(5, i)
+		mailBody = arrMail(3, i)	
+
+	end if
+
+Next
+			
+
+                strPerson = Replace(strPerson, "'", "")
+
+
+                Select Case (mailTo)
+
+                    Case "Employee"
+
+                        ToAddress = mailArray(0)
+
+
+                    Case "Supervisor"
+
+                        ToAddress = mailArray(1)
+
+                    Case "Manager"
+
+                        ToAddress = mailArray(2)
+
+                    Case Else
+
+                        ToAddress = mailArray(0)
+
+                End Select
+
+
+                If (mailCopy = "1") Then
+
+                    Select Case (mailCc)
+
+                        Case "Employee"
+
+                            ToCopy = mailArray(0)
+
+
+                        Case "Supervisor"
+
+                            ToCopy = mailArray(1)
+
+                        Case "Manager"
+
+                            ToCopy = mailArray(2)
+
+			Case Else
+	
+                            ToCopy = ""
+
+                    End Select
+
+                End If
+
+
+                strSubject = "eCL: " & strFormStatus & " (" & strPerson & ")"
+
+
+                strCtrMessage = (mailBody)
+                strCtrMessage = Replace(strCtrMessage, "strDateTime", Now)
+                strCtrMessage = Replace(strCtrMessage, "strPerson", strPerson)
+
+                strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
+    & "  <a href=""https://vadenmwbp11.local/coach/default.aspx"" target=""_blank"">Please click here to open the coaching application and select the &#39;My Dashboard&#39; tab to view the below form ID for details.</a>"
+'msgbox(strCtrMessage)
+
+
+
+
+
+
+
+
+
+
+
 
 
 'assign network SMTP server
@@ -115,74 +246,6 @@ ToSubject = strSubject
 
 
 
-
-    Select Case strFormStatus
-
-        Case "Pending Acknowledgement"
-
-            ToCopy = ""
-            ToAddress = mailArray(0) & ";" & mailArray(1)
-
-            strCtrMessage = "  A new eCoaching Log has been entered and requires your action. Please click on the link below to review and acknowledge the eCL entered on <strong>" & Date & "</strong>" & vbCrLf _
-            & "Please click on the link below to review the eCoaching log." & vbCrLf _
-& "  <br /><br />" & vbCrLf _
-& "  <a href=""https://vadenmwbp11.vangent.local/coach/default.aspx"" target=""_blank"">Please click here to open the eCL Dashboard</a>"
-
-        Case "Pending Manager Review"
-
-            ToCopy = ""
-
-            ToAddress = mailArray(2)
-
-            strCtrMessage = "  A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong>" & Date & "</strong>" & vbCrLf _
-         & "  for <strong>" & strPerson & "</strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form." & vbCrLf _
-         & "  <br /><br />" & vbCrLf _
-         & "  <a href=""https://vadenmwbp11.vangent.local/coach/default.aspx"" target=""_blank"">Please click here to open the eCL Dashboard</a>"
-
-
-
-
-
-
-        Case "Pending Supervisor Review"
-
-
-            strCtrMessage = "  A new eCoaching Log has been entered on behalf of <strong>" & strPerson & "</strong>" & vbCrLf _
-                     & "  on <strong>" & Date & "</strong> that requires your action. Please click on the link below" & vbCrLf _
-                     & "  to review the eCoaching log. After you have reviewed and coached an email will go to " & strPerson & " with direction to review and verify the coaching" & vbCrLf _
-                     & "  opportunity." & vbCrLf _
-         & "  <br /><br />" & vbCrLf _
-         & "  <a href=""https://vadenmwbp11.vangent.local/coach/default.aspx"" target=""_blank"">Please click here to open the eCL Dashboard</a>"
-
-
-if (InStr(1, strSource, "OMR", 1) > 0) then
-
-            ToCopy = ""
-            ToAddress = mailArray(1)
-
-else
-            ToCopy = mailArray(2)
-            ToAddress = mailArray(1)
-
-end if
-
-
-        Case "Pending CSR Review"
-
-            ToCopy = ""
-            ToAddress = mailArray(0)
-
-            strCtrMessage = "  A new eCoaching Log has been entered on your behalf." & vbCrLf _
-                     & "  Please click on the link below" & vbCrLf _
-                     & "  to review and verify the coaching opportunity received on " & Date & "." & vbCrLf _
-                     & "  opportunity." & vbCrLf _
-         & "  <br /><br />" & vbCrLf _
-         & "  <a href=""https://vadenmwbp11.vangent.local/coach/default.aspx"" target=""_blank"">Please click here to open the eCL Dashboard</a>"
-
-
-
-
-    End Select
 
 
 
@@ -210,6 +273,7 @@ end if
 & "</html>"& vbCrLf 
 
 
+
 'variables for configuring mail message
 Dim iMsg 
 Dim iConf 
@@ -227,7 +291,10 @@ set iConf = CreateObject("CDO.Configuration")
 'C:\bit9prog\dev\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png
 'C:\bit9prog\dev\images
 'C:\bit9prog\dev\Notifications\images\
+'N:\scorecard-ssis\coaching\notifications\images\BCC-eCL-LOGO-10142011-185x40.png
+
 Set objBP = iMsg.AddRelatedBodyPart("N:\scorecard-ssis\coaching\notifications\images\BCC-eCL-LOGO-10142011-185x40.png", "BCC-eCL-LOGO-10142011-185x40.png", CdoReferenceTypeName)
+
 
 objBP.Fields.Item("urn:schemas:mailheader:Content-ID") = "<BCC-eCL-LOGO-10142011-185x40.png>"
 objBP.Fields.Update
@@ -246,6 +313,7 @@ End With
 With iMsg
     Set .Configuration = iConf
     .MimeFormatted = True
+'change to line to ToAddress to go to the correct destination and uncomment the .CC line
     .To = ToAddress
     .Cc = ToCopy
     .From = "VIP@vangent.com"
@@ -253,7 +321,6 @@ With iMsg
     .HTMLBody = htmlbody
   .Send
 End With
-
 ' Clean up variables.
 Set iMsg = Nothing
 Set iConf = Nothing
@@ -280,5 +347,21 @@ myConnection.execute(sql2), , 129
 
 myConnection.Close 
 set myConnection = Nothing
+
+
+
+	end if
+
+
+else
+		'objRS.Close
+		set objRS = Nothing
+
+		myConnection.Close
+		set myConnection = Nothing
+
+end if
+
+
 
 End Sub
