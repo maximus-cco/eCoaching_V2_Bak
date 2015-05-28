@@ -1,0 +1,52 @@
+-- 1. Run the batch1 all at once
+
+
+--<Begin batch1>
+
+Use eCoachingDev
+
+ CREATE MASTER KEY ENCRYPTION BY
+ PASSWORD = 'W@rn1ng$D#S';
+ 
+ CREATE CERTIFICATE WarnDescCert
+ WITH SUBJECT = 'Warning Decription';
+ 
+ CREATE SYMMETRIC KEY WarnDescKey
+ WITH IDENTITY_VALUE = 'Warnings',
+ ALGORITHM = AES_256,
+ KEY_SOURCE = 'Securing the Warnings Descriptions.'
+ ENCRYPTION BY CERTIFICATE WarnDescCert;
+
+ GO
+
+--</End batch 1>
+
+--********************************************************
+
+
+--2. run the following backups one at a time.
+
+
+
+/*
+
+--2a.
+
+USE eCoachingDev
+BACKUP MASTER KEY TO FILE = 'G:\IntegrationServices\Coaching\Exported_Coaching_MasterKey.dbmk' 
+ENCRYPTION BY PASSWORD = '3ncrypti0nP@$$w0rd'
+
+
+--2b.
+
+USE eCoachingDev
+BACKUP CERTIFICATE WarnDescCert TO FILE = 'G:\IntegrationServices\Coaching\Exported_Coaching_Certificate.cer' 
+WITH PRIVATE KEY
+(FILE = 'G:\IntegrationServices\Coaching\Exported_Coaching_key.pvk',
+ ENCRYPTION BY PASSWORD = '3ncrypti0nP@$$w0rd');
+GO
+
+/*
+
+
+--***************************************************************
