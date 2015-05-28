@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(02).sql
-Last Modified Date: 07/22/2014
+eCoaching_Log_Create(03).sql
+Last Modified Date: 08/04/2014
 Last Modified By: Susmitha Palacherla
+
+Version 03:
+1. Updated [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] (6)  per SCR 13265 
+    to group multiple coaching reasons and display total count per eCL in dashboards.
 
 Version 02: 
 1.  Updated per SCR 13054 to Import additional attribute VerintFormName
@@ -821,7 +825,6 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
 GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -831,11 +834,11 @@ GO
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/12
 --	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
---  Last Update:    03/07/2014 - Updated for ECoachingDev 
---  Updated per SCR 12369 to add NOLOCK Hint 
---	Last Update:	<03/28/2014> - Adapted for eCoachingDev DB
+--  Last Modified Date:    08/04/2014
+--  Last Modified By: Susmitha Palacherla 
+--	Modified per SCR 13265 to group multiple coaching reasons and display total count per eCL in dashboards.
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
+ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
 
 @strSourcein nvarchar(100),
 @strCSRSitein nvarchar(30),
@@ -890,8 +893,8 @@ SELECT [cl].[FormName]	strFormID
 		,[so].[SubCoachingSource]	strSource
 		,[cl].[SubmittedDate]	SubmittedDate
 		,[sh].[Emp_Name]	strSubmitterName
-		,case when [clr].[Value] = ''Opportunity'' THEN 1 ELSE 0 END numOpportunity
-		,case when [clr].[Value] = ''Reinforcement'' THEN 1 ELSE 0 END numReinforcement
+		,SUM(case when [clr].[Value] = ''Opportunity'' THEN 1 ELSE 0 END) numOpportunity
+		,SUM(case when [clr].[Value] = ''Reinforcement'' THEN 1 ELSE 0 END) numReinforcement
 FROM [EC].[Employee_Hierarchy] eh,
 	 [EC].[Employee_Hierarchy] sh,
 	 [EC].[DIM_Status] s,
@@ -914,6 +917,8 @@ and ISNULL([si].[City], '' '') LIKE '''+@strCSRSitein+'''
 and convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''
 and convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
 and [s].[Status] <> '''+@strFormStatus+'''
+GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name]
 ) x
 where ISNULL(x.numOpportunity, '' '') LIKE '''+@strIsOpp+'''
 and ISNULL(x.numReinforcement, '' '') LIKE '''+@strIsForce+'''
@@ -921,8 +926,12 @@ Order By x.SubmittedDate DESC'
 
 
 EXEC (@nvcSQL)	
-   
+	    
 END -- sp_SelectFrom_Coaching_Log_HistoricalSUP
+GO
+
+
+
 
 
 ******************************************************************
