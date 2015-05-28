@@ -398,13 +398,6 @@ Public Class view4
 
     End Sub
 
-    Protected Sub ddCSR_DataBound(ByVal sender As Object, ByVal e As EventArgs)
-
-        Dim str As Integer = ddCSR.Items.Count
-        MsgBox(ddCSR.Items.Count)
-
-
-    End Sub
 
     Protected Sub ExportButton_Click(sender As Object, e As EventArgs) Handles ExportButton.Click
         ExportToExcel()
