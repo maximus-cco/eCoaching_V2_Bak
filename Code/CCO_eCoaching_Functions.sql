@@ -1,7 +1,12 @@
 /*
-File: eCoaching_Functions.sql (07)
+File: eCoaching_Functions.sql (08)
 Last Modified By: Susmitha Palacherla
-Date: 11/21/2014
+Date: 12/18/2014
+
+
+Version 08, 12/18/2014
+1.Updated FN  [EC].[fn_intSubCoachReasonIDFromRptCode]
+to add translation for new OMR report TR2 per SCR 14028.
 
 Version 07, 11/21/2014
 1. Added the following Function to support SCR 13826 for Verint sources.
@@ -311,7 +316,7 @@ IF EXISTS (
 )
    DROP FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode]
 GO
-/****** Object:  UserDefinedFunction [EC].[fn_intSubCoachReasonIDFromRptCode]    Script Date: 03/13/2014 21:19:31 ******/
+
 SET ANSI_NULLS ON
 GO
 
@@ -321,7 +326,10 @@ GO
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
--- Description:	  Given the 3 letter Report code returns the Sub coaching reason for the OMR log.
+-- Description:	  Given the 3 letter Outlier Report code returns the Sub coaching reason for the OMR log.
+-- Last Modified Date: 12/17/2014
+-- last Modified By: Susmitha Palacherla
+-- Modified per SCR 14028 to add FFM Tier 2 Report
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -352,7 +360,8 @@ BEGIN
 			WHEN N'NIT' THEN 35
 			WHEN N'RME' THEN 36
 			WHEN N'SLG' THEN 37
-			WHEN N'TRN' THEN 38    
+			WHEN N'TRN' THEN 38 
+			WHEN N'TR2' THEN 109  
         ELSE -1
       END
     ELSE
@@ -363,6 +372,10 @@ RETURN @intSubCoachReasonID
 END  -- fn_intSubCoachReasonIDFromRptCode()
 
 GO
+
+
+
+
 
 
 
