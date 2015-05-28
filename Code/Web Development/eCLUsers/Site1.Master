@@ -1,0 +1,34 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site1.master.cs" Inherits="CSRID2.Site1" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <link href="~/Styles/Site2.css" rel="stylesheet" type="text/css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div class="page">
+        <div class="header">
+            <div class="title">
+                <h1>
+                    eCL Access Control&nbsp;&nbsp;<asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/1348194467_Community Help.png" AlternateText="users icon" />
+                </h1>
+            </div>
+            <div class="loginDisplay">
+                <asp:Label ID="Label1" runat="server" Text="Welcome: "></asp:Label>
+                <asp:Label ID="Label2" runat="server" Text="Label"></asp:Label>
+            &nbsp;</div>
+            <div class="clear hideSkiplink">
+                &nbsp;
+            <div class="main">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+            </div></div>
+        </div>
+    </div>
+    </form>
+</body>
+</html>
