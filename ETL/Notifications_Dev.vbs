@@ -232,10 +232,10 @@ Next
 
 
 'assign network SMTP server
-Const SMTPServer1 = "vadentexp01.vangent.local" '"denexcp01.vangent.local" 
+Const SMTPServer1 = "smtpout.gdit.com" 
 
 'assign message from address
-Const FromAddress = "VIP@vangent.com"
+Const FromAddress = "VIPDev@GDIT.com"
 
 'add test to subject line
 ToSubject = strSubject
@@ -315,7 +315,7 @@ With iMsg
 'change to line to ToAddress to go to the correct destination and uncomment the .CC line
     .To =  ToAddress '"susmitha.palacherla@gdit.com" 
 '    .Cc = ToCopy
-    .From = "VIP@vangent.com"
+    .From = "VIPDev@GDIT.com"
     .Subject = ToSubject
     .HTMLBody = htmlbody
   .Send

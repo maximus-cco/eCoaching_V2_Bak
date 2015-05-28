@@ -233,7 +233,7 @@ Next
 
 
 'assign network SMTP server
-Const SMTPServer1 = "vadentexp01.vangent.local" '"denexcp01.vangent.local" 
+Const SMTPServer1 = "smtpout.gdit.com" '"denexcp01.vangent.local" 
 
 'assign message from address
 Const FromAddress = "VIP@vangent.com"
