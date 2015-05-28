@@ -1,7 +1,12 @@
 /*
-eCoaching_Log_Create(25).sql
-Last Modified Date: 05/25/2015
+eCoaching_Log_Create(26).sql
+Last Modified Date: 05/27/2015
 Last Modified By: Susmitha Palacherla
+
+Version 26:
+1. Modified procedures #9 to support acting sup view for LCS ecls 
+ LCSAT feed per SCR 14818.
+
 
 Version 25:
 1. Modified procedures #9 and #45 to support LCSAT feed per SCR 14818.
@@ -1567,6 +1572,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
@@ -1651,12 +1659,12 @@ SET @nvcSQL3 = 'select DISTINCT x.strFormID
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
-where cl.[MgrID] = '''+@nvcMGRID+''' 
-and [S].[Status] = '''+@strFormStatus1+''' 
+where ((cl.[MgrID] = '''+@nvcMGRID+''' and [S].[Status] = '''+@strFormStatus1+''') OR
+(eh.[Sup_ID] = '''+@nvcMGRID+''' and [S].[Status] = '''+@strFormStatus2+'''))
 and [eh].[Emp_Name] Like '''+@strCSRin+'''
 and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
 and [cl].[strReportCode] like '''+@strReportCode+'''
-and cl.[MgrID] <> ''999999'') X'
+and (cl.[MgrID] <> ''999999'' and eh.[Sup_ID] <> ''999999'')) X'
 
 SET @nvcSQL4 = '  Order By [SubmittedDate] DESC'
 
@@ -1664,16 +1672,15 @@ SET @nvcSQL4 = '  Order By [SubmittedDate] DESC'
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 + @nvcSQL4
 
 	
-		
+	
 EXEC (@nvcSQL)	
 --Print @nvcsql
 	    
 END -- sp_SelectFrom_Coaching_Log_MGRPending
 
-
-
-
 GO
+
+
 
 
 
