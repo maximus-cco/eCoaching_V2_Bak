@@ -1,7 +1,10 @@
 /*
-eCoaching_Outliers_Create(02).sql
-Last Modified Date: 11/20/14
+eCoaching_Outliers_Create(03).sql
+Last Modified Date: 12/15/14
 Last Modified By: Susmitha Palacherla
+
+Version 03:  12/15/14
+1. Updated per SCR to increase column size of Time_code column in ETS Rejected, Stage and Fact tables.
 
 
 Version 02:  11/20/14
@@ -64,7 +67,7 @@ CREATE TABLE [EC].[ETS_Coaching_Stage](
 	[Project_Number] [nvarchar](8) NULL,
 	[Task_Number] [nvarchar](8) NULL,
 	[Task_Name] [nvarchar](60) NULL,
-	[Time_Code] [nvarchar](8) NULL,
+	[Time_Code] [nvarchar](30) NULL,
 	[Associated_Person] [nvarchar](30) NULL,
 	[Hours] [nvarchar](8) NULL,
 	[Sat] [nvarchar](8) NULL,
@@ -133,7 +136,7 @@ CREATE TABLE [EC].[ETS_Coaching_Rejected](
 	[Project_Number] [nvarchar](8) NULL,
 	[Task_Number] [nvarchar](8) NULL,
 	[Task_Name] [nvarchar](60) NULL,
-	[Time_Code] [nvarchar](8) NULL,
+	[Time_Code] [nvarchar](30) NULL,
 	[Associated_Person] [nvarchar](30) NULL,
 	[Hours] [nvarchar](8) NULL,
 	[Sat] [nvarchar](8) NULL,
@@ -168,7 +171,7 @@ CREATE TABLE [EC].[ETS_Coaching_Fact](
 	[Project_Number] [nvarchar](8) NULL,
 	[Task_Number] [nvarchar](8) NULL,
 	[Task_Name] [nvarchar](60) NULL,
-	[Time_Code] [nvarchar](8) NULL,
+	[Time_Code] [nvarchar](30) NULL,
 	[Associated_Person] [nvarchar](30) NULL,
 	[Hours] [nvarchar](8) NULL,
 	[Sat] [nvarchar](8) NULL,
