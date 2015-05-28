@@ -365,30 +365,30 @@ Public Class review
 
 
                 Case 4
-                        Panel40.Visible = True 'Check the box below to acknowledge the monitor
+                    Panel40.Visible = True 'Check the box below to acknowledge the monitor
 
-                        panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+                    panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+                    panelHolder.Visible = True
+
+                    pHolder = ListView1.Items(0).FindControl("Label83")
+                    panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
+
+                    If (pHolder.Text <> "") Then
+
                         panelHolder.Visible = True
-
-                        pHolder = ListView1.Items(0).FindControl("Label83")
-                        panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
-
-                        If (pHolder.Text <> "") Then
-
-                            panelHolder.Visible = True
-                        End If
+                    End If
                 Case Else
 
-                        panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+                    panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+                    panelHolder.Visible = True
+
+                    pHolder = ListView1.Items(0).FindControl("Label83")
+                    panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
+
+                    If (pHolder.Text <> "") Then
+
                         panelHolder.Visible = True
-
-                        pHolder = ListView1.Items(0).FindControl("Label83")
-                        panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
-
-                        If (pHolder.Text <> "") Then
-
-                            panelHolder.Visible = True
-                        End If
+                    End If
 
             End Select
 
@@ -852,7 +852,7 @@ Public Class review
 
             Case (InStr(1, lan, "vngt\", 1) > 0)
                 lan = (Replace(lan, "vngt\", ""))
-               Case (InStr(1, lan, "ad\", 1) > 0)
+            Case (InStr(1, lan, "ad\", 1) > 0)
                 lan = (Replace(lan, "ad\", ""))
             Case Else
 
@@ -952,12 +952,12 @@ Public Class review
 
         End If
 
-            '         Case Else
+        '         Case Else
 
-            '    Response.Redirect("error.aspx")
+        '    Response.Redirect("error.aspx")
 
 
-            '     End Select
+        '     End Select
 
     End Sub
 
@@ -1065,7 +1065,7 @@ Public Class review
             Dim pHolder7 As Label
             pHolder7 = ListView1.Items(0).FindControl("Label31")
 
-            Select pHolder7.Text ' Module check
+            Select Case pHolder7.Text ' Module check
 
 
                 Case "CSR"
@@ -1155,7 +1155,7 @@ Public Class review
         End If
 
 
-     
+
         Page.Validate()
         If Page.IsValid Then
 
@@ -1295,7 +1295,7 @@ Public Class review
                         End If
 
 
-                         Case "Supervisor"
+                    Case "Supervisor"
 
                         If ((pHolder1.Text = "1") Or (pHolder2.Text = "1")) Then
 
@@ -1411,7 +1411,7 @@ Public Class review
             SqlDataSource5.UpdateParameters("nvcFormID").DefaultValue = Request.QueryString("id")
             SqlDataSource5.UpdateParameters("nvcFormStatus").DefaultValue = "Completed"
             SqlDataSource5.UpdateParameters("dtmCSRReviewAutoDate").DefaultValue = CDate(DateTime.Now())
- 
+
             If (Len(TextBox4.Text) > 3000) Then
 
                 TextBox4.Text = Left(TextBox4.Text, 3000)
@@ -1552,7 +1552,7 @@ Public Class review
     End Sub
 
 
-  
+
 
 
 
@@ -1577,7 +1577,7 @@ Public Class review
 
     End Sub
 
-   
+
 
     Protected Sub ARC_Selected(ByVal sender As Object, ByVal e As SqlDataSourceStatusEventArgs) Handles SqlDataSource14.Selected
         'EC.sp_Check_AgentRole 
