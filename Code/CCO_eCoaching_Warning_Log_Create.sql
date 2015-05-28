@@ -1,7 +1,12 @@
 /*
-eCoaching_Warning_Log_Create(05).sql
-Last Modified Date: 12/4/2014
+eCoaching_Warning_Log_Create(06).sql
+Last Modified Date: 12/15/2014
 Last Modified By: Susmitha Palacherla
+
+Version 06: SCR 13623
+1. Added 2 new fields to the Warning_Log table.
+    numReportID and strReportCode
+
 
 Version 05: SCR 13542
 1. Modified sp [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted]  (#6)
@@ -78,6 +83,8 @@ CREATE TABLE [EC].[Warning_Log](
 	[SubmittedDate] [datetime] NULL,
 	[ModuleID] [int] NULL,
 	[Active] [bit] NULL,
+                  [ numReportID] [int] NOT NULL,
+                 [strReportCode]  [nvarchar](30) NOT NULL,
  CONSTRAINT [PK_Warning_Log] PRIMARY KEY CLUSTERED 
 (
 	[WarningID] ASC
