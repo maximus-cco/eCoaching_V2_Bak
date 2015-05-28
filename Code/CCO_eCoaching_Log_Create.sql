@@ -1,7 +1,13 @@
 /*
-eCoaching_Log_Create(14).sql
-Last Modified Date: 12/19/2014
+eCoaching_Log_Create(15).sql
+Last Modified Date: 01/15/2015
 Last Modified By: Susmitha Palacherla
+
+
+
+Version 15:
+Updates to support Compliance ETS Reports per SCR 14031.
+1.Update to procedures #45 and #50.
 
 
 Version 14:
@@ -3781,16 +3787,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 -- Last Modified By: Susmitha Palacherla
 -- Last Modified Date: 12/17/2014
--- Modified per SCR 13891 to display the actual reviewer supervisor  
+-- Modified per SCR 14031 to incorporate ETS Outstanding Action (Compliance) reports.
+-- Modified per SCR 14066 to translate Quality sources to IQS
+
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -3822,7 +3827,9 @@ DECLARE
 		eh.Mgr_Name  strCSRMgrName,
 		eh.Mgr_Email strCSRMgrEmail,
 		ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
-		sc.SubCoachingSource	strSource,
+                                    sc.SubCoachingSource	strSource,
+                                    CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey '',''IQS'')
+		THEN 1 ELSE 0 END 	isIQS,
 		cl.isUCID    isUCID,
 		cl.UCID	strUCID,
 		cl.isVerintID	isVerintMonitor,
@@ -3835,6 +3842,8 @@ DECLARE
 		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END	"Customer Service Escalation",
 		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
 		CASE WHEN cc.OMR is Not NULL Then 1 ELSE 0 END	"OMR / Exceptions",
+		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
+		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
 		cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -3853,7 +3862,9 @@ DECLARE
 	  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''Customer Service Escalation'' THEN [clr].[Value] ELSE NULL END)	CSE,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''Current Coaching Initiative'' THEN [clr].[Value] ELSE NULL END)	CCI,
-	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 120 THEN [clr].[Value] ELSE NULL END)	ETSOAE,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS
 	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
@@ -3876,9 +3887,7 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
-
 GO
-
 
 
 
@@ -4366,12 +4375,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/12
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page for Outlier records. 
 --    Last Update:    12/16/2014
---    Updated per SCR 13891 to capture review mgr id.
+--    Modified per SCR 14031 to incorporate ETS Outstanding Action (Compliance) reports.
 
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
@@ -4379,12 +4389,11 @@ CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
       @nvcstrReasonNotCoachable Nvarchar(30),
-      @nvcReviewMgrLanID Nvarchar(20),
-      @dtmMgrReviewAutoDate datetime,
-      @dtmMgrReviewManualDate datetime,
+      @nvcReviewerLanID Nvarchar(20),
+      @dtmReviewAutoDate datetime,
+      @dtmReviewManualDate datetime,
       @bitisCoachingRequired bit,
---      @nvcstrCoachReason_Current_Coaching_Initiatives Nvarchar(30), 
-      @nvcMgrNotes Nvarchar(max),
+      @nvcReviewerNotes Nvarchar(max),
       @nvctxtReasonNotCoachable Nvarchar(max)
     
 )
@@ -4400,21 +4409,52 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
 
-DECLARE @nvcReviewMgrID Nvarchar(10),
-	    @dtmDate datetime
+DECLARE @nvcReviewerID Nvarchar(10),
+	    @dtmDate datetime,
+	    @nvcCat Nvarchar (10)
        
 SET @dtmDate  = GETDATE()   
-SET @nvcReviewMgrID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewMgrLanID,@dtmDate)
-            
-      
+SET @nvcReviewerID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewerLanID,@dtmDate)
+SET @nvcCat = (select RTRIM(LEFT(strReportCode,LEN(strReportCode)-8)) from EC.Coaching_Log where FormName = @nvcFormID) 
+
+
+  IF @nvcCat IN ('OAE','OAS')
+
+BEGIN      
 UPDATE 	EC.Coaching_Log
 SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
-        Review_MgrID = @nvcReviewMgrID,
+        Review_SupID = @nvcReviewerID,
 		strReasonNotCoachable = @nvcstrReasonNotCoachable,
 		isCoachingRequired = @bitisCoachingRequired,
-		MgrReviewAutoDate = @dtmMgrReviewAutoDate,
-		MgrReviewManualDate = @dtmMgrReviewManualDate,
-		MgrNotes = @nvcMgrNotes,		   
+		SupReviewedAutoDate =  @dtmReviewAutoDate,
+		CoachingNotes = @nvcReviewerNotes,		   
+		txtReasonNotCoachable = @nvctxtReasonNotCoachable 
+	WHERE FormName = @nvcFormID
+        OPTION (MAXDOP 1)
+        
+  
+UPDATE EC.Coaching_Log_Reason
+SET Value = (CASE WHEN @bitisCoachingRequired = 'True' then 'Opportunity' ELSE 'Not Coachable' END)
+  	FROM EC.Coaching_Log cl INNER JOIN EC.Coaching_Log_Reason clr
+	ON cl.CoachingID = clr.CoachingID
+	WHERE cl.FormName = @nvcFormID
+and clr.SubCoachingReasonID in (120,121)
+        OPTION (MAXDOP 1)
+
+END
+
+ELSE
+
+BEGIN
+
+UPDATE 	EC.Coaching_Log
+SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
+        Review_MgrID = @nvcReviewerID,
+		strReasonNotCoachable = @nvcstrReasonNotCoachable,
+		isCoachingRequired = @bitisCoachingRequired,
+		MgrReviewAutoDate = @dtmReviewAutoDate,
+		MgrReviewManualDate = @dtmReviewManualDate,
+		MgrNotes = @nvcReviewerNotes,		   
 		txtReasonNotCoachable = @nvctxtReasonNotCoachable 
 	WHERE FormName = @nvcFormID
         OPTION (MAXDOP 1)
@@ -4427,6 +4467,8 @@ SET Value = (CASE WHEN @bitisCoachingRequired = 'True' then 'Opportunity' ELSE '
 WHERE cl.FormName = @nvcFormID
 and cr.CoachingReason in ('OMR / Exceptions', 'Current Coaching Initiative')
         OPTION (MAXDOP 1)
+
+END
 	
 COMMIT TRANSACTION
 END TRY
@@ -4470,15 +4512,7 @@ END CATCH
 
 
 END --sp_Update5Review_Coaching_Log
-
-
 GO
-
-
-
-
-
-
 
 
 ******************************************************************
