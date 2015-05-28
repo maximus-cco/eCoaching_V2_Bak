@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(09).sql
-Last Modified Date: 11/3/2014
+eCoaching_Log_Create(10).sql
+Last Modified Date: 11/19/2014
 Last Modified By: Susmitha Palacherla
+
+Version 10;
+1. Update 1 procedure (SP # 8) to add source filter that was
+  discovered to be missing during testing for SCR 13659.
 
 Version 09:
 1. Additional Update to (SP # 47) to update MgrReviewAutoDate and MgrNotes
@@ -1291,17 +1295,16 @@ GO
 
 
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the CSR e-Coaching records from the Coaching_Log table
 -- Where the status is Prnding Review. 
--- Last Modified Date: 08/20/14
+-- Last Modified Date: 11/19/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename  CSRID to EmpID to support the Modular design.
+-- Modified to add missing Source filter discovered during testing for SCR 13659.
 --	=====================================================================
-CREATE  PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending] 
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending] 
 
 @strCSRMGRin nvarchar(30),
 @strCSRSUPin nvarchar(30),
@@ -1333,14 +1336,13 @@ and [cl].[StatusID] = [s].[StatusID]
 and [cl].[SourceID] = [sc].[SourceID]  
 and [eh].[Mgr_LanID] = '''+@strCSRMGRin+'''
 and [S].[Status] like ''Pending%''
+and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
 and [eh].[Emp_Name] Like '''+@strCSRin+'''
 and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
 Order By [SubmittedDate] DESC'
 		
 EXEC (@nvcSQL)	   
 END --sp_SelectFrom_Coaching_Log_MGRCSRPending
-
-
 
 GO
 
