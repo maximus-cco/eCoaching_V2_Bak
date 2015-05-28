@@ -1,7 +1,10 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (07)
-Date: 01/16/15
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (08)
+Date: 01/26/15
 
+
+Version 08, 01/26/15
+Additional updates to sp (#5) to inactivate ecls for employees in EA status and those not arriving in ewfm feed  per SCR 14072.
 
 Version 07, 01/16/15
 Updates to sp (#5) to inactivate ecls for employees in EA status and those not arriving in ewfm feed  per SCR 14072.
@@ -900,12 +903,33 @@ GO
 -- Last Modified Date: 01/16/2015
 -- Last Updated By: Susmitha Palacherla
 -- Modified to Inactivate Coaching logs for extended absences status 
--- and CSRs and Sup Module eCLs for Employees not arriving in eWFM feed per scr 14072.
+-- and for CSR and Sup Module ecls for employees not arriving in ewfm feed per scr 14072.
+
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
 AS
 BEGIN
+
+ DECLARE @EWFMSiteCount INT
+ 
+ -- Inactivate Warnings logs for Termed Employees
+
+BEGIN
+UPDATE [EC].[Warning_Log]
+SET [StatusID] = 2
+FROM [EC].[Warning_Log] W JOIN [EC].[Employee_Hierarchy]H
+ON W.[EmpLanID] = H.[Emp_LanID]
+AND W.[EmpID] = H.[Emp_ID]
+WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
+AND H.[Active] in ('T','D')
+AND H.[End_Date]<> '99991231'
+AND W.[StatusID] <> 2
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
 
 -- Inactivate Coaching logs for Termed Employees
 
@@ -925,20 +949,6 @@ END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
--- Inactivate Coaching logs for CSRs and Sup Module eCLs for Employees not arriving in eWFM feed.
-
-BEGIN
-UPDATE [EC].[Coaching_Log]
-SET [StatusID] = 2
-FROM [EC].[Coaching_Log] C WHERE  C.[EmpID] NOT IN
-(SELECT DISTINCT LTRIM(EMP_ID) FROM [EC].[EmpID_To_SupID_Stage])
-AND C.[StatusID] not in (1,2)
-AND C.[ModuleID]  in (1,2)
-OPTION (MAXDOP 1)
-END
-
-
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
 -- Inactivate Coaching logs for Employees on Extended Absence
 
@@ -956,25 +966,30 @@ END
 
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
--- Inactivate Warnings logs for Termed Employees
 
+-- Inactivate Coaching logs for CSRs and Sup Module eCLs for Employees not arriving in eWFM feed.
+
+SET @EWFMSiteCount = (SELECT count(DISTINCT Emp_Site_Code) FROM [EC].[EmpID_To_SupID_Stage])
+IF @EWFMSiteCount >= 14
 BEGIN
-UPDATE [EC].[Warning_Log]
+UPDATE [EC].[Coaching_Log]
 SET [StatusID] = 2
-FROM [EC].[Warning_Log] W JOIN [EC].[Employee_Hierarchy]H
-ON W.[EmpLanID] = H.[Emp_LanID]
-AND W.[EmpID] = H.[Emp_ID]
-WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
-AND H.[Active] in ('T','D')
-AND H.[End_Date]<> '99991231'
-AND W.[StatusID] <> 2
+FROM [EC].[Coaching_Log] C LEFT OUTER JOIN [EC].[EmpID_To_SupID_Stage] S
+ON C.EMPID = LTRIM(S.EMP_ID)
+WHERE C.[StatusID] not in (1,2)
+AND C.[ModuleID]  in (1,2)
+AND S.EMP_ID IS NULL
 OPTION (MAXDOP 1)
 END
+
 
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
 
 
 GO
+
+
+
 
 
 
