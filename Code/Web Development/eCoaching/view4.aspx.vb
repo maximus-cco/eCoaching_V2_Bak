@@ -254,6 +254,9 @@ Public Class view4
         GridView7.Visible = True
         GridView7.DataBind()
 
+        ' Needed for hiding Please Wait Modal dialog
+        Response.AppendCookie(New HttpCookie("tokenValue", hiddenTokenId.Value))
+
     End Sub
 
 
@@ -356,7 +359,6 @@ Public Class view4
 
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
-
     End Sub
 
 
@@ -392,6 +394,14 @@ Public Class view4
         'EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted
 
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
+    Protected Sub ddCSR_DataBound(ByVal sender As Object, ByVal e As EventArgs)
+
+        Dim str As Integer = ddCSR.Items.Count
+        MsgBox(ddCSR.Items.Count)
 
 
     End Sub
