@@ -217,7 +217,7 @@ Next
                 strCtrMessage = Replace(strCtrMessage, "strPerson", strPerson)
 
                 strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
-    & "  <a href=""https://vadenmwbp11.vangent.local/coach/default.aspx"" target=""_blank"">Please click here to open the coaching application and select the &#39;My Dashboard&#39; tab to view the below form ID for details.</a>"
+    & "  <a href=""https://F3420-MWBP11.vangent.local/coach/default.aspx"" target=""_blank"">Please click here to open the coaching application and select the &#39;My Dashboard&#39; tab to view the below form ID for details.</a>"
 'msgbox(strCtrMessage)
 
 
