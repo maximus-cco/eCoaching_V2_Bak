@@ -1,7 +1,12 @@
 /*
-File: eCoaching_Functions.sql (05)
+File: eCoaching_Functions.sql (06)
 Last Modified By: Susmitha Palacherla
-Date:10/222014
+Date: 11/14/2014
+
+Version 06, 11/14/2014
+1. Added the following Functions 2 functions related to ETS feed SCR 13659.
+ [EC].[fn_strETSDescriptionFromRptCode] 
+ [EC].[fn_intSubCoachReasonIDFromETSRptCode] 
 
 Version 05, 10/22/2014
 1.  Marked the following Functions as Not being used.
@@ -51,6 +56,8 @@ List of Functions:
 18.  [EC].[fn_strDirectUserHierarchy] 
 19. [EC].[fn_Encrypt] -- (Not Being Used)
 20. [EC].[fn_Decrypt] -- (Not Being Used)
+21. [EC].[fn_strETSDescriptionFromRptCode] 
+22. [EC].[fn_intSubCoachReasonIDFromETSRptCode] 
 
 */
 
@@ -1260,9 +1267,241 @@ GO
 
 ************************************************************************************
 
---21. FUNCTION [EC].[fn_] 
+--21. FUNCTION [EC].[fn_strETSDescriptionFromRptCode] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strETSDescriptionFromRptCode' 
+)
+   DROP FUNCTION [EC].[fn_strETSDescriptionFromRptCode]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:         11/3/2014
+-- Description:	        Given a 3 or 4 letter ETS Report Code returns the Text Description
+-- associated with that Report. 
+-- =============================================
+CREATE FUNCTION [EC].[fn_strETSDescriptionFromRptCode] (
+  @strRptCode NVARCHAR(10)
+)
+RETURNS NVARCHAR(MAX)
+AS
+BEGIN
+  DECLARE @strDescription NVARCHAR(MAX)
+  
+  IF @strRptCode IS NOT NULL
+  BEGIN
+  SET @strDescription = (SELECT [Description] FROM [EC].[ETS_Description]
+                         WHERE [ReportCode]= @strRptCode)       
+	END
+    ELSE
+    SET @strDescription = NULL
+        
+RETURN @strDescription
+
+END  -- fn_strETSDescriptionFromRptCode
+
+
+GO
+
+
 
 
 ************************************************************************************
 
---22. FUNCTION [EC].[fn_] 
+--22. FUNCTION [EC].[fn_intSubCoachReasonIDFromETSRptCode] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_intSubCoachReasonIDFromETSRptCode' 
+)
+   DROP FUNCTION [EC].[fn_intSubCoachReasonIDFromETSRptCode]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:         11/11/2014
+-- Description:	  Given the 3 or 4 letter ETS Report Code returns the Sub coaching reason for the ETS log.
+-- =============================================
+CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromETSRptCode] (
+  @strRptCode NVARCHAR(10)
+)
+RETURNS INT
+AS
+BEGIN
+  DECLARE @intSubCoachReasonID INT
+  
+  IF @strRptCode IS NOT NULL
+    SET @intSubCoachReasonID =
+      CASE @strRptCode 
+ 
+			WHEN N'EA' THEN 97
+			WHEN N'EOT' THEN 98
+			WHEN N'FWH' THEN 99
+			WHEN N'FWHA' THEN 100
+			WHEN N'HOL' THEN 101
+			WHEN N'HOLA' THEN 102
+			WHEN N'ITD' THEN 103
+			WHEN N'ITDA' THEN 104
+			WHEN N'ITI' THEN 105
+			WHEN N'ITIA' THEN 106
+			WHEN N'UTL' THEN 107
+			WHEN N'UTLA' THEN 108
+		
+        ELSE -1
+      END
+    ELSE
+    SET @intSubCoachReasonID = -1
+        
+RETURN @intSubCoachReasonID  
+
+END  -- fn_intSubCoachReasonIDFromETSRptCode()
+
+
+GO
+
+
+
+
+************************************************************************************
+
+--23. FUNCTION [EC].[xxxxxx] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'xxxxx' 
+)
+   DROP FUNCTION [EC].[xxxxxxx]
+GO
+
+
+
+
+************************************************************************************
+
+--24. FUNCTION [EC].[xxxxxx] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'xxxxx' 
+)
+   DROP FUNCTION [EC].[xxxxxxx]
+GO
+
+
+
+
+
+************************************************************************************
+
+--25. FUNCTION [EC].[xxxxxx] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'xxxxx' 
+)
+   DROP FUNCTION [EC].[xxxxxxx]
+GO
+
+
+
+
+************************************************************************************
+
+--26. FUNCTION [EC].[xxxxxx] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'xxxxx' 
+)
+   DROP FUNCTION [EC].[xxxxxxx]
+GO
+
+
+
+
+************************************************************************************
+
+--27. FUNCTION [EC].[xxxxxx] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'xxxxx' 
+)
+   DROP FUNCTION [EC].[xxxxxxx]
+GO
+
+
+
+
+************************************************************************************
+
+--28. FUNCTION [EC].[xxxxxx] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'xxxxx' 
+)
+   DROP FUNCTION [EC].[xxxxxxx]
+GO
+
+
+
+************************************************************************************
+
+--29. FUNCTION [EC].[xxxxxx] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'xxxxx' 
+)
+   DROP FUNCTION [EC].[xxxxxxx]
+GO
+
+
+
+************************************************************************************
+
+--30. FUNCTION [EC].[xxxxxx] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'xxxxx' 
+)
+   DROP FUNCTION [EC].[xxxxxxx]
+GO
