@@ -1,0 +1,593 @@
+/* SCR 14423 implementation Steps.
+Open in an ssms window pointing to eCoaching DB in target environment and run with nothing selected.
+Dev - eCoachingDev
+Test- eCoachingTest
+Prod - eCoaching
+*/
+
+
+--********************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSrMgrLvl1EmpIDFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 03/05/2015
+-- Description:	Given an Employee ID returns the Sr Manager Employee ID.
+-- First Looks up the Mgr Emp ID of the Employee from the Hierarchy table.
+-- Then looks up the Supervisor of the Manager as the Senior Manager Level1
+-- Last Modified by: 
+-- Last update: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+		 @strMgrEmpID nvarchar(10),
+		 @strSrMgrLvl1EmpID nvarchar(10)
+
+  SELECT   @strMgrEmpID = [Mgr_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID
+
+  IF    @strMgrEmpID IS NULL 
+  SET   @strMgrEmpID= N'999999'
+  
+  SELECT   @strSrMgrLvl1EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] =@strMgrEmpID
+  
+  IF     @strSrMgrLvl1EmpID IS NULL 
+  SET    @strSrMgrLvl1EmpID = N'999999'
+  
+  RETURN   @strSrMgrLvl1EmpID
+  
+END --fn_strSrMgrLvl1EmpIDFromEmpID
+
+GO
+
+
+
+
+
+
+--********************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSrMgrLvl2EmpIDFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 03/05/2015
+-- Description:	Given an Employee ID returns the Sr Mananger level 2 Employee ID.
+-- First Looks up the Mgr Emp ID of the Employee from the Hierarchy table.
+-- Then looks up the Supervisor of the Manager as the Senior Manager.
+-- Then looks up the Supervisor of the Senior Manager as the Sr Mananger level 2.
+-- Last Modified by: 
+-- Last update: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+		 @strMgrEmpID nvarchar(10),
+		 @strSrMgrLvl1EmpID nvarchar(10),
+		 @strSrMgrLvl2EmpID nvarchar(10)
+
+  SELECT   @strMgrEmpID = [Mgr_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID
+
+  IF    @strMgrEmpID IS NULL 
+  SET   @strMgrEmpID= N'999999'
+  
+  SELECT   @strSrMgrLvl1EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] =@strMgrEmpID
+  
+  IF     @strSrMgrLvl1EmpID IS NULL 
+  SET    @strSrMgrLvl1EmpID = N'999999'
+  
+  SELECT   @strSrMgrLvl2EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strSrMgrLvl1EmpID
+  
+  IF     @strSrMgrLvl2EmpID IS NULL 
+  SET    @strSrMgrLvl2EmpID = N'999999'
+  
+  RETURN  @strSrMgrLvl2EmpID
+  
+END --fn_strSrMgrLvl2EmpIDFromEmpID
+
+GO
+
+
+
+
+
+
+--********************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSrMgrLvl3EmpIDFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 03/05/2015
+-- Description:	Given an Employee ID returns the Regional Manager Employee ID.
+-- First Looks up the Mgr Emp ID of the Employee from the Hierarchy table.
+-- Then looks up the Supervisor of the Manager as the Senior Manager.
+-- Then looks up the Supervisor of the Senior Manager as the Regional Manager.
+-- Last Modified by: 
+-- Last update: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+		 @strMgrEmpID nvarchar(10),
+		 @strSrMgrLvl1EmpID nvarchar(10),
+		 @strSrMgrLvl2EmpID nvarchar(10),
+		 @strSrMgrLvl3EmpID nvarchar(10)
+		 
+
+  SELECT   @strMgrEmpID = [Mgr_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID
+
+  IF    @strMgrEmpID IS NULL 
+  SET   @strMgrEmpID= N'999999'
+  
+  SELECT   @strSrMgrLvl1EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] =@strMgrEmpID
+  
+  IF     @strSrMgrLvl1EmpID IS NULL 
+  SET    @strSrMgrLvl1EmpID = N'999999'
+  
+   SELECT   @strSrMgrLvl2EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strSrMgrLvl1EmpID
+  
+  IF    @strSrMgrLvl2EmpID IS NULL 
+  SET   @strSrMgrLvl2EmpID= N'999999'
+  
+  SELECT   @strSrMgrLvl3EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strSrMgrLvl2EmpID
+  
+  IF     @strSrMgrLvl3EmpID IS NULL 
+  SET    @strSrMgrLvl3EmpID = N'999999'
+  
+  RETURN  @strSrMgrLvl3EmpID
+  
+END --fn_strSrMgrLvl3EmpIDFromEmpID
+
+GO
+
+
+
+
+
+
+--********************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching]
+GO
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/05/2015
+--	Description: *	This procedure selects all the Coaching logs for Employees that fall under the Senior Manager 
+--  in the Hierarchy table.
+-- Last Modified Date: 
+-- Last Updated By: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching] 
+@strEMPSRMGRin nvarchar(30),
+@strEMPMGRin nvarchar(30),
+@strEMPSUPin nvarchar(30),
+@strEMPin nvarchar(30), 
+@strSourcein nvarchar(100),
+@strStatus nvarchar(30)
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strSrMgrEmpID nvarchar(10),
+@strFormStatus nvarchar(30),
+@intStatusID INT
+
+SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strEMPSRMGRin, GETDATE()))
+SET @intStatusID = (SELECT StatusID FROM [EC].[DIM_Status] where Status = @strStatus)
+Set @strFormStatus = 'Inactive'
+
+SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
+		[eh].[Emp_Name]	strEmpName,
+		[eh].[Sup_Name]	strEmpSupName, 
+		[eh].[Mgr_Name]	strEmpMgrName, 
+		[s].[Status]	strFormStatus,
+		[sc].[SubCoachingSource] strSource,
+		[cl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+[cl].[EmpID] = [eh].[Emp_ID]Join [EC].[DIM_Status] s ON
+[cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
+[cl].[SourceID] = [sc].[SourceID] 
+WHERE ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [S].[Status] like  '''+@strStatus+''' + ''%''
+and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
+and [eh].[Emp_Name] Like '''+@strEMPin+'''
+and [eh].[Sup_Name] Like '''+@strEMPSUPin+'''
+and [eh].[Mgr_Name] Like '''+@strEMPMGRin+'''
+and [s].[Status] <> '''+@strFormStatus+'''
+and '''+@strSrMgrEmpID+''' <> ''999999''
+ORDER BY submitteddate desc'
+
+ 
+
+EXEC (@nvcSQL)
+--Print @nvcSQL	   
+END --sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching
+GO
+
+
+
+
+
+--********************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/05/2015
+--	Description: *	This procedure selects all the Warning logs for Employees that fall under the Senior Manager 
+--  in the Hierarchy table.
+-- Last Modified Date: 
+-- Last Updated By: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] 
+@strEMPSRMGRin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@bitActive nvarchar(1)
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8),
+@strSrMgrEmpID Nvarchar(10),
+@dtmDate datetime
+
+
+Set @strFormStatus = 'Completed'
+Set @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+Set @dtmDate  = GETDATE()   
+Set @strSrMgrEmpID = EC.fn_nvcGetEmpIdFromLanID(@strEMPSRMGRin,@dtmDate)
+
+
+SET @nvcSQL = 'SELECT [wl].[FormName]	strFormID,
+		[eh].[Emp_Name]	strEmpName,
+		[eh].[Sup_Name]	strEmpSupName, 
+		[eh].[Mgr_Name]	strEmpMgrName, 
+		[s].[Status]	strFormStatus,
+		[sc].[SubCoachingSource] strSource,
+		[wl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl ON
+[wl].[EmpID] = [eh].[Emp_ID]Join [EC].[DIM_Status] s ON
+[wl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
+[wl].[SourceID] = [sc].[SourceID] 
+WHERE ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([wl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([wl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([wl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [s].[Status] = '''+@strFormStatus+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [wl].[Active] like '''+ CONVERT(NVARCHAR,@bitActive) + '''
+and '''+@strSrMgrEmpID+''' <> ''999999''
+ORDER BY submitteddate desc'
+
+		
+EXEC (@nvcSQL)
+--Print @nvcSQL	   
+END --sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning
+
+GO
+
+
+
+
+
+--********************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/23/2015
+--	Description: *	This procedure selects the distinct Employees under a senior manager from e-Coaching records to display on dashboard for filter. 
+--  Created during dashboard redesign SCR 14422.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam] 
+@strCSRSrMGRin nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSrMgrEmpID nvarchar(10)
+
+SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strCSRSrMGRin, GETDATE()))
+SET @strFormStatus = 'Inactive'
+
+SET @nvcSQL =  'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [S].[Status] <> '''+@strFormStatus+'''
+and eh.Emp_Name is NOT NULL) X
+ORDER BY X.Sortorder, X.EmpText'
+		
+		
+EXEC (@nvcSQL)	
+
+End -- sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam
+
+
+GO
+
+
+
+
+
+--********************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/23/2015
+--	Description: *	This procedure selects the distinct Managers (level 1) under a senior manager from e-Coaching records 
+--  in the dasboard filter. 
+--  Created during dashboard redesign SCR 14422.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam] 
+@strCSRSrMGRin nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSrMgrEmpID nvarchar(10)
+
+SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strCSRSrMGRin, GETDATE()))
+SET @strFormStatus = 'Inactive'
+
+SET @nvcSQL =  'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.MGR_Name	MGRText, eh.MGR_Name MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [S].[Status] <> '''+@strFormStatus+'''
+and eh.MGR_Name is NOT NULL) X
+Order By X.Sortorder, X.MGRText'
+		
+		
+EXEC (@nvcSQL)	
+
+End -- sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam
+
+
+GO
+
+
+
+
+
+--********************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/23/2015
+--	Description: *	This procedure selects the distinct Supervisors (level 1) under a senior manager from e-Coaching records 
+--  in the dasboard filter. 
+--  Created during dashboard redesign SCR 14422.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam] 
+@strCSRSrMGRin nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSrMgrEmpID nvarchar(10)
+
+SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strCSRSrMGRin, GETDATE()))
+SET @strFormStatus = 'Inactive'
+
+SET @nvcSQL =  'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [S].[Status] <> '''+@strFormStatus+'''
+and eh.SUP_Name is NOT NULL) X
+Order By X.Sortorder, X.SUPText'
+		
+		
+EXEC (@nvcSQL)	
+
+End -- sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam
+
+
+GO
+
+
+
+
+
+/********************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'x' 
+)
+   DROP PROCEDURE [EC].[x]
+GO
+
+
+
+
+--********************************/
