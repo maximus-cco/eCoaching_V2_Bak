@@ -1,7 +1,10 @@
 /*
-eCoaching_Warning_Log_Create(03).sql
-Last Modified Date: 10/27/2014
+eCoaching_Warning_Log_Create(04).sql
+Last Modified Date: 11/07/14
 Last Modified By: Susmitha Palacherla
+
+Version 04: Updates from UAR for SCr 13479 SCR 13624.
+1. Modified sp [EC].[sp_SelectFrom_Warning_Log_MGRCSRCompleted]  (#7)
 
 Version 03: Inactivate expired warning logs. SCR 13624.
 1. Added new sp [EC].[sp_InactivateExpiredWarningLogs] (#8)
@@ -716,6 +719,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/09/2014
@@ -758,24 +762,18 @@ FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl
 ON [wl].[EmpID] = [eh].[Emp_ID] JOIN  [EC].[DIM_Status]s
 ON [wl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source]sc
 ON [wl].[SourceID] = [sc].[SourceID]
-WHERE [eh].[Mgr_LanID] = '''+@strCSRMGRin+'''
+WHERE ([eh].[Mgr_LanID] = '''+@strCSRMGRin+''' OR [eh].[Sup_LanID] = '''+@strCSRMGRin+''')
 and [s].[Status] = '''+@strFormStatus+'''
 and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
 and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
 and [wl].[Active] like '''+ CONVERT(NVARCHAR,@bitActive) + '''
-and ( eh.Mgr_ID = '''+@nvcMgrID+''' and eh.Mgr_ID <> ''999999'')
+and ((eh.Mgr_ID = '''+@nvcMgrID+''' and eh.Mgr_ID <> ''999999'')OR (eh.Sup_ID = '''+@nvcMgrID+''' and eh.Sup_ID <> ''999999''))
 Order By [wl].[SubmittedDate] DESC'
 	
 EXEC (@nvcSQL)	
 	   
 END --sp_SelectFrom_Warning_Log_MGRCSRCompleted
-
-
-
 GO
-
-
-
 
 
 ******************************************************************
