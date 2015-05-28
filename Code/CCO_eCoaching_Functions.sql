@@ -1,6 +1,14 @@
 /*
-File: eCoaching_Functions.sql (03)
-Date: 08/29/2014
+File: eCoaching_Functions.sql (04)
+Last Modified By: Susmitha Palacherla
+Date:10/13/2014
+
+Version 04, 10/13/2014
+1.  Added  3 new Functions to support DirectHierarchy check, 
+Encryption/Decryption for CSR Warnings module. SCR 13479.
+[EC].[fn_strDirectUserHierarchy] 
+[EC].[fn_Encrypt] 
+[EC].[fn_Decrypt] 
 
 Version 03, 08/29/2014
 1. Updated the function [EC].[fn_strSiteNameFromSiteLocation] to 
@@ -35,6 +43,9 @@ List of Functions:
 15. [EC].[fn_intSiteIDFromSite] 
 16. [EC].[fn_intSourceIDFromOldSource] 
 17. [EC].[fnSplit_WithRowID] 
+18.  [EC].[fn_strDirectUserHierarchy] 
+19. [EC].[fn_Encrypt] 
+20. [EC].[fn_Decrypt] 
 
 */
 
@@ -1038,7 +1049,7 @@ END  -- fn_intSourceIDFromOldSource()
 
 GO
 
-
+********************************************************************
 
 --17. FUNCTION [EC].[fnSplit_WithRowID] 
 
@@ -1089,3 +1100,164 @@ END -- fnSplit
 
 
 GO
+
+************************************************************************************
+
+--18. FUNCTION [EC].[fn_strDirectUserHierarchy] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strDirectUserHierarchy' 
+)
+   DROP FUNCTION [EC].[fn_strDirectUserHierarchy]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	=============================================
+--	Author:		Susmitha Palacherla
+--	Create Date: 09/29/2014
+--	Description:	 
+--  *  Given an CSR LAN ID, a Submitter LAN ID and a date, return the  Employee ID of the
+-- CSR and Submitter. Then check to see if the Employee ID of the Submitter 
+-- equals the employee ID of the Supervisor or Manager.
+-- If it does the function returns a a 'Yes' to Indicate Direct Hierrachy.
+-- last Modified Date: 
+-- Last Modified By: 
+
+--	=============================================
+CREATE FUNCTION [EC].[fn_strDirectUserHierarchy] 
+(
+  @strCSRin Nvarchar(20),
+  @strSubmitterin Nvarchar(20),
+  @dtmDate Datetime
+)
+RETURNS nvarchar(10)
+AS
+BEGIN
+ 
+	 DECLARE @strCSRID nvarchar(10),
+	         @strSubmitterID nvarchar(10),
+	         @strCSRSupID nvarchar(10),
+	         @strCSRMgrID nvarchar(10),
+	         @DirectHierarchy nvarchar(10)
+	
+	SET @strCSRID = [EC].[fn_nvcGetEmpIdFromLanId] (@strCSRin, @dtmDate)
+	SET @strSubmitterID = [EC].[fn_nvcGetEmpIdFromLanId] (@strSubmitterin, @dtmDate)
+	SET @strCSRSupID = (Select Sup_ID from EC.Employee_Hierarchy Where Emp_ID = @strCSRID)
+	SET @strCSRMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @strCSRID)
+	
+
+ SET @DirectHierarchy =
+ CASE WHEN @strSubmitterID = @strCSRSupID THEN 'Yes'
+      WHEN @strSubmitterID = @strCSRMgrID THEN 'Yes'
+      Else 'No' END
+      
+
+   
+RETURN @DirectHierarchy
+
+END --fn_strDirectUserHierarchy
+GO
+
+************************************************************************************
+
+--19. FUNCTION [EC].[fn_Encrypt] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_Encrypt' 
+)
+   DROP FUNCTION [EC].[fn_Encrypt]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:         10/08/2014
+-- Description:	  Encrypts an input string using a predefined Encryption algorithm.
+-- =============================================
+CREATE FUNCTION [EC].[fn_Encrypt]
+(
+    @ValueToEncrypt varchar(max)
+)
+RETURNS varbinary(max)
+AS
+BEGIN
+    -- Declare the return variable here
+    DECLARE @Result varbinary(max)
+
+    SET @Result = EncryptByKey(Key_GUID('WarnDescKey'), @ValueToEncrypt)
+
+    -- Return the result of the function
+    RETURN @Result
+END --fn_Encrypt
+GO
+
+************************************************************************************
+
+--20. FUNCTION [EC].[fn_Decrypt] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_Decrypt' 
+)
+   DROP FUNCTION [EC].[fn_Decrypt]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:         10/08/2014
+-- Description:	  Decrypts an input string using a predefined Encryption algorithm.
+-- =============================================
+CREATE FUNCTION [EC].[fn_Decrypt]
+
+(
+    @ValueToDecrypt varbinary(max)
+)
+RETURNS varchar(max)
+AS
+BEGIN
+    -- Declare the return variable here
+    DECLARE @Result varchar(max)
+
+    SET @Result = DecryptByKey(@ValueToDecrypt)
+
+    -- Return the result of the function
+    RETURN @Result
+END --fn_Decrypt
+
+GO
+
+
+************************************************************************************
+
+--21. FUNCTION [EC].[fn_] 
+
+
+************************************************************************************
+
+--22. FUNCTION [EC].[fn_] 
