@@ -1,0 +1,219 @@
+/*
+Summary
+1. Run the stateement to alter SP sp  [EC].[sp_Populate_Employee_Hierarchy] 
+2. Run the update statements 2a through 2f  within the commented section one at a time 
+ for manual update of historical records no longer in the feed
+*/
+
+
+--Details
+--1. update sp  [EC].[sp_Populate_Employee_Hierarchy] 
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create Date: 07/25/2013
+-- Description:	Performs the following actions.
+-- Updates existing records and Inserts New records from the Staging table.
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date:11/6/2014
+-- updated per SCR 13759 to handle apostrophes in names and email addresses.
+-- =============================================
+ALTER PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
+AS
+BEGIN
+
+
+ --Assigns End_Date to Inactive Records with status change in feed
+ 
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy] 
+	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
+	FROM [EC].[Employee_Hierarchy_Stage] S JOIN [EC].[Employee_Hierarchy]H
+	ON H.Emp_ID = S.Emp_ID
+	AND S.Active in ('T', 'D')
+	AND H.END_DATE= '99991231'
+OPTION (MAXDOP 1)
+END
+
+
+-- Assigns End_Date to Inactive Records that stop arriving in feed
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy] 
+	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
+	,[Active] = 'T'
+	 WHERE END_DATE = '99991231' AND Active = 'A'
+	 AND Emp_ID <> '999999'
+	 AND EMP_ID NOT IN
+	(SELECT Emp_ID FROM [EC].[Employee_Hierarchy_Stage])
+
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+-- Assigns Open Ended End_Date for Rehire records
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy] 
+	SET [Active]= S.Active
+	,[Start_Date] = S.Start_Date
+	,[END_DATE] = '99991231'
+	FROM [EC].[Employee_Hierarchy_Stage] S JOIN [EC].[Employee_Hierarchy]H
+	ON H.Emp_ID = S.Emp_ID
+	AND S.Active not in ('T', 'D')
+	AND H.END_DATE  <> '99991231'
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+-- Updates Existing Records
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy]
+	   SET [Emp_Name] = Replace(S.[Emp_Name],'''', '')
+	      ,[Emp_Email] = Replace(S.[Emp_Email],'''','''''')
+		  ,[Emp_LanID] = S.Emp_LanID
+		  ,[Emp_Site] =  [EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site)
+		  ,[Emp_Job_Code] = S.Emp_Job_Code
+		  ,[Emp_Job_Description] = S.Emp_Job_Description
+		  ,[Emp_Program] = S.Emp_Program
+		  ,[Sup_ID] = S.Sup_EMP_ID
+		  ,[Sup_Name] = Replace(S.[Sup_Name],'''', '')
+		  ,[Sup_Email] = Replace(S.[Sup_Email],'''','''''')
+		  ,[Sup_LanID] = S.Sup_LanID
+		  ,[Sup_Job_Code] = S.Sup_Job_Code 
+		  ,[Sup_Job_Description] = S.Sup_Job_Description
+		  ,[Mgr_ID] = S.Mgr_EMP_ID 
+		  ,[Mgr_Name] = Replace(S.[Mgr_Name],'''', '')
+		  ,[Mgr_Email] = Replace(S.[Mgr_Email],'''','''''')
+		  ,[Mgr_LanID] = S.Mgr_LanID
+		  ,[Mgr_Job_Code] = S.Mgr_Job_Code 
+		  ,[Mgr_Job_Description] = S.Mgr_Job_Description
+		  ,[Start_Date] = CONVERT(nvarchar(8),S.[Start_Date],112)
+		  ,[Active] = S.Active
+	 FROM [EC].[Employee_Hierarchy]H JOIN [EC].[Employee_Hierarchy_Stage]S
+	 ON H.[Emp_ID] = S.[EMP_ID]
+	 WHERE H.[Emp_ID] is NOT NULL
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+    
+-- Inserts New Records
+BEGIN
+	INSERT INTO [EC].[Employee_Hierarchy]
+			  ([Emp_ID]
+			   ,[Emp_Name]
+			   ,[Emp_Email]
+			   ,[Emp_LanID]
+			   ,[Emp_Site]
+			   ,[Emp_Job_Code]
+			   ,[Emp_Job_Description]
+			   ,[Emp_program]
+			   ,[Sup_ID]
+			   ,[Sup_Name]
+			   ,[Sup_Email]
+			   ,[Sup_LanID]
+			   ,[Sup_Job_Code]
+			   ,[Sup_Job_Description]
+			   ,[Mgr_ID]
+			   ,[Mgr_Name]
+			   ,[Mgr_Email]
+			   ,[Mgr_LanID]
+			   ,[Mgr_Job_Code]
+			   ,[Mgr_Job_Description]
+			   ,[Start_Date]
+			   ,[Active]
+			  )
+							 SELECT S.[Emp_ID]
+						      ,Replace(S.[Emp_Name],'''', '')
+                              ,Replace(S.[Emp_Email],'''','''''')
+							  ,S.[Emp_LanID]
+							  ,[EC].[fn_strSiteNameFromSiteLocation](S.[Emp_Site])
+							  ,S.[Emp_Job_Code]
+							  ,S.[Emp_Job_Description]
+							  ,S.[Emp_Program]
+							  ,S.[Sup_Emp_ID]
+							  ,Replace(S.[Sup_Name],'''', '')
+							  ,Replace(S.[Sup_Email],'''','''''')
+							  ,S.[Sup_LanID]
+							  ,S.[Sup_Job_Code]
+							  ,S.[Sup_Job_Description]
+							  ,S.[Mgr_Emp_ID]
+							  ,Replace(S.[Mgr_Name],'''', '')
+							  ,Replace(S.[Mgr_Email],'''','''''')
+							  ,S.[Mgr_LanID]
+							  ,S.[Mgr_Job_Code]
+							  ,S.[Mgr_Job_Description]
+							  ,CONVERT(nvarchar(8),S.[Start_Date],112)
+							  ,S.[Active]
+						  FROM [EC].[Employee_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy]H
+						  ON S.Emp_ID = H.Emp_ID
+						  WHERE (H.EMP_ID IS NULL and S.Emp_ID <> '')
+
+OPTION (MAXDOP 1)
+END
+
+
+END --sp_Populate_Employee_Hierarchy
+GO
+
+
+
+
+--********************
+/*
+--2. manual update for historical records no longer in the feed
+
+--2a.
+
+UPDATE [EC].[Employee_Hierarchy]
+SET [Emp_Name] = Replace([Emp_Name],'''', '')
+WHERE [Emp_Name] like '%''%'
+	    
+	      
+--2b.
+	      
+UPDATE [EC].[Employee_Hierarchy]
+SET [Emp_Email] = Replace([Emp_Email],'''','''''')
+WHERE [Emp_Email] not like '%''''%'
+and [Emp_Email] like  '%''%'
+
+
+--2c.
+
+UPDATE [EC].[Employee_Hierarchy]
+SET [Sup_Name] = Replace([Sup_Name],'''', '')
+WHERE [Sup_Name] like '%''%'
+	    
+	      
+--2d.
+	      
+UPDATE [EC].[Employee_Hierarchy]
+SET [Sup_Email] = Replace([Sup_Email],'''','''''')
+WHERE [Sup_Email] not like '%''''%'
+and [Sup_Email] like  '%''%'
+
+
+--2e.
+
+UPDATE [EC].[Employee_Hierarchy]
+SET [Mgr_Name] = Replace([Mgr_Name],'''', '')
+WHERE [Mgr_Name] like '%''%'
+	    
+--2f.
+	      
+	      
+UPDATE [EC].[Employee_Hierarchy]
+SET [Mgr_Email] = Replace([Mgr_Email],'''','''''')
+WHERE [Mgr_Email] not like '%''''%'
+and [Mgr_Email] like  '%''%'
+
+
+*/
