@@ -1,8 +1,13 @@
 /*
-File: eCoaching_Functions.sql (08)
+File: eCoaching_Functions.sql (09)
 Last Modified By: Susmitha Palacherla
-Date: 12/18/2014
+Date: 01/09/2015
 
+
+Version 09, 01/09/2015
+1. Added 1 function #24 and modified 1 fn # 22related to ETS compliance feed SCR 14031.
+ [EC].[fn_strEmpNameFromEmpID]  -- Added
+ [EC].[fn_intSubCoachReasonIDFromETSRptCode] -- Modified
 
 Version 08, 12/18/2014
 1.Updated FN  [EC].[fn_intSubCoachReasonIDFromRptCode]
@@ -67,7 +72,8 @@ List of Functions:
 20. [EC].[fn_Decrypt] -- (Not Being Used)
 21. [EC].[fn_strETSDescriptionFromRptCode] 
 22. [EC].[fn_intSubCoachReasonIDFromETSRptCode] 
-23. FUNCTION [EC].[fn_intSourceIDFromSource] 
+23. [EC].[fn_intSourceIDFromSource] 
+24. [EC].[fn_strEmpNameFromEmpID]
 */
 
 
@@ -1358,6 +1364,8 @@ GO
 -- Author:              Susmitha Palacherla
 -- Create date:         11/11/2014
 -- Description:	  Given the 3 or 4 letter ETS Report Code returns the Sub coaching reason for the ETS log.
+-- Last Modified: 01/07/2015
+-- Modified per SCR 14031 to incorporate ETS Outstanding Action (Compliance) reports.
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromETSRptCode] (
   @strRptCode NVARCHAR(10)
@@ -1371,6 +1379,7 @@ BEGIN
     SET @intSubCoachReasonID =
       CASE @strRptCode 
  
+			
 			WHEN N'EA' THEN 97
 			WHEN N'EOT' THEN 98
 			WHEN N'FWH' THEN 99
@@ -1383,6 +1392,8 @@ BEGIN
 			WHEN N'ITIA' THEN 106
 			WHEN N'UTL' THEN 107
 			WHEN N'UTLA' THEN 108
+                                                      WHEN N'OAE' THEN 120
+			WHEN N'OAS' THEN 121
 		
         ELSE -1
       END
@@ -1395,6 +1406,8 @@ END  -- fn_intSubCoachReasonIDFromETSRptCode()
 
 
 GO
+
+
 
 
 
@@ -1450,19 +1463,57 @@ GO
 
 ************************************************************************************
 
---24. FUNCTION [EC].[xxxxxx] 
+--24. FUNCTION [EC].[fn_strEmpNameFromEmpID] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'xxxxx' 
+     AND SPECIFIC_NAME = N'fn_strEmpNameFromEmpID' 
 )
-   DROP FUNCTION [EC].[xxxxxxx]
+   DROP FUNCTION [EC].fn_strEmpNameFromEmpID]
 GO
 
 
+SET ANSI_NULLS ON
+GO
 
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 01/05/2015
+-- Description:	Given an Employee ID, fetches the User Name from the Employee Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version : SCR 14031 for loading ETS Compliance Reports
+-- =============================================
+CREATE FUNCTION [EC].[fn_strEmpNameFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strEmpName nvarchar(40)
+
+
+  
+  SELECT @strEmpName = Emp_Name
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strEmpId
+  
+  IF  @strEmpName IS NULL 
+  SET  @strEmpName = N'UnKnown'
+  
+  RETURN  @strEmpName 
+END
+
+
+
+GO
 
 
 ************************************************************************************
