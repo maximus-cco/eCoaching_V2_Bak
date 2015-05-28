@@ -1,12 +1,19 @@
 /*
-eCoaching_Outliers_Create(01).sql
-Last Modified Date: 11/14/14
+eCoaching_Outliers_Create(02).sql
+Last Modified Date: 11/20/14
 Last Modified By: Susmitha Palacherla
 
 
+Version 02:  11/20/14
+1. Additional changes from V&V feedback for SCR 13659 ETS feed Load.
+Added 2 columns to table [EC].[ETS_Coaching_Stage] ( [Report_ID] and [Reject_Reason])
+Modified existing SPs (#1 and #2)
+Added 1 new SP (#4) [sp_InsertInto_ETS_Rejected]
 
-Version 01: Initial Revision.
- 11/14/14
+
+Version 01:  11/14/14
+1. Initial Revision. SCR 13659. 
+
 
 Summary
 
@@ -24,7 +31,7 @@ Procedures
 1. Create SP  [EC].[sp_Update_ETS_Coaching_Stage]  
 2. Create SP  [EC].[sp_InsertInto_Coaching_Log_ETS]  
 3. Create SP [EC].[sp_Update_ETS_Fact]
-
+4. Create SP [EC].[sp_InsertInto_ETS_Rejected]
 */
 
 
@@ -44,6 +51,7 @@ GO
 
 CREATE TABLE [EC].[ETS_Coaching_Stage](
 	[Report_Code] [nvarchar](20) NULL,
+                  [Report_ID][int] NULL,
 	[Event_Date] [datetime] NULL,
 	[Submitted_Date] [datetime] NULL,
 	[Emp_ID] [nvarchar](20) NULL,
@@ -68,7 +76,8 @@ CREATE TABLE [EC].[ETS_Coaching_Stage](
 	[Fri] [nvarchar](8) NULL,
 	[Exemp_Status] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](max) NULL,
-	[FileName] [nvarchar](260) NULL
+	[FileName] [nvarchar](260) NULL,
+                  [Reject_Reason] [nvarchar](200) NULL
 ) ON [PRIMARY]
 
 GO
@@ -206,42 +215,62 @@ INSERT INTO [EC].[ETS_Description]
            ,[ReportDescription]
            ,[Description])
      VALUES
-          ('EA','Excused Absence',N'The employee recorded incorrect Excused Absence hours.  All paid leave (General Leave or floating Holiday time) must be exhausted before using Excused Absence 
-080984 | 3517.  Excused Absence cannot be taken for full days of leave and you must have some worked hours recorded for the days this project|task code is used.
-Exempt employees absent for a full day must use LWOP 080984 | 9005.'),
-          ('EOT','Exempt Over Time',N'The exempt employee incorrectly recorded overtime hours.  Exempt employees are expected to occasionally exceed the standard workweek (Saturday through Friday) as assigned tasks may demand. In most cases such work, which exceeds the standard workweek, is not eligible for additional pay and should be recorded as straight time.  CCO exempt employees should not charge overtime without direction from CCO Communications.'),
-          ('FWH','Future Worked Hours',N'The employee has entered worked hours in advance.  The only circumstances in which worked hours should be entered in advance are:
-                When the employee’s Friday shift doesn’t start until after the stated deadline for them to sign their timecard or
-                When the employee is working off-site or traveling and will not have access to ETS.
-If this employee doesn’t fall under one of these situations please coach them and have them remove the future worked hours from their timecard.'),
-          ('FWHA','Future Worked Hours (Approver)',N'The employee has approved a timecard with worked hours entered in advance.  The only circumstances in which worked hours should be entered in advance are:
-                When the employee’s Friday shift doesn’t start until after the stated deadline for them to approve timecards or
-                When the employee is working off-site or traveling and will not have access to ETS for approvals.
-If this employee doesn’t fall under one of these situations please coach them and have them remove the future worked hours from their timecard.'),
-          ('HOL','Incorrect Holiday',N'The non-exempt employee recorded incorrect hours on a holiday or recorded holiday hours on an incorrect day. 
+          ('EA','Excused Absence',
+  N'The employee recorded incorrect Excused Absence hours.
+  All paid leave (General Leave or floating Holiday time) must be exhausted before using Excused Absence 080984 | 3517.
+  Excused Absence cannot be taken for full days of leave and you must have some worked hours recorded for the days this project|task code is used.
+  Exempt employees absent for a full day must use LWOP 080984 | 9005.'),
+          ('EOT','Exempt Over Time',
+  N'The exempt employee incorrectly recorded overtime hours.
+  Exempt employees are expected to occasionally exceed the standard workweek (Saturday through Friday) as assigned tasks may demand. 
+  In most cases such work, which exceeds the standard workweek, is not eligible for additional pay and should be recorded as straight time.
+  CCO exempt employees should not charge overtime without direction from CCO Communications.'),
+          ('FWH','Future Worked Hours',
+  N'The employee has entered worked hours in advance.  
+  The only circumstances in which worked hours should be entered in advance are:
+   When the employee’s Friday shift doesn’t start until after the stated deadline for them to sign their timecard or
+   When the employee is working off-site or traveling and will not have access to ETS.
+   If this employee doesn’t fall under one of these situations please coach them and have them remove the future worked hours from their timecard.'),
+          ('FWHA','Future Worked Hours (Approver)',
+   N'The employee has approved a timecard with worked hours entered in advance.  
+  The only circumstances in which worked hours should be entered in advance are:
+   When the employee’s Friday shift doesn’t start until after the stated deadline for them to approve timecards or
+   When the employee is working off-site or traveling and will not have access to ETS for approvals.
+   If this employee doesn’t fall under one of these situations please coach them and have them remove the future worked hours from their timecard.'),
+          ('HOL','Incorrect Holiday',
+N'The non-exempt employee recorded incorrect hours on a holiday or recorded holiday hours on an incorrect day. 
 As a reminder, per HR-POL-203 Holidays, for employees with GSA administered benefits:
 Holiday can only be recorded on the day it is observed. 
 To receive holiday pay, other paid hours must be recorded in the week in which a holiday is observed. 
-                If an employee works on the observed holiday, holiday and time worked would be recorded.  
-                If the observed holiday falls on an employee’s scheduled day-off, only holiday hours would be recorded. 
+ If an employee works on the observed holiday, holiday and time worked would be recorded.  
+If the observed holiday falls on an employee’s scheduled day-off, only holiday hours would be recorded. 
+Leave time cannot be recorded on a day in which a holiday is recorded. 
+Shift and bilingual premiums do not apply to holiday hours. 
+When an employee takes a fixed holiday off, the time must be charged in a whole-day increment to holiday, regardless of the total number of hours worked in the particular pay period.'),
+          ('HOLA','Incorrect Holiday (Approver)',
+N'A timecard was approved with incorrect hours recorded on a holiday or holiday hours recorded on an incorrect day. 
+As a reminder, per HR-POL-203 Holidays, for employees with GSA administered benefits:
+Holiday can only be recorded on the day it is observed. 
+To receive holiday pay, other paid hours must be recorded in the week in which a holiday is observed. 
+If an employee works on the observed holiday, holiday and time worked would be recorded.  
+If the observed holiday falls on an employee’s scheduled day-off, only holiday hours would be recorded. 
 Leave time cannot be recorded on a day in which a holiday is recorded. 
 Shift and bilingual premiums do not apply to holiday hours. 
 When an employee takes a fixed holiday off, the time must be charged in a whole-day increment to holiday, regardless of the total number of hours worked in the particular pay 
 period.'),
-          ('HOLA','Incorrect Holiday (Approver)',N'A timecard was approved with incorrect hours recorded on a holiday or holiday hours recorded on an incorrect day. 
-As a reminder, per HR-POL-203 Holidays, for employees with GSA administered benefits:
-Holiday can only be recorded on the day it is observed. 
-To receive holiday pay, other paid hours must be recorded in the week in which a holiday is observed. 
-                If an employee works on the observed holiday, holiday and time worked would be recorded.  
-                If the observed holiday falls on an employee’s scheduled day-off, only holiday hours would be recorded. 
-Leave time cannot be recorded on a day in which a holiday is recorded. 
-Shift and bilingual premiums do not apply to holiday hours. 
-When an employee takes a fixed holiday off, the time must be charged in a whole-day increment to holiday, regardless of the total number of hours worked in the particular pay 
-period.'),
-          ('ITD','Invalid Timecodes Direct',N'The employee recorded worked hours with a time code that is not valid in the CCO program.  Please see your supervisor for a list of valid time codes used in the CCO.'),
-          ('ITDA','Invalid Timecodes Direct (Approver)',N'The employee approved a timecard with a time code that is not valid in the CCO program.  The list of valid time codes can be found in the Common_CCO_Time_Codes document on CCO Knowledge Net under the timekeeping category.'),
-          ('ITI','Invalid Timecodes Indirect',N'The employee recorded paid leave with an invalid time code.  Paid leave is not eligible for shift or bilingual premium.  All paid leave must be recorded with time code of 01 or *.'),
-          ('ITIA','Invalid Timecodes Indirect (Approver)',N'The employee approved a timecard that had paid leave with and invalid time code. Paid leave is not eligible for shift or bilingual premium.  All paid leave must be recorded with time code of 01 or *.'),
+          ('ITD','Invalid Timecodes Direct',
+  N'The employee recorded worked hours with a time code that is not valid in the CCO program.
+  Please see your supervisor for a list of valid time codes used in the CCO.'),
+          ('ITDA','Invalid Timecodes Direct (Approver)',
+  N'The employee approved a timecard with a time code that is not valid in the CCO program.  
+  The list of valid time codes can be found in the Common_CCO_Time_Codes document on CCO Knowledge Net under the timekeeping category.'),
+          ('ITI','Invalid Timecodes Indirect',
+   N'The employee recorded paid leave with an invalid time code.  
+   Paid leave is not eligible for shift or bilingual premium.  All paid leave must be recorded with time code of 01 or *.'),
+          ('ITIA','Invalid Timecodes Indirect (Approver)',
+  N'The employee approved a timecard that had paid leave with and invalid time code. 
+  Paid leave is not eligible for shift or bilingual premium.  
+  All paid leave must be recorded with time code of 01 or *.'),
           ('UTL','Utilization','TBD'),
           ('UTLA','Utilization (Approver)','TBD')
       
@@ -272,9 +301,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 10/30/2014
@@ -284,7 +310,8 @@ GO
 -- Inserts non CSR and supervisor records into Rejected table
 -- Deletes rejected records.
 -- Sets the detailed Description value by concatenating other attributes.
--- Last update: 
+-- Last update: 11/19/2014
+-- Modified to populate a Report_ID for non rejected records and Reject_Reason for rejected records
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_ETS_Coaching_Stage] 
@@ -301,7 +328,7 @@ OPTION (MAXDOP 1)
 END  
     
     
-WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
     
 -- Populate Attributes from Employee Table
 BEGIN
@@ -322,89 +349,42 @@ ON LTRIM(STAGE.Emp_ID) = LTRIM(EMP.Emp_ID)
 OPTION (MAXDOP 1)
 END
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 -- Reject records not belonging to CSRs and Supervisors
-
 BEGIN
-INSERT INTO [EC].[ETS_Coaching_Rejected]
-           ([Report_Code]
-           ,[Event_Date]
-           ,[Emp_ID]
-           ,[Emp_LanID]
-           ,[Emp_Site]
-           ,[Emp_Program]
-           ,[Emp_SupID]
-           ,[Emp_MgrID]
-           ,[Emp_Role]
-           ,[Project_Number]
-           ,[Task_Number]
-           ,[Task_Name]
-           ,[Time_Code]
-           ,[Associated_Person]
-           ,[Hours]
-           ,[Sat]
-           ,[Sun]
-           ,[Mon]
-           ,[Tue]
-           ,[Wed]
-           ,[Thu]
-           ,[Fri]
-           ,[Exemp_Status]
-           ,[FileName]
-           ,[Reject_Reason]
-           ,[Reject_Date])
-          SELECT S.[Report_Code]
-           ,S.[Event_Date]
-           ,S.[Emp_ID]
-           ,S.[Emp_LanID]
-           ,S.[Emp_Site]
-           ,S.[Emp_Program]
-           ,S.[Emp_SupID]
-           ,S.[Emp_MgrID]
-           ,S.[Emp_Role]
-           ,S.[Project_Number]
-           ,S.[Task_Number]
-           ,S.[Task_Name]
-           ,S.[Time_Code]
-           ,S.[Associated_Person]
-           ,S.[Hours]
-           ,S.[Sat]
-           ,S.[Sun]
-           ,S.[Mon]
-           ,S.[Tue]
-           ,S.[Wed]
-           ,S.[Thu]
-           ,S.[Fri]
-           ,S.[Exemp_Status]
-           ,S.[FileName]
-           ,N'Record does not belong to CSR or Supervisor Job Code'
-           ,GETDATE()
-           FROM [EC].[ETS_Coaching_Stage] S Left outer Join [EC].[ETS_Coaching_Rejected]R
-           ON S.Emp_ID = R.Emp_ID
-           AND S.Report_Code = R.Report_Code
-           AND S.Event_Date = R.Event_Date
-           WHERE S.[Emp_Role]NOT in ('C','S')
-           AND  (R.Emp_ID IS NULL AND  R.Report_Code IS NULL AND R.Event_Date IS NULL)
-
-OPTION (MAXDOP 1)
+EXEC [EC].[sp_InsertInto_ETS_Rejected] 
 END
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
--- Delete records not belonging to CSRs and Supervisors
+
+-- Delete rejected records
 
 BEGIN
 DELETE FROM [EC].[ETS_Coaching_Stage]
-WHERE [Emp_Role]NOT in ('C','S')
+WHERE [Reject_Reason]is not NULL
 
 SELECT @Count =@@ROWCOUNT
 
 OPTION (MAXDOP 1)
 END
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
+-- Assign Record ID
+
+BEGIN
+
+DECLARE @id INT 
+SET @id = 0 
+UPDATE [EC].[ETS_Coaching_Stage]
+SET @id = [Report_ID] = @id + 1 
+
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 -- Populate TextDescription by concatenating the individual detail fields.
 
@@ -418,10 +398,11 @@ SET [TextDescription] = ([TextDescription] + CHAR(13) + CHAR (10) + ' ' + CHAR(1
 OPTION (MAXDOP 1)
 END
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 END  -- [EC].[sp_Update_ETS_Coaching_Stage]
 GO
+
 
 
 
@@ -445,22 +426,18 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      11/07/2014
 --    Description:     This procedure inserts the ETS records into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 
--- Last Updated By: 
+-- Last Modified Date: 11/19/2014
+-- Last Updated By: Susmitha Palacherla
+-- Added IDs to the insert statement with a value of 'False'
 
 --    =====================================================================
-ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_ETS]
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_ETS]
 @Count INT OUTPUT
   
 AS
@@ -487,11 +464,16 @@ BEGIN TRY
            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
+           ,[isAvokeID]
+		   ,[isNGDActivityID]
+           ,[isUCID]
+           ,[isVerintID]
            ,[Description]
 	       ,[SubmittedDate]
            ,[StartDate]
            ,[isCSE]
            ,[isCSRAcknowledged]
+           ,[numReportID]
            ,[strReportCode]
            ,[ModuleID]
            ,[SupID]
@@ -509,11 +491,16 @@ BEGIN TRY
             es.EMP_ID [EmpID],
             '999999'	 [SubmitterID],       
             es.Event_Date [EventDate],
+            0			[isAvokeID],
+		    0			[isNGDActivityID],
+            0			[isUCID],
+            0          [isVerintID],
             REPLACE(EC.fn_nvcHtmlEncode(es.TextDescription), CHAR(13) + CHAR(10) ,'<br />')[Description],	
             es.Submitted_Date  [SubmittedDate], 
 		    es.Event_Date	[StartDate],
 		    0 [isCSE],			
 		    0 [isCSRAcknowledged],
+		    es.Report_ID [numReportID],
 		    es.Report_Code [strReportCode],
 		    CASE es.emp_role when 'C' THEN 1
             WHEN 'S' THEN 2 ELSE -1 END [ModuleID],
@@ -522,8 +509,8 @@ BEGIN TRY
             
 FROM [EC].[ETS_Coaching_Stage] es 
 left outer join EC.Coaching_Log cf on es.Report_Code = cf.strReportCode
-and es.Event_Date = cf.EventDate
-where cf.strReportCode is null and cf.EventDate is NULL
+and es.Event_Date = cf.EventDate and  es.Report_ID = cf.numReportID
+where cf.strReportCode is null and cf.EventDate is NULL and cf.numReportID is NULL
 OPTION (MAXDOP 1)
 
 SELECT @Count =@@ROWCOUNT
@@ -551,7 +538,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            'Opportunity' 
     FROM [EC].[ETS_Coaching_Stage] es  INNER JOIN  [EC].[Coaching_Log] cf      
     ON (es.[Report_Code] = cf.[strReportCode]
-   and es.Event_Date = cf.EventDate and es.Emp_ID = cf.EmpID)
+   and es.Event_Date = cf.EventDate and es.Emp_ID = cf.EmpID and es.Report_ID = cf.numReportID)
     LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
     ON cf.[CoachingID] = cr.[CoachingID]  
     WHERE cr.[CoachingID] IS NULL 
@@ -588,9 +575,8 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_ETS
-
-
 GO
+
 
 
 
@@ -712,8 +698,154 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_Update_ETS_Fact
-
-
 GO
+
+
+***************************************************************************************************
+
+--4. Create SP   [EC].[sp_InsertInto_ETS_Rejected]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_ETS_Rejected' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_ETS_Rejected]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create date: 11/19/14
+-- Description:	Determines rejection Reason for ETS logs.
+-- Populates the records with reject reasons to the Reject table.
+
+-- =============================================
+CREATE PROCEDURE [EC].[sp_InsertInto_ETS_Rejected] 
+
+AS
+BEGIN
+
+-- Determine and populate Reject Reasons
+
+
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [Reject_Reason]= N'Report Code not valid.'
+WHERE LEFT([Report_Code],LEN([Report_Code])-8) NOT IN 
+(SELECT DISTINCT ReportCode FROM [EC].[ETS_Description])
+	
+OPTION (MAXDOP 1)
+END  
+    
+  
+    
+WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+
+
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [Reject_Reason]= N'Employee Not found in Hierarchy table.'
+WHERE EMP_ID NOT IN 
+(SELECT DISTINCT EMP_ID FROM [EC].[Employee_Hierarchy])
+AND [Reject_Reason]is NULL
+	
+OPTION (MAXDOP 1)
+END  
+    
+    
+WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+
+
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [Reject_Reason]= CASE WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('EA', 'EOT','FWH','HOL','ITD', 'ITI', 'UTL')
+AND [Emp_Role]not in ( 'C','S') THEN N'Employee does not have a CSR or Supervisor job code.'
+WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('FWHA','HOLA','ITDA', 'ITIA', 'UTLA') 
+AND [Emp_Role] <> 'S' THEN N'Approver does not have a Supervisor job code.'
+ELSE NULL END
+WHERE [Emp_Role] NOT in ('C','S')AND [Reject_Reason]is NULL
+OPTION (MAXDOP 1)
+END  
+   
+
+
+    
+WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+    
+
+-- Write rejected records to Rejected table.
+
+BEGIN
+INSERT INTO [EC].[ETS_Coaching_Rejected]
+           ([Report_Code]
+           ,[Event_Date]
+           ,[Emp_ID]
+           ,[Emp_LanID]
+           ,[Emp_Site]
+           ,[Emp_Program]
+           ,[Emp_SupID]
+           ,[Emp_MgrID]
+           ,[Emp_Role]
+           ,[Project_Number]
+           ,[Task_Number]
+           ,[Task_Name]
+           ,[Time_Code]
+           ,[Associated_Person]
+           ,[Hours]
+           ,[Sat]
+           ,[Sun]
+           ,[Mon]
+           ,[Tue]
+           ,[Wed]
+           ,[Thu]
+           ,[Fri]
+           ,[Exemp_Status]
+           ,[FileName]
+           ,[Reject_Reason]
+           ,[Reject_Date])
+          SELECT S.[Report_Code]
+           ,S.[Event_Date]
+           ,S.[Emp_ID]
+           ,S.[Emp_LanID]
+           ,S.[Emp_Site]
+           ,S.[Emp_Program]
+           ,S.[Emp_SupID]
+           ,S.[Emp_MgrID]
+           ,S.[Emp_Role]
+           ,S.[Project_Number]
+           ,S.[Task_Number]
+           ,S.[Task_Name]
+           ,S.[Time_Code]
+           ,S.[Associated_Person]
+           ,S.[Hours]
+           ,S.[Sat]
+           ,S.[Sun]
+           ,S.[Mon]
+           ,S.[Tue]
+           ,S.[Wed]
+           ,S.[Thu]
+           ,S.[Fri]
+           ,S.[Exemp_Status]
+           ,S.[FileName]
+           ,S.[Reject_Reason]
+           ,GETDATE()
+           FROM [EC].[ETS_Coaching_Stage] S
+           WHERE S.[Reject_Reason] is not NULL
+      
+
+OPTION (MAXDOP 1)
+END
+
+END  -- [EC].[sp_InsertInto_ETS_Rejected]
+GO
+
 
 
