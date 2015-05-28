@@ -1,6 +1,15 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql(01)
-Date: 04/09/2014
+File: eCoaching_PS_Employee_Hierarchy_Load.sql(02)
+Date: 07/28/2014
+
+
+Version 02, 07/28/2014
+Updated the follwing code modules per SCR 12983 to change and or fix the update logic.
+
+1. PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
+2. PROCEDURE [EC].[sp_Update_EmployeeID_To_LanID] 
+
+ 
 
 Version 01, 04/09/2014
 Initial Revision for new database
@@ -404,26 +413,26 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Populate_Employee_Hierarchy]
 GO
 
-/****** Object:  StoredProcedure [EC].[sp_Populate_Employee_Hierarchy]    Script Date: 12/03/2013 10:33:11 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
 -- Description:	Performs the following actions.
 -- Updates existing records and Inserts New records from the Staging table.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 02/28/2014
--- updated to add start date for redesign project
+-- Last Modified Date: 07/25/2014
+-- updated per SCR 12983 to clean up Employee Update processes impacting Employee iD To lan ID table 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
 BEGIN
 
-
+/*
 -- Assigns End_Date to Inactive Records
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy] 
@@ -434,13 +443,29 @@ BEGIN
 	AND H.END_DATE= '99991231'
 OPTION (MAXDOP 1)
 END
+*/
+
+-- Assigns End_Date to Inactive Records
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy] 
+	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
+	,[Active] = 'T'
+	 WHERE END_DATE = '99991231' AND Active = 'A'
+	 AND Emp_ID <> '999999'
+	 AND EMP_ID NOT IN
+	(SELECT Emp_ID FROM [EC].[Employee_Hierarchy_Stage])
+
+OPTION (MAXDOP 1)
+END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
 -- Assigns Open Ended End_Date for Rehire records
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy] 
-	SET [END_DATE] = '99991231'
+	SET [Active]= S.Active
+	,[Start_Date] = S.Start_Date
+	,[END_DATE] = '99991231'
 	FROM [EC].[Employee_Hierarchy_Stage] S JOIN [EC].[Employee_Hierarchy]H
 	ON H.Emp_ID = S.Emp_ID
 	AND S.Active not in ('T', 'D')
@@ -546,6 +571,7 @@ GO
 
 
 
+
 /*****************************************************/
 
 
@@ -560,7 +586,6 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Update_EmployeeID_To_LanID]
 GO
 
-/****** Object:  StoredProcedure [EC].[sp_Update_EmployeeID_To_LanID]    Script Date: 03/12/2014 18:14:38 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -573,8 +598,9 @@ GO
 -- Description:	Performs the following actions.
 -- Adds an End Date to an Employee ID to lan ID combination that is different from the existing record.
 -- Inserts new records for the changed and new combinations.
--- Last Modified By: 
--- Last Modified Date: 
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date: 07/25/2014
+-- Modified to fix logic per SCR 12983.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_EmployeeID_To_LanID] 
@@ -584,28 +610,35 @@ BEGIN
 DECLARE @dtNow DATETIME
 SET @dtNow = GETDATE()
 
+  
+  
+  -- Assigns End_Date to an Employee ID to Lan ID link for Termed Users
+  
 
--- Assigns End_Date to an Employee ID to Lan ID link that should no longer exist
 BEGIN
-  UPDATE [EC].[EmployeeID_To_LanID]
-  SET [EndDate] = CONVERT(nvarchar(10),@dtNow,112),
-  [DatetimeLastUpdated]= @dtNow
-  FROM [EC].[Employee_Hierarchy]EH JOIN [EC].[EmployeeID_To_LanID]LAN
-  ON EH.[Emp_LanID]= LAN.[LanID]
-  AND EH.[Emp_ID]= LAN.[EmpID]
-  WHERE LAN.[EndDate] = '99991231'
-  AND EH.[Active]in ('T', 'D')
+  ;WITH OpenRecords AS
+  (SELECT * FROM [EC].[EmployeeID_To_LanID]LAN
+   WHERE EndDate = 99991231)
+  
+	  UPDATE LAN
+	  SET [EndDate] = [End_Date],
+	  [DatetimeLastUpdated]= @dtNow
+	  FROM [EC].[Employee_Hierarchy]EH 
+	  JOIN OpenRecords LAN
+	  ON EH.[Emp_ID]= LAN.[EmpID]
+	  WHERE LAN.[EndDate] = '99991231'
+	  AND EH.[Active]in ('T', 'D')
 OPTION (MAXDOP 1)
 END
+
 
 PRINT N'STEP1'
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
-    
--- Inserts links for new Employee ID to lan ID pair
+-- Inserts links for new Employee IDs 
 
 BEGIN
-INSERT INTO [EC].[EmployeeID_To_LanID]
+         INSERT INTO [EC].[EmployeeID_To_LanID]
 			   ([EmpID]
 			   ,[StartDate]
 			   ,[EndDate]
@@ -620,118 +653,90 @@ INSERT INTO [EC].[EmployeeID_To_LanID]
 			   Emp_LanID,
 			   @dtNow ,
 			   @dtNow 
+			   FROM [EC].[Employee_Hierarchy]EH WHERE EH.[ACTIVE] NOT IN ('T','D')
+			   AND NOT EXISTS
+			   (SELECT EMPID FROM [EC].[EmployeeID_To_LanID]LAN
+			   WHERE EH.[Emp_ID]= LAN.[EmpID]))
+			
+OPTION (MAXDOP 1)
+END
+
+
+PRINT N'STEP2'
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms  
+
+  
+-- Inserts links for new Employee IDs to Lan ID Pair
+
+BEGIN
+        INSERT INTO [EC].[EmployeeID_To_LanID]
+			   ([EmpID]
+			   ,[StartDate]
+			   ,[EndDate]
+			   ,[LanID]
+			   ,[DatetimeInserted]
+			   ,[DatetimeLastUpdated])
+			   
+		(SELECT
+			   Emp_ID,
+			   CONVERT(nvarchar(10),@dtNow,112),
+			   End_Date,
+			   Emp_LanID,
+			   @dtNow ,
+			   @dtNow 
 			   FROM [EC].[Employee_Hierarchy]EH LEFT OUTER JOIN [EC].[EmployeeID_To_LanID]LAN
 			   ON EH.[Emp_LanID]= LAN.[LanID]
 			   AND EH.[Emp_ID]= LAN.[EmpID]
-			   WHERE LAN.[EmpID]IS NULL AND LAN.[LanID]IS NULL
+			   WHERE LAN.[LanID]IS NULL
 			   AND EH.[Emp_LanID] IS NOT NULL
 			   AND EH.[ACTIVE] NOT IN ('T','D'))
 OPTION (MAXDOP 1)
 END
 
-PRINT N'STEP2'
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
-    
--- Inserts a new link for changed Employee ID to lan ID pair
-
-BEGIN
---DECLARE @dtNow DATETIME
---SET @dtNow = GETDATE()
-INSERT INTO [EC].[EmployeeID_To_LanID]
-			   ([EmpID]
-			   ,[StartDate]
-			   ,[EndDate]
-			   ,[LanID]
-			   ,[DatetimeInserted]
-			   ,[DatetimeLastUpdated])
-			   
-		(SELECT
-			   Emp_ID,
-			   --CONVERT(nvarchar(10),@dtNow,112),
-			   Start_Date,
-			   End_Date,
-			   Emp_LanID,
-			   @dtNow ,
-			   @dtNow 
-			   FROM [EC].[Employee_Hierarchy]EH LEFT OUTER JOIN [EC].[EmployeeID_To_LanID]LAN
-			   ON EH.[Emp_LanID]= LAN.[LanID]
-			   AND EH.[Emp_ID]= LAN.[EmpID]
-			   WHERE LAN.[EmpID]IS NULL 
-			   AND EH.[Emp_LanID] IS NOT NULL
-			   AND EH.[ACTIVE] NOT IN ('T','D'))
-			OPTION (MAXDOP 1)
-END
-	
-	
 PRINT N'STEP3'
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+    
 
 -- Inserts a new link for a rehired Employee using the same lanid
 
 BEGIN
---DECLARE @dtNow DATETIME
---SET @dtNow = GETDATE()
-INSERT INTO [EC].[EmployeeID_To_LanID]
+ ;WITH OpenRecords AS
+    (SELECT * FROM [EC].[EmployeeID_To_LanID]LAN
+     WHERE EndDate = 99991231)
+   
+   
+   INSERT INTO [EC].[EmployeeID_To_LanID]
 			   ([EmpID]
 			   ,[StartDate]
 			   ,[EndDate]
 			   ,[LanID]
 			   ,[DatetimeInserted]
 			   ,[DatetimeLastUpdated])
-			   
-		(SELECT
+   
+  (SELECT
 			   Emp_ID,
-			   --CONVERT(nvarchar(10),@dtNow,112),
 			   Start_Date,
 			   End_Date,
 			   Emp_LanID,
 			   @dtNow ,
 			   @dtNow 
-			   FROM [EC].[Employee_Hierarchy]EH JOIN [EC].[EmployeeID_To_LanID]LAN
-			   ON EH.[Emp_LanID]= LAN.[LanID]
-			   AND EH.[Emp_ID]= LAN.[EmpID]
-			   WHERE LAN.[EndDate]<>99991231
-			   AND EH.[Emp_LanID] IS NOT NULL
-			   AND EH.[ACTIVE] NOT IN ('T','D'))
-			OPTION (MAXDOP 1)
+			   FROM [EC].[Employee_Hierarchy]EH WHERE EH.[ACTIVE] NOT IN ('T','D', 'L', 'P')
+			   AND EMP_ID NOT IN
+			   (SELECT EMP_ID FROM OpenRecords LAN
+			   WHERE EH.[Emp_ID]= LAN.[EmpID]))
+
+
+OPTION (MAXDOP 1)
 END
-	
-	
+
 PRINT N'STEP4'
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
-
-
-BEGIN
-	
-	;With Overlaps (OverlaplanId, BaselanId) 
-As 
-( 
-	Select Overlap.lanId, Base.lanId 
-	From [EC].[EmployeeID_To_LanID] As Base 
-	Inner Join [EC].[EmployeeID_To_LanID] As Overlap On Overlap.LanID = Base.lanid
-	Where (Overlap.StartDate > Base.StartDate) 
-	  And (Overlap.StartDate < Base.EndDate) 
-) 
---select lan.[EmpID]
---      ,lan.[StartDate]
---      ,lan.[EndDate]
---      ,lan.[LanID]
---       from [eCoachingDev].[EC].[EmployeeID_To_LanID]lan join Overlaps o
---on lan.LanID = o.BaselanId
-
-
---This below sql will help us update the overlap rows to assign startdate of next row -1 to previous row
-Update Base
-set EndDate = [EC].[fn_intDatetime_to_YYYYMMDD](DATEADD(DAY,-1,CONVERT(datetime,convert(char(8),Overlap.StartDate))))
-	From [EC].[EmployeeID_To_LanID] As Base 
-	Inner Join [EC].[EmployeeID_To_LanID] As Overlap On Overlap.LanID = Base.lanid
-	Where (Overlap.StartDate > Base.StartDate) 
-	  And (Overlap.StartDate < Base.EndDate) 
-END	
-PRINT N'STEP5'
-
 END --sp_Update_EmployeeID_To_LanID
+
 GO
+
+
+
 
 
 
