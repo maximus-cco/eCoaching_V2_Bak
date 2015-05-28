@@ -1,18 +1,19 @@
 /*
-eCoaching_Outliers_Create(04).sql
-Last Modified Date: 01/12/2015
+eCoaching_Outliers_Create(05).sql
+Last Modified Date: 01/16/2015
 Last Modified By: Susmitha Palacherla
 
+Version 05:   01/16/2015
+1. Additional Update to sp  [EC].[sp_InsertInto_ETS_Rejected]from v&v feedback for SCR 14031.
 
 Version 04:   01/12/2015
-1. Updated per SCR to increase column size of Time_code column in ETS Rejected, Stage and Fact tables.
+1. Updated the following sps to incorporate the compliance reports per SCr 14031.
  [EC].[sp_Update_ETS_Coaching_Stage]  
  [EC].[sp_InsertInto_Coaching_Log_ETS]  
  [EC].[sp_InsertInto_ETS_Rejected]
 
 Version 03:  12/15/14
-1. Updated the following sps to incorporate the compliance reports per SCr 14031..
-
+1. Updated per SCR 14010 to increase column size of Time_code column in ETS Rejected, Stage and Fact tables.
 
 Version 02:  11/20/14
 1. Additional changes from V&V feedback for SCR 13659 ETS feed Load.
@@ -775,7 +776,7 @@ GO
 -- Last Modified By - Susmitha Palacherla
 -- Modified per scr 14031 to incorporate the compliance reports.
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_ETS_Rejected] 
+ALTER PROCEDURE [EC].[sp_InsertInto_ETS_Rejected] 
 
 AS
 BEGIN
@@ -815,10 +816,22 @@ BEGIN
 UPDATE [EC].[ETS_Coaching_Stage]
 SET [Reject_Reason]= CASE WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('EA', 'EOT','FWH','HOL','ITD', 'ITI', 'UTL', 'OAE')
 AND [Emp_Role]not in ( 'C','S') THEN N'Employee does not have a CSR or Supervisor job code.'
-WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('FWHA','HOLA','ITDA', 'ITIA', 'UTLA','OAS') 
-AND [Emp_Role] <> 'S' THEN N'Approver does not have a Supervisor job code.'
 ELSE NULL END
 WHERE [Emp_Role] NOT in ('C','S')AND [Reject_Reason]is NULL
+OPTION (MAXDOP 1)
+END  
+   
+
+    
+WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+
+
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [Reject_Reason]= CASE WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('FWHA','HOLA','ITDA', 'ITIA', 'UTLA','OAS') 
+AND [Emp_Role] <> 'S' THEN N'Approver does not have a Supervisor job code.'
+ELSE NULL END
+WHERE [Emp_Role] <> 'S' and [Reject_Reason]is NULL
 OPTION (MAXDOP 1)
 END  
    
@@ -895,6 +908,8 @@ END  -- [EC].[sp_InsertInto_ETS_Rejected]
 
 
 GO
+
+
 
 
 
