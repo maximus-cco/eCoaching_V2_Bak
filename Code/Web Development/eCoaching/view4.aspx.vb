@@ -664,7 +664,7 @@ Public Class view4
 
 
                 Dim conn2 As New SqlConnection(connString)
-                Dim comm2 As New SqlCommand("EC.sp_SelectReviewFrom_Coaching_Log_Reasons", conn2)
+                Dim comm2 As New SqlCommand("EC.sp_SelectReviewFrom_Coaching_Log_Reasons_Combined", conn2)
 
 
                 comm2.CommandType = CommandType.StoredProcedure
