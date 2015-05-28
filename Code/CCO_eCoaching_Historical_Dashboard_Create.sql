@@ -2,7 +2,8 @@
 File: Coaching_Log_Create.sql(01)
 Date: 04/05/2014
 
-
+Version 2, 6/24/2014
+1. Added SP  [EC].[sp_Check_AppRole] per SCR 12978
 
 Version 1, 4/05/2014
 1. Initial Revision for new DB.
@@ -19,7 +20,8 @@ List of Procedures:
 2. [EC].[sp_SelectFrom_Historical_Dashboard_ACL] 
 3. [EC].[sp_UpdateHistorical_Dashboard_ACL]
 4. [EC].[sp_DeleteFromHistoricalDashboardACL] 
-
+5. [EC].[sp_Check_AgentRole]
+6. [EC].[sp_Check_AppRole] 
  
 
 
@@ -575,7 +577,7 @@ END -- sp_Check_AgentRole
 /*****************************************************/
 
 
---6. PROCEDURE [EC].[sp_Check_AppRole]
+--5. PROCEDURE [EC].[sp_Check_AppRole]
 
 IF EXISTS (
   SELECT * 
