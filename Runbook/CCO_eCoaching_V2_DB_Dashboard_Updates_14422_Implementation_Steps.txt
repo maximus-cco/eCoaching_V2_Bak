@@ -1170,15 +1170,11 @@ SET @nvcSQL = 'SELECT  cl.[FormName] strFormID,
 		eh.[Emp_Name]	strCSRName,
 		eh.[Sup_Name]	strCSRSupName,
 		eh.[Mgr_Name]	strCSRMgrName,
-		cl.[SubmittedDate] SubmittedDate,
-		dsc.[SubCoachingReason]SubCoachingReason,
-		clr.[Value] Value
+		cl.[SubmittedDate] SubmittedDate
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
-cl.StatusID = s.StatusID JOIN [EC].[Coaching_Log_Reason] clr ON
-cl.CoachingID = clr.CoachingID JOIn [EC].[DIM_Sub_Coaching_Reason]dsc ON
-clr.SubCoachingReasonID = dsc.SubCoachingReasonID
+cl.StatusID = s.StatusID 
 where sh.Emp_ID = EC.fn_nvcGetEmpIdFromLanID('''+@strUserin+''',Getdate())
 and eh.[Emp_Name] LIKE '''+@strCSRin+'''
 and eh.[Sup_Name] LIKE '''+@strCSRSupin+'''
