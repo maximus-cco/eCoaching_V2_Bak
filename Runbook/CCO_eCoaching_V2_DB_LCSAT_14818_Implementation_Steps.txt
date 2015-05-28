@@ -1,0 +1,60 @@
+/*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+
+Summary
+
+1. Add Rmgr_ID col to 3 tables
+2. 
+3. 
+4.
+5. 
+
+
+
+*/
+
+--Details
+-- Step1. Add Rmgr_ID col to 3 tables
+
+ALTER table [EC].[Outlier_Coaching_Stage]
+ADD [RMgr_ID][nvarchar](20) NULL
+GO
+
+
+ALTER table [EC].[Outlier_Coaching_Rejected]
+ADD [RMgr_ID][nvarchar](20) NULL
+GO
+
+
+ALTER table [EC].[Outlier_Coaching_Fact]
+ADD [RMgr_ID][nvarchar](20) NULL
+GO
+
+
+--***************************************************************
+
+
+-- Step2: 
+
+
+--***************************************************************
+
+
+-- Step 3. 
+
+
+
+--***************************************************************
+
+--Step 4: 
+
+
+
+
+--***************************************************************
+
+--Step5. 
+
+
+
+--***************************************************************
