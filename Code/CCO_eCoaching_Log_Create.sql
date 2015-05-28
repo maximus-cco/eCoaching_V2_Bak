@@ -1,7 +1,12 @@
 /*
-eCoaching_Log_Create(12).sql
-Last Modified Date: 12/17/2014
+eCoaching_Log_Create(13).sql
+Last Modified Date: 12/19/2014
 Last Modified By: Susmitha Palacherla
+
+Version 12:
+Post V&V Updates for SCR 13891
+1.Update to Review SP (update2) #s 47
+
 
 Version 12:
 Updates for SCr 13891
@@ -4016,6 +4021,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/11
@@ -4046,15 +4052,15 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY 
 
-DECLARE @nvcReviewSupID Nvarchar(10),
+DECLARE @nvcReviewMgrID Nvarchar(10),
 	    @dtmDate datetime
        
 SET @dtmDate  = GETDATE()   
-SET @nvcReviewSupID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewMgrLanID,@dtmDate)
+SET @nvcReviewMgrID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewMgrLanID,@dtmDate)
       
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
-	       Review_SupID = @nvcReviewSupID,
+	       Review_MgrID = @nvcReviewMgrID,
 		   SupReviewedAutoDate = @dtmSupReviewedAutoDate,
 		   CoachingDate = @dtmCoachingDate,
 		   isCSE = @bitisCSE,
@@ -4108,7 +4114,10 @@ END CATCH
 END --sp_Update2Review_Coaching_Log
 
 
+
 GO
+
+
 
 
 
