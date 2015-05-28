@@ -1,25 +1,30 @@
 /*
-eCoaching_Outliers_Create(04).sql
-Last Modified Date: 12/19/2014
+eCoaching_Outliers_Create(05).sql
+Last Modified Date: 05/25/2015
 Last Modified By: Susmitha Palacherla
 
-Version 04: 
-12/19/2014
+
+Version 05: 05/25/2015
+1. Updated [EC].[sp_InsertInto_Coaching_Log_Outlier]  
+and [EC].[sp_InsertInto_Outlier_Rejected]per scr 14818
+to support rotational mgr in LCSAT feeed.
+
+
+Version 04: 12/19/2014
 1. Updated [EC].[sp_InsertInto_Coaching_Log_Outlier]  per scr 13891
 to store supid and mgrid at time of insert
 
 
-Version 03: 
-08/29/2014
+Version 03: 08/29/2014
 1. Updated [EC].[sp_InsertInto_Coaching_Log_Outlier]  for Phase II 
    Modular approach related changes.
 
-Version 02: 
-07/22/2014
+Version 02: 07/22/2014
 1. Updated per SCR 13213 to map the Coaching Reason ID for the Outlier logs to 9 ('OMR / Exceptions')
 
-Version 01: Initial Revision.
-03/10/2014
+Version 01: 03/10/2014
+Initial Revision.
+
 
 Summary
 
@@ -200,9 +205,9 @@ GO
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
 -- Loads records from [EC].[Outlier_Coaching_Stage]to [EC].[Coaching_Log]
--- Last Modified Date: 12/16/2014
+-- Last Modified Date: 05/12/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 13891 to store SupID and MgrID at time of insert.
+-- Modified per SCR 14818 to support LCSAT feed.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
@@ -214,12 +219,13 @@ BEGIN TRANSACTION
 BEGIN TRY
 
       DECLARE @maxnumID INT,
-              @dtmDate DATETIME
+              @dtmDate DATETIME,
+              @strLCSPretext nvarchar(80)
       -- Fetches the maximum CoachingID before the insert.
       SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
       -- Fetches the Date of the Insert
       SET @dtmDate  = GETDATE()   
-
+      SET @strLCSPretext = 'The call associated with this Low CSAT is Verint ID: '
 -- Inserts records from the Outlier_Coaching_Stage table to the Coaching_Log Table
 
  INSERT INTO [EC].[Coaching_Log]
@@ -241,6 +247,7 @@ BEGIN TRY
            ,[StartDate]
            ,[isCSRAcknowledged]
            ,[isCSE]
+           ,[EmailSent]
            ,[numReportID]
            ,[strReportCode]
            ,[ModuleID]
@@ -263,16 +270,20 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
 		 0			[isNGDActivityID],
          0			[isUCID],
          0          [isVerintID],
-		 EC.fn_nvcHtmlEncode(cs.TextDescription)		[Description],
+		 CASE WHEN cs.Report_Code LIKE 'LCS%' 
+		 THEN @strLCSPretext + EC.fn_nvcHtmlEncode(cs.TextDescription)
+		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
 	     cs.Submitted_Date			SubmittedDate,
 		 cs.Start_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
 		 0                          [isCSE],
+		 0                          [EmailSent],
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
 		 1							[ModuleID],
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
-		 ISNULL(csr.[Mgr_ID],'999999')  [MgrID]
+		 CASE WHEN cs.Report_Code LIKE 'LCS%' THEN ISNULL(cs.[RMgr_ID],'999999')
+		 ELSE ISNULL(csr.[Mgr_ID],'999999')END  [MgrID]
 	                   
 from [EC].[Outlier_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR_EMPID = csr.Emp_ID
 left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
@@ -351,6 +362,8 @@ GO
 
 
 
+
+
 ***************************************************************************************************
 
 --2. Create SP   [EC].[sp_InsertInto_Outlier_Rejected]
@@ -364,7 +377,7 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
 GO
 
-/****** Object:  StoredProcedure [EC].[sp_InsertInto_Outlier_Rejected]    Script Date: 01/18/2014 13:32:52 ******/
+
 SET ANSI_NULLS ON
 GO
 
@@ -373,15 +386,17 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:         01/15/2014
--- Last modified by:    Susmitha Palacherla
 -- Description:	 
 -- Loads all records from [EC].[Outlier_Coaching_Stage]Table
 -- that dont have a corresponding CSR Lanid in the Employee_Hierarchy table
--- Into tjhe Outliers rejected Table.
-
+-- Into the Outliers rejected Table.
+-- Last Modified Date: 05/12/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per SCR 14818 to support LCSAT feed.
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
 AS
@@ -407,7 +422,8 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
            ,[TextDescription]
            ,[FileName]
            ,[Rejected_Reason]
-           ,[Rejected_Date])
+           ,[Rejected_Date]
+           ,[RMgr_ID])
  SELECT S.[Report_ID]
       ,S.[Report_Code]
       ,S.[Form_Type]
@@ -426,6 +442,7 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
       ,S.[FileName]
       ,'CSR_LANID not found in Hierarchy Table'
       ,GETDATE()
+      ,S.RMgr_ID
   FROM [EC].[Outlier_Coaching_Stage]S left outer join [EC].[Outlier_Coaching_Rejected] R 
   ON S.Report_ID = R.Report_ID and S.Report_Code = R.Report_Code and S.CSR_LANID = R.CSR_LANID
   LEFT OUTER JOIN EC.[Employee_Hierarchy]H
@@ -435,9 +452,7 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
 	                   
 
 END -- sp_InsertInto_Outlier_Rejected
-
 GO
-
 
 
 
