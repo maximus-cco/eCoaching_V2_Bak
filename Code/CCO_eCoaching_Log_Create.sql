@@ -1,7 +1,13 @@
 /*
-eCoaching_Log_Create(07).sql
-Last Modified Date: 10/22/2014
+eCoaching_Log_Create(08).sql
+Last Modified Date: 10/29/2014
 Last Modified By: Susmitha Palacherla
+
+
+Version 08:
+1. Additonal Update to (SP # 62) to support 'Other' as a SubCoaching Reason 
+   for Progressive Warnings functionality per SCR 13479.
+
 
 Version 07:
 1. Updated 1 procedures to support ETS as a SubCoaching Reason 
@@ -5159,7 +5165,7 @@ GO
 --	Description: *	This procedure takes a Module, Direct or Indirect, a Coaching Reason and the submitter lanid 
 --  and returns the Sub Coaching Reasons associated with the Coaching Reason.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 10/22/2014
+-- Last Modified Date: 10/29/2014
 -- Modified per SCR to display ETS as a Sub coaching Reason irrespective of Job Code
 -- for Warnings related Coaching Reasons.
 --
@@ -5191,7 +5197,7 @@ Where ' + @strModulein +' = 1
 and [CoachingReason] = '''+@strReasonin +'''
 and [IsActive] = 1 
 AND ' + @strSourcein +' = 1
-Order by CASE WHEN [SubCoachingReason] = ''Other: Specify reason under coaching details.'' Then 1 Else 0 END, [SubCoachingReason]'
+Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
 
 ELSE
 
@@ -5201,7 +5207,7 @@ and [CoachingReason] = '''+@strReasonin +'''
 and [IsActive] = 1 
 AND ' + @strSourcein +' = 1
 AND [SubCoachingReason] <> ''ETS''
-Order by CASE WHEN [SubCoachingReason] = ''Other: Specify reason under coaching details.'' Then 1 Else 0 END, [SubCoachingReason]'
+Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
 
 --Print @nvcSQL
 
@@ -5209,7 +5215,9 @@ EXEC (@nvcSQL)
 END -- sp_Select_SubCoachingReasons_By_Reason
 
 
+
 GO
+
 
 
 
