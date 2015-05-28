@@ -1,8 +1,11 @@
 /*
-eCoaching_Maintenance_Create(01).sql
-Last Modified Date: 04/03/2014
+eCoaching_Maintenance_Create(02).sql
+Last Modified Date: 06/19/2014
 Last Modified By: Susmitha Palacherla
 
+
+Version 02: Updated PROCEDURE [EC].[sp_UpdateFeedMailSent]
+ to set @sentValue to 1 per SCR 12957.
 
 
 Version 01: Initial Revision for redesign.
@@ -291,7 +294,7 @@ DECLARE
 @sentValue nvarchar(30),
 @intNumID int
 
-SET @sentValue = 0 --1
+SET @sentValue = 1
 SET @intNumID = CAST(@nvcNumID as INT)
    
   	UPDATE [EC].[Coaching_Log]
