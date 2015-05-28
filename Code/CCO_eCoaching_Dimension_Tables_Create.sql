@@ -1,11 +1,15 @@
 /*
-eCoaching_Dimension_Tables_Create(01).sql
-Last Modified Date: 04/03/2014
+eCoaching_Dimension_Tables_Create(02).sql
+Last Modified Date: 08/29/2014
 Last Modified By: Susmitha Palacherla
 
+Version 02: 
+1. Modified to add additional tables to support the Phase II Modular design.
+   08/29/2014
 
-
-Version 01: Initial Revision 
+Version 01: 
+1. Initial Revision 
+    04/03/2014
 
 Summary
 
@@ -16,7 +20,13 @@ Tables
 4. [DIM_Status]
 5. [DIM_Coaching_Reason]
 6. [DIM_Sub_Coaching_Reason]
-
+7. [EC].[DIM_Module]
+8. [EC].[Employee_Selection]
+9. [EC].[Module_Submission]
+10. [EC].[DIM_Program]
+11. [EC].[Coaching_Reason_Selection]
+12. [EC].[CallID_Selection]
+13. [EC].[Email_Notifications]
 
 
 Procedures
@@ -182,10 +192,188 @@ GO
 
 ****************************************************************************************
 
+--7. Create Table [EC].[DIM_Module]
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[DIM_Module](
+	[ModuleID] [int] IDENTITY(1,1) NOT NULL,
+	[Module] [nvarchar](30) NOT NULL,
+	[BySite] [bit] NULL,
+	[isActive] [bit] NULL,
+	[ByProgram] [bit] NULL,
+ CONSTRAINT [Module_ID] PRIMARY KEY CLUSTERED 
+(
+	[ModuleID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
 
 
 
-**************************************************************
+****************************************************************************************
+
+
+--8. Create Table [EC].[Employee_Selection]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Employee_Selection](
+	[Job_Code] [nvarchar](50) NOT NULL,
+	[Job_Code_Description] [nvarchar](50) NULL,
+	[isCSR] [bit] NULL,
+	[isSupervisor] [bit] NULL,
+	[isQuality] [bit] NULL
+) ON [PRIMARY]
+
+GO
+
+****************************************************************************************
+
+--9. Create Table [EC].[Module_Submission]
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Module_Submission](
+	[Job_Code] [nvarchar](50) NOT NULL,
+	[Job_Code_Description] [nvarchar](50) NULL,
+	[CSR] [bit] NULL,
+	[Supervisor] [bit] NULL,
+	[Quality] [bit] NULL
+) ON [PRIMARY]
+
+GO
+
+
+
+****************************************************************************************
+
+--10. Create Table [EC].[DIM_Program]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[DIM_Program](
+	[ProgramID] [int] IDENTITY(1,1) NOT NULL,
+	[Program] [nvarchar](30) NOT NULL,
+	[isActive] [bit] NULL,
+ CONSTRAINT [ProgramID_ID] PRIMARY KEY CLUSTERED 
+(
+	[ProgramID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+
+****************************************************************************************
+
+--11. Create Table [EC].[Coaching_Reason_Selection]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Reason_Selection](
+	[CoachingReasonID] [int] NOT NULL,
+	[CoachingReason] [nvarchar](200) NOT NULL,
+	[SubCoachingReasonID] [int] NOT NULL,
+	[SubCoachingReason] [nvarchar](200) NOT NULL,
+	[isActive] [bit] NULL,
+	[Direct] [bit] NULL,
+	[Indirect] [bit] NULL,
+	[isOpportunity] [bit] NULL,
+	[isReinforcement] [bit] NULL,
+	[CSR] [bit] NULL,
+	[Quality] [bit] NULL,
+	[Supervisor] [bit] NULL,
+	[splReason] [bit] NULL
+) ON [PRIMARY]
+
+GO
+
+****************************************************************************************
+
+--12. Create Table [EC].[CallID_Selection]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[CallID_Selection](
+	[CallIdType] [nvarchar](50) NOT NULL,
+	[Format] [nvarchar](50) NULL,
+	[CSR] [bit] NULL,
+	[Supervisor] [bit] NULL,
+	[Quality] [bit] NULL
+) ON [PRIMARY]
+
+GO
+
+****************************************************************************************
+
+--13. Create Table [EC].[Email_Notifications]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Email_Notifications](
+	[Module] [nvarchar](30) NULL,
+	[Submission] [nvarchar](30) NULL,
+	[Source] [nvarchar](30) NULL,
+	[SubSource] [nvarchar](100) NULL,
+	[isCSE] [bit] NULL,
+	[Status] [nvarchar](100) NULL,
+	[Recipient] [nvarchar](100) NULL,
+	[Subject] [nvarchar](200) NULL,
+	[Body] [nvarchar](2000) NULL,
+	[isCCRecipient] [bit] NULL,
+	[CCRecipient] [nvarchar](100) NULL
+) ON [PRIMARY]
+
+GO
+
+
+
+
+****************************************************************************************
+
+--14. Create Table
+
+
+
+****************************************************************************************
+
+--15. Create Table
+
+
+
+****************************************************************************************
+
+
 
 
 

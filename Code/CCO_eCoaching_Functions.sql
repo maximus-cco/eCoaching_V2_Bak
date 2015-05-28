@@ -1,9 +1,14 @@
 /*
-File: eCoaching_Functions.sql (02)
-Date: 07/28/2014
+File: eCoaching_Functions.sql (03)
+Date: 08/29/2014
+
+Version 03, 08/29/2014
+1. Updated the function [EC].[fn_strSiteNameFromSiteLocation] to 
+use the new loaction address for Arlington.
+2. Added new Function [EC].[fnSplit_WithRowID] 
 
 Version 02, 07/28/2014
-Updated the follwing procedure per SCR 12983 to change and or fix the update logic.
+1. Updated the follwing function per SCR 12983 to change and or fix the update logic.
 FUNCTION [EC].[fn_nvcGetEmpIdFromLanId] 
 
 Version 1, 03/02/2014
@@ -29,6 +34,7 @@ List of Functions:
 14. [EC].[RemoveAlphaCharacters] 
 15. [EC].[fn_intSiteIDFromSite] 
 16. [EC].[fn_intSourceIDFromOldSource] 
+17. [EC].[fnSplit_WithRowID] 
 
 */
 
@@ -700,7 +706,7 @@ BEGIN
         WHEN N'UT-Layton-2195 N Univ Pk Blvd' THEN 'Layton'
         WHEN N'UT-Sandy-8475 S Sandy Parkway'       THEN N'Sandy'
         WHEN N'VA-Chester-701 Liberty Way'      THEN N'Chester'
-       WHEN N'VA-Arlington-3330 N Washington'     THEN N'Arlington'
+         WHEN N'VA-Falls Church-5201 Leesburg'     THEN N'Arlington'
         ELSE 'OTHER'
       END
     ELSE
@@ -1034,3 +1040,52 @@ GO
 
 
 
+--17. FUNCTION [EC].[fnSplit_WithRowID] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fnSplit_WithRowID' 
+)
+   DROP FUNCTION [EC].[fnSplit_WithRowID]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:      08/03/2014
+--    Description:     This Function takes a string of values separated by commas 
+--                     and parses it returning individual values with a row number.
+--    =====================================================================
+
+CREATE FUNCTION [EC].[fnSplit_WithRowID](
+    @InputList NVARCHAR(200) -- List of delimited items
+  , @Delimiter NVARCHAR(1)   -- delimiter that separates items
+) RETURNS @List TABLE (RowID INT Identity (1,1),Item NVARCHAR(200))
+
+BEGIN
+DECLARE @Item VARCHAR(200)
+WHILE CHARINDEX(@Delimiter,@InputList,0) <> 0
+ BEGIN
+ SELECT
+  @Item=RTRIM(LTRIM(SUBSTRING(@InputList,1,CHARINDEX(@Delimiter,@InputList,0)-1))),
+  @InputList=RTRIM(LTRIM(SUBSTRING(@InputList,CHARINDEX(@Delimiter,@InputList,0)+LEN(@Delimiter),LEN(@InputList))))
+ 
+ IF LEN(@Item) > 0
+  INSERT INTO @List SELECT @Item
+ END
+
+IF LEN(@InputList) > 0
+ INSERT INTO @List SELECT @InputList -- Put the last item in
+RETURN
+END -- fnSplit
+
+
+GO

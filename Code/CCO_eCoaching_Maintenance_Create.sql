@@ -1,7 +1,11 @@
 /*
-eCoaching_Maintenance_Create(03).sql
-Last Modified Date: 06/30/2014
+eCoaching_Maintenance_Create(04).sql
+Last Modified Date: 08/29/2014
 Last Modified By: Susmitha Palacherla
+
+Version 04: 
+1. Updated procedures impacted by the Phase II Modular design.
+
 
 Version 03: 
 1. Updated [EC].[sp_Update_Migrated_User_Logs] per SCR 12982 
@@ -90,10 +94,9 @@ GO
 -- Author:		   Susmitha Palacherla
 -- Create date: 04/05/2014
 -- Description:	Updates historical Coaching logs for Migrated users
--- Last Modified By: Susmitha Palacherela
--- Last Modified Date: 06/30/2014
--- Updated per SCR 12982 to remove update to Employee ID To Lan ID table
--- until correct logic can be identified.
+-- Last Modified Date: 08/13/2014
+-- Last Updated By: Susmitha Palacherla
+-- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Migrated_User_Logs] 
@@ -103,34 +106,16 @@ BEGIN
 -- Update CSR value in Coaching logs for migrated users
 BEGIN
 UPDATE [EC].[Coaching_Log]
-SET [CSR] = H.[Emp_LanID]
+SET [EmpLanID] = H.[Emp_LanID]
 FROM [EC].[Coaching_Log]F JOIN [EC].[Employee_Hierarchy]H
-ON F.[CSRID] = H.[Emp_ID]
-WHERE F.[CSR] <>  H.[Emp_LanID]
+ON F.[EmpID] = H.[Emp_ID]
+WHERE F.[EmpLanID] <>  H.[Emp_LanID]
+AND H.[Emp_LanID] is not NULL AND H.[Emp_LanID] <> ''
 OPTION (MAXDOP 1)
 END
 
-
-
--- Update Lan ID value in Employee ID To Lan ID table for migrated users
-/*
-BEGIN
-UPDATE [EC].[EmployeeID_To_LanID]
-SET [LANID] = H.[Emp_LanID]
-FROM [EC].[EmployeeID_To_LanID]L JOIN [EC].[Employee_Hierarchy]H
-ON L.[EMPID] = H.[Emp_ID]
-WHERE L.[LANID] <>  H.[Emp_LanID]
-OPTION (MAXDOP 1)
-END
-*/
 END  -- [EC].[sp_Update_Migrated_User_Logs]
-
-
 GO
-
-
-
-
 
 
 
@@ -153,14 +138,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/13
 --	Description: 	   This procedure queries db for feed records to send out mail
---  Last Modified by:  Susmitha Palacherla
---	Last Modified Date:9/19/2013
---  SCR 11051 to add numid to select list and numid length check to where clause.
---	Last Modified Date: 3/28/2013 - Adapted for new eCoaching DB
+-- Last Modified Date: 08/13/2014
+-- Last Updated By: Susmitha Palacherla
+-- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -170,15 +156,15 @@ DECLARE
 @nvcSQL nvarchar(max),
 @strFormStatus1 nvarchar(30),
 @strFormStatus2 nvarchar(30),
-@strSource nvarchar(30),
-@strSource2 nvarchar(30),
+@intSource1 int,
+@intSource2 int,
 @strFormType nvarchar(30),
 @strFormMail nvarchar (30)
 
  Set @strFormStatus1 = 'Completed'
  Set @strFormStatus2 = 'Inactive'
- Set @strSource = 'OMR'
- Set @strSource2 = 'IQS'
+ Set @intSource1 = 211
+ Set @intSource2 = 212
  
  Set @strFormType = 'Indirect'
 --Set @strFormMail = 'jourdain.augustin@gdit.com'
@@ -195,32 +181,41 @@ SET @nvcSQL = 'SELECT   cl.CoachingID	numID
 		,cl.SubmittedDate	SubmittedDate
 		,cl.CoachingDate	CoachingDate
 		,cl.EmailSent	EmailSent
+		,cl.sourceid
+		,cl.isCSE
+		,mo.Module
 FROM [EC].[Employee_Hierarchy] eh,
 	 [EC].[DIM_Status] s,
 	 [EC].[Coaching_Log] cl,
 	 [EC].[DIM_Source] so,
-	 [EC].[Coaching_Log_Reason] clr
-WHERE cl.CSRID = eh.Emp_ID
+	 [EC].[DIM_Module] mo
+WHERE cl.EMPID = eh.Emp_ID
 AND cl.StatusID = s.StatusID
 AND cl.SourceID = so.SourceID
-AND cl.CoachingID = clr.CoachingID
+AND cl.ModuleID = mo.ModuleID
 AND S.Status <> '''+@strFormStatus1+'''
 AND S.Status <> '''+@strFormStatus2+'''
-AND ([so].[SubCoachingSource] Like '''+@strSource+'%'' OR [so].[SubCoachingSource] LIKE '''+@strSource2+'%'') 
+AND cl.SourceID in (211,212)
 AND cl.EmailSent = ''False''
-AND ((so.CoachingSource =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
+AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
 OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL)
 OR (s.Status =''Pending Manager Review'' and eh.Mgr_Email is NOT NULL)
-OR (s.Status =''Pending CSR Review'' and eh.Emp_Email is NOT NULL))
+OR (s.Status =''Pending Employee Review'' and eh.Emp_Email is NOT NULL))
 AND LEN(cl.FormName) > 10
 Order By cl.SubmittedDate DESC'
-
-
 --and [strCSREmail] = '''+@strFormMail+'''
 EXEC (@nvcSQL)	
 	    
-END -- sp_SelectCoaching4Contact
+END
+
+
+
 GO
+
+
+
+
+
 
 ***************************************************************************************************************
 

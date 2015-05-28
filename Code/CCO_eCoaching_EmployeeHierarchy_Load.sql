@@ -1,6 +1,10 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql(02)
-Date: 07/28/2014
+File: eCoaching_PS_Employee_Hierarchy_Load.sql(03)
+Date: 08/29/2014
+
+
+Version 03, 08/29/2014
+Updated impacted procedures to support the Phase II Modular design.
 
 
 Version 02, 07/28/2014
@@ -419,21 +423,24 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
 -- Description:	Performs the following actions.
 -- Updates existing records and Inserts New records from the Staging table.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 07/25/2014
--- updated per SCR 12983 to clean up Employee Update processes impacting Employee iD To lan ID table 
+-- Last Modified Date: 08/14/2014
+-- updated during modular redesign to update name attribute for existing records 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
 BEGIN
 
-/*
--- Assigns End_Date to Inactive Records
+
+ --Assigns End_Date to Inactive Records with status change in feed
+ 
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy] 
 	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
@@ -443,9 +450,9 @@ BEGIN
 	AND H.END_DATE= '99991231'
 OPTION (MAXDOP 1)
 END
-*/
 
--- Assigns End_Date to Inactive Records
+
+-- Assigns End_Date to Inactive Records that stop arriving in feed
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy] 
 	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
@@ -478,7 +485,8 @@ WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 -- Updates Existing Records
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy]
-	   SET [Emp_Email] = S.Emp_Email
+	   SET [Emp_Name] = S.Emp_Name
+	      ,[Emp_Email] = S.Emp_Email
 		  ,[Emp_LanID] = S.Emp_LanID
 		  ,[Emp_Site] =  [EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site)
 		  ,[Emp_Job_Code] = S.Emp_Job_Code
@@ -563,9 +571,9 @@ END
 
 
 END --sp_Populate_Employee_Hierarchy
+
+
 GO
-
-
 
 
 
@@ -756,7 +764,6 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Update_CSR_Hierarchy]
 GO
 
-/****** Object:  StoredProcedure [EC].[sp_Update_CSR_Hierarchy]    Script Date: 03/12/2014 18:17:41 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -768,9 +775,11 @@ GO
 -- Create Date: 01/20/2014
 -- Description:	Performs the following actions.
 -- Adds an End Date to an Employee record with a Hierarchy change.
--- Inserts a new row for the Upadted Hierarchy.
--- Last Modified By: 
--- Last Modified Date: 
+-- Inserts a new row for the Updated Hierarchy.
+-- Last Modified Date: 08/21/2014
+-- Last Modified By: Susmitha Palacherla
+-- Modified to remove the condition to insert and update records for CSRS only. 
+-- This will support the Modul approcah being implemented to support non CSR ecls.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_CSR_Hierarchy] 
@@ -816,8 +825,8 @@ FROM [EC].[Employee_Hierarchy]EH  JOIN
 (SELECT C.* FROM [EC].[CSR_Hierarchy] C JOIN  LatestRecord L
 ON C. EMPID =L.EMPID WHERE L.LEnd_Date <> '9999-12-31 00:00:00.000') AS CH
 on EH.Emp_ID = CH.EmpID
-where EH.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
-AND (EH.[Sup_ID]<> CH.[SupID]OR EH.[Mgr_ID]<> CH.[MgrID])
+--where EH.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
+WHERE (EH.[Sup_ID]<> CH.[SupID]OR EH.[Mgr_ID]<> CH.[MgrID])
 AND (EH.[Sup_ID]IS NOT NULL AND EH.[Mgr_ID] IS NOT NULL)
 OPTION (MAXDOP 1)
 END
@@ -842,7 +851,7 @@ SELECT EH.[Emp_ID]
 FROM [EC].[Employee_Hierarchy]EH LEFT OUTER JOIN [EC].[CSR_Hierarchy]CH
 ON EH.[Emp_ID]= CH.[EmpID]
 WHERE CH.[EmpID]IS NULL
-AND EH.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
+--AND EH.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
 OPTION (MAXDOP 1)
 END
 
@@ -851,8 +860,8 @@ WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
 
 END --sp_Update_CSR_Hierarchy
-
 GO
+
 
 
 /*****************************************************/
@@ -868,7 +877,6 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms]
 GO
 
-/****** Object:  StoredProcedure [EC].[sp_InactivateCoachingLogsForTerms]    Script Date: 03/12/2014 18:17:41 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -879,8 +887,9 @@ GO
 -- Author:		   Susmitha Palacherla
 -- Create Date:    04/09/2014
 -- Description:	Inactivate Coaching logs for Termed Employees
--- Last Modified Date: 
--- Last Updated By: 
+-- Last Modified Date: 08/13/2014
+-- Last Updated By: Susmitha Palacherla
+-- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
@@ -893,8 +902,8 @@ BEGIN
 UPDATE [EC].[Coaching_Log]
 SET [StatusID] = 2
 FROM [EC].[Coaching_Log] C JOIN [EC].[Employee_Hierarchy]H
-ON C.[CSR] = H.[Emp_LanID]
-AND C.[CSRID] = H.[Emp_ID]
+ON C.[EmpLanID] = H.[Emp_LanID]
+AND C.[EmpID] = H.[Emp_ID]
 WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
 AND H.[Active] in ('T','D')
 AND H.[End_Date]<> '99991231'
@@ -904,6 +913,9 @@ END
 
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
 GO
+
+
+
 
 
 

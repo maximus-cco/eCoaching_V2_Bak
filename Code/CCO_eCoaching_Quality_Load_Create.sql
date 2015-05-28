@@ -1,7 +1,11 @@
 /*
-eCoaching_Quality_Create(04).sql
-Last Modified Date: 07/20/2014
+eCoaching_Quality_Create(05).sql
+Last Modified Date: 08/29/2014
 Last Modified By: Susmitha Palacherla
+
+Version 05: 
+1. Updated [EC].[sp_InsertInto_Coaching_Log_Quality] for Phase II 
+   Modular approach related changes.
 
 
 Version 04: 
@@ -209,7 +213,6 @@ IF EXISTS (
 GO
 
 
-
 SET ANSI_NULLS ON
 GO
 
@@ -223,10 +226,9 @@ GO
 --    Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
---   Modified Date:    07/18/2014
---   Description:      Updated per SCR 13054 to add additional column VerintFormName.
---                     Updated per SCR 13138 to insert new records based on Journal ID and Submitter ID 
---                     If eCL already submitted for a Journal ID from web interface should not be inserted.
+-- Last Modified Date: 08/13/2014
+-- Last Updated By: Susmitha Palacherla
+-- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
@@ -251,8 +253,8 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[CSR]
-           ,[CSRID]
+           ,[EmpLanID]
+           ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
            ,[isAvokeID]
@@ -267,6 +269,7 @@ BEGIN TRY
            ,[isCSE]
            ,[isCSRAcknowledged]
            ,[VerintFormName]
+           ,[ModuleID]
            )
 
             SELECT DISTINCT
@@ -278,8 +281,8 @@ BEGIN TRY
              211             [SourceID],
             [EC].[fn_strStatusIDFromIQSEvalID](qs.CSE, qs.Oppor_Rein )[StatusID],
             [EC].[fn_intSiteIDFromEmpID](LTRIM(qs.User_EMPID))[SiteID],
-            lower(csr.Emp_LanID)	[CSR],
-            qs.User_EMPID [CSRID],
+            lower(csr.Emp_LanID)	[EmpLanID],
+            qs.User_EMPID [EmpID],
             qs.Evaluator_ID	 [SubmitterID],       
             qs.Call_Date [EventDate],
             0			[isAvokeID],
@@ -294,7 +297,8 @@ BEGIN TRY
 		    CASE WHEN qs.CSE = '' THEN 0
 	            	ELSE 1 END	[isCSE],			
 		    0 [isCSRAcknowledged],
-		    qs.VerintFormname [verintFormName]
+		    qs.VerintFormname [verintFormName],
+		    1 [ModuleID]
 FROM [EC].[Quality_Coaching_Stage] qs 
 join EC.Employee_Hierarchy csr on qs.User_EMPID = csr.Emp_ID
 left outer join EC.Coaching_Log cf on qs.[Journal_ID] = cf.[VerintID]
@@ -362,7 +366,10 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
+
+
 GO
+
 
 
 
