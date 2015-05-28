@@ -3,6 +3,7 @@ Imports System.Configuration
 Imports System.Web.UI.WebControls
 Imports AjaxControlToolkit
 Imports System.Data.SqlClient
+Imports System.Web.Configuration
 
 Public Class view4
     Inherits BasePage
@@ -10,7 +11,8 @@ Public Class view4
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim backDate As String = DateAdd("D", -30, TodaysDate).ToShortDateString()
     'Dim connString As String = "server=VRIVFSSDBT02\SCORT01,1438; Integrated Security=true; Initial Catalog=eCoachingTest"
-    Dim connString As String = "server=VDENSSDBP07\SCORP01,1436; Integrated Security=true; Initial Catalog=eCoaching"
+    'Dim connString As String = "server=VDENSSDBP07\SCORP01,1436; Integrated Security=true; Initial Catalog=eCoaching"
+    Dim connString As String = WebConfigurationManager.ConnectionStrings("CoachingConnectionString").ConnectionString
 
     Dim counter As Integer
 
@@ -528,10 +530,10 @@ Public Class view4
 
             '  da.Fill(ds)
             GridView1.DataSource = dt
-            Cache("Data") = dt
+            Session("dashboard") = dt
             ' Session("dashboard") = dt
 
-            counter = dt.Rows.Count '(Cache("Data").Tables(0).Rows.Count)
+            counter = dt.Rows.Count '(Session("dashboard").Tables(0).Rows.Count)
 
             GridView1.DataBind()
             GridView1.Visible = True
@@ -559,7 +561,7 @@ Public Class view4
     Protected Sub OnPaging(ByVal sender As Object, ByVal e As GridViewPageEventArgs)
 
         GridView1.PageIndex = e.NewPageIndex
-        GridView1.DataSource = CType(Cache("Data"), DataTable)
+        GridView1.DataSource = CType(Session("dashboard"), DataTable)
         GridView1.DataBind()
 
     End Sub
@@ -567,13 +569,13 @@ Public Class view4
 
     Public Sub gvSorting(ByVal sender As Object, ByVal e As GridViewSortEventArgs)
 
-        Dim dt = TryCast(Cache("Data"), DataTable)
+        Dim dt = TryCast(Session("dashboard"), DataTable)
         'Dim dt = TryCast(Session("dashboard"), DataTable)
 
         If dt IsNot Nothing Then
 
             dt.DefaultView.Sort = e.SortExpression & " " & GetSortDirection(e.SortExpression)
-            GridView1.DataSource = Cache("Data") 'Session("dashboard")
+            GridView1.DataSource = Session("dashboard") 'Session("dashboard")
             GridView1.DataBind()
 
 
@@ -616,8 +618,8 @@ Public Class view4
     Protected Sub getFiltersx()
 
         'Dim conn As New SqlConnection("server=VRIVFSSDBT02\SCORT01,1438; Integrated Security=true; Initial Catalog=eCoachingTest")
-        Dim conn As New SqlConnection("server=VDENSSDBP07\SCORP01,1436; Integrated Security=true; Initial Catalog=eCoaching")
-
+        'Dim conn As New SqlConnection("server=VDENSSDBP07\SCORP01,1436; Integrated Security=true; Initial Catalog=eCoaching")
+        Dim conn As New SqlConnection(connString)
 
 
         Dim ddlValues As SqlDataReader
@@ -641,7 +643,7 @@ Public Class view4
 
 
         If e.Row.RowType = DataControlRowType.Footer Then
-            Dim dt = TryCast(Cache("Data"), DataTable)
+            Dim dt = TryCast(Session("dashboard"), DataTable)
 
             counter = dt.Rows.Count
 
