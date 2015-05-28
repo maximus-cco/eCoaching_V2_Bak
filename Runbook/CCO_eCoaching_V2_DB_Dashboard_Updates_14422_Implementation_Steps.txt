@@ -5,46 +5,6 @@ Test- eCoachingTest
 Prod - eCoaching
 */
 
--- Run the steps below one at a time.
---1. 
-Update [EC].[DIM_Source]
-set [isActive]= 0,
-    [LSA]= 0
-where  [SubCoachingSource]= 'CMS Reported Issue'  
-
---2.
-Update [EC].[DIM_Source]
-set [LSA]= 1
-where  [SubCoachingSource]= 'CMS Reported Item'  
-
---3.
-
-/*
-select [SourceID], count(*)
-from [EC].[Coaching_Log]
-where sourceid in ( 126, 226)
-group by [SourceID]
-*/
-
---3a.
-
-update [EC].[Coaching_Log]
-set [SourceID] = 106
-where [SourceID]= 126
-
---3b.
-
-update [EC].[Coaching_Log]
-set [SourceID] = 206
-where [SourceID]= 226
-
---4.
-update [EC].[Email_Notifications]
-set [SubSource] = 'CMS Reported Item'
-where [SubSource] = 'CMS Reported Issue'  
-and [Module]= 'LSA'
-
---**********************************************************************
 -- From Here on Copy everything into SSMS window and run with nothing selected
 
 --**********************************************************************
@@ -304,7 +264,7 @@ BEGIN
 SET @nvcSQL = 'SELECT X.ValueText, X.ValueValue FROM
 (SELECT ''All Values'' ValueText, ''%'' ValueValue, 01 Sortorder 
 UNION
-SELECT Distinct [Value] ValueText, [Value] ValueValue, 02 Sortorder From [EC].[Coaching_Log_Reason]
+SELECT Distinct [Value] ValueText, [Value] ValueValue, 02 Sortorder From [EC].[Coaching_Log_Reason] WITH(NOLOCK)
 Where [Value] IS NOT NULL
 AND [Value] <> ''Not Coachable'')X
 ORDER BY X.Sortorder, X.ValueText'
@@ -361,7 +321,7 @@ SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
 		[eh].[Mgr_Name]	strCSRMgrName,
 		[S].[Status]	strFormStatus,
 		[cl].[SubmittedDate] SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
 where eh.[Emp_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRin+''',Getdate())
@@ -419,7 +379,7 @@ SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
 		[eh].[Emp_Name]	strCSRName,
 		[S].[Status]	strFormStatus,
 		[cl].[SubmittedDate] SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
 where eh.[Emp_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRin+''',Getdate())
@@ -678,7 +638,7 @@ SET @nvcSQL = 'SELECT	[cl].[FormName]	strFormID,
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 [cl].[EmpID] = [eh].[Emp_ID]Join [EC].[DIM_Status] s ON
 [cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
 [cl].[SourceID] = [sc].[SourceID] 
@@ -746,7 +706,7 @@ SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource] strSource,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 [cl].[EmpID] = [eh].[Emp_ID] Join [EC].[DIM_Status] s ON
 [cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
 [cl].[SourceID] = [sc].[SourceID] 
@@ -819,7 +779,7 @@ SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
 		[eh].[Sup_Name]	strCSRSupName, 
 		[s].[Status]	strFormStatus,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
 where ((eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',Getdate()) and ([S].[Status] = '''+@strFormStatus1+''' OR
@@ -890,7 +850,7 @@ SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID
 		,[eh].[Sup_Name]	strCSRSupName
 		,[eh].[Mgr_Name]	strCSRMgrName
 		,[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -963,7 +923,7 @@ SET @nvcSQL = 'SELECT
 		,eh.Sup_Name	strCSRSupName
 		,eh.Mgr_Name	strCSRMgrName
 		,cl.SubmittedDate	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl  WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -1032,7 +992,7 @@ SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
 		[eh].[Sup_Name]	strCSRSupName,
 		[eh].[Mgr_Name]	strCSRMgrName,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -1097,7 +1057,7 @@ SET @nvcSQL = 'SELECT  cl.[FormName] strFormID,
 		eh.[Sup_Name]	strCSRSupName,
 		eh.[Mgr_Name]	strCSRMgrName,
 		cl.[SubmittedDate] SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl  WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -1171,7 +1131,7 @@ SET @nvcSQL = 'SELECT  cl.[FormName] strFormID,
 		eh.[Sup_Name]	strCSRSupName,
 		eh.[Mgr_Name]	strCSRMgrName,
 		cl.[SubmittedDate] SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID 
@@ -1247,7 +1207,7 @@ SET @nvcSQL = 'SELECT	[cl].[FormName]	strFormID,
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] sc
 ON cl.SourceID = sc.SourceID 
@@ -1315,7 +1275,7 @@ SET @nvcSQL = 'SELECT	[cl].[FormName]	strFormID,
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] sc
 ON cl.SourceID = sc.SourceID 
@@ -1388,7 +1348,7 @@ SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
 			[eh].[Sup_Name] strCSRSupName,
 			[S].[Status]	strFormStatus,
 			[cl].[SubmittedDate] SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
 where (((eh.[Sup_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',Getdate()) OR eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',Getdate()) )
@@ -1447,7 +1407,7 @@ SET @nvcSQL = 'SELECT X.CSRText, X.CSRValue, X.strCSRSite FROM
 (SELECT ''All Employees'' CSRText, ''%'' CSRValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	CSRText, eh.Emp_Name CSRValue, s.City strCSRSite, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
 cl.StatusID = st.StatusID JOIN [EC].[DIM_Site] s ON
 cl.SiteID = s.SiteID
@@ -1506,7 +1466,7 @@ SET @nvcSQL = 'SELECT X.CSRText, X.CSRValue FROM
 (SELECT ''All Employees'' CSRText, ''%'' CSRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	CSRText, eh.Emp_Name CSRValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
 cl.StatusID = st.StatusID 
 and st.Status <> '''+@strFormStatus+''')X
@@ -1563,7 +1523,7 @@ SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue, X.strCSRSite FROM
 (SELECT ''All Managers'' MGRText, ''%'' MGRValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.MGR_Name	MGRText, eh.MGR_Name MGRValue, s.City strCSRSite, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
 cl.StatusID = st.StatusID JOIN [EC].[DIM_Site] s ON
 cl.SiteID = s.SiteID
@@ -1620,7 +1580,7 @@ SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
 (SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
 cl.StatusID = st.StatusID 
 where st.Status <> '''+@strFormStatus+'''
@@ -1677,7 +1637,7 @@ SET @nvcSQL = 'SELECT X.SubmitterText, X.SubmitterValue FROM
 (SELECT ''All Submitters'' SubmitterText, ''%'' SubmitterValue, 01 Sortorder 
 UNION
 SELECT DISTINCT sh.Emp_Name	SubmitterText, sh.Emp_Name SubmitterValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -1685,7 +1645,7 @@ and s.Status <> '''+@strFormStatus+'''
 where (sh.Emp_Name is not NULL and sh.Emp_Name <> ''Unknown'')
 UNION
 SELECT DISTINCT sh.Emp_Name	SubmitterText, sh.Emp_Name SubmitterValue, 03 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)  ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -1747,7 +1707,7 @@ SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue, X.strCSRSite FROM
 (SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Sup_Name	SUPText, eh.Sup_Name SUPValue, s.City strCSRSite, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
 cl.StatusID = st.StatusID JOIN [EC].[DIM_Site] s ON
 cl.SiteID = s.SiteID
@@ -1809,7 +1769,7 @@ SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
 (SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Sup_Name	SUPText, eh.Sup_Name SUPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
 cl.StatusID = st.StatusID 
 where st.Status <> '''+@strFormStatus+'''
@@ -1871,7 +1831,7 @@ SET @nvcSQL =  'SELECT X.EmpText, X.EmpValue FROM
 (SELECT ''All Employeess'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID 
 where (([eh].[Mgr_ID] =   EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate()) and [S].[Status] = '''+@strFormStatus+''') OR ([eh].[Sup_ID] =   EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate()) and ([S].[Status] = '''+@strFormStatus2+''' or [S].[Status] = '''+@strFormStatus3+''')))
@@ -1929,7 +1889,7 @@ SET @nvcSQL = 'SELECT X.EMPText, X.EMPValue FROM
 (SELECT ''All Employees'' EMPText, ''%'' EMPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.EMP_Name	EMPText, eh.EMP_Name EMPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -1988,7 +1948,7 @@ SET @nvcSQL =  'SELECT X.EmpText, X.EmpValue FROM
 (SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID 
 where eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
@@ -2051,7 +2011,7 @@ SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
 (SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID 
 where eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
@@ -2110,7 +2070,7 @@ SET @nvcSQL =
 (SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -2175,7 +2135,7 @@ SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
 (SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID  JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
 where (([eh].[Mgr_ID] =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate()) and [S].[Status] = '''+@strFormStatus+''') OR ([eh].[Sup_ID] =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate()) and ([S].[Status] = '''+@strFormStatus2+''' or [S].[Status] = '''+@strFormStatus3+''')))
@@ -2233,7 +2193,7 @@ SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
 (SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -2293,7 +2253,7 @@ SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
 (SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
 where eh.Mgr_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
@@ -2354,7 +2314,7 @@ SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
 (SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
 where eh.Mgr_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
@@ -2414,7 +2374,7 @@ SET @nvcSQL = 'SELECT X.EMPText, X.EMPValue FROM
 (SELECT ''All Employees'' EMPText, ''%'' EMPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.EMP_Name	EMPText, eh.EMP_Name EMPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -2476,7 +2436,7 @@ SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
 (SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -2536,7 +2496,7 @@ SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
 (SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -2601,7 +2561,7 @@ SET @nvcSQL = 'SELECT X.EMPText, X.EMPValue FROM
 (SELECT ''All Employees'' EMPText, ''%'' EMPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.EMP_Name	EMPText, eh.EMP_Name EMPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -2661,7 +2621,7 @@ SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
 (SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -2727,7 +2687,7 @@ SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
 (SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -2787,7 +2747,7 @@ SET @nvcSQL = 'SELECT X.EMPText, X.EMPValue FROM
 (SELECT ''All Employees'' EMPText, ''%'' EMPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.EMP_Name	EMPText, eh.EMP_Name EMPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -2847,7 +2807,7 @@ SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
 (SELECT ''All Employeess'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID 
 where eh.[Sup_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',GetDate())
@@ -2909,7 +2869,7 @@ SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
 (SELECT ''All Employeess'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID 
 where eh.[Sup_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',GetDate())
@@ -2967,7 +2927,7 @@ SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
 (SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
@@ -3030,7 +2990,7 @@ SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
 (SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
 where eh.Sup_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',GetDate())
@@ -3090,7 +3050,7 @@ SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
 (SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
 cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
 cl.StatusID = s.StatusID
