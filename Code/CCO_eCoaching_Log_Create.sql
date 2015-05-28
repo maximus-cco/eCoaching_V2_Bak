@@ -1,7 +1,12 @@
 /*
-eCoaching_Log_Create(06).sql
-Last Modified Date: 10/13/2014
+eCoaching_Log_Create(07).sql
+Last Modified Date: 10/22/2014
 Last Modified By: Susmitha Palacherla
+
+Version 07:
+1. Updated 1 procedures to support ETS as a SubCoaching Reason 
+   for Progressive Warnings functionality per SCR 13479.(SP # 62).
+  
 
 Version 06:
 1. Updated 2 procedures to support Progressive Warnings functionality
@@ -5153,6 +5158,11 @@ GO
 --	Create Date:	8/01/14
 --	Description: *	This procedure takes a Module, Direct or Indirect, a Coaching Reason and the submitter lanid 
 --  and returns the Sub Coaching Reasons associated with the Coaching Reason.
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date: 10/22/2014
+-- Modified per SCR to display ETS as a Sub coaching Reason irrespective of Job Code
+-- for Warnings related Coaching Reasons.
+--
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_SubCoachingReasons_By_Reason] 
 @strReasonin nvarchar(200), @strModulein nvarchar(30), @strSourcein nvarchar(30), @nvcEmpLanIDin nvarchar(30)
@@ -5172,7 +5182,9 @@ SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
 WHERE Emp_ID = @nvcEmpID)
 
 
-IF  @strSourcein = 'Direct' and (@nvcEmpJobCode like 'WISY13' OR @nvcEmpJobCode like 'WSQA70' OR @nvcEmpJobCode like '%CS40%' OR @nvcEmpJobCode like '%CS50%' OR @nvcEmpJobCode like '%CS60%')
+IF  (@strSourcein = 'Direct' and (@nvcEmpJobCode like 'WISY13' OR @nvcEmpJobCode like 'WSQA70' OR @nvcEmpJobCode like '%CS40%' OR @nvcEmpJobCode like '%CS50%' OR @nvcEmpJobCode like '%CS60%'))
+OR
+(@strSourcein = 'Direct' and @strReasonin in ('Verbal Warning', 'Written Warning' ,'Final Written Warning'))
 
 SET @nvcSQL = 'Select [SubCoachingReasonID] as SubCoachingReasonID, [SubCoachingReason] as SubCoachingReason from [EC].[Coaching_Reason_Selection]
 Where ' + @strModulein +' = 1 
