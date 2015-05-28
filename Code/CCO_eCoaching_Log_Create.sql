@@ -1,7 +1,12 @@
 /*
-eCoaching_Log_Create(16).sql
-Last Modified Date: 01/16/2015
+eCoaching_Log_Create(17).sql
+Last Modified Date: 02/16/2015
 Last Modified By: Susmitha Palacherla
+
+Version 17:
+Updates to [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP](SP # 6) to support warnings 
+display for HR job codes per SCR 14065.
+
 
 Version 16:
 Additional post V&V Updates to support Compliance ETS Reports per SCR 14031.
@@ -1126,9 +1131,9 @@ GO
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/12
 --	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
--- Last Modified Date: 08/20/14
+-- Last Modified Date: 02/10/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
+-- Modified per SCR 14065 to add warning sections for HR display.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
 
@@ -1141,7 +1146,8 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
 @strEDatein datetime,
 @strIsOpp nvarchar(8),
 @strStatusin nvarchar(30), 
-@strIsForce nvarchar(8) 
+@strIsForce nvarchar(8),
+@strjobcode  nvarchar(20)
 
 AS
 
@@ -1149,6 +1155,10 @@ AS
 BEGIN
 DECLARE	
 @nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(20),
+@nvcSQL3 nvarchar(max),
+@nvcSQL4 nvarchar(100),
 @strFormStatus nvarchar(30),
 --@strFormStatus2 nvarchar(30),
 --@strFormStatus3 nvarchar(30),
@@ -1164,9 +1174,9 @@ Set @strFormStatus = 'Inactive'
 
 Set @strSDate = convert(varchar(8),@strSDatein,112)
 Set @strEDate = convert(varchar(8),@strEDatein,112)
- 
 
-SET @nvcSQL = 'select	 x.strFormID
+
+SET @nvcSQL1 = 'select	 x.strFormID
 		,x.strCSRName
 		,x.strCSRSupName
 		,x.strCSRMgrName
@@ -1176,6 +1186,7 @@ SET @nvcSQL = 'select	 x.strFormID
 		,x.strSubmitterName
 		,x.numOpportunity
 		,x.numReinforcement
+		,x.orderkey
 from (
 SELECT [cl].[FormName]	strFormID
 		,[eh].[Emp_Name]	strCSRName
@@ -1187,20 +1198,15 @@ SELECT [cl].[FormName]	strFormID
 		,[sh].[Emp_Name]	strSubmitterName
 		,SUM(case when [clr].[Value] = ''Opportunity'' THEN 1 ELSE 0 END) numOpportunity
 		,SUM(case when [clr].[Value] = ''Reinforcement'' THEN 1 ELSE 0 END) numReinforcement
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK),
-	 [EC].[DIM_Source] so,
-	 [EC].[Coaching_Log_Reason] clr,
-	 [EC].[DIM_Site] si
-WHERE cl.EmpID = eh.Emp_ID
-AND cl.StatusID = s.StatusID
-AND cl.SubmitterID = sh.EMP_ID 
-AND cl.SourceID = so.SourceID
-AND cl.CoachingID = clr.CoachingID
-AND cl.SiteID = si.SiteID
-AND [so].[SubCoachingSource] Like '''+@strSourcein+'''
+		,''ok1'' orderkey
+		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON cl.SiteID = si.SiteID JOIN  [EC].[Coaching_Log_Reason] clr
+ON cl.CoachingID = clr.CoachingID
+WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
 and [s].[Status] Like '''+@strStatusin+'''
 AND ISNULL([eh].[Emp_Name], '' '') LIKE '''+@strCSRin+''' 
 AND ISNULL([eh].[Sup_Name], '' '') LIKE '''+@strSUPin+''' 
@@ -1213,17 +1219,81 @@ GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
 [s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name]
 ) x
 where ISNULL(x.numOpportunity, '' '') LIKE '''+@strIsOpp+'''
-and ISNULL(x.numReinforcement, '' '') LIKE '''+@strIsForce+'''
-Order By x.SubmittedDate DESC'
+and ISNULL(x.numReinforcement, '' '') LIKE '''+@strIsForce+''''
 
+
+SET @nvcSQL2 = ' UNION ALL '
+
+SET @nvcSQL3 = 'select	 x.strFormID
+		,x.strCSRName
+		,x.strCSRSupName
+		,x.strCSRMgrName
+		,x.strFormStatus
+		,x.strSource
+		,x.submitteddate
+		,x.strSubmitterName
+		,x.numOpportunity
+		,x.numReinforcement
+		,x.orderkey
+from (
+SELECT [wl].[FormName]	strFormID
+		,[eh].[Emp_Name]	strCSRName
+		,[eh].[Sup_Name]	strCSRSupName
+		,[eh].[Mgr_Name]	strCSRMgrName
+		,[s].[Status]		strFormStatus
+		,[so].[SubCoachingSource]	strSource
+		,[wl].[SubmittedDate]	submitteddate
+		,[sh].[Emp_Name]	strSubmitterName
+		,SUM(case when [wlr].[Value] = ''Opportunity'' THEN 1 ELSE 0 END) numOpportunity
+		,SUM(case when [wlr].[Value] = ''Reinforcement'' THEN 1 ELSE 0 END) numReinforcement
+		,''ok2'' orderkey
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH(NOLOCK)
+ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON wl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON wl.SiteID = si.SiteID JOIN  [EC].[Warning_Log_Reason] wlr
+ON wl.WarningID = wlr.WarningID
+WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
+and [s].[Status] Like '''+@strStatusin+'''
+AND ISNULL([eh].[Emp_Name], '' '') LIKE '''+@strCSRin+''' 
+AND ISNULL([eh].[Sup_Name], '' '') LIKE '''+@strSUPin+''' 
+AND ISNULL([eh].[Mgr_Name], '' '') LIKE '''+@strMGRin+''' 
+and ISNULL([si].[City], '' '') LIKE '''+@strCSRSitein+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [s].[Status] <> '''+@strFormStatus+'''
+GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name]
+) x
+where ISNULL(x.numOpportunity, '' '') LIKE '''+@strIsOpp+'''
+and ISNULL(x.numReinforcement, '' '') LIKE '''+@strIsForce+''''
+
+
+ SET @nvcSQL4 = ' ORDER BY orderkey, submitteddate desc'
+
+IF @strjobcode in ('WHER13', 'WHER50',
+'WHHR12', 'WHHR13', 'WHHR14',
+'WHHR50', 'WHHR60', 'WHHR80')
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 + @nvcSQL4
+
+ELSE
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL4
 
 EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
 	    
 END -- sp_SelectFrom_Coaching_Log_HistoricalSUP
 
 
 
 GO
+
+
+
 
 
 
