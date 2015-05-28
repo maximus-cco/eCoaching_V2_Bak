@@ -9,7 +9,8 @@ Imports AjaxControlToolkit
 
 
 Public Class review2
-    Inherits System.Web.UI.Page
+    Inherits BasePage
+
     Dim pHolder As Label
     Dim panelHolder As Panel
     Dim recStatus As Label
@@ -20,19 +21,11 @@ Public Class review2
     Dim csr As String
     Dim csrLabel As Label
 
-
     Dim dssearch As System.DirectoryServices.DirectorySearcher
     Dim sresult As System.DirectoryServices.SearchResult
     Dim dresult As System.DirectoryServices.DirectoryEntry
 
-
-   
-    Dim lan As String = LCase(User.Identity.Name) 'boulsh
-
     ' Dim historyAccess = "harkda;carvmi;lindlo;dougei;colwmi;schrst;walll1;FitzDr;martb1;zeitsh;fjorbj;pattb1;arguma;sigama;daviev;ThyeCh;HessJo;sampjo;beauda;dyexbr;riddju;kinckr;fostm1;reynsc;curtja;cortco;augujo;mainsc;warrsc"
-
-
-
 
     Protected Sub Page_Load3(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView2.DataBound
 
@@ -225,7 +218,7 @@ Public Class review2
         '   MsgBox(i & "-" & pHolder.Text)
 
         'Next
-     
+
         'outside panels
 
 
@@ -270,7 +263,7 @@ Public Class review2
         panelHolder.Visible = True
 
 
-        
+
         pHolder = ListView2.Items(0).FindControl("Label101")
 
         If (Len(pHolder.Text) > 0) Then
@@ -334,137 +327,56 @@ Public Class review2
 
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        ' authentication is done in BasePage
+        ' if it makes it here, it means authentication is successful
+        ' still need to initialize the page on initial display
+        If Not IsPostBack Then
+            InitializePageDisplay()
+        End If
+    End Sub
 
+    Private Sub InitializePageDisplay()
+        userTitle = GetJobCode(Session("userInfo"))
 
-
-        Select Case True
-
-
-            Case (InStr(1, lan, "vngt\", 1) > 0)
-                lan = (Replace(lan, "vngt\", ""))
-            Case (InStr(1, lan, "ad\", 1) > 0)
-                lan = (Replace(lan, "ad\", ""))
-            Case Else
-                'MsgBox("hello2")
-                Response.Redirect("error.aspx")
-
-        End Select
-
-      
+        ' sp_Check_AgentRole - ARC
         SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = lan
         SqlDataSource14.SelectParameters("nvcRole").DefaultValue = "ECL"
-
         GridView1.DataBind()
 
-
-
-
+        ' sp_Check_AgentRole - SRMGR
         SqlDataSource4.SelectParameters("nvcLanID").DefaultValue = lan
         SqlDataSource4.SelectParameters("nvcRole").DefaultValue = "SRMGR"
-
         GridView5.DataBind()
 
-
-
-
-        SqlDataSource1.SelectParameters("strUserin").DefaultValue = lan
-
-        SqlDataSource1.DataBind()
-        GridView3.DataBind()
-
-
-
-
-        Dim subString As String
-
-
-
-        Try
-
-            subString = (CType(GridView3.Rows(0).FindControl("Job"), Label).Text)
-        Catch ex As Exception
-            subString = ""
-            ' MsgBox("hello1")
-            Response.Redirect("error.aspx")
-        End Try
-
-
-        If (Len(subString) > 0) Then
-
-            Dim subArray As Array
-
-            subArray = Split(subString, "$", -1, 1)
-
-            userTitle = subArray(0) 'title
-        Else
-
-            userTitle = "Error"
-
-        End If
-
-
-
-
-      
         Select Case True
-
-
             Case (InStr(1, userTitle, "40", 1) > 0), (InStr(1, userTitle, "50", 1) > 0), (InStr(1, userTitle, "60", 1) > 0), (InStr(1, userTitle, "70", 1) > 0), (InStr(1, userTitle, "WISO", 1) > 0), (InStr(1, userTitle, "WSTE", 1) > 0), (InStr(1, userTitle, "WSQE", 1) > 0), (InStr(1, userTitle, "WACQ", 1) > 0), (InStr(1, userTitle, "WPPM", 1) > 0), (InStr(1, userTitle, "WPSM", 1) > 0), (InStr(1, userTitle, "WEEX", 1) > 0), (InStr(1, userTitle, "WPWL51", 1) > 0), (InStr(1, userTitle, "WHER", 1) > 0), (InStr(1, userTitle, "WHHR", 1) > 0)
                 '"WPWL51","WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50"
-
-
             Case Else
-
                 If ((Label241.Text = 0) And (Label31.Text = 0)) Then
                     ' MsgBox("hello6")
                     Response.Redirect("error.aspx")
                 End If
-
-
         End Select
 
-
-
         Dim formID
-            Dim idArray
-
-            formID = Request.QueryString("id")
-
-
-            If (Len(formID) > 9) Then
-
-                idArray = Split(formID, "-", -1, 1)
+        Dim idArray
+        formID = Request.QueryString("id")
+        If (Len(formID) > 9) Then
+            idArray = Split(formID, "-", -1, 1)
             'error
             'If ((idArray(0) = "eCL") And (Len(idArray(1)) = 4) Or (CInt(idArray(2)) > -1)) Then
-
-            
             If ((LCase(idArray(0)) = "ecl") And (CInt(UBound(idArray)) > -1)) Then
                 recStatus = DataList1.Items(0).FindControl("LabelStatus")
-
                 If ((recStatus.Text = "Completed") Or (InStr(recStatus.Text, "Pending") > 0)) Then
-
                     'CHECK USER COMPARE
-
-
                     ListView2.Visible = True
                     Panel31.Visible = True
                     Label6.Text = recStatus.Text '"Final"
-
-
-
-
-
                 Else
                     ' MsgBox("hello7")
                     Response.Redirect("error3.aspx")
-
                 End If
-
-
-
             Else
-
-
                 Panel31.Visible = False
                 DataList1.Visible = False
                 DataList1.Enabled = False
@@ -472,26 +384,15 @@ Public Class review2
                 Panel4a.Visible = True
                 Label28.Visible = False
                 Label29.Visible = False
-
-
             End If
-
         Else
-
             Panel31.Visible = False
-
             DataList1.Visible = False
             DataList1.Enabled = False
-
             Panel4a.Visible = True
             Label28.Visible = False
             Label29.Visible = False
-
-
-
         End If
-
-
     End Sub
 
     Protected Sub OnRowDataBound2(ByVal sender As Object, ByVal e As System.EventArgs) Handles GridView4.DataBound

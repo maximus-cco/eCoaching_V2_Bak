@@ -11,7 +11,8 @@ Imports AjaxControlToolkit
 'Gonzales, Ramsey (CNV)
 
 Public Class default2
-    Inherits System.Web.UI.Page
+    Inherits BasePage
+
     Private CoachingButtonList1 As RadioButtonList
     Private VerintButtonList1 As RadioButtonList
     Private BehaviorButtonList1 As RadioButtonList
@@ -50,7 +51,6 @@ Public Class default2
     Dim copy As Boolean = False
     Dim strCopy As String
 
-    Dim lan As String = LCase(User.Identity.Name) 'boulsh"
     Dim supervisor As String
     Dim domain As String
 
@@ -1166,85 +1166,42 @@ Public Class default2
 
     End Sub
 
-
-
-
-
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
+        If Not IsPostBack Then
+            ' authentication is done in BasePage OnInit
+            ' if it makes it here, it means authentication is successful
+            InitializePageDisplay()
+        Else
+            ' Page post back
+            HandlePageDisplay()
+        End If
+    End Sub
 
+    Private Sub InitializePageDisplay()
+        userTitle = GetJobCode(Session("userInfo"))
+        Label180.Text = GetEmail(Session("userInfo"))
+        Label178.Text = GetName(Session("userInfo"))
+        Label157.Text = lan
+        ' Display today date after "Date Started:"
+        Label10.Text = DateTime.Today.ToShortDateString()
 
-        Select Case True
-
-
-            Case (InStr(1, lan, "vngt\", 1) > 0)
-                lan = (Replace(lan, "vngt\", ""))
-                domain = "LDAP://dc=vangent,dc=local"
-            Case (InStr(1, lan, "ad\", 1) > 0)
-                lan = (Replace(lan, "ad\", ""))
-                domain = "LDAP://dc=ad,dc=local"
-
-            Case Else
-                ' MsgBox("2" & lan)
-                Response.Redirect("error.aspx")
-
-        End Select
-
-
-
-        ' MsgBox(lan)
+        ' sp_check_agentrole (GridView1)
         SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = lan
         SqlDataSource14.SelectParameters("nvcRole").DefaultValue = "ARC"
-
         GridView1.DataBind()
-        SqlDataSource2.SelectParameters("strUserin").DefaultValue = lan
 
-        SqlDataSource2.DataBind()
-        GridView3.DataBind()
-
-
+        ' Populate "Select Coaching Module:" (DropDownList3)
+        ' sp_select_modules_by_job_code
         SqlDataSource15.SelectParameters("nvcEmpLanIDin").DefaultValue = lan
         SqlDataSource15.DataBind()
 
-        Dim subString As String
-
-        Try
-
-            subString = (CType(GridView3.Rows(0).FindControl("Job"), Label).Text)
-        Catch ex As Exception
-            subString = ""
-            'MsgBox("1" & lan)
-            Response.Redirect("error.aspx")
-        End Try
-
-
-        If (Len(subString) > 0) Then
-
-            Dim subArray As Array
-
-            subArray = Split(subString, "$", -1, 1)
-            Label57.Text = lan
-
-            Label178.Text = subArray(2) ' name
-
-            Label180.Text = subArray(1) 'mail
-            userTitle = subArray(0) 'title
-        Else
-
-            userTitle = "Error"
-
-        End If
-
-
         If ((InStr(1, userTitle, "WACS0", 1) > 0) And (Label241.Text = 0)) Then
-            '       MsgBox("test1")
+            ' not authorized to submit an eCoaching Log
             Response.Redirect("error2.aspx")
         End If
+    End Sub
 
-       
-
-
-      
-
+    Private Sub HandlePageDisplay()
         '  Dim grid As GridView
         grid = GridView4
         'MsgBox(DropDownList3.SelectedItem.Value)
@@ -1608,16 +1565,8 @@ Public Class default2
             ''CustomValidator3.Enabled = True
 
         End If
-        '''
-        'Label10.Text = CDate(DateTime.Now()) 'DateTime.Today.ToShortDateString() 'DateTime.Now()
-        Label10.Text = DateTime.Today.ToShortDateString() 'DateTime.Now()
-
         ' MsgBox("bubble = " & bubble)
-
     End Sub
-
-
-
 
     Protected Sub CheckBoxRequired_ServerValidate(ByVal Source As Object, ByVal args As ServerValidateEventArgs)
 

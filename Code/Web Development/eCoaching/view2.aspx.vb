@@ -5,8 +5,8 @@ Imports AjaxControlToolkit
 
 
 Public Class view2
-    Inherits System.Web.UI.Page
-    Dim lan As String = LCase(User.Identity.Name) 'boulsh", "vngt\parmro" '"vngt\ablast" '"ad\lanisa.rodriguez-tov" '
+    Inherits BasePage
+
     Dim domain As String
     Dim strLevel As Label
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
@@ -15,116 +15,53 @@ Public Class view2
     Dim filter1 As DropDownList
     Dim counter As Integer
 
-      
-
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-
-        'lan = "ad\jourdain.augustin" 'LCase(User.Identity.Name) 'boulsh
-        Select Case True
-
-
-            Case (InStr(1, lan, "vngt\", 1) > 0)
-                lan = (Replace(lan, "vngt\", ""))
-                domain = "LDAP://dc=vangent,dc=local"
-            Case (InStr(1, lan, "ad\", 1) > 0)
-                lan = (Replace(lan, "ad\", ""))
-                domain = "LDAP://dc=ad,dc=local"
-
-            Case Else
-
-                Response.Redirect("error.aspx")
-
-        End Select
-        'msgBox(lan)
-        'MsgBox(domain)
-
-        '   Dim connection As String
-
-        ' MsgBox(lan)
-        SqlDataSource12.SelectParameters("strUserin").DefaultValue = lan
-
-        SqlDataSource12.DataBind()
-        GridView1.DataBind()
-
-
-        SqlDataSource41.SelectParameters("nvcLanID").DefaultValue = lan
-        SqlDataSource41.SelectParameters("nvcRole").DefaultValue = "SRMGR"
-
-        GridView12.DataBind()
-
-
-        Dim subString As String
-
-
-        Try
-
-            subString = (CType(GridView1.Rows(0).FindControl("Job"), Label).Text)
-        Catch ex As Exception
-            subString = ""
-
-            Response.Redirect("error.aspx")
-        End Try
-
-
-        If (Len(subString) > 0) Then
-
-            Dim subArray As Array
-
-            subArray = Split(subString, "$", -1, 1)
-
-            Label6a.Text = subArray(0) 'title
-        Else
-
-            Label6a.Text = "Error"
-
+        If Not IsPostBack Then
+            ' authentication is done in BasePage OnInit
+            ' if it makes it here, it means authentication is successful
+            InitializePageDisplay()
         End If
 
-        ' MsgBox(Label6a.Text)
+    End Sub
+
+    Private Sub InitializePageDisplay()
+        '  sp_check_agentrole
+        SqlDataSource41.SelectParameters("nvcLanID").DefaultValue = lan
+        SqlDataSource41.SelectParameters("nvcRole").DefaultValue = "SRMGR"
+        GridView12.DataBind()
+
+        ' Title
+        Label6a.Text = GetJobCode(Session("userInfo"))
         Select Case True 'Label6a.Text
-
-
             Case (InStr(1, Label6a.Text, "WACS0", 1) > 0) '"WACS01", "WACS02", "WACS03"
                 '' Label5.Visible = True
                 '' Label4.Visible = True
                 Panel2.Visible = True
-
                 Label26.Text = "Welcome to the Employee Dashboard"
                 ' Label10.Text = "On this page, you can find your pending and completed coaching logs. <p> To view your pending coaching logs at your review, you can find them under My Pending eCoaching Logs.  The logs are displayed in reverse chronological order.  To open an eCoaching Log, click on the file name and complete the log entries. <p> To view your completed coaching logs, you can find them under My Completed eCoaching Logs.  The logs are displayed in reverse chonological order.  To open an eCoaching Log, click on the file name to view the content."
-
-
                 ''  drs12.Visible = True
                 '' drs12.Enabled = True
                 SqlDataSource2.SelectParameters("strCSRin").DefaultValue = lan
-
                 ''GridView2.Visible = True
                 ''GridView2.Enabled = True
                 SqlDataSource1.SelectParameters("strCSRin").DefaultValue = lan
-
                 ' Label11.Visible = True
                 'GridView1.Visible = True
                 'GridView1.Enabled = True
                 'SqlDataSource7.SelectParameters("strUserin").DefaultValue = lan
 
                 ' Dim spot As Label
-
                 ' spot = Me.Master.FindControl("Label16")
                 '  spot.Text = "CSR Dashboard"
-
             Case (InStr(1, Label6a.Text, "40", 1) > 0), (InStr(1, Label6a.Text, "WTTR12", 1) > 0), (InStr(1, Label6a.Text, "WTTI", 1) > 0) '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WPSM12"
-
                 ''Label5.Visible = True
                 ' Label4.Visible = True
-
                 Label26.Text = "Welcome to the Supervisor Dashboard"
-
                 Panel1.Visible = True
                 SqlDataSource27.SelectParameters("strUserin").DefaultValue = lan
                 SqlDataSource28.SelectParameters("strUserin").DefaultValue = lan
-
                 SqlDataSource3.SelectParameters("strCSRSUPin").DefaultValue = lan
-
                 SqlDataSource6.SelectParameters("strCSRSUPin").DefaultValue = lan
-
                 SqlDataSource7.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource9.SelectParameters("strCSRSUPin").DefaultValue = lan
@@ -134,28 +71,20 @@ Public Class view2
                 If (Label6a.Text = "WACS40") Then
                     Panel4.Visible = True
                     SqlDataSource22.SelectParameters("strCSRSUPin").DefaultValue = lan
-
                     If (Date7.Text = "") Then
                         SqlDataSource22.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                         Date7.Text = backDate
-
                     Else
                         SqlDataSource22.SelectParameters("strSDatein").DefaultValue = Date7.Text
-
-
                     End If
 
                     If (Date8.Text = "") Then
-
                         SqlDataSource22.SelectParameters("strEDatein").DefaultValue = TodaysDate
                         Date8.Text = TodaysDate
-
                     Else
                         SqlDataSource22.SelectParameters("strEDatein").DefaultValue = Date8.Text
                     End If
-
                 End If
-
 
                 CalendarExtender3.EndDate = TodaysDate
                 CalendarExtender4.EndDate = TodaysDate
@@ -163,51 +92,33 @@ Public Class view2
                 If (Date3.Text = "") Then
                     SqlDataSource9.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                     Date3.Text = backDate
-
                 Else
                     SqlDataSource9.SelectParameters("strSDatein").DefaultValue = Date3.Text
-
-
                 End If
 
                 If (Date4.Text = "") Then
-
                     SqlDataSource9.SelectParameters("strEDatein").DefaultValue = TodaysDate
                     Date4.Text = TodaysDate
-
                 Else
                     SqlDataSource9.SelectParameters("strEDatein").DefaultValue = Date4.Text
                 End If
 
-
-
-
-
-
             Case (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0) '"WACS50", "WACS60", "WBCO50", "WSQA50", "WTTR50", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPM70", "WPPT50", "WPPT60", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14"
                 'mgr  Or (InStr(1, Label6a.Text, "Engineer", 1) > 0) And (InStr(1, Label6a.Text, "Service Rep", 1) = 0)
                 Panel3.Visible = True
-
-
                 ''Label5.Visible = True
                 ''Label4.Visible = True
-
                 Label26.Text = "Welcome to the Manager Dashboard"
                 '   Label10.Text = "On this page, you can find your pending and completed coaching logs.<p> To view your pending coaching logs at your review, you can find them under My Pending eCoaching Logs.  The logs are displayed in reverse chronological order.  To open an eCoaching Log, click on the file name and complete the log entries. <p> To view your completed coaching logs, you can find them under My Completed eCoaching Logs.  The logs are displayed in reverse chonological order.  To open an eCoaching Log, click on the file name to view the content.  These are logs that you have been completed by your Supervisors and CSRs for review and acknowledgement.  These logs are grouped by Supervisor."
-
                 '' GridView4.Visible = True
                 ''GridView4.Enabled = True
                 SqlDataSource25.SelectParameters("strUserin").DefaultValue = lan
                 SqlDataSource26.SelectParameters("strUserin").DefaultValue = lan
-
                 SqlDataSource4.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource5.SelectParameters("strCSRMGRin").DefaultValue = lan
-
-
                 ''GridView7.Visible = True
                 ''GridView7.Enabled = True
                 SqlDataSource8.SelectParameters("strCSRMGRin").DefaultValue = lan
-
                 SqlDataSource13.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource14.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource15.SelectParameters("strCSRMGRin").DefaultValue = lan
@@ -216,176 +127,108 @@ Public Class view2
                 SqlDataSource21.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource18.SelectParameters("strCSRin").DefaultValue = lan
                 If ((Label6a.Text = "WACS50") Or (Label6a.Text = "WACS60")) Then
-
                     Panel5.Visible = True
                     SqlDataSource23.SelectParameters("strCSRMGRin").DefaultValue = lan
-
                     If (Date5.Text = "") Then
-
                         SqlDataSource23.SelectParameters("strSDatein").DefaultValue = backDate
                         Date5.Text = backDate
-
                     Else
                         SqlDataSource23.SelectParameters("strSDatein").DefaultValue = Date5.Text
                     End If
-
-
-
                     If (Date6.Text = "") Then
-
                         SqlDataSource23.SelectParameters("strEDatein").DefaultValue = TodaysDate
                         Date6.Text = TodaysDate
-
                     Else
                         SqlDataSource23.SelectParameters("strEDatein").DefaultValue = Date6.Text
                     End If
-
-
-
                 End If
-
 
                 CalendarExtender1.EndDate = TodaysDate
                 CalendarExtender2.EndDate = TodaysDate
-
                 If (Date1.Text = "") Then
-                    'MsgBox(backDate)
                     SqlDataSource8.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                     Date1.Text = backDate
-
                 Else
-                    '           MsgBox("goodbye")
-                    '          MsgBox(Date1.Text)
                     SqlDataSource8.SelectParameters("strSDatein").DefaultValue = Date1.Text
-
-
                 End If
 
                 If (Date2.Text = "") Then
-
                     SqlDataSource8.SelectParameters("strEDatein").DefaultValue = TodaysDate
                     Date2.Text = TodaysDate
-
                 Else
                     SqlDataSource8.SelectParameters("strEDatein").DefaultValue = Date2.Text
                 End If
-
-
-
-
-
                 ' Case (InStr(1, Label6a.Text, "WSQE", 1) > 0), (InStr(1, Label6a.Text, "WACQ", 1) > 0) '"WTTR12", "WTTR40", "WTTR50", "WACQ12", "WACQ13", "WSQA40", "WSQA70", "WSQE14", "WSQE15"
             Case Else
                 ' Response.Redirect("error.aspx")
                 ''Label5.Visible = True
                 ' Label4.Visible = True
-
                 Label26.Text = "Welcome to the eCL Dashboard" '& Label6a.Text
-
                 Panel1.Visible = True
-
                 SqlDataSource28.SelectParameters("strUserin").DefaultValue = lan
                 SqlDataSource27.SelectParameters("strUserin").DefaultValue = lan
-
-
                 SqlDataSource3.SelectParameters("strCSRSUPin").DefaultValue = lan
-
                 SqlDataSource6.SelectParameters("strCSRSUPin").DefaultValue = lan
-
                 SqlDataSource7.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource9.SelectParameters("strCSRSUPin").DefaultValue = lan
-
                 SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource17.SelectParameters("strCSRin").DefaultValue = lan
 
                 CalendarExtender3.EndDate = TodaysDate
                 CalendarExtender4.EndDate = TodaysDate
-
                 If (Date3.Text = "") Then
                     SqlDataSource9.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                     Date3.Text = backDate
-
                 Else
                     SqlDataSource9.SelectParameters("strSDatein").DefaultValue = Date3.Text
-
-
                 End If
 
                 If (Date4.Text = "") Then
-
                     SqlDataSource9.SelectParameters("strEDatein").DefaultValue = TodaysDate
                     Date4.Text = TodaysDate
-
                 Else
                     SqlDataSource9.SelectParameters("strEDatein").DefaultValue = Date4.Text
                 End If
-
                 ' Case Else
                 '    Response.Redirect("error.aspx")
-
         End Select
 
-
         If (Label241.Text > 0) Then ' Senior Manager
-
             Panel6.Visible = True
-
-
-              SqlDataSource44.SelectParameters("strUserin").DefaultValue = lan
-
+            SqlDataSource44.SelectParameters("strUserin").DefaultValue = lan
             SqlDataSource43.SelectParameters("strCSRSrMGRin").DefaultValue = lan
             SqlDataSource47.SelectParameters("strCSRSrMGRin").DefaultValue = lan
             SqlDataSource48.SelectParameters("strCSRSrMGRin").DefaultValue = lan
-
-
             SqlDataSource45.SelectParameters("strEMPSRMGRin").DefaultValue = lan
-
             If (Date11.Text = "") Then
                 SqlDataSource45.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                 Date11.Text = backDate
-
             Else
                 SqlDataSource45.SelectParameters("strSDatein").DefaultValue = Date11.Text
-
-
             End If
-
             If (Date12.Text = "") Then
-
                 SqlDataSource45.SelectParameters("strEDatein").DefaultValue = TodaysDate
                 Date12.Text = TodaysDate
-
             Else
                 SqlDataSource45.SelectParameters("strEDatein").DefaultValue = Date12.Text
             End If
 
-
             SqlDataSource50.SelectParameters("strEMPSRMGRin").DefaultValue = lan
-
             If (Date9.Text = "") Then
                 SqlDataSource50.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                 Date9.Text = backDate
-
             Else
                 SqlDataSource50.SelectParameters("strSDatein").DefaultValue = Date9.Text
-
-
             End If
 
             If (Date10.Text = "") Then
-
                 SqlDataSource50.SelectParameters("strEDatein").DefaultValue = TodaysDate
                 Date10.Text = TodaysDate
-
             Else
                 SqlDataSource50.SelectParameters("strEDatein").DefaultValue = Date10.Text
             End If
-
-
         End If
-
-
     End Sub
 
     Protected Sub Button3_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button3.Click
@@ -535,10 +378,10 @@ Public Class view2
             DirectCast(e.Row.FindControl("lblTotal"), Label).Text = String.Format("{0} records", counter.ToString)
         End If
     End Sub
-   
 
-   
-   
+
+
+
 
     Protected Function GetTotalRows(ByVal datasource) As Int32
         Dim dv As DataView = CType(datasource.Select(DataSourceSelectArguments.Empty), DataView)
@@ -689,7 +532,7 @@ Public Class view2
 
         If e.Row.RowType = DataControlRowType.DataRow Then
             Dim id As Label = e.Row.FindControl("Label1")
- 
+
             Dim mainReason As DataList = e.Row.FindControl("Dlist1")
             Dim subReason As DataList = e.Row.FindControl("Dlist2")
             Dim Value As DataList = e.Row.FindControl("Dlist3")
@@ -722,7 +565,7 @@ Public Class view2
 
         If e.Row.RowType = DataControlRowType.DataRow Then
             Dim id As Label = e.Row.FindControl("Label1")
-  
+
             Dim mainReason As DataList = e.Row.FindControl("Dlist1")
             Dim subReason As DataList = e.Row.FindControl("Dlist2")
             Dim Value As DataList = e.Row.FindControl("Dlist3")
@@ -754,7 +597,7 @@ Public Class view2
 
         If e.Row.RowType = DataControlRowType.DataRow Then
             Dim id As Label = e.Row.FindControl("Label1")
- 
+
             Dim mainReason As DataList = e.Row.FindControl("Dlist1")
             Dim subReason As DataList = e.Row.FindControl("Dlist2")
             Dim Value As DataList = e.Row.FindControl("Dlist3")
@@ -786,7 +629,7 @@ Public Class view2
 
         If e.Row.RowType = DataControlRowType.DataRow Then
             Dim id As Label = e.Row.FindControl("Label1")
- 
+
             Dim mainReason As DataList = e.Row.FindControl("Dlist1")
             Dim subReason As DataList = e.Row.FindControl("Dlist2")
             Dim Value As DataList = e.Row.FindControl("Dlist3")
@@ -818,7 +661,7 @@ Public Class view2
 
         If e.Row.RowType = DataControlRowType.DataRow Then
             Dim id As Label = e.Row.FindControl("Label1")
- 
+
             Dim mainReason As DataList = e.Row.FindControl("Dlist1")
             Dim subReason As DataList = e.Row.FindControl("Dlist2")
             Dim Value As DataList = e.Row.FindControl("Dlist3")
@@ -849,7 +692,7 @@ Public Class view2
 
         If e.Row.RowType = DataControlRowType.DataRow Then
             Dim id As Label = e.Row.FindControl("Label1")
-  
+
             Dim mainReason As DataList = e.Row.FindControl("Dlist1")
             Dim subReason As DataList = e.Row.FindControl("Dlist2")
             Dim Value As DataList = e.Row.FindControl("Dlist3")
@@ -880,7 +723,7 @@ Public Class view2
 
         If e.Row.RowType = DataControlRowType.DataRow Then
             Dim id As Label = e.Row.FindControl("Label1")
-  
+
             Dim mainReason As DataList = e.Row.FindControl("Dlist1")
             Dim subReason As DataList = e.Row.FindControl("Dlist2")
             Dim Value As DataList = e.Row.FindControl("Dlist3")
@@ -1083,7 +926,7 @@ Public Class view2
 
 
     End Sub
-  
+
     Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
         'EC.sp_SelectFrom_Coaching_Log_CSRPending  
 

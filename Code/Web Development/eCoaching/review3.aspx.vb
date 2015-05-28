@@ -8,29 +8,15 @@ Imports AjaxControlToolkit
 
 
 Public Class review3
-    Inherits System.Web.UI.Page
+    Inherits BasePage
+
     Dim pHolder As Label
     Dim panelHolder As Panel
     Dim recStatus As Label
     Dim userName As String
     Dim userTitle As String
-   Dim csr As String
-  
-
-    '  Dim dssearch As System.DirectoryServices.DirectorySearcher
-    ' Dim sresult As System.DirectoryServices.SearchResult
-    'Dim dresult As System.DirectoryServices.DirectoryEntry
-
-
-
-    Dim lan As String = LCase(User.Identity.Name) 'boulsh
+    Dim csr As String
  
-
-    ' Dim historyAccess = "harkda;carvmi;lindlo;dougei;colwmi;schrst;walll1;FitzDr;martb1;zeitsh;fjorbj;pattb1;arguma;sigama;daviev;ThyeCh;HessJo;sampjo;beauda;dyexbr;riddju;kinckr;fostm1;reynsc;curtja;cortco;augujo;mainsc;warrsc"
-
-
-
-
     Protected Sub Page_Load3(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView2.DataBound
 
 
@@ -120,68 +106,21 @@ Public Class review3
 
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        ' authentication is done in BasePage
+        ' if it makes it here, it means authentication is successful
+        ' still need to initialize the page on initial display
+        If Not IsPostBack Then
+            InitializePageDisplay()
+        End If
+    End Sub
 
+    Private Sub InitializePageDisplay()
+        userTitle = GetJobCode(Session("userInfo"))
 
-
-        Select Case True
-
-
-            Case (InStr(1, lan, "vngt\", 1) > 0)
-                lan = (Replace(lan, "vngt\", ""))
-            Case (InStr(1, lan, "ad\", 1) > 0)
-                lan = (Replace(lan, "ad\", ""))
- 
-            Case Else
-                'MsgBox("hello2")
-                Response.Redirect("error.aspx")
-
-        End Select
-
-
+        ' sp_Check_AgentRole 
         SqlDataSource3.SelectParameters("nvcLanID").DefaultValue = lan
         SqlDataSource3.SelectParameters("nvcRole").DefaultValue = "SRMGR"
-
         GridView2.DataBind()
-
-
-
-        SqlDataSource1.SelectParameters("strUserin").DefaultValue = lan
-
-        SqlDataSource1.DataBind()
-        GridView3.DataBind()
-
-
-
-
-        Dim subString As String
-
-
-
-        Try
-
-            subString = (CType(GridView3.Rows(0).FindControl("Job"), Label).Text)
-        Catch ex As Exception
-            subString = ""
-            ' MsgBox("hello1")
-            Response.Redirect("error.aspx")
-        End Try
-
-
-        If (Len(subString) > 0) Then
-
-            Dim subArray As Array
-
-            subArray = Split(subString, "$", -1, 1)
-
-            userTitle = subArray(0) 'title
-        Else
-
-            userTitle = "Error"
-
-        End If
-
-
-
 
         Dim formID
         Dim idArray
@@ -199,7 +138,7 @@ Public Class review3
             If ((LCase(idArray(0)) = "ecl") And (CInt(UBound(idArray)) > -1)) Then
 
                 ListView2.Visible = True
-                    Panel31.Visible = True
+                Panel31.Visible = True
                 Label6.Text = "Final"
 
 
@@ -207,7 +146,7 @@ Public Class review3
 
 
                 Panel31.Visible = False
-               
+
                 Panel4a.Visible = True
                 Label28.Visible = False
                 Label29.Visible = False
@@ -231,7 +170,7 @@ Public Class review3
     End Sub
 
     Protected Sub OnRowDataBound2(ByVal sender As Object, ByVal e As System.EventArgs) Handles GridView4.DataBound
-   
+
 
         For i As Integer = (GridView4.Rows.Count - 1) To 1 Step -1
 

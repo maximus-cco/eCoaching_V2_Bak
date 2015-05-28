@@ -5,8 +5,8 @@ Imports AjaxControlToolkit
 
 
 Public Class view3
-    Inherits System.Web.UI.Page
-    Dim lan As String = LCase(User.Identity.Name) 'boulsh
+    Inherits BasePage
+
     Dim domain As String
     Dim strLevel As Label
     Dim TodaysDate = DateTime.Today.ToShortDateString()
@@ -15,146 +15,57 @@ Public Class view3
     '(InStr(1, LCase(historyAccess), lan, 1) = 0)
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Not IsPostBack Then
+            ' authentication is done in BasePage OnInit
+            ' if it makes it here, it means authentication is successful
+            InitializePageDisplay()
+        End If
+    End Sub
 
-
-        Select Case True
-
-
-            Case (InStr(1, lan, "vngt\", 1) > 0)
-                lan = (Replace(lan, "vngt\", ""))
-                domain = "LDAP://dc=vangent,dc=local"
-            Case (InStr(1, lan, "ad\", 1) > 0)
-                lan = (Replace(lan, "ad\", ""))
-                domain = "LDAP://dc=ad,dc=local"
-
-            Case Else
-
-                Response.Redirect("error.aspx")
-
-        End Select
-
-
-        '   Dim connection As String
-
+    Private Sub InitializePageDisplay()
+        ' sp_check_AgentRole (GridView5)
         SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = lan
         SqlDataSource14.SelectParameters("nvcRole").DefaultValue = "ARC"
-
         GridView5.DataBind()
 
-        SqlDataSource15.SelectParameters("strUserin").DefaultValue = lan
-
-        SqlDataSource15.DataBind()
-        GridView6.DataBind()
-
-
-
-
-        Dim subString As String
-
-
-        Try
-
-            subString = (CType(GridView6.Rows(0).FindControl("Job"), Label).Text)
-        Catch ex As Exception
-            subString = ""
-
-            Response.Redirect("error.aspx")
-        End Try
-
-
-        If (Len(subString) > 0) Then
-
-            Dim subArray As Array
-
-            subArray = Split(subString, "$", -1, 1)
-            
-            Label6a.Text = subArray(0) 'title
-        Else
-
-            Label6a.Text = "Error"
-
-        End If
-
-
-
+        ' Title
+        Label6a.Text = GetJobCode(Session("userInfo"))
         Select Case True 'Label6a.Text
-
-
-
             Case (InStr(1, Label6a.Text, "WACS0", 1) > 0)
-                'white2
-
-
-
-               
                 If (Label241.Text > 0) Then
-
                     Panel2.Visible = True
-                    'harnst
-
                     Label26.Text = "Welcome to the My Submitted Dashboard"
                     SqlDataSource1.SelectParameters("strUserin").DefaultValue = lan
-        
                 Else
-
                     Response.Redirect("error2.aspx")
-
                 End If
-
-
-
-
-
             Case (InStr(1, Label6a.Text, "40", 1) > 0), (InStr(1, Label6a.Text, "WTTR12", 1) > 0), (InStr(1, Label6a.Text, "WTTI", 1) > 0) '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40"
-                'bracan
                 Label26.Text = "Welcome to the My Submitted Dashboard"
-
                 Panel1.Visible = True
-
-
                 SqlDataSource7.SelectParameters("strUserin").DefaultValue = lan
-
                 SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource12.SelectParameters("strCSRSUPin").DefaultValue = lan
-
-
             Case (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0) '"WACS50", "WACS60", "WBCO50", "WSQA50", "WTTR50", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPM70", "WPPT50", "WPPT60", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14"
                 Panel3.Visible = True
-                'harnst
-
                 Label26.Text = "Welcome to the My Submitted Dashboard"
                 SqlDataSource17.SelectParameters("strUserin").DefaultValue = lan
                 SqlDataSource18.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource19.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource22.SelectParameters("strCSRMGRin").DefaultValue = lan
-
-
             Case Else
-                'Case (InStr(1, Label6a.Text, "Staff", 1) > 0)
-                'MsgBox("helo")
-
                 Panel4.Visible = True
-
                 Label9.Visible = True
-
                 Label26.Text = "Welcome to the My Submitted Dashboard"
                 SqlDataSource2.SelectParameters("strUserin").DefaultValue = lan
                 SqlDataSource6.SelectParameters("strUserin").DefaultValue = lan
-
                 SqlDataSource3.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource4.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource5.SelectParameters("strCSRMGRin").DefaultValue = lan
-
                 SqlDataSource8.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource9.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource13.SelectParameters("strCSRMGRin").DefaultValue = lan
-                'MsgBox("goodbye")
         End Select
-
-
-
-
     End Sub
 
     Protected Function newDisplay(ByVal indicator As DateTime) As String

@@ -5,103 +5,46 @@ Imports AjaxControlToolkit
 Imports System.Data.SqlClient
 
 Public Class view4
-    Inherits System.Web.UI.Page
-    Dim lan As String = LCase(User.Identity.Name) 'boulsh
-    Dim domain As String
+    Inherits BasePage
+
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim backDate As String = DateAdd("D", -30, TodaysDate).ToShortDateString()
     Dim connString As String = "server=VRIVFSSDBT02\SCORT01,1438; Integrated Security=true; Initial Catalog=eCoachingTest"
     Dim counter As Integer
 
-    Dim subString As String
-
-
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-
-
-        Select Case True
-
-
-            Case (InStr(1, lan, "vngt\", 1) > 0)
-                lan = (Replace(lan, "vngt\", ""))
-                domain = "LDAP://dc=vangent,dc=local"
-            Case (InStr(1, lan, "ad\", 1) > 0)
-                lan = (Replace(lan, "ad\", ""))
-                domain = "LDAP://dc=ad,dc=local"
-
-            Case Else
-
-                Response.Redirect("error.aspx")
-
-        End Select
-
-        If Not Page.IsPostBack Then
-
-
-            getFilters1()
-            getFilters2()
-            getFilters3()
-            getFilters4()
-            getFilters5()
-            getFilters6()
-            getFilters7()
-            getFilters8()
-
-
-            Date1.Text = backDate
-            Date2.Text = TodaysDate
-
-
-            '    Dim profileAdapter As New QueriesTableAdapter
-
-
-            Try
-                getUserProfile()
-
-            Catch ex As Exception
-                Throw ex
-                ' subString = ""
-
-                'Response.Redirect("error.aspx")
-            End Try
-
-
-
-            If (Len(subString) > 0) Then
-
-                Dim subArray As Array
-
-                subArray = Split(subString, "$", -1, 1)
-
-                Label6a.Text = subArray(0) 'title
-            Else
-                Label6a.Text = "Error"
-                Response.Redirect("error.aspx")
-
-            End If
-
-
-            Select Case True 'Label6a.Text
-
-
-                Case (InStr(1, Label6a.Text, "40", 1) > 0), (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WSQE", 1) > 0), (InStr(1, Label6a.Text, "WACQ", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0), (InStr(1, Label6a.Text, "WHER", 1) > 0), (InStr(1, Label6a.Text, "WHHR", 1) > 0)
-                    '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50", "WEEX"
-
-                    Label26.Text = "Welcome to the Historical Reporting Dashboard"
-
-                    CalendarExtender1.EndDate = TodaysDate
-                    CalendarExtender2.EndDate = TodaysDate
-
-
-                Case Else
-                    Response.Redirect("error.aspx")
-            End Select
-
-
+        ' authentication is done in BasePage
+        ' if it makes it here, it means authentication is successful
+        ' still need to initialize the page on initial display
+        If Not IsPostBack Then
+            InitializePageDisplay()
         End If
+    End Sub
 
+    Private Sub InitializePageDisplay()
+        getFilters1()
+        getFilters2()
+        getFilters3()
+        getFilters4()
+        getFilters5()
+        getFilters6()
+        getFilters7()
+        getFilters8()
 
+        Date1.Text = backDate
+        Date2.Text = TodaysDate
 
+        Label6a.Text = GetJobCode(Session("userInfo"))
+        Select Case True 'Label6a.Text
+            Case (InStr(1, Label6a.Text, "40", 1) > 0), (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WSQE", 1) > 0), (InStr(1, Label6a.Text, "WACQ", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0), (InStr(1, Label6a.Text, "WHER", 1) > 0), (InStr(1, Label6a.Text, "WHHR", 1) > 0)
+                '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50", "WEEX"
+                Label26.Text = "Welcome to the Historical Reporting Dashboard"
+
+                CalendarExtender1.EndDate = TodaysDate
+                CalendarExtender2.EndDate = TodaysDate
+            Case Else
+                Response.Redirect("error.aspx")
+        End Select
     End Sub
 
     Protected Function newDisplay(ByVal indicator As DateTime) As String
@@ -141,37 +84,7 @@ Public Class view4
             Return ("review2.aspx?id={0}")
 
         End If
-
-
     End Function
-
-
-    Protected Sub getUserProfile()
-
-        Using conn As New SqlConnection(connString)
-
-            conn.Open()
-
-            Dim comm As New SqlCommand("EC.sp_Whoami", conn)
-            comm.CommandType = CommandType.StoredProcedure
-            comm.Parameters.Add("@strUserin", SqlDbType.VarChar).Value = lan
-
-            Dim result As String = DirectCast(comm.ExecuteScalar(), String)
-            If Not String.IsNullOrEmpty(result) Then
-
-
-                subString = result
-            Else
-                subString = ""
-            End If
-
-            conn.Close()
-
-        End Using
-
-
-
-    End Sub
 
 
     Protected Sub getFilters1()

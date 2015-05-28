@@ -1,134 +1,73 @@
 ﻿Public Class _default
-    Inherits System.Web.UI.Page
-
-    Dim lan As String = LCase(User.Identity.Name) 'boulsh"
-    Dim domain As String
-
+    Inherits BasePage
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-
-        If Not Page.IsPostBack Then
-
-            Select Case True
-
-
-                Case (InStr(1, lan, "vngt\", 1) > 0)
-                    lan = (Replace(lan, "vngt\", ""))
-                    domain = "LDAP://dc=vangent,dc=local"
-                Case (InStr(1, lan, "ad\", 1) > 0)
-                    lan = (Replace(lan, "ad\", ""))
-                    domain = "LDAP://dc=ad,dc=local"
-
-                Case Else
-                    ' MsgBox("2" & lan)
-                    Response.Redirect("error.aspx")
-
-            End Select
-
-            SqlDataSource1.SelectParameters("strUserin").DefaultValue = lan
-
-            ' SqlDataSource1.DataBind()
-            GridView1.DataSourceID = "SqlDataSource1"
-            GridView1.DataBind()
-
-
-            ' Try
-
-            'subString1 = (CType(GridView1.Rows(0).FindControl("Job1"), Label).Text)
-            Dim subString1 As String = DirectCast(GridView1.Rows(0).Cells(0).FindControl("Job1"), Label).Text
-
-
-
-            If (InStr(1, subString1, "Unknown", 1) > 0) Then
-
-                Label1.Text = "Error"
-                subString1 = ""
-                Response.Redirect("error.aspx")
-
-            Else
-
-                Dim subArray As Array
-
-                subArray = Split(subString1, "$", -1, 1)
-
-                Label1.Text = subArray(0) 'title
-
-
-            End If
-
-
-
-
-
-            Select Case True 'Label6a.Text
-
-
-                Case (InStr(1, Label1.Text, "WACS0", 1) > 0)
-
-                    'no historical dashboard for CSRs of any kind
-                    ' TabPanel4.Visible = False
-
-                    'check to display My submissions and submission page
-
-                    ' If (Label1.Text = "WACS02") Then
-
-
-
-                    SqlDataSource2.SelectParameters("nvcLanID").DefaultValue = lan
-                    SqlDataSource2.SelectParameters("nvcRole").DefaultValue = "ARC"
-                    GridView2.DataSource = "SqlDataSource2"
-                    GridView2.DataBind()
-
-
-
-
-                    If (Label2.Text = 0) Then
-                        '       MsgBox("test1")
-                        TabPanel1.Visible = False
-                        TabPanel3.Visible = False
-                    End If
-
-                    'Else
-
-                    'TabPanel1.Visible = False
-                    'TabPanel3.Visible = False
-
-                    'End If
-
-
-                Case (InStr(1, Label1.Text, "40", 1) > 0), (InStr(1, Label1.Text, "50", 1) > 0), (InStr(1, Label1.Text, "60", 1) > 0), (InStr(1, Label1.Text, "70", 1) > 0), (InStr(1, Label1.Text, "WISO", 1) > 0), (InStr(1, Label1.Text, "WSTE", 1) > 0), (InStr(1, Label1.Text, "WSQE", 1) > 0), (InStr(1, Label1.Text, "WACQ", 1) > 0), (InStr(1, Label1.Text, "WPPM", 1) > 0), (InStr(1, Label1.Text, "WPSM", 1) > 0), (InStr(1, Label1.Text, "WEEX", 1) > 0), (InStr(1, Label1.Text, "WISY", 1) > 0), (InStr(1, Label1.Text, "WPWL51", 1) > 0)
-                    '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50", "WEEX"
-
-                    TabPanel4.Visible = True
-
-
-                Case (InStr(1, Label1.Text, "WHER", 1) > 0), (InStr(1, Label1.Text, "WHHR", 1) > 0)
-
-
-                    TabPanel1.Visible = False
-                    TabPanel2.Visible = False
-                    TabPanel3.Visible = False
-                    TabPanel4.Visible = True
-
-
-            End Select
-
+        ' authentication is done in BasePage
+        ' if it makes it here, it means authentication is successful
+        ' still need to initialize the page on initial display
+        If Not IsPostBack Then
+            InitializePageDisplay()
         End If
-
-
     End Sub
 
+    Private Sub InitializePageDisplay()
+        ' title
+        Label1.Text = Split(Session("userInfo"), "$", -1, 1)(0)
+
+        Select Case True 'Label6a.Text
+
+
+            Case (InStr(1, Label1.Text, "WACS0", 1) > 0)
+
+                'no historical dashboard for CSRs of any kind
+                ' TabPanel4.Visible = False
+
+                'check to display My submissions and submission page
+
+                ' If (Label1.Text = "WACS02") Then
 
 
 
-    Protected Sub SqlDataSource1_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource1.Selecting
-        'EC.sp_Whoami 
+                SqlDataSource2.SelectParameters("nvcLanID").DefaultValue = lan
+                SqlDataSource2.SelectParameters("nvcRole").DefaultValue = "ARC"
+                GridView2.DataSource = "SqlDataSource2"
+                GridView2.DataBind()
 
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
+
+
+                If (Label2.Text = 0) Then
+                    '       MsgBox("test1")
+                    TabPanel1.Visible = False
+                    TabPanel3.Visible = False
+                End If
+
+                'Else
+
+                'TabPanel1.Visible = False
+                'TabPanel3.Visible = False
+
+                'End If
+
+
+            Case (InStr(1, Label1.Text, "40", 1) > 0), (InStr(1, Label1.Text, "50", 1) > 0), (InStr(1, Label1.Text, "60", 1) > 0), (InStr(1, Label1.Text, "70", 1) > 0), (InStr(1, Label1.Text, "WISO", 1) > 0), (InStr(1, Label1.Text, "WSTE", 1) > 0), (InStr(1, Label1.Text, "WSQE", 1) > 0), (InStr(1, Label1.Text, "WACQ", 1) > 0), (InStr(1, Label1.Text, "WPPM", 1) > 0), (InStr(1, Label1.Text, "WPSM", 1) > 0), (InStr(1, Label1.Text, "WEEX", 1) > 0), (InStr(1, Label1.Text, "WISY", 1) > 0), (InStr(1, Label1.Text, "WPWL51", 1) > 0)
+                '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50", "WEEX"
+
+                TabPanel4.Visible = True
+
+
+            Case (InStr(1, Label1.Text, "WHER", 1) > 0), (InStr(1, Label1.Text, "WHHR", 1) > 0)
+
+
+                TabPanel1.Visible = False
+                TabPanel2.Visible = False
+                TabPanel3.Visible = False
+                TabPanel4.Visible = True
+
+
+        End Select
 
     End Sub
-
 
     Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
         'EC.sp_Check_AgentRole 
