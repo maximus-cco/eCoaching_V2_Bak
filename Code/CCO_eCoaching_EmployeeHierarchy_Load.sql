@@ -1,6 +1,10 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (06)
-Date: 11/11/2014
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (07)
+Date: 01/16/15
+
+
+Version 07, 01/16/15
+Updates to sp (#5) to inactivate ecls for employees in EA status and those not arriving in ewfm feed  per SCR 14072.
 
 Version 06, 11/11/2014
 Additional Updates to sp (#2) to handle apostrophes in name and email addresses for sups and mgrs per SCR 13759.
@@ -886,13 +890,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date:    04/09/2014
 -- Description:	Inactivate Coaching logs for Termed Employees
--- Last Modified Date: 10/27/2014
+-- Last Modified Date: 01/16/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified to add Inactivations for warning_log table - SCR 13624.
+-- Modified to Inactivate Coaching logs for extended absences status 
+-- and CSRs and Sup Module eCLs for Employees not arriving in eWFM feed per scr 14072.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
@@ -917,7 +925,37 @@ END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
+-- Inactivate Coaching logs for CSRs and Sup Module eCLs for Employees not arriving in eWFM feed.
 
+BEGIN
+UPDATE [EC].[Coaching_Log]
+SET [StatusID] = 2
+FROM [EC].[Coaching_Log] C WHERE  C.[EmpID] NOT IN
+(SELECT DISTINCT LTRIM(EMP_ID) FROM [EC].[EmpID_To_SupID_Stage])
+AND C.[StatusID] not in (1,2)
+AND C.[ModuleID]  in (1,2)
+OPTION (MAXDOP 1)
+END
+
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+-- Inactivate Coaching logs for Employees on Extended Absence
+
+BEGIN
+UPDATE [EC].[Coaching_Log]
+SET [StatusID] = 2
+FROM [EC].[Coaching_Log] C JOIN [EC].[EmpID_To_SupID_Stage]H
+ON C.[EmpLanID] = H.[Emp_LanID]
+AND C.[EmpID] = LTRIM(H.[Emp_ID])
+WHERE H.[Emp_Status]= 'EA'
+AND H.[Emp_LanID] IS NOT NULL
+AND C.[StatusID] not in (1,2)
+OPTION (MAXDOP 1)
+END
+
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 -- Inactivate Warnings logs for Termed Employees
 
 BEGIN
@@ -934,7 +972,6 @@ OPTION (MAXDOP 1)
 END
 
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
-
 
 
 GO
