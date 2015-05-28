@@ -1,0 +1,452 @@
+/* DEFAULTS
+----------------------------------------------------------*/
+
+body
+{
+    background: #b6b7bc;
+    font-size: .80em;
+    font-family: "Helvetica Neue", "Lucida Grande", "Segoe UI", Arial, Helvetica, Verdana, sans-serif;
+    margin: 0px;
+    padding: 0px;
+    color: #696969;
+    
+}
+
+.formButton
+{
+	font-weight:700;
+	font-size:.7em;
+	color:#ffffff;
+	font-family:Tahoma;
+	background-color:#507CD1;
+	text-align:center
+}
+
+.subuttons
+
+{
+    width: 150px;
+    height: 35px;
+ font-family: Calibri;
+  font-size: 12pt;
+   font-weight: bold;
+    color: #000000;
+     padding-top: 6px;
+      padding-bottom: 6px;   
+}
+
+.tboxes
+{
+
+border: 1pt #bfbfbf;
+padding: 1px;
+width: 450px;
+height: 100px;
+ 
+}
+
+
+.question
+{
+font-family:Calibri;
+font-size: 12pt;
+font-weight: bold;
+color: #000000;
+padding-top: 6px;
+padding-bottom: 6px;   
+}
+
+
+.description
+{
+font-family:Calibri;
+font-size: 10pt;
+font-weight: normal;
+color: #000000;
+padding-top: 6px;
+padding-bottom: 6px;   
+    
+}
+
+.qcontrol
+{
+font-family:Calibri;
+font-size: 12pt;
+font-weight: normal;
+color: #000000;
+
+    
+}
+
+
+.crquestions
+{
+font-family:Calibri;
+font-size: 10pt;
+font-weight: bold;
+color: #000000;
+padding-top: 0px;
+padding-bottom: 0px;   
+    
+}
+.
+.croptions
+{
+font-family:Calibri;
+font-size: 10pt;
+font-weight: normal;
+color: #000000;
+padding-top: 0px;
+padding-bottom: 0px;   
+    
+}
+
+
+
+.footer
+{
+font-family:Calibri;
+font-size: 10pt;
+font-weight: normal;
+color: #3f3f3f;
+padding-top: 5px;
+padding-bottom: 5px;   
+    
+}
+
+.footlink
+{
+text-decoration: none;
+border-bottom:1px solid #3f3f3f;
+color: #3f3f3f;  
+    
+}
+.question2
+{
+font-family:Calibri;
+font-size: 12pt;
+font-weight: normal;
+color: #000000;
+padding-top: 6px;
+padding-bottom: 6px;   
+}
+
+.alink
+{
+    color: #000000;
+    text-decoration: none;
+    font-size: 10pt;
+    font-weight: 100;
+    font-family: Verdana;
+}
+
+
+a:link, a:visited
+{
+    color: #034af3;
+}
+
+a:hover
+{
+    color: #1d60ff;
+    text-decoration: none;
+}
+
+a:active
+{
+    color: #034af3;
+}
+
+
+
+.warning
+{
+    font-size: 2em;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    color: #990000;
+}
+
+
+.sidelabel
+
+{
+ font-size: 10pt;
+ font-family: Calibri;
+ font-weight: bold;
+ color: #000000;   
+ padding-top: 6px;
+ padding-bottom: 6px; 
+}
+
+.sidetext
+
+{
+    
+ font-size: 10pt;
+ font-family: Calibri;
+ font-weight: normal;
+ color: #000000;
+ padding-top: 6px;
+ padding-bottom: 6px;
+     
+    
+}
+
+.sidetext2
+
+{
+    
+ font-size: 8pt;
+ font-family: Calibri;
+ font-weight: normal;
+ color: #000000;    
+    
+}
+p
+{
+    margin-bottom: 10px;
+    line-height: 1.6em;
+}
+
+.style73
+{
+    font-size: .7em;
+    font-family: Calibri;
+}
+.warning
+{
+    font-size: 2em;
+    font-family: Calibri;
+    text-align: center;
+}
+.lview
+{
+    font-size: .8em;
+}
+.TextBox
+{
+    border-right: #d4d0c8 .1em solid;
+    border-top: #d4d0c8 .1em solid;
+    font-size: .97em;
+    border-left: #d4d0c8 .1em solid;
+    color: #000000;
+    border-bottom: #d4d0c8 .1em solid;
+    font-family: Calibri;
+    background-color: white;
+}
+/* HEADINGS   
+----------------------------------------------------------*/
+
+h2
+{
+    font-size: 1.5em;
+    color: #666666;
+    font-variant: small-caps;
+    text-transform: none;
+    font-weight: 200;
+    margin-bottom: 0px;
+    font-weight: 600;
+    padding: 0px 0px 0px 20px;
+}
+
+
+/* PRIMARY LAYOUT ELEMENTS   
+----------------------------------------------------------*/
+
+.page
+{
+    width: 960px;
+    background-color: #fff;
+   
+    border: 1px solid #496077;
+}
+
+.header
+{
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    background: #990000;
+    width: 100%;
+}
+
+
+
+.top
+{
+    font-size: 2.6em;
+    margin-top: 25px;
+    padding-top: 25px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    vertical-align: bottom;
+    width: 503px;
+}
+.main
+{
+    margin: 0;
+    padding: 0px 0px 0px 20px;
+
+}
+
+
+
+
+/* TAB MENU   
+----------------------------------------------------------*/
+
+div.hideSkiplink
+{
+    background-color: #F9F9F9;
+    color: #ffffff;
+    width: 100%;
+   
+}
+
+
+/* MISC  
+----------------------------------------------------------*/
+
+
+
+
+.clear
+{
+    clear: both;
+}
+
+.title
+{
+    display: block;
+    float: left;
+    text-align: left;
+    width: auto;
+}
+
+.EMessage
+{
+    font-size: 1.2em;
+    color: Red;
+}
+
+.tablestyle
+{
+    font-family: Calibri;
+}
+.tablestyle td, .tablestyle th
+{
+}
+.alternatingrowstyle
+{
+}
+
+.headerstyle a
+{
+    text-decoration: none;
+    color: #ffffff; 
+}
+.rowstyle
+{
+}
+.rowstyle td, .alternatingrowstyle td
+{
+}
+.headerstyle
+{
+    background-image: none;
+    text-align: left;
+    color: #ffffff;
+    font-size: .9em;
+}
+
+.sortascheaderstyle
+{
+    text-decoration: none;
+    background-image: url(../images/sort_asc_alt.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 20px;
+    font-size: .9em;
+}
+.sortdescheaderstyle
+{
+    text-decoration: none;
+    background-image: url(../images/sort_desc.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 20px;
+    font-size: .9em;
+}
+
+.sortascheaderstyle a
+{
+    text-decoration: none;
+}
+.sortdescheaderstyle a
+{
+    text-decoration: none;
+}
+p
+{
+    margin-bottom: 10px;
+    line-height: 1.6em;
+}
+
+.header h1
+{
+    font-weight: 700;
+    margin: 0px;
+    padding: 0px 0px 0px 20px;
+    color: #f9f9f9;
+    border: none;
+    line-height: 2em;
+    font-size: 2em;
+}
+
+.loginDisplay
+{
+    font-size: 1.1em;
+    display: block;
+    text-align: right;
+    padding: 10px;
+    color: White;
+}
+
+.loginDisplay a:link
+{
+    color: white;
+}
+
+.loginDisplay a:visited
+{
+    color: white;
+}
+
+.loginDisplay a:hover
+{
+    color: white;
+}
+
+
+.dashHead
+{
+font-size:14pt;
+font-family:Calibri;
+color: #0099FF;
+
+
+}
+    .nodata
+{
+font-size:8pt;
+font-family:Calibri;
+    
+}
+
+.review
+
+{
+ margin-bottom: 5px;   
+    
+}
