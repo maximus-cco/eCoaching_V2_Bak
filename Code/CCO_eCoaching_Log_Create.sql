@@ -1,9 +1,13 @@
 /*
-eCoaching_Log_Create(10).sql
-Last Modified Date: 11/19/2014
+eCoaching_Log_Create(11).sql
+Last Modified Date: 11/21/2014
 Last Modified By: Susmitha Palacherla
 
-Version 10;
+Version 11:
+1. Update to 1 procedure (SP # 56) to set warning flag for supervisors to 1.
+  (Modules by job code)SCR 13542
+
+Version 10:
 1. Update 1 procedure (SP # 8) to add source filter that was
   discovered to be missing during testing for SCR 13659.
 
@@ -4805,6 +4809,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	7/31/14
@@ -4812,8 +4817,8 @@ GO
 --  If Job code exists in the submisison table returns the valid submission modules.
 --  If job code does not exist in the submisisons table returns 'CSR' as a valid sumission module.
 --  Last Modified By: Susmitha Palacherla
---  Last Modified Date: 10/02/2014
---  Modified per SCR 13479 to Incorporate progtessive Warnings for CSRs
+--  Last Modified Date: 11/21/2014
+--  Modified per SCR 13542 to Incorporate progressive Warnings for Supervisors
 
 --  
 --	=====================================================================
@@ -4849,7 +4854,7 @@ if @nvcCSR is null
  2. Module Name
  3. Module ID
  4. Whether CSE will be displayed or not
- 5. Whether warning will be diaplayed for Direct or Not
+ 5. Whether warning will be displayed for Direct or Not
 */
 
 SET @nvcSQL = 'SELECT TOP 1 CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1-1'' as BySite
@@ -4861,7 +4866,7 @@ SET @nvcSQL = 'SELECT Module, BySite FROM
 (SELECT CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1-1'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION
-SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, ''0-Supervisor-2-1-0'' as BySite from [EC].[Module_Submission] 
+SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, ''0-Supervisor-2-1-1'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION 
 SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, ''0-Quality Specialist-3-0-0'' as BySite from [EC].[Module_Submission] 
@@ -4871,7 +4876,11 @@ where Module is not Null '
 
 EXEC (@nvcSQL)	
 END --sp_Select_Modules_By_Job_Code
+
 GO
+
+
+
 
 
 
