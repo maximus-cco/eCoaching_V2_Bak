@@ -4,6 +4,7 @@
 Summary
 1.Add record(s) to TABLE [EC].[DIM_Sub_Coaching_Reason]
 2.Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+3: General updates
 
 */
 
@@ -50,3 +51,20 @@ GO
 
 
 
+--step3: General updates
+
+Update [EC].[DIM_Sub_Coaching_Reason]
+set [SubCoachingReason]= 'Other: Specify reason under coaching details.'
+where [SubCoachingReasonID]= 42
+GO
+
+Update [EC].[DIM_Sub_Coaching_Reason]
+set [SubCoachingReason]= 'Other: Specify'
+where [SubCoachingReasonID]= 62
+GO
+
+Update [EC].[Coaching_Reason_Selection]
+set [SubCoachingReasonID]= 42
+where [CoachingReasonID]= 16
+and [SubCoachingReasonID]= 62
+GO
