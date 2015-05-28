@@ -1,8 +1,13 @@
 ﻿Imports System
 Imports System.Configuration
+Imports System.IO
 Imports System.Web.UI.WebControls
 Imports AjaxControlToolkit
 Imports System.Data.SqlClient
+Imports System.Web.Configuration
+
+Imports NPOI.SS.UserModel
+Imports NPOI.XSSF.UserModel
 
 Public Class view4
     Inherits System.Web.UI.Page
@@ -10,6 +15,7 @@ Public Class view4
     Dim domain As String
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim backDate As String = DateAdd("D", -548, TodaysDate).ToShortDateString()
+    Dim connectionString As String = WebConfigurationManager.ConnectionStrings("CoachingConnectionString").ConnectionString
 
     Dim counter As Integer
 
@@ -390,15 +396,154 @@ Public Class view4
 
     End Sub
 
+    Protected Sub ExportButton_Click(sender As Object, e As EventArgs) Handles ExportButton.Click
+        ExportToExcel()
+    End Sub
 
 
+    Private Sub ExportToExcel()
+        Dim workbook As IWorkbook = New XSSFWorkbook()
+        Dim sheet As ISheet = workbook.CreateSheet("Sheet1")
+        Dim fileName As String = ContructFileName()
+        ' start date user selects on the page
+        Dim startDate As String = IIf(String.IsNullOrEmpty(Date1.Text), backDate, Date1.Text)
+        ' end date user selects on the page
+        Dim endDate As String = IIf(String.IsNullOrEmpty(Date2.Text), TodaysDate, Date2.Text)
 
+        Response.Clear()
+        Response.Buffer = True
+        ' Needed for hiding Please Wait Modal dialog
+        Response.AppendCookie(New HttpCookie("tokenValue", hiddenTokenId.Value))
+        Response.Charset = "UTF-8"
+        ' Give user option to open or save the excel file
+        Response.AddHeader("content-disposition", "attachment;filename=" & fileName)
+        Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
+        ' Call sp to get data and write to Sheet1
+        Using connection As New SqlConnection(connectionString)
+            Using Command As New SqlCommand("EC.sp_SelectFrom_Coaching_Log_Historical_Export", connection)
+                connection.Open()
+                Command.CommandType = CommandType.StoredProcedure
+                Command.Parameters.AddWithValue("strSourcein", ddSource.SelectedValue)
+                Command.Parameters.AddWithValue("@strCSRSitein", ddSite.SelectedValue)
+                Command.Parameters.AddWithValue("@strCSRin", ddCSR.SelectedValue)
+                Command.Parameters.AddWithValue("@strSUPin", ddSUP.SelectedValue)
+                Command.Parameters.AddWithValue("@strMGRin", ddMGR.SelectedValue)
+                Command.Parameters.AddWithValue("@strSubmitterin", ddSubmitter.SelectedValue)
+                Command.Parameters.AddWithValue("@strSDatein", startDate)
+                Command.Parameters.AddWithValue("@strEDatein", endDate)
+                Command.Parameters.AddWithValue("@strStatusin", ddStatus.SelectedValue)
+                Command.Parameters.AddWithValue("@strvalue", ddValue.SelectedValue)
+                Command.CommandTimeout = 300
 
+                Using dataReader As SqlDataReader = Command.ExecuteReader()
+                    Dim rowNumber As Integer = 2
+                    Dim cellStyle As ICellStyle = workbook.CreateCellStyle()
+                    Dim row As IRow
+                    Dim cell As ICell
+                    Dim cellValue As String
 
+                    CreateFiltersRow(sheet, startDate, endDate)
+                    CreateHeaderRow(dataReader, workbook, sheet)
+                    ' Set Columns width
+                    SetAllColumnsWidth(sheet)
 
+                    cellStyle.WrapText = True
+                    While dataReader.Read()
+                        ' Create a new row
+                        row = sheet.CreateRow(rowNumber)
+                        For i = 0 To (dataReader.FieldCount - 1)
+                            cell = row.CreateCell(i)
+                            cellValue = IIf(dataReader(i) Is DBNull.Value, String.Empty, dataReader(i).ToString())
+                            cell.SetCellValue(dataReader(i).ToString())
+                            cell.CellStyle = cellStyle
+                        Next
+                        rowNumber = rowNumber + 1
+                    End While
 
+                End Using
+            End Using
+        End Using
 
+        ' Write Excel Workbook to response outputstream
+        workbook.Write(Response.OutputStream)
+        Response.Flush()
+        Response.End()
+    End Sub
 
+    Private Sub CreateFiltersRow(ByVal sheet As ISheet, ByVal startDate As String, ByVal endDate As String)
+        Dim row As IRow = sheet.CreateRow(0)
+        Dim cell As ICell = row.CreateCell(0)
+        Dim filters As New StringBuilder
+        Dim site As String = IIf(String.Compare(ddSite.SelectedValue, "%", True) = 0, "All", ddSite.SelectedValue)
+        Dim employeeName As String = IIf(String.Compare(ddCSR.SelectedValue, "%", True) = 0, "All", ddCSR.SelectedValue)
+        Dim supervisorName As String = IIf(String.Compare(ddSUP.SelectedValue, "%", True) = 0, "All", ddSUP.SelectedValue)
+        Dim managerName As String = IIf(String.Compare(ddMGR.SelectedValue, "%", True) = 0, "All", ddMGR.SelectedValue)
+        Dim submitter As String = IIf(String.Compare(ddSubmitter.SelectedValue, "%", True) = 0, "All", ddSubmitter.SelectedValue)
+        Dim status As String = IIf(String.Compare(ddStatus.SelectedValue, "%", True) = 0, "All", ddStatus.SelectedValue)
+        Dim source As String = IIf(String.Compare(ddSource.SelectedValue, "%", True) = 0, "All", ddSource.SelectedValue)
+        Dim value As String = IIf(String.Compare(ddValue.SelectedValue, "%", True) = 0, "All", ddValue.SelectedValue)
+
+        filters.Append("Site: " & site & ";  ")
+        filters.Append("Empployee: " & employeeName & ";  ")
+        filters.Append("Manager: " & supervisorName & ";  ")
+        filters.Append("Submitter: " & submitter & ";  ")
+        filters.Append("Status: " & status & ";  ")
+        filters.Append("Source: " & source & ";  ")
+        filters.Append("Value: " & value & ";  ")
+        filters.Append("Submitted: " & startDate & " ~ " & endDate)
+
+        cell.SetCellValue(filters.ToString())
+    End Sub
+
+    Private Function ContructFileName() As String
+        Dim fileDateTime As String = DateTime.Now.ToString("yyyyMMdd") & "_" & DateTime.Now.ToString("HHmmss")
+        Return "HistoricalLogs_" & fileDateTime & ".xlsx"
+    End Function
+
+    Private Sub CreateHeaderRow(ByVal dataReader As SqlDataReader, ByVal workbook As IWorkbook, ByVal sheet As ISheet)
+        Dim headerRow As IRow = sheet.CreateRow(1)
+        Dim cell As ICell
+        Dim cellStyle As ICellStyle = workbook.CreateCellStyle()
+        Dim font As IFont = workbook.CreateFont()
+
+        font.Boldweight = FontBoldWeight.Bold
+        cellStyle.SetFont(font)
+
+        For i = 0 To (dataReader.FieldCount - 1)
+            cell = headerRow.CreateCell(i)
+            cell.SetCellValue(dataReader.GetName(i))
+            cell.CellStyle = cellStyle
+        Next
+    End Sub
+
+    Private Sub SetAllColumnsWidth(ByVal sheet As ISheet)
+        sheet.SetColumnWidth(0, 12 * 256)      ' coaching id
+        sheet.SetColumnWidth(1, 32 * 256)      ' form name
+        sheet.SetColumnWidth(2, 15 * 256)      ' program name 
+        sheet.SetColumnWidth(3, 12 * 256)      ' employee id
+        sheet.SetColumnWidth(4, 28 * 256)      ' employee name
+        sheet.SetColumnWidth(5, 28 * 256)      ' supervisor name
+        sheet.SetColumnWidth(6, 28 * 256)      ' manager name 
+        sheet.SetColumnWidth(7, 12 * 256)      ' site
+        sheet.SetColumnWidth(8, 12 * 256)      ' source
+        sheet.SetColumnWidth(9, 22 * 256)      ' sub source
+        sheet.SetColumnWidth(10, 28 * 256)     ' coaching reason
+        sheet.SetColumnWidth(11, 40 * 256)     ' sub coaching reason    
+        sheet.SetColumnWidth(12, 15 * 256)     ' value
+        sheet.SetColumnWidth(13, 25 * 256)     ' form status
+        sheet.SetColumnWidth(14, 28 * 256)     ' submitted by
+        sheet.SetColumnWidth(15, 22 * 256)     ' event date
+        sheet.SetColumnWidth(16, 32 * 256)     ' verint id
+        sheet.SetColumnWidth(17, 70 * 256)     ' description - this is really really long!
+        sheet.SetColumnWidth(18, 35 * 256)     ' coaching notes
+        sheet.SetColumnWidth(19, 22 * 256)     ' submitted date
+        sheet.SetColumnWidth(20, 22 * 256)     ' supervisor reviewed auto date
+        sheet.SetColumnWidth(21, 22 * 256)     ' manager reviewed manual date
+        sheet.SetColumnWidth(22, 22 * 256)     ' manager reviewed auto date
+        sheet.SetColumnWidth(23, 35 * 256)     ' manager notes
+        sheet.SetColumnWidth(24, 22 * 256)     ' employee review auto date
+        sheet.SetColumnWidth(25, 22 * 256)     ' employee comments
+    End Sub
 
 End Class

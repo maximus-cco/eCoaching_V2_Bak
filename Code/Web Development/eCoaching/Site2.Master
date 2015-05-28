@@ -6,6 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <title>&nbsp;</title>
     <link href="~/Styles/Site.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
     </asp:ContentPlaceHolder>
     <style type="text/css">
@@ -13,24 +15,60 @@
         {
             background-color: white;
         }
-        
-      
-
-        </style>
+    </style>
 </head>
 <body id="ctest">
     <form id="Form1" runat="server">
     <div class="page" style="border: none; margin: 0px;">
-        
         <div class="main">
-                   <div>
+            <div>
                 <asp:ContentPlaceHolder ID="ContentPlaceHolder3" runat="server">
-                  </asp:ContentPlaceHolder>
+                </asp:ContentPlaceHolder>
             </div>  
-                          <div class="footer">&nbsp; </div>
-                        </div>
+            <div class="footer">&nbsp; </div>
+            </div>
        </div>
              
     </form> 
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="scripts/jquery.cookie.js"></script> 
+
+    <script type="text/javascript">
+        var blockUITimer;
+        function blockUI() {
+            var token = new Date().getTime();
+            $('.hidden-token-class').val(token)
+            showHide.showPleaseWait();
+
+            blockUITimer = window.setInterval(function () {
+                var cookieValue = $.cookie('tokenValue');
+                if (cookieValue == token)
+                    finish();
+            }, 1000);
+        }
+
+        function finish() {
+            window.clearInterval(blockUITimer);
+            $.removeCookie('tokenValue');
+            showHide.hidePleaseWait();
+        }
+
+        var showHide;
+        showHide = showHide || (function () {
+            var pleaseWaitDiv = $('<div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h3>Please wait while we process your request...</h3></div><div class="modal-body"><div class="progress progress-striped active"><div class="progress-bar" style="width: 100%;"></div></div></div></div></div></div>');
+
+            return {
+                showPleaseWait: function () {
+                    pleaseWaitDiv.modal();
+                },
+                hidePleaseWait: function () {
+                    pleaseWaitDiv.modal("hide");
+                },
+            };
+        })();
+    </script>  
+
 </body>
 </html>
