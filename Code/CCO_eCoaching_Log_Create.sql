@@ -1,7 +1,15 @@
 /*
-eCoaching_Log_Create(18).sql
-Last Modified Date: 02/18/2015
+eCoaching_Log_Create(19).sql
+Last Modified Date: 03/19/2015
 Last Modified By: Susmitha Palacherla
+
+Version 19:
+1. Phase III Updates for dashboard redesign SCR 14422
+   Modified procedures #4 through #44.
+    Added new procedures #66 through #71.
+
+2. Phase III Updates for Sr Management dashboard SCR 14423
+      Added new procedures #72 through #76.
 
 Version 18:
 Updates to [EC].[sp_Select_Employees_By_Module](SP # 55) to restrict users from 
@@ -170,13 +178,18 @@ Procedures
 63.[EC].[sp_Select_Email_Attributes]
 64. [EC].[sp_SelectReviewFrom_Coaching_Log_Reasons]
 65. [EC].[sp_Select_Values_By_Reason]
-66.
-67.
-68.
-69.
-70.
-
-
+66. [EC].[sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2]
+67. [EC].[sp_Select_Sites_For_Dashboard] 
+68. [EC].[sp_Select_Sources_For_Dashboard] 
+69. [EC].[sp_Select_States_For_Dashboard]
+70. [EC].[sp_Select_Statuses_For_Dashboard] 
+71. [EC].[sp_Select_Values_For_Dashboard] 
+72. [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching] 
+73. [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam] 
+74. [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam] 
+75. [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam] 
+76. [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] 
+77. 
 
 */
 
@@ -1004,13 +1017,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 --	====================================================================
---	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
--- Last Modified Date: 08/20/2014
+-- Author:			Susmitha Palacherla
+-- Create Date:	11/16/11
+-- Description: Displays an Employee's Completed logs in the My Dashboard.
+-- Last Modified Date: 03/05/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRCompleted] @strCSRin nvarchar(30)
 AS
@@ -1021,6 +1036,7 @@ DECLARE
 @nvcSQL nvarchar(max),
 @strFormStatus nvarchar(30)
 
+
  Set @strFormStatus = 'Completed'
 
 SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
@@ -1029,12 +1045,10 @@ SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
 		[eh].[Mgr_Name]	strCSRMgrName,
 		[S].[Status]	strFormStatus,
 		[cl].[SubmittedDate] SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and eh.[Emp_LanID] = '''+@strCSRin+'''
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID
+where eh.[Emp_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRin+''',Getdate())
 and [S].[Status] = '''+@strFormStatus+'''
 Order By [cl].[SubmittedDate] DESC'
 
@@ -1044,7 +1058,6 @@ END -- sp_SelectFrom_Coaching_Log_CSRCompleted
 
 
 GO
-
 
 
 
@@ -1069,10 +1082,13 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
--- Last Modified Date: 08/20/14
+--	Create Date:	11/16/2011
+--  Description: Displays an Employees Pending logs in the My Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRPending] @strCSRin nvarchar(30)
 AS
@@ -1091,12 +1107,10 @@ SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
 		[eh].[Emp_Name]	strCSRName,
 		[S].[Status]	strFormStatus,
 		[cl].[SubmittedDate] SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and eh.[Emp_LanID] = '''+@strCSRin+'''
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID
+where eh.[Emp_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRin+''',Getdate())
 and ([S].[Status] = '''+@strFormStatus+''' or [S].[Status] = '''+@strFormStatus2+''')
 Order By [cl].[SubmittedDate] DESC'
 
@@ -1107,6 +1121,7 @@ END -- sp_SelectFrom_Coaching_Log_CSRPending
 
 
 GO
+
 
 
 
@@ -1133,11 +1148,12 @@ GO
 
 --	====================================================================
 --	Author:			Jourdain Augustin
---	Create Date:	4/30/12
+--	Create Date:	4/30/2012
 --	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
--- Last Modified Date: 02/10/2015
+-- Last Modified Date: 03/13/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 14065 to add warning sections for HR display.
+-- Modified per SCR 14422 dashboard redesign.
+-- 1. Replaced existing parameters @strIsOpp and @strIsForce with new param @strvalue
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
 
@@ -1146,13 +1162,14 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
 @strCSRin nvarchar(30),
 @strSUPin nvarchar(30),
 @strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
 @strSDatein datetime,
 @strEDatein datetime,
-@strIsOpp nvarchar(8),
+--@strIsOpp nvarchar(8),
 @strStatusin nvarchar(30), 
-@strIsForce nvarchar(8),
-@strjobcode  nvarchar(20)
-
+--@strIsForce nvarchar(8),
+@strjobcode  nvarchar(20),
+@strvalue  nvarchar(30)
 AS
 
 
@@ -1164,23 +1181,16 @@ DECLARE
 @nvcSQL3 nvarchar(max),
 @nvcSQL4 nvarchar(100),
 @strFormStatus nvarchar(30),
---@strFormStatus2 nvarchar(30),
---@strFormStatus3 nvarchar(30),
---@strFormStatus4 nvarchar(30),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8)
 
 
 Set @strFormStatus = 'Inactive'
---Set @strFormStatus2 = 'Pending CSR Review'
---Set @strFormStatus3 = 'Pending Supervisor Review'
---Set @strFormStatus4 = 'Pending Manager Review'
-
 Set @strSDate = convert(varchar(8),@strSDatein,112)
 Set @strEDate = convert(varchar(8),@strEDatein,112)
 
 
-SET @nvcSQL1 = 'select	 x.strFormID
+SET @nvcSQL1 = 'select DISTINCT x.strFormID
 		,x.strCSRName
 		,x.strCSRSupName
 		,x.strCSRMgrName
@@ -1192,7 +1202,7 @@ SET @nvcSQL1 = 'select	 x.strFormID
 		,x.numReinforcement
 		,x.orderkey
 from (
-SELECT [cl].[FormName]	strFormID
+SELECT DISTINCT [cl].[FormName]	strFormID
 		,[eh].[Emp_Name]	strCSRName
 		,[eh].[Sup_Name]	strCSRSupName
 		,[eh].[Mgr_Name]	strCSRMgrName
@@ -1211,24 +1221,25 @@ ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
 ON cl.SiteID = si.SiteID JOIN  [EC].[Coaching_Log_Reason] clr
 ON cl.CoachingID = clr.CoachingID
 WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
-and [s].[Status] Like '''+@strStatusin+'''
+AND [s].[Status] Like '''+@strStatusin+'''
+AND [clr].[value] Like '''+@strvalue+'''
 AND ISNULL([eh].[Emp_Name], '' '') LIKE '''+@strCSRin+''' 
 AND ISNULL([eh].[Sup_Name], '' '') LIKE '''+@strSUPin+''' 
 AND ISNULL([eh].[Mgr_Name], '' '') LIKE '''+@strMGRin+''' 
+AND ISNULL([sh].[Emp_Name], '' '') LIKE '''+@strSubmitterin+''' 
 and ISNULL([si].[City], '' '') LIKE '''+@strCSRSitein+'''
 and convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''
 and convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
 and [s].[Status] <> '''+@strFormStatus+'''
 GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
 [s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name]
-) x
-where ISNULL(x.numOpportunity, '' '') LIKE '''+@strIsOpp+'''
-and ISNULL(x.numReinforcement, '' '') LIKE '''+@strIsForce+''''
+) x'
+
 
 
 SET @nvcSQL2 = ' UNION ALL '
 
-SET @nvcSQL3 = 'select	 x.strFormID
+SET @nvcSQL3 = 'select DISTINCT x.strFormID
 		,x.strCSRName
 		,x.strCSRSupName
 		,x.strCSRMgrName
@@ -1240,7 +1251,7 @@ SET @nvcSQL3 = 'select	 x.strFormID
 		,x.numReinforcement
 		,x.orderkey
 from (
-SELECT [wl].[FormName]	strFormID
+SELECT DISTINCT [wl].[FormName]	strFormID
 		,[eh].[Emp_Name]	strCSRName
 		,[eh].[Sup_Name]	strCSRSupName
 		,[eh].[Mgr_Name]	strCSRMgrName
@@ -1260,21 +1271,22 @@ ON wl.SiteID = si.SiteID JOIN  [EC].[Warning_Log_Reason] wlr
 ON wl.WarningID = wlr.WarningID
 WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
 and [s].[Status] Like '''+@strStatusin+'''
+AND [wlr].[value] Like '''+@strvalue+'''
 AND ISNULL([eh].[Emp_Name], '' '') LIKE '''+@strCSRin+''' 
 AND ISNULL([eh].[Sup_Name], '' '') LIKE '''+@strSUPin+''' 
 AND ISNULL([eh].[Mgr_Name], '' '') LIKE '''+@strMGRin+''' 
+AND ISNULL([sh].[Emp_Name], '' '') LIKE '''+@strSubmitterin+''' 
 and ISNULL([si].[City], '' '') LIKE '''+@strCSRSitein+'''
 and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
 and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
 and [s].[Status] <> '''+@strFormStatus+'''
 GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
 [s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name]
-) x
-where ISNULL(x.numOpportunity, '' '') LIKE '''+@strIsOpp+'''
-and ISNULL(x.numReinforcement, '' '') LIKE '''+@strIsForce+''''
+) x'
 
 
- SET @nvcSQL4 = ' ORDER BY orderkey, submitteddate desc'
+
+ SET @nvcSQL4 = '  ORDER BY orderkey, submitteddate desc'
 
 IF @strjobcode in ('WHER13', 'WHER50',
 'WHHR12', 'WHHR13', 'WHHR14',
@@ -1327,11 +1339,14 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
---	Description: *	This procedure selects the CSR e-Coaching records from the Coaching_Log table
--- Last Modified Date: 08/20/14
+--	Create Date:	11/16/2011
+--	Description: This procedure selects the completed e-Coaching records 
+--  for a given Manager's employees in the Manager Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRCompleted] 
 
@@ -1363,14 +1378,11 @@ SET @nvcSQL = 'SELECT	[cl].[FormName]	strFormID,
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[DIM_Source] sc,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where [cl].[EmpID] = [eh].[Emp_ID]
-and [cl].[StatusID] = [s].[StatusID]
-and [cl].[SourceID] = [sc].[SourceID]
-and [eh].[Mgr_LanID] = '''+@strCSRMGRin+'''
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+[cl].[EmpID] = [eh].[Emp_ID]Join [EC].[DIM_Status] s ON
+[cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
+[cl].[SourceID] = [sc].[SourceID] 
+where eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',Getdate())
 and [S].[Status] = '''+@strFormStatus+'''
 and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
 and [eh].[Emp_Name] Like '''+@strCSRin+'''
@@ -1385,6 +1397,9 @@ END --sp_SelectFrom_Coaching_Log_MGRCSRCompleted
 
 
 GO
+
+
+
 
 
 
@@ -1409,15 +1424,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
---	Description: *	This procedure selects the CSR e-Coaching records from the Coaching_Log table
--- Where the status is Prnding Review. 
--- Last Modified Date: 11/19/2014
+--	Create Date:	11/16/2011
+--	Description: This procedure selects the Pendingd e-Coaching records 
+--  for a given Manager's employees in the Manager Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Modified to add missing Source filter discovered during testing for SCR 13659.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending] 
 
@@ -1442,14 +1457,11 @@ SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource] strSource,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[DIM_Source] sc,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where [cl].[EmpID] = [eh].[Emp_ID]
-and [cl].[StatusID] = [s].[StatusID]
-and [cl].[SourceID] = [sc].[SourceID]  
-and [eh].[Mgr_LanID] = '''+@strCSRMGRin+'''
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+[cl].[EmpID] = [eh].[Emp_ID] Join [EC].[DIM_Status] s ON
+[cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
+[cl].[SourceID] = [sc].[SourceID] 
+where eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',Getdate())
 and [S].[Status] like ''Pending%''
 and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
 and [eh].[Emp_Name] Like '''+@strCSRin+'''
@@ -1458,6 +1470,7 @@ Order By [SubmittedDate] DESC'
 		
 EXEC (@nvcSQL)	   
 END --sp_SelectFrom_Coaching_Log_MGRCSRPending
+
 
 GO
 
@@ -1487,18 +1500,17 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
---	Description: *	This procedure selects the CSR e-Coaching records from the Coaching_Log table
--- Where the status is Pending Review. 
--- Last Modified Date: 08/20/14
+--	Description: This procedure selects the Pending e-Coaching records 
+--  for a given Manager in the Manager Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename  CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
-
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending] 
 @strCSRMGRin nvarchar(30),
 @strCSRin nvarchar(30),
@@ -1516,7 +1528,6 @@ DECLARE
 @strFormStatus5 nvarchar(50),
 @strFormStatus6 nvarchar(50)
 
-
  Set @strFormStatus1 = 'Pending Manager Review'
  Set @strFormStatus2 = 'Pending Supervisor Review'
  Set @strFormStatus3 = 'Pending Acknowledgement'
@@ -1530,13 +1541,12 @@ SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
 		[eh].[Sup_Name]	strCSRSupName, 
 		[s].[Status]	strFormStatus,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where [cl].[EmpID] = [eh].[Emp_ID]
-and [cl].[StatusID] = [s].[StatusID]
-and ((([eh].[Mgr_LanID] =  '''+@strCSRMGRin+''') and ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus4+''' OR [S].[Status] = '''+@strFormStatus5+''')) 
-OR (([eh].[Sup_LanID] =  '''+@strCSRMGRin+''') and ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+''' OR [S].[Status] = '''+@strFormStatus3+''' OR [S].[Status] = '''+@strFormStatus6+''')))
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID
+where ((eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',Getdate()) and ([S].[Status] = '''+@strFormStatus1+''' OR
+[S].[Status] = '''+@strFormStatus4+''' OR [S].[Status] = '''+@strFormStatus5+''')) OR
+(eh.[Sup_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',Getdate())and ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+''' OR [S].[Status] = '''+@strFormStatus3+''' OR [S].[Status] = '''+@strFormStatus6+''')))
 and [eh].[Emp_Name] Like '''+@strCSRin+'''
 and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
 Order By [SubmittedDate] DESC'
@@ -1546,10 +1556,9 @@ EXEC (@nvcSQL)
 	    
 END -- sp_SelectFrom_Coaching_Log_MGRPending
 
-
-
-
 GO
+
+
 
 
 
@@ -1574,14 +1583,18 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
---	Description: *	This procedure selects the support staff's submitted comopleted records from the Coaching_Log table and displayed on dashboard
--- Where the user's LAN is strSubmitter. 
--- Last Modified Date: 08/20/14
+--	Create Date:	11/16/2011
+--	Description: This procedure selects the completed records from the Coaching_Log table 
+--  and displays on the My submissions dashboard where the logged in user is the ecl submitter. 
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename  CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff] 
 @strUserin nvarchar(30),
@@ -1605,30 +1618,25 @@ SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID
 		,[eh].[Sup_Name]	strCSRSupName
 		,[eh].[Mgr_Name]	strCSRMgrName
 		,[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-WHERE cl.EmpID = eh.Emp_ID
-AND cl.StatusID = s.StatusID
-AND cl.SubmitterID = sh.EMP_ID 
-AND sh.Emp_LanID = '''+@strUserin+''' 
-AND [eh].[Emp_Name]= '''+@strCSRin+''' 
-AND [eh].[Sup_Name]= '''+@strCSRSupin+''' 
-AND [eh].[Mgr_Name]= '''+@strCSRMgrin+''' 
-and s.[Status] <> '''+@strFormStatus+'''
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+WHERE sh.Emp_ID = EC.fn_nvcGetEmpIdFromLanID('''+@strUserin+''',Getdate())
+AND [eh].[Emp_Name] Like '''+@strCSRin+''' 
+AND [eh].[Sup_Name] Like '''+@strCSRSupin+''' 
+AND [eh].[Mgr_Name] Like '''+@strCSRMgrin+''' 
+and s.[Status] = '''+@strFormStatus+'''
 Order By [cl].[SubmittedDate] DESC'
 
 		
 EXEC (@nvcSQL)	
+--print @nvcSQL
 	    
 END -- sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff
 
 
 GO
-
-
-
 
 
 
@@ -1655,12 +1663,16 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
---	Description: *	This procedure selects the support staff's submitted pending records from the Coaching_Log table and displayed on dashboard
--- Where the user's LAN is strSubmitter. 
--- Last Modified Date: 08/20/14
+--	Create Date:	11/16/2011
+--	Description: This procedure selects the pending records from the Coaching_Log table 
+--  and displays on the My submissions dashboard where the logged in user is the ecl submitter. 
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename  CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added additional statuses.
+-- 3. Lan ID association by date.
+
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPenSubmitted_DashboardStaff] 
 @strUserin nvarchar(30),
@@ -1673,15 +1685,7 @@ AS
 
 BEGIN
 DECLARE	
-@nvcSQL nvarchar(max),
-@strFormStatus nvarchar(30),
-@strFormStatus2 nvarchar(30),
-@strFormStatus3 nvarchar(30)
-
-
- Set @strFormStatus = 'Pending Employee Review'
- Set @strFormStatus2 = 'Pending Manager Review'
- Set @strFormStatus3 = 'Pending Supervisor Review'
+@nvcSQL nvarchar(max)
 
 
 SET @nvcSQL = 'SELECT
@@ -1691,18 +1695,15 @@ SET @nvcSQL = 'SELECT
 		,eh.Sup_Name	strCSRSupName
 		,eh.Mgr_Name	strCSRMgrName
 		,cl.SubmittedDate	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.SubmitterID = sh.Emp_ID
-and sh.Emp_LanID = '''+@strUserin+''' 
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID = EC.fn_nvcGetEmpIdFromLanID('''+@strUserin+''',Getdate())
 and eh.Emp_Name Like '''+@strCSRin+'%''
 and eh.Sup_Name Like '''+@strCSRSupin+'%''
 and eh.Mgr_Name Like '''+@strCSRMgrin+'%''
-and ((S.Status = '''+@strFormStatus+''') or (S.Status = '''+@strFormStatus2+''') or (S.Status = '''+@strFormStatus3+'''))
+and S.Status Like ''Pending%''
 Order By cl.SubmittedDate DESC'
 
 		
@@ -1712,7 +1713,6 @@ END --sp_SelectFrom_Coaching_Log_MyPenSubmitted_DashboardStaff
 
 
 GO
-
 
 
 
@@ -1737,15 +1737,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
---	Description: *	This procedure selects the user's recent submitted records from the Coaching_Log table and displayed on dashboard (includes completed)
--- Where the user's LAN is strSubmitter.
--- Last Modified Date: 08/20/14
+--	Create Date:	11/16/2011
+--	Description: This procedure selects the pending and completed records from the Coaching_Log table 
+--  and displays on the My submissions dashboard where the logged in user is the ecl submitter. 
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename  CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/15/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard] 
 @strUserin nvarchar(30)
@@ -1766,14 +1767,11 @@ SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
 		[eh].[Sup_Name]	strCSRSupName,
 		[eh].[Mgr_Name]	strCSRMgrName,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strUserin+''' 
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID = EC.fn_nvcGetEmpIdFromLanID('''+@strUserin+''',Getdate())
 and s.[Status] <> '''+@strFormStatus+'''
 Order By [cl].[SubmittedDate] DESC'
 		
@@ -1783,6 +1781,9 @@ END --sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard
 
 
 GO
+
+
+
 
 ******************************************************************
 
@@ -1806,12 +1807,13 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
---	Description: *	This procedure selects the Supervisor user's submitted records from the Coaching_Log table and displayed on dashboard (includes completed)
---  Where the user's LAN is strSubmitter. 
--- Last Modified Date: 08/20/14
+--	Create Date:	11/16/2011
+--	Description: This procedure selects the pending and completed records from the Coaching_Log table 
+--  and displays on the My submissions manager dashboard where the logged in manager is the ecl submitter. 
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_DashboardMGR] 
 @strUserin nvarchar(30),
@@ -1835,15 +1837,11 @@ SET @nvcSQL = 'SELECT  cl.[FormName] strFormID,
 		eh.[Sup_Name]	strCSRSupName,
 		eh.[Mgr_Name]	strCSRMgrName,
 		cl.[SubmittedDate] SubmittedDate
-from EC.Coaching_Log cl WITH(NOLOCK),
-	EC.Employee_Hierarchy eh,
-	EC.DIM_Status s
-where cl.StatusID = s.StatusID
-and cl.EmpID = eh.Emp_ID
-and cl.submitterID = (
-select sh.emp_ID
-from EC.Employee_Hierarchy sh
-where sh.emp_LanID = '''+@strUserin+''')
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID = EC.fn_nvcGetEmpIdFromLanID('''+@strUserin+''',Getdate())
 and eh.[Emp_Name] LIKE '''+@strCSRin+'''
 and eh.[Sup_Name] LIKE '''+@strCSRSupin+'''
 and eh.[Mgr_Name] LIKE '''+@strCSRMgrin+'''
@@ -1859,6 +1857,8 @@ END --sp_SelectFrom_Coaching_Log_MySubmitted_DashboardMGR
 
 
 GO
+
+
 
 
 
@@ -1887,12 +1887,13 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
---	Description: *	This procedure selects the Supervisor user's submitted records from the Coaching_Log table and displayed on dashboard (includes completed)
--- Where the user's LAN is strSubmitter. 
--- Last Modified Date: 08/20/14
+--	Create Date:	11/16/2011
+--	Description: This procedure selects the pending and completed records from the Coaching_Log table 
+--  and displays on the My submissions manager dashboard where the logged in supervisor is the ecl submitter. 
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_DashboardSUP] 
 @strUserin nvarchar(30),
@@ -1917,16 +1918,16 @@ SET @nvcSQL = 'SELECT  cl.[FormName] strFormID,
 		eh.[Emp_Name]	strCSRName,
 		eh.[Sup_Name]	strCSRSupName,
 		eh.[Mgr_Name]	strCSRMgrName,
-		cl.[SubmittedDate] SubmittedDate
-from EC.Coaching_Log cl WITH(NOLOCK),
-	EC.Employee_Hierarchy eh,
-	EC.DIM_Status s
-where cl.StatusID = s.StatusID
-and cl.EmpID = eh.Emp_ID
-and cl.submitterID = (
-select sh.emp_ID
-from EC.Employee_Hierarchy sh
-where sh.emp_LanID = '''+@strUserin+''')
+		cl.[SubmittedDate] SubmittedDate,
+		dsc.[SubCoachingReason]SubCoachingReason,
+		clr.[Value] Value
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID JOIN [EC].[Coaching_Log_Reason] clr ON
+cl.CoachingID = clr.CoachingID JOIn [EC].[DIM_Sub_Coaching_Reason]dsc ON
+clr.SubCoachingReasonID = dsc.SubCoachingReasonID
+where sh.Emp_ID = EC.fn_nvcGetEmpIdFromLanID('''+@strUserin+''',Getdate())
 and eh.[Emp_Name] LIKE '''+@strCSRin+'''
 and eh.[Sup_Name] LIKE '''+@strCSRSupin+'''
 and eh.[Mgr_Name] LIKE '''+@strCSRMgrin+'''
@@ -1937,7 +1938,6 @@ Order by cl.[SubmittedDate] DESC'
 EXEC (@nvcSQL)	
 	    
 END --sp_SelectFrom_Coaching_Log_MySubmitted_DashboardSUP
-
 
 GO
 
@@ -1966,15 +1966,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
---	Description: *	This procedure selects the SUP e-Coaching records from the Coaching_Log table
--- Where the status is Completed. 
--- Last Modified Date: 08/20/14
+--	Create Date:	11/16/2011
+--	Description: This procedure selects the completed e-Coaching records 
+--  for a given supervisor's employees in the supervisor Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRCompleted] 
 @strSourcein nvarchar(100),
@@ -2004,14 +2005,11 @@ SET @nvcSQL = 'SELECT	[cl].[FormName]	strFormID,
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[DIM_Source] sc,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where [cl].[EmpID] = [eh].[Emp_ID]
-and [cl].[StatusID] = [s].[StatusID]
-and [cl].[SourceID] = [sc].[SourceID]
-and [eh].[Sup_LanID] =  '''+@strCSRSUPin+''' 
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] sc
+ON cl.SourceID = sc.SourceID 
+where [eh].[Sup_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''' ,Getdate())
 and [eh].[Mgr_Name] Like '''+@strCSRMGRin+'''
 and [S].[Status] = '''+@strFormStatus+'''
 and [eh].[Emp_Name] Like '''+@strCSRin+'''
@@ -2025,10 +2023,7 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectFrom_Coaching_Log_SUPCSRCompleted
 
-
 GO
-
-
 
 
 
@@ -2058,12 +2053,14 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	11/16/11
---	Description: *	This procedure selects the CSR e-Coaching records from the Coaching_Log table
--- Where the status is Prnding Review. 
--- Last Modified Date: 08/20/14
+--	Create Date:	11/16/2011
+--	Description: This procedure selects the pending e-Coaching records 
+--  for a given supervisor's employees in the supervisor Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRPending] 
 
@@ -2085,14 +2082,11 @@ SET @nvcSQL = 'SELECT	[cl].[FormName]	strFormID,
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[DIM_Source] sc,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where [cl].[EmpID] = [eh].[Emp_ID]
-and [cl].[StatusID] = [s].[StatusID]
-and [cl].[SourceID] = [sc].[SourceID]
-and [eh].[Sup_LanID] =  '''+@strCSRSUPin+'''
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] sc
+ON cl.SourceID = sc.SourceID 
+where [eh].[Sup_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''' ,Getdate())
 and [S].[Status] like ''Pending%''
 and [eh].[Emp_Name] Like '''+@strCSRin+'''
 and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
@@ -2102,7 +2096,6 @@ Order By [eh].[Sup_LanID],[cl].[SubmittedDate] DESC'
 EXEC (@nvcSQL)	
 	    
 END--sp_SelectFrom_Coaching_Log_SUPCSRPending
-
 
 
 GO
@@ -2128,16 +2121,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
---	Description: *	This procedure selects the CSR e-Coaching records from the Coaching_Log table
--- Where the status is Prnding Review. 
--- Last Modified Date: 11/17/2014
+--	Description: This procedure selects the Pending e-Coaching records 
+--  for a given Supervisor in the Supervisor Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 13794 to allow acting Managers to view Supervisor level records.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPPending] @strCSRSUPin nvarchar(30)
 AS
@@ -2164,12 +2157,10 @@ SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
 			[eh].[Sup_Name] strCSRSupName,
 			[S].[Status]	strFormStatus,
 			[cl].[SubmittedDate] SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and (((eh.[Sup_LanID] = '''+@strCSRSUPin+''' OR eh.[Mgr_LanID] = '''+@strCSRSUPin+''' )
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID
+where (((eh.[Sup_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',Getdate()) OR eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',Getdate()) )
 and ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+'''OR [S].[Status] = '''+@strFormStatus3+'''OR [S].[Status] = '''+@strFormStatus4+'''))
 or (eh.[Emp_LanID] = '''+@strCSRSUPin+''' and [S].[Status] = '''+@strFormStatus5+'''))
 
@@ -2181,8 +2172,9 @@ EXEC (@nvcSQL)
 END --sp_SelectFrom_Coaching_Log_SUPPending
 
 
-
 GO
+
+
 
 
 
@@ -2202,21 +2194,21 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted]
 GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/12
 --	Description: *	This procedure selects the distinct CSRs from completed e-Coaching records to display on Historical dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added 'All Employees' to the return.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted] 
 
@@ -2228,27 +2220,28 @@ DECLARE
 @strFormStatus nvarchar(30)
 
 
- Set @strFormStatus = 'Inactive'
+Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT DISTINCT eh.Emp_Name	CSR,
-		s.City	strCSRSite
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Site] s,
-	 [EC].[DIM_Status] st,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.SiteID = s.SiteID
-and cl.StatusID = st.StatusID
-and st.Status <> '''+@strFormStatus+'''
-Order By eh.Emp_Name ASC'
+SET @nvcSQL = 'SELECT X.CSRText, X.CSRValue, X.strCSRSite FROM
+(SELECT ''All Employees'' CSRText, ''%'' CSRValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	CSRText, eh.Emp_Name CSRValue, s.City strCSRSite, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
+cl.StatusID = st.StatusID JOIN [EC].[DIM_Site] s ON
+cl.SiteID = s.SiteID
+where st.Status <> '''+@strFormStatus+'''
+and eh.Emp_Name is not NULL) X
+Order By X.Sortorder, X.CSRText'
+
 
 		
 EXEC (@nvcSQL)	
 
 End --sp_SelectFrom_Coaching_LogDistinctCSRCompleted
 
-
 GO
+
 
 
 ******************************************************************
@@ -2273,9 +2266,11 @@ GO
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/12
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added 'All Employees' to the return
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted2] 
 
@@ -2288,22 +2283,25 @@ DECLARE
 
 Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT DISTINCT eh.Emp_Name	CSR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] st,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = st.StatusID
-and st.Status <> '''+@strFormStatus+'''
-Order By eh.Emp_Name ASC'
+SET @nvcSQL = 'SELECT X.CSRText, X.CSRValue FROM
+(SELECT ''All Employees'' CSRText, ''%'' CSRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	CSRText, eh.Emp_Name CSRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
+cl.StatusID = st.StatusID 
+and st.Status <> '''+@strFormStatus+''')X
+ORDER BY X.Sortorder, X.CSRText'
 
 		
 EXEC (@nvcSQL)	
 
 End --sp_SelectFrom_Coaching_LogDistinctCSRCompleted2
 
-
 GO
+
+
+
 
 
 ******************************************************************
@@ -2330,9 +2328,11 @@ GO
 --	Author:			Jourdain Augustin
 --	Create Date:	7/12/12
 --	Description: *	This procedure selects the distinct MGRs from completed e-Coaching records to display on Historical dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added 'All Managers' to the return
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted] 
 
@@ -2345,17 +2345,17 @@ DECLARE
 
 Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT DISTINCT eh.Mgr_Name MGR,
-		s.City	strCSRSite
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Site] s,
-	 [EC].[DIM_Status] st,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.SiteID = s.SiteID
-and cl.StatusID = st.StatusID
-and st.Status <> '''+@strFormStatus+'''
-Order By eh.Mgr_Name ASC'
+SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue, X.strCSRSite FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.MGR_Name	MGRText, eh.MGR_Name MGRValue, s.City strCSRSite, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
+cl.StatusID = st.StatusID JOIN [EC].[DIM_Site] s ON
+cl.SiteID = s.SiteID
+where st.Status <> '''+@strFormStatus+'''
+and eh.MGR_Name is not NULL) X
+Order By X.Sortorder, X.MGRText'
 
 		
 EXEC (@nvcSQL)	
@@ -2364,6 +2364,7 @@ End --sp_SelectFrom_Coaching_LogDistinctMGRCompleted
 
 
 GO
+
 
 
 
@@ -2387,15 +2388,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	7/12/12
 --	Description: *	This procedure selects the distinct MGRs from completed e-Coaching records to display on Historical dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added 'All Managers' to the return
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted2] 
 
@@ -2408,22 +2409,26 @@ DECLARE
 
 Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT DISTINCT eh.Mgr_Name MGR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] st,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = st.StatusID
-and st.Status <> '''+@strFormStatus+'''
-Order By eh.Mgr_Name ASC'
+SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
+cl.StatusID = st.StatusID 
+where st.Status <> '''+@strFormStatus+'''
+and eh.Mgr_Name is not NULL) X
+Order By X.Sortorder, X.MgrText'
 
 		
 EXEC (@nvcSQL)	
 
 End --sp_SelectFrom_Coaching_LogDistinctMGRCompleted2
 
-
 GO
+
+
+
 
 
 
@@ -2448,13 +2453,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	7/12/12
 --	Description: *	This procedure selects the distinct SUPs from completed e-Coaching records to display on Historical dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added 'All Supervisors' to the return
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted] 
 
@@ -2468,25 +2476,28 @@ DECLARE
 
  Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT DISTINCT eh.Sup_Name	SUP,
-		s.City	strCSRSite
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Site] s,
-	 [EC].[DIM_Status] st,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.SiteID = s.SiteID
-and cl.StatusID = st.StatusID
-and st.Status <> '''+@strFormStatus+'''
-Order By eh.Sup_Name ASC'
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue, X.strCSRSite FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Sup_Name	SUPText, eh.Sup_Name SUPValue, s.City strCSRSite, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
+cl.StatusID = st.StatusID JOIN [EC].[DIM_Site] s ON
+cl.SiteID = s.SiteID
+where st.Status <> '''+@strFormStatus+'''
+and eh.Sup_Name is not NULL) X
+Order By X.Sortorder, X.SUPText'
+
 
 		
 EXEC (@nvcSQL)	
 
 End --sp_SelectFrom_Coaching_LogDistinctSUPCompleted
 
-
 GO
+
+
+
 
 ******************************************************************
 
@@ -2512,9 +2523,11 @@ GO
 --	Author:			Jourdain Augustin
 --	Create Date:	7/12/12
 --	Description: *	This procedure selects the distinct SUPs from completed e-Coaching records to display on Historical dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Last Modified Date: 03/05/2015
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added 'All Supervisors' to the return
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted2] 
 
@@ -2528,22 +2541,26 @@ DECLARE
 Set @strFormStatus = 'Inactive'
 
 
-SET @nvcSQL = 'SELECT DISTINCT eh.Sup_Name	SUP
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] st,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = st.StatusID
-and st.Status <> '''+@strFormStatus+'''
-Order By eh.Sup_Name ASC'
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Sup_Name	SUPText, eh.Sup_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] st ON 
+cl.StatusID = st.StatusID 
+where st.Status <> '''+@strFormStatus+'''
+and eh.Sup_Name is not NULL) X
+Order By X.Sortorder, X.SUPText'
 
 		
 EXEC (@nvcSQL)	
 
 End --sp_SelectFrom_Coaching_LogDistinctSUPCompleted2
 
-
 GO
+
+
+
 
 
 ******************************************************************
@@ -2565,15 +2582,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Employees to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR] @strCSRMGRin nvarchar(30)
 AS
@@ -2591,22 +2608,26 @@ Set @strFormStatus2 = 'Pending Supervisor Review'
 Set @strFormStatus3 = 'Pending Acknowledgement'
 
 
-SET @nvcSQL = 'SELECT DISTINCT	[eh].[Emp_Name]	CSR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where [cl].[EmpID] = [eh].[Emp_ID]
-and [cl].[StatusID] = [s].[StatusID]
-and (([eh].[Mgr_LanID] =  '''+@strCSRMGRin+''' and [S].[Status] = '''+@strFormStatus+''') OR ([eh].[Sup_LanID] =  '''+@strCSRMGRin+''' and ([S].[Status] = '''+@strFormStatus2+''' or [S].[Status] = '''+@strFormStatus3+''')))
-Order By [eh].[Emp_Name] ASC'
+SET @nvcSQL =  'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employeess'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where (([eh].[Mgr_ID] =   EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate()) and [S].[Status] = '''+@strFormStatus+''') OR ([eh].[Sup_ID] =   EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate()) and ([S].[Status] = '''+@strFormStatus2+''' or [S].[Status] = '''+@strFormStatus3+''')))
+and eh.Emp_Name is NOT NULL) X
+ORDER BY X.Sortorder, X.EmpText'
 		
 		
 EXEC (@nvcSQL)	
 
 End --sp_SelectFrom_Coaching_LogMgrDistinctCSR
 
-
 GO
+
+
+
 
 ******************************************************************
 
@@ -2621,7 +2642,6 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSRSubmitted]
 GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -2633,9 +2653,11 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All employees to the return
+-- 3. Lan ID association by date
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSRSubmitted] 
 @strCSRMGRin nvarchar(30)
@@ -2649,17 +2671,18 @@ DECLARE
 
 Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT distinct [eh].[Emp_Name]	CSR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strCSRMGRin+''' 
-and s.[Status] <> '''+@strFormStatus+'''
-Order By [eh].[Emp_Name] ASC'	
+SET @nvcSQL = 'SELECT X.EMPText, X.EMPValue FROM
+(SELECT ''All Employees'' EMPText, ''%'' EMPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.EMP_Name	EMPText, eh.EMP_Name EMPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
+and s.Status <> '''+@strFormStatus+'''
+and eh.EMP_Name is NOT NULL) X
+Order By X.Sortorder, X.EMPText'
 
 		
 EXEC (@nvcSQL)	
@@ -2668,6 +2691,9 @@ End --sp_SelectFrom_Coaching_LogMgrDistinctCSRSubmitted
 
 
 GO
+
+
+
 
 
 
@@ -2691,14 +2717,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 1. To Replace old style joins.
+-- 2. Added All Employees to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSRTeam] 
 
@@ -2711,23 +2739,25 @@ DECLARE
 @nvcSQL nvarchar(max)
 
 
-SET @nvcSQL = 'SELECT DISTINCT [eh].[Emp_Name]	CSR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and eh.[Mgr_LanID] = '''+@strCSRMGRin+'''
+SET @nvcSQL =  'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
 and [S].[Status] like ''Pending%''
-Order By [eh].[Emp_Name] ASC'
+and eh.Emp_Name is NOT NULL) X
+ORDER BY X.Sortorder, X.EmpText'
+		
 		
 EXEC (@nvcSQL)	
 
 End -- sp_SelectFrom_Coaching_LogMgrDistinctCSRTeam
 
-
-
 GO
+
 
 
 
@@ -2751,13 +2781,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Employees to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSRTeamCompleted] 
 
@@ -2773,22 +2806,26 @@ DECLARE
 
  Set @strFormStatus = 'Completed'
 
-SET @nvcSQL = 'SELECT DISTINCT [eh].[Emp_Name]	CSR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and eh.[Mgr_LanID] = '''+@strCSRMGRin+'''
+SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where eh.[Mgr_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
 and [S].[Status] = '''+@strFormStatus+'''
-Order By [eh].[Emp_Name] ASC'
+and eh.Emp_Name is NOT NULL) X
+ORDER BY X.Sortorder, X.EmpText'
 		
 EXEC (@nvcSQL)	
 
 End --sp_SelectFrom_Coaching_LogMgrDistinctCSRTeamCompleted
 
-
 GO
+
+
+
 
 
 
@@ -2817,9 +2854,11 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct supervisors from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Managers to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctMGRSubmitted] 
 @strCSRMGRin nvarchar(30)
@@ -2832,25 +2871,29 @@ DECLARE
 
 Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT distinct [eh].[Mgr_Name]	MGR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strCSRMGRin+''' 
-and s.[Status] <> '''+@strFormStatus+'''
-Order By [eh].[Mgr_Name] ASC'	
+SET @nvcSQL = 
+'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
+and s.Status <> '''+@strFormStatus+'''
+and eh.Mgr_Name is NOT NULL) X
+Order By X.Sortorder, X.MgrText'
 
 		
 EXEC (@nvcSQL)	
 
 End -- sp_SelectFrom_Coaching_LogMgrDistinctMGRSubmitted
 
-
 GO
+
+
+
 
 
 
@@ -2878,9 +2921,11 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Supervisors to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctSUP] @strCSRMGRin nvarchar(30)
 AS
@@ -2898,14 +2943,16 @@ Set @strFormStatus2 = 'Pending Supervisor Review'
 Set @strFormStatus3 = 'Pending Acknowledgement'
 
 		
-SET @nvcSQL = 'SELECT DISTINCT	[eh].[Sup_Name]	SUP
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where [cl].[EmpID] = [eh].[Emp_ID]
-and [cl].[StatusID] = [s].[StatusID]
-and (([eh].[Mgr_LanID] =  '''+@strCSRMGRin+''' and [S].[Status] = '''+@strFormStatus+''') OR ([eh].[Sup_LanID] =  '''+@strCSRMGRin+''' and ([S].[Status] = '''+@strFormStatus2+''' or [S].[Status] = '''+@strFormStatus3+''')))
-Order By [eh].[Sup_Name] ASC'
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID  JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where (([eh].[Mgr_ID] =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate()) and [S].[Status] = '''+@strFormStatus+''') OR ([eh].[Sup_ID] =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate()) and ([S].[Status] = '''+@strFormStatus2+''' or [S].[Status] = '''+@strFormStatus3+''')))
+and eh.SUP_Name is NOT NULL) X
+Order By X.Sortorder, X.SUPText'
 		
 
 		
@@ -2913,8 +2960,9 @@ EXEC (@nvcSQL)
 
 End -- sp_SelectFrom_Coaching_LogMgrDistinctSUP
 
-
 GO
+
+
 
 ******************************************************************
 
@@ -2935,14 +2983,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct supervisors from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Supervisors to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctSUPSubmitted] 
 @strCSRMGRin nvarchar(30)
@@ -2955,17 +3004,18 @@ DECLARE
 
 Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT distinct [eh].[Sup_Name]	SUP
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strCSRMGRin+''' 
-and s.[Status] <> '''+@strFormStatus+'''
-Order By [eh].[Sup_Name] ASC'	
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
+and s.Status <> '''+@strFormStatus+'''
+and eh.SUP_Name is NOT NULL) X
+Order By X.Sortorder, X.SUPText'
 
 		
 EXEC (@nvcSQL)	
@@ -2974,6 +3024,7 @@ End --sp_SelectFrom_Coaching_LogMgrDistinctSUPSubmitted
 
 
 GO
+
 
 
 
@@ -2995,15 +3046,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Supervisors to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctSUPTeam] 
 
@@ -3015,15 +3066,18 @@ DECLARE
 @nvcSQL nvarchar(max)
 
 
-SET @nvcSQL = 'SELECT DISTINCT [eh].[Sup_Name]	SUP
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and eh.[Mgr_LanID] = '''+@strCSRMGRin+'''
-and [S].[Status] like ''Pending%''
-Order By [eh].[Sup_Name] ASC'
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where eh.Mgr_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
+AND S.Status like ''Pending%''
+and eh.SUP_Name is NOT NULL) X
+Order By X.Sortorder, X.SUPText'
+
 		
 EXEC (@nvcSQL)	
 
@@ -3032,6 +3086,8 @@ End --sp_SelectFrom_Coaching_LogMgrDistinctSUPTeam
 
 
 GO
+
+
 
 
 ******************************************************************
@@ -3054,14 +3110,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Supervisors to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctSUPTeamCompleted] 
 
@@ -3076,21 +3133,21 @@ DECLARE
 
  Set @strFormStatus = 'Completed'
 
-SET @nvcSQL = 'SELECT DISTINCT [eh].[Sup_Name]	SUP
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and eh.[Mgr_LanID] = '''+@strCSRMGRin+'''
-and [S].[Status] = '''+@strFormStatus+'''
-Order By [eh].[Sup_Name] ASC'
-
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where eh.Mgr_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
+AND S.Status = '''+@strFormStatus+'''
+and eh.SUP_Name is NOT NULL) X
+Order By X.Sortorder, X.SUPText'
 		
 EXEC (@nvcSQL)	
 
 End -- sp_SelectFrom_Coaching_LogMgrDistinctSUPTeamCompleted
-
 
 GO
 
@@ -3121,9 +3178,11 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on staff dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Employees to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctCompletedCSRSubmitted] 
 @strCSRMGRin nvarchar(30)
@@ -3137,24 +3196,28 @@ DECLARE
 
 Set @strFormStatus = 'Completed'
 		
-SET @nvcSQL = 'SELECT distinct [eh].[Emp_Name]	CSR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strCSRMGRin+''' 
-and s.[Status] <> '''+@strFormStatus+'''
-Order By [eh].[Emp_Name] ASC'		
+SET @nvcSQL = 'SELECT X.EMPText, X.EMPValue FROM
+(SELECT ''All Employees'' EMPText, ''%'' EMPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.EMP_Name	EMPText, eh.EMP_Name EMPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
+and s.[Status] = '''+@strFormStatus+'''
+and eh.EMP_Name is NOT NULL) X
+Order By X.Sortorder, X.EMPText'	
+	
 
 EXEC (@nvcSQL)	
 
 End -- sp_SelectFrom_Coaching_LogStaffDistinctCompletedCSRSubmitted
 
-
 GO
+
+
+
 
 
 ******************************************************************
@@ -3179,12 +3242,13 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	<11/16/11>
---	Last Update:	<>
+--	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct managers from e-Coaching records to display on staff dashboard for filter. 
---  Last Update:    03/07/2014
---  Updated per SCR 12369 to add NOLOCK Hint 
---	Last Update:	<03/11/2014>  - Modified for eCoachingDev DB
+-- Last Updated By: Susmitha Palacherla
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Managers to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctCompletedMGRSubmitted] 
 @strCSRMGRin nvarchar(30)
@@ -3199,23 +3263,27 @@ DECLARE
 
 Set @strFormStatus = 'Completed'
 		
-SET @nvcSQL = 'SELECT distinct [eh].[Mgr_Name]	MGR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strCSRMGRin+''' 
-and s.[Status] <> '''+@strFormStatus+'''
-Order By [eh].[Mgr_Name] ASC'		
+SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
+and s.Status = '''+@strFormStatus+'''
+and eh.Mgr_Name is NOT NULL) X
+Order By X.Sortorder, X.MgrText'
 
 EXEC (@nvcSQL)	
 
-End
+End -- sp_SelectFrom_Coaching_LogStaffDistinctCompletedMGRSubmitted
 
 GO
+
+
+
 
 
 
@@ -3238,7 +3306,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
@@ -3246,6 +3313,9 @@ GO
 -- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
 -- Modified to rename CSRID to EmpID to support the Modular design.
+-- 1. To Replace old style joins.
+-- 2. Added All Supervisors to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctCompletedSUPSubmitted] 
 @strCSRMGRin nvarchar(30)
@@ -3259,17 +3329,18 @@ DECLARE
 
 Set @strFormStatus = 'Completed'	
 
-SET @nvcSQL = 'SELECT distinct [eh].[Sup_Name]	SUP
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strCSRMGRin+''' 
-and s.[Status] <> '''+@strFormStatus+'''
-Order By [eh].[Sup_Name] ASC'
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
+		AND S.Status = '''+@strFormStatus+'''
+and eh.SUP_Name is NOT NULL) X
+Order By X.Sortorder, X.SUPText'
 
 EXEC (@nvcSQL)	
 
@@ -3277,6 +3348,9 @@ End --sp_SelectFrom_Coaching_LogStaffDistinctCompletedSUPSubmitted
 
 
 GO
+
+
+
 
 
 ******************************************************************
@@ -3299,13 +3373,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on staff dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Employees to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctPendingCSRSubmitted] 
 @strCSRMGRin nvarchar(30)
@@ -3322,18 +3399,19 @@ Set @strFormStatus = 'Completed'
 Set @strFormStatus2 = 'Inactive'
 
 
-SET @nvcSQL = 'SELECT distinct [eh].[Emp_Name]	CSR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strCSRMGRin+''' 
+SET @nvcSQL = 'SELECT X.EMPText, X.EMPValue FROM
+(SELECT ''All Employees'' EMPText, ''%'' EMPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.EMP_Name	EMPText, eh.EMP_Name EMPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
 and s.[Status] <> '''+@strFormStatus+'''
 AND S.Status <> '''+@strFormStatus2+'''
-Order By [eh].[Emp_Name] ASC'		
+and eh.EMP_Name is NOT NULL) X
+Order By X.Sortorder, X.EMPText'	
 
 		
 EXEC (@nvcSQL)	
@@ -3342,6 +3420,9 @@ End --sp_SelectFrom_Coaching_LogStaffDistinctPendingCSRSubmitted
 
 
 GO
+
+
+
 
 ******************************************************************
 
@@ -3356,7 +3437,6 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctPendingMGRSubmitted]
 GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -3368,9 +3448,11 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct managers from e-Coaching records to display on staff dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Managers to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctPendingMGRSubmitted] 
 @strCSRMGRin nvarchar(30)
@@ -3385,18 +3467,19 @@ DECLARE
 Set @strFormStatus = 'Completed'
 Set @strFormStatus2 = 'Inactive'
 
-SET @nvcSQL = 'SELECT distinct [eh].[Mgr_Name]	MGR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strCSRMGRin+''' 
+SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
 		AND S.Status <> '''+@strFormStatus+'''
 		AND S.Status <> '''+@strFormStatus2+'''
-Order By [eh].[Mgr_Name] ASC'		
+and eh.Mgr_Name is NOT NULL) X
+Order By X.Sortorder, X.MgrText'	
 
  
 EXEC (@nvcSQL)	
@@ -3405,6 +3488,7 @@ End -- sp_SelectFrom_Coaching_LogStaffDistinctPendingMGRSubmitted
 
 
 GO
+
 
 
 
@@ -3433,9 +3517,11 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct Supervisors from e-Coaching records to display on staff dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Supervisors to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctPendingSUPSubmitted]  
 @strCSRMGRin nvarchar(30)
@@ -3451,18 +3537,19 @@ Set @strFormStatus = 'Completed'
 Set @strFormStatus2 = 'Inactive'
 
  
-SET @nvcSQL = 'SELECT distinct [eh].[Sup_Name]	SUP
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.[SubmitterID] = sh.[Emp_ID]
-and sh.[Emp_LanID] = '''+@strCSRMGRin+''' 
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRMGRin+''',GetDate())
 		AND S.Status <> '''+@strFormStatus+'''
 		AND S.Status <> '''+@strFormStatus2+'''
-Order By [eh].[Sup_Name] ASC' 
+and eh.SUP_Name is NOT NULL) X
+Order By X.Sortorder, X.SUPText'
  
 EXEC (@nvcSQL)	
 
@@ -3493,14 +3580,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All employees to the return
+-- 3. Lan ID association by date
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSR] @strCSRSUPin nvarchar(30)
 AS
@@ -3513,17 +3601,18 @@ DECLARE
 
 Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT DISTINCT eh.[Emp_Name] AS CSR
-FROM [EC].[Coaching_Log] cl WITH(NOLOCK),
-[EC].[Employee_Hierarchy] eh,
-[EC].[Employee_Hierarchy] sh,
-[EC].[DIM_Status] s
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.SubmitterID = sh.emp_ID
-and sh.Emp_LanID = '''+@strCSRSUPin+''' 
+SET @nvcSQL = 'SELECT X.EMPText, X.EMPValue FROM
+(SELECT ''All Employees'' EMPText, ''%'' EMPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.EMP_Name	EMPText, eh.EMP_Name EMPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',GetDate())
 and s.Status <> '''+@strFormStatus+'''
-Order By CSR ASC'
+and eh.EMP_Name is NOT NULL) X
+Order By X.Sortorder, X.EMPText'
 		
 EXEC (@nvcSQL)	
 
@@ -3531,8 +3620,6 @@ End -- sp_SelectFrom_Coaching_LogSupDistinctCSR
 
 
 GO
-
-
 
 
 
@@ -3557,14 +3644,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Employees to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeam] 
 
@@ -3578,20 +3666,21 @@ DECLARE
 
 
 
-SET @nvcSQL = 'SELECT DISTINCT [eh].[Emp_Name]	CSR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and eh.[Sup_LanID] = '''+@strCSRSUPin+'''
-and [S].[Status] like ''Pending%''
-Order By [eh].[Emp_Name] ASC'
+SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employeess'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where eh.[Sup_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',GetDate())
+and eh.Emp_Name is NOT NULL) X
+ORDER BY X.Sortorder, X.EmpText'
+
 		
 EXEC (@nvcSQL)	
 
 End --sp_SelectFrom_Coaching_LogSupDistinctCSRTeam
-
 
 
 GO
@@ -3623,9 +3712,11 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Employees to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted] 
 
@@ -3641,15 +3732,18 @@ DECLARE
  Set @strFormStatus = 'Completed'
 
 
-SET @nvcSQL = 'SELECT DISTINCT [eh].[Emp_Name]	CSR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and [eh].[Sup_LanID] = '''+@strCSRSUPin+'''
+SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employeess'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where eh.[Sup_ID] = EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',GetDate())
 and [S].[Status] = '''+@strFormStatus+'''
-Order By [eh].[Emp_Name] ASC'
+and eh.Emp_Name is NOT NULL) X
+ORDER BY X.Sortorder, X.EmpText'
+
 		
 EXEC (@nvcSQL)	
 
@@ -3657,6 +3751,8 @@ End --sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted
 
 
 GO
+
+
 
 
 
@@ -3685,14 +3781,17 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct supervisors from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Managers to the return
+-- 3. Lan ID association by date
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctMGR] @strCSRSUPin nvarchar(30)
 AS
 
-
+--where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',[cl].[SubmittedDate])
+--where sh.Emp_LanID = '''+@strCSRSUPin+'''
 BEGIN
 DECLARE	
 @nvcSQL nvarchar(max),
@@ -3700,17 +3799,18 @@ DECLARE
 
 Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT DISTINCT eh.[Mgr_Name] AS MGR
-FROM [EC].[Coaching_Log] cl WITH(NOLOCK),
-[EC].[Employee_Hierarchy] eh,
-[EC].[Employee_Hierarchy] sh,
-[EC].[DIM_Status] s
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.SubmitterID = sh.Emp_ID
-and sh.Emp_LanID = '''+@strCSRSUPin+''' 
+SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',GetDate())
 and s.Status <> '''+@strFormStatus+'''
-Order By MGR ASC'
+and eh.Mgr_Name is NOT NULL) X
+Order By X.Sortorder, X.MgrText'
 		
 EXEC (@nvcSQL)	
 
@@ -3718,6 +3818,7 @@ End --sp_SelectFrom_Coaching_LogSupDistinctMGR
 
 
 GO
+
 
 
 ******************************************************************
@@ -3740,14 +3841,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct managers for supervisors from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All Managers to the return.
+-- 3. Lan ID association by date.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctMGRTeamCompleted]
 
@@ -3763,15 +3865,17 @@ DECLARE
 
 Set @strFormStatus = 'Completed'
 
-SET @nvcSQL = 'SELECT DISTINCT [eh].[Mgr_Name]	MGR
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and [eh].[Sup_LanID] = '''+@strCSRSUPin+'''
-and [S].[Status] = '''+@strFormStatus+'''
-Order By [eh].[Mgr_Name] ASC'
+SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Mgr_Name	MGRText, eh.Mgr_Name MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where eh.Sup_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',GetDate())
+and s.Status = '''+@strFormStatus+'''
+and eh.Mgr_Name is NOT NULL) X
+Order By X.Sortorder, X.MgrText'
 		
 EXEC (@nvcSQL)	
 
@@ -3779,6 +3883,7 @@ End  --sp_SelectFrom_Coaching_LogSupDistinctMGRTeamCompleted
 
 
 GO
+
 
 
 
@@ -3809,9 +3914,11 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct supervisors from e-Coaching records to display on dashboard for filter. 
--- Last Modified Date: 08/20/14
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified during dashboard redesign SCR 14422.
+-- 1. To Replace old style joins.
+-- 2. Added All supervisors to the return
+-- 3. Lan ID association by date
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctSUP] @strCSRSUPin nvarchar(30)
 AS
@@ -3824,24 +3931,28 @@ DECLARE
 
 Set @strFormStatus = 'Inactive'
 
-SET @nvcSQL = 'SELECT DISTINCT eh.[Sup_Name] AS SUP
-FROM [EC].[Coaching_Log] cl WITH(NOLOCK),
-[EC].[Employee_Hierarchy] eh,
-[EC].[Employee_Hierarchy] sh,
-[EC].[DIM_Status] s
-where cl.EmpID = eh.Emp_ID
-and cl.StatusID = s.StatusID
-and cl.SubmitterID = sh.Emp_ID
-and sh.Emp_LanID = '''+@strCSRSUPin+''' 
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where sh.Emp_ID =  EC.fn_nvcGetEmpIdFromLanID('''+@strCSRSUPin+''',GetDate())
 and s.Status <> '''+@strFormStatus+'''
-Order By SUP ASC'
+and eh.SUP_Name is NOT NULL) X
+Order By X.Sortorder, X.SUPText'
 		
 EXEC (@nvcSQL)	
 
 End -- sp_SelectFrom_Coaching_LogSupDistinctSUP
 
 
+
 GO
+
+
 
 
 
@@ -5630,95 +5741,734 @@ GO
 
 ******************************************************************
 
---66. Create SP  [EC].[]
+--66. Create SP  [EC].[sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2]
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2' 
 )
-   DROP PROCEDURE [EC].[]
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	03/10/2015
+--  Description: Populates the Submitter values in the dashboard filter dropdown.
+--  Created as part of SCR 14422 for the dashboard redesign.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2] 
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30)
+
+Set @strFormStatus = 'Inactive'
+
+-- UNION of 3 separate selects for ordering.
+-- Wild card value followed by regular data followed by unknown values.
+
+SET @nvcSQL = 'SELECT X.SubmitterText, X.SubmitterValue FROM
+(SELECT ''All Submitters'' SubmitterText, ''%'' SubmitterValue, 01 Sortorder 
+UNION
+SELECT DISTINCT sh.Emp_Name	SubmitterText, sh.Emp_Name SubmitterValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+and s.Status <> '''+@strFormStatus+'''
+where (sh.Emp_Name is not NULL and sh.Emp_Name <> ''Unknown'')
+UNION
+SELECT DISTINCT sh.Emp_Name	SubmitterText, sh.Emp_Name SubmitterValue, 03 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
+cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+and s.Status <> '''+@strFormStatus+'''
+where sh.Emp_Name = ''Unknown'')X
+ORDER BY X.Sortorder, X.SubmitterText'
+
+
+--Print @nvcSQL
+EXEC (@nvcSQL)	
+
+
+End --sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
+
+GO
+
+
+
+
+******************************************************************
+
+--67. Create SP  [EC].[sp_Select_Sites_For_Dashboard]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Sites_For_Dashboard' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Sites_For_Dashboard]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/06/2015
+--	Description: *	This procedure selects Sites to be displayed in the dashboard
+--  Site dropdown list.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Sites_For_Dashboard] 
+
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max)
+
+SET @nvcSQL = 'SELECT X.SiteText, X.SiteValue FROM
+(SELECT ''All Locations'' SiteText, ''%'' SiteValue, 01 Sortorder From [EC].[DIM_Site]
+UNION
+SELECT [City] SiteText, [City] SiteValue, 02 Sortorder From [EC].[DIM_Site]
+where [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Sites_For_Dashboard
+
+
 GO
 
 
 
 ******************************************************************
 
---67. Create SP  [EC].[]
+--68. Create SP  [EC].[sp_Select_Sources_For_Dashboard]
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
+     AND SPECIFIC_NAME = N'sp_Select_Sources_For_Dashboard' 
 )
-   DROP PROCEDURE [EC].[]
+   DROP PROCEDURE [EC].[sp_Select_Sources_For_Dashboard]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/06/2015
+--	Description: *	This procedure selects Sources to be displayed in the dashboard
+--  Source dropdown list.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Sources_For_Dashboard] 
+@strUserin nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max),
+	@strjobcode  nvarchar(20)
+	
+SET @strjobcode = (SELECT Emp_Job_Code from [EC].[Employee_Hierarchy] where 
+Emp_LanID = @strUserin)
+
+-- Check users job code and show 'Warning' as a source only for HR users.
+
+IF @strjobcode in ('WHER13', 'WHER50',
+'WHHR12', 'WHHR13', 'WHHR14',
+'WHHR50', 'WHHR60', 'WHHR80')
+
+SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
+(SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
+UNION
+SELECT [SubCoachingSource] SourceText, [SubCoachingSource] SourceValue, 02 Sortorder From [EC].[DIM_Source]
+Where [SubCoachingSource] <> ''Unknown''
+and [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+ELSE
+
+SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
+(SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
+UNION
+SELECT [SubCoachingSource] SourceText, [SubCoachingSource] SourceValue, 02 Sortorder From [EC].[DIM_Source]
+Where [SubCoachingSource] not in ( ''Warning'',''Unknown'')
+and [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Sources_For_Dashboard
+
+GO
+
+
+
+
+
+
+******************************************************************
+
+--69. Create SP  [EC].[sp_Select_States_For_Dashboard]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_States_For_Dashboard' 
+)
+   DROP PROCEDURE [EC].[sp_Select_States_For_Dashboard]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/13/2015
+--	Description: *	This procedure returns list of possible States for Warning Logs.
+--  The 2 possible States of a Warning log are Active (within 91 days of warning given date) and Expired 
+--  for logs that have WarningGivenDate over 91 days.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_States_For_Dashboard] 
+
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max)
+
+
+
+SET @nvcSQL = 'SELECT X.StateText, X.StateValue FROM
+(SELECT ''All States'' StateText, ''%'' StateValue, 01 Sortorder 
+UNION
+SELECT ''Active'' StateText, ''1'' StateValue, 02 Sortorder 
+UNION
+SELECT ''Expired'' StateText, ''0'' StateValue, 03 Sortorder 
+)X
+ORDER BY X.Sortorder'
+
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_States_For_Dashboard
+
+
+GO
+
+
+
+
+******************************************************************
+
+--70. Create SP  [EC].[sp_Select_Statuses_For_Dashboard] 
+
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Statuses_For_Dashboard' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Statuses_For_Dashboard]
+GO
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/06/2015
+--	Description: *	This procedure selects Statuses to be displayed in the dashboard
+--  Status dropdown list.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Statuses_For_Dashboard] 
+
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max)
+
+SET @nvcSQL = 'SELECT X.StatusText, X.StatusValue FROM
+(SELECT ''All Statuses'' StatusText, ''%'' StatusValue, 01 Sortorder From [EC].[DIM_Status]
+UNION
+SELECT [Status] StatusText, [Status] StatusValue, 02 Sortorder From [EC].[DIM_Status]
+Where [Status] NOT IN (''Inactive'', ''Unknown''))X
+ORDER BY X.Sortorder'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Statuses_For_Dashboard
+
+
+
+GO
+
+
+
+
+
+******************************************************************
+
+--71. Create SP  [EC].[sp_Select_Values_For_Dashboard]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Values_For_Dashboard' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Values_For_Dashboard]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/06/2015
+--	Description: *	This procedure selects Values to be displayed in the dashboard
+--  filter dropdown list.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Values_For_Dashboard] 
+
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max)
+
+SET @nvcSQL = 'SELECT X.ValueText, X.ValueValue FROM
+(SELECT ''All Values'' ValueText, ''%'' ValueValue, 01 Sortorder 
+UNION
+SELECT Distinct [Value] ValueText, [Value] ValueValue, 02 Sortorder From [EC].[Coaching_Log_Reason]
+Where [Value] IS NOT NULL
+AND [Value] <> ''Not Coachable'')X
+ORDER BY X.Sortorder, X.ValueText'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Values_For_Dashboard
+
+GO
+
+
+******************************************************************
+
+--72. Create SP  [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/05/2015
+--	Description: *	This procedure selects all the Coaching logs for Employees that fall under the Senior Manager 
+--  in the Hierarchy table.
+-- Last Modified Date: 
+-- Last Updated By: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching] 
+@strEMPSRMGRin nvarchar(30),
+@strEMPMGRin nvarchar(30),
+@strEMPSUPin nvarchar(30),
+@strEMPin nvarchar(30), 
+@strSourcein nvarchar(100),
+@strStatus nvarchar(30)
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strSrMgrEmpID nvarchar(10),
+@strFormStatus nvarchar(30),
+@intStatusID INT
+
+SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strEMPSRMGRin, GETDATE()))
+SET @intStatusID = (SELECT StatusID FROM [EC].[DIM_Status] where Status = @strStatus)
+Set @strFormStatus = 'Inactive'
+
+SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
+		[eh].[Emp_Name]	strEmpName,
+		[eh].[Sup_Name]	strEmpSupName, 
+		[eh].[Mgr_Name]	strEmpMgrName, 
+		[s].[Status]	strFormStatus,
+		[sc].[SubCoachingSource] strSource,
+		[cl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+[cl].[EmpID] = [eh].[Emp_ID]Join [EC].[DIM_Status] s ON
+[cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
+[cl].[SourceID] = [sc].[SourceID] 
+WHERE ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [S].[Status] like  '''+@strStatus+''' + ''%''
+and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
+and [eh].[Emp_Name] Like '''+@strEMPin+'''
+and [eh].[Sup_Name] Like '''+@strEMPSUPin+'''
+and [eh].[Mgr_Name] Like '''+@strEMPMGRin+'''
+and [s].[Status] <> '''+@strFormStatus+'''
+and '''+@strSrMgrEmpID+''' <> ''999999''
+ORDER BY submitteddate desc'
+
+ 
+
+EXEC (@nvcSQL)
+--Print @nvcSQL	   
+END --sp_SelectFrom_Coaching_Log_SRMGREmployeeCoaching
+
 GO
 
 
 
 ******************************************************************
 
---68. Create SP  [EC].[]
+--73. Create SP  [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam' 
 )
-   DROP PROCEDURE [EC].[]
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/23/2015
+--	Description: *	This procedure selects the distinct Employees under a senior manager from e-Coaching records to display on dashboard for filter. 
+--  Created during dashboard redesign SCR 14422.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam] 
+@strCSRSrMGRin nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSrMgrEmpID nvarchar(10)
+
+SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strCSRSrMGRin, GETDATE()))
+SET @strFormStatus = 'Inactive'
+
+SET @nvcSQL =  'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [S].[Status] <> '''+@strFormStatus+'''
+and eh.Emp_Name is NOT NULL) X
+ORDER BY X.Sortorder, X.EmpText'
+		
+		
+EXEC (@nvcSQL)	
+
+End -- sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam
+
+
 GO
 
 
 
 ******************************************************************
 
---69. Create SP  [EC].[]
+--74. Create SP  [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam' 
 )
-   DROP PROCEDURE [EC].[]
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam]
 GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/23/2015
+--	Description: *	This procedure selects the distinct Managers (level 1) under a senior manager from e-Coaching records 
+--  in the dasboard filter. 
+--  Created during dashboard redesign SCR 14422.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam] 
+@strCSRSrMGRin nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSrMgrEmpID nvarchar(10)
+
+SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strCSRSrMGRin, GETDATE()))
+SET @strFormStatus = 'Inactive'
+
+SET @nvcSQL =  'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.MGR_Name	MGRText, eh.MGR_Name MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [S].[Status] <> '''+@strFormStatus+'''
+and eh.MGR_Name is NOT NULL) X
+Order By X.Sortorder, X.MGRText'
+		
+		
+EXEC (@nvcSQL)	
+
+End -- sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam
+
+
+GO
+
 
 
 
 ******************************************************************
 
---70. Create SP  [EC].[]
+--75. Create SP  [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam' 
 )
-   DROP PROCEDURE [EC].[]
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam]
 GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/23/2015
+--	Description: *	This procedure selects the distinct Supervisors (level 1) under a senior manager from e-Coaching records 
+--  in the dasboard filter. 
+--  Created during dashboard redesign SCR 14422.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam] 
+@strCSRSrMGRin nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSrMgrEmpID nvarchar(10)
+
+SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strCSRSrMGRin, GETDATE()))
+SET @strFormStatus = 'Inactive'
+
+SET @nvcSQL =  'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.SUP_Name	SUPText, eh.SUP_Name SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON
+cl.StatusID = s.StatusID
+where ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([cl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [S].[Status] <> '''+@strFormStatus+'''
+and eh.SUP_Name is NOT NULL) X
+Order By X.Sortorder, X.SUPText'
+		
+		
+EXEC (@nvcSQL)	
+
+End -- sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam
+
+
+GO
+
 
 
 
 ******************************************************************
 
---71. Create SP  [EC].[]
+--76. Create SP  [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning' 
 )
-   DROP PROCEDURE [EC].[]
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/05/2015
+--	Description: *	This procedure selects all the Warning logs for Employees that fall under the Senior Manager 
+--  in the Hierarchy table.
+-- Last Modified Date: 
+-- Last Updated By: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] 
+@strEMPSRMGRin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@bitActive nvarchar(1)
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8),
+@strSrMgrEmpID Nvarchar(10),
+@dtmDate datetime
+
+
+Set @strFormStatus = 'Completed'
+Set @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+Set @dtmDate  = GETDATE()   
+Set @strSrMgrEmpID = EC.fn_nvcGetEmpIdFromLanID(@strEMPSRMGRin,@dtmDate)
+
+
+SET @nvcSQL = 'SELECT [wl].[FormName]	strFormID,
+		[eh].[Emp_Name]	strEmpName,
+		[eh].[Sup_Name]	strEmpSupName, 
+		[eh].[Mgr_Name]	strEmpMgrName, 
+		[s].[Status]	strFormStatus,
+		[sc].[SubCoachingSource] strSource,
+		[wl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl ON
+[wl].[EmpID] = [eh].[Emp_ID]Join [EC].[DIM_Status] s ON
+[wl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
+[wl].[SourceID] = [sc].[SourceID] 
+WHERE ([EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([wl].[EmpID]) = '''+@strSrMgrEmpID+''' OR
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([wl].[EmpID]) = '''+@strSrMgrEmpID+''' OR [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([wl].[EmpID]) = '''+@strSrMgrEmpID+''')
+and [s].[Status] = '''+@strFormStatus+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [wl].[Active] like '''+ CONVERT(NVARCHAR,@bitActive) + '''
+and '''+@strSrMgrEmpID+''' <> ''999999''
+ORDER BY submitteddate desc'
+
+		
+EXEC (@nvcSQL)
+--Print @nvcSQL	   
+END --sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning
+
+
 GO
 
 
 
 ******************************************************************
-
-
-
