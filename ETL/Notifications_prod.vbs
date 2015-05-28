@@ -236,7 +236,7 @@ Next
 Const SMTPServer1 = "smtpout.gdit.com" '"denexcp01.vangent.local" 
 
 'assign message from address
-Const FromAddress = "VIP@vangent.com"
+Const FromAddress = "VIP@GDIT.com"
 
 'add test to subject line
 ToSubject = strSubject
