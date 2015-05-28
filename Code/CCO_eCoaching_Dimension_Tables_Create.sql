@@ -1,7 +1,12 @@
 /*
-eCoaching_Dimension_Tables_Create(02).sql
-Last Modified Date: 08/29/2014
+eCoaching_Dimension_Tables_Create(03).sql
+Last Modified Date: 04/15/2015
 Last Modified By: Susmitha Palacherla
+
+Version 03: 
+1. Modified to add changes made to support Training module per SCR 14512 and any 
+   missed changes for LSA and Quality Modules.
+    04/15/2015
 
 Version 02: 
 1. Modified to add additional tables to support the Phase II Modular design.
@@ -27,7 +32,7 @@ Tables
 11. [EC].[Coaching_Reason_Selection]
 12. [EC].[CallID_Selection]
 13. [EC].[Email_Notifications]
-
+14. [EC].[DIM_Behavior]
 
 Procedures
 1. [EC].[sp_Dim_Date_Add_Date_Range]
@@ -110,12 +115,36 @@ CREATE TABLE [EC].[DIM_Source](
 	[SourceID] [int] NOT NULL,
 	[CoachingSource] [nvarchar](100) NOT NULL,
 	[SubCoachingSource] [nvarchar](100) NOT NULL,
+	[isActive] [bit] NULL,
+	[CSR] [bit] NULL,
+	[Supervisor] [bit] NULL,
+	[Quality] [bit] NULL,
+	[LSA] [bit] NULL,
+	[Training] [bit] NULL,
  CONSTRAINT [Source_ID] PRIMARY KEY CLUSTERED 
 (
 	[SourceID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
+GO
+
+ALTER TABLE [EC].[DIM_Source] ADD  DEFAULT ((1)) FOR [isActive]
+GO
+
+ALTER TABLE [EC].[DIM_Source] ADD  DEFAULT ((0)) FOR [CSR]
+GO
+
+ALTER TABLE [EC].[DIM_Source] ADD  DEFAULT ((0)) FOR [Supervisor]
+GO
+
+ALTER TABLE [EC].[DIM_Source] ADD  DEFAULT ((0)) FOR [Quality]
+GO
+
+ALTER TABLE [EC].[DIM_Source] ADD  DEFAULT ((0)) FOR [LSA]
+GO
+
+ALTER TABLE [EC].[DIM_Source] ADD  DEFAULT ((0)) FOR [Training]
 GO
 
 
@@ -205,6 +234,7 @@ CREATE TABLE [EC].[DIM_Module](
 	[BySite] [bit] NULL,
 	[isActive] [bit] NULL,
 	[ByProgram] [bit] NULL,
+	[ByBehavior] [bit] NULL,
  CONSTRAINT [Module_ID] PRIMARY KEY CLUSTERED 
 (
 	[ModuleID] ASC
@@ -212,7 +242,6 @@ CREATE TABLE [EC].[DIM_Module](
 ) ON [PRIMARY]
 
 GO
-
 
 
 ****************************************************************************************
@@ -231,7 +260,9 @@ CREATE TABLE [EC].[Employee_Selection](
 	[Job_Code_Description] [nvarchar](50) NULL,
 	[isCSR] [bit] NULL,
 	[isSupervisor] [bit] NULL,
-	[isQuality] [bit] NULL
+	[isQuality] [bit] NULL,
+	[isLSA] [bit] NULL,
+	[isTraining] [bit] NULL
 ) ON [PRIMARY]
 
 GO
@@ -250,7 +281,9 @@ CREATE TABLE [EC].[Module_Submission](
 	[Job_Code_Description] [nvarchar](50) NULL,
 	[CSR] [bit] NULL,
 	[Supervisor] [bit] NULL,
-	[Quality] [bit] NULL
+	[Quality] [bit] NULL,
+	[LSA] [bit] NULL,
+	[Training] [bit] NULL
 ) ON [PRIMARY]
 
 GO
@@ -305,7 +338,10 @@ CREATE TABLE [EC].[Coaching_Reason_Selection](
 	[CSR] [bit] NULL,
 	[Quality] [bit] NULL,
 	[Supervisor] [bit] NULL,
-	[splReason] [bit] NULL
+	[splReason] [bit] NULL,
+	[splReasonPrty] [int] NULL,
+	[LSA] [bit] NULL,
+	[Training] [bit] NULL
 ) ON [PRIMARY]
 
 GO
@@ -325,10 +361,14 @@ CREATE TABLE [EC].[CallID_Selection](
 	[Format] [nvarchar](50) NULL,
 	[CSR] [bit] NULL,
 	[Supervisor] [bit] NULL,
-	[Quality] [bit] NULL
+	[Quality] [bit] NULL,
+	[LSA] [bit] NULL,
+	[Training] [bit] NULL
 ) ON [PRIMARY]
 
 GO
+
+
 
 ****************************************************************************************
 
@@ -361,7 +401,25 @@ GO
 
 ****************************************************************************************
 
---14. Create Table
+--14. Create Table [EC].[DIM_Behavior]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[DIM_Behavior](
+	[BehaviorID] [int] IDENTITY(1,1) NOT NULL,
+	[Behavior] [nvarchar](30) NOT NULL,
+ CONSTRAINT [BehaviorID] PRIMARY KEY CLUSTERED 
+(
+	[BehaviorID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
 
 
 
