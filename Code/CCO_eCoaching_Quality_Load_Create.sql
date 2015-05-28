@@ -1,7 +1,12 @@
 /*
-eCoaching_Quality_Create(05).sql
-Last Modified Date: 08/29/2014
+eCoaching_Quality_Create(06).sql
+Last Modified Date: 10/31/2014
 Last Modified By: Susmitha Palacherla
+
+Version 06: 
+1.  Updated per SCR 13701 to insert new records based on VerintEvalID 
+     Instead of  Journal ID and Submitter ID 
+  
 
 Version 05: 
 1. Updated [EC].[sp_InsertInto_Coaching_Log_Quality] for Phase II 
@@ -220,15 +225,17 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      02/23/2014
 --    Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 08/13/2014
+-- Last Modified Date: 10/31/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
+-- Modified to revert to using the Verint evalid as the unique identifier for loading new logs in the
+-- Coaching table.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
@@ -301,9 +308,8 @@ BEGIN TRY
 		    1 [ModuleID]
 FROM [EC].[Quality_Coaching_Stage] qs 
 join EC.Employee_Hierarchy csr on qs.User_EMPID = csr.Emp_ID
-left outer join EC.Coaching_Log cf on qs.[Journal_ID] = cf.[VerintID]
-AND qs.Evaluator_ID = cf.[SubmitterID]
-where cf.[VerintID] is null	and cf.[SubmitterID] is NULL
+left outer join EC.Coaching_Log cf on qs.Eval_ID = cf.VerintEvalID
+where cf.VerintEvalID is null
 OPTION (MAXDOP 1)
 
 SELECT @Count =@@ROWCOUNT
@@ -368,15 +374,8 @@ END TRY
 END -- sp_InsertInto_Coaching_Log_Quality
 
 
+
 GO
-
-
-
-
-
-
-
-
 
 **********************************************************************************************************************
 
