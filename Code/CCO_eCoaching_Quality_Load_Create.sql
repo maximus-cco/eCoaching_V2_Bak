@@ -1,9 +1,10 @@
 /*
-eCoaching_Quality_Create(01).sql
-Last Modified Date: 04/10/2014
+eCoaching_Quality_Create(02).sql
+Last Modified Date: 07/01/2014
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated per SCR 12963 to modify sp_InsertInto_Coaching_Log_Quality
+to fetch @@rowcount on insert.
 
 Version 01: Initial revision
 
@@ -190,13 +191,12 @@ IF EXISTS (
    DROP  PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality] 
 GO
 
-/****** Object:  StoredProcedure [EC].[sp_InsertInto_Coaching_Log_Quality]    Script Date: 11/14/2013 14:59:42 ******/
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --    ====================================================================
 --    Author:           Susmitha Palacherla
@@ -204,9 +204,12 @@ GO
 --    Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
---
+
+--   Modified Date: Per SCR 12963. Added Output parameter @Count to get the @@ROWCOUNT on insert for 
+--   populating in File List table.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
+@Count INT OUTPUT
   
 AS
 BEGIN
@@ -220,7 +223,9 @@ BEGIN TRY
       SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])    
       
       
-       INSERT INTO [EC].[Coaching_Log]
+      -- Inserts records from the Quality_Coaching_Stage table to the Coaching_Log Table
+
+         INSERT INTO [EC].[Coaching_Log]
            ([FormName]
            ,[ProgramName]
            ,[SourceID]
@@ -275,6 +280,7 @@ left outer join EC.Coaching_Log cf on qs.[Eval_ID] = cf.[VerintEvalID]
 where cf.[VerintEvalID] is null	 
 OPTION (MAXDOP 1)
 
+SELECT @Count =@@ROWCOUNT
 
 WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
@@ -333,9 +339,9 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
-
-
 GO
+
+
 
 
 
