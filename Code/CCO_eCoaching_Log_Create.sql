@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(17).sql
-Last Modified Date: 02/16/2015
+eCoaching_Log_Create(18).sql
+Last Modified Date: 02/18/2015
 Last Modified By: Susmitha Palacherla
+
+Version 18:
+Updates to [EC].[sp_Select_Employees_By_Module](SP # 55) to restrict users from 
+submitting ecls for themselves by not showing them in the drop down per SCR 14323.
 
 Version 17:
 Updates to [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP](SP # 6) to support warnings 
@@ -4935,11 +4939,15 @@ GO
 --	Description: *	This procedure pulls the list of Employee names to be displayed 
 --  in the drop downs for the selected Module using the job_code in the Employee_Selection table.
 --  Created to replace the sp_SelectCSRsbyLocation used by the original CSR Module 
---  
+--  Last Modified By: Susmitha Palacherla
+--  Last Modified date; Susmitha Palacherla
+--  Modified per SCR 14323 to restrict users from submitting ecls for themselves by
+--  by preventing them from appearing in the drop downs.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Employees_By_Module] 
 
-@strModulein nvarchar(30), @strCSRSitein nvarchar(30)= NULL
+@strModulein nvarchar(30), @strCSRSitein nvarchar(30)= NULL,
+@strUserLanin nvarchar(20)
 
 AS
 
@@ -4952,10 +4960,13 @@ DECLARE
 @nvcSQL03 nvarchar(max)
 
 SET @nvcSQL01 = 'select [Emp_Name] + '' ('' + [Emp_LanID] + '') '' + [Emp_Job_Description] as FrontRow1
-	  ,[Emp_Name] + ''$'' + [Emp_Email] + ''$'' + [Emp_LanID] + ''$'' + [Sup_Name] + ''$'' + [Sup_Email] + ''$'' + [Sup_LanID] + ''$'' + [Sup_Job_Description] + ''$'' + [Mgr_Name] + ''$'' + [Mgr_Email] + ''$'' + [Mgr_LanID] + ''$'' + [Mgr_Job_Description]  + ''$'' + [Emp_Site] as BackRow1, [Emp_Site]
+	  ,[Emp_Name] + ''$'' + [Emp_Email] + ''$'' + [Emp_LanID] + ''$'' + [Sup_Name] + ''$'' + [Sup_Email] + ''$'' + [Sup_LanID] + ''$'' + [Sup_Job_Description] + ''$'' + [Mgr_Name] + ''$'' + [Mgr_Email] + ''$'' + [Mgr_LanID] + ''$'' + 
+
+[Mgr_Job_Description]  + ''$'' + [Emp_Site] as BackRow1, [Emp_Site]
        from [EC].[Employee_Hierarchy] WITH (NOLOCK) JOIN [EC].[Employee_Selection]
        on [EC].[Employee_Hierarchy].[Emp_Job_Code]= [EC].[Employee_Selection].[Job_Code]
-where [EC].[Employee_Selection].[is'+ @strModulein + ']= 1'
+where [EC].[Employee_Selection].[is'+ @strModulein + ']= 1
+and [Emp_lanID] <> '''+@strUserLanin+ ''''
 
 SET @nvcSQL02 = ' and [Emp_Site] = ''' +@strCSRSitein + ''''
 
@@ -4977,8 +4988,10 @@ SET @nvcSQL = @nvcSQL01 + @nvcSQL03
 EXEC (@nvcSQL)	
 END --sp_Select_Employees_By_Module
 
-
 GO
+
+
+
 
 ******************************************************************
 
