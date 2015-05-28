@@ -1,8 +1,11 @@
 /*
-eCoaching_Quality_Create(07).sql
-Last Modified Date: 11/21/2014
+eCoaching_Quality_Create(08).sql
+Last Modified Date: 12/19/2014
 Last Modified By: Susmitha Palacherla
 
+Version 08: 
+1.  Updated [EC].[sp_InsertInto_Coaching_Log_Quality] per 
+     SCR 13891 to insert supID and MgrID at time of insert into the ecl log.
 
 Version 07: 
 1.  Updated [EC].[sp_InsertInto_Coaching_Log_Quality] per 
@@ -229,19 +232,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      02/23/2014
 --    Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 11/21/2014
+-- Last Modified Date: 12/16/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to determine source value from Source value in feed instead of 
--- hardcoding to 211 (IQS)per SCR 13826.
+-- Modified per SCR 13891 to store SupID and MgrID at time of insert.
 
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
@@ -285,6 +284,8 @@ BEGIN TRY
            ,[isCSRAcknowledged]
            ,[VerintFormName]
            ,[ModuleID]
+           ,[SupID]
+           ,[MgrID]
            )
 
             SELECT DISTINCT
@@ -313,7 +314,9 @@ BEGIN TRY
 	            	ELSE 1 END	[isCSE],			
 		    0 [isCSRAcknowledged],
 		    qs.VerintFormname [verintFormName],
-		    1 [ModuleID]
+		    1 [ModuleID],
+		    ISNULL(csr.[Sup_ID],'999999') [SupID],
+		    ISNULL(csr.[Mgr_ID],'999999')[MgrID]
 FROM [EC].[Quality_Coaching_Stage] qs 
 join EC.Employee_Hierarchy csr on qs.User_EMPID = csr.Emp_ID
 left outer join EC.Coaching_Log cf on qs.Eval_ID = cf.VerintEvalID
@@ -381,10 +384,9 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
 
-
-
-
 GO
+
+
 
 **********************************************************************************************************************
 
