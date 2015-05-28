@@ -1,7 +1,11 @@
 /*
-eCoaching_Warning_Log_Create(02).sql
-Last Modified Date: 10/22/2014
+eCoaching_Warning_Log_Create(03).sql
+Last Modified Date: 10/27/2014
 Last Modified By: Susmitha Palacherla
+
+Version 03: Inactivate expired warning logs. SCR 13624.
+1. Added new sp [EC].[sp_InactivateExpiredWarningLogs] (#8)
+
 
 Version 02: Additional Updates. SCR 13479.
 1. Marked Encryption related Objects as Not being Used.(sp #1)
@@ -27,6 +31,7 @@ Procedures
 5. [EC].[sp_SelectFrom_Warning_Log_CSRCompleted]-- (Not Being Used)
 6. [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted] 
 7. [EC].[sp_SelectFrom_Warning_Log_MGRCSRCompleted] 
+8. [EC].[sp_InactivateExpiredWarningLogs] 
 
 
 */
@@ -776,14 +781,53 @@ GO
 ******************************************************************
 
 
+--8. Create SP  [EC].[sp_InactivateExpiredWarningLogs] 
+
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
+     AND SPECIFIC_NAME = N'sp_InactivateExpiredWarningLogs ' 
 )
-   DROP PROCEDURE [EC].[]
+   DROP PROCEDURE [EC].[sp_InactivateExpiredWarningLogs] 
 GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create Date:    10/27/2014
+-- Description:	Inactivate Expired warning logs.
+-- Warning Logs are considered as expired 13 Weeks after the Warning Given Date.
+-- Last Modified Date:
+-- Last Updated By: 
+
+-- =============================================
+CREATE PROCEDURE [EC].[sp_InactivateExpiredWarningLogs] 
+AS
+BEGIN
+
+-- Inactivate Expired Warning logs 
+-- Warnings expire 91 days (13 weeks) from warningGivenDate
+
+BEGIN
+UPDATE [EC].[Warning_Log]
+SET [Active] = 0
+WHERE DATEDIFF(D, [WarningGivenDate],GetDate()) > 91
+OPTION (MAXDOP 1)
+END
+
+
+END  -- [EC].[sp_InactivateExpiredWarningLogs]
+
+GO
+
 
 
 
