@@ -1596,7 +1596,8 @@
                 </asp:Panel>
             </asp:Panel>
             <asp:Panel ID="Panel6" runat="server" Visible="false">
-               <p> &nbsp;</p>
+                <p>
+                    &nbsp;</p>
                 <asp:Label ID="Label25" runat="server" Text="My Hierarchy eCoaching Logs" ForeColor="#0099FF"
                     Visible="True"></asp:Label><br />
                 <asp:Label ID="Label33" runat="server" Text="Filter: " Visible="True"></asp:Label>
@@ -1649,6 +1650,19 @@
                     SelectCommand="EC.sp_Select_Statuses_For_Dashboard" SelectCommandType="StoredProcedure"
                     DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
                 </asp:SqlDataSource>
+                <asp:Label ID="Label37" runat="server" Text="Submitted: "></asp:Label>
+                <asp:TextBox runat="server" class="TextBox" ID="Date11" Width="100px" />&nbsp;
+                <asp:Image runat="server" ID="cal11" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
+                <asp:CalendarExtender ID="CalendarExtender11" runat="server" Enabled="true" TargetControlID="Date11"
+                    PopupButtonID="cal11">
+                </asp:CalendarExtender>
+                <asp:TextBox runat="server" class="TextBox" ID="Date12" Width="100px" />&nbsp;
+                <asp:Image runat="server" ID="cal12" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
+                <asp:CalendarExtender ID="CalendarExtender12" runat="server" Enabled="true" TargetControlID="Date12"
+                    PopupButtonID="cal12">
+                </asp:CalendarExtender>
+
+ <asp:Button ID="Button6" runat="server" Text="Go" CssClass="formButton" />
                 <asp:GridView ID="GridView15" runat="server" AutoGenerateColumns="False" CellPadding="4"
                     DataSourceID="SqlDataSource45" EnableModelValidation="True" ForeColor="#333333"
                     GridLines="Vertical" Width="90%" Visible="True" AllowSorting="True" Enabled="True"
@@ -1753,6 +1767,8 @@
                     EnableViewState="False" ViewStateMode="Disabled">
                     <SelectParameters>
                         <asp:Parameter Name="strEMPSRMGRin" Type="String" />
+                        <asp:Parameter Name="strSDatein" Type="String" />
+                        <asp:Parameter Name="strEDatein" Type="String" />
                         <asp:ControlParameter DefaultValue="%" Name="strEMPMGRin" Type="String" ControlID="ddMGR5"
                             Direction="Input" />
                         <asp:ControlParameter DefaultValue="%" Name="strEMPSUPin" Type="String" ControlID="ddSUP5"
@@ -1771,137 +1787,134 @@
                         <asp:Parameter Name="strFormIDin" Type="String" />
                     </SelectParameters>
                 </asp:SqlDataSource>
-
-                     <p>
-                        &nbsp;</p>
-                    <asp:Label ID="Label34" runat="server" Text="My Hierarchy Warning eCoaching Logs" ForeColor="#0099FF"
-                        Visible="True"></asp:Label>
-                    <br />
-                    <asp:Label ID="Label35" runat="server" Text="Filter: " Visible="True"></asp:Label>
-                    <asp:DropDownList ID="ddState6" DataTextField="StateText" DataValueField="StateValue"
-                        DataSourceID="SqlDataSource49" AutoPostBack="true" runat="server" class="TextBox"
-                        Style="margin-right: 5px;">
-                    </asp:DropDownList>
-                    <asp:SqlDataSource ID="SqlDataSource49" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                        SelectCommand="EC.sp_Select_States_For_Dashboard" SelectCommandType="StoredProcedure"
-                        DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                    </asp:SqlDataSource>
-                    <asp:Label ID="Label36" runat="server" Text="Submitted: "></asp:Label>
-                    <asp:TextBox runat="server" class="TextBox" ID="Date9" Width="100px" />&nbsp;
-                    <asp:Image runat="server" ID="cal9" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                    <asp:CalendarExtender ID="CalendarExtender9" runat="server" Enabled="true" TargetControlID="Date9"
-                        PopupButtonID="cal9">
-                    </asp:CalendarExtender>
-                    <asp:TextBox runat="server" class="TextBox" ID="Date10" Width="100px" />&nbsp;
-                    <asp:Image runat="server" ID="cal10" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                    <asp:CalendarExtender ID="CalendarExtender10" runat="server" Enabled="true" TargetControlID="Date10"
-                        PopupButtonID="cal10">
-                    </asp:CalendarExtender>
-                    <asp:Button ID="Button5" runat="server" Text="Go" CssClass="formButton" />
-                    <br />
-                    <asp:GridView ID="GridView16" runat="server" AutoGenerateColumns="False" AllowSorting="True"
-                        DataSourceID="SqlDataSource50" EnableModelValidation="True" Width="90%" CellPadding="4"
-                        ForeColor="#333333" GridLines="Vertical" Visible="True" Enabled="True" AllowPaging="True"
-                        PageSize="20">
-                        <AlternatingRowStyle BackColor="White" />
-                        <Columns>
-                            <asp:TemplateField HeaderText="#">
-                                <ItemTemplate>
-                                    <asp:Label ID="index" runat="server"><%# Container.DataItemIndex + 1%></asp:Label>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Name2" SortExpression="strFormID" Visible="False">
-                                <ItemTemplate>
-                                    <asp:Label ID="Label1" runat="server" Text='<%# Eval("strFormID") %>'></asp:Label>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="FormID" SortExpression="strFormID">
-                                <ItemTemplate>
-                                    <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review3.aspx?id={0}") %>'
-                                        Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                        Target="vlarge"></asp:HyperLink>
-                                    &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                        AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Employee Name" SortExpression="strEmpName">
-                                <ItemTemplate>
-                                    <asp:Label ID="Label2" runat="server" Text='<%# Eval(server.htmldecode("strEmpName")) %>'></asp:Label>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Supervisor Name" SortExpression="strEmpSupName">
-                                <ItemTemplate>
-                                    <asp:Label ID="Label3" runat="server" Text='<%# Eval("strEmpSupName") %>'></asp:Label>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Manager Name" SortExpression="strEmpMgrName">
-                                <ItemTemplate>
-                                    <asp:Label ID="Label4" runat="server" Text='<%# Eval("strEmpMgrName") %>'></asp:Label>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Status" SortExpression="strFormStatus">
-                                <ItemTemplate>
-                                    <asp:Label ID="Label5" runat="server" Text='<%# Eval("strFormStatus") %>'></asp:Label>
-                                </ItemTemplate>
-                            </asp:TemplateField>
- 
-                            <asp:TemplateField HeaderText="Warning Type" SortExpression="">
-                                <ItemTemplate>
-                                    <asp:Label ID="Label6a" runat="server" Text='' />
-                                    <asp:DataList ID="Dlist1" runat="server">
-                                        <ItemTemplate>
-                                            <asp:Label ID="Label6" runat="server" Text='<%# Eval("CoachingReason") %>' Visible="false" />
-                                        </ItemTemplate>
-                                    </asp:DataList>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Warning Reason(s)" SortExpression="">
-                                <ItemTemplate>
-                                    <asp:DataList ID="Dlist2" runat="server">
-                                        <ItemTemplate>
-                                            <asp:Label ID="Label7" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                        </ItemTemplate>
-                                    </asp:DataList>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
-                                <ItemTemplate>
-                                    <asp:Label ID="Label8" runat="server" Text='<%# Eval("SubmittedDate") %>'></asp:Label>&nbsp;PDT
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                        </Columns>
-                        <EditRowStyle BackColor="#2461BF" />
-                        <EmptyDataRowStyle BorderColor="#0066FF" BorderStyle="Solid" BorderWidth="1px" />
-                        <EmptyDataTemplate>
-                            <asp:Label ID="Label16" runat="server" CssClass="nodata" Text="There are no completed items to display."></asp:Label>
-                        </EmptyDataTemplate>
-                        <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
-                        <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
-                        <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
-                        <RowStyle BackColor="#EFF3FB" />
-                        <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
-                    </asp:GridView>
-                    <asp:SqlDataSource ID="SqlDataSource50" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                        SelectCommand="EC.sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning" SelectCommandType="StoredProcedure"
-                        EnableViewState="False" ViewStateMode="Disabled">
-                        <SelectParameters>
-                            <asp:Parameter Name="strEMPSRMGRin" Type="String" />
-                            <asp:Parameter Name="strSDatein" Type="String" />
-                            <asp:Parameter Name="strEDatein" Type="String" />
-                            <asp:ControlParameter DefaultValue="%" Name="bitActive" Type="String" ControlID="ddState6"
-                                Direction="Input" />
-                        </SelectParameters>
-                    </asp:SqlDataSource>
-                    <asp:SqlDataSource ID="SqlDataSource51" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                        SelectCommand="EC.sp_SelectReviewFrom_Warning_Log_Reasons" SelectCommandType="StoredProcedure"
-                        DataSourceMode="DataReader">
-                        <SelectParameters>
-                            <asp:Parameter Name="strFormIDin" Type="String" />
-                        </SelectParameters>
-                    </asp:SqlDataSource>
-
+                <p>
+                    &nbsp;</p>
+                <asp:Label ID="Label34" runat="server" Text="My Hierarchy Warning eCoaching Logs"
+                    ForeColor="#0099FF" Visible="True"></asp:Label>
+                <br />
+                <asp:Label ID="Label35" runat="server" Text="Filter: " Visible="True"></asp:Label>
+                <asp:DropDownList ID="ddState6" DataTextField="StateText" DataValueField="StateValue"
+                    DataSourceID="SqlDataSource49" AutoPostBack="true" runat="server" class="TextBox"
+                    Style="margin-right: 5px;">
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SqlDataSource49" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
+                    SelectCommand="EC.sp_Select_States_For_Dashboard" SelectCommandType="StoredProcedure"
+                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
+                </asp:SqlDataSource>
+                <asp:Label ID="Label36" runat="server" Text="Submitted: "></asp:Label>
+                <asp:TextBox runat="server" class="TextBox" ID="Date9" Width="100px" />&nbsp;
+                <asp:Image runat="server" ID="cal9" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
+                <asp:CalendarExtender ID="CalendarExtender9" runat="server" Enabled="true" TargetControlID="Date9"
+                    PopupButtonID="cal9">
+                </asp:CalendarExtender>
+                <asp:TextBox runat="server" class="TextBox" ID="Date10" Width="100px" />&nbsp;
+                <asp:Image runat="server" ID="cal10" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
+                <asp:CalendarExtender ID="CalendarExtender10" runat="server" Enabled="true" TargetControlID="Date10"
+                    PopupButtonID="cal10">
+                </asp:CalendarExtender>
+                <asp:Button ID="Button5" runat="server" Text="Go" CssClass="formButton" />
+                <br />
+                <asp:GridView ID="GridView16" runat="server" AutoGenerateColumns="False" AllowSorting="True"
+                    DataSourceID="SqlDataSource50" EnableModelValidation="True" Width="90%" CellPadding="4"
+                    ForeColor="#333333" GridLines="Vertical" Visible="True" Enabled="True" AllowPaging="True"
+                    PageSize="20">
+                    <AlternatingRowStyle BackColor="White" />
+                    <Columns>
+                        <asp:TemplateField HeaderText="#">
+                            <ItemTemplate>
+                                <asp:Label ID="index" runat="server"><%# Container.DataItemIndex + 1%></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Name2" SortExpression="strFormID" Visible="False">
+                            <ItemTemplate>
+                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("strFormID") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="FormID" SortExpression="strFormID">
+                            <ItemTemplate>
+                                <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review3.aspx?id={0}") %>'
+                                    Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
+                                    Target="vlarge"></asp:HyperLink>
+                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
+                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
+                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
+                                        Visible="true"></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Employee Name" SortExpression="strEmpName">
+                            <ItemTemplate>
+                                <asp:Label ID="Label2" runat="server" Text='<%# Eval(server.htmldecode("strEmpName")) %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Supervisor Name" SortExpression="strEmpSupName">
+                            <ItemTemplate>
+                                <asp:Label ID="Label3" runat="server" Text='<%# Eval("strEmpSupName") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Manager Name" SortExpression="strEmpMgrName">
+                            <ItemTemplate>
+                                <asp:Label ID="Label4" runat="server" Text='<%# Eval("strEmpMgrName") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Status" SortExpression="strFormStatus">
+                            <ItemTemplate>
+                                <asp:Label ID="Label5" runat="server" Text='<%# Eval("strFormStatus") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Warning Type" SortExpression="">
+                            <ItemTemplate>
+                                <asp:Label ID="Label6a" runat="server" Text='' />
+                                <asp:DataList ID="Dlist1" runat="server">
+                                    <ItemTemplate>
+                                        <asp:Label ID="Label6" runat="server" Text='<%# Eval("CoachingReason") %>' Visible="false" />
+                                    </ItemTemplate>
+                                </asp:DataList>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Warning Reason(s)" SortExpression="">
+                            <ItemTemplate>
+                                <asp:DataList ID="Dlist2" runat="server">
+                                    <ItemTemplate>
+                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
+                                    </ItemTemplate>
+                                </asp:DataList>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
+                            <ItemTemplate>
+                                <asp:Label ID="Label8" runat="server" Text='<%# Eval("SubmittedDate") %>'></asp:Label>&nbsp;PDT
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                    <EditRowStyle BackColor="#2461BF" />
+                    <EmptyDataRowStyle BorderColor="#0066FF" BorderStyle="Solid" BorderWidth="1px" />
+                    <EmptyDataTemplate>
+                        <asp:Label ID="Label16" runat="server" CssClass="nodata" Text="There are no completed items to display."></asp:Label>
+                    </EmptyDataTemplate>
+                    <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
+                    <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
+                    <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
+                    <RowStyle BackColor="#EFF3FB" />
+                    <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
+                </asp:GridView>
+                <asp:SqlDataSource ID="SqlDataSource50" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
+                    SelectCommand="EC.sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning" SelectCommandType="StoredProcedure"
+                    EnableViewState="False" ViewStateMode="Disabled">
+                    <SelectParameters>
+                        <asp:Parameter Name="strEMPSRMGRin" Type="String" />
+                        <asp:Parameter Name="strSDatein" Type="String" />
+                        <asp:Parameter Name="strEDatein" Type="String" />
+                        <asp:ControlParameter DefaultValue="%" Name="bitActive" Type="String" ControlID="ddState6"
+                            Direction="Input" />
+                    </SelectParameters>
+                </asp:SqlDataSource>
+                <asp:SqlDataSource ID="SqlDataSource51" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
+                    SelectCommand="EC.sp_SelectReviewFrom_Warning_Log_Reasons" SelectCommandType="StoredProcedure"
+                    DataSourceMode="DataReader">
+                    <SelectParameters>
+                        <asp:Parameter Name="strFormIDin" Type="String" />
+                    </SelectParameters>
+                </asp:SqlDataSource>
             </asp:Panel>
         </ContentTemplate>
     </asp:UpdatePanel>
