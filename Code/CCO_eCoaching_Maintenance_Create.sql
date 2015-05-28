@@ -1,7 +1,12 @@
 /*
-eCoaching_Maintenance_Create(04).sql
-Last Modified Date: 08/29/2014
+eCoaching_Maintenance_Create(05).sql
+Last Modified Date: 11/14/2014
 Last Modified By: Susmitha Palacherla
+
+
+Version 05: 
+1. Updated SP [EC].[sp_SelectCoaching4Contact] to add source ID 221
+    for new ETS feed per SCR 13659.
 
 Version 04: 
 1. Updated procedures impacted by the Phase II Modular design.
@@ -144,9 +149,9 @@ GO
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/13
 --	Description: 	   This procedure queries db for feed records to send out mail
--- Last Modified Date: 08/13/2014
+-- Last Modified Date: 11/12/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
+-- Modified per SCR 13659 to include the ETS feed.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -163,8 +168,7 @@ DECLARE
 
  Set @strFormStatus1 = 'Completed'
  Set @strFormStatus2 = 'Inactive'
- Set @intSource1 = 211
- Set @intSource2 = 212
+
  
  Set @strFormType = 'Indirect'
 --Set @strFormMail = 'jourdain.augustin@gdit.com'
@@ -195,7 +199,7 @@ AND cl.SourceID = so.SourceID
 AND cl.ModuleID = mo.ModuleID
 AND S.Status <> '''+@strFormStatus1+'''
 AND S.Status <> '''+@strFormStatus2+'''
-AND cl.SourceID in (211,212)
+AND cl.SourceID in (211,212,221)
 AND cl.EmailSent = ''False''
 AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
 OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL)
@@ -206,11 +210,12 @@ Order By cl.SubmittedDate DESC'
 --and [strCSREmail] = '''+@strFormMail+'''
 EXEC (@nvcSQL)	
 	    
-END
-
+END --sp_SelectCoaching4Contact
 
 
 GO
+
+
 
 
 
