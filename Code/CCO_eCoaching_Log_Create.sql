@@ -1,9 +1,11 @@
 /*
-eCoaching_Log_Create(15).sql
-Last Modified Date: 01/15/2015
+eCoaching_Log_Create(16).sql
+Last Modified Date: 01/16/2015
 Last Modified By: Susmitha Palacherla
 
-
+Version 16:
+Additional post V&V Updates to support Compliance ETS Reports per SCR 14031.
+1.Update to procedure #50.
 
 Version 15:
 Updates to support Compliance ETS Reports per SCR 14031.
@@ -4380,11 +4382,11 @@ GO
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/12
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page for Outlier records. 
---    Last Update:    12/16/2014
---    Modified per SCR 14031 to incorporate ETS Outstanding Action (Compliance) reports.
+--    Last Update:    01/16/2015
+--    Updated per SCR 14031 to incorporate OA Reports.
 
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
+ALTER PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
@@ -4427,6 +4429,7 @@ SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus
 		strReasonNotCoachable = @nvcstrReasonNotCoachable,
 		isCoachingRequired = @bitisCoachingRequired,
 		SupReviewedAutoDate =  @dtmReviewAutoDate,
+		CoachingDate =  @dtmReviewManualDate,
 		CoachingNotes = @nvcReviewerNotes,		   
 		txtReasonNotCoachable = @nvctxtReasonNotCoachable 
 	WHERE FormName = @nvcFormID
@@ -4512,7 +4515,10 @@ END CATCH
 
 
 END --sp_Update5Review_Coaching_Log
+
 GO
+
+
 
 
 ******************************************************************
