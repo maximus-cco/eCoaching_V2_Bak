@@ -1,10 +1,11 @@
 /*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
 
+Instructions refelect the updates made for SCR 14803 that impacted the ETL objects for this SCR.
 
 Summary
 
 1. Download files from Version Manager
-2. Create table [EC].[Inactivations_Stage] -- Done
+2. Create table [EC].[Inactivations_Stage] 
 3. Create Procedure [EC].[sp_Inactivations_From_Feed] for Inactication and Messages 
 4.Stage ssis package and Config file
 5. Setup sql agent job
@@ -17,7 +18,7 @@ Summary
 -- Step1. Download files from Version Manager
 Get the following files from version Manager
 1. \cms\eCoaching_V2\ETL\eCL_Inactivations.dtsx (VM Revision 1.0)
-2.  \cms\eCoaching_V2\ETL\Prod_eCL_Inactivations.dtsConfig (VM Revision 1.0)
+2.  \cms\eCoaching_V2\ETL\Prod_eCL_Inactivations.dtsConfig (VM Revision 1.1)
 
 
 --***************************************************************
@@ -37,6 +38,7 @@ GO
 
 
 -- Step 3. Create procedure sp_Inactivations_From_Feed for Processing 
+--<Begin Step3>
 
 IF EXISTS (
   SELECT * 
@@ -191,18 +193,16 @@ END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 END  -- [EC].[sp_Inactivations_From_Feed]
-
-
-
 GO
 
+--</End Step3>
 
 --***************************************************************
 
 --Step 4: Stage SSIS Package
 --a. copy previously downloaded files to \\vdenssdbp07\scorecard-ssis\Coaching\
 1. \cms\eCoaching_V2\ETL\eCL_Inactivations.dtsx (VM Revision 1.0)
-2.  \cms\eCoaching_V2\ETL\Prod_eCL_Inactivations.dtsConfig (VM Revision 1.0)
+2.  \cms\eCoaching_V2\ETL\Prod_eCL_Inactivations.dtsConfig (VM Revision 1.1)
 
 
 
