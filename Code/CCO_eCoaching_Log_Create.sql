@@ -1,7 +1,17 @@
 /*
-eCoaching_Log_Create(08).sql
-Last Modified Date: 10/29/2014
+eCoaching_Log_Create(09).sql
+Last Modified Date: 11/3/2014
 Last Modified By: Susmitha Palacherla
+
+Version 09:
+1. Additional Update to (SP # 47) to update MgrReviewAutoDate and MgrNotes
+   fields for Manager updates.  per SCR 13631.
+2. Additional Update to (SP # 62) to replace'Other' as a SubCoaching Reason 
+   for Progressive Warnings functionality with Other Policy (non-Security/Privacy) per SCR 13479. 
+3. Changes for SCR 13659- ETS Feed Load
+    Altered table Coaching_Log to add 2 additional columns. SupID and MgrID.
+4. Modified (SP # 17) to allow acting managers to review Pending supervisor
+   review eCLs per SCR 13794.
 
 
 Version 08:
@@ -183,6 +193,8 @@ CREATE TABLE [EC].[Coaching_Log](
 	[txtReasonNotCoachable] [nvarchar](3000) NULL,
 	[VerintFormName] [nvarchar]50) NULL,
                   [ModuleID][int],
+                  [SupID] [nvarchar](20) NULL,
+                  [MgrID] [nvarchar](20) NULL,
  CONSTRAINT [PK_Coaching_Log] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC
@@ -2006,9 +2018,9 @@ GO
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the CSR e-Coaching records from the Coaching_Log table
 -- Where the status is Prnding Review. 
--- Last Modified Date: 08/20/14
+-- Last Modified Date: 11/17/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSRID to EmpID to support the Modular design.
+-- Modified per SCR 13794 to allow acting Managers to view Supervisor level records.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPPending] @strCSRSUPin nvarchar(30)
 AS
@@ -2040,19 +2052,21 @@ FROM [EC].[Employee_Hierarchy] eh,
 	 [EC].[Coaching_Log] cl WITH(NOLOCK)
 where cl.EmpID = eh.Emp_ID
 and cl.StatusID = s.StatusID
-and (((eh.[Sup_LanID] = '''+@strCSRSUPin+''')
+and (((eh.[Sup_LanID] = '''+@strCSRSUPin+''' OR eh.[Mgr_LanID] = '''+@strCSRSUPin+''' )
 and ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+'''OR [S].[Status] = '''+@strFormStatus3+'''OR [S].[Status] = '''+@strFormStatus4+'''))
 or (eh.[Emp_LanID] = '''+@strCSRSUPin+''' and [S].[Status] = '''+@strFormStatus5+'''))
 
 Order By [cl].[SubmittedDate] DESC'
 		
 EXEC (@nvcSQL)	
+--Print @nvcSQL
 	    
 END --sp_SelectFrom_Coaching_Log_SUPPending
 
 
 
 GO
+
 
 
 
@@ -3959,10 +3973,9 @@ GO
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/11
 --    Description: *    This procedure allows managers to update the e-Coaching records from the review page with Yes, this is a confirmed Customer Service Escalation. 
---    Last Update:     12/13/13
---    Updated per SCR xxxxx to handle deadlocks with retries.
---    Last Update:    03/17/2014 - Modified for eCoachingDev DB
---    Last Update:    03/25/2014 - Modified Update query	
+--    Last Update:     10/31/2014
+--    Updated per SCR 13631 to update MgrReviewAutoDate and MgrNotes fields for Manager updates. 
+
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update2Review_Coaching_Log]
 (
@@ -3988,10 +4001,10 @@ BEGIN TRY
       
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
-		   SupReviewedAutoDate = @dtmSupReviewedAutoDate,
+		   MgrReviewAutoDate = @dtmSupReviewedAutoDate,
 		   CoachingDate = @dtmCoachingDate,
 		   isCSE = @bitisCSE,
-           CoachingNotes = @nvctxtCoachingNotes
+           MgrNotes = @nvctxtCoachingNotes
 from EC.Coaching_Log       
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)	
@@ -4040,7 +4053,6 @@ END CATCH
 
 END --sp_Update2Review_Coaching_Log
 GO
-
 
 
 
@@ -5187,7 +5199,6 @@ SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
 SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
 WHERE Emp_ID = @nvcEmpID)
 
-
 IF  (@strSourcein = 'Direct' and (@nvcEmpJobCode like 'WISY13' OR @nvcEmpJobCode like 'WSQA70' OR @nvcEmpJobCode like '%CS40%' OR @nvcEmpJobCode like '%CS50%' OR @nvcEmpJobCode like '%CS60%'))
 OR
 (@strSourcein = 'Direct' and @strReasonin in ('Verbal Warning', 'Written Warning' ,'Final Written Warning'))
@@ -5197,7 +5208,7 @@ Where ' + @strModulein +' = 1
 and [CoachingReason] = '''+@strReasonin +'''
 and [IsActive] = 1 
 AND ' + @strSourcein +' = 1
-Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
+Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other Policy (non-Security/Privacy)'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
 
 ELSE
 
@@ -5207,12 +5218,13 @@ and [CoachingReason] = '''+@strReasonin +'''
 and [IsActive] = 1 
 AND ' + @strSourcein +' = 1
 AND [SubCoachingReason] <> ''ETS''
-Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
+Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other Policy (non-Security/Privacy)'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
 
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
 END -- sp_Select_SubCoachingReasons_By_Reason
+
 
 
 
