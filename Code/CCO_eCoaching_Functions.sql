@@ -1,8 +1,13 @@
 /*
-File: eCoaching_Functions.sql (10)
+File: eCoaching_Functions.sql (11)
 Last Modified By: Susmitha Palacherla
-Date: 02/20/2015
+Date: 03/19/2015
 
+Version 11, 03/19/2015
+1. Added the following Functions 3 functions to support sr management dashboard per scr 14423.
+[EC].[fn_strSrMgrLvl1EmpIDFromEmpID]  
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
+[EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
 
 Version 10, 02/20/2015
 1. Modified fn #3 to handle multiple open ended employee id to lan id mappings per SCR 14375.
@@ -78,6 +83,9 @@ List of Functions:
 22. [EC].[fn_intSubCoachReasonIDFromETSRptCode] 
 23. [EC].[fn_intSourceIDFromSource] 
 24. [EC].[fn_strEmpNameFromEmpID]
+25. [EC].[fn_strSrMgrLvl1EmpIDFromEmpID]  
+26. [EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
+27. [EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
 */
 
 
@@ -1609,47 +1617,214 @@ GO
 
 ************************************************************************************
 
---25. FUNCTION [EC].[xxxxxx] 
+--25. FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'xxxxx' 
+     AND SPECIFIC_NAME = N'fn_strSrMgrLvl1EmpIDFromEmpID' 
 )
-   DROP FUNCTION [EC].[xxxxxxx]
+   DROP FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID]
 GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 03/05/2015
+-- Description:	Given an Employee ID returns the Sr Manager Employee ID.
+-- First Looks up the Mgr Emp ID of the Employee from the Hierarchy table.
+-- Then looks up the Supervisor of the Manager as the Senior Manager Level1
+-- Last Modified by: 
+-- Last update: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+		 @strMgrEmpID nvarchar(10),
+		 @strSrMgrLvl1EmpID nvarchar(10)
+
+  SELECT   @strMgrEmpID = [Mgr_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID
+
+  IF    @strMgrEmpID IS NULL 
+  SET   @strMgrEmpID= N'999999'
+  
+  SELECT   @strSrMgrLvl1EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] =@strMgrEmpID
+  
+  IF     @strSrMgrLvl1EmpID IS NULL 
+  SET    @strSrMgrLvl1EmpID = N'999999'
+  
+  RETURN   @strSrMgrLvl1EmpID
+  
+END --fn_strSrMgrLvl1EmpIDFromEmpID
+GO
+
 
 
 
 
 ************************************************************************************
 
---26. FUNCTION [EC].[xxxxxx] 
+--26. FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'xxxxx' 
+     AND SPECIFIC_NAME = N'fn_strSrMgrLvl2EmpIDFromEmpID' 
 )
-   DROP FUNCTION [EC].[xxxxxxx]
+   DROP FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID]
 GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 03/05/2015
+-- Description:	Given an Employee ID returns the Sr Mananger level 2 Employee ID.
+-- First Looks up the Mgr Emp ID of the Employee from the Hierarchy table.
+-- Then looks up the Supervisor of the Manager as the Senior Manager.
+-- Then looks up the Supervisor of the Senior Manager as the DSr Mananger level 2.
+-- Last Modified by: 
+-- Last update: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+		 @strMgrEmpID nvarchar(10),
+		 @strSrMgrLvl1EmpID nvarchar(10),
+		 @strSrMgrLvl2EmpID nvarchar(10)
+
+  SELECT   @strMgrEmpID = [Mgr_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID
+
+  IF    @strMgrEmpID IS NULL 
+  SET   @strMgrEmpID= N'999999'
+  
+  SELECT   @strSrMgrLvl1EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] =@strMgrEmpID
+  
+  IF     @strSrMgrLvl1EmpID IS NULL 
+  SET    @strSrMgrLvl1EmpID = N'999999'
+  
+  SELECT   @strSrMgrLvl2EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strSrMgrLvl1EmpID
+  
+  IF     @strSrMgrLvl2EmpID IS NULL 
+  SET    @strSrMgrLvl2EmpID = N'999999'
+  
+  RETURN  @strSrMgrLvl2EmpID
+  
+END --fn_strSrMgrLvl2EmpIDFromEmpID
+GO
+
 
 
 
 
 ************************************************************************************
 
---27. FUNCTION [EC].[xxxxxx] 
+--27. FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'xxxxx' 
+     AND SPECIFIC_NAME = N'fn_strSrMgrLvl3EmpIDFromEmpID' 
 )
-   DROP FUNCTION [EC].[xxxxxxx]
+   DROP FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 03/05/2015
+-- Description:	Given an Employee ID returns the Regional Manager Employee ID.
+-- First Looks up the Mgr Emp ID of the Employee from the Hierarchy table.
+-- Then looks up the Supervisor of the Manager as the Senior Manager.
+-- Then looks up the Supervisor of the Senior Manager as the Regional Manager.
+-- Last Modified by: 
+-- Last update: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+		 @strMgrEmpID nvarchar(10),
+		 @strSrMgrLvl1EmpID nvarchar(10),
+		 @strSrMgrLvl2EmpID nvarchar(10),
+		 @strSrMgrLvl3EmpID nvarchar(10)
+		 
+
+  SELECT   @strMgrEmpID = [Mgr_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID
+
+  IF    @strMgrEmpID IS NULL 
+  SET   @strMgrEmpID= N'999999'
+  
+  SELECT   @strSrMgrLvl1EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] =@strMgrEmpID
+  
+  IF     @strSrMgrLvl1EmpID IS NULL 
+  SET    @strSrMgrLvl1EmpID = N'999999'
+  
+   SELECT   @strSrMgrLvl2EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strSrMgrLvl1EmpID
+  
+  IF    @strSrMgrLvl2EmpID IS NULL 
+  SET   @strSrMgrLvl2EmpID= N'999999'
+  
+  SELECT   @strSrMgrLvl3EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strSrMgrLvl2EmpID
+  
+  IF     @strSrMgrLvl3EmpID IS NULL 
+  SET    @strSrMgrLvl3EmpID = N'999999'
+  
+  RETURN  @strSrMgrLvl3EmpID
+  
+END --fn_strSrMgrLvl3EmpIDFromEmpID
 GO
 
 
