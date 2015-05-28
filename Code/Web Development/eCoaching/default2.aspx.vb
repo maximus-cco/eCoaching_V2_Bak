@@ -3342,7 +3342,8 @@ Public Class default2
         myMessage.AlternateViews.Add(htmlView)
 
         'uncomment/comment to send mail/setup for dev
-        mySmtpClient = New SmtpClient("vadentexp01") ''
+         'mySmtpClient = New SmtpClient("vadentexp01") ''old
+        mySmtpClient = New SmtpClient("smtpout.gdit.com") ''new
 
         mySmtpClient.Send(myMessage)
 
