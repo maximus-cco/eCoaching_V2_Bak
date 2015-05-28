@@ -10,8 +10,6 @@
     </asp:ToolkitScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <input type="hidden" id="hiddenTokenId" runat="server" class="hidden-token-class"/>
-
             <br />
             <asp:Label ID="Label26" runat="server" CssClass="dashHead"></asp:Label>
             <br />
@@ -25,123 +23,27 @@
             <br />
             <asp:Label ID="Label6a" runat="server" Text='' Visible="false"></asp:Label>
             <asp:Panel ID="Panel3" runat="server">
-                <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_Whoami" SelectCommandType="StoredProcedure" DataSourceMode="DataReader"
-                    EnableViewState="False" ViewStateMode="Disabled">
-                    <SelectParameters>
-                        <asp:Parameter Name="strUserin" Type="String" />
-                    </SelectParameters>
-                </asp:SqlDataSource>
-                <asp:GridView ID="GridView3" runat="server" DataSourceID="SqlDataSource2" AutoGenerateColumns="False"
-                    EnableModelValidation="True" Visible="false">
-                    <Columns>
-                        <asp:TemplateField HeaderText="" ItemStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Label ID="Job" runat="server" Text='<%# Eval("Submitter") %>' Visible="false"></asp:Label>
-                            </ItemTemplate>
-                            <ItemStyle HorizontalAlign="Center"></ItemStyle>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
                 <asp:Label ID="Label22" runat="server" Text="eCoaching Logs" ForeColor="#0099FF"
                     Visible="True"></asp:Label><br />
                 <asp:Label ID="Label23" runat="server" Text="Filter: " Visible="True"></asp:Label>
-                <asp:DropDownList ID="ddSite" runat="server" DataTextField="SiteText" DataValueField="SiteValue"
-                    DataSourceID="SqlDataSource4" class="TextBox" Style="margin-right: 5px;"
-                    AutoPostBack="true">
+                <asp:DropDownList ID="ddSite" AutoPostBack="true" runat="server" class="TextBox"
+                    Style="margin-right: 5px;">
                 </asp:DropDownList>
-                <asp:SqlDataSource ID="SqlDataSource4" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_Select_Sites_For_Dashboard" SelectCommandType="StoredProcedure"
-                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                </asp:SqlDataSource>
-
-                <asp:DropDownList ID="ddCSR" DataTextField="CSRText" DataValueField="CSRValue"
-                    DataSourceID="SqlDataSource6" runat="server" class="TextBox" Style="margin-right: 5px;">                   
+                <asp:DropDownList ID="ddCSR" runat="server" class="TextBox" Style="margin-right: 5px;">
                 </asp:DropDownList>
-                <asp:SqlDataSource ID="SqlDataSource6" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted2" SelectCommandType="StoredProcedure"
-                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                </asp:SqlDataSource>
-                <asp:SqlDataSource ID="SqlDataSource15" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted" FilterExpression="strCSRSite Like '{0}' OR strCSRSite = '%'"
-                    SelectCommandType="StoredProcedure" DataSourceMode="DataSet" EnableViewState="True" 
-                    ViewStateMode="Enabled">
-                    <FilterParameters>
-                        <asp:ControlParameter Name="strCSRSite" ControlID="ddSite" PropertyName="SelectedValue"
-                            Direction="Input" DefaultValue="%" />
-                    </FilterParameters>
-                </asp:SqlDataSource>
-
-                <asp:DropDownList ID="ddSUP" DataTextField="SUPText" DataValueField="SUPValue" DataSourceID="SqlDataSource7"
-                    runat="server" class="TextBox" Style="margin-right: 5px;">                    
+                <asp:DropDownList ID="ddSUP" runat="server" class="TextBox" Style="margin-right: 5px;">
                 </asp:DropDownList>
-
-                <asp:SqlDataSource ID="SqlDataSource7" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_SelectFrom_Coaching_LogDistinctSUPCompleted2" SelectCommandType="StoredProcedure"
-                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                </asp:SqlDataSource>
-                <asp:SqlDataSource ID="SqlDataSource12" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_SelectFrom_Coaching_LogDistinctSUPCompleted" FilterExpression="strCSRSite Like '{0}' OR strCSRSite = '%'"
-                    SelectCommandType="StoredProcedure" DataSourceMode="DataSet" EnableViewState="True"
-                    ViewStateMode="Enabled">
-                    <FilterParameters>
-                        <asp:ControlParameter Name="strCSRSite" ControlID="ddSite" PropertyName="SelectedValue"
-                            Direction="Input" DefaultValue="%" />
-                    </FilterParameters>
-                </asp:SqlDataSource>
-
-                <asp:DropDownList ID="ddMGR" DataTextField="MGRText" DataValueField="MGRValue" DataSourceID="SqlDataSource9"
-                    runat="server" class="TextBox" Style="margin-right: 5px;">                    
+                <asp:DropDownList ID="ddMGR" runat="server" class="TextBox" Style="margin-right: 5px;">
                 </asp:DropDownList>
-
-                <asp:SqlDataSource ID="SqlDataSource9" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_SelectFrom_Coaching_LogDistinctMGRCompleted2" SelectCommandType="StoredProcedure"
-                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                </asp:SqlDataSource>
-                <asp:SqlDataSource ID="SqlDataSource3" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_SelectFrom_Coaching_LogDistinctMGRCompleted" FilterExpression="strCSRSite Like '{0}' OR strCSRSite = '%'"
-                    SelectCommandType="StoredProcedure" DataSourceMode="DataSet" EnableViewState="True"
-                    ViewStateMode="Enabled">
-                    <FilterParameters>
-                        <asp:ControlParameter Name="strCSRSite" ControlID="ddSite" PropertyName="SelectedValue"
-                            Direction="Input" DefaultValue="%" />
-                    </FilterParameters>
-                </asp:SqlDataSource>
-
-                 <asp:DropDownList ID="ddSubmitter" DataTextField="SubmitterText" DataValueField="SubmitterValue"
-                    DataSourceID="SqlDataSource13" runat="server" class="TextBox"
-                    Style="margin-right: 5px;">                   
+                <asp:DropDownList ID="ddSubmitter" runat="server" class="TextBox" Style="margin-right: 5px;">
                 </asp:DropDownList>
-                <asp:SqlDataSource ID="SqlDataSource13" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2" SelectCommandType="StoredProcedure"
-                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                </asp:SqlDataSource>
-                <asp:DropDownList ID="ddStatus" DataTextField="StatusText" DataValueField="StatusValue"
-                    DataSourceID="SqlDataSource1" runat="server" class="TextBox"
-                    Style="margin-right: 5px;">                   
+                &nbsp;
+                <asp:DropDownList ID="ddStatus" runat="server" class="TextBox" Style="margin-right: 5px;">
                 </asp:DropDownList>
-                <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_Select_Statuses_For_Dashboard" SelectCommandType="StoredProcedure"
-                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                </asp:SqlDataSource>
-              
-                 <asp:DropDownList ID="ddSource" runat="server" DataTextField="SourceText" DataValueField="SourceValue"
-                    DataSourceID="SqlDataSource5" class="TextBox" Style="margin-right: 5px;">                                           
+                <asp:DropDownList ID="ddSource" runat="server" class="TextBox" Style="margin-right: 5px;">
                 </asp:DropDownList>
-                <asp:SqlDataSource ID="SqlDataSource5" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_Select_Sources_For_Dashboard" SelectCommandType="StoredProcedure"
-                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                     <SelectParameters>
-                        <asp:Parameter Name="strUserin" Type="String" />
-                    </SelectParameters>
-                </asp:SqlDataSource>
-                 <asp:DropDownList ID="ddValue" runat="server" DataTextField="ValueText" DataValueField="ValueValue"
-                    DataSourceID="SqlDataSource14" class="TextBox" Style="margin-right: 5px;">                                           
+                <asp:DropDownList ID="ddValue" runat="server" class="TextBox" Style="margin-right: 5px;">
                 </asp:DropDownList>
-                <asp:SqlDataSource ID="SqlDataSource14" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_Select_Values_For_Dashboard" SelectCommandType="StoredProcedure"
-                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">                    
-                </asp:SqlDataSource>
                 <asp:Label ID="Label6" runat="server" Text="Submitted: "></asp:Label>
                 <asp:TextBox runat="server" class="TextBox" ID="Date1" Width="100px" />&nbsp;
                 <asp:Image runat="server" ID="cal1" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
@@ -153,13 +55,11 @@
                 <asp:CalendarExtender ID="CalendarExtender2" runat="server" Enabled="true" TargetControlID="Date2"
                     PopupButtonID="cal2">
                 </asp:CalendarExtender>
-                <asp:Button ID="Button1" runat="server" Text="Apply" CssClass="formButton" onClientClick="blockUI();" />
-                <asp:Button ID="ExportButton" runat="server" CssClass="formButton" Text="Export to Excel" onClientClick="blockUI();" />
-
-                <asp:GridView ID="GridView7" runat="server" AutoGenerateColumns="False" CellPadding="4"
-                    DataSourceID="SqlDataSource8" EnableModelValidation="True" ForeColor="#333333"
-                    GridLines="Vertical" Width="90%" AllowSorting="True" AllowPaging="True" PageSize="50"
-                    ShowFooter="True" OnRowDataBound="GridView7_Bound" Visible="false">
+                <asp:Button ID="Button1" runat="server" Text="Apply" CssClass="formButton" />
+                <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CellPadding="4"
+                    EnableModelValidation="True" ForeColor="#333333" GridLines="Vertical" Width="90%"
+                    AllowSorting="True" AllowPaging="True" PageSize="50" ShowFooter="True" OnSorting="gvSorting"
+                    OnRowDataBound="GridView1_Bound" Visible="false" OnPageIndexChanging="OnPaging">
                     <AlternatingRowStyle BackColor="White" />
                     <Columns>
                         <asp:TemplateField HeaderText="#">
@@ -213,7 +113,7 @@
                                 <asp:Label ID="Label7" runat="server" Text='<%# Eval("strFormStatus") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                      <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
+                        <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
                                 <asp:DataList ID="Dlist1" runat="server">
                                     <ItemTemplate>
@@ -240,8 +140,7 @@
                                 </asp:DataList>
                             </ItemTemplate>
                         </asp:TemplateField>
-
-                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
+                        <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
                             <ItemTemplate>
                                 <asp:Label ID="Label11" runat="server" Text='<%# Eval("SubmittedDate") %>'></asp:Label>
                             </ItemTemplate>
@@ -262,43 +161,7 @@
                     <RowStyle BackColor="#EFF3FB" />
                     <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
                 </asp:GridView>
-                <asp:SqlDataSource ID="SqlDataSource8" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_SelectFrom_Coaching_Log_HistoricalSUP" DataSourceMode="DataSet"
-                    SelectCommandType="StoredProcedure" EnableViewState="False" ViewStateMode="Disabled">
-                    <SelectParameters>
-                        <asp:Parameter Name="strSDatein" Type="String" />
-                        <asp:Parameter Name="strEDatein" Type="String" />
-                        <asp:Parameter Name="strjobcode" Type="String" />
-                        <asp:ControlParameter DefaultValue="%" Name="strValue" Type="String" ControlID="ddValue"
-                            Direction="Input" PropertyName="SelectedValue" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddCSR"
-                            Direction="Input" PropertyName="SelectedValue" />
-                        <asp:ControlParameter DefaultValue="%" Name="strSUPin" Type="String" ControlID="ddSUP"
-                            Direction="Input" PropertyName="SelectedValue" />
-                        <asp:ControlParameter DefaultValue="%" Name="strMGRin" Type="String" ControlID="ddMGR"
-                            Direction="Input" PropertyName="SelectedValue" />
-                        <asp:ControlParameter DefaultValue="%" Name="strSubmitterin" Type="String" ControlID="ddSubmitter"
-                            Direction="Input" PropertyName="SelectedValue" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRSitein" Type="String" ControlID="ddSite"
-                            Direction="Input" PropertyName="SelectedValue" />
-                        <asp:ControlParameter DefaultValue="%" Name="strSourcein" Type="String" ControlID="ddSource"
-                            Direction="Input" PropertyName="SelectedValue" />
-                        <asp:ControlParameter DefaultValue="%" Name="strStatusin" Type="String" ControlID="ddStatus"
-                            Direction="Input" PropertyName="SelectedValue" />
-                    </SelectParameters>
-                </asp:SqlDataSource>
-
-                 <asp:SqlDataSource ID="SqlDataSource10" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_SelectReviewFrom_Coaching_Log_Reasons" SelectCommandType="StoredProcedure">
-                    <SelectParameters>
-                        <asp:Parameter Name="strFormIDin" Type="String" />
-                    </SelectParameters>
-                </asp:SqlDataSource>
-
             </asp:Panel>
         </ContentTemplate>
-        <Triggers>
-            <asp:PostBackTrigger ControlID="ExportButton" />
-        </Triggers>
     </asp:UpdatePanel>
 </asp:Content>
