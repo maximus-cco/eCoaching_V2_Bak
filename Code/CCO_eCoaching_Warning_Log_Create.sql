@@ -1,9 +1,12 @@
 /*
-eCoaching_Warning_Log_Create(04).sql
-Last Modified Date: 11/07/14
+eCoaching_Warning_Log_Create(05).sql
+Last Modified Date: 12/4/2014
 Last Modified By: Susmitha Palacherla
 
-Version 04: Updates from UAR for SCr 13479 SCR 13624.
+Version 05: SCR 13542
+1. Modified sp [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted]  (#6)
+
+Version 04: Updates from UAT for SCR 13479 SCR 13624.
 1. Modified sp [EC].[sp_SelectFrom_Warning_Log_MGRCSRCompleted]  (#7)
 
 Version 03: Inactivate expired warning logs. SCR 13624.
@@ -639,8 +642,9 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/09/2014
 --	Description: *	This procedure selects the CSR Warning records from the Warning_Log table
--- Last Modified Date: 
--- Last Updated By: 
+-- Last Modified Date: 12/02/2014
+-- Last Updated By: Susmitha Palacherla
+-- Modified to add functionality for acting managers during testing of SCR 13542.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted] 
 @strCSRSUPin nvarchar(30),
@@ -676,12 +680,12 @@ FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl
 ON [wl].[EmpID] = [eh].[Emp_ID] JOIN  [EC].[DIM_Status]s
 ON [wl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source]sc
 ON [wl].[SourceID] = [sc].[SourceID]
-WHERE [eh].[Sup_LanID] =  '''+@strCSRSUPin+''' 
+WHERE ([eh].[Sup_LanID] =  '''+@strCSRSUPin+''' OR [eh].[Mgr_LanID] = '''+@strCSRSUPin+''')
 and [s].[Status] = '''+@strFormStatus+'''
 and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
 and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
 and [wl].[Active] like '''+ CONVERT(NVARCHAR,@bitActive) + '''
-and (eh.Sup_ID = '''+@nvcSupID+''' and eh.Sup_ID <> ''999999'')
+and ((eh.Sup_ID = '''+@nvcSupID+''' and eh.Sup_ID <> ''999999'')OR (eh.Mgr_ID = '''+@nvcSupID+''' and eh.Mgr_ID <> ''999999''))
 Order By [wl].[SubmittedDate] DESC'
 
 	
@@ -692,8 +696,9 @@ END --sp_SelectFrom_Warning_Log_SUPCSRCompleted
 
 
 
-GO
 
+
+GO
 
 
 
