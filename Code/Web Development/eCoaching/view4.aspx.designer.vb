@@ -32,15 +32,6 @@ Partial Public Class view4
     Protected WithEvents UpdatePanel1 As Global.System.Web.UI.UpdatePanel
 
     '''<summary>
-    '''hiddenTokenId control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents hiddenTokenId As Global.System.Web.UI.HtmlControls.HtmlInputHidden
-
-    '''<summary>
     '''Label26 control.
     '''</summary>
     '''<remarks>
@@ -77,24 +68,6 @@ Partial Public Class view4
     Protected WithEvents Panel3 As Global.System.Web.UI.WebControls.Panel
 
     '''<summary>
-    '''SqlDataSource2 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource2 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
-    '''GridView3 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents GridView3 As Global.System.Web.UI.WebControls.GridView
-
-    '''<summary>
     '''Label22 control.
     '''</summary>
     '''<remarks>
@@ -122,15 +95,6 @@ Partial Public Class view4
     Protected WithEvents ddSite As Global.System.Web.UI.WebControls.DropDownList
 
     '''<summary>
-    '''SqlDataSource4 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource4 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
     '''ddCSR control.
     '''</summary>
     '''<remarks>
@@ -138,24 +102,6 @@ Partial Public Class view4
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents ddCSR As Global.System.Web.UI.WebControls.DropDownList
-
-    '''<summary>
-    '''SqlDataSource6 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource6 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
-    '''SqlDataSource15 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource15 As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
     '''ddSUP control.
@@ -167,24 +113,6 @@ Partial Public Class view4
     Protected WithEvents ddSUP As Global.System.Web.UI.WebControls.DropDownList
 
     '''<summary>
-    '''SqlDataSource7 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource7 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
-    '''SqlDataSource12 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource12 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
     '''ddMGR control.
     '''</summary>
     '''<remarks>
@@ -192,24 +120,6 @@ Partial Public Class view4
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents ddMGR As Global.System.Web.UI.WebControls.DropDownList
-
-    '''<summary>
-    '''SqlDataSource9 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource9 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
-    '''SqlDataSource3 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource3 As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
     '''ddSubmitter control.
@@ -221,15 +131,6 @@ Partial Public Class view4
     Protected WithEvents ddSubmitter As Global.System.Web.UI.WebControls.DropDownList
 
     '''<summary>
-    '''SqlDataSource13 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource13 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
     '''ddStatus control.
     '''</summary>
     '''<remarks>
@@ -237,15 +138,6 @@ Partial Public Class view4
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents ddStatus As Global.System.Web.UI.WebControls.DropDownList
-
-    '''<summary>
-    '''SqlDataSource1 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource1 As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
     '''ddSource control.
@@ -257,15 +149,6 @@ Partial Public Class view4
     Protected WithEvents ddSource As Global.System.Web.UI.WebControls.DropDownList
 
     '''<summary>
-    '''SqlDataSource5 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource5 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
     '''ddValue control.
     '''</summary>
     '''<remarks>
@@ -273,15 +156,6 @@ Partial Public Class view4
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents ddValue As Global.System.Web.UI.WebControls.DropDownList
-
-    '''<summary>
-    '''SqlDataSource14 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource14 As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
     '''Label6 control.
@@ -356,38 +230,11 @@ Partial Public Class view4
     Protected WithEvents Button1 As Global.System.Web.UI.WebControls.Button
 
     '''<summary>
-    '''ExportButton control.
+    '''GridView1 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ExportButton As Global.System.Web.UI.WebControls.Button
-
-    '''<summary>
-    '''GridView7 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents GridView7 As Global.System.Web.UI.WebControls.GridView
-
-    '''<summary>
-    '''SqlDataSource8 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource8 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
-    '''SqlDataSource10 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource10 As Global.System.Web.UI.WebControls.SqlDataSource
+    Protected WithEvents GridView1 As Global.System.Web.UI.WebControls.GridView
 End Class
