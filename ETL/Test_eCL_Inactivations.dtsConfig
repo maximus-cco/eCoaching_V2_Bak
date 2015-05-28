@@ -1,0 +1,13 @@
+<?xml version="1.0"?><DTSConfiguration>
+<DTSConfigurationHeading><DTSConfigurationFileInfo GeneratedBy="VNGT\211palasu" GeneratedFromPackageName="eCL_Inactivations" GeneratedFromPackageID="{731A965E-74D8-4C80-AD62-5E1145C101DC}" GeneratedDate="4/23/2015 12:00:14 PM"/></DTSConfigurationHeading>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingTest</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[ServerName]" ValueType="String"><ConfiguredValue>VRIVFSSDBT02\SCORT01,1438</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>HQ200-SMTP01.ad.local</ConfiguredValue></Configuration> 
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::BakDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\Inactivations\Test\Bak</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FileDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\Inactivations\Test\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FromEmail].Properties[Value]" ValueType="String"><ConfiguredValue>eCoaching_Notifications@GDIT.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ProcessedDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\Inactivations\Test\Processed\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmailCC].Properties[Value]" ValueType="String"><ConfiguredValue>susmitha.palacherla@GDIT.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmailExt].Properties[Value]" ValueType="String"><ConfiguredValue>douglas.stearns@GDIT.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmailInt].Properties[Value]" ValueType="String"><ConfiguredValue>susmitha.palacherla@GDIT.com</ConfiguredValue></Configuration>
+</DTSConfiguration>
