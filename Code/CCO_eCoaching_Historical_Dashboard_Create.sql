@@ -1,11 +1,11 @@
 /*
-File: Coaching_Log_Create.sql(01)
-Date: 04/05/2014
+File: Coaching_Log_Create.sql(02)
+Date: 6/24/2014
 
-Version 2, 6/24/2014
+Version 02, 6/24/2014
 1. Added SP  [EC].[sp_Check_AppRole] per SCR 12978
 
-Version 1, 4/05/2014
+Version 01, 4/05/2014
 1. Initial Revision for new DB.
 
 To install, run section of the file as necessary
