@@ -9,7 +9,9 @@ Public Class view4
 
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim backDate As String = DateAdd("D", -30, TodaysDate).ToShortDateString()
-    Dim connString As String = "server=VRIVFSSDBT02\SCORT01,1438; Integrated Security=true; Initial Catalog=eCoachingTest"
+    'Dim connString As String = "server=VRIVFSSDBT02\SCORT01,1438; Integrated Security=true; Initial Catalog=eCoachingTest"
+    Dim connString As String = "server=VDENSSDBP07\SCORP01,1436; Integrated Security=true; Initial Catalog=eCoaching"
+
     Dim counter As Integer
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -613,7 +615,11 @@ Public Class view4
 
     Protected Sub getFiltersx()
 
-        Dim conn As New SqlConnection("server=VRIVFSSDBT02\SCORT01,1438; Integrated Security=true; Initial Catalog=eCoachingTest")
+        'Dim conn As New SqlConnection("server=VRIVFSSDBT02\SCORT01,1438; Integrated Security=true; Initial Catalog=eCoachingTest")
+        Dim conn As New SqlConnection("server=VDENSSDBP07\SCORP01,1436; Integrated Security=true; Initial Catalog=eCoaching")
+
+
+
         Dim ddlValues As SqlDataReader
         conn.Open()
         Dim comm As New SqlCommand("EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted2", conn)
