@@ -1,7 +1,12 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql(03)
-Date: 08/29/2014
+File: eCoaching_PS_Employee_Hierarchy_Load.sql(04)
+Date: 10/27/2014
 
+
+
+Version 04, 10/27/2014
+Updated  procedure (#5) sp_InactivateCoachingLogsForTerms to 
+Add statement to Inactivate Expired Warning logs per SCR 13624.
 
 Version 03, 08/29/2014
 Updated impacted procedures to support the Phase II Modular design.
@@ -887,9 +892,9 @@ GO
 -- Author:		   Susmitha Palacherla
 -- Create Date:    04/09/2014
 -- Description:	Inactivate Coaching logs for Termed Employees
--- Last Modified Date: 08/13/2014
+-- Last Modified Date: 10/27/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
+-- Modified to add Inactivations for warning_log table - SCR 13624.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
@@ -911,10 +916,30 @@ AND C.[StatusID] not in (1,2)
 OPTION (MAXDOP 1)
 END
 
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+
+-- Inactivate Warnings logs for Termed Employees
+
+BEGIN
+UPDATE [EC].[Warning_Log]
+SET [StatusID] = 2
+FROM [EC].[Warning_Log] W JOIN [EC].[Employee_Hierarchy]H
+ON W.[EmpLanID] = H.[Emp_LanID]
+AND W.[EmpID] = H.[Emp_ID]
+WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
+AND H.[Active] in ('T','D')
+AND H.[End_Date]<> '99991231'
+AND W.[StatusID] <> 2
+OPTION (MAXDOP 1)
+END
+
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
+
+
+
 GO
-
-
 
 
 
