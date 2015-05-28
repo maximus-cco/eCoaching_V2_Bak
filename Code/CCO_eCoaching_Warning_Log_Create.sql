@@ -1,12 +1,15 @@
 /*
-eCoaching_Warning_Log_Create(06).sql
-Last Modified Date: 12/15/2014
+eCoaching_Warning_Log_Create(07).sql
+Last Modified Date: 02/18/2015
 Last Modified By: Susmitha Palacherla
+
+
+Version 07: SCR 14304
+1. Modified sp [EC].[sp_InsertInto_Warning_Log](#2)
 
 Version 06: SCR 13623
 1. Added 2 new fields to the Warning_Log table.
     numReportID and strReportCode
-
 
 Version 05: SCR 13542
 1. Modified sp [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted]  (#6)
@@ -168,7 +171,7 @@ GO
 
 **************************************************************
 
---1. Create SP  [EC].[sp_OpenKeys]
+--1. Create SP  [EC].[sp_OpenKeys] -- Obsolete
 
 IF EXISTS (
   SELECT * 
@@ -240,9 +243,9 @@ GO
 --    Description:     This procedure inserts the Warning records into the Warning_Log table. 
 --                     The main attributes of the Warning are written to the warning_Log table.
 --                     The Warning Reasons are written to the Warning_Reasons Table.
--- Last Modified Date: 10/22/2014
+-- Last Modified Date: 02/18/2015
 -- Last Updated By: Susmitha Palacherla
--- Removed Description, Coaching Notes from Insert.
+-- Updated per SCR 14304 to check if warning exists and report as Dup
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
 (     @nvcFormName Nvarchar(50),
@@ -254,7 +257,8 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
       @intCoachReasonID1 INT,
       @nvcSubCoachReasonID1 Nvarchar(255),
       @dtmSubmittedDate datetime ,
-      @ModuleID INT
+      @ModuleID INT,
+      @isDup BIT OUTPUT
       )
    
 AS
@@ -276,7 +280,8 @@ BEGIN TRY
 	        @nvcSupID nvarchar(10),
 	        @nvcMgrID nvarchar(10),
 	        @nvcNotPassedSiteID INT,
-	        @dtmDate datetime
+	        @dtmDate datetime,
+	        @intWarnIDExists BIGINT
 	        
 	  
 	 	        
@@ -286,8 +291,21 @@ BEGIN TRY
 	SET @nvcSupID = (Select Sup_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)
 	SET @nvcMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)  
 	SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
+	SET @isDup = 1
+	
+SET @intWarnIDExists = (SELECT WL.WarningID
+FROM [EC].[Warning_Log]WL join [EC].[Warning_Log_Reason]WLR
+ON WL.WarningID = WLR.WarningID
+WHERE WL.[EmpID]= @nvcEmpID
+AND WL.[WarningGivenDate]= @dtmEventDate 
+AND WLR.[CoachingReasonID] = @intCoachReasonID1
+AND WLR.[SubCoachingReasonID]= @nvcSubCoachReasonID1
+AND [Active] = 1)
+
+
+IF @intWarnIDExists IS NULL 
         
-  
+ BEGIN 
          INSERT INTO [EC].[Warning_Log]
            ([FormName]
            ,[ProgramName]
@@ -351,7 +369,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
      END           
   END
  
-        
+ SET @isDup = 0
+ END       
 
 COMMIT TRANSACTION
 END TRY
@@ -408,6 +427,8 @@ END TRY
 
 
 GO
+
+
 
 
 
