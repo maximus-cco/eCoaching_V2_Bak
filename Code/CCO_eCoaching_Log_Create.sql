@@ -1,7 +1,15 @@
 /*
-eCoaching_Log_Create(11).sql
-Last Modified Date: 11/21/2014
+eCoaching_Log_Create(12).sql
+Last Modified Date: 12/17/2014
 Last Modified By: Susmitha Palacherla
+
+Version 12:
+Updates for SCr 13891
+1. Update to Table #1 Coaching_log to add 2 new fields.
+2. Update to insert into coaching log sp #1 to add supid and mgrid at time of submission
+3.Update to Review SPs #s 46,47,48,50,52 to capture Reviewer ID.
+4. Update to select for review sp #  45 to add Reviewer Name to the return.
+
 
 Version 11:
 1. Update to 1 procedure (SP # 56) to set warning flag for supervisors to 1.
@@ -203,6 +211,8 @@ CREATE TABLE [EC].[Coaching_Log](
                   [ModuleID][int],
                   [SupID] [nvarchar](20) NULL,
                   [MgrID] [nvarchar](20) NULL,
+                  [Review_SupID] [nvarchar](20) NULL,
+                  [Review_MgrID] [nvarchar](20) NULL,
  CONSTRAINT [PK_Coaching_Log] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC
@@ -305,9 +315,9 @@ GO
 --    Description:     This procedure inserts the e-Coaching records into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 08/13/2014
+-- Last Modified Date: 12/16/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to support the Modular design.
+-- Modified per SCR 13891 to capture SupID and MgrID at time of submission.
 --
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
@@ -397,6 +407,8 @@ BEGIN TRY
 
 	DECLARE @nvcEmpID Nvarchar(10),
 	        @nvcSubmitterID	Nvarchar(10),
+	        @nvcSupID Nvarchar(10),
+	        @nvcMgrID Nvarchar(10),
 	        @nvcNotPassedSiteID INT,
 	        @dtmDate datetime
 	        
@@ -407,7 +419,8 @@ BEGIN TRY
 	SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanID,@dtmDate)
 	SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
 	SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
-        
+    SET @nvcSupID = (SELECT [Sup_ID] FROM [EC].[Employee_Hierarchy]WHERE [Emp_ID]= @nvcEmpID)
+    SET @nvcMgrID = (SELECT [Mgr_ID] FROM [EC].[Employee_Hierarchy]WHERE [Emp_ID]= @nvcEmpID)
   
          INSERT INTO [EC].[Coaching_Log]
            ([FormName]
@@ -442,7 +455,9 @@ BEGIN TRY
            ,[CSRReviewAutoDate]
            ,[CSRComments]
            ,[EmailSent]
-           ,[ModuleID])
+           ,[ModuleID]
+           ,[SupID]
+           ,[MgrID])
      VALUES
            (@nvcFormName
            ,@nvcProgramName 
@@ -476,7 +491,9 @@ BEGIN TRY
 		   ,@dtmCSRReviewAutoDate 
 		   ,@nvcCSRComments
 		   ,@bitEmailSent
-		   ,@ModuleID)
+		   ,@ModuleID
+		   ,ISNULL(@nvcSupID,'999999')
+		   ,ISNULL(@nvcMgrID,'999999'))
             
             
      --PRINT 'STEP1'
@@ -817,8 +834,9 @@ END TRY
   END CATCH  
 
   END -- sp_InsertInto_Coaching_Log
-GO
 
+
+GO
 
 
 
@@ -3751,10 +3769,17 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
---	Description: 	This procedure displays the Coaching Log attributes for given Form Name. 
+--	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date: 12/17/2014
+-- Modified per SCR 13891 to display the actual reviewer supervisor  
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -3764,9 +3789,8 @@ BEGIN
 DECLARE	
 
 @nvcSQL nvarchar(max)
-
 	 
-  SET @nvcSQL = 'SELECT cl.CoachingID 	numID,
+  SET @nvcSQL = 'SELECT  cl.CoachingID 	numID,
 		cl.FormName	strFormID,
 		m.Module,
 		sc.CoachingSource	strFormType,
@@ -3780,64 +3804,60 @@ DECLARE
 		eh.Emp_Name	strCSRName,
 		eh.Emp_Email	strCSREmail,
 		st.City	strCSRSite,
-		eh.Sup_LanID	strCSRSup,
-		eh.Sup_Name	strCSRSupName,
-		eh.Sup_Email	strCSRSupEmail,
-		eh.Mgr_LanID	strCSRMgr,
-		eh.Mgr_Name	strCSRMgrName,
-		eh.Mgr_Email	strCSRMgrEmail,
+		eh.Sup_LanID strCSRSup,
+		eh.Sup_Name	 strCSRSupName,
+		eh.Sup_Email  strCSRSupEmail,
+		eh.Mgr_LanID  strCSRMgr,
+		eh.Mgr_Name  strCSRMgrName,
+		eh.Mgr_Email strCSRMgrEmail,
+		ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
 		sc.SubCoachingSource	strSource,
-		CL.isUCID    isUCID,
-		CL.UCID	strUCID,
-		CL.isVerintID	isVerintMonitor,
-		CL.VerintID	strVerintID,
-		CL.VerintFormName VerintFormName,
-		CL.isAvokeID	isBehaviorAnalyticsMonitor,
-		CL.AvokeID	strBehaviorAnalyticsID,
-		CL.isNGDActivityID	isNGDActivityID,
-		CL.NGDActivityID	strNGDActivityID,
-		CASE WHEN CC.CSE = ''Opportunity'' Then 1 ELSE 0 END	"Customer Service Escalation",
-		CASE WHEN CC.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
-		CASE WHEN CC.OMR is Not NULL Then 1 ELSE 0 END	"OMR / Exceptions",
-		CL.Description txtDescription,
-		CL.CoachingNotes txtCoachingNotes,
-		CL.isVerified,
-		CL.SubmittedDate,
-		CL.StartDate,
-		CL.SupReviewedAutoDate,
-		CL.isCSE,
-		CL.MgrReviewManualDate,
-		CL.MgrReviewAutoDate,
-		CL.MgrNotes txtMgrNotes,
-		CL.isCSRAcknowledged,
-		CL.isCoachingRequired,
-		CL.CSRReviewAutoDate,
-		CL.CSRComments txtCSRComments
-	 FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[Employee_Hierarchy] sh,
-	 [EC].[DIM_Status] s,
-	 [EC].[DIM_Source] sc,
-	 [EC].[DIM_Site] st,
-	 [EC].[DIM_Module] m,
-	 (SELECT  ccl.FormName,
+		cl.isUCID    isUCID,
+		cl.UCID	strUCID,
+		cl.isVerintID	isVerintMonitor,
+		cl.VerintID	strVerintID,
+		cl.VerintFormName VerintFormName,
+		cl.isAvokeID	isBehaviorAnalyticsMonitor,
+		cl.AvokeID	strBehaviorAnalyticsID,
+		cl.isNGDActivityID	isNGDActivityID,
+		cl.NGDActivityID	strNGDActivityID,
+		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END	"Customer Service Escalation",
+		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
+		CASE WHEN cc.OMR is Not NULL Then 1 ELSE 0 END	"OMR / Exceptions",
+		cl.Description txtDescription,
+		cl.CoachingNotes txtCoachingNotes,
+		cl.isVerified,
+		cl.SubmittedDate,
+		cl.StartDate,
+		cl.SupReviewedAutoDate,
+		cl.isCSE,
+		cl.MgrReviewManualDate,
+		cl.MgrReviewAutoDate,
+		cl.MgrNotes txtMgrNotes,
+		cl.isCSRAcknowledged,
+		cl.isCoachingRequired,
+		cl.CSRReviewAutoDate,
+		cl.CSRComments txtCSRComments
+	    FROM  [EC].[Coaching_Log] cl JOIN
+	  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''Customer Service Escalation'' THEN [clr].[Value] ELSE NULL END)	CSE,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''Current Coaching Initiative'' THEN [clr].[Value] ELSE NULL END)	CCI,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR
 	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
-	 [EC].[Coaching_Log] ccl WITH(NOLOCK)
+	 [EC].[Coaching_Log] ccl 
 	 WHERE [ccl].[FormName] = '''+@strFormIDin+'''
 	 AND [clr].[CoachingReasonID] = [cr].[CoachingReasonID]
 	 AND [ccl].[CoachingID] = [clr].[CoachingID] 
-	 GROUP BY ccl.FormName ) CC,
-	 [EC].[Coaching_Log] cl WITH(NOLOCK)
-where [cl].[EMPID] = [eh].[Emp_ID]
-and [cl].[StatusID] = [s].[StatusID]
-and [cl].[SourceID] = [sc].[SourceID]
-and [cl].[SiteID] = [st].[SiteID]
-and [cl].[ModuleID] = [m].[ModuleID]
-and [cl].[SubmitterID] = [sh].[Emp_ID]
-and [cl].[FormName] = [CC].[FormName] 
+	 GROUP BY ccl.FormName ) cc
+ON [cl].[FormName] = [cc].[FormName] JOIN  [EC].[Employee_Hierarchy] eh
+	 ON [cl].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
+	 ON [cl].[SubmitterID] = [sh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] suph
+	 ON ISNULL([cl].[Review_SupID],''999999'') = [suph].[Emp_ID] JOIN [EC].[Employee_Hierarchy] mgrh
+	 ON ISNULL([cl].[Review_MgrID],''999999'') = [mgrh].[Emp_ID]JOIN [EC].[DIM_Status] s
+	 ON [cl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source] sc
+     ON [cl].[SourceID] = [sc].[SourceID] JOIN [EC].[DIM_Site] st
+	 ON [cl].[SiteID] = [st].[SiteID] JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
 Order By [cl].[FormName]'
 		
 
@@ -3845,7 +3865,14 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
 GO
+
+
+
+
+
+
 
 
 
@@ -3869,19 +3896,20 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/12
 --    Description: *    This procedure allows supervisors to update the e-Coaching records from review page. 
---    Last Update:    03/04/2014
---    Updated per SCR 12359 to handle deadlocks with retries.
---    Last Update:    03/17/2014 - Modified for eCoachingDev DB
---    Last Update:    03/25/2014 - Modified Update query	
+--    Last Update:    12/16/2014
+--    Updated per SCR 13891 to capture review sup id.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update1Review_Coaching_Log]
 (
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
+      @nvcReviewSupLanID Nvarchar(20),
       @dtmSupReviewedAutoDate datetime,
 	  @dtmCoachingDate datetime,
       @nvctxtCoachingNotes Nvarchar(max) 
@@ -3898,10 +3926,16 @@ RETRY: -- Label RETRY
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
+
+DECLARE @nvcReviewSupID Nvarchar(10),
+	    @dtmDate datetime
        
+SET @dtmDate  = GETDATE()   
+SET @nvcReviewSupID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewSupLanID,@dtmDate)
 
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
+	       Review_SupID = @nvcReviewSupID,
 		   SupReviewedAutoDate = @dtmSupReviewedAutoDate,
 		   CoachingDate = @dtmCoachingDate,
            CoachingNotes = @nvctxtCoachingNotes
@@ -3951,7 +3985,12 @@ END CATCH
 
 
 END --sp_Update1Review_Coaching_Log
+
+
 GO
+
+
+
 
 
 
@@ -3975,18 +4014,20 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/11
 --    Description: *    This procedure allows managers to update the e-Coaching records from the review page with Yes, this is a confirmed Customer Service Escalation. 
---    Last Update:     10/31/2014
---    Updated per SCR 13631 to update MgrReviewAutoDate and MgrNotes fields for Manager updates. 
-
+--    Last Update:    12/16/2014
+--    Updated per SCR 13891 to capture review sup id.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update2Review_Coaching_Log]
 (
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
+      @nvcReviewMgrLanID Nvarchar(20),
       @dtmSupReviewedAutoDate datetime,
 	  @dtmCoachingDate datetime,
 	  @bitisCSE bit,
@@ -4004,13 +4045,20 @@ RETRY: -- Label RETRY
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY 
+
+DECLARE @nvcReviewSupID Nvarchar(10),
+	    @dtmDate datetime
+       
+SET @dtmDate  = GETDATE()   
+SET @nvcReviewSupID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewMgrLanID,@dtmDate)
       
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
-		   MgrReviewAutoDate = @dtmSupReviewedAutoDate,
+	       Review_SupID = @nvcReviewSupID,
+		   SupReviewedAutoDate = @dtmSupReviewedAutoDate,
 		   CoachingDate = @dtmCoachingDate,
 		   isCSE = @bitisCSE,
-           MgrNotes = @nvctxtCoachingNotes
+           CoachingNotes = @nvctxtCoachingNotes
 from EC.Coaching_Log       
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)	
@@ -4058,7 +4106,10 @@ END CATCH
 
 
 END --sp_Update2Review_Coaching_Log
+
+
 GO
+
 
 
 
@@ -4085,15 +4136,14 @@ GO
 --    Author:                 Susmitha Palacherla
 --    Create Date:     11/16/12
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page with No, this is not a confirmed Customer Service Escalation. 
---    Last Update:     03/04/2014
---    Updated per SCR 12359 to handle deadlocks with retries.
---    Last Update:    03/17/2014 - Modified for eCoachingDev DB
---    Last Update:    03/25/2014 - Modified Update query
+--    Last Update:    12/16/2014
+--    Updated per SCR 13891 to capture review mgr id.
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update3Review_Coaching_Log]
+CREATE  PROCEDURE [EC].[sp_Update3Review_Coaching_Log]
 (
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
+      @nvcReviewMgrLanID Nvarchar(20),
       @dtmMgrReviewAutoDate datetime,
       @dtmMgrReviewManualDate datetime,
       @bitisCSE bit,
@@ -4112,9 +4162,15 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
       
+      DECLARE @nvcReviewMgrID Nvarchar(10),
+	    @dtmDate datetime
+       
+SET @dtmDate  = GETDATE()   
+SET @nvcReviewMgrID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewMgrLanID,@dtmDate)
 	
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
+	       Review_MgrID = @nvcReviewMgrID,
 		   isCSE = @bitisCSE,
 		   MgrReviewAutoDate = @dtmMgrReviewAutoDate,
 		   MgrReviewManualDate = @dtmMgrReviewManualDate,
@@ -4299,8 +4355,8 @@ GO
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/12
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page for Outlier records. 
---    Last modified by:    Susmitha Palacherla
---    Modified per SCR 13213 to add Coaching Reason 'OMR / Exceptions' to the filter criteria for the review page.
+--    Last Update:    12/16/2014
+--    Updated per SCR 13891 to capture review mgr id.
 
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
@@ -4308,6 +4364,7 @@ CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
       @nvcstrReasonNotCoachable Nvarchar(30),
+      @nvcReviewMgrLanID Nvarchar(20),
       @dtmMgrReviewAutoDate datetime,
       @dtmMgrReviewManualDate datetime,
       @bitisCoachingRequired bit,
@@ -4327,10 +4384,17 @@ RETRY: -- Label RETRY
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
+
+DECLARE @nvcReviewMgrID Nvarchar(10),
+	    @dtmDate datetime
+       
+SET @dtmDate  = GETDATE()   
+SET @nvcReviewMgrID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewMgrLanID,@dtmDate)
             
       
 UPDATE 	EC.Coaching_Log
 SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
+        Review_MgrID = @nvcReviewMgrID,
 		strReasonNotCoachable = @nvcstrReasonNotCoachable,
 		isCoachingRequired = @bitisCoachingRequired,
 		MgrReviewAutoDate = @dtmMgrReviewAutoDate,
@@ -4391,7 +4455,10 @@ END CATCH
 
 
 END --sp_Update5Review_Coaching_Log
+
+
 GO
+
 
 
 
@@ -4517,25 +4584,18 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Update7Review_Coaching_Log]
 GO
 
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 --    ====================================================================
 --    Author:                 Jourdain Augustin
 --    Create Date:      7/31/13
 --    Description: *    This procedure allows Sups to update the e-Coaching records from the review page for Pending Acknowledgment records. 
---    Last Update:    03/04/2014
---    Updated per SCR 12359 to handle deadlocks with retries.
---    Last Update:    03/17/2014 - Modified for eCoachingDev DB
---    Last Update:    03/25/2014 - Modified Update query
+--    Last Update:    12/16/2014
+--    Updated per SCR 13891 to capture review sup id.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update7Review_Coaching_Log]
 (
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
+      @nvcReviewSupLanID Nvarchar(20),
       @dtmSUPReviewAutoDate datetime
 	
 )
@@ -4551,10 +4611,15 @@ RETRY: -- Label RETRY
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
-
+DECLARE @nvcReviewSupID Nvarchar(10),
+	    @dtmDate datetime
+       
+SET @dtmDate  = GETDATE()   
+SET @nvcReviewSupID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewSupLanID,@dtmDate)
 
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
+	       Review_SupID = @nvcReviewSupID,
 		   SUPReviewedAutoDate = @dtmSUPReviewAutoDate
 from EC.Coaching_Log        
 	WHERE FormName = @nvcFormID
@@ -4604,6 +4669,9 @@ END CATCH
 
 END --sp_Update7Review_Coaching_Log
 GO
+
+
+
 
 
 
