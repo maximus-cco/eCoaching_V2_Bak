@@ -1,0 +1,52 @@
+/*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+
+Summary
+1.Add record(s) to TABLE [EC].[DIM_Sub_Coaching_Reason]
+2.Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+
+*/
+
+-- step1: add subcoaching reasons
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+('Keeping the call on task'), 
+('Navigational efficiency'),
+('Non transfer opportunity'),
+('Over servicing the caller'),
+('Utilizing appropriate scripting')
+GO
+
+
+
+
+--step2: add into coaching reason selection
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA])
+     VALUES
+(1, 'AHT',122,'Keeping the call on task',1,1,1,1,1,1,0,0,0,0,0),
+(1, 'AHT',123,'Navigational efficiency',1,1,1,1,1,1,0,0,0,0,0),
+(1, 'AHT',124,'Non transfer opportunity',1,1,1,1,1,1,0,0,0,0,0),
+(1, 'AHT',125,'Over servicing the caller',1,1,1,1,1,1,0,0,0,0,0),
+(1, 'AHT',126,'Utilizing appropriate scripting',1,1,1,1,1,1,0,0,0,0,0)
+GO
+
+
+
