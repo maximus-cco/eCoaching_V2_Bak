@@ -1,7 +1,13 @@
 /*
-eCoaching_Outliers_Create(03).sql
-Last Modified Date: 08/29/2014
+eCoaching_Outliers_Create(04).sql
+Last Modified Date: 12/19/2014
 Last Modified By: Susmitha Palacherla
+
+Version 04: 
+12/19/2014
+1. Updated [EC].[sp_InsertInto_Coaching_Log_Outlier]  per scr 13891
+to store supid and mgrid at time of insert
+
 
 Version 03: 
 08/29/2014
@@ -190,15 +196,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
 -- Loads records from [EC].[Outlier_Coaching_Stage]to [EC].[Coaching_Log]
--- Last Modified Date: 08/13/2014
+-- Last Modified Date: 12/16/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to rename CSR and CSRID to EmpLanID and EmpID to support the Modular design.
+-- Modified per SCR 13891 to store SupID and MgrID at time of insert.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
@@ -240,6 +244,8 @@ BEGIN TRY
            ,[numReportID]
            ,[strReportCode]
            ,[ModuleID]
+           ,[SupID]
+           ,[MgrID]
            )
 select  Distinct LOWER(cs.CSR_LANID)	[FormName],
         CASE cs.Program  
@@ -264,7 +270,9 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
 		 0                          [isCSE],
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 1							[ModuleID]
+		 1							[ModuleID],
+		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
+		 ISNULL(csr.[Mgr_ID],'999999')  [MgrID]
 	                   
 from [EC].[Outlier_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR_EMPID = csr.Emp_ID
 left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
@@ -333,9 +341,8 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Outlier
 
-
-
 GO
+
 
 
 
