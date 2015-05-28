@@ -1,9 +1,18 @@
 /*
-eCoaching_Log_Create(01).sql
-Last Modified Date: 04/03/2014
+eCoaching_Log_Create(02).sql
+Last Modified Date: 07/22/2014
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: 
+1.  Updated per SCR 13054 to Import additional attribute VerintFormName
+     Updated impacted tables to add new Column and Stored procedures
+      Table [EC].[Coaching_Log] and SP [EC].[sp_InsertInto_Coaching_Log](1)
+2.  Updated per SCR 12930 to display VerintFormName on Review dashboard.
+      [EC].[sp_SelectReviewFrom_Coaching_Log] (45)
+3.  Updated per SCR 13138 to support insertion of Quality logs from web interface.
+     SP [EC].[sp_InsertInto_Coaching_Log]
+4. Updated sp [EC].[sp_Update5Review_Coaching_Log] (50) per SCR 13213 to 
+    add Coaching Reason 'OMR / Exceptions' to the filter criteria for the review page.
 
 Version 01: Initial Revision 
 
@@ -128,6 +137,7 @@ CREATE TABLE [EC].[Coaching_Log](
 	[isCoachingRequired] [bit] NULL,
 	[strReasonNotCoachable] [nvarchar](30) NULL,
 	[txtReasonNotCoachable] [nvarchar](3000) NULL,
+	[VerintFormName] [nvarchar]50) NULL,
  CONSTRAINT [PK_Coaching_Log] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC
@@ -217,6 +227,7 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
@@ -229,6 +240,10 @@ GO
 --    Description:     This procedure inserts the e-Coaching records into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
+--   Modified Date:    07/18/2014
+--   Description:      Updated per SCR 13138 to translate 'Opportunity' and 'Re-Inforcement' values for 
+--                     Quality logs submitted from Web Interface to 'Met Goal' and 'Did Not Meet Goal'
+--                     on insert into the Coaching_Reason table.
 --
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
@@ -318,12 +333,14 @@ BEGIN TRY
 	DECLARE @nvcEmpID Nvarchar(10),
 	        @nvcSubmitterID	Nvarchar(10),
 	        @dtmDate datetime
+	  
+	        
 	        
 	SET @dtmDate  = GETDATE()   
 	SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcCSR,@dtmDate)
 	SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
         
-      
+  
          INSERT INTO [EC].[Coaching_Log]
            ([FormName]
            ,[ProgramName]
@@ -394,7 +411,7 @@ BEGIN TRY
     SELECT @@IDENTITY AS 'Identity';
     DECLARE @I BIGINT = @@IDENTITY
 
-        
+       /* 
        IF NOT @intCoachReasonID1 IS NULL
        BEGIN
             INSERT INTO [EC].[Coaching_Log_Reason]
@@ -402,8 +419,18 @@ BEGIN TRY
             VALUES (@I, @intCoachReasonID1,@intSubCoachReasonID1,
             CASE WHEN @intCoachReasonID1 = 6 THEN 'Opportunity' ELSE @nvcValue1 END) 
         END
+       */
+           IF NOT @intCoachReasonID1 IS NULL
+       BEGIN
+            INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+            VALUES (@I, @intCoachReasonID1,@intSubCoachReasonID1,
+            CASE WHEN @intCoachReasonID1 = 6 THEN 'Opportunity'
+                 WHEN (@intCoachReasonID1 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID1 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+             ELSE @nvcValue1 END) 
+        END
          
-                  
         IF NOT @intCoachReasonID2 IS NULL  
         BEGIN
 			INSERT INTO [EC].[Coaching_Log_Reason]
@@ -544,8 +571,13 @@ END TRY
   END CATCH  
 
   END -- sp_InsertInto_Coaching_Log
-
 GO
+
+
+
+
+
+
 
 
 ******************************************************************
@@ -3325,22 +3357,19 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
 GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: 	This procedure selects an e-Coaching record from the Coaching_Log table for review. 
 --  Last Modified by: Susmitha Palacherla
---  Last Update:    03/05/2014
---  Updated per SCR 12359 to add NOLOCK Hint
---  Last Update:    03/24/2014 - Modified for eCoachingDev DB
+--  Last Update:    07/18/2014
+--  Updated per SCR 12930 to add isUCID and VerintFormName to the Return
+
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
 AS
@@ -3371,9 +3400,11 @@ SET @nvcSQL = 'SELECT cl.CoachingID 	numID,
 		eh.Mgr_Name	strCSRMgrName,
 		eh.Mgr_Email	strCSRMgrEmail,
 		sc.SubCoachingSource	strSource,
-		CL.UCID	strCID,
+		CL.isUCID    isUCID,
+		CL.UCID	strUCID,
 		CL.isVerintID	isVerintMonitor,
 		CL.VerintID	strVerintID,
+		CL.VerintFormName VerintFormName,
 		CL.isAvokeID	isBehaviorAnalyticsMonitor,
 		CL.AvokeID	strBehaviorAnalyticsID,
 		CL.isNGDActivityID	isNGDActivityID,
@@ -3446,6 +3477,10 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
+
+
+
+
 
 
 
@@ -3895,13 +3930,14 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/12
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page for Outlier records. 
---    Last Update:    03/04/2014
---    Updated per SCR 12359 to handle deadlocks with retries.
---    Last Update:    03/27/2014 - Modified for eCoachingDev DB
+--    Last modified by:    Susmitha Palacherla
+--    Modified per SCR 13213 to add Coaching Reason 'OMR / Exceptions' to the filter criteria for the review page.
+
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
@@ -3946,7 +3982,7 @@ SET Value = (CASE WHEN @bitisCoachingRequired = 'True' then 'Opportunity' ELSE '
 	ON cl.CoachingID = clr.CoachingID
 	INNER JOIN EC.DIM_Coaching_Reason cr ON cr.CoachingReasonID = clr.CoachingReasonID
 WHERE cl.FormName = @nvcFormID
-and cr.CoachingReason = 'Current Coaching Initiative'
+and cr.CoachingReason in ('OMR / Exceptions', 'Current Coaching Initiative')
         OPTION (MAXDOP 1)
 	
 COMMIT TRANSACTION
@@ -3992,6 +4028,9 @@ END CATCH
 
 END --sp_Update5Review_Coaching_Log
 GO
+
+
+
 
 
 
