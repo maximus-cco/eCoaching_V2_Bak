@@ -1,8 +1,11 @@
 /*
-eCoaching_Log_Create(23).sql
-Last Modified Date: 05/11/2015
+eCoaching_Log_Create(24).sql
+Last Modified Date: 05/13/2015
 Last Modified By: Susmitha Palacherla
 
+Version 24:
+1. Added new procedure #78 per SCR 14951 to select Reasons records
+from coaching or Warning table given a formname.
 
 Version 23:
 1. Post Phase III correction to add missed current lanid check to SP # 68 per SCR 14955.
@@ -214,6 +217,7 @@ Procedures
 75. [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam] 
 76. [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] 
 77. [EC].[sp_Select_Behaviors]
+78. [EC].[sp_SelectReviewFrom_Coaching_Log_Reasons_Combined]
 
 */
 
@@ -6983,4 +6987,78 @@ GO
 
 
 
-******************************************************************
+--******************************************************************
+
+
+
+--72. Create SP  [EC].[sp_SelectReviewFrom_Coaching_Log_Reasons_Combined] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Coaching_Log_Reasons_Combined' 
+)
+   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Reasons_Combined]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	05/12/2015
+--	Description: 	This procedure displays the Coaching Log or Warning log Reasons 
+--  and Sub Coaching Reason values for a given Form Name.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Reasons_Combined] @strFormIDin nvarchar(50)
+AS
+
+BEGIN
+	DECLARE	
+
+	@nvcSQL nvarchar(max),
+	@intCoachingID INT,
+	@intWarningID INT
+
+ 
+SET @intCoachingID = (SELECT CoachingID From [EC].[Coaching_Log]where[FormName]=@strFormIDin)
+
+IF @intCoachingID IS NULL
+
+BEGIN
+
+SET @intWarningID = (SELECT WarningID From [EC].[Warning_Log]where[FormName]=@strFormIDin)
+
+
+SET @nvcSQL = 'SELECT cr.CoachingReason, scr.SubCoachingReason, wlr.value
+FROM [EC].[Warning_Log_Reason] wlr join [EC].[DIM_Coaching_Reason] cr
+ON[wlr].[CoachingReasonID] = [cr].[CoachingReasonID]Join [EC].[DIM_Sub_Coaching_Reason]scr
+ON [wlr].[SubCoachingReasonID]= [scr].[SubCoachingReasonID]
+Where WarningID = '''+CONVERT(NVARCHAR(20),@intWarningID) + '''
+ORDER BY cr.CoachingReason,scr.SubCoachingReason,wlr.value'
+
+END
+
+ELSE
+
+SET @nvcSQL = 'SELECT cr.CoachingReason, scr.SubCoachingReason, clr.value
+FROM [EC].[Coaching_Log_Reason] clr join [EC].[DIM_Coaching_Reason] cr
+ON[clr].[CoachingReasonID] = [cr].[CoachingReasonID]Join [EC].[DIM_Sub_Coaching_Reason]scr
+ON [clr].[SubCoachingReasonID]= [scr].[SubCoachingReasonID]
+Where CoachingID = '''+CONVERT(NVARCHAR(20),@intCoachingID) + '''
+ORDER BY cr.CoachingReason,scr.SubCoachingReason,clr.value'
+
+		
+EXEC (@nvcSQL)	
+--Print (@nvcSQL)
+	    
+END --sp_SelectReviewFrom_Coaching_Log_Reasons_Combined
+
+GO
+
+--******************************************************************
