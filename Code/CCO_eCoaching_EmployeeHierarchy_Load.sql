@@ -1,8 +1,9 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql(04)
-Date: 10/27/2014
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (05)
+Date: 11/6/2014
 
-
+Version 05, 11/6/2014
+Updated sp (#2) to handle apostrophes in name and email addresses per SCR 13759.
 
 Version 04, 10/27/2014
 Updated  procedure (#5) sp_InactivateCoachingLogsForTerms to 
@@ -403,10 +404,6 @@ GO
 
 
 
-
-
-
-
 /*****************************************************/
 
 
@@ -436,8 +433,8 @@ GO
 -- Description:	Performs the following actions.
 -- Updates existing records and Inserts New records from the Staging table.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 08/14/2014
--- updated during modular redesign to update name attribute for existing records 
+-- Last Modified Date:11/6/2014
+-- updated per SCR 13759 to handle apostrophes in names and email addresses.
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
@@ -486,12 +483,12 @@ OPTION (MAXDOP 1)
 END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
-	
+
 -- Updates Existing Records
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy]
-	   SET [Emp_Name] = S.Emp_Name
-	      ,[Emp_Email] = S.Emp_Email
+	   SET [Emp_Name] = Replace(S.[Emp_Name],'''', '')
+	      ,[Emp_Email] = Replace(S.[Emp_Email],'''','''''')
 		  ,[Emp_LanID] = S.Emp_LanID
 		  ,[Emp_Site] =  [EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site)
 		  ,[Emp_Job_Code] = S.Emp_Job_Code
@@ -546,8 +543,8 @@ BEGIN
 			   ,[Active]
 			  )
 							 SELECT S.[Emp_ID]
-							  ,S.[Emp_Name]
-							  ,S.[Emp_Email]
+						      ,Replace(S.[Emp_Name],'''', '')
+                              ,Replace(S.[Emp_Email],'''','''''')
 							  ,S.[Emp_LanID]
 							  ,[EC].[fn_strSiteNameFromSiteLocation](S.[Emp_Site])
 							  ,S.[Emp_Job_Code]
@@ -576,6 +573,7 @@ END
 
 
 END --sp_Populate_Employee_Hierarchy
+
 
 
 GO
