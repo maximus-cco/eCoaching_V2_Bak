@@ -1,7 +1,11 @@
 /*
-eCoaching_Outliers_Create(05).sql
-Last Modified Date: 05/25/2015
+eCoaching_Outliers_Create(06).sql
+Last Modified Date: 05/26/2015
 Last Modified By: Susmitha Palacherla
+
+Version 06: 05/26/2015
+1. Updated table creates for #1,3 and 4 to add new col RMgr_ID
+to support rotational mgr for LCSAT feed per SCR 14818.
 
 
 Version 05: 05/25/2015
@@ -73,7 +77,8 @@ CREATE TABLE [EC].[Outlier_Coaching_Stage](
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
-	[FileName] [nvarchar](260) NULL
+	[FileName] [nvarchar](260) NULL,
+                  [RMgr_ID] [nvarchar](20) NULL
 ) ON [PRIMARY]
 
 GO
@@ -135,7 +140,8 @@ CREATE TABLE [EC].[Outlier_Coaching_Rejected](
 	[TextDescription] [nvarchar](3000) NULL,
 	[FileName] [nvarchar](260) NULL,
 	[Rejected_Reason] [nvarchar](200) NULL,
-	[Rejected_Date] [datetime] NULL
+	[Rejected_Date] [datetime] NULL,
+                  [RMgr_ID] [nvarchar](20) NULL
 ) ON [PRIMARY]
 
 GO
@@ -169,7 +175,8 @@ CREATE TABLE [EC].[Outlier_Coaching_Fact](
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
-	[FileName] [nvarchar](260) NULL
+	[FileName] [nvarchar](260) NULL,
+                  [RMgr_ID] [nvarchar](20) NULL
 ) ON [PRIMARY]
 
 GO
