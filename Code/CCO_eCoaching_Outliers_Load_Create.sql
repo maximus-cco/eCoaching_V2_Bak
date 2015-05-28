@@ -1,9 +1,10 @@
 /*
-eCoaching_Outliers_Create(01).sql
-Last Modified Date: 04/09/2014
+eCoaching_Outliers_Create(02).sql
+Last Modified Date: 07/22/2014
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: 
+1. Updated per SCR 13213 to map the Coaching Reason ID for the Outlier logs to 9 ('OMR / Exceptions')
 
 Version 01: Initial Revision.
 
@@ -156,11 +157,6 @@ CREATE TABLE [EC].[Outlier_Coaching_Fact](
 GO
 
 
-
-
-
-
-
 **************************************************************
 
 --Procedures
@@ -169,21 +165,29 @@ GO
 
 --1. Create SP  [EC].[sp_InsertInto_Coaching_Log_Outlier]
 
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Outlier' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+GO
 
-/****** Object:  StoredProcedure [EC].[sp_InsertInto_Coaching_Log_Outlier]    Script Date: 11/14/2013 15:54:42 ******/
+
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
+-- Loads records from [EC].[Outlier_Coaching_Stage]to [EC].[Coaching_Log]
 -- Last modified by:    Susmitha Palacherla
--- Loads all records from [EC].[Outlier_Coaching_Stage]
+-- Modified per SCR 13213 to map to Coaching Reason ID 9.
 
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
@@ -202,7 +206,6 @@ BEGIN TRY
       SET @dtmDate  = GETDATE()   
 
 -- Inserts records from the Outlier_Coaching_Stage table to the Coaching_Log Table
-
 
  INSERT INTO [EC].[Coaching_Log]
            ([FormName]
@@ -273,7 +276,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[SubCoachingReasonID]
            ,[Value])
     SELECT cf.[CoachingID],
-           5,
+           9,
            [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
            os.[CoachReason_Current_Coaching_Initiatives]
     FROM [EC].[Outlier_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
@@ -315,14 +318,14 @@ END TRY
   END CATCH  
 END
 
+GO -- sp_InsertInto_Coaching_Log_Outlier
 
 
-GO
 
 
 
-***************************************************************************************************************
 
+***************************************************************************************************
 
 --2. Create SP   [EC].[sp_InsertInto_Outlier_Rejected]
 
