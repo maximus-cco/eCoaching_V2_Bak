@@ -1,12 +1,19 @@
 /*
-eCoaching_Log_Create(20).sql
-Last Modified Date: 04/09/2015
+eCoaching_Log_Create(21).sql
+Last Modified Date: 04/21/2015
 Last Modified By: Susmitha Palacherla
+
+
+Version 21:
+1. Changes for Training Module SCR 14512.
+      Added Column to  [Behavior] Table #1 [EC].[Coaching_Log]
+      Added new sp #77
+     Modified procedures #1, #55 and #56 
+2. Added new SP # 78 for Historical Dashboard export functionality per SCR 14676.
 
 Version 20:
 1. Phase III post testing update for dashboard redesign SCR 14422
    Modified procedures #14 to remove subcoaching reason and value from select.
-
 
 Version 19:
 1. Phase III Updates for dashboard redesign SCR 14422
@@ -194,7 +201,7 @@ Procedures
 74. [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctMGRTeam] 
 75. [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctSUPTeam] 
 76. [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] 
-77. 
+77. [EC].[sp_Select_Behaviors]
 
 */
 
@@ -259,6 +266,7 @@ CREATE TABLE [EC].[Coaching_Log](
                   [MgrID] [nvarchar](20) NULL,
                   [Review_SupID] [nvarchar](20) NULL,
                   [Review_MgrID] [nvarchar](20) NULL,
+                  [Behavior] [nvarchar](30) NULL,
  CONSTRAINT [PK_Coaching_Log] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC
@@ -355,15 +363,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      02/03/2014
 --    Description:     This procedure inserts the e-Coaching records into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 12/16/2014
+-- Last Modified Date: 04/10/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 13891 to capture SupID and MgrID at time of submission.
+-- Modified per SCR 14512 to capture 'behavior' for Training Module.
 --
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
@@ -434,7 +443,8 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
       @dtmCSRReviewAutoDate datetime ,
       @nvcCSRComments Nvarchar(3000),
       @bitEmailSent bit ,
-      @ModuleID INT
+      @ModuleID INT,
+      @Behaviour Nvarchar(30)
       )
    
 AS
@@ -503,7 +513,8 @@ BEGIN TRY
            ,[EmailSent]
            ,[ModuleID]
            ,[SupID]
-           ,[MgrID])
+           ,[MgrID]
+           ,[Behavior])
      VALUES
            (@nvcFormName
            ,@nvcProgramName 
@@ -539,7 +550,8 @@ BEGIN TRY
 		   ,@bitEmailSent
 		   ,@ModuleID
 		   ,ISNULL(@nvcSupID,'999999')
-		   ,ISNULL(@nvcMgrID,'999999'))
+		   ,ISNULL(@nvcMgrID,'999999')
+		   ,@Behaviour)
             
             
      --PRINT 'STEP1'
@@ -882,7 +894,10 @@ END TRY
   END -- sp_InsertInto_Coaching_Log
 
 
+
 GO
+
+
 
 
 
@@ -5045,6 +5060,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	7/31/14
@@ -5052,9 +5071,9 @@ GO
 --  in the drop downs for the selected Module using the job_code in the Employee_Selection table.
 --  Created to replace the sp_SelectCSRsbyLocation used by the original CSR Module 
 --  Last Modified By: Susmitha Palacherla
---  Last Modified date; Susmitha Palacherla
---  Modified per SCR 14323 to restrict users from submitting ecls for themselves by
---  by preventing them from appearing in the drop downs.
+--  Last Modified date: 04/15/2015
+--  Modified per SCR 14512 while adding Training Module to restrict  users with certain 
+--  job codes from submitting Training ecls for some job codes.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Employees_By_Module] 
 
@@ -5066,10 +5085,21 @@ AS
 BEGIN
 DECLARE	
 @isBySite BIT,
+@nvcEmpJobCode nvarchar(30),
+@nvcEmpID nvarchar(10),
+@dtmDate datetime,
 @nvcSQL nvarchar(max),
-@nvcSQL01 nvarchar(max),
-@nvcSQL02 nvarchar(max),
-@nvcSQL03 nvarchar(max)
+@nvcSQL01 nvarchar(1000),
+@nvcSQL02 nvarchar(1000),
+@nvcSQL03 nvarchar(1000),
+@nvcSQL04 nvarchar(1000)
+
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserLanin,@dtmDate)
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcEmpID)
+
+-- General Selection of employees based on Job codes flagged in Employee Selection table.
 
 SET @nvcSQL01 = 'select [Emp_Name] + '' ('' + [Emp_LanID] + '') '' + [Emp_Job_Description] as FrontRow1
 	  ,[Emp_Name] + ''$'' + [Emp_Email] + ''$'' + [Emp_LanID] + ''$'' + [Sup_Name] + ''$'' + [Sup_Email] + ''$'' + [Sup_LanID] + ''$'' + [Sup_Job_Description] + ''$'' + [Mgr_Name] + ''$'' + [Mgr_Email] + ''$'' + [Mgr_LanID] + ''$'' + 
@@ -5080,10 +5110,20 @@ SET @nvcSQL01 = 'select [Emp_Name] + '' ('' + [Emp_LanID] + '') '' + [Emp_Job_De
 where [EC].[Employee_Selection].[is'+ @strModulein + ']= 1
 and [Emp_lanID] <> '''+@strUserLanin+ ''''
 
+
+-- Conditional filter for Modules that are flagged as BySite in DIM Module
+
 SET @nvcSQL02 = ' and [Emp_Site] = ''' +@strCSRSitein + ''''
 
 
-SET @nvcSQL03 = ' and [End_Date] = ''99991231''
+-- Conditional Filter to restrtict Training staff with specific job codes to submit only for certain job codes.
+
+SET @nvcSQL03 = ' and [Emp_Job_Code] NOT IN (''WTTR12'', ''WTTR13'', ''WTID13'')' 
+
+
+-- Generic  Filter for all scenarios.
+
+SET @nvcSQL04 = ' and [End_Date] = ''99991231''
 and [Emp_LanID]is not NULL and [Sup_LanID] is not NULL and [Mgr_LanID]is not NULL
 order By [Emp_Name] ASC'
 
@@ -5091,9 +5131,15 @@ order By [Emp_Name] ASC'
 SET @isBySite = (SELECT BySite FROM [EC].[DIM_Module] Where [Module] = @strModulein and isActive =1)
 IF @isBySite = 1
 
-SET @nvcSQL = @nvcSQL01 + @nvcSQL02 +@nvcSQL03 
+SET @nvcSQL = @nvcSQL01 + @nvcSQL02 +@nvcSQL04 
 ELSE
-SET @nvcSQL = @nvcSQL01 + @nvcSQL03 
+
+IF @nvcEmpJobCode IN ('WTTR12', 'WTTR13', 'WTID13') 
+
+SET @nvcSQL = @nvcSQL01 + @nvcSQL03 + @nvcSQL04 
+
+ELSE
+SET @nvcSQL = @nvcSQL01 + @nvcSQL04 
 
 --Print @nvcSQL
 
@@ -5101,6 +5147,8 @@ EXEC (@nvcSQL)
 END --sp_Select_Employees_By_Module
 
 GO
+
+
 
 
 
@@ -5136,8 +5184,8 @@ GO
 --  If Job code exists in the submisison table returns the valid submission modules.
 --  If job code does not exist in the submisisons table returns 'CSR' as a valid sumission module.
 --  Last Modified By: Susmitha Palacherla
---  Last Modified Date: 12/23/2014
---  Modified per SCR 13653 to Incorporate LSA Module
+--  Last Modified Date: 04/10/2015
+--  Modified per SCR 14512 to add Training Module.
 
 --  
 --	=====================================================================
@@ -5174,24 +5222,29 @@ if @nvcCSR is null
  3. Module ID
  4. Whether CSE will be displayed or not
  5. Whether warning will be displayed for Direct or Not
+ 6.Whether program will be a selection or not
+ 7. whether behavior will be a selection or not
 */
 
-SET @nvcSQL = 'SELECT TOP 1 CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1-1'' as BySite
+SET @nvcSQL = 'SELECT TOP 1 CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1-1-1-0'' as BySite
 from [EC].[Module_Submission]'
  
 ELSE
 
 SET @nvcSQL = 'SELECT Module, BySite FROM 
-(SELECT CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1-1'' as BySite from [EC].[Module_Submission] 
+(SELECT CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, ''1-CSR-1-1-1-1-0'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION
-SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, ''0-Supervisor-2-1-1'' as BySite from [EC].[Module_Submission] 
+SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, ''0-Supervisor-2-1-1-1-0'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION 
-SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, ''0-Quality Specialist-3-0-0'' as BySite from [EC].[Module_Submission] 
+SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, ''0-Quality Specialist-3-0-0-1-0'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION 
-SELECT CASE WHEN [LSA]= 1 THEN N''LSA'' ELSE NULL END as Module, ''0-LSA-4-0-0'' as BySite from [EC].[Module_Submission] 
+SELECT CASE WHEN [LSA]= 1 THEN N''LSA'' ELSE NULL END as Module, ''0-LSA-4-0-0-1-0'' as BySite from [EC].[Module_Submission] 
+where Job_Code = '''+@nvcEmpJobCode+'''
+UNION 
+SELECT CASE WHEN [Training]= 1 THEN N''Training'' ELSE NULL END as Module, ''0-Training-5-1-0-0-1'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+''')AS Modulelist
 where Module is not Null '
 --Print @nvcSQL
@@ -5201,11 +5254,6 @@ END --sp_Select_Modules_By_Job_Code
 
 
 GO
-
-
-
-
-
 
 ******************************************************************
 
@@ -6469,6 +6517,171 @@ END --sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning
 
 
 GO
+
+
+
+******************************************************************
+
+
+--77. Create SP  [EC].[sp_Select_Behaviors] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Behaviors' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Behaviors]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	04/10/2015
+--	Description: *	This procedure returns a list of Behaviors to
+--  be made available in the UI submission page for Modules that track Behavior.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Behaviors] 
+@strModulein nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+	@isByBehavior BIT,
+	@nvcSQL nvarchar(max)
+	
+SET @isByBehavior = (SELECT ByBehavior FROM [EC].[DIM_Module] Where [Module] = @strModulein and isActive =1)
+IF @isByBehavior = 1
+
+SET @nvcSQL = 'Select [Behavior] as Behavior from [EC].[DIM_Behavior]
+Order by CASE WHEN [Behavior] = ''Other'' Then 1 Else 0 END, [Behavior]'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END -- sp_Select_Behaviors
+
+GO
+
+******************************************************************
+
+--78. Create SP [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Historical_Export' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	4/14/2015
+--	Description: *	This procedure selects the  e-Coaching completed records for export.
+--   SCR: 14676 Initial Revision.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
+
+@strSourcein nvarchar(100),
+@strCSRSitein nvarchar(30),
+@strCSRin nvarchar(30),
+@strSUPin nvarchar(30),
+@strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@strStatusin nvarchar(30), 
+@strvalue  nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8)
+
+
+Set @strFormStatus = 'Inactive'
+Set @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+
+
+
+SET @nvcSQL = ';WITH CL AS
+(SELECT * From [EC].[Coaching_Log]
+WHERE convert(varchar(8),[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[SubmittedDate],112) <= '''+@strEDate+'''
+AND [StatusID] <> 2
+)
+SELECT [cl].[CoachingID]	CoachingID
+        ,[cl].[FormName]	FormName
+        ,[cl].[ProgramName]	ProgramName
+        ,[cl].[EmpID]	EmpID
+		,[eh].[Emp_Name]	CSRName
+		,[eh].[Sup_Name]	CSRSupName
+		,[eh].[Mgr_Name]	CSRMgrName
+		,[si].[City]		FormSite
+		,[so].[CoachingSource]		FormSource
+		,[so].[SubCoachingSource]	FormSubSource
+		,[dcr].[CoachingReason]	CoachingReason
+		,[dscr].[SubCoachingReason]	SubCoachingReason
+		,[clr].[Value]	Value
+		,[s].[Status]		FormStatus
+		,[sh].[Emp_Name]	SubmitterName
+		,[cl].[EventDate]	EventDate
+		,[cl].[VerintID]	VerintID
+		,[cl].[Description]	Description
+		,[cl].[CoachingNotes]	CoachingNotes
+		,[cl].[SubmittedDate]	SubmittedDate
+		,[cl].[SupReviewedAutoDate]	SupReviewedAutoDate
+		,[cl].[MgrReviewManualDate]	MgrReviewManualDate
+		,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
+		,[cl].[MgrNotes]	MgrNotes
+		,[cl].[CSRReviewAutoDate]	CSRReviewAutoDate
+		,[cl].[CSRComments]	CSRComments
+		FROM [EC].[Employee_Hierarchy] eh JOIN cl
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON cl.SiteID = si.SiteID JOIN [EC].[Coaching_Log_Reason]clr
+ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr
+ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID
+WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
+AND [s].[Status] Like '''+@strStatusin+'''
+AND [clr].[value] Like '''+@strvalue+'''
+AND ISNULL([eh].[Emp_Name], '' '') LIKE '''+@strCSRin+''' 
+AND ISNULL([eh].[Sup_Name], '' '') LIKE '''+@strSUPin+''' 
+AND ISNULL([eh].[Mgr_Name], '' '') LIKE '''+@strMGRin+''' 
+AND ISNULL([sh].[Emp_Name], '' '') LIKE '''+@strSubmitterin+''' 
+AND ISNULL(si.[City], '' '') LIKE '''+@strCSRSitein+'''
+ORDER BY [cl].[CoachingID]'
+
+EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
+	    
+END -- sp_SelectFrom_Coaching_Log_Historical_Export
+GO
+
 
 
 
