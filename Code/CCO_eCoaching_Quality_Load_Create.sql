@@ -1,17 +1,26 @@
 /*
-eCoaching_Quality_Create(03).sql
-Last Modified Date: 07/07/2014
+eCoaching_Quality_Create(04).sql
+Last Modified Date: 07/20/2014
 Last Modified By: Susmitha Palacherla
 
-Version 03: Updated stored procedure [EC].[sp_Update_Coaching_Log_Quality]
-with actually implemented code from production.
+
+Version 04: 
+1.  Updated per SCR 13054 to Import additional attribute VerintFormName
+     Updated impacted tables to add new Column and Stored procedures
+2.  Updated per SCR 13138 to insert new records based on Journal ID and Submitter ID 
+     Instead of VerintEvalID
+
+Version 03: 
+1. Updated stored procedure [EC].[sp_Update_Coaching_Log_Quality]
+   with actually implemented code from production.
 
 
-
-Version 02: Updated per SCR 12963 to modify sp_InsertInto_Coaching_Log_Quality
+Version 02: 
+1. Updated per SCR 12963 to modify sp_InsertInto_Coaching_Log_Quality
 to fetch @@rowcount on insert.
 
-Version 01: Initial revision
+Version 01: 
+Initial revision
 
 Summary
 Create/Alter Tables
@@ -61,7 +70,8 @@ CREATE TABLE [EC].[Quality_Coaching_Stage](
 	[Program] [nvarchar](20) NULL,
 	[Source] [nvarchar](30) NULL,
 	[Oppor_Rein] [nvarchar](20) NULL,
-	[Date_Inserted] [datetime] NULL
+	[Date_Inserted] [datetime] NULL,
+                  [VerintFormName] [nvarchar) (50) NULL
 ) ON [PRIMARY]
 
 GO
@@ -104,7 +114,8 @@ CREATE TABLE [EC].[Quality_Coaching_Fact](
 	[Program] [nvarchar](20) NULL,
 	[Source] [nvarchar](30) NULL,
 	[Oppor_Rein] [nvarchar](20) NULL,
-	[Date_Inserted] [datetime] NULL
+	[Date_Inserted] [datetime] NULL,
+                  [VerintFormName] [nvarchar) (50) NULL
 ) ON [PRIMARY]
 
 GO
@@ -142,7 +153,8 @@ CREATE TABLE [EC].[Quality_Coaching_Rejected](
 	[Source] [nvarchar](30) NULL,
 	[Oppor_Rein] [nvarchar](20) NULL,
 	[Reject_reason] [nvarchar](40) NULL,
-	[Date_Rejected] [datetime] NULL
+	[Date_Rejected] [datetime] NULL,
+	[VerintFormName] [nvarchar) (50) NULL
 ) ON [PRIMARY]
 
 GO
@@ -197,11 +209,13 @@ IF EXISTS (
 GO
 
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --    ====================================================================
 --    Author:           Susmitha Palacherla
@@ -209,9 +223,10 @@ GO
 --    Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
-
---   Modified Date: Per SCR 12963. Added Output parameter @Count to get the @@ROWCOUNT on insert for 
---   populating in File List table.
+--   Modified Date:    07/18/2014
+--   Description:      Updated per SCR 13054 to add additional column VerintFormName.
+--                     Updated per SCR 13138 to insert new records based on Journal ID and Submitter ID 
+--                     If eCL already submitted for a Journal ID from web interface should not be inserted.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
@@ -251,6 +266,7 @@ BEGIN TRY
            ,[StartDate]
            ,[isCSE]
            ,[isCSRAcknowledged]
+           ,[VerintFormName]
            )
 
             SELECT DISTINCT
@@ -277,12 +293,13 @@ BEGIN TRY
 		    qs.Eval_Date	[StartDate],
 		    CASE WHEN qs.CSE = '' THEN 0
 	            	ELSE 1 END	[isCSE],			
-		    0 [isCSRAcknowledged]
-		     
+		    0 [isCSRAcknowledged],
+		    qs.VerintFormname [verintFormName]
 FROM [EC].[Quality_Coaching_Stage] qs 
 join EC.Employee_Hierarchy csr on qs.User_EMPID = csr.Emp_ID
-left outer join EC.Coaching_Log cf on qs.[Eval_ID] = cf.[VerintEvalID]
-where cf.[VerintEvalID] is null	 
+left outer join EC.Coaching_Log cf on qs.[Journal_ID] = cf.[VerintID]
+AND qs.Evaluator_ID = cf.[SubmitterID]
+where cf.[VerintID] is null	and cf.[SubmitterID] is NULL
 OPTION (MAXDOP 1)
 
 SELECT @Count =@@ROWCOUNT
@@ -308,7 +325,8 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            42,
            qs.[Oppor_Rein]
     FROM [EC].[Quality_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
-    ON qs.[Eval_ID] = cf.[VerintEvalID] LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
+    ON qs.[Eval_ID] = cf.[VerintEvalID] 
+    LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
     ON cf.[CoachingID] = cr.[CoachingID]  
     WHERE cr.[CoachingID] IS NULL 
  OPTION (MAXDOP 1)   
@@ -345,6 +363,8 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
 GO
+
+
 
 
 
@@ -476,8 +496,8 @@ GO
 --    Create Date:      05/14/2014
 --    Description:     This procedure updates the existing records in the Quality Fact table
 --                     and inserts new records.
---                     
---
+--   Modified Date:    07/18/2014
+--   Description:      Updated per SCR 13054 to add additional column VerintFormName.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update_Quality_Fact]
   
@@ -527,7 +547,8 @@ INSERT INTO [EC].[Quality_Coaching_Fact]
            ,[Program]
            ,[Source]
            ,[Oppor_Rein]
-           ,[Date_Inserted])
+           ,[Date_Inserted]
+           ,[VerintFormName])
      SELECT
        S.[Eval_ID]
       ,S.[Eval_Date]
@@ -549,6 +570,7 @@ INSERT INTO [EC].[Quality_Coaching_Fact]
       ,S.[Source]
       ,S.[Oppor_Rein]
       ,S.[Date_Inserted]
+      ,S.[VerintFormName]
       FROM
 	[EC].[Quality_Coaching_Stage] S LEFT OUTER JOIN
 	[EC].[Quality_Coaching_Fact] F ON 
@@ -588,9 +610,11 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_Update_Quality_Fact
-
-
 GO
+
+
+
+
 
 
 
