@@ -511,24 +511,6 @@
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
-            <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                SelectCommand="EC.sp_Whoami" SelectCommandType="StoredProcedure" DataSourceMode="DataReader"
-                EnableViewState="True" ViewStateMode="Enabled">
-                <SelectParameters>
-                    <asp:Parameter Name="strUserin" Type="String" />
-                </SelectParameters>
-            </asp:SqlDataSource>
-            <asp:GridView ID="GridView3" runat="server" DataSourceID="SqlDataSource2" AutoGenerateColumns="False"
-                EnableModelValidation="True" Visible="false">
-                <Columns>
-                    <asp:TemplateField HeaderText="" ItemStyle-HorizontalAlign="Center">
-                        <ItemTemplate>
-                            <asp:Label ID="Job" runat="server" Text='<%# Eval("Submitter") %>' Visible="false"></asp:Label>
-                        </ItemTemplate>
-                        <ItemStyle HorizontalAlign="Center"></ItemStyle>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
             <asp:Panel ID="Panel28" runat="server" Visible="true" HorizontalAlign="Center" Width="100%"
                 Style="border-bottom-color: Gray; border-bottom-style: solid; border-bottom-width: 5px;">
                 <asp:Table ID="Table2" runat="server">

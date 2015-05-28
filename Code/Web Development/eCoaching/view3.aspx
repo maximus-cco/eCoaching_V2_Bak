@@ -33,24 +33,6 @@
             <asp:GridView ID="GridView5" runat="server" DataSourceID="SqlDataSource14" Visible="true">
             </asp:GridView>
             <asp:Label ID="Label241" runat="server" Text="" Visible="false"></asp:Label>
-            <asp:SqlDataSource ID="SqlDataSource15" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                SelectCommand="EC.sp_Whoami" SelectCommandType="StoredProcedure" DataSourceMode="DataReader"
-                EnableViewState="False" ViewStateMode="Disabled">
-                <SelectParameters>
-                    <asp:Parameter Name="strUserin" Type="String" />
-                </SelectParameters>
-            </asp:SqlDataSource>
-            <asp:GridView ID="GridView6" runat="server" DataSourceID="SqlDataSource15" AutoGenerateColumns="False"
-                EnableModelValidation="True" Visible="false">
-                <Columns>
-                    <asp:TemplateField HeaderText="" ItemStyle-HorizontalAlign="Center">
-                        <ItemTemplate>
-                            <asp:Label ID="Job" runat="server" Text='<%# Eval("Submitter") %>' Visible="false"></asp:Label>
-                        </ItemTemplate>
-                        <ItemStyle HorizontalAlign="Center"></ItemStyle>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
             <asp:Panel ID="Panel1" runat="server" Visible="false">
                 <asp:Label ID="Label11" runat="server" Text="My Submitted eCoaching Logs" ForeColor="#0099FF"
                     Visible="True"></asp:Label><br />

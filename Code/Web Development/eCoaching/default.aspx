@@ -7,25 +7,6 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder3" runat="server">
     <asp:Label ID="Label1" runat="server" Text='' Visible="false"></asp:Label><br />
-    <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-        SelectCommand="EC.sp_Whoami" SelectCommandType="StoredProcedure" DataSourceMode="DataReader"
-        EnableViewState="False" ViewStateMode="Disabled">
-        <SelectParameters>
-            <asp:Parameter Name="strUserin" Type="String" />
-        </SelectParameters>
-    </asp:SqlDataSource>
-    <asp:GridView ID="GridView1" runat="server"  AutoGenerateColumns="False"
-        Visible="false" EnableTheming="False" EnableViewState="True" ShowHeader="False"
-        UseAccessibleHeader="False" ViewStateMode="Enabled">
-        <Columns>
-            <asp:TemplateField HeaderText="" ItemStyle-HorizontalAlign="Center">
-                <ItemTemplate>
-                    <asp:Label ID="Job1" runat="server" Text='<%# Eval("Submitter") %>' Visible="false"></asp:Label>
-                </ItemTemplate>
-                <ItemStyle HorizontalAlign="Center"></ItemStyle>
-            </asp:TemplateField>
-        </Columns>
-    </asp:GridView>
     <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
         SelectCommand="EC.sp_Check_AgentRole" SelectCommandType="StoredProcedure" OnSelected="ARC_Selected"
         DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">

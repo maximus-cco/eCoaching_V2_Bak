@@ -86,24 +86,6 @@ Partial Public Class view3
     Protected WithEvents Label241 As Global.System.Web.UI.WebControls.Label
 
     '''<summary>
-    '''SqlDataSource15 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource15 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
-    '''GridView6 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents GridView6 As Global.System.Web.UI.WebControls.GridView
-
-    '''<summary>
     '''Panel1 control.
     '''</summary>
     '''<remarks>

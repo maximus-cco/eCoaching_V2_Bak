@@ -95,24 +95,6 @@ Partial Public Class review2
     Protected WithEvents SqlDataSource6 As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
-    '''SqlDataSource1 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents SqlDataSource1 As Global.System.Web.UI.WebControls.SqlDataSource
-
-    '''<summary>
-    '''GridView3 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents GridView3 As Global.System.Web.UI.WebControls.GridView
-
-    '''<summary>
     '''SqlDataSource3 control.
     '''</summary>
     '''<remarks>

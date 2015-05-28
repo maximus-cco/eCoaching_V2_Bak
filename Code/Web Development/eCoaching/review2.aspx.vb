@@ -493,15 +493,6 @@ Public Class review2
 
 
 
-    Protected Sub SqlDataSource1_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource1.Selecting
-        'EC.sp_Whoami 
-
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
-
-
     Protected Sub SqlDataSource3_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource3.Selecting
         'EC.sp_Whoisthis 
 

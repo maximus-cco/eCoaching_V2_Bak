@@ -1013,16 +1013,6 @@ Public Class view2
 
     End Sub
 
-    Protected Sub SqlDataSource12_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource12.Selecting
-        'EC.sp_Whoami 
-
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
-
-
-
 
     Protected Sub SqlDataSource13_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource13.Selecting
 

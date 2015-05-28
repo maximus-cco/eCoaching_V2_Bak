@@ -91,23 +91,6 @@
             <asp:QueryStringParameter Name="strFormID" QueryStringField="id" Type="String" Direction="Input" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-        SelectCommand="EC.sp_Whoami" SelectCommandType="StoredProcedure">
-        <SelectParameters>
-            <asp:Parameter Name="strUserin" Type="String" />
-        </SelectParameters>
-    </asp:SqlDataSource>
-    <asp:GridView ID="GridView3" runat="server" DataSourceID="SqlDataSource1" AutoGenerateColumns="False"
-        EnableModelValidation="True" Visible="false">
-        <Columns>
-            <asp:TemplateField HeaderText="" ItemStyle-HorizontalAlign="Center">
-                <ItemTemplate>
-                    <asp:Label ID="Job" runat="server" Text='<%# Eval("Submitter") %>' Visible="false"></asp:Label>
-                </ItemTemplate>
-                <ItemStyle HorizontalAlign="Center"></ItemStyle>
-            </asp:TemplateField>
-        </Columns>
-    </asp:GridView>
     <asp:SqlDataSource ID="SqlDataSource3" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
         SelectCommand="EC.sp_Whoisthis" SelectCommandType="StoredProcedure">
         <SelectParameters>
