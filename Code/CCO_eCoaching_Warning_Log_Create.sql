@@ -1,8 +1,12 @@
 /*
-eCoaching_Warning_Log_Create(01).sql
-Last Modified Date: 10/13/2014
+eCoaching_Warning_Log_Create(02).sql
+Last Modified Date: 10/22/2014
 Last Modified By: Susmitha Palacherla
 
+Version 02: Additional Updates. SCR 13479.
+1. Marked Encryption related Objects as Not being Used.(sp #1)
+2. Removed Calls to encryption Functions and procedure and 
+    removed Description and Coaching Notes from Insert (sp #2) and Review (sp #3) Procedures.
 
 
 Version 01: Initial Revision 
@@ -16,11 +20,11 @@ Tables
 2. [EC].[Warning_Log_Reason]
 
 Procedures
-1.  [EC].[sp_OpenKeys]
+1.  [EC].[sp_OpenKeys] -- (Not Being Used)
 2.  [EC].[sp_InsertInto_Warning_Log]
 3. [EC].[sp_SelectReviewFrom_Warning_Log] 
 4. [EC].[sp_SelectReviewFrom_Warning_Log_Reasons]
-5. [EC].[sp_SelectFrom_Warning_Log_CSRCompleted]-- Obsolete. Not required.
+5. [EC].[sp_SelectFrom_Warning_Log_CSRCompleted]-- (Not Being Used)
 6. [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted] 
 7. [EC].[sp_SelectFrom_Warning_Log_MGRCSRCompleted] 
 
@@ -218,9 +222,9 @@ GO
 --    Description:     This procedure inserts the Warning records into the Warning_Log table. 
 --                     The main attributes of the Warning are written to the warning_Log table.
 --                     The Warning Reasons are written to the Warning_Reasons Table.
--- Last Modified Date: 
--- Last Updated By: 
---
+-- Last Modified Date: 10/22/2014
+-- Last Updated By: Susmitha Palacherla
+-- Removed Description, Coaching Notes from Insert.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
 (     @nvcFormName Nvarchar(50),
@@ -231,8 +235,6 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
       @dtmEventDate datetime,
       @intCoachReasonID1 INT,
       @nvcSubCoachReasonID1 Nvarchar(255),
-      @nvcDescription Nvarchar(3000) ,
-      @nvcCoachingNotes Nvarchar(4000) ,
       @dtmSubmittedDate datetime ,
       @ModuleID INT
       )
@@ -267,10 +269,6 @@ BEGIN TRY
 	SET @nvcMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)  
 	SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
         
-  --OPEN SYMMETRIC KEY WarnDescKey
-  --DECRYPTION BY CERTIFICATE WarnDescCert;
-  
-  Exec [EC].[sp_OpenKeys]
   
          INSERT INTO [EC].[Warning_Log]
            ([FormName]
@@ -284,8 +282,6 @@ BEGIN TRY
            ,[SupID]
            ,[MgrID]
            ,[WarningGivenDate]
-           ,[Description]
-           ,[CoachingNotes]
            ,[SubmittedDate]
            ,[ModuleID])
      VALUES
@@ -300,12 +296,10 @@ BEGIN TRY
            ,@nvcSupID
            ,@nvcMgrID
            ,@dtmEventDate 
-           ,[EC].[fn_Encrypt](@nvcDescription)
-   		   ,[EC].[fn_Encrypt](@nvcCoachingNotes)
 	       ,@dtmSubmittedDate 
 		   ,@ModuleID)
             
-   CLOSE SYMMETRIC KEY WarnDescKey;          
+    
      --PRINT 'STEP1'
             
     SELECT @@IDENTITY AS 'Identity';
@@ -402,6 +396,8 @@ GO
 
 
 
+
+
 ******************************************************************
 
 --3. Create SP  [EC].[sp_SelectReviewFrom_Warning_Log] 
@@ -427,6 +423,9 @@ GO
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/08/2014
 --	Description: 	This procedure displays the Warning Log attributes for given Form Name. 
+-- Last Modified Date: 10/22/2014
+-- Last Updated By: Susmitha Palacherla
+-- Removed Description, Coaching Notes from Select.
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log] @strFormIDin nvarchar(50)
@@ -437,8 +436,7 @@ DECLARE
 
 @nvcSQL nvarchar(max)
 
-Exec [EC].[sp_OpenKeys]
-	 
+ 
   SET @nvcSQL = 'SELECT wl.WarningID 	numID,
 		wl.FormName	strFormID,
 		m.Module,
@@ -459,8 +457,6 @@ Exec [EC].[sp_OpenKeys]
 		eh.Mgr_Name	strCSRMgrName,
 		eh.Mgr_Email	strCSRMgrEmail,
 		''Warning''	strSource,
-		[EC].[fn_Decrypt](wl.[Description])txtDescription,
-		[EC].[fn_Decrypt](wl.[CoachingNotes])txtCoachingNotes,
 		wl.SubmittedDate
 		FROM [EC].[Employee_Hierarchy] eh join [EC].[Warning_Log] wl 
 	    ON [wl].[EMPID] = [eh].[Emp_ID]JOIN [EC].[Employee_Hierarchy] sh
@@ -474,12 +470,14 @@ Order By [wl].[FormName]'
 EXEC (@nvcSQL)
 --Print (@nvcSQL)
 
-CLOSE SYMMETRIC KEY WarnDescKey;  
 	    
 END --sp_SelectReviewFrom_Warning_Log
 
 
 GO
+
+
+
 ******************************************************************
 
 
