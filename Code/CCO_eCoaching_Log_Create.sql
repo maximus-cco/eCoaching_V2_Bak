@@ -1,7 +1,12 @@
 /*
-eCoaching_Log_Create(26).sql
-Last Modified Date: 05/27/2015
+eCoaching_Log_Create(27).sql
+Last Modified Date: 05/28/2015
 Last Modified By: Susmitha Palacherla
+
+Version 26:
+1. Modified procedures #45 to add LCS flag for supporting custom Review text in UI.
+ LCSAT feed per SCR 14818.
+
 
 Version 26:
 1. Modified procedures #9 to support acting sup view for LCS ecls 
@@ -4273,12 +4278,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 05/18/2015
+-- Last Modified Date: 05/28/2015
 -- Updated per SCR 14818 to support rotation managers for LCS Feed.
 --	=====================================================================
 
@@ -4327,9 +4333,10 @@ DECLARE
 		cl.NGDActivityID	strNGDActivityID,
 		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END	"Customer Service Escalation",
 		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
-		CASE WHEN cc.OMR is Not NULL Then 1 ELSE 0 END	"OMR / Exceptions",
+		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
 		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
 		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
+		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
 		cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -4350,7 +4357,8 @@ DECLARE
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''Current Coaching Initiative'' THEN [clr].[Value] ELSE NULL END)	CCI,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 120 THEN [clr].[Value] ELSE NULL END)	ETSOAE,
-	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS
 	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
@@ -4373,7 +4381,10 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
 GO
+
+
 
 
 
