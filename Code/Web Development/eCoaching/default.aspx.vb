@@ -30,7 +30,7 @@
 
                 SqlDataSource2.SelectParameters("nvcLanID").DefaultValue = lan
                 SqlDataSource2.SelectParameters("nvcRole").DefaultValue = "ARC"
-                GridView2.DataSource = "SqlDataSource2"
+                GridView2.DataSourceID = "SqlDataSource2"
                 GridView2.DataBind()
 
 
@@ -40,6 +40,8 @@
                     '       MsgBox("test1")
                     TabPanel1.Visible = False
                     TabPanel3.Visible = False
+		    Tabcontainer1.ActiveTabIndex = 1
+
                 End If
 
                 'Else
@@ -58,6 +60,7 @@
 
             Case (InStr(1, Label1.Text, "WHER", 1) > 0), (InStr(1, Label1.Text, "WHHR", 1) > 0)
 
+		TabContainer1.ActiveTabIndex = 3		
 
                 TabPanel1.Visible = False
                 TabPanel2.Visible = False
