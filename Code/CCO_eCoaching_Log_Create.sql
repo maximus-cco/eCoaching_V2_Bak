@@ -1,7 +1,10 @@
 /*
-eCoaching_Log_Create(04).sql
-Last Modified Date: 08/29/2014
+eCoaching_Log_Create(05).sql
+Last Modified Date: 09/11/2014
 Last Modified By: Susmitha Palacherla
+
+Version 05:
+1. Updated sp_Select_CallID_By_Module(61) to remove sort order per program request.
 
 Version 04:
 1. Added several new procedures and modified existing procedures to
@@ -163,6 +166,7 @@ CREATE TABLE [EC].[Coaching_Log](
 	[strReasonNotCoachable] [nvarchar](30) NULL,
 	[txtReasonNotCoachable] [nvarchar](3000) NULL,
 	[VerintFormName] [nvarchar]50) NULL,
+                  [ModuleID][int],
  CONSTRAINT [PK_Coaching_Log] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC
@@ -5086,8 +5090,7 @@ BEGIN
 	@nvcSQL nvarchar(max)
 
 SET @nvcSQL = 'Select [CallIdType] as CallIdType, [Format]as IdFormat from [EC].[CallID_Selection]
-Where ' + @strModulein +' = 1 
-Order by CallIdType'
+Where ' + @strModulein +' = 1' 
 
 
 --Print @nvcSQL
