@@ -1319,6 +1319,78 @@ Partial Public Class view2
     Protected WithEvents SqlDataSource42 As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
+    '''Label37 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Label37 As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''Date11 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Date11 As Global.System.Web.UI.WebControls.TextBox
+
+    '''<summary>
+    '''cal11 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents cal11 As Global.System.Web.UI.WebControls.Image
+
+    '''<summary>
+    '''CalendarExtender11 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents CalendarExtender11 As Global.AjaxControlToolkit.CalendarExtender
+
+    '''<summary>
+    '''Date12 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Date12 As Global.System.Web.UI.WebControls.TextBox
+
+    '''<summary>
+    '''cal12 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents cal12 As Global.System.Web.UI.WebControls.Image
+
+    '''<summary>
+    '''CalendarExtender12 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents CalendarExtender12 As Global.AjaxControlToolkit.CalendarExtender
+
+    '''<summary>
+    '''Button6 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Button6 As Global.System.Web.UI.WebControls.Button
+
+    '''<summary>
     '''GridView15 control.
     '''</summary>
     '''<remarks>

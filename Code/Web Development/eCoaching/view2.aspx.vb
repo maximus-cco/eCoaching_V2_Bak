@@ -40,7 +40,6 @@ Public Class view2
 
         '   Dim connection As String
 
-
         ' MsgBox(lan)
         SqlDataSource12.SelectParameters("strUserin").DefaultValue = lan
 
@@ -72,7 +71,7 @@ Public Class view2
             Dim subArray As Array
 
             subArray = Split(subString, "$", -1, 1)
-            
+
             Label6a.Text = subArray(0) 'title
         Else
 
@@ -85,7 +84,7 @@ Public Class view2
 
 
             Case (InStr(1, Label6a.Text, "WACS0", 1) > 0) '"WACS01", "WACS02", "WACS03"
-                 '' Label5.Visible = True
+                '' Label5.Visible = True
                 '' Label4.Visible = True
                 Panel2.Visible = True
 
@@ -96,11 +95,11 @@ Public Class view2
                 ''  drs12.Visible = True
                 '' drs12.Enabled = True
                 SqlDataSource2.SelectParameters("strCSRin").DefaultValue = lan
-         
+
                 ''GridView2.Visible = True
                 ''GridView2.Enabled = True
                 SqlDataSource1.SelectParameters("strCSRin").DefaultValue = lan
-      
+
                 ' Label11.Visible = True
                 'GridView1.Visible = True
                 'GridView1.Enabled = True
@@ -121,21 +120,21 @@ Public Class view2
                 Panel1.Visible = True
                 SqlDataSource27.SelectParameters("strUserin").DefaultValue = lan
                 SqlDataSource28.SelectParameters("strUserin").DefaultValue = lan
-      
+
                 SqlDataSource3.SelectParameters("strCSRSUPin").DefaultValue = lan
-      
+
                 SqlDataSource6.SelectParameters("strCSRSUPin").DefaultValue = lan
-      
+
                 SqlDataSource7.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource9.SelectParameters("strCSRSUPin").DefaultValue = lan
-                 SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = lan
+                SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource17.SelectParameters("strCSRin").DefaultValue = lan
-     
+
                 If (Label6a.Text = "WACS40") Then
                     Panel4.Visible = True
                     SqlDataSource22.SelectParameters("strCSRSUPin").DefaultValue = lan
-      
+
                     If (Date7.Text = "") Then
                         SqlDataSource22.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                         Date7.Text = backDate
@@ -182,7 +181,7 @@ Public Class view2
 
 
 
-            
+
 
 
             Case (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0) '"WACS50", "WACS60", "WBCO50", "WSQA50", "WTTR50", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPM70", "WPPT50", "WPPT60", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14"
@@ -203,12 +202,12 @@ Public Class view2
 
                 SqlDataSource4.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource5.SelectParameters("strCSRMGRin").DefaultValue = lan
-     
+
 
                 ''GridView7.Visible = True
                 ''GridView7.Enabled = True
                 SqlDataSource8.SelectParameters("strCSRMGRin").DefaultValue = lan
-      
+
                 SqlDataSource13.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource14.SelectParameters("strCSRMGRin").DefaultValue = lan
                 SqlDataSource15.SelectParameters("strCSRMGRin").DefaultValue = lan
@@ -272,7 +271,7 @@ Public Class view2
                 End If
 
 
-             
+
 
 
                 ' Case (InStr(1, Label6a.Text, "WSQE", 1) > 0), (InStr(1, Label6a.Text, "WACQ", 1) > 0) '"WTTR12", "WTTR40", "WTTR50", "WACQ12", "WACQ13", "WSQA40", "WSQA70", "WSQE14", "WSQE15"
@@ -290,16 +289,16 @@ Public Class view2
 
 
                 SqlDataSource3.SelectParameters("strCSRSUPin").DefaultValue = lan
-    
+
                 SqlDataSource6.SelectParameters("strCSRSUPin").DefaultValue = lan
-     
+
                 SqlDataSource7.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource9.SelectParameters("strCSRSUPin").DefaultValue = lan
-    
+
                 SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = lan
                 SqlDataSource17.SelectParameters("strCSRin").DefaultValue = lan
-     
+
                 CalendarExtender3.EndDate = TodaysDate
                 CalendarExtender4.EndDate = TodaysDate
 
@@ -333,12 +332,33 @@ Public Class view2
             Panel6.Visible = True
 
 
-            SqlDataSource45.SelectParameters("strEMPSRMGRin").DefaultValue = lan
-            SqlDataSource44.SelectParameters("strUserin").DefaultValue = lan
+              SqlDataSource44.SelectParameters("strUserin").DefaultValue = lan
 
             SqlDataSource43.SelectParameters("strCSRSrMGRin").DefaultValue = lan
             SqlDataSource47.SelectParameters("strCSRSrMGRin").DefaultValue = lan
             SqlDataSource48.SelectParameters("strCSRSrMGRin").DefaultValue = lan
+
+
+            SqlDataSource45.SelectParameters("strEMPSRMGRin").DefaultValue = lan
+
+            If (Date11.Text = "") Then
+                SqlDataSource45.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
+                Date11.Text = backDate
+
+            Else
+                SqlDataSource45.SelectParameters("strSDatein").DefaultValue = Date11.Text
+
+
+            End If
+
+            If (Date12.Text = "") Then
+
+                SqlDataSource45.SelectParameters("strEDatein").DefaultValue = TodaysDate
+                Date12.Text = TodaysDate
+
+            Else
+                SqlDataSource45.SelectParameters("strEDatein").DefaultValue = Date12.Text
+            End If
 
 
             SqlDataSource50.SelectParameters("strEMPSRMGRin").DefaultValue = lan
@@ -367,6 +387,76 @@ Public Class view2
 
 
     End Sub
+
+    Protected Sub Button3_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button3.Click
+
+
+        'MsgBox("button pushed")
+        If (Date7.Text = "") Then
+            Date7.Text = backDate '"01/01/2011"
+
+        End If
+
+        If (Date8.Text = "") Then
+            Date8.Text = TodaysDate
+
+        End If
+
+        GridView13.DataBind()
+    End Sub
+
+
+    Protected Sub Button4_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button4.Click
+
+
+        'MsgBox("button pushed")
+        If (Date5.Text = "") Then
+            Date5.Text = backDate '"01/01/2011"
+
+        End If
+
+        If (Date6.Text = "") Then
+            Date6.Text = TodaysDate
+
+        End If
+
+        GridView14.DataBind()
+    End Sub
+
+    Protected Sub Button5_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button5.Click
+
+
+        'MsgBox("button pushed")
+        If (Date9.Text = "") Then
+            Date9.Text = backDate '"01/01/2011"
+
+        End If
+
+        If (Date10.Text = "") Then
+            Date10.Text = TodaysDate
+
+        End If
+
+        GridView16.DataBind()
+    End Sub
+
+    Protected Sub Button6_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button6.Click
+
+
+        'MsgBox("button pushed")
+        If (Date11.Text = "") Then
+            Date11.Text = backDate '"01/01/2011"
+
+        End If
+
+        If (Date12.Text = "") Then
+            Date12.Text = TodaysDate
+
+        End If
+
+        GridView15.DataBind()
+    End Sub
+
 
     Protected Function newDisplay(ByVal indicator As DateTime) As String
 
