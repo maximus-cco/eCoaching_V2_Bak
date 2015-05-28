@@ -1,7 +1,11 @@
 /*
-eCoaching_Maintenance_Create(07).sql
-Last Modified Date: 04/25/2015
+eCoaching_Maintenance_Create(08).sql
+Last Modified Date: 05/22/2015
 Last Modified By: Susmitha Palacherla
+
+Version 08: 
+1. Updated SP #2 [EC].[sp_SelectCoaching4Contact] to support LCSAT feed per SCR 14818.
+
 
 Version 07: 
 1. Changes for SCR 14634 Inactivations from Feed.
@@ -49,6 +53,8 @@ Procedures
 2. Create SP [EC].[sp_SelectCoaching4Contact] 
 3. Create SP [EC].[sp_UpdateFeedMailSent] 
 4. Create SP [EC].[sp_Inactivations_From_Feed] 
+5. Create SP [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]
+6. Create SP [EC].[sp_Delete_From_Coaching_Log]
 
 */
 
@@ -169,14 +175,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/13
 --	Description: 	   This procedure queries db for feed records to send out mail
--- Last Modified Date: 11/212014
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 13826 to add source IDs 222,223,224 for new Quality sources.
+-- Last Modified Date:  05/14/2015
+-- Updated per SCR 14818 to support rotating managers for Low CSAT
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -191,11 +196,11 @@ DECLARE
 @strFormType nvarchar(30),
 @strFormMail nvarchar (30)
 
- Set @strFormStatus1 = 'Completed'
- Set @strFormStatus2 = 'Inactive'
+ --Set @strFormStatus1 = 'Completed'
+ --Set @strFormStatus2 = 'Inactive'
 
- 
- Set @strFormType = 'Indirect'
+
+ --Set @strFormType = 'Indirect'
 --Set @strFormMail = 'jourdain.augustin@gdit.com'
  
 SET @nvcSQL = 'SELECT   cl.CoachingID	numID	
@@ -203,7 +208,9 @@ SET @nvcSQL = 'SELECT   cl.CoachingID	numID
 		,s.Status		strFormStatus
 		,eh.Emp_Email	strCSREmail
 		,eh.Sup_Email	strCSRSupEmail
-		,eh.Mgr_Email	strCSRMgrEmail
+		,CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN [EC].[fn_strEmpEmailFromEmpID](cl.[MgrID])
+		 ELSE eh.Mgr_Email END	strCSRMgrEmail
 		,so.SubCoachingSource	strSource
 		,eh.Emp_Name	strCSRName
 		,so.CoachingSource	strFormType
@@ -213,17 +220,12 @@ SET @nvcSQL = 'SELECT   cl.CoachingID	numID
 		,cl.sourceid
 		,cl.isCSE
 		,mo.Module
-FROM [EC].[Employee_Hierarchy] eh,
-	 [EC].[DIM_Status] s,
-	 [EC].[Coaching_Log] cl,
-	 [EC].[DIM_Source] so,
-	 [EC].[DIM_Module] mo
-WHERE cl.EMPID = eh.Emp_ID
-AND cl.StatusID = s.StatusID
-AND cl.SourceID = so.SourceID
-AND cl.ModuleID = mo.ModuleID
-AND S.Status <> '''+@strFormStatus1+'''
-AND S.Status <> '''+@strFormStatus2+'''
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
+ON eh.Emp_ID = cl.EMPID JOIN [EC].[DIM_Status] s 
+ON s.StatusID = cl.StatusID JOIN [EC].[DIM_Source] so
+ON so.SourceID = cl.SourceID JOIN [EC].[DIM_Module] mo
+ON mo.ModuleID = cl.ModuleID
+WHERE S.Status not in (''Completed'',''Inactive'')
 AND cl.SourceID in (211,212,221,222,223,224)
 AND cl.EmailSent = ''False''
 AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
@@ -237,8 +239,9 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectCoaching4Contact
 
-
 GO
+
+
 
 
 
@@ -313,9 +316,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 
 
@@ -457,16 +457,7 @@ END
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 END  -- [EC].[sp_Inactivations_From_Feed]
 
-
-
-
 GO
 
-
-
-
-
-
-
-
 --***************************************************************************************************************
+
