@@ -14,14 +14,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
--- ====================================================================
+--	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/12
---	Description: *	This procedure selects the completed eCL records to display on historical dashboard.
+--	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
 -- Last Modified Date: 02/10/2015
 -- Last Updated By: Susmitha Palacherla
 -- Modified per SCR 14065 to add warning sections for HR display.
--- =====================================================================
+--	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
 
 @strSourcein nvarchar(100),
@@ -47,6 +47,9 @@ DECLARE
 @nvcSQL3 nvarchar(max),
 @nvcSQL4 nvarchar(100),
 @strFormStatus nvarchar(30),
+--@strFormStatus2 nvarchar(30),
+--@strFormStatus3 nvarchar(30),
+--@strFormStatus4 nvarchar(30),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8)
 
@@ -126,7 +129,7 @@ SELECT [wl].[FormName]	strFormID
 		,[eh].[Mgr_Name]	strCSRMgrName
 		,[s].[Status]		strFormStatus
 		,[so].[SubCoachingSource]	strSource
-		,[wl].[WarningGivenDate]	submitteddate
+		,[wl].[SubmittedDate]	submitteddate
 		,[sh].[Emp_Name]	strSubmitterName
 		,SUM(case when [wlr].[Value] = ''Opportunity'' THEN 1 ELSE 0 END) numOpportunity
 		,SUM(case when [wlr].[Value] = ''Reinforcement'' THEN 1 ELSE 0 END) numReinforcement
@@ -148,7 +151,7 @@ and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
 and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
 and [s].[Status] <> '''+@strFormStatus+'''
 GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
-[s].[Status],[so].[SubCoachingSource],[wl].[WarningGivenDate],[sh].[Emp_Name]
+[s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name]
 ) x
 where ISNULL(x.numOpportunity, '' '') LIKE '''+@strIsOpp+'''
 and ISNULL(x.numReinforcement, '' '') LIKE '''+@strIsForce+''''
@@ -171,6 +174,8 @@ EXEC (@nvcSQL)
 --PRINT @nvcSQL
 	    
 END -- sp_SelectFrom_Coaching_Log_HistoricalSUP
+
+
 
 GO
 
