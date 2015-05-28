@@ -1,9 +1,15 @@
 /*
-eCoaching_Log_Create(13).sql
+eCoaching_Log_Create(14).sql
 Last Modified Date: 12/19/2014
 Last Modified By: Susmitha Palacherla
 
-Version 12:
+
+Version 14:
+1. Update to  [EC].[sp_Select_Modules_By_Job_Code] (SP # 56 ) to support LSA Module
+ SCR 13653
+
+
+Version 13:
 Post V&V Updates for SCR 13891
 1.Update to Review SP (update2) #s 47
 
@@ -4887,6 +4893,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	7/31/14
@@ -4894,8 +4901,8 @@ GO
 --  If Job code exists in the submisison table returns the valid submission modules.
 --  If job code does not exist in the submisisons table returns 'CSR' as a valid sumission module.
 --  Last Modified By: Susmitha Palacherla
---  Last Modified Date: 11/21/2014
---  Modified per SCR 13542 to Incorporate progressive Warnings for Supervisors
+--  Last Modified Date: 12/23/2014
+--  Modified per SCR 13653 to Incorporate LSA Module
 
 --  
 --	=====================================================================
@@ -4947,12 +4954,16 @@ SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, '
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION 
 SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, ''0-Quality Specialist-3-0-0'' as BySite from [EC].[Module_Submission] 
+where Job_Code = '''+@nvcEmpJobCode+'''
+UNION 
+SELECT CASE WHEN [LSA]= 1 THEN N''LSA'' ELSE NULL END as Module, ''0-LSA-4-0-0'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+''')AS Modulelist
 where Module is not Null '
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
 END --sp_Select_Modules_By_Job_Code
+
 
 GO
 
