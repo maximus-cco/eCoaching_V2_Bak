@@ -1,7 +1,14 @@
 /*
-File: eCoaching_Functions.sql (11)
+File: eCoaching_Functions.sql (12)
 Last Modified By: Susmitha Palacherla
-Date: 03/19/2015
+Date: 05/25/2015
+
+
+Version 12, 05/25/2015
+1. Added the following Functions 2 functions(#28 and #29) to support the LCSAT feed per SCR 14818.
+[EC].[fn_strEmpEmailFromEmpID] 
+[EC].[fn_strEmpLanIDFromEmpID] 
+
 
 Version 11, 03/19/2015
 1. Added the following Functions 3 functions to support sr management dashboard per scr 14423.
@@ -1832,30 +1839,119 @@ GO
 
 ************************************************************************************
 
---28. FUNCTION [EC].[xxxxxx] 
+--28. FUNCTION [EC].[fn_strEmpEmailFromEmpID] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'xxxxx' 
+     AND SPECIFIC_NAME = N'fn_strEmpEmailFromEmpID' 
 )
-   DROP FUNCTION [EC].[xxxxxxx]
+   DROP FUNCTION [EC].[fn_strEmpEmailFromEmpID]
 GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 05/13/2015
+-- Description:	Given an Employee ID, fetches the Email address from the Employee Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version : SCR 14818 for loading LCSAT feed.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strEmpEmailFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strEmpEmail nvarchar(50)
+
+
+  
+  SELECT @strEmpEmail = Emp_Email
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strEmpId
+  
+  IF  @strEmpEmail IS NULL 
+  SET @strEmpEmail = N'UnKnown'
+  
+  RETURN  @strEmpEmail 
+END -- fn_strEmpEmailFromEmpID
+
+GO
+
+
+--3e.
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
 
 
 
 ************************************************************************************
 
---29. FUNCTION [EC].[xxxxxx] 
+--29. FUNCTION [EC].[fn_strEmpLanIDFromEmpID] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'xxxxx' 
+     AND SPECIFIC_NAME = N'fn_strEmpLanIDFromEmpID' 
 )
-   DROP FUNCTION [EC].[xxxxxxx]
+   DROP FUNCTION [EC].[fn_strEmpLanIDFromEmpID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 05/13/2015
+-- Description:	Given an Employee ID, fetches the Lan ID from the Employee Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version : SCR 14818 for loading LCSAT feed.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strEmpLanIDFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strEmpLanID nvarchar(30)
+
+
+  
+  SELECT @strEmpLanID = Emp_LanID
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strEmpId
+  
+  IF  @strEmpLanID IS NULL 
+  SET @strEmpLanID = N'UnKnown'
+  
+  RETURN  @strEmpLanID 
+END -- fn_strEmpLanIDFromEmpID
+
+
 GO
 
 
