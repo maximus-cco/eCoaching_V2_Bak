@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(22).sql
-Last Modified Date: 04/24/2015
+eCoaching_Log_Create(23).sql
+Last Modified Date: 05/11/2015
 Last Modified By: Susmitha Palacherla
+
+
+Version 23:
+1. Post Phase III correction to add missed current lanid check to SP # 68 per SCR 14955.
 
 
 Version 22:
@@ -6152,11 +6156,15 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	03/06/2015
 --	Description: *	This procedure selects Sources to be displayed in the dashboard
 --  Source dropdown list.
+--  Last Modified Date: 05/11/2015
+--  Last Modified By: Susmitha Palacherla
+--  Modified per SCR 14955 to add current lanid logic
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Sources_For_Dashboard] 
 @strUserin nvarchar(30)
@@ -6165,10 +6173,18 @@ AS
 BEGIN
 	DECLARE	
 	@nvcSQL nvarchar(max),
-	@strjobcode  nvarchar(20)
+	@strjobcode  nvarchar(20),
+	@nvcEmpID nvarchar(10),
+	@dtmDate datetime
 	
-SET @strjobcode = (SELECT Emp_Job_Code from [EC].[Employee_Hierarchy] where 
-Emp_LanID = @strUserin)
+		
+	
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
+SET @strjobcode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcEmpID)	
+	
+
 
 -- Check users job code and show 'Warning' as a source only for HR users.
 
@@ -6198,6 +6214,7 @@ ORDER BY X.Sortorder'
 
 EXEC (@nvcSQL)	
 END --sp_Select_Sources_For_Dashboard
+
 
 GO
 
