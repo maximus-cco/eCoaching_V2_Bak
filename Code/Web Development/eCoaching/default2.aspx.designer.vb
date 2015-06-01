@@ -347,6 +347,15 @@ Partial Public Class default2
     Protected WithEvents MGRDropDownList As Global.System.Web.UI.WebControls.Label
 
     '''<summary>
+    '''Panel8 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Panel8 As Global.System.Web.UI.WebControls.Panel
+
+    '''<summary>
     '''Label61 control.
     '''</summary>
     '''<remarks>
@@ -399,6 +408,69 @@ Partial Public Class default2
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents SqlDataSource4 As Global.System.Web.UI.WebControls.SqlDataSource
+
+    '''<summary>
+    '''Panel9 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Panel9 As Global.System.Web.UI.WebControls.Panel
+
+    '''<summary>
+    '''Label96 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Label96 As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''Label97 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Label97 As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''Label98 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Label98 As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''RequiredFieldValidator10 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RequiredFieldValidator10 As Global.System.Web.UI.WebControls.RequiredFieldValidator
+
+    '''<summary>
+    '''behaviorList control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents behaviorList As Global.System.Web.UI.WebControls.DropDownList
+
+    '''<summary>
+    '''SqlDataSource28 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents SqlDataSource28 As Global.System.Web.UI.WebControls.SqlDataSource
 
     '''<summary>
     '''Label63 control.

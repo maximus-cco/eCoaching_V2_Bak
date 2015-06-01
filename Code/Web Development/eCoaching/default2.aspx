@@ -511,6 +511,24 @@
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
+ <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
+                SelectCommand="EC.sp_Whoami" SelectCommandType="StoredProcedure" DataSourceMode="DataReader"
+                EnableViewState="True" ViewStateMode="Enabled">
+                <SelectParameters>
+                    <asp:Parameter Name="strUserin" Type="String" />
+                </SelectParameters>
+            </asp:SqlDataSource>
+            <asp:GridView ID="GridView3" runat="server" DataSourceID="SqlDataSource2" AutoGenerateColumns="False"
+                EnableModelValidation="True" Visible="false">
+                <Columns>
+                    <asp:TemplateField HeaderText="" ItemStyle-HorizontalAlign="Center">
+                        <ItemTemplate>
+                            <asp:Label ID="Job" runat="server" Text='<%# Eval("Submitter") %>' Visible="false"></asp:Label>
+                        </ItemTemplate>
+                        <ItemStyle HorizontalAlign="Center"></ItemStyle>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
             <asp:Panel ID="Panel28" runat="server" Visible="true" HorizontalAlign="Center" Width="100%"
                 Style="border-bottom-color: Gray; border-bottom-style: solid; border-bottom-width: 5px;">
                 <asp:Table ID="Table2" runat="server">
@@ -613,31 +631,58 @@
                 <br />
                 <asp:Label ID="MGRDropDownList" runat="server" Text=""></asp:Label>
                 <br />
+ 		<asp:Panel ID="Panel8" runat="server" Visible="true">
+                    <br />
+                    <asp:Label ID="Label61" runat="server" CssClass="question" ViewStateMode="Enabled"></asp:Label><asp:Label
+                        ID="Label243" runat="server" Text="Select the appropriate program for this coaching:"
+                        CssClass="question" ViewStateMode="Disabled"></asp:Label>
+                    &nbsp;<asp:Label ID="Label244" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator22" runat="server" ControlToValidate="programList"
+                        InitialValue="Select..." ErrorMessage="Select a program option." CssClass="EMessage"
+                        Display="Dynamic" Width="200px" EnableClientScript="false">Select a program option.&nbsp;</asp:RequiredFieldValidator>
+                    <br />
+                    <asp:DropDownList ID="programList" runat="server" AppendDataBoundItems="true" DataSourceID="SqlDataSource4"
+                        CssClass="TextBox" DataTextField="Program" DataValueField="Program" AutoPostBack="True"
+                        OnSelectedIndexChanged="ProgramList_SelectedIndexChanged">
+                        <asp:ListItem Value="Select...">Select...</asp:ListItem>
+                    </asp:DropDownList>
+                    &nbsp;
+                    <asp:SqlDataSource ID="SqlDataSource4" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
+                        SelectCommand="EC.sp_Select_Programs" SelectCommandType="StoredProcedure" DataSourceMode="DataReader"
+                        EnableViewState="False" ViewStateMode="Disabled">
+                        <SelectParameters>
+                            <asp:Parameter Name="strModulein" Type="String" />
+                        </SelectParameters>
+                    </asp:SqlDataSource>
+                    <br />
+                </asp:Panel>
+                <asp:Panel ID="Panel9" runat="server" Visible="false">
+                    <br />
+                    <asp:Label ID="Label96" runat="server" CssClass="question" ViewStateMode="Enabled"></asp:Label><asp:Label
+                        ID="Label97" runat="server" Text="Select the appropriate behavior for this coaching:"
+                        CssClass="question" ViewStateMode="Disabled"></asp:Label>
+                    &nbsp;<asp:Label ID="Label98" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator10" runat="server" ControlToValidate="behaviorList"
+                        InitialValue="Select..." ErrorMessage="Select a behavior option." CssClass="EMessage"
+                        Display="Dynamic" Width="200px" EnableClientScript="false" Enabled="false">Select a behavior option.&nbsp;</asp:RequiredFieldValidator>
+                    <br />
+                    <asp:DropDownList ID="behaviorList" runat="server" AppendDataBoundItems="true" DataSourceID="SqlDataSource28"
+                        CssClass="TextBox" DataTextField="Behavior" DataValueField="Behavior" AutoPostBack="True"
+                        OnSelectedIndexChanged="BehaviorList_SelectedIndexChanged">
+                        <asp:ListItem Value="Select...">Select...</asp:ListItem>
+                    </asp:DropDownList>
+                    &nbsp;
+                    <asp:SqlDataSource ID="SqlDataSource28" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
+                        SelectCommand="EC.sp_Select_Behaviors" SelectCommandType="StoredProcedure" DataSourceMode="DataReader"
+                        EnableViewState="False" ViewStateMode="Disabled">
+                        <SelectParameters>
+                            <asp:Parameter Name="strModulein" Type="String" />
+                        </SelectParameters>
+                    </asp:SqlDataSource>
+                    <br />
+                </asp:Panel>
                 <br />
-                <asp:Label ID="Label61" runat="server" CssClass="question" ViewStateMode="Enabled"></asp:Label><asp:Label
-                    ID="Label243" runat="server" Text="Select the appropriate program for this coaching:"
-                    CssClass="question" ViewStateMode="Disabled"></asp:Label>
-                &nbsp;<asp:Label ID="Label244" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
-                <asp:RequiredFieldValidator ID="RequiredFieldValidator22" runat="server" ControlToValidate="programList"
-                    InitialValue="Select..." ErrorMessage="Select a program option." CssClass="EMessage"
-                    Display="Dynamic" Width="200px" EnableClientScript="false">Select a program option.&nbsp;</asp:RequiredFieldValidator>
-                <br />
-                <asp:DropDownList ID="programList" runat="server" AppendDataBoundItems="true" DataSourceID="SqlDataSource4"
-                    CssClass="TextBox" DataTextField="Program" DataValueField="Program" AutoPostBack="True"
-                    OnSelectedIndexChanged="ProgramList_SelectedIndexChanged">
-                    <asp:ListItem Value="Select...">Select...</asp:ListItem>
-                </asp:DropDownList>
-                &nbsp;
-                <asp:SqlDataSource ID="SqlDataSource4" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    SelectCommand="EC.sp_Select_Programs" SelectCommandType="StoredProcedure" DataSourceMode="DataReader"
-                    EnableViewState="False" ViewStateMode="Disabled">
-                    <SelectParameters>
-                        <asp:Parameter Name="strModulein" Type="String" />
-                    </SelectParameters>
-                </asp:SqlDataSource>
-                <br />
-                <br />
-                <asp:Label ID="Label63" runat="server" CssClass="question" ViewStateMode="Enabled"></asp:Label><asp:Label
+		<asp:Label ID="Label63" runat="server" CssClass="question" ViewStateMode="Enabled"></asp:Label><asp:Label
                     ID="Label11" runat="server" Text="Will you be delivering the coaching session?"
                     CssClass="question"></asp:Label>&nbsp;<asp:Label ID="Label171" runat="server" Text="*"
                         CssClass="EMessage" Width="10px"></asp:Label>
@@ -1390,6 +1435,7 @@
                         <asp:Parameter Name="nvcFormName" Direction="Input" Type="String" />
                         <asp:Parameter Name="nvcEmplanID" Direction="Input" Type="String" />
                         <asp:Parameter Name="nvcProgramName" Direction="Input" Type="String" />
+         		<asp:Parameter Name="Behaviour" Direction="Input" Type="String" />
                         <asp:Parameter Name="intSourceID" Direction="Input" Type="Int32" />
                         <asp:Parameter Name="intStatusID" Direction="Input" Type="Int32" />
                         <asp:Parameter Name="SiteID" Direction="Input" Type="Int32" />

@@ -245,97 +245,51 @@
                     <span>No data was returned.</span>
                 </EmptyDataTemplate>
                 <ItemTemplate>
-                    <asp:Panel ID="Panel21" runat="server" Visible="false">
-                        <asp:Label ID="Label48" runat="server" Text="Details of the behavior being coached:"
-                            Font-Names="Calibri" Font-Bold="True" /><br />
-                        <asp:Table ID="Table2" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
+                    <asp:Label ID="Label48" runat="server" Text="Details of the behavior being coached:"
+                        Font-Names="Calibri" Font-Bold="True" /><br />
+                    <asp:Table ID="Table2" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
+                        background-color: #f1f1ec; width: 490px;" class="review">
+                        <asp:TableRow>
+                            <asp:TableCell CssClass="wrapped">
+                                &nbsp;<asp:Label ID="txtDescriptionLabel" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
+                            </asp:TableCell></asp:TableRow>
+                    </asp:Table>
+                    <asp:Panel ID="Panel15" runat="server" Visible="false">
+                        <asp:Label ID="Label49" runat="server" Text="Notes from Manager:" Font-Names="Calibri"
+                            Font-Bold="True"></asp:Label><br />
+                        <asp:Table ID="Table3" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
                             background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="wrapped">
-                                    &nbsp;<asp:Label ID="txtDescriptionLabel" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
-                                </asp:TableCell></asp:TableRow>
-                        </asp:Table>
-                        <asp:Panel ID="Panel15" runat="server" Visible="false">
-                            <asp:Label ID="Label49" runat="server" Text="Notes from Manager:" Font-Names="Calibri"
-                                Font-Bold="True"></asp:Label><br />
-                            <asp:Table ID="Table3" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
-                                background-color: #f1f1ec; width: 490px;" class="review">
-                                <asp:TableRow>
-                                    <asp:TableCell CssClass="wrapped">
-                                        &nbsp;<asp:Label ID="txtMgrNotesLabel" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>' /></asp:TableCell></asp:TableRow>
-                            </asp:Table>
-                        </asp:Panel>
-                    </asp:Panel>
-                    <asp:Panel ID="Panel22" runat="server" Visible="false">
-                        <asp:Label ID="Label47" runat="server" Text="Details of the behavior being coached:"
-                            Font-Names="Calibri" Font-Bold="True" /><br />
-                        <asp:Table ID="Table4" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
+                                    &nbsp;<asp:Label ID="txtMgrNotesLabel" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>' /></asp:TableCell></asp:TableRow></asp:Table></asp:Panel><asp:Panel ID="Panel23" runat="server" Visible="false">
+                        <asp:Label ID="Label71" runat="server" Text="Coaching Notes:" Font-Names="Calibri"
+                            Font-Bold="True"></asp:Label><br /><asp:Table ID="Table5" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
                             background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="wrapped">
-                                    &nbsp;<asp:Label ID="Label64" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
-                                </asp:TableCell></asp:TableRow>
-                        </asp:Table>
-                        <asp:Panel ID="Panel23" runat="server" Visible="false">
-                            <asp:Label ID="Label71" runat="server" Text="Coaching Notes:" Font-Names="Calibri"
-                                Font-Bold="True"></asp:Label><br />
-                            <asp:Table ID="Table5" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
-                                background-color: #f1f1ec; width: 490px;" class="review">
-                                <asp:TableRow>
-                                    <asp:TableCell CssClass="wrapped">
-                                        &nbsp;<asp:Label ID="Label72" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
-                                    </asp:TableCell></asp:TableRow>
-                            </asp:Table>
-                        </asp:Panel>
-                    </asp:Panel>
-                    <asp:Panel ID="Panel28" runat="server" Visible="false">
-                        <asp:Label ID="Label80" runat="server" Text="2Details of the behavior being coached:"
-                            Font-Names="Calibri" Font-Bold="True" /><br />
-                        <asp:Table ID="Table6" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
-                            background-color: #f1f1ec; width: 490px;" class="review">
-                            <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">
-                                    &nbsp;<asp:Label ID="Label81" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label></asp:TableCell></asp:TableRow>
-                        </asp:Table>
+                                    &nbsp;<asp:Label ID="Label72" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
+                                </asp:TableCell></asp:TableRow></asp:Table></asp:Panel><asp:Panel ID="Panel28" runat="server" Visible="false">
                         <asp:Panel ID="Panel29" runat="server" Visible="false">
                             <asp:Label ID="Label82" runat="server" Text="Management Notes:" Font-Names="Calibri"
-                                Font-Bold="True"></asp:Label><br />
-                            <asp:Table ID="Table1" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
+                                Font-Bold="True"></asp:Label><br /><asp:Table ID="Table1" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
                                 background-color: #f1f1ec; width: 490px;" class="review">
                                 <asp:TableRow>
                                     <asp:TableCell CssClass="wrapped">
                                         &nbsp;<asp:Label ID="Label83" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>' />
-                                    </asp:TableCell></asp:TableRow>
-                            </asp:Table>
-                        </asp:Panel>
-                        <asp:Label ID="Label84" runat="server" Text="Coaching Notes:" Font-Names="Calibri"
+                                    </asp:TableCell></asp:TableRow></asp:Table></asp:Panel><asp:Label ID="Label84" runat="server" Text="Coaching Notes:" Font-Names="Calibri"
                             Font-Bold="True" /><br />
                         <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
                             background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="wrapped">
                                     &nbsp;<asp:Label ID="Label85" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
-                                </asp:TableCell></asp:TableRow>
-                        </asp:Table>
-                    </asp:Panel>
-                    <asp:Panel ID="Panel38" runat="server" Visible="false">
-                        <asp:Label ID="Label142" runat="server" Text="Details of the behavior being coached:"
-                            Font-Names="Calibri" Font-Bold="True" /><br />
-                        <asp:Table ID="Table11" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
-                            background-color: #f1f1ec; width: 490px;" class="review">
-                            <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">
-                                    &nbsp;<asp:Label ID="Label143" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
-                                </asp:TableCell></asp:TableRow>
-                        </asp:Table>
-                    </asp:Panel>
-                    <asp:Label ID="Label96" runat="server" Text='<%# Eval("strFormID") %>' Visible="false" />
+                                </asp:TableCell></asp:TableRow></asp:Table></asp:Panel><asp:Label ID="Label96" runat="server" Text='<%# Eval("strFormID") %>' Visible="false" />
                     <asp:Label ID="Label50" runat="server" Text='<%# Eval("strFormStatus") %>' Visible="false" />
                     <asp:Label ID="Label51" runat="server" Text='<%# Eval("SubmittedDate") %>' Visible="false" />
                     <asp:Label ID="Label52" runat="server" Text='<%# Eval("CoachingDate") %>' Visible="false" />
                     <asp:Label ID="Label53" runat="server" Text='<%# Eval("strSource") %>' Visible="false" />
                     <asp:Label ID="Label33" runat="server" Text='<%# Eval("isIQS") %>' Visible="false" />
-                     <asp:Label ID="Label54" runat="server" Text='<%# Eval("EventDate") %>' Visible="false" />
+                    <asp:Label ID="Label54" runat="server" Text='<%# Eval("EventDate") %>' Visible="false" />
                     <asp:Label ID="Label55" runat="server" Text='<%# Eval("strCSRSite") %>' Visible="false" />
                     <asp:Label ID="Label56" runat="server" Text='<%# Eval("strVerintID") %>' Visible="false" />
                     <asp:Label ID="Label57" runat="server" Text='<%# Eval("strBehaviorAnalyticsID") %>'
@@ -365,14 +319,11 @@
                         Visible="false" />
                     <asp:Label ID="Label133" runat="server" Text='<%# Eval("Current Coaching Initiative") %>'
                         Visible="false" />
-                   <asp:Label ID="Label151" runat="server" Text='<%# Eval("OMR / Exceptions") %>'
-                        Visible="false" />
-                    <asp:Label ID="Label34" runat="server" Text='<%# Eval("ETS / OAE") %>'
-                        Visible="false" />
-                    <asp:Label ID="Label35" runat="server" Text='<%# Eval("ETS / OAS") %>'
-                        Visible="false" />
- 
-                     <asp:Label ID="Label126" runat="server" Text='<%# Eval("isCoachingRequired") %>'
+                    <asp:Label ID="Label151" runat="server" Text='<%# Eval("OMR / Exceptions") %>' Visible="false" />
+                    <asp:Label ID="Label34" runat="server" Text='<%# Eval("ETS / OAE") %>' Visible="false" />
+                    <asp:Label ID="Label35" runat="server" Text='<%# Eval("ETS / OAS") %>' Visible="false" />
+                    <asp:Label ID="Label36" runat="server" Text='<%# Eval("LCS") %>' Visible="false" />
+                    <asp:Label ID="Label126" runat="server" Text='<%# Eval("isCoachingRequired") %>'
                         Visible="false" />
                     <asp:Label ID="Label107b" runat="server" Text='<%# Eval("MgrReviewManualDate") %>'
                         Visible="false" />
@@ -393,119 +344,75 @@
                         ID="RequiredFieldValidator14" runat="server" ControlToValidate="Date1" ErrorMessage=""
                         CssClass="EMessage" Display="Dynamic" Width="200px">Enter a valid coaching date.</asp:RequiredFieldValidator><asp:CompareValidator
                             ID="CompareValidator1" runat="server" Display="Dynamic" Operator="LessThanEqual"
-                            Type="Date" ControlToValidate="Date1" ErrorMessage="" CssClass="EMessage" Width="490px">Enter today's date or a date in the past. You are not allowed to enter a future date.</asp:CompareValidator><br />
-                <asp:TextBox ID="Date1" runat="server" CssClass="qcontrol" Width="100px"></asp:TextBox>&nbsp;<asp:Image
+                            Type="Date" ControlToValidate="Date1" ErrorMessage="" CssClass="EMessage" Width="490px">Enter today's date or a date in the past. You are not allowed to enter a future date.</asp:CompareValidator><br /><asp:TextBox ID="Date1" runat="server" CssClass="qcontrol" Width="100px"></asp:TextBox>&nbsp;<asp:Image
                     runat="server" ID="cal1" ImageUrl="images/Calendar_scheduleHS.png" />
                 <asp:CalendarExtender ID="calendarButtonExtender" runat="server" TargetControlID="Date1"
                     PopupButtonID="cal1" Enabled="True" />
                 <br />
                 <asp:Label ID="Label70" runat="server" Text="2. Provide the details from the coaching session including action plans developed:"
                     CssClass="question"></asp:Label>&nbsp;<asp:Label ID="Label109" runat="server" Text="*"
-                        CssClass="EMessage" Width="10px"></asp:Label><br />
-                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage=""
-                    ControlToValidate="TextBox5" CssClass="EMessage" Display="Dynamic" Enabled="false">Enter details from the coaching session including action plans developed.</asp:RequiredFieldValidator><br />
-                <asp:TextBox ID="TextBox5" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes"
-                    onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br />
-                <br />
-                <asp:Label ID="Label231" runat="server" Text="[max length: 3,000 chars]"></asp:Label><br />
-                <asp:Label ID="Label1" runat="server" Text="Provide as much detail as possible"></asp:Label><br />
-                <asp:Button ID="Button1" runat="server" Text="Submit" CssClass="subuttons" />
+                        CssClass="EMessage" Width="10px"></asp:Label><br /><asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage=""
+                    ControlToValidate="TextBox5" CssClass="EMessage" Display="Dynamic" Enabled="false">Enter details from the coaching session including action plans developed.</asp:RequiredFieldValidator><br /><asp:TextBox ID="TextBox5" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes"
+                    onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br /><br /><asp:Label ID="Label231" runat="server" Text="[max length: 3,000 chars]"></asp:Label><br /><asp:Label ID="Label1" runat="server" Text="Provide as much detail as possible"></asp:Label><br /><asp:Button ID="Button1" runat="server" Text="Submit" CssClass="subuttons" />
             </asp:Panel>
             <asp:Panel ID="Panel40" runat="server" Visible="false">
                 <asp:Label ID="Label146" runat="server" Text="1. Check the box below to acknowledge the monitor:"
                     CssClass="question"></asp:Label><asp:Label ID="Label147" runat="server" Text="*"
-                        CssClass="EMessage" Width="10px"></asp:Label><br />
-                <asp:CheckBox ID="CheckBox3" runat="server" Text="I have read and understand all the information provided on this eCoaching Log." />
+                        CssClass="EMessage" Width="10px"></asp:Label><br /><asp:CheckBox ID="CheckBox3" runat="server" Text="I have read and understand all the information provided on this eCoaching Log." />
                 &nbsp;<asp:CustomValidator runat="server" ID="CustomValidator3" EnableClientScript="true"
                     OnServerValidate="CheckBoxRequired3_ServerValidate" ErrorMessage="" CssClass="EMessage"
-                    Width="470px" Display="Dynamic">You must select the acknowledgement checkbox to complete this review.</asp:CustomValidator><br />
-                <br />
-                <asp:Button ID="Button7" runat="server" Text="Submit" CssClass="subuttons" />
+                    Width="470px" Display="Dynamic">You must select the acknowledgement checkbox to complete this review.</asp:CustomValidator><br /><br /><asp:Button ID="Button7" runat="server" Text="Submit" CssClass="subuttons" />
             </asp:Panel>
             <asp:Panel ID="Panel37" runat="server" Visible="false">
                 <asp:Label ID="Label134" runat="server" Text="You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest "></asp:Label><asp:HyperLink
                     ID="HyperLink1" NavigateUrl="https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx"
                     Target="_blank" runat="server">Contact Center Operations 46.0 Outlier Management Report (OMR): Outlier Research Process SOP</asp:HyperLink>&nbsp;<asp:Label
-                        ID="Label132" runat="server" Text=" and provide the details in the record below."></asp:Label><br />
-                <br />
-                <asp:Label ID="Label140" runat="server" Text="1. Date:" CssClass="question"></asp:Label>&nbsp;<asp:Label
+                        ID="Label132" runat="server" Text=" and provide the details in the record below."></asp:Label><br /><br /><asp:Label ID="Label140" runat="server" Text="1. Date:" CssClass="question"></asp:Label>&nbsp;<asp:Label
                     ID="Label130" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label><asp:RequiredFieldValidator
                         ID="RequiredFieldValidator10" runat="server" ControlToValidate="Date4" ErrorMessage=""
                         CssClass="EMessage" Display="Dynamic" Width="200px" Enabled="false">Enter a valid coaching date.</asp:RequiredFieldValidator><asp:CompareValidator
                             ID="CompareValidator5" runat="server" Display="Dynamic" Operator="LessThanEqual"
                             Type="Date" ControlToValidate="Date4" ErrorMessage="" CssClass="EMessage" Width="490px"
-                            Enabled="True">Enter today's date or a date in the past. You are not allowed to enter a future date.</asp:CompareValidator><br />
-                <asp:TextBox ID="Date4" runat="server" CssClass="qcontrol" Width="100px"></asp:TextBox>&nbsp;
-                <asp:Image runat="server" ID="cal4" ImageUrl="images/Calendar_scheduleHS.png" />
+                            Enabled="True">Enter today's date or a date in the past. You are not allowed to enter a future date.</asp:CompareValidator><br /><asp:TextBox ID="Date4" runat="server" CssClass="qcontrol" Width="100px"></asp:TextBox>&nbsp; <asp:Image runat="server" ID="cal4" ImageUrl="images/Calendar_scheduleHS.png" />
                 <asp:CalendarExtender ID="CalendarExtender4" runat="server" TargetControlID="Date4"
                     PopupButtonID="cal4" Enabled="True" />
                 <br />
                 <asp:Label ID="Label141" runat="server" Text="2. Based on your research does this record require coaching?"
-                    CssClass="question"></asp:Label><br />
-                <asp:RadioButtonList ID="RadioButtonList3" runat="server">
+                    CssClass="question"></asp:Label><br /><asp:RadioButtonList ID="RadioButtonList3" runat="server">
                     <asp:ListItem Value="1" class="croptions" onclick="javascript: toggle('1','panel0a');"
-                        Selected="True">Yes</asp:ListItem>
-                    <asp:ListItem Value="0" class="croptions" onclick="javascript: toggle('0','panel0a');">No</asp:ListItem>
-                </asp:RadioButtonList>
-                <br />
-                <div runat="server" id="panel0a" style="visibility: hidden; display: none;">
+                        Selected="True">Yes</asp:ListItem><asp:ListItem Value="0" class="croptions" onclick="javascript: toggle('0','panel0a');">No</asp:ListItem></asp:RadioButtonList><br /><div runat="server" id="panel0a" style="visibility: hidden; display: none;">
                     <asp:Label ID="Label135" runat="server" Text="3. What was the main reason this item was not coachable?"
-                        CssClass="question"></asp:Label>&nbsp;<br />
-                    <asp:DropDownList ID="DropDownList2" runat="server" class="TextBox">
-                        <asp:ListItem Value="Other" Selected="True">Other</asp:ListItem>
-                    </asp:DropDownList>
-                    <br />
-                    <br />
-                    <asp:Label ID="Label136" runat="server" Text="4. Please provide reason / explanation / justification as to why the item was not coachable:"
+                        CssClass="question"></asp:Label>&nbsp;<br /> <asp:DropDownList ID="DropDownList2" runat="server" class="TextBox">
+                        <asp:ListItem Value="Other" Selected="True">Other</asp:ListItem></asp:DropDownList><br /><br /><asp:Label ID="Label136" runat="server" Text="4. Please provide reason / explanation / justification as to why the item was not coachable:"
                         CssClass="question" Style="margin-right: 5px;"></asp:Label>&nbsp;<asp:Label ID="Label128"
                             runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label><asp:RequiredFieldValidator
                                 ID="RequiredFieldValidator4" runat="server" ErrorMessage="" ControlToValidate="TextBox1"
                                 Display="Dynamic" CssClass="EMessage" Enabled="false" Style="margin-right: 5px;">Please provide reason / explanation / justification as to why the item was not coachable.</asp:RequiredFieldValidator><asp:TextBox
                                     ID="TextBox1" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes"
-                                    onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br />
-                    <asp:Label ID="Label127" runat="server" Text="[max length: 3,000 chars]"></asp:Label>&nbsp;
-                    <asp:Label ID="Label137" runat="server" Text="[These notes will only be viewed by Supervisors]"></asp:Label><br />
-                </div>
-                <div runat="server" id="panel0b" style="visibility: visible; display: inline;">
+                                    onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br /><asp:Label ID="Label127" runat="server" Text="[max length: 3,000 chars]"></asp:Label>&nbsp; <asp:Label ID="Label137" runat="server" Text="[These notes will only be viewed by Supervisors]"></asp:Label><br /></div><div runat="server" id="panel0b" style="visibility: visible; display: inline;">
                     <asp:Label ID="Label138" runat="server" Text="3. Please provide reason / explanation / justification as to why the item is coachable for the Supervisor:"
                         CssClass="question" Style="margin-right: 5px;"></asp:Label>&nbsp;<asp:Label ID="Label131"
-                            runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label><br />
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator9" runat="server" ErrorMessage=""
+                            runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label><br /><asp:RequiredFieldValidator ID="RequiredFieldValidator9" runat="server" ErrorMessage=""
                         ControlToValidate="AddlNotes" Display="Dynamic" CssClass="EMessage" Enabled="false"
                         Style="margin-right: 5px;">Please provide reason / explanation / justification as to why the item is coachable for the Supervisor.</asp:RequiredFieldValidator><asp:TextBox
                             ID="AddlNotes" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes"
-                            onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br />
-                    <asp:Label ID="Label139" runat="server" Text="[max length: 3,000 chars]"></asp:Label>&nbsp;
-                    <asp:Label ID="Label129" runat="server" Text="[These notes will only be viewed by Supervisors]"></asp:Label><br />
-                    <br />
-                </div>
-                <asp:Button ID="Button5" runat="server" Text="Submit" CssClass="subuttons" />
+                            onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br /><asp:Label ID="Label139" runat="server" Text="[max length: 3,000 chars]"></asp:Label>&nbsp; <asp:Label ID="Label129" runat="server" Text="[These notes will only be viewed by Supervisors]"></asp:Label><br /><br /></div><asp:Button ID="Button5" runat="server" Text="Submit" CssClass="subuttons" />
                 <br />
             </asp:Panel>
-
-
-              <asp:Panel ID="Panel26" runat="server" Visible="false">
-                <asp:Label ID="Label76" runat="server" Width="490px" Text="Review the submitted coaching opportunity and (1) determine if it is a confirmed Customer Service Escalation (CSE).  If it is a CSE, setup a meeting with the Employee and Supervisor and report your coaching in the box below.  If it not a CSE, enter notes for the Supervisor to use to coach the Employee."></asp:Label><br />
-                <br />
-                <asp:Label ID="Label77" runat="server" Text="1. Is the coaching opportunity a confirmed Customer Service Escalation (CSE)?"
+            <asp:Panel ID="Panel26" runat="server" Visible="false">
+                <asp:Label ID="Label76" runat="server" Width="490px" Text="Review the submitted coaching opportunity and (1) determine if it is a confirmed Customer Service Escalation (CSE).  If it is a CSE, setup a meeting with the Employee and Supervisor and report your coaching in the box below.  If it not a CSE, enter notes for the Supervisor to use to coach the Employee."></asp:Label><br /><br /><asp:Label ID="Label77" runat="server" Text="1. Is the coaching opportunity a confirmed Customer Service Escalation (CSE)?"
                     CssClass="question"></asp:Label>&nbsp;<asp:Label ID="Label110" runat="server" Text="*"
                         CssClass="EMessage" Width="10px"></asp:Label><asp:RequiredFieldValidator ID="RequiredFieldValidator7"
                             runat="server" ControlToValidate="RadioButtonList1" ErrorMessage="" CssClass="EMessage"
-                            Display="Dynamic" Width="250px" Enabled="false">Indicate if this is a confirmed CSE.</asp:RequiredFieldValidator><br />
-                <asp:RadioButtonList ID="RadioButtonList1" runat="server">
-                    <asp:ListItem Value="1" class="croptions" onclick="javascript: toggle('1','panel24');">Yes, this is a confirmed Customer Service Escalation.</asp:ListItem>
-                    <asp:ListItem Value="0" class="croptions" onclick="javascript: toggle('1','panel27');">No, this is not a confirmed Customer Service Escalation.</asp:ListItem>
-                </asp:RadioButtonList>
-                <br />
-                <div id="panel24" runat="server" style="visibility: hidden; display: none;">
+                            Display="Dynamic" Width="250px" Enabled="false">Indicate if this is a confirmed CSE.</asp:RequiredFieldValidator><br /><asp:RadioButtonList ID="RadioButtonList1" runat="server">
+                    <asp:ListItem Value="1" class="croptions" onclick="javascript: toggle('1','panel24');">Yes, this is a confirmed Customer Service Escalation.</asp:ListItem><asp:ListItem Value="0" class="croptions" onclick="javascript: toggle('1','panel27');">No, this is not a confirmed Customer Service Escalation.</asp:ListItem></asp:RadioButtonList><br /><div id="panel24" runat="server" style="visibility: hidden; display: none;">
                     <asp:Label ID="Label73" runat="server" Text="2. Enter the date coached:" CssClass="question"></asp:Label>&nbsp;<asp:Label
                         ID="Label111" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label><asp:RequiredFieldValidator
                             ID="RequiredFieldValidator1" runat="server" ControlToValidate="Date2" ErrorMessage=""
                             CssClass="EMessage" Display="Dynamic" Width="200px" Enabled="false">Enter a valid coaching date.</asp:RequiredFieldValidator><asp:CompareValidator
                                 ID="CompareValidator2" runat="server" Display="Dynamic" Operator="LessThanEqual"
                                 Type="Date" ControlToValidate="Date2" ErrorMessage="" CssClass="EMessage" Width="490px"
-                                Enabled="false">Enter today's date or a date in the past. You are not allowed to enter a future date.</asp:CompareValidator><br />
-                    <asp:TextBox ID="Date2" runat="server" CssClass="qcontrol" Text=""></asp:TextBox>&nbsp;<asp:Image
+                                Enabled="false">Enter today's date or a date in the past. You are not allowed to enter a future date.</asp:CompareValidator><br /><asp:TextBox ID="Date2" runat="server" CssClass="qcontrol" Text=""></asp:TextBox>&nbsp;<asp:Image
                         runat="server" ID="cal2" ImageUrl="images/Calendar_scheduleHS.png" />
                     <asp:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="Date2"
                         PopupButtonID="cal2" Enabled="True" />
@@ -514,13 +421,8 @@
                         CssClass="question"></asp:Label>&nbsp;<asp:Label ID="Label113" runat="server" Text="*"
                             CssClass="EMessage" Width="10px"></asp:Label><asp:RequiredFieldValidator ID="RequiredFieldValidator6"
                                 runat="server" ErrorMessage="" ControlToValidate="TextBox2" Display="Dynamic"
-                                CssClass="EMessage" Enabled="false" Width="400px">Please provide details of the behavior to be coached.</asp:RequiredFieldValidator><br />
-                    <asp:TextBox ID="TextBox2" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes"
-                        onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br />
-                    <asp:Label ID="Label122" runat="server" Text="[max length: 3,000 chars]"></asp:Label><br />
-                    <asp:Label ID="Label92" runat="server" Text="Provide as much detail as possible"></asp:Label><br />
-                    <br />
-                    <asp:Button ID="Button2" runat="server" Text="Submit" CssClass="subuttons" />
+                                CssClass="EMessage" Enabled="false" Width="400px">Please provide details of the behavior to be coached.</asp:RequiredFieldValidator><br /><asp:TextBox ID="TextBox2" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes"
+                        onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br /><asp:Label ID="Label122" runat="server" Text="[max length: 3,000 chars]"></asp:Label><br /><asp:Label ID="Label92" runat="server" Text="Provide as much detail as possible"></asp:Label><br /><br /><asp:Button ID="Button2" runat="server" Text="Submit" CssClass="subuttons" />
                 </div>
                 <div id="panel27" runat="server" style="visibility: hidden; display: none;">
                     <asp:Label ID="Label78" runat="server" Text="2. Enter the date reviewed:" CssClass="question"></asp:Label>&nbsp;<asp:Label
@@ -529,8 +431,7 @@
                             CssClass="EMessage" Display="Dynamic" Width="200px" Enabled="false">Enter a valid coaching date.</asp:RequiredFieldValidator><asp:CompareValidator
                                 ID="CompareValidator3" runat="server" Display="Dynamic" Operator="LessThanEqual"
                                 Type="Date" ControlToValidate="Date3" ErrorMessage="" CssClass="EMessage" Width="490px"
-                                Enabled="false">Enter today's date or a date in the past. You are not allowed to enter a future date.</asp:CompareValidator><br />
-                    <asp:TextBox ID="Date3" runat="server" CssClass="qcontrol"></asp:TextBox>&nbsp;<asp:Image
+                                Enabled="false">Enter today's date or a date in the past. You are not allowed to enter a future date.</asp:CompareValidator><br /><asp:TextBox ID="Date3" runat="server" CssClass="qcontrol"></asp:TextBox>&nbsp;<asp:Image
                         runat="server" ID="cal3" ImageUrl="images/Calendar_scheduleHS.png" />
                     <asp:CalendarExtender ID="CalendarExtender2" runat="server" TargetControlID="Date3"
                         PopupButtonID="cal3" Enabled="True" />
@@ -541,41 +442,26 @@
                                 runat="server" ErrorMessage="" ControlToValidate="TextBox3" Display="Dynamic"
                                 CssClass="EMessage" Enabled="false" Width="400px">Provide reason why this is not a CSE.</asp:RequiredFieldValidator><asp:TextBox
                                     ID="TextBox3" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes"
-                                    onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br />
-                    <asp:Label ID="Label123" runat="server" Text="[max length: 3,000 chars]"></asp:Label><br />
-                    <asp:Label ID="Label93" runat="server" Text="Provide as much detail as possible"></asp:Label><br />
-                    <br />
-                    <asp:Button ID="Button3" runat="server" Text="Submit" CssClass="subuttons" />
+                                    onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br /><asp:Label ID="Label123" runat="server" Text="[max length: 3,000 chars]"></asp:Label><br /><asp:Label ID="Label93" runat="server" Text="Provide as much detail as possible"></asp:Label><br /><br /><asp:Button ID="Button3" runat="server" Text="Submit" CssClass="subuttons" />
                 </div>
             </asp:Panel>
             <asp:Panel ID="Panel30" runat="server" Visible="false">
                 <asp:Label ID="Label86" runat="server" Text="1. Check the box below to acknowledge the coaching opportunity:"
                     CssClass="question"></asp:Label><asp:Label ID="Label115" runat="server" Text="*"
-                        CssClass="EMessage" Width="10px"></asp:Label><br />
-                <asp:CheckBox ID="CheckBox2" runat="server" Text="I have read and understand all the information provided on this eCoaching Log." />
+                        CssClass="EMessage" Width="10px"></asp:Label><br /><asp:CheckBox ID="CheckBox2" runat="server" Text="I have read and understand all the information provided on this eCoaching Log." />
                 &nbsp;<asp:CustomValidator runat="server" ID="CustomValidator2" EnableClientScript="true"
                     OnServerValidate="CheckBoxRequired2_ServerValidate" ErrorMessage="" CssClass="EMessage"
-                    Width="470px" Display="Dynamic">You must select the acknowledgement checkbox to complete this review.</asp:CustomValidator><br />
-                <br />
-                <asp:Label ID="Label87" runat="server" Text="2. Provide any comments or feedback below:"
-                    CssClass="question"></asp:Label><br />
-                <asp:TextBox ID="TextBox4" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes"
-                    onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br />
-                <asp:Label ID="Label124" runat="server" Text="[max length: 3,000 chars]"></asp:Label><br />
-                <asp:Label ID="Label108" runat="server" Text="Provide as much detail as possible"></asp:Label><br />
-                <br />
-                <asp:Button ID="Button4" runat="server" Text="Submit" CssClass="subuttons" />
+                    Width="470px" Display="Dynamic">You must select the acknowledgement checkbox to complete this review.</asp:CustomValidator><br /><br /><asp:Label ID="Label87" runat="server" Text="2. Provide any comments or feedback below:"
+                    CssClass="question"></asp:Label><br /><asp:TextBox ID="TextBox4" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes"
+                    onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox><br /><asp:Label ID="Label124" runat="server" Text="[max length: 3,000 chars]"></asp:Label><br /><asp:Label ID="Label108" runat="server" Text="Provide as much detail as possible"></asp:Label><br /><br /><asp:Button ID="Button4" runat="server" Text="Submit" CssClass="subuttons" />
             </asp:Panel>
             <asp:Panel ID="Panel39" runat="server" Visible="false">
                 <asp:Label ID="Label144" runat="server" Text="1. Check the box below to acknowledge the monitor:"
                     CssClass="question"></asp:Label><asp:Label ID="Label145" runat="server" Text="*"
-                        CssClass="EMessage" Width="10px"></asp:Label><br />
-                <asp:CheckBox ID="CheckBox1" runat="server" Text="I have read and understand all the information provided on this eCoaching Log." />
+                        CssClass="EMessage" Width="10px"></asp:Label><br /><asp:CheckBox ID="CheckBox1" runat="server" Text="I have read and understand all the information provided on this eCoaching Log." />
                 &nbsp;<asp:CustomValidator runat="server" ID="CustomValidator1" EnableClientScript="true"
                     OnServerValidate="CheckBoxRequired1_ServerValidate" ErrorMessage="" CssClass="EMessage"
-                    Width="470px" Display="Dynamic">You must select the acknowledgement checkbox to complete this review.</asp:CustomValidator><br />
-                <br />
-                <asp:Button ID="Button6" runat="server" Text="Submit" CssClass="subuttons" />
+                    Width="470px" Display="Dynamic">You must select the acknowledgement checkbox to complete this review.</asp:CustomValidator><br /><br /><asp:Button ID="Button6" runat="server" Text="Submit" CssClass="subuttons" />
             </asp:Panel>
             <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
                 UpdateCommand="EC.sp_Update1Review_Coaching_Log" UpdateCommandType="StoredProcedure"
@@ -664,71 +550,50 @@
             <asp:ListView ID="ListView2" runat="server" DataSourceID="SqlDataSource2" EnableModelValidation="True"
                 DataKeyNames="numID" Visible="false">
                 <EmptyDataTemplate>
-                    <span>No data was returned.</span></EmptyDataTemplate>
-                <ItemTemplate>
-                    <asp:Panel ID="Panel33" runat="server" Visible="false">
-                        <asp:Label ID="Label98" runat="server" Text="Details of the behavior being coached:"
-                            Font-Names="Calibri" Font-Bold="True" /><br />
-                        <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
-                            background-color: #f1f1ec; width: 490px;" class="review">
-                            <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">
-                                    &nbsp;<asp:Label ID="Label99" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label></asp:TableCell></asp:TableRow>
-                        </asp:Table>
-                    </asp:Panel>
-                    <asp:Label ID="Label43" runat="server" Text="Coaching Opportunity was a confirmed Customer Service Escalation"
-                        Font-Bold="True" Visible="false"></asp:Label><asp:Panel ID="Panel35" runat="server"
-                            Visible="false">
-                            <asp:Panel ID="Panel36" runat="server" Visible="false">
-                                <asp:Label ID="Label102" runat="server" Text="Management Notes:" Font-Names="Calibri"
-                                    Font-Bold="True"></asp:Label><br />
-                                <asp:Table ID="Table8" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
-                                    background-color: #f1f1ec; width: 490px;" class="review">
-                                    <asp:TableRow>
-                                        <asp:TableCell CssClass="wrapped">
-                                            &nbsp;<asp:Label ID="Label103" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>'
-                                                class="review"></asp:Label></asp:TableCell></asp:TableRow>
-                                </asp:Table>
-                            </asp:Panel>
-                            <asp:Label ID="Label91" runat="server" Text="Coaching Opportunity was not a confirmed Customer Service Escalation"
-                                Font-Bold="True"></asp:Label></asp:Panel>
-                    <asp:Panel ID="Panel23" runat="server" Visible="false">
+                    <span>No data was returned.</span></EmptyDataTemplate><ItemTemplate>
+                    <asp:Label ID="Label98" runat="server" Text="Details of the behavior being coached:"
+                        Font-Names="Calibri" Font-Bold="True" /><br />
+                    <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
+                        background-color: #f1f1ec; width: 490px;" class="review">
+                        <asp:TableRow>
+                            <asp:TableCell CssClass="wrapped">
+                                &nbsp;<asp:Label ID="Label99" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label></asp:TableCell></asp:TableRow></asp:Table><asp:Label ID="Label43" runat="server" Text="Coaching Opportunity was a confirmed Customer Service Escalation"
+                        Font-Bold="True" Visible="false"></asp:Label><asp:Panel ID="Panel35" runat="server" Visible="false">
+                        <asp:Panel ID="Panel36" runat="server" Visible="false">
+                            <asp:Label ID="Label102" runat="server" Text="Management Notes:" Font-Names="Calibri"
+                                Font-Bold="True"></asp:Label><br /><asp:Table ID="Table8" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
+                                background-color: #f1f1ec; width: 490px;" class="review">
+                                <asp:TableRow>
+                                    <asp:TableCell CssClass="wrapped">
+                                        &nbsp;<asp:Label ID="Label103" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>'
+                                            class="review"></asp:Label></asp:TableCell></asp:TableRow></asp:Table></asp:Panel><asp:Label ID="Label91" runat="server" Text="Coaching Opportunity was not a confirmed Customer Service Escalation"
+                            Font-Bold="True"></asp:Label></asp:Panel><asp:Panel ID="Panel23" runat="server" Visible="false">
                         <asp:Label ID="Label71" runat="server" Text="Coaching Notes:" Font-Names="Calibri"
-                            Font-Bold="True"></asp:Label><br />
-                        <asp:Table ID="Table9" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
+                            Font-Bold="True"></asp:Label><br /><asp:Table ID="Table9" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
                             background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="wrapped">
-                                    &nbsp;<asp:Label ID="Label72" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label></asp:TableCell></asp:TableRow>
-                        </asp:Table>
-                    </asp:Panel>
-                    <asp:Label ID="Label80" runat="server" Text="Employee Review Information:" Font-Names="Calibri"
+                                    &nbsp;<asp:Label ID="Label72" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label></asp:TableCell></asp:TableRow></asp:Table></asp:Panel><asp:Label ID="Label80" runat="server" Text="Employee Review Information:" Font-Names="Calibri"
                         Font-Bold="True" /><br />
                     <asp:Label ID="Label97" runat="server" Text='<%# Eval(server.htmldecode("strCSRName")) %>'
                         Font-Names="Calibri" /><br />
-                    <asp:Label ID="Label100" runat="server" Text="TBD" Font-Names="Calibri" Font-Bold="False" />&nbsp;
-                    <asp:Label ID="Label101" runat="server" Text='<%# Eval("CSRReviewAutoDate") %>' Font-Names="Calibri" /><br />
+                    <asp:Label ID="Label100" runat="server" Text="TBD" Font-Names="Calibri" Font-Bold="False" />&nbsp; <asp:Label ID="Label101" runat="server" Text='<%# Eval("CSRReviewAutoDate") %>' Font-Names="Calibri" /><br />
                     <asp:Panel ID="Panel41" runat="server" Visible="false" Style="margin-top: 5px;">
                         <asp:Label ID="Label152" runat="server" Text="Supervisor Review Information:" Font-Names="Calibri"
                             Font-Bold="True" /><br />
                         <asp:Label ID="Label153" runat="server" Text='<%# Eval(server.htmldecode("strReviewer")) %>'
                             Font-Names="Calibri" /><br />
                         <asp:Label ID="Label154" runat="server" Text="Reviewed and acknowledged Quality Monitor on"
-                            Font-Names="Calibri" Font-Bold="False" />&nbsp;
-                        <asp:Label ID="Label155" runat="server" Text='<%# Eval("SupReviewedAutoDate") %>'
+                            Font-Names="Calibri" Font-Bold="False" />&nbsp; <asp:Label ID="Label155" runat="server" Text='<%# Eval("SupReviewedAutoDate") %>'
                             Font-Names="Calibri" /><br />
                     </asp:Panel>
                     <asp:Panel ID="Panel32" runat="server" Visible="false" Style="margin-top: 5px;">
                         <asp:Label ID="Label94" runat="server" Text="Employee Comments/Feedback:" Font-Names="Calibri"
-                            Font-Bold="True"></asp:Label><br />
-                        <asp:Table ID="Table10" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
+                            Font-Bold="True"></asp:Label><br /><asp:Table ID="Table10" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
                             background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="wrapped">
-                                    &nbsp;<asp:Label ID="Label95" runat="server" Text='<%# Eval(server.htmldecode("txtCSRComments")) %>'></asp:Label></asp:TableCell></asp:TableRow>
-                        </asp:Table>
-                    </asp:Panel>
-                    <asp:Label ID="Label96" runat="server" Text='<%# Eval("strFormID") %>' Visible="false" />
+                                    &nbsp;<asp:Label ID="Label95" runat="server" Text='<%# Eval(server.htmldecode("txtCSRComments")) %>'></asp:Label></asp:TableCell></asp:TableRow></asp:Table></asp:Panel><asp:Label ID="Label96" runat="server" Text='<%# Eval("strFormID") %>' Visible="false" />
                     <asp:Label ID="Label50" runat="server" Text='<%# Eval("strFormStatus") %>' Visible="false" />
                     <asp:Label ID="Label51" runat="server" Text='<%# Eval("SubmittedDate") %>' Visible="false" />
                     <asp:Label ID="Label52" runat="server" Text='<%# Eval("CoachingDate") %>' Visible="false" />
@@ -781,75 +646,34 @@
             <asp:Panel ID="Panel4a" runat="server" Visible="false" Style="text-align: center;">
                 <div style="border: 1px solid #cccccc; width: 99%; text-align: center;">
                     <p style="font-family: Arial; font-size: medium; text-align: center; width: 490px;">
-                        <em style="font-weight: 700; text-align: center">This is an invalid Form ID.
-                            <br />
-                            Please return to the previous page and select a valid Form ID to view. </em>
-                    </p>
-                </div>
-            </asp:Panel>
-            <asp:UpdateProgress ID="UpdateProgress3" runat="server" DynamicLayout="true" DisplayAfter="0">
+                        <em style="font-weight: 700; text-align: center">This is an invalid Form ID. <br />Please return to the previous page and select a valid Form ID to view. </em></p></div></asp:Panel><asp:UpdateProgress ID="UpdateProgress3" runat="server" DynamicLayout="true" DisplayAfter="0">
                 <ProgressTemplate>
                     <div style="text-align: center;">
-                        loading...<br />
-                        <img src="images/ajax-loader5.gif" alt="progress animation gif" /></div>
-                </ProgressTemplate>
-            </asp:UpdateProgress>
-            <br />
-            <asp:Label ID="Label116" runat="server" CssClass="EMessage" Visible="true"></asp:Label></ContentTemplate>
-    </asp:UpdatePanel>
-</asp:Content>
-<asp:Content ID="Content5" ContentPlaceHolderID="ContentPlaceHolder4" runat="server">
+                        loading...<br /> <img src="images/ajax-loader5.gif" alt="progress animation gif" /></div></ProgressTemplate></asp:UpdateProgress><br /><asp:Label ID="Label116" runat="server" CssClass="EMessage" Visible="true"></asp:Label></ContentTemplate></asp:UpdatePanel></asp:Content><asp:Content ID="Content5" ContentPlaceHolderID="ContentPlaceHolder4" runat="server">
     <asp:Panel ID="Panel31" runat="server" Visible="false">
         <asp:Label ID="Label4" runat="server" Text="Page:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label6" runat="server" Text="Review" CssClass="sidetext"></asp:Label><br />
-        <asp:Label ID="Label117" runat="server" Text="FormID:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label118" runat="server" Text="" CssClass="sidetext"></asp:Label><br />
-        <asp:Label ID="Label2" runat="server" Text="Status:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label3" runat="server" Text="New" CssClass="sidetext"></asp:Label><br />
-        <asp:Label ID="Label8" runat="server" Text="Date Submitted:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label10" runat="server" CssClass="sidetext"></asp:Label><br />
-        <asp:Label ID="Label9" runat="server" Text="Type:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label11" runat="server" CssClass="sidetext"></asp:Label><br />
-        <asp:Panel ID="Panel16" runat="server">
+            ID="Label6" runat="server" Text="Review" CssClass="sidetext"></asp:Label><br /><asp:Label ID="Label117" runat="server" Text="FormID:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
+            ID="Label118" runat="server" Text="" CssClass="sidetext"></asp:Label><br /><asp:Label ID="Label2" runat="server" Text="Status:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
+            ID="Label3" runat="server" Text="New" CssClass="sidetext"></asp:Label><br /><asp:Label ID="Label8" runat="server" Text="Date Submitted:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
+            ID="Label10" runat="server" CssClass="sidetext"></asp:Label><br /><asp:Label ID="Label9" runat="server" Text="Type:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
+            ID="Label11" runat="server" CssClass="sidetext"></asp:Label><br /><asp:Panel ID="Panel16" runat="server">
             <asp:Label ID="Label5" runat="server" Text="Date of Coaching:" ForeColor="Black"
-                CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label ID="Label7" runat="server" CssClass="sidetext"></asp:Label><br />
-        </asp:Panel>
-        <asp:Panel ID="Panel17" runat="server">
+                CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label ID="Label7" runat="server" CssClass="sidetext"></asp:Label><br /></asp:Panel><asp:Panel ID="Panel17" runat="server">
             <asp:Label ID="Label12" runat="server" Text="Date of Event:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-                ID="Label13" runat="server" CssClass="sidetext"></asp:Label><br />
-        </asp:Panel>
-        <asp:Label ID="Label14" runat="server" Text="Source:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label15" runat="server" CssClass="sidetext" Text="Select..."></asp:Label><br />
-        <asp:Label ID="Label65" runat="server" Text="Site:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label66" runat="server" CssClass="sidetext"></asp:Label><br />
-        <br />
-        <asp:Panel ID="Panel18" runat="server">
+                ID="Label13" runat="server" CssClass="sidetext"></asp:Label><br /></asp:Panel><asp:Label ID="Label14" runat="server" Text="Source:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
+            ID="Label15" runat="server" CssClass="sidetext" Text="Select..."></asp:Label><br /><asp:Label ID="Label65" runat="server" Text="Site:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
+            ID="Label66" runat="server" CssClass="sidetext"></asp:Label><br /><br /><asp:Panel ID="Panel18" runat="server">
             <asp:Label ID="Label16" runat="server" Text="Verint ID:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-                ID="Label17" runat="server" CssClass="sidetext"></asp:Label><br />
-            <asp:Label ID="Label160" runat="server" Text="Scorecard Name:" ForeColor="Black"
-                CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label ID="Label64" runat="server" CssClass="sidetext"></asp:Label><br />
-        </asp:Panel>
-        <asp:Panel ID="Panel19" runat="server">
+                ID="Label17" runat="server" CssClass="sidetext"></asp:Label><br /><asp:Label ID="Label160" runat="server" Text="Scorecard Name:" ForeColor="Black"
+                CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label ID="Label64" runat="server" CssClass="sidetext"></asp:Label><br /></asp:Panel><asp:Panel ID="Panel19" runat="server">
             <asp:Label ID="Label18" runat="server" Text="Avoke ID:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-                ID="Label19" runat="server" CssClass="sidetext"></asp:Label><br />
-        </asp:Panel>
-        <asp:Panel ID="Panel20" runat="server">
+                ID="Label19" runat="server" CssClass="sidetext"></asp:Label><br /></asp:Panel><asp:Panel ID="Panel20" runat="server">
             <asp:Label ID="Label20" runat="server" Text="NGD Activity ID:" ForeColor="Black"
-                CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label ID="Label21" runat="server" CssClass="sidetext"></asp:Label><br />
-        </asp:Panel>
-        <asp:Panel ID="Panel14" runat="server">
+                CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label ID="Label21" runat="server" CssClass="sidetext"></asp:Label><br /></asp:Panel><asp:Panel ID="Panel14" runat="server">
             <asp:Label ID="Label46" runat="server" Text="Universal Call ID:" ForeColor="Black"
-                CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label ID="Label149" runat="server" CssClass="sidetext"></asp:Label><br />
-        </asp:Panel>
-        <asp:Label ID="Label22" runat="server" Text="Employee:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label23" runat="server" CssClass="sidetext"></asp:Label><br />
-        <asp:Label ID="Label24" runat="server" Text="Supervisor:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label25" runat="server" CssClass="sidetext"></asp:Label><br />
-        <asp:Label ID="Label26" runat="server" Text="Manager:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-            ID="Label27" runat="server" CssClass="sidetext"></asp:Label><br />
-        <asp:Panel ID="Panel34" runat="server" Visible="false">
+                CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label ID="Label149" runat="server" CssClass="sidetext"></asp:Label><br /></asp:Panel><asp:Label ID="Label22" runat="server" Text="Employee:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
+            ID="Label23" runat="server" CssClass="sidetext"></asp:Label><br /><asp:Label ID="Label24" runat="server" Text="Supervisor:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
+            ID="Label25" runat="server" CssClass="sidetext"></asp:Label><br /><asp:Label ID="Label26" runat="server" Text="Manager:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
+            ID="Label27" runat="server" CssClass="sidetext"></asp:Label><br /><asp:Panel ID="Panel34" runat="server" Visible="false">
             <asp:Label ID="Label119" runat="server" Text="Submitter:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;<asp:Label
-                ID="Label120" runat="server" CssClass="sidetext"></asp:Label><br />
-        </asp:Panel>
-    </asp:Panel>
-</asp:Content>
+                ID="Label120" runat="server" CssClass="sidetext"></asp:Label><br /></asp:Panel></asp:Panel></asp:Content>

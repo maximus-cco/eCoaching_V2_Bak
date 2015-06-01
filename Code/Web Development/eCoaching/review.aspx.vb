@@ -192,7 +192,7 @@ Public Class review
         Select Case pHolder7.Text ' Module check
 
 
-            Case "CSR"
+            Case "CSR", "Training"
 
                 Select Case recStatus.Text ' status check
 
@@ -266,7 +266,7 @@ Public Class review
             pHolder5 = ListView1.Items(0).FindControl("Label33") 'isIQS
 
             '  MsgBox("supervisor")
-            If (pHolder3.Text = "True") Or (pHolder4.Text <> "") Then
+            If ((pHolder3.Text = "True") Or (pHolder4.Text <> "")) Then
 
                 panelHolder = ListView1.Items(0).FindControl("Panel15")
                 panelHolder.Visible = True
@@ -290,13 +290,13 @@ Public Class review
 
                         'If ((pHolder5.Text = "IQS") And (pHolder6.Text = "True")) Then
 
-                        panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+                        panelHolder = ListView1.Items(0).FindControl("Panel28")
                         panelHolder.Visible = True
 
                         pHolder = ListView1.Items(0).FindControl("Label83")
                         panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
 
-                        If (pHolder.Text <> "") Then
+                        If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
 
                             panelHolder.Visible = True
                         End If
@@ -326,8 +326,8 @@ Public Class review
 
                         If ((pHolder2v.Text = "1") Or (pHolder2w.Text = "1")) Then 'Research Required?
                             '   MsgBox("found 1")
-                            panelHolder1 = ListView1.Items(0).FindControl("Panel38") 'Details of the behavior being coached
-                            panelHolder1.Visible = True 'display txtDescription 
+                            ''panelHolder1 = ListView1.Items(0).FindControl("Panel38") 'Details of the behavior being coached
+                            ''panelHolder1.Visible = True 'display txtDescription 
 
                             Panel37.Visible = True ' coaching required question group
                             Label138.Text = "3. Provide the details from the coaching session including action plans developed"
@@ -351,8 +351,8 @@ Public Class review
 
                         Else
 
-                            panelHolder = ListView1.Items(0).FindControl("Panel21")
-                            panelHolder.Visible = True
+                            '' panelHolder = ListView1.Items(0).FindControl("Panel21")
+                            '' panelHolder.Visible = True
                             Panel25.Visible = True
                             calendarButtonExtender.EndDate = TodaysDate
                             RequiredFieldValidator3.Enabled = True
@@ -367,25 +367,25 @@ Public Class review
                 Case 4
                     Panel40.Visible = True 'Check the box below to acknowledge the monitor
 
-                    panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+                    panelHolder = ListView1.Items(0).FindControl("Panel28")
                     panelHolder.Visible = True
 
                     pHolder = ListView1.Items(0).FindControl("Label83")
                     panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
 
-                    If (pHolder.Text <> "") Then
+                    If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
 
                         panelHolder.Visible = True
                     End If
                 Case Else
 
-                    panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+                    panelHolder = ListView1.Items(0).FindControl("Panel28")
                     panelHolder.Visible = True
 
                     pHolder = ListView1.Items(0).FindControl("Label83")
                     panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
 
-                    If (pHolder.Text <> "") Then
+                    If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
 
                         panelHolder.Visible = True
                     End If
@@ -400,7 +400,7 @@ Public Class review
 
 
         pHolder = ListView1.Items(0).FindControl("Label75")
-        panelHolder = ListView1.Items(0).FindControl("Panel22") 'Display details of the behavior being coached and coaching notes
+        ''panelHolder = ListView1.Items(0).FindControl("Panel22") 'Display details of the behavior being coached and coaching notes
         ' MsgBox(pHolder.Text)
         If (lan = LCase(pHolder.Text)) Then ' I'm the current record's level 3
 
@@ -410,24 +410,35 @@ Public Class review
 
                 Dim pHolder2x As Label
                 Dim pHolder2y As Label
+                Dim pHolder2z As Label
 
                 pHolder2x = ListView1.Items(0).FindControl("Label133") 'Current Coaching Initiative
                 pHolder2y = ListView1.Items(0).FindControl("Label151") 'OMR / Exceptions
+                pHolder2z = ListView1.Items(0).FindControl("Label36") 'Low CSAT
 
                 '  MsgBox("manager2")
-                ' MsgBox(pHolder2x)
-                'MsgBox(pHolder2y)
-                If ((pHolder2x.Text = "1") Or (pHolder2y.Text = "1")) Then 'Research Required?
+                'MsgBox(pHolder2x.Text)
+                'MsgBox(pHolder2y.Text)
+                'MsgBox(pHolder2z.Text)
+                If ((pHolder2x.Text = "1") Or (pHolder2y.Text = "1") Or (pHolder2z.Text = "1")) Then 'Research Required?
 
                     '   MsgBox("found 1")
-                    panelHolder1 = ListView1.Items(0).FindControl("Panel38") 'Details of the behavior being coached
-                    panelHolder1.Visible = True 'display txtDescription 
+                    ''panelHolder1 = ListView1.Items(0).FindControl("Panel38") 'Details of the behavior being coached
+                    ''panelHolder1.Visible = True 'display txtDescription 
 
                     Panel37.Visible = True ' coaching required question group
 
                     CalendarExtender4.EndDate = TodaysDate
                     CompareValidator5.ValueToCompare = TodaysDate
                     RequiredFieldValidator10.Enabled = True
+
+                    If (pHolder2z.Text = "1") Then 'change text for Low CSAT
+
+                        Label134.Text = "You are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction.  Please review the call from a PPoM perspective and provide details on the specific opportunities  requiring coaching in the record below. "
+                        HyperLink1.Visible = "False" ' hide hyperlink
+                        Label132.Text = "" 'hide 2nd part of paragraph
+
+                    End If
 
                 Else
 
@@ -470,7 +481,7 @@ Public Class review
 
                     End If
 
-                    panelHolder.Visible = True
+                    ''panelHolder.Visible = True
 
                     'Dim pHolderX As TextBox
 
@@ -498,13 +509,13 @@ Public Class review
 
             Else
 
-                panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+                panelHolder = ListView1.Items(0).FindControl("Panel28")
                 panelHolder.Visible = True
 
                 pHolder = ListView1.Items(0).FindControl("Label83")
                 panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
 
-                If (pHolder.Text <> "") Then
+                If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
 
                     panelHolder.Visible = True
                 End If
@@ -531,11 +542,11 @@ Public Class review
 
         pHolder = ListView1.Items(0).FindControl("Label88")
 
-        panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+        ''panelHolder = ListView1.Items(0).FindControl("Panel28")
 
         If (lan = LCase(pHolder.Text)) Then ' I'm the current record's csr
 
-            panelHolder.Visible = True
+            ''panelHolder.Visible = True
 
 
             ' recStatus = DataList1.Items(0).FindControl("LabelStatus")
@@ -580,13 +591,13 @@ Public Class review
 
             'User is submitter but not CSR, SUP, or MGR
 
-            panelHolder = ListView1.Items(0).FindControl("Panel28") 'Details of the behavior being coached
+            panelHolder = ListView1.Items(0).FindControl("Panel28")
             panelHolder.Visible = True
 
             pHolder = ListView1.Items(0).FindControl("Label83") '' remove if shouldn't have for Outlier
             panelHolder = ListView1.Items(0).FindControl("Panel29") ''Management Notes remove if shouldn't have for Outlier
 
-            If (pHolder.Text <> "") Then '' remove if shouldn't have for Outlier
+            If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then '' remove if shouldn't have for Outlier
 
                 panelHolder.Visible = True '' remove if shouldn't have for Outlier
 
@@ -751,8 +762,8 @@ Public Class review
 
 
 
-        panelHolder = ListView2.Items(0).FindControl("Panel33") 'Details of the behavior being coached
-        panelHolder.Visible = True
+        '' panelHolder = ListView2.Items(0).FindControl("Panel33") 'Details of the behavior being coached
+        '' panelHolder.Visible = True
 
         pHolder = ListView2.Items(0).FindControl("Label107")
         ' MsgBox(pHolder.Text)
@@ -772,20 +783,20 @@ Public Class review
                 panelHolder = ListView2.Items(0).FindControl("Panel35") 'not CSE
                 panelHolder.Visible = True
 
+                panelHolder = ListView2.Items(0).FindControl("Panel36") 'Management Notes
+                pHolder = ListView2.Items(0).FindControl("Label103")
+
+
+                If (pHolder.Text <> "") Then
+
+                    panelHolder.Visible = True
+
+
+                End If
             End If
 
         End If
 
-        panelHolder = ListView2.Items(0).FindControl("Panel36") 'Management Notes
-        pHolder = ListView2.Items(0).FindControl("Label103")
-
-
-        If (pHolder.Text <> "") Then
-
-            panelHolder.Visible = True
-
-
-        End If
 
         pHolder = ListView2.Items(0).FindControl("Label101")
 
@@ -1068,7 +1079,7 @@ Public Class review
             Select Case pHolder7.Text ' Module check
 
 
-                Case "CSR"
+                Case "CSR", "Training"
                     SqlDataSource3.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
 
                 Case "Supervisor"
@@ -1174,7 +1185,7 @@ Public Class review
             Select Case pHolder7.Text ' Module check
 
 
-                Case "CSR", "LSA"
+                Case "CSR", "LSA", "Training"
                     SqlDataSource4.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
 
                 Case "Supervisor"
@@ -1279,7 +1290,7 @@ Public Class review
 
                 Select Case pHolder7.Text ' Module check
 
-                    Case "CSR"
+                    Case "CSR", "Training"
 
                         If ((pHolder1.Text = "1") Or (pHolder2.Text = "1")) Then
 
@@ -1451,7 +1462,7 @@ Public Class review
     Protected Sub Button6_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button6.Click
         'CSR Pending Ack Submit
 
-        Dim nextStep
+        Dim nextStep As String = ""
 
         Page.Validate()
         recStatus = DataList1.Items(0).FindControl("LabelStatus")
@@ -1464,7 +1475,7 @@ Public Class review
             Select Case pHolder7.Text ' Module check
 
 
-                Case "CSR"
+                Case "CSR", "Training"
                     nextStep = "Pending Supervisor Review"
 
                 Case "Supervisor"
@@ -1640,8 +1651,25 @@ Public Class review
     End Sub
 
 
+     Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
+        'EC.sp_SelectReviewFrom_Coaching_Log 
+
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
     Protected Sub SqlDataSource6_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource6.Selecting
         'EC.sp_SelectRecordStatus 
+
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
+
+    Protected Sub SqlDataSource8_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource8.Selecting
+        'EC.sp_SelectReviewFrom_Coaching_Log_Reasons 
 
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
@@ -1658,13 +1686,7 @@ Public Class review
 
 
 
-    Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
-        'EC.sp_SelectReviewFrom_Coaching_Log 
 
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
 
 
     Protected Sub SqlDataSource1_Updating(ByVal sender As Object, e As SqlDataSourceCommandEventArgs) Handles SqlDataSource1.Updating
@@ -1704,6 +1726,15 @@ Public Class review
 
     End Sub
 
+    Protected Sub SqlDataSource7_Updating(ByVal sender As Object, e As SqlDataSourceCommandEventArgs) Handles SqlDataSource7.Updating
+
+
+        'EC.sp_Update5Review_Coaching_Log 
+
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
 
     Protected Sub SqlDataSource9_Updating(ByVal sender As Object, e As SqlDataSourceCommandEventArgs) Handles SqlDataSource9.Updating
         'EC.sp_Update6Review_Coaching_Log 
@@ -1717,27 +1748,6 @@ Public Class review
 
     Protected Sub SqlDataSource10_Updating(ByVal sender As Object, e As SqlDataSourceCommandEventArgs) Handles SqlDataSource10.Updating
         'EC.sp_Update7Review_Coaching_Log 
-
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
-
-
-
-    Protected Sub SqlDataSource7_Updating(ByVal sender As Object, e As SqlDataSourceCommandEventArgs) Handles SqlDataSource7.Updating
-
-
-        'EC.sp_Update5Review_Coaching_Log 
-
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
-
-
-    Protected Sub SqlDataSource8_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource8.Selecting
-        'EC.sp_SelectReviewFrom_Coaching_Log_Reasons 
 
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
