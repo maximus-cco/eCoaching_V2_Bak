@@ -7,7 +7,8 @@ Imports AjaxControlToolkit
 
 
 Public Class review
-    Inherits System.Web.UI.Page
+    Inherits BasePage
+
     Dim pHolder As Label
     Dim panelHolder As Panel
     Dim pHolder2 As Label
@@ -19,16 +20,13 @@ Public Class review
     Dim statusLevel As String
 
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
-    Dim lan As String = LCase(User.Identity.Name) 'boulsh, "vngt\parmro" '"vngt\ablast" '"ad\lanisa.rodriguez-tov" '
     Dim FromURL As String
-    ' Dim arcAccess = "harvan;brunB1;mcgey9;lapkca;jackky;turnna;grifpa;catopa;clutpe;mitcre;paqusa;stonsa;garns1;boulsh;jacqst;mcphvi;klicwa;findan;timmap;lemuce;stewci;ryanel;hatcki;rodrl1;morglo;thommi;esqumo;howare;dupesu;horrta;waleti;medlwa;mccoal;jakuas;slavda;orties;rodrgr;acosir;sumnlo;woodma;pezzni;amayro;medrru;pachsa;doolst;martt2;jonetr;Baezad;Gonzar;velado;castd1;barnge;pittgl;rosije;marmli;hernlu;favelu;castm4;bolina;demesa;delgba;navave;garcvi;nevavi"
 
-
-
+    'Dim lan As String
 
     Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
-
-
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
 
         Dim pHolder1a As Label
         Dim pHolder2a As Label
@@ -611,17 +609,8 @@ Public Class review
 
 
     Protected Sub Page_Load3(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView2.DataBound ' record not modifyable
-
-        Select Case True
-
-
-            Case (InStr(1, lan, "vngt\", 1) > 0)
-                lan = (Replace(lan, "vngt\", ""))
-            Case (InStr(1, lan, "ad\", 1) > 0)
-                lan = (Replace(lan, "ad\", ""))
-            Case Else
-                lan = lan
-        End Select
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
 
         Dim pHolder1a As Label
         Dim pHolder2a As Label
@@ -854,50 +843,33 @@ Public Class review
 
     End Sub
 
+    Public Overrides Sub HandlePageDisplay()
+    End Sub
 
-    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+    Public Overrides Sub Initialize()
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
 
-
-        Select Case True
-
-
-            Case (InStr(1, lan, "vngt\", 1) > 0)
-                lan = (Replace(lan, "vngt\", ""))
-            Case (InStr(1, lan, "ad\", 1) > 0)
-                lan = (Replace(lan, "ad\", ""))
-            Case Else
-
-                Response.Redirect("error.aspx")
-
-        End Select
-
-
+        ' sp_Check_AgentRole
         SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = lan
         SqlDataSource14.SelectParameters("nvcRole").DefaultValue = "ARC"
-
         GridView1.DataBind()
-
 
         Dim formID
         Dim idArray
 
         formID = Request.QueryString("id")
-
         If (RadioButtonList1.SelectedValue = "1") Then
-
             panel24.Style("display") = "inline"
             panel24.Style("visibility") = "visible"
             panel27.Style("display") = "none"
             panel27.Style("visibility") = "hidden"
-
         End If
         If (RadioButtonList1.SelectedValue = "0") Then
-
             panel27.Style("display") = "inline"
             panel27.Style("visibility") = "visible"
             panel24.Style("display") = "none"
             panel24.Style("visibility") = "hidden"
-
         End If
 
         If (Len(formID) > 9) Then
@@ -929,14 +901,8 @@ Public Class review
                 End If
 
                 CompareValidator2.ValueToCompare = TodaysDate
-
                 CompareValidator3.ValueToCompare = TodaysDate
-
-
-
             Else
-
-
                 Panel31.Visible = False
                 DataList1.Visible = False
                 DataList1.Enabled = False
@@ -944,36 +910,21 @@ Public Class review
                 Panel4a.Visible = False ''True
                 Label28.Visible = False
                 Label29.Visible = False
-
-
             End If
-
         Else
-
             Panel31.Visible = False
-
             DataList1.Visible = False
             DataList1.Enabled = False
-
             Panel4a.Visible = False ''True
             Label28.Visible = False
             Label29.Visible = False
-
-
-
         End If
-
-        '         Case Else
-
-        '    Response.Redirect("error.aspx")
-
-
-        '     End Select
-
     End Sub
 
-
     Protected Sub Button1_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button1.Click
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
+
         'Supervisor submit
         Page.Validate()
         If Page.IsValid Then
@@ -1020,6 +971,9 @@ Public Class review
     End Sub
 
     Protected Sub Button2_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button2.Click
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
+
         'Manager submit 1
         '' add dtmMgrReviewAutoDate to update parameters = CDate(DateTime.Now())
         'MsgBox("goodbye")
@@ -1138,6 +1092,9 @@ Public Class review
     End Sub
 
     Protected Sub Button3_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button3.Click
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
+
         'Manager submit 2
 
 
@@ -1233,6 +1190,9 @@ Public Class review
     End Sub
 
     Protected Sub Button5_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button5.Click
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
+
         'Manager or Supervisor submit 3 - Outlier [OMR, OAE, OAM]
 
         RequiredFieldValidator10.Enabled = True
@@ -1523,6 +1483,9 @@ Public Class review
 
 
     Protected Sub Button7_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button7.Click
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
+
         'SUP Pending Ack Submit
         Dim nextStep
 

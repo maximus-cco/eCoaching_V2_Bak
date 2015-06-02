@@ -86,16 +86,25 @@ Public Class review2
         Dim pHolder3a As Label
         Dim pHolder4a As Label
 
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
 
-        pHolder1a = ListView2.Items(0).FindControl("Label49")
-        pHolder2a = ListView2.Items(0).FindControl("Label48")
-        pHolder3a = ListView2.Items(0).FindControl("Label47")
-        pHolder4a = ListView2.Items(0).FindControl("Label1")
+        pHolder1a = ListView2.Items(0).FindControl("Label49") 'strEmpLanID
+        pHolder2a = ListView2.Items(0).FindControl("Label48") 'strCSRSup
+        pHolder3a = ListView2.Items(0).FindControl("Label47") 'strCSRMgr
+        pHolder4a = ListView2.Items(0).FindControl("Label1") 'strSubmitter
 
 
-   
-
-        If ((lan <> (Replace(pHolder4a.Text, "'", ""))) And (lan <> (Replace(pHolder1a.Text, "'", ""))) And (lan <> (Replace(pHolder2a.Text, "'", ""))) And (lan <> (Replace(pHolder3a.Text, "'", ""))) And (lan <> LCase(csupervisor)) And (lan <> LCase(cmanager)) And (Label241.Text = 0) And (Label31.Text = 0) And (InStr(1, userTitle, "WHHR", 1) = 0) And (InStr(1, userTitle, "WHER", 1) = 0)) Then
+        If ((lan <> (Replace(pHolder4a.Text, "'", ""))) And
+            (lan <> (Replace(pHolder1a.Text, "'", ""))) And
+            (lan <> (Replace(pHolder2a.Text, "'", ""))) And
+            (lan <> (Replace(pHolder3a.Text, "'", ""))) And
+            (lan <> LCase(csupervisor)) And
+            (lan <> LCase(cmanager)) And
+            (Label241.Text = 0) And
+            (Label31.Text = 0) And
+            (InStr(1, userTitle, "WHHR", 1) = 0) And
+            (InStr(1, userTitle, "WHER", 1) = 0)) Then
             '  MsgBox(lan)
             '  MsgBox(cmanager)
             '  MsgBox(pHolder3a.Text)
@@ -326,17 +335,13 @@ Public Class review2
     End Sub
 
 
-    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        ' authentication is done in BasePage
-        ' if it makes it here, it means authentication is successful
-        ' still need to initialize the page on initial display
-        If Not IsPostBack Then
-            InitializePageDisplay()
-        End If
+    Public Overrides Sub HandlePageDisplay()
     End Sub
 
-    Private Sub InitializePageDisplay()
-        userTitle = GetJobCode(Session("userInfo"))
+    Public Overrides Sub Initialize()
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
+        userTitle = eclUser.JobCode 'GetJobCode(Session("userInfo"))
 
         ' sp_Check_AgentRole - ARC
         SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = lan

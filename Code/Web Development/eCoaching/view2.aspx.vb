@@ -15,23 +15,19 @@ Public Class view2
     Dim filter1 As DropDownList
     Dim counter As Integer
 
-    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        If Not IsPostBack Then
-            ' authentication is done in BasePage OnInit
-            ' if it makes it here, it means authentication is successful
-            InitializePageDisplay()
-        End If
-
+    Public Overrides Sub HandlePageDisplay()
     End Sub
 
-    Private Sub InitializePageDisplay()
+    Public Overrides Sub Initialize()
+        Dim eclUser As User = Session("eclUser")
+
         '  sp_check_agentrole
-        SqlDataSource41.SelectParameters("nvcLanID").DefaultValue = lan
+        SqlDataSource41.SelectParameters("nvcLanID").DefaultValue = eclUser.LanID
         SqlDataSource41.SelectParameters("nvcRole").DefaultValue = "SRMGR"
         GridView12.DataBind()
 
         ' Title
-        Label6a.Text = GetJobCode(Session("userInfo"))
+        Label6a.Text = eclUser.JobCode 'GetJobCode(Session("userInfo"))
         Select Case True 'Label6a.Text
             Case (InStr(1, Label6a.Text, "WACS0", 1) > 0) '"WACS01", "WACS02", "WACS03"
                 '' Label5.Visible = True
@@ -41,10 +37,10 @@ Public Class view2
                 ' Label10.Text = "On this page, you can find your pending and completed coaching logs. <p> To view your pending coaching logs at your review, you can find them under My Pending eCoaching Logs.  The logs are displayed in reverse chronological order.  To open an eCoaching Log, click on the file name and complete the log entries. <p> To view your completed coaching logs, you can find them under My Completed eCoaching Logs.  The logs are displayed in reverse chonological order.  To open an eCoaching Log, click on the file name to view the content."
                 ''  drs12.Visible = True
                 '' drs12.Enabled = True
-                SqlDataSource2.SelectParameters("strCSRin").DefaultValue = lan
+                SqlDataSource2.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
                 ''GridView2.Visible = True
                 ''GridView2.Enabled = True
-                SqlDataSource1.SelectParameters("strCSRin").DefaultValue = lan
+                SqlDataSource1.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
                 ' Label11.Visible = True
                 'GridView1.Visible = True
                 'GridView1.Enabled = True
@@ -58,19 +54,19 @@ Public Class view2
                 ' Label4.Visible = True
                 Label26.Text = "Welcome to the Supervisor Dashboard"
                 Panel1.Visible = True
-                SqlDataSource27.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource28.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource3.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource6.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource7.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource9.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource17.SelectParameters("strCSRin").DefaultValue = lan
+                SqlDataSource27.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource28.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource3.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource6.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource7.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource9.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource17.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
 
                 If (Label6a.Text = "WACS40") Then
                     Panel4.Visible = True
-                    SqlDataSource22.SelectParameters("strCSRSUPin").DefaultValue = lan
+                    SqlDataSource22.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
                     If (Date7.Text = "") Then
                         SqlDataSource22.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                         Date7.Text = backDate
@@ -112,23 +108,23 @@ Public Class view2
                 '   Label10.Text = "On this page, you can find your pending and completed coaching logs.<p> To view your pending coaching logs at your review, you can find them under My Pending eCoaching Logs.  The logs are displayed in reverse chronological order.  To open an eCoaching Log, click on the file name and complete the log entries. <p> To view your completed coaching logs, you can find them under My Completed eCoaching Logs.  The logs are displayed in reverse chonological order.  To open an eCoaching Log, click on the file name to view the content.  These are logs that you have been completed by your Supervisors and CSRs for review and acknowledgement.  These logs are grouped by Supervisor."
                 '' GridView4.Visible = True
                 ''GridView4.Enabled = True
-                SqlDataSource25.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource26.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource4.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource5.SelectParameters("strCSRMGRin").DefaultValue = lan
+                SqlDataSource25.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource26.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource4.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource5.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                 ''GridView7.Visible = True
                 ''GridView7.Enabled = True
-                SqlDataSource8.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource13.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource14.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource15.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource16.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource20.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource21.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource18.SelectParameters("strCSRin").DefaultValue = lan
+                SqlDataSource8.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource13.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource14.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource15.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource16.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource20.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource21.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource18.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
                 If ((Label6a.Text = "WACS50") Or (Label6a.Text = "WACS60")) Then
                     Panel5.Visible = True
-                    SqlDataSource23.SelectParameters("strCSRMGRin").DefaultValue = lan
+                    SqlDataSource23.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                     If (Date5.Text = "") Then
                         SqlDataSource23.SelectParameters("strSDatein").DefaultValue = backDate
                         Date5.Text = backDate
@@ -165,15 +161,14 @@ Public Class view2
                 ' Label4.Visible = True
                 Label26.Text = "Welcome to the eCL Dashboard" '& Label6a.Text
                 Panel1.Visible = True
-                SqlDataSource28.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource27.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource3.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource6.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource7.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource9.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource17.SelectParameters("strCSRin").DefaultValue = lan
+                SqlDataSource28.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource27.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource3.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource6.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource7.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource17.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
 
                 CalendarExtender3.EndDate = TodaysDate
                 CalendarExtender4.EndDate = TodaysDate
@@ -196,11 +191,11 @@ Public Class view2
 
         If (Label241.Text > 0) Then ' Senior Manager
             Panel6.Visible = True
-            SqlDataSource44.SelectParameters("strUserin").DefaultValue = lan
-            SqlDataSource43.SelectParameters("strCSRSrMGRin").DefaultValue = lan
-            SqlDataSource47.SelectParameters("strCSRSrMGRin").DefaultValue = lan
-            SqlDataSource48.SelectParameters("strCSRSrMGRin").DefaultValue = lan
-            SqlDataSource45.SelectParameters("strEMPSRMGRin").DefaultValue = lan
+            SqlDataSource44.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+            SqlDataSource43.SelectParameters("strCSRSrMGRin").DefaultValue = eclUser.LanID
+            SqlDataSource47.SelectParameters("strCSRSrMGRin").DefaultValue = eclUser.LanID
+            SqlDataSource48.SelectParameters("strCSRSrMGRin").DefaultValue = eclUser.LanID
+            SqlDataSource45.SelectParameters("strEMPSRMGRin").DefaultValue = eclUser.LanID
             If (Date11.Text = "") Then
                 SqlDataSource45.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                 Date11.Text = backDate
@@ -214,7 +209,7 @@ Public Class view2
                 SqlDataSource45.SelectParameters("strEDatein").DefaultValue = Date12.Text
             End If
 
-            SqlDataSource50.SelectParameters("strEMPSRMGRin").DefaultValue = lan
+            SqlDataSource50.SelectParameters("strEMPSRMGRin").DefaultValue = eclUser.LanID
             If (Date9.Text = "") Then
                 SqlDataSource50.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
                 Date9.Text = backDate

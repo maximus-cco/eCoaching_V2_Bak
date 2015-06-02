@@ -1500,6 +1500,7 @@
                         <asp:Parameter Name="dtmCSRReviewAutoDate" Direction="Input" Type="DateTime" />
                         <asp:Parameter Name="nvcCSRComments" Direction="Input" Type="String" />
                         <asp:Parameter Name="bitEmailSent" Direction="Input" Type="Boolean" />
+                        <asp:Parameter Name="Behaviour" Direction="Input" Type="String" />
                     </InsertParameters>
                 </asp:SqlDataSource>
                 <asp:SqlDataSource ID="SqlDataSource27" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"

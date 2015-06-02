@@ -14,57 +14,54 @@ Public Class view3
     ' Dim arcAccess = "harvan;brunB1;mcgey9;lapkca;jackky;turnna;grifpa;catopa;clutpe;mitcre;paqusa;stonsa;garns1;boulsh;jacqst;mcphvi;klicwa;findan;timmap;lemuce;stewci;ryanel;hatcki;rodrl1;morglo;thommi;esqumo;howare;dupesu;horrta;waleti;medlwa;mccoal;jakuas;slavda;orties;rodrgr;acosir;sumnlo;woodma;pezzni;amayro;medrru;pachsa;doolst;martt2;jonetr;Baezad;Gonzar;velado;castd1;barnge;pittgl;rosije;marmli;hernlu;favelu;castm4;bolina;demesa;delgba;navave;garcvi;nevavi"
     '(InStr(1, LCase(historyAccess), lan, 1) = 0)
 
-    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        If Not IsPostBack Then
-            ' authentication is done in BasePage OnInit
-            ' if it makes it here, it means authentication is successful
-            InitializePageDisplay()
-        End If
+    Public Overrides Sub HandlePageDisplay()
     End Sub
 
-    Private Sub InitializePageDisplay()
+    Public Overrides Sub Initialize()
+        Dim eclUser As User = Session("eclUser")
+
         ' sp_check_AgentRole (GridView5)
-        SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = lan
+        SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = eclUser.LanID
         SqlDataSource14.SelectParameters("nvcRole").DefaultValue = "ARC"
         GridView5.DataBind()
 
         ' Title
-        Label6a.Text = GetJobCode(Session("userInfo"))
+        Label6a.Text = eclUser.JobCode 'GetJobCode(Session("userInfo"))
         Select Case True 'Label6a.Text
             Case (InStr(1, Label6a.Text, "WACS0", 1) > 0)
                 If (Label241.Text > 0) Then
                     Panel2.Visible = True
                     Label26.Text = "Welcome to the My Submitted Dashboard"
-                    SqlDataSource1.SelectParameters("strUserin").DefaultValue = lan
+                    SqlDataSource1.SelectParameters("strUserin").DefaultValue = eclUser.LanID
                 Else
                     Response.Redirect("error2.aspx")
                 End If
             Case (InStr(1, Label6a.Text, "40", 1) > 0), (InStr(1, Label6a.Text, "WTTR12", 1) > 0), (InStr(1, Label6a.Text, "WTTI", 1) > 0) '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40"
                 Label26.Text = "Welcome to the My Submitted Dashboard"
                 Panel1.Visible = True
-                SqlDataSource7.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = lan
-                SqlDataSource12.SelectParameters("strCSRSUPin").DefaultValue = lan
+                SqlDataSource7.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
+                SqlDataSource12.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
             Case (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0) '"WACS50", "WACS60", "WBCO50", "WSQA50", "WTTR50", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPM70", "WPPT50", "WPPT60", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14"
                 Panel3.Visible = True
                 Label26.Text = "Welcome to the My Submitted Dashboard"
-                SqlDataSource17.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource18.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource19.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource22.SelectParameters("strCSRMGRin").DefaultValue = lan
+                SqlDataSource17.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource18.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource19.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource22.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
             Case Else
                 Panel4.Visible = True
                 Label9.Visible = True
                 Label26.Text = "Welcome to the My Submitted Dashboard"
-                SqlDataSource2.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource6.SelectParameters("strUserin").DefaultValue = lan
-                SqlDataSource3.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource4.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource5.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource8.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource9.SelectParameters("strCSRMGRin").DefaultValue = lan
-                SqlDataSource13.SelectParameters("strCSRMGRin").DefaultValue = lan
+                SqlDataSource2.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource6.SelectParameters("strUserin").DefaultValue = eclUser.LanID
+                SqlDataSource3.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource4.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource5.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource8.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource9.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+                SqlDataSource13.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
         End Select
     End Sub
 

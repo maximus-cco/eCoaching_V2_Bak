@@ -18,25 +18,17 @@ Public Class review3
     Dim csr As String
  
     Protected Sub Page_Load3(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView2.DataBound
-
-
-
-
-
         '************************************
         'check the user's SUP and MGR and assign to values
         ' csupervisor
         'cmanager
-
         '********************
-
-
-
         Dim pHolder1a As Label
         Dim pHolder2a As Label
         Dim pHolder3a As Label
         Dim pHolder4a As Label
-
+        Dim eclUser As User = Session("eclUser")
+        Dim lan As String = eclUser.LanID
 
         pHolder1a = ListView2.Items(0).FindControl("Label49")
         pHolder2a = ListView2.Items(0).FindControl("Label48")
@@ -104,21 +96,15 @@ Public Class review3
 
     End Sub
 
-
-    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        ' authentication is done in BasePage
-        ' if it makes it here, it means authentication is successful
-        ' still need to initialize the page on initial display
-        If Not IsPostBack Then
-            InitializePageDisplay()
-        End If
+    Public Overrides Sub HandlePageDisplay()
     End Sub
 
-    Private Sub InitializePageDisplay()
-        userTitle = GetJobCode(Session("userInfo"))
+    Public Overrides Sub Initialize()
+        Dim eclUser As User = Session("eclUser")
+        userTitle = eclUser.JobCode 'GetJobCode(Session("userInfo"))
 
         ' sp_Check_AgentRole 
-        SqlDataSource3.SelectParameters("nvcLanID").DefaultValue = lan
+        SqlDataSource3.SelectParameters("nvcLanID").DefaultValue = eclUser.LanID
         SqlDataSource3.SelectParameters("nvcRole").DefaultValue = "SRMGR"
         GridView2.DataBind()
 

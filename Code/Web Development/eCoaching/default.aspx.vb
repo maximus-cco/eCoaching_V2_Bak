@@ -1,34 +1,22 @@
 ﻿Public Class _default
     Inherits BasePage
 
-    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        ' authentication is done in BasePage
-        ' if it makes it here, it means authentication is successful
-        ' still need to initialize the page on initial display
-        If Not IsPostBack Then
-            InitializePageDisplay()
-        End If
+    Public Overrides Sub HandlePageDisplay()
     End Sub
 
-    Private Sub InitializePageDisplay()
-        ' title
-        Label1.Text = Split(Session("userInfo"), "$", -1, 1)(0)
+    Public Overrides Sub Initialize()
+        Dim elcUser As User = Session("eclUser")
+        Label1.Text = elcUser.JobCode
 
         Select Case True 'Label6a.Text
-
-
             Case (InStr(1, Label1.Text, "WACS0", 1) > 0)
-
                 'no historical dashboard for CSRs of any kind
                 ' TabPanel4.Visible = False
 
                 'check to display My submissions and submission page
-
                 ' If (Label1.Text = "WACS02") Then
 
-
-
-                SqlDataSource2.SelectParameters("nvcLanID").DefaultValue = lan
+                SqlDataSource2.SelectParameters("nvcLanID").DefaultValue = elcUser.LanID
                 SqlDataSource2.SelectParameters("nvcRole").DefaultValue = "ARC"
                 GridView2.DataSourceID = "SqlDataSource2"
                 GridView2.DataBind()
@@ -40,8 +28,7 @@
                     '       MsgBox("test1")
                     TabPanel1.Visible = False
                     TabPanel3.Visible = False
-		    Tabcontainer1.ActiveTabIndex = 1
-
+                    TabContainer1.ActiveTabIndex = 1
                 End If
 
                 'Else
@@ -60,17 +47,18 @@
 
             Case (InStr(1, Label1.Text, "WHER", 1) > 0), (InStr(1, Label1.Text, "WHHR", 1) > 0)
 
-		TabContainer1.ActiveTabIndex = 3		
+                TabContainer1.ActiveTabIndex = 3
 
                 TabPanel1.Visible = False
                 TabPanel2.Visible = False
                 TabPanel3.Visible = False
                 TabPanel4.Visible = True
-
-
         End Select
 
+
     End Sub
+
+
 
     Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
         'EC.sp_Check_AgentRole 

@@ -1,72 +1,44 @@
-﻿Imports System.Data
-Imports System.Data.SqlClient
-Imports System.Web.Configuration
-
-' base class for all pages
-Public Class BasePage
+﻿' base class for all pages
+Public MustInherit Class BasePage
     Inherits System.Web.UI.Page
 
-    Const unknow As String = "unknown"
-    Protected lan As String = Nothing
-    Protected connectionString As String = WebConfigurationManager.ConnectionStrings("CoachingConnectionString").ConnectionString
-
-    Protected Overrides Sub OnInit(ByVal e As EventArgs)
-        MyBase.OnInit(e)
-
-        lan = GetLanId()
-        ' check user access here
-        If Session("userInfo") Is Nothing Then
-            Dim userInfo As String = GetUserInfo()
-            If IsValidUser(userInfo) Then
-                Session("userInfo") = userInfo
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Not IsPostBack Then
+            If AuthenticateUser() Then
+                Initialize()
             Else
-                ' user doesn't have access, send user to unauthorized page
+                ' authentication failed, send user to unauthorized page
                 Response.Redirect("error.aspx")
             End If
+        Else
+            HandlePageDisplay()
         End If
     End Sub
 
-    ' call stored procedure sp_whoami to get user "jobcode$email$name"
-    ' database access will need to move DAL layer later on
-    Function GetUserInfo() As String
-        Dim userInfo As String = Nothing
-        Using connection As New SqlConnection(connectionString)
-            Using command As New SqlCommand("EC.sp_Whoami", connection)
-                connection.Open()
-                command.CommandType = CommandType.StoredProcedure
-                command.Parameters.AddWithValue("@strUserin", lan)
-                Using dataReader As SqlDataReader = command.ExecuteReader()
-                    If dataReader.Read() Then
-                        userInfo = dataReader("Submitter").ToString()
-                    End If
-                End Using
-            End Using
-        End Using
+    Public MustOverride Sub Initialize()
+    Public MustOverride Sub HandlePageDisplay()
 
-        Return userInfo
-    End Function
+    Private Function AuthenticateUser() As Boolean
+        Dim authenticated As Boolean = (Not ((Session("eclUser") Is Nothing)))
 
-    Function IsValidUser(ByVal userInfo As String) As Boolean
-        Return IIf(LCase(userInfo).Contains(unknow), False, True)
+        If Not authenticated Then
+            Dim userHandler = New UserHandler()
+            Dim eclUser As User = userHandler.AuthenticateUser(GetLanId())
+            If Not (eclUser Is Nothing) Then
+                Session("eclUser") = eclUser
+                authenticated = True
+            End If
+        End If
+
+        Return authenticated
     End Function
 
     Function GetLanId() As String
         Dim lanId As String = LCase(User.Identity.Name)
+
         lanId = Replace(lanId, "vngt\", "")
         lanId = Replace(lanId, "ad\", "")
+
         Return lanId
     End Function
-
-    Function GetJobCode(ByVal userInfo As String) As String
-        Return IIf(String.IsNullOrEmpty(userInfo), String.Empty, Split(userInfo, "$", -1, 1)(0))
-    End Function
-
-    Function GetEmail(ByVal userInfo As String) As String
-        Return IIf(String.IsNullOrEmpty(userInfo), String.Empty, Split(userInfo, "$", -1, 1)(1))
-    End Function
-
-    Function GetName(ByVal userInfo As String) As String
-        Return IIf(String.IsNullOrEmpty(userInfo), String.Empty, Split(userInfo, "$", -1, 1)(2))
-    End Function
-
 End Class

@@ -93,6 +93,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DataVisualization" />
@@ -130,6 +131,9 @@
     <Content Include="images\eCL.jpg" />
     <Content Include="images\header-photo.jpg" />
     <Content Include="review3.aspx" />
+    <Content Include="scripts\bootstrap-3.2.0.min.js" />
+    <Content Include="scripts\jquery-1.11.1.min.js" />
+    <Content Include="scripts\jquery-ui-1.11.1.min.js" />
     <Content Include="scripts\jquery.cookie.js" />
     <Content Include="secllogo.html" />
     <Content Include="bin\AjaxControlToolkit.dll" />
@@ -154,6 +158,7 @@
     <Content Include="next1.aspx" />
     <Content Include="review.aspx" />
     <Content Include="review2.aspx" />
+    <Content Include="styles\bootstrap-3.2.0.min.css" />
     <Content Include="styles\Site.css" />
     <Content Include="unauthorized.html" />
     <Content Include="view2.aspx" />
@@ -168,9 +173,18 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BLL\HistoricalDashboardHandler.vb" />
+    <Compile Include="BLL\UserHandler.vb" />
+    <Compile Include="DAL\HistoricalDashboardDBAccess.vb" />
+    <Compile Include="common\BasePage.vb">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DAL\DBUtility.vb" />
+    <Compile Include="DAL\UserDBAccess.vb" />
     <Compile Include="default.aspx.designer.vb">
       <DependentUpon>default.aspx</DependentUpon>
     </Compile>
@@ -213,6 +227,9 @@
       <DependentUpon>error4.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Models\HistoricalDashboard.vb" />
+    <Compile Include="Models\HistoricalDashboardFilter.vb" />
+    <Compile Include="Models\User.vb" />
     <Compile Include="next1.aspx.designer.vb">
       <DependentUpon>next1.aspx</DependentUpon>
     </Compile>
@@ -239,7 +256,7 @@
     </Compile>
     <Compile Include="review3.aspx.vb">
       <DependentUpon>review3.aspx</DependentUpon>
-      <SubType>ASPXCodebehind</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Settings.vb" />
     <Compile Include="Site1.Master.designer.vb">
@@ -292,6 +309,8 @@
     </None>
     <None Include="My Project\PublishProfiles\Coach Module.pubxml" />
     <None Include="My Project\PublishProfiles\Coach.pubxml" />
+    <None Include="My Project\PublishProfiles\prod.pubxml" />
+    <None Include="My Project\PublishProfiles\test.pubxml" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <CustomToolNamespace>My</CustomToolNamespace>
@@ -300,10 +319,12 @@
     <Content Include="Site2.Master" />
     <Content Include="Site3.Master" />
     <Content Include="Site1.Master" />
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
