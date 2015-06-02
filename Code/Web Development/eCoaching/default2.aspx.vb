@@ -1276,14 +1276,10 @@ Public Class default2
         ' sp_check_agentrole (GridView1)
         SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = lan
         SqlDataSource14.SelectParameters("nvcRole").DefaultValue = "ARC"
-
         GridView1.DataBind()
-        SqlDataSource2.SelectParameters("strUserin").DefaultValue = lan
 
-        SqlDataSource2.DataBind()
-        GridView3.DataBind()
-
-
+        ' Populate "Select Coaching Module:" (DropDownList3)
+        ' sp_select_modules_by_job_code
         SqlDataSource15.SelectParameters("nvcEmpLanIDin").DefaultValue = lan
         SqlDataSource15.DataBind()
 
@@ -4114,15 +4110,6 @@ Public Class default2
 
     End Sub
 
-
-
-    Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
-
-        'EC.sp_Whoami
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
 
 
 
