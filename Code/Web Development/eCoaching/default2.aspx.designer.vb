@@ -1850,13 +1850,13 @@ Partial Public Class default2
     Protected WithEvents Label228 As Global.System.Web.UI.WebControls.Label
 
     '''<summary>
-    '''RequiredFieldValidator13 control.
+    '''CustomValidator5 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents RequiredFieldValidator13 As Global.System.Web.UI.WebControls.CustomValidator
+    Protected WithEvents CustomValidator5 As Global.System.Web.UI.WebControls.CustomValidator
 
     '''<summary>
     '''Table6 control.
