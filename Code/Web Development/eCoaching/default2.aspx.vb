@@ -76,6 +76,11 @@ Public Class default2
 
         Label49.Text = site        'site
 
+
+
+
+
+
         SupervisorDropDownList.Text = ""
         MGRDropDownList.Text = ""
 
@@ -281,8 +286,11 @@ Public Class default2
         DropDownList1.Items.Clear() 'clear site list
         DropDownList1.Items.Add(New ListItem("Select...", "Select..."))
 
-        programList.Items.Clear() 'clear site list
+        programList.Items.Clear() 'clear program list
         programList.Items.Add(New ListItem("Select...", "Select..."))
+
+        behaviorList.Items.Clear() 'clear behavior list
+        behaviorList.Items.Add(New ListItem("Select...", "Select..."))
         'programList.SelectedIndex = 0
 
         RadioButtonList1.SelectedIndex = -1
@@ -309,8 +317,9 @@ Public Class default2
 
 
             SqlDataSource3.SelectParameters("strModulein").DefaultValue = DropDownList3.SelectedItem.Text
-
             SqlDataSource4.SelectParameters("strModulein").DefaultValue = DropDownList3.SelectedItem.Text
+            SqlDataSource28.SelectParameters("strModulein").DefaultValue = DropDownList3.SelectedItem.Text
+
 
 
 
@@ -337,8 +346,57 @@ Public Class default2
                 Label41.Text = "1. "
                 Label42.Text = "2. "
                 Label43.Text = "3. "
-                Label61.Text = "4. "
-                Label63.Text = "5. "
+
+                If (modtype(5) = 1) Then
+
+                    Panel8.Visible = True
+                    RequiredFieldValidator22.Enabled = True
+                    Label61.Text = "4. "
+
+                Else
+
+                    Panel8.Visible = False
+                    RequiredFieldValidator22.Enabled = False
+                    Label61.Text = ""
+
+                End If
+
+                If (modtype(6) = 1) Then
+
+                    Panel9.Visible = True
+                    RequiredFieldValidator10.Enabled = True
+
+                    If (Label61.Text = "4. ") Then
+
+                        Label96.Text = "5. "
+                        Label63.Text = "6. "
+
+                    Else
+
+                        Label96.Text = "4. "
+                        Label63.Text = "5. "
+
+                    End If
+
+                Else
+
+                    Label96.Text = ""
+                    Panel9.Visible = False
+                    RequiredFieldValidator10.Enabled = False
+
+                    If (Label61.Text = "4. ") Then
+
+                        Label63.Text = "5. "
+
+                    Else
+                        Label63.Text = "4. "
+
+                    End If
+
+                End If
+
+
+                ' Label63.Text = "5. "
 
                 SqlDataSource1.SelectParameters("strCSRSitein").DefaultValue = "Empty"
                 SqlDataSource1.SelectParameters("strModulein").DefaultValue = DropDownList3.SelectedItem.Text
@@ -678,6 +736,8 @@ Public Class default2
 
 
     Protected Sub ProgramList_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs)
+
+
         programList = CType(sender, DropDownList)
 
         ' If (programList.SelectedValue = "Select...") Then
@@ -706,7 +766,15 @@ Public Class default2
     End Sub
 
 
+    Protected Sub BehaviorList_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs)
 
+
+
+        behaviorList = CType(sender, DropDownList)
+
+        Button1_Click() '  Next1.Enabled = True
+
+    End Sub
 
     Protected Sub RadioButtonList1_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs)
         ' CoachingButtonList1 = CType(sender, RadioButtonList)
@@ -747,7 +815,34 @@ Public Class default2
 
         'End Select
 
-        If ((RadioButtonList1.SelectedIndex <> -1) And (programList.SelectedIndex <> 0) And (ddCSR.SelectedIndex <> 0)) Then
+        Dim checkProgram
+        Dim checkBehavior
+
+        modtype = Split(DropDownList3.SelectedItem.Value, "-", -1, 1)
+
+        If (modtype(5) = 1) Then
+
+            checkProgram = (programList.SelectedIndex <> 0)
+
+        Else
+
+            checkProgram = True
+
+        End If
+
+        If (modtype(6) = 1) Then
+
+            checkBehavior = (behaviorList.SelectedIndex <> 0)
+
+        Else
+
+            checkBehavior = True
+
+        End If
+
+
+
+        If ((RadioButtonList1.SelectedIndex <> -1) And (checkProgram = True) And (checkBehavior = True) And (ddCSR.SelectedIndex <> 0)) Then
 
             Page.Validate()
 
@@ -836,9 +931,10 @@ Public Class default2
                 Dim numCur As Integer
 
                 numCur = CInt(Replace(Label63.Text, ". ", ""))
-                modtype = Split(DropDownList3.SelectedItem.Value, "-", -1, 1)
+
 
                 '  MsgBox("number = " & numCur)
+
 
                 If (cbl = "Indirect") Then
 
@@ -1180,10 +1276,14 @@ Public Class default2
         ' sp_check_agentrole (GridView1)
         SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = lan
         SqlDataSource14.SelectParameters("nvcRole").DefaultValue = "ARC"
-        GridView1.DataBind()
 
-        ' Populate "Select Coaching Module:" (DropDownList3)
-        ' sp_select_modules_by_job_code
+        GridView1.DataBind()
+        SqlDataSource2.SelectParameters("strUserin").DefaultValue = lan
+
+        SqlDataSource2.DataBind()
+        GridView3.DataBind()
+
+
         SqlDataSource15.SelectParameters("nvcEmpLanIDin").DefaultValue = lan
         SqlDataSource15.DataBind()
 
@@ -1200,7 +1300,40 @@ Public Class default2
         '  Dim grid As GridView
         grid = GridView4
         'MsgBox(DropDownList3.SelectedItem.Value)
-        modtype = Split(DropDownList3.SelectedItem.Value, "-", -1, 1)
+
+        If (DropDownList3.SelectedIndex > 0) Then
+
+            modtype = Split(DropDownList3.SelectedItem.Value, "-", -1, 1)
+
+
+            'MsgBox(DropDownList3.SelectedItem.Value)
+            'MsgBox("2" & modtype)
+            If (modtype(5) = 1) Then
+
+                Panel8.Visible = True
+                RequiredFieldValidator22.Enabled = True
+            Else
+
+                Panel8.Visible = False
+                RequiredFieldValidator22.Enabled = False
+
+
+            End If
+
+
+            If (modtype(6) = 1) Then
+
+                Panel9.Visible = True
+                RequiredFieldValidator10.Enabled = True
+            Else
+
+                Panel9.Visible = False
+                RequiredFieldValidator10.Enabled = False
+
+            End If
+
+        End If
+
 
         If ((RadioButtonList1.SelectedValue = "Direct") And (DropDownList3.SelectedItem.Value <> "Select...")) Then
 
@@ -1560,8 +1693,16 @@ Public Class default2
             ''CustomValidator3.Enabled = True
 
         End If
+        '''
+        'Label10.Text = CDate(DateTime.Now()) 'DateTime.Today.ToShortDateString() 'DateTime.Now()
+        Label10.Text = DateTime.Today.ToShortDateString() 'DateTime.Now()
+
         ' MsgBox("bubble = " & bubble)
+
     End Sub
+
+
+
 
     Protected Sub CheckBoxRequired_ServerValidate(ByVal Source As Object, ByVal args As ServerValidateEventArgs)
 
@@ -2042,22 +2183,33 @@ Public Class default2
 
             SqlDataSource6.InsertParameters("nvcEmplanID").DefaultValue = Label17.Text
             SqlDataSource6.InsertParameters("nvcFormName").DefaultValue = Label160.Text '"eCL-" & lan & numCount.Text
-            SqlDataSource6.InsertParameters("nvcProgramName").DefaultValue = programList.SelectedValue
-            SqlDataSource6.InsertParameters("intSourceID").DefaultValue = Label60.Text
-            SqlDataSource6.InsertParameters("intStatusID").DefaultValue = Label158.Text
+
 
             modtype = Split(DropDownList3.SelectedItem.Value, "-", -1, 1)
 
-            If (modtype(0) = 1) Then
 
-                SqlDataSource6.InsertParameters("SiteID").DefaultValue = DropDownList1.SelectedValue 'Label49.Text 'Label49.Text
+            If (modtype(5) = 1) Then
+
+                SqlDataSource6.InsertParameters("nvcProgramName").DefaultValue = programList.SelectedValue
 
             Else
-
-                SqlDataSource6.InsertParameters("SiteID").DefaultValue = "" 'Label49.Text 'Label49.Text
-
+                SqlDataSource6.InsertParameters("nvcProgramName").DefaultValue = ""
 
             End If
+
+
+            If (modtype(6) = 1) Then
+
+                SqlDataSource6.InsertParameters("Behaviour").DefaultValue = behaviorList.SelectedValue
+
+            Else
+                SqlDataSource6.InsertParameters("Behaviour").DefaultValue = ""
+
+            End If
+
+            SqlDataSource6.InsertParameters("intSourceID").DefaultValue = Label60.Text
+            SqlDataSource6.InsertParameters("intStatusID").DefaultValue = Label158.Text
+
 
             SqlDataSource6.InsertParameters("nvcSubmitter").DefaultValue = lan
             SqlDataSource6.InsertParameters("dtmEventDate").DefaultValue = CDate(Label58.Text)
@@ -2931,7 +3083,7 @@ Public Class default2
 
             End If
 
-         
+            modtype = Split(DropDownList3.SelectedItem.Value, "-", -1, 1)
 
             'MsgBox(Label95.Text)
             If (warnlist.SelectedIndex = 0) Then
@@ -2940,7 +3092,7 @@ Public Class default2
                 SqlDataSource27.InsertParameters("nvcEmplanID").DefaultValue = Label17.Text
                 SqlDataSource27.InsertParameters("nvcFormName").DefaultValue = Label160.Text '"eCL-" & lan & numCount.Text
 
-                modtype = Split(DropDownList3.SelectedItem.Value, "-", -1, 1)
+
 
                 If (modtype(0) = 1) Then
 
@@ -3014,7 +3166,26 @@ Public Class default2
                 ' MsgBox(Label93.Text)
 
                 'MsgBox(Label95.Text)
-                SqlDataSource27.InsertParameters("nvcProgramName").DefaultValue = programList.SelectedValue
+                If (modtype(5) = 1) Then
+
+                    SqlDataSource27.InsertParameters("nvcProgramName").DefaultValue = programList.SelectedValue
+
+                Else
+                    SqlDataSource27.InsertParameters("nvcProgramName").DefaultValue = ""
+
+                End If
+
+
+                '' If (modtype(6) = 1) Then
+
+                '' SqlDataSource27.InsertParameters("Behaviour").DefaultValue = behaviorList.SelectedValue
+
+                ''Else
+                ''  SqlDataSource27.InsertParameters("Behaviour").DefaultValue = ""
+
+                ''End If
+
+                'SqlDataSource27.InsertParameters("nvcProgramName").DefaultValue = programList.SelectedValue
                 'SqlDataSource27.InsertParameters("nvcDescription").DefaultValue = Label93.Text
                 'SqlDataSource27.InsertParameters("nvcCoachingNotes").DefaultValue = Label95.Text
 
@@ -3073,7 +3244,27 @@ Public Class default2
 
                 SqlDataSource6.InsertParameters("nvcEmplanID").DefaultValue = Label17.Text
                 SqlDataSource6.InsertParameters("nvcFormName").DefaultValue = Label160.Text '"eCL-" & lan & numCount.Text
-                SqlDataSource6.InsertParameters("nvcProgramName").DefaultValue = programList.SelectedValue
+
+
+                If (modtype(5) = 1) Then
+
+                    SqlDataSource6.InsertParameters("nvcProgramName").DefaultValue = programList.SelectedValue
+
+                Else
+                    SqlDataSource6.InsertParameters("nvcProgramName").DefaultValue = ""
+
+                End If
+
+
+                If (modtype(6) = 1) Then
+
+                    SqlDataSource6.InsertParameters("Behaviour").DefaultValue = behaviorList.SelectedValue
+
+                Else
+                    SqlDataSource6.InsertParameters("Behaviour").DefaultValue = ""
+
+                End If
+
 
                 SqlDataSource6.InsertParameters("intSourceID").DefaultValue = Label71.Text
                 SqlDataSource6.InsertParameters("intStatusID").DefaultValue = Label156.Text
@@ -3288,7 +3479,7 @@ Public Class default2
 
         Dim mbody As String
 
-        myMessage.From = New System.Net.Mail.MailAddress("VIP@vangent.com", "eCoaching Log")
+        myMessage.From = New System.Net.Mail.MailAddress("VIP@gdit.com", "eCoaching Log")
         myMessage.To.Add(New MailAddress(strEmail))
 
         If (copy = True) Then
@@ -3924,39 +4115,15 @@ Public Class default2
     End Sub
 
 
-    Protected Sub SqlDataSource14_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource14.Selecting
-        'EC.sp_Check_AgentRole 
 
+    Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
+
+        'EC.sp_Whoami
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
 
     End Sub
 
-
-    Protected Sub SqlDataSource25_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource25.Selecting
-
-        'Select name From EC.sp_Select_Email_Attributes
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
-
-    'Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
-
-    '    'EC.sp_Whoami
-    '    e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    'End Sub
-
-
-    Protected Sub SqlDataSource15_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource15.Selecting
-
-        'EC.sp_Select_Modules_By_Job_Code
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
 
 
     Protected Sub SqlDataSource3_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource3.Selecting
@@ -3975,26 +4142,51 @@ Public Class default2
 
     End Sub
 
-    Protected Sub SqlDataSource21_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource21.Selecting
 
-        'EC.sp_Select_CoachingReasons_By_Module  
+
+
+
+
+    Protected Sub SqlDataSource5_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource5.Selecting
+
+        'EC.sp_Select_Source_By_Module        
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
 
     End Sub
 
-    Protected Sub SqlDataSource22_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource22.Selecting
 
-        'EC.sp_Select_SubCoachingReasons_By_Reason    
+
+    Protected Sub SqlDataSource6_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource6.Selecting
+
+        'EC.sp_InsertInto_Coaching_Log               
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
+    Protected Sub SqlDataSource7_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource7.Selecting
+
+        'EC.sp_Select_Source_By_Module             
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
 
     End Sub
 
 
-    Protected Sub SqlDataSource23_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource23.Selecting
+    Protected Sub SqlDataSource8_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource8.Selecting
 
-        'EC.sp_Select_Values_By_Reason     
+        'EC.sp_Select_CallID_By_Module         
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
+
+
+    Protected Sub SqlDataSource9_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource9.Selecting
+
+        'EC.sp_Select_CallID_By_Module              
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
 
@@ -4018,6 +4210,52 @@ Public Class default2
     End Sub
 
 
+
+    Protected Sub SqlDataSource12_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource12.Selecting
+
+        'EC.sp_Select_CoachingReasons_By_Module           
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
+
+    Protected Sub SqlDataSource13_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource13.Selecting
+
+        'EC.sp_Select_SubCoachingReasons_By_Reason            
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
+
+    Protected Sub SqlDataSource14_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource14.Selecting
+        'EC.sp_Check_AgentRole 
+
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
+
+
+    Protected Sub SqlDataSource15_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource15.Selecting
+
+        'EC.sp_Select_Modules_By_Job_Code
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
+
+    Protected Sub SqlDataSource16_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource16.Selecting
+
+        'EC.sp_Select_Values_By_Reason            
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
     Protected Sub SqlDataSource17_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource17.Selecting
 
         'EC.sp_Select_Values_By_Reason       
@@ -4026,22 +4264,6 @@ Public Class default2
 
     End Sub
 
-
-    Protected Sub SqlDataSource5_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource5.Selecting
-
-        'EC.sp_Select_Source_By_Module        
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
-
-    Protected Sub SqlDataSource8_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource8.Selecting
-
-        'EC.sp_Select_CallID_By_Module         
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
 
     Protected Sub SqlDataSource18_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource18.Selecting
 
@@ -4068,66 +4290,57 @@ Public Class default2
 
     End Sub
 
-    Protected Sub SqlDataSource12_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource12.Selecting
 
-        'EC.sp_Select_CoachingReasons_By_Module           
+    Protected Sub SqlDataSource21_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource21.Selecting
+
+        'EC.sp_Select_CoachingReasons_By_Module  
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
+
+    Protected Sub SqlDataSource22_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource22.Selecting
+
+        'EC.sp_Select_SubCoachingReasons_By_Reason    
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
 
     End Sub
 
 
-    Protected Sub SqlDataSource13_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource13.Selecting
+    Protected Sub SqlDataSource23_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource23.Selecting
 
-        'EC.sp_Select_SubCoachingReasons_By_Reason            
+        'EC.sp_Select_Values_By_Reason     
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
 
     End Sub
 
-    Protected Sub SqlDataSource16_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource16.Selecting
+    Protected Sub SqlDataSource24_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource24.Selecting
 
-        'EC.sp_Select_Values_By_Reason            
+        'EC.sp_Select_CoachingReasons_By_Module     
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
 
     End Sub
 
+    Protected Sub SqlDataSource25_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource25.Selecting
 
-    Protected Sub SqlDataSource7_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource7.Selecting
-
-        'EC.sp_Select_Source_By_Module             
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
-
-
-
-    Protected Sub SqlDataSource9_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource9.Selecting
-
-        'EC.sp_Select_CallID_By_Module              
-        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
-
-
-    End Sub
-
-    Protected Sub SqlDataSource6_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource6.Selecting
-
-        'EC.sp_InsertInto_Coaching_Log               
+        'EC.sp_Select_Email_Attributes
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
 
     End Sub
 
 
-    Protected Sub SqlDataSource27_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource27.Selecting
+    Protected Sub SqlDataSource26_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource26.Selecting
 
-        'EC.sp_InsertInto_Warning_Log               
+        'EC.sp_Select_SubCoachingReasons_By_Reason
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
 
 
     End Sub
+
 
     ' Protected Sub SqlDataSource5_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource5.Selecting
 
@@ -4136,6 +4349,14 @@ Public Class default2
 
 
     'End Sub
+
+    Protected Sub SqlDataSource28_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource28.Selecting
+
+        'EC.sp_Select_Behaviors 
+        e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
+
+
+    End Sub
 
 
     Protected Sub SqlDataSource6_Inserting(ByVal sender As Object, e As SqlDataSourceCommandEventArgs) Handles SqlDataSource6.Inserting
