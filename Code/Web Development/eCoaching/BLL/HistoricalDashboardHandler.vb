@@ -3,7 +3,7 @@ Imports NPOI.XSSF.UserModel
 
 Public Class HistoricalDashboardHandler
 
-    Private Const CacheExpireInMinutes As Integer = 10
+    Private Const CacheExpireInMinutes As Integer = 480 ' 8 hours
     Private historicalDashboardDBAccess As HistoricalDashboardDBAccess
 
     Public Sub New()
@@ -164,7 +164,7 @@ Public Class HistoricalDashboardHandler
                     strEDatein, strStatusin, strjobcode, strValue, sortBy, sortASC)
     End Function
 
-    Public Function CreateExcel(ByVal filter As HistoricalDashboardFilter) As IWorkbook
+    Public Function CreateExcel(ByRef filter As HistoricalDashboardFilter) As IWorkbook
         Dim workbook As IWorkbook = New XSSFWorkbook()
         Dim sheet As ISheet = workbook.CreateSheet("Sheet1")
         Dim fileName As String = GetFileName()
@@ -205,7 +205,7 @@ Public Class HistoricalDashboardHandler
         Return "HistoricalLogs_" & fileDateTime & ".xlsx"
     End Function
 
-    Private Sub CreateFiltersRow(ByVal sheet As ISheet, ByVal filter As HistoricalDashboardFilter)
+    Private Sub CreateFiltersRow(ByRef sheet As ISheet, ByRef filter As HistoricalDashboardFilter)
         Dim row As IRow = sheet.CreateRow(0)
         Dim cell As ICell = row.CreateCell(0)
         Dim filters As New StringBuilder
@@ -219,7 +219,7 @@ Public Class HistoricalDashboardHandler
         Dim value As String = If(String.Compare(filter.Value, "%", True) = 0, "All", filter.Value)
 
         filters.Append("Site: " & site & ";  ")
-        filters.Append("Empployee: " & employeeName & ";  ")
+        filters.Append("Employee: " & employeeName & ";  ")
         filters.Append("Manager: " & supervisorName & ";  ")
         filters.Append("Submitter: " & submitter & ";  ")
         filters.Append("Status: " & status & ";  ")
@@ -230,7 +230,7 @@ Public Class HistoricalDashboardHandler
         cell.SetCellValue(filters.ToString())
     End Sub
 
-    Private Sub CreateHeaderRow(ByVal dataTable As DataTable, ByVal workbook As IWorkbook, ByVal sheet As ISheet)
+    Private Sub CreateHeaderRow(ByRef dataTable As DataTable, ByRef workbook As IWorkbook, ByRef sheet As ISheet)
         Dim headerRow As IRow = sheet.CreateRow(1)
         Dim cell As ICell
         Dim cellStyle As ICellStyle = workbook.CreateCellStyle()
@@ -248,7 +248,7 @@ Public Class HistoricalDashboardHandler
         Next
     End Sub
 
-    Private Sub SetAllColumnsWidth(ByVal sheet As ISheet)
+    Private Sub SetAllColumnsWidth(ByRef sheet As ISheet)
         sheet.SetColumnWidth(0, 12 * 256)      ' coaching id
         sheet.SetColumnWidth(1, 32 * 256)      ' form name
         sheet.SetColumnWidth(2, 15 * 256)      ' program name 

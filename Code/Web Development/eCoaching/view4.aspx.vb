@@ -240,16 +240,23 @@
     End Sub
 
     Private Function GetHistoricalDashboardFilter() As HistoricalDashboardFilter
-        Return New HistoricalDashboardFilter(ddSite.SelectedValue,
-                                             ddCSR.SelectedValue,
-                                             ddSUP.SelectedValue,
-                                             ddMGR.SelectedValue,
-                                             ddSubmitter.SelectedValue,
-                                             ddStatus.SelectedValue,
-                                             ddSource.SelectedValue,
-                                             ddSite.SelectedValue,
+        Return New HistoricalDashboardFilter(
+                                             ddSite.SelectedItem.Value,
+                                             ddCSR.SelectedItem.Value,
+                                             ddSUP.SelectedItem.Value,
+                                             ddMGR.SelectedItem.Value,
+                                             ddSubmitter.SelectedItem.Value,
+                                             ddSite.SelectedItem.Text,
+                                             ddCSR.SelectedItem.Text,
+                                             ddSUP.SelectedItem.Text,
+                                             ddMGR.SelectedItem.Text,
+                                             ddSubmitter.SelectedItem.Text,
+                                             ddStatus.SelectedItem.Value,
+                                             ddSource.SelectedItem.Value,
+                                             ddValue.SelectedItem.Value,
                                              If(String.IsNullOrEmpty(Date1.Text), backDate, Date1.Text),
-                                             If(String.IsNullOrEmpty(Date2.Text), TodaysDate, Date2.Text))
+                                             If(String.IsNullOrEmpty(Date2.Text), TodaysDate, Date2.Text)
+                                            )
     End Function
 
 End Class

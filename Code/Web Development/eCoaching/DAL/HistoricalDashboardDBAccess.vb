@@ -136,14 +136,14 @@ Public Class HistoricalDashboardDBAccess
         Return rows
     End Function
 
-    Public Function GetExcelDataTable(ByVal filter As HistoricalDashboardFilter) As DataTable
+    Public Function GetExcelDataTable(ByRef filter As HistoricalDashboardFilter) As DataTable
         Dim parameters() As SqlParameter = New SqlParameter() {
             New SqlParameter("@strSourcein", filter.Source),
-            New SqlParameter("@strCSRSitein", filter.Site),
-            New SqlParameter("@strCSRin", filter.CSRName),
-            New SqlParameter("@strSUPin", filter.SupervisorName),
-            New SqlParameter("@strMGRin", filter.ManagerName),
-            New SqlParameter("@strSubmitterin", filter.SubmitterName),
+            New SqlParameter("@strCSRSitein", filter.SiteID),
+            New SqlParameter("@strCSRin", filter.CSREmpID),
+            New SqlParameter("@strSUPin", filter.SupervisorEmpID),
+            New SqlParameter("@strMGRin", filter.ManagerEmpID),
+            New SqlParameter("@strSubmitterin", filter.SubmitterEmpID),
             New SqlParameter("@strSDatein", filter.StartDate),
             New SqlParameter("@strEDatein", filter.EndDate),
             New SqlParameter("@strStatusin", filter.Status),
