@@ -456,7 +456,7 @@
                 //control.attributes['disabled'].value = '';    
 
             }
-        }
+        } 
     </script>
 </asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="ContentPlaceHolder3" runat="server">
@@ -508,24 +508,6 @@
                             <asp:Label ID="isCC" runat="server" Text='<%# Eval("isCCReceiver") %>'></asp:Label>
                             <asp:Label ID="ccReceiver" runat="server" Text='<%# Eval("CCReceiver") %>'></asp:Label>
                         </ItemTemplate>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
-            <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                SelectCommand="EC.sp_Whoami" SelectCommandType="StoredProcedure" DataSourceMode="DataReader"
-                EnableViewState="True" ViewStateMode="Enabled">
-                <SelectParameters>
-                    <asp:Parameter Name="strUserin" Type="String" />
-                </SelectParameters>
-            </asp:SqlDataSource>
-            <asp:GridView ID="GridView3" runat="server" DataSourceID="SqlDataSource2" AutoGenerateColumns="False"
-                EnableModelValidation="True" Visible="false">
-                <Columns>
-                    <asp:TemplateField HeaderText="" ItemStyle-HorizontalAlign="Center">
-                        <ItemTemplate>
-                            <asp:Label ID="Job" runat="server" Text='<%# Eval("Submitter") %>' Visible="false"></asp:Label>
-                        </ItemTemplate>
-                        <ItemStyle HorizontalAlign="Center"></ItemStyle>
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
@@ -770,7 +752,7 @@
                             <asp:TemplateField SortExpression="CoachingReason">
                                 <ItemTemplate>
                                     <asp:CheckBox ID="check1" runat="server" />
-                                    <asp:Label ID="Label2" runat="server" CssClass="description" Text='<%# Bind("CoachingReason") %>'></asp:Label>
+                                    <asp:Label ID="Label1" runat="server" CssClass="description" Text='<%# Bind("CoachingReason") %>'></asp:Label>
                                     <asp:Label ID="Label65" runat="server" Text='<%# Bind("CoachingReasonID") %>' Visible="false"></asp:Label>
                                     <br />
                                     <asp:Panel ID="sub1" runat="server" Style="visibility: hidden; display: none;">
@@ -779,7 +761,7 @@
                                             <asp:ListItem Value="" Selected="True"></asp:ListItem>
                                         </asp:ListBox>
                                         <br />
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="SubReasons"
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="SubReasons"
                                             InitialValue="" ErrorMessage="Please select a coaching sub reason." CssClass="EMessage"
                                             Enabled="false" Display="Dynamic" Width="425px">Please select a coaching sub reason.</asp:RequiredFieldValidator>
                                     </asp:Panel>
@@ -791,7 +773,7 @@
                                         RepeatDirection="Horizontal" DataTextField="Value" Enabled="false">
                                         <asp:ListItem class="croptions"></asp:ListItem>
                                     </asp:RadioButtonList>
-                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" Enabled="false"
+                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" Enabled="false"
                                         ControlToValidate="buttons1" CssClass="EMessage" Display="Dynamic" ErrorMessage="You must also select Opportunity or Reinforcement">You must also select "Opportunity" or "Reinforcement"</asp:RequiredFieldValidator>
                                 </ItemTemplate>
                             </asp:TemplateField>
@@ -836,17 +818,17 @@
                         <Columns>
                             <asp:TemplateField SortExpression="CoachingReason">
                                 <ItemTemplate>
-                                    <asp:CheckBox ID="CheckBox1" runat="server" />
-                                    <asp:Label ID="Label4" runat="server" CssClass="description" Text='<%# Bind("CoachingReason") %>'></asp:Label>
-                                    <asp:Label ID="Label6" runat="server" Text='<%# Bind("CoachingReasonID") %>' Visible="false"></asp:Label>
+                                    <asp:CheckBox ID="check1" runat="server" />
+                                    <asp:Label ID="Label1" runat="server" CssClass="description" Text='<%# Bind("CoachingReason") %>'></asp:Label>
+                                    <asp:Label ID="Label65" runat="server" Text='<%# Bind("CoachingReasonID") %>' Visible="false"></asp:Label>
                                     <br />
-                                    <asp:Panel ID="Panel2" runat="server" Style="visibility: hidden; display: none;">
-                                        <asp:ListBox ID="ListBox1" runat="server" DataTextField="SubCoachingReason" DataValueField="SubCoachingReasonID"
+                                    <asp:Panel ID="sub1" runat="server" Style="visibility: hidden; display: none;">
+                                        <asp:ListBox ID="SubReasons" runat="server" DataTextField="SubCoachingReason" DataValueField="SubCoachingReasonID"
                                             AppendDataBoundItems="true" SelectionMode="Multiple" class="TextBox">
                                             <asp:ListItem Value="" Selected="True"></asp:ListItem>
                                         </asp:ListBox>
                                         <br />
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" ControlToValidate="SubReasons"
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="SubReasons"
                                             InitialValue="" ErrorMessage="Please select a coaching sub reason." CssClass="EMessage"
                                             Enabled="false" Display="Dynamic" Width="425px">Please select a coaching sub reason.</asp:RequiredFieldValidator>
                                     </asp:Panel>
@@ -854,11 +836,11 @@
                             </asp:TemplateField>
                             <asp:TemplateField>
                                 <ItemTemplate>
-                                    <asp:RadioButtonList ID="RadioButtonList2" runat="server" Width="306px" RepeatColumns="2"
+                                    <asp:RadioButtonList ID="buttons1" runat="server" Width="306px" RepeatColumns="2"
                                         RepeatDirection="Horizontal" Enabled="false" DataTextField="Value">
                                         <asp:ListItem class="croptions"></asp:ListItem>
                                     </asp:RadioButtonList>
-                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" Enabled="false"
+                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" Enabled="false"
                                         ControlToValidate="buttons1" CssClass="EMessage" Display="Dynamic" ErrorMessage="You must also select Opportunity or Reinforcement">You must also select "Opportunity" or "Reinforcement"</asp:RequiredFieldValidator>
                                 </ItemTemplate>
                             </asp:TemplateField>
@@ -897,7 +879,7 @@
                     </asp:SqlDataSource>
                 </div>
                 <asp:TextBox ID="Label239" runat="server" Visible="false" Text="valid"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="RequiredFieldValidator9" Enabled="False" ControlToValidate="Label239"
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator7" Enabled="False" ControlToValidate="Label239"
                     CssClass="EMessage" ErrorMessage="At least one coaching reason above must be selected to continue."
                     runat="server" Display="Dynamic" EnableClientScript="false">At least one coaching reason above must be selected to continue.</asp:RequiredFieldValidator>
                 <br />
@@ -923,7 +905,7 @@
                     ID="Label20" runat="server" Text="How was the coaching opportunity identified?"
                     CssClass="question" ViewStateMode="Disabled"></asp:Label>&nbsp;<asp:Label ID="Label22"
                         runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
-                <asp:RequiredFieldValidator ID="RequiredFieldValidator11" runat="server" ControlToValidate="howid2"
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="howid2"
                     InitialValue="Select..." ErrorMessage="Please select how the coaching was identified."
                     CssClass="EMessage" Enabled="false" Display="Dynamic" Width="425px" EnableClientScript="false">Please select how the coaching was identified.</asp:RequiredFieldValidator>
                 <br />
@@ -964,7 +946,7 @@
                                     ToolTip="Please select a call record type for this coaching.">
                                 </asp:DropDownList>
                                 <asp:TextBox ID="callID2" runat="server" CssClass="qcontrol"></asp:TextBox>&nbsp;
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator12" runat="server" ControlToValidate="callID2"
+                                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="callID2"
                                     ErrorMessage="Enter a Call Record number for this coaching." CssClass="EMessage"
                                     Display="Dynamic" Enabled="false"><span>Enter a Call Record number for this coaching.</span></asp:RequiredFieldValidator>
                                 <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ControlToValidate="callID2"
@@ -989,7 +971,7 @@
                     </asp:TableRow>
                 </asp:Table>
                 <br />
-                <asp:CheckBox ID="CheckBox2" runat="server" Text="I have verfied that all the information on this form is true and complete to 
+                <asp:CheckBox ID="CheckBox1" runat="server" Text="I have verfied that all the information on this form is true and complete to 
         the best of my knowledge." />&nbsp;<asp:Label ID="Label223" runat="server" Text="*"
             CssClass="EMessage" Width="10px"></asp:Label><br />
                 <asp:CustomValidator runat="server" ID="CheckBoxRequired" EnableClientScript="true"
@@ -1004,7 +986,7 @@
                             <img src="images/ajax-loader5.gif" alt="progress animation gif" /></div>
                     </ProgressTemplate>
                 </asp:UpdateProgress>
-                <asp:Label ID="Label8" runat="server" CssClass="EMessage" Visible="True"></asp:Label>
+                <asp:Label ID="Label2" runat="server" CssClass="EMessage" Visible="True"></asp:Label>
                 <br />
                 <div style="text-align: center">
                     <asp:Button ID="Button3" runat="server" Text="Reset Page" Enabled="True" CausesValidation="False"
@@ -1032,14 +1014,14 @@
                     </Animations>
                 </asp:AnimationExtender>
             </asp:Panel>
-            <asp:Panel ID="Panel4" runat="server" Visible="false">
+            <asp:Panel ID="Panel2" runat="server" Visible="false">
                 <asp:Label ID="Label186" runat="server" Text="Direct" Visible="False" ViewStateMode="Disabled"></asp:Label>
                 <asp:Panel ID="warngroup2" runat="server" Visible="false">
                     <asp:Label ID="Label64" runat="server" Text="" CssClass="question" ViewStateMode="Enabled"></asp:Label><asp:Label
                         ID="Label86" runat="server" Text="Do you need to submit a progressive disciplinary coaching (WARNING)?"
                         CssClass="question" ViewStateMode="Disabled"></asp:Label>
                     &nbsp;<asp:Label ID="Label87" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator13" runat="server" ControlToValidate="warnlist"
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" ControlToValidate="warnlist"
                         ErrorMessage="Indicate whether this record is a WARNING or not." CssClass="EMessage"
                         Display="Dynamic" Width="400px">Indicate whether this record is a WARNING or not.&nbsp;</asp:RequiredFieldValidator>
                     <br />
@@ -1051,7 +1033,7 @@
                     <div id="warngroup1" runat="server" style="visibility: hidden; display: none;">
                         <br />
                         <asp:Label ID="Label88" runat="server" Text="Please select type of warning."></asp:Label>
-                        <asp:RequiredFieldValidator ID="RequiredFieldValidator15" runat="server" ControlToValidate="warnlist2"
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidator11" runat="server" ControlToValidate="warnlist2"
                             CssClass="EMessage" Display="Dynamic" Enabled="false" ErrorMessage="Please select a type of warning."
                             InitialValue="Select..." Width="325px">* Please select a type of warning.</asp:RequiredFieldValidator>
                         <br />
@@ -1096,7 +1078,7 @@
                         </asp:SqlDataSource>
                     </div>
                     <asp:TextBox ID="TextBox2" runat="server" Visible="false" Text="valid"></asp:TextBox>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator16" Enabled="False" ControlToValidate="TextBox1"
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator9" Enabled="False" ControlToValidate="TextBox1"
                         CssClass="EMessage" runat="server" ErrorMessage="At least one coaching reason above must be selected to continue."
                         Display="Dynamic" EnableClientScript="false">At least one coaching reason above must be selected to continue.</asp:RequiredFieldValidator>
                     <br />
@@ -1156,17 +1138,17 @@
                             <Columns>
                                 <asp:TemplateField SortExpression="CoachingReason">
                                     <ItemTemplate>
-                                        <asp:CheckBox ID="CheckBox3" runat="server" />
-                                        <asp:Label ID="Label10" runat="server" CssClass="description" Text='<%# Bind("CoachingReason") %>'></asp:Label>
-                                        <asp:Label ID="Label12" runat="server" Text='<%# Bind("CoachingReasonID") %>' Visible="false"></asp:Label>
+                                        <asp:CheckBox ID="check1" runat="server" />
+                                        <asp:Label ID="Label1" runat="server" CssClass="description" Text='<%# Bind("CoachingReason") %>'></asp:Label>
+                                        <asp:Label ID="Label65" runat="server" Text='<%# Bind("CoachingReasonID") %>' Visible="false"></asp:Label>
                                         <br />
-                                        <asp:Panel ID="Panel6" runat="server" Style="visibility: hidden; display: none;">
-                                            <asp:ListBox ID="ListBox2" runat="server" DataTextField="SubCoachingReason" DataValueField="SubCoachingReasonID"
+                                        <asp:Panel ID="sub1" runat="server" Style="visibility: hidden; display: none;">
+                                            <asp:ListBox ID="SubReasons" runat="server" DataTextField="SubCoachingReason" DataValueField="SubCoachingReasonID"
                                                 AppendDataBoundItems="true" SelectionMode="Multiple" class="TextBox">
                                                 <asp:ListItem Value="" Selected="True"></asp:ListItem>
                                             </asp:ListBox>
                                             <br />
-                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator17" runat="server" ControlToValidate="SubReasons"
+                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="SubReasons"
                                                 InitialValue="" ErrorMessage="Please select a coaching sub reason." CssClass="EMessage"
                                                 Enabled="false" Display="Dynamic" Width="425px">Please select a coaching sub reason.</asp:RequiredFieldValidator>
                                         </asp:Panel>
@@ -1174,11 +1156,11 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:RadioButtonList ID="RadioButtonList3" runat="server" Width="306px" RepeatColumns="2"
+                                        <asp:RadioButtonList ID="buttons1" runat="server" Width="306px" RepeatColumns="2"
                                             RepeatDirection="Horizontal" DataTextField="Value" Enabled="false">
                                             <asp:ListItem class="croptions"></asp:ListItem>
                                         </asp:RadioButtonList>
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator19" runat="server" Enabled="false"
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" Enabled="false"
                                             ControlToValidate="buttons1" CssClass="EMessage" Display="Dynamic" ErrorMessage="You must also select Opportunity or Reinforcement">You must also select "Opportunity" or "Reinforcement"</asp:RequiredFieldValidator>
                                     </ItemTemplate>
                                 </asp:TemplateField>
@@ -1223,17 +1205,17 @@
                             <Columns>
                                 <asp:TemplateField SortExpression="CoachingReason">
                                     <ItemTemplate>
-                                        <asp:CheckBox ID="CheckBox4" runat="server" />
-                                        <asp:Label ID="Label15" runat="server" CssClass="description" Text='<%# Bind("CoachingReason") %>'></asp:Label>
-                                        <asp:Label ID="Label17" runat="server" Text='<%# Bind("CoachingReasonID") %>' Visible="false"></asp:Label>
+                                        <asp:CheckBox ID="check1" runat="server" />
+                                        <asp:Label ID="Label1" runat="server" CssClass="description" Text='<%# Bind("CoachingReason") %>'></asp:Label>
+                                        <asp:Label ID="Label65" runat="server" Text='<%# Bind("CoachingReasonID") %>' Visible="false"></asp:Label>
                                         <br />
-                                        <asp:Panel ID="Panel7" runat="server" Style="visibility: hidden; display: none;">
-                                            <asp:ListBox ID="ListBox3" runat="server" DataTextField="SubCoachingReason" DataValueField="SubCoachingReasonID"
+                                        <asp:Panel ID="sub1" runat="server" Style="visibility: hidden; display: none;">
+                                            <asp:ListBox ID="SubReasons" runat="server" DataTextField="SubCoachingReason" DataValueField="SubCoachingReasonID"
                                                 AppendDataBoundItems="true" SelectionMode="Multiple" class="TextBox">
                                                 <asp:ListItem Value="" Selected="True"></asp:ListItem>
                                             </asp:ListBox>
                                             <br />
-                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator20" runat="server" ControlToValidate="SubReasons"
+                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="SubReasons"
                                                 InitialValue="" ErrorMessage="Please select a coaching sub reason." CssClass="EMessage"
                                                 Enabled="false" Display="Dynamic" Width="425px">Please select a coaching sub reason.</asp:RequiredFieldValidator>
                                         </asp:Panel>
@@ -1241,11 +1223,11 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:RadioButtonList ID="RadioButtonList4" runat="server" Width="306px" RepeatColumns="2"
+                                        <asp:RadioButtonList ID="buttons1" runat="server" Width="306px" RepeatColumns="2"
                                             RepeatDirection="Horizontal" Enabled="false" DataTextField="Value">
                                             <asp:ListItem class="croptions"></asp:ListItem>
                                         </asp:RadioButtonList>
-                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator21" runat="server" Enabled="false"
+                                        <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" Enabled="false"
                                             ControlToValidate="buttons1" CssClass="EMessage" Display="Dynamic" ErrorMessage="You must also select Opportunity or Reinforcement">You must also select "Opportunity" or "Reinforcement"</asp:RequiredFieldValidator>
                                     </ItemTemplate>
                                 </asp:TemplateField>
@@ -1325,7 +1307,7 @@
                         Display="Dynamic" Enabled="false">Please provide details from the coaching session including action plans developed.</asp:RequiredFieldValidator>
                     <br />
                 </div>
-                <div id="Div1" runat="server" style="visibility: visible; display: inline;">
+                <div id="Panel6" runat="server" style="visibility: visible; display: inline;">
                     <asp:Label ID="Label84" runat="server" Text="" CssClass="question" ViewStateMode="Enabled"></asp:Label><asp:Label
                         ID="Label248" runat="server" Text="How was the coaching opportunity identified?"
                         CssClass="question" ViewStateMode="Disabled"></asp:Label>&nbsp;<asp:Label ID="Label249"
@@ -1349,12 +1331,12 @@
                         CssClass="EMessage" Enabled="false" Display="Dynamic" Width="425px" EnableClientScript="false">Please select how the coaching was identified.</asp:RequiredFieldValidator>
                     <br />
                 </div>
-                <div id="Div2" runat="server" style="visibility: visible; display: inline;">
+                <div id="Panel7" runat="server" style="visibility: visible; display: inline;">
                     <asp:Label ID="Label85" runat="server" Text="" CssClass="question" ViewStateMode="Enabled"></asp:Label><asp:Label
                         ID="Label35" runat="server" Text="Is there a Call Record associated with this coaching?"
                         CssClass="question" ViewStateMode="Disabled"></asp:Label>&nbsp;<asp:Label ID="Label228"
                             runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
-                    <asp:CustomValidator ID="CustomValidator2" runat="server" Display="Dynamic"
+                    <asp:CustomValidator ID="CustomValidator5" runat="server" Display="Dynamic"
                         CssClass="EMessage" Width="350px" ErrorMessage="Indicate if the item has a Call Record or NGD Activity ID."
                         ClientValidationFunction="CustomValidator1_ClientValidate" OnServerValidate="CustomValidator1_ServerValidate"></asp:CustomValidator>
                     <asp:Table ID="Table6" runat="server" Width="75%">
@@ -1372,7 +1354,7 @@
                                         ToolTip="Please select a call record type for this coaching.">
                                     </asp:DropDownList>
                                     <asp:TextBox ID="callID" runat="server" CssClass="qcontrol"></asp:TextBox>&nbsp;
-                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator25" runat="server" ControlToValidate="callID"
+                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator21" runat="server" ControlToValidate="callID"
                                         ErrorMessage="Enter a Call Record number for this coaching." CssClass="EMessage"
                                         Display="Dynamic" Enabled="false"><span>Enter a Call Record number for this coaching.</span></asp:RequiredFieldValidator>
                                     <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="callID"
@@ -1397,11 +1379,11 @@
                         </asp:TableRow>
                     </asp:Table>
                     <br />
-                    <asp:CheckBox ID="CheckBox5" runat="server" Text="I have verified that all the information on this form is true and complete to 
+                    <asp:CheckBox ID="CheckBox2" runat="server" Text="I have verified that all the information on this form is true and complete to 
         the best of my knowledge." />&nbsp;<asp:Label ID="Label229" runat="server" Text="*"
             CssClass="EMessage" Width="10px"></asp:Label>
                     &nbsp;<br />
-                    <asp:CustomValidator runat="server" ID="CustomValidator5" EnableClientScript="true"
+                    <asp:CustomValidator runat="server" ID="CustomValidator2" EnableClientScript="true"
                         OnServerValidate="CheckBoxRequired2_ServerValidate" ErrorMessage="You must select the verification checkbox to submit this form."
                         CssClass="EMessage" Width="400px" Display="Dynamic" Enabled="false">You must select the verification checkbox to submit this form.</asp:CustomValidator>
                     <br />
@@ -1537,7 +1519,7 @@
                     </Animations>
                 </asp:AnimationExtender>
             </asp:Panel>
-            <asp:Panel ID="Panel10" runat="server" Visible="false" Style="text-align: center;">
+            <asp:Panel ID="Panel4" runat="server" Visible="false" Style="text-align: center;">
                 <div style="border: 1px solid #cccccc; width: 65%; text-align: center; margin-left: 80px;">
                     <p style="font-family: Arial; font-size: medium; text-align: center;">
                         <em style="font-weight: 700; text-align: center">The form has been closed. </em>
@@ -1559,11 +1541,11 @@
                         Visible="false"></asp:Label>
                     <asp:Label ID="Label188" runat="server" Text="Start [1 of 2]" CssClass="sidetext"
                         Visible="false"></asp:Label>
-                    <asp:Label ID="Label19" runat="server" Text="Status:" ForeColor="Black" CssClass="sidelabel"></asp:Label>
-                    &nbsp;<asp:Label ID="Label21" runat="server" Text="New" CssClass="sidetext"></asp:Label>
+                    <asp:Label ID="Label4" runat="server" Text="Status:" ForeColor="Black" CssClass="sidelabel"></asp:Label>
+                    &nbsp;<asp:Label ID="Label6" runat="server" Text="New" CssClass="sidetext"></asp:Label>
                     <br />
-                    <asp:Label ID="Label23" runat="server" Text="Date Started:" ForeColor="Black" CssClass="sidelabel"></asp:Label>
-                    &nbsp;<asp:Label ID="Label24" runat="server" CssClass="sidetext"></asp:Label>
+                    <asp:Label ID="Label8" runat="server" Text="Date Started:" ForeColor="Black" CssClass="sidelabel"></asp:Label>
+                    &nbsp;<asp:Label ID="Label10" runat="server" CssClass="sidetext"></asp:Label>
                 </div>
                 <asp:Panel ID="Panel0a" runat="server" Visible="false">
                     <div style="border: none; margin-left: .50em; margin-right: .50em; margin-bottom: .50em;">
@@ -1572,9 +1554,9 @@
                         &nbsp;<asp:Label ID="Label49" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
                         <br />
                         <br />
-                        <asp:Label ID="Label27" runat="server" Text="Employee:" ForeColor="Black" CssClass="sidelabel"
+                        <asp:Label ID="Label21" runat="server" Text="Employee:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label28" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        &nbsp;<asp:Label ID="Label23" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
                         <br />
                         <asp:Label ID="Label30" runat="server" Text="Supervisor:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
@@ -1587,30 +1569,30 @@
                         <asp:Label ID="Label189" runat="server" Text="Employee Information:" ForeColor="Black"
                             CssClass="sidelabel" Visible="False"></asp:Label>
                         &nbsp
-                        <asp:Label ID="Label34" runat="server" Text="Employee:" ForeColor="Black" CssClass="sidelabel"
+                        <asp:Label ID="Label12" runat="server" Text="Employee:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label36" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label37" runat="server" Text="Email:" ForeColor="Black" CssClass="sidelabel"
+                        &nbsp;<asp:Label ID="Label17" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label15" runat="server" Text="Email:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label39" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label47" runat="server" Text="Supervisor:" ForeColor="Black" CssClass="sidelabel"
+                        &nbsp;<asp:Label ID="Label19" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label27" runat="server" Text="Supervisor:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label50" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label51" runat="server" Text="Supervisor Email:" ForeColor="Black"
+                        &nbsp;<asp:Label ID="Label28" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label34" runat="server" Text="Supervisor Email:" ForeColor="Black"
                             CssClass="sidelabel" Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label54" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label55" runat="server" Text="Manager:" ForeColor="Black" CssClass="sidelabel"
+                        &nbsp;<asp:Label ID="Label36" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label39" runat="server" Text="Manager:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label56" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label57" runat="server" Text="Manager Email:" ForeColor="Black" CssClass="sidelabel"
+                        &nbsp;<asp:Label ID="Label47" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label54" runat="server" Text="Manager Email:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label58" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label59" runat="server" Text="Delivering?:" ForeColor="Black" CssClass="sidelabel"
+                        &nbsp;<asp:Label ID="Label55" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label50" runat="server" Text="Delivering?:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label60" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label62" runat="server" Text="Submitter:" ForeColor="Black" CssClass="sidelabel"
+                        &nbsp;<asp:Label ID="Label51" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label56" runat="server" Text="Submitter:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label67" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        &nbsp;<asp:Label ID="Label57" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
                         <asp:Label ID="Label177" runat="server" Text="Submitter Name:" ForeColor="Black"
                             CssClass="sidelabel" Visible="False"></asp:Label>
                         &nbsp;<asp:Label ID="Label178" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
@@ -1619,19 +1601,19 @@
                         &nbsp;<asp:Label ID="Label180" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
                         <asp:Label ID="Label151" runat="server" Text="Count of Records:" ForeColor="Black"
                             CssClass="sidelabel" Visible="False"></asp:Label>
-                        <asp:Label ID="Label68" runat="server" Text="Event Date:" ForeColor="Black" CssClass="sidelabel"
+                        <asp:Label ID="Label24" runat="server" Text="Event Date:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label69" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label70" runat="server" Text="Coaching Source:" ForeColor="Black"
+                        &nbsp;<asp:Label ID="Label58" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label59" runat="server" Text="Coaching Source:" ForeColor="Black"
                             CssClass="sidelabel" Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label71" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label81" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label82" runat="server" Text="Quality or PPoM Number:" ForeColor="Black"
+                        &nbsp;<asp:Label ID="Label60" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        &nbsp;<asp:Label ID="Label62" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label81" runat="server" Text="Quality or PPoM Number:" ForeColor="Black"
                             CssClass="sidelabel" Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label92" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label93" runat="server" Text="Details:" ForeColor="Black" CssClass="sidelabel"
+                        &nbsp;<asp:Label ID="Label82" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label67" runat="server" Text="Details:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label94" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        &nbsp;<asp:Label ID="Label68" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
                         <asp:Label ID="Label159" runat="server" Text="FormID:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
                         &nbsp;<asp:Label ID="Label160" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
@@ -1641,18 +1623,18 @@
                         <asp:Label ID="Label155" runat="server" Text="Form Status:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
                         &nbsp;<asp:Label ID="Label156" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label95" runat="server" Text="Coaching Date:" ForeColor="Black" CssClass="sidelabel"
+                        <asp:Label ID="Label37" runat="server" Text="Coaching Date:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label99" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label100" runat="server" Text="Coaching Source:" ForeColor="Black"
+                        &nbsp;<asp:Label ID="Label69" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label70" runat="server" Text="Coaching Source:" ForeColor="Black"
                             CssClass="sidelabel" Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label101" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label102" runat="server" Text="Details2:" ForeColor="Black" CssClass="sidelabel"
+                        &nbsp;<asp:Label ID="Label71" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label92" runat="server" Text="Details2:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label103" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
-                        <asp:Label ID="Label104" runat="server" Text="Details3:" ForeColor="Black" CssClass="sidelabel"
+                        &nbsp;<asp:Label ID="Label93" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        <asp:Label ID="Label94" runat="server" Text="Details3:" ForeColor="Black" CssClass="sidelabel"
                             Visible="False"></asp:Label>
-                        &nbsp;<asp:Label ID="Label105" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
+                        &nbsp;<asp:Label ID="Label95" runat="server" CssClass="sidetext" Visible="False"></asp:Label>
                         <br />
                         <asp:Label ID="moduleIDlbl" runat="server" Text="Label" Visible="False"></asp:Label>
                     </div>

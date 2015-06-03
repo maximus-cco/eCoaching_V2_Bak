@@ -12,7 +12,6 @@ Imports AjaxControlToolkit
 
 Public Class default2
     Inherits BasePage
-
     Private CoachingButtonList1 As RadioButtonList
     Private VerintButtonList1 As RadioButtonList
     Private BehaviorButtonList1 As RadioButtonList
@@ -51,6 +50,7 @@ Public Class default2
     Dim copy As Boolean = False
     Dim strCopy As String
 
+    'Dim lan As String = LCase(User.Identity.Name) 'boulsh"
     Dim supervisor As String
     Dim domain As String
 
@@ -64,9 +64,13 @@ Public Class default2
 
     Protected Sub DropDownList1_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs)
         DropDownList1 = CType(sender, DropDownList)
-        Dim site = DropDownList1.SelectedItem.Text
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+
+
+
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
+
+        ' MsgBox(site)
+
         Label21.Visible = False
         Label23.Visible = False
         Label30.Visible = False
@@ -75,7 +79,6 @@ Public Class default2
         Label53.Visible = False
 
         Label49.Text = site        'site
-
 
 
 
@@ -223,9 +226,7 @@ Public Class default2
         warnReasons.Items.Clear()
         warnReasons.Items.Add(New ListItem("Select...", "Select..."))
 
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
-
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
         If (warnlist2.SelectedValue <> "Select...") Then
 
             ' MsgBox("changing")
@@ -257,9 +258,7 @@ Public Class default2
 
 
     Protected Sub DropDownList3_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs)
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
-
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
         Dim DropDownList3 = CType(sender, DropDownList)
 
         Dim recipient = DropDownList3.SelectedItem.Text
@@ -798,9 +797,7 @@ Public Class default2
 
 
     Protected Sub Button1_Click()
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
-
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
         ' MsgBox("cbl") '
         'Select Case True
 
@@ -1262,6 +1259,10 @@ Public Class default2
 
     End Sub
 
+
+
+
+
     Public Overrides Sub Initialize()
         Dim eclUser As User = Session("eclUser")
         Dim lan As String = eclUser.LanID
@@ -1290,8 +1291,7 @@ Public Class default2
     End Sub
 
     Public Overrides Sub HandlePageDisplay()
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
 
         '  Dim grid As GridView
         grid = GridView4
@@ -1717,21 +1717,7 @@ Public Class default2
 
 
     Protected Sub Button2_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button2.Click
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
-
-        Select Case True
-
-
-            Case (InStr(1, lan, "vngt\", 1) > 0)
-                lan = (Replace(lan, "vngt\", ""))
-            Case (InStr(1, lan, "ad\", 1) > 0)
-                lan = (Replace(lan, "ad\", ""))
-            Case Else
-
-                lan = lan
-
-        End Select
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
 
         '' GridView2.DataBind()
 
@@ -2000,7 +1986,7 @@ Public Class default2
         End If
 
 
-      
+
 
 
 
@@ -2179,7 +2165,6 @@ Public Class default2
 
             SqlDataSource6.InsertParameters("nvcEmplanID").DefaultValue = Label17.Text
             SqlDataSource6.InsertParameters("nvcFormName").DefaultValue = Label160.Text '"eCL-" & lan & numCount.Text
-
 
             modtype = Split(DropDownList3.SelectedItem.Value, "-", -1, 1)
 
@@ -2400,8 +2385,6 @@ Public Class default2
             ' MsgBox(moduleIDlbl.Text)
             SqlDataSource6.InsertParameters("ModuleID").DefaultValue = moduleIDlbl.Text 'DropDownList3.SelectedItem.Text
 
-            SqlDataSource6.InsertParameters("Behaviour").DefaultValue = "Testing 13631"
-
 
 
             'MsgBox("inserting")
@@ -2427,8 +2410,8 @@ Public Class default2
 
 
     Protected Sub Button5_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button5.Click
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
+
 
         ''  GridView2.DataBind()
         Dim formType = "Direct"
@@ -2804,10 +2787,10 @@ Public Class default2
 
             'warning field collection
 
-      
+
             '''MsgBox("7")
 
-          If (warnReasons.SelectedValue <> "Select...") Then
+            If (warnReasons.SelectedValue <> "Select...") Then
 
                 coachR(0, 1) = warnReasons.SelectedValue
 
@@ -2822,7 +2805,7 @@ Public Class default2
                 coachR(0, 0) = warnlist2.SelectedValue
 
             End If
-          
+
 
             If ((warnlist2.SelectedValue <> "Select...") And (warnReasons.SelectedValue <> "Select...")) Then
 
@@ -2847,7 +2830,7 @@ Public Class default2
             RequiredFieldValidator28.Enabled = False
 
             RequiredFieldValidator11.Enabled = True
-           ' RequiredFieldValidator10.Enabled = True
+            ' RequiredFieldValidator10.Enabled = True
             CustomValidator3.Enabled = True
 
 
@@ -2862,7 +2845,7 @@ Public Class default2
             End If
 
         Else
-            
+
             RequiredFieldValidator24.Enabled = True
 
 
@@ -2897,7 +2880,7 @@ Public Class default2
 
         End If
 
-     
+
 
         Page.Validate()
         'MsgBox("validating Button 5...")
@@ -3265,7 +3248,7 @@ Public Class default2
                 SqlDataSource6.InsertParameters("intSourceID").DefaultValue = Label71.Text
                 SqlDataSource6.InsertParameters("intStatusID").DefaultValue = Label156.Text
 
-                modtype = Split(DropDownList3.SelectedItem.Value, "-", -1, 1)
+
 
                 If (modtype(0) = 1) Then
 
@@ -3467,7 +3450,7 @@ Public Class default2
     End Sub
 
 
-  
+
     Sub SendMail_OnInsert()
 
         Dim myMessage As System.Net.Mail.MailMessage = New System.Net.Mail.MailMessage()
@@ -3567,9 +3550,7 @@ Public Class default2
     End Sub
 
     Protected Sub CustomValidator4_ServerValidate(ByVal sender As Object, ByVal args As ServerValidateEventArgs)
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
-
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
         ' MsgBox("1=" & LCase(Label17.Text))
         'MsgBox("2=" & LCase(lan))
         args.IsValid = (LCase(Label17.Text) <> LCase(lan))
@@ -3628,8 +3609,7 @@ Public Class default2
 
 
     Protected Sub OnRowDataBound(ByVal sender As Object, ByVal e As GridViewRowEventArgs) Handles GridView2.RowDataBound
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
 
         If e.Row.RowType = DataControlRowType.DataRow Then
 
@@ -3720,8 +3700,7 @@ Public Class default2
 
 
     Protected Sub OnRowDataBound2(ByVal sender As Object, ByVal e As GridViewRowEventArgs) Handles GridView4.RowDataBound
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
 
         If e.Row.RowType = DataControlRowType.DataRow Then
 
@@ -3810,8 +3789,7 @@ Public Class default2
     End Sub
 
     Protected Sub OnRowDataBound3(ByVal sender As Object, ByVal e As GridViewRowEventArgs) Handles GridView5.RowDataBound
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
 
         If e.Row.RowType = DataControlRowType.DataRow Then
 
@@ -3902,8 +3880,7 @@ Public Class default2
 
 
     Protected Sub OnRowDataBound4(ByVal sender As Object, ByVal e As GridViewRowEventArgs) Handles GridView6.RowDataBound
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
 
         If e.Row.RowType = DataControlRowType.DataRow Then
 
@@ -3995,7 +3972,7 @@ Public Class default2
     End Sub
 
 
-  
+
 
     Protected Sub Button3_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button3.Click
 
@@ -4012,8 +3989,7 @@ Public Class default2
 
 
     Protected Sub cseradio_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cseradio.SelectedIndexChanged
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
 
         '  MsgBox(cseradio.SelectedValue)
         '  MsgBox(cseradio.SelectedIndex)
@@ -4050,9 +4026,7 @@ Public Class default2
     End Sub
 
     Protected Sub cseradio2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cseradio2.SelectedIndexChanged
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
-
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
         '  MsgBox(cseradio2.SelectedValue)
         ' MsgBox(cseradio2.SelectedIndex)
         'SqlDataSource10.SelectParameters("strSourcein").DefaultValue = "Indirect"
@@ -4109,7 +4083,6 @@ Public Class default2
 
 
     End Sub
-
 
 
 
