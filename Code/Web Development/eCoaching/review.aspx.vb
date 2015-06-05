@@ -1247,12 +1247,14 @@ Public Class review
                 Dim pHolder2 As Label = ListView1.Items(0).FindControl("Label151") 'OMR / Exceptions
                 Dim pHolder3 As Label = ListView1.Items(0).FindControl("Label34") 'ETS / OAE
                 Dim pHolder4 As Label = ListView1.Items(0).FindControl("Label35") 'ETS / OAS
+                Dim pHolder5 As Label = ListView1.Items(0).FindControl("Label36") 'Low CSAT
+
 
                 Select Case pHolder7.Text ' Module check
 
                     Case "CSR", "Training"
 
-                        If ((pHolder1.Text = "1") Or (pHolder2.Text = "1")) Then
+                        If ((pHolder1.Text = "1") Or (pHolder2.Text = "1") Or (pHolder5.Text = "1")) Then
 
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
 
