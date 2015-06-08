@@ -1,0 +1,1267 @@
+/*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+ 
+
+Summary for SCR 14893
+
+1. 6 new functions for Coaching Reasons concatenation
+2. sp_SelectFrom_Coaching_Log_HistoricalSUP
+3. sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
+4. sp_Select_Sites_For_Dashboard
+5. sp_SelectFrom_Coaching_LogDistinctCSRCompleted
+6. sp_SelectFrom_Coaching_LogDistinctSUPCompleted
+7. sp_SelectFrom_Coaching_LogDistinctMGRCompleted
+8. sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
+9. sp_SelectFrom_Coaching_Log_Historical_Export
+
+*/
+
+
+
+--Details
+
+--1. 6 new functions for Coaching Reasons concatenation
+
+
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCoachingReasonFromCoachingID' 
+)
+   DROP FUNCTION [EC].[fn_strCoachingReasonFromCoachingID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a CoachingID returns the Coaching Reasons concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+
+ CREATE FUNCTION [EC].[fn_strCoachingReasonFromCoachingID]
+  (
+  @bigintCoachingID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strCoachingReason NVARCHAR(1000)
+  
+  IF @bigintCoachingID IS NOT NULL
+  BEGIN
+  SET @strCoachingReason = (SELECT STUFF((SELECT '| ' + CAST([CoachingReason] AS VARCHAR(2000)) [text()]
+         FROM [EC].[Coaching_Log_Reason]m JOIN [EC].[DIM_Coaching_Reason]dcr
+         ON m.[CoachingReasonID] = dcr.[CoachingReasonID]
+         WHERE m.[CoachingID] = t.[CoachingID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Coaching_Log_Reason] t 
+  where t.[CoachingID]= @bigintCoachingID
+GROUP BY [CoachingID])       
+	END
+    ELSE
+    SET @strCoachingReason = NULL
+        
+RETURN @strCoachingReason
+
+END  -- fn_strCoachingReasonFromCoachingID
+GO
+
+--**********************************
+--1b.
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSubCoachingReasonFromCoachingID' 
+)
+   DROP FUNCTION [EC].[fn_strSubCoachingReasonFromCoachingID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a CoachingID returns the Sub Coaching Reasons concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSubCoachingReasonFromCoachingID] (
+  @bigintCoachingID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strSubCoachingReason NVARCHAR(1000)
+  
+  IF @bigintCoachingID IS NOT NULL
+  BEGIN
+  SET @strSubCoachingReason = (SELECT STUFF((SELECT  '| ' + CAST([SubCoachingReason] AS VARCHAR(2000)) [text()]
+         FROM [EC].[Coaching_Log_Reason]m JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+         ON m.[SubCoachingReasonID] = dscr.[SubCoachingReasonID]
+         WHERE m.[CoachingID] = t.[CoachingID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Coaching_Log_Reason] t 
+  where t.[CoachingID]= @bigintCoachingID
+GROUP BY [CoachingID])       
+	END
+    ELSE
+    SET @strSubCoachingReason = NULL
+        
+RETURN @strSubCoachingReason
+
+END  -- fn_strSubCoachingReasonFromCoachingID
+GO
+
+
+
+--**********************************
+--1c.
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strValueFromCoachingID' 
+)
+   DROP FUNCTION [EC].[fn_strValueFromCoachingID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a CoachingID returns the Values concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strValueFromCoachingID] (
+  @bigintCoachingID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strValue NVARCHAR(1000)
+  
+  IF @bigintCoachingID IS NOT NULL
+  BEGIN
+  SET @strValue = (SELECT STUFF((SELECT  '| ' + CAST([Value] AS VARCHAR(1000)) [text()]
+            FROM [EC].[Coaching_Log_Reason]
+         WHERE [CoachingID] = t.[CoachingID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Coaching_Log_Reason] t
+  where t.[CoachingID]= @bigintCoachingID
+GROUP BY [CoachingID])       
+	END
+    ELSE
+    SET @strValue = NULL
+        
+RETURN @strValue
+
+END  -- fn_strValueFromCoachingID
+GO
+
+
+--**********************************
+--1d.
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCoachingReasonFromWarningID' 
+)
+   DROP FUNCTION [EC].[fn_strCoachingReasonFromWarningID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a WarningID returns the Coaching Reasons concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strCoachingReasonFromWarningID] (
+  @bigintWarningID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strCoachingReason NVARCHAR(1000)
+  
+  IF @bigintWarningID IS NOT NULL
+  BEGIN
+  SET @strCoachingReason = (SELECT STUFF((SELECT  '| ' + CAST([CoachingReason] AS VARCHAR(2000)) [text()]
+         FROM [EC].[Warning_Log_Reason]m JOIN [EC].[DIM_Coaching_Reason]dcr
+         ON m.[CoachingReasonID] = dcr.[CoachingReasonID]
+         WHERE m.[WarningID] = t.[WarningID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Warning_Log_Reason] t 
+  where t.[WarningID]= @bigintWarningID
+GROUP BY [WarningID])       
+	END
+    ELSE
+    SET @strCoachingReason = NULL
+        
+RETURN @strCoachingReason
+
+END  -- fn_strCoachingReasonFromWarningID
+GO
+
+
+
+
+--**********************************
+--1e.
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSubCoachingReasonFromWarningID' 
+)
+   DROP FUNCTION [EC].[fn_strSubCoachingReasonFromWarningID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a WarningID returns the Sub Coaching Reasons concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSubCoachingReasonFromWarningID] (
+  @bigintWarningID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strSubCoachingReason NVARCHAR(1000)
+  
+  IF @bigintWarningID IS NOT NULL
+  BEGIN
+  SET @strSubCoachingReason = (SELECT STUFF((SELECT  '| ' + CAST([SubCoachingReason] AS VARCHAR(2000)) [text()]
+         FROM [EC].[Warning_Log_Reason]m JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+         ON m.[SubCoachingReasonID] = dscr.[SubCoachingReasonID]
+         WHERE m.[WarningID] = t.[WarningID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Warning_Log_Reason] t 
+  where t.[WarningID]= @bigintWarningID
+GROUP BY [WarningID])       
+	END
+    ELSE
+    SET @strSubCoachingReason = NULL
+        
+RETURN @strSubCoachingReason
+
+END  -- fn_strSubCoachingReasonFromWarningID
+GO
+
+
+
+
+--**********************************
+--1f.
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strValueFromWarningID' 
+)
+   DROP FUNCTION [EC].[fn_strValueFromWarningID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a WarningID returns the Values concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strValueFromWarningID] (
+  @bigintWarningID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strValue NVARCHAR(1000)
+  
+  IF @bigintWarningID IS NOT NULL
+  BEGIN
+  SET @strValue = (SELECT STUFF((SELECT  '| ' + CAST([Value] AS VARCHAR(1000)) [text()]
+            FROM [EC].[Warning_Log_Reason]
+         WHERE [WarningID] = t.[WarningID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Warning_Log_Reason] t
+  where t.[WarningID]= @bigintWarningID
+GROUP BY [WarningID])       
+	END
+    ELSE
+    SET @strValue = NULL
+        
+RETURN @strValue
+
+END  -- fn_strValueFromWarningID
+GO
+
+
+
+--**********************************
+--2. sp_SelectFrom_Coaching_Log_HistoricalSUP
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_HistoricalSUP' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	4/30/2012
+--	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
+-- Last Modified Date:05/28/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per SCR 14893 dashboard redesign performance round 2.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
+
+@strSourcein nvarchar(100),
+@strCSRSitein nvarchar(30),
+@strCSRin nvarchar(30),
+@strSUPin nvarchar(30),
+@strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@strStatusin nvarchar(30), 
+@strjobcode  nvarchar(20),
+@strvalue  nvarchar(30),
+@PageSize int,
+@startRowIndex int, 
+@sortBy nvarchar(100),
+@sortASC nvarchar(1)
+AS
+
+--[cl].[SubmittedDate]
+BEGIN
+
+SET NOCOUNT ON
+
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
+@nvcSQL4 nvarchar(100),
+@strSDate nvarchar(10),
+@strEDate nvarchar(10),
+@UpperBand int,
+@LowerBand int,
+@SortExpression nvarchar(100),
+@SortOrder nvarchar(10)         
+    
+
+SET @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+SET @LowerBand  = @startRowIndex 
+SET @UpperBand  = @startRowIndex + @PageSize 
+
+--PRINT @UpperBand
+IF @sortASC = 'y' 
+SET @SortOrder = ' ASC' ELSE 
+SET @SortOrder = ' DESC' 
+SET  @SortExpression = @sortBy +  @SortOrder
+
+--PRINT @SortExpression
+
+SET @nvcSQL1 = 'WITH TempCoaching AS 
+        (select DISTINCT x.strFormID
+		,x.strCSRName
+		,x.strCSRSupName
+		,x.strCSRMgrName
+		,x.strFormStatus
+		,x.strSource
+		,x.SubmittedDate
+		,x.strSubmitterName
+		,x.strCoachingReason
+		,x.strSubCoachingReason
+		,x.strValue
+		,x.orderkey
+		,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
+from (
+     SELECT DISTINCT [cl].[FormName]	strFormID
+		,[eh].[Emp_Name]	strCSRName
+		,[eh].[Sup_Name]	strCSRSupName
+		,[eh].[Mgr_Name]	strCSRMgrName
+		,[s].[Status]		strFormStatus
+		,[so].[SubCoachingSource]	strSource
+		,[cl].[SubmittedDate]	SubmittedDate
+		,[sh].[Emp_Name]	strSubmitterName
+	    ,[EC].[fn_strCoachingReasonFromCoachingID](cl.CoachingID)strCoachingReason
+	    ,[EC].[fn_strSubCoachingReasonFromCoachingID](cl.CoachingID)strSubCoachingReason
+	    ,[EC].[fn_strValueFromCoachingID](cl.CoachingID)strValue
+	   	,''ok1'' orderkey
+		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID JOIN  [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+ON cl.CoachingID = clr.CoachingID
+WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
+AND [s].[Status] Like '''+@strStatusin+'''
+AND [clr].[value] Like '''+@strvalue+'''
+AND ISNULL([cl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
+AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
+AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
+AND ISNULL([cl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
+AND CONVERT(varchar,[cl].[SiteID]) LIKE '''+@strCSRSitein+'''
+and convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [cl].[StatusID] <> 2
+GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name],[cl].[CoachingID]'
+
+
+
+SET @nvcSQL2 = ' UNION
+     SELECT DISTINCT [wl].[FormName]	strFormID
+		,[eh].[Emp_Name]	strCSRName
+		,[eh].[Sup_Name]	strCSRSupName
+		,[eh].[Mgr_Name]	strCSRMgrName
+		,[s].[Status]		strFormStatus
+		,[so].[SubCoachingSource]	strSource
+		,[wl].[SubmittedDate]	SubmittedDate
+		,[sh].[Emp_Name]	strSubmitterName
+	    ,[EC].[fn_strCoachingReasonFromWarningID](wl.WarningID)strCoachingReason
+	    ,[EC].[fn_strSubCoachingReasonFromWarningID](wl.WarningID)strSubCoachingReason
+	    ,[EC].[fn_strValueFromWarningID](wl.WarningID)strValue
+	   	,''ok2'' orderkey
+		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH(NOLOCK)
+ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON wl.SourceID = so.SourceID JOIN  [EC].[Warning_Log_Reason] wlr WITH (NOLOCK)
+ON wl.WarningID = wlr.WarningID
+WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
+AND [s].[Status] Like '''+@strStatusin+'''
+AND [wlr].[value] Like '''+@strvalue+'''
+AND ISNULL([wl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
+AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
+AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
+AND ISNULL([wl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
+AND CONVERT(varchar,[wl].[SiteID]) LIKE '''+@strCSRSitein+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [wl].[StatusID] <> 2
+GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name],[wl].[WarningID]'
+
+SET @nvcSQL3 = ' ) x
+ )
+ SELECT strFormID
+		,strCSRName
+	    ,strCSRSupName
+		,strCSRMgrName
+		,strFormStatus
+		,strSource
+		,SubmittedDate
+		,strSubmitterName
+	    ,strCoachingReason
+	    ,strSubCoachingReason
+	    ,strValue
+		,RowNumber                 
+		FROM TempCoaching
+		WHERE RowNumber >= '''+CONVERT(VARCHAR,@LowerBand)+'''  AND RowNumber < '''+CONVERT(VARCHAR, @UpperBand) +
+        ''' ORDER BY ' + @SortExpression       
+ 
+ 
+ IF @strjobcode in ('WHER13', 'WHER50',
+'WHHR12', 'WHHR13', 'WHHR14',
+'WHHR50', 'WHHR60', 'WHHR80')
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
+
+ELSE
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL3
+
+EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
+	    
+END -- sp_SelectFrom_Coaching_Log_HistoricalSUP
+GO
+
+
+
+
+--*********************************************************
+--3. sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_HistoricalSUP_Count' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	05/28/2015
+--	Description: *	This procedure returns the count of completed   e-Coaching  records that will be 
+--  displayed for the selected criteria on the SUP historical page.
+-- Create per SCR 14893 dashboard redesign performance round 2.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count] 
+
+@strSourcein nvarchar(100),
+@strCSRSitein nvarchar(30),
+@strCSRin nvarchar(30),
+@strSUPin nvarchar(30),
+@strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@strStatusin nvarchar(30), 
+@strjobcode  nvarchar(20),
+@strvalue  nvarchar(30)
+--@intRecordCount int OUT
+
+AS
+
+
+BEGIN
+
+SET NOCOUNT ON
+
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8)
+      
+    
+SET @strFormStatus = 'Inactive'
+SET @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+
+
+
+SET @nvcSQL1 = 'WITH TempCoaching AS 
+        (select DISTINCT x.strFormID
+	from (
+     SELECT DISTINCT [cl].[FormName]	strFormID
+	 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON cl.SiteID = si.SiteID JOIN  [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+ON cl.CoachingID = clr.CoachingID
+WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
+AND [s].[Status] Like '''+@strStatusin+'''
+AND [clr].[value] Like '''+@strvalue+'''
+AND ISNULL([cl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
+AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
+AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
+AND ISNULL([cl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
+AND CONVERT(varchar,[cl].[SiteID]) LIKE '''+@strCSRSitein+'''
+and convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [cl].[StatusID] <> 2
+GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name],[cl].[CoachingID]'
+
+SET @nvcSQL2 = ' UNION
+     SELECT DISTINCT [wl].[FormName]	strFormID
+	FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH(NOLOCK)
+ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON wl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON wl.SiteID = si.SiteID JOIN  [EC].[Warning_Log_Reason] wlr WITH (NOLOCK)
+ON wl.WarningID = wlr.WarningID
+WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
+AND [s].[Status] Like '''+@strStatusin+'''
+AND [wlr].[value] Like '''+@strvalue+'''
+AND ISNULL([wl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
+AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
+AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
+AND ISNULL([wl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
+AND CONVERT(varchar,[wl].[SiteID]) LIKE '''+@strCSRSitein+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [wl].[StatusID] <> 2
+GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name],[wl].[WarningID]'
+
+SET @nvcSQL3 = ' ) x
+ )
+ SELECT count(strFormID) FROM TempCoaching'
+	   
+  
+ IF @strjobcode in ('WHER13', 'WHER50',
+'WHHR12', 'WHHR13', 'WHHR14',
+'WHHR50', 'WHHR60', 'WHHR80')
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
+
+ELSE
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL3
+
+EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
+	    
+END -- sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
+
+GO
+
+--*********************************************************
+--4. sp_Select_Sites_For_Dashboard
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Sites_For_Dashboard' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Sites_For_Dashboard]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/06/2015
+--	Description: *	This procedure selects Sites to be displayed in the dashboard
+--  Site dropdown list.
+-- Last Modified Date: 06/01/2015
+-- Last Modified Bt: Susmitha Palacherla
+-- Modified per SCR 14893 Round 2 Performance improvements.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Sites_For_Dashboard] 
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max)
+
+SET @nvcSQL = 'SELECT X.SiteText, X.SiteValue FROM
+(SELECT ''All Locations'' SiteText, ''%'' SiteValue, 01 Sortorder From [EC].[DIM_Site]
+UNION
+SELECT [City] SiteText, CONVERT(nvarchar,[SiteID]) SiteValue, 02 Sortorder From [EC].[DIM_Site]
+where [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Sites_For_Dashboard
+GO
+
+
+--*********************************************************
+--5. sp_SelectFrom_Coaching_LogDistinctCSRCompleted
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctCSRCompleted' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	4/30/12
+--	Description: *	This procedure selects the distinct CSRs from completed e-Coaching records to display on Historical dashboard for filter. 
+-- Last Modified Date: 06/01/2015
+-- Last Modified Bt: Susmitha Palacherla
+-- Modified per SCR 14893 Round 2 Performance improvements.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted] 
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+
+SET @nvcSQL = 'SELECT X.CSRText, X.CSRValue, X.strCSRSite FROM
+(SELECT ''All Employees'' CSRText, ''%'' CSRValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	CSRText, cl.EmpID CSRValue, CONVERT(nvarchar,cl.SiteID) strCSRSite, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID 
+where cl.StatusID <> 2
+and cl.EmpID is not NULL) X
+Order By X.Sortorder, X.CSRText'
+
+		
+EXEC (@nvcSQL)	
+--PRINT @nvcSQL
+
+End --sp_SelectFrom_Coaching_LogDistinctCSRCompleted
+GO
+
+
+
+--*********************************************************
+--6. sp_SelectFrom_Coaching_LogDistinctSUPCompleted
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctSUPCompleted' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	7/12/12
+--	Description: *	This procedure selects the distinct SUPs from completed e-Coaching records to display on Historical dashboard for filter. 
+-- Last Modified Date: 06/01/2015
+-- Last Modified Bt: Susmitha Palacherla
+-- Modified per SCR 14893 Round 2 Performance improvements.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted] 
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+
+
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue, X.strCSRSite FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Sup_Name	SUPText, eh.Sup_ID SUPValue,  CONVERT(nvarchar,cl.SiteID) strCSRSite, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID 
+where cl.StatusID <> 2
+and eh.Sup_Name is not NULL
+and (eh.Sup_ID <> ''999999'' or eh.Sup_ID is NOT NULL)) X
+Order By X.Sortorder, X.SUPText'
+
+
+		
+EXEC (@nvcSQL)	
+
+End --sp_SelectFrom_Coaching_LogDistinctSUPCompleted
+GO
+
+
+
+--*********************************************************
+--7. sp_SelectFrom_Coaching_LogDistinctMGRCompleted
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctMGRCompleted' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	7/12/12
+--	Description: *	This procedure selects the distinct MGRs from completed e-Coaching records to display on Historical dashboard for filter. 
+-- Last Modified Date: 06/01/2015
+-- Last Modified Bt: Susmitha Palacherla
+-- Modified per SCR 14893 Round 2 Performance improvements.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted] 
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+
+
+SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue, X.strCSRSite FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.MGR_Name	MGRText, eh.MGR_ID MGRValue, CONVERT(nvarchar,cl.SiteID) strCSRSite, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID 
+where cl.StatusID <> 2
+and (eh.MGR_Name is not NULL or eh.Mgr_ID  <> ''999999'')) X
+Order By X.Sortorder, X.MGRText'
+
+		
+EXEC (@nvcSQL)	
+--PRINT @nvcSQL
+
+End --sp_SelectFrom_Coaching_LogDistinctMGRCompleted
+GO
+
+
+
+
+--*********************************************************
+--8. sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	03/10/2015
+--  Description: Populates the Submitter values in the dashboard filter dropdown.
+--  Created as part of SCR 14422 for the dashboard redesign.
+-- Last Modified Date: 05/28/2015
+-- Modified to add unknown as a constant per SCr 14893 Round 2 perf improvement.
+-- 
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2] 
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+-- UNION of 3 separate selects for ordering.
+-- Wild card value followed by regular data followed by unknown values.
+
+SET @nvcSQL = 'SELECT X.SubmitterText, X.SubmitterValue FROM
+(SELECT ''All Submitters'' SubmitterText, ''%'' SubmitterValue, 01 Sortorder 
+UNION
+SELECT DISTINCT sh.Emp_Name	SubmitterText, cl.SubmitterID SubmitterValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh  ON
+cl.SubmitterID = sh.Emp_ID
+where (cl.SubmitterID is not NULL or cl.SubmitterID  <> ''999999'')
+and cl.StatusID <> 2
+UNION
+SELECT ''Unknown'' SubmitterText, ''Unknown'' SubmitterValue, 03 Sortorder
+)X
+ORDER BY X.Sortorder, X.SubmitterText'
+
+
+--Print @nvcSQL
+EXEC (@nvcSQL)	
+
+
+End --sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
+GO
+
+
+
+
+--*********************************************************
+
+--9. sp_SelectFrom_Coaching_Log_Historical_Export
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Historical_Export' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	4/14/2015
+--	Description: *	This procedure selects the  e-Coaching completed records for export.
+-- Last Modified Date:06/2/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per SCR 14893 dashboard redesign performance round 2.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
+
+@strSourcein nvarchar(100),
+@strCSRSitein nvarchar(30),
+@strCSRin nvarchar(30),
+@strSUPin nvarchar(30),
+@strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@strStatusin nvarchar(30), 
+@strvalue  nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8)
+
+
+Set @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+
+
+
+SET @nvcSQL = ';WITH CL AS
+(SELECT * From [EC].[Coaching_Log]WITH (NOLOCK)
+WHERE convert(varchar(8),[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[SubmittedDate],112) <= '''+@strEDate+'''
+AND [StatusID] <> 2
+)
+SELECT [cl].[CoachingID]	CoachingID
+        ,[cl].[FormName]	FormName
+        ,[cl].[ProgramName]	ProgramName
+        ,[cl].[EmpID]	EmpID
+		,[eh].[Emp_Name]	CSRName
+		,[eh].[Sup_Name]	CSRSupName
+		,[eh].[Mgr_Name]	CSRMgrName
+		,[si].[City]		FormSite
+		,[so].[CoachingSource]		FormSource
+		,[so].[SubCoachingSource]	FormSubSource
+		,[dcr].[CoachingReason]	CoachingReason
+		,[dscr].[SubCoachingReason]	SubCoachingReason
+		,[clr].[Value]	Value
+		,[s].[Status]		FormStatus
+		,[sh].[Emp_Name]	SubmitterName
+		,[cl].[EventDate]	EventDate
+		,[cl].[VerintID]	VerintID
+		,[cl].[Description]	Description
+		,[cl].[CoachingNotes]	CoachingNotes
+		,[cl].[SubmittedDate]	SubmittedDate
+		,[cl].[SupReviewedAutoDate]	SupReviewedAutoDate
+		,[cl].[MgrReviewManualDate]	MgrReviewManualDate
+		,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
+		,[cl].[MgrNotes]	MgrNotes
+		,[cl].[CSRReviewAutoDate]	CSRReviewAutoDate
+		,[cl].[CSRComments]	CSRComments
+		FROM [EC].[Employee_Hierarchy] eh WITH (NOLOCK) JOIN cl
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON cl.SiteID = si.SiteID JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) 
+ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr
+ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID
+WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
+AND [s].[Status] Like '''+@strStatusin+'''
+AND [clr].[value] Like '''+@strvalue+'''
+AND ISNULL([cl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
+AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
+AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
+AND ISNULL([cl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
+AND CONVERT(varchar,[cl].[SiteID]) LIKE '''+@strCSRSitein+'''
+ORDER BY [cl].[CoachingID]'
+
+EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
+	    
+END -- sp_SelectFrom_Coaching_Log_Historical_Export
+GO
+
+
+
+
+/*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'' 
+)
+   DROP PROCEDURE [EC].[]
+GO
+
+
+
+
+--*********************************************************/
