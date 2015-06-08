@@ -37,7 +37,7 @@ Public Class review3
 
 
 
-        If ((lan <> (Replace(LCase(pHolder4a.Text), "'", ""))) And (lan <> (Replace(LCase(pHolder1a.Text), "'", ""))) And (lan <> (Replace(LCase(pHolder2a.Text), "'", ""))) And (lan <> (Replace(LCase(pHolder3a.Text), "'", ""))) And (Label241.Text = 0) And (InStr(1, userTitle, "WHHR", 1) = 0) And (InStr(1, userTitle, "WHER", 1) = 0)) Then
+        If ((lan <> (Replace(LCase(pHolder4a.Text), "'", ""))) And (lan <> (Replace(LCase(pHolder1a.Text), "'", ""))) And (lan <> (Replace(LCase(pHolder2a.Text), "'", ""))) And (lan <> (Replace(LCase(pHolder3a.Text), "'", ""))) And (Label241.Text = 0) And (InStr(1, userTitle, "WHHR", 1) = 0) And (InStr(1, userTitle, "WHER", 1) = 0) And (InStr(1, userTitle, "WHRC", 1) = 0)) Then
 
             Response.Redirect("error3.aspx")
 
