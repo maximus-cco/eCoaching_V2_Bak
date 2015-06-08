@@ -1,7 +1,11 @@
 /*
-eCoaching_Maintenance_Create(09).sql
-Last Modified Date: 06/04/2015
+eCoaching_Maintenance_Create(10).sql
+Last Modified Date: 06/08/2015
 Last Modified By: Susmitha Palacherla
+
+Version 10: 
+1. Updated SP #5 [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete] per SCR 14478
+to add label CoachingID for Coaching or Warning Log.
 
 Version 09: 
 1. Added SP #5 [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete] per SCR 14478.
@@ -505,7 +509,7 @@ SET @intCoachID = (SELECT  [CoachingID] FROM  [EC].[Coaching_Log] WITH (NOLOCK)
 	 	
 IF 	 @intCoachID IS NOT NULL
 
-  SET @nvcSQL = 'SELECT  [CoachingID],
+  SET @nvcSQL = 'SELECT  [CoachingID]CoachingID,
 			[FormName],
 			[EmpLanID],
 			[EmpID],
@@ -515,7 +519,7 @@ IF 	 @intCoachID IS NOT NULL
 	 
 ELSE
 
-  SET @nvcSQL = 'SELECT  [WarningID],
+  SET @nvcSQL = 'SELECT  [WarningID]CoachingID,
 			[FormName],
 			[EmpLanID],
 			[EmpID],
@@ -532,6 +536,8 @@ END --sp_SelectReviewFrom_Coaching_Log_For_Delete
 
 
 GO
+
+
 
 
 
