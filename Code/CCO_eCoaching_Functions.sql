@@ -1,7 +1,17 @@
 /*
-File: eCoaching_Functions.sql (12)
+File: eCoaching_Functions.sql (13)
 Last Modified By: Susmitha Palacherla
-Date: 05/25/2015
+Date: 06/05/2015
+
+
+Version 13,  06/05/2015
+1. Added the following Functions 6 functions(#30 through #35) for performance improvements round 2 per SCR 14893.
+ [EC].[fn_strCoachingReasonFromCoachingID]
+ [EC].[fn_strSubCoachingReasonFromCoachingID]
+ [EC].[fn_strValueFromCoachingID]
+ [EC].[fn_strCoachingReasonFromWarningID]
+ [EC].[fn_strSubCoachingReasonFromWarningID]
+ [EC].[fn_strValueFromWarningID]
 
 
 Version 12, 05/25/2015
@@ -93,6 +103,16 @@ List of Functions:
 25. [EC].[fn_strSrMgrLvl1EmpIDFromEmpID]  
 26. [EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
 27. [EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
+28. [EC].[fn_strEmpEmailFromEmpID] 
+29. [EC].[fn_strEmpLanIDFromEmpID] 
+30. [EC].[fn_strCoachingReasonFromCoachingID]
+31. [EC].[fn_strSubCoachingReasonFromCoachingID]
+32. [EC].[fn_strValueFromCoachingID]
+33. [EC].[fn_strCoachingReasonFromWarningID]
+34. [EC].[fn_strSubCoachingReasonFromWarningID]
+35. [EC].[fn_strValueFromWarningID]
+
+
 */
 
 
@@ -356,8 +376,7 @@ GO
 
 
 
-*****************************************************************************
-
+/*****************************************************/
 
 --4. Drop/Recreate Function [EC].[fn_intSiteIDFromEmpID] 
 
@@ -417,7 +436,7 @@ END --fn_intSiteIDFromEmpID
 
 GO
 
-*****************************************************************************
+/*****************************************************/
 --5. Drop/Recreate Function  [EC].[fn_intSubCoachReasonIDFromRptCode]
 
 IF EXISTS (
@@ -491,7 +510,7 @@ GO
 
 
 
-*****************************************************************************
+/*****************************************************/
 --6. Drop/Recreate Function [EC].[fn_nvcGetEmpIdFromLanId]
 
 IF EXISTS (
@@ -631,7 +650,7 @@ GO
 
 
 
-*****************************************************************************
+/*****************************************************/
 --7. Drop/Recreate Function [EC].[fn_nvcHtmlEncode]
 
 IF EXISTS (
@@ -703,7 +722,7 @@ END
 GO
 
 
-*****************************************************************************
+/*****************************************************/
 --8. Drop/Recreate Function [EC].[fn_strAddSpaceToName]
 
 IF EXISTS (
@@ -749,7 +768,7 @@ GO
 
 
 
-*****************************************************************************
+/*****************************************************/
 --9. Drop/Recreate Function [EC].[fn_strMgrEmpIDFromEmpID]
 
 IF EXISTS (
@@ -804,7 +823,7 @@ END --fn_strMgrEmpIDFromEmpID
 GO
 
 
-*****************************************************************************
+/*****************************************************/
 --10. Drop/Recreate Function [EC].[fn_strSiteNameFromSiteLocation]
 
 IF EXISTS (
@@ -872,8 +891,7 @@ END  -- fn_strSiteNameFromSiteLocation()
 GO
 
 
-
-*****************************************************************************
+/*****************************************************/
 --11. Drop/Recreate Function [EC].[fn_strStatusIDFromIQSEvalID]
 
 IF EXISTS (
@@ -933,7 +951,8 @@ END  -- fn_strStatusIDFromIQSEvalID()
 GO
 
 
-*****************************************************************************
+/*****************************************************/
+
 --12. Drop/Recreate Function [EC].[fn_strStatusIDFromStatus]
 
 IF EXISTS (
@@ -978,9 +997,8 @@ BEGIN
 END  -- fn_strStatusIDFromStatus()
 
 GO
+/*****************************************************/
 
-
-****************************************************************************
 --13. Drop/Recreate Function [EC].[fn_strUserName]
 
 IF EXISTS (
@@ -1032,8 +1050,8 @@ BEGIN
 END
 GO
 
+/*****************************************************/
 
-**************************************************
 
 
 --14. FUNCTION [EC].[RemoveAlphaCharacters] 
@@ -1076,7 +1094,7 @@ Begin
 End -- RemoveAlphaCharacters
 
 GO
-**************************************************
+/*****************************************************/
 
 
 --15. FUNCTION [EC].[fn_intSiteIDFromSite] 
@@ -1141,8 +1159,7 @@ RETURN @intSiteID
 
 END  -- fn_intSiteIDFromSite()
 
-**************************************************
-
+/*****************************************************/
 
 --16. FUNCTION [EC].[fn_intSourceIDFromOldSource] 
 
@@ -1190,7 +1207,7 @@ END  -- fn_intSourceIDFromOldSource()
 
 GO
 
-********************************************************************
+/*****************************************************/
 
 --17. FUNCTION [EC].[fnSplit_WithRowID] 
 
@@ -1242,7 +1259,7 @@ END -- fnSplit
 
 GO
 
-************************************************************************************
+/*****************************************************/
 
 --18. FUNCTION [EC].[fn_strDirectUserHierarchy] 
 
@@ -1307,7 +1324,7 @@ RETURN @DirectHierarchy
 END --fn_strDirectUserHierarchy
 GO
 
-************************************************************************************
+/*****************************************************/
 
 --19. FUNCTION [EC].[fn_Encrypt] 
 
@@ -1348,8 +1365,7 @@ BEGIN
     RETURN @Result
 END --fn_Encrypt
 GO
-
-************************************************************************************
+/*****************************************************/
 
 --20. FUNCTION [EC].[fn_Decrypt] 
 
@@ -1394,7 +1410,7 @@ END --fn_Decrypt
 GO
 
 
-************************************************************************************
+/*****************************************************/
 
 --21. FUNCTION [EC].[fn_strETSDescriptionFromRptCode] 
 
@@ -1446,7 +1462,7 @@ GO
 
 
 
-************************************************************************************
+/*****************************************************/
 
 --22. FUNCTION [EC].[fn_intSubCoachReasonIDFromETSRptCode] 
 
@@ -1518,7 +1534,7 @@ GO
 
 
 
-************************************************************************************
+/*****************************************************/
 
 --23. FUNCTION [EC].[fn_intSourceIDFromSource] 
 
@@ -1566,8 +1582,7 @@ END  -- fn_intSourceIDFromSource()
 GO
 
 
-
-************************************************************************************
+/*****************************************************/
 
 --24. FUNCTION [EC].[fn_strEmpNameFromEmpID] 
 
@@ -1622,7 +1637,7 @@ END
 GO
 
 
-************************************************************************************
+/*****************************************************/
 
 --25. FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID] 
 
@@ -1686,7 +1701,7 @@ GO
 
 
 
-************************************************************************************
+/*****************************************************/
 
 --26. FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
 
@@ -1756,8 +1771,7 @@ GO
 
 
 
-
-************************************************************************************
+/*****************************************************/
 
 --27. FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
 
@@ -1837,7 +1851,7 @@ GO
 
 
 
-************************************************************************************
+/*****************************************************/
 
 --28. FUNCTION [EC].[fn_strEmpEmailFromEmpID] 
 
@@ -1891,18 +1905,7 @@ END -- fn_strEmpEmailFromEmpID
 GO
 
 
---3e.
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-************************************************************************************
+/*****************************************************/
 
 --29. FUNCTION [EC].[fn_strEmpLanIDFromEmpID] 
 
@@ -1956,15 +1959,336 @@ GO
 
 
 
-************************************************************************************
+/*****************************************************/
 
---30. FUNCTION [EC].[xxxxxx] 
+--30. FUNCTION [EC].[fn_strCoachingReasonFromCoachingID]
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'xxxxx' 
+     AND SPECIFIC_NAME = N'fn_strCoachingReasonFromCoachingID' 
 )
-   DROP FUNCTION [EC].[xxxxxxx]
+   DROP FUNCTION [EC].[fn_strCoachingReasonFromCoachingID]
 GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a CoachingID returns the Coaching Reasons concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+
+ CREATE FUNCTION [EC].[fn_strCoachingReasonFromCoachingID]
+  (
+  @bigintCoachingID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strCoachingReason NVARCHAR(1000)
+  
+  IF @bigintCoachingID IS NOT NULL
+  BEGIN
+  SET @strCoachingReason = (SELECT STUFF((SELECT '| ' + CAST([CoachingReason] AS VARCHAR(2000)) [text()]
+         FROM [EC].[Coaching_Log_Reason]m JOIN [EC].[DIM_Coaching_Reason]dcr
+         ON m.[CoachingReasonID] = dcr.[CoachingReasonID]
+         WHERE m.[CoachingID] = t.[CoachingID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Coaching_Log_Reason] t 
+  where t.[CoachingID]= @bigintCoachingID
+GROUP BY [CoachingID])       
+	END
+    ELSE
+    SET @strCoachingReason = NULL
+        
+RETURN @strCoachingReason
+
+END  -- fn_strCoachingReasonFromCoachingID
+GO
+
+/*****************************************************/
+
+--31. FUNCTION [EC].[fn_strSubCoachingReasonFromCoachingID]
+
+
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSubCoachingReasonFromCoachingID' 
+)
+   DROP FUNCTION [EC].[fn_strSubCoachingReasonFromCoachingID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a CoachingID returns the Sub Coaching Reasons concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSubCoachingReasonFromCoachingID] (
+  @bigintCoachingID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strSubCoachingReason NVARCHAR(1000)
+  
+  IF @bigintCoachingID IS NOT NULL
+  BEGIN
+  SET @strSubCoachingReason = (SELECT STUFF((SELECT  '| ' + CAST([SubCoachingReason] AS VARCHAR(2000)) [text()]
+         FROM [EC].[Coaching_Log_Reason]m JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+         ON m.[SubCoachingReasonID] = dscr.[SubCoachingReasonID]
+         WHERE m.[CoachingID] = t.[CoachingID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Coaching_Log_Reason] t 
+  where t.[CoachingID]= @bigintCoachingID
+GROUP BY [CoachingID])       
+	END
+    ELSE
+    SET @strSubCoachingReason = NULL
+        
+RETURN @strSubCoachingReason
+
+END  -- fn_strSubCoachingReasonFromCoachingID
+GO
+
+
+
+/*****************************************************/
+
+--32. FUNCTION [EC].[fn_strValueFromCoachingID]
+
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strValueFromCoachingID' 
+)
+   DROP FUNCTION [EC].[fn_strValueFromCoachingID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a CoachingID returns the Values concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strValueFromCoachingID] (
+  @bigintCoachingID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strValue NVARCHAR(1000)
+  
+  IF @bigintCoachingID IS NOT NULL
+  BEGIN
+  SET @strValue = (SELECT STUFF((SELECT  '| ' + CAST([Value] AS VARCHAR(1000)) [text()]
+            FROM [EC].[Coaching_Log_Reason]
+         WHERE [CoachingID] = t.[CoachingID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Coaching_Log_Reason] t
+  where t.[CoachingID]= @bigintCoachingID
+GROUP BY [CoachingID])       
+	END
+    ELSE
+    SET @strValue = NULL
+        
+RETURN @strValue
+
+END  -- fn_strValueFromCoachingID
+GO
+
+
+/*****************************************************/
+
+--33. FUNCTION [EC].[fn_strCoachingReasonFromWarningID]
+
+
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCoachingReasonFromWarningID' 
+)
+   DROP FUNCTION [EC].[fn_strCoachingReasonFromWarningID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a WarningID returns the Coaching Reasons concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strCoachingReasonFromWarningID] (
+  @bigintWarningID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strCoachingReason NVARCHAR(1000)
+  
+  IF @bigintWarningID IS NOT NULL
+  BEGIN
+  SET @strCoachingReason = (SELECT STUFF((SELECT  '| ' + CAST([CoachingReason] AS VARCHAR(2000)) [text()]
+         FROM [EC].[Warning_Log_Reason]m JOIN [EC].[DIM_Coaching_Reason]dcr
+         ON m.[CoachingReasonID] = dcr.[CoachingReasonID]
+         WHERE m.[WarningID] = t.[WarningID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Warning_Log_Reason] t 
+  where t.[WarningID]= @bigintWarningID
+GROUP BY [WarningID])       
+	END
+    ELSE
+    SET @strCoachingReason = NULL
+        
+RETURN @strCoachingReason
+
+END  -- fn_strCoachingReasonFromWarningID
+GO
+
+
+
+
+/*****************************************************/
+
+
+
+--34. FUNCTION [EC].[fn_strSubCoachingReasonFromWarningID]
+
+
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSubCoachingReasonFromWarningID' 
+)
+   DROP FUNCTION [EC].[fn_strSubCoachingReasonFromWarningID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a WarningID returns the Sub Coaching Reasons concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSubCoachingReasonFromWarningID] (
+  @bigintWarningID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strSubCoachingReason NVARCHAR(1000)
+  
+  IF @bigintWarningID IS NOT NULL
+  BEGIN
+  SET @strSubCoachingReason = (SELECT STUFF((SELECT  '| ' + CAST([SubCoachingReason] AS VARCHAR(2000)) [text()]
+         FROM [EC].[Warning_Log_Reason]m JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+         ON m.[SubCoachingReasonID] = dscr.[SubCoachingReasonID]
+         WHERE m.[WarningID] = t.[WarningID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Warning_Log_Reason] t 
+  where t.[WarningID]= @bigintWarningID
+GROUP BY [WarningID])       
+	END
+    ELSE
+    SET @strSubCoachingReason = NULL
+        
+RETURN @strSubCoachingReason
+
+END  -- fn_strSubCoachingReasonFromWarningID
+GO
+
+
+
+
+/*****************************************************/
+
+
+--35. FUNCTION [EC].[fn_strValueFromWarningID]
+
+ IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strValueFromWarningID' 
+)
+   DROP FUNCTION [EC].[fn_strValueFromWarningID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        Given a WarningID returns the Values concatenated as a single string 
+-- of values separated by a '|'
+-- =============================================
+CREATE FUNCTION [EC].[fn_strValueFromWarningID] (
+  @bigintWarningID bigint
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strValue NVARCHAR(1000)
+  
+  IF @bigintWarningID IS NOT NULL
+  BEGIN
+  SET @strValue = (SELECT STUFF((SELECT  '| ' + CAST([Value] AS VARCHAR(1000)) [text()]
+            FROM [EC].[Warning_Log_Reason]
+         WHERE [WarningID] = t.[WarningID]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
+FROM [EC].[Warning_Log_Reason] t
+  where t.[WarningID]= @bigintWarningID
+GROUP BY [WarningID])       
+	END
+    ELSE
+    SET @strValue = NULL
+        
+RETURN @strValue
+
+END  -- fn_strValueFromWarningID
+GO
+
+/*****************************************************/
