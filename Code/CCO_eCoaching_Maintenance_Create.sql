@@ -1,7 +1,10 @@
 /*
-eCoaching_Maintenance_Create(08).sql
-Last Modified Date: 05/22/2015
+eCoaching_Maintenance_Create(09).sql
+Last Modified Date: 06/04/2015
 Last Modified By: Susmitha Palacherla
+
+Version 09: 
+1. Added SP #5 [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete] per SCR 14478.
 
 Version 08: 
 1. Updated SP #2 [EC].[sp_SelectCoaching4Contact] to support LCSAT feed per SCR 14818.
@@ -54,7 +57,6 @@ Procedures
 3. Create SP [EC].[sp_UpdateFeedMailSent] 
 4. Create SP [EC].[sp_Inactivations_From_Feed] 
 5. Create SP [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]
-6. Create SP [EC].[sp_Delete_From_Coaching_Log]
 
 */
 
@@ -461,3 +463,77 @@ GO
 
 --***************************************************************************************************************
 
+
+
+-5. Create SP[EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Coaching_Log_For_Delete' 
+)
+   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	05/04/2015
+--	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
+--  Initial Revision per SCR 14478.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete] @strFormIDin nvarchar(50)
+AS
+
+BEGIN
+DECLARE	
+
+@intCoachID bigint,
+@nvcSQL nvarchar(max)
+
+SET @intCoachID = (SELECT  [CoachingID] FROM  [EC].[Coaching_Log] WITH (NOLOCK)
+	 	WHERE [FormName] = @strFormIDin)
+	 	
+IF 	 @intCoachID IS NOT NULL
+
+  SET @nvcSQL = 'SELECT  [CoachingID],
+			[FormName],
+			[EmpLanID],
+			[EmpID],
+			[SourceID]
+		FROM  [EC].[Coaching_Log] WITH (NOLOCK)
+	 	WHERE [FormName] = '''+@strFormIDin+''''
+	 
+ELSE
+
+  SET @nvcSQL = 'SELECT  [WarningID],
+			[FormName],
+			[EmpLanID],
+			[EmpID],
+			[SourceID]
+		FROM  [EC].[Warning_Log] WITH (NOLOCK)
+	 	WHERE [FormName] = '''+@strFormIDin+''''
+	 		
+
+EXEC (@nvcSQL)
+--Print (@nvcSQL)
+	    
+END --sp_SelectReviewFrom_Coaching_Log_For_Delete
+
+
+
+GO
+
+
+
+
+--***************************************************************************************************************
