@@ -45,7 +45,7 @@
                 TabPanel4.Visible = True
 
 
-            Case (InStr(1, Label1.Text, "WHER", 1) > 0), (InStr(1, Label1.Text, "WHHR", 1) > 0)
+            Case (InStr(1, Label1.Text, "WHER", 1) > 0), (InStr(1, Label1.Text, "WHHR", 1) > 0), (InStr(1, Label1.Text, "WHRC", 1) > 0)
 
                 TabContainer1.ActiveTabIndex = 3
 
