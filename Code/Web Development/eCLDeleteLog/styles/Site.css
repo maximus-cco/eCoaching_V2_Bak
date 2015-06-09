@@ -1,0 +1,406 @@
+﻿body
+{
+    background: #ffffff;
+    font-family: Calibri;
+    font-size: 10pt;
+    margin: 0px;
+    padding: 10px;
+    color: #000000;
+    border: none;
+}
+.formButton
+{
+    font-weight: 700;
+    font-family: Calibri;
+    font-size: 10pt;
+    color: #ffffff;
+    font-family: Tahoma;
+    background-color: #507CD1;
+    text-align: center;
+}
+.subuttons
+{
+    width: 150px;
+    height: 25px;
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: bold;
+    color: #000000;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+.tboxes
+{
+    border: 1pt #bfbfbf;
+    padding: 1px;
+    width: 450px;
+    height: 100px;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.question
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: bold;
+    color: #000000;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+.description
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: normal;
+    color: #000000;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+.qcontrol
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: normal;
+    color: #000000;
+}
+.crquestions
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: bold;
+    color: #000000;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.croptions
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: normal;
+    color: #000000;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.footer
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: normal;
+    color: #3f3f3f;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.footlink
+{
+    text-decoration: none;
+    border-bottom: 1px solid #3f3f3f;
+    color: #3f3f3f;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.question2
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: normal;
+    color: #000000;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+.alink
+{
+    color: #000000;
+    text-decoration: none;
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: 100;
+}
+.warning
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    text-align: center;
+}
+.sidelabel
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: bold;
+    color: #000000;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+.sidetext
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: normal;
+    color: #000000;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+.sidetext2
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    font-weight: normal;
+    color: #000000;
+}
+p
+{
+    margin-bottom: 10px;
+    line-height: 1.6em;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.style73
+{
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.warning
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    text-align: center;
+}
+.lview
+{
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.TextBox
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    color: #000000;
+    background-color: white;
+}
+/* HEADINGS   
+----------------------------------------------------------*/
+h2
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    color: #666666;
+    font-variant: small-caps;
+    text-transform: none;
+    font-weight: 200;
+    margin-bottom: 0px;
+}
+/* PRIMARY LAYOUT ELEMENTS   
+----------------------------------------------------------*/
+.page
+{
+    width: 1200px;
+    background-color: #fff;
+    margin: 5px auto 0px auto;
+    border: 1px solid #496077;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.header
+{
+    position: relative;
+    margin: 0px;
+    padding: 0px;
+    background: #ffffff;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.top
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    margin-top: 25px;
+    padding-top: 25px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    vertical-align: bottom;
+    width: 503px;
+}
+.main
+{
+    padding: 0;
+    margin: 0;
+    min-height: 420px;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+/* TAB MENU   
+----------------------------------------------------------*/
+div.hideSkiplink
+{
+    background-color: #F9F9F9;
+    color: #ffffff;
+    width: 100%;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+/* MISC  
+----------------------------------------------------------*/
+.clear
+{
+    clear: both;
+}
+.title
+{
+    display: block;
+    float: left;
+    text-align: left;
+    width: auto;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.error-message
+{
+    font-family: Calibri;
+    font-size: 12pt;
+    color: Red;
+}
+.success-message
+{
+    font-family: Calibri;
+    font-size: 12pt;
+    color: #01DF3A;
+}
+.tablestyle
+{
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.tablestyle td, .tablestyle th
+{
+}
+.alternatingrowstyle
+{
+}
+.headerstyle a
+{
+    text-decoration: none;
+    color: #ffffff;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.rowstyle
+{
+}
+.rowstyle td, .alternatingrowstyle td
+{
+}
+.headerstyle
+{
+    background-image: none;
+    text-align: left;
+    color: #ffffff;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.sortascheaderstyle
+{
+    text-decoration: none;
+    background-image: url(../images/sort_asc_alt.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 20px;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.sortdescheaderstyle
+{
+    text-decoration: none;
+    background-image: url(../images/sort_desc.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 20px;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.sortascheaderstyle a
+{
+    text-decoration: none;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.sortdescheaderstyle a
+{
+    text-decoration: none;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.dashHead
+{
+    font-family: Calibri;
+    font-size: 10pt;
+    color: #0099FF;
+}
+.nodata
+{
+    font-family: Calibri;
+    font-size: 10pt;
+}
+.review
+{
+    margin-bottom: 5px;
+    font-family: Calibri;
+    font-size: 10pt;
+}
+/* header-photo */
+#header-photo
+{
+    position: relative;
+    clear: both;
+    margin: 0px;
+    height: 112px;
+    width: 718px;
+    border: 0px;
+    background: url(../images/eCL.jpg) no-repeat center center;
+}
+#header-photo h1#logo-text
+{
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    font: bold 10pt 'Trebuchet MS' , Arial, Sans-serif;
+    letter-spacing: -1px;
+    color: #fff;
+    text-transform: none;
+    text-decoration: none;
+    border: none; /* change the values of top and left to adjust the position of the logo*/
+    top: 25px;
+    left: 30px;
+}
+#header-photo h2#slogan
+{
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    font: bold 10pt 'Trebuchet MS' , Arial, Sans-serif;
+    text-transform: none;
+    color: #B6D1F8; /* change the values of top and left to adjust the position of the slogan*/
+    top: 80px;
+    left: 35px;
+}
+
+.header-delete-log {
+    height: 130px;
+    background-image: url("../images/eCL.jpg");
+    background-repeat: no-repeat;
+}
+.modal-dialog,
+.modal-content {
+    /* 90% of window height */
+    height: 90%;
+    width: 850px;
+}
+.modal-body {
+    /* 100% = dialog height, 120px = header + footer */
+    height: 80%;
+    max-height: calc(100% - 120px);
+}
+
+
+
