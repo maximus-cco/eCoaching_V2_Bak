@@ -69,7 +69,7 @@ Public Class HistoricalDashboardHandler
     Public Function GetCSRsBySite(ByVal site As String) As DataTable
         Dim allCSRs As DataTable = Me.GetAllCSRs()
         Dim query = From CSR In allCSRs.AsEnumerable()
-                    Where CSR.Field(Of String)("strCSRSite") = site
+                    Where (CSR.Field(Of String)("strCSRSite") = site Or CSR.Field(Of String)("strCSRSite") = "%")
                     Select CSR
         Return query.CopyToDataTable()
     End Function
@@ -80,7 +80,7 @@ Public Class HistoricalDashboardHandler
             allSupervisors = GetAllSupervisors()
         End If
         Dim query = From supervisor In allSupervisors.AsEnumerable()
-                    Where supervisor.Field(Of String)("strCSRSite") = site
+                    Where (supervisor.Field(Of String)("strCSRSite") = site Or supervisor.Field(Of String)("strCSRSite") = "%")
                     Select supervisor
         Return query.CopyToDataTable()
     End Function
@@ -91,7 +91,7 @@ Public Class HistoricalDashboardHandler
             allManagers = GetAllManagers()
         End If
         Dim query = From manager In allManagers.AsEnumerable()
-                    Where manager.Field(Of String)("strCSRSite") = site
+                    Where (manager.Field(Of String)("strCSRSite") = site Or manager.Field(Of String)("strCSRSite") = "%")
                     Select manager
         Return query.CopyToDataTable()
     End Function
