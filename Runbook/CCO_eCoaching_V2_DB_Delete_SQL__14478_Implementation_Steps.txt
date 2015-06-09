@@ -18,13 +18,18 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	05/04/2015
+--	Create Date:	06/08/2015
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 --  Initial Revision per SCR 14478.
 
 --	=====================================================================
+
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete] @strFormIDin nvarchar(50)
 AS
 
@@ -39,7 +44,7 @@ SET @intCoachID = (SELECT  [CoachingID] FROM  [EC].[Coaching_Log] WITH (NOLOCK)
 	 	
 IF 	 @intCoachID IS NOT NULL
 
-  SET @nvcSQL = 'SELECT  [CoachingID],
+  SET @nvcSQL = 'SELECT  [CoachingID]CoachingID,
 			[FormName],
 			[EmpLanID],
 			[EmpID],
@@ -49,7 +54,7 @@ IF 	 @intCoachID IS NOT NULL
 	 
 ELSE
 
-  SET @nvcSQL = 'SELECT  [WarningID],
+  SET @nvcSQL = 'SELECT  [WarningID]CoachingID,
 			[FormName],
 			[EmpLanID],
 			[EmpID],
@@ -64,10 +69,9 @@ EXEC (@nvcSQL)
 END --sp_SelectReviewFrom_Coaching_Log_For_Delete
 
 
+
+
 GO
 
 
-
-
---***************************************************************************************************************
 
