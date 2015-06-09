@@ -15,10 +15,11 @@ Public Class view2
     Dim filter1 As DropDownList
     Dim counter As Integer
 
-    Public Overrides Sub HandlePageDisplay()
+    Public Overrides Sub Initialize()
+        HandlePageDisplay()
     End Sub
 
-    Public Overrides Sub Initialize()
+    Public Overrides Sub HandlePageDisplay()
         Dim eclUser As User = Session("eclUser")
 
         '  sp_check_agentrole

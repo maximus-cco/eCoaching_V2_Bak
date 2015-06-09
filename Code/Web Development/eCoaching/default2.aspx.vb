@@ -68,6 +68,7 @@ Public Class default2
 
 
         Dim lan As String = TryCast(Session("eclUser"), User).LanID
+        Dim site = DropDownList1.SelectedItem.Text
 
         ' MsgBox(site)
 
@@ -1264,6 +1265,10 @@ Public Class default2
 
 
     Public Overrides Sub Initialize()
+        HandlePageDisplay()
+    End Sub
+
+    Public Overrides Sub HandlePageDisplay()
         Dim eclUser As User = Session("eclUser")
         Dim lan As String = eclUser.LanID
 
@@ -1288,10 +1293,6 @@ Public Class default2
             ' not authorized to submit an eCoaching Log
             Response.Redirect("error2.aspx")
         End If
-    End Sub
-
-    Public Overrides Sub HandlePageDisplay()
-        Dim lan As String = TryCast(Session("eclUser"), User).LanID
 
         '  Dim grid As GridView
         grid = GridView4
