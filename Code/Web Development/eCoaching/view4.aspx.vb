@@ -163,9 +163,20 @@
             Date2.Text = TodaysDate
         End If
 
-        GridView1.PageIndex = 0 ' reset to page 1
+        Reset()
         DisplayDashboard()
     End Sub
+
+    Private Sub Reset()
+        GridView1.DataSource = Nothing
+        GridView1.PageIndex = 0 ' reset to page 1
+        ViewState("SortDirection") = Nothing
+        ViewState("SortExpression") = Nothing
+        Session("sortDirection") = Nothing
+        Session("sortExpression") = Nothing
+        Session("totalCount") = Nothing
+    End Sub
+
 
     Protected Sub Dashboard_RowDataBound(sender As Object, e As GridViewRowEventArgs) Handles GridView1.RowDataBound, GridView1.RowDataBound
         If e.Row.RowType = DataControlRowType.Footer Then
@@ -174,23 +185,17 @@
     End Sub
 
     Protected Sub Dashboard_Sorting(sender As Object, e As GridViewSortEventArgs) Handles GridView1.Sorting
-        HttpContext.Current.Session("sortExpression") = e.SortExpression
-        HttpContext.Current.Session("sortDirection") = GetSortDirection(e.SortExpression)
+        Session("sortExpression") = e.SortExpression
+        Session("sortDirection") = GetSortDirection(e.SortExpression)
         DisplayDashboard()
     End Sub
 
     Protected Sub Dashboard_PageIndexChanging(sender As Object, e As GridViewPageEventArgs) Handles GridView1.PageIndexChanging
         GridView1.PageIndex = e.NewPageIndex
-        HttpContext.Current.Items("pageIndexChangingTo") = e.NewPageIndex
         DisplayDashboard()
     End Sub
 
     Private Sub DisplayDashboard()
-        LoadDashboard()
-        GridView1.Visible = True
-    End Sub
-
-    Private Sub LoadDashboard()
         GridView1.DataSource = GetDashboardDataSource()
         GridView1.DataBind()
     End Sub
@@ -216,8 +221,8 @@
         ods.SelectParameters.Add("strjobcode", Label6a.Text)
         ods.SelectParameters.Add("strValue", ddValue.SelectedValue)
 
-        ods.SelectParameters.Add("sortBy", HttpContext.Current.Session("sortExpression"))
-        ods.SelectParameters.Add("sortDirection", HttpContext.Current.Session("sortDirection"))
+        ods.SelectParameters.Add("sortBy", Session("sortExpression"))
+        ods.SelectParameters.Add("sortDirection", Session("sortDirection"))
 
         Return ods
     End Function

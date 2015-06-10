@@ -8,15 +8,15 @@ Public Class HistoricalDashboardDBAccess
     End Function
 
     Public Function GetAllCSRs() As DataTable
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted", CommandType.StoredProcedure, Nothing)
+        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All", CommandType.StoredProcedure, Nothing)
     End Function
 
     Public Function GetAllSupervisors()
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctSUPCompleted", CommandType.StoredProcedure, Nothing)
+        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All", CommandType.StoredProcedure, Nothing)
     End Function
 
     Public Function GetAllManagers() As DataTable
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctMGRCompleted", CommandType.StoredProcedure, Nothing)
+        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All", CommandType.StoredProcedure, Nothing)
     End Function
 
     Public Function GetAllSubmitters() As DataTable
@@ -38,6 +38,33 @@ Public Class HistoricalDashboardDBAccess
 
     Public Function GetAllValues() As DataTable
         Return DBUtility.ExecuteSelectCommand("EC.sp_Select_Values_For_Dashboard", CommandType.StoredProcedure, Nothing)
+    End Function
+
+    Public Function GetCSRsBySite(ByVal siteID As String)
+        Dim parameters() As SqlParameter = New SqlParameter() _
+        {
+            New SqlParameter("@strCSRSitein", siteID)
+        }
+
+        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site", CommandType.StoredProcedure, parameters)
+    End Function
+
+    Public Function GetSupervisorsBySite(ByVal siteID As String)
+        Dim parameters() As SqlParameter = New SqlParameter() _
+        {
+            New SqlParameter("@strCSRSitein", siteID)
+        }
+
+        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site", CommandType.StoredProcedure, parameters)
+    End Function
+
+    Public Function GetManagersBySite(ByVal siteID As String)
+        Dim parameters() As SqlParameter = New SqlParameter() _
+        {
+            New SqlParameter("@strCSRSitein", siteID)
+        }
+
+        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site", CommandType.StoredProcedure, parameters)
     End Function
 
     Public Function GetTotalRowCount(ByVal strSourcein As String,

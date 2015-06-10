@@ -66,34 +66,25 @@ Public Class HistoricalDashboardHandler
         Return HttpContext.Current.Cache("AllValues")
     End Function
 
-    Public Function GetCSRsBySite(ByVal site As String) As DataTable
-        Dim allCSRs As DataTable = Me.GetAllCSRs()
-        Dim query = From CSR In allCSRs.AsEnumerable()
-                    Where (CSR.Field(Of String)("strCSRSite") = site Or CSR.Field(Of String)("strCSRSite") = "%")
-                    Select CSR
-        Return query.CopyToDataTable()
+    Public Function GetCSRsBySite(ByVal siteID As String) As DataTable
+        If HttpContext.Current.Cache("CSRsBySite") Is Nothing Then
+            HttpContext.Current.Cache.Insert("CSRsBySite", historicalDashboardDBAccess.GetCSRsBySite(siteID), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+        End If
+        Return HttpContext.Current.Cache("CSRsBySite")
     End Function
 
-    Public Function GetSupervisorsBySite(ByVal site As String) As DataTable
-        Dim allSupervisors As DataTable = HttpContext.Current.Cache("AllSupervisors")
-        If allSupervisors Is Nothing Then
-            allSupervisors = GetAllSupervisors()
+    Public Function GetSupervisorsBySite(ByVal siteID As String) As DataTable
+        If HttpContext.Current.Cache("SupervisorsBySite") Is Nothing Then
+            HttpContext.Current.Cache.Insert("SupervisorsBySite", historicalDashboardDBAccess.GetSupervisorsBySite(siteID), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
         End If
-        Dim query = From supervisor In allSupervisors.AsEnumerable()
-                    Where (supervisor.Field(Of String)("strCSRSite") = site Or supervisor.Field(Of String)("strCSRSite") = "%")
-                    Select supervisor
-        Return query.CopyToDataTable()
+        Return HttpContext.Current.Cache("SupervisorsBySite")
     End Function
 
-    Public Function GetManagersBySite(ByVal site As String) As DataTable
-        Dim allManagers As DataTable = HttpContext.Current.Cache("AllManagers")
-        If allManagers Is Nothing Then
-            allManagers = GetAllManagers()
+    Public Function GetManagersBySite(ByVal siteID As String) As DataTable
+        If HttpContext.Current.Cache("ManagersBySite") Is Nothing Then
+            HttpContext.Current.Cache.Insert("ManagersBySite", historicalDashboardDBAccess.GetManagersBySite(siteID), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
         End If
-        Dim query = From manager In allManagers.AsEnumerable()
-                    Where (manager.Field(Of String)("strCSRSite") = site Or manager.Field(Of String)("strCSRSite") = "%")
-                    Select manager
-        Return query.CopyToDataTable()
+        Return HttpContext.Current.Cache("ManagersBySite")
     End Function
 
     ' custom paging 
@@ -113,13 +104,9 @@ Public Class HistoricalDashboardHandler
                             ) As Integer
 
 
-        ' user clicks APPLY to search (sortBy is null and pageIndexChangingTo not exist in current request)
-        ' OR somehow totalCount not exists in Session
-        ' need to get the total count from DB for this search
-        If (String.IsNullOrEmpty(sortBy) AndAlso
-            HttpContext.Current.Items("pageIndexChangingTo") Is Nothing) OrElse
-            HttpContext.Current.Session("totalCount") Is Nothing Then
-
+        ' user clicks APPLY to search
+        ' need to get the total count from DB
+        If HttpContext.Current.Session("totalCount") Is Nothing Then
             Dim totalCount As Integer = historicalDashboardDBAccess.GetTotalRowCount(strSourcein, strCSRSitein, strCSRin, strSUPin, strMGRin, strSubmitterin, strSDatein,
                                             strEDatein, strStatusin, strjobcode, strValue)
             HttpContext.Current.Session("totalCount") = totalCount

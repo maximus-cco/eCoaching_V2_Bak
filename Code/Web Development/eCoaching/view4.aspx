@@ -63,7 +63,7 @@
 
                 <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CellPadding="4"
                     EnableModelValidation="True" ForeColor="#333333" GridLines="Vertical" Width="90%"
-                    AllowSorting="True" AllowPaging="True" PageSize="50" ShowFooter="True" Visible="false"
+                    AllowSorting="True" AllowPaging="True" PageSize="50" ShowFooter="True" Visible="true"
                     EnableViewState="false">
                     <AlternatingRowStyle BackColor="White" />
                     <Columns>
