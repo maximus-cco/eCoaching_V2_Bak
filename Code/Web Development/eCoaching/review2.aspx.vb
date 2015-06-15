@@ -336,11 +336,14 @@ Public Class review2
 
     End Sub
 
-
-    Public Overrides Sub HandlePageDisplay()
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Not IsPostBack Then
+            HandlePageNonPostBack()
+        End If
     End Sub
 
-    Public Overrides Sub Initialize()
+    ' called on page non post back but after authentication is successful
+    Public Sub HandlePageNonPostBack()
         Dim eclUser As User = Session("eclUser")
         Dim lan As String = eclUser.LanID
         userTitle = eclUser.JobCode 'GetJobCode(Session("userInfo"))

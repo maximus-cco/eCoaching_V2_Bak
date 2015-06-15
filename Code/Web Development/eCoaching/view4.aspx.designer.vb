@@ -14,6 +14,78 @@ Option Explicit On
 Partial Public Class view4
 
     '''<summary>
+    '''WelcomeLabel control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents WelcomeLabel As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''hiddenTokenId control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hiddenTokenId As Global.System.Web.UI.HtmlControls.HtmlInputHidden
+
+    '''<summary>
+    '''ddCSRSelectedValueHidden control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddCSRSelectedValueHidden As Global.System.Web.UI.WebControls.HiddenField
+
+    '''<summary>
+    '''ddCSRSelectedTextHidden control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddCSRSelectedTextHidden As Global.System.Web.UI.WebControls.HiddenField
+
+    '''<summary>
+    '''ddSUPSelectedValueHidden control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddSUPSelectedValueHidden As Global.System.Web.UI.WebControls.HiddenField
+
+    '''<summary>
+    '''ddSUPSelectedTextHidden control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddSUPSelectedTextHidden As Global.System.Web.UI.WebControls.HiddenField
+
+    '''<summary>
+    '''ddMGRSelectedValueHidden control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddMGRSelectedValueHidden As Global.System.Web.UI.WebControls.HiddenField
+
+    '''<summary>
+    '''ddMGRSelectedTextHidden control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddMGRSelectedTextHidden As Global.System.Web.UI.WebControls.HiddenField
+
+    '''<summary>
     '''ToolkitScriptManager1 control.
     '''</summary>
     '''<remarks>
@@ -32,24 +104,6 @@ Partial Public Class view4
     Protected WithEvents UpdatePanel1 As Global.System.Web.UI.UpdatePanel
 
     '''<summary>
-    '''hiddenTokenId control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents hiddenTokenId As Global.System.Web.UI.HtmlControls.HtmlInputHidden
-
-    '''<summary>
-    '''Label26 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents Label26 As Global.System.Web.UI.WebControls.Label
-
-    '''<summary>
     '''UpdateProgress1 control.
     '''</summary>
     '''<remarks>
@@ -59,40 +113,13 @@ Partial Public Class view4
     Protected WithEvents UpdateProgress1 As Global.System.Web.UI.UpdateProgress
 
     '''<summary>
-    '''Label6a control.
+    '''FilterPanel control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents Label6a As Global.System.Web.UI.WebControls.Label
-
-    '''<summary>
-    '''Panel3 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents Panel3 As Global.System.Web.UI.WebControls.Panel
-
-    '''<summary>
-    '''Label22 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents Label22 As Global.System.Web.UI.WebControls.Label
-
-    '''<summary>
-    '''Label23 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents Label23 As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents FilterPanel As Global.System.Web.UI.WebControls.Panel
 
     '''<summary>
     '''ddSite control.
@@ -176,13 +203,13 @@ Partial Public Class view4
     Protected WithEvents Label6 As Global.System.Web.UI.WebControls.Label
 
     '''<summary>
-    '''Date1 control.
+    '''StartDate control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents Date1 As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents StartDate As Global.System.Web.UI.WebControls.TextBox
 
     '''<summary>
     '''cal1 control.
@@ -203,13 +230,13 @@ Partial Public Class view4
     Protected WithEvents CalendarExtender1 As Global.AjaxControlToolkit.CalendarExtender
 
     '''<summary>
-    '''Date2 control.
+    '''EndDate control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents Date2 As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents EndDate As Global.System.Web.UI.WebControls.TextBox
 
     '''<summary>
     '''cal2 control.
@@ -230,13 +257,40 @@ Partial Public Class view4
     Protected WithEvents CalendarExtender2 As Global.AjaxControlToolkit.CalendarExtender
 
     '''<summary>
-    '''Button1 control.
+    '''UpdatePanel2 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents Button1 As Global.System.Web.UI.WebControls.Button
+    Protected WithEvents UpdatePanel2 As Global.System.Web.UI.UpdatePanel
+
+    '''<summary>
+    '''UpdateProgress2 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents UpdateProgress2 As Global.System.Web.UI.UpdateProgress
+
+    '''<summary>
+    '''Panel2 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Panel2 As Global.System.Web.UI.WebControls.Panel
+
+    '''<summary>
+    '''ApplyButton control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ApplyButton As Global.System.Web.UI.WebControls.Button
 
     '''<summary>
     '''ExportToExcelButton control.

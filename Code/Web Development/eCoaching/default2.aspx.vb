@@ -12,6 +12,7 @@ Imports AjaxControlToolkit
 
 Public Class default2
     Inherits BasePage
+
     Private CoachingButtonList1 As RadioButtonList
     Private VerintButtonList1 As RadioButtonList
     Private BehaviorButtonList1 As RadioButtonList
@@ -1260,15 +1261,14 @@ Public Class default2
 
     End Sub
 
-
-
-
-
-    Public Overrides Sub Initialize()
-        HandlePageDisplay()
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Not IsPostBack Then
+            HandlePageNonPostBack()
+        End If
     End Sub
 
-    Public Overrides Sub HandlePageDisplay()
+    ' called on page non post back but after authentication is successful
+    Public Sub HandlePageNonPostBack()
         Dim eclUser As User = Session("eclUser")
         Dim lan As String = eclUser.LanID
 

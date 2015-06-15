@@ -6,16 +6,23 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="ContentPlaceHolder3" runat="server">
+    <br />
+    <asp:Label ID="WelcomeLabel" runat="server" CssClass="dashHead"></asp:Label>
+    <br />
+    <input type="hidden" id="hiddenTokenId" runat="server" class="hidden-token-class"/>
+    <asp:HiddenField ID="ddCSRSelectedValueHidden" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="ddCSRSelectedTextHidden" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="ddSUPSelectedValueHidden" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="ddSUPSelectedTextHidden" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="ddMGRSelectedValueHidden" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="ddMGRSelectedTextHidden" runat="server" ClientIDMode="Static" />
+
     <asp:ToolkitScriptManager runat="server" ID="ToolkitScriptManager1" AsyncPostBackTimeout="1200">
     </asp:ToolkitScriptManager>
+
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <input type="hidden" id="hiddenTokenId" runat="server" class="hidden-token-class"/>
-
-            <br />
-            <asp:Label ID="Label26" runat="server" CssClass="dashHead"></asp:Label>
-            <br />
-            <asp:UpdateProgress ID="UpdateProgress1" runat="server" DynamicLayout="true" DisplayAfter="0">
+            <asp:UpdateProgress ID="UpdateProgress1" runat="server" DynamicLayout="true" DisplayAfter="0" AssociatedUpdatePanelID="UpdatePanel1">
                 <ProgressTemplate>
                     <div style="text-align: center;">
                         loading...<br />
@@ -23,44 +30,44 @@
                 </ProgressTemplate>
             </asp:UpdateProgress>
             <br />
-            <asp:Label ID="Label6a" runat="server" Text='' Visible="false"></asp:Label>
-            <asp:Panel ID="Panel3" runat="server">
-                <asp:Label ID="Label22" runat="server" Text="eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label><br />
-                <asp:Label ID="Label23" runat="server" Text="Filter: " Visible="True"></asp:Label>
-                <asp:DropDownList ID="ddSite" AutoPostBack="true" runat="server" class="TextBox"
-                    Style="margin-right: 5px;">
-                </asp:DropDownList>
-                <asp:DropDownList ID="ddCSR" runat="server" class="TextBox" Style="margin-right: 5px;">
-                </asp:DropDownList>
-                <asp:DropDownList ID="ddSUP" runat="server" class="TextBox" Style="margin-right: 5px;">
-                </asp:DropDownList>
-                <asp:DropDownList ID="ddMGR" runat="server" class="TextBox" Style="margin-right: 5px;">
-                </asp:DropDownList>
-                <asp:DropDownList ID="ddSubmitter" runat="server" class="TextBox" Style="margin-right: 5px;">
-                </asp:DropDownList>
-                &nbsp;
-                <asp:DropDownList ID="ddStatus" runat="server" class="TextBox" Style="margin-right: 5px;">
-                </asp:DropDownList>
-                <asp:DropDownList ID="ddSource" runat="server" class="TextBox" Style="margin-right: 5px;">
-                </asp:DropDownList>
-                <asp:DropDownList ID="ddValue" runat="server" class="TextBox" Style="margin-right: 5px;">
-                </asp:DropDownList>
+            <%= DateTime.Now.ToString() %>
+            <br />
+            <asp:Panel ID="FilterPanel" runat="server">
+                <asp:DropDownList ID="ddSite" AutoPostBack="true" runat="server" class="TextBox" Style="margin-right: 5px;"></asp:DropDownList>
+                <asp:DropDownList ID="ddCSR" runat="server" class="TextBox" Style="margin-right: 5px;" EnableViewState="false"></asp:DropDownList>
+                <asp:DropDownList ID="ddSUP" runat="server" class="TextBox" Style="margin-right: 5px;" EnableViewState="false"></asp:DropDownList>
+                <asp:DropDownList ID="ddMGR" runat="server" class="TextBox" Style="margin-right: 5px;" EnableViewState="false"></asp:DropDownList>
+                <asp:DropDownList ID="ddSubmitter" runat="server" class="TextBox" Style="margin-right: 5px;"  EnableViewState="true"></asp:DropDownList>
+                <asp:DropDownList ID="ddStatus" runat="server" class="TextBox" Style="margin-right: 5px;"  EnableViewState="true"></asp:DropDownList>
+                <asp:DropDownList ID="ddSource" runat="server" class="TextBox" Style="margin-right: 5px;"  EnableViewState="true"></asp:DropDownList>
+                <asp:DropDownList ID="ddValue" runat="server" class="TextBox" Style="margin-right: 5px;"  EnableViewState="true"></asp:DropDownList>
                 <asp:Label ID="Label6" runat="server" Text="Submitted: "></asp:Label>
-                <asp:TextBox runat="server" class="TextBox" ID="Date1" Width="100px" ClientIDMode="Static" />&nbsp;
+                <asp:TextBox runat="server" class="TextBox" ID="StartDate" Width="100px" ClientIDMode="Static" />&nbsp;
                 <asp:Image runat="server" ID="cal1" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                <asp:CalendarExtender ID="CalendarExtender1" runat="server" Enabled="true" TargetControlID="Date1"
-                    PopupButtonID="cal1">
-                </asp:CalendarExtender>
-                <asp:TextBox runat="server" class="TextBox" ID="Date2" Width="100px" ClientIDMode="Static" />&nbsp;
+                <asp:CalendarExtender ID="CalendarExtender1" runat="server" Enabled="true" TargetControlID="StartDate" PopupButtonID="cal1"></asp:CalendarExtender>
+                <asp:TextBox runat="server" class="TextBox" ID="EndDate" Width="100px" ClientIDMode="Static" />&nbsp;
                 <asp:Image runat="server" ID="cal2" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                <asp:CalendarExtender ID="CalendarExtender2" runat="server" Enabled="true" TargetControlID="Date2"
-                    PopupButtonID="cal2">
-                </asp:CalendarExtender>
-                
-                <asp:Button ID="Button1" runat="server" Text="Apply" CssClass="formButton" />
-                <asp:Button ID="ExportToExcelButton" runat="server" CssClass="formButton" Text="Export to Excel" onClientClick="return validateDateRange();" />
+                <asp:CalendarExtender ID="CalendarExtender2" runat="server" Enabled="true" TargetControlID="EndDate" PopupButtonID="cal2"></asp:CalendarExtender>
+            </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
 
+    <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>            
+            <asp:UpdateProgress ID="UpdateProgress2" runat="server" DynamicLayout="true" DisplayAfter="0" AssociatedUpdatePanelID="UpdatePanel2">
+                <ProgressTemplate> 
+                    <div style="text-align: center;">
+                        searching...<br />
+                        <img src="images/ajax-loader5.gif" alt="progress animation gif" style="width: 180px" /></div>
+                </ProgressTemplate>
+            </asp:UpdateProgress>
+            <br />
+
+            <%= DateTime.Now.ToString() %>
+
+            <asp:Panel id="Panel2" runat="server">                 
+                <asp:Button ID="ApplyButton" runat="server" Text="Apply" CssClass="formButton" onClientClick="return setDropdownHiddenValues(); "></asp:Button>
+                <asp:Button ID="ExportToExcelButton" runat="server" CssClass="formButton" Text="Export to Excel" onClientClick="return validateDateRange();"></asp:Button>
                 <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CellPadding="4"
                     EnableModelValidation="True" ForeColor="#333333" GridLines="Vertical" Width="90%"
                     AllowSorting="True" AllowPaging="True" PageSize="50" ShowFooter="True" Visible="true"
@@ -168,7 +175,6 @@
                     <HeaderStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                     <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
                     <RowStyle BackColor="#EFF3FB" />
-
                     <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
                 </asp:GridView>
             </asp:Panel>
@@ -197,5 +203,17 @@
             </div>
         </div>
     </div>
+
+<script type="text/javascript">
+
+    function setDropdownHiddenValues() {
+        $('#ddCSRSelectedValueHidden').val($('#<%= ddCSR.ClientID %>').val());
+        $('#ddCSRSelectedTextHidden').val($('#<%= ddCSR.ClientID %> option:selected').text());
+        $('#ddSUPSelectedValueHidden').val($('#<%= ddSUP.ClientID%>').val());
+        $('#ddSUPSelectedTextHidden').val($('#<%= ddSUP.ClientID%> option:selected').text());
+        $('#ddMGRSelectedValueHidden').val($('#<%= ddMGR.ClientID%>').val());
+        $('#ddMGRSelectedTextHidden').val($('#<%= ddMGR.ClientID%> option:selected').text());
+    }
+</script>
 
 </asp:Content>

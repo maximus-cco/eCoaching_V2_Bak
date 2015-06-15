@@ -1,112 +1,79 @@
 ﻿Public Class view4
     Inherits BasePage
 
+    Private historicalDashoardHandler As HistoricalDashboardHandler
+
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim backDate As String = DateAdd("D", -30, TodaysDate).ToShortDateString()
 
-    Public Overrides Sub HandlePageDisplay()
+    Protected Sub Page_PreLoad(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.PreLoad
+        If historicalDashoardHandler Is Nothing Then
+            historicalDashoardHandler = New HistoricalDashboardHandler()
+        End If
+
+        ' ajax call
+        If ScriptManager.GetCurrent(Page).IsInAsyncPostBack() Then
+            ' viewstate for CSR, Supervisor, and Manger dropdownlists are disabled
+            ' need to re-load them
+            BindSiteRelatedDropdowns()
+        End If
     End Sub
 
-    Public Overrides Sub Initialize()
-        InitDropdowns()
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Not IsPostBack Then
+            HandlePageNonPostBack()
+        End If
+    End Sub
 
-        Date1.Text = backDate
-        Date2.Text = TodaysDate
-        Label6a.Text = TryCast(Session("eclUser"), User).JobCode
-        Select Case True 'Label6a.Text
-            Case (InStr(1, Label6a.Text, "40", 1) > 0), (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WSQE", 1) > 0), (InStr(1, Label6a.Text, "WACQ", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0), (InStr(1, Label6a.Text, "WHER", 1) > 0), (InStr(1, Label6a.Text, "WHHR", 1) > 0),
-                 (InStr(1, Label6a.Text, "WHRC", 1) > 0)
+    ' called on page non post back but after authentication is successful
+    Public Sub HandlePageNonPostBack()
+        StartDate.Text = backDate
+        EndDate.Text = TodaysDate
+        Dim jobCode As String = TryCast(Session("eclUser"), User).JobCode
+        Select Case True 'jobCode
+            Case (InStr(1, jobCode, "40", 1) > 0), (InStr(1, jobCode, "50", 1) > 0), (InStr(1, jobCode, "60", 1) > 0), (InStr(1, jobCode, "70", 1) > 0), (InStr(1, jobCode, "WISO", 1) > 0), (InStr(1, jobCode, "WSTE", 1) > 0), (InStr(1, jobCode, "WSQE", 1) > 0), (InStr(1, jobCode, "WACQ", 1) > 0), (InStr(1, jobCode, "WPPM", 1) > 0), (InStr(1, jobCode, "WPSM", 1) > 0), (InStr(1, jobCode, "WEEX", 1) > 0), (InStr(1, jobCode, "WISY", 1) > 0), (InStr(1, jobCode, "WPWL51", 1) > 0), (InStr(1, jobCode, "WHER", 1) > 0), (InStr(1, jobCode, "WHHR", 1) > 0),
+                 (InStr(1, jobCode, "WHRC", 1) > 0)
                 '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50", "WEEX"
-                Label26.Text = "Welcome to the Historical Reporting Dashboard"
+                WelcomeLabel.Text = "Welcome to the Historical Reporting Dashboard"
 
                 CalendarExtender1.EndDate = TodaysDate
                 CalendarExtender2.EndDate = TodaysDate
             Case Else
                 Response.Redirect("error.aspx")
         End Select
+
+        BindAllDropdownsToAllSites()
     End Sub
 
-    Private Sub InitDropdowns()
-        Dim historicalDashoardHandler As HistoricalDashboardHandler = New HistoricalDashboardHandler()
-
-        BindAllSitesDropdown(historicalDashoardHandler.GetAllSites())
-
-        BindCSRsDropdown(historicalDashoardHandler.GetAllCSRs())
-        BindSupervisorsDropdown(historicalDashoardHandler.GetAllSupervisors())
-        BindManagersDropdown(historicalDashoardHandler.GetAllManagers())
-
-        BindAllSubmittersDropdown(historicalDashoardHandler.GetAllSubmitters())
-        BindAllStatusesDropdown(historicalDashoardHandler.GetAllStatuses())
-        BindAllSourcesDropdown(historicalDashoardHandler.GetAllSources(TryCast(Session("eclUser"), User).LanID))
-        BindAllValuesDropdown(historicalDashoardHandler.GetAllValues())
+    ' Bind all dropdowns - Sites, CSRs, Supervisors, Managers, Submittiters, Statuses, Sources, Values
+    Private Sub BindAllDropdownsToAllSites()
+        BindDropdown(ddSite, "SiteName", "SiteID", historicalDashoardHandler.GetAllSites())
+        BindDropdown(ddCSR, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetAllCSRs())
+        BindDropdown(ddSUP, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetAllSupervisors())
+        BindDropdown(ddMGR, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetAllManagers())
+        BindDropdown(ddSubmitter, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetAllSubmitters())
+        BindDropdown(ddStatus, "StatusText", "StatusID", historicalDashoardHandler.GetAllStatuses())
+        BindDropdown(ddSource, "SourceText", "SourceID", historicalDashoardHandler.GetAllSources(TryCast(Session("eclUser"), User).LanID))
+        BindDropdown(ddValue, "ValueText", "ValueID", historicalDashoardHandler.GetAllValues())
     End Sub
 
-    Private Sub BindAllSitesDropdown(ByRef allSites As DataTable)
-        ddSite.DataSource = allSites
-        ddSite.DataTextField = "SiteText"
-        ddSite.DataValueField = "SiteValue"
-        ddSite.DataBind()
+    Private Sub BindDropdown(ByRef dropDown As DropDownList, ByVal text As String, ByVal value As String, ByRef list As IEnumerable(Of Object))
+        dropDown.DataTextField = text
+        dropDown.DataValueField = value
+        dropDown.DataSource = list
+        dropDown.DataBind()
     End Sub
 
-    Private Sub BindCSRsDropdown(ByRef CSRs As DataTable)
-        ddCSR.DataSource = CSRs
-        ddCSR.DataTextField = "CSRText"
-        ddCSR.DataValueField = "CSRValue"
-        ddCSR.DataBind()
-    End Sub
-
-    Private Sub BindSupervisorsDropdown(ByRef supervisors As DataTable)
-        ddSUP.DataSource = supervisors
-        ddSUP.DataTextField = "SUPText"
-        ddSUP.DataValueField = "SUPValue"
-        ddSUP.DataBind()
-    End Sub
-
-    Private Sub BindManagersDropdown(ByRef managers As DataTable)
-        ddMGR.DataSource = managers
-        ddMGR.DataTextField = "MGRText"
-        ddMGR.DataValueField = "MGRValue"
-        ddMGR.DataBind()
-    End Sub
-
-    Private Sub BindAllSubmittersDropdown(ByRef submitters As DataTable)
-        ddSubmitter.DataSource = submitters
-        ddSubmitter.DataTextField = "SubmitterText"
-        ddSubmitter.DataValueField = "SubmitterValue"
-        ddSubmitter.DataBind()
-    End Sub
-
-    Private Sub BindAllStatusesDropdown(ByRef statuses As DataTable)
-        ddStatus.DataSource = statuses
-        ddStatus.DataTextField = "StatusText"
-        ddStatus.DataValueField = "StatusValue"
-        ddStatus.DataBind()
-    End Sub
-
-    Private Sub BindAllSourcesDropdown(ByRef sources As DataTable)
-        ddSource.DataSource = sources
-        ddSource.DataTextField = "SourceText"
-        ddSource.DataValueField = "SourceValue"
-        ddSource.DataBind()
-    End Sub
-
-    Private Sub BindAllValuesDropdown(ByRef values As DataTable)
-        ddValue.DataSource = values
-        ddValue.DataTextField = "ValueText"
-        ddValue.DataValueField = "ValueValue"
-        ddValue.DataBind()
-    End Sub
-
-    Protected Sub ddSite1_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs) Handles ddSite.SelectedIndexChanged
-        Dim historicalDashboardHandler As HistoricalDashboardHandler = New HistoricalDashboardHandler()
-        If ddSite.SelectedValue = "%" Then
-            BindCSRsDropdown(historicalDashboardHandler.GetAllCSRs())
-            BindSupervisorsDropdown(historicalDashboardHandler.GetAllSupervisors())
-            BindManagersDropdown(historicalDashboardHandler.GetAllManagers())
+    Private Sub BindSiteRelatedDropdowns()
+        Dim siteID As String = ddSite.SelectedValue
+        If siteID = "%" Then
+            BindDropdown(ddCSR, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetAllCSRs())
+            BindDropdown(ddSUP, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetAllSupervisors())
+            BindDropdown(ddMGR, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetAllManagers())
         Else
-            BindCSRsDropdown(historicalDashboardHandler.GetCSRsBySite(ddSite.SelectedValue))
-            BindSupervisorsDropdown(historicalDashboardHandler.GetSupervisorsBySite(ddSite.SelectedValue))
-            BindManagersDropdown(historicalDashboardHandler.GetManagersBySite(ddSite.SelectedValue))
+            BindDropdown(ddCSR, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetCSRsBySite(siteID))
+            BindDropdown(ddSUP, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetSupervisorsBySite(siteID))
+            BindDropdown(ddMGR, "EmployeeName", "EmployeeID", historicalDashoardHandler.GetManagersBySite(siteID))
         End If
     End Sub
 
@@ -154,29 +121,29 @@
         Return sortDirection
     End Function
 
-    Protected Sub Button1_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button1.Click
-        If (Date1.Text = "") Then
-            Date1.Text = backDate '"01/01/2011"
+    Protected Sub ApplyButton_Click(sender As Object, e As EventArgs) Handles ApplyButton.Click
+        If (StartDate.Text = "") Then
+            StartDate.Text = backDate ' today's date minus 30 days
         End If
 
-        If (Date2.Text = "") Then
-            Date2.Text = TodaysDate
+        If (EndDate.Text = "") Then
+            EndDate.Text = TodaysDate
         End If
 
-        Reset()
+        ResetDashboard()
         DisplayDashboard()
     End Sub
 
-    Private Sub Reset()
+    Private Sub ResetDashboard()
         GridView1.DataSource = Nothing
-        GridView1.PageIndex = 0 ' reset to page 1
+        ' reset to page 1
+        GridView1.PageIndex = 0
         ViewState("SortDirection") = Nothing
         ViewState("SortExpression") = Nothing
         Session("sortDirection") = Nothing
         Session("sortExpression") = Nothing
         Session("totalCount") = Nothing
     End Sub
-
 
     Protected Sub Dashboard_RowDataBound(sender As Object, e As GridViewRowEventArgs) Handles GridView1.RowDataBound, GridView1.RowDataBound
         If e.Row.RowType = DataControlRowType.Footer Then
@@ -211,16 +178,15 @@
 
         ods.SelectParameters.Add("strSourcein", ddSource.SelectedValue)
         ods.SelectParameters.Add("strCSRSitein", ddSite.SelectedValue)
-        ods.SelectParameters.Add("strCSRin", ddCSR.SelectedValue)
-        ods.SelectParameters.Add("strSUPin", ddSUP.SelectedValue)
-        ods.SelectParameters.Add("strMGRin", ddMGR.SelectedValue)
+        ods.SelectParameters.Add("strCSRin", ddCSRSelectedValueHidden.Value)
+        ods.SelectParameters.Add("strSUPin", ddSUPSelectedValueHidden.Value)
+        ods.SelectParameters.Add("strMGRin", ddMGRSelectedValueHidden.Value)
         ods.SelectParameters.Add("strSubmitterin", ddSubmitter.SelectedValue)
-        ods.SelectParameters.Add("strSDatein", Date1.Text)
-        ods.SelectParameters.Add("strEDatein", Date2.Text)
+        ods.SelectParameters.Add("strSDatein", StartDate.Text)
+        ods.SelectParameters.Add("strEDatein", EndDate.Text)
         ods.SelectParameters.Add("strStatusin", ddStatus.SelectedValue)
-        ods.SelectParameters.Add("strjobcode", Label6a.Text)
+        ods.SelectParameters.Add("strjobcode", Session("eclUser").JobCode)
         ods.SelectParameters.Add("strValue", ddValue.SelectedValue)
-
         ods.SelectParameters.Add("sortBy", Session("sortExpression"))
         ods.SelectParameters.Add("sortDirection", Session("sortDirection"))
 
@@ -248,21 +214,20 @@
     Private Function GetHistoricalDashboardFilter() As HistoricalDashboardFilter
         Return New HistoricalDashboardFilter(
                                              ddSite.SelectedItem.Value,
-                                             ddCSR.SelectedItem.Value,
-                                             ddSUP.SelectedItem.Value,
-                                             ddMGR.SelectedItem.Value,
-                                             ddSubmitter.SelectedItem.Value,
+                                             ddCSRSelectedValueHidden.Value,
+                                             ddSUPSelectedValueHidden.Value,
+                                             ddMGRSelectedValueHidden.Value,
+                                             ddSubmitter.SelectedValue,
                                              ddSite.SelectedItem.Text,
-                                             ddCSR.SelectedItem.Text,
-                                             ddSUP.SelectedItem.Text,
-                                             ddMGR.SelectedItem.Text,
+                                             ddCSRSelectedTextHidden.Value,
+                                             ddSUPSelectedTextHidden.Value,
+                                             ddMGRSelectedTextHidden.Value,
                                              ddSubmitter.SelectedItem.Text,
-                                             ddStatus.SelectedItem.Value,
-                                             ddSource.SelectedItem.Value,
-                                             ddValue.SelectedItem.Value,
-                                             If(String.IsNullOrEmpty(Date1.Text), backDate, Date1.Text),
-                                             If(String.IsNullOrEmpty(Date2.Text), TodaysDate, Date2.Text)
+                                             ddStatus.SelectedValue,
+                                             ddSource.SelectedValue,
+                                             ddValue.SelectedValue,
+                                             If(String.IsNullOrEmpty(StartDate.Text), backDate, StartDate.Text),
+                                             If(String.IsNullOrEmpty(EndDate.Text), TodaysDate, EndDate.Text)
                                             )
     End Function
-
 End Class

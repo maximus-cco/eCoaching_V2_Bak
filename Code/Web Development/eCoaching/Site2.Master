@@ -15,6 +15,7 @@
 </head>
 <body id="ctest">
     <form id="Form1" runat="server">
+
         <div class="page" style="border: none; margin: 0px;">
             <div class="main">
                 <div>
@@ -41,16 +42,29 @@
             });
         });
 */
+/*
+        $('#ddCSR').change(function () {
+            // Get the value, and store it in a variable
+            var theValue = $(this).val();
+            // Set that value to the hidden input
+            $('#ddCSRHidden').val(theValue);
+            alert("!!" + $("#ddCSRHidden").val());
+        });
+*/
 
         function validateDateRange() {
-            var startDate = new Date(jQuery('#Date1').val());
-            var endDate = new Date(jQuery('#Date2').val());
+            var startDate = new Date(jQuery('#StartDate').val());
+            var endDate = new Date(jQuery('#EndDate').val());
             var days = (endDate - startDate) / 1000 / 60 / 60 / 24;
 
+
             if (days > 100) {
+                alert('invalid')
                 jQuery('#invalidDateRangeModal').modal('show');
                 return false;
             }
+
+            setDropdownHiddenValues();
 
             blockUI();
         };

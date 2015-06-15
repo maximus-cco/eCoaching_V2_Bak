@@ -231,9 +231,14 @@
       <DependentUpon>error4.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Models\Employee.vb" />
     <Compile Include="Models\HistoricalDashboard.vb" />
     <Compile Include="Models\HistoricalDashboardFilter.vb" />
+    <Compile Include="Models\Site.vb" />
+    <Compile Include="Models\Source.vb" />
+    <Compile Include="Models\Status.vb" />
     <Compile Include="Models\User.vb" />
+    <Compile Include="Models\Value.vb" />
     <Compile Include="next1.aspx.designer.vb">
       <DependentUpon>next1.aspx</DependentUpon>
     </Compile>

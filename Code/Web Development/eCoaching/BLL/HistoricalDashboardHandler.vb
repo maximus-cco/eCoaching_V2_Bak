@@ -4,87 +4,120 @@ Imports NPOI.XSSF.UserModel
 Public Class HistoricalDashboardHandler
 
     Private Const CacheExpireInMinutes As Integer = 480 ' 8 hours
+    Private Const AllSites As String = "AllSites"
+    Private Const AllSubmitters As String = "AllSubmitters"
+    Private Const AllStatuses As String = "AllStatuses"
+    Private Const AllSources As String = "AllSources"
+    Private Const AllValues As String = "AllValues"
+
     Private historicalDashboardDBAccess As HistoricalDashboardDBAccess
 
     Public Sub New()
         historicalDashboardDBAccess = New HistoricalDashboardDBAccess()
     End Sub
 
-    Public Function GetAllSites() As DataTable
-        If HttpContext.Current.Cache("AllSites") Is Nothing Then
-            HttpContext.Current.Cache.Insert("AllSites", historicalDashboardDBAccess.GetAllSites(), Nothing, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration)
+    Private Sub SaveObjectInCache(ByVal myKey As String, ByRef myObject As Object)
+        HttpContext.Current.Cache.Insert(myKey, myObject, Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    End Sub
+
+    Public Function GetAllSites() As IEnumerable(Of Site)
+        If HttpContext.Current.Cache(AllSites) Is Nothing Then
+            SaveObjectInCache(AllSites, historicalDashboardDBAccess.GetAllSites())
         End If
-        Return HttpContext.Current.Cache("AllSites")
+        Return HttpContext.Current.Cache(AllSites)
     End Function
 
-    Public Function GetAllCSRs() As DataTable
-        If HttpContext.Current.Cache("AllCSRs") Is Nothing Then
-            HttpContext.Current.Cache.Insert("AllCSRs", historicalDashboardDBAccess.GetAllCSRs(), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
-        End If
-        Return HttpContext.Current.Cache("AllCSRs")
+    Private Function GetSiteByID(ByVal siteID As String) As Site
+        Dim sites As List(Of Site) = GetAllSites()
+        Dim query = From site In sites.AsEnumerable()
+                                     Where site.SiteID = siteID
+                                     Select site
+        Return query(0)
     End Function
 
-    Public Function GetAllSupervisors() As DataTable
-        If HttpContext.Current.Cache("AllSupervisors") Is Nothing Then
-            HttpContext.Current.Cache.Insert("AllSupervisors", historicalDashboardDBAccess.GetAllSupervisors(), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    Public Function GetAllCSRs() As IEnumerable(Of Employee)
+        Dim siteFound As Site = GetSiteByID("%")
+        If siteFound.CSRs Is Nothing Then
+            ' not found in cache, get from db
+            siteFound.CSRs = historicalDashboardDBAccess.GetAllCSRs()
         End If
-        Return HttpContext.Current.Cache("AllSupervisors")
+        Return siteFound.CSRs
     End Function
 
-    Public Function GetAllManagers() As DataTable
-        If HttpContext.Current.Cache("AllManagers") Is Nothing Then
-            HttpContext.Current.Cache.Insert("AllManagers", historicalDashboardDBAccess.GetAllManagers(), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    Public Function GetCSRsBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+        'Return historicalDashboardDBAccess.GetCSRsBySite(siteID)
+        Dim siteFound As Site = GetSiteByID(siteID)
+        If siteFound.CSRs Is Nothing Then
+            ' not found in cache, get from db
+            siteFound.CSRs = historicalDashboardDBAccess.GetCSRsBySite(siteID)
         End If
-        Return HttpContext.Current.Cache("AllManagers")
+        Return siteFound.CSRs
     End Function
 
-    Public Function GetAllSubmitters() As DataTable
-        If HttpContext.Current.Cache("AllSubmitters") Is Nothing Then
-            HttpContext.Current.Cache.Insert("AllSubmitters", historicalDashboardDBAccess.GetAllSubmitters(), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    Public Function GetAllSupervisors() As IEnumerable(Of Employee)
+        Dim siteFound As Site = GetSiteByID("%")
+        If siteFound.Supervisors Is Nothing Then
+            ' not found in cache, get from db
+            siteFound.Supervisors = historicalDashboardDBAccess.GetAllSupervisors()
         End If
-        Return HttpContext.Current.Cache("AllSubmitters")
+        Return siteFound.Supervisors
     End Function
 
-    Public Function GetAllStatuses() As DataTable
-        If HttpContext.Current.Cache("AllStatuses") Is Nothing Then
-            HttpContext.Current.Cache.Insert("AllStatuses", historicalDashboardDBAccess.GetAllStatuses(), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    Public Function GetSupervisorsBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+        'Return historicalDashboardDBAccess.GetSupervisorsBySite(siteID)
+        Dim siteFound As Site = GetSiteByID(siteID)
+        If siteFound.Supervisors Is Nothing Then
+            ' not found in cache, get from db
+            siteFound.Supervisors = historicalDashboardDBAccess.GetSupervisorsBySite(siteID)
         End If
-        Return HttpContext.Current.Cache("AllStatuses")
+        Return siteFound.Supervisors
     End Function
 
-    Public Function GetAllSources(ByVal userLanID As String) As DataTable
-        If HttpContext.Current.Cache("AllSources") Is Nothing Then
-            HttpContext.Current.Cache.Insert("AllSources", historicalDashboardDBAccess.GetAllSources(userLanID), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    Public Function GetAllManagers() As IEnumerable(Of Employee)
+        Dim siteFound As Site = GetSiteByID("%")
+        If siteFound.Managers Is Nothing Then
+            ' not found in cache, get from db
+            siteFound.Managers = historicalDashboardDBAccess.GetAllManagers()
         End If
-        Return HttpContext.Current.Cache("AllSources")
+        Return siteFound.Managers
     End Function
 
-    Public Function GetAllValues() As DataTable
-        If HttpContext.Current.Cache("AllValues") Is Nothing Then
-            HttpContext.Current.Cache.Insert("AllValues", historicalDashboardDBAccess.GetAllValues(), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    Public Function GetManagersBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+        'Return historicalDashboardDBAccess.GetManagersBySite(siteID)
+        Dim siteFound As Site = GetSiteByID(siteID)
+        If siteFound.Managers Is Nothing Then
+            ' not found in cache, get from db
+            siteFound.Managers = historicalDashboardDBAccess.GetManagersBySite(siteID)
         End If
-        Return HttpContext.Current.Cache("AllValues")
+        Return siteFound.Managers
     End Function
 
-    Public Function GetCSRsBySite(ByVal siteID As String) As DataTable
-        If HttpContext.Current.Cache("CSRsBySite") Is Nothing Then
-            HttpContext.Current.Cache.Insert("CSRsBySite", historicalDashboardDBAccess.GetCSRsBySite(siteID), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    Public Function GetAllSubmitters() As IEnumerable(Of Employee)
+        If HttpContext.Current.Cache(AllSubmitters) Is Nothing Then
+            SaveObjectInCache(AllSubmitters, historicalDashboardDBAccess.GetAllSubmitters())
         End If
-        Return HttpContext.Current.Cache("CSRsBySite")
+        Return HttpContext.Current.Cache(AllSubmitters)
     End Function
 
-    Public Function GetSupervisorsBySite(ByVal siteID As String) As DataTable
-        If HttpContext.Current.Cache("SupervisorsBySite") Is Nothing Then
-            HttpContext.Current.Cache.Insert("SupervisorsBySite", historicalDashboardDBAccess.GetSupervisorsBySite(siteID), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    Public Function GetAllStatuses() As IEnumerable(Of Status)
+        If HttpContext.Current.Cache(AllStatuses) Is Nothing Then
+            SaveObjectInCache(AllStatuses, historicalDashboardDBAccess.GetAllStatuses())
         End If
-        Return HttpContext.Current.Cache("SupervisorsBySite")
+        Return HttpContext.Current.Cache(AllStatuses)
     End Function
 
-    Public Function GetManagersBySite(ByVal siteID As String) As DataTable
-        If HttpContext.Current.Cache("ManagersBySite") Is Nothing Then
-            HttpContext.Current.Cache.Insert("ManagersBySite", historicalDashboardDBAccess.GetManagersBySite(siteID), Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
+    Public Function GetAllSources(ByVal userLanID As String) As IEnumerable(Of Source)
+        If HttpContext.Current.Cache(AllSources) Is Nothing Then
+            SaveObjectInCache(AllSources, historicalDashboardDBAccess.GetAllSources(userLanID))
         End If
-        Return HttpContext.Current.Cache("ManagersBySite")
+        Return HttpContext.Current.Cache(AllSources)
+    End Function
+
+    Public Function GetAllValues() As IEnumerable(Of Value)
+        If HttpContext.Current.Cache(AllValues) Is Nothing Then
+            SaveObjectInCache(AllValues, historicalDashboardDBAccess.GetAllValues())
+        End If
+        Return HttpContext.Current.Cache(AllValues)
     End Function
 
     ' custom paging 
@@ -136,7 +169,7 @@ Public Class HistoricalDashboardHandler
                         ByVal strValue As String,
                         ByVal sortBy As String,
                         ByVal sortDirection As String
-                    ) As List(Of HistoricalDashboard)
+                    ) As IEnumerable(Of HistoricalDashboard)
 
         'startRowIndex starts from zero
         startRowIndex = startRowIndex + 1
@@ -184,6 +217,12 @@ Public Class HistoricalDashboardHandler
             rowNumber += 1
         Next
 
+        If (excelDataTable.Rows.Count = 0) Then
+            row = sheet.CreateRow(rowNumber)
+            cell = row.CreateCell(0)
+            cell.SetCellValue("No Record Found.")
+        End If
+
         Return workbook
     End Function
 
@@ -207,7 +246,8 @@ Public Class HistoricalDashboardHandler
 
         filters.Append("Site: " & site & ";  ")
         filters.Append("Employee: " & employeeName & ";  ")
-        filters.Append("Manager: " & supervisorName & ";  ")
+        filters.Append("Supervisor: " & supervisorName & ";  ")
+        filters.Append("Manager: " & managerName & ";  ")
         filters.Append("Submitter: " & submitter & ";  ")
         filters.Append("Status: " & status & ";  ")
         filters.Append("Source: " & source & ";  ")
@@ -263,4 +303,6 @@ Public Class HistoricalDashboardHandler
         sheet.SetColumnWidth(24, 22 * 256)     ' employee review auto date
         sheet.SetColumnWidth(25, 22 * 256)     ' employee comments
     End Sub
+
+
 End Class

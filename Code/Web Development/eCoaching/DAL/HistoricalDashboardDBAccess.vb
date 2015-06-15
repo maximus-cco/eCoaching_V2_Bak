@@ -3,68 +3,164 @@ Imports System.Data
 
 Public Class HistoricalDashboardDBAccess
 
-    Public Function GetAllSites() As DataTable
-        Return DBUtility.ExecuteSelectCommand("EC.sp_Select_Sites_For_Dashboard", CommandType.StoredProcedure, Nothing)
+    Public Function GetAllSites() As IEnumerable(Of Site)
+        Dim sites As IList(Of Site) = New List(Of Site)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_Select_Sites_For_Dashboard", CommandType.StoredProcedure, Nothing)
+            For Each row In dataTable.Rows
+                Dim site As Site = New Site()
+                site.SiteID = row("SiteValue")
+                site.SiteName = row("SiteText")
+                sites.Add(site)
+            Next
+        End Using
+
+        Return sites
     End Function
 
-    Public Function GetAllCSRs() As DataTable
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All", CommandType.StoredProcedure, Nothing)
+    Public Function GetAllCSRs() As IEnumerable(Of Employee)
+        Dim CSRs As IList(Of Employee) = New List(Of Employee)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All", CommandType.StoredProcedure, Nothing)
+            For Each row In dataTable.Rows
+                Dim csr As Employee = New Employee()
+                csr.EmployeeID = row("CSRValue")
+                csr.EmployeeName = row("CSRText")
+                CSRs.Add(csr)
+            Next
+        End Using
+        Return CSRs
     End Function
 
-    Public Function GetAllSupervisors()
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All", CommandType.StoredProcedure, Nothing)
+    Public Function GetAllSupervisors() As IEnumerable(Of Employee)
+        Dim supervisors As IList(Of Employee) = New List(Of Employee)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All", CommandType.StoredProcedure, Nothing)
+            For Each row In dataTable.Rows
+                Dim supervisor As Employee = New Employee()
+                supervisor.EmployeeID = row("SUPValue")
+                supervisor.EmployeeName = row("SUPText")
+                supervisors.Add(supervisor)
+            Next
+        End Using
+        Return supervisors
     End Function
 
-    Public Function GetAllManagers() As DataTable
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All", CommandType.StoredProcedure, Nothing)
+    Public Function GetAllManagers() As IEnumerable(Of Employee)
+        Dim managers As IList(Of Employee) = New List(Of Employee)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All", CommandType.StoredProcedure, Nothing)
+            For Each row In dataTable.Rows
+                Dim manager As Employee = New Employee()
+                manager.EmployeeID = row("MGRValue")
+                manager.EmployeeName = row("MGRText")
+                managers.Add(manager)
+            Next
+        End Using
+        Return managers
     End Function
 
-    Public Function GetAllSubmitters() As DataTable
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2", CommandType.StoredProcedure, Nothing)
+    Public Function GetAllSubmitters() As IEnumerable(Of Employee)
+        Dim submitters As IList(Of Employee) = New List(Of Employee)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2", CommandType.StoredProcedure, Nothing)
+            For Each row In dataTable.Rows
+                Dim submitter As Employee = New Employee()
+                submitter.EmployeeID = row("SubmitterValue")
+                submitter.EmployeeName = row("SubmitterText")
+                submitters.Add(submitter)
+            Next
+        End Using
+        Return submitters
     End Function
 
-    Public Function GetAllStatuses() As DataTable
-        Return DBUtility.ExecuteSelectCommand("EC.sp_Select_Statuses_For_Dashboard", CommandType.StoredProcedure, Nothing)
+    Public Function GetAllStatuses() As IEnumerable(Of Status)
+        Dim statuses As IList(Of Status) = New List(Of Status)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_Select_Statuses_For_Dashboard", CommandType.StoredProcedure, Nothing)
+            For Each row In dataTable.Rows
+                Dim status As Status = New Status()
+                status.StatusID = row("StatusValue")
+                status.StatusText = row("StatusText")
+                statuses.Add(status)
+            Next
+        End Using
+        Return statuses
     End Function
 
-    Public Function GetAllSources(ByVal userLanID As String) As DataTable
+    Public Function GetAllSources(ByVal userLanID As String) As IEnumerable(Of Source)
+        Dim sources As IList(Of Source) = New List(Of Source)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
             New SqlParameter("@strUserin", userLanID)
         }
-
-        Return DBUtility.ExecuteSelectCommand("EC.sp_Select_Sources_For_Dashboard", CommandType.StoredProcedure, parameters)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_Select_Sources_For_Dashboard", CommandType.StoredProcedure, parameters)
+            For Each row In dataTable.Rows
+                Dim source As Source = New Source()
+                source.SourceID = row("SourceValue")
+                source.SourceText = row("SourceText")
+                sources.Add(source)
+            Next
+        End Using
+        Return sources
     End Function
 
-    Public Function GetAllValues() As DataTable
-        Return DBUtility.ExecuteSelectCommand("EC.sp_Select_Values_For_Dashboard", CommandType.StoredProcedure, Nothing)
+    Public Function GetAllValues() As IEnumerable(Of Value)
+        Dim values As IList(Of Value) = New List(Of Value)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_Select_Values_For_Dashboard", CommandType.StoredProcedure, Nothing)
+            For Each row In dataTable.Rows
+                Dim value As Value = New Value()
+                value.ValueID = row("ValueValue")
+                value.ValueText = row("ValueText")
+                values.Add(value)
+            Next
+        End Using
+        Return values
     End Function
 
-    Public Function GetCSRsBySite(ByVal siteID As String)
+    Public Function GetCSRsBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+        Dim CSRs As IList(Of Employee) = New List(Of Employee)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
             New SqlParameter("@strCSRSitein", siteID)
         }
-
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site", CommandType.StoredProcedure, parameters)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site", CommandType.StoredProcedure, parameters)
+            For Each row In dataTable.Rows
+                Dim csr As Employee = New Employee()
+                csr.EmployeeID = row("CSRValue")
+                csr.EmployeeName = row("CSRText")
+                CSRs.Add(csr)
+            Next
+        End Using
+        Return CSRs
     End Function
 
-    Public Function GetSupervisorsBySite(ByVal siteID As String)
+    Public Function GetSupervisorsBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+        Dim supervisors As IList(Of Employee) = New List(Of Employee)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
             New SqlParameter("@strCSRSitein", siteID)
         }
-
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site", CommandType.StoredProcedure, parameters)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site", CommandType.StoredProcedure, parameters)
+            For Each row In dataTable.Rows
+                Dim supervisor As Employee = New Employee()
+                supervisor.EmployeeID = row("SUPValue")
+                supervisor.EmployeeName = row("SUPText")
+                supervisors.Add(supervisor)
+            Next
+        End Using
+        Return supervisors
     End Function
 
-    Public Function GetManagersBySite(ByVal siteID As String)
+    Public Function GetManagersBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+        Dim managers As IList(Of Employee) = New List(Of Employee)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
             New SqlParameter("@strCSRSitein", siteID)
         }
-
-        Return DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site", CommandType.StoredProcedure, parameters)
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site", CommandType.StoredProcedure, parameters)
+            For Each row In dataTable.Rows
+                Dim manager As Employee = New Employee()
+                manager.EmployeeID = row("MGRValue")
+                manager.EmployeeName = row("MGRText")
+                managers.Add(manager)
+            Next
+        End Using
+        Return managers
     End Function
 
     Public Function GetTotalRowCount(ByVal strSourcein As String,
@@ -115,9 +211,9 @@ Public Class HistoricalDashboardDBAccess
                         ByVal strValue As String,
                         ByVal sortBy As String,
                         ByVal sortASC As String
-                    ) As List(Of HistoricalDashboard)
+                    ) As IEnumerable(Of HistoricalDashboard)
 
-        Dim rows As List(Of HistoricalDashboard) = New List(Of HistoricalDashboard)
+        Dim rows As IList(Of HistoricalDashboard) = New List(Of HistoricalDashboard)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
             New SqlParameter("@strSourcein", strSourcein),

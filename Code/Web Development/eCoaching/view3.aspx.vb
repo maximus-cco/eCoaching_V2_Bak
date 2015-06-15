@@ -14,11 +14,11 @@ Public Class view3
     ' Dim arcAccess = "harvan;brunB1;mcgey9;lapkca;jackky;turnna;grifpa;catopa;clutpe;mitcre;paqusa;stonsa;garns1;boulsh;jacqst;mcphvi;klicwa;findan;timmap;lemuce;stewci;ryanel;hatcki;rodrl1;morglo;thommi;esqumo;howare;dupesu;horrta;waleti;medlwa;mccoal;jakuas;slavda;orties;rodrgr;acosir;sumnlo;woodma;pezzni;amayro;medrru;pachsa;doolst;martt2;jonetr;Baezad;Gonzar;velado;castd1;barnge;pittgl;rosije;marmli;hernlu;favelu;castm4;bolina;demesa;delgba;navave;garcvi;nevavi"
     '(InStr(1, LCase(historyAccess), lan, 1) = 0)
 
-    Public Overrides Sub Initialize()
-        HandlePageDisplay()
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        HandlePageRequest()
     End Sub
 
-    Public Overrides Sub HandlePageDisplay()
+    Public Sub HandlePageRequest()
         Dim eclUser As User = Session("eclUser")
 
         ' sp_check_AgentRole (GridView5)
