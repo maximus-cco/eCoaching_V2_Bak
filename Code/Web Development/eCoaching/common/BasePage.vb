@@ -8,6 +8,14 @@ Public MustInherit Class BasePage
         If Not IsPostBack AndAlso Not AuthenticateUser() Then
             Response.Redirect("error.aspx")
         End If
+
+        ' session times out, reload user to session
+        If Session("eclUser") Is Nothing Then
+            Dim userHandler = New UserHandler()
+            Dim eclUser As User = userHandler.GetUser(GetLanId())
+            Session("eclUser") = eclUser
+        End If
+
     End Sub
 
     Private Function AuthenticateUser() As Boolean
