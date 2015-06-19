@@ -13,9 +13,16 @@
 
         ' ajax call
         If ScriptManager.GetCurrent(Page).IsInAsyncPostBack() Then
-            ' viewstate for CSR, Supervisor, and Manger dropdownlists are disabled
-            ' need to re-load them
-            BindSiteRelatedDropdowns()
+            Dim eventTarget As String = Page.Request.Params.Get("__EVENTTARGET")
+            If (Not String.IsNullOrEmpty(eventTarget)) Then
+                Dim ctrl As Control = Page.FindControl(eventTarget)
+                ' ajax call fired by the site dropdownlist
+                If ctrl.ID = "ddSite" Then
+                    ' viewstate for CSR, Supervisor, and Manger dropdownlists are disabled
+                    ' need to re-load them
+                    BindSiteRelatedDropdowns()
+                End If ' end of ddSite
+            End If ' end of eventTarget not null
         End If
     End Sub
 

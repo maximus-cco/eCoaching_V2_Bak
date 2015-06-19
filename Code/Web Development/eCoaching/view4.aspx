@@ -1,5 +1,5 @@
 ﻿<%@ Page Title="" Language="vb" AutoEventWireup="false" MasterPageFile="~/Site2.Master"
-    CodeBehind="view4.aspx.vb" Inherits="eCoachingFixed.view4" %>
+    CodeBehind="view4.aspx.vb" Inherits="eCoachingFixed.view4" EnableEventValidation="false"%>
 
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
 <%@ OutputCache Location="None" VaryByParam="None" %>
@@ -7,7 +7,7 @@
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="ContentPlaceHolder3" runat="server">
     <br />
-    <asp:Label ID="WelcomeLabel" runat="server" CssClass="dashHead"></asp:Label>
+    <asp:Label ID="WelcomeLabel" runat="server" CssClass="dashHead" EnableViewState="false"></asp:Label>
     <br />
     <input type="hidden" id="hiddenTokenId" runat="server" class="hidden-token-class"/>
     <asp:HiddenField ID="ddCSRSelectedValueHidden" runat="server" ClientIDMode="Static" />
@@ -37,10 +37,10 @@
                 <asp:DropDownList ID="ddCSR" runat="server" class="TextBox" Style="margin-right: 5px;" EnableViewState="false"></asp:DropDownList>
                 <asp:DropDownList ID="ddSUP" runat="server" class="TextBox" Style="margin-right: 5px;" EnableViewState="false"></asp:DropDownList>
                 <asp:DropDownList ID="ddMGR" runat="server" class="TextBox" Style="margin-right: 5px;" EnableViewState="false"></asp:DropDownList>
-                <asp:DropDownList ID="ddSubmitter" runat="server" class="TextBox" Style="margin-right: 5px;"  EnableViewState="true"></asp:DropDownList>
-                <asp:DropDownList ID="ddStatus" runat="server" class="TextBox" Style="margin-right: 5px;"  EnableViewState="true"></asp:DropDownList>
-                <asp:DropDownList ID="ddSource" runat="server" class="TextBox" Style="margin-right: 5px;"  EnableViewState="true"></asp:DropDownList>
-                <asp:DropDownList ID="ddValue" runat="server" class="TextBox" Style="margin-right: 5px;"  EnableViewState="true"></asp:DropDownList>
+                <asp:DropDownList ID="ddSubmitter" runat="server" class="TextBox" Style="margin-right: 5px;"></asp:DropDownList>
+                <asp:DropDownList ID="ddStatus" runat="server" class="TextBox" Style="margin-right: 5px;"></asp:DropDownList>
+                <asp:DropDownList ID="ddSource" runat="server" class="TextBox" Style="margin-right: 5px;"></asp:DropDownList>
+                <asp:DropDownList ID="ddValue" runat="server" class="TextBox" Style="margin-right: 5px;"></asp:DropDownList>
                 <asp:Label ID="Label6" runat="server" Text="Submitted: "></asp:Label>
                 <asp:TextBox runat="server" class="TextBox" ID="StartDate" Width="100px" ClientIDMode="Static" />&nbsp;
                 <asp:Image runat="server" ID="cal1" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
@@ -128,7 +128,7 @@
 
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="ReasonList" runat="server" DataSource='<%# Eval("CoachingReasons") %>' EnableViewState="false">
+                                <asp:DataList ID="ReasonList" runat="server" DataSource='<%# Eval("CoachingReasons") %>'>
                                     <ItemTemplate>
                                         <asp:Label ID="Label8" runat="server" Text='<%# Container.DataItem %>' />
                                     </ItemTemplate>
@@ -138,7 +138,7 @@
 
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="SubReasonList" runat="server" DataSource='<%# Eval("CoachingSubReasons") %>' EnableViewState="false">
+                                <asp:DataList ID="SubReasonList" runat="server" DataSource='<%# Eval("CoachingSubReasons") %>'>
                                     <ItemTemplate>
                                         <asp:Label ID="Label8" runat="server" Text='<%# Container.DataItem %>' />
                                     </ItemTemplate>
@@ -148,7 +148,7 @@
 
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="ValueList" runat="server" DataSource='<%# Eval("Values") %>' EnableViewState="false">
+                                <asp:DataList ID="ValueList" runat="server" DataSource='<%# Eval("Values") %>'>
                                     <ItemTemplate>
                                         <asp:Label ID="Label8" runat="server" Text='<%# Container.DataItem %>' />
                                     </ItemTemplate>
