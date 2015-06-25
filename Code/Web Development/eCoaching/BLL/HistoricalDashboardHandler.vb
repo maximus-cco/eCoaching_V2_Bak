@@ -107,10 +107,11 @@ Public Class HistoricalDashboardHandler
     End Function
 
     Public Function GetAllSources(ByVal userLanID As String) As IEnumerable(Of Source)
-        If HttpContext.Current.Cache(AllSources) Is Nothing Then
-            SaveObjectInCache(AllSources, historicalDashboardDBAccess.GetAllSources(userLanID))
+        ' Sources are jobcode related, need to store in Session instead of Cache
+        If HttpContext.Current.Session(AllSources) Is Nothing Then
+            HttpContext.Current.Session(AllSources) = historicalDashboardDBAccess.GetAllSources(userLanID)
         End If
-        Return HttpContext.Current.Cache(AllSources)
+        Return HttpContext.Current.Session(AllSources)
     End Function
 
     Public Function GetAllValues() As IEnumerable(Of Value)
