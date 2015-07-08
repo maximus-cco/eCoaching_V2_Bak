@@ -6,7 +6,7 @@
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim backDate As String = DateAdd("D", -30, TodaysDate).ToShortDateString()
 
-    Protected Sub Page_PreLoad(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.PreLoad
+    Protected Sub Page_PreLoad(sender As Object, e As System.EventArgs) Handles Me.PreLoad
         If historicalDashoardHandler Is Nothing Then
             historicalDashoardHandler = New HistoricalDashboardHandler()
         End If
@@ -26,7 +26,7 @@
         End If
     End Sub
 
-    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+    Protected Sub Page_Load(sender As Object, e As System.EventArgs) Handles Me.Load
         If Not IsPostBack Then
             HandlePageNonPostBack()
         End If
@@ -64,7 +64,7 @@
         BindDropdown(ddValue, "ValueText", "ValueID", historicalDashoardHandler.GetAllValues())
     End Sub
 
-    Private Sub BindDropdown(ByRef dropDown As DropDownList, ByVal text As String, ByVal value As String, ByRef list As IEnumerable(Of Object))
+    Private Sub BindDropdown(dropDown As DropDownList, text As String, value As String, list As IEnumerable(Of Object))
         dropDown.DataTextField = text
         dropDown.DataValueField = value
         dropDown.DataSource = list
@@ -84,7 +84,7 @@
         End If
     End Sub
 
-    Protected Function newDisplay(ByVal indicator As DateTime) As String
+    Protected Function newDisplay(indicator As DateTime) As String
         If (DateDiff("D", indicator, TodaysDate) < 1) Then
             Return ("&nbsp;&nbsp;New!&nbsp;")
         Else
@@ -92,7 +92,7 @@
         End If
     End Function
 
-    Protected Function newDisplay2(ByVal indicator As DateTime) As String
+    Protected Function newDisplay2(indicator As DateTime) As String
         If (DateDiff("D", indicator, TodaysDate) < 1) Then
             Return ("True")
         Else
@@ -100,7 +100,7 @@
         End If
     End Function
 
-    Protected Function oLink(ByVal indicator As String) As String
+    Protected Function oLink(indicator As String) As String
         If (indicator = "Warning") Then
             Return ("review3.aspx?id={0}")
         Else
@@ -108,7 +108,7 @@
         End If
     End Function
 
-    Private Function GetSortDirection(ByVal column As String) As String
+    Private Function GetSortDirection(column As String) As String
         Dim sortDirection = "ASC"
         Dim sortExpression = TryCast(ViewState("SortExpression"), String)
 

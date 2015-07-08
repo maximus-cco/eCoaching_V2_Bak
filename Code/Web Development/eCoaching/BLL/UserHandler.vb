@@ -7,7 +7,7 @@
 
     ' Returns User Object if authentication is successful
     ' Otherwise returns Nothing
-    Function AuthenticateUser(ByVal lanID As String) As User
+    Function AuthenticateUser(lanID As String) As User
         Dim user As User = GetUser(lanID)
         If Not IsInvalidUser(user) Then
             Return user
@@ -16,11 +16,11 @@
         Return Nothing
     End Function
 
-    Function GetUser(ByVal lanID As String) As User
+    Function GetUser(lanID As String) As User
         Return userDBAccess.GetUser(lanID)
     End Function
 
-    Function IsInvalidUser(ByVal user As User) As Boolean
+    Function IsInvalidUser(user As User) As Boolean
         Return (user Is Nothing OrElse String.IsNullOrEmpty(user.Name) OrElse LCase(user.Name).Contains("unkonwn"))
     End Function
 End Class

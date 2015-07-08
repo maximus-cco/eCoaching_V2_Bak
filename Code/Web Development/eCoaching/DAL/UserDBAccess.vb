@@ -1,7 +1,7 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class UserDBAccess
-    Public Function GetUser(ByVal lanID As String) As User
+    Public Function GetUser(lanID As String) As User
         Dim user As User = Nothing
         Dim parameters() As SqlParameter = New SqlParameter() _
         {

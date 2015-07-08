@@ -5,7 +5,7 @@ Public Class DBUtility
 
     Shared ReadOnly connectionString As String = WebConfigurationManager.ConnectionStrings("CoachingConnectionString").ConnectionString
 
-    Public Shared Function ExecuteSelectCommand(ByVal commandName As String, ByVal commandType As String, ByVal commandParameters As SqlParameter()) As DataTable
+    Public Shared Function ExecuteSelectCommand(commandName As String, commandType As String, commandParameters As SqlParameter()) As DataTable
         Dim dataTable As DataTable = New DataTable()
 
         Using connection As New SqlConnection(connectionString)
@@ -24,7 +24,7 @@ Public Class DBUtility
         Return dataTable
     End Function
 
-    Public Shared Function ExecuteScalar(ByVal commandName As String, ByVal commandType As String, ByVal commandParameters As SqlParameter()) As Object
+    Public Shared Function ExecuteScalar(commandName As String, commandType As String, commandParameters As SqlParameter()) As Object
         Dim retVal As Object = Nothing
 
         Using connection As New SqlConnection(connectionString)

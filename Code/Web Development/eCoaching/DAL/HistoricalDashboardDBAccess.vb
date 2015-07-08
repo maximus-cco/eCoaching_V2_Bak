@@ -82,7 +82,7 @@ Public Class HistoricalDashboardDBAccess
         Return statuses
     End Function
 
-    Public Function GetAllSources(ByVal userLanID As String) As IEnumerable(Of Source)
+    Public Function GetAllSources(userLanID As String) As IEnumerable(Of Source)
         Dim sources As IList(Of Source) = New List(Of Source)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
@@ -112,7 +112,7 @@ Public Class HistoricalDashboardDBAccess
         Return values
     End Function
 
-    Public Function GetCSRsBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+    Public Function GetCSRsBySite(siteID As String) As IEnumerable(Of Employee)
         Dim CSRs As IList(Of Employee) = New List(Of Employee)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
@@ -129,7 +129,7 @@ Public Class HistoricalDashboardDBAccess
         Return CSRs
     End Function
 
-    Public Function GetSupervisorsBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+    Public Function GetSupervisorsBySite(siteID As String) As IEnumerable(Of Employee)
         Dim supervisors As IList(Of Employee) = New List(Of Employee)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
@@ -146,7 +146,7 @@ Public Class HistoricalDashboardDBAccess
         Return supervisors
     End Function
 
-    Public Function GetManagersBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+    Public Function GetManagersBySite(siteID As String) As IEnumerable(Of Employee)
         Dim managers As IList(Of Employee) = New List(Of Employee)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
@@ -163,17 +163,17 @@ Public Class HistoricalDashboardDBAccess
         Return managers
     End Function
 
-    Public Function GetTotalRowCount(ByVal strSourcein As String,
-                                ByVal strCSRSitein As String,
-                                ByVal strCSRin As String,
-                                ByVal strSUPin As String,
-                                ByVal strMGRin As String,
-                                ByVal strSubmitterin As String,
-                                ByVal strSDatein As String,
-                                ByVal strEDatein As String,
-                                ByVal strStatusin As String,
-                                ByVal strjobcode As String,
-                                ByVal strValue As String
+    Public Function GetTotalRowCount(strSourcein As String,
+                                strCSRSitein As String,
+                                strCSRin As String,
+                                strSUPin As String,
+                                strMGRin As String,
+                                strSubmitterin As String,
+                                strSDatein As String,
+                                strEDatein As String,
+                                strStatusin As String,
+                                strjobcode As String,
+                                strValue As String
                             ) As Integer
 
         Dim count As Integer = 0
@@ -196,21 +196,21 @@ Public Class HistoricalDashboardDBAccess
         Return count
     End Function
 
-    Public Function GetRows(ByVal startRowIndex As Integer,
-                        ByVal pageSize As Integer,
-                        ByVal strSourcein As String,
-                        ByVal strCSRSitein As String,
-                        ByVal strCSRin As String,
-                        ByVal strSUPin As String,
-                        ByVal strMGRin As String,
-                        ByVal strSubmitterin As String,
-                        ByVal strSDatein As String,
-                        ByVal strEDatein As String,
-                        ByVal strStatusin As String,
-                        ByVal strjobcode As String,
-                        ByVal strValue As String,
-                        ByVal sortBy As String,
-                        ByVal sortASC As String
+    Public Function GetRows(startRowIndex As Integer,
+                        pageSize As Integer,
+                        strSourcein As String,
+                        strCSRSitein As String,
+                        strCSRin As String,
+                        strSUPin As String,
+                        strMGRin As String,
+                        strSubmitterin As String,
+                        strSDatein As String,
+                        strEDatein As String,
+                        strStatusin As String,
+                        strjobcode As String,
+                        strValue As String,
+                        sortBy As String,
+                        sortASC As String
                     ) As IEnumerable(Of HistoricalDashboard)
 
         Dim rows As IList(Of HistoricalDashboard) = New List(Of HistoricalDashboard)
@@ -259,7 +259,7 @@ Public Class HistoricalDashboardDBAccess
         Return rows
     End Function
 
-    Public Function GetExcelDataTable(ByRef filter As HistoricalDashboardFilter) As DataTable
+    Public Function GetExcelDataTable(filter As HistoricalDashboardFilter) As DataTable
         Dim parameters() As SqlParameter = New SqlParameter() {
             New SqlParameter("@strSourcein", filter.Source),
             New SqlParameter("@strCSRSitein", filter.SiteID),

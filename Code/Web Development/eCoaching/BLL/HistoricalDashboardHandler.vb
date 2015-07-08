@@ -16,7 +16,7 @@ Public Class HistoricalDashboardHandler
         historicalDashboardDBAccess = New HistoricalDashboardDBAccess()
     End Sub
 
-    Private Sub SaveObjectInCache(ByVal myKey As String, ByRef myObject As Object)
+    Private Sub SaveObjectInCache(myKey As String, myObject As Object)
         HttpContext.Current.Cache.Insert(myKey, myObject, Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)
     End Sub
 
@@ -27,7 +27,7 @@ Public Class HistoricalDashboardHandler
         Return HttpContext.Current.Cache(AllSites)
     End Function
 
-    Private Function GetSiteByID(ByVal siteID As String) As Site
+    Private Function GetSiteByID(siteID As String) As Site
         Dim sites As List(Of Site) = GetAllSites()
         Dim query = From site In sites.AsEnumerable()
                                      Where site.SiteID = siteID
@@ -44,7 +44,7 @@ Public Class HistoricalDashboardHandler
         Return siteFound.CSRs
     End Function
 
-    Public Function GetCSRsBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+    Public Function GetCSRsBySite(siteID As String) As IEnumerable(Of Employee)
         'Return historicalDashboardDBAccess.GetCSRsBySite(siteID)
         Dim siteFound As Site = GetSiteByID(siteID)
         If siteFound.CSRs Is Nothing Then
@@ -63,7 +63,7 @@ Public Class HistoricalDashboardHandler
         Return siteFound.Supervisors
     End Function
 
-    Public Function GetSupervisorsBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+    Public Function GetSupervisorsBySite(siteID As String) As IEnumerable(Of Employee)
         'Return historicalDashboardDBAccess.GetSupervisorsBySite(siteID)
         Dim siteFound As Site = GetSiteByID(siteID)
         If siteFound.Supervisors Is Nothing Then
@@ -82,7 +82,7 @@ Public Class HistoricalDashboardHandler
         Return siteFound.Managers
     End Function
 
-    Public Function GetManagersBySite(ByVal siteID As String) As IEnumerable(Of Employee)
+    Public Function GetManagersBySite(siteID As String) As IEnumerable(Of Employee)
         'Return historicalDashboardDBAccess.GetManagersBySite(siteID)
         Dim siteFound As Site = GetSiteByID(siteID)
         If siteFound.Managers Is Nothing Then
@@ -106,7 +106,7 @@ Public Class HistoricalDashboardHandler
         Return HttpContext.Current.Cache(AllStatuses)
     End Function
 
-    Public Function GetAllSources(ByVal userLanID As String) As IEnumerable(Of Source)
+    Public Function GetAllSources(userLanID As String) As IEnumerable(Of Source)
         ' Sources are jobcode related, need to store in Session instead of Cache
         If HttpContext.Current.Session(AllSources) Is Nothing Then
             HttpContext.Current.Session(AllSources) = historicalDashboardDBAccess.GetAllSources(userLanID)
@@ -122,19 +122,19 @@ Public Class HistoricalDashboardHandler
     End Function
 
     ' custom paging 
-    Public Function GetTotalRowCount(ByVal strSourcein As String,
-                                ByVal strCSRSitein As String,
-                                ByVal strCSRin As String,
-                                ByVal strSUPin As String,
-                                ByVal strMGRin As String,
-                                ByVal strSubmitterin As String,
-                                ByVal strSDatein As String,
-                                ByVal strEDatein As String,
-                                ByVal strStatusin As String,
-                                ByVal strjobcode As String,
-                                ByVal strValue As String,
-                                ByVal sortBy As String,
-                                ByVal sortDirection As String
+    Public Function GetTotalRowCount(strSourcein As String,
+                                strCSRSitein As String,
+                                strCSRin As String,
+                                strSUPin As String,
+                                strMGRin As String,
+                                strSubmitterin As String,
+                                strSDatein As String,
+                                strEDatein As String,
+                                strStatusin As String,
+                                strjobcode As String,
+                                strValue As String,
+                                sortBy As String,
+                                sortDirection As String
                             ) As Integer
 
 
@@ -155,21 +155,21 @@ Public Class HistoricalDashboardHandler
     End Function
 
     ' custom paging
-    Public Function GetRows(ByVal startRowIndex As Integer,
-                        ByVal pageSize As Integer,
-                        ByVal strSourcein As String,
-                        ByVal strCSRSitein As String,
-                        ByVal strCSRin As String,
-                        ByVal strSUPin As String,
-                        ByVal strMGRin As String,
-                        ByVal strSubmitterin As String,
-                        ByVal strSDatein As String,
-                        ByVal strEDatein As String,
-                        ByVal strStatusin As String,
-                        ByVal strjobcode As String,
-                        ByVal strValue As String,
-                        ByVal sortBy As String,
-                        ByVal sortDirection As String
+    Public Function GetRows(startRowIndex As Integer,
+                        pageSize As Integer,
+                        strSourcein As String,
+                        strCSRSitein As String,
+                        strCSRin As String,
+                        strSUPin As String,
+                        strMGRin As String,
+                        strSubmitterin As String,
+                        strSDatein As String,
+                        strEDatein As String,
+                        strStatusin As String,
+                        strjobcode As String,
+                        strValue As String,
+                        sortBy As String,
+                        sortDirection As String
                     ) As IEnumerable(Of HistoricalDashboard)
 
         'startRowIndex starts from zero
@@ -185,7 +185,7 @@ Public Class HistoricalDashboardHandler
                     strEDatein, strStatusin, strjobcode, strValue, sortBy, sortASC)
     End Function
 
-    Public Function CreateExcel(ByRef filter As HistoricalDashboardFilter) As IWorkbook
+    Public Function CreateExcel(filter As HistoricalDashboardFilter) As IWorkbook
         Dim workbook As IWorkbook = New XSSFWorkbook()
         Dim sheet As ISheet = workbook.CreateSheet("Sheet1")
         Dim fileName As String = GetFileName()
@@ -232,7 +232,7 @@ Public Class HistoricalDashboardHandler
         Return "HistoricalLogs_" & fileDateTime & ".xlsx"
     End Function
 
-    Private Sub CreateFiltersRow(ByRef sheet As ISheet, ByRef filter As HistoricalDashboardFilter)
+    Private Sub CreateFiltersRow(sheet As ISheet, filter As HistoricalDashboardFilter)
         Dim row As IRow = sheet.CreateRow(0)
         Dim cell As ICell = row.CreateCell(0)
         Dim filters As New StringBuilder
@@ -258,7 +258,7 @@ Public Class HistoricalDashboardHandler
         cell.SetCellValue(filters.ToString())
     End Sub
 
-    Private Sub CreateHeaderRow(ByRef dataTable As DataTable, ByRef workbook As IWorkbook, ByRef sheet As ISheet)
+    Private Sub CreateHeaderRow(dataTable As DataTable, workbook As IWorkbook, sheet As ISheet)
         Dim headerRow As IRow = sheet.CreateRow(1)
         Dim cell As ICell
         Dim cellStyle As ICellStyle = workbook.CreateCellStyle()
@@ -276,7 +276,7 @@ Public Class HistoricalDashboardHandler
         Next
     End Sub
 
-    Private Sub SetAllColumnsWidth(ByRef sheet As ISheet)
+    Private Sub SetAllColumnsWidth(sheet As ISheet)
         sheet.SetColumnWidth(0, 12 * 256)      ' coaching id
         sheet.SetColumnWidth(1, 32 * 256)      ' form name
         sheet.SetColumnWidth(2, 15 * 256)      ' program name 
