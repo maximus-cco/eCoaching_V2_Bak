@@ -1,17 +1,23 @@
 /*
-eCoaching_Log_Create(29).sql
-Last Modified Date: 06/10/2015
+eCoaching_Log_Create(30).sql
+Last Modified Date: 06/15/2015
 Last Modified By: Susmitha Palacherla
 
+Version 30:
+1. Additional updates for SCR 14893. Updated SP #66
+2. Updates for SCR 14966 Cleanup code to accomodate Duplicate Lan ID integration with UI.
+    Updated Procedures #45,53 and 54.
+
+
 Version 29:
-1. Marked the following procedures as Obsolete.#18,19,20,21,22,23
+1. Marked the following procedures as Obsolete#18,19,20,21,22,23(replaced with new procedures listed in Item 3)
 2. Updated the following procedures to use dynamic where clause # 6,79, 80
 3. Added 6 new Procedures # 81,82,83,84,85,86
-
+   All above chnages per SCR 14893.
 
 Version 28:
-1. Modified procedures #6,18,20,22,66,and 67 tosupport performance improvement 
-  changesfor SCR 14893
+1. Modified procedures #6,18,20,22,66,and 67 to support performance improvement 
+  changes for SCR 14893
 2. Added 2 new procedures #79 and #80.
 
 
@@ -4347,13 +4353,15 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 05/28/2015
--- Updated per SCR 14818 to support rotation managers for LCS Feed.
+-- Last Modified Date: 06/12/2015
+-- Updated per SCR 14966 to add EmpID and SubmitterID to the select list.
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4371,9 +4379,11 @@ DECLARE
 		s.Status	strFormStatus,
 		cl.EventDate	EventDate,
 		cl.CoachingDate	CoachingDate,
+		cl.SubmitterID strSubmitterID,
 		sh.Emp_LanID	strSubmitter,		
 		sh.Emp_Name	strSubmitterName,
-		sh.Emp_Email	strSubmitterEmail,			
+		sh.Emp_Email	strSubmitterEmail,	
+		cl.EmpID strEmpID,		
 		cl.EmpLanID	strEmpLanID,
 		eh.Emp_Name	strCSRName,
 		eh.Emp_Email	strCSREmail,
@@ -4449,20 +4459,7 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
-
 GO
-
-
-
-
-
-
-
-
-
-
-
-
 
 ******************************************************************
 
@@ -5314,12 +5311,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	07/22/13
---  Last Modified Date: 08/21/14
---  Last Modified By: Susmitha Palacherla
---  Modified during the modular design to look up the Employee ID using the Employee ID From Lan ID Function.
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 06/12/2015
+-- Updated per SCR 14966 to add EmpID and Active flag to the select list.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Whoami] 
 
@@ -5341,15 +5340,22 @@ SET @nvcSQL = 'SELECT [Emp_Job_Code] + ''$'' + [Emp_Email] + ''$'' +  [Emp_Name]
               FROM [EC].[Employee_Hierarchy]WITH(NOLOCK)
               WHERE [Emp_LanID] = '''+@strUserin+''''
  */
- SET @nvcSQL = 'SELECT [Emp_Job_Code] + ''$'' + [Emp_Email] + ''$'' +  [Emp_Name] as Submitter
+ SET @nvcSQL = 'SELECT [Emp_Job_Code] + ''$'' + [Emp_Email] + ''$'' +  [Emp_Name] + ''$'' + 
+              [Emp_ID] + ''$'' +  CASE WHEN [Active] = ''A'' THEN ''Y'' ELSE ''N'' END  as Submitter
               FROM [EC].[Employee_Hierarchy]WITH(NOLOCK)
               WHERE [Emp_ID] = '''+@EmpID+''''
             
 		
 EXEC (@nvcSQL)	
 --Print @nvcSQL
-END -- sp_Whoami
+END --sp_Whoami
+
+
+
 GO
+
+
+
 
 
 ******************************************************************
@@ -5370,18 +5376,21 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	<7/23/13>
---	Last Update:	<>
---	Description: *	This procedure selects the CSR's hierarchy information from a table 
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 06/12/2015
+-- Updated per SCR 14966 to use the Employee ID as input parameter instead of Emp Lan ID.
 --  
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Whoisthis] 
 
 
 (
- @strUserin	Nvarchar(30)
+ @strUserIDin	Nvarchar(30)
 )
 AS
 
@@ -5392,7 +5401,7 @@ DECLARE
 
 SET @nvcSQL = 'SELECT [Sup_LanID] + ''$'' + [Mgr_LanID] Flow
               FROM [EC].[Employee_Hierarchy]
-              WHERE [Emp_LanID] = '''+@strUserin+''''
+              WHERE [Emp_ID] = '''+ @strUserIDin+''''
 
 		
 EXEC (@nvcSQL)	
@@ -5400,6 +5409,7 @@ EXEC (@nvcSQL)
 
 END --sp_Whoisthis
 GO
+
 
 
 
@@ -6197,10 +6207,11 @@ SELECT DISTINCT sh.Emp_Name	SubmitterText, cl.SubmitterID SubmitterValue, 02 Sor
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh  ON
 cl.SubmitterID = sh.Emp_ID
-where (cl.SubmitterID is not NULL or cl.SubmitterID  <> ''999999'')
+where cl.SubmitterID is not NULL 
+and cl.SubmitterID  <> ''999999''
 and cl.StatusID <> 2
 UNION
-SELECT ''Unknown'' SubmitterText, ''Unknown'' SubmitterValue, 03 Sortorder
+SELECT ''Unknown'' SubmitterText, ''999999'' SubmitterValue, 03 Sortorder
 )X
 ORDER BY X.Sortorder, X.SubmitterText'
 
@@ -6210,6 +6221,8 @@ EXEC (@nvcSQL)
 
 
 End --sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
+
+
 GO
 
 
