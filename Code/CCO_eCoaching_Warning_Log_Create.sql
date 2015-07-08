@@ -1,7 +1,11 @@
 /*
-eCoaching_Warning_Log_Create(07).sql
-Last Modified Date: 02/18/2015
+eCoaching_Warning_Log_Create(08).sql
+Last Modified Date: 06/15/2015
 Last Modified By: Susmitha Palacherla
+
+Version 08: SCR 14966
+1. Modified sp [EC].[sp_SelectReviewFrom_Warning_Log] (#3)
+2. Added a new SP #9 which was created earlier as part of 14423 and added toas SP #76 in Coaching_Log_Create doc.
 
 
 Version 07: SCR 14304
@@ -46,8 +50,7 @@ Procedures
 6. [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted] 
 7. [EC].[sp_SelectFrom_Warning_Log_MGRCSRCompleted] 
 8. [EC].[sp_InactivateExpiredWarningLogs] 
-
-
+9. [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] --(#76 in Coaching_Log_Create doc)
 */
 
 
@@ -451,20 +454,21 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/08/2014
 --	Description: 	This procedure displays the Warning Log attributes for given Form Name. 
--- Last Modified Date: 10/22/2014
 -- Last Updated By: Susmitha Palacherla
--- Removed Description, Coaching Notes from Select.
+-- Last Modified Date: 06/12/2015
+-- Updated per SCR 14966 to add EmpID and submitteriD to the select list.
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log] @strFormIDin nvarchar(50)
@@ -482,6 +486,8 @@ DECLARE
 		''Direct''	strFormType,
 		''Completed''	strFormStatus,
 		wl.WarningGivenDate	EventDate,
+		wl.SubmitterID strSubmitterID,
+		wl.EmpID strEmpID,	
 		sh.Emp_LanID	strSubmitter,		
 		sh.Emp_Name	strSubmitterName,
 		sh.Emp_Email	strSubmitterEmail,			
@@ -511,9 +517,10 @@ EXEC (@nvcSQL)
 
 	    
 END --sp_SelectReviewFrom_Warning_Log
-
-
 GO
+
+
+
 
 
 
@@ -858,6 +865,107 @@ END
 END  -- [EC].[sp_InactivateExpiredWarningLogs]
 
 GO
+
+
+
+
+******************************************************************
+
+
+
+--9. Create SP  [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] 
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/05/2015
+--	Description: *	This procedure selects all the Warning logs for Employees that fall under the Senior Manager 
+--  in the Hierarchy table.
+-- Last Modified Date: -- Last Modified Date: 04/17/2015
+-- Last Updated By: 
+-- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning] 
+@strEMPSRMGRin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@bitActive nvarchar(1)
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8),
+@strSrMgrEmpID Nvarchar(10),
+@dtmDate datetime
+
+
+Set @strFormStatus = 'Completed'
+Set @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+Set @dtmDate  = GETDATE()   
+Set @strSrMgrEmpID = EC.fn_nvcGetEmpIdFromLanID(@strEMPSRMGRin,@dtmDate)
+
+
+SET @nvcSQL = ';WITH SrHierarchy As
+(SELECT Emp_ID, [EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([H].[Emp_ID])as Lvl1Mgr,
+[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([H].[Emp_ID])as Lvl2Mgr,
+[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])as Lvl3Mgr 
+From [EC].[Employee_Hierarchy]H WITH (NOLOCK)
+)
+SELECT [wl].[FormName]	strFormID,
+		[eh].[Emp_Name]	strEmpName,
+		[eh].[Sup_Name]	strEmpSupName, 
+		[eh].[Mgr_Name]	strEmpMgrName, 
+		[s].[Status]	strFormStatus,
+		[sc].[SubCoachingSource] strSource,
+		[wl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh WITH (NOLOCK) JOIN [EC].[Warning_Log] wl WITH (NOLOCK) ON
+[wl].[EmpID] = [eh].[Emp_ID] Join [EC].[DIM_Status] s ON
+[wl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
+[wl].[SourceID] = [sc].[SourceID] JOIN SrHierarchy ON
+SrHierarchy.Emp_ID = [eh].[Emp_ID]
+WHERE (SrHierarchy.Lvl1Mgr = '''+@strSrMgrEmpID+''' OR
+SrHierarchy.Lvl2Mgr = '''+@strSrMgrEmpID+''' OR SrHierarchy.Lvl3Mgr = '''+@strSrMgrEmpID+''')
+and [s].[Status] = '''+@strFormStatus+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [wl].[Active] like '''+ CONVERT(NVARCHAR,@bitActive) + '''
+and SrHierarchy.Lvl1Mgr <> ''999999''
+and SrHierarchy.Lvl2Mgr <> ''999999'' 
+and SrHierarchy.Lvl3Mgr <> ''999999''
+ORDER BY submitteddate desc'
+
+		
+EXEC (@nvcSQL)
+--Print @nvcSQL	   
+END --sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning
+
+GO
+
+
+
 
 
 
