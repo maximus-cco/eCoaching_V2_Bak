@@ -9,20 +9,22 @@
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="ContentPlaceHolder3" runat="server">
     <br />
-    <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" AsyncPostBackTimeout="1200">
-    </asp:ToolkitScriptManager>
+    <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" AsyncPostBackTimeout="1200"></asp:ToolkitScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
             <asp:UpdateProgress ID="UpdateProgress1" runat="server" DynamicLayout="true" DisplayAfter="0">
                 <ProgressTemplate>
                     <div style="text-align: center;">
-                        loading...<br />
-                        <img src="images/ajax-loader5.gif" alt="progress animation gif" style="width: 180px" /></div>
+                        loading...
+                        <br />
+                        <img src="images/ajax-loader5.gif" alt="progress animation gif" style="width: 180px" />
+                    </div>
                 </ProgressTemplate>
             </asp:UpdateProgress>
             <asp:Label ID="Label26" runat="server" CssClass="dashHead"></asp:Label>
             <br />
-            <asp:Label ID="Label6a" runat="server" Text='' Visible="false"></asp:Label><br />
+            <asp:Label ID="Label6a" runat="server" Text='' Visible="false"></asp:Label>
+            <br />
             <asp:SqlDataSource ID="SqlDataSource41" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
                 SelectCommand="EC.sp_Check_AgentRole" SelectCommandType="StoredProcedure" OnSelected="SRMGR_Selected"
                 DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
@@ -32,12 +34,10 @@
                     <asp:Parameter Direction="ReturnValue" Name="Indirect@return_value" Type="Int32" />
                 </SelectParameters>
             </asp:SqlDataSource>
-            <asp:GridView ID="GridView12" runat="server" DataSourceID="SqlDataSource41" Visible="true">
-            </asp:GridView>
+            <asp:GridView ID="GridView12" runat="server" DataSourceID="SqlDataSource41" Visible="true"></asp:GridView>
             <asp:Label ID="Label241" runat="server" Text="" Visible="false"></asp:Label>
             <asp:Panel ID="Panel1" runat="server" Visible="false">
-                <asp:Label ID="Label5" runat="server" Text="My Pending eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label>
+                <asp:Label ID="Label5" runat="server" Text="My Pending eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                 <br />
                 <asp:GridView ID="GridView3" runat="server" AllowSorting="True" AutoGenerateColumns="False"
                     CellPadding="4" DataSourceID="SqlDataSource3" EnableModelValidation="True" ForeColor="#333333"
@@ -57,12 +57,12 @@
                         <asp:TemplateField HeaderText="FormID" SortExpression="strFormID">
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
-                                    Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Text='<%# Eval("strFormID") %>' 
+                                    onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -141,12 +141,12 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <p>
-                    &nbsp;</p>
-                <asp:Label ID="Label8" runat="server" Text="My Team's Pending eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label>
+                    &nbsp;
+                </p>
+                <asp:Label ID="Label8" runat="server" Text="My Team's Pending eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                 <br />
-                <asp:Label ID="Label20" runat="server" Text="Filter: " Visible="True"></asp:Label><asp:DropDownList
-                    ID="ddCSR3" DataTextField="EMPText" DataValueField="EMPValue" AutoPostBack="true"
+                <asp:Label ID="Label20" runat="server" Text="Filter: " Visible="True"></asp:Label>
+                <asp:DropDownList ID="ddCSR3" DataTextField="EMPText" DataValueField="EMPValue" AutoPostBack="true"
                     DataSourceID="SqlDataSource10" runat="server" class="TextBox" Style="margin-right: 5px;">
                 </asp:DropDownList>
                 <asp:DropDownList ID="ddSource3" DataTextField="SourceText" DataValueField="SourceValue"
@@ -187,11 +187,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -268,10 +267,8 @@
                     ViewStateMode="Enabled">
                     <SelectParameters>
                         <asp:Parameter Name="strCSRSUPin" Type="String" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddCSR3"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strSourcein" Type="String" ControlID="ddSource3"
-                            Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddCSR3" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strSourcein" Type="String" ControlID="ddSource3" Direction="Input" />
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <asp:SqlDataSource ID="SqlDataSource32" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
@@ -281,9 +278,9 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <p>
-                    &nbsp;</p>
-                <asp:Label ID="Label9" runat="server" Text="My Team's Completed eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label>
+                    &nbsp;
+                </p>
+                <asp:Label ID="Label9" runat="server" Text="My Team's Completed eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                 <br />
                 <asp:Label ID="Label19" runat="server" Text="Filter: " Visible="True"></asp:Label>
                 <asp:DropDownList ID="ddMGR2" DataTextField="MGRText" DataValueField="MGRValue" AutoPostBack="true"
@@ -299,14 +296,10 @@
                 <asp:Label ID="Label7" runat="server" Text="Submitted: "></asp:Label>
                 <asp:TextBox runat="server" class="TextBox" ID="Date3" Width="100px" />&nbsp;
                 <asp:Image runat="server" ID="cal3" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                <asp:CalendarExtender ID="CalendarExtender3" runat="server" Enabled="true" TargetControlID="Date3"
-                    PopupButtonID="cal3">
-                </asp:CalendarExtender>
+                <asp:CalendarExtender ID="CalendarExtender3" runat="server" Enabled="true" TargetControlID="Date3" PopupButtonID="cal3"></asp:CalendarExtender>
                 <asp:TextBox runat="server" class="TextBox" ID="Date4" Width="100px" />&nbsp;
                 <asp:Image runat="server" ID="cal4" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                <asp:CalendarExtender ID="CalendarExtender4" runat="server" Enabled="true" TargetControlID="Date4"
-                    PopupButtonID="cal4">
-                </asp:CalendarExtender>
+                <asp:CalendarExtender ID="CalendarExtender4" runat="server" Enabled="true" TargetControlID="Date4" PopupButtonID="cal4"></asp:CalendarExtender>
                 <asp:Button ID="Button2" runat="server" Text="Go" CssClass="formButton" />
                 <asp:SqlDataSource ID="SqlDataSource11" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
                     SelectCommand="EC.sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted" SelectCommandType="StoredProcedure"
@@ -349,11 +342,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -450,9 +442,9 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <p>
-                    &nbsp;</p>
-                <asp:Label ID="Label11" runat="server" Text="My Completed eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label>
+                    &nbsp;
+                </p>
+                <asp:Label ID="Label11" runat="server" Text="My Completed eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                 <br />
                 <asp:GridView ID="GridView10" runat="server" AutoGenerateColumns="False" AllowSorting="True"
                     DataSourceID="SqlDataSource17" EnableModelValidation="True" Width="90%" CellPadding="4"
@@ -474,11 +466,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -560,9 +551,9 @@
                 </asp:SqlDataSource>
                 <asp:Panel ID="Panel4" runat="server" Visible="false">
                     <p>
-                        &nbsp;</p>
-                    <asp:Label ID="Label27" runat="server" Text="My Team's Warning eCoaching Logs" ForeColor="#0099FF"
-                        Visible="True"></asp:Label>
+                        &nbsp;
+                    </p>
+                    <asp:Label ID="Label27" runat="server" Text="My Team's Warning eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                     <br />
                     <asp:Label ID="Label29" runat="server" Text="Filter: " Visible="True"></asp:Label>
                     <asp:DropDownList ID="ddState7" DataTextField="StateText" DataValueField="StateValue"
@@ -576,14 +567,10 @@
                     <asp:Label ID="Label30" runat="server" Text="Submitted: "></asp:Label>
                     <asp:TextBox runat="server" class="TextBox" ID="Date7" Width="100px" />&nbsp;
                     <asp:Image runat="server" ID="cal7" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                    <asp:CalendarExtender ID="CalendarExtender5" runat="server" Enabled="true" TargetControlID="Date7"
-                        PopupButtonID="cal7">
-                    </asp:CalendarExtender>
+                    <asp:CalendarExtender ID="CalendarExtender5" runat="server" Enabled="true" TargetControlID="Date7" PopupButtonID="cal7"></asp:CalendarExtender>
                     <asp:TextBox runat="server" class="TextBox" ID="Date8" Width="100px" />&nbsp;
                     <asp:Image runat="server" ID="cal8" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                    <asp:CalendarExtender ID="CalendarExtender6" runat="server" Enabled="true" TargetControlID="Date8"
-                        PopupButtonID="cal8">
-                    </asp:CalendarExtender>
+                    <asp:CalendarExtender ID="CalendarExtender6" runat="server" Enabled="true" TargetControlID="Date8" PopupButtonID="cal8"></asp:CalendarExtender>
                     <asp:Button ID="Button3" runat="server" Text="Go" CssClass="formButton" />
                     <br />
                     <asp:GridView ID="GridView13" runat="server" AutoGenerateColumns="False" AllowSorting="True"
@@ -606,11 +593,10 @@
                                 <ItemTemplate>
                                     <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review3.aspx?id={0}") %>'
                                         Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                        Target="vlarge"></asp:HyperLink>
-                                    &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                        AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
+                                        Target="vlarge">
+                                    </asp:HyperLink>&nbsp;&nbsp;
+                                    <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                    <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -671,8 +657,7 @@
                             <asp:Parameter Name="strCSRSUPin" Type="String" />
                             <asp:Parameter Name="strSDatein" Type="String" />
                             <asp:Parameter Name="strEDatein" Type="String" />
-                            <asp:ControlParameter DefaultValue="%" Name="bitActive" Type="String" ControlID="ddState7"
-                                Direction="Input" />
+                            <asp:ControlParameter DefaultValue="%" Name="bitActive" Type="String" ControlID="ddState7" Direction="Input" />
                         </SelectParameters>
                     </asp:SqlDataSource>
                     <asp:SqlDataSource ID="SqlDataSource24" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
@@ -706,10 +691,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>&nbsp;&nbsp;<asp:Image ID="Image1" runat="server"
-                                        ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -780,9 +765,9 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <p>
-                    &nbsp;</p>
-                <asp:Label ID="Label4" runat="server" Text="My Completed eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label>
+                    &nbsp;
+                </p>
+                <asp:Label ID="Label4" runat="server" Text="My Completed eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                 <br />
                 <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False" AllowSorting="True"
                     DataSourceID="SqlDataSource1" EnableModelValidation="True" Width="90%" CellPadding="4"
@@ -804,11 +789,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -890,8 +874,7 @@
                 </asp:SqlDataSource>
             </asp:Panel>
             <asp:Panel ID="Panel3" runat="server" Visible="false">
-                <asp:Label ID="Label10" runat="server" Text="My Pending eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label>
+                <asp:Label ID="Label10" runat="server" Text="My Pending eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                 <br />
                 <asp:Label ID="Label21" runat="server" Text="Filter: " Visible="True"></asp:Label>
                 <asp:DropDownList ID="ddSUP1" DataTextField="SUPText" DataValueField="SUPValue" AutoPostBack="true"
@@ -934,10 +917,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>&nbsp;&nbsp;<asp:Image ID="Image1" runat="server"
-                                        ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -1020,9 +1003,9 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <p>
-                    &nbsp;</p>
-                <asp:Label ID="Label17" runat="server" Text="My Team's Pending eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label><br />
+                    &nbsp;
+                </p>
+                <asp:Label ID="Label17" runat="server" Text="My Team's Pending eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label><br />
                 <asp:Label ID="Label18" runat="server" Text="Filter: " Visible="True"></asp:Label>
                 <asp:DropDownList ID="ddSUP3" DataTextField="SUPText" DataValueField="SUPValue" AutoPostBack="true"
                     DataSourceID="SqlDataSource21" runat="server" class="TextBox" Style="margin-right: 5px;">
@@ -1075,11 +1058,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -1174,9 +1156,10 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <p>
-                    &nbsp;</p>
-                <asp:Label ID="Label22" runat="server" Text="My Team's Completed eCoaching Logs"
-                    ForeColor="#0099FF" Visible="True"></asp:Label><br />
+                    &nbsp;
+                </p>
+                <asp:Label ID="Label22" runat="server" Text="My Team's Completed eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
+                <br />
                 <asp:Label ID="Label23" runat="server" Text="Filter: " Visible="True"></asp:Label>
                 <asp:DropDownList ID="ddSUP4" DataTextField="SUPText" DataValueField="SUPValue" AutoPostBack="true"
                     DataSourceID="SqlDataSource16" runat="server" class="TextBox" Style="margin-right: 5px;">
@@ -1191,14 +1174,10 @@
                 <asp:Label ID="Label6" runat="server" Text="Submitted: "></asp:Label>
                 <asp:TextBox runat="server" class="TextBox" ID="Date1" Width="100px" />&nbsp;
                 <asp:Image runat="server" ID="cal1" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                <asp:CalendarExtender ID="CalendarExtender1" runat="server" Enabled="true" TargetControlID="Date1"
-                    PopupButtonID="cal1">
-                </asp:CalendarExtender>
+                <asp:CalendarExtender ID="CalendarExtender1" runat="server" Enabled="true" TargetControlID="Date1" PopupButtonID="cal1"></asp:CalendarExtender>
                 <asp:TextBox runat="server" class="TextBox" ID="Date2" Width="100px" />&nbsp;
                 <asp:Image runat="server" ID="cal2" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                <asp:CalendarExtender ID="CalendarExtender2" runat="server" Enabled="true" TargetControlID="Date2"
-                    PopupButtonID="cal2">
-                </asp:CalendarExtender>
+                <asp:CalendarExtender ID="CalendarExtender2" runat="server" Enabled="true" TargetControlID="Date2" PopupButtonID="cal2"></asp:CalendarExtender>
                 <asp:Button ID="Button1" runat="server" Text="Go" CssClass="formButton" />
                 <asp:SqlDataSource ID="SqlDataSource15" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
                     SelectCommand="EC.sp_SelectFrom_Coaching_LogMgrDistinctCSRTeamCompleted" SelectCommandType="StoredProcedure"
@@ -1241,11 +1220,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -1342,9 +1320,9 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <p>
-                    &nbsp;</p>
-                <asp:Label ID="Label24" runat="server" Text="My Completed eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label>
+                    &nbsp;
+                </p>
+                <asp:Label ID="Label24" runat="server" Text="My Completed eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                 <br />
                 <asp:GridView ID="GridView11" runat="server" AutoGenerateColumns="False" AllowSorting="True"
                     DataSourceID="SqlDataSource18" EnableModelValidation="True" Width="90%" CellPadding="4"
@@ -1366,11 +1344,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -1452,9 +1429,9 @@
                 </asp:SqlDataSource>
                 <asp:Panel ID="Panel5" runat="server" Visible="false">
                     <p>
-                        &nbsp;</p>
-                    <asp:Label ID="Label28" runat="server" Text="My Team's Warning eCoaching Logs" ForeColor="#0099FF"
-                        Visible="True"></asp:Label>
+                        &nbsp;
+                    </p>
+                    <asp:Label ID="Label28" runat="server" Text="My Team's Warning eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                     <br />
                     <asp:Label ID="Label31" runat="server" Text="Filter: " Visible="True"></asp:Label>
                     <asp:DropDownList ID="ddState" DataTextField="StateText" DataValueField="StateValue"
@@ -1468,14 +1445,10 @@
                     <asp:Label ID="Label32" runat="server" Text="Submitted: "></asp:Label>
                     <asp:TextBox runat="server" class="TextBox" ID="Date5" Width="100px" />&nbsp;
                     <asp:Image runat="server" ID="cal5" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                    <asp:CalendarExtender ID="CalendarExtender7" runat="server" Enabled="true" TargetControlID="Date5"
-                        PopupButtonID="cal5">
-                    </asp:CalendarExtender>
+                    <asp:CalendarExtender ID="CalendarExtender7" runat="server" Enabled="true" TargetControlID="Date5" PopupButtonID="cal5"></asp:CalendarExtender>
                     <asp:TextBox runat="server" class="TextBox" ID="Date6" Width="100px" />&nbsp;
                     <asp:Image runat="server" ID="cal6" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                    <asp:CalendarExtender ID="CalendarExtender8" runat="server" Enabled="true" TargetControlID="Date6"
-                        PopupButtonID="cal6">
-                    </asp:CalendarExtender>
+                    <asp:CalendarExtender ID="CalendarExtender8" runat="server" Enabled="true" TargetControlID="Date6" PopupButtonID="cal6"></asp:CalendarExtender>
                     <asp:Button ID="Button4" runat="server" Text="Go" CssClass="formButton" />
                     <br />
                     <asp:GridView ID="GridView14" runat="server" AutoGenerateColumns="False" AllowSorting="True"
@@ -1498,11 +1471,10 @@
                                 <ItemTemplate>
                                     <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review3.aspx?id={0}") %>'
                                         Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                        Target="vlarge"></asp:HyperLink>
-                                    &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                        AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
+                                        Target="vlarge">
+                                    </asp:HyperLink>&nbsp;&nbsp;
+                                    <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                    <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -1642,8 +1614,8 @@
                 <asp:CalendarExtender ID="CalendarExtender12" runat="server" Enabled="true" TargetControlID="Date12"
                     PopupButtonID="cal12">
                 </asp:CalendarExtender>
+                <asp:Button ID="Button6" runat="server" Text="Go" CssClass="formButton" />
 
- <asp:Button ID="Button6" runat="server" Text="Go" CssClass="formButton" />
                 <asp:GridView ID="GridView15" runat="server" AutoGenerateColumns="False" CellPadding="4"
                     DataSourceID="SqlDataSource45" EnableModelValidation="True" ForeColor="#333333"
                     GridLines="Vertical" Width="90%" Visible="True" AllowSorting="True" Enabled="True"
@@ -1664,11 +1636,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review2.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strEmpName">
@@ -1769,9 +1740,9 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <p>
-                    &nbsp;</p>
-                <asp:Label ID="Label34" runat="server" Text="My Hierarchy Warning eCoaching Logs"
-                    ForeColor="#0099FF" Visible="True"></asp:Label>
+                    &nbsp;
+                </p>
+                <asp:Label ID="Label34" runat="server" Text="My Hierarchy Warning eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
                 <br />
                 <asp:Label ID="Label35" runat="server" Text="Filter: " Visible="True"></asp:Label>
                 <asp:DropDownList ID="ddState6" DataTextField="StateText" DataValueField="StateValue"
@@ -1785,14 +1756,10 @@
                 <asp:Label ID="Label36" runat="server" Text="Submitted: "></asp:Label>
                 <asp:TextBox runat="server" class="TextBox" ID="Date9" Width="100px" />&nbsp;
                 <asp:Image runat="server" ID="cal9" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                <asp:CalendarExtender ID="CalendarExtender9" runat="server" Enabled="true" TargetControlID="Date9"
-                    PopupButtonID="cal9">
-                </asp:CalendarExtender>
+                <asp:CalendarExtender ID="CalendarExtender9" runat="server" Enabled="true" TargetControlID="Date9" PopupButtonID="cal9"></asp:CalendarExtender>
                 <asp:TextBox runat="server" class="TextBox" ID="Date10" Width="100px" />&nbsp;
                 <asp:Image runat="server" ID="cal10" ImageUrl="images/Calendar_scheduleHS.png" Style="margin-right: 5px;" />
-                <asp:CalendarExtender ID="CalendarExtender10" runat="server" Enabled="true" TargetControlID="Date10"
-                    PopupButtonID="cal10">
-                </asp:CalendarExtender>
+                <asp:CalendarExtender ID="CalendarExtender10" runat="server" Enabled="true" TargetControlID="Date10" PopupButtonID="cal10"></asp:CalendarExtender>
                 <asp:Button ID="Button5" runat="server" Text="Go" CssClass="formButton" />
                 <br />
                 <asp:GridView ID="GridView16" runat="server" AutoGenerateColumns="False" AllowSorting="True"
@@ -1815,11 +1782,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review3.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>
-                                &nbsp;&nbsp;<asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png"
-                                    AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                        ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                        Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strEmpName">
@@ -1885,8 +1851,7 @@
                         <asp:Parameter Name="strEMPSRMGRin" Type="String" />
                         <asp:Parameter Name="strSDatein" Type="String" />
                         <asp:Parameter Name="strEDatein" Type="String" />
-                        <asp:ControlParameter DefaultValue="%" Name="bitActive" Type="String" ControlID="ddState6"
-                            Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="bitActive" Type="String" ControlID="ddState6" Direction="Input" />
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <asp:SqlDataSource ID="SqlDataSource51" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"

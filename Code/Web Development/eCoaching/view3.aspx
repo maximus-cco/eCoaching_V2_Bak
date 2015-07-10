@@ -7,20 +7,22 @@
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="ContentPlaceHolder3" runat="server">
     <br />
-    <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" AsyncPostBackTimeout="1200">
-    </asp:ToolkitScriptManager>
+    <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" AsyncPostBackTimeout="1200"></asp:ToolkitScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
             <asp:UpdateProgress ID="UpdateProgress1" runat="server" DynamicLayout="true" DisplayAfter="0">
                 <ProgressTemplate>
                     <div style="text-align: center;">
-                        loading...<br />
-                        <img src="images/ajax-loader5.gif" alt="progress animation gif" style="width: 180px" /></div>
+                        loading...
+                        <br />
+                        <img src="images/ajax-loader5.gif" alt="progress animation gif" style="width: 180px" />
+                    </div>
                 </ProgressTemplate>
             </asp:UpdateProgress>
             <asp:Label ID="Label26" runat="server" CssClass="dashHead"></asp:Label>
             <br />
-            <asp:Label ID="Label6a" runat="server" Text='' Visible="false"></asp:Label><br />
+            <asp:Label ID="Label6a" runat="server" Text='' Visible="false"></asp:Label>
+            <br />
             <asp:SqlDataSource ID="SqlDataSource14" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
                 SelectCommand="EC.sp_Check_AgentRole" SelectCommandType="StoredProcedure" OnSelected="ARC_Selected"
                 DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
@@ -30,12 +32,11 @@
                     <asp:Parameter Direction="ReturnValue" Name="Indirect@return_value" Type="Int32" />
                 </SelectParameters>
             </asp:SqlDataSource>
-            <asp:GridView ID="GridView5" runat="server" DataSourceID="SqlDataSource14" Visible="true">
-            </asp:GridView>
+            <asp:GridView ID="GridView5" runat="server" DataSourceID="SqlDataSource14" Visible="true"></asp:GridView>
             <asp:Label ID="Label241" runat="server" Text="" Visible="false"></asp:Label>
             <asp:Panel ID="Panel1" runat="server" Visible="false">
-                <asp:Label ID="Label11" runat="server" Text="My Submitted eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label><br />
+                <asp:Label ID="Label11" runat="server" Text="My Submitted eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
+                <br />
                 <asp:Label ID="Label14" runat="server" Text="Filter: " Visible="True"></asp:Label>
                 <asp:DropDownList ID="ddMGR" DataTextField="MGRText" DataValueField="MGRValue" AutoPostBack="true"
                     DataSourceID="SqlDataSource11" runat="server" class="TextBox" Style="margin-right: 5px;">
@@ -95,10 +96,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>&nbsp;&nbsp;<asp:Image ID="Image1" runat="server"
-                                        ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -170,14 +171,10 @@
                     EnableViewState="False" ViewStateMode="Disabled">
                     <SelectParameters>
                         <asp:Parameter Name="strUserin" Type="String" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddCSR"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRSupin" Type="String" ControlID="ddSUP"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRMgrin" Type="String" ControlID="ddMGR"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strStatusin" Type="String" ControlID="ddStatus"
-                            Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddCSR" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRSupin" Type="String" ControlID="ddSUP" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRMgrin" Type="String" ControlID="ddMGR" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strStatusin" Type="String" ControlID="ddStatus" Direction="Input" />
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <asp:SqlDataSource ID="SqlDataSource23" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
@@ -188,8 +185,7 @@
                 </asp:SqlDataSource>
             </asp:Panel>
             <asp:Panel ID="Panel2" runat="server" Visible="false">
-                <asp:Label ID="Label8" runat="server" Text="My Submitted eCoaching Logs" ForeColor="#0099FF"
-                    Visible="True"></asp:Label><br />
+                <asp:Label ID="Label8" runat="server" Text="My Submitted eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label><br />
                 <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False" AllowSorting="True"
                     DataSourceID="SqlDataSource1" EnableModelValidation="True" Width="90%" CellPadding="4"
                     ForeColor="#333333" GridLines="Vertical" Visible="True" Enabled="True" AllowPaging="True"
@@ -210,10 +206,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>&nbsp;&nbsp;<asp:Image ID="Image1" runat="server"
-                                        ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -356,10 +352,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>&nbsp;&nbsp;<asp:Image ID="Image1" runat="server"
-                                        ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -431,14 +427,10 @@
                     EnableViewState="False" ViewStateMode="Disabled">
                     <SelectParameters>
                         <asp:Parameter Name="strUserin" Type="String" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddCSR2"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRSupin" Type="String" ControlID="ddSUP2"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRMgrin" Type="String" ControlID="ddMGR2"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strStatusin" Type="String" ControlID="ddStatus2"
-                            Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddCSR2" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRSupin" Type="String" ControlID="ddSUP2" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRMgrin" Type="String" ControlID="ddMGR2" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strStatusin" Type="String" ControlID="ddStatus2" Direction="Input" />
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <asp:SqlDataSource ID="SqlDataSource21" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
@@ -449,8 +441,8 @@
                 </asp:SqlDataSource>
             </asp:Panel>
             <asp:Panel ID="Panel4" runat="server" Visible="false">
-                <asp:Label ID="Label9" runat="server" Text="My Submitted Pending eCoaching Logs"
-                    ForeColor="#0099FF" Visible="false"></asp:Label><br />
+                <asp:Label ID="Label9" runat="server" Text="My Submitted Pending eCoaching Logs" ForeColor="#0099FF" Visible="false"></asp:Label>
+                <br />
                 <asp:Label ID="Label10" runat="server" Text="Filter: "></asp:Label>
                 <asp:DropDownList ID="ddMGR3" DataTextField="MGRText" DataValueField="MGRValue" AutoPostBack="true"
                     DataSourceID="SqlDataSource4" runat="server" class="TextBox" Style="margin-right: 5px;">
@@ -505,10 +497,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>&nbsp;&nbsp;<asp:Image ID="Image1" runat="server"
-                                        ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -580,12 +572,9 @@
                     EnableViewState="False" ViewStateMode="Disabled">
                     <SelectParameters>
                         <asp:Parameter Name="strUserin" Type="String" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddEMP3"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRSupin" Type="String" ControlID="ddSUP3"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRMgrin" Type="String" ControlID="ddMGR3"
-                            Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddEMP3" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRSupin" Type="String" ControlID="ddSUP3" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRMgrin" Type="String" ControlID="ddMGR3" Direction="Input" />
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <asp:SqlDataSource ID="SqlDataSource26" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
@@ -595,9 +584,10 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <p>
-                    &nbsp;</p>
-                <asp:Label ID="Label12" runat="server" Text="My Submitted Completed eCoaching Logs"
-                    ForeColor="#0099FF" Visible="True"></asp:Label><br />
+                    &nbsp;
+                </p>
+                <asp:Label ID="Label12" runat="server" Text="My Submitted Completed eCoaching Logs" ForeColor="#0099FF" Visible="True"></asp:Label>
+                <br />
                 <asp:Label ID="Label13" runat="server" Text="Filter: "></asp:Label>
                 <asp:DropDownList ID="ddMGR4" DataTextField="MGRText" DataValueField="MGRValue" AutoPostBack="true"
                     DataSourceID="SqlDataSource9" runat="server" class="TextBox" Style="margin-right: 5px;">
@@ -652,10 +642,10 @@
                             <ItemTemplate>
                                 <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("strFormID", "review.aspx?id={0}") %>'
                                     Text='<%# Eval("strFormID") %>' onclick="vlarge1=window.open('','vlarge','resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=900,left=50,top=40');vlarge1.focus();return true;"
-                                    Target="vlarge"></asp:HyperLink>&nbsp;&nbsp;<asp:Image ID="Image1" runat="server"
-                                        ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' /><asp:Label
-                                            ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>'
-                                            Visible="true"></asp:Label>
+                                    Target="vlarge">
+                                </asp:HyperLink>&nbsp;&nbsp;
+                                <asp:Image ID="Image1" runat="server" ImageUrl="images/1324418219_new.png" AlternateText="New Image" Visible='<%# newDisplay2(CDate(Eval("SubmittedDate"))) %>' />
+                                <asp:Label ID="Label182" runat="server" Text='<%# newDisplay(CDate(Eval("SubmittedDate"))) %>' Visible="true"></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name" SortExpression="strCSRName">
@@ -727,12 +717,9 @@
                     SelectCommandType="StoredProcedure" EnableViewState="False" ViewStateMode="Disabled">
                     <SelectParameters>
                         <asp:Parameter Name="strUserin" Type="String" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddEMP4"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRSupin" Type="String" ControlID="ddSUP4"
-                            Direction="Input" />
-                        <asp:ControlParameter DefaultValue="%" Name="strCSRMgrin" Type="String" ControlID="ddMGR4"
-                            Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRin" Type="String" ControlID="ddEMP4" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRSupin" Type="String" ControlID="ddSUP4" Direction="Input" />
+                        <asp:ControlParameter DefaultValue="%" Name="strCSRMgrin" Type="String" ControlID="ddMGR4" Direction="Input" />
                     </SelectParameters>
                 </asp:SqlDataSource>
                 <asp:SqlDataSource ID="SqlDataSource27" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"

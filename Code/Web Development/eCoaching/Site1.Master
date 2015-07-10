@@ -5,19 +5,14 @@
 
 <head id="Head1" runat="server">
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-    <title>&nbsp;</title>
-    <link href="~/Styles/Site.css" rel="stylesheet" type="text/css" />
-    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
-    </asp:ContentPlaceHolder>
-    <style type="text/css">
-        html
-        {
-            background-color: white;
-        }
-        
-      
-
-        </style>
+<title>&nbsp;</title>
+<link href="~/Styles/Site.css" rel="stylesheet" type="text/css" />
+<asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
+<style type="text/css">
+    html {
+        background-color: white;
+    }
+</style>
      
 </head>
 <body id="ctest">
@@ -34,6 +29,20 @@
               </div>
        </div>
             
-    </form> 
+    </form>
+    <script src="scripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var iframeHeight = $(window).height() - 200;
+        $(function () {
+             $('iframe').height(iframeHeight);
+        });
+
+        function setIFrameHeight() {
+            setTimeout(function () {
+                $('iframe').height(iframeHeight);
+            }, 200);
+        }
+
+    </script>
 </body>
 </html>

@@ -29,6 +29,9 @@ Public Class view3
         ' Title
         Label6a.Text = eclUser.JobCode 'GetJobCode(Session("userInfo"))
         Select Case True 'Label6a.Text
+            ' WACS01 (Assoc Specialist, Cust Svc)
+            ' WACS02 (Specialist, Customer Service)
+            ' WACS03 (Sr Specialist, Customer Svc)
             Case (InStr(1, Label6a.Text, "WACS0", 1) > 0)
                 If (Label241.Text > 0) Then
                     Panel2.Visible = True
@@ -37,7 +40,17 @@ Public Class view3
                 Else
                     Response.Redirect("error2.aspx")
                 End If
-            Case (InStr(1, Label6a.Text, "40", 1) > 0), (InStr(1, Label6a.Text, "WTTR12", 1) > 0), (InStr(1, Label6a.Text, "WTTI", 1) > 0) '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40"
+                ' WACQ40 (Supervisor, Quality (CS))
+                ' WACS40 (Supervisor, Customer Service)
+                ' WFFA40 (Supervisor, Finance)
+                ' WMPR40 (Supervisor, Production)
+                ' WPPT40 (Supervisor, Project/Task)
+                ' WTTR40 (Supervisor, Training)
+                '
+                ' WTTR12 (Specialist, Training)
+                ' 
+                ' WTTI02 (Instructor)
+            Case (InStr(1, Label6a.Text, "40", 1) > 0), (InStr(1, Label6a.Text, "WTTR12", 1) > 0), (InStr(1, Label6a.Text, "WTTI", 1) > 0)
                 Label26.Text = "Welcome to the My Submitted Dashboard"
                 Panel1.Visible = True
                 SqlDataSource7.SelectParameters("strUserin").DefaultValue = eclUser.LanID

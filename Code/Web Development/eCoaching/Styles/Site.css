@@ -1,5 +1,9 @@
 ﻿/* DEFAULTS
 ----------------------------------------------------------*/
+html
+{
+    height: 100%;
+}
 
 body
 {
@@ -10,6 +14,8 @@ body
     padding: 0px;
     color: #000000;
     border: none;
+    height: 100%;
+    overflow: hidden;
 }
 
 .formButton
@@ -425,6 +431,11 @@ div.hideSkiplink
     color: #B6D1F8; /* change the values of top and left to adjust the position of the slogan*/
     top: 80px;
     left: 35px;
+}
+
+.ajax__tab_xp .ajax__tab_body
+{
+    border-style: none !important;
 }
 
 

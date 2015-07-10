@@ -3,15 +3,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head id="Head1" runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <script type="text/javascript">
         if (!window.console) window.console = {};
         if (!window.console.log) window.console.log = function () { };
     </script>
-    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <title>&nbsp;</title>
     <link href="styles/Site.css" rel="stylesheet" type="text/css" />
     <link href="styles/bootstrap-3.2.0.min.css" rel="stylesheet" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
+    <style type="text/css">
+        body {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body id="ctest">
     <form id="Form1" runat="server">
@@ -25,6 +31,9 @@
             </div>
        </div>
     </form> 
+
+    <script src="http://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js" type="text/javascript"></script>
+    <script src="http://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js" type="text/javascript"></script>
 
     <script src="scripts/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script src="scripts/jquery-ui-1.11.1.min.js" type="text/javascript"></script>
@@ -53,16 +62,15 @@
 */
 
         function validateDateRange() {
-            var startDate = new Date(jQuery('#StartDate').val());
-            var endDate = new Date(jQuery('#EndDate').val());
-            var days = (endDate - startDate) / 1000 / 60 / 60 / 24;
+            //var startDate = new Date(jQuery('#StartDate').val());
+            //var endDate = new Date(jQuery('#EndDate').val());
+            //var days = (endDate - startDate) / 1000 / 60 / 60 / 24;
 
-
-            if (days > 100) {
-                alert('invalid')
-                jQuery('#invalidDateRangeModal').modal('show');
-                return false;
-            }
+            //if (days > 100) {
+            //    alert('invalid')
+            //    jQuery('#invalidDateRangeModal').modal('show');
+            //    return false;
+            //}
 
             setDropdownHiddenValues();
 

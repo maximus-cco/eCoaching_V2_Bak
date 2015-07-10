@@ -139,6 +139,7 @@
     <Content Include="scripts\jquery-1.11.1.min.js" />
     <Content Include="scripts\jquery-ui-1.11.1.min.js" />
     <Content Include="scripts\jquery.cookie.js" />
+    <Content Include="scripts\respond.min.js" />
     <Content Include="secllogo.html" />
     <Content Include="bin\AjaxControlToolkit.dll" />
     <Content Include="csrs.html" />

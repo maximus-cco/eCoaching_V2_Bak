@@ -21,27 +21,28 @@
     <asp:Label ID="Label2" runat="server" Text="" Visible="false" ViewStateMode="Disabled"></asp:Label>
     <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" AsyncPostBackTimeout="1200">
     </asp:ToolkitScriptManager>
-    <asp:TabContainer ID="TabContainer1" runat="server" AutoPostBack="false" OnDemand="true">
+
+    <asp:TabContainer ID="TabContainer1" runat="server" AutoPostBack="false" OnDemand="true" OnClientActiveTabChanged="setIFrameHeight">
         <asp:TabPanel ID="TabPanel1" runat="server" HeaderText="New Submissions" OnDemandMode="Once">
             <ContentTemplate>
-                <iframe id="frame1" src="default2.aspx" width="100%" height="550" frameborder="0">
+                <iframe id="frame1" src="default2.aspx" width="100%" frameborder="0">
                 </iframe>
             </ContentTemplate>
         </asp:TabPanel>
         <asp:TabPanel ID="TabPanel2" runat="server" HeaderText="My Dashboard" OnDemandMode="Once">
             <ContentTemplate>
-                <iframe id="frame2" src="view2.aspx" width="100%" height="800" frameborder="0"></iframe>
+                <iframe id="frame2" src="view2.aspx" width="100%" frameborder="0"></iframe>
             </ContentTemplate>
         </asp:TabPanel>
         <asp:TabPanel ID="TabPanel3" runat="server" HeaderText="My Submissions" OnDemandMode="Once">
             <ContentTemplate>
-                <iframe id="frame3" src="view3.aspx" width="100%" height="800" frameborder="0"></iframe>
+                <iframe id="frame3" src="view3.aspx" width="100%" frameborder="0"></iframe>
             </ContentTemplate>
         </asp:TabPanel>
         <asp:TabPanel ID="TabPanel4" runat="server" HeaderText="Historical Dashboard" Visible="false"
             OnDemandMode="Once">
             <ContentTemplate>
-                <iframe id="frame4" src="view4.aspx" width="100%" height="800" frameborder="0"></iframe>
+                <iframe id="frame4" src="view4.aspx" width="100%" frameborder="0"></iframe>
             </ContentTemplate>
         </asp:TabPanel>
     </asp:TabContainer>

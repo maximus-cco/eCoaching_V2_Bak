@@ -131,6 +131,15 @@ Partial Public Class review3
     Protected WithEvents UpdateProgress3 As Global.System.Web.UI.UpdateProgress
 
     '''<summary>
+    '''Label242 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Label242 As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
     '''Label116 control.
     '''</summary>
     '''<remarks>
