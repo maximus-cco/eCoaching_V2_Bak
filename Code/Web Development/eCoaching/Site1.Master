@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 
 <head id="Head1" runat="server">
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 <title>&nbsp;</title>
 <link href="~/Styles/Site.css" rel="stylesheet" type="text/css" />
 <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
