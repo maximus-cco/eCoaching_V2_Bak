@@ -293,16 +293,17 @@ Public Class HistoricalDashboardHandler
         sheet.SetColumnWidth(13, 25 * 256)     ' form status
         sheet.SetColumnWidth(14, 28 * 256)     ' submitted by
         sheet.SetColumnWidth(15, 22 * 256)     ' event date
-        sheet.SetColumnWidth(16, 32 * 256)     ' verint id
-        sheet.SetColumnWidth(17, 70 * 256)     ' description - this is really really long!
-        sheet.SetColumnWidth(18, 35 * 256)     ' coaching notes
-        sheet.SetColumnWidth(19, 22 * 256)     ' submitted date
-        sheet.SetColumnWidth(20, 22 * 256)     ' supervisor reviewed auto date
-        sheet.SetColumnWidth(21, 22 * 256)     ' manager reviewed manual date
-        sheet.SetColumnWidth(22, 22 * 256)     ' manager reviewed auto date
-        sheet.SetColumnWidth(23, 35 * 256)     ' manager notes
-        sheet.SetColumnWidth(24, 22 * 256)     ' employee review auto date
-        sheet.SetColumnWidth(25, 22 * 256)     ' employee comments
+        sheet.SetColumnWidth(16, 22 * 256)     ' coaching_date
+        sheet.SetColumnWidth(17, 32 * 256)     ' verint id
+        sheet.SetColumnWidth(18, 70 * 256)     ' description - this is really really long!
+        sheet.SetColumnWidth(19, 35 * 256)     ' coaching notes
+        sheet.SetColumnWidth(20, 22 * 256)     ' submitted date
+        sheet.SetColumnWidth(21, 22 * 256)     ' supervisor reviewed auto date
+        sheet.SetColumnWidth(22, 22 * 256)     ' manager reviewed manual date
+        sheet.SetColumnWidth(23, 22 * 256)     ' manager reviewed auto date
+        sheet.SetColumnWidth(24, 35 * 256)     ' manager notes
+        sheet.SetColumnWidth(25, 22 * 256)     ' employee review auto date
+        sheet.SetColumnWidth(26, 22 * 256)     ' employee comments
     End Sub
 
 
