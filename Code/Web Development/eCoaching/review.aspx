@@ -240,7 +240,7 @@
                         </asp:Table>
                     </asp:Panel>
                     <asp:Panel ID="Panel23" runat="server" Visible="false">
-                        <asp:Label ID="Label71" runat="server" Text="P23 Coaching Notes:" Font-Names="Calibri" Font-Bold="True"></asp:Label>
+                        <asp:Label ID="Label71" runat="server" Text="Coaching Notes:" Font-Names="Calibri" Font-Bold="True"></asp:Label>
                         <br />
                         <asp:Table ID="Table5" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
@@ -262,7 +262,7 @@
                                 </asp:TableRow>
                             </asp:Table>
                         </asp:Panel>
-                        <asp:Label ID="Label84" runat="server" Text="P28 Coaching Notes:" Font-Names="Calibri" Font-Bold="True" />
+                        <asp:Label ID="Label84" runat="server" Text="Coaching Notes:" Font-Names="Calibri" Font-Bold="True" />
                         <br />
                         <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc;
                             background-color: #f1f1ec; width: 490px;" class="review">
