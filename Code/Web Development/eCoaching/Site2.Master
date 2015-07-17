@@ -7,17 +7,11 @@
         if (!window.console) window.console = {};
         if (!window.console.log) window.console.log = function () { };
     </script>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <title>&nbsp;</title>
-    <link href="styles/Site.css" rel="stylesheet" type="text/css" />
     <link href="styles/bootstrap-3.2.0.min.css" rel="stylesheet" />
+    <link href="styles/Site.css" rel="stylesheet" type="text/css" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
-    <style type="text/css">
-        body {
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-    </style>
 </head>
 <body id="ctest">
     <form id="Form1" runat="server">
@@ -50,17 +44,7 @@
             });
         });
 */
-/*
-        $('#ddCSR').change(function () {
-            // Get the value, and store it in a variable
-            var theValue = $(this).val();
-            // Set that value to the hidden input
-            $('#ddCSRHidden').val(theValue);
-            alert("!!" + $("#ddCSRHidden").val());
-        });
-*/
-
-        function validateDateRange() {
+        function runExportToExcel() {
             //var startDate = new Date(jQuery('#StartDate').val());
             //var endDate = new Date(jQuery('#EndDate').val());
             //var days = (endDate - startDate) / 1000 / 60 / 60 / 24;

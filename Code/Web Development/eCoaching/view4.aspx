@@ -30,9 +30,9 @@
                 </ProgressTemplate>
             </asp:UpdateProgress>
             <br />
-            <%= DateTime.Now.ToString() %>
-            <br />
             <asp:Panel ID="FilterPanel" runat="server">
+                <asp:Label ID="Label22" runat="server" Text="eCoaching Logs" ForeColor="#0099FF"></asp:Label>
+                <br />
                 <asp:DropDownList ID="ddSite" AutoPostBack="true" runat="server" class="TextBox" Style="margin-right: 5px;"></asp:DropDownList>
                 <asp:DropDownList ID="ddCSR" runat="server" class="TextBox" Style="margin-right: 5px;" EnableViewState="false"></asp:DropDownList>
                 <asp:DropDownList ID="ddSUP" runat="server" class="TextBox" Style="margin-right: 5px;" EnableViewState="false"></asp:DropDownList>
@@ -63,11 +63,11 @@
             </asp:UpdateProgress>
             <br />
 
-            <%= DateTime.Now.ToString() %>
-
             <asp:Panel id="Panel2" runat="server">                 
                 <asp:Button ID="ApplyButton" runat="server" Text="Apply" CssClass="formButton" onClientClick="return setDropdownHiddenValues(); "></asp:Button>
-                <asp:Button ID="ExportToExcelButton" runat="server" CssClass="formButton" Text="Export to Excel" onClientClick="return validateDateRange();"></asp:Button>
+                <asp:Button ID="ExportToExcelButton" runat="server" CssClass="formButton" Text="Export to Excel" onClientClick="return runExportToExcel();"></asp:Button>
+                <br />
+                <br />
                 <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CellPadding="4"
                     EnableModelValidation="True" ForeColor="#333333" GridLines="Vertical" Width="90%"
                     AllowSorting="True" AllowPaging="True" PageSize="50" ShowFooter="True" Visible="true"
@@ -76,7 +76,7 @@
                     <Columns>
                         <asp:TemplateField HeaderText="#" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:Label ID="index" runat="server"><%# Eval("RowNumber") %></asp:Label>
+                                <asp:Label ID="index" runat="server">&nbsp;&nbsp;<%# Eval("RowNumber") %></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Name2" SortExpression="strFormID" Visible="False" ItemStyle-VerticalAlign="Top">

@@ -244,7 +244,7 @@ Public Class HistoricalDashboardDBAccess
                 historicalDashboard.SubmitterName = If(IsDBNull(row("strSubmitterName")), String.Empty, row("strSubmitterName"))
                 historicalDashboard.Source = If(IsDBNull(row("strSource")), String.Empty, row("strSource"))
                 historicalDashboard.Status = If(IsDBNull(row("strFormStatus")), String.Empty, row("strFormStatus"))
-                historicalDashboard.SubmittedDate = If(IsDBNull(row("SubmittedDate")), String.Empty, row("SubmittedDate"))
+                historicalDashboard.SubmittedDate = If(IsDBNull(row("SubmittedDate")), String.Empty, row("SubmittedDate")).ToString()
                 Dim reasons As String = If(IsDBNull(row("strCoachingReason")), String.Empty, row("strCoachingReason"))
                 Dim subReasons As String = If(IsDBNull(row("strSubCoachingReason")), String.Empty, row("strSubCoachingReason"))
                 Dim values As String = If(IsDBNull(row("strValue")), String.Empty, row("strValue"))

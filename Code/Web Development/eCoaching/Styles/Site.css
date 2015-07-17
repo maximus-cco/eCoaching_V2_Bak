@@ -11,11 +11,10 @@ body
     font-family: Calibri;
     font-size: 10pt;
     margin: 0px;
-    padding: 0px;
+    padding: 10px;
     color: #000000;
     border: none;
     height: 100%;
-    overflow: hidden;
 }
 
 .formButton
@@ -433,9 +432,20 @@ div.hideSkiplink
     left: 35px;
 }
 
-.ajax__tab_xp .ajax__tab_body
+/*.ajax__tab_xp .ajax__tab_body
 {
     border-style: none !important;
+}*/
+
+th
+{
+    text-align: center;
+}
+
+td 
+{
+    padding-right: 4px;
+    padding-left: 4px;
 }
 
 

@@ -656,7 +656,7 @@
                         <asp:Label ID="Label91" runat="server" Text="Coaching Opportunity was not a confirmed Customer Service Escalation" Font-Bold="True"></asp:Label>
                     </asp:Panel>
                     <asp:Panel ID="Panel23" runat="server" Visible="false">
-                        <asp:Label ID="Label71" runat="server" Text="P23 Coaching Notes:" Font-Names="Calibri" Font-Bold="True"></asp:Label>
+                        <asp:Label ID="Label71" runat="server" Text="Coaching Notes:" Font-Names="Calibri" Font-Bold="True"></asp:Label>
                         <br />
                         <asp:Table ID="Table9" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
