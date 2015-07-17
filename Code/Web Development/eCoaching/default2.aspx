@@ -511,33 +511,35 @@
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
-            <asp:Panel ID="Panel28" runat="server" Visible="true" HorizontalAlign="Center" Width="100%"
+            <asp:Panel ID="Panel28" runat="server" Visible="true" HorizontalAlign="Center" Width="100%" 
                 Style="border-bottom-color: Gray; border-bottom-style: solid; border-bottom-width: 5px;">
-                <asp:Table ID="Table2" runat="server">
-                    <asp:TableRow>
-                        <asp:TableCell HorizontalAlign="Left">
-                            <asp:Label ID="Label38" runat="server" Text="Select Coaching Module:" CssClass="question"
-                                ViewStateMode="Disabled"></asp:Label>
-                            &nbsp;<asp:Label ID="Label40" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
-                        </asp:TableCell>
-                    </asp:TableRow>
-                    <asp:TableRow>
-                        <asp:TableCell HorizontalAlign="Left">
-                            <asp:DropDownList ID="DropDownList3" DataSourceID="SqlDataSource15" DataValueField="BySite"
-                                CssClass="TextBox" DataTextField="Module" AutoPostBack="true" AppendDataBoundItems="true"
-                                runat="server" OnSelectedIndexChanged="DropDownList3_SelectedIndexChanged" Style="margin-right: 5px;">
-                                <asp:ListItem Value="Select..." Selected="True">Select...</asp:ListItem>
-                            </asp:DropDownList>
-                            <asp:SqlDataSource ID="SqlDataSource15" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                                SelectCommand="EC.sp_Select_Modules_By_Job_Code" SelectCommandType="StoredProcedure"
-                                DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                                <SelectParameters>
-                                    <asp:Parameter Name="nvcEmpLanIDin" Type="String" />
-                                </SelectParameters>
-                            </asp:SqlDataSource>
-                        </asp:TableCell>
-                    </asp:TableRow>
-                </asp:Table>
+                <div align="center">
+                    <asp:Table ID="Table2" runat="server">
+                        <asp:TableRow>
+                            <asp:TableCell HorizontalAlign="Left">
+                                <asp:Label ID="Label38" runat="server" Text="Select Coaching Module:" CssClass="question"
+                                    ViewStateMode="Disabled"></asp:Label>
+                                &nbsp;<asp:Label ID="Label40" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
+                            </asp:TableCell>
+                        </asp:TableRow>
+                        <asp:TableRow>
+                            <asp:TableCell HorizontalAlign="Left">
+                                <asp:DropDownList ID="DropDownList3" DataSourceID="SqlDataSource15" DataValueField="BySite"
+                                    CssClass="TextBox" DataTextField="Module" AutoPostBack="true" AppendDataBoundItems="true"
+                                    runat="server" OnSelectedIndexChanged="DropDownList3_SelectedIndexChanged" Style="margin-right: 5px;">
+                                    <asp:ListItem Value="Select..." Selected="True">Select...</asp:ListItem>
+                                </asp:DropDownList>
+                                <asp:SqlDataSource ID="SqlDataSource15" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
+                                    SelectCommand="EC.sp_Select_Modules_By_Job_Code" SelectCommandType="StoredProcedure"
+                                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
+                                    <SelectParameters>
+                                        <asp:Parameter Name="nvcEmpLanIDin" Type="String" />
+                                    </SelectParameters>
+                                </asp:SqlDataSource>
+                            </asp:TableCell>
+                        </asp:TableRow>
+                    </asp:Table>
+                 </div>
                 <br />
             </asp:Panel>
             <br />
