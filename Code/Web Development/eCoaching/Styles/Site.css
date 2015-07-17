@@ -42,7 +42,9 @@ body
 
 .tboxes
 {
-    border: 1pt #bfbfbf;
+    border-style: solid;
+    border-width: thin;
+    /*border: 1pt #bfbfbf;*/
     padding: 1px;
     width: 450px;
     height: 100px;
