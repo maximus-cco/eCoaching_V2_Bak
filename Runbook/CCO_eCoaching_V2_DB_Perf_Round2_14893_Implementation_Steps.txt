@@ -7,12 +7,15 @@ Summary for SCR 14893
 1. 6 new functions for Coaching Reasons concatenation
 2. sp_SelectFrom_Coaching_Log_HistoricalSUP
 3. sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
-4. sp_Select_Sites_For_Dashboard
-5. sp_SelectFrom_Coaching_LogDistinctCSRCompleted
-6. sp_SelectFrom_Coaching_LogDistinctSUPCompleted
-7. sp_SelectFrom_Coaching_LogDistinctMGRCompleted
-8. sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
-9. sp_SelectFrom_Coaching_Log_Historical_Export
+4. sp_SelectFrom_Coaching_Log_Historical_Export
+5. sp_Select_Sites_For_Dashboard
+6. sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
+7. sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All
+8. sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site 
+9. sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All 
+10. sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site
+11. sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All
+12. sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site 
 
 */
 
@@ -354,13 +357,15 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/2012
 --	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
--- Last Modified Date:05/28/2015
--- Last Updated By: Susmitha Palacherla
--- Modified per SCR 14893 dashboard redesign performance round 2.
+--  Last Modified: 06/11/2015
+--  Last Modified Bt: Susmitha Palacherla
+--  Modified per SCR 14916 to add additional HR job codes.
 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
@@ -398,19 +403,58 @@ DECLARE
 @UpperBand int,
 @LowerBand int,
 @SortExpression nvarchar(100),
-@SortOrder nvarchar(10)         
-    
+@SortOrder nvarchar(10) ,
+@OrderKey nvarchar(10),
+@where nvarchar(max)        
 
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 Set @strEDate = convert(varchar(8),@strEDatein,112)
 SET @LowerBand  = @startRowIndex 
 SET @UpperBand  = @startRowIndex + @PageSize 
 
+SET @where = ' WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [cl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [clr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [cl].[EmpID] =   '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+'''' 
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [cl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[cl].[SiteID]) = '''+@strCSRSitein+''''
+END			 
+
 --PRINT @UpperBand
 IF @sortASC = 'y' 
 SET @SortOrder = ' ASC' ELSE 
 SET @SortOrder = ' DESC' 
-SET  @SortExpression = @sortBy +  @SortOrder
+SET @OrderKey = 'orderkey, '
+SET  @SortExpression = @OrderKey + @sortBy +  @SortOrder
 
 --PRINT @SortExpression
 
@@ -446,22 +490,48 @@ ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
 ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
 ON cl.SourceID = so.SourceID JOIN  [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
-ON cl.CoachingID = clr.CoachingID
-WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
-AND [s].[Status] Like '''+@strStatusin+'''
-AND [clr].[value] Like '''+@strvalue+'''
-AND ISNULL([cl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
-AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
-AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
-AND ISNULL([cl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
-AND CONVERT(varchar,[cl].[SiteID]) LIKE '''+@strCSRSitein+'''
-and convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''
-and convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
-and [cl].[StatusID] <> 2
-GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+ON cl.CoachingID = clr.CoachingID' + 
+@where + 
+' GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
 [s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name],[cl].[CoachingID]'
 
 
+SET @where = ' WHERE convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [wl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [wlr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [wl].[EmpID] = '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+''''
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [wl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[wl].[SiteID]) = '''+@strCSRSitein+''''
+END	
 
 SET @nvcSQL2 = ' UNION
      SELECT DISTINCT [wl].[FormName]	strFormID
@@ -481,19 +551,9 @@ ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
 ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
 ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
 ON wl.SourceID = so.SourceID JOIN  [EC].[Warning_Log_Reason] wlr WITH (NOLOCK)
-ON wl.WarningID = wlr.WarningID
-WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
-AND [s].[Status] Like '''+@strStatusin+'''
-AND [wlr].[value] Like '''+@strvalue+'''
-AND ISNULL([wl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
-AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
-AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
-AND ISNULL([wl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
-AND CONVERT(varchar,[wl].[SiteID]) LIKE '''+@strCSRSitein+'''
-and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
-and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
-and [wl].[StatusID] <> 2
-GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+ON wl.WarningID = wlr.WarningID' +
+@where + 
+' GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
 [s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name],[wl].[WarningID]'
 
 SET @nvcSQL3 = ' ) x
@@ -517,7 +577,8 @@ SET @nvcSQL3 = ' ) x
  
  IF @strjobcode in ('WHER13', 'WHER50',
 'WHHR12', 'WHHR13', 'WHHR14',
-'WHHR50', 'WHHR60', 'WHHR80')
+'WHHR50', 'WHHR60', 'WHHR80',
+'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
 
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
 
@@ -530,7 +591,10 @@ EXEC (@nvcSQL)
 --PRINT @nvcSQL
 	    
 END -- sp_SelectFrom_Coaching_Log_HistoricalSUP
+
+
 GO
+
 
 
 
@@ -554,12 +618,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/28/2015
 --	Description: *	This procedure returns the count of completed   e-Coaching  records that will be 
 --  displayed for the selected criteria on the SUP historical page.
 -- Create per SCR 14893 dashboard redesign performance round 2.
+--  Last Modified: 06/11/2015
+--  Last Modified Bt: Susmitha Palacherla
+--  Modified per SCR 14916 to add additional HR job codes.
 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count] 
@@ -591,14 +659,50 @@ DECLARE
 @nvcSQL3 nvarchar(max),
 @strFormStatus nvarchar(30),
 @strSDate nvarchar(8),
-@strEDate nvarchar(8)
+@strEDate nvarchar(8),
+@where nvarchar(max) 
       
     
 SET @strFormStatus = 'Inactive'
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 Set @strEDate = convert(varchar(8),@strEDatein,112)
 
-
+SET @where = ' WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [cl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [clr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [cl].[EmpID] =   '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+'''' 
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [cl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[cl].[SiteID]) = '''+@strCSRSitein+''''
+END			 
 
 SET @nvcSQL1 = 'WITH TempCoaching AS 
         (select DISTINCT x.strFormID
@@ -610,20 +714,48 @@ ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
 ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
 ON cl.SiteID = si.SiteID JOIN  [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
-ON cl.CoachingID = clr.CoachingID
-WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
-AND [s].[Status] Like '''+@strStatusin+'''
-AND [clr].[value] Like '''+@strvalue+'''
-AND ISNULL([cl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
-AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
-AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
-AND ISNULL([cl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
-AND CONVERT(varchar,[cl].[SiteID]) LIKE '''+@strCSRSitein+'''
-and convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''
-and convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
-and [cl].[StatusID] <> 2
-GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+ON cl.CoachingID = clr.CoachingID'
++ @where + 
+' GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
 [s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name],[cl].[CoachingID]'
+
+SET @where = ' WHERE convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [wl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [wlr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [wl].[EmpID] = '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+''''
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [wl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[wl].[SiteID]) = '''+@strCSRSitein+''''
+END	
+
 
 SET @nvcSQL2 = ' UNION
      SELECT DISTINCT [wl].[FormName]	strFormID
@@ -633,19 +765,9 @@ ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
 ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
 ON wl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
 ON wl.SiteID = si.SiteID JOIN  [EC].[Warning_Log_Reason] wlr WITH (NOLOCK)
-ON wl.WarningID = wlr.WarningID
-WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
-AND [s].[Status] Like '''+@strStatusin+'''
-AND [wlr].[value] Like '''+@strvalue+'''
-AND ISNULL([wl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
-AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
-AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
-AND ISNULL([wl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
-AND CONVERT(varchar,[wl].[SiteID]) LIKE '''+@strCSRSitein+'''
-and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
-and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
-and [wl].[StatusID] <> 2
-GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+ON wl.WarningID = wlr.WarningID'
++ @where + 
+' GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
 [s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name],[wl].[WarningID]'
 
 SET @nvcSQL3 = ' ) x
@@ -655,7 +777,8 @@ SET @nvcSQL3 = ' ) x
   
  IF @strjobcode in ('WHER13', 'WHER50',
 'WHHR12', 'WHHR13', 'WHHR14',
-'WHHR50', 'WHHR60', 'WHHR80')
+'WHHR50', 'WHHR60', 'WHHR80',
+'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
 
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
 
@@ -669,11 +792,175 @@ EXEC (@nvcSQL)
 	    
 END -- sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
 
+
 GO
 
---*********************************************************
---4. sp_Select_Sites_For_Dashboard
 
+
+
+
+
+--*********************************************************
+
+--4. sp_SelectFrom_Coaching_Log_Historical_Export
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Historical_Export' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	4/14/2015
+--	Description: *	This procedure selects the  e-Coaching completed records for export.
+-- Last Modified Date:06/2/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per SCR 14893 dashboard redesign performance round 2.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
+
+@strSourcein nvarchar(100),
+@strCSRSitein nvarchar(30),
+@strCSRin nvarchar(30),
+@strSUPin nvarchar(30),
+@strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@strStatusin nvarchar(30), 
+@strvalue  nvarchar(30)
+
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8),
+@where nvarchar(max)  
+
+
+Set @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+
+SET @where = ' '
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [clr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [cl].[EmpID] =   '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+'''' 
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [cl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[cl].[SiteID]) = '''+@strCSRSitein+''''
+END			 
+
+
+SET @nvcSQL = ';WITH CL AS
+(SELECT * From [EC].[Coaching_Log]WITH (NOLOCK)
+WHERE convert(varchar(8),[SubmittedDate],112) >= '''+@strSDate+'''
+and convert(varchar(8),[SubmittedDate],112) <= '''+@strEDate+'''
+AND [StatusID] <> 2
+)
+SELECT [cl].[CoachingID]	CoachingID
+        ,[cl].[FormName]	FormName
+        ,[cl].[ProgramName]	ProgramName
+        ,[cl].[EmpID]	EmpID
+		,[eh].[Emp_Name]	CSRName
+		,[eh].[Sup_Name]	CSRSupName
+		,[eh].[Mgr_Name]	CSRMgrName
+		,[si].[City]		FormSite
+		,[so].[CoachingSource]		FormSource
+		,[so].[SubCoachingSource]	FormSubSource
+		,[dcr].[CoachingReason]	CoachingReason
+		,[dscr].[SubCoachingReason]	SubCoachingReason
+		,[clr].[Value]	Value
+		,[s].[Status]		FormStatus
+		,[sh].[Emp_Name]	SubmitterName
+		,[cl].[EventDate]	EventDate
+		,[cl].[CoachingDate]	CoachingDate
+		,[cl].[VerintID]	VerintID
+		,[cl].[Description]	Description
+		,[cl].[CoachingNotes]	CoachingNotes
+		,[cl].[SubmittedDate]	SubmittedDate
+		,[cl].[SupReviewedAutoDate]	SupReviewedAutoDate
+		,[cl].[MgrReviewManualDate]	MgrReviewManualDate
+		,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
+		,[cl].[MgrNotes]	MgrNotes
+		,[cl].[CSRReviewAutoDate]	CSRReviewAutoDate
+		,[cl].[CSRComments]	CSRComments
+		FROM [EC].[Employee_Hierarchy] eh WITH (NOLOCK) JOIN cl
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON cl.SiteID = si.SiteID JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) 
+ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr
+ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID '
++ @where + 
+' ORDER BY [cl].[CoachingID]'
+
+EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
+	    
+END -- sp_SelectFrom_Coaching_Log_Historical_Export
+
+
+
+
+GO
+
+
+
+
+
+
+
+--*********************************************************
+
+--5. sp_Select_Sites_For_Dashboard
 
 IF EXISTS (
   SELECT * 
@@ -723,174 +1010,8 @@ GO
 
 
 --*********************************************************
---5. sp_SelectFrom_Coaching_LogDistinctCSRCompleted
 
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctCSRCompleted' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted]
-GO
-
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
---	====================================================================
---	Author:			Jourdain Augustin
---	Create Date:	4/30/12
---	Description: *	This procedure selects the distinct CSRs from completed e-Coaching records to display on Historical dashboard for filter. 
--- Last Modified Date: 06/01/2015
--- Last Modified Bt: Susmitha Palacherla
--- Modified per SCR 14893 Round 2 Performance improvements.
---	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted] 
-
-AS
-
-BEGIN
-DECLARE	
-@nvcSQL nvarchar(max)
-
-
-SET @nvcSQL = 'SELECT X.CSRText, X.CSRValue, X.strCSRSite FROM
-(SELECT ''All Employees'' CSRText, ''%'' CSRValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
-UNION
-SELECT DISTINCT eh.Emp_Name	CSRText, cl.EmpID CSRValue, CONVERT(nvarchar,cl.SiteID) strCSRSite, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
-cl.EmpID = eh.Emp_ID 
-where cl.StatusID <> 2
-and cl.EmpID is not NULL) X
-Order By X.Sortorder, X.CSRText'
-
-		
-EXEC (@nvcSQL)	
---PRINT @nvcSQL
-
-End --sp_SelectFrom_Coaching_LogDistinctCSRCompleted
-GO
-
-
-
---*********************************************************
---6. sp_SelectFrom_Coaching_LogDistinctSUPCompleted
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctSUPCompleted' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted]
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
---	====================================================================
---	Author:			Jourdain Augustin
---	Create Date:	7/12/12
---	Description: *	This procedure selects the distinct SUPs from completed e-Coaching records to display on Historical dashboard for filter. 
--- Last Modified Date: 06/01/2015
--- Last Modified Bt: Susmitha Palacherla
--- Modified per SCR 14893 Round 2 Performance improvements.
---	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted] 
-
-AS
-
-BEGIN
-DECLARE	
-@nvcSQL nvarchar(max)
-
-
-
-SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue, X.strCSRSite FROM
-(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
-UNION
-SELECT DISTINCT eh.Sup_Name	SUPText, eh.Sup_ID SUPValue,  CONVERT(nvarchar,cl.SiteID) strCSRSite, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
-cl.EmpID = eh.Emp_ID 
-where cl.StatusID <> 2
-and eh.Sup_Name is not NULL
-and (eh.Sup_ID <> ''999999'' or eh.Sup_ID is NOT NULL)) X
-Order By X.Sortorder, X.SUPText'
-
-
-		
-EXEC (@nvcSQL)	
-
-End --sp_SelectFrom_Coaching_LogDistinctSUPCompleted
-GO
-
-
-
---*********************************************************
---7. sp_SelectFrom_Coaching_LogDistinctMGRCompleted
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctMGRCompleted' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted]
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
---	====================================================================
---	Author:			Jourdain Augustin
---	Create Date:	7/12/12
---	Description: *	This procedure selects the distinct MGRs from completed e-Coaching records to display on Historical dashboard for filter. 
--- Last Modified Date: 06/01/2015
--- Last Modified Bt: Susmitha Palacherla
--- Modified per SCR 14893 Round 2 Performance improvements.
---	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted] 
-
-AS
-
-BEGIN
-DECLARE	
-@nvcSQL nvarchar(max)
-
-
-
-SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue, X.strCSRSite FROM
-(SELECT ''All Managers'' MGRText, ''%'' MGRValue, ''%'' strCSRSite, 01 Sortorder From [EC].[Employee_Hierarchy]
-UNION
-SELECT DISTINCT eh.MGR_Name	MGRText, eh.MGR_ID MGRValue, CONVERT(nvarchar,cl.SiteID) strCSRSite, 02 Sortorder
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
-cl.EmpID = eh.Emp_ID 
-where cl.StatusID <> 2
-and (eh.MGR_Name is not NULL or eh.Mgr_ID  <> ''999999'')) X
-Order By X.Sortorder, X.MGRText'
-
-		
-EXEC (@nvcSQL)	
---PRINT @nvcSQL
-
-End --sp_SelectFrom_Coaching_LogDistinctMGRCompleted
-GO
-
-
-
-
---*********************************************************
---8. sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
+--6. sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
 
 IF EXISTS (
   SELECT * 
@@ -906,6 +1027,9 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 
 --	====================================================================
 --	Author:			Jourdain Augustin
@@ -934,10 +1058,11 @@ SELECT DISTINCT sh.Emp_Name	SubmitterText, cl.SubmitterID SubmitterValue, 02 Sor
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh  ON
 cl.SubmitterID = sh.Emp_ID
-where (cl.SubmitterID is not NULL or cl.SubmitterID  <> ''999999'')
+where cl.SubmitterID is not NULL 
+and cl.SubmitterID  <> ''999999''
 and cl.StatusID <> 2
 UNION
-SELECT ''Unknown'' SubmitterText, ''Unknown'' SubmitterValue, 03 Sortorder
+SELECT ''Unknown'' SubmitterText, ''999999'' SubmitterValue, 03 Sortorder
 )X
 ORDER BY X.Sortorder, X.SubmitterText'
 
@@ -947,22 +1072,85 @@ EXEC (@nvcSQL)
 
 
 End --sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2
+
+
+
 GO
 
 
 
 
---*********************************************************
+--******************************************************************
 
---9. sp_SelectFrom_Coaching_Log_Historical_Export
+--7. Create SP [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All] 
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Historical_Export' 
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All' 
 )
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export]
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	06/10/2015
+--	Description: *	This procedure selects a list of all Employees who have completed or pending 
+--  eCoaching records to display in the Historical dashboard filter dropdown.
+--   Created during SCR 14893 Round 2 Performance improvements.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All] 
+
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+
+SET @nvcSQL = 'SELECT X.CSRText, X.CSRValue FROM
+(SELECT ''All Employees'' CSRText, ''%'' CSRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	CSRText, cl.EmpID CSRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID 
+where cl.StatusID <> 2
+and cl.EmpID is not NULL
+) X
+Order By X.Sortorder, X.CSRText'
+
+		
+EXEC (@nvcSQL)	
+--PRINT @nvcSQL
+
+End --sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All
+
+
+GO
+
+
+
+--******************************************************************
+
+--8. Create SP [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site]
 GO
 
 
@@ -973,295 +1161,318 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	4/14/2015
---	Description: *	This procedure selects the  e-Coaching completed records for export.
--- Last Modified Date:06/2/2015
--- Last Updated By: Susmitha Palacherla
--- Modified per SCR 14893 dashboard redesign performance round 2.
+--	Create Date:	06/10/2015
+--	Description: *	This procedure selects a list of Employees at a selected site who have completed or pending 
+--  eCoaching records to display in the Historical dashboard filter dropdown.
+--   Created during SCR 14893 Round 2 Performance improvements.
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site] 
+@strCSRSitein nvarchar(30)
 
-@strSourcein nvarchar(100),
-@strCSRSitein nvarchar(30),
-@strCSRin nvarchar(30),
-@strSUPin nvarchar(30),
-@strMGRin nvarchar(30),
-@strSubmitterin nvarchar(30),
-@strSDatein datetime,
-@strEDatein datetime,
-@strStatusin nvarchar(30), 
-@strvalue  nvarchar(30)
 AS
-
 
 BEGIN
 DECLARE	
-@nvcSQL nvarchar(max),
-@strSDate nvarchar(8),
-@strEDate nvarchar(8)
+@nvcSQL nvarchar(max)
 
 
-Set @strSDate = convert(varchar(8),@strSDatein,112)
-Set @strEDate = convert(varchar(8),@strEDatein,112)
+SET @nvcSQL = 'SELECT X.CSRText, X.CSRValue FROM
+(SELECT ''All Employees'' CSRText, ''%'' CSRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	CSRText, cl.EmpID CSRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID 
+where cl.StatusID <> 2
+and cl.EmpID is not NULL
+and CONVERT(nvarchar,cl.SiteID) = '''+@strCSRSitein+''') X
+Order By X.Sortorder, X.CSRText'
+
+		
+EXEC (@nvcSQL)	
+--PRINT @nvcSQL
+
+End --sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site
+
+
+GO
 
 
 
-SET @nvcSQL = ';WITH CL AS
-(SELECT * From [EC].[Coaching_Log]WITH (NOLOCK)
-WHERE convert(varchar(8),[SubmittedDate],112) >= '''+@strSDate+'''
-and convert(varchar(8),[SubmittedDate],112) <= '''+@strEDate+'''
-AND [StatusID] <> 2
+
+
+--******************************************************************
+
+--9. Create SP [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All' 
 )
-SELECT [cl].[CoachingID]	CoachingID
-        ,[cl].[FormName]	FormName
-        ,[cl].[ProgramName]	ProgramName
-        ,[cl].[EmpID]	EmpID
-		,[eh].[Emp_Name]	CSRName
-		,[eh].[Sup_Name]	CSRSupName
-		,[eh].[Mgr_Name]	CSRMgrName
-		,[si].[City]		FormSite
-		,[so].[CoachingSource]		FormSource
-		,[so].[SubCoachingSource]	FormSubSource
-		,[dcr].[CoachingReason]	CoachingReason
-		,[dscr].[SubCoachingReason]	SubCoachingReason
-		,[clr].[Value]	Value
-		,[s].[Status]		FormStatus
-		,[sh].[Emp_Name]	SubmitterName
-		,[cl].[EventDate]	EventDate
-		,[cl].[VerintID]	VerintID
-		,[cl].[Description]	Description
-		,[cl].[CoachingNotes]	CoachingNotes
-		,[cl].[SubmittedDate]	SubmittedDate
-		,[cl].[SupReviewedAutoDate]	SupReviewedAutoDate
-		,[cl].[MgrReviewManualDate]	MgrReviewManualDate
-		,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
-		,[cl].[MgrNotes]	MgrNotes
-		,[cl].[CSRReviewAutoDate]	CSRReviewAutoDate
-		,[cl].[CSRComments]	CSRComments
-		FROM [EC].[Employee_Hierarchy] eh WITH (NOLOCK) JOIN cl
-ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
-ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
-ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
-ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
-ON cl.SiteID = si.SiteID JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) 
-ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr
-ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
-ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID
-WHERE [so].[SubCoachingSource] Like '''+@strSourcein+'''
-AND [s].[Status] Like '''+@strStatusin+'''
-AND [clr].[value] Like '''+@strvalue+'''
-AND ISNULL([cl].[EmpID], '' '') LIKE '''+@strCSRin+''' 
-AND ISNULL([eh].[Sup_ID], '' '') LIKE '''+@strSUPin+''' 
-AND ISNULL([eh].[Mgr_ID], '' '') LIKE '''+@strMGRin+''' 
-AND ISNULL([cl].[SubmitterID], '' '') LIKE '''+@strSubmitterin+''' 
-AND CONVERT(varchar,[cl].[SiteID]) LIKE '''+@strCSRSitein+'''
-ORDER BY [cl].[CoachingID]'
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All]
+GO
 
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	06/10/2015
+--	Description: *	This procedure selects a list of all Supervisors who have completed or pending 
+--  eCoaching records to display in the Historical dashboard filter dropdown.
+--   Created during SCR 14893 Round 2 Performance improvements.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All] 
+
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+
+
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Sup_Name	SUPText, eh.Sup_ID SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID 
+where cl.StatusID <> 2
+and eh.Sup_Name is not NULL
+and eh.Sup_ID <> ''999999'' 
+) X
+Order By X.Sortorder, X.SUPText'
+
+
+		
 EXEC (@nvcSQL)	
 
+End --sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All
+
+
+
+GO
+
+
+
+
+
+
+--******************************************************************
+
+--10. Create SP [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	06/10/2015
+--	Description: *	This procedure selects a list of Supervisors at a selected site who have completed or pending 
+--  eCoaching records to display in the Historical dashboard filter dropdown.
+--   Created during SCR 14893 Round 2 Performance improvements.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site] 
+@strCSRSitein nvarchar(30)
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+
+
+SET @nvcSQL = 'SELECT X.SUPText, X.SUPValue FROM
+(SELECT ''All Supervisors'' SUPText, ''%'' SUPValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Sup_Name	SUPText, eh.Sup_ID SUPValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID 
+where cl.StatusID <> 2
+and eh.Sup_Name is not NULL
+and eh.Sup_ID <> ''999999'' 
+and CONVERT(nvarchar,cl.SiteID) = '''+@strCSRSitein+''') X
+Order By X.Sortorder, X.SUPText'
+
+
+		
+EXEC (@nvcSQL)	
+
+End --sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site
+
+
+
+GO
+
+
+
+
+--******************************************************************
+
+--11. Create SP [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	06/10/2015
+--	Description: *	This procedure selects a list of all Managers who have completed or pending 
+--  eCoaching records to display in the Historical dashboard filter dropdown.
+--   Created during SCR 14893 Round 2 Performance improvements.
+--	=====================================================================
+CREATE  PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All] 
+
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+
+
+SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.MGR_Name	MGRText, eh.MGR_ID MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID 
+where cl.StatusID <> 2
+and eh.MGR_Name is not NULL 
+and eh.Mgr_ID  <> ''999999''
+) X
+Order By X.Sortorder, X.MGRText'
+
+		
+EXEC (@nvcSQL)	
 --PRINT @nvcSQL
-	    
-END -- sp_SelectFrom_Coaching_Log_Historical_Export
+
+End --sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All
+
+
+
 GO
 
 
 
 
-/*********************************************************
+
+
+--******************************************************************
+
+--12. Create SP [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site] 
+
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site' 
 )
-   DROP PROCEDURE [EC].[]
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
 GO
 
 
 
 
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	06/10/2015
+--	Description: *	This procedure selects a list of Managers at a selected site who have completed or pending 
+--  eCoaching records to display in the Historical dashboard filter dropdown.
+--   Created during SCR 14893 Round 2 Performance improvements.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site] 
+@strCSRSitein nvarchar(30)
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+
+
+SET @nvcSQL = 'SELECT X.MGRText, X.MGRValue FROM
+(SELECT ''All Managers'' MGRText, ''%'' MGRValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.MGR_Name	MGRText, eh.MGR_ID MGRValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID 
+where cl.StatusID <> 2
+and eh.MGR_Name is not NULL 
+and eh.Mgr_ID  <> ''999999''
+and CONVERT(nvarchar,cl.SiteID) = '''+@strCSRSitein+''') X
+Order By X.Sortorder, X.MGRText'
+
+		
+EXEC (@nvcSQL)	
+--PRINT @nvcSQL
+
+End --sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site
+
+
+
 GO
 
 
 
 
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
-
-
-
-
---*********************************************************
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'' 
-)
-   DROP PROCEDURE [EC].[]
-GO
 
 
 
 
 --*********************************************************/
+
+
