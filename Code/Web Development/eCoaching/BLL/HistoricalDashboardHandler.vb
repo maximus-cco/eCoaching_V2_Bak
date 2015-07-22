@@ -174,11 +174,11 @@ Public Class HistoricalDashboardHandler
 
         'startRowIndex starts from zero
         startRowIndex = startRowIndex + 1
-        sortBy = If(String.IsNullOrEmpty(sortBy), "strFormID", sortBy)
+        sortBy = If(String.IsNullOrEmpty(sortBy), "SubmittedDate", sortBy)
 
-        Dim sortASC As String = "Y"
-        If String.Compare(sortDirection, "DESC", True) = 0 Then
-            sortASC = "N"
+        Dim sortASC As String = "N"
+        If String.Compare(sortDirection, "ASC", True) = 0 Then
+            sortASC = "Y"
         End If
 
         Return historicalDashboardDBAccess.GetRows(startRowIndex, pageSize, strSourcein, strCSRSitein, strCSRin, strSUPin, strMGRin, strSubmitterin, strSDatein,
@@ -211,7 +211,9 @@ Public Class HistoricalDashboardHandler
             Dim i As Integer = 0
             For Each item In dataRow.ItemArray
                 cell = row.CreateCell(i)
-                cell.SetCellValue(If(item Is DBNull.Value, String.Empty, item.ToString().Trim())) ' trim in stored procedure as well
+                ' Replace <br /> with line break
+                item = Replace(If(item Is DBNull.Value, String.Empty, item.ToString().Trim()), "<br />", Chr(10))
+                cell.SetCellValue(HttpUtility.HtmlDecode(item))
                 cell.CellStyle = cellStyle
                 i += 1
             Next
