@@ -1,7 +1,14 @@
 /*
-eCoaching_Log_Create(31).sql
-Last Modified Date: 07/08/2015
+eCoaching_Log_Create(32).sql
+Last Modified Date: 07/22/2015
 Last Modified By: Susmitha Palacherla
+
+Version 32:
+1. Additional Updates for SCR 14893
+    Updated #6 for Performance Optimization
+    Updated SP #80 to add Coaching_date
+2. Additional Update for SCR 14966. 
+     Updated SP#45 to add additional hierarchy fields.
 
 Version 31:
 1. Updates for SCR 14916 additional HR job codes
@@ -17,7 +24,7 @@ Version 29:
 1. Marked the following procedures as Obsolete#18,19,20,21,22,23(replaced with new procedures listed in Item 3)
 2. Updated the following procedures to use dynamic where clause # 6,79, 80
 3. Added 6 new Procedures # 81,82,83,84,85,86
-   All above chnages per SCR 14893.
+   All above changes per SCR 14893.
 
 Version 28:
 1. Modified procedures #6,18,20,22,66,and 67 to support performance improvement 
@@ -1235,6 +1242,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/2012
@@ -1266,6 +1276,7 @@ AS
 --[cl].[SubmittedDate]
 BEGIN
 
+
 SET NOCOUNT ON
 
 DECLARE	
@@ -1273,7 +1284,8 @@ DECLARE
 @nvcSQL1 nvarchar(max),
 @nvcSQL2 nvarchar(max),
 @nvcSQL3 nvarchar(max),
-@nvcSQL4 nvarchar(100),
+@nvcSQL4 nvarchar(max),
+@nvcSQL5 nvarchar(max),
 @strSDate nvarchar(10),
 @strEDate nvarchar(10),
 @UpperBand int,
@@ -1332,44 +1344,36 @@ SET @SortOrder = ' DESC'
 SET @OrderKey = 'orderkey, '
 SET  @SortExpression = @OrderKey + @sortBy +  @SortOrder
 
-PRINT @SortExpression
+--PRINT @SortExpression
 
-SET @nvcSQL1 = 'WITH TempCoaching AS 
+SET @nvcSQL1 = 'WITH TempMain AS 
         (select DISTINCT x.strFormID
-		,x.strCSRName
+        ,x.strCoachingID
+        ,x.strCSRName
 		,x.strCSRSupName
 		,x.strCSRMgrName
 		,x.strFormStatus
 		,x.strSource
 		,x.SubmittedDate
 		,x.strSubmitterName
-		,x.strCoachingReason
-		,x.strSubCoachingReason
-		,x.strValue
 		,x.orderkey
 		,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
 from (
      SELECT DISTINCT [cl].[FormName]	strFormID
-		,[eh].[Emp_Name]	strCSRName
+        ,[cl].[CoachingID]	strCoachingID
+    	,[eh].[Emp_Name]	strCSRName
 		,[eh].[Sup_Name]	strCSRSupName
 		,[eh].[Mgr_Name]	strCSRMgrName
 		,[s].[Status]		strFormStatus
 		,[so].[SubCoachingSource]	strSource
 		,[cl].[SubmittedDate]	SubmittedDate
 		,[sh].[Emp_Name]	strSubmitterName
-	    ,[EC].[fn_strCoachingReasonFromCoachingID](cl.CoachingID)strCoachingReason
-	    ,[EC].[fn_strSubCoachingReasonFromCoachingID](cl.CoachingID)strSubCoachingReason
-	    ,[EC].[fn_strValueFromCoachingID](cl.CoachingID)strValue
 	   	,''ok1'' orderkey
 		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
 ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
 ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
-ON cl.SourceID = so.SourceID JOIN  [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
-ON cl.CoachingID = clr.CoachingID' + 
-@where + 
-' GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
-[s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name],[cl].[CoachingID]'
+ON cl.SourceID = so.SourceID' +  @where 
 
 
 SET @where = ' WHERE convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
@@ -1411,29 +1415,24 @@ END
 
 SET @nvcSQL2 = ' UNION
      SELECT DISTINCT [wl].[FormName]	strFormID
-		,[eh].[Emp_Name]	strCSRName
+        ,[wl].[WarningID]	strCoachingID
+     	,[eh].[Emp_Name]	strCSRName
 		,[eh].[Sup_Name]	strCSRSupName
 		,[eh].[Mgr_Name]	strCSRMgrName
 		,[s].[Status]		strFormStatus
 		,[so].[SubCoachingSource]	strSource
 		,[wl].[SubmittedDate]	SubmittedDate
 		,[sh].[Emp_Name]	strSubmitterName
-	    ,[EC].[fn_strCoachingReasonFromWarningID](wl.WarningID)strCoachingReason
-	    ,[EC].[fn_strSubCoachingReasonFromWarningID](wl.WarningID)strSubCoachingReason
-	    ,[EC].[fn_strValueFromWarningID](wl.WarningID)strValue
 	   	,''ok2'' orderkey
 		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH(NOLOCK)
 ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
 ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
 ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
-ON wl.SourceID = so.SourceID JOIN  [EC].[Warning_Log_Reason] wlr WITH (NOLOCK)
-ON wl.WarningID = wlr.WarningID' +
-@where + 
-' GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
-[s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name],[wl].[WarningID]'
+ON wl.SourceID = so.SourceID' + @where 
 
-SET @nvcSQL3 = ' ) x
- )
+
+SET @nvcSQL3 = ' ) x )
+
  SELECT strFormID
 		,strCSRName
 	    ,strCSRSupName
@@ -1442,14 +1441,17 @@ SET @nvcSQL3 = ' ) x
 		,strSource
 		,SubmittedDate
 		,strSubmitterName
-	    ,strCoachingReason
-	    ,strSubCoachingReason
-	    ,strValue
+	    ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strCoachingReasonFromCoachingID](T.strCoachingID)
+	     ELSE [EC].[fn_strCoachingReasonFromWarningID](T.strCoachingID) END strCoachingReason
+	    ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strSubCoachingReasonFromCoachingID](T.strCoachingID)
+	     ELSE [EC].[fn_strSubCoachingReasonFromWarningID](T.strCoachingID) END strSubCoachingReason
+	    ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strValueFromCoachingID](T.strCoachingID)
+	     ELSE [EC].[fn_strValueFromWarningID](T.strCoachingID)END strValue
 		,RowNumber                 
-		FROM TempCoaching
+		FROM TempMain T
 		WHERE RowNumber >= '''+CONVERT(VARCHAR,@LowerBand)+'''  AND RowNumber < '''+CONVERT(VARCHAR, @UpperBand) +
-        ''' ORDER BY ' + @SortExpression       
- 
+        ''' ORDER BY ' + @SortExpression  
+
  
  IF @strjobcode in ('WHER13', 'WHER50',
 'WHHR12', 'WHHR13', 'WHHR14',
@@ -1462,14 +1464,19 @@ ELSE
 
 SET @nvcSQL = @nvcSQL1 + @nvcSQL3
 
+
 EXEC (@nvcSQL)	
 
 --PRINT @nvcSQL
 	    
-END -- sp_SelectFrom_Coaching_Log_HistoricalSUP
+END -- try2_SelectFrom_Coaching_Log_HistoricalSUP
+
+
+
 
 
 GO
+
 
 
 
@@ -4360,13 +4367,14 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 06/12/2015
--- Updated per SCR 14966 to add EmpID and SubmitterID to the select list.
+-- Last Modified Date: 07/10/2015
+-- Updated per SCR 14966 to add Hierarchy IDs to the select list.
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4385,6 +4393,8 @@ DECLARE
 		cl.EventDate	EventDate,
 		cl.CoachingDate	CoachingDate,
 		cl.SubmitterID strSubmitterID,
+		cl.SupID strCLSupID,
+		cl.MgrID strCLMgrID,
 		sh.Emp_LanID	strSubmitter,		
 		sh.Emp_Name	strSubmitterName,
 		sh.Emp_Email	strSubmitterEmail,	
@@ -4393,9 +4403,13 @@ DECLARE
 		eh.Emp_Name	strCSRName,
 		eh.Emp_Email	strCSREmail,
 		st.City	strCSRSite,
+		eh.Sup_ID strCSRSupID,
 		eh.Sup_LanID strCSRSup,
 		eh.Sup_Name	 strCSRSupName,
 		eh.Sup_Email  strCSRSupEmail,
+		 CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN cl.[MgrID]
+		 ELSE eh.Mgr_ID END	strCSRMgrID,
 		CASE WHEN cl.[strReportCode] like ''LCS%'' 
 		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
 		 ELSE eh.Mgr_LanID END	strCSRMgr,
@@ -4464,7 +4478,14 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
+
+
 GO
+
+
+
 
 ******************************************************************
 
@@ -7407,6 +7428,7 @@ SELECT [cl].[CoachingID]	CoachingID
 		,[s].[Status]		FormStatus
 		,[sh].[Emp_Name]	SubmitterName
 		,[cl].[EventDate]	EventDate
+		,[cl].[CoachingDate]	CoachingDate
 		,[cl].[VerintID]	VerintID
 		,[cl].[Description]	Description
 		,[cl].[CoachingNotes]	CoachingNotes
