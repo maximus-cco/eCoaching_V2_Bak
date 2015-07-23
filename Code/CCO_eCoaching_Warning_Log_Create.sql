@@ -1,10 +1,14 @@
 /*
-eCoaching_Warning_Log_Create(08).sql
-Last Modified Date: 06/15/2015
+eCoaching_Warning_Log_Create(09).sql
+Last Modified Date: 07/22/2015
 Last Modified By: Susmitha Palacherla
 
+
+Version 09: SCR 14966
+1. Additional Update to sp [EC].[sp_SelectReviewFrom_Warning_Log] (#3) to add Sup and Mgr Ids
+
 Version 08: SCR 14966
-1. Modified sp [EC].[sp_SelectReviewFrom_Warning_Log] (#3)
+1. Modified sp [EC].[sp_SelectReviewFrom_Warning_Log] (#3) to add Emp and submitter IDs
 2. Added a new SP #9 which was created earlier as part of 14423 and added toas SP #76 in Coaching_Log_Create doc.
 
 
@@ -462,13 +466,14 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/08/2014
 --	Description: 	This procedure displays the Warning Log attributes for given Form Name. 
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date: 06/12/2015
--- Updated per SCR 14966 to add EmpID and submitteriD to the select list.
+-- Last Modified Date: 07/10/2015
+-- Updated per SCR 14966 to add Hierarchy IDs to the select list.
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log] @strFormIDin nvarchar(50)
@@ -487,6 +492,8 @@ DECLARE
 		''Completed''	strFormStatus,
 		wl.WarningGivenDate	EventDate,
 		wl.SubmitterID strSubmitterID,
+		wl.SupID strCLSupID,
+		wl.MgrID strCLMgrID,
 		wl.EmpID strEmpID,	
 		sh.Emp_LanID	strSubmitter,		
 		sh.Emp_Name	strSubmitterName,
@@ -495,9 +502,11 @@ DECLARE
 		eh.Emp_Name	strCSRName,
 		eh.Emp_Email	strCSREmail,
 		st.City	strCSRSite,
+		eh.Sup_ID strCSRSupID,
 		eh.Sup_LanID	strCSRSup,
 		eh.Sup_Name	strCSRSupName,
 		eh.Sup_Email	strCSRSupEmail,
+		eh.Mgr_ID strCSRMgrID,
 		eh.Mgr_LanID	strCSRMgr,
 		eh.Mgr_Name	strCSRMgrName,
 		eh.Mgr_Email	strCSRMgrEmail,
@@ -517,8 +526,12 @@ EXEC (@nvcSQL)
 
 	    
 END --sp_SelectReviewFrom_Warning_Log
-GO
 
+
+
+
+
+GO
 
 
 
