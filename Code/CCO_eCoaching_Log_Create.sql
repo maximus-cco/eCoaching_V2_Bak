@@ -1,7 +1,14 @@
 /*
-eCoaching_Log_Create(32).sql
-Last Modified Date: 07/22/2015
+eCoaching_Log_Create(33).sql
+Last Modified Date: 07/24/2015
 Last Modified By: Susmitha Palacherla
+
+
+Version 33:
+1.  Updates for SCR 13631(TFS 115) Coaching Notes overwritten.
+     Updated SPs#46 and 47 for updating Mgr attributes 
+2.  Updates for TFS 363 Avoid Duplicate FormNames for Insert from UI.
+     Updated SP#1 to update logic for generating formname during insert.
 
 Version 32:
 1. Additional Updates for SCR 14893
@@ -431,15 +438,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      02/03/2014
 --    Description:     This procedure inserts the e-Coaching records into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 04/10/2015
+-- Last Modified Date: 07/23/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 14512 to capture 'behavior' for Training Module.
+-- Modified per TFS 363/402 to update formname from CoachingID after insert. 
 --
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
@@ -511,7 +519,8 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
       @nvcCSRComments Nvarchar(3000),
       @bitEmailSent bit ,
       @ModuleID INT,
-      @Behaviour Nvarchar(30)
+      @Behaviour Nvarchar(30),
+      @nvcNewFormName Nvarchar(50)OUTPUT
       )
    
 AS
@@ -629,7 +638,18 @@ BEGIN TRY
     DECLARE @I BIGINT = @@IDENTITY,
             @MaxSubReasonRowID INT,
             @SubReasonRowID INT
-    
+       
+            
+--WAITFOR DELAY '00:00:00:02'  -- Wait for 5 ms
+
+UPDATE [EC].[Coaching_Log]
+SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+where [CoachingID] = @I  AND [FormName] not like 'eCL%'    
+OPTION (MAXDOP 1)
+
+WAITFOR DELAY '00:00:00:01'  -- Wait for 5 ms
+
+SET @nvcNewFormName = (SELECT [FormName] FROM  [EC].[Coaching_Log] WHERE [CoachingID] = @I)
 
      /*
            IF NOT @intCoachReasonID1 IS NULL
@@ -906,6 +926,10 @@ While @SubReasonRowID <= @MaxSubReasonRowID
       	SET @SubReasonRowID = @SubReasonRowID + 1
 
     END
+    
+
+   
+    
   END  
 COMMIT TRANSACTION
 END TRY
@@ -962,7 +986,11 @@ END TRY
 
 
 
+
 GO
+
+
+
 
 
 
@@ -4507,12 +4535,13 @@ GO
 
 
 
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/12
 --    Description: *    This procedure allows supervisors to update the e-Coaching records from review page. 
---    Last Update:    12/16/2014
---    Updated per SCR 13891 to capture review sup id.
+--    Last Update:   07/22/2015
+--    Updated per TFS 115/118 to fix issue with Coaching Notes overwritten.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update1Review_Coaching_Log]
 (
@@ -4520,8 +4549,7 @@ CREATE PROCEDURE [EC].[sp_Update1Review_Coaching_Log]
       @nvcFormStatus Nvarchar(30),
       @nvcReviewSupLanID Nvarchar(20),
       @dtmSupReviewedAutoDate datetime,
-	  @dtmCoachingDate datetime,
-      @nvctxtCoachingNotes Nvarchar(max) 
+	  @nvctxtCoachingNotes Nvarchar(max) 
 )
 AS
 
@@ -4546,8 +4574,7 @@ UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
 	       Review_SupID = @nvcReviewSupID,
 		   SupReviewedAutoDate = @dtmSupReviewedAutoDate,
-		   CoachingDate = @dtmCoachingDate,
-           CoachingNotes = @nvctxtCoachingNotes
+		   CoachingNotes = @nvctxtCoachingNotes
 from EC.Coaching_Log      
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)
@@ -4596,7 +4623,9 @@ END CATCH
 END --sp_Update1Review_Coaching_Log
 
 
+
 GO
+
 
 
 
@@ -4626,22 +4655,23 @@ GO
 
 
 
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/11
 --    Description: *    This procedure allows managers to update the e-Coaching records from the review page with Yes, this is a confirmed Customer Service Escalation. 
---    Last Update:    12/16/2014
---    Updated per SCR 13891 to capture review sup id.
+--    Last Update:   07/22/2015
+--    Updated per TFS 115/118 to fix issue with Coaching Notes overwritten.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update2Review_Coaching_Log]
 (
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
       @nvcReviewMgrLanID Nvarchar(20),
-      @dtmSupReviewedAutoDate datetime,
-	  @dtmCoachingDate datetime,
+      @dtmMgrReviewAutoDate datetime,
+	  @dtmMgrReviewManualDate datetime,
 	  @bitisCSE bit,
-      @nvctxtCoachingNotes Nvarchar(max)
+      @nvctxtMgrNotes nvarchar(max)
 
 )
 AS
@@ -4665,10 +4695,10 @@ SET @nvcReviewMgrID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewMgrLanID,@dtmDate)
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
 	       Review_MgrID = @nvcReviewMgrID,
-		   SupReviewedAutoDate = @dtmSupReviewedAutoDate,
-		   CoachingDate = @dtmCoachingDate,
+		   MgrReviewAutoDate = @dtmMgrReviewAutoDate,
+		   MgrReviewManualDate = @dtmMgrReviewManualDate,
 		   isCSE = @bitisCSE,
-           CoachingNotes = @nvctxtCoachingNotes
+           MgrNotes = @nvctxtMgrNotes
 from EC.Coaching_Log       
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)	
@@ -4717,10 +4747,7 @@ END CATCH
 
 END --sp_Update2Review_Coaching_Log
 
-
-
 GO
-
 
 
 
