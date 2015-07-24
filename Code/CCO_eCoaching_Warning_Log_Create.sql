@@ -1,8 +1,11 @@
 /*
-eCoaching_Warning_Log_Create(09).sql
-Last Modified Date: 07/22/2015
+eCoaching_Warning_Log_Create(10).sql
+Last Modified Date: 07/23/2015
 Last Modified By: Susmitha Palacherla
 
+Version 10:
+1.  Updates for TFS 363 Avoid Duplicate FormNames for Insert from UI.
+     Updated SP#2 for generating formname after insert
 
 Version 09: SCR 14966
 1. Additional Update to sp [EC].[sp_SelectReviewFrom_Warning_Log] (#3) to add Sup and Mgr Ids
@@ -244,15 +247,17 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      10/03/2014
 --    Description:     This procedure inserts the Warning records into the Warning_Log table. 
 --                     The main attributes of the Warning are written to the warning_Log table.
 --                     The Warning Reasons are written to the Warning_Reasons Table.
--- Last Modified Date: 02/18/2015
+-- Last Modified Date: 07/23/2015
 -- Last Updated By: Susmitha Palacherla
--- Updated per SCR 14304 to check if warning exists and report as Dup
+-- Modified per TFS 363/402 to update formname from WarningID after insert. 
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
 (     @nvcFormName Nvarchar(50),
@@ -265,7 +270,8 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
       @nvcSubCoachReasonID1 Nvarchar(255),
       @dtmSubmittedDate datetime ,
       @ModuleID INT,
-      @isDup BIT OUTPUT
+      @isDup BIT OUTPUT,
+      @nvcNewFormName Nvarchar(50) OUTPUT
       )
    
 AS
@@ -352,6 +358,14 @@ IF @intWarnIDExists IS NULL
             @MaxSubReasonRowID INT,
             @SubReasonRowID INT
     
+UPDATE [EC].[Warning_Log]
+SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,WarningID)
+where [WarningID] = @I  AND [FormName] not like 'eCL%'    
+OPTION (MAXDOP 1)
+
+WAITFOR DELAY '00:00:00:01'  -- Wait for 5 ms
+
+SET @nvcNewFormName = (SELECT [FormName] FROM  [EC].[Warning_Log] WHERE [WarningID] = @I)
 
 
  IF NOT @intCoachReasonID1 IS NULL
@@ -380,6 +394,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
  END       
 
 COMMIT TRANSACTION
+
+
 END TRY
       
       BEGIN CATCH
@@ -433,9 +449,8 @@ END TRY
   END -- sp_InsertInto_Warning_Log
 
 
+
 GO
-
-
 
 
 
