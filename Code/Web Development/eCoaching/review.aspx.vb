@@ -511,6 +511,10 @@ Public Class review
         If (m_strUserEmployeeID = m_strEmployeeID) Then
             'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's csr
 
+            ' Display Coaching Notes.
+            panelHolder = ListView1.Items(0).FindControl("Panel28")
+            panelHolder.Visible = True
+
             If (statusLevel = 1) Then
                 pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
@@ -523,9 +527,6 @@ Public Class review
 
             If (statusLevel = 4) Then
                 Panel39.Visible = True 'acknowledge monitor
-                ' Display Coaching Notes.
-		panelHolder = ListView1.Items(0).FindControl("Panel28")
-                panelHolder.Visible = True
             End If
         End If
 
