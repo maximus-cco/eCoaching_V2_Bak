@@ -1,7 +1,7 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class UserDBAccess
-    Public Function GetUser(lanID As String) As User
+    Public Function GetUser(ByVal lanID As String) As User
         Dim user As User = Nothing
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
@@ -11,13 +11,12 @@ Public Class UserDBAccess
         Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_Whoami", CommandType.StoredProcedure, parameters)
             If dataTable.Rows.Count = 1 Then
                 Dim row As DataRow = dataTable.Rows(0)
-                Dim userInfor As String = row("Submitter")
-
                 user = New User()
+                user.JobCode = row("EmpJobCode")
+                user.Email = row("EmpEmail")
+                user.Name = row("EmpName")
+                user.EmployeeID = row("EmpID")
                 user.LanID = lanID
-                user.Name = IIf(String.IsNullOrEmpty(userInfor), String.Empty, Split(userInfor, "$", -1, 1)(2))
-                user.JobCode = IIf(String.IsNullOrEmpty(userInfor), String.Empty, Split(userInfor, "$", -1, 1)(0))
-                user.Email = IIf(String.IsNullOrEmpty(userInfor), String.Empty, Split(userInfor, "$", -1, 1)(1))
             End If
         End Using
 

@@ -2,7 +2,7 @@
 Public MustInherit Class BasePage
     Inherits System.Web.UI.Page
 
-    Protected Sub Page_PreInit(sender As Object, e As System.EventArgs) Handles Me.PreInit
+    Protected Sub Page_PreInit(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.PreInit
         ' page post back (initial display) and authentication fails
         ' send user to unauthorized page
         If Not IsPostBack AndAlso Not AuthenticateUser() Then
@@ -15,7 +15,6 @@ Public MustInherit Class BasePage
             Dim eclUser As User = userHandler.GetUser(GetLanId())
             Session("eclUser") = eclUser
         End If
-
     End Sub
 
     Private Function AuthenticateUser() As Boolean

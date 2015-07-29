@@ -150,7 +150,7 @@
                         <br />
                         <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">&nbsp;
+                                <asp:TableCell CssClass="wrapped">
                                     <asp:Label ID="Label99" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
@@ -163,7 +163,7 @@
                                 <br />
                                 <asp:Table ID="Table8" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                                     <asp:TableRow>
-                                        <asp:TableCell CssClass="wrapped">&nbsp;
+                                        <asp:TableCell CssClass="wrapped">
                                             <asp:Label ID="Label103" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>' class="review"></asp:Label>
                                         </asp:TableCell>
                                     </asp:TableRow>
@@ -176,7 +176,7 @@
                         <br />
                         <asp:Table ID="Table9" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">&nbsp;
+                                <asp:TableCell CssClass="wrapped">
                                     <asp:Label ID="Label72" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
@@ -203,7 +203,7 @@
                         <br />
                         <asp:Table ID="Table10" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">&nbsp;
+                                <asp:TableCell CssClass="wrapped">
                                     <asp:Label ID="Label95" runat="server" Text='<%# Eval(server.htmldecode("txtCSRComments")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
@@ -245,6 +245,18 @@
                     <asp:Label ID="Label106" runat="server" Text='<%# Eval("txtMgrNotes") %>' Visible="false" />
                     <asp:Label ID="Label107" runat="server" Text='<%# Eval("Customer Service Escalation") %>' Visible="false" />
                     <asp:Label ID="Label32" runat="server" Text='<%# Eval("strReviewer") %>' Visible="false" />
+                    <%-- The Submitter's employee ID in coaching_log table --%>
+                    <asp:Label ID="SubmitterEmployeeID" runat="server" Text='<%# Eval("strSubmitterID") %>' Visible="false" />
+                    <%-- The employee's employee ID in coaching_log table--%>
+                    <asp:Label ID="EmployeeID" runat="server" Text='<%# Eval("strEmpID") %>' Visible="false" />
+                    <%-- The employee's Manager employee ID in employee_hierarchy table. --%>
+                    <asp:Label ID="HierarchyMgrEmployeeID" runat="server" Text='<%# Eval("strCSRMgrID")%>' Visible="false" />
+                    <%-- The employee's Supervisor employee ID in employee_hierarchy table. --%>
+                    <asp:Label ID="HierarchySupEmployeeID" runat="server" Text='<%# Eval("strCSRSupID")%>' Visible="false" />
+                    <%-- The employee's Manager employee ID in coaching_log/warning_log table. --%>
+                    <asp:Label ID="LogMgrEmployeeID" runat="server" Text='<%# Eval("strCLMgrID")%>' Visible="false" />
+                    <%-- The employee's Supervisor employee ID in coaching_log/warning_log table. --%>
+                    <asp:Label ID="LogSupEmployeeID" runat="server" Text='<%# Eval("strCLSupID")%>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">

@@ -116,6 +116,18 @@
                     <asp:Label ID="Label62" runat="server" Text='<%# Eval("strFormType") %>' Visible="false" />
                      <asp:Label ID="Label45" runat="server" Text='<%# Eval("strCSRSup") %>' Visible="false" />
                     <asp:Label ID="Label75" runat="server" Text='<%# Eval("strCSRMgr") %>' Visible="false" />
+                    <%-- The Submitter's employee ID - warning_log.SubmitterID --%>
+                    <asp:Label ID="SubmitterEmployeeID" runat="server" Text='<%# Eval("strSubmitterID") %>' Visible="false" />
+                    <%-- The employee's employee ID warning_log.EmpID--%>
+                    <asp:Label ID="EmployeeID" runat="server" Text='<%# Eval("strEmpID") %>' Visible="false" />
+                    <%-- The employee's Manager employee ID in employee_hierarchy table. --%>
+                    <asp:Label ID="HierarchyMgrEmployeeID" runat="server" Text='<%# Eval("strCSRMgrID")%>' Visible="false" />
+                    <%-- The employee's Supervisor employee ID in employee_hierarchy table. --%>
+                    <asp:Label ID="HierarchySupEmployeeID" runat="server" Text='<%# Eval("strCSRSupID")%>' Visible="false" />
+                    <%-- The employee's Manager employee ID in coaching_log/warning_log table. --%>
+                    <asp:Label ID="LogMgrEmployeeID" runat="server" Text='<%# Eval("strCLMgrID")%>' Visible="false" />
+                    <%-- The employee's Supervisor employee ID in coaching_log/warning_log table. --%>
+                    <asp:Label ID="LogSupEmployeeID" runat="server" Text='<%# Eval("strCLSupID")%>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">

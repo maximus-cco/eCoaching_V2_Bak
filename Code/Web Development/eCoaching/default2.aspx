@@ -511,35 +511,33 @@
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
-            <asp:Panel ID="Panel28" runat="server" Visible="true" HorizontalAlign="Center" Width="100%" 
+            <asp:Panel ID="Panel28" runat="server" Visible="true" HorizontalAlign="Center" Width="100%"
                 Style="border-bottom-color: Gray; border-bottom-style: solid; border-bottom-width: 5px;">
-                <div align="center">
-                    <asp:Table ID="Table2" runat="server">
-                        <asp:TableRow>
-                            <asp:TableCell HorizontalAlign="Left">
-                                <asp:Label ID="Label38" runat="server" Text="Select Coaching Module:" CssClass="question"
-                                    ViewStateMode="Disabled"></asp:Label>
-                                &nbsp;<asp:Label ID="Label40" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
-                            </asp:TableCell>
-                        </asp:TableRow>
-                        <asp:TableRow>
-                            <asp:TableCell HorizontalAlign="Left">
-                                <asp:DropDownList ID="DropDownList3" DataSourceID="SqlDataSource15" DataValueField="BySite"
-                                    CssClass="TextBox" DataTextField="Module" AutoPostBack="true" AppendDataBoundItems="true"
-                                    runat="server" OnSelectedIndexChanged="DropDownList3_SelectedIndexChanged" Style="margin-right: 5px;">
-                                    <asp:ListItem Value="Select..." Selected="True">Select...</asp:ListItem>
-                                </asp:DropDownList>
-                                <asp:SqlDataSource ID="SqlDataSource15" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                                    SelectCommand="EC.sp_Select_Modules_By_Job_Code" SelectCommandType="StoredProcedure"
-                                    DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
-                                    <SelectParameters>
-                                        <asp:Parameter Name="nvcEmpLanIDin" Type="String" />
-                                    </SelectParameters>
-                                </asp:SqlDataSource>
-                            </asp:TableCell>
-                        </asp:TableRow>
-                    </asp:Table>
-                 </div>
+                <asp:Table ID="Table2" runat="server">
+                    <asp:TableRow>
+                        <asp:TableCell HorizontalAlign="Left">
+                            <asp:Label ID="Label38" runat="server" Text="Select Coaching Module:" CssClass="question"
+                                ViewStateMode="Disabled"></asp:Label>
+                            &nbsp;<asp:Label ID="Label40" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
+                        </asp:TableCell>
+                    </asp:TableRow>
+                    <asp:TableRow>
+                        <asp:TableCell HorizontalAlign="Left">
+                            <asp:DropDownList ID="DropDownList3" DataSourceID="SqlDataSource15" DataValueField="BySite"
+                                CssClass="TextBox" DataTextField="Module" AutoPostBack="true" AppendDataBoundItems="true"
+                                runat="server" OnSelectedIndexChanged="DropDownList3_SelectedIndexChanged" Style="margin-right: 5px;">
+                                <asp:ListItem Value="Select..." Selected="True">Select...</asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="SqlDataSource15" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
+                                SelectCommand="EC.sp_Select_Modules_By_Job_Code" SelectCommandType="StoredProcedure"
+                                DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
+                                <SelectParameters>
+                                    <asp:Parameter Name="nvcEmpLanIDin" Type="String" />
+                                </SelectParameters>
+                            </asp:SqlDataSource>
+                        </asp:TableCell>
+                    </asp:TableRow>
+                </asp:Table>
                 <br />
             </asp:Panel>
             <br />
@@ -1411,7 +1409,7 @@
                 <!--  </ol> -->
                 <!-- End Validators -->
                 <asp:SqlDataSource ID="SqlDataSource6" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
-                    InsertCommand="EC.sp_InsertInto_Coaching_Log" InsertCommandType="StoredProcedure"
+                    InsertCommand="EC.sp_InsertInto_Coaching_Log" InsertCommandType="StoredProcedure" OnInserted="Coaching_Inserted"
                     DataSourceMode="DataReader" EnableViewState="False" ViewStateMode="Disabled">
                     <InsertParameters>
                         <asp:Parameter Name="ModuleID" Direction="Input" Type="Int32" />
@@ -1483,6 +1481,7 @@
                         <asp:Parameter Name="dtmCSRReviewAutoDate" Direction="Input" Type="DateTime" />
                         <asp:Parameter Name="nvcCSRComments" Direction="Input" Type="String" />
                         <asp:Parameter Name="bitEmailSent" Direction="Input" Type="Boolean" />
+                        <asp:Parameter Name="nvcNewFormName" Direction="Output" Type="String" Size="50"/>
                     </InsertParameters>
                 </asp:SqlDataSource>
                 <asp:SqlDataSource ID="SqlDataSource27" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
@@ -1491,16 +1490,17 @@
                     OnInserted="Warning_Inserted">
                     <InsertParameters>
                         <asp:Parameter Name="nvcFormName" Direction="Input" Type="String" />
+                        <asp:Parameter Name="nvcProgramName" Direction="Input" Type="String" />
                         <asp:Parameter Name="nvcEmplanID" Direction="Input" Type="String" />
                         <asp:Parameter Name="SiteID" Direction="Input" Type="Int32" />
                         <asp:Parameter Name="nvcSubmitter" Direction="Input" Type="String" />
-                        <asp:Parameter Name="nvcProgramName" Direction="Input" Type="String" />
                         <asp:Parameter Name="dtmEventDate" Direction="Input" Type="DateTime" />
                         <asp:Parameter Name="intCoachReasonID1" Direction="Input" Type="Int32" />
                         <asp:Parameter Name="nvcSubCoachReasonID1" Direction="Input" Type="String" />
                         <asp:Parameter Name="dtmSubmittedDate" Direction="Input" Type="DateTime" />
                         <asp:Parameter Name="ModuleID" Direction="Input" Type="Int32" />
-                        <asp:Parameter Direction="InputOutput" Name="isDup" Type="Int32" />
+                        <asp:Parameter Name="isDup" Direction="Output" Type="Int32" />
+                        <asp:Parameter Name="nvcNewFormName" Direction="Output" Type="String" Size="50"/>
                     </InsertParameters>
                 </asp:SqlDataSource>
                 <br />

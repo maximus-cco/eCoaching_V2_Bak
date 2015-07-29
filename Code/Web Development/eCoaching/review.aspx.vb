@@ -1,4 +1,4 @@
-﻿Imports System.Data.SqlClient
+Imports System.Data.SqlClient
 Imports System.Net.Mail
 Imports System
 Imports System.Configuration
@@ -22,53 +22,84 @@ Public Class review
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim FromURL As String
 
-    'Dim lan As String
+    'The user employee ID.
+    ' Employee_Hierarchy.EmpID
+    Private m_strUserEmployeeID As String
 
-    Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+    ' The user job code.
+    ' Employee_Hierarchy.Emp_Job_Code
+    Private m_strUserJobCode As String
 
-        Dim pHolder1a As Label
-        Dim pHolder2a As Label
-        Dim pHolder3a As Label
-        Dim pHolder4a As Label
+    ' The employee ID in the log record.
+    ' coaching_log/Warning_log.EmpID
+    Private m_strEmployeeID As String
 
+    ' The employee's supervisor employee ID in the Coaching_Log/Warning_Log table.
+    ' Coaching_log/Warning_Log.SupID
+    Private m_strLogSupEmployeeID As String
 
-        pHolder1a = ListView1.Items(0).FindControl("Label88")
-        pHolder2a = ListView1.Items(0).FindControl("Label45")
-        pHolder3a = ListView1.Items(0).FindControl("Label75")
-        pHolder4a = ListView1.Items(0).FindControl("Label125")
-        'MsgBox(Label241.Text)
-        If (((lan <> LCase(pHolder4a.Text)) And (lan <> LCase(pHolder1a.Text)) And (lan <> LCase(pHolder2a.Text)) And (lan <> LCase(pHolder3a.Text))) Or ((lan = LCase(pHolder4a.Text)) And (CInt(Label241.Text) > 0))) Then
+    ' The employee's manager employee ID in the Coaching_Log/Warning_Log table.
+    ' Coaching_log/Warning_Log.MgrID
+    Private m_strLogMgrEmployeeID As String
 
-            'MsgBox("you are not of the 3")
+    ' The employee's supervisor employee ID in the Employee_Hierarchy table.
+    ' Employee_Hierarchy.SupID
+    Private m_strHierarchySupEmployeeID As String
 
-            Response.Redirect("error3.aspx")
+    ' The employee's manager employee ID in the Employee_Hierarchy table.
+    ' Employee_Hierarchy.MgrID
+    Private m_strHierarchyMgrEmployeeID As String
 
+    ' The submitter employee ID in the log record.
+    ' coaching_log.SubmitterID
+    Private m_strSubmitterEmployeeID As String
+
+    ' Indicates if the user is an ARC CSR. 
+    ' Historical_Dashboard_ACL.Role as "ARC"
+    Private m_blnUserIsARCCsr As Boolean
+
+    ' Indicates if the user is a Senior Manager. 
+    ' Historical_Dashboard_ACL.Role as "SRMGR"
+    Private m_blnUserIsSeniorMgr As Boolean
+
+    Private Function IsAccessAllowed() As Boolean
+        ' The user submitted the log.
+        If (m_strUserEmployeeID = m_strSubmitterEmployeeID) Then
+            ' Only non ARC CSR has access.
+            Return Not m_blnUserIsARCCsr
         End If
 
+        ' The user didn't submit the log.
+        ' The user is one of these:
+        ' the employee of the log
+        ' the employee's current supervisor 
+        ' the employee's current manager
+        ' the employee's supervisor when the log was created
+        ' the employee's manager when the log was created
+        Return m_strUserEmployeeID = m_strEmployeeID OrElse
+               m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse
+               m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse
+               m_strUserEmployeeID = m_strLogSupEmployeeID OrElse
+               m_strUserEmployeeID = m_strLogMgrEmployeeID
+    End Function
 
+    Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
+        ' Get the user employee ID from session.
+        m_strUserEmployeeID = Session("eclUser").EmployeeID
 
+        m_strEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("EmployeeID"), Label).Text)
+        m_strHierarchySupEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("HierarchySupEmployeeID"), Label).Text)
+        m_strHierarchyMgrEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("HierarchyMgrEmployeeID"), Label).Text)
+        m_strLogSupEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("LogSupEmployeeID"), Label).Text)
+        m_strLogMgrEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("LogMgrEmployeeID"), Label).Text)
+        m_strSubmitterEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("SubmitterEmployeeID"), Label).Text)
 
-        'if user is CSR III and submitter then redirect
-        ' Case (InStr(1, LCase(arcAccess), lan, 1) > 0)
-        'MsgBox(LCase(pHolder4a.Text))
-        ' MsgBox(Label241.Text)
-        'If ((lan = LCase(pHolder4a.Text)) And (InStr(1, LCase(arcAccess), lan, 1) > 0)) Then
-        ' If ((lan = LCase(pHolder4a.Text)) And (Len(Label241.Text) > 0)) Then
-        'Response.Redirect("error3.aspx")
+        m_blnUserIsARCCsr = Label241.Text <> "0"
 
-        'End If
-
-
-
-        'Dim i As Integer
-        ' MsgBox("hello")
-        'MsgBox(ListView1.Items.Count)
-        ' For i = 0 To ListView1.Items.Count - 1
-        'MsgBox(i & "-")
-
-
+        If (Not IsAccessAllowed()) Then
+            ' Send the user to the authorized page.
+            Response.Redirect("error3.aspx")
+        End If
 
         pHolder = ListView1.Items(0).FindControl("Label50")
         Label3.Text = pHolder.Text
@@ -247,10 +278,13 @@ Public Class review
 
 
         End Select
-        ' MsgBox(statusLevel)
-        pHolder = ListView1.Items(0).FindControl("Label45")
 
-        If (lan = LCase(pHolder.Text)) Then ' I'm the current record's supervisor
+        'pHolder = ListView1.Items(0).FindControl("Label45") ' strCSRSup
+
+        ' The user is the employee's current supervisor or 
+        ' The user was the employee's supervisor when the log was created
+        If (m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse m_strUserEmployeeID = m_strLogSupEmployeeID) Then
+            'If (lan = LCase(pHolder.Text)) Then
             ' Date1.Text = DateTime.Now.ToString("d")
             CompareValidator1.ValueToCompare = TodaysDate
 
@@ -259,63 +293,55 @@ Public Class review
             Dim pHolder5
             Dim pHolder6
 
-            pHolder3 = ListView1.Items(0).FindControl("Label126")
-            pHolder4 = ListView1.Items(0).FindControl("Label106") 'txtMgrNotes
-            pHolder5 = ListView1.Items(0).FindControl("Label33") 'isIQS
+            pHolder3 = ListView1.Items(0).FindControl("Label126") ' isCoachingRequired
+            pHolder4 = ListView1.Items(0).FindControl("Label106") ' txtMgrNotes
+            pHolder5 = ListView1.Items(0).FindControl("Label33")  ' isIQS
 
             '  MsgBox("supervisor")
             If ((pHolder3.Text = "True") Or (pHolder4.Text <> "")) Then
 
-                panelHolder = ListView1.Items(0).FindControl("Panel15")
+                panelHolder = ListView1.Items(0).FindControl("Panel15") ' Notes from Manager:
                 panelHolder.Visible = True
 
             End If
 
-            recStatus = DataList1.Items(0).FindControl("LabelStatus")
-            pHolder6 = ListView1.Items(0).FindControl("Label90")
-
-
-
-
-
+            recStatus = DataList1.Items(0).FindControl("LabelStatus")  ' strFormStatus
+            pHolder6 = ListView1.Items(0).FindControl("Label90")       ' isCSRAcknowledged
 
             Select Case statusLevel
-
                 Case 2
+                    ' Pending Supervisor Review (CSR, Training, and LSA modules), Or
+                    ' Pending Manager Review (Supervisor module), Or
+                    ' Pending Quality Lead Review (Quality module)
 
-
-                    If (pHolder5.Text = "1") Then 'IQS
+                    ' It is from IQS.
+                    If (pHolder5.Text = "1") Then
 
                         'If ((pHolder5.Text = "IQS") And (pHolder6.Text = "True")) Then
 
+                        ' Panel28 includes "Management Notes" (Panel29, Label82, Label83) AND "Coaching Notes" (Label84, Label85)
                         panelHolder = ListView1.Items(0).FindControl("Panel28")
-                        panelHolder.Visible = True
+                        panelHolder.Visible = True ' Display "Coaching Notes"
 
-                        pHolder = ListView1.Items(0).FindControl("Label83")
-                        panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
+                        pHolder = ListView1.Items(0).FindControl("Label83")     ' txtMgrNotes
+                        panelHolder = ListView1.Items(0).FindControl("Panel29")
 
-                        If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
-
-                            panelHolder.Visible = True
+                        If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then  ' Panel15: "Notes from Manager:"
+                            panelHolder.Visible = True ' Display "Management Notes"
                         End If
 
-
-                        If (pHolder6.Text = "True") Then
-
+                        If (pHolder6.Text = "True") Then ' isCSRAcknowledged
+                            ' Panel40 -
+                            ' 1. Check the box below to acknowledge the monitor:
+                            ' I have read and understand all the information provided on this eCoaching Log.
                             Panel40.Visible = True
-
                         Else
-
+                            ' Panel25 -
+                            ' 1. Enter the date of coaching:
+                            ' 2. Provide the details from the coaching session including action plans developed:
                             Panel25.Visible = True
-
                         End If
-
-
-
-
-                    Else
-
-
+                    Else ' not from IQS
                         Dim pHolder2v ''
                         Dim pHolder2w
 
@@ -347,7 +373,7 @@ Public Class review
                             End If
 
 
-                        Else
+                        Else ' not from IQS and ETS/OAE/OAS are NOT Required Research
 
                             '' panelHolder = ListView1.Items(0).FindControl("Panel21")
                             '' panelHolder.Visible = True
@@ -362,11 +388,11 @@ Public Class review
 
 
 
-                Case 4
+                Case 4 ' Pending Acknowledgement
                     Panel40.Visible = True 'Check the box below to acknowledge the monitor
 
-                    panelHolder = ListView1.Items(0).FindControl("Panel28")
-                    panelHolder.Visible = True
+                    panelHolder = ListView1.Items(0).FindControl("Panel28") ' Coaching Notes
+                    panelHolder.Visible = True ' Display "Coaching Notes"
 
                     pHolder = ListView1.Items(0).FindControl("Label83")
                     panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
@@ -377,11 +403,11 @@ Public Class review
                     End If
                 Case Else
 
-                    panelHolder = ListView1.Items(0).FindControl("Panel28")
-                    panelHolder.Visible = True
+                    panelHolder = ListView1.Items(0).FindControl("Panel28") ' Coaching Notes
+                    panelHolder.Visible = True ' Display "Coaching Notes"
 
                     pHolder = ListView1.Items(0).FindControl("Label83")
-                    panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
+                    panelHolder = ListView1.Items(0).FindControl("Panel29") ' Management Notes
 
                     If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
 
@@ -397,57 +423,40 @@ Public Class review
         ' MsgBox("testing1")
 
 
-        pHolder = ListView1.Items(0).FindControl("Label75")
-        ''panelHolder = ListView1.Items(0).FindControl("Panel22") 'Display details of the behavior being coached and coaching notes
-        ' MsgBox(pHolder.Text)
-        If (lan = LCase(pHolder.Text)) Then ' I'm the current record's level 3
+        pHolder = ListView1.Items(0).FindControl("Label75")  ' strCSRMgr
+        ' The user is the employee's current manager, or
+        ' The user was the employee's manager when the log was created
+        If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse m_strUserEmployeeID = m_strLogMgrEmployeeID) Then
+            'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's level 3
 
             'recStatus = DataList1.Items(0).FindControl("LabelStatus")
             'If ((InStr(recStatus.Text, "Pending Manager Review") > 0) Or ((InStr(recStatus.Text, "Pending Sr. Manager Review") > 0)) Or ((InStr(recStatus.Text, "Pending Deputy Program Manager Review") > 0))) Then
             If (statusLevel = 3) Then
-
                 Dim pHolder2x As Label
                 Dim pHolder2y As Label
                 Dim pHolder2z As Label
 
                 pHolder2x = ListView1.Items(0).FindControl("Label133") 'Current Coaching Initiative
                 pHolder2y = ListView1.Items(0).FindControl("Label151") 'OMR / Exceptions
-                pHolder2z = ListView1.Items(0).FindControl("Label36") 'Low CSAT
-
-                '  MsgBox("manager2")
-                'MsgBox(pHolder2x.Text)
-                'MsgBox(pHolder2y.Text)
-                'MsgBox(pHolder2z.Text)
+                pHolder2z = ListView1.Items(0).FindControl("Label36")  'Low CSAT
                 If ((pHolder2x.Text = "1") Or (pHolder2y.Text = "1") Or (pHolder2z.Text = "1")) Then 'Research Required?
-
                     '   MsgBox("found 1")
                     ''panelHolder1 = ListView1.Items(0).FindControl("Panel38") 'Details of the behavior being coached
                     ''panelHolder1.Visible = True 'display txtDescription 
-
                     Panel37.Visible = True ' coaching required question group
-
                     CalendarExtender4.EndDate = TodaysDate
                     CompareValidator5.ValueToCompare = TodaysDate
                     RequiredFieldValidator10.Enabled = True
-
                     If (pHolder2z.Text = "1") Then 'change text for Low CSAT
-
                         Label134.Text = "You are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction.  Please review the call from a PPoM perspective and provide details on the specific opportunities  requiring coaching in the record below. "
                         HyperLink1.Visible = "False" ' hide hyperlink
                         Label132.Text = "" 'hide 2nd part of paragraph
-
                     End If
-
                 Else
-
-
                     Panel26.Visible = True 'Customer Service Escalation (CSE) question group
                     CalendarExtender1.EndDate = TodaysDate
                     CalendarExtender2.EndDate = TodaysDate 'new
-
-
                     If (RadioButtonList1.SelectedValue = "1") Then 'CSE
-
                         panel24.Style("display") = "inline"
                         panel24.Style("visibility") = "visible"
                         panel27.Style("display") = "none"
@@ -459,11 +468,8 @@ Public Class review
                         RequiredFieldValidator5.Enabled = False
                         CompareValidator2.Enabled = True
                         CompareValidator3.Enabled = False
-
                     End If
                     If (RadioButtonList1.SelectedValue = "0") Then 'NOT CSE
-
-
                         panel27.Style("display") = "inline"
                         panel27.Style("visibility") = "visible"
                         CalendarExtender2.EndDate = TodaysDate
@@ -476,37 +482,15 @@ Public Class review
 
                         panel24.Style("display") = "none"
                         panel24.Style("visibility") = "hidden"
-
                     End If
 
-                    ''panelHolder.Visible = True
-
-                    'Dim pHolderX As TextBox
-
-                    'pHolderX = ListView1.Items(0).FindControl("TextBox1")
-                    pHolder = ListView1.Items(0).FindControl("Label72")
-
-                    'MsgBox(pHolder.Text)
-                    panelHolder = ListView1.Items(0).FindControl("Panel23")
-                    'TextBox3.Text = "Enter Text..." 'pHolder.Text
-                    '' Dim pHolder2 As Label
-
-                    '' pHolder2 = ListView1.Items(0).FindControl("Label105")
-                    'TextBox2.Text = "Enter Text..." 'pHolder2.Text
-
+                    pHolder = ListView1.Items(0).FindControl("Label72")      ' txtCoachingNotes
+                    panelHolder = ListView1.Items(0).FindControl("Panel23")  ' Coaching Notes
                     If (pHolder.Text <> "") Then
-
                         panelHolder.Visible = True
-
-
-
                     End If
-
-                End If
-
-
-            Else
-
+                End If ' End of If ((pHolder2x.Text = "1") Or (pHolder2y.Text = "1") Or (pHolder2z.Text = "1"))
+            Else ' statusLevel <> 3
                 panelHolder = ListView1.Items(0).FindControl("Panel28")
                 panelHolder.Visible = True
 
@@ -514,61 +498,34 @@ Public Class review
                 panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
 
                 If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
-
                     panelHolder.Visible = True
                 End If
-
-
-            End If
-
-
-
-
-        End If
-
-
-        '-End If
-
+            End If ' End of If (statusLevel = 3)
+        End If ' End of If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse m_strUserEMployeeID = m_strLogMgrEmployeeID)
 
         Dim pHolder2
         Dim pHolder8
-
         pHolder2 = ListView1.Items(0).FindControl("Label33") 'iSIQS
-
-
-
-
         pHolder = ListView1.Items(0).FindControl("Label88")
+        ' The uer is the current record's employee
+        If (m_strUserEmployeeID = m_strEmployeeID) Then
+            'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's csr
 
-        ''panelHolder = ListView1.Items(0).FindControl("Panel28")
-
-        If (lan = LCase(pHolder.Text)) Then ' I'm the current record's csr
-
-            ''panelHolder.Visible = True
-
-
-            ' recStatus = DataList1.Items(0).FindControl("LabelStatus")
-
-            'If (InStr(recStatus.Text, "Pending Employee Review") > 0) Then
             If (statusLevel = 1) Then
-
-
                 pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
                 If ((pHolder2.Text = "1") And (Len(pHolder8.Text) > 4)) Then ' IQS
-
-                    Panel39.Visible = True 'acknowledge monitor
-
+                    Panel39.Visible = True ' 1. Check the box below to acknowledge the monitor:
                 Else
-                    Panel30.Visible = True 'acknowledge the coaching opportunity and comments
-
+                    Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
                 End If
-
             End If
 
             If (statusLevel = 4) Then
-
                 Panel39.Visible = True 'acknowledge monitor
+                ' Display Coaching Notes.
+		panelHolder = ListView1.Items(0).FindControl("Panel28")
+                panelHolder.Visible = True
             End If
         End If
 
@@ -584,11 +541,16 @@ Public Class review
         'Button4
 
 
-        If ((lan = LCase(pHolder4a.Text)) And (lan <> LCase(pHolder1a.Text)) And (lan <> LCase(pHolder2a.Text)) And (lan <> LCase(pHolder3a.Text))) Then
+        ' The user is the submitter but not the employee of record, not the employee's supervisor, and not the employee's manager
+        If (m_strUserEmployeeID = m_strSubmitterEmployeeID AndAlso
+            m_strUserEmployeeID <> m_strEmployeeID AndAlso
+            m_strUserEmployeeID <> m_strHierarchySupEmployeeID AndAlso
+            m_strUserEmployeeID <> m_strHierarchyMgrEmployeeID AndAlso
+            m_strUserEmployeeID <> m_strLogSupEmployeeID AndAlso
+            m_strUserEmployeeID <> m_strLogMgrEmployeeID) Then
+            'If ((lan = LCase(pHolder4a.Text)) And (lan <> LCase(pHolder1a.Text)) And (lan <> LCase(pHolder2a.Text)) And (lan <> LCase(pHolder3a.Text))) Then
 
-
-            'User is submitter but not CSR, SUP, or MGR
-
+            'User is submitter but not the employee of record, not the employee's SUP, nor the employee's MGR
             panelHolder = ListView1.Items(0).FindControl("Panel28")
             panelHolder.Visible = True
 
@@ -609,32 +571,23 @@ Public Class review
 
 
     Protected Sub Page_Load3(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView2.DataBound ' record not modifyable
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
+        ' Get the user employee ID from session
+        m_strUserEmployeeID = Session("eclUser").EmployeeID
 
-        Dim pHolder1a As Label
-        Dim pHolder2a As Label
-        Dim pHolder3a As Label
-        Dim pHolder4a As Label
+        m_strEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("EmployeeID"), Label).Text)
+        m_strHierarchySupEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("HierarchySupEmployeeID"), Label).Text)
+        m_strHierarchyMgrEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("HierarchyMgrEmployeeID"), Label).Text)
+        m_strLogSupEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("LogSupEmployeeID"), Label).Text)
+        m_strLogMgrEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("LogMgrEmployeeID"), Label).Text)
+        m_strSubmitterEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("SubmitterEmployeeID"), Label).Text)
 
+        m_blnUserIsARCCsr = Label241.Text <> "0"
 
-        pHolder1a = ListView2.Items(0).FindControl("Label88")
-        pHolder2a = ListView2.Items(0).FindControl("Label45")
-        pHolder3a = ListView2.Items(0).FindControl("Label75")
-        pHolder4a = ListView2.Items(0).FindControl("Label125")
-        'MsgBox(Label241.Text)
-        If (((lan <> LCase(pHolder4a.Text)) And (lan <> LCase(pHolder1a.Text)) And (lan <> LCase(pHolder2a.Text)) And (lan <> LCase(pHolder3a.Text))) Or ((lan = LCase(pHolder4a.Text)) And (CInt(Label241.Text) > 0))) Then
-
-            'MsgBox("you are not of the 3")
+        If (Not IsAccessAllowed()) Then
+            ' Send the user to the unauthorized page.
             Response.Redirect("error3.aspx")
-
         End If
 
-        'Dim i As Integer
-        ' MsgBox("hello")
-        'MsgBox(ListView1.Items.Count)
-        ' For i = 0 To ListView1.Items.Count - 1
-        'MsgBox(i & "-")
         pHolder = ListView2.Items(0).FindControl("Label50")
         Label3.Text = pHolder.Text
         pHolder = ListView2.Items(0).FindControl("Label51")
@@ -754,36 +707,22 @@ Public Class review
         '' panelHolder = ListView2.Items(0).FindControl("Panel33") 'Details of the behavior being coached
         '' panelHolder.Visible = True
 
-        pHolder = ListView2.Items(0).FindControl("Label107")
-        ' MsgBox(pHolder.Text)
+        pHolder = ListView2.Items(0).FindControl("Label107") ' Customer Service Escalation
         If (pHolder.Text = "1") Then
-            'MsgBox("found 1 again")
-
             pHolder = ListView2.Items(0).FindControl("Label89") 'isCSE
-
             If (pHolder.Text = "True") Then
-
-                pHolder = ListView2.Items(0).FindControl("Label43")
+                pHolder = ListView2.Items(0).FindControl("Label43") ' Coaching Opportunity was a confirmed Customer Service Escalation
                 pHolder.Visible = True
+            Else ' not CSE
+                panelHolder = ListView2.Items(0).FindControl("Panel35")
+                panelHolder.Visible = True ' Display "Coaching Opportunity was not a confirmed Customer Service Escalation"
 
-
-            Else
-
-                panelHolder = ListView2.Items(0).FindControl("Panel35") 'not CSE
-                panelHolder.Visible = True
-
-                panelHolder = ListView2.Items(0).FindControl("Panel36") 'Management Notes
-                pHolder = ListView2.Items(0).FindControl("Label103")
-
-
+                panelHolder = ListView2.Items(0).FindControl("Panel36") ' Management Notes
+                pHolder = ListView2.Items(0).FindControl("Label103") ' txtMgrNotes
                 If (pHolder.Text <> "") Then
-
-                    panelHolder.Visible = True
-
-
+                    panelHolder.Visible = True ' Display "Management Notes"
                 End If
             End If
-
         End If
 
 
@@ -851,11 +790,8 @@ Public Class review
 
     ' called on page non post back but after authentication is successful
     Public Sub HandlePageNonPostBack()
-        Dim eclUser As User = Session("eclUser")
-        Dim lan As String = eclUser.LanID
-
         ' sp_Check_AgentRole
-        SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = lan
+        SqlDataSource14.SelectParameters("nvcLanID").DefaultValue = Session("eclUser").LanID
         SqlDataSource14.SelectParameters("nvcRole").DefaultValue = "ARC"
         GridView1.DataBind()
 
@@ -928,51 +864,50 @@ Public Class review
     Protected Sub Button1_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button1.Click
         Dim eclUser As User = Session("eclUser")
         Dim lan As String = eclUser.LanID
+        Dim currentDateTime As Date = CDate(DateTime.Now())
 
         'Supervisor submit
         Page.Validate()
         If Page.IsValid Then
-
             '   MsgBox(Request.QueryString("id"))
             SqlDataSource1.UpdateParameters("nvcFormID").DefaultValue = Request.QueryString("id")
             SqlDataSource1.UpdateParameters("nvcReviewSupLanID").DefaultValue = lan
             SqlDataSource1.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
-            SqlDataSource1.UpdateParameters("dtmSupReviewedAutoDate").DefaultValue = CDate(DateTime.Now())
-
-            If (Len(TextBox5.Text) > 3000) Then
-
-                TextBox5.Text = Left(TextBox5.Text, 3000)
-
-            End If
-
-            TextBox5.Text = Server.HtmlEncode(TextBox5.Text)
-            TextBox5.Text = Replace(TextBox5.Text, "’", "&rsquo;")
-            TextBox5.Text = Replace(TextBox5.Text, "‘", "&lsquo;")
-            TextBox5.Text = Replace(TextBox5.Text, "'", "&prime;")
-            TextBox5.Text = Replace(TextBox5.Text, Chr(147), "&ldquo;")
-            TextBox5.Text = Replace(TextBox5.Text, Chr(148), "&rdquo;")
-            TextBox5.Text = Replace(TextBox5.Text, "-", "&ndash;")
-
-
-            SqlDataSource1.UpdateParameters("nvctxtCoachingNotes").DefaultValue = TextBox5.Text
-            SqlDataSource1.UpdateParameters("dtmCoachingDate").DefaultValue = CDate(Date1.Text)
-
+            SqlDataSource1.UpdateParameters("dtmSupReviewedAutoDate").DefaultValue = currentDateTime
+            SqlDataSource1.UpdateParameters("nvctxtCoachingNotes").DefaultValue = GetFormattedCoachingNotes(currentDateTime)
 
             SqlDataSource1.Update()
 
             FromURL = Request.ServerVariables("URL")
             Response.Redirect("next1.aspx?FromURL=" & FromURL)
-
-
             ' Response.Redirect("next1.aspx")  ' Response.Redirect("view2.aspx")
         Else
-
             Label116.Text = "Please correct all fields indicated in red to proceed."
+        End If
+    End Sub
 
+    Private Function GetFormattedCoachingNotes(currentDateTime) As String
+        If (Len(TextBox5.Text) > 3000) Then
+            TextBox5.Text = Left(TextBox5.Text, 3000)
         End If
 
+        TextBox5.Text = Server.HtmlEncode(TextBox5.Text)
+        TextBox5.Text = Replace(TextBox5.Text, "’", "&rsquo;")
+        TextBox5.Text = Replace(TextBox5.Text, "‘", "&lsquo;")
+        TextBox5.Text = Replace(TextBox5.Text, "'", "&prime;")
+        TextBox5.Text = Replace(TextBox5.Text, Chr(147), "&ldquo;")
+        TextBox5.Text = Replace(TextBox5.Text, Chr(148), "&rdquo;")
+        TextBox5.Text = Replace(TextBox5.Text, "-", "&ndash;")
 
-    End Sub
+        ' Label25.Text: Supervisor name
+        ' Date1.Text: Coaching Date Supervisor entered on Review page
+        ' Text5.Text: Coaching Plans Supervisor entered on Review page
+        Dim formattedSupervisorNotes As String = Label25.Text & " (" & currentDateTime & " PDT) - " & CDate(Date1.Text) & " " & TextBox5.Text
+        ' Label105: Coaching Notes from coaching_log table
+        Dim coachingNotesLabel As Label = ListView1.Items(0).FindControl("Label105")
+
+        Return coachingNotesLabel.Text & "<br />" & formattedSupervisorNotes
+    End Function
 
     Protected Sub Button2_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button2.Click
         Dim eclUser As User = Session("eclUser")
@@ -1035,40 +970,31 @@ Public Class review
             pHolder7 = ListView1.Items(0).FindControl("Label31")
 
             Select Case pHolder7.Text ' Module check
-
-
                 Case "CSR", "Training"
                     SqlDataSource3.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
-
                 Case "Supervisor"
                     SqlDataSource3.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Manager Review"
-
                 Case "Quality"
                     SqlDataSource3.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Quality Lead Review"
-
-
             End Select
 
+            SqlDataSource3.UpdateParameters("dtmMgrReviewAutoDate").DefaultValue = CDate(DateTime.Now())
 
-
-            ''SqlDataSource3.UpdateParameters("dtmMgrReviewedAutoDate").DefaultValue = CDate(DateTime.Now())
-            SqlDataSource3.UpdateParameters("dtmSupReviewedAutoDate").DefaultValue = CDate(DateTime.Now())
-
-
-
-            'MsgBox("hello")
             'supervisor /QS comments originally combined for notes
-            pHolder2 = ListView1.Items(0).FindControl("Label105")
-            TextBox2.Text = "1. " & Label25.Text & " (Sup/QS " & Label10.Text & ")" & Server.HtmlDecode(pHolder2.Text) & "-----------------2. " & Label27.Text & " (MGMT " & TodaysDate & ") " & TextBox2.Text
+            pHolder2 = ListView1.Items(0).FindControl("Label105") ' txtcoachingnotes
+            ' Label25: strCSRSupName
+            ' Label27: strCSRMgrName
+
+            'TextBox2.Text = "1. " & Label25.Text & " (Sup/QS " & Label10.Text & ")" & Server.HtmlDecode(pHolder2.Text) & "-----------------2. " & Label27.Text & " (MGMT " & TodaysDate & ") " & TextBox2.Text
+
             '"\r\n", "<br />"
             If (Len(TextBox2.Text) > 3000) Then
-
                 TextBox2.Text = Left(TextBox2.Text, 3000)
-
             End If
             'MsgBox(TextBox2.Text)
             'add manager name and date for CSE manager notes
-            TextBox2.Text = Label27.Text & " (MGMT " & TodaysDate & ") " & Server.HtmlEncode(TextBox2.Text)
+            'TextBox2.Text = Label27.Text & " (MGMT " & TodaysDate & ") " & Server.HtmlEncode(TextBox2.Text)
+            TextBox2.Text = Server.HtmlEncode(TextBox2.Text)
             TextBox2.Text = Replace(TextBox2.Text, "’", "&rsquo;")
             TextBox2.Text = Replace(TextBox2.Text, "‘", "&lsquo;")
             TextBox2.Text = Replace(TextBox2.Text, "'", "&prime;")
@@ -1076,11 +1002,8 @@ Public Class review
             TextBox2.Text = Replace(TextBox2.Text, Chr(148), "&rdquo;")
             TextBox2.Text = Replace(TextBox2.Text, "-", "&ndash;")
 
-            ''SqlDataSource3.UpdateParameters("nvctxtMgrNotes").DefaultValue = TextBox2.Text
-            SqlDataSource3.UpdateParameters("nvctxtCoachingNotes").DefaultValue = TextBox2.Text
-            SqlDataSource3.UpdateParameters("dtmCoachingDate").DefaultValue = CDate(Date2.Text)
-
-
+            SqlDataSource3.UpdateParameters("nvctxtMgrNotes").DefaultValue = TextBox2.Text
+            SqlDataSource3.UpdateParameters("dtmMgrReviewManualDate").DefaultValue = CDate(Date2.Text)
 
             SqlDataSource3.Update()
 
@@ -1168,8 +1091,8 @@ Public Class review
             End If
 
             TextBox3.Text = Server.HtmlEncode(TextBox3.Text)
-            TextBox3.Text = Replace(TextBox3.Text, "’", "&rsquo;")
-            TextBox3.Text = Replace(TextBox3.Text, "‘", "&lsquo;")
+            TextBox3.Text = Replace(TextBox3.Text, "�", "&rsquo;")
+            TextBox3.Text = Replace(TextBox3.Text, "�", "&lsquo;")
             TextBox3.Text = Replace(TextBox3.Text, "'", "&prime;")
             TextBox3.Text = Replace(TextBox3.Text, Chr(147), "&ldquo;")
             TextBox3.Text = Replace(TextBox3.Text, Chr(148), "&rdquo;")
@@ -1322,8 +1245,8 @@ Public Class review
 
                 'encode strings that are not valid and not caught by htmlencode
                 AddlNotes.Text = Server.HtmlEncode(AddlNotes.Text)
-                AddlNotes.Text = Replace(AddlNotes.Text, "’", "&rsquo;")
-                AddlNotes.Text = Replace(AddlNotes.Text, "‘", "&lsquo;")
+                AddlNotes.Text = Replace(AddlNotes.Text, "�", "&rsquo;")
+                AddlNotes.Text = Replace(AddlNotes.Text, "�", "&lsquo;")
                 AddlNotes.Text = Replace(AddlNotes.Text, "'", "&prime;")
                 AddlNotes.Text = Replace(AddlNotes.Text, Chr(147), "&ldquo;")
                 AddlNotes.Text = Replace(AddlNotes.Text, Chr(148), "&rdquo;")
@@ -1350,8 +1273,8 @@ Public Class review
 
                 'encode strings that are not valid and not caught by htmlencode
                 TextBox1.Text = Server.HtmlEncode(TextBox1.Text)
-                TextBox1.Text = Replace(TextBox1.Text, "’", "&rsquo;")
-                TextBox1.Text = Replace(TextBox1.Text, "‘", "&lsquo;")
+                TextBox1.Text = Replace(TextBox1.Text, "�", "&rsquo;")
+                TextBox1.Text = Replace(TextBox1.Text, "�", "&lsquo;")
                 TextBox1.Text = Replace(TextBox1.Text, "'", "&prime;")
                 TextBox1.Text = Replace(TextBox1.Text, Chr(147), "&ldquo;")
                 TextBox1.Text = Replace(TextBox1.Text, Chr(148), "&rdquo;")
@@ -1396,8 +1319,8 @@ Public Class review
             End If
 
             TextBox4.Text = Server.HtmlEncode(TextBox4.Text)
-            TextBox4.Text = Replace(TextBox4.Text, "’", "&rsquo;")
-            TextBox4.Text = Replace(TextBox4.Text, "‘", "&lsquo;")
+            TextBox4.Text = Replace(TextBox4.Text, "�", "&rsquo;")
+            TextBox4.Text = Replace(TextBox4.Text, "�", "&lsquo;")
             TextBox4.Text = Replace(TextBox4.Text, "'", "&prime;")
             TextBox4.Text = Replace(TextBox4.Text, Chr(147), "&ldquo;")
             TextBox4.Text = Replace(TextBox4.Text, Chr(148), "&rdquo;")
@@ -1620,7 +1543,7 @@ Public Class review
     End Sub
 
 
-     Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
+    Protected Sub SqlDataSource2_Selecting(ByVal sender As Object, e As SqlDataSourceSelectingEventArgs) Handles SqlDataSource2.Selecting
         'EC.sp_SelectReviewFrom_Coaching_Log 
 
         e.Command.CommandTimeout = 300 'wait 5 minutes modify the command sql timeout
