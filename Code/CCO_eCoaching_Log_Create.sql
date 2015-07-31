@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(34).sql
-Last Modified Date: 07/28/2015
+eCoaching_Log_Create(35).sql
+Last Modified Date: 07/31/2015
 Last Modified By: Susmitha Palacherla
+
+Version 35:
+1.  Update for TFS 175/475 to display assigned reviewer for LCS logs. 
+     Updated SP#45 
 
 Version 34:
 1. Additional Updates for SCR 14893
@@ -4402,11 +4406,13 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
 GO
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -4419,7 +4425,7 @@ GO
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 -- Last Modified By: Susmitha Palacherla
 -- Last Modified Date: 07/10/2015
--- Updated per SCR 14966 to add Hierarchy IDs to the select list.
+-- Updated per TFS # 175 to display assigned reviewer for LCSAT records on Review pages 
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4428,8 +4434,14 @@ AS
 BEGIN
 DECLARE	
 
-@nvcSQL nvarchar(max)
-	 
+@nvcSQL nvarchar(max),
+@nvcEmpID nvarchar(10),
+@nvcMgrID nvarchar(10)
+
+
+SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [FormName]= @strFormIDin)	 
+SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] = @nvcEmpID)
+
   SET @nvcSQL = 'SELECT  cl.CoachingID 	numID,
 		cl.FormName	strFormID,
 		m.Module,
@@ -4458,7 +4470,9 @@ DECLARE
 		CASE WHEN cl.[strReportCode] like ''LCS%'' 
 		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
 		 ELSE eh.Mgr_LanID END	strCSRMgr,
-		eh.Mgr_Name  strCSRMgrName,
+		 CASE WHEN cl.[strReportCode] like ''LCS%'' AND cl.[MgrID] <> '''+@nvcMgrID+'''
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[MgrID])+ '' (Assigned Reviewer)''
+		 ELSE eh.Mgr_Name END strCSRMgrName,
 		eh.Mgr_Email strCSRMgrEmail,
 		ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
         sc.SubCoachingSource	strSource,
@@ -4527,7 +4541,11 @@ END --sp_SelectReviewFrom_Coaching_Log
 
 
 
+
 GO
+
+
+
 
 
 
