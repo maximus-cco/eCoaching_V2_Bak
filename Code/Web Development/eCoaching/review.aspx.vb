@@ -1502,32 +1502,21 @@ Public Class review
 
 
     Protected Sub OnRowDataBound2(ByVal sender As Object, ByVal e As System.EventArgs) Handles GridView2.DataBound
-        'MsgBox("test=" & (GridView2.Rows.Count - 1))
-        '  MsgBox("testing2")
-        ' MsgBox(GridView2.Rows.Count)
-
-        ' For k As Integer = 0 To GridView2.Rows.Count - 1
-        '    MsgBox(GridView2.Rows(k).Cells.Count)
-        'For l As Integer = 0 To GridView2.Rows(k).Cells.Count - 1
-
-        'MsgBox("Value=" & GridView2.Rows(k).Cells(l).Text)
-        'Next
-
-        'Next
-
-
         For i As Integer = (GridView2.Rows.Count - 1) To 1 Step -1
-
             Dim row As GridViewRow = GridView2.Rows(i)
             Dim previousRow As GridViewRow = GridView2.Rows(i - 1)
-            'MsgBox(i)
+
             For j As Integer = 0 To row.Cells.Count - 1
-                ' MsgBox("rowtext=" & row.Cells(j).Text)
-                ' MsgBox("previous=" & previousRow.Cells(j).Text)
-                'MsgBox(j)
-                'MsgBox(row.Cells(j).Text)
-                'MsgBox(previousRow.Cells(j).Text)
                 If (row.Cells(j).Text = previousRow.Cells(j).Text) Then
+                    ' fixed issue for coaching_log.CoachingID: 1412519
+                    ' AHT - Keeping the call on track - Opportunity
+                    ' AHT - Other: Specify reason under coaching details - Opportunity
+                    ' Attendance - Other: Specify reason under coaching details - Opportunity
+                    ' Quality - Other: Specify reason under coaching details - Opportunity
+                    If (j < row.Cells.Count - 1 AndAlso row.Cells(j + 1).Text <> previousRow.Cells(j + 1).Text AndAlso row.Cells(j + 1).RowSpan > 0) Then
+                        Continue For
+                    End If
+
                     If (previousRow.Cells(j).RowSpan = 0) Then
                         If (row.Cells(j).RowSpan = 0) Then
                             previousRow.Cells(j).RowSpan += 2
@@ -1538,9 +1527,7 @@ Public Class review
                     End If
                 End If
             Next
-
         Next
-
     End Sub
 
 

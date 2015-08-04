@@ -326,8 +326,18 @@ Public Class review2
         For i As Integer = (GridView4.Rows.Count - 1) To 1 Step -1
             Dim row As GridViewRow = GridView4.Rows(i)
             Dim previousRow As GridViewRow = GridView4.Rows(i - 1)
+
             For j As Integer = 0 To row.Cells.Count - 1
                 If (row.Cells(j).Text = previousRow.Cells(j).Text) Then
+                    ' fixed issue for coaching_log.CoachingID: 1412519
+                    ' AHT - Keeping the call on track - Opportunity
+                    ' AHT - Other: Specify reason under coaching details - Opportunity
+                    ' Attendance - Other: Specify reason under coaching details - Opportunity
+                    ' Quality - Other: Specify reason under coaching details - Opportunity
+                    If (j < row.Cells.Count - 1 AndAlso row.Cells(j + 1).Text <> previousRow.Cells(j + 1).Text AndAlso row.Cells(j + 1).RowSpan > 0) Then
+                        Continue For
+                    End If
+
                     If (previousRow.Cells(j).RowSpan = 0) Then
                         If (row.Cells(j).RowSpan = 0) Then
                             previousRow.Cells(j).RowSpan += 2
