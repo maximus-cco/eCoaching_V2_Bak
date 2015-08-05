@@ -321,10 +321,6 @@
                     <asp:Label ID="HierarchyMgrEmployeeID" runat="server" Text='<%# Eval("strCSRMgrID")%>' Visible="false" />
                     <%-- The employee's Supervisor employee ID in employee_hierarchy table. --%>
                     <asp:Label ID="HierarchySupEmployeeID" runat="server" Text='<%# Eval("strCSRSupID")%>' Visible="false" />
-                    <%-- The employee's Manager employee ID in coaching_log/warning_log table. --%>
-                    <asp:Label ID="LogMgrEmployeeID" runat="server" Text='<%# Eval("strCLMgrID")%>' Visible="false" />
-                    <%-- The employee's Supervisor employee ID in coaching_log/warning_log table. --%>
-                    <asp:Label ID="LogSupEmployeeID" runat="server" Text='<%# Eval("strCLSupID")%>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">
@@ -751,10 +747,6 @@
                     <asp:Label ID="HierarchyMgrEmployeeID" runat="server" Text='<%# Eval("strCSRMgrID")%>' Visible="false" />
                     <%-- The employee's Supervisor employee ID in employee_hierarchy table. --%>
                     <asp:Label ID="HierarchySupEmployeeID" runat="server" Text='<%# Eval("strCSRSupID")%>' Visible="false" />
-                    <%-- The employee's Manager employee ID in coaching_log/warning_log table. --%>
-                    <asp:Label ID="LogMgrEmployeeID" runat="server" Text='<%# Eval("strCLMgrID")%>' Visible="false" />
-                    <%-- The employee's Supervisor employee ID in coaching_log/warning_log table. --%>
-                    <asp:Label ID="LogSupEmployeeID" runat="server" Text='<%# Eval("strCLSupID")%>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">

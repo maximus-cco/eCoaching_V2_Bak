@@ -35,14 +35,6 @@ Public Class review2
     ' coaching_log.EmpID
     Private m_strEmployeeID As String
 
-    ' The employee's supervisor employee ID in the Coaching_Log/Warning_Log table.
-    ' Coaching_log/Warning_Log.SupID
-    Private m_strLogSupEmployeeID As String
-
-    ' The employee's manager employee ID in the Coaching_Log/Warning_Log table.
-    ' Coaching_log/Warning_Log.MgrID
-    Private m_strLogMgrEmployeeID As String
-
     ' The employee's supervisor employee ID in the Employee_Hierarchy table.
     ' Employee_Hierarchy.Sup_ID
     Private m_strHierarchySupEmployeeID As String
@@ -55,9 +47,9 @@ Public Class review2
     ' coaching_log.SubmitterID
     Private m_strSubmitterEmployeeID As String
 
-    ' Indicates if the user is an ARC CSR. 
-    ' Historical_Dashboard_ACL.Role as "ARC"
-    Private m_blnUserIsARCCsr As Boolean
+    ' Indicates if the user is an ECL user. 
+    ' Historical_Dashboard_ACL.Role as "ECL"
+    Private m_blnUserIsECL As Boolean
 
     ' Indicates if the user is Senior Manager. 
     ' Historical_Dashboard_ACL.Role as "SRMGR"
@@ -68,9 +60,7 @@ Public Class review2
             m_strUserEmployeeID = m_strEmployeeID OrElse
             m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse
             m_strUserEmployeeID = m_strHierachyMgrEmployeeID OrElse
-            m_strUserEmployeeID = m_strLogSupEmployeeID OrElse
-            m_strUserEmployeeID = m_strLogSupEmployeeID OrElse
-            m_blnUserIsARCCsr OrElse
+            m_blnUserIsECL OrElse
             m_blnUserIsSeniorMgr OrElse
             m_strUserJobCode.StartsWith("WHHR") OrElse
             m_strUserJobCode.StartsWith("WHER") OrElse
@@ -116,11 +106,9 @@ Public Class review2
         m_strEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("EmployeeID"), Label).Text)
         m_strHierarchySupEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("HierarchySupEmployeeID"), Label).Text)
         m_strHierachyMgrEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("HierarchyMgrEmployeeID"), Label).Text)
-        m_strLogSupEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("LogSupEmployeeID"), Label).Text)
-        m_strLogMgrEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("LogMgrEmployeeID"), Label).Text)
         m_strSubmitterEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("SubmitterEmployeeID"), Label).Text)
 
-        m_blnUserIsARCCsr = Label241.Text <> "0"
+        m_blnUserIsECL = Label241.Text <> "0"
         m_blnUserIsSeniorMgr = Label31.Text <> "0"
 
         If (Not IsAccessAllowed()) Then

@@ -34,14 +34,6 @@ Public Class review
     ' coaching_log/Warning_log.EmpID
     Private m_strEmployeeID As String
 
-    ' The employee's supervisor employee ID in the Coaching_Log/Warning_Log table.
-    ' Coaching_log/Warning_Log.SupID
-    Private m_strLogSupEmployeeID As String
-
-    ' The employee's manager employee ID in the Coaching_Log/Warning_Log table.
-    ' Coaching_log/Warning_Log.MgrID
-    Private m_strLogMgrEmployeeID As String
-
     ' The employee's supervisor employee ID in the Employee_Hierarchy table.
     ' Employee_Hierarchy.SupID
     Private m_strHierarchySupEmployeeID As String
@@ -58,10 +50,6 @@ Public Class review
     ' Historical_Dashboard_ACL.Role as "ARC"
     Private m_blnUserIsARCCsr As Boolean
 
-    ' Indicates if the user is a Senior Manager. 
-    ' Historical_Dashboard_ACL.Role as "SRMGR"
-    Private m_blnUserIsSeniorMgr As Boolean
-
     Private Function IsAccessAllowed() As Boolean
         ' The user submitted the log.
         If (m_strUserEmployeeID = m_strSubmitterEmployeeID) Then
@@ -74,13 +62,9 @@ Public Class review
         ' the employee of the log
         ' the employee's current supervisor 
         ' the employee's current manager
-        ' the employee's supervisor when the log was created
-        ' the employee's manager when the log was created
         Return m_strUserEmployeeID = m_strEmployeeID OrElse
                m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse
-               m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse
-               m_strUserEmployeeID = m_strLogSupEmployeeID OrElse
-               m_strUserEmployeeID = m_strLogMgrEmployeeID
+               m_strUserEmployeeID = m_strHierarchyMgrEmployeeID
     End Function
 
     Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
@@ -90,8 +74,6 @@ Public Class review
         m_strEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("EmployeeID"), Label).Text)
         m_strHierarchySupEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("HierarchySupEmployeeID"), Label).Text)
         m_strHierarchyMgrEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("HierarchyMgrEmployeeID"), Label).Text)
-        m_strLogSupEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("LogSupEmployeeID"), Label).Text)
-        m_strLogMgrEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("LogMgrEmployeeID"), Label).Text)
         m_strSubmitterEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("SubmitterEmployeeID"), Label).Text)
 
         m_blnUserIsARCCsr = Label241.Text <> "0"
@@ -281,9 +263,8 @@ Public Class review
 
         'pHolder = ListView1.Items(0).FindControl("Label45") ' strCSRSup
 
-        ' The user is the employee's current supervisor or 
-        ' The user was the employee's supervisor when the log was created
-        If (m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse m_strUserEmployeeID = m_strLogSupEmployeeID) Then
+        ' The user is the employee's current supervisor
+        If (m_strUserEmployeeID = m_strHierarchySupEmployeeID) Then
             'If (lan = LCase(pHolder.Text)) Then
             ' Date1.Text = DateTime.Now.ToString("d")
             CompareValidator1.ValueToCompare = TodaysDate
@@ -424,9 +405,8 @@ Public Class review
 
 
         pHolder = ListView1.Items(0).FindControl("Label75")  ' strCSRMgr
-        ' The user is the employee's current manager, or
-        ' The user was the employee's manager when the log was created
-        If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse m_strUserEmployeeID = m_strLogMgrEmployeeID) Then
+        ' The user is the employee's current manager
+        If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID) Then
             'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's level 3
 
             'recStatus = DataList1.Items(0).FindControl("LabelStatus")
@@ -546,9 +526,7 @@ Public Class review
         If (m_strUserEmployeeID = m_strSubmitterEmployeeID AndAlso
             m_strUserEmployeeID <> m_strEmployeeID AndAlso
             m_strUserEmployeeID <> m_strHierarchySupEmployeeID AndAlso
-            m_strUserEmployeeID <> m_strHierarchyMgrEmployeeID AndAlso
-            m_strUserEmployeeID <> m_strLogSupEmployeeID AndAlso
-            m_strUserEmployeeID <> m_strLogMgrEmployeeID) Then
+            m_strUserEmployeeID <> m_strHierarchyMgrEmployeeID) Then
             'If ((lan = LCase(pHolder4a.Text)) And (lan <> LCase(pHolder1a.Text)) And (lan <> LCase(pHolder2a.Text)) And (lan <> LCase(pHolder3a.Text))) Then
 
             'User is submitter but not the employee of record, not the employee's SUP, nor the employee's MGR
@@ -578,8 +556,6 @@ Public Class review
         m_strEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("EmployeeID"), Label).Text)
         m_strHierarchySupEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("HierarchySupEmployeeID"), Label).Text)
         m_strHierarchyMgrEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("HierarchyMgrEmployeeID"), Label).Text)
-        m_strLogSupEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("LogSupEmployeeID"), Label).Text)
-        m_strLogMgrEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("LogMgrEmployeeID"), Label).Text)
         m_strSubmitterEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("SubmitterEmployeeID"), Label).Text)
 
         m_blnUserIsARCCsr = Label241.Text <> "0"
