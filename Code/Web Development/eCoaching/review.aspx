@@ -223,7 +223,7 @@
                     <br />
                     <asp:Table ID="Table2" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                         <asp:TableRow>
-                            <asp:TableCell CssClass="wrapped">
+                            <asp:TableCell CssClass="wrapped">&nbsp;
                                 <asp:Label ID="txtDescriptionLabel" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
                             </asp:TableCell>
                         </asp:TableRow>
@@ -233,7 +233,7 @@
                         <br />
                         <asp:Table ID="Table3" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">
+                                <asp:TableCell CssClass="wrapped">&nbsp;
                                     <asp:Label ID="txtMgrNotesLabel" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>' />
                                 </asp:TableCell>
                             </asp:TableRow>
@@ -244,7 +244,7 @@
                         <br />
                         <asp:Table ID="Table5" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">
+                                <asp:TableCell CssClass="wrapped">&nbsp;
                                     <asp:Label ID="Label72" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
@@ -256,7 +256,7 @@
                             <br />
                             <asp:Table ID="Table1" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                                 <asp:TableRow>
-                                    <asp:TableCell CssClass="wrapped">
+                                    <asp:TableCell CssClass="wrapped">&nbsp;
                                         <asp:Label ID="Label83" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>' />
                                     </asp:TableCell>
                                 </asp:TableRow>
@@ -266,7 +266,7 @@
                         <br />
                         <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">
+                                <asp:TableCell CssClass="wrapped">&nbsp;
                                     <asp:Label ID="Label85" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
@@ -644,7 +644,7 @@
                     <br />
                     <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                         <asp:TableRow>
-                            <asp:TableCell CssClass="wrapped">
+                            <asp:TableCell CssClass="wrapped">&nbsp;
                                 <asp:Label ID="Label99" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
                             </asp:TableCell>
                         </asp:TableRow>
@@ -656,7 +656,7 @@
                             <br />
                             <asp:Table ID="Table8" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                                 <asp:TableRow>
-                                    <asp:TableCell CssClass="wrapped">
+                                    <asp:TableCell CssClass="wrapped">&nbsp;
                                         <asp:Label ID="Label103" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>' class="review"></asp:Label>
                                     </asp:TableCell>
                                 </asp:TableRow>
@@ -669,7 +669,7 @@
                         <br />
                         <asp:Table ID="Table9" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">
+                                <asp:TableCell CssClass="wrapped">&nbsp;
                                     <asp:Label ID="Label72" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
@@ -696,7 +696,7 @@
                         <br />
                         <asp:Table ID="Table10" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
-                                <asp:TableCell CssClass="wrapped">
+                                <asp:TableCell CssClass="wrapped">&nbsp;
                                     <asp:Label ID="Label95" runat="server" Text='<%# Eval(server.htmldecode("txtCSRComments")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>

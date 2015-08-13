@@ -847,11 +847,32 @@ Public Class review
         Page.Validate()
         If Page.IsValid Then
             '   MsgBox(Request.QueryString("id"))
+
+            ' Text5.Text: Coaching Plans Supervisor entered on Review page
+            If (Len(TextBox5.Text) > 3000) Then
+                TextBox5.Text = Left(TextBox5.Text, 3000)
+            End If
+
+            TextBox5.Text = Server.HtmlEncode(TextBox5.Text)
+            TextBox5.Text = Replace(TextBox5.Text, "’", "&rsquo;")
+            TextBox5.Text = Replace(TextBox5.Text, "‘", "&lsquo;")
+            TextBox5.Text = Replace(TextBox5.Text, "'", "&prime;")
+            TextBox5.Text = Replace(TextBox5.Text, Chr(147), "&ldquo;")
+            TextBox5.Text = Replace(TextBox5.Text, Chr(148), "&rdquo;")
+            TextBox5.Text = Replace(TextBox5.Text, "-", "&ndash;")
+
+            ' Label105: Coaching Notes from coaching_log table
+            Dim coachingNotesLabel As Label = ListView1.Items(0).FindControl("Label105")
+
+            ' Label25.Text: Supervisor name
+            Dim supervisorName = Label25.Text
+
             SqlDataSource1.UpdateParameters("nvcFormID").DefaultValue = Request.QueryString("id")
             SqlDataSource1.UpdateParameters("nvcReviewSupLanID").DefaultValue = lan
             SqlDataSource1.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
             SqlDataSource1.UpdateParameters("dtmSupReviewedAutoDate").DefaultValue = currentDateTime
-            SqlDataSource1.UpdateParameters("nvctxtCoachingNotes").DefaultValue = GetFormattedCoachingNotes(currentDateTime)
+            ' Date1.Text: Coaching Date Supervisor entered on Review page
+            SqlDataSource1.UpdateParameters("nvctxtCoachingNotes").DefaultValue = GetFormattedCoachingNotes(currentDateTime, CDate(Date1.Text), coachingNotesLabel.Text, TextBox5.Text, supervisorName)
 
             SqlDataSource1.Update()
 
@@ -863,27 +884,16 @@ Public Class review
         End If
     End Sub
 
-    Private Function GetFormattedCoachingNotes(currentDateTime) As String
-        If (Len(TextBox5.Text) > 3000) Then
-            TextBox5.Text = Left(TextBox5.Text, 3000)
+    Private Function GetFormattedCoachingNotes(currentDateTime, coachingManualDate, coachingNotes, supervisorNotes, supervisorName) As String
+        'Dim formattedSupervisorNotes As String = Label25.Text & " (" & currentDateTime & " PDT) - " & CDate(Date1.Text) & " " & TextBox5.Text
+        Dim formattedSupervisorNotes As String = supervisorName & " (" & currentDateTime & " PDT) - " & coachingManualDate & " " & supervisorNotes
+
+        'If String.IsNullOrEmpty(coachingNotesLabel.Text) Then
+        If String.IsNullOrEmpty(coachingNotes) Then
+            Return formattedSupervisorNotes
         End If
 
-        TextBox5.Text = Server.HtmlEncode(TextBox5.Text)
-        TextBox5.Text = Replace(TextBox5.Text, "’", "&rsquo;")
-        TextBox5.Text = Replace(TextBox5.Text, "‘", "&lsquo;")
-        TextBox5.Text = Replace(TextBox5.Text, "'", "&prime;")
-        TextBox5.Text = Replace(TextBox5.Text, Chr(147), "&ldquo;")
-        TextBox5.Text = Replace(TextBox5.Text, Chr(148), "&rdquo;")
-        TextBox5.Text = Replace(TextBox5.Text, "-", "&ndash;")
-
-        ' Label25.Text: Supervisor name
-        ' Date1.Text: Coaching Date Supervisor entered on Review page
-        ' Text5.Text: Coaching Plans Supervisor entered on Review page
-        Dim formattedSupervisorNotes As String = Label25.Text & " (" & currentDateTime & " PDT) - " & CDate(Date1.Text) & " " & TextBox5.Text
-        ' Label105: Coaching Notes from coaching_log table
-        Dim coachingNotesLabel As Label = ListView1.Items(0).FindControl("Label105")
-
-        Return coachingNotesLabel.Text & "<br />" & formattedSupervisorNotes
+        Return coachingNotes & "<br />" & formattedSupervisorNotes
     End Function
 
     Protected Sub Button2_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button2.Click
@@ -1220,6 +1230,12 @@ Public Class review
 
                 End If
 
+                Dim currentDateTime As Date = CDate(DateTime.Now())
+                ' Label25.Text: Supervisor name
+                Dim supervisorName = Label25.Text
+                ' Label105: Coaching Notes from coaching_log table
+                Dim coachingNotesLabel As Label = ListView1.Items(0).FindControl("Label105")
+
                 'encode strings that are not valid and not caught by htmlencode
                 AddlNotes.Text = Server.HtmlEncode(AddlNotes.Text)
                 AddlNotes.Text = Replace(AddlNotes.Text, "�", "&rsquo;")
@@ -1229,10 +1245,8 @@ Public Class review
                 AddlNotes.Text = Replace(AddlNotes.Text, Chr(148), "&rdquo;")
                 AddlNotes.Text = Replace(AddlNotes.Text, "-", "&ndash;")
 
-
-
                 SqlDataSource7.UpdateParameters("nvctxtReasonNotCoachable").DefaultValue = ""
-                SqlDataSource7.UpdateParameters("nvcReviewerNotes").DefaultValue = AddlNotes.Text
+                SqlDataSource7.UpdateParameters("nvcReviewerNotes").DefaultValue = GetFormattedCoachingNotes(currentDateTime, CDate(Date4.Text), coachingNotesLabel.Text, AddlNotes.Text, supervisorName)
                 SqlDataSource7.UpdateParameters("nvcstrReasonNotCoachable").DefaultValue = ""
 
             Else '[isCoachingRequired] = False/No/0
