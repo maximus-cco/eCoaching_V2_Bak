@@ -1147,7 +1147,9 @@ Public Class review
             SqlDataSource7.UpdateParameters("nvcReviewerLanID").DefaultValue = lan
             SqlDataSource7.UpdateParameters("dtmReviewAutoDate").DefaultValue = CDate(DateTime.Now()) 'already existing for outlier, update EC.sp_Update3Review_Coaching_Log
             SqlDataSource7.UpdateParameters("bitisCoachingRequired").DefaultValue = CBool(RadioButtonList3.SelectedValue)
-            SqlDataSource7.UpdateParameters("dtmReviewManualDate").DefaultValue = CDate(Date4.Text)
+            ' Do not update Coaching_Log.coachingDate, append the date entered on the page to coachingNotes or txtReasonNotCoachable field
+            ' See TFS 115 (SCR13631) - Coaching Notes Overwritten;
+            SqlDataSource7.UpdateParameters("dtmReviewManualDate").DefaultValue = String.Empty ' CDate(Date4.Text)
 
             If RadioButtonList3.SelectedValue = "1" Then '[isCoachingRequired] = True/Yes/1
 
@@ -1262,6 +1264,12 @@ Public Class review
 
                 End If
 
+                Dim currentDateTime As Date = CDate(DateTime.Now())
+                ' Label25.Text: Supervisor name
+                Dim supervisorName = Label25.Text
+                ' Label105: Coaching Notes from coaching_log table
+                Dim coachingNotesLabel As Label = ListView1.Items(0).FindControl("Label105")
+
                 'encode strings that are not valid and not caught by htmlencode
                 TextBox1.Text = Server.HtmlEncode(TextBox1.Text)
                 TextBox1.Text = Replace(TextBox1.Text, "�", "&rsquo;")
@@ -1272,7 +1280,7 @@ Public Class review
                 TextBox1.Text = Replace(TextBox1.Text, "-", "&ndash;")
 
                 SqlDataSource7.UpdateParameters("nvcReviewerNotes").DefaultValue = ""
-                SqlDataSource7.UpdateParameters("nvctxtReasonNotCoachable").DefaultValue = TextBox1.Text
+                SqlDataSource7.UpdateParameters("nvctxtReasonNotCoachable").DefaultValue = GetFormattedCoachingNotes(currentDateTime, CDate(Date4.Text), coachingNotesLabel.Text, TextBox1.Text, supervisorName)
             End If
 
 
