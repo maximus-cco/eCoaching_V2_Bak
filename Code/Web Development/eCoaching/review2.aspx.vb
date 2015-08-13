@@ -322,7 +322,7 @@ Public Class review2
                     ' AHT - Other: Specify reason under coaching details - Opportunity
                     ' Attendance - Other: Specify reason under coaching details - Opportunity
                     ' Quality - Other: Specify reason under coaching details - Opportunity
-                    If (j < row.Cells.Count - 1 AndAlso row.Cells(j + 1).Text <> previousRow.Cells(j + 1).Text AndAlso row.Cells(j + 1).RowSpan > 0) Then
+                    If (j = 0 AndAlso row.Cells(j + 1).Text <> previousRow.Cells(j + 1).Text AndAlso row.Cells(j + 1).RowSpan > 0) Then
                         Continue For
                     End If
 
