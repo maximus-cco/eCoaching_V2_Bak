@@ -200,66 +200,7 @@ Public Class review
         ' MsgBox(lan)
         'MsgBox(pHolder7.Text)
 
-        Select Case pHolder7.Text ' Module check
-
-
-            Case "CSR", "Training"
-
-                Select Case recStatus.Text ' status check
-
-                    Case "Pending Employee Review"
-                        statusLevel = 1
-                    Case "Pending Supervisor Review"
-                        statusLevel = 2
-                    Case "Pending Manager Review"
-                        statusLevel = 3
-                    Case "Pending Acknowledgement"
-                        statusLevel = 4
-                End Select
-
-            Case "Supervisor"
-
-                Select Case recStatus.Text ' status check
-
-                    Case "Pending Employee Review"
-                        statusLevel = 1
-                    Case "Pending Manager Review"
-                        statusLevel = 2
-                    Case "Pending Sr. Manager Review"
-                        statusLevel = 3
-                    Case "Pending Acknowledgement"
-                        statusLevel = 4
-                End Select
-
-
-
-            Case "Quality"
-
-                Select Case recStatus.Text ' status check
-
-                    Case "Pending Employee Review"
-                        statusLevel = 1
-                    Case "Pending Quality Lead Review"
-                        statusLevel = 2
-                    Case "Pending Deputy Program Manager Review"
-                        statusLevel = 3
-                    Case "Pending Acknowledgement"
-                        statusLevel = 4
-                End Select
-
-
-            Case "LSA"
-
-                Select Case recStatus.Text ' status check
-
-                    Case "Pending Employee Review"
-                        statusLevel = 1
-                    Case "Pending Supervisor Review"
-                        statusLevel = 2
-                End Select
-
-
-        End Select
+        statusLevel = GetRecordStatusLevel(pHolder7.Text, recStatus.Text)
 
         'pHolder = ListView1.Items(0).FindControl("Label45") ' strCSRSup
 
@@ -1107,7 +1048,10 @@ Public Class review
         Dim eclUser As User = Session("eclUser")
         Dim lan As String = eclUser.LanID
 
+        Dim moduleName As String = TryCast(ListView1.Items(0).FindControl("Label31"), Label).Text
         Dim recordStatus As String = TryCast(ListView1.Items(0).FindControl("Label50"), Label).Text
+
+        statusLevel = GetRecordStatusLevel(moduleName, recordStatus)
 
         'Manager or Supervisor submit 3 - Outlier [OMR, OAE, OAM]
 
@@ -1149,10 +1093,10 @@ Public Class review
             SqlDataSource7.UpdateParameters("nvcReviewerLanID").DefaultValue = lan
             SqlDataSource7.UpdateParameters("dtmReviewAutoDate").DefaultValue = CDate(DateTime.Now()) 'already existing for outlier, update EC.sp_Update3Review_Coaching_Log
             SqlDataSource7.UpdateParameters("bitisCoachingRequired").DefaultValue = CBool(RadioButtonList3.SelectedValue)
-            ' If the record status is "Pending Supervisor Review", then 
+            ' If the record status is at level 2
             ' Do not update Coaching_Log.coachingDate, append the date entered on the page to coachingNotes or txtReasonNotCoachable field
             ' See TFS 115 (SCR13631) - Coaching Notes Overwritten;
-            If String.Compare(recordStatus, "Pending Supervisor Review") = 0 Then
+            If statusLevel = 2 Then
                 SqlDataSource7.UpdateParameters("dtmReviewManualDate").DefaultValue = String.Empty ' CDate(Date4.Text)
             Else
                 SqlDataSource7.UpdateParameters("dtmReviewManualDate").DefaultValue = CDate(Date4.Text)
@@ -1252,7 +1196,7 @@ Public Class review
                 SqlDataSource7.UpdateParameters("nvcstrReasonNotCoachable").DefaultValue = ""
 
                 ' See TFS 115 (SCR13631) - Coaching Notes Overwritten;
-                If String.Compare(recordStatus, "Pending Supervisor Review") = 0 Then
+                If statusLevel = 2 Then
                     Dim currentDateTime As Date = CDate(DateTime.Now())
                     ' Label25.Text: Supervisor name
                     Dim supervisorName = Label25.Text
@@ -1288,7 +1232,7 @@ Public Class review
                 SqlDataSource7.UpdateParameters("nvcReviewerNotes").DefaultValue = ""
 
                 ' See TFS 115 (SCR13631) - Coaching Notes Overwritten;
-                If String.Compare(recordStatus, "Pending Supervisor Review") = 0 Then
+                If statusLevel = 2 Then
                     Dim currentDateTime As Date = CDate(DateTime.Now())
                     ' Label25.Text: Supervisor name
                     Dim supervisorName = Label25.Text
@@ -1650,6 +1594,57 @@ Public Class review
 
     End Sub
 
+    Private Function GetRecordStatusLevel(moduleName As String, recordStatus As String)
+        Dim retValue As String = String.Empty
+
+        Select Case moduleName
+            Case "CSR", "Training"
+                Select Case recordStatus
+                    Case "Pending Employee Review"
+                        retValue = 1
+                    Case "Pending Supervisor Review"
+                        retValue = 2
+                    Case "Pending Manager Review"
+                        retValue = 3
+                    Case "Pending Acknowledgement"
+                        retValue = 4
+                End Select
+
+            Case "Supervisor"
+                Select Case recordStatus
+                    Case "Pending Employee Review"
+                        retValue = 1
+                    Case "Pending Manager Review"
+                        retValue = 2
+                    Case "Pending Sr. Manager Review"
+                        retValue = 3
+                    Case "Pending Acknowledgement"
+                        retValue = 4
+                End Select
+
+            Case "Quality"
+                Select Case recordStatus
+                    Case "Pending Employee Review"
+                        retValue = 1
+                    Case "Pending Quality Lead Review"
+                        retValue = 2
+                    Case "Pending Deputy Program Manager Review"
+                        retValue = 3
+                    Case "Pending Acknowledgement"
+                        retValue = 4
+                End Select
+
+            Case "LSA"
+                Select Case recordStatus
+                    Case "Pending Employee Review"
+                        retValue = 1
+                    Case "Pending Supervisor Review"
+                        retValue = 2
+                End Select
+        End Select
+
+        Return retValue
+    End Function
 
 
 End Class
