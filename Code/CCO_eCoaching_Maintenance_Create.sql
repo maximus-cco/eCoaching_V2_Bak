@@ -1,7 +1,10 @@
 /*
-eCoaching_Maintenance_Create(10).sql
-Last Modified Date: 06/08/2015
+eCoaching_Maintenance_Create(11).sql
+Last Modified Date: 08/04/2015
 Last Modified By: Susmitha Palacherla
+
+Version 11:
+1.  Updated SP #2 [EC].[sp_SelectCoaching4Contact] for TFS 413 to add new Quality Source 'Verint-GDIT Supervisor' (SourceID 230)
 
 Version 10: 
 1. Updated SP #5 [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete] per SCR 14478
@@ -181,13 +184,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/13
 --	Description: 	   This procedure queries db for feed records to send out mail
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date:  05/14/2015
--- Updated per SCR 14818 to support rotating managers for Low CSAT
+-- Last Modified Date: 8/3/2015
+-- Updated per TFS # 413 to add additional Quality source Verint-GDIT Supervisor (230)
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -232,7 +236,7 @@ ON s.StatusID = cl.StatusID JOIN [EC].[DIM_Source] so
 ON so.SourceID = cl.SourceID JOIN [EC].[DIM_Module] mo
 ON mo.ModuleID = cl.ModuleID
 WHERE S.Status not in (''Completed'',''Inactive'')
-AND cl.SourceID in (211,212,221,222,223,224)
+AND cl.SourceID in (211,212,221,222,223,224,230)
 AND cl.EmailSent = ''False''
 AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
 OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL)
@@ -245,11 +249,8 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectCoaching4Contact
 
+
 GO
-
-
-
-
 
 
 
