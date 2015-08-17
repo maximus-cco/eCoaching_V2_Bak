@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(35).sql
-Last Modified Date: 07/31/2015
+eCoaching_Log_Create(36).sql
+Last Modified Date: 08/4/2015
 Last Modified By: Susmitha Palacherla
+
+Version 36:
+1.  Update for TFS 413 to add new Quality Source 'Verint-GDIT Supervisor' in Review procedure
+     Updated SP#45 
 
 Version 35:
 1.  Update for TFS 175/475 to display assigned reviewer for LCS logs. 
@@ -4416,16 +4420,15 @@ GO
 
 
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
+-- SQL split into 2 parts to overcome sql string size restriction.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 07/10/2015
--- Updated per TFS # 175 to display assigned reviewer for LCSAT records on Review pages 
+-- Last Modified Date: 8/3/2015
+-- Updated per TFS # 413 to add additional Quality source Verint-GDIT Supervisor 
+
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4435,6 +4438,8 @@ BEGIN
 DECLARE	
 
 @nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
 @nvcEmpID nvarchar(10),
 @nvcMgrID nvarchar(10)
 
@@ -4442,7 +4447,7 @@ DECLARE
 SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [FormName]= @strFormIDin)	 
 SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] = @nvcEmpID)
 
-  SET @nvcSQL = 'SELECT  cl.CoachingID 	numID,
+  SET @nvcSQL1 = 'SELECT  cl.CoachingID 	numID,
 		cl.FormName	strFormID,
 		m.Module,
 		sc.CoachingSource	strFormType,
@@ -4464,9 +4469,9 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		eh.Sup_LanID strCSRSup,
 		eh.Sup_Name	 strCSRSupName,
 		eh.Sup_Email  strCSRSupEmail,
-		 CASE WHEN cl.[strReportCode] like ''LCS%'' 
-		 THEN cl.[MgrID]
-		 ELSE eh.Mgr_ID END	strCSRMgrID,
+		CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		THEN cl.[MgrID]
+		ELSE eh.Mgr_ID END	strCSRMgrID,
 		CASE WHEN cl.[strReportCode] like ''LCS%'' 
 		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
 		 ELSE eh.Mgr_LanID END	strCSRMgr,
@@ -4476,7 +4481,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		eh.Mgr_Email strCSRMgrEmail,
 		ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
         sc.SubCoachingSource	strSource,
-        CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey '',''IQS'')
+        CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey'',''IQS'',''Verint-GDIT Supervisor'')
 		THEN 1 ELSE 0 END 	isIQS,
 		cl.isUCID    isUCID,
 		cl.UCID	strUCID,
@@ -4487,7 +4492,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		cl.AvokeID	strBehaviorAnalyticsID,
 		cl.isNGDActivityID	isNGDActivityID,
 		cl.NGDActivityID	strNGDActivityID,
-		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END	"Customer Service Escalation",
+		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END "Customer Service Escalation",
 		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
 		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
 		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
@@ -4507,8 +4512,9 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		cl.isCoachingRequired,
 		cl.CSRReviewAutoDate,
 		cl.CSRComments txtCSRComments
-	    FROM  [EC].[Coaching_Log] cl JOIN
-	  (SELECT  ccl.FormName,
+	    FROM  [EC].[Coaching_Log] cl JOIN'
+	    
+SET @nvcSQL2 = '  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''Customer Service Escalation'' THEN [clr].[Value] ELSE NULL END)	CSE,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''Current Coaching Initiative'' THEN [clr].[Value] ELSE NULL END)	CCI,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
@@ -4532,18 +4538,14 @@ ON [cl].[FormName] = [cc].[FormName] JOIN  [EC].[Employee_Hierarchy] eh
 	 ON [cl].[SiteID] = [st].[SiteID] JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
 Order By [cl].[FormName]'
 		
-
+SET @nvcSQL =  @nvcSQL1 +  @nvcSQL2
 EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 
 
-
-
-
 GO
-
 
 
 
