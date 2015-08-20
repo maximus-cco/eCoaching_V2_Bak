@@ -1,0 +1,285 @@
+/*
+Implementation Instructions for TFS # 413
+
+Summary
+1.Insert records into [EC].[DIM_Source] table (dim data doc)
+2. Insert records into [EC].[Email_Notifications] table (dim data doc)
+3. Update procedure [EC].[sp_SelectReviewFrom_Coaching_Log] (main  doc)
+4. Update procedure [EC].[sp_SelectCoaching4Contact] (maint doc)
+
+***************************************************
+
+For Implementing
+Run the below statements one at a time.
+In an ssis window pointed to ECoaching database on vdenssdbp07\scorp01
+
+
+**************************************************/
+
+
+
+--1.Insert records into [EC].[DIM_Source] table
+
+INSERT INTO [EC].[DIM_Source]
+           ([SourceID]
+           ,[CoachingSource]
+           ,[SubCoachingSource]
+           ,[isActive]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+         ,[Training])
+     VALUES
+           (130,'Direct','Verint-GDIT Supervisor',1,0,0,0,0,0),
+           (230,'Indirect','Verint-GDIT Supervisor',1,0,0,0,0,0)
+           
+GO
+
+--*******************************************************
+
+--2. Insert records into [EC].[Email_Notifications] table
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+    	 ('CSR','IQS','Indirect','Verint-GDIT Supervisor',0,'Pending Acknowledgement','Employee','eCL: Pending Acknowledgement','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
+	 ('CSR','IQS','Indirect','Verint-GDIT Supervisor',0,'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong>  on <strong> strDateTime </strong> that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
+	 ('CSR','IQS','Indirect','Verint-GDIT Supervisor',1,'Pending Manager Review','Mananger','eCL: Pending Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA')
+GO
+
+
+--****************************************************************************
+-- 3. Update procedure [EC].[sp_SelectReviewFrom_Coaching_Log]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	08/26/2014
+--	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
+-- SQL split into 2 parts to overcome sql string size restriction.
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date: 8/3/2015
+-- Updated per TFS # 413 to add additional Quality source Verint-GDIT Supervisor 
+
+--	=====================================================================
+
+ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
+AS
+
+BEGIN
+DECLARE	
+
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcEmpID nvarchar(10),
+@nvcMgrID nvarchar(10)
+
+
+SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [FormName]= @strFormIDin)	 
+SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] = @nvcEmpID)
+
+  SET @nvcSQL1 = 'SELECT  cl.CoachingID 	numID,
+		cl.FormName	strFormID,
+		m.Module,
+		sc.CoachingSource	strFormType,
+		s.Status	strFormStatus,
+		cl.EventDate	EventDate,
+		cl.CoachingDate	CoachingDate,
+		cl.SubmitterID strSubmitterID,
+		cl.SupID strCLSupID,
+		cl.MgrID strCLMgrID,
+		sh.Emp_LanID	strSubmitter,		
+		sh.Emp_Name	strSubmitterName,
+		sh.Emp_Email	strSubmitterEmail,	
+		cl.EmpID strEmpID,		
+		cl.EmpLanID	strEmpLanID,
+		eh.Emp_Name	strCSRName,
+		eh.Emp_Email	strCSREmail,
+		st.City	strCSRSite,
+		eh.Sup_ID strCSRSupID,
+		eh.Sup_LanID strCSRSup,
+		eh.Sup_Name	 strCSRSupName,
+		eh.Sup_Email  strCSRSupEmail,
+		CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		THEN cl.[MgrID]
+		ELSE eh.Mgr_ID END	strCSRMgrID,
+		CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
+		 ELSE eh.Mgr_LanID END	strCSRMgr,
+		 CASE WHEN cl.[strReportCode] like ''LCS%'' AND cl.[MgrID] <> '''+@nvcMgrID+'''
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[MgrID])+ '' (Assigned Reviewer)''
+		 ELSE eh.Mgr_Name END strCSRMgrName,
+		eh.Mgr_Email strCSRMgrEmail,
+		ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
+        sc.SubCoachingSource	strSource,
+        CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey'',''IQS'',''Verint-GDIT Supervisor'')
+		THEN 1 ELSE 0 END 	isIQS,
+		cl.isUCID    isUCID,
+		cl.UCID	strUCID,
+		cl.isVerintID	isVerintMonitor,
+		cl.VerintID	strVerintID,
+		cl.VerintFormName VerintFormName,
+		cl.isAvokeID	isBehaviorAnalyticsMonitor,
+		cl.AvokeID	strBehaviorAnalyticsID,
+		cl.isNGDActivityID	isNGDActivityID,
+		cl.NGDActivityID	strNGDActivityID,
+		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END "Customer Service Escalation",
+		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
+		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL Then 1 ELSE 0 END	"OMR / Exceptions",		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
+		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
+		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
+		cl.Description txtDescription,
+		cl.CoachingNotes txtCoachingNotes,
+		cl.isVerified,
+		cl.SubmittedDate,
+		cl.StartDate,
+		cl.SupReviewedAutoDate,
+		cl.isCSE,
+		cl.MgrReviewManualDate,
+		cl.MgrReviewAutoDate,
+		cl.MgrNotes txtMgrNotes,
+		cl.isCSRAcknowledged,
+		cl.isCoachingRequired,
+		cl.CSRReviewAutoDate,
+		cl.CSRComments txtCSRComments
+	    FROM  [EC].[Coaching_Log] cl JOIN'
+	    
+SET @nvcSQL2 = '  (SELECT  ccl.FormName,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''Customer Service Escalation'' THEN [clr].[Value] ELSE NULL END)	CSE,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''Current Coaching Initiative'' THEN [clr].[Value] ELSE NULL END)	CCI,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 120 THEN [clr].[Value] ELSE NULL END)	ETSOAE,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS
+	 FROM [EC].[Coaching_Log_Reason] clr,
+	 [EC].[DIM_Coaching_Reason] cr,
+	 [EC].[Coaching_Log] ccl 
+	 WHERE [ccl].[FormName] = '''+@strFormIDin+'''
+	 AND [clr].[CoachingReasonID] = [cr].[CoachingReasonID]
+	 AND [ccl].[CoachingID] = [clr].[CoachingID] 
+	 GROUP BY ccl.FormName ) cc
+ON [cl].[FormName] = [cc].[FormName] JOIN  [EC].[Employee_Hierarchy] eh
+	 ON [cl].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
+	 ON [cl].[SubmitterID] = [sh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] suph
+	 ON ISNULL([cl].[Review_SupID],''999999'') = [suph].[Emp_ID] JOIN [EC].[Employee_Hierarchy] mgrh
+	 ON ISNULL([cl].[Review_MgrID],''999999'') = [mgrh].[Emp_ID]JOIN [EC].[DIM_Status] s
+	 ON [cl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source] sc
+     ON [cl].[SourceID] = [sc].[SourceID] JOIN [EC].[DIM_Site] st
+	 ON [cl].[SiteID] = [st].[SiteID] JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
+Order By [cl].[FormName]'
+		
+SET @nvcSQL =  @nvcSQL1 +  @nvcSQL2
+EXEC (@nvcSQL)
+--Print (@nvcSQL)
+	    
+END --sp_SelectReviewFrom_Coaching_Log
+
+GO
+
+
+
+
+
+
+
+--********************************************************************
+
+
+-- 4. Update procedure [EC].[sp_SelectCoaching4Contact]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:		       Jourdain Augustin
+--	Create Date:	   6/10/13
+--	Description: 	   This procedure queries db for feed records to send out mail
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 8/3/2015
+-- Updated per TFS # 413 to add additional Quality source Verint-GDIT Supervisor (230)
+--	=====================================================================
+ALTER PROCEDURE [EC].[sp_SelectCoaching4Contact]
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus1 nvarchar(30),
+@strFormStatus2 nvarchar(30),
+@intSource1 int,
+@intSource2 int,
+@strFormType nvarchar(30),
+@strFormMail nvarchar (30)
+
+ --Set @strFormStatus1 = 'Completed'
+ --Set @strFormStatus2 = 'Inactive'
+
+
+ --Set @strFormType = 'Indirect'
+--Set @strFormMail = 'jourdain.augustin@gdit.com'
+ 
+SET @nvcSQL = 'SELECT   cl.CoachingID	numID	
+		,cl.FormName	strFormID
+		,s.Status		strFormStatus
+		,eh.Emp_Email	strCSREmail
+		,eh.Sup_Email	strCSRSupEmail
+		,CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN [EC].[fn_strEmpEmailFromEmpID](cl.[MgrID])
+		 ELSE eh.Mgr_Email END	strCSRMgrEmail
+		,so.SubCoachingSource	strSource
+		,eh.Emp_Name	strCSRName
+		,so.CoachingSource	strFormType
+		,cl.SubmittedDate	SubmittedDate
+		,cl.CoachingDate	CoachingDate
+		,cl.EmailSent	EmailSent
+		,cl.sourceid
+		,cl.isCSE
+		,mo.Module
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
+ON eh.Emp_ID = cl.EMPID JOIN [EC].[DIM_Status] s 
+ON s.StatusID = cl.StatusID JOIN [EC].[DIM_Source] so
+ON so.SourceID = cl.SourceID JOIN [EC].[DIM_Module] mo
+ON mo.ModuleID = cl.ModuleID
+WHERE S.Status not in (''Completed'',''Inactive'')
+AND cl.SourceID in (211,212,221,222,223,224,230)
+AND cl.EmailSent = ''False''
+AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
+OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL)
+OR (s.Status =''Pending Manager Review'' and eh.Mgr_Email is NOT NULL)
+OR (s.Status =''Pending Employee Review'' and eh.Emp_Email is NOT NULL))
+AND LEN(cl.FormName) > 10
+Order By cl.SubmittedDate DESC'
+--and [strCSREmail] = '''+@strFormMail+'''
+EXEC (@nvcSQL)	
+	    
+END --sp_SelectCoaching4Contact
+
+GO
+
+
+
+
+--**********************************

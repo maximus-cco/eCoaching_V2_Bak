@@ -1,0 +1,382 @@
+/*
+Open in an ssms window pointing to eCoaching DB in target environment and run with nothing selected
+
+Summary
+
+ [sp_SelectReviewFrom_Coaching_Log] 
+ [sp_SelectReviewFrom_Warning_Log]
+ [sp_whoami]
+ [sp_whoisthis]
+
+*/
+--Details
+
+--1. Create SP [EC].[sp_SelectReviewFrom_Coaching_Log]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Coaching_Log' 
+)
+   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	08/26/2014
+--	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date: 07/10/2015
+-- Updated per SCR 14966 to add Hierarchy IDs to the select list.
+--	=====================================================================
+
+CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
+AS
+
+BEGIN
+DECLARE	
+
+@nvcSQL nvarchar(max)
+	 
+  SET @nvcSQL = 'SELECT  cl.CoachingID 	numID,
+		cl.FormName	strFormID,
+		m.Module,
+		sc.CoachingSource	strFormType,
+		s.Status	strFormStatus,
+		cl.EventDate	EventDate,
+		cl.CoachingDate	CoachingDate,
+		cl.SubmitterID strSubmitterID,
+		cl.SupID strCLSupID,
+		cl.MgrID strCLMgrID,
+		sh.Emp_LanID	strSubmitter,		
+		sh.Emp_Name	strSubmitterName,
+		sh.Emp_Email	strSubmitterEmail,	
+		cl.EmpID strEmpID,		
+		cl.EmpLanID	strEmpLanID,
+		eh.Emp_Name	strCSRName,
+		eh.Emp_Email	strCSREmail,
+		st.City	strCSRSite,
+		eh.Sup_ID strCSRSupID,
+		eh.Sup_LanID strCSRSup,
+		eh.Sup_Name	 strCSRSupName,
+		eh.Sup_Email  strCSRSupEmail,
+		 CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN cl.[MgrID]
+		 ELSE eh.Mgr_ID END	strCSRMgrID,
+		CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
+		 ELSE eh.Mgr_LanID END	strCSRMgr,
+		eh.Mgr_Name  strCSRMgrName,
+		eh.Mgr_Email strCSRMgrEmail,
+		ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
+        sc.SubCoachingSource	strSource,
+        CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey '',''IQS'')
+		THEN 1 ELSE 0 END 	isIQS,
+		cl.isUCID    isUCID,
+		cl.UCID	strUCID,
+		cl.isVerintID	isVerintMonitor,
+		cl.VerintID	strVerintID,
+		cl.VerintFormName VerintFormName,
+		cl.isAvokeID	isBehaviorAnalyticsMonitor,
+		cl.AvokeID	strBehaviorAnalyticsID,
+		cl.isNGDActivityID	isNGDActivityID,
+		cl.NGDActivityID	strNGDActivityID,
+		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END	"Customer Service Escalation",
+		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
+		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
+		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
+		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
+		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
+		cl.Description txtDescription,
+		cl.CoachingNotes txtCoachingNotes,
+		cl.isVerified,
+		cl.SubmittedDate,
+		cl.StartDate,
+		cl.SupReviewedAutoDate,
+		cl.isCSE,
+		cl.MgrReviewManualDate,
+		cl.MgrReviewAutoDate,
+		cl.MgrNotes txtMgrNotes,
+		cl.isCSRAcknowledged,
+		cl.isCoachingRequired,
+		cl.CSRReviewAutoDate,
+		cl.CSRComments txtCSRComments
+	    FROM  [EC].[Coaching_Log] cl JOIN
+	  (SELECT  ccl.FormName,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''Customer Service Escalation'' THEN [clr].[Value] ELSE NULL END)	CSE,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''Current Coaching Initiative'' THEN [clr].[Value] ELSE NULL END)	CCI,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 120 THEN [clr].[Value] ELSE NULL END)	ETSOAE,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS
+	 FROM [EC].[Coaching_Log_Reason] clr,
+	 [EC].[DIM_Coaching_Reason] cr,
+	 [EC].[Coaching_Log] ccl 
+	 WHERE [ccl].[FormName] = '''+@strFormIDin+'''
+	 AND [clr].[CoachingReasonID] = [cr].[CoachingReasonID]
+	 AND [ccl].[CoachingID] = [clr].[CoachingID] 
+	 GROUP BY ccl.FormName ) cc
+ON [cl].[FormName] = [cc].[FormName] JOIN  [EC].[Employee_Hierarchy] eh
+	 ON [cl].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
+	 ON [cl].[SubmitterID] = [sh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] suph
+	 ON ISNULL([cl].[Review_SupID],''999999'') = [suph].[Emp_ID] JOIN [EC].[Employee_Hierarchy] mgrh
+	 ON ISNULL([cl].[Review_MgrID],''999999'') = [mgrh].[Emp_ID]JOIN [EC].[DIM_Status] s
+	 ON [cl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source] sc
+     ON [cl].[SourceID] = [sc].[SourceID] JOIN [EC].[DIM_Site] st
+	 ON [cl].[SiteID] = [st].[SiteID] JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
+Order By [cl].[FormName]'
+		
+
+EXEC (@nvcSQL)
+--Print (@nvcSQL)
+	    
+END --sp_SelectReviewFrom_Coaching_Log
+
+
+
+
+GO
+
+
+
+
+
+
+--***************************************************************
+--2. Create SP [EC].[sp_SelectReviewFrom_Warning_Log]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Warning_Log' 
+)
+   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	10/08/2014
+--	Description: 	This procedure displays the Warning Log attributes for given Form Name. 
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 07/10/2015
+-- Updated per SCR 14966 to add Hierarchy IDs to the select list.
+--	=====================================================================
+
+CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log] @strFormIDin nvarchar(50)
+AS
+
+BEGIN
+DECLARE	
+
+@nvcSQL nvarchar(max)
+
+ 
+  SET @nvcSQL = 'SELECT wl.WarningID 	numID,
+		wl.FormName	strFormID,
+		m.Module,
+		''Direct''	strFormType,
+		''Completed''	strFormStatus,
+		wl.WarningGivenDate	EventDate,
+		wl.SubmitterID strSubmitterID,
+		wl.SupID strCLSupID,
+		wl.MgrID strCLMgrID,
+		wl.EmpID strEmpID,	
+		sh.Emp_LanID	strSubmitter,		
+		sh.Emp_Name	strSubmitterName,
+		sh.Emp_Email	strSubmitterEmail,			
+		wl.EmpLanID	strEmpLanID,
+		eh.Emp_Name	strCSRName,
+		eh.Emp_Email	strCSREmail,
+		st.City	strCSRSite,
+		eh.Sup_ID strCSRSupID,
+		eh.Sup_LanID	strCSRSup,
+		eh.Sup_Name	strCSRSupName,
+		eh.Sup_Email	strCSRSupEmail,
+		eh.Mgr_ID strCSRMgrID,
+		eh.Mgr_LanID	strCSRMgr,
+		eh.Mgr_Name	strCSRMgrName,
+		eh.Mgr_Email	strCSRMgrEmail,
+		''Warning''	strSource,
+		wl.SubmittedDate
+		FROM [EC].[Employee_Hierarchy] eh join [EC].[Warning_Log] wl 
+	    ON [wl].[EMPID] = [eh].[Emp_ID]JOIN [EC].[Employee_Hierarchy] sh
+	    ON [wl].[SubmitterID] = [sh].[Emp_ID]JOIN [EC].[DIM_Module] m
+	    ON [wl].[ModuleID] = [m].[ModuleID]JOIN [EC].[DIM_Site] st
+	    ON [wl].[SiteID] = [st].[SiteID]
+	 	Where [wl].[FormName] = '''+@strFormIDin+'''
+Order By [wl].[FormName]'
+		
+
+EXEC (@nvcSQL)
+--Print (@nvcSQL)
+
+	    
+END --sp_SelectReviewFrom_Warning_Log
+
+
+
+
+
+GO
+
+
+
+
+
+--***************************************************************
+--3. Create SP [EC].[sp_whoami]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_whoami' 
+)
+   DROP PROCEDURE [EC].[sp_whoami]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	07/22/13
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 06/12/2015
+-- Updated per SCR 14966 to return 4 different fields instead of a single string.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Whoami] 
+
+(
+ @strUserin	Nvarchar(30)
+)
+AS
+
+BEGIN
+DECLARE	
+@EmpID nvarchar(100),
+@nvcSQL nvarchar(max)
+
+
+SET @EmpID = (Select [EC].[fn_nvcGetEmpIdFromLanId](@strUserin,GETDATE()))
+
+ SET @nvcSQL = 'SELECT [Emp_Job_Code] as EmpJobCode,
+                       [Emp_Email] as EmpEmail,
+                       [Emp_Name] as EmpName,
+                       [Emp_ID] as EmpID
+              FROM [EC].[Employee_Hierarchy]WITH(NOLOCK)
+              WHERE [Emp_ID] = '''+@EmpID+'''
+              AND [Active] = ''A'''
+            
+		
+EXEC (@nvcSQL)	
+--Print @nvcSQL
+END --sp_Whoami
+
+
+
+
+GO
+
+
+
+
+
+
+
+--***************************************************************
+
+--4. Create SP [EC].[sp_whoisthis]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_whoisthis' 
+)
+   DROP PROCEDURE [EC].[sp_whoisthis]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	<7/23/13>
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 06/12/2015
+-- Updated per SCR 14966 to use the Employee ID as input parameter instead of Emp Lan ID 
+-- and added SupID and MgrID to the return.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Whoisthis] 
+
+
+(
+ @strUserIDin	Nvarchar(30)
+)
+AS
+
+BEGIN
+DECLARE	
+
+@nvcSQL nvarchar(max)
+
+SET @nvcSQL = 'SELECT [Sup_LanID] + ''$'' + [Sup_ID]+ 
+		 	  ''$'' + [Mgr_LanID] + ''$'' + [Mgr_ID] Flow
+              FROM [EC].[Employee_Hierarchy]
+              WHERE [Emp_ID] = '''+ @strUserIDin+''''
+
+		
+EXEC (@nvcSQL)	
+
+
+END
+
+
+
+
+
+GO
+
+
+
+
+
+
+--***************************************************************
