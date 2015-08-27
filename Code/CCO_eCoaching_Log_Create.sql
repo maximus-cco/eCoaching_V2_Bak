@@ -1,7 +1,13 @@
 /*
-eCoaching_Log_Create(36).sql
-Last Modified Date: 08/4/2015
+eCoaching_Log_Create(37).sql
+Last Modified Date: 08/24/2015
 Last Modified By: Susmitha Palacherla
+
+Version 37:
+1.  Update for TFS 599 Typo in value 'All Employees' #
+     Updated SPs # 24, 40,41
+2. Update for TFS 605 Return lower Employee Ids # 53
+
 
 Version 36:
 1.  Update for TFS 413 to add new Quality Source 'Verint-GDIT Supervisor' in Review procedure
@@ -2888,16 +2894,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date: 04/16/2015
--- Modified during dashboard redesign SCR 14422.
--- 1. To Replace old style joins.
--- 2. Added All Employees to the return.
--- 3. Lan ID association by date.
+-- Last Modified Date: 08/25/2015
+-- Modified per TFS 599 to fix typo for 'All Employees'
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR] @strCSRMGRin nvarchar(30)
 AS
@@ -2920,7 +2924,7 @@ Set @nvcMGRID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
 
 
 SET @nvcSQL =  'SELECT X.EmpText, X.EmpValue FROM
-(SELECT ''All Employeess'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
@@ -2939,7 +2943,10 @@ EXEC (@nvcSQL)
 
 End --sp_SelectFrom_Coaching_LogMgrDistinctCSR
 
+
 GO
+
+
 
 
 
@@ -4055,16 +4062,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date: 04/16/2015
--- Modified during dashboard redesign SCR 14422.
--- 1. To Replace old style joins.
--- 2. Added All Employees to the return.
--- 3. Lan ID association by date.
+-- Last Modified Date: 08/25/2015
+-- Modified per TFS 599 to fix typo for 'All Employees'
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeam] 
 @strCSRSUPin nvarchar(30)
@@ -4081,7 +4086,7 @@ DECLARE
  Set @nvcSUPID = EC.fn_nvcGetEmpIdFromLanID(@strCSRSUPin,@dtmDate)
 
 SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
-(SELECT ''All Employeess'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
@@ -4098,9 +4103,9 @@ EXEC (@nvcSQL)
 --PRINT @nvcSQL	
 
 End --sp_SelectFrom_Coaching_LogSupDistinctCSRTeam
-
-
 GO
+
+
 
 
 
@@ -4126,16 +4131,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date: 04/16/2015
--- Modified during dashboard redesign SCR 14422.
--- 1. To Replace old style joins.
--- 2. Added All Employees to the return.
--- 3. Lan ID association by date.
+-- Last Modified Date: 08/25/2015
+-- Modified per TFS 599 to fix typo for 'All Employees'
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted] 
 @strCSRSUPin nvarchar(30)
@@ -4155,7 +4158,7 @@ DECLARE
 
 
 SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
-(SELECT ''All Employeess'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
 UNION
 SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
@@ -4172,10 +4175,7 @@ EXEC (@nvcSQL)
 --PRINT @nvcSQL	
 
 End --sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted
-
-
 GO
-
 
 
 
@@ -5394,7 +5394,6 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_Whoami]
 GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -5403,12 +5402,14 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	07/22/13
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date: 06/12/2015
--- Updated per SCR 14966 to add EmpID and Active flag to the select list.
+-- Last Modified Date: 8/25/2015
+-- Updated per TFS 605  to return lower employee ID and also look for Active not in ('T','D')
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Whoami] 
 
@@ -5422,18 +5423,17 @@ DECLARE
 @EmpID nvarchar(100),
 @nvcSQL nvarchar(max)
 
---SET @EmpID = (Select Emp_ID from [EC].[Employee_Hierarchy]where Emp_LanID = @strUserin)
 
 SET @EmpID = (Select [EC].[fn_nvcGetEmpIdFromLanId](@strUserin,GETDATE()))
-/*
-SET @nvcSQL = 'SELECT [Emp_Job_Code] + ''$'' + [Emp_Email] + ''$'' +  [Emp_Name] as Submitter
+
+ SET @nvcSQL = 'SELECT [Emp_Job_Code] as EmpJobCode,
+                       [Emp_Email] as EmpEmail,
+                       [Emp_Name] as EmpName,
+                       lower([Emp_ID]) as EmpID
               FROM [EC].[Employee_Hierarchy]WITH(NOLOCK)
-              WHERE [Emp_LanID] = '''+@strUserin+''''
- */
- SET @nvcSQL = 'SELECT [Emp_Job_Code] + ''$'' + [Emp_Email] + ''$'' +  [Emp_Name] + ''$'' + 
-              [Emp_ID] + ''$'' +  CASE WHEN [Active] = ''A'' THEN ''Y'' ELSE ''N'' END  as Submitter
-              FROM [EC].[Employee_Hierarchy]WITH(NOLOCK)
-              WHERE [Emp_ID] = '''+@EmpID+''''
+              WHERE [Emp_ID] = '''+@EmpID+'''
+              AND [Active] not in  (''T'', ''D'')'
+              
             
 		
 EXEC (@nvcSQL)	
@@ -5441,8 +5441,9 @@ EXEC (@nvcSQL)
 END --sp_Whoami
 
 
-
 GO
+
+
 
 
 
