@@ -1,7 +1,12 @@
 /*
-eCoaching_Quality_Create(08).sql
-Last Modified Date: 12/19/2014
+eCoaching_Quality_Create(09).sql
+Last Modified Date: 09/01/2015
 Last Modified By: Susmitha Palacherla
+
+Version 09:
+1. Updated following procedures to force CRLF in Decsription in Quality logs during load and update.(TFS 283)
+    [EC].[sp_InsertInto_Coaching_Log_Quality]
+    [EC].[sp_Update_Coaching_Log_Quality]
 
 Version 08: 
 1.  Updated [EC].[sp_InsertInto_Coaching_Log_Quality] per 
@@ -232,15 +237,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      02/23/2014
 --    Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 12/16/2014
+-- Last Modified Date: 08/31/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 13891 to store SupID and MgrID at time of insert.
+-- Modified per TFS 283 to force CRLF in Description value when viewed in UI.
 
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
@@ -307,7 +313,8 @@ BEGIN TRY
             1 [isVerintID],
             qs.Journal_ID	[VerintID],
             qs.Eval_ID [VerintEvalID],
-            EC.fn_nvcHtmlEncode(qs.Summary_CallerIssues)[Description],	
+            --EC.fn_nvcHtmlEncode(qs.Summary_CallerIssues)[Description],	
+            REPLACE(EC.fn_nvcHtmlEncode(qs.[Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />')[Description],
             GetDate()  [SubmittedDate], 
 		    qs.Eval_Date	[StartDate],
 		    CASE WHEN qs.CSE = '' THEN 0
@@ -383,8 +390,9 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
-
 GO
+
+
 
 
 
@@ -408,13 +416,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      04/23/2014
 --    Description:     This procedure updates the Quality scorecards into the Coaching_Log table. 
 --                     The txtdescription is updated in the Coaching_Log table.
 --                     The updated Oppor/Re-In value is updated in the Coaching_Reasons Table.
---
+-- Last Modified Date: 08/31/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per TFS 283 to force CRLF in Description value when viewed in UI.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality]
   
@@ -428,7 +439,7 @@ BEGIN TRY
 -- Update txtDescription for existing records
 
  UPDATE [EC].[Coaching_Log]
- SET [Description] = EC.fn_nvcHtmlEncode(S.[Summary_CallerIssues])
+ SET [Description] = REPLACE(EC.fn_nvcHtmlEncode(S.[Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />')
  FROM [EC].[Quality_Coaching_Stage]S INNER JOIN [EC].[Coaching_Log]F
  ON S.[Eval_ID] = F.[VerintEvalID]
  AND S.[Journal_ID] = F.[VerintID]
@@ -483,7 +494,9 @@ END -- sp_Update_Coaching_Log_Quality
 
 
 
+
 GO
+
 
 
 
