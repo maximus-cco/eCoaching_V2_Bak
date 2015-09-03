@@ -1,7 +1,11 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (08)
-Date: 01/26/15
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (09)
+Date: 09/03/2015
 
+Version 09, 09/03/2015
+Updated sp [EC].[sp_Update_Employee_Hierarchy_Stage (#1) to
+trim leading and trailing spaces in Employee and Supervisor Ids from eWFM and PeopleSoft before 
+using in Employee Hierarchy table per TFS 641.
 
 Version 08, 01/26/15
 Additional updates to sp (#5) to inactivate ecls for employees in EA status and those not arriving in ewfm feed  per SCR 14072.
@@ -304,46 +308,62 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/2/2013
 -- Description:	Performs the following actions.
 -- Deletes records with missing Employee IDs
 -- Removes Alpha characters from first 2 positions of Emp_ID, Sup_EMP_ID, Mgr_Emp_ID
--- Upadtes CSR Sup ID values with the SUP from WFM
+-- Removes leading and Trailing spaces from emp and Sup Ids from eWFM and Employee Hierarchy staging tables.
+-- Updates CSR Sup ID values with the SUP from WFM
 -- Deletes records with Missing SUP IDs
 -- Populates Supervisor attributes
 -- Populates Manager attributes
--- Last update: 03/05/2014
--- Updated per redesign
+-- Last update: 09/03/2015
+-- Updated per TFS 641 to trim leading and trailing spaces in Employee and Supervisor Ids 
+-- from eWFM and PeopleSoft before using in Employee Hierarchy table.
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage] 
 AS
 BEGIN
 
+-- Delete records where Employee ID is a missing or a blank.
 BEGIN
 DELETE FROM [EC].[Employee_Hierarchy_Stage]
 WHERE EMP_ID = ' ' or  EMP_ID is NULL
 OPTION (MAXDOP 1)
 END
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
 -- Removes Alpha characters from first 2 positions of Emp_ID, Sup_EMP_ID, Mgr_Emp_ID
-
+-- and removes all leading and trailing spaces.
 BEGIN
 UPDATE [EC].[Employee_Hierarchy_Stage]
-SET [Emp_ID]=[EC].[RemoveAlphaCharacters]([Emp_ID]),
-    [Sup_EMP_ID]=[EC].[RemoveAlphaCharacters]([Sup_EMP_ID]),
-    [Mgr_Emp_ID]=[EC].[RemoveAlphaCharacters]([Mgr_Emp_ID]),
+SET [Emp_ID]= REPLACE(LTRIM(RTRIM([EC].[RemoveAlphaCharacters]([Emp_ID]))),' ',''),
+    [Sup_EMP_ID]= REPLACE(LTRIM(RTRIM([EC].[RemoveAlphaCharacters]([Sup_EMP_ID]))),' ',''),
+    [Mgr_Emp_ID]= REPLACE(LTRIM(RTRIM([EC].[RemoveAlphaCharacters]([Mgr_Emp_ID]))),' ',''),
     [Emp_LanID]= REPLACE([Emp_LanID], '#',''),
     [Emp_Email]= REPLACE([Emp_Email], '#','')
 OPTION (MAXDOP 1)
 END  
+ WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+
+-- Remove leading and trailing spaces from Emp and Sup Ids from EWFM.
+BEGIN
+UPDATE [EC].[EmpID_To_SupID_Stage]
+SET [Emp_ID]= REPLACE(LTRIM(RTRIM([Emp_ID])),' ',''),
+   [Sup_ID]= REPLACE(LTRIM(RTRIM([Sup_ID])),' ','')
+END
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
     
-    
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
-    
--- Set Sup_Emp_ID  and Program for CSrs from WFM
+-- Set Sup_Emp_ID  and Program for CSRs from WFM
 BEGIN
 UPDATE [EC].[Employee_Hierarchy_Stage]
 SET [Sup_Emp_ID] = [Sup_ID],
@@ -351,12 +371,11 @@ SET [Sup_Emp_ID] = [Sup_ID],
 CASE WHEN WFMSUP.[Emp_Program]like 'FFM%'
 THEN 'Marketplace' ELSE 'Medicare' END
 FROM [EC].[EmpID_To_SupID_Stage] WFMSUP JOIN [EC].[Employee_Hierarchy_Stage]INFO
-ON LTRIM(WFMSUP.Emp_ID) = LTRIM(INFO.Emp_ID)
+ON WFMSUP.Emp_ID = INFO.Emp_ID
 WHERE INFO.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
 OPTION (MAXDOP 1)
 END
-
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
 
 -- Update Mgr_Emp_ID to be Supervisor's supervisor
@@ -389,7 +408,7 @@ UPDATE Emp
     [Sup_Job_Description]= Sup.[Emp_Job_Description],
     [Sup_LanID]= Sup.[Emp_LanID]
    FROM [EC].[Employee_Hierarchy_Stage] as Emp Join [EC].[Employee_Hierarchy_Stage]as Sup
-    ON LTRIM(Emp.[Sup_Emp_ID])= LTRIM(Sup.[EMP_ID])
+    ON Emp.[Sup_Emp_ID]= Sup.[EMP_ID]
 OPTION (MAXDOP 1)
  END
  
@@ -404,12 +423,13 @@ BEGIN
     [Mgr_Job_Description]= Mgr.[Emp_Job_Description],
     [Mgr_LanID]= Mgr.[Emp_LanID]
     FROM [EC].[Employee_Hierarchy_Stage] as Emp Join [EC].[Employee_Hierarchy_Stage]as Mgr
-    ON LTRIM(Emp.[Mgr_Emp_ID])= LTRIM(Mgr.[EMP_ID])
+    ON Emp.[Mgr_Emp_ID]= Mgr.[EMP_ID]
 OPTION (MAXDOP 1)
 END
 
 END  -- [EC].[sp_Update_Employee_Hierarchy_Stage]
 GO
+
 
 
 
