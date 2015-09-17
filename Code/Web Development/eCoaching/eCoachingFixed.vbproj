@@ -182,6 +182,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BLL\ECLHandler.vb" />
     <Compile Include="BLL\HistoricalDashboardHandler.vb" />
     <Compile Include="BLL\UserHandler.vb" />
     <Compile Include="DAL\HistoricalDashboardDBAccess.vb" />
