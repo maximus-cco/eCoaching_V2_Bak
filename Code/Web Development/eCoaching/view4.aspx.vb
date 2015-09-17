@@ -34,23 +34,29 @@
 
     ' called on page non post back but after authentication is successful
     Public Sub HandlePageNonPostBack()
+        If Not historicalDashoardHandler.IsHistoricalDashboardPageAccessAllowed(Session("eclUser")) Then
+            ' Send user to not authorized page.
+            Response.Redirect("error.aspx")
+        End If
+
+        WelcomeLabel.Text = "Welcome to the Historical Reporting Dashboard"
         StartDate.Text = backDate
         EndDate.Text = TodaysDate
-        Dim jobCode As String = TryCast(Session("eclUser"), User).JobCode
-        Select Case True 'jobCode
-            Case (InStr(1, jobCode, "40", 1) > 0), (InStr(1, jobCode, "50", 1) > 0), (InStr(1, jobCode, "60", 1) > 0), (InStr(1, jobCode, "70", 1) > 0), (InStr(1, jobCode, "WISO", 1) > 0), (InStr(1, jobCode, "WSTE", 1) > 0), (InStr(1, jobCode, "WSQE", 1) > 0), (InStr(1, jobCode, "WACQ", 1) > 0), (InStr(1, jobCode, "WPPM", 1) > 0), (InStr(1, jobCode, "WPSM", 1) > 0), (InStr(1, jobCode, "WEEX", 1) > 0), (InStr(1, jobCode, "WISY", 1) > 0), (InStr(1, jobCode, "WPWL51", 1) > 0), (InStr(1, jobCode, "WHER", 1) > 0), (InStr(1, jobCode, "WHHR", 1) > 0),
-                 (InStr(1, jobCode, "WHRC", 1) > 0)
-                '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50", "WEEX"
-                WelcomeLabel.Text = "Welcome to the Historical Reporting Dashboard"
+        CalendarExtender1.EndDate = TodaysDate
+        CalendarExtender2.EndDate = TodaysDate
 
-                CalendarExtender1.EndDate = TodaysDate
-                CalendarExtender2.EndDate = TodaysDate
-            Case Else
-                Response.Redirect("error.aspx")
-        End Select
+        ' Disable "Export to Excel" button if user now allowed to export to excel
+        If Not historicalDashoardHandler.IsExportToExcelAllowed(Session("eclUser")) Then
+            ExportToExcelButton.CssClass = "formButtonDisabled"
+            ExportToExcelButton.Enabled = False
+        End If
 
         BindAllDropdownsToAllSites()
     End Sub
+
+    Private Function IsExtractToExcelNotAllowed(jobCode As String)
+        Return Not String.IsNullOrEmpty(jobCode) AndAlso jobCode.EndsWith("40")
+    End Function
 
     ' Bind all dropdowns - Sites, CSRs, Supervisors, Managers, Submittiters, Statuses, Sources, Values
     Private Sub BindAllDropdownsToAllSites()

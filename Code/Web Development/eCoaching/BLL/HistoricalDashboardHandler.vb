@@ -2,6 +2,7 @@
 Imports NPOI.XSSF.UserModel
 
 Public Class HistoricalDashboardHandler
+    Inherits ECLHandler
 
     Private Const CacheExpireInMinutes As Integer = 480 ' 8 hours
     Private Const AllSites As String = "AllSites"
@@ -15,6 +16,15 @@ Public Class HistoricalDashboardHandler
     Public Sub New()
         historicalDashboardDBAccess = New HistoricalDashboardDBAccess()
     End Sub
+
+    Public Function IsExportToExcelAllowed(eclUser As User)
+        If eclUser Is Nothing OrElse String.IsNullOrWhiteSpace(eclUser.JobCode) Then
+            Return False
+        End If
+
+        Dim jobCode As String = eclUser.JobCode.Trim
+        Return Not jobCode.EndsWith("40")
+    End Function
 
     Private Sub SaveObjectInCache(myKey As String, myObject As Object)
         HttpContext.Current.Cache.Insert(myKey, myObject, Nothing, DateTime.Now.AddMinutes(CacheExpireInMinutes), Cache.NoSlidingExpiration)

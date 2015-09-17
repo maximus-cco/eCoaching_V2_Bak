@@ -28,6 +28,17 @@ body
     text-align: center;
 }
 
+.formButtonDisabled
+{
+    font-weight: 700;
+    font-family: Calibri;
+    font-size: 10pt;
+    color: #c0c0c0;
+    font-family: Tahoma;
+    background-color: #507CD1;
+    text-align: center;
+}
+
 .subuttons
 {
     width: 150px;

@@ -270,45 +270,35 @@ Public Class review
                         pHolder2v = ListView1.Items(0).FindControl("Label34") 'ETS / OAE
                         pHolder2w = ListView1.Items(0).FindControl("Label35") 'ETS / OAS
 
-                        If ((pHolder2v.Text = "1") Or (pHolder2w.Text = "1")) Then 'Research Required?
-                            '   MsgBox("found 1")
-                            ''panelHolder1 = ListView1.Items(0).FindControl("Panel38") 'Details of the behavior being coached
-                            ''panelHolder1.Visible = True 'display txtDescription 
+                        Dim omrIae As Label = ListView1.Items(0).FindControl("LabelOmrIae")
+                        Dim omrIat As Label = ListView1.Items(0).FindControl("LabelOmrIat")
 
+                        ' Is it OMR/IAE (Inappropriate ARC Escalation) or OMR/IAT (Inappropriate ARC Transfer)
+                        If (pHolder2v.Text = "1" OrElse pHolder2w.Text = "1" OrElse omrIae.Text = "1" OrElse omrIat.Text = "1") Then
                             Panel37.Visible = True ' coaching required question group
                             Label138.Text = "3. Provide the details from the coaching session including action plans developed"
                             CalendarExtender4.EndDate = TodaysDate
                             CompareValidator5.ValueToCompare = TodaysDate
                             RequiredFieldValidator10.Enabled = True
-                            HyperLink1.Text = "Contact Center Operations 3.06 Timecard Audit SOP"
-
                             If (pHolder2v.Text = "1") Then 'ETS OAE
-
+                                HyperLink1.Text = "Contact Center Operations 3.06 Timecard Audit SOP"
                                 Label134.Text = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did not complete their timecard before the deadline laid out in the latest "
 
                             End If
 
                             If (pHolder2w.Text = "1") Then 'ETS OAS
-
+                                HyperLink1.Text = "Contact Center Operations 3.06 Timecard Audit SOP"
                                 Label134.Text = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the supervisor did not approve or reject their CSR’s timecard before the deadline laid out in the latest "
-
                             End If
 
 
-                        Else ' not from IQS and ETS/OAE/OAS are NOT Required Research
-
-                            '' panelHolder = ListView1.Items(0).FindControl("Panel21")
-                            '' panelHolder.Visible = True
+                        Else ' not from IQS, not ETS/OAE/OAS, not OMR/IAE, not OMR/IAT
                             Panel25.Visible = True
                             calendarButtonExtender.EndDate = TodaysDate
                             RequiredFieldValidator3.Enabled = True
-
+                            'End If
                         End If
-
-
                     End If
-
-
 
                 Case 4 ' Pending Acknowledgement
                     Panel40.Visible = True 'Check the box below to acknowledge the monitor
@@ -1112,6 +1102,8 @@ Public Class review
 
                 Dim pHolder1 As Label = ListView1.Items(0).FindControl("Label133") 'Current Coaching Initiative
                 Dim pHolder2 As Label = ListView1.Items(0).FindControl("Label151") 'OMR / Exceptions
+                Dim omrIae As Label = ListView1.Items(0).FindControl("LabelOmrIae") 'OMR / IAE
+                Dim omrIat As Label = ListView1.Items(0).FindControl("LabelOmrIat") 'OMR / IAT
                 Dim pHolder3 As Label = ListView1.Items(0).FindControl("Label34") 'ETS / OAE
                 Dim pHolder4 As Label = ListView1.Items(0).FindControl("Label35") 'ETS / OAS
                 Dim pHolder5 As Label = ListView1.Items(0).FindControl("Label36") 'Low CSAT
@@ -1121,14 +1113,14 @@ Public Class review
 
                     Case "CSR", "Training"
 
-                        If ((pHolder1.Text = "1") Or (pHolder2.Text = "1") Or (pHolder5.Text = "1")) Then
-
+                        ' Current Coaching Initiative, Low CSAT
+                        If ((pHolder1.Text = "1") Or (pHolder5.Text = "1")) Then
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
 
                         End If
 
-
-                        If (pHolder3.Text = "1") Then
+                        ' OMR/Exceptions, OMR/IAE, OMR/IAT, ETS/OAE
+                        If (pHolder2.Text = "1" OrElse omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1") Then
 
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
 

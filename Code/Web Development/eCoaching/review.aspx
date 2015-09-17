@@ -305,6 +305,8 @@
                     <asp:Label ID="Label107" runat="server" Text='<%# Eval("Customer Service Escalation") %>' Visible="false" />
                     <asp:Label ID="Label133" runat="server" Text='<%# Eval("Current Coaching Initiative") %>' Visible="false" />
                     <asp:Label ID="Label151" runat="server" Text='<%# Eval("OMR / Exceptions") %>' Visible="false" />
+                    <asp:Label ID="LabelOmrIae" runat="server" Text='<%# Eval("OMR / IAE") %>' Visible="false" />
+                    <asp:Label ID="LabelOmrIat" runat="server" Text='<%# Eval("OMR / IAT") %>' Visible="false" />
                     <asp:Label ID="Label34" runat="server" Text='<%# Eval("ETS / OAE") %>' Visible="false" />
                     <asp:Label ID="Label35" runat="server" Text='<%# Eval("ETS / OAS") %>' Visible="false" />
                     <asp:Label ID="Label36" runat="server" Text='<%# Eval("LCS") %>' Visible="false" />
