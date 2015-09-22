@@ -1,7 +1,12 @@
 /*
-File: eCoaching_Functions.sql (13)
+File: eCoaching_Functions.sql (14)
 Last Modified By: Susmitha Palacherla
-Date: 06/05/2015
+Date: 09/21/2015
+
+
+
+Version 14,  09/21/2015
+Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add code IAT per TFS 644.
 
 
 Version 13,  06/05/2015
@@ -454,13 +459,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
 -- Description:	  Given the 3 letter Outlier Report code returns the Sub coaching reason for the OMR log.
--- Last Modified Date: 12/17/2014
+-- Last Modified Date: 09/17/2015
 -- last Modified By: Susmitha Palacherla
--- Modified per SCR 14028 to add FFM Tier 2 Report
+-- Modified per TFS 644 to add IAT and IAE Reports.
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -493,6 +500,7 @@ BEGIN
 			WHEN N'SLG' THEN 37
 			WHEN N'TRN' THEN 38 
 			WHEN N'TR2' THEN 109  
+			WHEN N'IAT' THEN 231
         ELSE -1
       END
     ELSE
@@ -502,7 +510,11 @@ RETURN @intSubCoachReasonID
 
 END  -- fn_intSubCoachReasonIDFromRptCode()
 
+
+
 GO
+
+
 
 
 
