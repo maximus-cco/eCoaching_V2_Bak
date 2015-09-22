@@ -1,7 +1,14 @@
 /*
-eCoaching_Outliers_Create(06).sql
-Last Modified Date: 05/26/2015
+eCoaching_Outliers_Create(07).sql
+Last Modified Date: 09/21/2015
 Last Modified By: Susmitha Palacherla
+
+
+Version 07: 09/21/2015
+1. Updated table creates for #1,3 and 4 to add new cols CD1 and CD2
+and updated Updated SP#1 [EC].[sp_InsertInto_Coaching_Log_Outlier]  to support IAE and IAT feeds.
+Marked SP#2 [EC].[sp_InsertInto_Outlier_Rejected] as Obsolete
+
 
 Version 06: 05/26/2015
 1. Updated table creates for #1,3 and 4 to add new col RMgr_ID
@@ -40,7 +47,7 @@ Tables
 
 Procedures
 1. Create SP  [EC].[sp_InsertInto_Coaching_Log_Outlier]  
-2. Create SP [EC].[sp_InsertInto_Outlier_Rejected]
+2. Create SP [EC].[sp_InsertInto_Outlier_Rejected] -- Obsolete 
 
 */
 
@@ -78,7 +85,9 @@ CREATE TABLE [EC].[Outlier_Coaching_Stage](
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
 	[FileName] [nvarchar](260) NULL,
-                  [RMgr_ID] [nvarchar](20) NULL
+                  [RMgr_ID] [nvarchar](20) NULL,
+                  [CD1] [nvarchar](50) NULL,
+	[CD2] [nvarchar](50) NULL
 ) ON [PRIMARY]
 
 GO
@@ -141,7 +150,9 @@ CREATE TABLE [EC].[Outlier_Coaching_Rejected](
 	[FileName] [nvarchar](260) NULL,
 	[Rejected_Reason] [nvarchar](200) NULL,
 	[Rejected_Date] [datetime] NULL,
-                  [RMgr_ID] [nvarchar](20) NULL
+                  [RMgr_ID] [nvarchar](20) NULL,
+	[CD1] [nvarchar](50) NULL,
+	[CD2] [nvarchar](50) NULL
 ) ON [PRIMARY]
 
 GO
@@ -176,7 +187,9 @@ CREATE TABLE [EC].[Outlier_Coaching_Fact](
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
 	[FileName] [nvarchar](260) NULL,
-                  [RMgr_ID] [nvarchar](20) NULL
+                  [RMgr_ID] [nvarchar](20) NULL,
+	[CD1] [nvarchar](50) NULL,
+	[CD2] [nvarchar](50) NULL
 ) ON [PRIMARY]
 
 GO
@@ -208,14 +221,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
 -- Loads records from [EC].[Outlier_Coaching_Stage]to [EC].[Coaching_Log]
--- Last Modified Date: 05/12/2015
+-- Last Modified Date: 09/16/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 14818 to support LCSAT feed.
-
+-- Modified per TFS644 to add IAE, IAT Feeds
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 AS
@@ -227,12 +241,18 @@ BEGIN TRY
 
       DECLARE @maxnumID INT,
               @dtmDate DATETIME,
-              @strLCSPretext nvarchar(80)
+              @strLCSPretext nvarchar(200),
+              @strIAEPretext nvarchar(200),
+              @strIATPretext nvarchar(200)
+              
       -- Fetches the maximum CoachingID before the insert.
       SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
       -- Fetches the Date of the Insert
       SET @dtmDate  = GETDATE()   
       SET @strLCSPretext = 'The call associated with this Low CSAT is Verint ID: '
+      SET @strIAEPretext = 'You are receiving this eCL because the ARC received an Inappropriate Escalation for this CSR.  Please review the Verint Call, NGD call record and coach as appropriate. '
+      SET @strIATPretext = 'You are receiving this eCL because the ARC received an Inappropriate Transfer for this CSR.  Please review the Verint Call, NGD call record and coach as appropriate. '
+     
 -- Inserts records from the Outlier_Coaching_Stage table to the Coaching_Log Table
 
  INSERT INTO [EC].[Coaching_Log]
@@ -277,11 +297,22 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
 		 0			[isNGDActivityID],
          0			[isUCID],
          0          [isVerintID],
+		 --CASE WHEN cs.Report_Code LIKE 'LCS%' 
+		 --THEN @strLCSPretext + EC.fn_nvcHtmlEncode(cs.TextDescription)
+		 --WHEN cs.Report_Code LIKE 'IAE%' 
+		 --THEN REPLACE(EC.fn_nvcHtmlEncode(@strIAEPretext + CHAR(13) + CHAR(10) + cs.TextDescription + CHAR(13) + CHAR(10) + cs.CD1 + CHAR(13) + CHAR(10) + cs.CD2), CHAR(13) + CHAR(10) ,'<br />')
+		 --WHEN cs.Report_Code LIKE 'IAT%' 
+		 --THEN REPLACE(EC.fn_nvcHtmlEncode(@strIATPretext + CHAR(13) + CHAR(10) +  cs.TextDescription + CHAR(13) + CHAR(10)+ cs.CD1 + CHAR(13) + CHAR(10) + cs.CD2), CHAR(13) + CHAR(10) ,'<br />')
+		 --ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
 		 CASE WHEN cs.Report_Code LIKE 'LCS%' 
 		 THEN @strLCSPretext + EC.fn_nvcHtmlEncode(cs.TextDescription)
+		 WHEN cs.Report_Code LIKE 'IAE%' 
+		 THEN @strIAEPretext + '<br />' + EC.fn_nvcHtmlEncode(cs.TextDescription) + '<br />' + cs.CD1 + '<br />' + cs.CD2
+		 WHEN cs.Report_Code LIKE 'IAT%' 
+		 THEN @strIATPretext + '<br />' + EC.fn_nvcHtmlEncode(cs.TextDescription) + '<br />' + cs.CD1 + '<br />' + cs.CD2
 		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
-	     cs.Submitted_Date			SubmittedDate,
-		 cs.Start_Date				[StartDate],
+		  cs.Submitted_Date			SubmittedDate,
+		  		 cs.Start_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
 		 0                          [isCSE],
 		 0                          [EmailSent],
@@ -359,11 +390,9 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Outlier
 
+
+
 GO
-
-
-
-
 
 
 
@@ -394,6 +423,8 @@ GO
 
 
 
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:         01/15/2014
@@ -401,9 +432,9 @@ GO
 -- Loads all records from [EC].[Outlier_Coaching_Stage]Table
 -- that dont have a corresponding CSR Lanid in the Employee_Hierarchy table
 -- Into the Outliers rejected Table.
--- Last Modified Date: 05/12/2015
+-- Last Modified Date: 09/16/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 14818 to support LCSAT feed.
+-- Modified per TFS644 to add IAE, IAT Feeds
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
 AS
@@ -430,7 +461,9 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
            ,[FileName]
            ,[Rejected_Reason]
            ,[Rejected_Date]
-           ,[RMgr_ID])
+           ,[RMgr_ID]
+           ,[CD1]
+           ,[CD2])
  SELECT S.[Report_ID]
       ,S.[Report_Code]
       ,S.[Form_Type]
@@ -449,7 +482,9 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
       ,S.[FileName]
       ,'CSR_LANID not found in Hierarchy Table'
       ,GETDATE()
-      ,S.RMgr_ID
+      ,S.[RMgr_ID]
+      ,S.[CD1]
+      ,S.[CD2]
   FROM [EC].[Outlier_Coaching_Stage]S left outer join [EC].[Outlier_Coaching_Rejected] R 
   ON S.Report_ID = R.Report_ID and S.Report_Code = R.Report_Code and S.CSR_LANID = R.CSR_LANID
   LEFT OUTER JOIN EC.[Employee_Hierarchy]H
@@ -459,7 +494,13 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
 	                   
 
 END -- sp_InsertInto_Outlier_Rejected
+
+
+
+
 GO
+
+
 
 
 
