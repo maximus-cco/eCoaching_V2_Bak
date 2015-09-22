@@ -1,9 +1,13 @@
 /*
-eCoaching_Log_Create(37).sql
-Last Modified Date: 08/24/2015
+eCoaching_Log_Create(38).sql
+Last Modified Date: 09/21/2015
 Last Modified By: Susmitha Palacherla
 
-Version 37:
+
+Version 38: 09/21/2015
+1. Updated SPs # 45 and 50 to add OMR IAE and IAT per TFS 644.
+
+Version 37: 08/24/2015
 1.  Update for TFS 599 Typo in value 'All Employees' #
      Updated SPs # 24, 40,41
 2. Update for TFS 605 Return lower Employee Ids # 53
@@ -4420,14 +4424,15 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 -- SQL split into 2 parts to overcome sql string size restriction.
--- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 8/3/2015
--- Updated per TFS # 413 to add additional Quality source Verint-GDIT Supervisor 
+-- Last Modified Date: 09/16/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per TFS644 to add IAE, IAT Feeds
 
 --	=====================================================================
 
@@ -4497,6 +4502,8 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
 		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
 		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
+		CASE WHEN cc.OMRIAE is Not NULL Then 1 ELSE 0 END	"OMR / IAE",
+		CASE WHEN cc.OMRIAT is Not NULL Then 1 ELSE 0 END	"OMR / IAT",
 		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
 		cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
@@ -4520,6 +4527,8 @@ SET @nvcSQL2 = '  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 120 THEN [clr].[Value] ELSE NULL END)	ETSOAE,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 29 THEN [clr].[Value] ELSE NULL END)	OMRIAE,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 231 THEN [clr].[Value] ELSE NULL END)	OMRIAT,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS
 	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
@@ -4545,7 +4554,10 @@ EXEC (@nvcSQL)
 END --sp_SelectReviewFrom_Coaching_Log
 
 
+
 GO
+
+
 
 
 
@@ -5027,17 +5039,15 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
---    Create Date:    11/16/12
+--    Create Date:    11/16/2012
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page for Outlier records. 
---    Last Update:    01/16/2015
---    Updated per SCR 14031 to incorporate OA Reports.
+--    Last Update:    09/17/2015
+--    Updated per TFS 644 to add IAE and IAT reports.
 
 --    =====================================================================
-ALTER PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
+CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
@@ -5068,10 +5078,12 @@ DECLARE @nvcReviewerID Nvarchar(10),
        
 SET @dtmDate  = GETDATE()   
 SET @nvcReviewerID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewerLanID,@dtmDate)
+--SET @nvcCat = (select strReportCode from EC.Coaching_Log where FormName = @nvcFormID) 
 SET @nvcCat = (select RTRIM(LEFT(strReportCode,LEN(strReportCode)-8)) from EC.Coaching_Log where FormName = @nvcFormID) 
 
 
-  IF @nvcCat IN ('OAE','OAS')
+--IF LEFT(@nvcCat,LEN(@nvcCat)-8) IN ('OAE','OAS')
+  IF @nvcCat IN ('OAE','OAS', 'IAE','IAT')
 
 BEGIN      
 UPDATE 	EC.Coaching_Log
@@ -5092,7 +5104,7 @@ SET Value = (CASE WHEN @bitisCoachingRequired = 'True' then 'Opportunity' ELSE '
   	FROM EC.Coaching_Log cl INNER JOIN EC.Coaching_Log_Reason clr
 	ON cl.CoachingID = clr.CoachingID
 	WHERE cl.FormName = @nvcFormID
-and clr.SubCoachingReasonID in (120,121)
+and clr.SubCoachingReasonID in (120,121,29,231)
         OPTION (MAXDOP 1)
 
 END
@@ -5166,8 +5178,10 @@ END CATCH
 
 
 END --sp_Update5Review_Coaching_Log
-
 GO
+
+
+
 
 
 
