@@ -19,6 +19,7 @@ Dim sConn
 Dim strModule
 Dim strSourceID
 Dim isCSE
+Dim isOMRARC
 
 Dim mainArray
 Dim jMax
@@ -57,6 +58,7 @@ For j = 0 to jMax
 	strModule = mainArray(14,j)
 	strSourceID = mainArray(12,j)
 	isCSE = mainArray(13,j)
+	isOMRARC = mainArray(15,j) 'Will be 1 for IAT and IAE OMR Feeds
 
 
 	'configure the subject line
@@ -159,6 +161,15 @@ Next
 			
 
                 strPerson = Replace(strPerson, "'", "")
+
+'Begin check for OMRARC
+              Select Case (isOMRARC)
+	Case 1
+	mailBody = "This eCoaching Log has been created in reference to an inappropriate escalation or transfer to the ARC.  Please review and coach your CSR accordingly."
+	
+        End Select
+
+'End check for OMRARC
 
 
                 Select Case (mailTo)
