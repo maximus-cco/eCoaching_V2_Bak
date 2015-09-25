@@ -1,0 +1,159 @@
+/*
+Copy to ssms window pointing to eCoaching DB in target environment and run with nothing selected.
+Test - eCoachingTest on vrivfssdbt02\scort01,1438
+Prod eCoaching on vdenssdbp07\scorp01
+
+Summary
+TFS 641
+1.  [EC].[sp_Update_Employee_Hierarchy_Stage]
+
+
+*****************************************/
+
+-- 1. Create Procedure [EC].[sp_Update_Employee_Hierarchy_Stage] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Update_Employee_Hierarchy_Stage' 
+)
+   DROP  PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage] 
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create date: 12/2/2013
+-- Description:	Performs the following actions.
+-- Deletes records with missing Employee IDs
+-- Removes Alpha characters from first 2 positions of Emp_ID, Sup_EMP_ID, Mgr_Emp_ID
+-- Removes leading and Trailing spaces from emp and Sup Ids from eWFM and Employee Hierarchy staging tables.
+-- Updates CSR Sup ID values with the SUP from WFM
+-- Deletes records with Missing SUP IDs
+-- Populates Supervisor attributes
+-- Populates Manager attributes
+-- Last update: 09/03/2015
+-- Updated per TFS 641 to trim leading and trailing spaces in Employee and Supervisor Ids 
+-- from eWFM and PeopleSoft before using in Employee Hierarchy table.
+-- =============================================
+CREATE PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage] 
+AS
+BEGIN
+
+-- Delete records where Employee ID is a missing or a blank.
+BEGIN
+DELETE FROM [EC].[Employee_Hierarchy_Stage]
+WHERE EMP_ID = ' ' or  EMP_ID is NULL
+OPTION (MAXDOP 1)
+END
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+-- Removes Alpha characters from first 2 positions of Emp_ID, Sup_EMP_ID, Mgr_Emp_ID
+-- and removes all leading and trailing spaces.
+BEGIN
+UPDATE [EC].[Employee_Hierarchy_Stage]
+SET [Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Emp_ID])),' ','')),
+    [Sup_EMP_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Sup_EMP_ID])),' ','')),
+    [Mgr_Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Mgr_Emp_ID])),' ','')),
+    [Emp_LanID]= REPLACE([Emp_LanID], '#',''),
+    [Emp_Email]= REPLACE([Emp_Email], '#','')
+OPTION (MAXDOP 1)
+END  
+ WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+
+-- Remove leading and trailing spaces from Emp and Sup Ids from EWFM.
+BEGIN
+UPDATE [EC].[EmpID_To_SupID_Stage]
+SET [Emp_ID]= REPLACE(LTRIM(RTRIM([Emp_ID])),' ',''),
+   [Sup_ID]= REPLACE(LTRIM(RTRIM([Sup_ID])),' ','')
+END
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+    
+-- Set Sup_Emp_ID  and Program for CSRs from WFM
+BEGIN
+UPDATE [EC].[Employee_Hierarchy_Stage]
+SET [Sup_Emp_ID] = [Sup_ID],
+[Emp_Program]= 
+CASE WHEN WFMSUP.[Emp_Program]like 'FFM%'
+THEN 'Marketplace' ELSE 'Medicare' END
+FROM [EC].[EmpID_To_SupID_Stage] WFMSUP JOIN [EC].[Employee_Hierarchy_Stage]INFO
+ON WFMSUP.Emp_ID = INFO.Emp_ID
+WHERE INFO.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
+OPTION (MAXDOP 1)
+END
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+-- Update Mgr_Emp_ID to be Supervisor's supervisor
+BEGIN
+UPDATE [EC].[Employee_Hierarchy_Stage]
+SET Mgr_Emp_ID =[EC].[fn_strMgrEmpIDFromEmpID] (Emp_ID)
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+
+-- This will ensure that all users with missing sup id and mgr id will not be in the Employee_Hierarchy table.
+BEGIN
+DELETE FROM [EC].[Employee_Hierarchy_Stage]
+WHERE [Sup_Emp_ID] = ' ' or  [Sup_Emp_ID] is NULL or [Mgr_Emp_ID] = ' ' or  [Mgr_Emp_ID] is NULL
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+
+
+-- Populates Supervisor attributes
+BEGIN 
+UPDATE Emp
+    SET [Sup_Name]= Sup.[Emp_Name],
+    [Sup_Email]= Sup.[Emp_Email],
+    [Sup_Job_Code]= Sup.[Emp_Job_Code],
+    [Sup_Job_Description]= Sup.[Emp_Job_Description],
+    [Sup_LanID]= Sup.[Emp_LanID]
+   FROM [EC].[Employee_Hierarchy_Stage] as Emp Join [EC].[Employee_Hierarchy_Stage]as Sup
+    ON Emp.[Sup_Emp_ID]= Sup.[EMP_ID]
+OPTION (MAXDOP 1)
+ END
+ 
+ WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+    
+-- Populates Manager attributes
+BEGIN    
+ UPDATE Emp
+    SET [Mgr_Name]= Mgr.[Emp_Name],
+    [Mgr_Email]= Mgr.[Emp_Email],
+    [Mgr_Job_Code]= Mgr.[Emp_Job_Code],
+    [Mgr_Job_Description]= Mgr.[Emp_Job_Description],
+    [Mgr_LanID]= Mgr.[Emp_LanID]
+    FROM [EC].[Employee_Hierarchy_Stage] as Emp Join [EC].[Employee_Hierarchy_Stage]as Mgr
+    ON Emp.[Mgr_Emp_ID]= Mgr.[EMP_ID]
+OPTION (MAXDOP 1)
+END
+
+END  -- [EC].[sp_Update_Employee_Hierarchy_Stage]
+
+
+GO
+
+
+
+
