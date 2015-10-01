@@ -1,6 +1,11 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (09)
-Date: 09/03/2015
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (10)
+Date: 09/30/2015
+
+
+Version 10, 09/30/2015
+Updated sp [EC].[sp_InactivateCoachingLogsForTerms] (#5) to
+add Inactivations for Survey records per TFS 549.
 
 Version 09, 09/03/2015
 Updated sp [EC].[sp_Update_Employee_Hierarchy_Stage (#1) to
@@ -342,9 +347,9 @@ WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 -- and removes all leading and trailing spaces.
 BEGIN
 UPDATE [EC].[Employee_Hierarchy_Stage]
-SET [Emp_ID]= REPLACE(LTRIM(RTRIM([EC].[RemoveAlphaCharacters]([Emp_ID]))),' ',''),
-    [Sup_EMP_ID]= REPLACE(LTRIM(RTRIM([EC].[RemoveAlphaCharacters]([Sup_EMP_ID]))),' ',''),
-    [Mgr_Emp_ID]= REPLACE(LTRIM(RTRIM([EC].[RemoveAlphaCharacters]([Mgr_Emp_ID]))),' ',''),
+SET [Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Emp_ID])),' ','')),
+    [Sup_EMP_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Sup_EMP_ID])),' ','')),
+    [Mgr_Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Mgr_Emp_ID])),' ','')),
     [Emp_LanID]= REPLACE([Emp_LanID], '#',''),
     [Emp_Email]= REPLACE([Emp_Email], '#','')
 OPTION (MAXDOP 1)
@@ -916,16 +921,17 @@ GO
 
 
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date:    04/09/2014
--- Description:	Inactivate Coaching logs for Termed Employees
--- Last Modified Date: 01/16/2015
--- Last Updated By: Susmitha Palacherla
--- Modified to Inactivate Coaching logs for extended absences status 
--- and for CSR and Sup Module ecls for employees not arriving in ewfm feed per scr 14072.
-
-
+-- Description:	Inactivate Coaching logs for Termed Employees.
+-- Last Modified: 09/04/2015
+-- Last Modified By: Susmitha Palacherla
+-- Modified to Inactivate Surveys for termed Employees and Expired Surveys.
+-- and Expired Surveys per TFS 549.
+-- Surveys expire 5 days from Creation date.
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
 AS
@@ -951,6 +957,46 @@ END
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
 
+-- Inactivate Surveys for Termed Employees
+
+BEGIN
+UPDATE [EC].[Survey_Response_Header]
+SET [Status] = 'Inactive'
+,[InactivationDate] = GETDATE()
+,[InactivationReason] = 'Employee Not Active'
+FROM [EC].[Survey_Response_Header]SH  JOIN [EC].[Employee_Hierarchy]H
+ON SH.[EmpLanID] = H.[Emp_LanID]
+AND SH.[EmpID] = H.[Emp_ID]
+WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
+AND H.[Active] in ('T','D')
+AND H.[End_Date]<> '99991231'
+AND SH.[Status] <> 'Inactive'
+AND [InactivationReason] IS NULL
+OPTION (MAXDOP 1)
+END
+
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+
+ -- Inactivate Expired Survey records (5 days after creation date)
+
+BEGIN
+UPDATE [EC].[Survey_Response_Header]
+SET [Status] = 'Inactive'
+,[InactivationDate] = GETDATE()
+,[InactivationReason] = 'Survey Expired'
+WHERE DATEDIFF(DAY, [CreatedDate],  GETDATE())>= 5
+AND [Status] <> 'Inactive'
+AND [InactivationReason] IS NULL
+OPTION (MAXDOP 1)
+END
+
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+
+
 -- Inactivate Coaching logs for Termed Employees
 
 BEGIN
@@ -965,7 +1011,6 @@ AND H.[End_Date]<> '99991231'
 AND C.[StatusID] not in (1,2)
 OPTION (MAXDOP 1)
 END
-
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
@@ -1006,7 +1051,10 @@ END
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
 
 
+
+
 GO
+
 
 
 
