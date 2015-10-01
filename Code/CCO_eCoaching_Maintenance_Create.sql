@@ -1,9 +1,15 @@
 /*
-eCoaching_Maintenance_Create(11).sql
-Last Modified Date: 08/04/2015
+eCoaching_Maintenance_Create(12).sql
+Last Modified Date: 09/21/2015
 Last Modified By: Susmitha Palacherla
 
-Version 11:
+
+
+Version 12: 09/21/2015
+1. Updated SP #4 [EC].[sp_Inactivations_From_Feed] for TFS 549 to Inactivate Surveys for ecls being inactivated.
+2. Updated SP #2 [EC].[sp_SelectCoaching4Contact] for TFS 644 to add extra attribute 'OMRARC' to support IAE, IAT Feeds
+
+Version 11: 08/04/2015
 1.  Updated SP #2 [EC].[sp_SelectCoaching4Contact] for TFS 413 to add new Quality Source 'Verint-GDIT Supervisor' (SourceID 230)
 
 Version 10: 
@@ -63,7 +69,7 @@ Procedures
 2. Create SP [EC].[sp_SelectCoaching4Contact] 
 3. Create SP [EC].[sp_UpdateFeedMailSent] 
 4. Create SP [EC].[sp_Inactivations_From_Feed] 
-5. Create SP [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]
+5. Create SP [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]-- Obsolete (Not used)
 
 */
 
@@ -185,13 +191,15 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/13
 --	Description: 	   This procedure queries db for feed records to send out mail
+-- Last Modified Date: 09/21/2015
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date: 8/3/2015
--- Updated per TFS # 413 to add additional Quality source Verint-GDIT Supervisor (230)
+-- Modified per TFS 644 to add extra attribute 'OMRARC' to support IAE, IAT Feeds
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -230,6 +238,8 @@ SET @nvcSQL = 'SELECT   cl.CoachingID	numID
 		,cl.sourceid
 		,cl.isCSE
 		,mo.Module
+		,CASE WHEN SUBSTRING(cl.strReportCode,1,3)in (''IAT'',''IAE'')
+		THEN 1 ELSE 0 END OMRARC	
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 ON eh.Emp_ID = cl.EMPID JOIN [EC].[DIM_Status] s 
 ON s.StatusID = cl.StatusID JOIN [EC].[DIM_Source] so
@@ -247,10 +257,16 @@ Order By cl.SubmittedDate DESC'
 --and [strCSREmail] = '''+@strFormMail+'''
 EXEC (@nvcSQL)	
 	    
+--PRINT @nvcsql	    
+	    
 END --sp_SelectCoaching4Contact
 
 
+
+
 GO
+
+
 
 
 
@@ -326,11 +342,18 @@ GO
 
 
 
+
+
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date:    04/22/2015
 -- Description:	Inactivate Coaching and Warning logs from feed files.
 -- Initial revision per SCR 14634.
+-- Last Modified: 09/04/2015
+-- Last Modified By: Susmitha Palacherla
+-- Modified to Inactivate Surveys for ecls being inactivated per TFS 549.
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Inactivations_From_Feed] 
 @strLogType nvarchar(20)
@@ -401,6 +424,24 @@ END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
+
+ -- Inactivate Survey records
+
+BEGIN
+UPDATE [EC].[Survey_Response_Header]
+SET [Status] = 'Inactive'
+,[InactivationDate] = GETDATE()
+,[InactivationReason] = 'eCL Inactivated'
+FROM [EC].[Inactivations_Stage] I JOIN [EC].[Survey_Response_Header]SH
+ON I.[FormName]= SH.[FormName]
+WHERE SH.[Status] <> 'Inactive'
+AND [InactivationReason] IS NULL
+OPTION (MAXDOP 1)
+END
+
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
  IF @strLogType = 'Warning'
  
   -- Warning logs 
@@ -464,7 +505,16 @@ END
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 END  -- [EC].[sp_Inactivations_From_Feed]
 
+
+
+
+
 GO
+
+
+
+
+
 
 --***************************************************************************************************************
 
