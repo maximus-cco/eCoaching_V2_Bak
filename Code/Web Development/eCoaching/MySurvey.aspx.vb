@@ -83,7 +83,7 @@
     Protected Sub btnSubmit_Click(sender As Object, e As EventArgs) Handles btnSubmit.Click
         If Page.IsValid Then
 
-            Threading.Thread.Sleep(10000)
+            Threading.Thread.Sleep(1000)
 
             survey = ViewState(ViewStateSurvey)
             ' Gets answers entered on the page
@@ -103,7 +103,7 @@
             survey.Comment = StringUtils.Truncate(Server.HtmlEncode(CommentTextBox.Text), CommentMaxLength)
 
             ' Save to database
-            'handler.SaveSurvey(survey)
+            handler.SaveSurvey(survey)
             ' Display success msg 
             Session("Submitted") = "Success"
             DisplaySuccessMsg()
