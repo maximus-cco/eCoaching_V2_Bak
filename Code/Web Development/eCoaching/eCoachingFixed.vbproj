@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -134,6 +134,9 @@
     <Content Include="ecllogo.html" />
     <Content Include="images\eCL.jpg" />
     <Content Include="images\header-photo.jpg" />
+    <Content Include="MySurvey.aspx" />
+    <Content Include="MySurveyError.aspx" />
+    <Content Include="MySurveyLogDetailView.aspx" />
     <Content Include="review3.aspx" />
     <Content Include="scripts\bootstrap-3.2.0.min.js" />
     <Content Include="scripts\jquery-1.11.1.min.js" />
@@ -182,14 +185,24 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_GlobalResources\LocalizedText.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LocalizedText.resx</DependentUpon>
+    </Compile>
     <Compile Include="BLL\ECLHandler.vb" />
     <Compile Include="BLL\HistoricalDashboardHandler.vb" />
+    <Compile Include="BLL\MySurveyHandler.vb" />
+    <Compile Include="BLL\MySurveyLogDetailViewHandler.vb" />
     <Compile Include="BLL\UserHandler.vb" />
+    <Compile Include="common\util\StringUtils.vb" />
     <Compile Include="DAL\HistoricalDashboardDBAccess.vb" />
     <Compile Include="common\BasePage.vb">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="DAL\DBUtility.vb" />
+    <Compile Include="DAL\MySurveyDBAccess.vb" />
+    <Compile Include="DAL\MySurveyLogDetailDBAccess.vb" />
     <Compile Include="DAL\UserDBAccess.vb" />
     <Compile Include="default.aspx.designer.vb">
       <DependentUpon>default.aspx</DependentUpon>
@@ -236,11 +249,37 @@
     <Compile Include="Models\Employee.vb" />
     <Compile Include="Models\HistoricalDashboard.vb" />
     <Compile Include="Models\HistoricalDashboardFilter.vb" />
+    <Compile Include="Models\MySurveyLogDetail.vb" />
     <Compile Include="Models\Site.vb" />
     <Compile Include="Models\Source.vb" />
     <Compile Include="Models\Status.vb" />
+    <Compile Include="Models\Survey\Answer.vb" />
+    <Compile Include="Models\Survey\Question.vb" />
+    <Compile Include="Models\Survey\SingleChoice.vb" />
+    <Compile Include="Models\Survey\Survey.vb" />
     <Compile Include="Models\User.vb" />
     <Compile Include="Models\Value.vb" />
+    <Compile Include="MySurvey.aspx.designer.vb">
+      <DependentUpon>MySurvey.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MySurvey.aspx.vb">
+      <DependentUpon>MySurvey.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="MySurveyError.aspx.designer.vb">
+      <DependentUpon>MySurveyError.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MySurveyError.aspx.vb">
+      <DependentUpon>MySurveyError.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="MySurveyLogDetailView.aspx.designer.vb">
+      <DependentUpon>MySurveyLogDetailView.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MySurveyLogDetailView.aspx.vb">
+      <DependentUpon>MySurveyLogDetailView.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="next1.aspx.designer.vb">
       <DependentUpon>next1.aspx</DependentUpon>
     </Compile>
@@ -290,6 +329,13 @@
       <DependentUpon>Site3.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Site4.Master.designer.vb">
+      <DependentUpon>Site4.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Site4.Master.vb">
+      <DependentUpon>Site4.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="view2.aspx.designer.vb">
       <DependentUpon>view2.aspx</DependentUpon>
     </Compile>
@@ -330,9 +376,16 @@
     <Content Include="Site3.Master" />
     <Content Include="Site1.Master" />
     <Content Include="packages.config" />
+    <Content Include="Site4.Master" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\LocalizedText.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>LocalizedText.Designer.vb</LastGenOutput>
+    </Content>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

@@ -1,4 +1,4 @@
-﻿/* DEFAULTS
+/* DEFAULTS
 ----------------------------------------------------------*/
 html
 {
@@ -104,7 +104,7 @@ body
     padding-top: 0px;
     padding-bottom: 0px;
 }
-. .croptions
+.croptions
 {
     font-family: Calibri;
     font-size: 10pt;
@@ -460,6 +460,144 @@ td
 {
     padding-right: 4px;
     padding-left: 4px;
+}
+
+.pleaseWait
+{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    min-height: 100%;
+    min-width: 100%;
+    background-image: url("../Images/ajax-spinner.gif");
+    background-position: 50% 20%;
+    background-repeat:no-repeat;
+    background-color: #FAFAFA;
+    z-index: 500 !important;
+    opacity: 0.7;
+    filter: alpha(opacity=70); /* For IE8 and earlier */
+    overflow: hidden;
+}
+
+.mySurvey {
+    margin-left: 25px;
+    margin-right: 100px;
+}
+
+#mysurvey-header-photo
+{
+    margin-left: 20px;
+    position: relative;
+    clear: both;
+    height: 112px;
+    width: 718px;
+    border: 0px;
+    background: url(../images/eCL.jpg);
+}
+
+.mySurvey .description
+{
+    width: 50%;
+    font-family: Calibri;
+    font-size: 12pt;
+    font-weight: normal;
+    color: #000000;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.mySurvey .header
+{
+  font-weight: bold;
+  font-size: large;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.mySurvey textarea {
+    border-style: solid;
+    border-width: 1pt;
+    border-color: #bfbfbf;
+    width: 90%;
+    height: 80px;
+}
+
+/*.mySurvey label {
+    font-size: 12px;
+    font-weight: normal;
+}*/
+
+.mySurvey .question {
+    line-height: 30px;
+    font-size: 14px;
+}
+
+.mySurvey .subQuestion {
+    padding-left: 14px;
+    line-height: 30px; 
+    font-weight: normal;
+}
+
+.mySurvey .radioButtonList input[type=radio] {
+    margin-left: 20px;
+    vertical-align: top;
+}
+
+.mySurvey .radioButtonList label {
+    margin-left: 5px;
+    vertical-align: bottom;
+    font-weight: normal;
+}
+
+.success {
+    color: #32CD32;
+    font-size: large;
+}
+
+.fail {
+    color: red;
+    font-size: large;
+    font-weight: bold;
+}
+
+.errorMsg {
+    margin-left: 25px;
+    margin-right: 100px;
+}
+
+.errorMsg .errorTitle {
+    font-size: medium;
+    font-weight: bold;
+}
+
+.errorMsg .errorDetail {
+    font-size: small;
+    font-weight: normal;
+}
+
+.mySurvey .required {
+	font-weight: bold;
+    font-size: medium;
+	color: red;
+}
+
+#LogDetailModal {
+    top: 5%;
+    right: 3%;
+    outline: none;
+}
+
+#LogDetailModal .modal-dialog,
+#LogDetailModal .modal-content {
+    /* 90% of window height */
+    height: 85%;
+    width: 850px;
+}
+
+#LogDetailModal .modal-body {
+    /* 100% = dialog height, 120px = header + footer */
+    height: 85%;
+    max-height: calc(100% - 120px);
 }
 
 

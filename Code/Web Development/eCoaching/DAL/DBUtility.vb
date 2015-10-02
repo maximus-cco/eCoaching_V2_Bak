@@ -3,7 +3,7 @@ Imports System.Data.SqlClient
 
 Public Class DBUtility
 
-    Shared ReadOnly connectionString As String = WebConfigurationManager.ConnectionStrings("CoachingConnectionString").ConnectionString
+    Public Shared ReadOnly connectionString As String = WebConfigurationManager.ConnectionStrings("CoachingConnectionString").ConnectionString
 
     Public Shared Function ExecuteSelectCommand(commandName As String, commandType As String, commandParameters As SqlParameter()) As DataTable
         Dim dataTable As DataTable = New DataTable()
@@ -42,4 +42,5 @@ Public Class DBUtility
 
         Return retVal
     End Function
+
 End Class
