@@ -8,12 +8,12 @@ Public Class MySurveyDBAccess
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function GetSurvey(surveyID As Integer) As Survey
-        'Dim survey = New Survey(surveyID)
         Dim survey As Survey = GetSurveyInfo(surveyID)
+        Dim allSingleChoices As List(Of SingleChoice) = GetSingleChoices()
 
         survey.Questions = GetSurveyQuestions(surveyID)
         For Each question In survey.Questions
-            question.SingleChoices = GetSingleChoices(question.ID)
+            question.SingleChoices = GetSingleChoices(question.ID, allSingleChoices)
         Next
 
         Return survey
@@ -78,9 +78,7 @@ Public Class MySurveyDBAccess
         Return singleChoices
     End Function
 
-    Public Function GetSingleChoices(questionID As Integer) As ICollection(Of SingleChoice)
-        Dim allSingleChoices As ICollection(Of SingleChoice) = GetSingleChoices()
-
+    Public Function GetSingleChoices(questionID As Integer, allSingleChoices As List(Of SingleChoice)) As ICollection(Of SingleChoice)
         Return (From choice As SingleChoice In allSingleChoices
                 Where choice.QuestionID = questionID
                 Select choice).ToList
