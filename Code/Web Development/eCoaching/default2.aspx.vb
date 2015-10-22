@@ -1650,6 +1650,14 @@ Public Class default2
                     SqlDataSource27.InsertParameters("nvcProgramName").DefaultValue = ""
                 End If
 
+                ' sp_Select_Modules_By_Job_Code
+                ' behavior is a selection on the page
+                If (modtype(6) = 1) Then
+                    SqlDataSource27.InsertParameters("nvcBehavior").DefaultValue = behaviorList.SelectedValue
+                Else
+                    SqlDataSource27.InsertParameters("nvcBehavior").DefaultValue = String.Empty
+                End If
+
                 SqlDataSource27.InsertParameters("dtmSubmittedDate").DefaultValue = DateTime.Now()
                 SqlDataSource27.InsertParameters("ModuleID").DefaultValue = moduleIDlbl.Text 'DropDownList3.SelectedItem.Text
 

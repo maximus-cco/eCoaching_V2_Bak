@@ -1499,6 +1499,7 @@
                         <asp:Parameter Name="nvcSubCoachReasonID1" Direction="Input" Type="String" />
                         <asp:Parameter Name="dtmSubmittedDate" Direction="Input" Type="DateTime" />
                         <asp:Parameter Name="ModuleID" Direction="Input" Type="Int32" />
+                        <asp:Parameter Name="nvcBehavior" Direction="Input" Type="String" />
                         <asp:Parameter Name="isDup" Direction="Output" Type="Int32" />
                         <asp:Parameter Name="nvcNewFormName" Direction="Output" Type="String" Size="50"/>
                     </InsertParameters>
