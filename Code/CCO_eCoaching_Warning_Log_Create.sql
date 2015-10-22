@@ -1,7 +1,13 @@
 /*
 eCoaching_Warning_Log_Create(10).sql
-Last Modified Date: 07/23/2015
+Last Modified Date: 10/21/2015
 Last Modified By: Susmitha Palacherla
+
+
+Version 10:
+1.  Updates for TFS 861 Ato add Warnings for all Modules
+    Updated Table #1 to remove not null constraint on ProgramName and add new column Behavior
+     Updated SP#2 for adding Behavior to the insert for Training module ecls submitted
 
 Version 10:
 1.  Updates for TFS 363 Avoid Duplicate FormNames for Insert from UI.
@@ -81,7 +87,7 @@ GO
 CREATE TABLE [EC].[Warning_Log](
 	[WarningID] [bigint] IDENTITY(1,1) NOT NULL,
 	[FormName] [nvarchar](50) NOT NULL,
-	[ProgramName] [nvarchar](50) NOT NULL,
+	[ProgramName] [nvarchar](50) NULL,
 	[SourceID] [int] NOT NULL,
 	[StatusID] [int] NOT NULL,
 	[SiteID] [int] NOT NULL,
@@ -98,6 +104,7 @@ CREATE TABLE [EC].[Warning_Log](
 	[Active] [bit] NULL,
                   [ numReportID] [int] NOT NULL,
                  [strReportCode]  [nvarchar](30) NOT NULL,
+                 [Behavior] [nvarchar](30) NULL,
  CONSTRAINT [PK_Warning_Log] PRIMARY KEY CLUSTERED 
 (
 	[WarningID] ASC
@@ -255,9 +262,10 @@ GO
 --    Description:     This procedure inserts the Warning records into the Warning_Log table. 
 --                     The main attributes of the Warning are written to the warning_Log table.
 --                     The Warning Reasons are written to the Warning_Reasons Table.
--- Last Modified Date: 07/23/2015
--- Last Updated By: Susmitha Palacherla
--- Modified per TFS 363/402 to update formname from WarningID after insert. 
+--  Last Modified By: Susmitha Palacherla
+--  Last Modified Date: 10/21/2015 
+--  Modified per TFS 861 to add Behavior to the insert to support warnings for Training Module
+ 
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
 (     @nvcFormName Nvarchar(50),
@@ -270,6 +278,7 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
       @nvcSubCoachReasonID1 Nvarchar(255),
       @dtmSubmittedDate datetime ,
       @ModuleID INT,
+      @nvcBehavior Nvarchar(30),
       @isDup BIT OUTPUT,
       @nvcNewFormName Nvarchar(50) OUTPUT
       )
@@ -332,7 +341,8 @@ IF @intWarnIDExists IS NULL
            ,[MgrID]
            ,[WarningGivenDate]
            ,[SubmittedDate]
-           ,[ModuleID])
+           ,[ModuleID]
+           ,[Behavior])
      VALUES
            (@nvcFormName
            ,@nvcProgramName 
@@ -346,7 +356,8 @@ IF @intWarnIDExists IS NULL
            ,@nvcMgrID
            ,@dtmEventDate 
 	       ,@dtmSubmittedDate 
-		   ,@ModuleID)
+		   ,@ModuleID
+		   ,@nvcBehavior)
             
     
      --PRINT 'STEP1'
@@ -451,6 +462,8 @@ END TRY
 
 
 GO
+
+
 
 
 
