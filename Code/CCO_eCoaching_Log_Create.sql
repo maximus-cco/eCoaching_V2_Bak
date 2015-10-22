@@ -1,8 +1,11 @@
 /*
-eCoaching_Log_Create(38).sql
-Last Modified Date: 09/21/2015
+eCoaching_Log_Create(39).sql
+Last Modified Date: 10/21/2015
 Last Modified By: Susmitha Palacherla
 
+
+Version 39: 10/21/2015
+1. Updated SP # 56 to add Warnings to all Modules for tfs 861
 
 Version 38: 09/21/2015
 1. Updated SPs # 45 and 50 to add OMR IAE and IAT per TFS 644.
@@ -5662,10 +5665,9 @@ GO
 --  If Job code exists in the submisison table returns the valid submission modules.
 --  If job code does not exist in the submisisons table returns 'CSR' as a valid sumission module.
 --  Last Modified By: Susmitha Palacherla
---  Last Modified Date: 04/10/2015
---  Modified per SCR 14512 to add Training Module.
-
---  
+--  Last Modified Date: 10/21/2015 
+--  Modified per TFS 861 to add Warnings to all Modules 
+ 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Modules_By_Job_Code] 
 @nvcEmpLanIDin nvarchar(30)
@@ -5716,13 +5718,13 @@ UNION
 SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, ''0-Supervisor-2-1-1-1-0'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION 
-SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, ''0-Quality Specialist-3-0-0-1-0'' as BySite from [EC].[Module_Submission] 
+SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, ''0-Quality Specialist-3-0-1-1-0'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION 
-SELECT CASE WHEN [LSA]= 1 THEN N''LSA'' ELSE NULL END as Module, ''0-LSA-4-0-0-1-0'' as BySite from [EC].[Module_Submission] 
+SELECT CASE WHEN [LSA]= 1 THEN N''LSA'' ELSE NULL END as Module, ''0-LSA-4-0-1-1-0'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION 
-SELECT CASE WHEN [Training]= 1 THEN N''Training'' ELSE NULL END as Module, ''0-Training-5-1-0-0-1'' as BySite from [EC].[Module_Submission] 
+SELECT CASE WHEN [Training]= 1 THEN N''Training'' ELSE NULL END as Module, ''0-Training-5-1-1-0-1'' as BySite from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+''')AS Modulelist
 where Module is not Null '
 --Print @nvcSQL
@@ -5732,6 +5734,8 @@ END --sp_Select_Modules_By_Job_Code
 
 
 GO
+
+
 
 ******************************************************************
 
