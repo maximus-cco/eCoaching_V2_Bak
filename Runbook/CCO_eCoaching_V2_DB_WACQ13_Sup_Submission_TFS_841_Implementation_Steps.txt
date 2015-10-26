@@ -1,0 +1,6 @@
+--Open in an ssms window pointing to eCoaching DB in target environment and run one statement.
+
+Update [EC].[Module_Submission]
+SET [Supervisor]=1
+where [Job_Code]= 'WACQ13'
+
