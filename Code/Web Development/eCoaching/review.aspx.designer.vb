@@ -1058,6 +1058,42 @@ Partial Public Class review
     Protected WithEvents CustomValidator1 As Global.System.Web.UI.WebControls.CustomValidator
 
     '''<summary>
+    '''lblAcknowledgeComments control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblAcknowledgeComments As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''txtAcknowledgeComments control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtAcknowledgeComments As Global.System.Web.UI.WebControls.TextBox
+
+    '''<summary>
+    '''lblAcknowlegeCommentsMaxLength control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblAcknowlegeCommentsMaxLength As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
+    '''lblAcknowledgeCommentsInstruction control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblAcknowledgeCommentsInstruction As Global.System.Web.UI.WebControls.Label
+
+    '''<summary>
     '''Button6 control.
     '''</summary>
     '''<remarks>

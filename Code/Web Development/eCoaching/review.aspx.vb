@@ -9,6 +9,8 @@ Imports AjaxControlToolkit
 Public Class review
     Inherits BasePage
 
+    Public Const COMMENTS_MAX_LENGTH = 3000
+
     Dim pHolder As Label
     Dim panelHolder As Panel
     Dim pHolder2 As Label
@@ -199,6 +201,8 @@ Public Class review
         pHolder7 = ListView1.Items(0).FindControl("Label31")
         ' MsgBox(lan)
         'MsgBox(pHolder7.Text)
+
+        recStatus = DataList1.Items(0).FindControl("LabelStatus")
 
         statusLevel = GetRecordStatusLevel(pHolder7.Text, recStatus.Text)
 
@@ -1344,7 +1348,7 @@ Public Class review
             SqlDataSource9.UpdateParameters("nvcFormStatus").DefaultValue = nextStep
             SqlDataSource9.UpdateParameters("dtmCSRReviewAutoDate").DefaultValue = CDate(DateTime.Now())
             SqlDataSource9.UpdateParameters("bitisCSRAcknowledged").DefaultValue = CheckBox1.Checked
-
+            SqlDataSource9.UpdateParameters("nvcCSRComments").DefaultValue = StringUtils.Sanitize(txtAcknowledgeComments.Text)
 
             SqlDataSource9.Update()
 

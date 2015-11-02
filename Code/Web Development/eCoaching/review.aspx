@@ -550,6 +550,15 @@
                 </asp:CustomValidator>
                 <br />
                 <br />
+                <asp:Label ID="lblAcknowledgeComments" runat="server" Text="2. Provide any comments or feedback below:" CssClass="question"></asp:Label>
+                <br />
+                <asp:TextBox ID="txtAcknowledgeComments" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes" onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox>
+                <br />
+                <asp:Label ID="lblAcknowlegeCommentsMaxLength" runat="server" Text="[max length: 3,000 chars]"></asp:Label>
+                <br />
+                <asp:Label ID="lblAcknowledgeCommentsInstruction" runat="server" Text="Provide as much detail as possible"></asp:Label>
+                <br />
+                <br />
                 <asp:Button ID="Button6" runat="server" Text="Submit" CssClass="subuttons" />
             </asp:Panel>
 
@@ -609,6 +618,7 @@
                     <asp:Parameter Name="nvcFormStatus" Type="String" />
                     <asp:Parameter Name="dtmCSRReviewAutoDate" Type="DateTime" />
                     <asp:Parameter Name="bitisCSRAcknowledged" Type="Boolean" />
+                    <asp:Parameter Name="nvcCSRComments" Type="String" />
                 </UpdateParameters>
             </asp:SqlDataSource>
             <asp:SqlDataSource ID="SqlDataSource10" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
