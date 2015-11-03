@@ -1,8 +1,11 @@
 /*
-eCoaching_Log_Create(39).sql
-Last Modified Date: 10/21/2015
+eCoaching_Log_Create(40).sql
+Last Modified Date: 11/02/2015
 Last Modified By: Susmitha Palacherla
 
+
+Version 40: 11/02/2015
+1. Updated SP # 51 to add capture csr comments per tfs 864
 
 Version 39: 10/21/2015
 1. Updated SP # 56 to add Warnings to all Modules for tfs 861
@@ -5212,17 +5215,17 @@ GO
 --    Author:                 Jourdain Augustin
 --    Create Date:      7/31/13
 --    Description: *    This procedure allows csrs to update the e-Coaching records from the review page for Pending Acknowledgment records. 
---    Last Update:    03/04/2014
---    Updated per SCR 12359 to handle deadlocks with retries.
---    Last Update:    03/17/2014 - Modified for eCoachingDev DB
---    Last Update:    03/25/2014 - Modified Update query
+--    Last Update:    11/02/2015
+--    Updated per TFS 864 to open CSR comments for all ecls
+
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update6Review_Coaching_Log]
 (
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
       @bitisCSRAcknowledged bit,
-      @dtmCSRReviewAutoDate datetime
+      @dtmCSRReviewAutoDate datetime,
+      @nvcCSRComments Nvarchar(max)
 	
 )
 AS
@@ -5238,14 +5241,15 @@ BEGIN TRANSACTION
 BEGIN TRY
 
       
+      
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where Status = @nvcFormStatus),
 		   isCSRAcknowledged = @bitisCSRAcknowledged,
-		   CSRReviewAutoDate = @dtmCSRReviewAutoDate
+		   CSRReviewAutoDate = @dtmCSRReviewAutoDate,
+		   CSRComments = @nvcCSRComments
 from EC.Coaching_Log 
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)	
-
 	
 COMMIT TRANSACTION
 END TRY
