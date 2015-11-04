@@ -71,6 +71,7 @@ GO
 
 
 --4. PROCEDURE [EC].[sp_Select_Modules_By_Job_Code] will be updated to return 1 instead of 0  for the last digit
+
 SET ANSI_NULLS ON
 GO
 
