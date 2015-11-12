@@ -1,0 +1,57 @@
+/*
+Implementation Instructions for TFS # 1013
+
+Summary
+1.Insert records into [EC].[DIM_Source] table (dim data doc)
+2. Insert records into [EC].[Email_Notifications] table (dim data doc)
+
+***************************************************
+
+For Implementing
+Run the below statements one at a time.
+In an ssis window pointed to ECoaching database on vdenssdbp07\scorp01
+
+
+**************************************************/
+
+
+
+--1.Insert records into [EC].[DIM_Source] table
+
+INSERT INTO [EC].[DIM_Source]
+           ([SourceID]
+           ,[CoachingSource]
+           ,[SubCoachingSource]
+           ,[isActive]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+         ,[Training])
+     VALUES
+           (131,'Direct','Coach the coach',1,0,1,0,0,0),
+           (231,'Indirect','Coach the coach',0,0,0,0,0,0)
+           
+GO
+
+--*******************************************************
+
+--2. Insert records into [EC].[Email_Notifications] table
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+           ('Supervisor','UI','Direct','Coach the coach',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
+           ('Supervisor','UI','Direct','Coach the coach',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received  on <strong>  strDateTime </strong> .',0,'NA')
+
+--****************************************************************************
