@@ -50,55 +50,6 @@ Public Class view2
                 ' Dim spot As Label
                 ' spot = Me.Master.FindControl("Label16")
                 '  spot.Text = "CSR Dashboard"
-            Case (InStr(1, Label6a.Text, "40", 1) > 0), (InStr(1, Label6a.Text, "WTTR12", 1) > 0), (InStr(1, Label6a.Text, "WTTI", 1) > 0) '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WPSM12"
-                ''Label5.Visible = True
-                ' Label4.Visible = True
-                Label26.Text = "Welcome to the Supervisor Dashboard"
-                Panel1.Visible = True
-                SqlDataSource27.SelectParameters("strUserin").DefaultValue = eclUser.LanID
-                SqlDataSource28.SelectParameters("strUserin").DefaultValue = eclUser.LanID
-                SqlDataSource3.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
-                SqlDataSource6.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
-                SqlDataSource7.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
-                SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
-                SqlDataSource9.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
-                SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
-                SqlDataSource17.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
-
-                If (Label6a.Text = "WACS40") Then
-                    Panel4.Visible = True
-                    SqlDataSource22.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
-                    If (Date7.Text = "") Then
-                        SqlDataSource22.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
-                        Date7.Text = backDate
-                    Else
-                        SqlDataSource22.SelectParameters("strSDatein").DefaultValue = Date7.Text
-                    End If
-
-                    If (Date8.Text = "") Then
-                        SqlDataSource22.SelectParameters("strEDatein").DefaultValue = TodaysDate
-                        Date8.Text = TodaysDate
-                    Else
-                        SqlDataSource22.SelectParameters("strEDatein").DefaultValue = Date8.Text
-                    End If
-                End If
-
-                CalendarExtender3.EndDate = TodaysDate
-                CalendarExtender4.EndDate = TodaysDate
-
-                If (Date3.Text = "") Then
-                    SqlDataSource9.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
-                    Date3.Text = backDate
-                Else
-                    SqlDataSource9.SelectParameters("strSDatein").DefaultValue = Date3.Text
-                End If
-
-                If (Date4.Text = "") Then
-                    SqlDataSource9.SelectParameters("strEDatein").DefaultValue = TodaysDate
-                    Date4.Text = TodaysDate
-                Else
-                    SqlDataSource9.SelectParameters("strEDatein").DefaultValue = Date4.Text
-                End If
 
             Case (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0) '"WACS50", "WACS60", "WBCO50", "WSQA50", "WTTR50", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPM70", "WPPT50", "WPPT60", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14"
                 'mgr  Or (InStr(1, Label6a.Text, "Engineer", 1) > 0) And (InStr(1, Label6a.Text, "Service Rep", 1) = 0)
@@ -156,11 +107,15 @@ Public Class view2
                     SqlDataSource8.SelectParameters("strEDatein").DefaultValue = Date2.Text
                 End If
                 ' Case (InStr(1, Label6a.Text, "WSQE", 1) > 0), (InStr(1, Label6a.Text, "WACQ", 1) > 0) '"WTTR12", "WTTR40", "WTTR50", "WACQ12", "WACQ13", "WSQA40", "WSQA70", "WSQE14", "WSQE15"
+
             Case Else
-                ' Response.Redirect("error.aspx")
-                ''Label5.Visible = True
-                ' Label4.Visible = True
-                Label26.Text = "Welcome to the eCL Dashboard" '& Label6a.Text
+                Label26.Text = "Welcome to the eCL Dashboard"
+
+                Dim jobCode = Label6a.Text.Trim().ToUpper()
+                If (InStr(1, jobCode, "40", 1) > 0 OrElse InStr(1, jobCode, "WTTR", 1) > 0 OrElse InStr(1, jobCode, "WTTI", 1) > 0) Then
+                    Label26.Text = "Welcome to the Supervisor Dashboard"
+                End If
+
                 Panel1.Visible = True
                 SqlDataSource28.SelectParameters("strUserin").DefaultValue = eclUser.LanID
                 SqlDataSource27.SelectParameters("strUserin").DefaultValue = eclUser.LanID
@@ -170,6 +125,7 @@ Public Class view2
                 SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
                 SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
                 SqlDataSource17.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
+                SqlDataSource9.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
 
                 CalendarExtender3.EndDate = TodaysDate
                 CalendarExtender4.EndDate = TodaysDate
@@ -186,8 +142,8 @@ Public Class view2
                 Else
                     SqlDataSource9.SelectParameters("strEDatein").DefaultValue = Date4.Text
                 End If
-                ' Case Else
-                '    Response.Redirect("error.aspx")
+
+                DisplayMyTeamWarnings(eclUser.LanID)
         End Select
 
         If (Label241.Text > 0) Then ' Senior Manager
@@ -227,6 +183,24 @@ Public Class view2
         End If
     End Sub
 
+    Private Sub DisplayMyTeamWarnings(userId As String)
+        Panel4.Visible = True
+        SqlDataSource22.SelectParameters("strCSRSUPin").DefaultValue = userId
+        If (Date7.Text = "") Then
+            SqlDataSource22.SelectParameters("strSDatein").DefaultValue = backDate '"01/01/2011" 'Date1.Text
+            Date7.Text = backDate
+        Else
+            SqlDataSource22.SelectParameters("strSDatein").DefaultValue = Date7.Text
+        End If
+
+        If (Date8.Text = "") Then
+            SqlDataSource22.SelectParameters("strEDatein").DefaultValue = TodaysDate
+            Date8.Text = TodaysDate
+        Else
+            SqlDataSource22.SelectParameters("strEDatein").DefaultValue = Date8.Text
+        End If
+    End Sub
+
     Protected Sub Button3_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button3.Click
 
 
@@ -263,29 +237,22 @@ Public Class view2
     End Sub
 
     Protected Sub Button5_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button5.Click
-
-
         'MsgBox("button pushed")
         If (Date9.Text = "") Then
             Date9.Text = backDate '"01/01/2011"
-
         End If
 
         If (Date10.Text = "") Then
             Date10.Text = TodaysDate
-
         End If
 
         GridView16.DataBind()
     End Sub
 
     Protected Sub Button6_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button6.Click
-
-
         'MsgBox("button pushed")
         If (Date11.Text = "") Then
             Date11.Text = backDate '"01/01/2011"
-
         End If
 
         If (Date12.Text = "") Then
@@ -298,16 +265,11 @@ Public Class view2
 
 
     Protected Function newDisplay(ByVal indicator As DateTime) As String
-
         If (DateDiff("D", indicator, TodaysDate) < 1) Then
-
             Return ("&nbsp;&nbsp;New!&nbsp;")
         Else
             Return ("")
-
         End If
-
-
     End Function
 
     Protected Function newDisplay2(ByVal indicator As DateTime) As String
