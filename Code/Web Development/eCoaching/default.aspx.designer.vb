@@ -59,47 +59,47 @@ Partial Public Class _default
     Protected WithEvents ToolkitScriptManager1 As Global.AjaxControlToolkit.ToolkitScriptManager
 
     '''<summary>
-    '''TabContainer1 control.
+    '''ECLTabContainer control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents TabContainer1 As Global.AjaxControlToolkit.TabContainer
+    Protected WithEvents ECLTabContainer As Global.AjaxControlToolkit.TabContainer
 
     '''<summary>
-    '''TabPanel1 control.
+    '''NewSubmissionsTab control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents TabPanel1 As Global.AjaxControlToolkit.TabPanel
+    Protected WithEvents NewSubmissionsTab As Global.AjaxControlToolkit.TabPanel
 
     '''<summary>
-    '''TabPanel2 control.
+    '''MyDashboardTab control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents TabPanel2 As Global.AjaxControlToolkit.TabPanel
+    Protected WithEvents MyDashboardTab As Global.AjaxControlToolkit.TabPanel
 
     '''<summary>
-    '''TabPanel3 control.
+    '''MySubmissionsTab control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents TabPanel3 As Global.AjaxControlToolkit.TabPanel
+    Protected WithEvents MySubmissionsTab As Global.AjaxControlToolkit.TabPanel
 
     '''<summary>
-    '''TabPanel4 control.
+    '''HistoricalTab control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents TabPanel4 As Global.AjaxControlToolkit.TabPanel
+    Protected WithEvents HistoricalTab As Global.AjaxControlToolkit.TabPanel
 End Class

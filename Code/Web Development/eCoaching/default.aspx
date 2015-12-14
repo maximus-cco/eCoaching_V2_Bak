@@ -22,24 +22,24 @@
     <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" AsyncPostBackTimeout="1200">
     </asp:ToolkitScriptManager>
 
-    <asp:TabContainer ID="TabContainer1" runat="server" AutoPostBack="false" OnDemand="true">
-        <asp:TabPanel ID="TabPanel1" runat="server" HeaderText="New Submissions" OnDemandMode="Once">
+    <asp:TabContainer ID="ECLTabContainer" runat="server" AutoPostBack="false" OnDemand="true">
+        <asp:TabPanel ID="NewSubmissionsTab" runat="server" HeaderText="New Submissions" Visible="false" OnDemandMode="Once">
             <ContentTemplate>
                 <iframe id="frame1" src="default2.aspx" width="100%" height="550" frameborder="0">
                 </iframe>
             </ContentTemplate>
         </asp:TabPanel>
-        <asp:TabPanel ID="TabPanel2" runat="server" HeaderText="My Dashboard" OnDemandMode="Once">
+        <asp:TabPanel ID="MyDashboardTab" runat="server" HeaderText="My Dashboard" Visible="false" OnDemandMode="Once">
             <ContentTemplate>
                 <iframe id="frame2" src="view2.aspx" width="100%" height="800" frameborder="0"></iframe>
             </ContentTemplate>
         </asp:TabPanel>
-        <asp:TabPanel ID="TabPanel3" runat="server" HeaderText="My Submissions" OnDemandMode="Once">
+        <asp:TabPanel ID="MySubmissionsTab" runat="server" HeaderText="My Submissions" Visible="false" OnDemandMode="Once">
             <ContentTemplate>
                 <iframe id="frame3" src="view3.aspx" width="100%" height="800" frameborder="0"></iframe>
             </ContentTemplate>
         </asp:TabPanel>
-        <asp:TabPanel ID="TabPanel4" runat="server" HeaderText="Historical Dashboard" Visible="false"
+        <asp:TabPanel ID="HistoricalTab" runat="server" HeaderText="Historical Dashboard" Visible="false"
             OnDemandMode="Once">
             <ContentTemplate>
                 <iframe id="frame4" src="view4.aspx" width="100%" height="800" frameborder="0"></iframe>

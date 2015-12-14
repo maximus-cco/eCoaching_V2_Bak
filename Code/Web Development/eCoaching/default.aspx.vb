@@ -9,56 +9,36 @@
 
     ' called on page none post back but after authentication is successful
     Public Sub HandlePageNonPostBack()
-        Dim elcUser As User = Session("eclUser")
-        Label1.Text = elcUser.JobCode
+        Dim eclUser As User = Session("eclUser")
+        Dim eclHandler As ECLHandler = New ECLHandler()
 
-        Select Case True 'Label6a.Text
-            Case (InStr(1, Label1.Text, "WACS0", 1) > 0)
-                'no historical dashboard for CSRs of any kind
-                ' TabPanel4.Visible = False
+        ' Check if ARC user.
+        ' Result is stored in Label2.Text: 0 means not ARC user; non 0 means ARC user.
+        ' This needs to be moved to BLL and DLL.
+        SqlDataSource2.SelectParameters("nvcLanID").DefaultValue = eclUser.LanID
+        SqlDataSource2.SelectParameters("nvcRole").DefaultValue = "ARC"
+        GridView2.DataSourceID = "SqlDataSource2"
+        GridView2.DataBind()
 
-                'check to display My submissions and submission page
-                ' If (Label1.Text = "WACS02") Then
+        ' New Submissions
+        If eclHandler.IsNewSubmissionsAccessAllowed(eclUser, Label2.Text) Then
+            NewSubmissionsTab.Visible = True
+        End If
 
-                SqlDataSource2.SelectParameters("nvcLanID").DefaultValue = elcUser.LanID
-                SqlDataSource2.SelectParameters("nvcRole").DefaultValue = "ARC"
-                GridView2.DataSourceID = "SqlDataSource2"
-                GridView2.DataBind()
+        ' My Dashboard
+        If eclHandler.IsMyDashboardAccessAllowed(eclUser) Then
+            MyDashboardTab.Visible = True
+        End If
 
+        ' My Submission
+        If eclHandler.IsMySubmissionAccessAllowed(eclUser, Label2.Text) Then
+            MySubmissionsTab.Visible = True
+        End If
 
-
-
-                If (Label2.Text = 0) Then
-                    '       MsgBox("test1")
-                    TabPanel1.Visible = False
-                    TabPanel3.Visible = False
-                    TabContainer1.ActiveTabIndex = 1
-                End If
-
-                'Else
-
-                'TabPanel1.Visible = False
-                'TabPanel3.Visible = False
-
-                'End If
-
-
-            Case (InStr(1, Label1.Text, "40", 1) > 0), (InStr(1, Label1.Text, "50", 1) > 0), (InStr(1, Label1.Text, "60", 1) > 0), (InStr(1, Label1.Text, "70", 1) > 0), (InStr(1, Label1.Text, "WISO", 1) > 0), (InStr(1, Label1.Text, "WSTE", 1) > 0), (InStr(1, Label1.Text, "WSQE", 1) > 0), (InStr(1, Label1.Text, "WACQ", 1) > 0), (InStr(1, Label1.Text, "WPPM", 1) > 0), (InStr(1, Label1.Text, "WPSM", 1) > 0), (InStr(1, Label1.Text, "WEEX", 1) > 0), (InStr(1, Label1.Text, "WISY", 1) > 0), (InStr(1, Label1.Text, "WPWL51", 1) > 0)
-                '"WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50", "WEEX"
-
-                TabPanel4.Visible = True
-
-
-            Case (InStr(1, Label1.Text, "WHER", 1) > 0), (InStr(1, Label1.Text, "WHHR", 1) > 0), (InStr(1, Label1.Text, "WHRC", 1) > 0)
-
-                TabContainer1.ActiveTabIndex = 3
-
-                TabPanel1.Visible = False
-                TabPanel2.Visible = False
-                TabPanel3.Visible = False
-                TabPanel4.Visible = True
-        End Select
-
+        ' Historical Dashboard
+        If eclHandler.IsHistoricalDashboardPageAccessAllowed(eclUser) Then
+            HistoricalTab.Visible = True
+        End If
 
     End Sub
 
