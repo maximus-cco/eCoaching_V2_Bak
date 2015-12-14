@@ -40,6 +40,17 @@
             HistoricalTab.Visible = True
         End If
 
+        ' Set active tab
+        If NewSubmissionsTab.Visible Then
+            ECLTabContainer.ActiveTabIndex = 0
+        ElseIf MyDashboardTab.Visible Then
+            ECLTabContainer.ActiveTabIndex = 1
+        ElseIf MySubmissionsTab.Visible Then
+            ECLTabContainer.ActiveTabIndex = 2
+        Else
+            ECLTabContainer.ActiveTabIndex = 3
+        End If
+
     End Sub
 
 
