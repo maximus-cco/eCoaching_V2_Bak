@@ -1,8 +1,13 @@
 /*
-eCoaching_Log_Create(40).sql
-Last Modified Date: 11/02/2015
+eCoaching_Log_Create(41).sql
+Last Modified Date: 12/15/2015
 Last Modified By: Susmitha Palacherla
 
+
+
+
+Version 41: 12/16/2015
+1. Updated SPs # 68, 6, 79 to add additional hr job code WHHR70 per tfs 1423
 
 Version 40: 11/02/2015
 1. Updated SP # 51 to add capture csr comments per tfs 864
@@ -1291,6 +1296,7 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
 GO
+
 SET ANSI_NULLS ON
 GO
 
@@ -1300,17 +1306,13 @@ GO
 
 
 
-
-
-
-
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/2012
 --	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
---  Last Modified: 06/11/2015
+--  Last Modified: 12/15/2015
 --  Last Modified Bt: Susmitha Palacherla
---  Modified per SCR 14916 to add additional HR job codes.
+--  Modified per TFS 1423 to add additional HR job code WHHR70
 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
@@ -1519,7 +1521,7 @@ SET @nvcSQL3 = ' ) x )
  
  IF @strjobcode in ('WHER13', 'WHER50',
 'WHHR12', 'WHHR13', 'WHHR14',
-'WHHR50', 'WHHR60', 'WHHR80',
+'WHHR50', 'WHHR60', 'WHHR70', 'WHHR80',
 'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
 
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
@@ -1535,7 +1537,7 @@ EXEC (@nvcSQL)
 	    
 END -- SelectFrom_Coaching_Log_HistoricalSUP
 
-
+GO
 
 
 
@@ -6416,9 +6418,9 @@ GO
 --	Create Date:	03/06/2015
 --	Description: *	This procedure selects Sources to be displayed in the dashboard
 --  Source dropdown list.
---  Last Modified: 06/11/2015
+--  Last Modified: 12/15/2015
 --  Last Modified Bt: Susmitha Palacherla
---  Modified per SCR 14916 to add additional HR job codes.
+--  Modified per TFS 1423 to add additional HR job code WHHR70
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Sources_For_Dashboard] 
 @strUserin nvarchar(30)
@@ -6444,7 +6446,7 @@ WHERE Emp_ID = @nvcEmpID)
 
 IF @strjobcode in ('WHER13', 'WHER50',
 'WHHR12', 'WHHR13', 'WHHR14',
-'WHHR50', 'WHHR60', 'WHHR80',
+'WHHR50', 'WHHR60', 'WHHR70', 'WHHR80',
 'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
 
 SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
@@ -6470,7 +6472,9 @@ ORDER BY X.Sortorder'
 EXEC (@nvcSQL)	
 END --sp_Select_Sources_For_Dashboard
 
+
 GO
+
 
 
 
@@ -7219,15 +7223,18 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/28/2015
 --	Description: *	This procedure returns the count of completed   e-Coaching  records that will be 
 --  displayed for the selected criteria on the SUP historical page.
 -- Create per SCR 14893 dashboard redesign performance round 2.
---  Last Modified: 06/11/2015
+--  Last Modified: 12/15/2015
 --  Last Modified Bt: Susmitha Palacherla
---  Modified per SCR 14916 to add additional HR job codes.
+--  Modified per TFS 1423 to add additional HR job code WHHR70
+
 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count] 
@@ -7377,7 +7384,7 @@ SET @nvcSQL3 = ' ) x
   
  IF @strjobcode in ('WHER13', 'WHER50',
 'WHHR12', 'WHHR13', 'WHHR14',
-'WHHR50', 'WHHR60', 'WHHR80',
+'WHHR50', 'WHHR60', 'WHHR70', 'WHHR80',
 'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
 
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
@@ -7394,6 +7401,7 @@ END -- sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
 
 
 GO
+
 
 
 
