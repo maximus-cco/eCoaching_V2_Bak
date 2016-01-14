@@ -7,7 +7,7 @@
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FileDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\Inactivations\</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FromEmail].Properties[Value]" ValueType="String"><ConfiguredValue>eCoaching_Notifications@GDIT.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::ProcessedDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\Inactivations\Processed\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmailCC].Properties[Value]" ValueType="String"><ConfiguredValue>susmitha.palacherla@GDIT.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmailCC].Properties[Value]" ValueType="String"><ConfiguredValue>susmitha.palacherla@GDIT.com;Lili.Huang@GDIT.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmailExt].Properties[Value]" ValueType="String"><ConfiguredValue>JohnEric.Tiongson@GDIT.com</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmailInt].Properties[Value]" ValueType="String"><ConfiguredValue>David.Hinman@GDIT.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmailInt].Properties[Value]" ValueType="String"><ConfiguredValue>David.Hinman@GDIT.com;Lili.Huang@GDIT.com;susmitha.palacherla@gdit.com</ConfiguredValue></Configuration>
 </DTSConfiguration>
