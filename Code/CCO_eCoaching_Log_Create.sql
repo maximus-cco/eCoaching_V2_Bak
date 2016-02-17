@@ -1,10 +1,14 @@
 /*
-eCoaching_Log_Create(41).sql
-Last Modified Date: 12/15/2015
+eCoaching_Log_Create(42).sql
+Last Modified Date: 2/17/2016
 Last Modified By: Susmitha Palacherla
 
 
-
+Version 42: 2/17/2016
+1.  Updated SP#45 for the following change requests
+    TFS 1877 to support OMR Low CSAT logs should be viewable by hierarchy manger
+    TFS 1914 to support  OMR Short Calls feed with Manager Review
+    TFS 1732 to support SDR feed
 
 Version 41: 12/16/2015
 1. Updated SPs # 68, 6, 79 to add additional hr job code WHHR70 per tfs 1423
@@ -4430,18 +4434,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 -- SQL split into 2 parts to overcome sql string size restriction.
--- Last Modified Date: 09/16/2015
+-- Last Modified Date: 2/17/2016
 -- Last Updated By: Susmitha Palacherla
--- Modified per TFS644 to add IAE, IAT Feeds
-
+-- 1. TFS 1877 to support OMR Low CSAT logs should be viewable by hierarchy manger
+-- 2. TFS 1914 to support  OMR Short Calls feed with Manager Review
+-- 3. TFS 1732 to support SDR feed
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4482,9 +4484,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		eh.Sup_LanID strCSRSup,
 		eh.Sup_Name	 strCSRSupName,
 		eh.Sup_Email  strCSRSupEmail,
-		CASE WHEN cl.[strReportCode] like ''LCS%'' 
-		THEN cl.[MgrID]
-		ELSE eh.Mgr_ID END	strCSRMgrID,
+		eh.Mgr_ID strCSRMgrID,
 		CASE WHEN cl.[strReportCode] like ''LCS%'' 
 		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
 		 ELSE eh.Mgr_LanID END	strCSRMgr,
@@ -4512,7 +4512,9 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
 		CASE WHEN cc.OMRIAE is Not NULL Then 1 ELSE 0 END	"OMR / IAE",
 		CASE WHEN cc.OMRIAT is Not NULL Then 1 ELSE 0 END	"OMR / IAT",
+		CASE WHEN cc.OMRISQ is Not NULL Then 1 ELSE 0 END	"OMR / ISQ",
 		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
+		CASE WHEN cc.SDR is Not NULL Then 1 ELSE 0 END	"SDR",
 		cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -4537,7 +4539,9 @@ SET @nvcSQL2 = '  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 29 THEN [clr].[Value] ELSE NULL END)	OMRIAE,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 231 THEN [clr].[Value] ELSE NULL END)	OMRIAT,
-	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END)	OMRISQ,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END)	SDR
 	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
@@ -4563,7 +4567,13 @@ END --sp_SelectReviewFrom_Coaching_Log
 
 
 
+
+
+
 GO
+
+
+
 
 
 
