@@ -22,6 +22,8 @@
         </div>
     </form>
 
+    <br />
+
     <asp:ContentPlaceHolder ID="ContentPlaceHolder2" runat="server">
     </asp:ContentPlaceHolder>
 

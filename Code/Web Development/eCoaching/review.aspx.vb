@@ -11,6 +11,10 @@ Public Class review
 
     Public Const COMMENTS_MAX_LENGTH = 3000
 
+    Public Const REVIEW_OMR_SHORT_CALL_TEXT = "You are receiving this eCL because you have been assigned to listen to and provide feedback on calls that have been identified as having a short duration. Details of each call can be found within the Performance Report Catalog by clicking " &
+        "<a href='https://cco.gdit.com/bi/ReportsCatalog/TQC_ShortCall/Forms/AllItems.aspx' target='_blank'>here</a>. " &
+        "Please review the calls and provide specific details on opportunities that requiring coaching."
+
     Dim pHolder As Label
     Dim panelHolder As Panel
     Dim pHolder2 As Label
@@ -350,10 +354,12 @@ Public Class review
                 Dim pHolder2x As Label
                 Dim pHolder2y As Label
                 Dim pHolder2z As Label
+                Dim omrShortCall As Label
 
                 pHolder2x = ListView1.Items(0).FindControl("Label133") 'Current Coaching Initiative
                 pHolder2y = ListView1.Items(0).FindControl("Label151") 'OMR / Exceptions
                 pHolder2z = ListView1.Items(0).FindControl("Label36")  'Low CSAT
+                omrShortCall = ListView1.Items(0).FindControl("LabelOmrIsq") ' Short Call
                 If ((pHolder2x.Text = "1") Or (pHolder2y.Text = "1") Or (pHolder2z.Text = "1")) Then 'Research Required?
                     '   MsgBox("found 1")
                     ''panelHolder1 = ListView1.Items(0).FindControl("Panel38") 'Details of the behavior being coached
@@ -366,6 +372,10 @@ Public Class review
                         Label134.Text = "You are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction.  Please review the call from a PPoM perspective and provide details on the specific opportunities  requiring coaching in the record below. "
                         HyperLink1.Visible = "False" ' hide hyperlink
                         Label132.Text = "" 'hide 2nd part of paragraph
+                    ElseIf (omrShortCall.Text = "1") Then 'change text for Short Calls
+                        Label134.Text = REVIEW_OMR_SHORT_CALL_TEXT
+                        HyperLink1.Visible = "False"
+                        Label132.Text = ""
                     End If
                 Else
                     Panel26.Visible = True 'Customer Service Escalation (CSE) question group
@@ -405,79 +415,79 @@ Public Class review
                         panelHolder.Visible = True
                     End If
                 End If ' End of If ((pHolder2x.Text = "1") Or (pHolder2y.Text = "1") Or (pHolder2z.Text = "1"))
-            Else ' statusLevel <> 3
+                Else ' statusLevel <> 3
+                    panelHolder = ListView1.Items(0).FindControl("Panel28")
+                    panelHolder.Visible = True
+
+                    pHolder = ListView1.Items(0).FindControl("Label83")
+                    panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
+
+                    If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
+                        panelHolder.Visible = True
+                    End If
+                End If ' End of If (statusLevel = 3)
+            End If ' End of If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse m_strUserEMployeeID = m_strLogMgrEmployeeID)
+
+            Dim pHolder2
+            Dim pHolder8
+            pHolder2 = ListView1.Items(0).FindControl("Label33") 'iSIQS
+            pHolder = ListView1.Items(0).FindControl("Label88")
+            ' The uer is the current record's employee
+            If (m_strUserEmployeeID = m_strEmployeeID) Then
+                'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's csr
+
+                ' Display Coaching Notes.
                 panelHolder = ListView1.Items(0).FindControl("Panel28")
                 panelHolder.Visible = True
 
-                pHolder = ListView1.Items(0).FindControl("Label83")
-                panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
+                If (statusLevel = 1) Then
+                    pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
-                If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
-                    panelHolder.Visible = True
+                    If ((pHolder2.Text = "1") And (Len(pHolder8.Text) > 4)) Then ' IQS
+                        Panel39.Visible = True ' 1. Check the box below to acknowledge the monitor:
+                    Else
+                        Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
+                    End If
                 End If
-            End If ' End of If (statusLevel = 3)
-        End If ' End of If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse m_strUserEMployeeID = m_strLogMgrEmployeeID)
 
-        Dim pHolder2
-        Dim pHolder8
-        pHolder2 = ListView1.Items(0).FindControl("Label33") 'iSIQS
-        pHolder = ListView1.Items(0).FindControl("Label88")
-        ' The uer is the current record's employee
-        If (m_strUserEmployeeID = m_strEmployeeID) Then
-            'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's csr
-
-            ' Display Coaching Notes.
-            panelHolder = ListView1.Items(0).FindControl("Panel28")
-            panelHolder.Visible = True
-
-            If (statusLevel = 1) Then
-                pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
-
-                If ((pHolder2.Text = "1") And (Len(pHolder8.Text) > 4)) Then ' IQS
-                    Panel39.Visible = True ' 1. Check the box below to acknowledge the monitor:
-                Else
-                    Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
+                If (statusLevel = 4) Then
+                    Panel39.Visible = True 'acknowledge monitor
                 End If
             End If
 
-            If (statusLevel = 4) Then
-                Panel39.Visible = True 'acknowledge monitor
+
+            ''   pHolder = ListView1.Items(0).FindControl("Label90") ' removed for IQS
+            '' If (pHolder.Text = "True") Then ' I'm the current record's csr
+            '??????????????????????????????????
+            ''Button4.Visible = True
+
+            ''  End If
+
+            'Label90
+            'Button4
+
+
+            ' The user is the submitter but not the employee of record, not the employee's supervisor, and not the employee's manager
+            If (m_strUserEmployeeID = m_strSubmitterEmployeeID AndAlso
+                m_strUserEmployeeID <> m_strEmployeeID AndAlso
+                m_strUserEmployeeID <> m_strHierarchySupEmployeeID AndAlso
+                m_strUserEmployeeID <> m_strHierarchyMgrEmployeeID) Then
+                'If ((lan = LCase(pHolder4a.Text)) And (lan <> LCase(pHolder1a.Text)) And (lan <> LCase(pHolder2a.Text)) And (lan <> LCase(pHolder3a.Text))) Then
+
+                'User is submitter but not the employee of record, not the employee's SUP, nor the employee's MGR
+                panelHolder = ListView1.Items(0).FindControl("Panel28")
+                panelHolder.Visible = True
+
+                pHolder = ListView1.Items(0).FindControl("Label83") '' remove if shouldn't have for Outlier
+                panelHolder = ListView1.Items(0).FindControl("Panel29") ''Management Notes remove if shouldn't have for Outlier
+
+                If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then '' remove if shouldn't have for Outlier
+
+                    panelHolder.Visible = True '' remove if shouldn't have for Outlier
+
+
+                End If '' remove if shouldn't have for Outlier
             End If
-        End If
-
-
-        ''   pHolder = ListView1.Items(0).FindControl("Label90") ' removed for IQS
-        '' If (pHolder.Text = "True") Then ' I'm the current record's csr
-        '??????????????????????????????????
-        ''Button4.Visible = True
-
-        ''  End If
-
-        'Label90
-        'Button4
-
-
-        ' The user is the submitter but not the employee of record, not the employee's supervisor, and not the employee's manager
-        If (m_strUserEmployeeID = m_strSubmitterEmployeeID AndAlso
-            m_strUserEmployeeID <> m_strEmployeeID AndAlso
-            m_strUserEmployeeID <> m_strHierarchySupEmployeeID AndAlso
-            m_strUserEmployeeID <> m_strHierarchyMgrEmployeeID) Then
-            'If ((lan = LCase(pHolder4a.Text)) And (lan <> LCase(pHolder1a.Text)) And (lan <> LCase(pHolder2a.Text)) And (lan <> LCase(pHolder3a.Text))) Then
-
-            'User is submitter but not the employee of record, not the employee's SUP, nor the employee's MGR
-            panelHolder = ListView1.Items(0).FindControl("Panel28")
-            panelHolder.Visible = True
-
-            pHolder = ListView1.Items(0).FindControl("Label83") '' remove if shouldn't have for Outlier
-            panelHolder = ListView1.Items(0).FindControl("Panel29") ''Management Notes remove if shouldn't have for Outlier
-
-            If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then '' remove if shouldn't have for Outlier
-
-                panelHolder.Visible = True '' remove if shouldn't have for Outlier
-
-
-            End If '' remove if shouldn't have for Outlier
-        End If
 
 
     End Sub
