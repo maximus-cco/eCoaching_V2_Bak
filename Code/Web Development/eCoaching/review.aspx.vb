@@ -1127,14 +1127,14 @@ Public Class review
 
                     Case "CSR", "Training"
 
-                        ' Current Coaching Initiative, Low CSAT
-                        If ((pHolder1.Text = "1") Or (pHolder5.Text = "1")) Then
+                        ' Current Coaching Initiative, OMR / Exception, Low CSAT
+                        If (pHolder1.Text = "1" OrElse pHolder2.Text = "1" OrElse pHolder5.Text = "1") Then
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
 
                         End If
 
-                        ' OMR/Exceptions, OMR/IAE, OMR/IAT, ETS/OAE
-                        If (pHolder2.Text = "1" OrElse omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1") Then
+                        '  OMR/IAE, OMR/IAT, ETS/OAE
+                        If (omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1") Then
 
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
 
