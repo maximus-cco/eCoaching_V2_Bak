@@ -365,6 +365,15 @@ Partial Public Class review
     Protected WithEvents Label132 As Global.System.Web.UI.WebControls.Label
 
     '''<summary>
+    '''pnlDate control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlDate As Global.System.Web.UI.WebControls.Panel
+
+    '''<summary>
     '''Label140 control.
     '''</summary>
     '''<remarks>

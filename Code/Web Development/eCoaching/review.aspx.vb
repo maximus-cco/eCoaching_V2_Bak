@@ -48,6 +48,12 @@ Public Class review
     ' Employee_Hierarchy.MgrID
     Private m_strHierarchyMgrEmployeeID As String
 
+    ' The employee's manager employee ID in the Coaching_Log table.
+    Private m_strCLMgrEmployeeID As String
+
+    ' Indicate if it is LCS record
+    Private m_lowCustomerSatisfaction As String
+
     ' The submitter employee ID in the log record.
     ' coaching_log.SubmitterID
     Private m_strSubmitterEmployeeID As String
@@ -68,9 +74,11 @@ Public Class review
         ' the employee of the log
         ' the employee's current supervisor 
         ' the employee's current manager
+        ' If it is LCS, then either the employee's current manager or the Employee's manager when the eCL was submitted 
         Return m_strUserEmployeeID = m_strEmployeeID OrElse
                m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse
-               m_strUserEmployeeID = m_strHierarchyMgrEmployeeID
+               m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse
+               (m_lowCustomerSatisfaction = 1 AndAlso m_strUserEmployeeID = m_strCLMgrEmployeeID)
     End Function
 
     Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
@@ -81,6 +89,9 @@ Public Class review
         m_strHierarchySupEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("HierarchySupEmployeeID"), Label).Text)
         m_strHierarchyMgrEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("HierarchyMgrEmployeeID"), Label).Text)
         m_strSubmitterEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("SubmitterEmployeeID"), Label).Text)
+
+        m_strCLMgrEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("CLMgrEmployeeID"), Label).Text)
+        m_lowCustomerSatisfaction = LCase(DirectCast(ListView1.Items(0).FindControl("Label36"), Label).Text)
 
         m_blnUserIsARCCsr = Label241.Text <> "0"
 
@@ -344,8 +355,10 @@ Public Class review
 
 
         pHolder = ListView1.Items(0).FindControl("Label75")  ' strCSRMgr
-        ' The user is the employee's current manager
-        If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID) Then
+        ' The user is the employee's current manager, OR
+        ' If it is a LCS, the user is either the employee's current mgr or the mgr when the eCL was submitted
+        If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse
+                (m_lowCustomerSatisfaction = 1 AndAlso m_strUserEmployeeID = m_strCLMgrEmployeeID)) Then
             'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's level 3
 
             'recStatus = DataList1.Items(0).FindControl("LabelStatus")
@@ -364,6 +377,7 @@ Public Class review
                     '   MsgBox("found 1")
                     ''panelHolder1 = ListView1.Items(0).FindControl("Panel38") 'Details of the behavior being coached
                     ''panelHolder1.Visible = True 'display txtDescription 
+
                     Panel37.Visible = True ' coaching required question group
                     CalendarExtender4.EndDate = TodaysDate
                     CompareValidator5.ValueToCompare = TodaysDate
@@ -377,6 +391,18 @@ Public Class review
                         HyperLink1.Visible = "False"
                         Label132.Text = ""
                     End If
+
+                    ' TFS1893: hide all editable fields
+                    If (pHolder2z.Text = "1" AndAlso m_strUserEmployeeID = m_strHierarchyMgrEmployeeID) Then
+                        Label140.Visible = False
+                        Label130.Visible = False
+                        pnlDate.Visible = False
+                        Label141.Visible = False
+                        RadioButtonList3.Visible = False
+                        panel0b.Visible = False
+                        Button5.Visible = False
+                    End If
+
                 Else
                     Panel26.Visible = True 'Customer Service Escalation (CSE) question group
                     CalendarExtender1.EndDate = TodaysDate
@@ -415,79 +441,79 @@ Public Class review
                         panelHolder.Visible = True
                     End If
                 End If ' End of If ((pHolder2x.Text = "1") Or (pHolder2y.Text = "1") Or (pHolder2z.Text = "1"))
-                Else ' statusLevel <> 3
-                    panelHolder = ListView1.Items(0).FindControl("Panel28")
+            Else ' statusLevel <> 3
+                panelHolder = ListView1.Items(0).FindControl("Panel28")
+                panelHolder.Visible = True
+
+                pHolder = ListView1.Items(0).FindControl("Label83")
+                panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
+
+                If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
                     panelHolder.Visible = True
-
-                    pHolder = ListView1.Items(0).FindControl("Label83")
-                    panelHolder = ListView1.Items(0).FindControl("Panel29") 'Management Notes
-
-                    If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then
-                        panelHolder.Visible = True
-                    End If
-                End If ' End of If (statusLevel = 3)
-            End If ' End of If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse m_strUserEMployeeID = m_strLogMgrEmployeeID)
-
-            Dim pHolder2
-            Dim pHolder8
-            pHolder2 = ListView1.Items(0).FindControl("Label33") 'iSIQS
-            pHolder = ListView1.Items(0).FindControl("Label88")
-            ' The uer is the current record's employee
-            If (m_strUserEmployeeID = m_strEmployeeID) Then
-                'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's csr
-
-                ' Display Coaching Notes.
-                panelHolder = ListView1.Items(0).FindControl("Panel28")
-                panelHolder.Visible = True
-
-                If (statusLevel = 1) Then
-                    pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
-
-                    If ((pHolder2.Text = "1") And (Len(pHolder8.Text) > 4)) Then ' IQS
-                        Panel39.Visible = True ' 1. Check the box below to acknowledge the monitor:
-                    Else
-                        Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
-                    End If
                 End If
+            End If ' End of If (statusLevel = 3)
+        End If ' End of If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse m_strUserEMployeeID = m_strLogMgrEmployeeID)
 
-                If (statusLevel = 4) Then
-                    Panel39.Visible = True 'acknowledge monitor
+        Dim pHolder2
+        Dim pHolder8
+        pHolder2 = ListView1.Items(0).FindControl("Label33") 'iSIQS
+        pHolder = ListView1.Items(0).FindControl("Label88")
+        ' The uer is the current record's employee
+        If (m_strUserEmployeeID = m_strEmployeeID) Then
+            'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's csr
+
+            ' Display Coaching Notes.
+            panelHolder = ListView1.Items(0).FindControl("Panel28")
+            panelHolder.Visible = True
+
+            If (statusLevel = 1) Then
+                pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
+
+                If ((pHolder2.Text = "1") And (Len(pHolder8.Text) > 4)) Then ' IQS
+                    Panel39.Visible = True ' 1. Check the box below to acknowledge the monitor:
+                Else
+                    Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
                 End If
             End If
 
-
-            ''   pHolder = ListView1.Items(0).FindControl("Label90") ' removed for IQS
-            '' If (pHolder.Text = "True") Then ' I'm the current record's csr
-            '??????????????????????????????????
-            ''Button4.Visible = True
-
-            ''  End If
-
-            'Label90
-            'Button4
-
-
-            ' The user is the submitter but not the employee of record, not the employee's supervisor, and not the employee's manager
-            If (m_strUserEmployeeID = m_strSubmitterEmployeeID AndAlso
-                m_strUserEmployeeID <> m_strEmployeeID AndAlso
-                m_strUserEmployeeID <> m_strHierarchySupEmployeeID AndAlso
-                m_strUserEmployeeID <> m_strHierarchyMgrEmployeeID) Then
-                'If ((lan = LCase(pHolder4a.Text)) And (lan <> LCase(pHolder1a.Text)) And (lan <> LCase(pHolder2a.Text)) And (lan <> LCase(pHolder3a.Text))) Then
-
-                'User is submitter but not the employee of record, not the employee's SUP, nor the employee's MGR
-                panelHolder = ListView1.Items(0).FindControl("Panel28")
-                panelHolder.Visible = True
-
-                pHolder = ListView1.Items(0).FindControl("Label83") '' remove if shouldn't have for Outlier
-                panelHolder = ListView1.Items(0).FindControl("Panel29") ''Management Notes remove if shouldn't have for Outlier
-
-                If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then '' remove if shouldn't have for Outlier
-
-                    panelHolder.Visible = True '' remove if shouldn't have for Outlier
-
-
-                End If '' remove if shouldn't have for Outlier
+            If (statusLevel = 4) Then
+                Panel39.Visible = True 'acknowledge monitor
             End If
+        End If
+
+
+        ''   pHolder = ListView1.Items(0).FindControl("Label90") ' removed for IQS
+        '' If (pHolder.Text = "True") Then ' I'm the current record's csr
+        '??????????????????????????????????
+        ''Button4.Visible = True
+
+        ''  End If
+
+        'Label90
+        'Button4
+
+
+        ' The user is the submitter but not the employee of record, not the employee's supervisor, and not the employee's manager
+        If (m_strUserEmployeeID = m_strSubmitterEmployeeID AndAlso
+            m_strUserEmployeeID <> m_strEmployeeID AndAlso
+            m_strUserEmployeeID <> m_strHierarchySupEmployeeID AndAlso
+            m_strUserEmployeeID <> m_strHierarchyMgrEmployeeID) Then
+            'If ((lan = LCase(pHolder4a.Text)) And (lan <> LCase(pHolder1a.Text)) And (lan <> LCase(pHolder2a.Text)) And (lan <> LCase(pHolder3a.Text))) Then
+
+            'User is submitter but not the employee of record, not the employee's SUP, nor the employee's MGR
+            panelHolder = ListView1.Items(0).FindControl("Panel28")
+            panelHolder.Visible = True
+
+            pHolder = ListView1.Items(0).FindControl("Label83") '' remove if shouldn't have for Outlier
+            panelHolder = ListView1.Items(0).FindControl("Panel29") ''Management Notes remove if shouldn't have for Outlier
+
+            If ((pHolder.Text <> "") And (ListView1.Items(0).FindControl("Panel15").Visible = False)) Then '' remove if shouldn't have for Outlier
+
+                panelHolder.Visible = True '' remove if shouldn't have for Outlier
+
+
+            End If '' remove if shouldn't have for Outlier
+        End If
 
 
     End Sub

@@ -324,6 +324,7 @@
                     <asp:Label ID="HierarchyMgrEmployeeID" runat="server" Text='<%# Eval("strCSRMgrID")%>' Visible="false" />
                     <%-- The employee's Supervisor employee ID in employee_hierarchy table. --%>
                     <asp:Label ID="HierarchySupEmployeeID" runat="server" Text='<%# Eval("strCSRSupID")%>' Visible="false" />
+                    <asp:Label ID="CLMgrEmployeeID" runat="server" Text='<%# Eval("strCLMgrID")%>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">
@@ -382,19 +383,21 @@
                 <asp:Label ID="Label132" runat="server" Text=" and provide the details in the record below."></asp:Label>
                 <br />
                 <br />
-                <asp:Label ID="Label140" runat="server" Text="1. Date:" CssClass="question"></asp:Label>&nbsp; 
-                <asp:Label ID="Label130" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
-                <asp:RequiredFieldValidator ID="RequiredFieldValidator10" runat="server" ControlToValidate="Date4" ErrorMessage=""
-                    CssClass="EMessage" Display="Dynamic" Width="200px" Enabled="false">Enter a valid coaching date.
-                </asp:RequiredFieldValidator>
-                <asp:CompareValidator ID="CompareValidator5" runat="server" Display="Dynamic" Operator="LessThanEqual"
-                    Type="Date" ControlToValidate="Date4" ErrorMessage="" CssClass="EMessage" Width="490px"
-                    Enabled="True">Enter today's date or a date in the past. You are not allowed to enter a future date.
-                </asp:CompareValidator>
-                <br />
-                <asp:TextBox ID="Date4" runat="server" CssClass="qcontrol" Width="100px"></asp:TextBox>&nbsp; 
-                <asp:Image runat="server" ID="cal4" ImageUrl="images/Calendar_scheduleHS.png" />
-                <asp:CalendarExtender ID="CalendarExtender4" runat="server" TargetControlID="Date4" PopupButtonID="cal4" Enabled="True" />
+                <asp:Panel ID="pnlDate" runat="server">
+                    <asp:Label ID="Label140" runat="server" Text="1. Date:" CssClass="question"></asp:Label>&nbsp; 
+                    <asp:Label ID="Label130" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator10" runat="server" ControlToValidate="Date4" ErrorMessage=""
+                        CssClass="EMessage" Display="Dynamic" Width="200px" Enabled="false">Enter a valid coaching date.
+                    </asp:RequiredFieldValidator>
+                    <asp:CompareValidator ID="CompareValidator5" runat="server" Display="Dynamic" Operator="LessThanEqual"
+                        Type="Date" ControlToValidate="Date4" ErrorMessage="" CssClass="EMessage" Width="490px"
+                        Enabled="True">Enter today's date or a date in the past. You are not allowed to enter a future date.
+                    </asp:CompareValidator>
+                    <br />
+                    <asp:TextBox ID="Date4" runat="server" CssClass="qcontrol" Width="100px"></asp:TextBox>&nbsp; 
+                    <asp:Image runat="server" ID="cal4" ImageUrl="images/Calendar_scheduleHS.png" />
+                    <asp:CalendarExtender ID="CalendarExtender4" runat="server" TargetControlID="Date4" PopupButtonID="cal4" Enabled="True" />
+                </asp:Panel>
                 <br />
                 <asp:Label ID="Label141" runat="server" Text="2. Based on your research does this record require coaching?" CssClass="question"></asp:Label>
                 <br />
