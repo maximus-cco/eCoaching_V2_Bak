@@ -1,8 +1,15 @@
 /*
-File: eCoaching_Functions.sql (15)
+File: eCoaching_Functions.sql (16)
 Last Modified By: Susmitha Palacherla
-Date: 10/01/2015
+Date: 02/19/2016
 
+Version 16: 02/19/2016
+1. Added the following fn #37 to support the Email reminders per TFS 1710.
+[EC].[fnGetMaxDateTime]
+2. Upadted the following Fns to simlify the lookup (#'s 25, 6 and 27)
+ [EC].[fn_strSrMgrLvl1EmpIDFromEmpID]  
+ [EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
+[EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
 
 Version 15, 10/01/2015
 1. Added the following Function  function(#36) to support the CSR Survey setup per TFS 549.
@@ -121,7 +128,7 @@ List of Functions:
 34. [EC].[fn_strSubCoachingReasonFromWarningID]
 35. [EC].[fn_strValueFromWarningID]
 36. [EC].[fn_isHotTopicFromSurveyTypeID] 
-
+37. [EC].[fnGetMaxDateTime]
 */
 
 
@@ -1673,15 +1680,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 -- =============================================
 -- Author:		Susmitha Palacherla
 -- Create date: 03/05/2015
 -- Description:	Given an Employee ID returns the Sr Manager Employee ID.
--- First Looks up the Mgr Emp ID of the Employee from the Hierarchy table.
--- Then looks up the Supervisor of the Manager as the Senior Manager Level1
--- Last Modified by: 
--- Last update: 
--- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+-- Last Modified by: Susmitha Palacherla
+-- Last update: 02/18/2016
+-- Simplified lookup while working TFS 1710 to set up Email reminders
 -- =============================================
 CREATE FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID] 
 (
@@ -1691,28 +1699,23 @@ RETURNS NVARCHAR(10)
 AS
 BEGIN
 	DECLARE 
-		 @strMgrEmpID nvarchar(10),
-		 @strSrMgrLvl1EmpID nvarchar(10)
+	@strSrMgrLvl1EmpID nvarchar(10)
+		 
 
-  SELECT   @strMgrEmpID = [Mgr_ID]
-  FROM [EC].[Employee_Hierarchy]
-  WHERE [Emp_ID] = @strEmpID
-
-  IF    @strMgrEmpID IS NULL 
-  SET   @strMgrEmpID= N'999999'
+ SET @strSrMgrLvl1EmpID = (SELECT M.Sup_ID
+  FROM [EC].[Employee_Hierarchy]E JOIN [EC].[Employee_Hierarchy]M
+  ON E.Mgr_ID = M.Emp_ID
+  WHERE E.[Emp_ID] = @strEmpID)
   
-  SELECT   @strSrMgrLvl1EmpID =[Sup_ID]
-  FROM [EC].[Employee_Hierarchy]
-  WHERE [Emp_ID] =@strMgrEmpID
-  
-  IF     @strSrMgrLvl1EmpID IS NULL 
+  IF     (@strSrMgrLvl1EmpID IS NULL OR @strSrMgrLvl1EmpID = 'Unknown')
   SET    @strSrMgrLvl1EmpID = N'999999'
   
   RETURN   @strSrMgrLvl1EmpID
   
 END --fn_strSrMgrLvl1EmpIDFromEmpID
-GO
 
+
+GO
 
 
 
@@ -1735,16 +1738,16 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 -- =============================================
 -- Author:		Susmitha Palacherla
 -- Create date: 03/05/2015
 -- Description:	Given an Employee ID returns the Sr Mananger level 2 Employee ID.
--- First Looks up the Mgr Emp ID of the Employee from the Hierarchy table.
--- Then looks up the Supervisor of the Manager as the Senior Manager.
--- Then looks up the Supervisor of the Senior Manager as the DSr Mananger level 2.
--- Last Modified by: 
--- Last update: 
--- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+-- Last Modified by: Susmitha Palacherla
+-- Last update: 02/18/2016
+-- Simplified lookup while working TFS 1710 to set up Email reminders
 -- =============================================
 CREATE FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
 (
@@ -1754,35 +1757,25 @@ RETURNS NVARCHAR(10)
 AS
 BEGIN
 	DECLARE 
-		 @strMgrEmpID nvarchar(10),
-		 @strSrMgrLvl1EmpID nvarchar(10),
+
 		 @strSrMgrLvl2EmpID nvarchar(10)
 
-  SELECT   @strMgrEmpID = [Mgr_ID]
-  FROM [EC].[Employee_Hierarchy]
-  WHERE [Emp_ID] = @strEmpID
-
-  IF    @strMgrEmpID IS NULL 
-  SET   @strMgrEmpID= N'999999'
+  SET @strSrMgrLvl2EmpID = (SELECT M.Mgr_ID
+  FROM [EC].[Employee_Hierarchy]E JOIN [EC].[Employee_Hierarchy]M
+  ON E.Mgr_ID = M.Emp_ID
+  WHERE E.[Emp_ID] = @strEmpID)
   
-  SELECT   @strSrMgrLvl1EmpID =[Sup_ID]
-  FROM [EC].[Employee_Hierarchy]
-  WHERE [Emp_ID] =@strMgrEmpID
-  
-  IF     @strSrMgrLvl1EmpID IS NULL 
-  SET    @strSrMgrLvl1EmpID = N'999999'
-  
-  SELECT   @strSrMgrLvl2EmpID =[Sup_ID]
-  FROM [EC].[Employee_Hierarchy]
-  WHERE [Emp_ID] = @strSrMgrLvl1EmpID
-  
-  IF     @strSrMgrLvl2EmpID IS NULL 
+  IF    (@strSrMgrLvl2EmpID IS NULL OR @strSrMgrLvl2EmpID = 'Unknown')
   SET    @strSrMgrLvl2EmpID = N'999999'
   
   RETURN  @strSrMgrLvl2EmpID
   
 END --fn_strSrMgrLvl2EmpIDFromEmpID
+
+
 GO
+
+
 
 
 
@@ -1806,16 +1799,18 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
+
 -- =============================================
 -- Author:		Susmitha Palacherla
 -- Create date: 03/05/2015
 -- Description:	Given an Employee ID returns the Regional Manager Employee ID.
--- First Looks up the Mgr Emp ID of the Employee from the Hierarchy table.
--- Then looks up the Supervisor of the Manager as the Senior Manager.
--- Then looks up the Supervisor of the Senior Manager as the Regional Manager.
--- Last Modified by: 
--- Last update: 
--- Created per SCR 14423 to extend dashboard functionality to senior leadership.
+-- Last Modified by: Susmitha Palacherla
+-- Last update: 02/18/2016
+-- Simplified lookup while working TFS 1710 to set up Email reminders
 -- =============================================
 CREATE FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
 (
@@ -1825,44 +1820,33 @@ RETURNS NVARCHAR(10)
 AS
 BEGIN
 	DECLARE 
-		 @strMgrEmpID nvarchar(10),
-		 @strSrMgrLvl1EmpID nvarchar(10),
+
 		 @strSrMgrLvl2EmpID nvarchar(10),
 		 @strSrMgrLvl3EmpID nvarchar(10)
 		 
-
-  SELECT   @strMgrEmpID = [Mgr_ID]
-  FROM [EC].[Employee_Hierarchy]
-  WHERE [Emp_ID] = @strEmpID
-
-  IF    @strMgrEmpID IS NULL 
-  SET   @strMgrEmpID= N'999999'
+  SET @strSrMgrLvl2EmpID = (SELECT M.Mgr_ID
+  FROM [EC].[Employee_Hierarchy]E JOIN [EC].[Employee_Hierarchy]M
+  ON E.Mgr_ID = M.Emp_ID
+  WHERE E.[Emp_ID] = @strEmpID)
   
-  SELECT   @strSrMgrLvl1EmpID =[Sup_ID]
-  FROM [EC].[Employee_Hierarchy]
-  WHERE [Emp_ID] =@strMgrEmpID
-  
-  IF     @strSrMgrLvl1EmpID IS NULL 
-  SET    @strSrMgrLvl1EmpID = N'999999'
-  
-   SELECT   @strSrMgrLvl2EmpID =[Sup_ID]
-  FROM [EC].[Employee_Hierarchy]
-  WHERE [Emp_ID] = @strSrMgrLvl1EmpID
-  
-  IF    @strSrMgrLvl2EmpID IS NULL 
-  SET   @strSrMgrLvl2EmpID= N'999999'
+  IF    (@strSrMgrLvl2EmpID IS NULL OR @strSrMgrLvl2EmpID = 'Unknown')
+  SET    @strSrMgrLvl2EmpID = N'999999'
   
   SELECT   @strSrMgrLvl3EmpID =[Sup_ID]
   FROM [EC].[Employee_Hierarchy]
   WHERE [Emp_ID] = @strSrMgrLvl2EmpID
   
-  IF     @strSrMgrLvl3EmpID IS NULL 
+  IF    (@strSrMgrLvl3EmpID IS NULL OR @strSrMgrLvl3EmpID = 'Unknown')
   SET    @strSrMgrLvl3EmpID = N'999999'
   
   RETURN  @strSrMgrLvl3EmpID
   
 END --fn_strSrMgrLvl3EmpIDFromEmpID
+
+
 GO
+
+
 
 
 
@@ -2382,3 +2366,54 @@ GO
 
 
 /*****************************************************/
+
+-- Function [EC].[fnGetMaxDateTime]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fnGetMaxDateTime' 
+)
+   DROP FUNCTION [EC].[fnGetMaxDateTime]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 02/17/2016
+-- Description:	Given a datetime value, return an integer
+--   in format YYYYMMDD representing the date.
+--  Created per TFS Change request 1710
+-- =============================================
+CREATE FUNCTION [EC].[fnGetMaxDateTime] (
+    @dtDate1        DATETIME,
+    @dtDate2        DATETIME
+) RETURNS DATETIME AS
+BEGIN
+    DECLARE @dtReturn DATETIME;
+
+    -- If either are NULL, then return NULL as cannot be determined.
+    IF (@dtDate1 IS NULL) OR (@dtDate2 IS NULL)
+        SET @dtReturn = NULL;
+
+    IF (@dtDate1 > @dtDate2)
+        SET @dtReturn = @dtDate1;
+    ELSE
+        SET @dtReturn = @dtDate2;
+
+    RETURN @dtReturn;
+END
+
+
+
+GO
+--**********************************************************

@@ -1,8 +1,11 @@
 /*
-eCoaching_Maintenance_Create(12).sql
-Last Modified Date: 09/21/2015
+eCoaching_Maintenance_Create(13).sql
+Last Modified Date: 02/19/2016
 Last Modified By: Susmitha Palacherla
 
+Version13: 02/19/2016
+1. Updated SP # 3 [EC].[sp_UpdateFeedMailSent]  to capture Notification date
+2. Added Sp's 6 and 7  [EC].[sp_SelectCoaching4Reminder] and [EC].[sp_UpdateReminderMailSent] to support Email reminder functionality per TFS 1710.
 
 
 Version 12: 09/21/2015
@@ -65,11 +68,13 @@ Tables
 
 
 Procedures
-1. Create SP [EC].[sp_Update_Migrated_User_Logs] -- Obsolete
-2. Create SP [EC].[sp_SelectCoaching4Contact] 
-3. Create SP [EC].[sp_UpdateFeedMailSent] 
-4. Create SP [EC].[sp_Inactivations_From_Feed] 
-5. Create SP [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]-- Obsolete (Not used)
+1.  SP [EC].[sp_Update_Migrated_User_Logs] -- Obsolete
+2.  SP [EC].[sp_SelectCoaching4Contact] 
+3.  SP [EC].[sp_UpdateFeedMailSent] 
+4.  SP [EC].[sp_Inactivations_From_Feed] 
+5.  SP [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]-- Obsolete (Not used)
+6.  SP [EC].[sp_SelectCoaching4Reminder]
+7.  SP [EC].[sp_UpdateReminderMailSent] 
 
 */
 
@@ -292,12 +297,14 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 --    ====================================================================
 --    Author:           Jourdain Augustin
 --    Create Date:      08/23/13
 --    Description:      This procedure updates emailsent column to "True" for records from mail script. 
---    Last Update:      <>
---    Last Update:      03/27/2014 - Modified for redesigned DB
+--    Last Update:      02/16/2016 - Modified per tfs 1710 to capture Notification Date to support Reminder initiative.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_UpdateFeedMailSent]
 (
@@ -315,10 +322,15 @@ SET @intNumID = CAST(@nvcNumID as INT)
    
   	UPDATE [EC].[Coaching_Log]
 	   SET EmailSent = @sentValue
+	      ,NotificationDate = GetDate() 
 	WHERE CoachingID = @intNumID
 	
 END --sp_UpdateFeedMailSent
+
+
+
 GO
+
 
 
 --***************************************************************************************************************
@@ -594,3 +606,238 @@ GO
 
 
 --***************************************************************************************************************
+
+--6.  Create SP [EC].[sp_SelectCoaching4Reminder]
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectCoaching4Reminder' 
+)
+   DROP PROCEDURE [EC].[sp_SelectCoaching4Reminder]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:		       Susmitha Palacherla
+--	Create Date:	   02/09/2016
+--	Description: 	   This procedure queries db for Failed Quality and LCSAT records that are past 
+--  the Coaching SLA and sends Reminders to Supervisors and or Managers.
+--  Created per TFS Change request 1710
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectCoaching4Reminder]
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
+@intHrs1 int,
+@intHrs2 int
+
+-- Variables used for the diferent reminder periods.
+-- Quality reminders are set at 48 hrs
+-- OMR reminders are set at 72 hrs
+
+SET @intHrs1 = 48 
+SET @intHrs2 = 72
+
+SET @nvcSQL1 = ';WITH TempMain AS 
+        (select DISTINCT x.strFormID 
+        ,x.numID 
+        ,x.strEmpID 
+        ,x.strStatus 
+        ,x.strSubCoachingSource
+       	,x.strvalue 
+        ,x.Remind 
+        ,x.RemindCC 
+		,x.NotificationDate	
+		,x.ReminderSent	
+		,x.ReminderDate	
+		,x.ReminderCount   
+		,x.ReassignDate   
+FROM 
+	
+-- Verint-GDIT Logs
+
+(SELECT   cl.CoachingID	numID	
+		,cl.FormName	strFormID
+		,cl.EmpID strEmpID
+		,s.Status strStatus
+		,so.SubCoachingSource strSubCoachingSource
+		,clr.value strValue
+		,cl.NotificationDate	NotificationDate
+		,cl.ReminderSent	ReminderSent
+		,cl.ReminderDate	ReminderDate
+		,cl.ReminderCount   ReminderCount
+		,cl.ReassignDate    ReassignDate 
+		, CASE
+		WHEN (ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) >  '''+CONVERT(VARCHAR,@intHrs1)+''' ) THEN ''Sup''
+		WHEN (ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) >'''+CONVERT(VARCHAR,@intHrs1)+''' )THEN ''Sup''
+		ELSE ''NA'' END Remind
+		,CASE
+		WHEN (ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' ) THEN ''Mgr''
+		WHEN (ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' )THEN ''Mgr/SrMgr''
+		ELSE ''NA'' END RemindCC
+FROM  [EC].[Coaching_Log] cl WITH (NOLOCK)
+ JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+ ON cl.coachingid = clr.coachingid JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID
+WHERE cl.Statusid = 6
+AND cl.SourceID = 223
+AND cl.EmailSent = ''True''
+AND clr.Value   = ''Did not meet goal''
+AND ((ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' )OR
+(ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' ))'
+
+-- LCS OMR Logs
+
+SET @nvcSQL2 = ' UNION
+SELECT   cl.CoachingID	numID	
+			,cl.FormName	strFormID
+		,cl.EmpID strEmpID
+		,s.Status strStatus
+		,so.SubCoachingSource strSubCoachingSource
+		,clr.value strValue
+		,cl.NotificationDate	NotificationDate
+		,cl.ReminderSent	ReminderSent
+		,cl.ReminderDate	ReminderDate
+		,cl.ReminderCount   ReminderCount
+		,cl.ReassignDate    ReassignDate 
+		, CASE
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''') THEN ''Mgr''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 5 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Mgr''
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Sup''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 6 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Sup''
+		ELSE ''NA'' END Remind
+	  , CASE
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''') THEN ''SrMgr''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 5 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''SrMgr''
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Mgr''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 6 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Mgr/SrMgr''
+		ELSE ''NA'' END RemindCC
+FROM  [EC].[Coaching_Log] cl WITH (NOLOCK)
+ JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+ ON cl.coachingid = clr.coachingid JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID
+WHERE clr.SubCoachingreasonID = 34 
+AND ((cl.Statusid = 5 AND clr.Value   = ''Research Required'') OR 
+(cl.Statusid = 6 AND clr.Value   = ''Opportunity''))
+AND cl.EmailSent = ''True''
+AND ((ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')OR
+(ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')OR
+(ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+'''))'
+
+
+SET @nvcSQL3 = 
+ ' ) x )SELECT 
+         numid CoachingID
+        ,strFormID
+		,strStatus
+		,strSubCoachingSource
+		,strValue
+		,CASE WHEN Remind = ''Sup'' THEN eh.Sup_Email	
+		      WHEN Remind = ''Mgr'' THEN eh.Mgr_Email
+		      ELSE '''' END strToEmail
+		,CASE WHEN RemindCC = ''Mgr'' THEN eh.Mgr_Email	
+		      WHEN RemindCC = ''SrMgr'' THEN [EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		      WHEN RemindCC = ''Mgr/SrMgr'' THEN eh.Mgr_Email + '';'' +[EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		      ELSE '''' END strCCEmail
+		 ,NotificationDate	
+		,ReminderSent	
+		,ReminderDate	
+		,ReminderCount   
+		,ReassignDate
+	   	FROM TempMain T JOIN [EC].[Employee_Hierarchy] eh 
+	   	ON T.strEmpID  = eh.Emp_ID
+	   	WHERE (eh.Sup_Email is not NULL OR eh.Sup_Email <> '''' OR eh.Mgr_Email is not NULL OR eh.Mgr_Email <> '''')
+	   	ORDER BY NotificationDate desc'
+
+        
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
+EXEC (@nvcSQL)	
+	    
+--PRINT @nvcsql  
+	    
+END --sp_SelectCoaching4Reminder
+
+
+GO
+
+
+
+--***************************************************************************************************************
+
+--7. Create SP [EC].[sp_UpdateReminderMailSent] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_UpdateReminderMailSent' 
+)
+   DROP PROCEDURE [EC].[sp_UpdateReminderMailSent]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:      02/16/2016
+--    Description:      This procedure updates emailsent column to "True" for records from mail script. 
+--    Last Update:      02/16/2016 - Modified per tfs 1710 to capture Notification Date to support Reminder initiative.
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_UpdateReminderMailSent]
+(
+      @nvcNumID nvarchar(30)
+ 
+)
+AS
+BEGIN
+DECLARE
+@sentValue nvarchar(30),
+@intNumID int
+
+SET @sentValue = 1
+SET @intNumID = CAST(@nvcNumID as INT)
+   
+  	UPDATE [EC].[Coaching_Log]
+	   SET ReminderSent = @sentValue
+	      ,ReminderDate = GetDate() 
+	      ,ReminderCount = ReminderCount + 1
+	WHERE CoachingID = @intNumID
+	
+END --sp_UpdateReminderMailSent
+
+
+GO

@@ -1,7 +1,10 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (10)
-Date: 09/30/2015
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (11)
+Date: 02/18/2016
 
+Version 11: 02/18/2016
+Updated SP #2 [EC].[sp_Populate_Employee_Hierarchy]  to populate Sr Level Manager Ids during development for 
+ TFS 1710 to set up Email reminders for past due ecls.
 
 Version 10, 09/30/2015
 Updated sp [EC].[sp_InactivateCoachingLogsForTerms] (#5) to
@@ -460,16 +463,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
 -- Description:	Performs the following actions.
 -- Updates existing records and Inserts New records from the Staging table.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date:11/6/2014
--- updated per SCR 13759 to handle apostrophes in names and email addresses.
+-- Last Modified Date:2/18/2016
+-- updated during TFS 1710 to populate SrLvlMgr IDs
 -- =============================================
-ALTER PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
+CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
 BEGIN
 
@@ -604,9 +608,23 @@ BEGIN
 OPTION (MAXDOP 1)
 END
 
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+    
+-- Populate SrMgr IDs
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy]
+    SET [SrMgrLvl1_ID]=	[EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([H].[Emp_ID])		  
+	   ,[SrMgrLvl2_ID]=	[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([H].[Emp_ID])	
+	   ,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
+	FROM [EC].[Employee_Hierarchy]H
 
+OPTION (MAXDOP 1)
+END
 END --sp_Populate_Employee_Hierarchy
+
 GO
+
+
 
 
 
