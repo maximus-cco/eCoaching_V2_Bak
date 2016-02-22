@@ -392,8 +392,8 @@ Public Class review
                         Label132.Text = ""
                     End If
 
-                    ' TFS1893: hide all editable fields
-                    If (pHolder2z.Text = "1" AndAlso m_strUserEmployeeID = m_strHierarchyMgrEmployeeID) Then
+                    ' TFS1893: hide all editable fields if user is the hierarchy manager but not the log manager
+                    If (pHolder2z.Text = "1" AndAlso m_strUserEmployeeID = m_strHierarchyMgrEmployeeID AndAlso m_strHierarchyMgrEmployeeID <> m_strCLMgrEmployeeID) Then
                         Label140.Visible = False
                         Label130.Visible = False
                         pnlDate.Visible = False
