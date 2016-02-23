@@ -1,0 +1,858 @@
+/*
+
+TFS 1710
+
+Implement in eCoaching database in target environment.
+
+
+Dev - eCoahingDev
+Test - eCoachingTest
+Prod - eCoaching
+
+
+
+****************************************
+
+IMPLEMENTATION SUMMARY
+
+***************************************
+SECTION 1 - Fetch and Stage Files 
+Reminder Script for Test - Reminders_Test.vbs
+Reminder Script for Prod - Reminders_Prod.vbs
+
+SECTION 2 - Create SQL agent JOB 
+
+
+ SECTION 3 - Create/Modify Tables
+ ADD COLUMNS To Employee_Hierarchy Table
+ ADD COLUMNS to Table Coaching_log Table
+
+
+SECTION 4 - Create/Modify FUNCTIONS
+FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID]
+FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID]
+FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]
+FUNCTION [EC].[fnGetMaxDateTime]
+
+SECTION 5 - Create/Modify PROCEDURES
+PROCEDURE [EC].[sp_Populate_Employee_Hierarchy]
+PROCEDURE [EC].[sp_UpdateFeedMailSent]
+PROCEDURE [EC].[sp_SelectCoaching4Reminder]
+PROCEDURE [EC].[sp_UpdateReminderMailSent]
+
+
+****************************************
+
+IMPLEMENTATION DETAILS
+
+***************************************
+
+
+--SECTION 1 - Fetch and Stage Files
+
+***************************************/
+
+Fetch the following files from TFS source Control and stage accordingly.
+
+--Test
+ \cms\eCoaching_V2\ETL\Reminders_Test.vbs
+ To
+\\vrivfssdbt02\integrationservices\Coaching\Notifications
+
+-- Prod
+ \cms\eCoaching_V2\ETL\Reminders_Prod.vbs
+To
+ \\vdenssdbp07\scorecard-ssis\Coaching\Notifications\
+
+/*******************************************
+
+SECTION 2 - Create SQL agent JOB in Production
+
+*******************************************/
+
+Login to SSMS using jobs_admin account.
+
+Right click and create New Job
+
+Job General tab
+ Job Name- CoachingReminders
+Owner - VNGT\sqlsscorp01
+
+
+Job Steps Tab
+
+
+Step 1- Step General Tab
+    Step Name -Coaching Reminders
+   Type -Operating System (CmdExec)
+Runas - BccScrdSQLAgent
+Command - start /w wscript.exe "\\vdenssdbp07\scorecard-ssis\Coaching\Notifications\Reminders_Prod.vbs"
+
+
+Step 2- Step Advanced tab
+On success Quit the job reporting success
+On failure Quit the job reporting failure
+
+Job Schedules tab
+Add 3 Schedules.
+
+Daily - 3:00 AM Daily
+
+
+
+
+/*******************************************
+
+SECTION 3 - Create/Modify Tables
+Run 3.a through 3.c one statement at a time.
+
+
+*****************************************/
+
+
+
+--3a. Add 3 columns to employee Hierarchy table.
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+ADD SrMgrLvl1_ID nvarchar(10) ,
+         SrMgrLvl2_ID nvarchar(10),
+         SrMgrLvl3_ID nvarchar(10) 
+GO
+
+
+--3b. Add columns to Coaching_log table
+
+ALTER table [EC].[Coaching_Log]
+ADD [NotificationDate] [datetime] NULL,
+[ReminderSent][bit] DEFAULT (0),
+[ReminderDate] [datetime] NULL,
+[ReminderCount][int] DEFAULT (0),
+[ReassignDate] [datetime] NULL
+GO
+
+
+--3c.
+
+ UPDATE [EC].[Coaching_Log]
+SET [ReminderSent]= 0,
+[ReminderCount]= 0
+WHERE [ReminderSent] is NULL
+GO
+
+
+    
+
+
+/**********************************************************************************
+
+FROM EVERYTHING FROM HERE ON INTO AN SSMS WINDOW
+POINTING TO THE eCOACHING DB IN TARGET ENVIRONMENT
+AND RUN WITH NOTHING SELECTED.
+
+**********************************************************************************/
+
+-- SECTION 4 - FUNCTIONS
+
+--4a.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSrMgrLvl1EmpIDFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 03/05/2015
+-- Description:	Given an Employee ID returns the Sr Manager Employee ID.
+-- Last Modified by: Susmitha Palacherla
+-- Last update: 02/18/2016
+-- Simplified lookup while working TFS 1710 to set up Email reminders
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSrMgrLvl1EmpIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+	@strSrMgrLvl1EmpID nvarchar(10)
+		 
+
+ SET @strSrMgrLvl1EmpID = (SELECT M.Sup_ID
+  FROM [EC].[Employee_Hierarchy]E JOIN [EC].[Employee_Hierarchy]M
+  ON E.Mgr_ID = M.Emp_ID
+  WHERE E.[Emp_ID] = @strEmpID)
+  
+  IF     (@strSrMgrLvl1EmpID IS NULL OR @strSrMgrLvl1EmpID = 'Unknown')
+  SET    @strSrMgrLvl1EmpID = N'999999'
+  
+  RETURN   @strSrMgrLvl1EmpID
+  
+END --fn_strSrMgrLvl1EmpIDFromEmpID
+
+
+GO
+
+
+--4b.
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSrMgrLvl2EmpIDFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 03/05/2015
+-- Description:	Given an Employee ID returns the Sr Mananger level 2 Employee ID.
+-- Last Modified by: Susmitha Palacherla
+-- Last update: 02/18/2016
+-- Simplified lookup while working TFS 1710 to set up Email reminders
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSrMgrLvl2EmpIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+
+		 @strSrMgrLvl2EmpID nvarchar(10)
+
+  SET @strSrMgrLvl2EmpID = (SELECT M.Mgr_ID
+  FROM [EC].[Employee_Hierarchy]E JOIN [EC].[Employee_Hierarchy]M
+  ON E.Mgr_ID = M.Emp_ID
+  WHERE E.[Emp_ID] = @strEmpID)
+  
+  IF    (@strSrMgrLvl2EmpID IS NULL OR @strSrMgrLvl2EmpID = 'Unknown')
+  SET    @strSrMgrLvl2EmpID = N'999999'
+  
+  RETURN  @strSrMgrLvl2EmpID
+  
+END --fn_strSrMgrLvl2EmpIDFromEmpID
+
+
+GO
+
+
+--4c.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSrMgrLvl3EmpIDFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 03/05/2015
+-- Description:	Given an Employee ID returns the Regional Manager Employee ID.
+-- Last Modified by: Susmitha Palacherla
+-- Last update: 02/18/2016
+-- Simplified lookup while working TFS 1710 to set up Email reminders
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSrMgrLvl3EmpIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+
+		 @strSrMgrLvl2EmpID nvarchar(10),
+		 @strSrMgrLvl3EmpID nvarchar(10)
+		 
+  SET @strSrMgrLvl2EmpID = (SELECT M.Mgr_ID
+  FROM [EC].[Employee_Hierarchy]E JOIN [EC].[Employee_Hierarchy]M
+  ON E.Mgr_ID = M.Emp_ID
+  WHERE E.[Emp_ID] = @strEmpID)
+  
+  IF    (@strSrMgrLvl2EmpID IS NULL OR @strSrMgrLvl2EmpID = 'Unknown')
+  SET    @strSrMgrLvl2EmpID = N'999999'
+  
+  SELECT   @strSrMgrLvl3EmpID =[Sup_ID]
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strSrMgrLvl2EmpID
+  
+  IF    (@strSrMgrLvl3EmpID IS NULL OR @strSrMgrLvl3EmpID = 'Unknown')
+  SET    @strSrMgrLvl3EmpID = N'999999'
+  
+  RETURN  @strSrMgrLvl3EmpID
+  
+END --fn_strSrMgrLvl3EmpIDFromEmpID
+
+
+GO
+
+
+
+ --4d.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fnGetMaxDateTime' 
+)
+   DROP FUNCTION [EC].[fnGetMaxDateTime]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 02/17/2016
+-- Description: Given 2 datetime values, returns the Greater of the 2 dates.
+--  Created per TFS Change request 1710
+-- =============================================
+CREATE FUNCTION [EC].[fnGetMaxDateTime] (
+    @dtDate1        DATETIME,
+    @dtDate2        DATETIME
+) RETURNS DATETIME AS
+BEGIN
+    DECLARE @dtReturn DATETIME;
+
+    -- If either are NULL, then return NULL as cannot be determined.
+    IF (@dtDate1 IS NULL) OR (@dtDate2 IS NULL)
+        SET @dtReturn = NULL;
+
+    IF (@dtDate1 > @dtDate2)
+        SET @dtReturn = @dtDate1;
+    ELSE
+        SET @dtReturn = @dtDate2;
+
+    RETURN @dtReturn;
+END
+
+
+GO
+
+--**************************************************
+
+-- SECTION 5 - PROCEDURES
+
+
+--5a. Update Employee Hierarachy table update procedure to add logic for populating sr lvl mgrs.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Populate_Employee_Hierarchy' 
+)
+   DROP PROCEDURE [EC].[sp_Populate_Employee_Hierarchy]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create Date: 07/25/2013
+-- Description:	Performs the following actions.
+-- Updates existing records and Inserts New records from the Staging table.
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date: 2/18/2016
+-- updated during TFS 1710 to populate SrLvlMgr IDs
+-- =============================================
+CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
+AS
+BEGIN
+
+
+ --Assigns End_Date to Inactive Records with status change in feed
+ 
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy] 
+	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
+	FROM [EC].[Employee_Hierarchy_Stage] S JOIN [EC].[Employee_Hierarchy]H
+	ON H.Emp_ID = S.Emp_ID
+	AND S.Active in ('T', 'D')
+	AND H.END_DATE= '99991231'
+OPTION (MAXDOP 1)
+END
+
+
+-- Assigns End_Date to Inactive Records that stop arriving in feed
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy] 
+	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
+	,[Active] = 'T'
+	 WHERE END_DATE = '99991231' AND Active = 'A'
+	 AND Emp_ID <> '999999'
+	 AND EMP_ID NOT IN
+	(SELECT Emp_ID FROM [EC].[Employee_Hierarchy_Stage])
+
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+-- Assigns Open Ended End_Date for Rehire records
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy] 
+	SET [Active]= S.Active
+	,[Start_Date] = S.Start_Date
+	,[END_DATE] = '99991231'
+	FROM [EC].[Employee_Hierarchy_Stage] S JOIN [EC].[Employee_Hierarchy]H
+	ON H.Emp_ID = S.Emp_ID
+	AND S.Active not in ('T', 'D')
+	AND H.END_DATE  <> '99991231'
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+-- Updates Existing Records
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy]
+	   SET [Emp_Name] = Replace(S.[Emp_Name],'''', '')
+	      ,[Emp_Email] = Replace(S.[Emp_Email],'''','''''')
+		  ,[Emp_LanID] = S.Emp_LanID
+		  ,[Emp_Site] =  [EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site)
+		  ,[Emp_Job_Code] = S.Emp_Job_Code
+		  ,[Emp_Job_Description] = S.Emp_Job_Description
+		  ,[Emp_Program] = S.Emp_Program
+		  ,[Sup_ID] = S.Sup_EMP_ID
+		  ,[Sup_Name] = Replace(S.[Sup_Name],'''', '')
+		  ,[Sup_Email] = Replace(S.[Sup_Email],'''','''''')
+		  ,[Sup_LanID] = S.Sup_LanID
+		  ,[Sup_Job_Code] = S.Sup_Job_Code 
+		  ,[Sup_Job_Description] = S.Sup_Job_Description
+		  ,[Mgr_ID] = S.Mgr_EMP_ID 
+		  ,[Mgr_Name] = Replace(S.[Mgr_Name],'''', '')
+		  ,[Mgr_Email] = Replace(S.[Mgr_Email],'''','''''')
+		  ,[Mgr_LanID] = S.Mgr_LanID
+		  ,[Mgr_Job_Code] = S.Mgr_Job_Code 
+		  ,[Mgr_Job_Description] = S.Mgr_Job_Description
+		  ,[Start_Date] = CONVERT(nvarchar(8),S.[Start_Date],112)
+		  ,[Active] = S.Active
+	 FROM [EC].[Employee_Hierarchy]H JOIN [EC].[Employee_Hierarchy_Stage]S
+	 ON H.[Emp_ID] = S.[EMP_ID]
+	 WHERE H.[Emp_ID] is NOT NULL
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+    
+-- Inserts New Records
+BEGIN
+	INSERT INTO [EC].[Employee_Hierarchy]
+			  ([Emp_ID]
+			   ,[Emp_Name]
+			   ,[Emp_Email]
+			   ,[Emp_LanID]
+			   ,[Emp_Site]
+			   ,[Emp_Job_Code]
+			   ,[Emp_Job_Description]
+			   ,[Emp_program]
+			   ,[Sup_ID]
+			   ,[Sup_Name]
+			   ,[Sup_Email]
+			   ,[Sup_LanID]
+			   ,[Sup_Job_Code]
+			   ,[Sup_Job_Description]
+			   ,[Mgr_ID]
+			   ,[Mgr_Name]
+			   ,[Mgr_Email]
+			   ,[Mgr_LanID]
+			   ,[Mgr_Job_Code]
+			   ,[Mgr_Job_Description]
+			   ,[Start_Date]
+			   ,[Active]
+			  )
+							 SELECT S.[Emp_ID]
+						      ,Replace(S.[Emp_Name],'''', '')
+                              ,Replace(S.[Emp_Email],'''','''''')
+							  ,S.[Emp_LanID]
+							  ,[EC].[fn_strSiteNameFromSiteLocation](S.[Emp_Site])
+							  ,S.[Emp_Job_Code]
+							  ,S.[Emp_Job_Description]
+							  ,S.[Emp_Program]
+							  ,S.[Sup_Emp_ID]
+							  ,Replace(S.[Sup_Name],'''', '')
+							  ,Replace(S.[Sup_Email],'''','''''')
+							  ,S.[Sup_LanID]
+							  ,S.[Sup_Job_Code]
+							  ,S.[Sup_Job_Description]
+							  ,S.[Mgr_Emp_ID]
+							  ,Replace(S.[Mgr_Name],'''', '')
+							  ,Replace(S.[Mgr_Email],'''','''''')
+							  ,S.[Mgr_LanID]
+							  ,S.[Mgr_Job_Code]
+							  ,S.[Mgr_Job_Description]
+							  ,CONVERT(nvarchar(8),S.[Start_Date],112)
+							  ,S.[Active]
+						  FROM [EC].[Employee_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy]H
+						  ON S.Emp_ID = H.Emp_ID
+						  WHERE (H.EMP_ID IS NULL and S.Emp_ID <> '')
+
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+    
+-- Populate SrMgr IDs
+BEGIN
+              UPDATE [EC].[Employee_Hierarchy]
+              SET [SrMgrLvl1_ID]=	[EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([H].[Emp_ID])		  
+	   ,[SrMgrLvl2_ID]=	[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([H].[Emp_ID])	
+	   ,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
+	FROM [EC].[Employee_Hierarchy]H
+
+     OPTION (MAXDOP 1)
+     END
+
+END --sp_Populate_Employee_Hierarchy
+GO
+
+
+
+
+--*********************************************
+
+--5b.
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_UpdateFeedMailSent' 
+)
+   DROP PROCEDURE [EC].[sp_UpdateFeedMailSent]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--    ====================================================================
+--    Author:           Jourdain Augustin
+--    Create Date:      08/23/13
+--    Description:      This procedure updates emailsent column to "True" for records from mail script. 
+--    Last Update:      02/16/2016 - Modified per tfs 1710 to capture Notification Date to support Reminder initiative.
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_UpdateFeedMailSent]
+(
+      @nvcNumID nvarchar(30)
+ 
+)
+AS
+BEGIN
+DECLARE
+@sentValue nvarchar(30),
+@intNumID int
+
+SET @sentValue = 1
+SET @intNumID = CAST(@nvcNumID as INT)
+   
+  	UPDATE [EC].[Coaching_Log]
+	   SET EmailSent = @sentValue
+	      ,NotificationDate = GetDate() 
+	WHERE CoachingID = @intNumID
+	
+END --sp_UpdateFeedMailSent
+
+
+
+GO
+
+
+
+
+--*********************************************
+
+--5c.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectCoaching4Reminder' 
+)
+   DROP PROCEDURE [EC].[sp_SelectCoaching4Reminder]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:		       Susmitha Palacherla
+--	Create Date:	   02/09/2016
+--	Description: 	   This procedure queries db for Failed Quality and LCSAT records that are past 
+--  the Coaching SLA and sends Reminders to Supervisors and or Managers.
+--  Created per TFS Change request 1710
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectCoaching4Reminder]
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
+@intHrs1 int,
+@intHrs2 int
+
+-- Variables used for the diferent reminder periods.
+-- Quality reminders are set at 48 hrs
+-- OMR reminders are set at 72 hrs
+
+SET @intHrs1 = 48 
+SET @intHrs2 = 72
+
+SET @nvcSQL1 = ';WITH TempMain AS 
+        (select DISTINCT x.strFormID 
+        ,x.numID 
+        ,x.strEmpID 
+        ,x.strStatus 
+        ,x.strSubCoachingSource
+       	,x.strvalue 
+        ,x.Remind 
+        ,x.RemindCC 
+		,x.NotificationDate	
+		,x.ReminderSent	
+		,x.ReminderDate	
+		,x.ReminderCount   
+		,x.ReassignDate   
+FROM 
+	
+-- Verint-GDIT Logs
+
+(SELECT   cl.CoachingID	numID	
+		,cl.FormName	strFormID
+		,cl.EmpID strEmpID
+		,s.Status strStatus
+		,so.SubCoachingSource strSubCoachingSource
+		,clr.value strValue
+		,cl.NotificationDate	NotificationDate
+		,cl.ReminderSent	ReminderSent
+		,cl.ReminderDate	ReminderDate
+		,cl.ReminderCount   ReminderCount
+		,cl.ReassignDate    ReassignDate 
+		, CASE
+		WHEN (ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) >  '''+CONVERT(VARCHAR,@intHrs1)+''' ) THEN ''Sup''
+		WHEN (ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) >'''+CONVERT(VARCHAR,@intHrs1)+''' )THEN ''Sup''
+		ELSE ''NA'' END Remind
+		,CASE
+		WHEN (ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' ) THEN ''Mgr''
+		WHEN (ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' )THEN ''Mgr/SrMgr''
+		ELSE ''NA'' END RemindCC
+FROM  [EC].[Coaching_Log] cl WITH (NOLOCK)
+ JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+ ON cl.coachingid = clr.coachingid JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID
+WHERE cl.Statusid = 6
+AND cl.SourceID = 223
+AND cl.EmailSent = ''True''
+AND clr.Value   = ''Did not meet goal''
+AND ((ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' )OR
+(ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' ))'
+
+-- LCS OMR Logs
+
+SET @nvcSQL2 = ' UNION
+SELECT   cl.CoachingID	numID	
+			,cl.FormName	strFormID
+		,cl.EmpID strEmpID
+		,s.Status strStatus
+		,so.SubCoachingSource strSubCoachingSource
+		,clr.value strValue
+		,cl.NotificationDate	NotificationDate
+		,cl.ReminderSent	ReminderSent
+		,cl.ReminderDate	ReminderDate
+		,cl.ReminderCount   ReminderCount
+		,cl.ReassignDate    ReassignDate 
+		, CASE
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''') THEN ''Mgr''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 5 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Mgr''
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Sup''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 6 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Sup''
+		ELSE ''NA'' END Remind
+	  , CASE
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''') THEN ''SrMgr''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 5 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''SrMgr''
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Mgr''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 6 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Mgr/SrMgr''
+		ELSE ''NA'' END RemindCC
+FROM  [EC].[Coaching_Log] cl WITH (NOLOCK)
+ JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+ ON cl.coachingid = clr.coachingid JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID
+WHERE clr.SubCoachingreasonID = 34 
+AND ((cl.Statusid = 5 AND clr.Value   = ''Research Required'') OR 
+(cl.Statusid = 6 AND clr.Value   = ''Opportunity''))
+AND cl.EmailSent = ''True''
+AND ((ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')OR
+(ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')OR
+(ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+'''))'
+
+
+SET @nvcSQL3 = 
+ ' ) x )SELECT 
+         numid CoachingID
+        ,strFormID
+		,strStatus
+		,strSubCoachingSource
+		,strValue
+		,CASE WHEN Remind = ''Sup'' THEN eh.Sup_Email	
+		      WHEN Remind = ''Mgr'' THEN eh.Mgr_Email
+		      ELSE '''' END strToEmail
+		,CASE WHEN RemindCC = ''Mgr'' THEN eh.Mgr_Email	
+		      WHEN RemindCC = ''SrMgr'' THEN [EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		      WHEN RemindCC = ''Mgr/SrMgr'' THEN eh.Mgr_Email + '';'' +[EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		      ELSE '''' END strCCEmail
+		 ,NotificationDate	
+		,ReminderSent	
+		,ReminderDate	
+		,ReminderCount   
+		,ReassignDate
+	   	FROM TempMain T JOIN [EC].[Employee_Hierarchy] eh 
+	   	ON T.strEmpID  = eh.Emp_ID
+	   	WHERE (eh.Sup_Email is not NULL OR eh.Sup_Email <> '''' OR eh.Mgr_Email is not NULL OR eh.Mgr_Email <> '''')
+	   	ORDER BY NotificationDate desc'
+
+        
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
+EXEC (@nvcSQL)	
+	    
+--PRINT @nvcsql  
+	    
+END --sp_SelectCoaching4Reminder
+
+
+GO
+
+
+
+
+
+
+
+--*********************************************
+
+--5d.
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_UpdateReminderMailSent' 
+)
+   DROP PROCEDURE [EC].[sp_UpdateReminderMailSent]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:      02/16/2016
+--    Description:      This procedure updates emailsent column to "True" for records from mail script. 
+--    Last Update:      02/16/2016 - Modified per tfs 1710 to capture Notification Date to support Reminder initiative.
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_UpdateReminderMailSent]
+(
+      @nvcNumID nvarchar(30)
+ 
+)
+AS
+BEGIN
+DECLARE
+@sentValue nvarchar(30),
+@intNumID int
+
+SET @sentValue = 1
+SET @intNumID = CAST(@nvcNumID as INT)
+   
+  	UPDATE [EC].[Coaching_Log]
+	   SET ReminderSent = @sentValue
+	      ,ReminderDate = GetDate() 
+	      ,ReminderCount = ReminderCount + 1
+	WHERE CoachingID = @intNumID
+	
+END --sp_UpdateReminderMailSent
+
+
+GO
+
+
+
+--*********************************************
