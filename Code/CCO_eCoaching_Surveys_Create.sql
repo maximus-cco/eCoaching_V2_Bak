@@ -1,8 +1,13 @@
 /*
-eCoaching_Surveys_Create(01).sql
-Last Modified Date: 09/25/2015
+eCoaching_Surveys_Create(02).sql
+Last Modified Date: 02/26/2016
 Last Modified By: Susmitha Palacherla
 
+Version 02: 02/26/2016
+Initial revision. TFS 2052.  Setup Survey Reminders 
+Added column [NotificationDate] to Table Survey_Response_Header
+Modified procedure #5 sp_UpdateSurveyMailSent to capture Notification date
+Added new procedure #10 sp_SelectSurvey4Reminder to select surveys for reminders
 
 Version 01: 09/25/2015
 Initial revision. TFS 549. CSR Survey Setup.
@@ -35,7 +40,7 @@ Initial revision. TFS 549. CSR Survey Setup.
 7. Create PROCEDURE [EC].[sp_Select_Responses_For_Survey]
 8. Create PROCEDURE [EC].[sp_Select_Responses_By_Question] 
 9. Create PROCEDURE [EC].[sp_Select_SurveyDetails_By_SurveyID]
-
+10. Create PROCEDURE [EC].[sp_SelectSurvey4Reminder]
 
 
 ********************************************************************************
@@ -401,6 +406,7 @@ CREATE TABLE [EC].[Survey_Response_Header](
 	[Status] [nvarchar](20) NULL,
 	[InactivationDate] [datetime] NULL,
 	[InactivationReason] [nvarchar](100) NULL,
+                  [NotificationDate] [datetime] NULL,
  CONSTRAINT [SurveyID] PRIMARY KEY CLUSTERED 
 (
 	[SurveyID] ASC
@@ -1334,6 +1340,7 @@ IF EXISTS (
 )
    DROP  PROCEDURE [EC].[sp_UpdateSurveyMailSent] 
 GO
+
 SET ANSI_NULLS ON
 GO
 
@@ -1346,7 +1353,8 @@ GO
 --    Author:           Susmitha Palacherla
 --    Create Date:      08/27/15
 --    Description:      This procedure updates EmailSent column to "True" for records from Survey mail script. 
-
+--    Last Update:      02/26/2016 - Modified per tfs 2502 to capture Notification Date to support Reminder initiative.
+--    
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_UpdateSurveyMailSent]
 (
@@ -1364,6 +1372,7 @@ SET @intSurveyID = CAST(@nvcSurveyID as INT)
    
   	UPDATE [EC].[Survey_Response_Header]
 	   SET EmailSent = @SentValue
+          ,NotificationDate = GetDate() 
 	WHERE SurveyID = @intSurveyID
 	
 END --sp_UpdateSurveyMailSent
@@ -1371,6 +1380,8 @@ END --sp_UpdateSurveyMailSent
 
 
 GO
+
+
 
 
 
@@ -1625,4 +1636,61 @@ GO
 --*****************************************************************
 
 
+--10. Create PROCEDURE [EC].[sp_SelectSurvey4Reminder]
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectSurvey4Reminder' 
+)
+   DROP  PROCEDURE [EC].[sp_SelectSurvey4Reminder] 
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:		       Susmitha Palacherla
+--	Create Date:	   2/25/2016
+--	Description: 	   This procedure queries db for newly added Survey records to send out notification.
+--  Created  per TFS 2052 to setup reminders for CSR survey.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectSurvey4Reminder]
+AS
+
+BEGIN
+DECLARE	
+@intHrs int,
+@nvcSQL nvarchar(max)
+
+
+SET @intHrs = 48 
+ 
+SET @nvcSQL = 'SELECT   SRH.SurveyID	SurveyID	
+		,SRH.FormName	FormName
+		,SRH.Status		Status
+		,eh.Emp_Email	EmpEmail
+		,eh.Emp_Name	EmpName
+		,SRH.CreatedDate	CreatedDate
+		,CONVERT(VARCHAR(10), DATEADD(dd,5,SRH.CreatedDate) , 101) ExpiryDate
+		,SRH.EmailSent	EmailSent
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Survey_Response_Header] SRH WITH (NOLOCK)
+ON eh.Emp_ID = SRH.EmpID
+WHERE  SRH.[Status]= ''Active''
+AND DATEDIFF(HH,SRH.[NotificationDate],GetDate()) > '''+CONVERT(VARCHAR,@intHrs)+''' 
+Order By SRH.SurveyID'
+
+EXEC (@nvcSQL)	
+	    
+END --sp_SelectSurvey4Reminder
+GO
+
+--*****************************************************************
 
