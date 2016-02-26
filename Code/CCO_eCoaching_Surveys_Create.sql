@@ -1,7 +1,12 @@
 /*
-eCoaching_Surveys_Create(02).sql
+eCoaching_Surveys_Create(03).sql
 Last Modified Date: 02/26/2016
 Last Modified By: Susmitha Palacherla
+
+Version 03: 02/26/2016
+Additional update for TFS 2052.  Setup Survey Reminders 
+Modified  procedure #10 sp_SelectSurvey4Reminder to use status of 
+'open' in selection criteria
 
 Version 02: 02/26/2016
 Initial revision. TFS 2052.  Setup Survey Reminders 
@@ -1645,10 +1650,8 @@ IF EXISTS (
    WHERE SPECIFIC_SCHEMA = N'EC'
      AND SPECIFIC_NAME = N'sp_SelectSurvey4Reminder' 
 )
-   DROP  PROCEDURE [EC].[sp_SelectSurvey4Reminder] 
+   DROP PROCEDURE [EC].[sp_SelectSurvey4Reminder]
 GO
-
-
 
 SET ANSI_NULLS ON
 GO
@@ -1659,7 +1662,7 @@ GO
 --	====================================================================
 --	Author:		       Susmitha Palacherla
 --	Create Date:	   2/25/2016
---	Description: 	   This procedure queries db for newly added Survey records to send out notification.
+--	Description: This procedure queries db for surveys active after 48 hrs to send reminders.
 --  Created  per TFS 2052 to setup reminders for CSR survey.
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectSurvey4Reminder]
@@ -1683,7 +1686,7 @@ SET @nvcSQL = 'SELECT   SRH.SurveyID	SurveyID
 		,SRH.EmailSent	EmailSent
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Survey_Response_Header] SRH WITH (NOLOCK)
 ON eh.Emp_ID = SRH.EmpID
-WHERE  SRH.[Status]= ''Active''
+WHERE  SRH.[Status]= ''Open''
 AND DATEDIFF(HH,SRH.[NotificationDate],GetDate()) > '''+CONVERT(VARCHAR,@intHrs)+''' 
 Order By SRH.SurveyID'
 
