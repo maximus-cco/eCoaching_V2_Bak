@@ -49,9 +49,6 @@ For j = 0 to jMax
 	strExpiryDate= mainArray(6,j)
 
 
-	'configure the subject line
-	strSubject = "Follow-up: eCoaching Log Survey "  '& " (" & strPerson & ")"
-
 	'send mail
 	SendMail strEmail, strSubject, strFormName, strPerson, SurveyID, strExpiryDate
 
@@ -77,7 +74,7 @@ Dim mailBody
 Dim i
 
 
-                strSubject = "Follow-up: eCoaching Log Survey "  '& " (" & strPerson & ")"
+                strSubject = "eCoaching Log Survey Follow-up"  '& " (" & strPerson & ")"
                 mailbody = "Please take time to complete this survey regarding a coaching session for "  & strFormName & ". This survey will expire on "  & strExpiryDate & "."
                 strCtrMessage = (mailBody)
             
@@ -162,7 +159,18 @@ End With
 ' Apply the settings to the message.
 With iMsg
     Set .Configuration = iConf
+
+   'set mail importance
+     ' For Outlook 2003:
+          .Fields.Item( "urn:schemas:mailheader:X-MSMail-Priority" ) =  "High"     
+      ' For Outlook 2003 also:
+          .Fields.Item( "urn:schemas:mailheader:X-Priority" ) =  2 
+      ' For Outlook Express:
+          .Fields.Item( "urn:schemas:httpmail:importance" ) =  2 
+          .Fields.Update
+
     .MimeFormatted = True
+
 'change to line to ToAddress to go to the correct destination and uncomment the .CC line
     .To =  ToAddress '"susmitha.palacherla@gdit.com" 
     .From = "VIPDev@GDIT.com"
