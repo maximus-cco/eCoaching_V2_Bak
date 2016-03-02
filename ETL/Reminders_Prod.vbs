@@ -171,7 +171,18 @@ End With
 ' Apply the settings to the message.
 With iMsg
     Set .Configuration = iConf
+
+   'set mail importance
+     ' For Outlook 2003:
+          .Fields.Item( "urn:schemas:mailheader:X-MSMail-Priority" ) =  "High"     
+      ' For Outlook 2003 also:
+          .Fields.Item( "urn:schemas:mailheader:X-Priority" ) =  2 
+      ' For Outlook Express:
+          .Fields.Item( "urn:schemas:httpmail:importance" ) =  2 
+          .Fields.Update
+
     .MimeFormatted = True
+
 'change to line to ToAddress to go to the correct destination and uncomment the .CC line
     .To =  ToAddress '"susmitha.palacherla@gdit.com" 
     .Cc = CCAddress 
