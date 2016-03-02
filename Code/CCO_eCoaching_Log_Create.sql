@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(42).sql
-Last Modified Date: 2/17/2016
+eCoaching_Log_Create(43).sql
+Last Modified Date: 3/2/2016
 Last Modified By: Susmitha Palacherla
+
+
+Version 43: 3/2/2016
+1. Updated SP # 50 to reset Reminder attributes for OMR logs.
 
 
 Version 42: 2/17/2016
@@ -5057,13 +5061,15 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/2012
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page for Outlier records. 
---    Last Update:    09/17/2015
---    Updated per TFS 644 to add IAE and IAT reports.
-
+--    Updated per TFS 644 to add IAE and IAT reports - 09/17/2015
+--    Upadted per TFS 2145 to reset Email reminder attributes for OMR logs  - 3/2/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
@@ -5139,7 +5145,10 @@ SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus
 		MgrReviewAutoDate = @dtmReviewAutoDate,
 		MgrReviewManualDate = @dtmReviewManualDate,
 		MgrNotes = @nvcReviewerNotes,		   
-		txtReasonNotCoachable = @nvctxtReasonNotCoachable 
+		txtReasonNotCoachable = @nvctxtReasonNotCoachable, 
+		ReminderSent = 0,
+        ReminderDate = NULL,
+        ReminderCount = 0
 	WHERE FormName = @nvcFormID
         OPTION (MAXDOP 1)
 
@@ -5196,7 +5205,14 @@ END CATCH
 
 
 END --sp_Update5Review_Coaching_Log
+
+
+
+
+
+
 GO
+
 
 
 
