@@ -15,6 +15,12 @@ Public Class review
         "<a href='https://cco.gdit.com/bi/ReportsCatalog/TQC_ShortCall/Forms/AllItems.aspx' target='_blank'>here</a>. " &
         "Please review the calls and provide specific details on opportunities that requiring coaching."
 
+    Public Const REVIEW_OMR_SHORT_DURATION_REPORT_TEXT =
+        "CSRs are scheduled for specific times in Empower to ensure understanding of training materials presented. " &
+        "It is important to utilize the timeframe allotted to successfully understand the training content. " &
+        "Please be aware that the scheduled timeframe is a metric which has been agreed upon by CCO and CMS. " &
+        "You should use all or the majority of the scheduled time to review each eLearning module assigned."
+
     Dim pHolder As Label
     Dim panelHolder As Panel
     Dim pHolder2 As Label
@@ -291,9 +297,10 @@ Public Class review
 
                         Dim omrIae As Label = ListView1.Items(0).FindControl("LabelOmrIae")
                         Dim omrIat As Label = ListView1.Items(0).FindControl("LabelOmrIat")
+                        Dim omrShortDuration As Label = ListView1.Items(0).FindControl("LabelShortDurationReport")
 
-                        ' Is it OMR/IAE (Inappropriate ARC Escalation) or OMR/IAT (Inappropriate ARC Transfer)
-                        If (pHolder2v.Text = "1" OrElse pHolder2w.Text = "1" OrElse omrIae.Text = "1" OrElse omrIat.Text = "1") Then
+                        ' Is it OMR/IAE (Inappropriate ARC Escalation) or OMR/IAT (Inappropriate ARC Transfer) or OMR/SDR (short duration in training)
+                        If (pHolder2v.Text = "1" OrElse pHolder2w.Text = "1" OrElse omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse omrShortDuration.Text = "1") Then
                             Panel37.Visible = True ' coaching required question group
                             Label138.Text = "3. Provide the details from the coaching session including action plans developed"
                             CalendarExtender4.EndDate = TodaysDate
@@ -310,12 +317,15 @@ Public Class review
                                 Label134.Text = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the supervisor did not approve or reject their CSR’s timecard before the deadline laid out in the latest "
                             End If
 
-
-                        Else ' not from IQS, not ETS/OAE/OAS, not OMR/IAE, not OMR/IAT
+                            If (omrShortDuration.Text = "1") Then
+                                HyperLink1.Text = String.Empty
+                                Label134.Text = REVIEW_OMR_SHORT_DURATION_REPORT_TEXT
+                                Label132.Text = String.Empty
+                            End If
+                        Else ' not from IQS, not ETS/OAE/OAS, not OMR/IAE, not OMR/IAT, not OMR/SDR
                             Panel25.Visible = True
                             calendarButtonExtender.EndDate = TodaysDate
                             RequiredFieldValidator3.Enabled = True
-                            'End If
                         End If
                     End If
 
