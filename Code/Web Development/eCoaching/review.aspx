@@ -223,7 +223,7 @@
                     <br />
                     <asp:Table ID="Table2" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                         <asp:TableRow>
-                            <asp:TableCell CssClass="wrapped">&nbsp;
+                            <asp:TableCell CssClass="wrapped">
                                 <asp:Label ID="txtDescriptionLabel" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
                             </asp:TableCell>
                         </asp:TableRow>
@@ -661,7 +661,7 @@
                     <br />
                     <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                         <asp:TableRow>
-                            <asp:TableCell CssClass="wrapped">&nbsp;
+                            <asp:TableCell CssClass="wrapped">
                                 <asp:Label ID="Label99" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
                             </asp:TableCell>
                         </asp:TableRow>
