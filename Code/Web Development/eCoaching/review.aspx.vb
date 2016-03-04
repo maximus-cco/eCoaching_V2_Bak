@@ -1157,6 +1157,7 @@ Public Class review
                 Dim pHolder3 As Label = ListView1.Items(0).FindControl("Label34") 'ETS / OAE
                 Dim pHolder4 As Label = ListView1.Items(0).FindControl("Label35") 'ETS / OAS
                 Dim pHolder5 As Label = ListView1.Items(0).FindControl("Label36") 'Low CSAT
+                Dim omrShortDuration As Label = ListView1.Items(0).FindControl("LabelShortDurationReport") ' OMR / SDR
 
 
                 Select Case pHolder7.Text ' Module check
@@ -1169,8 +1170,8 @@ Public Class review
 
                         End If
 
-                        '  OMR/IAE, OMR/IAT, ETS/OAE
-                        If (omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1") Then
+                        '  OMR/IAE, OMR/IAT, ETS/OAE, OMR/SDR
+                        If (omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1" OrElse omrShortDuration.Text = "1") Then
 
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
 
