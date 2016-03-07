@@ -1,7 +1,10 @@
 /*
-eCoaching_Maintenance_Create(14).sql
-Last Modified Date: 03/2/2016
+eCoaching_Maintenance_Create(15).sql
+Last Modified Date: 03/4/2016
 Last Modified By: Susmitha Palacherla
+
+Version 15: 03/4/2016
+1.  Updated SP #2 [EC].[sp_SelectCoaching4Contact] for TFS 1732 to add new  Source for SDR Feed 210.
 
 Version14: 03/2/2016
 1. Updated Sp#6   [EC].[sp_SelectCoaching4Reminder] to restrict to rwo reminders per status per tfs 2145.
@@ -201,13 +204,16 @@ GO
 
 
 
+
+
+
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/13
 --	Description: 	   This procedure queries db for feed records to send out mail
--- Last Modified Date: 09/21/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per TFS 644 to add extra attribute 'OMRARC' to support IAE, IAT Feeds
+-- Modified per TFS 644 to add extra attribute 'OMRARC' to support IAE, IAT Feeds -- 09/21/2015
+-- Modified per TFS 1732 to add Source 210 for SDR feed -- 3/4/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -254,7 +260,7 @@ ON s.StatusID = cl.StatusID JOIN [EC].[DIM_Source] so
 ON so.SourceID = cl.SourceID JOIN [EC].[DIM_Module] mo
 ON mo.ModuleID = cl.ModuleID
 WHERE S.Status not in (''Completed'',''Inactive'')
-AND cl.SourceID in (211,212,221,222,223,224,230)
+AND cl.SourceID in (210,211,212,221,222,223,224,230)
 AND cl.EmailSent = ''False''
 AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
 OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL)
@@ -269,10 +275,9 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectCoaching4Contact
 
-
-
-
 GO
+
+
 
 
 

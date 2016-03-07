@@ -1,7 +1,11 @@
 /*
-File: eCoaching_Functions.sql (16)
+File: eCoaching_Functions.sql (17)
 Last Modified By: Susmitha Palacherla
-Date: 02/19/2016
+Date: 3/4/2016
+
+
+Version 17,  3/4/2016
+Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add code SDR per TFS 1732.
 
 Version 16: 02/19/2016
 1. Added the following fn #37 to support the Email reminders per TFS 1710.
@@ -472,13 +476,14 @@ GO
 
 
 
+
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
 -- Description:	  Given the 3 letter Outlier Report code returns the Sub coaching reason for the OMR log.
--- Last Modified Date: 09/17/2015
+-- Last Modified Date: 03/1/2016
 -- last Modified By: Susmitha Palacherla
--- Modified per TFS 644 to add IAT and IAE Reports.
+-- Modified per TFS 1732 to add SDR Report.
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -512,6 +517,7 @@ BEGIN
 			WHEN N'TRN' THEN 38 
 			WHEN N'TR2' THEN 109  
 			WHEN N'IAT' THEN 231
+			WHEN N'SDR' THEN 232
         ELSE -1
       END
     ELSE
@@ -523,7 +529,9 @@ END  -- fn_intSubCoachReasonIDFromRptCode()
 
 
 
+
 GO
+
 
 
 

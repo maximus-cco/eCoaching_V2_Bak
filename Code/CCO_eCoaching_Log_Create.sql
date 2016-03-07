@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(43).sql
-Last Modified Date: 3/2/2016
+eCoaching_Log_Create(44).sql
+Last Modified Date: 3/4/2016
 Last Modified By: Susmitha Palacherla
+
+
+Version 44: 3/4/2016
+1. Updated SP # 50 to add SDR to Sup update workflow.
 
 
 Version 43: 3/2/2016
@@ -4438,6 +4442,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -4511,7 +4517,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		cl.NGDActivityID	strNGDActivityID,
 		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END "Customer Service Escalation",
 		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
-		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
+		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL AND cc.SDR is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
 		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
 		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
 		CASE WHEN cc.OMRIAE is Not NULL Then 1 ELSE 0 END	"OMR / IAE",
@@ -4570,11 +4576,9 @@ EXEC (@nvcSQL)
 END --sp_SelectReviewFrom_Coaching_Log
 
 
-
-
-
-
 GO
+
+
 
 
 
@@ -5064,12 +5068,15 @@ GO
 
 
 
+
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/2012
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page for Outlier records. 
 --    Updated per TFS 644 to add IAE and IAT reports - 09/17/2015
---    Upadted per TFS 2145 to reset Email reminder attributes for OMR logs  - 3/2/2016
+--    Updated per TFS 2145 to reset Email reminder attributes for OMR logs  - 3/2/2016
+--    Updated per TFS 1732 to support SDR feed  - 3/4/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
@@ -5107,7 +5114,7 @@ SET @nvcCat = (select RTRIM(LEFT(strReportCode,LEN(strReportCode)-8)) from EC.Co
 
 
 --IF LEFT(@nvcCat,LEN(@nvcCat)-8) IN ('OAE','OAS')
-  IF @nvcCat IN ('OAE','OAS', 'IAE','IAT')
+  IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR')
 
 BEGIN      
 UPDATE 	EC.Coaching_Log
@@ -5206,12 +5213,9 @@ END CATCH
 
 END --sp_Update5Review_Coaching_Log
 
-
-
-
-
-
 GO
+
+
 
 
 
