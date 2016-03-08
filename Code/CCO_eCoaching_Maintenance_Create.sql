@@ -1,7 +1,11 @@
 /*
-eCoaching_Maintenance_Create(15).sql
-Last Modified Date: 03/4/2016
+eCoaching_Maintenance_Create(16).sql
+Last Modified Date: 03/8/2016
 Last Modified By: Susmitha Palacherla
+
+
+Version14: 03/8/2016
+1. Updated Sp#6   [EC].[sp_SelectCoaching4Reminder] to replace Hierarchy mgr with Review mgr for LCS Mgr recipients per TFS 2182
 
 Version 15: 03/4/2016
 1.  Updated SP #2 [EC].[sp_SelectCoaching4Contact] for TFS 1732 to add new  Source for SDR Feed 210.
@@ -627,11 +631,13 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_SelectCoaching4Reminder]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 --	====================================================================
@@ -641,6 +647,7 @@ GO
 --  the Coaching SLA and sends Reminders to Supervisors and or Managers.
 --  Initial revision per TFS Change request 1710 - 02/09/2016
 --  Updated to limit to 2 reminders per status per TFS 2145 - 3/2/2016
+--  Updated to replace Hierarchy mgr with Review mgr for LCS Mgr recipients per TFS 2182 - 3/8/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Reminder]
 AS
@@ -668,6 +675,7 @@ SET @nvcSQL1 = ';WITH TempMain AS
         ,x.strStatus 
         ,x.strSubCoachingSource
        	,x.strvalue 
+       	,x.strMgr
         ,x.Remind 
         ,x.RemindCC 
 		,x.NotificationDate	
@@ -685,6 +693,7 @@ FROM
 		,s.Status strStatus
 		,so.SubCoachingSource strSubCoachingSource
 		,clr.value strValue
+		,ISNULL(cl.MgrID,''999999'') strMgr
 		,cl.NotificationDate	NotificationDate
 		,cl.ReminderSent	ReminderSent
 		,cl.ReminderDate	ReminderDate
@@ -708,7 +717,7 @@ AND cl.SourceID = 223
 AND cl.EmailSent = ''True''
 AND clr.Value   = ''Did not meet goal''
 AND ((ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' )OR
-(ReminderSent = ''True'' AND [ReminderCount] <2 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' ))'
+(ReminderSent = ''True'' AND [ReminderCount] < 2 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''' ))'
 
 -- LCS OMR Logs
 
@@ -719,20 +728,21 @@ SELECT   cl.CoachingID	numID
 		,s.Status strStatus
 		,so.SubCoachingSource strSubCoachingSource
 		,clr.value strValue
+		,ISNULL(cl.MgrID,''999999'') strMgr
 		,cl.NotificationDate	NotificationDate
 		,cl.ReminderSent	ReminderSent
 		,cl.ReminderDate	ReminderDate
 		,cl.ReminderCount   ReminderCount
 		,cl.ReassignDate    ReassignDate 
 		, CASE
-		WHEN (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''') THEN ''Mgr''
-		WHEN (ReminderSent = ''True'' AND cl.Statusid = 5 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Mgr''
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''') THEN ''ReviewMgr''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 5 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''ReviewMgr''
 		WHEN (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Sup''
 		WHEN (ReminderSent = ''True'' AND cl.Statusid = 6 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Sup''
 		ELSE ''NA'' END Remind
 	  , CASE
-		WHEN (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''') THEN ''SrMgr''
-		WHEN (ReminderSent = ''True'' AND cl.Statusid = 5 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''SrMgr''
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''') THEN ''ReviewSrMgr''
+		WHEN (ReminderSent = ''True'' AND cl.Statusid = 5 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''ReviewSrMgr''
 		WHEN (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Mgr''
 		WHEN (ReminderSent = ''True'' AND cl.Statusid = 6 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''Mgr/SrMgr''
 		ELSE ''NA'' END RemindCC
@@ -746,7 +756,7 @@ AND ((cl.Statusid = 5 AND clr.Value   = ''Research Required'') OR
 (cl.Statusid = 6 AND clr.Value   = ''Opportunity''))
 AND cl.EmailSent = ''True''
 AND ((ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')OR
-(ReminderSent = ''True'' AND [ReminderCount] <2 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')OR
+(ReminderSent = ''True'' AND [ReminderCount] < 2 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')OR
 (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+'''))'
 
 
@@ -759,9 +769,11 @@ SET @nvcSQL3 =
 		,strValue
 		,CASE WHEN Remind = ''Sup'' THEN eh.Sup_Email	
 		      WHEN Remind = ''Mgr'' THEN eh.Mgr_Email
+		      WHEN Remind = ''ReviewMgr'' Then [EC].[fn_strEmpEmailFromEmpID](strMgr)
 		      ELSE '''' END strToEmail
 		,CASE WHEN RemindCC = ''Mgr'' THEN eh.Mgr_Email	
 		      WHEN RemindCC = ''SrMgr'' THEN [EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		      WHEN RemindCC = ''ReviewSrMgr'' THEN [EC].[fn_strSupEmailFromEmpID](strMgr)
 		      WHEN RemindCC = ''Mgr/SrMgr'' THEN eh.Mgr_Email + '';'' +[EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
 		      ELSE '''' END strCCEmail
 		 ,NotificationDate	
@@ -785,12 +797,8 @@ END --sp_SelectCoaching4Reminder
 
 
 
+
 GO
-
-
-
-
-
 
 --***************************************************************************************************************
 

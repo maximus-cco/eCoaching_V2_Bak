@@ -1,8 +1,12 @@
 /*
-File: eCoaching_Functions.sql (17)
+File: eCoaching_Functions.sql (18)
 Last Modified By: Susmitha Palacherla
-Date: 3/4/2016
+Date: 3/8/2016
 
+
+Version 18: 3/8/2016
+1. Added the following fn #38 to support Review Managers and their Sups as recipients for LCS Pending Manager reminders per TFS 2182.
+[EC].[fn_strSupEmailFromEmpID]
 
 Version 17,  3/4/2016
 Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add code SDR per TFS 1732.
@@ -2375,7 +2379,7 @@ GO
 
 /*****************************************************/
 
--- Function [EC].[fnGetMaxDateTime]
+--37.  Function [EC].[fnGetMaxDateTime]
 
 IF EXISTS (
   SELECT * 
@@ -2424,4 +2428,67 @@ END
 
 
 GO
+--**********************************************************
+
+--38. Function [EC].[fn_strSupEmailFromEmpID] 
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSupEmailFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strSupEmailFromEmpID]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 3/8/2016
+-- Description:	Given an Employee ID, fetches the Email address of the Employee's Supervisor from the  Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version : TFS 2182 for fetching Review Managers Supervisor Email for LCS Reminders.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSupEmailFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strSupEmpID nvarchar(10)
+	  ,@strSupEmail nvarchar(50)
+
+  SET @strSupEmpID = (SELECT Sup_ID
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID)
+  
+  IF     (@strSupEmpID IS NULL OR @strSupEmpID = 'Unknown')
+  SET    @strSupEmpID = N'999999'
+  
+ SET @strSupEmail = (SELECT Emp_Email
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strSupEmpID)
+  
+  IF  @strSupEmail IS NULL 
+  SET @strSupEmail = N'UnKnown'
+  
+  RETURN  @strSupEmail 
+END -- fn_strSupEmailFromEmpID
+
+
+
+GO
+
+
+
 --**********************************************************
