@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -132,6 +132,7 @@
   <ItemGroup>
     <Content Include="default.aspx" />
     <Content Include="ecllogo.html" />
+    <Content Include="images\ajax-spinner.gif" />
     <Content Include="images\eCL.jpg" />
     <Content Include="images\header-photo.jpg" />
     <Content Include="MySurvey.aspx" />
