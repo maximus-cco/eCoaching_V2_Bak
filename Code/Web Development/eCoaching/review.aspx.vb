@@ -706,7 +706,6 @@ Public Class review
         pHolder7 = ListView2.Items(0).FindControl("Label50")
 
         If ((pHolder6.Text = "1") And (pHolder7.Text = "Completed")) Then ' IQS
-
             pHolder = ListView2.Items(0).FindControl("Label100")
             pHolder.Text = "Reviewed and acknowledged Quality Monitor on"
 
@@ -714,29 +713,18 @@ Public Class review
             panelHolder.Visible = True
 
             Dim pHolder8
-
             pHolder8 = ListView2.Items(0).FindControl("Label155")
-
             If (Len(pHolder8.Text) > 0) Then
-
                 pHolder8.Text = pHolder8.Text & "&nbsp;PDT"
-
             End If
-
         Else
-            '   pHolder = ListView2.Items(0).FindControl("Label80")
-            ' pHolder.Visible = True
-
             pHolder = ListView2.Items(0).FindControl("Label100")
             pHolder.Text = "Reviewed and acknowledged coaching opportunity on"
-
-            panelHolder = ListView2.Items(0).FindControl("Panel32") 'CSR Comments/Feedback
-            panelHolder.Visible = True
-
-
         End If
 
-
+        ' TFS 2196 - Show CSR Comments/Feedback always
+        panelHolder = ListView2.Items(0).FindControl("Panel32") 'CSR Comments/Feedback
+        panelHolder.Visible = True
 
     End Sub
 
