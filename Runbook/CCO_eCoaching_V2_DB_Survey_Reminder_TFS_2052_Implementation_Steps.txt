@@ -17,8 +17,8 @@ IMPLEMENTATION SUMMARY
 
 ***************************************
 SECTION 1 - Fetch and Stage Files 
-Reminder Script for Test - Survey_Reminders_Test.vbs (changeset 33916)
-Reminder Script for Prod - Survey_Reminders_Prod.vbs (changeset 33916)
+Reminder Script for Test - Reminders_Survey_Test.vbs (changeset 33916)
+Reminder Script for Prod - Reminders_Survey_Prod.vbs (changeset 33916)
 
 SECTION 2 - Create SQL agent JOB 
 
@@ -46,12 +46,12 @@ IMPLEMENTATION DETAILS
 Fetch the following files from TFS source Control and stage accordingly.
 
 --Test
- \cms\eCoaching_V2\ETL\Survey_Reminders_Test.vbs
+ \cms\eCoaching_V2\ETL\Reminders_Survey_Test.vbs
  To
 \\vrivfssdbt02\integrationservices\Coaching\Notifications
 
 -- Prod
- \cms\eCoaching_V2\ETL\Survey_Reminders_Prod.vbs
+ \cms\eCoaching_V2\ETL\Reminders_Survey_Prod.vbs
 To
  \\vdenssdbp07\scorecard-ssis\Coaching\Notifications\
 
@@ -73,23 +73,24 @@ Owner - VNGT\sqlsscorp01
 Job Steps Tab
 
 
-Step 1- Step General Tab
+Step 1- 
+General Tab
     Step Name -Survey Reminders
    Type -Operating System (CmdExec)
 Runas - BccScrdSQLAgent
-Command - start /w wscript.exe "\\vdenssdbp07\scorecard-ssis\Coaching\Notifications\Survey_Reminders_Prod.vbs"
+Command - start /w wscript.exe "\\vdenssdbp07\scorecard-ssis\Coaching\Notifications\Reminders_Survey_Prod.vbs"
 
 
-Step 2- Step Advanced tab
+Advanced tab
 On success Quit the job reporting success
 On failure Quit the job reporting failure
 
 Job Schedules tab
 Add 3 Schedules.
 
-Eighth Run - Monthly on 10th of Every Month at 5:00 AM
-Fifteenth Run - Monthly on 17th of Every Month at 5:00 AM
-TwentySecond Run - Monthly on 24th of Every Month at 5:00 AM
+Tenth Run - Monthly on 10th of Every Month at 5:00 AM
+Seventeenth Run - Monthly on 17th of Every Month at 5:00 AM
+Twentyfourth Run - Monthly on 24th of Every Month at 5:00 AM
 
 
 
