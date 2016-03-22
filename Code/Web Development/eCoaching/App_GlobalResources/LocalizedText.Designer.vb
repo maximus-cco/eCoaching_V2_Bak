@@ -101,7 +101,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to The Quality team is asking for your help in providing feedback on your coaching experience with your supervisor. Please take a few minutes to complete this survey. The details from this survey will be used to improve the effectiveness, content and delivery of discussions regarding your performance..
+        '''  Looks up a localized string similar to The CCO Leadership team is asking for your help in providing feedback on your coaching experience. Please take a few minutes to complete this survey. The details from the surveys will be used to improve the effectiveness, content and delivery of discussions regarding your performance. Your comments and feedback will be anonymous and will not be attributed directly to your individual survey..
         '''</summary>
         Friend Shared ReadOnly Property MySurvey_Instruction() As String
             Get

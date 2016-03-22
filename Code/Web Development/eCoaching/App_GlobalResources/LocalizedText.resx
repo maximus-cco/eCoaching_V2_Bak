@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MySurvey_Instruction" xml:space="preserve">
-    <value>The Quality team is asking for your help in providing feedback on your coaching experience with your supervisor. Please take a few minutes to complete this survey. The details from this survey will be used to improve the effectiveness, content and delivery of discussions regarding your performance.</value>
+    <value>The CCO Leadership team is asking for your help in providing feedback on your coaching experience. Please take a few minutes to complete this survey. The details from the surveys will be used to improve the effectiveness, content and delivery of discussions regarding your performance. Your comments and feedback will be anonymous and will not be attributed directly to your individual survey.</value>
   </data>
   <data name="MySurvey_AdditionalComments" xml:space="preserve">
     <value>Provide additional comments below.</value>
