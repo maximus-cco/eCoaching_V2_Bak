@@ -5135,7 +5135,7 @@ SET Value = (CASE WHEN @bitisCoachingRequired = 'True' then 'Opportunity' ELSE '
   	FROM EC.Coaching_Log cl INNER JOIN EC.Coaching_Log_Reason clr
 	ON cl.CoachingID = clr.CoachingID
 	WHERE cl.FormName = @nvcFormID
-and clr.SubCoachingReasonID in (120,121,29,231)
+and clr.SubCoachingReasonID in (120,121,29,231,232)
         OPTION (MAXDOP 1)
 
 END
