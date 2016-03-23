@@ -295,7 +295,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[SubCoachingReasonID]
            ,[Value])
     SELECT cf.[CoachingID],
-           9,
+           5,
            [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
            os.[CoachReason_Current_Coaching_Initiatives]
     FROM [EC].[SDR_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
