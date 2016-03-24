@@ -1,15 +1,18 @@
 /*
-eCoaching_Log_Create(44).sql
-Last Modified Date: 3/4/2016
+eCoaching_Log_Create(45).sql
+Last Modified Date: 3/23/2016
 Last Modified By: Susmitha Palacherla
 
+Version 45: 3/23/2016
+1. Updated SP # SP#45 to support ODT feed per TFS 2283
+2. Updated SP # 50 add ODT to Sup update workflow per TFS 2283
 
 Version 44: 3/4/2016
-1. Updated SP # 50 to add SDR to Sup update workflow.
+1. Updated SP # 50 to add SDR to Sup update workflow per TFS 1732
 
 
 Version 43: 3/2/2016
-1. Updated SP # 50 to reset Reminder attributes for OMR logs.
+1. Updated SP # 50 to reset Reminder attributes for OMR logs per TFS 2145
 
 
 Version 42: 2/17/2016
@@ -4449,11 +4452,12 @@ GO
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 -- SQL split into 2 parts to overcome sql string size restriction.
--- Last Modified Date: 2/17/2016
+
 -- Last Updated By: Susmitha Palacherla
--- 1. TFS 1877 to support OMR Low CSAT logs should be viewable by hierarchy manger
--- 2. TFS 1914 to support  OMR Short Calls feed with Manager Review
--- 3. TFS 1732 to support SDR feed
+-- 1. TFS 1877 to support OMR Low CSAT logs should be viewable by hierarchy manger - 2/17/2016
+-- 2. TFS 1914 to support  OMR Short Calls feed with Manager Review - 2/17/2016
+-- 3. TFS 1732 to support SDR Training feed - 3/2/2016
+-- 4. TFS 2283 to support ODT Training feed - 3/22/2016
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4517,14 +4521,15 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		cl.NGDActivityID	strNGDActivityID,
 		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END "Customer Service Escalation",
 		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
-		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL AND cc.SDR is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
+		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL AND cc.SDR is NULL AND cc.ODT is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
 		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
 		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
 		CASE WHEN cc.OMRIAE is Not NULL Then 1 ELSE 0 END	"OMR / IAE",
 		CASE WHEN cc.OMRIAT is Not NULL Then 1 ELSE 0 END	"OMR / IAT",
 		CASE WHEN cc.OMRISQ is Not NULL Then 1 ELSE 0 END	"OMR / ISQ",
 		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
-		CASE WHEN cc.SDR is Not NULL Then 1 ELSE 0 END	"SDR",
+		CASE WHEN cc.SDR is Not NULL Then 1 ELSE 0 END	"Training / SDR",
+	    CASE WHEN cc.ODT is Not NULL Then 1 ELSE 0 END	"Training / ODT",
 		cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -4551,7 +4556,8 @@ SET @nvcSQL2 = '  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 231 THEN [clr].[Value] ELSE NULL END)	OMRIAT,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END)	OMRISQ,
-	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END)	SDR
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END)	SDR,
+     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END)	ODT
 	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
@@ -4577,10 +4583,6 @@ END --sp_SelectReviewFrom_Coaching_Log
 
 
 GO
-
-
-
-
 
 
 
@@ -5077,6 +5079,7 @@ GO
 --    Updated per TFS 644 to add IAE and IAT reports - 09/17/2015
 --    Updated per TFS 2145 to reset Email reminder attributes for OMR logs  - 3/2/2016
 --    Updated per TFS 1732 to support SDR feed  - 3/4/2016
+--    Updated per TFS 2283 to support SDR feed  - 3/22/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
@@ -5114,7 +5117,7 @@ SET @nvcCat = (select RTRIM(LEFT(strReportCode,LEN(strReportCode)-8)) from EC.Co
 
 
 --IF LEFT(@nvcCat,LEN(@nvcCat)-8) IN ('OAE','OAS')
-  IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR')
+  IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT')
 
 BEGIN      
 UPDATE 	EC.Coaching_Log
@@ -5135,7 +5138,7 @@ SET Value = (CASE WHEN @bitisCoachingRequired = 'True' then 'Opportunity' ELSE '
   	FROM EC.Coaching_Log cl INNER JOIN EC.Coaching_Log_Reason clr
 	ON cl.CoachingID = clr.CoachingID
 	WHERE cl.FormName = @nvcFormID
-and clr.SubCoachingReasonID in (120,121,29,231,232)
+and clr.SubCoachingReasonID in (120,121,29,231,232,233)
         OPTION (MAXDOP 1)
 
 END
@@ -5214,6 +5217,8 @@ END CATCH
 END --sp_Update5Review_Coaching_Log
 
 GO
+
+
 
 
 
