@@ -1,0 +1,13 @@
+<?xml version="1.0"?><DTSConfiguration><DTSConfigurationHeading><DTSConfigurationFileInfo GeneratedBy="VNGT\palasu" GeneratedFromPackageName="Training_Coaching" GeneratedFromPackageID="{5935C644-1A96-420A-9122-46D5AD971041}" GeneratedDate="3/4/2016 12:47:46 PM"/></DTSConfigurationHeading>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoaching</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>VDENSSDBP07\SCORP01,1436</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpout.gdit.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FailMessage].Properties[Value]" ValueType="String"><ConfiguredValue>Training Coaching Load failed in Prod</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FileBakPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\Training\Backups</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FilePath].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\Training\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::VarDBName].Properties[Value]" ValueType="String"><ConfiguredValue>Prod</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[CCLine]" ValueType="String"><ConfiguredValue>David.Hinman@gdit.com;Lili.Huang@gdit.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[FromLine]" ValueType="String"><ConfiguredValue>VIP@gdit.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[Subject]" ValueType="String"><ConfiguredValue>Training Coaching Load Failed</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[ToLine]" ValueType="String"><ConfiguredValue>Susmitha.Palacherla@gdit.com</ConfiguredValue></Configuration>
+</DTSConfiguration>
