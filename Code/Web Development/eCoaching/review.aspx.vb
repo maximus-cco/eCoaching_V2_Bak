@@ -21,7 +21,7 @@ Public Class review
         "Please be aware that the scheduled timeframe is a metric which has been agreed upon by CCO and CMS. " &
         "You should use all or the majority of the scheduled time to review each eLearning module assigned."
 
-    Public Const REVIEW_TRAINING_OVERDUE_TRAINING_TEXT = "You are receiving this eCL because the above training is now overdue. Please complete the training that has been assigned and provide details on the specific reasons it was overdue."
+    Public Const REVIEW_TRAINING_OVERDUE_TRAINING_TEXT = "The above training is now overdue. Please have the training completed and provide coaching on the specific reasons it was overdue."
 
     Dim pHolder As Label
     Dim panelHolder As Panel
