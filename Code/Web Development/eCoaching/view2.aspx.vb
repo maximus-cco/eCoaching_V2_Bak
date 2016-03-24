@@ -111,7 +111,7 @@ Public Class view2
             Case Else
                 Label26.Text = "Welcome to the eCL Dashboard"
 
-                Dim jobCode = Label6a.Text.Trim().ToUpper()
+                Dim jobCode = UCase(Label6a.Text).Trim()
                 If (InStr(1, jobCode, "40", 1) > 0 OrElse InStr(1, jobCode, "WTTR", 1) > 0 OrElse InStr(1, jobCode, "WTTI", 1) > 0) Then
                     Label26.Text = "Welcome to the Supervisor Dashboard"
                 End If

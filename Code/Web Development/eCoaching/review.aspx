@@ -311,7 +311,8 @@
                     <asp:Label ID="Label35" runat="server" Text='<%# Eval("ETS / OAS") %>' Visible="false" />
                     <asp:Label ID="Label36" runat="server" Text='<%# Eval("LCS") %>' Visible="false" />
                     <asp:Label ID="LabelOmrIsq" runat="server" Text='<%# Eval("OMR / ISQ") %>' Visible="false" />
-                    <asp:Label ID="LabelShortDurationReport" runat="server" Text='<%# Eval("SDR")%>' Visible="false" />
+                    <asp:Label ID="LabelShortDurationReport" runat="server" Text='<%# Eval("Training / SDR")%>' Visible="false" />
+                    <asp:Label ID="LabelOverDueTraining" runat="server" Text='<%# Eval("Training / ODT")%>' Visible="false" />
                     <asp:Label ID="Label126" runat="server" Text='<%# Eval("isCoachingRequired") %>' Visible="false" />
                     <asp:Label ID="Label107b" runat="server" Text='<%# Eval("MgrReviewManualDate") %>' Visible="false" />
                     <asp:Label ID="Label148" runat="server" Text='<%# Eval("SupReviewedAutoDate") %>' Visible="false" />

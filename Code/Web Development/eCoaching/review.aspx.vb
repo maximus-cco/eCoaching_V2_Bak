@@ -15,11 +15,13 @@ Public Class review
         "<a href='https://cco.gdit.com/bi/ReportsCatalog/TQC_ShortCall/Forms/AllItems.aspx' target='_blank'>here</a>. " &
         "Please review the calls and provide specific details on opportunities that requiring coaching."
 
-    Public Const REVIEW_OMR_SHORT_DURATION_REPORT_TEXT =
+    Public Const REVIEW_TRAINING_SHORT_DURATION_REPORT_TEXT =
         "CSRs are scheduled for specific times in Empower to ensure understanding of training materials presented. " &
         "It is important to utilize the timeframe allotted to successfully understand the training content. " &
         "Please be aware that the scheduled timeframe is a metric which has been agreed upon by CCO and CMS. " &
         "You should use all or the majority of the scheduled time to review each eLearning module assigned."
+
+    Public Const REVIEW_TRAINING_OVERDUE_TRAINING_TEXT = "You are receiving this eCL because the above training is now overdue. Please complete the training that has been assigned and provide details on the specific reasons it was overdue."
 
     Dim pHolder As Label
     Dim panelHolder As Panel
@@ -297,10 +299,12 @@ Public Class review
 
                         Dim omrIae As Label = ListView1.Items(0).FindControl("LabelOmrIae")
                         Dim omrIat As Label = ListView1.Items(0).FindControl("LabelOmrIat")
-                        Dim omrShortDuration As Label = ListView1.Items(0).FindControl("LabelShortDurationReport")
+                        Dim trainingShortDuration As Label = ListView1.Items(0).FindControl("LabelShortDurationReport")
+                        Dim trainingOverdue As Label = ListView1.Items(0).FindControl("LabelOverDueTraining")
 
-                        ' Is it OMR/IAE (Inappropriate ARC Escalation) or OMR/IAT (Inappropriate ARC Transfer) or OMR/SDR (short duration in training)
-                        If (pHolder2v.Text = "1" OrElse pHolder2w.Text = "1" OrElse omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse omrShortDuration.Text = "1") Then
+
+                        ' Is it OMR/IAE (Inappropriate ARC Escalation) or OMR/IAT (Inappropriate ARC Transfer) or Training/SDR (short duration in training) or Training/ODT (Overdue Training)
+                        If (pHolder2v.Text = "1" OrElse pHolder2w.Text = "1" OrElse omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse trainingShortDuration.Text = "1" OrElse trainingOverdue.Text = "1") Then
                             Panel37.Visible = True ' coaching required question group
                             Label138.Text = "3. Provide the details from the coaching session including action plans developed"
                             CalendarExtender4.EndDate = TodaysDate
@@ -317,12 +321,19 @@ Public Class review
                                 Label134.Text = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the supervisor did not approve or reject their CSR’s timecard before the deadline laid out in the latest "
                             End If
 
-                            If (omrShortDuration.Text = "1") Then
+                            If (trainingShortDuration.Text = "1") Then
                                 HyperLink1.Text = String.Empty
-                                Label134.Text = REVIEW_OMR_SHORT_DURATION_REPORT_TEXT
+                                Label134.Text = REVIEW_TRAINING_SHORT_DURATION_REPORT_TEXT
                                 Label132.Text = String.Empty
                             End If
-                        Else ' not from IQS, not ETS/OAE/OAS, not OMR/IAE, not OMR/IAT, not OMR/SDR
+
+                            ' Overdue Training
+                            If (trainingOverdue.Text = "1") Then
+                                HyperLink1.Text = String.Empty
+                                Label134.Text = REVIEW_TRAINING_OVERDUE_TRAINING_TEXT
+                                Label132.Text = String.Empty
+                            End If
+                        Else ' not from IQS, not ETS/OAE/OAS, not OMR/IAE, not OMR/IAT, not Training/SDR, not Training/ODT
                             Panel25.Visible = True
                             calendarButtonExtender.EndDate = TodaysDate
                             RequiredFieldValidator3.Enabled = True
@@ -1145,8 +1156,8 @@ Public Class review
                 Dim pHolder3 As Label = ListView1.Items(0).FindControl("Label34") 'ETS / OAE
                 Dim pHolder4 As Label = ListView1.Items(0).FindControl("Label35") 'ETS / OAS
                 Dim pHolder5 As Label = ListView1.Items(0).FindControl("Label36") 'Low CSAT
-                Dim omrShortDuration As Label = ListView1.Items(0).FindControl("LabelShortDurationReport") ' OMR / SDR
-
+                Dim trainingShortDuration As Label = ListView1.Items(0).FindControl("LabelShortDurationReport") ' Training / SDR
+                Dim trainingOverdue As Label = ListView1.Items(0).FindControl("LabelOverDueTraining") ' Training / ODT
 
                 Select Case pHolder7.Text ' Module check
 
@@ -1155,16 +1166,12 @@ Public Class review
                         ' Current Coaching Initiative, OMR / Exception, Low CSAT
                         If (pHolder1.Text = "1" OrElse pHolder2.Text = "1" OrElse pHolder5.Text = "1") Then
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
-
                         End If
 
-                        '  OMR/IAE, OMR/IAT, ETS/OAE, OMR/SDR
-                        If (omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1" OrElse omrShortDuration.Text = "1") Then
-
+                        '  OMR/IAE, OMR/IAT, ETS/OAE, Training/SDR, Training/ODT
+                        If (omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1" OrElse trainingShortDuration.Text = "1" OrElse trainingOverdue.Text = "1") Then
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
-
                         End If
-
 
                     Case "Supervisor"
 

@@ -100,7 +100,7 @@ Public Class review2
         'End If
 
         Dim eclUser As User = Session("eclUser")
-        m_strUserJobCode = eclUser.JobCode.Trim().ToUpper()
+        m_strUserJobCode = UCase(eclUser.JobCode).Trim()
         m_strUserEmployeeID = Session("eclUser").EmployeeID
 
         m_strEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("EmployeeID"), Label).Text)

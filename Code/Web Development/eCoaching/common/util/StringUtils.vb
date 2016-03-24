@@ -3,7 +3,7 @@
 Public Module StringUtils
 
     Public Function GetSafeString(obj As Object) As String
-        Return If(obj Is Nothing OrElse IsDBNull(obj), String.Empty, obj.ToString().Trim)
+        Return If(obj Is Nothing OrElse IsDBNull(obj), String.Empty, obj.ToString().Trim())
     End Function
 
     Public Function Truncate(str As String, maxLength As Integer) As String

@@ -49,8 +49,8 @@ Public Class MySurveyDBAccess
                 question.DisplayOrder = row("DisplayOrder")
 
                 Dim description As String = row("Description")
-                question.QuestionLabel = (From q In description.Split("|") Select q).ToList().ElementAt(0).Trim
-                question.TextBoxLabel = (From q In description.Split("|") Select q).ToList().ElementAt(1).Trim
+                question.QuestionLabel = (From q In description.Split("|") Select q).ToList().ElementAt(0).Trim()
+                question.TextBoxLabel = (From q In description.Split("|") Select q).ToList().ElementAt(1).Trim()
 
                 question.SurveyID = surveyID
 

@@ -22,7 +22,7 @@ Public Class HistoricalDashboardHandler
             Return False
         End If
 
-        Dim jobCode As String = eclUser.JobCode.Trim
+        Dim jobCode As String = eclUser.JobCode.Trim()
         Return Not jobCode.EndsWith("40")
     End Function
 
