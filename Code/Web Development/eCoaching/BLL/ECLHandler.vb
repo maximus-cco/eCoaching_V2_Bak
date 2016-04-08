@@ -1,11 +1,16 @@
 ﻿Public Class ECLHandler
+    Private userDBAccess As UserDBAccess
+
+    Public Sub New()
+        userDBAccess = New UserDBAccess()
+    End Sub
 
     Public Function IsNewSubmissionsAccessAllowed(eclUser As User, arc As Int32)
         If eclUser Is Nothing OrElse String.IsNullOrWhiteSpace(eclUser.JobCode) Then
             Return False
         End If
 
-        Dim jobCode As String = eclUser.JobCode.Trim.ToUpper
+        Dim jobCode As String = UCase(eclUser.JobCode.Trim())
         ' All users other than non-ARC CSRs and HRs have access.
         If ((IsCSRUser(eclUser) AndAlso arc = 0) OrElse IsHRUser(eclUser)) Then
             Return False
@@ -34,7 +39,7 @@
         End If
 
         Dim retValue = False
-        Dim jobCode As String = eclUser.JobCode.Trim.ToUpper
+        Dim jobCode As String = UCase(eclUser.JobCode.Trim())
 
         ' All users with jobcode matching the following criteria have access
         Select Case True
@@ -50,15 +55,13 @@
                  jobCode.StartsWith("WPSM"),
                  jobCode.StartsWith("WEEX"),
                  jobCode.StartsWith("WISY"),
-                 jobCode.StartsWith("WPWL51"),
-                 jobCode.StartsWith("WHER"),
-                 jobCode.StartsWith("WHHR"),
-                 jobCode.StartsWith("WHRC")
+                 jobCode.StartsWith("WPWL51")
 
                 retValue = True
         End Select
 
-        Return retValue
+        ' HR Users also have access
+        Return retValue OrElse IsHRUser(eclUser)
     End Function
 
     Public Function IsCSRUser(eclUser As User)
@@ -66,7 +69,7 @@
             Return False
         End If
 
-        Dim jobCode As String = eclUser.JobCode.Trim.ToUpper
+        Dim jobCode As String = UCase(eclUser.JobCode.Trim())
         If jobCode.StartsWith("WACS0") Then
             Return True
         End If
@@ -74,22 +77,8 @@
         Return False
     End Function
 
-    Public Function IsHRUser(eclUser As User)
-        If eclUser Is Nothing OrElse String.IsNullOrWhiteSpace(eclUser.JobCode) Then
-            Return False
-        End If
-
-        Dim retValue = False
-        Dim jobCode As String = eclUser.JobCode.Trim.ToUpper
-        Select Case True
-            Case jobCode.StartsWith("WHER"),
-                 jobCode.StartsWith("WHHR"),
-                 jobCode.StartsWith("WHRC")
-
-                retValue = True
-        End Select
-
-        Return retValue
+    Public Function IsHRUser(eclUser As User) As Boolean
+        Return userDBAccess.IsValidHRUser(eclUser)
     End Function
 
 End Class

@@ -22,4 +22,20 @@ Public Class UserDBAccess
 
         Return user
     End Function
+
+    Public Function IsValidHRUser(eclUser As User) As Boolean
+        Dim validHRUser = "NO"
+
+        Dim parameters() As SqlParameter = New SqlParameter() _
+        {
+            New SqlParameter("@nvcEmpLanIDin", eclUser.LanID)
+        }
+
+        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_CheckIf_HRUser", CommandType.StoredProcedure, parameters)
+            Dim row As DataRow = dataTable.Rows(0)
+            validHRUser = UCase(row("isHRUser").ToString().Trim())
+        End Using
+
+        Return validHRUser.Equals("YES")
+    End Function
 End Class

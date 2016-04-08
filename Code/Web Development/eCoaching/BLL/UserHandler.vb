@@ -21,6 +21,6 @@
     End Function
 
     Function IsInvalidUser(user As User) As Boolean
-        Return (user Is Nothing OrElse String.IsNullOrEmpty(user.Name) OrElse LCase(user.Name).Contains("unkonwn"))
+        Return user Is Nothing OrElse String.IsNullOrEmpty(user.Name)
     End Function
 End Class
