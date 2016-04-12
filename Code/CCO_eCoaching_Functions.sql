@@ -1,7 +1,10 @@
 /*
-File: eCoaching_Functions.sql (19)
+File: eCoaching_Functions.sql (20)
 Last Modified By: Susmitha Palacherla
-Date: 3/23/2016
+Date: 4/11/2016
+
+Version 20,  4/11/2016
+1. Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add code OTH per TFS 2470
 
 Version 19,  3/23/2016
 1. Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add code ODT per TFS 2833
@@ -482,14 +485,15 @@ GO
 
 
 
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
--- Description:	  Given the 3 letter Outlier Report code returns the Sub coaching reason for the OMR log.
--- Last Modified Date: 3/22/2016
+-- Description:	  Given the 3 letter Outlier Report code returns the Sub coaching reason for the log.
+-- Last Modified Date: 4/11/2016
 -- last Modified By: Susmitha Palacherla
--- Modified per TFS 2283 to add ODT report.
+-- TFS 1732 - To add SDR - 3/02/2016
+-- TFS 2282 - To add ODT - 3/22/2016
+-- TFS 2470 - To add OTH - 4/11/2016
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -525,6 +529,7 @@ BEGIN
 			WHEN N'IAT' THEN 231
 			WHEN N'SDR' THEN 232
             WHEN N'ODT' THEN 233
+            WHEN N'OTH' THEN 42
         ELSE -1
       END
     ELSE
@@ -533,7 +538,6 @@ BEGIN
 RETURN @intSubCoachReasonID  
 
 END  -- fn_intSubCoachReasonIDFromRptCode()
-
 
 
 
