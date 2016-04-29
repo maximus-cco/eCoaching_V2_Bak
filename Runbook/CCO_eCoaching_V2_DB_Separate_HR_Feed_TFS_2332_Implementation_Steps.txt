@@ -1,0 +1,938 @@
+
+/*
+
+TFS 2323 - Restrict unknown Users from authenticating
+TFS 2332 - HR Solution
+
+Implement in eCoaching database in target environment.
+
+
+Dev - eCoahingDev
+Test - eCoachingTest
+Prod - eCoaching
+
+
+
+****************************************
+
+IMPLEMENTATION SUMMARY
+SECTION 1 - Fetch and Stage ssis Package
+Employee_Hierarchy.dtsx (Changeset )
+ 
+SECTION 2 - Create Database tables and populate
+[EC].[HR_Hierarchy_Stage]
+[EC].[HR_Access]
+
+SECTION 3 - Create/Modify PROCEDURES
+[EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
+[EC].[sp_CheckIf_HRUser] 
+[EC].[sp_Whoami] 
+[EC].[sp_Select_Sources_For_Dashboard] 
+[EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
+[EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count]
+
+***************************************
+
+IMPLEMENTATION DETAILS
+
+***************************************
+
+
+
+
+***************************************
+
+--SECTION 1 - Fetch and Stage ssis Package
+
+--Fetch the following ssis Package from TFS source Control and stage accordingly.
+   Employee_Hierarchy.dtsx (Changeset )
+
+/*******************************************/
+
+
+SECTION 2 - Create Database tables and populate
+
+
+
+--1. Create Table [EC].[HR_Hierarchy_Stage]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[HR_Hierarchy_Stage](
+	[Emp_ID] [nvarchar](10) NOT NULL,
+	[Emp_Name] [nvarchar](70) NULL,
+	[Emp_Email] [nvarchar](50) NULL,
+	[Emp_Site] [nvarchar](50) NULL,
+	[Emp_Job_Code] [nvarchar](20) NULL,
+	[Emp_Job_Description] [nvarchar](50) NULL,
+	[Emp_LanID] [nvarchar](30) NULL,
+	[Emp_Program] [nvarchar](20) NULL,
+	[Sup_Emp_ID] [nvarchar](10) NULL,
+	[Sup_Name] [nvarchar](70) NULL,
+	[Sup_Email] [nvarchar](50) NULL,
+	[Sup_Job_Code] [nvarchar](50) NULL,
+	[Sup_Job_Description] [nvarchar](50) NULL,
+	[Sup_LanID] [nvarchar](30) NULL,
+	[Mgr_Emp_ID] [nvarchar](10) NULL,
+	[Mgr_Name] [nvarchar](70) NULL,
+	[Mgr_Email] [nvarchar](50) NULL,
+	[Mgr_Job_Code] [nvarchar](50) NULL,
+	[Mgr_Job_Description] [nvarchar](50) NULL,
+	[Mgr_LanID] [nvarchar](30) NULL,
+	[Start_Date] [datetime] NULL,
+	[Active] [nvarchar](1) NULL
+) ON [PRIMARY]
+
+GO
+
+
+
+--2. Create Table CREATE TABLE [EC].[HR_Access]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[HR_Access](
+	[Job_Code] [nvarchar](50) NOT NULL,
+	[Job_Code_Description] [nvarchar](50) NULL,
+	[NewSubmissions] [bit] NULL,
+	[MyDashboard] [bit] NULL,
+	[MySubmissions] [bit] NULL,
+	[HistDashboard] [bit] NULL,
+	[DisplayWarnings] [bit] NULL
+	
+) ON [PRIMARY]
+
+GO
+
+
+
+--3. Insert records into TABLE [EC].[HR_Access]
+INSERT INTO [EC].[HR_Access]
+           ([Job_Code]
+           ,[Job_Code_Description]
+           ,[NewSubmissions]
+           ,[MyDashboard]
+           ,[MySubmissions]
+           ,[HistDashboard]
+           ,[DisplayWarnings])
+     VALUES
+           ('WHER12', 'Analyst, HR Compliance',0,0,0,1,1),
+           ('WHER13', 'Sr Analyst, HR Compliance',0,0,0,1,1),
+           ('WHER14', 'Princ Analyst, HR Compliance',0,0,0,1,1),
+           ('WHHR02', 'Assistant, HR',0,0,0,1,1),
+           ('WHHR12', 'Business Partner, HR',0,0,0,1,1),
+           ('WHHR13', 'Sr Business Partner, HR',0,0,0,1,1),
+           ('WHHR14', 'Principal Business Partner, HR',0,0,0,1,1),
+           ('WHHR50', 'Manager, HR',0,0,0,1,1),
+           ('WHHR60', 'Sr Manager, HR',0,0,0,1,1),
+           ('WHHR70', 'Director, HR',0,0,0,1,1)
+GO
+
+
+
+
+/**********************************************************************************
+
+
+SECTION 3 - Create/Modify PROCEDURES
+
+
+FROM EVERYTHING FROM HERE ON INTO AN SSMS WINDOW
+POINTING TO THE eCOACHING DB IN TARGET ENVIRONMENT
+AND RUN WITH NOTHING SELECTED.
+
+**********************************************************************************/
+
+
+--1. PROCEDURE sp_Merge_HR_Employee_Hierarchy_Stage
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Merge_HR_Employee_Hierarchy_Stage' 
+)
+   DROP PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create Date: 04/6/2016
+-- Description:	Performs the following actions.
+-- Updates existing records and inserts new records from the
+-- HR Staging table to the general Employee Hierarchy staging table.
+-- Last Modified By: 
+-- Last Modified Date: 
+-- Initial Revision - TFS 2332 - 4/6/2016
+-- =============================================
+CREATE PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
+AS
+BEGIN
+
+
+-- Updates Existing Records
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy_Stage]
+	   SET [Emp_Name] = S.[Emp_Name]
+	      ,[Emp_Email] =S.[Emp_Email]
+		  ,[Emp_LanID] = S.[Emp_LanID]
+		  ,[Emp_Site] =  S.[Emp_Site]
+		  ,[Emp_Job_Code] = S.[Emp_Job_Code]
+		  ,[Emp_Job_Description] = S.[Emp_Job_Description]
+		  ,[Sup_Emp_ID] = S.[Sup_Emp_ID]
+		  ,[Mgr_Emp_ID] = S.[Mgr_EMP_ID] 
+		  ,[Start_Date] = S.[Start_Date]
+		  ,[Active] = S.[Active]
+	 FROM [EC].[Employee_Hierarchy_Stage]H JOIN [EC].[HR_Hierarchy_Stage]S
+	 ON H.[Emp_ID] = S.[EMP_ID]
+	 WHERE H.[Emp_ID] is NOT NULL
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+    
+-- Inserts New Records
+BEGIN
+	INSERT INTO [EC].[Employee_Hierarchy_Stage]
+           ([Emp_ID]
+           ,[Emp_Name]
+           ,[Emp_Email]
+           ,[Emp_Site]
+           ,[Emp_Job_Code]
+           ,[Emp_Job_Description]
+           ,[Emp_LanID]
+           ,[Sup_Emp_ID]
+           ,[Mgr_Emp_ID]
+           ,[Start_Date]
+           ,[Active])
+							 SELECT S.[Emp_ID]
+									  ,S.[Emp_Name]
+									  ,S.[Emp_Email]
+									  ,S.[Emp_Site]
+									  ,S.[Emp_Job_Code]
+									  ,S.[Emp_Job_Description]
+									  ,S.[Emp_LanID]
+									  ,S.[Sup_Emp_ID]
+									  ,S.[Mgr_Emp_ID]
+									  ,S.[Start_Date]
+									  ,S.[Active]
+						  FROM [EC].[HR_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy_Stage]H
+						  ON S.Emp_ID = H.Emp_ID
+						  WHERE H.EMP_ID IS NULL
+
+OPTION (MAXDOP 1)
+END
+
+
+END --sp_Merge_HR_Employee_Hierarchy_Stage
+
+GO
+
+
+
+
+
+
+
+
+--2. PROCEDURE [EC].[sp_CheckIf_HRUser]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_CheckIf_HRUser' 
+)
+   DROP PROCEDURE [EC].[sp_CheckIf_HRUser]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	4/6/2016
+--	Description: *	This procedure takes the lan ID of the HR user and looks up the job code.
+--  If Job code exists in the HR access table and HistDashboard = 1 then returns 'YES' else 'NO'
+--  Last Modified By: 
+--  Last Modified Date: 
+--  Created to replace hardcoding in UI code with table lookup. TFS 2232. - 4/6/2016 
+ 
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_CheckIf_HRUser] 
+@nvcEmpLanIDin nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+
+	@nvcSQL nvarchar(max),
+	@nvcEmpID nvarchar(10),
+	@nvcEmpJobCode nvarchar(30),
+	@dtmDate datetime
+
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcEmpID)
+
+  
+SET @nvcSQL = 'SELECT CASE WHEN '''+@nvcEmpJobCode+''' IN
+(SELECT DISTINCT [Job_Code] FROM [EC].[HR_Access]
+WHERE [HistDashboard]= 1) THEN ''YES'' ELSE ''NO'' END AS isHRUser'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_CheckIf_HRUser
+
+GO
+
+
+
+
+--3. PROCEDURE [EC].[sp_Whoami] 
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Whoami' 
+)
+   DROP PROCEDURE [EC].[sp_Whoami]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	07/22/13
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 4/4/2016
+-- TFS 605 - Return lower employee ID and look for Active not in ('T','D')- 8/25/2015
+-- TFS 2323 - Unknown user can be authenticated - Restrict user in SP return - 4/4/2016
+-- TFS 2332 - Controlling access for HR users from backend - 4/7/2016
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Whoami] 
+
+(
+ @strUserin	Nvarchar(30)
+)
+AS
+
+BEGIN
+DECLARE	
+@EmpID nvarchar(100),
+@nvcEmpJobCode nvarchar(30),
+@nvcHRCondition nvarchar(1000),
+@nvcSQL nvarchar(max)
+
+SET @nvcHRCondition = ''
+
+
+SET @EmpID = (Select [EC].[fn_nvcGetEmpIdFromLanId](@strUserin,GETDATE()))
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @EmpID)
+
+IF @nvcEmpJobCode LIKE 'WH%'
+SET @nvcHRCondition = ' AND [Emp_Job_Code] IN (SELECT DISTINCT [Job_Code] FROM [EC].[HR_Access] WHERE [HistDashboard]= 1)'
+
+SET @nvcSQL = 'SELECT [Emp_Job_Code] as EmpJobCode,
+                       [Emp_Email] as EmpEmail,
+                       [Emp_Name] as EmpName,
+                       lower([Emp_ID]) as EmpID
+              FROM [EC].[Employee_Hierarchy]WITH(NOLOCK)
+              WHERE [Emp_ID] = '''+@EmpID+'''
+              AND [Active] not in  (''T'', ''D'')
+              AND [Emp_ID] <> ''999999''' + @nvcHRCondition
+
+
+              
+            
+		
+EXEC (@nvcSQL)	
+--Print @nvcSQL
+END --sp_Whoami
+
+GO
+
+
+
+
+
+--4. PROCEDURE [EC].[sp_Select_Sources_For_Dashboard] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Sources_For_Dashboard' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Sources_For_Dashboard]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/06/2015
+--	Description: *	This procedure selects Sources to be displayed in the dashboard
+--  Source dropdown list.
+--  Last Modified: 4/6/2016
+--  Last Modified By: Susmitha Palacherla
+--  Modified to add additional HR job code WHHR70 - TFS 1423 - 12/15/2015
+--  Modified to reference table for HR job codes - TFS 2332 - 4/6/2016
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Sources_For_Dashboard] 
+@strUserin nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max),
+	@strjobcode  nvarchar(20),
+	@nvcEmpID nvarchar(10),
+	@bitDisplayWarnings bit,
+	@dtmDate datetime
+	
+		
+	
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
+SET @strjobcode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcEmpID)	
+	
+SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
+WHERE [Job_Code]= @strjobcode)
+
+
+-- Check users job code and show 'Warning' as a source only for HR users.
+IF @bitDisplayWarnings = 1
+
+SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
+(SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
+UNION
+SELECT [SubCoachingSource] SourceText,  [SubCoachingSource] SourceValue, 02 Sortorder From [EC].[DIM_Source]
+Where [SubCoachingSource] <> ''Unknown''
+and [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+ELSE
+
+SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
+(SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
+UNION
+SELECT  [SubCoachingSource] SourceText,  [SubCoachingSource] SourceValue, 02 Sortorder From [EC].[DIM_Source]
+Where [SubCoachingSource] not in ( ''Warning'',''Unknown'')
+and [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Sources_For_Dashboard
+
+
+
+
+GO
+
+
+
+
+
+
+--5. PROCEDURE  [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_HistoricalSUP' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	4/30/2012
+--	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
+--  Last Modified: 4/6/2016
+--  Last Modified By: Susmitha Palacherla
+--  Modified to add additional HR job code WHHR70 - TFS 1423 - 12/15/2015
+--  Modified to reference table for HR job codes - TFS 2332 - 4/6/2016
+--	=====================================================================
+
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
+
+@strSourcein nvarchar(100),
+@strCSRSitein nvarchar(30),
+@strCSRin nvarchar(30),
+@strSUPin nvarchar(30),
+@strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@strStatusin nvarchar(30), 
+@strjobcode  nvarchar(20),
+@strvalue  nvarchar(30),
+@PageSize int,
+@startRowIndex int, 
+@sortBy nvarchar(100),
+@sortASC nvarchar(1)
+AS
+
+
+BEGIN
+
+
+SET NOCOUNT ON
+
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
+@nvcSQL4 nvarchar(max),
+@nvcSQL5 nvarchar(max),
+@strSDate nvarchar(10),
+@strEDate nvarchar(10),
+@bitDisplayWarnings bit,
+@UpperBand int,
+@LowerBand int,
+@SortExpression nvarchar(100),
+@SortOrder nvarchar(10) ,
+@OrderKey nvarchar(10),
+@where nvarchar(max)        
+
+SET @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+SET @LowerBand  = @startRowIndex 
+SET @UpperBand  = @startRowIndex + @PageSize 
+
+SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
+WHERE [Job_Code]= @strjobcode)
+
+SET @where = ' WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [cl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [clr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [cl].[EmpID] =   '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+'''' 
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [cl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[cl].[SiteID]) = '''+@strCSRSitein+''''
+END			 
+
+--PRINT @UpperBand
+IF @sortASC = 'y' 
+SET @SortOrder = ' ASC' ELSE 
+SET @SortOrder = ' DESC' 
+SET @OrderKey = 'orderkey, '
+SET  @SortExpression = @OrderKey + @sortBy +  @SortOrder
+
+--PRINT @SortExpression
+
+SET @nvcSQL1 = 'WITH TempMain AS 
+        (select DISTINCT x.strFormID
+        ,x.strCoachingID
+        ,x.strCSRName
+		,x.strCSRSupName
+		,x.strCSRMgrName
+		,x.strFormStatus
+		,x.strSource
+		,x.SubmittedDate
+		,x.strSubmitterName
+		,x.orderkey
+		,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
+from (
+     SELECT DISTINCT [cl].[FormName]	strFormID
+        ,[cl].[CoachingID]	strCoachingID
+    	,[eh].[Emp_Name]	strCSRName
+		,[eh].[Sup_Name]	strCSRSupName
+		,[eh].[Mgr_Name]	strCSRMgrName
+		,[s].[Status]		strFormStatus
+		,[so].[SubCoachingSource]	strSource
+		,[cl].[SubmittedDate]	SubmittedDate
+		,[sh].[Emp_Name]	strSubmitterName
+		,''ok1'' orderkey
+		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+ON cl.CoachingID = clr.CoachingID' +  @where 
++ ' GROUP BY [cl].[FormName],[cl].[CoachingID],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name], 
+[s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name]'
+
+
+SET @where = ' WHERE convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [wl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [wlr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [wl].[EmpID] = '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+''''
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [wl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[wl].[SiteID]) = '''+@strCSRSitein+''''
+END	
+
+SET @nvcSQL2 = ' UNION
+     SELECT DISTINCT [wl].[FormName]	strFormID
+        ,[wl].[WarningID]	strCoachingID
+     	,[eh].[Emp_Name]	strCSRName
+		,[eh].[Sup_Name]	strCSRSupName
+		,[eh].[Mgr_Name]	strCSRMgrName
+		,[s].[Status]		strFormStatus
+		,[so].[SubCoachingSource]	strSource
+		,[wl].[SubmittedDate]	SubmittedDate
+		,[sh].[Emp_Name]	strSubmitterName
+	 	,''ok2'' orderkey
+		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH(NOLOCK)
+ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON wl.SourceID = so.SourceID
+JOIN [EC].[Warning_Log_Reason] wlr WITH (NOLOCK) ON wl.WarningID = wlr.WarningID' + @where 
+ + ' GROUP BY [wl].[FormName],[wl].[WarningID],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name], 
+[s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name]'
+
+SET @nvcSQL3 = ' ) x )
+
+ SELECT strFormID
+		,strCSRName
+	    ,strCSRSupName
+		,strCSRMgrName
+		,strFormStatus
+		,strSource
+		,SubmittedDate
+		,strSubmitterName
+	    ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strCoachingReasonFromCoachingID](T.strCoachingID)
+	     ELSE [EC].[fn_strCoachingReasonFromWarningID](T.strCoachingID) END strCoachingReason
+	    ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strSubCoachingReasonFromCoachingID](T.strCoachingID)
+	     ELSE [EC].[fn_strSubCoachingReasonFromWarningID](T.strCoachingID) END strSubCoachingReason
+	    ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strValueFromCoachingID](T.strCoachingID)
+	     ELSE [EC].[fn_strValueFromWarningID](T.strCoachingID)END strValue
+		,RowNumber                 
+		FROM TempMain T
+		WHERE RowNumber >= '''+CONVERT(VARCHAR,@LowerBand)+'''  AND RowNumber < '''+CONVERT(VARCHAR, @UpperBand) +
+        ''' ORDER BY ' + @SortExpression  
+
+
+IF @bitDisplayWarnings = 1
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
+
+ELSE
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL3
+
+
+EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
+	    
+END -- SelectFrom_Coaching_Log_HistoricalSUP
+
+
+
+GO
+
+
+
+
+
+--6. PROCEDURE  [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_HistoricalSUP_Count' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	05/28/2015
+--	Description: *	This procedure returns the count of completed   e-Coaching  records that will be 
+--  displayed for the selected criteria on the SUP historical page.
+-- Create per SCR 14893 dashboard redesign performance round 2.
+--  Last Modified: 4/6/2016
+--  Last Modified By: Susmitha Palacherla
+--  Modified to add additional HR job code WHHR70 - TFS 1423 - 12/15/2015
+--  Modified to reference table for HR job codes - TFS 2332 - 4/6/2016
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count] 
+
+@strSourcein nvarchar(100),
+@strCSRSitein nvarchar(30),
+@strCSRin nvarchar(30),
+@strSUPin nvarchar(30),
+@strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@strStatusin nvarchar(30), 
+@strjobcode  nvarchar(20),
+@strvalue  nvarchar(30)
+--@intRecordCount int OUT
+
+AS
+
+
+BEGIN
+
+SET NOCOUNT ON
+
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8),
+@bitDisplayWarnings bit,
+@where nvarchar(max) 
+      
+ 
+SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
+WHERE [Job_Code]= @strjobcode)
+   
+SET @strFormStatus = 'Inactive'
+SET @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+
+SET @where = ' WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [cl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [clr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [cl].[EmpID] =   '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+'''' 
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [cl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[cl].[SiteID]) = '''+@strCSRSitein+''''
+END			 
+
+SET @nvcSQL1 = 'WITH TempCoaching AS 
+        (select DISTINCT x.strFormID
+	from (
+     SELECT DISTINCT [cl].[FormName]	strFormID
+	 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON cl.SiteID = si.SiteID JOIN  [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+ON cl.CoachingID = clr.CoachingID'
++ @where + 
+' GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name],[cl].[CoachingID]'
+
+SET @where = ' WHERE convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [wl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [wlr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [wl].[EmpID] = '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+''''
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [wl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[wl].[SiteID]) = '''+@strCSRSitein+''''
+END	
+
+
+SET @nvcSQL2 = ' UNION
+     SELECT DISTINCT [wl].[FormName]	strFormID
+	FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH(NOLOCK)
+ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON wl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON wl.SiteID = si.SiteID JOIN  [EC].[Warning_Log_Reason] wlr WITH (NOLOCK)
+ON wl.WarningID = wlr.WarningID'
++ @where + 
+' GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name],[wl].[WarningID]'
+
+SET @nvcSQL3 = ' ) x
+ )
+ SELECT count(strFormID) FROM TempCoaching'
+	   
+IF @bitDisplayWarnings = 1
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
+
+ELSE
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL3
+
+EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
+	    
+END -- sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
+
+
+
+GO
+
+
+
+
