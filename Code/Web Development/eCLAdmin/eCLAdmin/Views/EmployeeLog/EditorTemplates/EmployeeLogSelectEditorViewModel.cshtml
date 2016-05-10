@@ -1,0 +1,42 @@
+﻿@model eCLAdmin.ViewModels.EmployeeLogSelectEditorViewModel
+
+<tr>
+    <td>
+        @Html.CheckBoxFor(model => model.Selected, new {@class = "checkbox-select-employeeLog" })
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.FormName)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.EmployeeName)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.SupervisorName)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.ManagerName)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.SubmitterName)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.Status)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.CreatedDate)
+    </td>
+
+    <td>
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.FormName)
+        @Html.HiddenFor(model => model.StatusId)
+        @Html.HiddenFor(model => model.PreviousStatusId)
+    </td>
+
+    @*<td>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+        @Html.ActionLink("Details", "Details", new { id = Model.ID }) |
+        @Html.ActionLink("Delete", "Delete", new { id = Model.ID })
+    </td>*@
+</tr>
+

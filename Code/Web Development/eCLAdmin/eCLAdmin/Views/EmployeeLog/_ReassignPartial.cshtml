@@ -1,0 +1,139 @@
+﻿<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Reassign Employee Logs</h4>
+</div>
+
+<div class="modal-body">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-assign-to" }))
+    {
+        Html.RenderPartial("_ReasonPartial");
+
+        <div class="form-group">
+            <label for="assignTo">Reassign to:&nbsp;&nbsp;</label>
+            <div id="reassign-to-error-msg" class="field-validation-error"></div>
+            @Html.DropDownList(
+                "assignTo",
+                (SelectList)ViewBag.AssignTo,
+                new
+                {
+                    @class = "form-control"
+                }
+            )
+        </div>
+
+        Html.RenderPartial("_CommentPartial");
+    }
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button type="submit" id="btn-submit-reassign" class="btn btn-primary">Reassign</button>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        // Display validation error msg when nothing selected
+        // remove otherwise
+        $('#assignTo').on("change", function () {
+            if ($('#assignTo').val() != -1)
+            {
+                removeReassignToError();
+            }
+            else {
+                displayReassignToError();
+            }
+        })
+
+        $('#btn-submit-reassign').on('click', function (event) {
+            event.preventDefault();
+
+            if (!validatePage())
+            {
+                return false;
+            }
+
+            if (!validateAssignTo() || !validateComment()) {
+                return false;
+            }
+
+            if (!confirm('Are you sure that you want to proceed?')) {
+                //$('#modal-container').modal('hide');
+                return false;
+            }
+
+            $('#modal-container').modal('hide');
+            showSpinner();
+
+            var ajaxRequest = $.ajax({
+                url: '@Url.Action("Reassign", "EmployeeLog")',
+                type: 'POST',
+                data: $('#form-assign-to').add('#form-select-EmployeeLogs').serialize(),
+                dataType: "json"
+            });
+
+            ajaxRequest.done(function (msg) {
+                hideSpinner();
+
+                if (msg.success == true) {
+                    var info = 'The selected logs have been successfully reassigned.';
+                    $("#message").html('<div class="alert alert-success"><button type="button" class="close">x</button>' + info + '</div>');
+                } else {
+                    var info = 'Failed to reassign the selected logs.';
+                    $("#message").html('<div class="alert alert-warning"><button type="button" class="close">x</button>' + info + '</div>');
+                };
+
+                window.setTimeout(function () {
+                    if (msg.success == true) {
+                        initPage();
+                    }
+                }, 1000);
+            });
+
+            ajaxRequest.fail(function (jqXHR, textStatus) {
+                hideSpinner();
+                var info = 'Failed to reassign the selected log(s).';
+                $("#message").html('<div class="alert alert-danger"><button type="button" class="close">×</button>' + info + '</div>');
+            });
+        }) // end of $('#btn-submit-reassign').on('click', function ()
+
+    });
+
+    function validatePage()
+    {
+        var isReasonSelected = validateReason();
+        var isReassignToSelected = validateAssignTo();
+        var isCommentEntered = validateComment();
+
+        return isReasonSelected && isReassignToSelected && isCommentEntered;
+    }
+
+    // Validate select - assignTo
+    function validateAssignTo() {
+        var isValid = false;
+        if ($('#assignTo').val() == -1) {
+            displayReassignToError();
+        }
+        else {
+            removeReassignToError();
+            isValid = true;
+        }
+        return isValid;
+    }
+
+    function displayReassignToError()
+    {
+        $('#assignTo').addClass("input-validation-error");
+        $('#reassign-to-error-msg').html('Please make a selection');
+    }
+
+    function removeReassignToError()
+    {
+        $('#assignTo').removeClass("input-validation-error");
+        $('#reassign-to-error-msg').html('');
+    }
+
+</script>
+
+
+

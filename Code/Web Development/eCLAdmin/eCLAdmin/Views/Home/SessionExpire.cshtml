@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Session Expired: Your session has expired.</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @Styles.Render("~/Content/css")
+</head>
+
+<html>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("eCL Admin", null, null, null, new { @class = "navbar-brand" })>
+            </div>
+        </div>
+    </div>
+    <div class="span6 offset3">
+        <div>
+            <h2>Session Expired</h2>
+            <h3>Your session has expired!</h3>
+        </div>
+    </div>
+</body>
+</html>
+

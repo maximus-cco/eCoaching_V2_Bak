@@ -1,0 +1,289 @@
+﻿@{
+    ViewBag.Title = "Manage Employee Logs";
+}
+
+<h2>@ViewBag.SubTitle</h2>
+<br />
+
+<!-- Search Form -->
+@using (Ajax.BeginForm("SearchForReassign", "EmployeeLog", FormMethod.Post,
+                    new AjaxOptions
+                    {
+                        InsertionMode = InsertionMode.Replace,
+                        HttpMethod = "POST",
+                        UpdateTargetId = "search-result",
+                        OnBegin = "processSearchOnBegin",
+                        OnComplete = "processSearchOnComplete"
+                    },
+                    new { @class = "form-horizontal" }
+                    ))
+{    
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="module">Module:</label>
+        <div class="col-sm-10">
+            @Html.DropDownList(
+                "module",
+                (SelectList)ViewBag.Modules,
+                new
+                {
+                    @class = "form-control"
+                }
+            )
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="employeeLogStatus">Status:</label>
+        <div id="status-error-msg" class="field-validation-error"></div>
+        <div class="col-sm-10">
+            @Html.DropDownList(
+             "employeeLogStatus",
+             (SelectList)ViewBag.Statuses, 
+             new {
+                @class = "form-control"
+             }
+            )
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" id="reviewer-label" for="reviewer">Pending Reviewer:</label>
+        <div id="status-error-msg" class="field-validation-error"></div>
+        <div class="col-sm-10">
+            @Html.DropDownList(
+             "reviewer",
+             (SelectList)ViewBag.Reviewers,
+             new
+             {
+                 @class = "form-control",
+                 id = "reviewer-dropdown"
+             }
+            )
+        </div>
+    </div>
+       
+    <div class="form-group"> 
+        <div class="col-sm-offset-2 col-sm-10">
+            <button class="btn btn-primary" type="submit" id="btn-search">
+                <span class="glyphicon glyphicon-search"></span>&nbsp;Search
+            </button>
+        </div>
+    </div>
+ 
+}
+
+<div id="message"></div>
+
+<!-- Search Result -->
+<form id="form-select-EmployeeLogs">
+    <p class="text-right">
+        @*@Html.ActionLink("Reassign ", "InitReassignModal", "EmployeeLog", null, new { @class = "modal-link btn btn-primary", @style = "display: none;", id = "lk-reassign" })*@
+        @Html.ActionLink("Reassign ", // Link Text
+                   "InitReassignModal", // Action Method Name
+                   "EmployeeLog", // Controller Name
+                    new
+                    {
+                        @class = "modal-link btn btn-primary",
+                        @style = "display: none;",
+                        id = "lk-reassign"
+                    })
+    </p>
+
+    <div id="search-result"></div>
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+
+            // Check/Uncheck all checkboxes.
+            $(document).on('click', '#checkall', function () {
+                var status = $("#checkall").prop('checked');
+
+                toggleCheckboxes(status);
+                hideShowReassignLink();
+            });
+
+            $('body').on('click', '.checkbox-select-employeeLog', function () {
+                // Uncheck checkall box
+                $('#checkall').prop('checked', false);
+
+                var rowsChecked = $('.checkbox-select-employeeLog:checked').length;
+                $('#total-selected').text(rowsChecked + " selected");
+
+                hideShowReassignLink();
+            });
+
+            $("#employeeLogStatus").on("change", function () {
+                // Hide search result.
+                $("#search-result").slideUp(500);
+                $('#lk-reassign').slideUp(500);
+
+                var statusId = $("#employeeLogStatus").val();
+                var moduleId = $("#module").val();
+
+                // if either Module or Status is NOT selected
+                if (statusId == -1 || moduleId == -1) {
+                    resetReviewerDropdown();
+                    return false;
+                }
+
+                // Display "Loading..." with ajax loader gif
+                $("#reviewer-dropdown").empty().append('<option value="">Loading...</option>');
+                $("#reviewer-dropdown").addClass('loadinggif');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetPendingReviewers")', // Call GetPendingReviewers method.
+                    dataType: 'json',
+                    data: { employeeLogStatusId: statusId, moduleId: moduleId}, // Get the value of the selected status and pass to GetPendingReviewers method.
+
+                    success: function (reviewers) {
+                        $("#reviewer-dropdown").empty();
+
+                        // Load Pending Reviewer drowdown
+                        var options = [];
+                        $.each(reviewers, function (i, reviewer) {
+                            options.push('<option value="', reviewer.Value, '">' + reviewer.Text + '</option>');
+                        });
+
+                        $("#reviewer-dropdown").html(options.join(''));
+                        $("#reviewer-dropdown").removeClass('loadinggif');
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve reviewer list.' + ex);
+                    }
+                });
+                return false;
+            })
+
+            $("#module").on("change", function () {
+                // Hide search result.
+                $("#search-result").slideUp(500);
+                $('#lk-reassign').slideUp(500);
+
+                var moduleId = $("#module").val();
+
+                // If Status dropdown list is not populated from database yet
+                // Make ajax call to get the statuses for the selected module, then return
+                var statusLength = $("#employeeLogStatus").length;
+                if (statusLength == 1)
+                {
+                    // Display "Loading..." with ajax loader gif
+                    $("#employeeLogStatus").empty().append('<option value="">Loading...</option>');
+                    $("#employeeLogStatus").addClass('loadinggif');
+
+                    resetReviewerDropdown();
+
+                    // Ajax call
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("GetPendingStatuses")', // Call GetPendingStatuses method.
+                        dataType: 'json',
+                        data: { moduleId: moduleId }, // Get the value of the selected module and pass to GetPendingStatuses method.
+
+                        success: function (statuses) {
+                            $("#employeeLogStatus").empty();
+                            
+                            // Load Status drowdown
+                            var options = [];
+                            $.each(statuses, function (i, status) {
+                                options.push('<option value="', status.Value, '">' + status.Text + '</option>');
+                            });
+
+                            $("#employeeLogStatus").html(options.join(''));
+                            $("#employeeLogStatus").removeClass('loadinggif');
+                        },
+                        error: function (ex) {
+                            alert('Failed to retrieve status list.' + ex);
+                        }
+                    });
+
+                    return false;
+                }
+
+
+                var statusId = $("#employeeLogStatus").val();
+                // if either Module or Status is NOT selected
+                if (statusId == -1 || moduleId == -1) {
+                    resetReviewerDropdown();
+                    return false;
+                }
+
+                // Display "Loading..." with ajax loader gif
+                $("#reviewer-dropdown").empty().append('<option value="">Loading...</option>');
+                $("#reviewer-dropdown").addClass('loadinggif');
+
+                // Ajax call
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetPendingReviewers")', // Call GetPendingReviewers method.
+                    dataType: 'json',
+                    data: { EmployeeLogStatusId: statusId }, // Get the value of the selected status and pass to GetPendingReviewers method.
+
+                    success: function (reviewers) {
+                        //$("#reviewer-dropdown").removeClass('loadinggif');
+                        $("#reviewer-dropdown").empty();
+
+                        // Load Pending Reviewer drowdown
+                        var options = [];
+                        $.each(reviewers, function (i, reviewer) {
+                            options.push('<option value="', reviewer.Value, '">' + reviewer.Text + '</option>');
+                        });
+
+                        $("#reviewer-dropdown").html(options.join(''));
+                        $("#reviewer-dropdown").removeClass('loadinggif');
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve reviewer list.' + ex);
+                    }
+                });
+                return false;
+            })
+
+            $("#reviewer-dropdown").on("change", function () {
+                $("#search-result").slideUp(500);
+                $('#lk-reassign').slideUp(500);
+            })
+        });
+
+        function initPage() {
+            // Hide the message
+            $(".alert").slideUp(1000);
+            // Hide "Reassign" link.
+            $('#lk-reassign').slideUp(1000);
+            // Hide search result.
+            $("#search-result").slideUp(1000);
+            // Reset Status dropdown.
+            $('#employeeLogStatus').val(-1);
+            // Reset Pending Reviewer dropdown.
+            // Remove all in Pending Reviewer dropdown except for the first default item "Please select a reviewer"
+            $('#reviewer-dropdown').find('option:gt(0)').remove()
+        }
+
+        function hideShowReassignLink() {
+            var numberChecked = $('.checkbox-select-employeeLog:checked').length;
+
+            if (numberChecked > 0) {
+                $('#lk-reassign').slideDown(500);
+            }
+
+            else {
+                $('#lk-reassign').slideUp(500);
+            }
+        }
+
+        function processSearchOnBegin() {
+            showSpinner();
+        }
+
+        function processSearchOnComplete() {
+            hideSpinner();
+            $("#search-result").slideDown(500);
+            hideShowReassignLink();
+        }
+
+    </script>
+}
+
+
