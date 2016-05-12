@@ -1,6 +1,10 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (11)
-Date: 02/18/2016
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (12)
+Date: 4/15/2016
+
+Version 12: 4/15/2016
+Added table (#6 )and Procedure (#6) to support separate HR solution per TFS 2332
+
 
 Version 11: 02/18/2016
 Updated SP #2 [EC].[sp_Populate_Employee_Hierarchy]  to populate Sr Level Manager Ids during development for 
@@ -55,6 +59,7 @@ List of Tables:
 3. [EC].[EmpID_To_SupID_Stage]
 4. [EC].[EmployeeID_To_LanID]
 5. [EC].[CSR_Hierarchy]
+6. [EC].[HR_Hierarchy_Stage]
  
 
 List of Procedures:
@@ -63,6 +68,7 @@ List of Procedures:
 3. [EC].[sp_Update_EmployeeID_To_LanID] 
 4. [EC].[sp_Update_CSR_Hierarchy] 
 5. [EC].[sp_InactivateCoachingLogsForTerms] 
+6. [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
  
 
 */
@@ -256,7 +262,7 @@ GO
 -- 5. Table  [EC].[CSR_Hierarchy]
 -- =============================================
 -- Author: Susmitha Palacherla
--- Create Date: 0202/2014
+-- Create Date: 02/02/2014
 -- Description: Used to store CSR-SUP-MGR Hierarchy
 -- Last Modified Date:
 -- Last Modified By: 
@@ -292,6 +298,54 @@ GO
 
 
 /*********************************************************/
+
+--6.Table [EC].[HR_Hierarchy_Stage]
+
+--1. Create Table [EC].[HR_Hierarchy_Stage]
+
+-- =============================================
+-- Author: Susmitha Palacherla
+-- Create Date: 04/12/2016
+-- Description: Used to stage HR employee records
+-- Last Modified Date:
+-- Last Modified By: 
+
+-- =============================================
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[HR_Hierarchy_Stage](
+	[Emp_ID] [nvarchar](10) NOT NULL,
+	[Emp_Name] [nvarchar](70) NULL,
+	[Emp_Email] [nvarchar](50) NULL,
+	[Emp_Site] [nvarchar](50) NULL,
+	[Emp_Job_Code] [nvarchar](20) NULL,
+	[Emp_Job_Description] [nvarchar](50) NULL,
+	[Emp_LanID] [nvarchar](30) NULL,
+	[Emp_Program] [nvarchar](20) NULL,
+	[Sup_Emp_ID] [nvarchar](10) NULL,
+	[Sup_Name] [nvarchar](70) NULL,
+	[Sup_Email] [nvarchar](50) NULL,
+	[Sup_Job_Code] [nvarchar](50) NULL,
+	[Sup_Job_Description] [nvarchar](50) NULL,
+	[Sup_LanID] [nvarchar](30) NULL,
+	[Mgr_Emp_ID] [nvarchar](10) NULL,
+	[Mgr_Name] [nvarchar](70) NULL,
+	[Mgr_Email] [nvarchar](50) NULL,
+	[Mgr_Job_Code] [nvarchar](50) NULL,
+	[Mgr_Job_Description] [nvarchar](50) NULL,
+	[Mgr_LanID] [nvarchar](30) NULL,
+	[Start_Date] [datetime] NULL,
+	[Active] [nvarchar](1) NULL
+) ON [PRIMARY]
+
+GO
+
 
 
 /*****************************************************/
@@ -1086,4 +1140,93 @@ GO
 
 
 
+--6. PROCEDURE  [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Merge_HR_Employee_Hierarchy_Stage' 
+)
+   DROP PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create Date: 04/6/2016
+-- Description:	Performs the following actions.
+-- Updates existing records and inserts new records from the
+-- HR Staging table to the general Employee Hierarchy staging table.
+-- Last Modified By: 
+-- Last Modified Date: 
+-- Initial Revision - TFS 2332 - 4/6/2016
+-- =============================================
+CREATE PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
+AS
+BEGIN
+
+
+-- Updates Existing Records
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy_Stage]
+	   SET [Emp_Name] = S.[Emp_Name]
+	      ,[Emp_Email] =S.[Emp_Email]
+		  ,[Emp_LanID] = S.[Emp_LanID]
+		  ,[Emp_Site] =  S.[Emp_Site]
+		  ,[Emp_Job_Code] = S.[Emp_Job_Code]
+		  ,[Emp_Job_Description] = S.[Emp_Job_Description]
+		  ,[Sup_Emp_ID] = S.[Sup_Emp_ID]
+		  ,[Mgr_Emp_ID] = S.[Mgr_EMP_ID] 
+		  ,[Start_Date] = S.[Start_Date]
+		  ,[Active] = S.[Active]
+	 FROM [EC].[Employee_Hierarchy_Stage]H JOIN [EC].[HR_Hierarchy_Stage]S
+	 ON H.[Emp_ID] = S.[EMP_ID]
+	 WHERE H.[Emp_ID] is NOT NULL
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+    
+-- Inserts New Records
+BEGIN
+	INSERT INTO [EC].[Employee_Hierarchy_Stage]
+           ([Emp_ID]
+           ,[Emp_Name]
+           ,[Emp_Email]
+           ,[Emp_Site]
+           ,[Emp_Job_Code]
+           ,[Emp_Job_Description]
+           ,[Emp_LanID]
+           ,[Sup_Emp_ID]
+           ,[Mgr_Emp_ID]
+           ,[Start_Date]
+           ,[Active])
+							 SELECT S.[Emp_ID]
+									  ,S.[Emp_Name]
+									  ,S.[Emp_Email]
+									  ,S.[Emp_Site]
+									  ,S.[Emp_Job_Code]
+									  ,S.[Emp_Job_Description]
+									  ,S.[Emp_LanID]
+									  ,S.[Sup_Emp_ID]
+									  ,S.[Mgr_Emp_ID]
+									  ,S.[Start_Date]
+									  ,S.[Active]
+						  FROM [EC].[HR_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy_Stage]H
+						  ON S.Emp_ID = H.Emp_ID
+						  WHERE H.EMP_ID IS NULL
+
+OPTION (MAXDOP 1)
+END
+
+
+END --sp_Merge_HR_Employee_Hierarchy_Stage
+
+GO
 
