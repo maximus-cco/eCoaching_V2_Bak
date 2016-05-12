@@ -1,9 +1,14 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (12)
-Date: 4/15/2016
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (13)
+Date: 5/12/2016
+
+
+
+Version 13:5/12/2016
+Modified Procedure (#5) as part of TFS 1709 Admin tool setup to Audit inactivations from terms.
 
 Version 12: 4/15/2016
-Added table (#6 )and Procedure (#6) to support separate HR solution per TFS 2332
+Added tables (#6 and #7)and Procedure (#6) to support separate HR solution per TFS 2332
 
 
 Version 11: 02/18/2016
@@ -60,6 +65,7 @@ List of Tables:
 4. [EC].[EmployeeID_To_LanID]
 5. [EC].[CSR_Hierarchy]
 6. [EC].[HR_Hierarchy_Stage]
+7. [EC].[HR_Access]
  
 
 List of Procedures:
@@ -299,9 +305,9 @@ GO
 
 /*********************************************************/
 
---6.Table [EC].[HR_Hierarchy_Stage]
 
---1. Create Table [EC].[HR_Hierarchy_Stage]
+
+--6. Create Table [EC].[HR_Hierarchy_Stage]
 
 -- =============================================
 -- Author: Susmitha Palacherla
@@ -344,6 +350,53 @@ CREATE TABLE [EC].[HR_Hierarchy_Stage](
 	[Active] [nvarchar](1) NULL
 ) ON [PRIMARY]
 
+GO
+
+--*****************************************************
+
+--7. Create Table CREATE TABLE [EC].[HR_Access]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[HR_Access](
+	[Job_Code] [nvarchar](50) NOT NULL,
+	[Job_Code_Description] [nvarchar](50) NULL,
+	[NewSubmissions] [bit] NULL,
+	[MyDashboard] [bit] NULL,
+	[MySubmissions] [bit] NULL,
+	[HistDashboard] [bit] NULL,
+	[DisplayWarnings] [bit] NULL
+	
+) ON [PRIMARY]
+
+GO
+
+
+
+--3. Insert records into TABLE [EC].[HR_Access]
+INSERT INTO [EC].[HR_Access]
+           ([Job_Code]
+           ,[Job_Code_Description]
+           ,[NewSubmissions]
+           ,[MyDashboard]
+           ,[MySubmissions]
+           ,[HistDashboard]
+           ,[DisplayWarnings])
+     VALUES
+           ('WHER12', 'Analyst, HR Compliance',0,0,0,1,1),
+           ('WHER13', 'Sr Analyst, HR Compliance',0,0,0,1,1),
+           ('WHER14', 'Princ Analyst, HR Compliance',0,0,0,1,1),
+           ('WHHR02', 'Assistant, HR',0,0,0,1,1),
+           ('WHHR12', 'Business Partner, HR',0,0,0,1,1),
+           ('WHHR13', 'Sr Business Partner, HR',0,0,0,1,1),
+           ('WHHR14', 'Principal Business Partner, HR',0,0,0,1,1),
+           ('WHHR50', 'Manager, HR',0,0,0,1,1),
+           ('WHHR60', 'Sr Manager, HR',0,0,0,1,1),
+           ('WHHR70', 'Director, HR',0,0,0,1,1)
 GO
 
 
@@ -975,6 +1028,7 @@ GO
 
 --5. PROCEDURE  [EC].[sp_InactivateCoachingLogsForTerms] 
 
+
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -992,18 +1046,15 @@ GO
 
 
 
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date:    04/09/2014
 -- Description:	Inactivate Coaching logs for Termed Employees.
--- Last Modified: 09/04/2015
 -- Last Modified By: Susmitha Palacherla
--- Modified to Inactivate Surveys for termed Employees and Expired Surveys.
--- and Expired Surveys per TFS 549.
--- Surveys expire 5 days from Creation date.
+-- Revision History:
+-- Modified per TFS 549 - To Inactivate Surveys for termed Employees and Expired Surveys.
+-- Surveys expire 5 days from Creation date - 09/04/2015
+-- Admin tool setup per TFS 1709-  To log Inactivations in audit tables - 4/27/12016
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
 AS
@@ -1012,6 +1063,46 @@ BEGIN
  DECLARE @EWFMSiteCount INT
  
  -- Inactivate Warnings logs for Termed Employees
+
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+
+BEGIN TRY
+
+-- Log records being inactivated to Audit table and 
+-- Inactivate Warning logs for Termed Employees
+BEGIN
+INSERT INTO [EC].[AT_Warning_Inactivate_Reactivate_Audit]
+           ([WarningID]
+           ,[FormName]
+           ,[LastKnownStatus]
+           ,[Action]
+           ,[ActionTimestamp]
+           ,[RequesterID]
+           ,[Reason]
+           ,[RequesterComments]
+          )
+   SELECT W.WarningID
+		 ,W.FormName
+		 ,W.StatusID
+		 ,'Inactivate'
+		 ,GetDate()
+		 ,'000000'
+		 ,'Employee Inactive'
+		 ,'Employee Hierarchy Load Process'
+FROM [EC].[Warning_Log] W JOIN [EC].[Employee_Hierarchy]H
+ON W.[EmpLanID] = H.[Emp_LanID]
+AND W.[EmpID] = H.[Emp_ID]
+WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
+AND H.[Active] in ('T','D')
+AND H.[End_Date]<> '99991231'
+AND W.[StatusID] <> 2	 
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
 
 BEGIN
 UPDATE [EC].[Warning_Log]
@@ -1026,7 +1117,7 @@ AND W.[StatusID] <> 2
 OPTION (MAXDOP 1)
 END
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 
 -- Inactivate Surveys for Termed Employees
@@ -1042,13 +1133,13 @@ AND SH.[EmpID] = H.[Emp_ID]
 WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
 AND H.[Active] in ('T','D')
 AND H.[End_Date]<> '99991231'
-AND SH.[Status] <> 'Inactive'
+AND SH.[Status] = 'Open'
 AND [InactivationReason] IS NULL
 OPTION (MAXDOP 1)
 END
 
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 
  -- Inactivate Expired Survey records (5 days after creation date)
@@ -1059,17 +1150,50 @@ SET [Status] = 'Inactive'
 ,[InactivationDate] = GETDATE()
 ,[InactivationReason] = 'Survey Expired'
 WHERE DATEDIFF(DAY, [CreatedDate],  GETDATE())>= 5
-AND [Status] <> 'Inactive'
+AND [Status]  = 'Open'
 AND [InactivationReason] IS NULL
 OPTION (MAXDOP 1)
 END
 
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 
 
--- Inactivate Coaching logs for Termed Employees
+--Log records being inactivated to Audit table and 
+--Inactivate Coaching logs for Termed Employees
+
+BEGIN
+INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+           ([CoachingID]
+           ,[FormName]
+           ,[LastKnownStatus]
+           ,[Action]
+           ,[ActionTimestamp]
+           ,[RequesterID]
+           ,[Reason]
+           ,[RequesterComments]
+          )
+   SELECT C.CoachingID
+		 ,C.FormName
+		 ,C.StatusID
+		 ,'Inactivate'
+		 ,GetDate()
+		 ,'000000'
+		 ,'Employee Inactive'
+		 ,'Employee Hierarchy Load Process'
+FROM [EC].[Coaching_Log] C JOIN [EC].[Employee_Hierarchy]H
+ON C.[EmpLanID] = H.[Emp_LanID]
+AND C.[EmpID] = H.[Emp_ID]
+WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
+AND H.[Active] in ('T','D')
+AND H.[End_Date]<> '99991231'
+AND C.[StatusID] not in (1,2)	 
+OPTION (MAXDOP 1)		 
+END
+
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 BEGIN
 UPDATE [EC].[Coaching_Log]
@@ -1084,10 +1208,43 @@ AND C.[StatusID] not in (1,2)
 OPTION (MAXDOP 1)
 END
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
-
+-- Log records being inactivated to Audit table and 
 -- Inactivate Coaching logs for Employees on Extended Absence
+
+
+BEGIN
+INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+           ([CoachingID]
+           ,[FormName]
+           ,[LastKnownStatus]
+           ,[Action]
+           ,[ActionTimestamp]
+           ,[RequesterID]
+           ,[Reason]
+           ,[RequesterComments]
+          )
+   SELECT C.CoachingID
+		 ,C.FormName
+		 ,C.StatusID
+		 ,'Inactivate'
+		 ,GetDate()
+		 ,'000000'
+		 ,'Employee on EA'
+		 ,'Employee Hierarchy Load Process'
+FROM [EC].[Coaching_Log] C JOIN [EC].[EmpID_To_SupID_Stage]H
+ON C.[EmpLanID] = H.[Emp_LanID]
+AND C.[EmpID] = LTRIM(H.[Emp_ID])
+WHERE H.[Emp_Status]= 'EA'
+AND H.[Emp_LanID] IS NOT NULL
+AND C.[StatusID] not in (1,2) 
+OPTION (MAXDOP 1)		 
+END
+
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
 
 BEGIN
 UPDATE [EC].[Coaching_Log]
@@ -1101,13 +1258,47 @@ AND C.[StatusID] not in (1,2)
 OPTION (MAXDOP 1)
 END
 
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
-
+-- Log records being inactivated to Audit table and 
 -- Inactivate Coaching logs for CSRs and Sup Module eCLs for Employees not arriving in eWFM feed.
+
 
 SET @EWFMSiteCount = (SELECT count(DISTINCT Emp_Site_Code) FROM [EC].[EmpID_To_SupID_Stage])
 IF @EWFMSiteCount >= 14
+
+
+
+BEGIN
+INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+           ([CoachingID]
+           ,[FormName]
+           ,[LastKnownStatus]
+           ,[Action]
+           ,[ActionTimestamp]
+           ,[RequesterID]
+           ,[Reason]
+           ,[RequesterComments]
+          )
+   SELECT C.CoachingID
+		 ,C.FormName
+		 ,C.StatusID
+		 ,'Inactivate'
+		 ,GetDate()
+		 ,'000000'
+		 ,'Employee not in feed'
+		 ,'Employee Hierarchy Load Process'
+FROM [EC].[Coaching_Log] C LEFT OUTER JOIN [EC].[EmpID_To_SupID_Stage] S
+ON C.EMPID = LTRIM(S.EMP_ID)
+WHERE C.[StatusID] not in (1,2)
+AND C.[ModuleID]  in (1,2)
+AND S.EMP_ID IS NULL
+OPTION (MAXDOP 1)
+END
+		 
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
 BEGIN
 UPDATE [EC].[Coaching_Log]
 SET [StatusID] = 2
@@ -1120,13 +1311,17 @@ OPTION (MAXDOP 1)
 END
 
 
+COMMIT TRANSACTION
+END TRY
+
+  BEGIN CATCH
+  ROLLBACK TRANSACTION
+  END CATCH
+
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
 
 
-
-
 GO
-
 
 
 
