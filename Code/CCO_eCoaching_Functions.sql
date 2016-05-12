@@ -1,7 +1,13 @@
 /*
-File: eCoaching_Functions.sql (20)
+File: eCoaching_Functions.sql (21)
 Last Modified By: Susmitha Palacherla
-Date: 4/11/2016
+Date: 5/12/2016
+
+Version 21, 5/12/2016
+1. Added the following Functions 2 functions(#38 and #39) to support the Admin tool per TFS 1709.
+[EC].[fn_intLastKnownStatusForCoachingID]
+[EC].[fn_strCheckIfATSysAdmin]
+
 
 Version 20,  4/11/2016
 1. Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add code OTH per TFS 2470
@@ -142,6 +148,9 @@ List of Functions:
 35. [EC].[fn_strValueFromWarningID]
 36. [EC].[fn_isHotTopicFromSurveyTypeID] 
 37. [EC].[fnGetMaxDateTime]
+38.[EC].[fn_intLastKnownStatusForCoachingID]
+39.[EC].[fn_strCheckIfATSysAdmin]
+
 */
 
 
@@ -2497,3 +2506,137 @@ GO
 
 
 --**********************************************************
+
+--38.[EC].[fn_intLastKnownStatusForCoachingID]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_intLastKnownStatusForCoachingID' 
+)
+   DROP FUNCTION [EC].[fn_intLastKnownStatusForCoachingID]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+-- =============================================
+-- Author:           Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	     Given a CoachingID returns the last known active status from the audit table.
+-- Revision History:
+-- Initial revision - Created per TFS 1709 Admin tool setup - 4/21/2016
+-- =============================================
+
+CREATE FUNCTION [EC].[fn_intLastKnownStatusForCoachingID] (
+  @bigintID bigint
+)
+RETURNS INT
+AS
+BEGIN
+  DECLARE @intLKStatusID INT
+
+
+  SET @intLKStatusID = 
+(SELECT A.[LastKnownStatus] 
+FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit]A
+JOIN (SELECT [CoachingID], MAX([ActionTimestamp])AS MaxActionTimestamp
+ FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+ WHERE [LastKnownStatus] <> 2
+ GROUP BY [CoachingID]) AMax
+ ON A.[CoachingID]= AMax.[CoachingID]
+ AND A.ActionTimestamp = AMax.MaxActionTimestamp
+  WHERE  A.[CoachingID] = @bigintID)
+  
+         
+RETURN @intLKStatusID
+
+END  -- fn_intLastKnownStatusForCoachingID
+
+
+
+
+GO
+
+
+
+--***************************************
+
+--39.[EC].[fn_strCheckIfATSysAdmin]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCheckIfATSysAdmin' 
+)
+   DROP FUNCTION [EC].[fn_strCheckIfATSysAdmin]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date:  5/6/2016
+-- Description:	Given an Employee ID returns the number of Admin Tool roles
+-- Last Modified By:
+-- Revision History:
+-- where isSysAdmin = 1
+--  Created per TFS 1709 - Initial setup of admin tool - 05/06/2016
+
+-- =============================================
+CREATE FUNCTION [EC].[fn_strCheckIfATSysAdmin] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+	@intCountAdminRoles int,
+	@strSysAdmin nvarchar(10)
+	
+		 
+
+ SET @intCountAdminRoles = (SELECT Count(r.[RoleId])
+FROM [EC].[AT_Role]r JOIN [EC].[AT_User_Role_Link] ur
+ON r.RoleId = ur.RoleId JOIN [EC].[AT_User]u 
+ON u.UserId = ur.UserId 
+WHERE r.IsSysAdmin = 1
+AND u.UserID = @strEmpID )
+  
+  IF     @intCountAdminRoles > 0
+  SET    @strSysAdmin = N'YES'
+  ELSE
+  SET    @strSysAdmin = N'NO'
+  
+  RETURN   @strSysAdmin
+  
+END --fn_strCheckIfATSysAdmin
+
+
+
+
+GO
+
+
+
+
+--***************************************
