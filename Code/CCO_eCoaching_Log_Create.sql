@@ -1,7 +1,12 @@
 /*
-eCoaching_Log_Create(46).sql
-Last Modified Date: 4/15/2016
+eCoaching_Log_Create(47).sql
+Last Modified Date: 5/12/2016
 Last Modified By: Susmitha Palacherla
+
+
+Version 47: 5/12/2016
+1. Updated Procedures #8,9,17,45,46,47,48,50 for changes related to Admin tool setup. TFS 1709
+
 
 Version 46: 4/15/2016
 1. Added SP# 87 to control HR access from table per TFS 2332
@@ -1677,6 +1682,7 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending]
 GO
+
 SET ANSI_NULLS ON
 GO
 
@@ -1684,16 +1690,18 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/2011
 --	Description: This procedure selects the Pendingd e-Coaching records 
 --  for a given Manager's employees in the Manager Dashboard.
--- Last Updated By: Susmitha Palacherla
--- Last Modified Date: 04/16/2015
--- Modified during dashboard redesign SCR 14422.
--- 1. To Replace old style joins.
--- 2. Lan ID association by date.
+--  Last Updated By: Susmitha Palacherla
+--  Revision History:
+--  Modified per scr 14422 - dashboard redesign - 04/16/2015
+--  1. To Replace old style joins.
+--  2. Lan ID association by date.
+--  Modified per TFS 1709 - Admin tool setup to add non hierarchy sups - 5/4/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending] 
 
@@ -1716,7 +1724,7 @@ SET @nvcMGRID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
 
 SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
 		[eh].[Emp_Name]	strCSRName,
-		[eh].[Sup_Name]	strCSRSupName, 
+		[eh].[Sup_Name] strCSRSupName, 
 		[eh].[Mgr_Name]	strCSRMgrName, 
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource] strSource,
@@ -1731,13 +1739,41 @@ and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
 and [eh].[Emp_Name] Like '''+@strCSRin+'''
 and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
 and eh.[Mgr_ID] <> ''999999''
+AND (cl.[ReassignedToID] IS NULL OR cl.[ReassignedToID] IN 
+(SELECT DISTINCT Emp_ID FROM EC.Employee_Hierarchy 
+WHERE Sup_ID = '''+@nvcMGRID+'''))
+
+UNION
+
+SELECT [cl].[FormName]	strFormID,
+		[eh].[Emp_Name]	strCSRName,
+		[rs].[Emp_Name] strCSRSupName, 
+		[eh].[Mgr_Name]	strCSRMgrName, 
+		[s].[Status]	strFormStatus,
+		[sc].[SubCoachingSource] strSource,
+		[cl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+[cl].[EmpID] = [eh].[Emp_ID] Join [EC].[Employee_Hierarchy] rs
+ON rs.Emp_ID = cl.ReassignedToID Join [EC].[DIM_Status] s ON
+[cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
+[cl].[SourceID] = [sc].[SourceID] 
+where rs.[Sup_ID] = '''+@nvcMGRID+''' 
+and [S].[Status] like ''Pending%''
+and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
+and [eh].[Emp_Name] Like '''+@strCSRin+'''
+and [rs].[Emp_Name] Like '''+@strCSRSUPin+'''
+and eh.[Mgr_ID] <> ''999999''
+AND cl.[ReassignedToID] IS NOT NULL 
+
 Order By [SubmittedDate] DESC'
 		
-EXEC (@nvcSQL)	   
+EXEC (@nvcSQL)
+--PRINT 	(@nvcSQL)   
 END --sp_SelectFrom_Coaching_Log_MGRCSRPending
 
-
 GO
+
+
 
 
 
@@ -1764,19 +1800,17 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: This procedure selects the Pending e-Coaching records 
 --  for a given Manager in the Manager Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date:  05/22/2015
--- Updated per SCR 14818 to support rotating managers for Low CSAT
+-- Modified per SCR 14422 during dashboard resdesign - 04/16/2015
+-- 1. To Replace old style joins.
+-- 2. Lan ID association by date.
+-- Updated per SCR 14818 to support rotating managers for Low CSAT - 05/22/2015
+-- Modified per TFS 1710 Admin Tool setup - 5/2/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending] 
 @strCSRMGRin nvarchar(30),
@@ -1827,13 +1861,16 @@ SET @nvcSQL1 = 'select DISTINCT x.strFormID
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
-where ((eh.[Mgr_ID] = '''+@nvcMGRID+''' and ([S].[Status] = '''+@strFormStatus1+''' OR
-[S].[Status] = '''+@strFormStatus4+''' OR [S].[Status] = '''+@strFormStatus5+''')) OR
-(eh.[Sup_ID] = '''+@nvcMGRID+'''and ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+''' OR [S].[Status] = '''+@strFormStatus3+''' OR [S].[Status] = '''+@strFormStatus6+''')))
-and [eh].[Emp_Name] Like '''+@strCSRin+'''
-and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
-and ([cl].[strReportCode] not like '''+@strReportCode+''' OR [cl].[strReportCode] is NULL)
-and (eh.[Mgr_ID] <> ''999999'' and eh.[Sup_ID] <> ''999999''))X'
+WHERE (([ReassignCount]= 0 AND eh.[Mgr_ID] = '''+@nvcMGRID+''' 
+AND([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus4+''' OR [S].[Status] = '''+@strFormStatus5+''')) 
+OR(cl.[ReassignedToID] = '''+@nvcMGRID+''' AND [ReassignCount]<> 0
+AND ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus4+''' OR [S].[Status] = '''+@strFormStatus5+''')) 
+OR([ReassignCount]= 0 AND eh.[Sup_ID] = '''+@nvcMGRID+'''
+AND ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+''' OR [S].[Status] = '''+@strFormStatus3+''' OR [S].[Status] = '''+@strFormStatus6+''')))
+AND [eh].[Emp_Name] Like '''+@strCSRin+'''
+AND [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
+AND ([cl].[strReportCode] not like '''+@strReportCode+''' OR [cl].[strReportCode] is NULL)
+AND (eh.[Mgr_ID] <> ''999999'' AND eh.[Sup_ID] <> ''999999''))X'
 
 		
 SET @nvcSQL2 = ' UNION '
@@ -1853,12 +1890,13 @@ SET @nvcSQL3 = 'select DISTINCT x.strFormID
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
-where ((cl.[MgrID] = '''+@nvcMGRID+''' and [S].[Status] = '''+@strFormStatus1+''') OR
-(eh.[Sup_ID] = '''+@nvcMGRID+''' and [S].[Status] = '''+@strFormStatus2+'''))
-and [eh].[Emp_Name] Like '''+@strCSRin+'''
-and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
-and [cl].[strReportCode] like '''+@strReportCode+'''
-and (cl.[MgrID] <> ''999999'' and eh.[Sup_ID] <> ''999999'')) X'
+WHERE (([ReassignCount]= 0 AND cl.[MgrID] = '''+@nvcMGRID+''' AND [S].[Status] = '''+@strFormStatus1+''')
+OR (cl.[ReassignedToID] = '''+@nvcMGRID+''' AND [ReassignCount]<> 0 AND [S].[Status] = '''+@strFormStatus1+''')
+OR ([ReassignCount]= 0 AND eh.[Sup_ID] = '''+@nvcMGRID+''' AND [S].[Status] = '''+@strFormStatus2+'''))
+AND [eh].[Emp_Name] Like '''+@strCSRin+'''
+AND [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
+AND [cl].[strReportCode] like '''+@strReportCode+'''
+AND (cl.[MgrID] <> ''999999'' AND eh.[Sup_ID] <> ''999999'')) X'
 
 SET @nvcSQL4 = '  Order By [SubmittedDate] DESC'
 
@@ -1871,8 +1909,9 @@ EXEC (@nvcSQL)
 --Print @nvcsql
 	    
 END -- sp_SelectFrom_Coaching_Log_MGRPending
-
 GO
+
+
 
 
 
@@ -2481,18 +2520,16 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: This procedure selects the Pending e-Coaching records 
 --  for a given Supervisor in the Supervisor Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date:04/16/2015
--- Modified during dashboard redesign SCR 14422.
+-- Modified per SCR 14422 during dashboard resdesign - 04/16/2015
 -- 1. To Replace old style joins.
 -- 2. Lan ID association by date.
+-- Modified per TFS 1710 Admin Tool setup - 5/2/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPPending] @strCSRSUPin nvarchar(30)
 AS
@@ -2526,20 +2563,20 @@ SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
-and (((eh.[Sup_ID] = '''+@nvcSUPID+''' OR eh.[Mgr_ID] = '''+@nvcSUPID+''' )
-and ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+'''OR [S].[Status] = '''+@strFormStatus3+'''OR [S].[Status] = '''+@strFormStatus4+'''))
-or (eh.[Emp_ID] = '''+@nvcSUPID+''' and [S].[Status] = '''+@strFormStatus5+'''))
-and (eh.[Sup_ID] <> ''999999'' AND eh.[Mgr_ID] <> ''999999'')
-Order By [cl].[SubmittedDate] DESC'
+WHERE (
+([ReassignCount]= 0 AND (eh.[Sup_ID] = '''+@nvcSUPID+''' OR eh.[Mgr_ID] = '''+@nvcSUPID+''')
+AND ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+'''OR [S].[Status] = '''+@strFormStatus3+'''OR [S].[Status] = '''+@strFormStatus4+'''))
+OR (cl.[ReassignedToId] = '''+@nvcSUPID+''' AND [ReassignCount]<> 0 AND [S].[Status] = '''+@strFormStatus1+''')
+OR (eh.[Emp_ID] = '''+@nvcSUPID+''' AND [S].[Status] = '''+@strFormStatus5+''')
+)
+AND (eh.[Sup_ID] <> ''999999'' AND eh.[Mgr_ID] <> ''999999'')
+ORDER BY [cl].[SubmittedDate] DESC'
 		
 EXEC (@nvcSQL)	
 --Print @nvcSQL
 	    
 END --sp_SelectFrom_Coaching_Log_SUPPending
-
-
 GO
-
 
 
 
@@ -4438,9 +4475,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -4452,6 +4486,8 @@ GO
 -- 2. TFS 1914 to support  OMR Short Calls feed with Manager Review - 2/17/2016
 -- 3. TFS 1732 to support SDR Training feed - 3/2/2016
 -- 4. TFS 2283 to support ODT Training feed - 3/22/2016
+-- 5. TFS 1709 to support Reassigned sups and Mgrs - 5/6/2016
+
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4463,6 +4499,7 @@ DECLARE
 @nvcSQL nvarchar(max),
 @nvcSQL1 nvarchar(max),
 @nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
 @nvcEmpID nvarchar(10),
 @nvcMgrID nvarchar(10)
 
@@ -4490,17 +4527,38 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		st.City	strCSRSite,
 		eh.Sup_ID strCSRSupID,
 		eh.Sup_LanID strCSRSup,
-		eh.Sup_Name	 strCSRSupName,
+		eh.Sup_Name strCSRSupName,
 		eh.Sup_Email  strCSRSupEmail,
+	CASE 
+	     WHEN (cl.[statusId]= 6 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
+		 WHEN (cl.[Review_SupID]is NOT NULL and cl.[Review_SupID] = cl.[ReassignedToID] and [ReassignCount]= 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_SupID])
+		 ELSE ''NA''
+	END  strReassignedSupName,	
 		eh.Mgr_ID strCSRMgrID,
-		CASE WHEN cl.[strReportCode] like ''LCS%'' 
+	CASE 
+		 WHEN cl.[strReportCode] like ''LCS%'' 
 		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
-		 ELSE eh.Mgr_LanID END	strCSRMgr,
-		 CASE WHEN cl.[strReportCode] like ''LCS%'' AND cl.[MgrID] <> '''+@nvcMgrID+'''
+		 ELSE eh.Mgr_LanID 
+	END strCSRMgr,
+	CASE
+		 WHEN cl.[strReportCode] like ''LCS%'' AND cl.[MgrID] <> '''+@nvcMgrID+'''
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[MgrID])+ '' (Assigned Reviewer)''
-		 ELSE eh.Mgr_Name END strCSRMgrName,
+		 ELSE eh.Mgr_Name 
+	END strCSRMgrName,
 		eh.Mgr_Email strCSRMgrEmail,
-		ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
+	CASE 
+	     WHEN (cl.[statusId]= 5 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
+		 WHEN (cl.[Review_MgrID]is NOT NULL AND cl.[Review_MgrID] = cl.[ReassignedToID]and [ReassignCount]= 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_MgrID])
+		 ELSE ''NA''
+	END strReassignedMgrName, '
+	
+	  SET @nvcSQL2 =
+		'ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
+		cl.ReassignedToID,
         sc.SubCoachingSource	strSource,
         CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey'',''IQS'',''Verint-GDIT Supervisor'')
 		THEN 1 ELSE 0 END 	isIQS,
@@ -4524,7 +4582,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
 		CASE WHEN cc.SDR is Not NULL Then 1 ELSE 0 END	"Training / SDR",
 	    CASE WHEN cc.ODT is Not NULL Then 1 ELSE 0 END	"Training / ODT",
-		cl.Description txtDescription,
+	  	cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
 		cl.SubmittedDate,
@@ -4540,7 +4598,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		cl.CSRComments txtCSRComments
 	    FROM  [EC].[Coaching_Log] cl JOIN'
 	    
-SET @nvcSQL2 = '  (SELECT  ccl.FormName,
+SET @nvcSQL3 = '  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''Customer Service Escalation'' THEN [clr].[Value] ELSE NULL END)	CSE,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''Current Coaching Initiative'' THEN [clr].[Value] ELSE NULL END)	CCI,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
@@ -4552,7 +4610,7 @@ SET @nvcSQL2 = '  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END)	OMRISQ,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END)	SDR,
      MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END)	ODT
-	 FROM [EC].[Coaching_Log_Reason] clr,
+ 	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
 	 WHERE [ccl].[FormName] = '''+@strFormIDin+'''
@@ -4569,14 +4627,15 @@ ON [cl].[FormName] = [cc].[FormName] JOIN  [EC].[Employee_Hierarchy] eh
 	 ON [cl].[SiteID] = [st].[SiteID] JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
 Order By [cl].[FormName]'
 		
-SET @nvcSQL =  @nvcSQL1 +  @nvcSQL2
+SET @nvcSQL =  @nvcSQL1 +  @nvcSQL2 +  @nvcSQL3
 EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 
-
 GO
+
+
 
 
 
@@ -4605,14 +4664,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/12
 --    Description: *    This procedure allows supervisors to update the e-Coaching records from review page. 
---    Last Update:   07/22/2015
---    Updated per TFS 115/118 to fix issue with Coaching Notes overwritten.
+--    Updated per TFS 115/118 to fix issue with Coaching Notes overwritten - 07/22/2015
+--    Updated per TFS 1709 Admin tool setup to reset reassign count  - 5/2/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update1Review_Coaching_Log]
 (
@@ -4645,7 +4702,8 @@ UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
 	       Review_SupID = @nvcReviewSupID,
 		   SupReviewedAutoDate = @dtmSupReviewedAutoDate,
-		   CoachingNotes = @nvctxtCoachingNotes
+		   CoachingNotes = @nvctxtCoachingNotes,
+		   ReassignCount = 0
 from EC.Coaching_Log      
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)
@@ -4692,15 +4750,7 @@ END CATCH
 
 
 END --sp_Update1Review_Coaching_Log
-
-
-
 GO
-
-
-
-
-
 
 
 
@@ -4718,6 +4768,7 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Update2Review_Coaching_Log]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
@@ -4725,14 +4776,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/11
 --    Description: *    This procedure allows managers to update the e-Coaching records from the review page with Yes, this is a confirmed Customer Service Escalation. 
---    Last Update:   07/22/2015
---    Updated per TFS 115/118 to fix issue with Coaching Notes overwritten.
+--    Updated per TFS 115/118 to fix issue with Coaching Notes overwritten - 07/22/2015
+--    Updated per TFS 1709 Admin tool setup to reset reassign count to 0 - 5/2/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update2Review_Coaching_Log]
 (
@@ -4769,7 +4818,8 @@ UPDATE [EC].[Coaching_Log]
 		   MgrReviewAutoDate = @dtmMgrReviewAutoDate,
 		   MgrReviewManualDate = @dtmMgrReviewManualDate,
 		   isCSE = @bitisCSE,
-           MgrNotes = @nvctxtMgrNotes
+           MgrNotes = @nvctxtMgrNotes,
+           ReassignCount = 0
 from EC.Coaching_Log       
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)	
@@ -4824,6 +4874,9 @@ GO
 
 
 
+
+
+
 ******************************************************************
 
 --48. Create SP  [EC].[sp_Update3Review_Coaching_Log]
@@ -4843,12 +4896,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:     11/16/12
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page with No, this is not a confirmed Customer Service Escalation. 
---    Last Update:    12/16/2014
---    Updated per SCR 13891 to capture review mgr id.
+--    Updated per SCR 13891 to capture review mgr id - 12/16/2014
+--    Updated per TFS 1709 Admin tool setup to reset reassign count to 0 - 5/2/2016
 --    =====================================================================
 CREATE  PROCEDURE [EC].[sp_Update3Review_Coaching_Log]
 (
@@ -4885,7 +4942,8 @@ UPDATE [EC].[Coaching_Log]
 		   isCSE = @bitisCSE,
 		   MgrReviewAutoDate = @dtmMgrReviewAutoDate,
 		   MgrReviewManualDate = @dtmMgrReviewManualDate,
-           MgrNotes = @nvcMgrNotes	
+           MgrNotes = @nvcMgrNotes,
+           ReassignCount = 0
 from EC.Coaching_Log        
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)	
@@ -4932,7 +4990,9 @@ END CATCH
 
 
 END --sp_Update3Review_Coaching_Log
+
 GO
+
 
 
 
@@ -5061,19 +5121,15 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/2012
 --    Description:    This procedure allows managers to update the e-Coaching records from the review page for Outlier records. 
 --    Updated per TFS 644 to add IAE and IAT reports - 09/17/2015
 --    Updated per TFS 2145 to reset Email reminder attributes for OMR logs  - 3/2/2016
---    Updated per TFS 1732 to support SDR feed  - 3/4/2016
---    Updated per TFS 2283 to support SDR feed  - 3/22/2016
+--    Updated per TFS 1732 to support Training sdr  feed  - 3/4/2016
+--    Updated per TFS 2283 to support Training odt feed  - 3/22/2016
+--    Updated per TFS 1709 Admin tool setup to reset reassign count to 0 - 5/2/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
@@ -5122,7 +5178,8 @@ SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus
 		SupReviewedAutoDate =  @dtmReviewAutoDate,
 		CoachingDate =  @dtmReviewManualDate,
 		CoachingNotes = @nvcReviewerNotes,		   
-		txtReasonNotCoachable = @nvctxtReasonNotCoachable 
+		txtReasonNotCoachable = @nvctxtReasonNotCoachable,
+		ReassignCount = 0 
 	WHERE FormName = @nvcFormID
         OPTION (MAXDOP 1)
         
@@ -5152,7 +5209,8 @@ SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus
 		txtReasonNotCoachable = @nvctxtReasonNotCoachable, 
 		ReminderSent = 0,
         ReminderDate = NULL,
-        ReminderCount = 0
+        ReminderCount = 0,
+        ReassignCount = 0 
 	WHERE FormName = @nvcFormID
         OPTION (MAXDOP 1)
 
@@ -5211,7 +5269,6 @@ END CATCH
 END --sp_Update5Review_Coaching_Log
 
 GO
-
 
 
 
