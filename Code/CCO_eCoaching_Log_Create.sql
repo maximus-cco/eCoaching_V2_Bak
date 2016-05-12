@@ -1,7 +1,13 @@
 /*
-eCoaching_Log_Create(45).sql
-Last Modified Date: 3/23/2016
+eCoaching_Log_Create(46).sql
+Last Modified Date: 4/15/2016
 Last Modified By: Susmitha Palacherla
+
+Version 46: 4/15/2016
+1. Added SP# 87 to control HR access from table per TFS 2332
+2. Updated Procedures #6,53, 68 and 79 to replace hardcoding of job codes with table lookup
+3. Updated Procedure #53 to remove mpID from return per TFS 2323
+
 
 Version 45: 3/23/2016
 1. Updated SP # SP#45 to support ODT feed per TFS 2283
@@ -325,6 +331,7 @@ Procedures
 84. [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted_Site] 
 85. [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All] 
 86. [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site] 
+87. [EC].[sp_CheckIf_HRUser]
 */
 
 
@@ -1318,18 +1325,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/2012
 --	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
---  Last Modified: 12/15/2015
---  Last Modified Bt: Susmitha Palacherla
---  Modified per TFS 1423 to add additional HR job code WHHR70
-
+--  Last Modified: 4/6/2016
+--  Last Modified By: Susmitha Palacherla
+--  Modified to add additional HR job code WHHR70 - TFS 1423 - 12/15/2015
+--  Modified to reference table for HR job codes - TFS 2332 - 4/6/2016
 --	=====================================================================
+
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
 
 @strSourcein nvarchar(100),
@@ -1349,7 +1354,7 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
 @sortASC nvarchar(1)
 AS
 
---[cl].[SubmittedDate]
+
 BEGIN
 
 
@@ -1364,6 +1369,7 @@ DECLARE
 @nvcSQL5 nvarchar(max),
 @strSDate nvarchar(10),
 @strEDate nvarchar(10),
+@bitDisplayWarnings bit,
 @UpperBand int,
 @LowerBand int,
 @SortExpression nvarchar(100),
@@ -1375,6 +1381,9 @@ SET @strSDate = convert(varchar(8),@strSDatein,112)
 Set @strEDate = convert(varchar(8),@strEDatein,112)
 SET @LowerBand  = @startRowIndex 
 SET @UpperBand  = @startRowIndex + @PageSize 
+
+SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
+WHERE [Job_Code]= @strjobcode)
 
 SET @where = ' WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
 			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
@@ -1533,12 +1542,8 @@ SET @nvcSQL3 = ' ) x )
 		WHERE RowNumber >= '''+CONVERT(VARCHAR,@LowerBand)+'''  AND RowNumber < '''+CONVERT(VARCHAR, @UpperBand) +
         ''' ORDER BY ' + @SortExpression  
 
- 
- IF @strjobcode in ('WHER13', 'WHER50',
-'WHHR12', 'WHHR13', 'WHHR14',
-'WHHR50', 'WHHR60', 'WHHR70', 'WHHR80',
-'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
 
+IF @bitDisplayWarnings = 1
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
 
 ELSE
@@ -1552,20 +1557,9 @@ EXEC (@nvcSQL)
 	    
 END -- SelectFrom_Coaching_Log_HistoricalSUP
 
-GO
-
-
-
-
 
 
 GO
-
-
-
-
-
-
 
 
 
@@ -5459,15 +5453,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	07/22/13
 -- Last Updated By: Susmitha Palacherla
--- Last Modified Date: 8/25/2015
--- Updated per TFS 605  to return lower employee ID and also look for Active not in ('T','D')
+-- Last Modified Date: 4/4/2016
+-- TFS 605 - Return lower employee ID and look for Active not in ('T','D')- 8/25/2015
+-- TFS 2323 - Unknown user can be authenticated - Restrict user in SP return - 4/4/2016
+-- TFS 2332 - Controlling access for HR users from backend - 4/7/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Whoami] 
 
@@ -5479,25 +5472,36 @@ AS
 BEGIN
 DECLARE	
 @EmpID nvarchar(100),
+@nvcEmpJobCode nvarchar(30),
+@nvcHRCondition nvarchar(1000),
 @nvcSQL nvarchar(max)
+
+SET @nvcHRCondition = ''
 
 
 SET @EmpID = (Select [EC].[fn_nvcGetEmpIdFromLanId](@strUserin,GETDATE()))
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @EmpID)
 
- SET @nvcSQL = 'SELECT [Emp_Job_Code] as EmpJobCode,
+IF @nvcEmpJobCode LIKE 'WH%'
+SET @nvcHRCondition = ' AND [Emp_Job_Code] IN (SELECT DISTINCT [Job_Code] FROM [EC].[HR_Access] WHERE [HistDashboard]= 1)'
+
+SET @nvcSQL = 'SELECT [Emp_Job_Code] as EmpJobCode,
                        [Emp_Email] as EmpEmail,
                        [Emp_Name] as EmpName,
                        lower([Emp_ID]) as EmpID
               FROM [EC].[Employee_Hierarchy]WITH(NOLOCK)
               WHERE [Emp_ID] = '''+@EmpID+'''
-              AND [Active] not in  (''T'', ''D'')'
+              AND [Active] not in  (''T'', ''D'')
+              AND [Emp_ID] <> ''999999''' + @nvcHRCondition
+
+
               
             
 		
 EXEC (@nvcSQL)	
 --Print @nvcSQL
 END --sp_Whoami
-
 
 GO
 
@@ -6448,14 +6452,17 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	03/06/2015
 --	Description: *	This procedure selects Sources to be displayed in the dashboard
 --  Source dropdown list.
---  Last Modified: 12/15/2015
---  Last Modified Bt: Susmitha Palacherla
---  Modified per TFS 1423 to add additional HR job code WHHR70
+--  Last Modified: 4/6/2016
+--  Last Modified By: Susmitha Palacherla
+--  Modified to add additional HR job code WHHR70 - TFS 1423 - 12/15/2015
+--  Modified to reference table for HR job codes - TFS 2332 - 4/6/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Sources_For_Dashboard] 
 @strUserin nvarchar(30)
@@ -6466,6 +6473,7 @@ BEGIN
 	@nvcSQL nvarchar(max),
 	@strjobcode  nvarchar(20),
 	@nvcEmpID nvarchar(10),
+	@bitDisplayWarnings bit,
 	@dtmDate datetime
 	
 		
@@ -6475,14 +6483,12 @@ SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
 SET @strjobcode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
 WHERE Emp_ID = @nvcEmpID)	
 	
+SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
+WHERE [Job_Code]= @strjobcode)
 
 
 -- Check users job code and show 'Warning' as a source only for HR users.
-
-IF @strjobcode in ('WHER13', 'WHER50',
-'WHHR12', 'WHHR13', 'WHHR14',
-'WHHR50', 'WHHR60', 'WHHR70', 'WHHR80',
-'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
+IF @bitDisplayWarnings = 1
 
 SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
 (SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
@@ -6506,6 +6512,8 @@ ORDER BY X.Sortorder'
 
 EXEC (@nvcSQL)	
 END --sp_Select_Sources_For_Dashboard
+
+
 
 
 GO
@@ -7260,16 +7268,17 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/28/2015
 --	Description: *	This procedure returns the count of completed   e-Coaching  records that will be 
 --  displayed for the selected criteria on the SUP historical page.
 -- Create per SCR 14893 dashboard redesign performance round 2.
---  Last Modified: 12/15/2015
---  Last Modified Bt: Susmitha Palacherla
---  Modified per TFS 1423 to add additional HR job code WHHR70
-
+--  Last Modified: 4/6/2016
+--  Last Modified By: Susmitha Palacherla
+--  Modified to add additional HR job code WHHR70 - TFS 1423 - 12/15/2015
+--  Modified to reference table for HR job codes - TFS 2332 - 4/6/2016
 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count] 
@@ -7302,9 +7311,13 @@ DECLARE
 @strFormStatus nvarchar(30),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8),
+@bitDisplayWarnings bit,
 @where nvarchar(max) 
       
-    
+ 
+SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
+WHERE [Job_Code]= @strjobcode)
+   
 SET @strFormStatus = 'Inactive'
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 Set @strEDate = convert(varchar(8),@strEDatein,112)
@@ -7416,12 +7429,7 @@ SET @nvcSQL3 = ' ) x
  )
  SELECT count(strFormID) FROM TempCoaching'
 	   
-  
- IF @strjobcode in ('WHER13', 'WHER50',
-'WHHR12', 'WHHR13', 'WHHR14',
-'WHHR50', 'WHHR60', 'WHHR70', 'WHHR80',
-'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
-
+IF @bitDisplayWarnings = 1
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
 
 ELSE
@@ -7435,7 +7443,10 @@ EXEC (@nvcSQL)
 END -- sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
 
 
+
 GO
+
+
 
 
 
@@ -7973,9 +7984,73 @@ End --sp_SelectFrom_Coaching_LogDistinctMGRCompleted_Site
 
 
 GO
+--******************************************************************
+
+--87. Create PROCEDURE [EC].[sp_CheckIf_HRUser]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_CheckIf_HRUser' 
+)
+   DROP PROCEDURE [EC].[sp_CheckIf_HRUser]
+GO
 
 
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	4/6/2016
+--	Description: *	This procedure takes the lan ID of the HR user and looks up the job code.
+--  If Job code exists in the HR access table and HistDashboard = 1 then returns 'YES' else 'NO'
+--  Last Modified By: 
+--  Last Modified Date: 
+--  Created to replace hardcoding in UI code with table lookup. TFS 2232. - 4/6/2016 
+ 
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_CheckIf_HRUser] 
+@nvcEmpLanIDin nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+
+	@nvcSQL nvarchar(max),
+	@nvcEmpID nvarchar(10),
+	@nvcEmpJobCode nvarchar(30),
+	@dtmDate datetime
+
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcEmpID)
+
+  
+SET @nvcSQL = 'SELECT CASE WHEN '''+@nvcEmpJobCode+''' IN
+(SELECT DISTINCT [Job_Code] FROM [EC].[HR_Access]
+WHERE [HistDashboard]= 1) THEN ''YES'' ELSE ''NO'' END AS isHRUser'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_CheckIf_HRUser
+
+GO
 
 
 --******************************************************************
+
+
+
+
+
+
 
