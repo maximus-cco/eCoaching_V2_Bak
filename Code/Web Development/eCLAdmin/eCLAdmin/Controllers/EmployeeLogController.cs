@@ -175,9 +175,11 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public ActionResult Reactivate(string employee, int logType, EmployeeLogSelectViewModel model, int reason, string otherReason, string comment)
+        public ActionResult Reactivate(int module, string employee, int logType, EmployeeLogSelectViewModel model, int reason, string otherReason, string comment)
         {
             logger.Debug("Entered Reactivate [post]...");
+
+            logger.Debug("module=" + module);
 
             // Save to database
             bool success = employeeLogService.ProcessActivation(
@@ -191,6 +193,7 @@ namespace eCLAdmin.Controllers
                                              );
 
             // Send email notification for Coaching logs Reactivation
+            // Do not cc to anyone.
             if ((int)EmployeeLogType.Coaching == logType)
             {
                 string emailTo = null;
@@ -198,7 +201,7 @@ namespace eCLAdmin.Controllers
                 var dict = EclAdminUtil.BuildLogStatusNamesDictionary(model.GetSelectedLogs());
                 foreach (int key in dict.Keys)
                 {
-                    emailTo = EmailUtil.GetEmailTo(key, employeeInfo);
+                    emailTo = EmailUtil.GetEmailTo(module, key, employeeInfo);
                     List<string> logNames = dict[key];
                     SendEmail(EmailType.Reactivation, new List<string> { emailTo }, null, logNames);
                 }

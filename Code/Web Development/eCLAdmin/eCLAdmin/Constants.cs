@@ -4,6 +4,13 @@ namespace eCLAdmin
 {
     public static class Constants
     {
+        public const int MODULE_UNKNOWN = -1;
+        public const int MODULE_CSR = 1;
+        public const int MODULE_SUPERVISOR = 2;
+        public const int MODULE_QUALITY = 3;
+        public const int MODULE_LSA = 4;
+        public const int MODULE_TRAINING = 5;
+
         public const int LOG_STATUS_UNKNOWN = -1;
         public const int LOG_STATUS_COMPLETED = 1;
         public const int LOG_STATUS_INACTIVE = 2;

@@ -42,10 +42,14 @@ namespace eCLAdmin.Utilities
             return subject;
         }
 
-        public static string GetEmailTo(int statusId, Employee employee)
+        // Get address to send email.
+        // CSR and Training modules: Pending Supervisor Review, Pending Manager Review
+        // Supervisor module: Pending Manager Review, Pending Sr. Manager Review
+        // Quality module: Pending Quality Lead Review
+        // LSA module: Pending Supervisor Review
+        public static string GetEmailTo(int moduleId,  int statusId, Employee employee)
         {
             string emailTo = null;
-
             switch (statusId)
             {
                 case Constants.LOG_STATUS_PENDING_ACKNOWLEDGEMENT:
@@ -56,10 +60,25 @@ namespace eCLAdmin.Utilities
                     break;
                 case Constants.LOG_STATUS_PENDING_MANAGERREVIEW:
                     emailTo = employee.ManagerEmail;
+                    if (moduleId == Constants.MODULE_SUPERVISOR)
+                    {
+                        // For supervisors, their direct report is their supervisor
+                        emailTo = employee.SupervisorEmail;
+                    }
                     break;
                 case Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW:
                     emailTo = employee.SupervisorEmail;
                     break;
+                case Constants.LOG_STATUS_PENDING_SRMANAGER_REVIEW:
+                    emailTo = employee.ManagerEmail;
+                    break;
+                case Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW:
+                    emailTo = employee.SupervisorEmail;
+                    break;
+                // This status is not being used in eCoaching Log.
+                //case Constants.LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW:
+                //    emailTo = employee.ManagerEmail;
+                //    break;
                 default:
                     break;
             }
