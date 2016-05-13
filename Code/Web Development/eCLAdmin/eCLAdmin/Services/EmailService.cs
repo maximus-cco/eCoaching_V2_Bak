@@ -46,11 +46,8 @@ namespace eCLAdmin.Services
 
             // Replace {eCoachingUrl} based on environment
             string eCoachingUrl = null;
-            if (Constants.WEB_SERVER_NAME_PROD == webServerName)
-            {
-                eCoachingUrl = Constants.ECOACHING_URL_PROD;
-            }
-            else if (Constants.WEB_SERVER_NAME_ST == webServerName)
+            eCoachingUrl = Constants.ECOACHING_URL_PROD;
+            if (Constants.WEB_SERVER_NAME_ST == webServerName)
             {
                 eCoachingUrl = Constants.ECOACHING_URL_ST;
             }
