@@ -327,6 +327,12 @@
                     <%-- The employee's Supervisor employee ID in employee_hierarchy table. --%>
                     <asp:Label ID="HierarchySupEmployeeID" runat="server" Text='<%# Eval("strCSRSupID")%>' Visible="false" />
                     <asp:Label ID="CLMgrEmployeeID" runat="server" Text='<%# Eval("strCLMgrID")%>' Visible="false" />
+                    <%-- The employee ID of the person to whom this log was reassigned.--%>
+                    <asp:Label ID="ReassignedToEmployeeID" runat="server" Text='<%# Eval("ReassignedToID")%>' Visible="false" />
+                    <%-- The supervisor name to whom the log was reassigned to.--%>
+                    <asp:Label ID="ReassignedToSupName" runat="server" Text='<%# Eval("strReassignedSupName")%>' Visible="false" />
+                    <%-- The manager name to whom the log was reassigned to.--%>
+                    <asp:Label ID="ReassignedToMgrName" runat="server" Text='<%# Eval("strReassignedMgrName")%>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">
@@ -765,6 +771,11 @@
                     <asp:Label ID="HierarchyMgrEmployeeID" runat="server" Text='<%# Eval("strCSRMgrID")%>' Visible="false" />
                     <%-- The employee's Supervisor employee ID in employee_hierarchy table. --%>
                     <asp:Label ID="HierarchySupEmployeeID" runat="server" Text='<%# Eval("strCSRSupID")%>' Visible="false" />
+                    <%-- The employee ID of the person to whom this log was reassigned.--%>
+                    <asp:Label ID="ReassignedToEmployeeID" runat="server" Text='<%# Eval("ReassignedToID")%>' Visible="false" />
+                    <asp:Label ID="ReassignedToSupName" runat="server" Text='<%# Eval("strReassignedSupName")%>' Visible="false" />
+                    <%-- The manager name to whom the log was reassigned to.--%>
+                    <asp:Label ID="ReassignedToMgrName" runat="server" Text='<%# Eval("strReassignedMgrName")%>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">
@@ -860,8 +871,14 @@
         <asp:Label ID="Label24" runat="server" Text="Supervisor:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
         <asp:Label ID="Label25" runat="server" CssClass="sidetext"></asp:Label>
         <br />
+        <asp:Label ID="ReassignedSupLabel" runat="server" Text="Reassigned Supervisor:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
+        <asp:Label ID="ReassignedSupName" runat="server" CssClass="sidetext"></asp:Label>
+        <br />
         <asp:Label ID="Label26" runat="server" Text="Manager:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
         <asp:Label ID="Label27" runat="server" CssClass="sidetext"></asp:Label>
+        <br />
+        <asp:Label ID="ReassignedMgrLabel" runat="server" Text="Reassigned Manager:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
+        <asp:Label ID="ReassignedMgrName" runat="server" CssClass="sidetext"></asp:Label>
         <br />
         <asp:Panel ID="Panel34" runat="server" Visible="false">
             <asp:Label ID="Label119" runat="server" Text="Submitter:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;

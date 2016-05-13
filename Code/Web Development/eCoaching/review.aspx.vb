@@ -66,6 +66,9 @@ Public Class review
     ' coaching_log.SubmitterID
     Private m_strSubmitterEmployeeID As String
 
+    ' The employee ID of the person to whom this log was reassigned.
+    Private m_strReassignedToEmployeeID As String
+
     ' Indicates if the user is an ARC CSR. 
     ' Historical_Dashboard_ACL.Role as "ARC"
     Private m_blnUserIsARCCsr As Boolean
@@ -86,7 +89,9 @@ Public Class review
         Return m_strUserEmployeeID = m_strEmployeeID OrElse
                m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse
                m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse
-               (m_lowCustomerSatisfaction = 1 AndAlso m_strUserEmployeeID = m_strCLMgrEmployeeID)
+               (m_lowCustomerSatisfaction = 1 AndAlso m_strUserEmployeeID = m_strCLMgrEmployeeID) OrElse
+               m_strUserEmployeeID = m_strReassignedToEmployeeID
+
     End Function
 
     Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
@@ -100,6 +105,8 @@ Public Class review
 
         m_strCLMgrEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("CLMgrEmployeeID"), Label).Text)
         m_lowCustomerSatisfaction = LCase(DirectCast(ListView1.Items(0).FindControl("Label36"), Label).Text)
+
+        m_strReassignedToEmployeeID = LCase(DirectCast(ListView1.Items(0).FindControl("ReassignedToEmployeeID"), Label).Text)
 
         m_blnUserIsARCCsr = Label241.Text <> "0"
 
@@ -126,8 +133,14 @@ Public Class review
         pHolder = ListView1.Items(0).FindControl("Label60")
         Label25.Text = pHolder.Text
 
+        pHolder = ListView1.Items(0).FindControl("ReassignedToSupName")
+        ReassignedSupName.Text = pHolder.Text
+
         pHolder = ListView1.Items(0).FindControl("Label61")
         Label27.Text = pHolder.Text
+
+        pHolder = ListView1.Items(0).FindControl("ReassignedToMgrName")
+        ReassignedMgrName.Text = pHolder.Text
 
         Panel34.Visible = True
         pHolder = ListView1.Items(0).FindControl("Label121")
@@ -232,7 +245,7 @@ Public Class review
         'pHolder = ListView1.Items(0).FindControl("Label45") ' strCSRSup
 
         ' The user is the employee's current supervisor
-        If (m_strUserEmployeeID = m_strHierarchySupEmployeeID) Then
+        If (m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse m_strUserEmployeeID = m_strReassignedToEmployeeID) Then
             'If (lan = LCase(pHolder.Text)) Then
             ' Date1.Text = DateTime.Now.ToString("d")
             CompareValidator1.ValueToCompare = TodaysDate
@@ -379,7 +392,8 @@ Public Class review
         ' The user is the employee's current manager, OR
         ' If it is a LCS, the user is either the employee's current mgr or the mgr when the eCL was submitted
         If (m_strUserEmployeeID = m_strHierarchyMgrEmployeeID OrElse
-                (m_lowCustomerSatisfaction = 1 AndAlso m_strUserEmployeeID = m_strCLMgrEmployeeID)) Then
+                (m_lowCustomerSatisfaction = 1 AndAlso m_strUserEmployeeID = m_strCLMgrEmployeeID) OrElse
+                m_strUserEmployeeID = m_strReassignedToEmployeeID) Then
             'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's level 3
 
             'recStatus = DataList1.Items(0).FindControl("LabelStatus")
@@ -550,6 +564,8 @@ Public Class review
         m_strHierarchyMgrEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("HierarchyMgrEmployeeID"), Label).Text)
         m_strSubmitterEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("SubmitterEmployeeID"), Label).Text)
 
+        m_strReassignedToEmployeeID = LCase(DirectCast(ListView2.Items(0).FindControl("ReassignedToEmployeeID"), Label).Text)
+
         m_blnUserIsARCCsr = Label241.Text <> "0"
 
         If (Not IsAccessAllowed()) Then
@@ -575,8 +591,14 @@ Public Class review
         pHolder = ListView2.Items(0).FindControl("Label60")
         Label25.Text = pHolder.Text
 
+        pHolder = ListView2.Items(0).FindControl("ReassignedToSupName")
+        ReassignedSupName.Text = pHolder.Text
+
         pHolder = ListView2.Items(0).FindControl("Label61")
         Label27.Text = pHolder.Text
+
+        pHolder = ListView2.Items(0).FindControl("ReassignedToMgrName")
+        ReassignedMgrName.Text = pHolder.Text
 
         Panel34.Visible = True
         pHolder = ListView2.Items(0).FindControl("Label121")
@@ -847,12 +869,16 @@ Public Class review
             ' Label25.Text: Supervisor name
             Dim supervisorName = Label25.Text
 
+            ' The supervisor name to whom the log was reassigned to.
+            Dim reassignedToSupLabel As Label = ListView1.Items(0).FindControl("ReassignedToSupName")
+            Dim reassignedToSupName = reassignedToSupLabel.Text
+
             SqlDataSource1.UpdateParameters("nvcFormID").DefaultValue = Request.QueryString("id")
             SqlDataSource1.UpdateParameters("nvcReviewSupLanID").DefaultValue = lan
             SqlDataSource1.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
             SqlDataSource1.UpdateParameters("dtmSupReviewedAutoDate").DefaultValue = currentDateTime
             ' Date1.Text: Coaching Date Supervisor entered on Review page
-            SqlDataSource1.UpdateParameters("nvctxtCoachingNotes").DefaultValue = GetFormattedCoachingNotes(currentDateTime, CDate(Date1.Text), coachingNotesLabel.Text, TextBox5.Text, supervisorName)
+            SqlDataSource1.UpdateParameters("nvctxtCoachingNotes").DefaultValue = GetFormattedCoachingNotes(currentDateTime, CDate(Date1.Text), coachingNotesLabel.Text, TextBox5.Text, supervisorName, reassignedToSupName)
 
             SqlDataSource1.Update()
 
@@ -864,9 +890,18 @@ Public Class review
         End If
     End Sub
 
-    Private Function GetFormattedCoachingNotes(currentDateTime, coachingManualDate, coachingNotes, supervisorNotes, supervisorName) As String
-        'Dim formattedSupervisorNotes As String = Label25.Text & " (" & currentDateTime & " PDT) - " & CDate(Date1.Text) & " " & TextBox5.Text
-        Dim formattedSupervisorNotes As String = supervisorName & " (" & currentDateTime & " PDT) - " & coachingManualDate & " " & supervisorNotes
+    Private Function GetFormattedCoachingNotes(currentDateTime, coachingManualDate, coachingNotes, supervisorNotes, supervisorName, reassigneToSupName) As String
+        Dim formattedSupervisorNotes As String = String.Empty
+
+        If (String.IsNullOrEmpty(reassigneToSupName) OrElse
+                String.Compare(reassigneToSupName.Trim(), "NA", True) = 0) Then
+            formattedSupervisorNotes &= supervisorName
+        Else
+            ' The reassigned supervisor entered the coaching notes
+            formattedSupervisorNotes &= reassigneToSupName
+        End If
+
+        formattedSupervisorNotes &= " (" & currentDateTime & " PDT) - " & coachingManualDate & " " & supervisorNotes
 
         'If String.IsNullOrEmpty(coachingNotesLabel.Text) Then
         If String.IsNullOrEmpty(coachingNotes) Then
@@ -1240,7 +1275,11 @@ Public Class review
                     Dim supervisorName = Label25.Text
                     ' Label105: Coaching Notes from coaching_log table
                     Dim coachingNotesLabel As Label = ListView1.Items(0).FindControl("Label105")
-                    SqlDataSource7.UpdateParameters("nvcReviewerNotes").DefaultValue = GetFormattedCoachingNotes(currentDateTime, CDate(Date4.Text), coachingNotesLabel.Text, AddlNotes.Text, supervisorName)
+                    ' The supervisor name to whom the log was reassigned to.
+                    Dim reassignedToSupLabel As Label = ListView1.Items(0).FindControl("ReassignedToSupName")
+                    Dim reassignedToSupName = reassignedToSupLabel.Text
+
+                    SqlDataSource7.UpdateParameters("nvcReviewerNotes").DefaultValue = GetFormattedCoachingNotes(currentDateTime, CDate(Date4.Text), coachingNotesLabel.Text, AddlNotes.Text, supervisorName, reassignedToSupName)
                 Else
                     SqlDataSource7.UpdateParameters("nvcReviewerNotes").DefaultValue = AddlNotes.Text
                 End If
@@ -1276,8 +1315,11 @@ Public Class review
                     Dim supervisorName = Label25.Text
                     ' Label105: Coaching Notes from coaching_log table
                     Dim coachingNotesLabel As Label = ListView1.Items(0).FindControl("Label105")
+                    ' The supervisor name to whom the log was reassigned to.
+                    Dim reassignedToSupLabel As Label = ListView1.Items(0).FindControl("ReassignedToSupName")
+                    Dim reassignedToSupName = reassignedToSupLabel.Text
 
-                    SqlDataSource7.UpdateParameters("nvctxtReasonNotCoachable").DefaultValue = GetFormattedCoachingNotes(currentDateTime, CDate(Date4.Text), coachingNotesLabel.Text, TextBox1.Text, supervisorName)
+                    SqlDataSource7.UpdateParameters("nvctxtReasonNotCoachable").DefaultValue = GetFormattedCoachingNotes(currentDateTime, CDate(Date4.Text), coachingNotesLabel.Text, TextBox1.Text, supervisorName, reassignedToSupName)
                 Else
                     SqlDataSource7.UpdateParameters("nvctxtReasonNotCoachable").DefaultValue = TextBox1.Text
                 End If
