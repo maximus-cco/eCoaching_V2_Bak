@@ -1,12 +1,16 @@
 /*
-eCoaching_Dimension_Tables_Create(03).sql
-Last Modified Date: 04/15/2015
+eCoaching_Dimension_Tables_Create(04).sql
+Last Modified Date: 04/15/2016
 Last Modified By: Susmitha Palacherla
+
+Version 04: 
+1. Modified to add Table #15 to support HR access control from table per TFS 2332
+   04/15/2016
 
 Version 03: 
 1. Modified to add changes made to support Training module per SCR 14512 and any 
    missed changes for LSA and Quality Modules.
-    04/15/2015
+   04/15/2015
 
 Version 02: 
 1. Modified to add additional tables to support the Phase II Modular design.
@@ -33,6 +37,7 @@ Tables
 12. [EC].[CallID_Selection]
 13. [EC].[Email_Notifications]
 14. [EC].[DIM_Behavior]
+15. [EC].[HR_Access]
 
 Procedures
 1. [EC].[sp_Dim_Date_Add_Date_Range]
@@ -425,13 +430,39 @@ GO
 
 ****************************************************************************************
 
---15. Create Table
+--15. Create Table [EC].[HR_Access]
 
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[HR_Access](
+	[Job_Code] [nvarchar](50) NOT NULL,
+	[Job_Code_Description] [nvarchar](50) NULL,
+	[NewSubmissions] [bit] NULL,
+	[MyDashboard] [bit] NULL,
+	[MySubmissions] [bit] NULL,
+	[HistDashboard] [bit] NULL,
+	[DisplayWarnings] [bit] NULL
+	
+) ON [PRIMARY]
+
+GO
 
 
 ****************************************************************************************
 
 
+
+****************************************************************************************
+
+--16. Create Table
+
+
+
+****************************************************************************************
 
 
 
