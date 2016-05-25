@@ -41,6 +41,8 @@ namespace eCLAdmin
         public const string WEB_SERVER_NAME_ST = "f3420-mpmd01.vangent.local";
         public const string ECOACHING_URL_PROD = "https://f3420-mwbp11.vangent.local/coach/default.aspx";
         public const string ECOACHING_URL_ST = "https://f3420-mpmd01.vangent.local/coach3/default.aspx";
+
+        public const string SITE_ADMIN_EMAIL = "johneric.tiongson@gdit.com";
     }
 
     public enum EmployeeLogType

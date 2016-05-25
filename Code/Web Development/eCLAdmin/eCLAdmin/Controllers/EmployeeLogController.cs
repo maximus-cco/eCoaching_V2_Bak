@@ -54,12 +54,12 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchForInactivate(int logType, string employee)
+        public ActionResult SearchForInactivate(int module, int logType, string employee)
         {
             logger.Debug("Entered SearchForInactivate [post]...");
 
             Session["LogType"] = logType;
-            List<EmployeeLog> employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(logType, employee, Constants.LOG_ACTION_INACTIVATE);
+            List<EmployeeLog> employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_INACTIVATE);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 
@@ -165,12 +165,12 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchForReactivate(int logType, string employee)
+        public ActionResult SearchForReactivate(int module, int logType, string employee)
         {
             logger.Debug("Entered SearchForReactivate [post]...");
 
             Session["LogType"] = logType;
-            List<EmployeeLog> employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(logType, employee, Constants.LOG_ACTION_REACTIVATE);
+            List<EmployeeLog> employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_REACTIVATE);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 

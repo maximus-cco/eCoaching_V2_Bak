@@ -13,7 +13,7 @@
 
 <div class="form-group" id="other-reason" style="display: none;">
     <div id="other-reason-error-msg" class="field-validation-error"></div>
-    <textarea class="form-control" rows="2" id="textarea-other-reason" name="otherReason" maxlength="200" placeholder="Other Reason"></textarea>
+    <textarea class="form-control" rows="2" id="textarea-other-reason" name="otherReason" maxlength="200"></textarea>
     <div class="small"><span id="other-reason-remaining-chars"></span> remaining characters</div>
 </div>
 
@@ -77,20 +77,29 @@
 
     // Validate select - Reason
     function validateReason() {
-        var isValid = false;
+        // Nothing selected
         if ($('#reason').val() == -1) {
             displayReasonError();
+            return false;
         }
-        else {
-            removeReasonError();
-            isValid = true;
+
+        // "Other" selected
+        if ($('#reason :selected').text() === "Other") {
+            var other = $.trim($('#textarea-other-reason').val());
+            // "Other" text is blank
+            if (other.length == 0) {
+                displayOtherReasonTextError();
+                return false;
+            }
         }
-        return isValid;
+
+        // All good
+        return true;
     }
 
     function displayReasonError() {
         $('#reason').addClass("input-validation-error");
-        $('#reason-error-msg').html('Please make a selection');
+        $('#reason-error-msg').html('Please select a reason');
     }
 
     function removeReasonError() {

@@ -73,7 +73,7 @@ namespace eCLAdmin.Repository
             return statuses;
         }
 
-        public List<EmployeeLog> GetLogsByEmpIdAndAction(int logTypeId, string employeeId, string action)
+        public List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action)
         {
             string logType = EclAdminUtil.GetLogTypeNameById(logTypeId);
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
@@ -83,13 +83,10 @@ namespace eCLAdmin.Repository
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
+                command.Parameters.AddWithValue("@intModuleIdin", moduleId);
                 command.Parameters.AddWithValue("@strTypein", logType);
                 command.Parameters.AddWithValue("@strActionin", action);
                 command.Parameters.AddWithValue("@strEmployeein", employeeId);
-
-                logger.Debug("typein=" + logType);
-                logger.Debug("action=" + action);
-                logger.Debug("empId=" + employeeId);
 
                 connection.Open();
 
@@ -104,6 +101,7 @@ namespace eCLAdmin.Repository
                         cl.SupervisorName = dataReader["strSupName"].ToString();
                         cl.ManagerName = dataReader["strMgrName"].ToString();
                         cl.Status = dataReader["Status"].ToString();
+                        cl.SubmitterName = dataReader["strSubmitter"].ToString();
                         //cl.StatusId = (int)dataReader["StatusID"];
                         if (action.Equals(Constants.LOG_ACTION_REACTIVATE))
                         {
@@ -144,6 +142,7 @@ namespace eCLAdmin.Repository
                         cl.EmployeeName = dataReader["strEmpName"].ToString();
                         cl.SupervisorName = dataReader["strSupName"].ToString();
                         cl.ManagerName = dataReader["strMgrName"].ToString();
+                        cl.SubmitterName = dataReader["strSubmitter"].ToString();
                         cl.Status = dataReader["Status"].ToString();
                         //cl.StatusId = (int)dataReader["StatusID"];
                         cl.CreatedDate = dataReader["strCreatedDate"].ToString();

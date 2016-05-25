@@ -38,7 +38,7 @@ namespace eCLAdmin.ViewModels
             EmployeeName = employeeLog.EmployeeName;
             SupervisorName = employeeLog.SupervisorName;
             ManagerName = employeeLog.ManagerName;
-            SubmitterName = employeeLog.SupervisorName;
+            SubmitterName = employeeLog.SubmitterName;
             Status = employeeLog.Status;
             StatusId = employeeLog.StatusId;
             PreviousStatusId = employeeLog.PreviousStatusId;

@@ -23,27 +23,6 @@ namespace eCLAdmin.Services
 
         public void Send(Email email, List<string> logNames, string webServerName)
         {
-            // TODO: remove 
-            foreach (string r in email.To)
-            {
-                logger.Debug("To: " + r);
-            }
-
-            if (email.CC != null)
-            {
-                foreach (string r in email.CC)
-                {
-                    logger.Debug("Cc: " + r);
-                }
-
-                email.CC.Clear();
-                email.CC.Add("lili.huang@gdit.com");
-            }
-
-            email.To.Clear();
-            email.To.Add("lili.huang@gdit.com");
-            // end of "remove"
-
             // Replace {eCoachingUrl} based on environment
             string eCoachingUrl = null;
             eCoachingUrl = Constants.ECOACHING_URL_PROD;
