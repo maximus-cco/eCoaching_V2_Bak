@@ -8,7 +8,7 @@ namespace eCLAdmin.Services
     {
         List<Module> GetModules(string userLanId);
 
-        List<Models.EmployeeLog.Type> GetTypes(User user);
+        List<Models.EmployeeLog.Type> GetTypes(User user, string action);
 
         List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action);
 

@@ -24,13 +24,34 @@ namespace eCLAdmin.Services
             return employeeLogRepository.GetModules(userLanId);
         }
 
-        public List<Models.EmployeeLog.Type> GetTypes(User user)
+        public List<Models.EmployeeLog.Type> GetTypes(User user, string action)
         {
             List<Models.EmployeeLog.Type> types = new List<Models.EmployeeLog.Type>();
             List<Entitlement> entitlements = user.Entitlements;
 
             foreach (Entitlement entitlement in entitlements)
             {
+                if (Constants.LOG_ACTION_REACTIVATE.Equals(action))
+                {
+                    if (entitlement.Name.Equals(Constants.ENTITLEMENT_REACTIVATE_COACHING_LOGS))
+                    {
+                        Models.EmployeeLog.Type type = new Models.EmployeeLog.Type();
+                        type.Id = (int)EmployeeLogType.Coaching;
+                        type.Description = EmployeeLogType.Coaching.ToDescription();
+                        types.Add(type);
+                    }
+
+                    if (entitlement.Name.Equals(Constants.ENTITLEMENT_REACTIVATE_WARNING_LOGS))
+                    {
+                        Models.EmployeeLog.Type type = new Models.EmployeeLog.Type();
+                        type.Id = (int)EmployeeLogType.Warning;
+                        type.Description = EmployeeLogType.Warning.ToDescription();
+                        types.Add(type);
+                    }
+
+                    continue;
+                }
+
                 if (entitlement.Name.Equals(Constants.ENTITLEMENT_MANAGE_COACHING_LOGS))
                 {
                     Models.EmployeeLog.Type type = new Models.EmployeeLog.Type();

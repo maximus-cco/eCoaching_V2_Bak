@@ -36,6 +36,8 @@ namespace eCLAdmin
 
         public const string ENTITLEMENT_MANAGE_COACHING_LOGS = "ManageCoachingLogs";
         public const string ENTITLEMENT_MANAGE_WARNING_LOGS = "ManageWarningLogs";
+        public const string ENTITLEMENT_REACTIVATE_COACHING_LOGS = "ReactivateCoachingLogs";
+        public const string ENTITLEMENT_REACTIVATE_WARNING_LOGS = "ReactivateWarningLogs";
 
         public const string WEB_SERVER_NAME_PROD = "f3420-mwbp11.vangent.local";
         public const string WEB_SERVER_NAME_ST = "f3420-mpmd01.vangent.local";

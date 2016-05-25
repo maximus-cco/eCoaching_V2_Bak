@@ -42,7 +42,7 @@ namespace eCLAdmin.Controllers
             ViewBag.SubTitle = "Inactivate Employee Logs";
             ViewBag.Modules = GetModules();
             // Employee log types - coaching or warning
-            ViewBag.LogTypes = GetTypes();
+            ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_INACTIVATE);
 
             // Empty employee list
             List<Employee> employeeList = new List<Employee>();
@@ -153,7 +153,7 @@ namespace eCLAdmin.Controllers
             ViewBag.SubTitle = "Reactivate Employee Logs";
             ViewBag.Modules = GetModules();
             // Employee log types - coaching or warning
-            ViewBag.LogTypes = GetTypes();
+            ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REACTIVATE);
 
             // Empty employee list
             List<Employee> employeeList = new List<Employee>();
@@ -222,15 +222,17 @@ namespace eCLAdmin.Controllers
         }
 
         // Get employee log types (coaching or warning)
-        private IEnumerable<SelectListItem> GetTypes()
+        private IEnumerable<SelectListItem> GetTypes(string action)
         {
             User user = GetUserFromSession();
-            List<Models.EmployeeLog.Type> typeList = employeeLogService.GetTypes(user);
+            List<Models.EmployeeLog.Type> typeList = employeeLogService.GetTypes(user, action);
             typeList.Insert(0, new Models.EmployeeLog.Type { Id = -1, Description = "Please select a type" });
             IEnumerable<SelectListItem> types = new SelectList(typeList, "Id", "Description");
 
             return types;
         }
+
+
 
         // Get employees based on log type (coaching or warning), module (csr, training, ...), and action (inactivate or reactivate)
         public JsonResult GetEmployees(int logTypeId, int moduleId, string action)
