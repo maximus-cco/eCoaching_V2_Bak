@@ -20,7 +20,7 @@
 {
     <div class="form-group">
         <label class="control-label col-sm-2" for="module">Module:</label>
-        <div id="reason-error-msg" class="field-validation-error"></div>
+        <div id="module-error-msg" class="field-validation-error"></div>
         <div class="col-sm-10">
             @Html.DropDownList(
                 "module",
@@ -77,14 +77,14 @@
 <form id="form-select-EmployeeLogs">
     <p class="text-right">
         @Html.ActionLink("Inactivate ", // Link Text
-                   "InitInactivateModal", // Action Method Name
-                   "EmployeeLog", // Controller Name
-                    new
-                    {
-                        @class = "modal-link btn btn-primary",
-                        @style = "display: none;",
-                        id = "lk-inactivate"
-                    })
+                "InitInactivateModal", // Action Method Name
+                "EmployeeLog", // Controller Name
+                new
+                {
+                    @class = "modal-link btn btn-primary",
+                    @style = "display: none;",
+                    id = "lk-inactivate"
+                })
     </p>
     <div id="search-result"></div>
 </form>
@@ -92,6 +92,10 @@
 @section scripts {
     <script type="text/javascript">
         $(function () {
+
+            $('#example').DataTable();
+
+
             $('body').on('click', '#checkall', function () {
                 var status = $("#checkall").prop('checked');
                 toggleCheckboxes(status);
@@ -163,8 +167,7 @@
                 var action = "@Constants.LOG_ACTION_INACTIVATE";
 
                 // if either Module or Type is NOT selected
-                if (logTypeSelected == -1 || mouduleSelected == -1)
-                {
+                if (logTypeSelected == -1 || mouduleSelected == -1) {
                     resetEmployeeDropdown();
                     return false;
                 }
@@ -206,8 +209,7 @@
             })
         });
 
-        function initPage()
-        {
+        function initPage() {
             // Hide the message
             $(".alert").slideUp(1000);
             // Hide "Inactivate" link.

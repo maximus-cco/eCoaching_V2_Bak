@@ -22,7 +22,7 @@
 
         $('#btn-reactivate').on("click", function (e) {
             e.preventDefault();
-            if (!validateComment()) {
+            if (!validateReason() || !validateComment()) {
                 return false;
             }
 
