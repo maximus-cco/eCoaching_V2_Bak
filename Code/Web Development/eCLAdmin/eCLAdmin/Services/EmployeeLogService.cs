@@ -21,12 +21,8 @@ namespace eCLAdmin.Services
 
         public List<Module> GetModules(string userLanId, int logTypeId)
         {
-            if (logTypeId != -1)
-            {
-                return employeeLogRepository.GetModules(userLanId, logTypeId);
-            }
 
-            return new List<Module>();
+            return employeeLogRepository.GetModules(userLanId, logTypeId);
         }
 
         public List<Models.EmployeeLog.Type> GetTypes(User user, string action)
