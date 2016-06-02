@@ -40,10 +40,10 @@ namespace eCLAdmin.Controllers
             logger.Debug("Entered SearchForInactivate [get]...");
 
             ViewBag.SubTitle = "Inactivate Employee Logs";
-            ViewBag.Modules = GetModules();
             // Employee log types - coaching or warning
             ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_INACTIVATE);
-
+            // Empty module list
+            ViewBag.Modules = GetEmpltyModuleList();
             // Empty employee list
             List<Employee> employeeList = new List<Employee>();
             employeeList.Insert(0, new Employee { Id = "-1", Name = "Please select an employee" });
@@ -89,7 +89,7 @@ namespace eCLAdmin.Controllers
             logger.Debug("Entered SearchForReassign [get]...");
 
             ViewBag.SubTitle = "Reassign Employee Logs";
-            ViewBag.Modules = GetModules();
+            ViewBag.Modules = GetModules(Constants.MODULE_UNKNOWN);
 
             List<Status> statusList = new List<Status>();
             statusList.Insert(0, new Status { Id = -1, Description = "Please select a status" });
@@ -151,10 +151,10 @@ namespace eCLAdmin.Controllers
             logger.Debug("Entered SearchForReactivate [get]...");
 
             ViewBag.SubTitle = "Reactivate Employee Logs";
-            ViewBag.Modules = GetModules();
+            // Empty module list
+            ViewBag.Modules = GetEmpltyModuleList();
             // Employee log types - coaching or warning
             ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REACTIVATE);
-
             // Empty employee list
             List<Employee> employeeList = new List<Employee>();
             employeeList.Insert(0, new Employee { Id = "-1", Name = "Please select an employee" });
@@ -211,14 +211,19 @@ namespace eCLAdmin.Controllers
         }
 
         // Get employee log modules (csr, training, ...)
-        private IEnumerable<SelectListItem> GetModules()
+        public JsonResult GetModules(int logTypeId)
         {
+            logger.Debug("Entered GetModules: logTypeId=" + logTypeId);
+
             User user = GetUserFromSession();
-            List<Module> moduleList = employeeLogService.GetModules(user.LanId);
+            List<Module> moduleList = employeeLogService.GetModules(user.LanId, logTypeId);
+
+            logger.Debug("moduleList size =" + moduleList.Count);
+
             moduleList.Insert(0, new Module { Id = -1, Name = "Please select a module" });
             IEnumerable<SelectListItem> modules = new SelectList(moduleList, "Id", "Name");
 
-            return modules;
+            return Json(new SelectList(modules, "Value", "Text")); ;
         }
 
         // Get employee log types (coaching or warning)
@@ -349,6 +354,15 @@ namespace eCLAdmin.Controllers
         private User GetUserFromSession()
         {
             return (User)Session["AuthenticatedUser"];
+        }
+
+        private IEnumerable<SelectListItem> GetEmpltyModuleList()
+        {
+            List<Module> moduleList = new List<Module>();
+            moduleList.Insert(0, new Module { Id = -1, Name = "Please select a module" });
+            IEnumerable<SelectListItem> emptyModuleList = new SelectList(moduleList, "Id", "Name");
+
+            return emptyModuleList;
         }
     }
 }

@@ -5,7 +5,7 @@ namespace eCLAdmin.Repository
 {
     public interface IEmployeeLogRepository
     {
-        List<Module> GetModules(string userLanId);
+        List<Module> GetModules(string userLanId, int logTypeId);
 
         List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action);
 

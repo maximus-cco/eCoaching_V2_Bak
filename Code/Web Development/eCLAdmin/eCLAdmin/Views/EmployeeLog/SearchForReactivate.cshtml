@@ -19,21 +19,6 @@
                                             ))
 {
     <div class="form-group">
-        <label class="control-label col-sm-2" for="module">Module:</label>
-        <div id="module-error-msg" class="field-validation-error"></div>
-        <div class="col-sm-10">
-            @Html.DropDownList(
-                "module",
-                (SelectList)ViewBag.Modules,
-                new
-                {
-                    @class = "form-control"
-                }
-            )
-        </div>
-    </div>
-
-    <div class="form-group">
         <label class="control-label col-sm-2" for="employee">Type:</label>
         <div id="type-error-msg" class="field-validation-error"></div>
         <div class="col-sm-10">
@@ -44,6 +29,21 @@
              {
                  @class = "form-control"
              }
+            )
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="module">Module:</label>
+        <div id="module-error-msg" class="field-validation-error"></div>
+        <div class="col-sm-10">
+            @Html.DropDownList(
+                "module",
+                (SelectList)ViewBag.Modules,
+                new
+                {
+                    @class = "form-control"
+                }
             )
         </div>
     </div>
@@ -112,47 +112,47 @@
             $("#logType").on("change", function () {
                 // Hide search result
                 $("#search-result").slideUp(500);
-                $('#lk-reactivate').slideUp(500);
+                $('#lk-inactivate').slideUp(500);
 
                 var logTypeSelected = $("#logType").val();
-                var mouduleSelected = $("#module").val();
 
-                // if either Module or Type is NOT selected
-                if (logTypeSelected == -1 || mouduleSelected == -1) {
-                    resetEmployeeDropdown();
+                if (logTypeSelected == -1) {
+                    initPage();
                     return false;
                 }
 
-                $("#employee").empty().append('<option value="">Loading...</option>');
-                $("#employee").addClass('loadinggif');
+                // Make ajax call to get modules for the selected type
+                $("#module").empty().append('<option value="">Loading...</option>');
+                $("#module").addClass('loadinggif');
 
-                var action = "@Constants.LOG_ACTION_REACTIVATE";
                 $.ajax({
                     type: 'POST',
-                    // Call GetEmployees method.
-                    url: '@Url.Action("GetEmployees")',
+                    // Call GetModules method.
+                    url: '@Url.Action("GetModules")',
                     dataType: 'json',
-                    // Get the value of the selected type (coaching or warning), module (csr, training...) and pass to GetEmployees method.
-                    data: { logTypeId: logTypeSelected, moduleId: mouduleSelected, action: action },
+                    // Get the value of the selected type (coaching or warning) and pass to GetModules method.
+                    data: { logTypeId: logTypeSelected },
 
-                    success: function (employees) {
-                        $("#employee").empty();
+                    success: function (modules) {
+                        $("#module").empty();
 
-                        // Load Employee drowdown
+                        // Load Module drowdown
                         var options = [];
-                        $.each(employees, function (i, employee) {
-                            options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
+                        $.each(modules, function (i, module) {
+                            options.push('<option value="', module.Value, '">' + module.Text + '</option>');
                         });
 
-                        $("#employee").html(options.join(''));
-                        $("#employee").removeClass('loadinggif');
+                        $("#module").html(options.join(''));
+                        $("#module").removeClass('loadinggif');
                     },
                     error: function (ex) {
-                        alert('Failed to retrieve employees.' + ex);
+                        alert('Failed to retrieve modules.' + ex);
                     }
                 });
+
                 return false;
             })
+
 
             $("#module").on("change", function () {
                 // Hide search result
@@ -218,6 +218,9 @@
             // Reset Employee dropdown.
             // Remove all in Employee dropdown except for the first default item "Please select an employee"
             $('#employee').find('option:gt(0)').remove()
+            // Reset Module dropdown.
+            // Remove all in Module dropdown except for the first default item "Please select a module"
+            resetModuleDropdown();
         }
 
         function processSearchOnBegin() {

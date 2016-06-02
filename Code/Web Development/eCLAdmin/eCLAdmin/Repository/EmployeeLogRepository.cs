@@ -15,9 +15,10 @@ namespace eCLAdmin.Repository
 
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
-        public List<Module> GetModules(string userLanId)
+        public List<Module> GetModules(string userLanId, int logTypeId)
         {
             var modules = new List<Module>();
+            string logType = EclAdminUtil.GetLogTypeNameById(logTypeId);
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_Modules_By_LanID]", connection))
@@ -25,6 +26,7 @@ namespace eCLAdmin.Repository
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
                 command.Parameters.AddWithValue("@nvcEmpLanIDin", userLanId);
+                command.Parameters.AddWithValue("@strTypein", logType);
 
                 connection.Open();
 

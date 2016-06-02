@@ -6,7 +6,7 @@ namespace eCLAdmin.Services
 {
     public interface IEmployeeLogService
     {
-        List<Module> GetModules(string userLanId);
+        List<Module> GetModules(string userLanId, int logTypeId);
 
         List<Models.EmployeeLog.Type> GetTypes(User user, string action);
 
