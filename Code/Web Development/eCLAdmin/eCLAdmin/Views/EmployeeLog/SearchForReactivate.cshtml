@@ -128,9 +128,9 @@
                 $.ajax({
                     type: 'POST',
                     // Call GetModules method.
-                    url: '@Url.Action("GetModules")',
+                    url: '@Url.Action("GetModulesInJson")',
                     dataType: 'json',
-                    // Get the value of the selected type (coaching or warning) and pass to GetModules method.
+                    // Get the value of the selected type (coaching or warning) and pass to GetModulesInJson method.
                     data: { logTypeId: logTypeSelected },
 
                     success: function (modules) {

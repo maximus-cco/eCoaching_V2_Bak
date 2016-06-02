@@ -32,7 +32,7 @@ namespace eCLAdmin.Utilities
 
         public static string GetLogTypeNameById(int logTypeId)
         {
-            string logType = "unknown";
+            string logType = null;
 
             // Set log type
             if (logTypeId == (int)EmployeeLogType.Coaching)

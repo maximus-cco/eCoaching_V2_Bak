@@ -211,19 +211,23 @@ namespace eCLAdmin.Controllers
         }
 
         // Get employee log modules (csr, training, ...)
-        public JsonResult GetModules(int logTypeId)
+        private IEnumerable<SelectListItem> GetModules(int logTypeId)
         {
             logger.Debug("Entered GetModules: logTypeId=" + logTypeId);
 
             User user = GetUserFromSession();
             List<Module> moduleList = employeeLogService.GetModules(user.LanId, logTypeId);
-
-            logger.Debug("moduleList size =" + moduleList.Count);
-
             moduleList.Insert(0, new Module { Id = -1, Name = "Please select a module" });
             IEnumerable<SelectListItem> modules = new SelectList(moduleList, "Id", "Name");
 
-            return Json(new SelectList(modules, "Value", "Text")); ;
+            return modules;
+        }
+
+        // Get employee log modules in json format (csr, training, ...)
+        public JsonResult GetModulesInJson(int logTypeId)
+        {
+            IEnumerable<SelectListItem> modules = GetModules(logTypeId);
+            return Json(new SelectList(modules, "Value", "Text"));
         }
 
         // Get employee log types (coaching or warning)
