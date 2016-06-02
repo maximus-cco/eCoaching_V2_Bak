@@ -195,6 +195,7 @@
     <Content Include="Content\Images\ajax-spinner.gif" />
     <Content Include="Content\Images\ecl-logo-small.png" />
     <Content Include="Content\Images\ecl-logo.png" />
+    <Content Include="Content\Images\eCL.png" />
     <Content Include="EmailTemplates\EmployeeLogReactivation.html" />
     <Content Include="EmailTemplates\EmployeeLogReassignment.html" />
     <Content Include="favicon.ico" />
