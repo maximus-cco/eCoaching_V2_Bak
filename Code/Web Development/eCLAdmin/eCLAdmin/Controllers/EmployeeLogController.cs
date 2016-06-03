@@ -7,6 +7,7 @@ using eCLAdmin.Utilities;
 using eCLAdmin.ViewModels;
 using log4net;
 using System.Collections.Generic;
+using System.Web;
 using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
@@ -64,6 +65,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Inactivate(EmployeeLogSelectViewModel model, int reason, string otherReason, string comment)
         {
             logger.Debug("Entered Inactivate [post]...");
@@ -75,8 +77,9 @@ namespace eCLAdmin.Controllers
                                                 (int)Session["LogType"],
                                                 model.GetSelectedIds(),
                                                 reason,
-                                                otherReason,
-                                                comment
+                                                // Sanitize user input
+                                                HttpUtility.HtmlEncode(otherReason),
+                                                HttpUtility.HtmlEncode(comment)
                                              );
 
             return Json(new { success = success });
@@ -120,6 +123,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Reassign(EmployeeLogSelectViewModel model, int reason, string assignTo, string otherReason, string comment)
         {
             logger.Debug("Entered Reassign [post]...");
@@ -130,8 +134,9 @@ namespace eCLAdmin.Controllers
                                                 model.GetSelectedIds(),
                                                 assignTo,
                                                 reason,
-                                                otherReason,
-                                                comment
+                                                // Sanitize user input
+                                                HttpUtility.HtmlEncode(otherReason),
+                                                HttpUtility.HtmlEncode(comment)
                                              );
 
             // Send email
@@ -168,6 +173,7 @@ namespace eCLAdmin.Controllers
         public ActionResult SearchForReactivate(int module, int logType, string employee)
         {
             logger.Debug("Entered SearchForReactivate [post]...");
+            logger.Debug("module=" + module + ", logType=" + logType + ", employee=" + employee);
 
             Session["LogType"] = logType;
             List<EmployeeLog> employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_REACTIVATE);
@@ -175,6 +181,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Reactivate(int module, string employee, int logType, EmployeeLogSelectViewModel model, int reason, string otherReason, string comment)
         {
             logger.Debug("Entered Reactivate [post]...");
@@ -188,8 +195,9 @@ namespace eCLAdmin.Controllers
                                                 (int)Session["LogType"],
                                                 model.GetSelectedIds(),
                                                 reason,
-                                                otherReason,
-                                                comment
+                                                // Sanitize user input
+                                                HttpUtility.HtmlEncode(otherReason),
+                                                HttpUtility.HtmlEncode(comment)
                                              );
 
             // Send email notification for Coaching logs Reactivation
@@ -240,8 +248,6 @@ namespace eCLAdmin.Controllers
 
             return types;
         }
-
-
 
         // Get employees based on log type (coaching or warning), module (csr, training, ...), and action (inactivate or reactivate)
         public JsonResult GetEmployees(int logTypeId, int moduleId, string action)

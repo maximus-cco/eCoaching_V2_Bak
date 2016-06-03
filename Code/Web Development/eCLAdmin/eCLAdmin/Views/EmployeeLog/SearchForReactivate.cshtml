@@ -20,8 +20,7 @@
 {
     <div class="form-group">
         <label class="control-label col-sm-2" for="employee">Type:</label>
-        <div id="type-error-msg" class="field-validation-error"></div>
-        <div class="col-sm-10">
+        <div class="col-sm-3">
             @Html.DropDownList(
              "logType",
              (SelectList)ViewBag.LogTypes,
@@ -31,12 +30,12 @@
              }
             )
         </div>
+        <div id="type-error-msg" class="col-sm-offset-2 field-validation-error"></div>
     </div>
 
     <div class="form-group">
         <label class="control-label col-sm-2" for="module">Module:</label>
-        <div id="module-error-msg" class="field-validation-error"></div>
-        <div class="col-sm-10">
+        <div class="col-sm-3">
             @Html.DropDownList(
                 "module",
                 (SelectList)ViewBag.Modules,
@@ -46,12 +45,12 @@
                 }
             )
         </div>
+        <div id="module-error-msg" class="col-sm-offset-2 field-validation-error"></div>
     </div>
 
     <div class="form-group">
         <label class="control-label col-sm-2" for="employee">Employee:</label>
-        <div id="employee-error-msg" class="field-validation-error"></div>
-        <div class="col-sm-10">
+        <div class="col-sm-3">
             @Html.DropDownList(
              "employee",
              (SelectList)ViewBag.Employees,
@@ -61,6 +60,7 @@
              }
             )
         </div>
+        <div id="employee-error-msg" class="col-sm-offset-2 field-validation-error"></div>
     </div>
 
     <div class="form-group">
@@ -121,6 +121,10 @@
                     return false;
                 }
 
+                // Remove error msg
+                $('#logType').removeClass("input-validation-error");
+                $('#type-error-msg').html('');
+
                 // Make ajax call to get modules for the selected type
                 $("#module").empty().append('<option value="">Loading...</option>');
                 $("#module").addClass('loadinggif');
@@ -168,6 +172,10 @@
                     return false;
                 }
 
+                // Remove error msg
+                $('#module').removeClass("input-validation-error");
+                $('#module-error-msg').html('');
+
                 $("#employee").empty().append('<option value="">Loading...</option>');
                 $("#employee").addClass('loadinggif');
 
@@ -200,6 +208,12 @@
             })
 
             $("#employee").on("change", function () {
+                if ($("#employee").val() != -1) {
+                    // Remove error msg
+                    $('#employee').removeClass("input-validation-error");
+                    $('#employee-error-msg').html('');
+                }
+
                 $("#search-result").slideUp(500);
                 $('#lk-reactivate').slideUp(500);
             })
@@ -223,7 +237,30 @@
             resetModuleDropdown();
         }
 
+        function validateForm() {
+            var isFormValid = true;
+            if ($('#logType').val() == -1) {
+                $('#logType').addClass("input-validation-error");
+                $('#type-error-msg').html('Please select a type');
+                isFormValid = false;
+            }
+            if ($('#module').val() == -1) {
+                $('#module').addClass("input-validation-error");
+                $('#module-error-msg').html('Please select a module');
+                isFormValid = false;
+            }
+            if ($('#employee').val() == -1) {
+                $('#employee').addClass("input-validation-error");
+                $('#employee-error-msg').html('Please select an employee');
+                isFormValid = false;
+            }
+            return isFormValid;
+        }
+
         function processSearchOnBegin() {
+            if (!validateForm()) {
+                return false;
+            }
             showSpinner();
         }
 

@@ -20,8 +20,7 @@
 {    
     <div class="form-group">
         <label class="control-label col-sm-2" for="module">Module:</label>
-        <div id="module-error-msg" class="field-validation-error"></div>
-        <div class="col-sm-10">
+        <div class="col-sm-3">
             @Html.DropDownList(
                 "module",
                 (SelectList)ViewBag.Modules,
@@ -31,12 +30,12 @@
                 }
             )
         </div>
+        <div id="module-error-msg" class="col-sm-offset-2 field-validation-error"></div>
     </div>
 
     <div class="form-group">
         <label class="control-label col-sm-2" for="employeeLogStatus">Status:</label>
-        <div id="status-error-msg" class="field-validation-error"></div>
-        <div class="col-sm-10">
+        <div class="col-sm-3">
             @Html.DropDownList(
              "employeeLogStatus",
              (SelectList)ViewBag.Statuses, 
@@ -45,12 +44,12 @@
              }
             )
         </div>
+        <div id="status-error-msg" class="col-sm-offset-2 field-validation-error"></div>
     </div>
 
     <div class="form-group">
         <label class="control-label col-sm-2" id="reviewer-label" for="reviewer">Pending Reviewer:</label>
-        <div id="status-error-msg" class="field-validation-error"></div>
-        <div class="col-sm-10">
+        <div class="col-sm-3">
             @Html.DropDownList(
              "reviewer",
              (SelectList)ViewBag.Reviewers,
@@ -61,6 +60,7 @@
              }
             )
         </div>
+        <div id="reviewer-error-msg" class="col-sm-offset-2 field-validation-error"></div>
     </div>
        
     <div class="form-group"> 
@@ -129,6 +129,10 @@
                     return false;
                 }
 
+                // Remove error msg
+                $('#employeeLogStatus').removeClass("input-validation-error");
+                $('#status-error-msg').html('');
+
                 // Display "Loading..." with ajax loader gif
                 $("#reviewer-dropdown").empty().append('<option value="">Loading...</option>');
                 $("#reviewer-dropdown").addClass('loadinggif');
@@ -170,6 +174,10 @@
                 var statusLength = $("#employeeLogStatus").length;
                 if (statusLength == 1)
                 {
+                    // Remove error msg
+                    $('#module').removeClass("input-validation-error");
+                    $('#module-error-msg').html('');
+
                     // Display "Loading..." with ajax loader gif
                     $("#employeeLogStatus").empty().append('<option value="">Loading...</option>');
                     $("#employeeLogStatus").addClass('loadinggif');
@@ -243,6 +251,11 @@
             })
 
             $("#reviewer-dropdown").on("change", function () {
+                if ($("#reviewer-dropdown").val() != -1) {
+                    // Remove error msg
+                    $('#reviewer-dropdown').removeClass("input-validation-error");
+                    $('#reviewer-error-msg').html('');
+                }
                 $("#search-result").slideUp(500);
                 $('#lk-reassign').slideUp(500);
             })
@@ -274,7 +287,30 @@
             }
         }
 
+        function validateForm() {
+            var isFormValid = true;
+            if ($('#module').val() == -1) {
+                $('#module').addClass("input-validation-error");
+                $('#module-error-msg').html('Please select a module');
+                isFormValid = false;
+            }
+            if ($('#employeeLogStatus').val() == -1) {
+                $('#employeeLogStatus').addClass("input-validation-error");
+                $('#status-error-msg').html('Please select a status');
+                isFormValid = false;
+            }
+            if ($('#reviewer-dropdown').val() == -1) {
+                $('#reviewer-dropdown').addClass("input-validation-error");
+                $('#reviewer-error-msg').html('Please select a reviewer');
+                isFormValid = false;
+            }
+            return isFormValid;
+        }
+
         function processSearchOnBegin() {
+            if (!validateForm()) {
+                return false;
+            }
             showSpinner();
         }
 
