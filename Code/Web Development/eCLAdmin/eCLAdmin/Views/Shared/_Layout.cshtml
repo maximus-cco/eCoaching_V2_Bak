@@ -62,7 +62,10 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @*<li class="navbar-text">Hello, @User.Identity.Name!</li>*@
-                    <li class="navbar-text">Hello, @(((User)Session["AuthenticatedUser"]).Name)!</li>
+                    @if (Session["AuthenticatedUser"] != null)
+                    {
+                        <li class="navbar-text">Hello, @(((User)Session["AuthenticatedUser"]).Name)!</li>
+                    }
                 </ul>
             </div>
         </div>
