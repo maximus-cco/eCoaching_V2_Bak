@@ -163,7 +163,9 @@ Public Class HistoricalDashboardDBAccess
         Return managers
     End Function
 
-    Public Function GetTotalRowCount(strSourcein As String,
+    Public Function GetTotalRowCount(
+                                strUserin As String,
+                                strSourcein As String,
                                 strCSRSitein As String,
                                 strCSRin As String,
                                 strSUPin As String,
@@ -179,6 +181,7 @@ Public Class HistoricalDashboardDBAccess
         Dim count As Integer = 0
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
+            New SqlParameter("@strUserin", strUserin),
             New SqlParameter("@strSourcein", strSourcein),
             New SqlParameter("@strCSRSitein", strCSRSitein),
             New SqlParameter("@strCSRin", strCSRin),
@@ -198,6 +201,7 @@ Public Class HistoricalDashboardDBAccess
 
     Public Function GetRows(startRowIndex As Integer,
                         pageSize As Integer,
+                        strUserin As String,
                         strSourcein As String,
                         strCSRSitein As String,
                         strCSRin As String,
@@ -216,6 +220,7 @@ Public Class HistoricalDashboardDBAccess
         Dim rows As IList(Of HistoricalDashboard) = New List(Of HistoricalDashboard)
         Dim parameters() As SqlParameter = New SqlParameter() _
         {
+            New SqlParameter("@strUserin", strUserin),
             New SqlParameter("@strSourcein", strSourcein),
             New SqlParameter("@strCSRSitein", strCSRSitein),
             New SqlParameter("@strCSRin", strCSRin),

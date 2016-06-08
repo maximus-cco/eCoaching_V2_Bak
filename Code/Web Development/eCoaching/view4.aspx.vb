@@ -189,6 +189,7 @@
         ods.StartRowIndexParameterName = "startRowIndex"
         ods.MaximumRowsParameterName = "pageSize"
 
+        ods.SelectParameters.Add("strUserin", TryCast(Session("eclUser"), User).LanID)
         ods.SelectParameters.Add("strSourcein", ddSource.SelectedValue)
         ods.SelectParameters.Add("strCSRSitein", ddSite.SelectedValue)
         ods.SelectParameters.Add("strCSRin", ddCSRSelectedValueHidden.Value)

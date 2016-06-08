@@ -132,7 +132,9 @@ Public Class HistoricalDashboardHandler
     End Function
 
     ' custom paging 
-    Public Function GetTotalRowCount(strSourcein As String,
+    Public Function GetTotalRowCount(
+                                strUserin As String,
+                                strSourcein As String,
                                 strCSRSitein As String,
                                 strCSRin As String,
                                 strSUPin As String,
@@ -151,7 +153,7 @@ Public Class HistoricalDashboardHandler
         ' user clicks APPLY to search
         ' need to get the total count from DB
         If HttpContext.Current.Session("totalCount") Is Nothing Then
-            Dim totalCount As Integer = historicalDashboardDBAccess.GetTotalRowCount(strSourcein, strCSRSitein, strCSRin, strSUPin, strMGRin, strSubmitterin, strSDatein,
+            Dim totalCount As Integer = historicalDashboardDBAccess.GetTotalRowCount(strUserin, strSourcein, strCSRSitein, strCSRin, strSUPin, strMGRin, strSubmitterin, strSDatein,
                                             strEDatein, strStatusin, strjobcode, strValue)
             HttpContext.Current.Session("totalCount") = totalCount
 
@@ -167,6 +169,7 @@ Public Class HistoricalDashboardHandler
     ' custom paging
     Public Function GetRows(startRowIndex As Integer,
                         pageSize As Integer,
+                        strUserin As String,
                         strSourcein As String,
                         strCSRSitein As String,
                         strCSRin As String,
@@ -191,7 +194,7 @@ Public Class HistoricalDashboardHandler
             sortASC = "Y"
         End If
 
-        Return historicalDashboardDBAccess.GetRows(startRowIndex, pageSize, strSourcein, strCSRSitein, strCSRin, strSUPin, strMGRin, strSubmitterin, strSDatein,
+        Return historicalDashboardDBAccess.GetRows(startRowIndex, pageSize, strUserin, strSourcein, strCSRSitein, strCSRin, strSUPin, strMGRin, strSubmitterin, strSDatein,
                     strEDatein, strStatusin, strjobcode, strValue, sortBy, sortASC)
     End Function
 
