@@ -141,4 +141,7 @@
   <data name="MySurvey_SaveSuccessMsg" xml:space="preserve">
     <value>Thank you for your time. Your survey has been saved successfully.</value>
   </data>
+  <data name="MySurvey_ExpiredMsg" xml:space="preserve">
+    <value>This survey has expired.</value>
+  </data>
 </root>

@@ -35,6 +35,8 @@
             Else
                 If handler.IsSurveyCompleted(survey) Then
                     DisplayCompletedMsg()
+                ElseIf handler.IsSurveyInactive(survey) Then
+                    DisplayInactiveMsg()
                 Else
                     Session("AccessAllowed") = True
                     BindSurveyQuestions(survey)
@@ -118,6 +120,11 @@
     Private Sub DisplayCompletedMsg()
         QuestionsPanel.Controls.Clear()
         SuccessMsgLabel.Text = Resources.LocalizedText.MySurvey_AlreadyCompletedMsg
+    End Sub
+
+    Private Sub DisplayInactiveMsg()
+        QuestionsPanel.Controls.Clear()
+        SuccessMsgLabel.Text = Resources.LocalizedText.MySurvey_ExpiredMsg
     End Sub
 
     Private Sub DisplayAccessDeniedMessage()

@@ -1,6 +1,7 @@
 ﻿Public Class MySurveyHandler
 
     Const COMPLETED As String = "COMPLETED"
+    Const INACTIVE As String = "INACTIVE"
 
     Private mySurveyDBAccess As MySurveyDBAccess
 
@@ -18,6 +19,10 @@
 
     Public Function IsSurveyCompleted(survey As Survey) As Boolean
         Return UCase(StringUtils.GetSafeString(survey.Status)) = COMPLETED
+    End Function
+
+    Public Function IsSurveyInactive(survey As Survey) As Boolean
+        Return UCase(StringUtils.GetSafeString(survey.Status)) = INACTIVE
     End Function
 
     Public Function ShowHotTopic(survey As Survey) As Boolean
