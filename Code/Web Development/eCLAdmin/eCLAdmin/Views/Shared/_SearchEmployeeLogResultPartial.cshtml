@@ -1,10 +1,18 @@
-﻿@model eCLAdmin.ViewModels.EmployeeLogSelectViewModel
+﻿@using eCLAdmin.Extensions
+
+@model eCLAdmin.ViewModels.EmployeeLogSelectViewModel
+
+@{
+    string action = ViewBag.Action;
+    bool showPrevStatus = ViewContext.Controller.ShowPreviousStatus(action);
+}
 
 <div class="panel panel-default">
     <div class="panel-heading">
         Total record(s) found: <span class="badge">@Model.EmployeeLogs.Count</span>
         <div id="total-selected" class="pull-right" >
         </div>
+        <br />
     </div>
     @if (Model.EmployeeLogs.Count > 0)
     {
@@ -17,7 +25,15 @@
                     <th>Supervisor Name</th>
                     <th>Manager Name</th>
                     <th>Submitter Name</th>
-                    <th>Status</th>
+                    @if (showPrevStatus)
+                    {
+                        <th>Previous Status</th>
+                    }
+                    else
+                    {
+                        <th>Status</th>
+                    }
+                    
                     <th>Created Date</th>
                 </tr>
             </thead>

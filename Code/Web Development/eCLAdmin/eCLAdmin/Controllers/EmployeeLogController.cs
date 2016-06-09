@@ -175,6 +175,8 @@ namespace eCLAdmin.Controllers
             logger.Debug("Entered SearchForReactivate [post]...");
             logger.Debug("module=" + module + ", logType=" + logType + ", employee=" + employee);
 
+            ViewBag.Action = Constants.LOG_ACTION_REACTIVATE;
+
             Session["LogType"] = logType;
             List<EmployeeLog> employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_REACTIVATE);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));

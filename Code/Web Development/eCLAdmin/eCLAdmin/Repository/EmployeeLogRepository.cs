@@ -105,9 +105,10 @@ namespace eCLAdmin.Repository
                         cl.Status = dataReader["Status"].ToString();
                         cl.SubmitterName = dataReader["strSubmitter"].ToString();
                         //cl.StatusId = (int)dataReader["StatusID"];
-                        if (action.Equals(Constants.LOG_ACTION_REACTIVATE))
+                        if (string.Equals(action, Constants.LOG_ACTION_REACTIVATE, StringComparison.OrdinalIgnoreCase))
                         {
                             cl.PreviousStatusId = (int)dataReader["LastKnownStatus"];
+                            cl.Status = dataReader["LKStatus"].ToString();
                         }
                         cl.CreatedDate = dataReader["strCreatedDate"].ToString();
 
