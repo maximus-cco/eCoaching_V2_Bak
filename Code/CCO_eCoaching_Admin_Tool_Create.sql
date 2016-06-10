@@ -1,11 +1,23 @@
 /*
-eCoaching_Log_Create(01).sql
-Last Modified Date: 5/12/2016
+eCoaching_Admin_Tool_Create(02).sql
+Last Modified Date:6/10/2016
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Updates from testing . TFS 1709 Admin tool setup - 6/10/2016
 
-Version 01: Initial Revision . TFS 1709 Admin tool setup.
+1. Additional rows in Tables #7,#8 and #10
+2. Updated comments and Reason field sizes in tables #1,#2 and #3
+3. Updated comments and Reason field sizes in procedures #1,#2 and #12
+4. Updates to following procedures;
+   #3 and #4 - select employees for inactivate/reactivate - Add restriction to not display logged in user.
+   #6 -  select logs inactivate/reactivate - Add module filter.Show assigned user. Return lastknown status value.
+   #9 -  select modules by lanid - resolve coaching user and warning admin conflict. Display all modules for coaching admin.
+   #13 - Select reassign from users - logged in user sup vs mgr conflict
+   #14 - select reassign to users - remove status filter
+   #15 - Select logs reassign - Display assigned reviewer and add sup or mgr logic. lCS Status 6 logs display.
+
+Version 01: Initial Revision . TFS 1709 Admin tool setup - 5/12/2016
 
 Summary
 
@@ -69,8 +81,8 @@ CREATE TABLE [EC].[AT_Coaching_Inactivate_Reactivate_Audit](
 	[Action] [nvarchar](30) NOT NULL,
 	[ActionTimestamp] [datetime] NOT NULL,
 	[RequesterID] [nvarchar](30) NOT NULL,
-	[Reason] [nvarchar](50) NOT NULL,
-	[RequesterComments] [nvarchar](200) NULL
+	[Reason] [nvarchar](250) NOT NULL,
+	[RequesterComments] [nvarchar](4000) NULL
 
 ) ON [PRIMARY]
 
@@ -95,8 +107,8 @@ CREATE TABLE [EC].[AT_Warning_Inactivate_Reactivate_Audit](
 	[Action] [nvarchar](30) NOT NULL,
 	[ActionTimestamp] [datetime] NOT NULL,
 	[RequesterID] [nvarchar](30) NOT NULL,
-	[Reason] [nvarchar](50) NOT NULL,
-	[RequesterComments] [nvarchar](200) NULL
+	[Reason] [nvarchar](250) NOT NULL,
+	[RequesterComments] [nvarchar](4000) NULL
 
 ) ON [PRIMARY]
 
@@ -120,8 +132,8 @@ CREATE TABLE [EC].[AT_Coaching_Reassign_Audit](
 	[ActionTimestamp] [datetime] NOT NULL,
 	[RequesterID] [nvarchar](10) NOT NULL,
 	[AssignedToID] [nvarchar](10) NOT NULL,
-	[Reason] [nvarchar](50) NOT NULL,
-	[RequesterComments] [nvarchar](200) NULL
+	[Reason] [nvarchar](250) NOT NULL,
+	[RequesterComments] [nvarchar](4000) NULL
 	
 ) ON [PRIMARY]
 
@@ -244,7 +256,9 @@ VALUES
 ('EmployeeLog-SearchForReassign'),
 ('EmployeeLog-SearchForReactivate'),
 ('ManageCoachingLogs'),
-('ManageWarningLogs')
+('ManageWarningLogs'),
+('ReactivateCoachingLogs'),
+('ReactivateWarningLogs')
 
 
 --************************************************
@@ -277,6 +291,8 @@ GO
 
 
 
+
+
 INSERT INTO [EC].[AT_Role_Entitlement_Link]
 (RoleId,EntitlementId)
 VALUES
@@ -289,7 +305,10 @@ VALUES
 (102,204),
 (103,201),
 (103,203),
-(103,205)
+(103,205),
+(101,206),
+(103,207)
+
 
 
 --****************************************************
@@ -379,6 +398,8 @@ INSERT INTO [EC].[AT_Module_Access]
            ('WISY13','Sr Analyst, Systems',5,'Training',1),
            ('WACS50','Manager, Customer Service',1,'CSR',1),
            ('WACS60','Sr Manager, Customer Service',2,'Supervisor',1),
+           ('WACS50','Manager, Customer Service',2,'Supervisor',1),
+           ('WACS60','Sr Manager, Customer Service',1,'CSR',1)
            ('WIHD50','Manager, Help Desk',4,'LSA',1),
            ('WTTR50','Manager, Training',5,'Training',1),
            ('WPPM13','Sr Analyst, Program',3,'Quality',1) 
@@ -521,8 +542,8 @@ CREATE PROCEDURE [EC].[sp_AT_Coaching_Inactivation_Reactivation] (
   @strAction NVARCHAR(30), 
   @tableIds IdsTableType READONLY,
   @intReasonId INT, 
-  @strReasonOther NVARCHAR(40)= NULL, 
-  @strComments NVARCHAR(200)= NULL, 
+  @strReasonOther NVARCHAR(250)= NULL, 
+  @strComments NVARCHAR(4000)= NULL, 
      
 -------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
@@ -568,7 +589,7 @@ SET NOCOUNT ON;
 
 
 DECLARE @strRequestrID nvarchar(10),
-        @strReason NVARCHAR(100),
+        @strReason NVARCHAR(250),
         @intStatusID int,
         @intLKStatusID int,
      	@dtmDate datetime
@@ -679,8 +700,8 @@ CREATE PROCEDURE [EC].[sp_AT_Warning_Inactivation_Reactivation] (
   @strAction NVARCHAR(30), 
   @tableIds IdsTableType READONLY,
   @intReasonId INT, 
-  @strReasonOther NVARCHAR(40)= NULL, 
-  @strComments NVARCHAR(200)= NULL, 
+  @strReasonOther NVARCHAR(250)= NULL, 
+  @strComments NVARCHAR(4000)= NULL, 
      
 -------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
@@ -726,7 +747,7 @@ SET NOCOUNT ON;
 
 
 DECLARE @strRequestrID nvarchar(10),
-        @strReason NVARCHAR(100),
+        @strReason NVARCHAR(250),
         @intStatusID int,
         @intLKStatusID int,
      	@dtmDate datetime
@@ -824,6 +845,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -846,17 +870,17 @@ DECLARE
 @strRequesterID nvarchar(10),
 @intRequesterSiteID int,
 @strConditionalSite nvarchar(100),
-@strATAdminUser nvarchar(10),
+@strATCoachAdminUser nvarchar(10),
 @dtmDate datetime,
 @nvcSQL nvarchar(max)
 
 SET @dtmDate  = GETDATE()   
 SET @strRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterLanId,@dtmDate)
 SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@strRequesterID)
-SET @strATAdminUser = EC.fn_strCheckIfATSysAdmin(@strRequesterID) 
+SET @strATCoachAdminUser = EC.fn_strCheckIfATCoachingAdmin(@strRequesterID) 
 
 SET @strConditionalSite = ' '
-IF @strATAdminUser <> 'YES'
+IF @strATCoachAdminUser <> 'YES'
 
 BEGIN
 	SET @strConditionalSite = ' AND Fact.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+''' '
@@ -874,6 +898,7 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
  AND Emp.Active = ''A'''
  + @strConditionalSite 
  + 'AND Emp.Emp_Site = MGR.Emp_Site
+  AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
  ORDER BY Emp.Emp_Name'
 
 ELSE 
@@ -888,6 +913,7 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
  AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
  AND Fact.EmpID <> ''999999''
  AND Emp.Active = ''A''
+ AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
  ORDER BY Emp.Emp_Name'
  
 --Print @nvcSQL
@@ -897,7 +923,12 @@ END --sp_AT_Select_Employees_Coaching_Inactivation_Reactivation
 
 
 
+
+
+
 GO
+
+
 
 
 
@@ -924,6 +955,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -963,6 +996,7 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
  AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
  AND Fact.EmpID <> ''999999''
  AND Emp.Active = ''A''
+ AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
  ORDER BY Emp.Emp_Name'
 
 ELSE 
@@ -977,6 +1011,7 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
  AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
  AND Fact.EmpID <> ''999999''
  AND Emp.Active = ''A''
+ AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
  ORDER BY Emp.Emp_Name'
  
 --Print @nvcSQL
@@ -984,7 +1019,12 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
 EXEC (@nvcSQL)	
 END --sp_AT_Select_Employees_Warning_Inactivation_Reactivation
 
+
+
 GO
+
+
+
 
 
 --***************************************
@@ -1065,6 +1105,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -1077,13 +1118,13 @@ GO
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
-@strTypein nvarchar(10), @strActionin nvarchar(10), @strEmployeein nvarchar(10)
+@strTypein nvarchar(10)= NULL, @strActionin nvarchar(10), @strEmployeein nvarchar(10),  @intModuleIdin INT
 AS
 
 BEGIN
 DECLARE	
-@nvcTableName nvarchar(200),
-@nvcWhere nvarchar(50),
+@nvcTableName nvarchar(500),
+@nvcWhere nvarchar(100),
 @nvcSQL nvarchar(max),
 @strID nvarchar(30)
 
@@ -1100,12 +1141,14 @@ IF @strTypein = N'Warning' AND @strActionin = 'Inactivate'
 SET @nvcTableName = ' FROM [EC].[Warning_Log] Fact WITH(NOLOCK) '
 
 IF @strTypein = N'Coaching' AND @strActionin = 'Reactivate'
-SET @nvcTableName = ',Aud.LastKnownStatus FROM [EC].[Coaching_Log] Fact WITH(NOLOCK) JOIN (Select * FROM
+SET @nvcTableName = ',Aud.LastKnownStatus, [EC].[fn_strStatusFromStatusID](Aud.LastKnownStatus)LKStatus
+ FROM [EC].[Coaching_Log] Fact WITH(NOLOCK) JOIN (Select * FROM
  [EC].[AT_Coaching_Inactivate_Reactivate_Audit] WHERE LastKnownStatus <> 2) Aud
  ON Aud.FormName = Fact.Formname '
 
 IF @strTypein = N'Warning' AND @strActionin = 'Reactivate'
-SET @nvcTableName = ',Aud.LastKnownStatus FROM [EC].[Warning_Log] Fact WITH(NOLOCK) JOIN (Select * FROM
+SET @nvcTableName = ',Aud.LastKnownStatus, [EC].[fn_strStatusFromStatusID](Aud.LastKnownStatus)LKStatus 
+ FROM [EC].[Warning_Log] Fact WITH(NOLOCK) JOIN (Select * FROM
  [EC].[AT_Warning_Inactivate_Reactivate_Audit] WHERE LastKnownStatus <> 2) Aud
  ON Aud.FormName = Fact.Formname '
 
@@ -1125,7 +1168,10 @@ SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
         fact.FormName strFormName,
 		eh.Emp_Name	strEmpName,
 		eh.Sup_Name	strSupName,
-	    eh.Mgr_Name strMgrName,
+	    CASE
+		 WHEN  fact.[strReportCode] like ''LCS%'' AND fact.[MgrID] <> eh.[Mgr_ID]
+		 THEN [EC].[fn_strEmpNameFromEmpID](fact.[MgrID])+ '' (Assigned Reviewer)''
+		 ELSE eh.Mgr_Name END strMgrName,
 		sh.Emp_Name strSubmitter,
 		s.Status,
 		Fact.SubmittedDate strCreatedDate '
@@ -1136,6 +1182,7 @@ SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 	 ON [Fact].[StatusID] = [s].[StatusID] '+
  @nvcWhere +
  'AND EmpID = '''+@strEmployeein+'''
+  AND [Fact].[ModuleId] = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
   ORDER BY Fact.FormName DESC'
 
 
@@ -1143,6 +1190,7 @@ SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 
 EXEC (@nvcSQL)	
 END --sp_AT_Select_Logs_Inactivation_Reactivation
+
 GO
 
 
@@ -1303,6 +1351,13 @@ GO
 
 
 
+
+
+
+
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -1312,7 +1367,7 @@ GO
 --  Initial Revision. Admin tool setup, TFS 1709- 4/27/12016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Modules_By_LanID] 
-@nvcEmpLanIDin nvarchar(30)
+@nvcEmpLanIDin nvarchar(30),@strTypein nvarchar(10)= NULL
 
 AS
 BEGIN
@@ -1320,7 +1375,8 @@ BEGIN
 
 	@nvcSQL nvarchar(max),
 	@nvcEmpID nvarchar(10),
-	@strATAdminUser nvarchar(10),
+	@strATWarnAdminUser nvarchar(10),
+	@strATCoachAdminUser nvarchar(10),
 	@nvcEmpJobCode nvarchar(30),
 	@dtmDate datetime
 
@@ -1328,27 +1384,45 @@ SET @dtmDate  = GETDATE()
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
 SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
 WHERE Emp_ID = @nvcEmpID)
-SET @strATAdminUser = EC.fn_strCheckIfATSysAdmin(@nvcEmpID) 
+SET @strATWarnAdminUser = EC.fn_strCheckIfATWarningAdmin(@nvcEmpID) 
+SET @strATCoachAdminUser = EC.fn_strCheckIfATCoachingAdmin(@nvcEmpID) 
 
-IF @strATAdminUser = 'YES'
+
+IF ((@strATWarnAdminUser = 'YES' AND @strATCoachAdminUser = 'YES')
+   OR (@strTypein is NULL AND @strATCoachAdminUser = 'YES')
+   OR (@strTypein = 'Coaching' AND @strATCoachAdminUser = 'YES')
+   OR (@strTypein = 'Warning' AND @strATWarnAdminUser = 'YES'))
 
 SET @nvcSQL = 'SELECT DISTINCT ModuleId, Module 
 			   FROM [EC].[AT_Module_Access]
-			   WHERE [isActive]=1'
+			   WHERE [isActive]=1
+			   ORDER BY Module'
 			   
 ELSE
 
 SET @nvcSQL = 'SELECT ModuleId, Module 
 			   FROM [EC].[AT_Module_Access]
 			   WHERE [JobCode]= '''+@nvcEmpJobCode+'''
-			   AND [isActive]=1'
+			   AND [isActive]=1
+			   ORDER BY Module'
 
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
 END --sp_AT_Select_Modules_By_LanID
 
+
+
+
+
+
+
+
 GO
+
+
+
+
 
 
 
@@ -1510,8 +1584,8 @@ CREATE PROCEDURE [EC].[sp_AT_Coaching_Reassignment] (
   @tableIds IdsTableType READONLY,
   @strAssignedId NVARCHAR(10),
   @intReasonId INT, 
-  @strReasonOther NVARCHAR(40)= NULL, 
-  @strComments NVARCHAR(200)= NULL, 
+  @strReasonOther NVARCHAR(250)= NULL, 
+  @strComments NVARCHAR(4000)= NULL, 
      
 
 -------------------------------------------------------------------------------------
@@ -1558,7 +1632,7 @@ SET NOCOUNT ON;
 
 
 DECLARE @strRequestrID nvarchar(10),
-        @strReason NVARCHAR(100),
+        @strReason NVARCHAR(250),
         @intStatusID int,
         @intLKStatusID int,
      	@dtmDate datetime
@@ -1651,12 +1725,19 @@ IF EXISTS (
 GO
 
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
+
+
+
+
 
 
 --	====================================================================
@@ -1679,6 +1760,7 @@ DECLARE
 @strATAdminUser nvarchar(10),
 @strConditionalSelect nvarchar(100),
 @strConditionalSite nvarchar(100),
+@strConditionalRestrict nvarchar(100),
 @dtmDate datetime
 
 SET @dtmDate  = GETDATE()   
@@ -1691,6 +1773,7 @@ OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
 
 BEGIN
 SET @strConditionalSelect = N'SELECT DISTINCT eh.SUP_ID UserID, eh.SUP_Name UserName '
+SET @strConditionalRestrict = N'AND eh.SUP_ID <> '''+@nvcRequesterID+''' ' 
 END
 
 ELSE IF 
@@ -1699,6 +1782,7 @@ OR (@intStatusIdin = 7 AND @intModuleIdin = 2))
 
 BEGIN
 SET @strConditionalSelect = N'SELECT DISTINCT eh.MGR_ID UserID, eh.MGR_Name UserName '
+SET @strConditionalRestrict = N'AND eh.MGR_ID <> '''+@nvcRequesterID+''''
 END
 		
 SET @strConditionalSite = ' '
@@ -1716,29 +1800,29 @@ END
 
 
 SET @nvcSQL = @strConditionalSelect +
-'FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
-cl.EmpID = eh.Emp_ID 
+'FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ' +
+' ON cl.EmpID = eh.Emp_ID 
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
 AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND CL.ReassignCount = 0
-AND (CL.strReportCode not like ''LCS%'' OR CL.strReportCode is NULL)
-AND (eh.SUP_Name is NOT NULL AND eh.MGR_Name is NOT NULL)'
+AND NOT (CL.statusid = 5 AND ISNULL(CL.strReportCode,'' '') like ''LCS%'')'
 + @strConditionalSite 
-+ 'AND (eh.SUP_ID <> '''+@nvcRequesterID+''' AND eh.MGR_ID <> '''+@nvcRequesterID+''')
++ @strConditionalRestrict
++ 'AND (eh.SUP_Name is NOT NULL AND eh.MGR_Name is NOT NULL)
 AND eh.Active = ''A''
 
 UNION 
-
 
 SELECT DISTINCT rm.Emp_ID UserID, rm.Emp_Name UserName
 FROM [EC].[Employee_Hierarchy] rm JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.ReassignedToID = rm.Emp_ID 
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
 AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
-AND cl.ReassignedToID is not NULL
+AND cl.ReassignedToID is not NULL 
+AND (cl.ReassignCount < 2 and cl.ReassignCount <> 0)
 AND (rm.Emp_Name is NOT NULL AND rm.Emp_Name <> ''Unknown'')'
 + @strConditionalSite 
-+ 'AND (rm.Emp_ID <> '''+@nvcRequesterID+''' AND rm.Emp_ID <> '''+@nvcRequesterID+''')
++ 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' 
 AND rm.Active = ''A''
 
 
@@ -1751,9 +1835,10 @@ WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
 AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND cl.MgrID is not NULL
 AND cl.strReportCode like ''LCS%''
+AND CL.ReassignCount = 0
 AND (rm.Emp_Name is NOT NULL AND rm.Emp_Name <> ''Unknown'')'
 + @strConditionalSite 
-+ 'AND (rm.Emp_ID <> '''+@nvcRequesterID+''' AND rm.Emp_ID <> '''+@nvcRequesterID+''')
++ 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' 
 AND rm.Active = ''A''
 Order By UserName'
 
@@ -1763,7 +1848,14 @@ EXEC (@nvcSQL)
 
 End --sp_AT_Select_ReassignFrom_Users
 
+
+
+
+
 GO
+
+
+
 
 
 
@@ -1783,13 +1875,16 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_AT_Select_ReassignTo_Users]
 GO
-
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -1840,8 +1935,7 @@ END
 SET @nvcSQL = @strSelect +
 'FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID 
-WHERE cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
-AND cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+'''
+WHERE cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+'''
 AND (eh.SUP_Name is NOT NULL AND eh.MGR_Name is NOT NULL AND eh.SUP_Name <> ''Unknown'' AND eh.MGR_Name <> ''Unknown'')
 AND (eh.SUP_ID <> '''+@strFromUserIdin+''' AND eh.MGR_ID <> '''+@strFromUserIdin+''')
 AND EH.Active = ''A''
@@ -1852,6 +1946,15 @@ EXEC (@nvcSQL)
 
 
 End --sp_AT_Select_ReassignTo_Users
+
+
+
+
+
+
+
+
+
 GO
 
 
@@ -1879,11 +1982,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -1893,37 +1991,55 @@ GO
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/27/12016
 --	=====================================================================
-
 CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Reassign] 
 @istrOwnerin nvarchar(10), @intStatusIdin INT, @intModuleIdin INT
 AS
 
 BEGIN
 DECLARE	
-
+@strConditionalWhere nvarchar(100),
 @nvcSQL nvarchar(max)
+
+
+IF ((@intStatusIdin IN (6,8) AND @intModuleIdin IN (1,3,4,5))
+OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
+
+BEGIN
+SET @strConditionalWhere = ' WHERE EH.Sup_ID = '''+@istrOwnerin+''' '
+END
+
+ELSE IF 
+((@intStatusIdin = 5 AND @intModuleIdin IN (1,3,4,5))
+OR (@intStatusIdin = 7 AND @intModuleIdin = 2))
+
+BEGIN
+SET @strConditionalWhere = ' WHERE EH.Mgr_ID = '''+@istrOwnerin+''' '
+END
 
 -- Check for 3 scenarios
 --1. Original hierarchy owner
 --2. Reassigned owner
 --3. Review owner for LCS
 
-SET @nvcSQL = 'SELECT fact.CoachingID,  
-        fact.FormName strFormName,
+SET @nvcSQL = 'SELECT cfact.CoachingID,  
+        cfact.FormName strFormName,
 		eh.Emp_Name	strEmpName,
 		eh.Sup_Name	strSupName,
-	    eh.Mgr_Name strMgrName,
-		sh.Emp_Name strSubmitter,
+	    CASE
+		 WHEN cfact.[strReportCode] like ''LCS%'' AND cfact.[MgrID] <> eh.[Mgr_ID]
+		 THEN [EC].[fn_strEmpNameFromEmpID](cfact.[MgrID])+ '' (Assigned Reviewer)''
+		 ELSE eh.Mgr_Name END strMgrName,
+		 sh.Emp_Name strSubmitter,
 		s.Status,
-		Fact.SubmittedDate strCreatedDate 
-     FROM [EC].[Coaching_Log]fact WITH(NOLOCK) JOIN 
+		cfact.SubmittedDate strCreatedDate 
+     FROM [EC].[Coaching_Log]cfact WITH(NOLOCK) JOIN 
      
      (SELECT fact.CoachingID
      FROM [EC].[Coaching_Log]fact WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh
-	 ON [Fact].[EMPID] = [eh].[Emp_ID] 
-	 AND (fact.strReportCode  IS NULL OR fact.strReportCode  NOT LIKE ''LCS%'')
-	 WHERE (EH.Sup_ID = '''+@istrOwnerin+''' OR EH.Mgr_ID =  '''+@istrOwnerin+''')
-	 AND fact.ReassignCount = 0
+	 ON [Fact].[EMPID] = [eh].[Emp_ID]
+	 AND NOT(fact.statusid = 5 AND ISNULL(fact.strReportCode,'' '') LIKE ''LCS%'')'
+	 + @strConditionalWhere +
+	 'AND fact.ReassignCount = 0
 	
      UNION
      
@@ -1942,21 +2058,26 @@ SET @nvcSQL = 'SELECT fact.CoachingID,
 	 AND fact.strReportCode like ''LCS%''
 	 AND fact.ReassignCount = 0)Selected 
 	 
-	 ON Selected.CoachingID = fact.CoachingID JOIN [EC].[Employee_Hierarchy] eh
-	 ON [Fact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
-	 ON [Fact].[SubmitterID] = [sh].[Emp_ID]JOIN [EC].[DIM_Status] s
-	 ON [Fact].[StatusID] = [s].[StatusID]
+	 ON Selected.CoachingID = cfact.CoachingID JOIN [EC].[Employee_Hierarchy] eh
+	 ON [cfact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
+	 ON [cfact].[SubmitterID] = [sh].[Emp_ID]JOIN [EC].[DIM_Status] s
+	 ON [cfact].[StatusID] = [s].[StatusID]
 	 
-	WHERE fact.StatusId = '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
-	AND fact.Moduleid = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
+	WHERE cfact.StatusId = '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
+	AND cfact.Moduleid = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
   	 
-   ORDER BY Fact.FormName DESC'
+   ORDER BY cfact.FormName DESC'
    
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
 END --sp_AT_Select_Logs_Reassign
+
 GO
+
+
+
+
 
 
 
