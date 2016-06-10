@@ -19,9 +19,9 @@ IMPLEMENTATION SUMMARY
 SECTION 1 - Fetch and Stage ssis Package
 Employee_Hierarchy.dtsx (Changeset )
  
-SECTION 2 - Create Database tables and populate
+SECTION 2 - Create Database tables 
 [EC].[HR_Hierarchy_Stage]
-[EC].[HR_Access]
+
 
 SECTION 3 - Create/Modify PROCEDURES
 [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
@@ -30,6 +30,7 @@ SECTION 3 - Create/Modify PROCEDURES
 [EC].[sp_Select_Sources_For_Dashboard] 
 [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
 [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count]
+[EC].[fn_strCheckIf_HRUser] 
 
 ***************************************
 
@@ -45,7 +46,7 @@ IMPLEMENTATION DETAILS
 --SECTION 1 - Fetch and Stage ssis Package
 
 --Fetch the following ssis Package from TFS source Control and stage accordingly.
-   Employee_Hierarchy.dtsx (Changeset )
+   Employee_Hierarchy.dtsx (Changeset 34492)
 
 /*******************************************/
 
@@ -91,58 +92,13 @@ GO
 
 
 
---2. Create Table CREATE TABLE [EC].[HR_Access]
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [EC].[HR_Access](
-	[Job_Code] [nvarchar](50) NOT NULL,
-	[Job_Code_Description] [nvarchar](50) NULL,
-	[NewSubmissions] [bit] NULL,
-	[MyDashboard] [bit] NULL,
-	[MySubmissions] [bit] NULL,
-	[HistDashboard] [bit] NULL,
-	[DisplayWarnings] [bit] NULL
-	
-) ON [PRIMARY]
-
-GO
-
-
-
---3. Insert records into TABLE [EC].[HR_Access]
-INSERT INTO [EC].[HR_Access]
-           ([Job_Code]
-           ,[Job_Code_Description]
-           ,[NewSubmissions]
-           ,[MyDashboard]
-           ,[MySubmissions]
-           ,[HistDashboard]
-           ,[DisplayWarnings])
-     VALUES
-           ('WHER12', 'Analyst, HR Compliance',0,0,0,1,1),
-           ('WHER13', 'Sr Analyst, HR Compliance',0,0,0,1,1),
-           ('WHER14', 'Princ Analyst, HR Compliance',0,0,0,1,1),
-           ('WHHR02', 'Assistant, HR',0,0,0,1,1),
-           ('WHHR12', 'Business Partner, HR',0,0,0,1,1),
-           ('WHHR13', 'Sr Business Partner, HR',0,0,0,1,1),
-           ('WHHR14', 'Principal Business Partner, HR',0,0,0,1,1),
-           ('WHHR50', 'Manager, HR',0,0,0,1,1),
-           ('WHHR60', 'Sr Manager, HR',0,0,0,1,1),
-           ('WHHR70', 'Director, HR',0,0,0,1,1)
-GO
-
 
 
 
 /**********************************************************************************
 
 
-SECTION 3 - Create/Modify PROCEDURES
+SECTION 3 - Create/Modify PROCEDURES AND FUNCTIONS
 
 
 FROM EVERYTHING FROM HERE ON INTO AN SSMS WINDOW
@@ -169,6 +125,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 04/6/2016
@@ -187,25 +148,33 @@ BEGIN
 -- Updates Existing Records
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy_Stage]
-	   SET [Emp_Name] = S.[Emp_Name]
-	      ,[Emp_Email] =S.[Emp_Email]
-		  ,[Emp_LanID] = S.[Emp_LanID]
-		  ,[Emp_Site] =  S.[Emp_Site]
-		  ,[Emp_Job_Code] = S.[Emp_Job_Code]
+	   SET [Emp_Job_Code] = S.[Emp_Job_Code]
 		  ,[Emp_Job_Description] = S.[Emp_Job_Description]
-		  ,[Sup_Emp_ID] = S.[Sup_Emp_ID]
-		  ,[Mgr_Emp_ID] = S.[Mgr_EMP_ID] 
-		  ,[Start_Date] = S.[Start_Date]
-		  ,[Active] = S.[Active]
-	 FROM [EC].[Employee_Hierarchy_Stage]H JOIN [EC].[HR_Hierarchy_Stage]S
+		  FROM [EC].[Employee_Hierarchy_Stage]H JOIN [EC].[HR_Hierarchy_Stage]S
 	 ON H.[Emp_ID] = S.[EMP_ID]
 	 WHERE H.[Emp_ID] is NOT NULL
 OPTION (MAXDOP 1)
 END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+
+-- Fetch Start date for existing records from employee Hierarchy Table
+-- and populate into HR staging table
+
+BEGIN
+	UPDATE [EC].[HR_Hierarchy_Stage]
+	   SET [Start_Date]= [EC].[fn_dtYYYYMMDD_to_Datetime] (EH.Start_Date)
+		  FROM [EC].[Employee_Hierarchy]EH JOIN [EC].[HR_Hierarchy_Stage]S
+	 ON EH.[Emp_ID] = S.[EMP_ID]
+	 WHERE EH.[Emp_ID] is NOT NULL
+	 AND EH.[Active]= 'A'
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
     
--- Inserts New Records
+-- Inserts HR Records into Employee Hierarchy Staging Table
 BEGIN
 	INSERT INTO [EC].[Employee_Hierarchy_Stage]
            ([Emp_ID]
@@ -214,6 +183,7 @@ BEGIN
            ,[Emp_Site]
            ,[Emp_Job_Code]
            ,[Emp_Job_Description]
+           ,[Emp_Program]
            ,[Emp_LanID]
            ,[Sup_Emp_ID]
            ,[Mgr_Emp_ID]
@@ -225,11 +195,12 @@ BEGIN
 									  ,S.[Emp_Site]
 									  ,S.[Emp_Job_Code]
 									  ,S.[Emp_Job_Description]
+									  ,S.[Emp_Program]
 									  ,S.[Emp_LanID]
-									  ,S.[Sup_Emp_ID]
-									  ,S.[Mgr_Emp_ID]
-									  ,S.[Start_Date]
-									  ,S.[Active]
+									  ,'999999'
+									  ,'999999'
+									  ,ISNULL(S.[Start_Date], GETDATE())
+									  ,'A'
 						  FROM [EC].[HR_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy_Stage]H
 						  ON S.Emp_ID = H.Emp_ID
 						  WHERE H.EMP_ID IS NULL
@@ -240,7 +211,13 @@ END
 
 END --sp_Merge_HR_Employee_Hierarchy_Stage
 
+
+
+
+
 GO
+
+
 
 
 
@@ -260,12 +237,15 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_CheckIf_HRUser]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
 
 
 --	====================================================================
@@ -288,17 +268,13 @@ BEGIN
 	@nvcSQL nvarchar(max),
 	@nvcEmpID nvarchar(10),
 	@nvcEmpJobCode nvarchar(30),
-	@dtmDate datetime
+	@nvcActive nvarchar(1),
+		@dtmDate datetime
 
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
-SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
-WHERE Emp_ID = @nvcEmpID)
 
-  
-SET @nvcSQL = 'SELECT CASE WHEN '''+@nvcEmpJobCode+''' IN
-(SELECT DISTINCT [Job_Code] FROM [EC].[HR_Access]
-WHERE [HistDashboard]= 1) THEN ''YES'' ELSE ''NO'' END AS isHRUser'
+SET @nvcSQL = 'SELECT  ISNULL(EC.fn_strCheckIf_HRUser('''+@nvcEmpID+'''),''NO'') AS isHRUser'
 
 
 --Print @nvcSQL
@@ -306,7 +282,15 @@ WHERE [HistDashboard]= 1) THEN ''YES'' ELSE ''NO'' END AS isHRUser'
 EXEC (@nvcSQL)	
 END --sp_CheckIf_HRUser
 
+
+
+
+
 GO
+
+
+--********************************************
+
 
 
 
@@ -323,12 +307,15 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Whoami]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
 
 
 --	====================================================================
@@ -362,7 +349,7 @@ SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
 WHERE Emp_ID = @EmpID)
 
 IF @nvcEmpJobCode LIKE 'WH%'
-SET @nvcHRCondition = ' AND [Emp_Job_Code] IN (SELECT DISTINCT [Job_Code] FROM [EC].[HR_Access] WHERE [HistDashboard]= 1)'
+SET @nvcHRCondition = ' AND [Emp_Job_Code] LIKE ''WH%'' AND [Active]= ''A'''
 
 SET @nvcSQL = 'SELECT [Emp_Job_Code] as EmpJobCode,
                        [Emp_Email] as EmpEmail,
@@ -381,7 +368,13 @@ EXEC (@nvcSQL)
 --Print @nvcSQL
 END --sp_Whoami
 
+
+
 GO
+
+
+
+
 
 
 
@@ -407,6 +400,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	03/06/2015
@@ -424,24 +418,18 @@ AS
 BEGIN
 	DECLARE	
 	@nvcSQL nvarchar(max),
-	@strjobcode  nvarchar(20),
 	@nvcEmpID nvarchar(10),
-	@bitDisplayWarnings bit,
+	@nvcDisplayWarnings nvarchar(5),
 	@dtmDate datetime
 	
 		
 	
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
-SET @strjobcode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
-WHERE Emp_ID = @nvcEmpID)	
-	
-SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
-WHERE [Job_Code]= @strjobcode)
-
+SET @nvcDisplayWarnings = (SELECT ISNULL (EC.fn_strCheckIf_HRUser(@nvcEmpID),'NO')) 
 
 -- Check users job code and show 'Warning' as a source only for HR users.
-IF @bitDisplayWarnings = 1
+IF @nvcDisplayWarnings = 'YES'
 
 SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
 (SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
@@ -465,6 +453,7 @@ ORDER BY X.Sortorder'
 
 EXEC (@nvcSQL)	
 END --sp_Select_Sources_For_Dashboard
+
 
 
 
@@ -493,6 +482,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
+
+
+
+
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/2012
@@ -502,9 +498,9 @@ GO
 --  Modified to add additional HR job code WHHR70 - TFS 1423 - 12/15/2015
 --  Modified to reference table for HR job codes - TFS 2332 - 4/6/2016
 --	=====================================================================
-
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
 
+@strUserin nvarchar(30),
 @strSourcein nvarchar(100),
 @strCSRSitein nvarchar(30),
 @strCSRin nvarchar(30),
@@ -535,9 +531,11 @@ DECLARE
 @nvcSQL3 nvarchar(max),
 @nvcSQL4 nvarchar(max),
 @nvcSQL5 nvarchar(max),
+@nvcEmpID nvarchar(10),
+@dtmDate datetime,
 @strSDate nvarchar(10),
 @strEDate nvarchar(10),
-@bitDisplayWarnings bit,
+@nvcDisplayWarnings nvarchar(5),
 @UpperBand int,
 @LowerBand int,
 @SortExpression nvarchar(100),
@@ -550,8 +548,11 @@ Set @strEDate = convert(varchar(8),@strEDatein,112)
 SET @LowerBand  = @startRowIndex 
 SET @UpperBand  = @startRowIndex + @PageSize 
 
-SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
-WHERE [Job_Code]= @strjobcode)
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
+ 
+
+SET @nvcDisplayWarnings = (SELECT ISNULL (EC.fn_strCheckIf_HRUser(@nvcEmpID),'NO')) 
 
 SET @where = ' WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
 			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
@@ -710,8 +711,8 @@ SET @nvcSQL3 = ' ) x )
 		WHERE RowNumber >= '''+CONVERT(VARCHAR,@LowerBand)+'''  AND RowNumber < '''+CONVERT(VARCHAR, @UpperBand) +
         ''' ORDER BY ' + @SortExpression  
 
-
-IF @bitDisplayWarnings = 1
+--print @nvcDisplayWarnings
+IF @nvcDisplayWarnings = 'YES'
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
 
 ELSE
@@ -727,7 +728,11 @@ END -- SelectFrom_Coaching_Log_HistoricalSUP
 
 
 
+
+
 GO
+
+
 
 
 
@@ -745,12 +750,12 @@ IF EXISTS (
 GO
 
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -770,6 +775,7 @@ GO
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count] 
 
+@strUserin nvarchar(30),
 @strSourcein nvarchar(100),
 @strCSRSitein nvarchar(30),
 @strCSRin nvarchar(30),
@@ -795,15 +801,18 @@ DECLARE
 @nvcSQL1 nvarchar(max),
 @nvcSQL2 nvarchar(max),
 @nvcSQL3 nvarchar(max),
+@nvcEmpID nvarchar(10),
+@dtmDate datetime,
 @strFormStatus nvarchar(30),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8),
-@bitDisplayWarnings bit,
+@nvcDisplayWarnings nvarchar(5),
 @where nvarchar(max) 
       
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
  
-SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
-WHERE [Job_Code]= @strjobcode)
+SET @nvcDisplayWarnings = (SELECT ISNULL (EC.fn_strCheckIf_HRUser(@nvcEmpID),'NO')) 
    
 SET @strFormStatus = 'Inactive'
 SET @strSDate = convert(varchar(8),@strSDatein,112)
@@ -916,7 +925,7 @@ SET @nvcSQL3 = ' ) x
  )
  SELECT count(strFormID) FROM TempCoaching'
 	   
-IF @bitDisplayWarnings = 1
+IF @nvcDisplayWarnings = 'YES'
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
 
 ELSE
@@ -931,8 +940,72 @@ END -- sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
 
 
 
+
+GO
+
+--*********************************************************************************
+
+--7. FUNCTION [EC].[fn_strCheckIf_HRUser] 
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCheckIf_HRUser' 
+)
+   DROP FUNCTION [EC].[fn_strCheckIf_HRUser]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
 GO
 
 
 
 
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date:  6/7/2016
+-- Description:	Given an Employee ID returns whether the user is a HR user.
+-- Last Modified By:
+-- Revision History:
+--  Created per TFS 2332- Separate solution for HR access
+-- =============================================
+
+CREATE FUNCTION [EC].[fn_strCheckIf_HRUser] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS nvarchar(10)
+AS
+BEGIN
+	DECLARE 
+	@strEmpJobCode nvarchar(20),
+	@nvcActive nvarchar(1),
+	@strHRUser nvarchar(10)
+	
+SET @strEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @strEmpID)
+
+SET @nvcActive = (SELECT Active From EC.Employee_Hierarchy
+WHERE Emp_ID = @strEmpID)
+
+IF @nvcActive = 'A'	AND @strEmpJobCode LIKE 'WH%'
+
+ SET @strHRUser = 'YES'
+  ELSE
+ SET    @strHRUser = N'NO'
+  
+  RETURN   @strHRUser
+  
+END --fn_strCheckIf_HRUser
+
+GO
+
+
+--****************************************************************
