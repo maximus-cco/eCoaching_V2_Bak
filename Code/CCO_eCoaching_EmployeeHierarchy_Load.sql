@@ -1,7 +1,11 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (13)
-Date: 5/12/2016
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (14)
+Date: 6/10/2016
 
+
+Version 14: 6/10/2016 -  Additonal changes for TFS 2332
+Marked Table #7 [EC].[HR_Access] as obsolete as it is not being used
+Modified Procedure (#6) to fetch start_Date for existing employees
 
 
 Version 13:5/12/2016
@@ -65,7 +69,7 @@ List of Tables:
 4. [EC].[EmployeeID_To_LanID]
 5. [EC].[CSR_Hierarchy]
 6. [EC].[HR_Hierarchy_Stage]
-7. [EC].[HR_Access]
+7. [EC].[HR_Access]-- Obsolete
  
 
 List of Procedures:
@@ -354,7 +358,7 @@ GO
 
 --*****************************************************
 
---7. Create Table CREATE TABLE [EC].[HR_Access]
+--7. Create Table CREATE TABLE [EC].[HR_Access]-- Obsolete
 
 SET ANSI_NULLS ON
 GO
@@ -1046,6 +1050,9 @@ GO
 
 
 
+
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date:    04/09/2014
@@ -1088,7 +1095,7 @@ INSERT INTO [EC].[AT_Warning_Inactivate_Reactivate_Audit]
 		 ,W.StatusID
 		 ,'Inactivate'
 		 ,GetDate()
-		 ,'000000'
+	 	 ,'999998'
 		 ,'Employee Inactive'
 		 ,'Employee Hierarchy Load Process'
 FROM [EC].[Warning_Log] W JOIN [EC].[Employee_Hierarchy]H
@@ -1179,7 +1186,7 @@ INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
 		 ,C.StatusID
 		 ,'Inactivate'
 		 ,GetDate()
-		 ,'000000'
+		 ,'999998'
 		 ,'Employee Inactive'
 		 ,'Employee Hierarchy Load Process'
 FROM [EC].[Coaching_Log] C JOIN [EC].[Employee_Hierarchy]H
@@ -1230,7 +1237,7 @@ INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
 		 ,C.StatusID
 		 ,'Inactivate'
 		 ,GetDate()
-		 ,'000000'
+		 ,'999998'
 		 ,'Employee on EA'
 		 ,'Employee Hierarchy Load Process'
 FROM [EC].[Coaching_Log] C JOIN [EC].[EmpID_To_SupID_Stage]H
@@ -1285,7 +1292,7 @@ INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
 		 ,C.StatusID
 		 ,'Inactivate'
 		 ,GetDate()
-		 ,'000000'
+		 ,'999998'
 		 ,'Employee not in feed'
 		 ,'Employee Hierarchy Load Process'
 FROM [EC].[Coaching_Log] C LEFT OUTER JOIN [EC].[EmpID_To_SupID_Stage] S
@@ -1321,8 +1328,10 @@ END TRY
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
 
 
-GO
 
+
+
+GO
 
 
 
@@ -1352,6 +1361,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 04/6/2016
@@ -1370,25 +1384,33 @@ BEGIN
 -- Updates Existing Records
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy_Stage]
-	   SET [Emp_Name] = S.[Emp_Name]
-	      ,[Emp_Email] =S.[Emp_Email]
-		  ,[Emp_LanID] = S.[Emp_LanID]
-		  ,[Emp_Site] =  S.[Emp_Site]
-		  ,[Emp_Job_Code] = S.[Emp_Job_Code]
+	   SET [Emp_Job_Code] = S.[Emp_Job_Code]
 		  ,[Emp_Job_Description] = S.[Emp_Job_Description]
-		  ,[Sup_Emp_ID] = S.[Sup_Emp_ID]
-		  ,[Mgr_Emp_ID] = S.[Mgr_EMP_ID] 
-		  ,[Start_Date] = S.[Start_Date]
-		  ,[Active] = S.[Active]
-	 FROM [EC].[Employee_Hierarchy_Stage]H JOIN [EC].[HR_Hierarchy_Stage]S
+		  FROM [EC].[Employee_Hierarchy_Stage]H JOIN [EC].[HR_Hierarchy_Stage]S
 	 ON H.[Emp_ID] = S.[EMP_ID]
 	 WHERE H.[Emp_ID] is NOT NULL
 OPTION (MAXDOP 1)
 END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+
+-- Fetch Start date for existing records from employee Hierarchy Table
+-- and populate into HR staging table
+
+BEGIN
+	UPDATE [EC].[HR_Hierarchy_Stage]
+	   SET [Start_Date]= [EC].[fn_dtYYYYMMDD_to_Datetime] (EH.Start_Date)
+		  FROM [EC].[Employee_Hierarchy]EH JOIN [EC].[HR_Hierarchy_Stage]S
+	 ON EH.[Emp_ID] = S.[EMP_ID]
+	 WHERE EH.[Emp_ID] is NOT NULL
+	 AND EH.[Active]= 'A'
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
     
--- Inserts New Records
+-- Inserts HR Records into Employee Hierarchy Staging Table
 BEGIN
 	INSERT INTO [EC].[Employee_Hierarchy_Stage]
            ([Emp_ID]
@@ -1397,6 +1419,7 @@ BEGIN
            ,[Emp_Site]
            ,[Emp_Job_Code]
            ,[Emp_Job_Description]
+           ,[Emp_Program]
            ,[Emp_LanID]
            ,[Sup_Emp_ID]
            ,[Mgr_Emp_ID]
@@ -1408,11 +1431,12 @@ BEGIN
 									  ,S.[Emp_Site]
 									  ,S.[Emp_Job_Code]
 									  ,S.[Emp_Job_Description]
+									  ,S.[Emp_Program]
 									  ,S.[Emp_LanID]
-									  ,S.[Sup_Emp_ID]
-									  ,S.[Mgr_Emp_ID]
-									  ,S.[Start_Date]
-									  ,S.[Active]
+									  ,'999999'
+									  ,'999999'
+									  ,ISNULL(S.[Start_Date], GETDATE())
+									  ,'A'
 						  FROM [EC].[HR_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy_Stage]H
 						  ON S.Emp_ID = H.Emp_ID
 						  WHERE H.EMP_ID IS NULL
@@ -1423,5 +1447,11 @@ END
 
 END --sp_Merge_HR_Employee_Hierarchy_Stage
 
+
+
+
+
 GO
 
+
+/*****************************************************/
