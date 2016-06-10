@@ -1,7 +1,13 @@
 /*
-File: eCoaching_Functions.sql (21)
+File: eCoaching_Functions.sql (22)
 Last Modified By: Susmitha Palacherla
-Date: 5/12/2016
+Date: 6/6/2016
+
+Version 22, 6/6/2016
+1. Added the following Functions 3 functions(#40, #41 and #42) to support the Admin tool per TFS 1709.
+[EC].[fn_strCheckIfATCoachingAdmin] 
+[EC].[fn_strCheckIfATWarningAdmin] 
+[EC].[fn_strStatusFromStatusID]
 
 Version 21, 5/12/2016
 1. Added the following Functions 2 functions(#38 and #39) to support the Admin tool per TFS 1709.
@@ -150,6 +156,9 @@ List of Functions:
 37. [EC].[fnGetMaxDateTime]
 38.[EC].[fn_intLastKnownStatusForCoachingID]
 39.[EC].[fn_strCheckIfATSysAdmin]
+40.[EC].[fn_strCheckIfATCoachingAdmin] 
+41.[EC].[fn_strCheckIfATWarningAdmin] 
+42.[EC].[fn_strStatusFromStatusID]
 
 */
 
@@ -1030,7 +1039,7 @@ GO
 -- =============================================
 CREATE FUNCTION [EC].[fn_strStatusIDFromStatus]
  (
- @strStatus NVARCHAR(30)
+ @strStatus NVARCHAR(50)
 )
 RETURNS INT
 AS
@@ -2640,3 +2649,200 @@ GO
 
 
 --***************************************
+--40.[EC].[fn_strCheckIfATCoachingAdmin]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCheckIfATCoachingAdmin' 
+)
+   DROP FUNCTION [EC].[fn_strCheckIfATCoachingAdmin]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date:  5/6/2016
+-- Description:	Given an Employee ID returns if the user is a Coaching Admin
+-- Last Modified By:
+-- Revision History:
+--  Created per TFS 1709 - Initial setup of admin tool - 05/06/2016
+
+-- =============================================
+CREATE FUNCTION [EC].[fn_strCheckIfATCoachingAdmin] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+	@intCountAdminRoles int,
+	@strCoachAdmin nvarchar(10)
+	
+		 
+
+ SET @intCountAdminRoles = (SELECT Count(r.[RoleId])
+FROM [EC].[AT_Role]r JOIN [EC].[AT_User_Role_Link] ur
+ON r.RoleId = ur.RoleId JOIN [EC].[AT_User]u 
+ON u.UserId = ur.UserId 
+WHERE r.IsSysAdmin = 1
+AND r.RoleDescription like 'Coach%'
+AND u.UserID = @strEmpID )
+  
+  IF     @intCountAdminRoles > 0
+  SET    @strCoachAdmin = N'YES'
+  ELSE
+  SET    @strCoachAdmin = N'NO'
+  
+  RETURN   @strCoachAdmin
+  
+END --fn_strCheckIfATCoachingAdmin
+
+
+
+
+
+GO
+
+
+
+
+--***********************************************
+
+--41.[EC].[fn_strCheckIfATWarningAdmin]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCheckIfATWarningAdmin' 
+)
+   DROP FUNCTION [EC].[fn_strCheckIfATWarningAdmin]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date:  5/6/2016
+-- Description:	Given an Employee ID returns if the user is aWarning Admin
+-- Last Modified By:
+-- Revision History:
+--  Created per TFS 1709 - Initial setup of admin tool - 05/06/2016
+
+-- =============================================
+CREATE FUNCTION [EC].[fn_strCheckIfATWarningAdmin] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+	DECLARE 
+	@intCountAdminRoles int,
+	@strWarnAdmin nvarchar(10)
+	
+		 
+
+ SET @intCountAdminRoles = (SELECT Count(r.[RoleId])
+FROM [EC].[AT_Role]r JOIN [EC].[AT_User_Role_Link] ur
+ON r.RoleId = ur.RoleId JOIN [EC].[AT_User]u 
+ON u.UserId = ur.UserId 
+WHERE r.IsSysAdmin = 1
+AND r.RoleDescription like 'Warn%'
+AND u.UserID = @strEmpID )
+  
+  IF     @intCountAdminRoles > 0
+  SET    @strWarnAdmin = N'YES'
+  ELSE
+  SET    @strWarnAdmin = N'NO'
+  
+  RETURN   @strWarnAdmin
+  
+END --fn_strCheckIfATWarningAdmin
+
+
+
+
+
+
+GO
+
+
+--***********************************************
+
+--42.[EC].[fn_strStatusFromStatusID]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strStatusFromStatusID' 
+)
+   DROP FUNCTION [EC].[fn_strStatusFromStatusID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:        06/09/2016
+-- Last modified by:    
+-- Last modified date:  
+-- Description:	 Given a Status ID returns the Status from Status table.
+--    
+-- =============================================
+CREATE FUNCTION [EC].[fn_strStatusFromStatusID]
+ (
+ @strStatusID INT
+)
+RETURNS nvarchar(50)
+AS
+BEGIN
+  DECLARE  @strStatus nvarchar(50)
+   
+  SELECT @strStatus = [Status] FROM [EC].[DIM_Status]
+  WHERE [StatusID]= @strStatusID
+  
+  IF  @strStatus  IS NULL
+  SET @strStatus = 'Unknown'
+  
+  RETURN @strStatus 
+  
+END  -- fn_strStatusFromStatusID
+
+
+
+GO
+
+--***********************************************
+
