@@ -1,7 +1,13 @@
 /*
-eCoaching_Log_Create(47).sql
-Last Modified Date: 5/12/2016
+eCoaching_Log_Create(48).sql
+Last Modified Date: 6/13/2016
 Last Modified By: Susmitha Palacherla
+
+Version 48: 6/13/2016
+Additional changes for TFS 2332. 
+Not using HR_Access table but job code WH% and Active = 'A' to identify HR 
+1. Updated Procedures #6,53, 68 and 79 and #87 to not use HR_Access table.
+
 
 
 Version 47: 5/12/2016
@@ -11,7 +17,7 @@ Version 47: 5/12/2016
 Version 46: 4/15/2016
 1. Added SP# 87 to control HR access from table per TFS 2332
 2. Updated Procedures #6,53, 68 and 79 to replace hardcoding of job codes with table lookup
-3. Updated Procedure #53 to remove mpID from return per TFS 2323
+3. Updated Procedure #53 to remove EmpID 999999 from return per TFS 2323
 
 
 Version 45: 3/23/2016
@@ -1330,6 +1336,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
+
+
+
+
+
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	4/30/2012
@@ -1339,9 +1353,9 @@ GO
 --  Modified to add additional HR job code WHHR70 - TFS 1423 - 12/15/2015
 --  Modified to reference table for HR job codes - TFS 2332 - 4/6/2016
 --	=====================================================================
-
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
 
+@strUserin nvarchar(30),
 @strSourcein nvarchar(100),
 @strCSRSitein nvarchar(30),
 @strCSRin nvarchar(30),
@@ -1372,9 +1386,11 @@ DECLARE
 @nvcSQL3 nvarchar(max),
 @nvcSQL4 nvarchar(max),
 @nvcSQL5 nvarchar(max),
+@nvcEmpID nvarchar(10),
+@dtmDate datetime,
 @strSDate nvarchar(10),
 @strEDate nvarchar(10),
-@bitDisplayWarnings bit,
+@nvcDisplayWarnings nvarchar(5),
 @UpperBand int,
 @LowerBand int,
 @SortExpression nvarchar(100),
@@ -1387,8 +1403,11 @@ Set @strEDate = convert(varchar(8),@strEDatein,112)
 SET @LowerBand  = @startRowIndex 
 SET @UpperBand  = @startRowIndex + @PageSize 
 
-SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
-WHERE [Job_Code]= @strjobcode)
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
+ 
+
+SET @nvcDisplayWarnings = (SELECT ISNULL (EC.fn_strCheckIf_HRUser(@nvcEmpID),'NO')) 
 
 SET @where = ' WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
 			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
@@ -1547,8 +1566,8 @@ SET @nvcSQL3 = ' ) x )
 		WHERE RowNumber >= '''+CONVERT(VARCHAR,@LowerBand)+'''  AND RowNumber < '''+CONVERT(VARCHAR, @UpperBand) +
         ''' ORDER BY ' + @SortExpression  
 
-
-IF @bitDisplayWarnings = 1
+--print @nvcDisplayWarnings
+IF @nvcDisplayWarnings = 'YES'
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
 
 ELSE
@@ -1564,7 +1583,11 @@ END -- SelectFrom_Coaching_Log_HistoricalSUP
 
 
 
+
+
+
 GO
+
 
 
 
@@ -5510,6 +5533,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
+
 --	====================================================================
 --	Author:			Jourdain Augustin
 --	Create Date:	07/22/13
@@ -5541,7 +5569,7 @@ SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
 WHERE Emp_ID = @EmpID)
 
 IF @nvcEmpJobCode LIKE 'WH%'
-SET @nvcHRCondition = ' AND [Emp_Job_Code] IN (SELECT DISTINCT [Job_Code] FROM [EC].[HR_Access] WHERE [HistDashboard]= 1)'
+SET @nvcHRCondition = ' AND [Emp_Job_Code] LIKE ''WH%'' AND [Active]= ''A'''
 
 SET @nvcSQL = 'SELECT [Emp_Job_Code] as EmpJobCode,
                        [Emp_Email] as EmpEmail,
@@ -5560,7 +5588,11 @@ EXEC (@nvcSQL)
 --Print @nvcSQL
 END --sp_Whoami
 
+
+
+
 GO
+
 
 
 
@@ -6511,6 +6543,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	03/06/2015
@@ -6528,24 +6562,18 @@ AS
 BEGIN
 	DECLARE	
 	@nvcSQL nvarchar(max),
-	@strjobcode  nvarchar(20),
 	@nvcEmpID nvarchar(10),
-	@bitDisplayWarnings bit,
+	@nvcDisplayWarnings nvarchar(5),
 	@dtmDate datetime
 	
 		
 	
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
-SET @strjobcode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
-WHERE Emp_ID = @nvcEmpID)	
-	
-SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
-WHERE [Job_Code]= @strjobcode)
-
+SET @nvcDisplayWarnings = (SELECT ISNULL (EC.fn_strCheckIf_HRUser(@nvcEmpID),'NO')) 
 
 -- Check users job code and show 'Warning' as a source only for HR users.
-IF @bitDisplayWarnings = 1
+IF @nvcDisplayWarnings = 'YES'
 
 SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
 (SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
@@ -6573,7 +6601,11 @@ END --sp_Select_Sources_For_Dashboard
 
 
 
+
+
 GO
+
+
 
 
 
@@ -7326,6 +7358,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/28/2015
@@ -7340,6 +7374,7 @@ GO
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count] 
 
+@strUserin nvarchar(30),
 @strSourcein nvarchar(100),
 @strCSRSitein nvarchar(30),
 @strCSRin nvarchar(30),
@@ -7365,15 +7400,18 @@ DECLARE
 @nvcSQL1 nvarchar(max),
 @nvcSQL2 nvarchar(max),
 @nvcSQL3 nvarchar(max),
+@nvcEmpID nvarchar(10),
+@dtmDate datetime,
 @strFormStatus nvarchar(30),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8),
-@bitDisplayWarnings bit,
+@nvcDisplayWarnings nvarchar(5),
 @where nvarchar(max) 
       
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
  
-SET @bitDisplayWarnings = (SELECT ISNULL([DisplayWarnings],0)FROM [EC].[HR_Access]
-WHERE [Job_Code]= @strjobcode)
+SET @nvcDisplayWarnings = (SELECT ISNULL (EC.fn_strCheckIf_HRUser(@nvcEmpID),'NO')) 
    
 SET @strFormStatus = 'Inactive'
 SET @strSDate = convert(varchar(8),@strSDatein,112)
@@ -7486,7 +7524,7 @@ SET @nvcSQL3 = ' ) x
  )
  SELECT count(strFormID) FROM TempCoaching'
 	   
-IF @bitDisplayWarnings = 1
+IF @nvcDisplayWarnings = 'YES'
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
 
 ELSE
@@ -7501,7 +7539,10 @@ END -- sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
 
 
 
+
+
 GO
+
 
 
 
@@ -8054,12 +8095,16 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_CheckIf_HRUser]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
+
 
 
 --	====================================================================
@@ -8082,17 +8127,13 @@ BEGIN
 	@nvcSQL nvarchar(max),
 	@nvcEmpID nvarchar(10),
 	@nvcEmpJobCode nvarchar(30),
-	@dtmDate datetime
+	@nvcActive nvarchar(1),
+		@dtmDate datetime
 
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
-SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
-WHERE Emp_ID = @nvcEmpID)
 
-  
-SET @nvcSQL = 'SELECT CASE WHEN '''+@nvcEmpJobCode+''' IN
-(SELECT DISTINCT [Job_Code] FROM [EC].[HR_Access]
-WHERE [HistDashboard]= 1) THEN ''YES'' ELSE ''NO'' END AS isHRUser'
+SET @nvcSQL = 'SELECT  ISNULL(EC.fn_strCheckIf_HRUser('''+@nvcEmpID+'''),''NO'') AS isHRUser'
 
 
 --Print @nvcSQL
@@ -8100,7 +8141,14 @@ WHERE [HistDashboard]= 1) THEN ''YES'' ELSE ''NO'' END AS isHRUser'
 EXEC (@nvcSQL)	
 END --sp_CheckIf_HRUser
 
+
+
+
+
+
 GO
+
+
 
 
 --******************************************************************
