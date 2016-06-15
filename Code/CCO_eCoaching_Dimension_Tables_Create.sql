@@ -1,7 +1,11 @@
 /*
-eCoaching_Dimension_Tables_Create(04).sql
-Last Modified Date: 04/15/2016
+eCoaching_Dimension_Tables_Create(05).sql
+Last Modified Date: 06/13/2016
 Last Modified By: Susmitha Palacherla
+
+Version 05: 
+1. Modified to markTable #15 as obsolete as it is not being used for TFS 2332
+   06/13/2016
 
 Version 04: 
 1. Modified to add Table #15 to support HR access control from table per TFS 2332
@@ -37,7 +41,7 @@ Tables
 12. [EC].[CallID_Selection]
 13. [EC].[Email_Notifications]
 14. [EC].[DIM_Behavior]
-15. [EC].[HR_Access]
+15. [EC].[HR_Access] -- Obsolete as of 06/10/2016
 
 Procedures
 1. [EC].[sp_Dim_Date_Add_Date_Range]
@@ -430,8 +434,9 @@ GO
 
 ****************************************************************************************
 
---15. Create Table [EC].[HR_Access]
+--15. Create Table [EC].[HR_Access]-- Obsolete
 
+/*
 SET ANSI_NULLS ON
 GO
 
@@ -451,6 +456,7 @@ CREATE TABLE [EC].[HR_Access](
 
 GO
 
+*/
 
 ****************************************************************************************
 
