@@ -1,7 +1,12 @@
 /*
-File: eCoaching_Functions.sql (22)
+File: eCoaching_Functions.sql (23)
 Last Modified By: Susmitha Palacherla
-Date: 6/6/2016
+Date: 6/13/2016
+
+Version 23, 6/13/2016
+1. Added 1new Function 3 function #43) to support the new HR check per TFS 2332
+[EC].[fn_strCheckIf_HRUser] 
+
 
 Version 22, 6/6/2016
 1. Added the following Functions 3 functions(#40, #41 and #42) to support the Admin tool per TFS 1709.
@@ -2844,5 +2849,70 @@ END  -- fn_strStatusFromStatusID
 
 GO
 
---***********************************************
 
+
+--*********************************************************************************
+
+--43. FUNCTION [EC].[fn_strCheckIf_HRUser] 
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCheckIf_HRUser' 
+)
+   DROP FUNCTION [EC].[fn_strCheckIf_HRUser]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date:  6/7/2016
+-- Description:	Given an Employee ID returns whether the user is a HR user.
+-- Last Modified By:
+-- Revision History:
+--  Created per TFS 2332- Separate solution for HR access
+-- =============================================
+
+CREATE FUNCTION [EC].[fn_strCheckIf_HRUser] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS nvarchar(10)
+AS
+BEGIN
+	DECLARE 
+	@strEmpJobCode nvarchar(20),
+	@nvcActive nvarchar(1),
+	@strHRUser nvarchar(10)
+	
+SET @strEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @strEmpID)
+
+SET @nvcActive = (SELECT Active From EC.Employee_Hierarchy
+WHERE Emp_ID = @strEmpID)
+
+IF @nvcActive = 'A'	AND @strEmpJobCode LIKE 'WH%'
+
+ SET @strHRUser = 'YES'
+  ELSE
+ SET    @strHRUser = N'NO'
+  
+  RETURN   @strHRUser
+  
+END --fn_strCheckIf_HRUser
+
+GO
+
+--*********************************************************************************
