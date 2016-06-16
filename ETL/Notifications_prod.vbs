@@ -194,7 +194,14 @@ Next
                 End Select
 
 
-                If (mailCopy = "1") Then
+
+
+'Begin check for Copy/CC
+
+                 Select Case (mailCopy) 'If (mailCopy = "1") Then
+  
+                 Case "True"
+
 
                     Select Case (mailCc)
 
@@ -217,7 +224,9 @@ Next
 
                     End Select
 
-                End If
+              End Select 'End If
+
+'End check for Copy/CC
 
 
                 strSubject = "eCL: " & strFormStatus & " (" & strPerson & ")"

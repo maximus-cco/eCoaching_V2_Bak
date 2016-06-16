@@ -170,6 +170,7 @@ Next
 
 'End check for OMRARC
 
+
                 Select Case (mailTo)
 
                     Case "Employee"
@@ -192,7 +193,11 @@ Next
                 End Select
 
 
-                If (mailCopy = "1") Then
+  'Begin check for Copy/CC
+
+                 Select Case (mailCopy) 'If (mailCopy = "1") Then
+  
+                 Case "True"
 
                     Select Case (mailCc)
 
@@ -215,8 +220,9 @@ Next
 
                     End Select
 
-                End If
+         End Select     'End If
 
+  'End check for Copy/CC
 
                 strSubject = "PHASE II - eCL: " & strFormStatus & " (" & strPerson & ") - PHASE II"
 
@@ -324,7 +330,7 @@ With iMsg
     .MimeFormatted = True
 'change to line to ToAddress to go to the correct destination and uncomment the .CC line
     .To =  ToAddress '"susmitha.palacherla@gdit.com" 
-'    .Cc = ToCopy
+    .Cc = ToCopy
     .From = "VIPTest@GDIT.com"
     .Subject = ToSubject
     .HTMLBody = htmlbody
