@@ -1,10 +1,13 @@
 /*
-eCoaching_Maintenance_Create(16).sql
-Last Modified Date: 03/8/2016
+eCoaching_Maintenance_Create(17).sql
+Last Modified Date: 06/20/2016
 Last Modified By: Susmitha Palacherla
 
+Version 17: 06/20/2016
+1. Updated SP #2 [EC].[sp_SelectCoaching4Contact] to support CTC feed per TFS 2268.
 
-Version14: 03/8/2016
+
+Version 16: 03/8/2016
 1. Updated Sp#6   [EC].[sp_SelectCoaching4Reminder] to replace Hierarchy mgr with Review mgr for LCS Mgr recipients per TFS 2182
 
 Version 15: 03/4/2016
@@ -211,14 +214,17 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:		       Jourdain Augustin
---	Create Date:	   6/10/13
+--	Create Date:	   6/10/2013
 --	Description: 	   This procedure queries db for feed records to send out mail
 -- Last Updated By: Susmitha Palacherla
+-- last Modified date: 6/15/2016
 -- Modified per TFS 644 to add extra attribute 'OMRARC' to support IAE, IAT Feeds -- 09/21/2015
--- Modified per TFS 1732 to add Source 210 for SDR feed -- 3/4/2016
---	=====================================================================
+-- Modified per TFS 2283 to add Source 210 for Training feed -- 3/22/2016
+-- Modified per TFS 2268 to add Source 231 for CTC Quality Other feed - 6/15/2016
+-- --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
 
@@ -264,7 +270,7 @@ ON s.StatusID = cl.StatusID JOIN [EC].[DIM_Source] so
 ON so.SourceID = cl.SourceID JOIN [EC].[DIM_Module] mo
 ON mo.ModuleID = cl.ModuleID
 WHERE S.Status not in (''Completed'',''Inactive'')
-AND cl.SourceID in (210,211,212,221,222,223,224,230)
+AND cl.SourceID in (210,211,212,221,222,223,224,230,231)
 AND cl.EmailSent = ''False''
 AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
 OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL)
@@ -279,11 +285,8 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectCoaching4Contact
 
+
 GO
-
-
-
-
 
 
 
