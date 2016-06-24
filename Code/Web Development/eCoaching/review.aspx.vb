@@ -23,6 +23,8 @@ Public Class review
 
     Public Const REVIEW_TRAINING_OVERDUE_TRAINING_TEXT = "The above training is now overdue. Please have the training completed and provide coaching on the specific reasons it was overdue."
 
+    Public Const PENDING_MGR_REVIEW = "Pending Manager Review"
+
     Dim pHolder As Label
     Dim panelHolder As Panel
     Dim pHolder2 As Label
@@ -32,6 +34,9 @@ Public Class review
 
     Dim panelHolder1 As Panel
     Dim statusLevel As String
+
+    Dim lblisCTC As Label
+    Dim isCTC As Boolean
 
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim FromURL As String
@@ -113,6 +118,13 @@ Public Class review
         If (Not IsAccessAllowed()) Then
             ' Send the user to the authorized page.
             Response.Redirect("error3.aspx")
+        End If
+
+        lblisCTC = ListView1.Items(0).FindControl("isCTC")
+        If (lblisCTC.Text = "0") Then
+            isCTC = False
+        Else
+            isCTC = True
         End If
 
         pHolder = ListView1.Items(0).FindControl("Label50")
@@ -244,8 +256,10 @@ Public Class review
 
         'pHolder = ListView1.Items(0).FindControl("Label45") ' strCSRSup
 
+        Dim logModule = "Supervisor"
         ' The user is the employee's current supervisor
         If (m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse m_strUserEmployeeID = m_strReassignedToEmployeeID) Then
+            '        OrElse logModule = "Supervisor") Then
             'If (lan = LCase(pHolder.Text)) Then
             ' Date1.Text = DateTime.Now.ToString("d")
             CompareValidator1.ValueToCompare = TodaysDate
@@ -276,8 +290,10 @@ Public Class review
                     ' Pending Manager Review (Supervisor module), Or
                     ' Pending Quality Lead Review (Quality module)
 
-                    ' It is from IQS.
-                    If (pHolder5.Text = "1") Then
+
+
+                    ' It is from IQS or it is CTC.
+                    If (pHolder5.Text = "1" OrElse isCTC) Then
 
                         'If ((pHolder5.Text = "IQS") And (pHolder6.Text = "True")) Then
 
@@ -293,10 +309,10 @@ Public Class review
                         End If
 
                         If (pHolder6.Text = "True") Then ' isCSRAcknowledged
-                            ' Panel40 -
+                            ' pnlMgtAckReinforceLog -
                             ' 1. Check the box below to acknowledge the monitor:
                             ' I have read and understand all the information provided on this eCoaching Log.
-                            Panel40.Visible = True
+                            pnlMgtAckReinforceLog.Visible = True
                         Else
                             ' Panel25 -
                             ' 1. Enter the date of coaching:
@@ -354,7 +370,7 @@ Public Class review
                     End If
 
                 Case 4 ' Pending Acknowledgement
-                    Panel40.Visible = True 'Check the box below to acknowledge the monitor
+                    pnlMgtAckReinforceLog.Visible = True 'Check the box below to acknowledge the monitor
 
                     panelHolder = ListView1.Items(0).FindControl("Panel28") ' Coaching Notes
                     panelHolder.Visible = True ' Display "Coaching Notes"
@@ -504,15 +520,15 @@ Public Class review
             If (statusLevel = 1) Then
                 pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
-                If ((pHolder2.Text = "1") And (Len(pHolder8.Text) > 4)) Then ' IQS
-                    Panel39.Visible = True ' 1. Check the box below to acknowledge the monitor:
+                If ((pHolder2.Text = "1" OrElse isCTC) AndAlso Len(pHolder8.Text) > 4) Then ' IQS or CTC
+                    pnlEmpAckReinforceLog.Visible = True ' 1. Check the box below to acknowledge the monitor:
                 Else
                     Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
                 End If
             End If
 
             If (statusLevel = 4) Then
-                Panel39.Visible = True 'acknowledge monitor
+                pnlEmpAckReinforceLog.Visible = True 'acknowledge monitor
             End If
         End If
 
@@ -1451,23 +1467,20 @@ Public Class review
 
     End Sub
 
-
+    ' Management acknowledge
+    ' For CTC, manager acknowledge;
+    ' For all others, superviosr acknowledge
     Protected Sub Button7_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button7.Click
         Dim eclUser As User = Session("eclUser")
         Dim lan As String = eclUser.LanID
-
-        'SUP Pending Ack Submit
-        Dim nextStep
+        Dim nextStep As String = ""
 
         Page.Validate()
         recStatus = DataList1.Items(0).FindControl("LabelStatus")
         If (recStatus.Text = "Pending Acknowledgement") Then
-
             nextStep = "Pending Employee Review"
-
         Else
             nextStep = "Completed"
-
         End If
 
         If Page.IsValid Then
@@ -1487,7 +1500,7 @@ Public Class review
 
         Else
 
-            Label116.Text = "Please correct all fields indicated in red to proceed."
+                Label116.Text = "Please correct all fields indicated in red to proceed."
 
 
         End If

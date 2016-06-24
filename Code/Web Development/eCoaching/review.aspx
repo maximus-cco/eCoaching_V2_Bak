@@ -333,6 +333,7 @@
                     <asp:Label ID="ReassignedToSupName" runat="server" Text='<%# Eval("strReassignedSupName")%>' Visible="false" />
                     <%-- The manager name to whom the log was reassigned to.--%>
                     <asp:Label ID="ReassignedToMgrName" runat="server" Text='<%# Eval("strReassignedMgrName")%>' Visible="false" />
+                    <asp:Label ID="isCTC" runat="server" Text='<%# Eval("Quality / CTC") %>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">
@@ -370,7 +371,8 @@
                 <br />
                 <asp:Button ID="Button1" runat="server" Text="Submit" CssClass="subuttons" />
             </asp:Panel>
-            <asp:Panel ID="Panel40" runat="server" Visible="false">
+            <!-- Management Acknowledge Reinforcement Logs Panel-->
+            <asp:Panel ID="pnlMgtAckReinforceLog" runat="server" Visible="false">
                 <asp:Label ID="Label146" runat="server" Text="1. Check the box below to acknowledge the monitor:" CssClass="question"></asp:Label>
                 <asp:Label ID="Label147" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
                 <br />
@@ -551,7 +553,8 @@
                 <br />
                 <asp:Button ID="Button4" runat="server" Text="Submit" CssClass="subuttons" />
             </asp:Panel>
-            <asp:Panel ID="Panel39" runat="server" Visible="false">
+            <!-- Employee Acknowledge Reinforcement Logs Panel -->
+            <asp:Panel ID="pnlEmpAckReinforceLog" runat="server" Visible="false">
                 <asp:Label ID="Label144" runat="server" Text="1. Check the box below to acknowledge the monitor:" CssClass="question"></asp:Label>
                 <asp:Label ID="Label145" runat="server" Text="*" CssClass="EMessage" Width="10px"></asp:Label>
                 <br />

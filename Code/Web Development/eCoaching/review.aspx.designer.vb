@@ -275,13 +275,13 @@ Partial Public Class review
     Protected WithEvents Button1 As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
-    '''Panel40 control.
+    '''pnlMgtAckReinforceLog control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents Panel40 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents pnlMgtAckReinforceLog As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
     '''Label146 control.
@@ -1022,13 +1022,13 @@ Partial Public Class review
     Protected WithEvents Button4 As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
-    '''Panel39 control.
+    '''pnlEmpAckReinforceLog control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents Panel39 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents pnlEmpAckReinforceLog As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
     '''Label144 control.
