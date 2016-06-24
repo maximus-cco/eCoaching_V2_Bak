@@ -253,6 +253,8 @@
                     <asp:Label ID="HierarchyMgrEmployeeID" runat="server" Text='<%# Eval("strCSRMgrID")%>' Visible="false" />
                     <%-- The employee's Supervisor employee ID in employee_hierarchy table. --%>
                     <asp:Label ID="HierarchySupEmployeeID" runat="server" Text='<%# Eval("strCSRSupID")%>' Visible="false" />
+                    <asp:Label ID="isCTC" runat="server" Text='<%# Eval("Quality / CTC") %>' Visible="false" />
+                    <asp:Label ID="MgrReviewAutoDate" runat="server" Text='<%# Eval("MgrReviewAutoDate") %>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">

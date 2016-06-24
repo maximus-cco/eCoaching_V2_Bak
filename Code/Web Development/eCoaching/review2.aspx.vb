@@ -19,6 +19,9 @@ Public Class review2
     Dim csr As String
     Dim csrLabel As Label
 
+    Dim lblisCTC As Label
+    Dim isCTC As Boolean
+
     Dim dssearch As System.DirectoryServices.DirectorySearcher
     Dim sresult As System.DirectoryServices.SearchResult
     Dim dresult As System.DirectoryServices.DirectoryEntry
@@ -74,31 +77,6 @@ Public Class review2
     End Function
 
     Protected Sub Page_Load3(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView2.DataBound
-        'csrLabel = ListView2.Items(0).FindControl("Label88")
-        'csr = csrLabel.Text
-        '' Get the CSR's supervisor and manager from employee_hierarchy table
-        'SqlDataSource3.SelectParameters("strUserin").DefaultValue = csr
-        'SqlDataSource3.DataBind()
-        'GridView2.DataBind()
-
-        'Dim subString As String
-        'Try
-        '    ' supervisorLanID$supervisorEmployeeID$managerLanID$managerEmployeeID
-        '    subString = (CType(GridView2.Rows(0).FindControl("Flow"), Label).Text)
-        'Catch ex As Exception
-        '    subString = ""
-        'End Try
-
-        'If (Len(subString) > 0) Then
-        '    Dim subArray As Array
-        '    subArray = Split(subString, "$", -1, 1)
-        '    m_strCSRSupHierarchyEmployeeID = subArray(1)
-        '    m_strCSRMgrHierachyEmployeeID = subArray(3)
-        'Else
-        '    csupervisor = "Unavailable"
-        '    cmanager = "Unavailable"
-        'End If
-
         Dim eclUser As User = Session("eclUser")
         m_strUserJobCode = UCase(eclUser.JobCode).Trim()
         m_strUserEmployeeID = Session("eclUser").EmployeeID
@@ -114,6 +92,13 @@ Public Class review2
         If (Not IsAccessAllowed()) Then
             ' Send the user to the unauthorized page.
             Response.Redirect("error3.aspx")
+        End If
+
+        lblisCTC = ListView2.Items(0).FindControl("isCTC")
+        If (lblisCTC.Text = "0") Then
+            isCTC = False
+        Else
+            isCTC = True
         End If
 
         pHolder = ListView2.Items(0).FindControl("Label50")
@@ -226,9 +211,20 @@ Public Class review2
         Dim pHolder7
         pHolder6 = ListView2.Items(0).FindControl("Label33") 'isIQS
         pHolder7 = ListView2.Items(0).FindControl("Label50")
-        If (pHolder6.Text = "1") Then
+        If (pHolder6.Text = "1" OrElse isCTC) Then
             pHolder = ListView2.Items(0).FindControl("Label100")
-            pHolder.Text = "Reviewed and acknowledged Quality Monitor on"
+            pHolder.Text = "Reviewed and acknowledged coaching on"
+            ' If CTC, set label text to "Manager Review Information:", review date to manager review date
+            If (isCTC) Then
+                ' Set label text to "Manager Review Information:"
+                DirectCast(ListView2.Items(0).FindControl("Label152"), Label).Text = "Manager Review Information:"
+                ' Set auto review date to MgrReviewAutoDate
+                DirectCast(ListView2.Items(0).FindControl("Label155"), Label).Text = DirectCast(ListView2.Items(0).FindControl("MgrReviewAutoDate"), Label).Text
+            End If
+
+            ' set label to "Reviewed and acknowledged coaching on"
+            DirectCast(ListView2.Items(0).FindControl("Label154"), Label).Text = "Reviewed and acknowledged coaching on"
+
             panelHolder = ListView2.Items(0).FindControl("Panel41")
             panelHolder.Visible = True
 
