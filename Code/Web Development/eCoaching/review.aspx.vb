@@ -768,7 +768,7 @@ Public Class review
             End If
         Else
             pHolder = ListView2.Items(0).FindControl("Label100")
-            pHolder.Text = "Reviewed and acknowledged coaching opportunity on"
+            pHolder.Text = "Reviewed and acknowledged coaching on"
         End If
 
         ' TFS 2196 - Show CSR Comments/Feedback always

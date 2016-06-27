@@ -235,7 +235,7 @@ Public Class review2
             End If
         Else
             pHolder = ListView2.Items(0).FindControl("Label100")
-            pHolder.Text = "Reviewed and acknowledged coaching opportunity on"
+            pHolder.Text = "Reviewed and acknowledged coaching on"
             panelHolder = ListView2.Items(0).FindControl("Panel32")
             panelHolder.Visible = True
         End If
