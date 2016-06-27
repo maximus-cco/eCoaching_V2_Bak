@@ -146,7 +146,7 @@
     <asp:Label ID="EmployeeNameValueLabel" runat="server" Font-Names="Calibri" />
     <br />
 
-    <asp:Label ID="EmployeeReviewedDateLabel" runat="server" Text="Reviewed and acknowledged coaching opportunity on" Font-Names="Calibri" Font-Bold="False" />&nbsp;
+    <asp:Label ID="EmployeeReviewedDateLabel" runat="server" Text="Reviewed and acknowledged coaching on" Font-Names="Calibri" Font-Bold="False" />&nbsp;
     <asp:Label ID="EmployeeReviewedDateValueLabel" runat="server" Font-Names="Calibri" />
     <br />
 

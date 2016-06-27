@@ -186,7 +186,7 @@
                     <br />
                     <asp:Label ID="Label97" runat="server" Text='<%# Eval(server.htmldecode("strCSRName")) %>' Font-Names="Calibri" />
                     <br />
-                    <asp:Label ID="Label100" runat="server" Text="Reviewed and acknowledged coaching opportunity on" Font-Names="Calibri" Font-Bold="False" />&nbsp;
+                    <asp:Label ID="Label100" runat="server" Text="Reviewed and acknowledged coaching on" Font-Names="Calibri" Font-Bold="False" />&nbsp;
                     <asp:Label ID="Label101" runat="server" Text='<%# Eval("CSRReviewAutoDate") %>' Font-Names="Calibri" />
                     <br />
                     <asp:Panel ID="Panel41" runat="server" Visible="false" Style="margin-top: 5px;">
