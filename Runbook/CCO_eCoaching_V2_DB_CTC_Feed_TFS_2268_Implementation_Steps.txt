@@ -105,10 +105,10 @@ On failure Quit the job reporting failure
 
 OK
 
-/*******************************************/
+*******************************************/
 
 
-SECTION 2 - Create Database tables and populate
+--SECTION 2 - Create Database tables and populate
 
 
 
@@ -242,7 +242,25 @@ GO
 
 
 
+--5. Add record to Email attributes table
 
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+     ('Supervisor','Quality','Indirect','Coach the coach',0,'Pending Acknowledgement','Employee','eCL: Pending Acknowledgement',
+     'A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',
+     1,'Supervisor')
+     
 
 
 
@@ -348,7 +366,7 @@ select  Distinct LOWER(cs.EMP_LANID)	[FormName],
          0			[isUCID],
          0          [isVerintID],
 		-- EC.fn_nvcHtmlEncode(cs.TextDescription)		[Description],
-		 REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '      '  ,'<br />')[Description],	
+		 REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br />')[Description],	
 		 cs.Submitted_Date			SubmittedDate,
 		 cs.Event_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
@@ -434,6 +452,7 @@ END -- sp_InsertInto_Coaching_Log_Quality_Other
 
 
 GO
+
 
 
 
