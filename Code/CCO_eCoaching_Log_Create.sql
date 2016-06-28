@@ -1,7 +1,13 @@
 /*
-eCoaching_Log_Create(48).sql
-Last Modified Date: 6/13/2016
+eCoaching_Log_Create(49).sql
+Last Modified Date: 6/28/2016
 Last Modified By: Susmitha Palacherla
+
+Version 45: 6/28/2016
+1. Updated SP # 17 to support  CTC feed per TFS 2268
+2. Updated SP # 45 to support CTC feed per TFS 2268
+3. Updated SP # 52 add CTC to Sup ACk update workflow per TFS 2268
+
 
 Version 48: 6/13/2016
 Additional changes for TFS 2332. 
@@ -2543,16 +2549,20 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
 --	Description: This procedure selects the Pending e-Coaching records 
 --  for a given Supervisor in the Supervisor Dashboard.
 -- Last Updated By: Susmitha Palacherla
--- Modified per SCR 14422 during dashboard resdesign - 04/16/2015
+-- Modified per SCR 14422 during dashboard resdesign - 6/16/2016
 -- 1. To Replace old style joins.
 -- 2. Lan ID association by date.
 -- Modified per TFS 1710 Admin Tool setup - 5/2/2016
+-- Modified for TFS 2268 CTC feed to add "Pending Acknowledgement" to filter - 5/2/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPPending] @strCSRSUPin nvarchar(30)
 AS
@@ -2590,6 +2600,7 @@ WHERE (
 ([ReassignCount]= 0 AND (eh.[Sup_ID] = '''+@nvcSUPID+''' OR eh.[Mgr_ID] = '''+@nvcSUPID+''')
 AND ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+'''OR [S].[Status] = '''+@strFormStatus3+'''OR [S].[Status] = '''+@strFormStatus4+'''))
 OR (cl.[ReassignedToId] = '''+@nvcSUPID+''' AND [ReassignCount]<> 0 AND [S].[Status] = '''+@strFormStatus1+''')
+OR (eh.[Emp_ID] = '''+@nvcSUPID+''' AND [S].[Status] = '''+@strFormStatus2+''')
 OR (eh.[Emp_ID] = '''+@nvcSUPID+''' AND [S].[Status] = '''+@strFormStatus5+''')
 )
 AND (eh.[Sup_ID] <> ''999999'' AND eh.[Mgr_ID] <> ''999999'')
@@ -2599,9 +2610,10 @@ EXEC (@nvcSQL)
 --Print @nvcSQL
 	    
 END --sp_SelectFrom_Coaching_Log_SUPPending
+
+
+
 GO
-
-
 
 
 
@@ -4498,6 +4510,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -4510,6 +4525,7 @@ GO
 -- 3. TFS 1732 to support SDR Training feed - 3/2/2016
 -- 4. TFS 2283 to support ODT Training feed - 3/22/2016
 -- 5. TFS 1709 to support Reassigned sups and Mgrs - 5/6/2016
+-- 6. TFS 2268 to support CTC feed - 6/23/2016
 
 --	=====================================================================
 
@@ -4579,12 +4595,15 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		 ELSE ''NA''
 	END strReassignedMgrName, '
 	
-	  SET @nvcSQL2 =
-		'ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
+	  SET @nvcSQL2 = 'CASE
+		WHEN cl.[Review_SupID] IS NOT NULL THEN ISNULL(suph.Emp_Name,''Unknown'')
+		ELSE ISNULL(mgrh.Emp_Name,''Unknown'')END strReviewer,
 		cl.ReassignedToID,
         sc.SubCoachingSource	strSource,
         CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey'',''IQS'',''Verint-GDIT Supervisor'')
 		THEN 1 ELSE 0 END 	isIQS,
+		CASE WHEN sc.SubCoachingSource = ''Coach the coach''
+		THEN 1 ELSE 0 END 	isCTC,
 		cl.isUCID    isUCID,
 		cl.UCID	strUCID,
 		cl.isVerintID	isVerintMonitor,
@@ -4605,6 +4624,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
 		CASE WHEN cc.SDR is Not NULL Then 1 ELSE 0 END	"Training / SDR",
 	    CASE WHEN cc.ODT is Not NULL Then 1 ELSE 0 END	"Training / ODT",
+	    CASE WHEN cc.CTC is Not NULL Then 1 ELSE 0 END	"Quality / CTC",
 	  	cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -4632,7 +4652,8 @@ SET @nvcSQL3 = '  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END)	OMRISQ,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END)	SDR,
-     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END)	ODT
+     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END)	ODT,
+     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END)	CTC
  	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
@@ -4655,6 +4676,13 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
+
+
+GO
+
+
 
 GO
 
@@ -5422,12 +5450,26 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Update7Review_Coaching_Log]
 GO
 
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
 --    ====================================================================
 --    Author:                 Jourdain Augustin
 --    Create Date:      7/31/13
 --    Description: *    This procedure allows Sups to update the e-Coaching records from the review page for Pending Acknowledgment records. 
---    Last Update:    12/16/2014
---    Updated per SCR 13891 to capture review sup id.
+--    Last Updated By: Susmitha Palacherla   
+--    Updated per SCR 13891 to capture review sup id - 12/16/2014
+--    Updated per TFS 2268 to support CTC feed workflow - 6/23/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update7Review_Coaching_Log]
 (
@@ -5450,11 +5492,29 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
 DECLARE @nvcReviewSupID Nvarchar(10),
-	    @dtmDate datetime
+	    @dtmDate datetime,
+	    @nvcCat Nvarchar (10)
        
 SET @dtmDate  = GETDATE()   
 SET @nvcReviewSupID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewSupLanID,@dtmDate)
+SET @nvcCat = (select RTRIM(LEFT(strReportCode,LEN(strReportCode)-8)) from EC.Coaching_Log where FormName = @nvcFormID) 
 
+  IF @nvcCat = 'CTC'
+  
+BEGIN
+UPDATE [EC].[Coaching_Log]
+	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
+	       Review_MgrID = @nvcReviewSupID,
+		   MgrReviewAutoDate = @dtmSUPReviewAutoDate
+from EC.Coaching_Log        
+	WHERE FormName = @nvcFormID
+	OPTION (MAXDOP 1)
+END
+
+
+ELSE
+
+BEGIN
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
 	       Review_SupID = @nvcReviewSupID,
@@ -5462,7 +5522,7 @@ UPDATE [EC].[Coaching_Log]
 from EC.Coaching_Log        
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)
-
+END
 	
 COMMIT TRANSACTION
 END TRY
@@ -5506,8 +5566,14 @@ END CATCH
 
 
 END --sp_Update7Review_Coaching_Log
-GO
 
+
+
+
+
+
+
+GO
 
 
 
