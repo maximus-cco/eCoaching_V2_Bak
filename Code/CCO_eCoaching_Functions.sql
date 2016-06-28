@@ -1,7 +1,12 @@
 /*
-File: eCoaching_Functions.sql (23)
+File: eCoaching_Functions.sql (24)
 Last Modified By: Susmitha Palacherla
-Date: 6/13/2016
+Date: 6/28/2016
+
+
+Version 24,  6/28/2016
+1. Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add code CTC per TFS 2268
+
 
 Version 23, 6/13/2016
 1. Added 1new Function 3 function #43) to support the new HR check per TFS 2332
@@ -508,15 +513,18 @@ GO
 
 
 
+
+
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
--- Description:	  Given the 3 letter Outlier Report code returns the Sub coaching reason for the log.
--- Last Modified Date: 4/11/2016
+-- Description:	  Given the 3 letter  Report code returns the Sub coaching reason for the log.
+-- Last Modified Date: 6/15/2016
 -- last Modified By: Susmitha Palacherla
 -- TFS 1732 - To add SDR - 3/02/2016
 -- TFS 2282 - To add ODT - 3/22/2016
 -- TFS 2470 - To add OTH - 4/11/2016
+-- TFS 2268 - To add CTC - 6/15/2016
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -553,6 +561,7 @@ BEGIN
 			WHEN N'SDR' THEN 232
             WHEN N'ODT' THEN 233
             WHEN N'OTH' THEN 42
+            WHEN N'CTC' THEN 73
         ELSE -1
       END
     ELSE
@@ -564,7 +573,12 @@ END  -- fn_intSubCoachReasonIDFromRptCode()
 
 
 
+
+
 GO
+
+
+
 
 
 
