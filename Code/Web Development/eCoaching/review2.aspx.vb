@@ -214,13 +214,6 @@ Public Class review2
         If (pHolder6.Text = "1" OrElse isCTC) Then
             pHolder = ListView2.Items(0).FindControl("Label100")
             pHolder.Text = "Reviewed and acknowledged coaching on"
-            ' If CTC, set label text to "Manager Review Information:", review date to manager review date
-            If (isCTC) Then
-                ' Set label text to "Manager Review Information:"
-                DirectCast(ListView2.Items(0).FindControl("Label152"), Label).Text = "Manager Review Information:"
-                ' Set auto review date to MgrReviewAutoDate
-                DirectCast(ListView2.Items(0).FindControl("Label155"), Label).Text = DirectCast(ListView2.Items(0).FindControl("MgrReviewAutoDate"), Label).Text
-            End If
 
             ' set label to "Reviewed and acknowledged coaching on"
             DirectCast(ListView2.Items(0).FindControl("Label154"), Label).Text = "Reviewed and acknowledged coaching on"
