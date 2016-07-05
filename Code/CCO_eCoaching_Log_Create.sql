@@ -1,9 +1,12 @@
 /*
-eCoaching_Log_Create(49).sql
-Last Modified Date: 6/28/2016
+eCoaching_Log_Create(50).sql
+Last Modified Date: 6/29/2016
 Last Modified By: Susmitha Palacherla
 
-Version 45: 6/28/2016
+Version 50: 6/29/2016
+1. Reverted changes to made in revision 49 to SP # 52 per TFS 2268
+
+Version 49: 6/28/2016
 1. Updated SP # 17 to support  CTC feed per TFS 2268
 2. Updated SP # 45 to support CTC feed per TFS 2268
 3. Updated SP # 52 add CTC to Sup ACk update workflow per TFS 2268
@@ -5456,20 +5459,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
-
 --    ====================================================================
 --    Author:                 Jourdain Augustin
 --    Create Date:      7/31/13
 --    Description: *    This procedure allows Sups to update the e-Coaching records from the review page for Pending Acknowledgment records. 
---    Last Updated By: Susmitha Palacherla   
---    Updated per SCR 13891 to capture review sup id - 12/16/2014
---    Updated per TFS 2268 to support CTC feed workflow - 6/23/2016
+--    Last Update:    12/16/2014
+--    Updated per SCR 13891 to capture review sup id.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update7Review_Coaching_Log]
 (
@@ -5492,29 +5487,11 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
 DECLARE @nvcReviewSupID Nvarchar(10),
-	    @dtmDate datetime,
-	    @nvcCat Nvarchar (10)
+	    @dtmDate datetime
        
 SET @dtmDate  = GETDATE()   
 SET @nvcReviewSupID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewSupLanID,@dtmDate)
-SET @nvcCat = (select RTRIM(LEFT(strReportCode,LEN(strReportCode)-8)) from EC.Coaching_Log where FormName = @nvcFormID) 
 
-  IF @nvcCat = 'CTC'
-  
-BEGIN
-UPDATE [EC].[Coaching_Log]
-	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
-	       Review_MgrID = @nvcReviewSupID,
-		   MgrReviewAutoDate = @dtmSUPReviewAutoDate
-from EC.Coaching_Log        
-	WHERE FormName = @nvcFormID
-	OPTION (MAXDOP 1)
-END
-
-
-ELSE
-
-BEGIN
 UPDATE [EC].[Coaching_Log]
 	   SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
 	       Review_SupID = @nvcReviewSupID,
@@ -5522,7 +5499,7 @@ UPDATE [EC].[Coaching_Log]
 from EC.Coaching_Log        
 	WHERE FormName = @nvcFormID
 	OPTION (MAXDOP 1)
-END
+
 	
 COMMIT TRANSACTION
 END TRY
@@ -5566,12 +5543,6 @@ END CATCH
 
 
 END --sp_Update7Review_Coaching_Log
-
-
-
-
-
-
 
 GO
 
