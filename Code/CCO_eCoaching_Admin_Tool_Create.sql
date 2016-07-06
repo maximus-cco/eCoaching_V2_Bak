@@ -1,7 +1,9 @@
 /*
-eCoaching_Admin_Tool_Create(02).sql
-Last Modified Date:6/10/2016
+eCoaching_Admin_Tool_Create(03).sql
+Last Modified Date:07/06/2016
 Last Modified By: Susmitha Palacherla
+
+Version 03: Update to SP #3 per TFS 3091- 07/06/2016
 
 
 Version 02: Updates from testing . TFS 1709 Admin tool setup - 6/10/2016
@@ -848,15 +850,17 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
 --	Description: *	This procedure returns the list of Employees who have 
 --  Coaching logs for Inactivation or Reactivation.
---  Last Modified By: 
---  Last Modified date: 
+--  Last Modified By: Susmitha Palacherla
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/20/12016
+--  Updated to remove Mgr site restriction for non admins, TFS 3091 - 07/05/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Employees_Coaching_Inactivation_Reactivation] 
 
@@ -897,8 +901,7 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
  AND Fact.EmpID <> ''999999''
  AND Emp.Active = ''A'''
  + @strConditionalSite 
- + 'AND Emp.Emp_Site = MGR.Emp_Site
-  AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
+ + ' AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
  ORDER BY Emp.Emp_Name'
 
 ELSE 
@@ -922,13 +925,7 @@ EXEC (@nvcSQL)
 END --sp_AT_Select_Employees_Coaching_Inactivation_Reactivation
 
 
-
-
-
-
 GO
-
-
 
 
 
