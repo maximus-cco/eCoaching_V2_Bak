@@ -140,6 +140,24 @@ Partial Public Class review
     Protected WithEvents ListView1 As Global.System.Web.UI.WebControls.ListView
     
     '''<summary>
+    '''pnlStaticText control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlStaticText As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''lblStaticText control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblStaticText As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
     '''Panel25 control.
     '''</summary>
     '''<remarks>

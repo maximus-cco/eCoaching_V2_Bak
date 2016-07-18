@@ -272,6 +272,7 @@
                             </asp:TableRow>
                         </asp:Table>
                     </asp:Panel>
+
                     <asp:Label ID="Label96" runat="server" Text='<%# Eval("strFormID") %>' Visible="false" />
                     <asp:Label ID="Label50" runat="server" Text='<%# Eval("strFormStatus") %>' Visible="false" />
                     <asp:Label ID="Label51" runat="server" Text='<%# Eval("SubmittedDate") %>' Visible="false" />
@@ -334,6 +335,8 @@
                     <%-- The manager name to whom the log was reassigned to.--%>
                     <asp:Label ID="ReassignedToMgrName" runat="server" Text='<%# Eval("strReassignedMgrName")%>' Visible="false" />
                     <asp:Label ID="isCTC" runat="server" Text='<%# Eval("Quality / CTC") %>' Visible="false" />
+                    <asp:Label ID="isHigh5Club" runat="server" Text='<%# Eval("Quality / HFC") %>' Visible="false" />
+                    <asp:Label ID="isKudo" runat="server" Text='<%# Eval("Quality / KUD") %>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">
@@ -341,6 +344,11 @@
                     </div>
                 </LayoutTemplate>
             </asp:ListView>
+
+            <!-- Ecl Static Text -->
+            <asp:Panel ID="pnlStaticText" runat="server" Visible="false" CssClass="marginbottom">
+                <asp:Label ID="lblStaticText" runat="server" />
+            </asp:Panel>
 
             <asp:Panel ID="Panel25" runat="server" Visible="false">
                 <asp:Label ID="Label63" runat="server" Text="1. Enter the date of coaching:" CssClass="question"></asp:Label>&nbsp; 
@@ -553,6 +561,7 @@
                 <br />
                 <asp:Button ID="Button4" runat="server" Text="Submit" CssClass="subuttons" />
             </asp:Panel>
+
             <!-- Employee Acknowledge Reinforcement Logs Panel -->
             <asp:Panel ID="pnlEmpAckReinforceLog" runat="server" Visible="false">
                 <asp:Label ID="Label144" runat="server" Text="1. Check the box below to acknowledge the monitor:" CssClass="question"></asp:Label>

@@ -23,6 +23,13 @@ Public Class review
 
     Public Const REVIEW_TRAINING_OVERDUE_TRAINING_TEXT = "The above training is now overdue. Please have the training completed and provide coaching on the specific reasons it was overdue."
 
+    Public Const REVIEW_QUALITY_HIGH5_CLUB = "Customer satisfaction is critical to our success; therefore, " &
+        "to help gauge our performance, every caller is offered the option to complete a Customer Satisfaction (CSAT) survey. " &
+        "Using a scale from one to five, callers are able to rate their overall satisfaction. Top box, or a rating of ""5"", indicates the caller was extremely satisfied!  " &
+        "Thank you for taking good care of your callers; you make a difference for each caller AND for the CCO!"
+
+    Public Const REVIEW_QUALITY_KUDO_CLUB = "Kudo text goes here"
+
     Public Const PENDING_MGR_REVIEW = "Pending Manager Review"
 
     Dim pHolder As Label
@@ -37,6 +44,12 @@ Public Class review
 
     Dim lblisCTC As Label
     Dim isCTC As Boolean
+
+    Dim lblisHigh5Club As Label
+    Dim isHigh5Club As Boolean
+
+    Dim lblisKudo As Label
+    Dim isKudo As Boolean
 
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim FromURL As String
@@ -99,6 +112,33 @@ Public Class review
 
     End Function
 
+    Private Sub SetIsCTC()
+        lblisCTC = ListView1.Items(0).FindControl("isCTC")
+        If (lblisCTC.Text = "0") Then
+            isCTC = False
+        Else
+            isCTC = True
+        End If
+    End Sub
+
+    Private Sub SetIsHigh5Club()
+        lblisHigh5Club = ListView1.Items(0).FindControl("isHigh5Club")
+        If (lblisHigh5Club.Text = "0") Then
+            isHigh5Club = False
+        Else
+            isHigh5Club = True
+        End If
+    End Sub
+
+    Private Sub SetIsKudo()
+        lblisKudo = ListView1.Items(0).FindControl("isKudo")
+        If (lblisKudo.Text = "0") Then
+            isKudo = False
+        Else
+            isKudo = True
+        End If
+    End Sub
+
     Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
         ' Get the user employee ID from session.
         m_strUserEmployeeID = Session("eclUser").EmployeeID
@@ -120,11 +160,17 @@ Public Class review
             Response.Redirect("error3.aspx")
         End If
 
-        lblisCTC = ListView1.Items(0).FindControl("isCTC")
-        If (lblisCTC.Text = "0") Then
-            isCTC = False
-        Else
-            isCTC = True
+        SetIsCTC()
+        SetIsHigh5Club()
+        SetIsKudo()
+
+        If (isHigh5Club OrElse isKudo) Then
+            pnlStaticText.Visible = True
+            If (isHigh5Club) Then
+                lblStaticText.Text = REVIEW_QUALITY_HIGH5_CLUB
+            Else
+                lblStaticText.Text = REVIEW_QUALITY_KUDO_CLUB
+            End If
         End If
 
         pHolder = ListView1.Items(0).FindControl("Label50")
@@ -292,8 +338,8 @@ Public Class review
 
 
 
-                    ' It is from IQS or it is CTC.
-                    If (pHolder5.Text = "1" OrElse isCTC) Then
+                    ' It is from IQS or it is CTC or high CSAT5 or kudo.
+                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo) Then
 
                         'If ((pHolder5.Text = "IQS") And (pHolder6.Text = "True")) Then
 
@@ -341,13 +387,13 @@ Public Class review
                             RequiredFieldValidator10.Enabled = True
                             If (pHolder2v.Text = "1") Then 'ETS OAE
                                 HyperLink1.Text = "Contact Center Operations 3.06 Timecard Audit SOP"
-                                Label134.Text = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did not complete their timecard before the deadline laid out in the latest "
+                                Label134.Text = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did Not complete their timecard before the deadline laid out in the latest "
 
                             End If
 
                             If (pHolder2w.Text = "1") Then 'ETS OAS
                                 HyperLink1.Text = "Contact Center Operations 3.06 Timecard Audit SOP"
-                                Label134.Text = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the supervisor did not approve or reject their CSR’s timecard before the deadline laid out in the latest "
+                                Label134.Text = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the supervisor did Not approve Or reject their CSR’s timecard before the deadline laid out in the latest "
                             End If
 
                             If (trainingShortDuration.Text = "1") Then
@@ -509,7 +555,7 @@ Public Class review
         Dim pHolder8
         pHolder2 = ListView1.Items(0).FindControl("Label33") 'iSIQS
         pHolder = ListView1.Items(0).FindControl("Label88")
-        ' The uer is the current record's employee
+        ' The user is the current record's employee
         If (m_strUserEmployeeID = m_strEmployeeID) Then
             'If (lan = LCase(pHolder.Text)) Then ' I'm the current record's csr
 
@@ -520,7 +566,8 @@ Public Class review
             If (statusLevel = 1) Then
                 pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
-                If ((pHolder2.Text = "1" OrElse isCTC) AndAlso Len(pHolder8.Text) > 4) Then ' IQS or CTC
+                ' IQS or CTC or high CSAT5 or kudo
+                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo) AndAlso Len(pHolder8.Text) > 4) Then
                     pnlEmpAckReinforceLog.Visible = True ' 1. Check the box below to acknowledge the monitor:
                 Else
                     Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...

@@ -600,5 +600,11 @@ td
     max-height: calc(100% - 120px);
 }
 
+.marginbottom::after {
+    content: "";
+    display: block;
+    height: 20px;
+}
+
 
 
