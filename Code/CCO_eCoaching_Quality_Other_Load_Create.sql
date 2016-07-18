@@ -1,11 +1,14 @@
 /*
-eCoaching_Quality_Other_Create(01).sql
-Last Modified Date: 6/28/2016
+eCoaching_Quality_Other_Create(02).sql
+Last Modified Date: 7/15/2016
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: 7/15/2016
+TFS 3179 & 3186 - To add HFC & KUD 
+Updated procedure [EC].[sp_InsertInto_Coaching_Log_Quality_Other] to support HFC and KUD feeds.
 
-Version 01:6/28/2016
+Version 01: 6/28/2016
 Initial Revision - TFS 2268 - CTC Feed load setup
 
 
@@ -202,10 +205,14 @@ GO
 
 
 
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
--- Create date:        6/15/2016
---  Created per TFS 2268 during setup of CTC Load
+-- Last Modified Date: 09/16/2015
+-- Last Updated By: Susmitha Palacherla
+-- Initial Revision: Setup of CTC Load - TFS 2268 -  6/15/2016
+-- Update: HFC and KUD Loads - TFS 3179 and 3186 - 07/15/2016
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 AS
@@ -222,6 +229,14 @@ BEGIN TRY
       SET @maxnumID = (SELECT IsNULL(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
       -- Fetches the Date of the Insert
       SET @dtmDate  = GETDATE()   
+      
+-- Update the value for Pending Acknowledgement
+
+  UPDATE [EC].[Quality_Other_Coaching_Stage]
+  SET [Form_Status]= 'Pending Acknowledgement'
+  WHERE [Form_Status]= 'Pending Acknowledgment'
+  
+  WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
       
 -- Inserts records from the Quality_Other_Coaching_Stage table to the Coaching_Log Table
 
@@ -268,7 +283,9 @@ select  Distinct LOWER(cs.EMP_LANID)	[FormName],
          0			[isUCID],
          0          [isVerintID],
 		-- EC.fn_nvcHtmlEncode(cs.TextDescription)		[Description],
-		 REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '      '  ,'<br />')[Description],	
+		 CASE WHEN cs.Report_Code LIKE 'CTC%' 
+		 THEN  REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br />')
+		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
 		 cs.Submitted_Date			SubmittedDate,
 		 cs.Event_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
@@ -276,7 +293,9 @@ select  Distinct LOWER(cs.EMP_LANID)	[FormName],
 		 0                          [EmailSent],
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 2							[ModuleID],
+		 CASE WHEN cs.Report_Code LIKE 'CTC%'
+		 THEN 2	
+		 ELSE 1 END						[ModuleID],
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
 		 ISNULL(csr.[Mgr_ID],'999999') [MgrID]
 	                   
@@ -285,9 +304,10 @@ left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Repor
 where cf.numReportID is Null and cf.strReportCode is null
 
 
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
 -- Updates the strFormID value
 
-WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
 UPDATE [EC].[Coaching_Log]
 SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
@@ -305,8 +325,10 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[SubCoachingReasonID]
            ,[Value])
     SELECT cf.[CoachingID],
-           CASE WHEN cf.strReportCode like 'CTC%'
-           THEN 21 ELSE 14 END,
+           CASE WHEN cf.strReportCode like 'CTC%' THEN 21 
+           WHEN cf.strReportCode like 'HFC%' THEN 10 
+           WHEN cf.strReportCode like 'KUD%' THEN 11
+           ELSE 14 END,
            [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
            qs.[CoachReason_Current_Coaching_Initiatives]
     FROM [EC].[Quality_Other_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
@@ -315,6 +337,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     ON cf.[CoachingID] = cr.[CoachingID]  
     WHERE cr.[CoachingID] IS NULL 
  OPTION (MAXDOP 1)   
+ 
  
                   
 COMMIT TRANSACTION
@@ -353,7 +376,11 @@ END -- sp_InsertInto_Coaching_Log_Quality_Other
 
 
 
+
+
 GO
+
+
 
 
 

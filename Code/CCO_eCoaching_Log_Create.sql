@@ -1,7 +1,12 @@
 /*
-eCoaching_Log_Create(50).sql
-Last Modified Date: 6/29/2016
+eCoaching_Log_Create(51).sql
+Last Modified Date: 7/15/2016
 Last Modified By: Susmitha Palacherla
+
+
+
+Version 51: 7/15/2016
+1. Updated SP # 45 to support HFC & KUD feeds per TFS 3179 & 3186 
 
 Version 50: 6/29/2016
 1. Reverted changes to made in revision 49 to SP # 52 per TFS 2268
@@ -4516,11 +4521,13 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
--- SQL split into 2 parts to overcome sql string size restriction.
+-- SQL split into 3 parts to overcome sql string size restriction.
 
 -- Last Updated By: Susmitha Palacherla
 -- 1. TFS 1877 to support OMR Low CSAT logs should be viewable by hierarchy manger - 2/17/2016
@@ -4528,7 +4535,8 @@ GO
 -- 3. TFS 1732 to support SDR Training feed - 3/2/2016
 -- 4. TFS 2283 to support ODT Training feed - 3/22/2016
 -- 5. TFS 1709 to support Reassigned sups and Mgrs - 5/6/2016
--- 6. TFS 2268 to support CTC feed - 6/23/2016
+-- 6. TFS 2268 to support CTC Quality Other feed - 6/23/2016
+-- 7. TFS 3179 & 3186 to add support HFC & KUD Quality Other feeds - 7/15/2016
 
 --	=====================================================================
 
@@ -4572,7 +4580,9 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		eh.Sup_Name strCSRSupName,
 		eh.Sup_Email  strCSRSupEmail,
 	CASE 
-	     WHEN (cl.[statusId]= 6 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+	     WHEN (cl.[statusId]in (6,8) AND cl.[ModuleID] in (1,3,4,5) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
+		 WHEN (cl.[statusId]= 5 AND cl.[ModuleID] = 2 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
 		 WHEN (cl.[Review_SupID]is NOT NULL and cl.[Review_SupID] = cl.[ReassignedToID] and [ReassignCount]= 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_SupID])
@@ -4591,7 +4601,9 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 	END strCSRMgrName,
 		eh.Mgr_Email strCSRMgrEmail,
 	CASE 
-	     WHEN (cl.[statusId]= 5 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+	     WHEN (cl.[statusId]= 5  AND cl.[ModuleID] in (1,3,4,5) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
+		 WHEN (cl.[statusId]= 7  AND cl.[ModuleID] = 2 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
 		 WHEN (cl.[Review_MgrID]is NOT NULL AND cl.[Review_MgrID] = cl.[ReassignedToID]and [ReassignCount]= 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_MgrID])
@@ -4628,6 +4640,8 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		CASE WHEN cc.SDR is Not NULL Then 1 ELSE 0 END	"Training / SDR",
 	    CASE WHEN cc.ODT is Not NULL Then 1 ELSE 0 END	"Training / ODT",
 	    CASE WHEN cc.CTC is Not NULL Then 1 ELSE 0 END	"Quality / CTC",
+	    CASE WHEN cc.HFC is Not NULL Then 1 ELSE 0 END	"Quality / HFC",
+	    CASE WHEN cc.KUD is Not NULL Then 1 ELSE 0 END	"Quality / KUD",
 	  	cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -4656,7 +4670,9 @@ SET @nvcSQL3 = '  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END)	OMRISQ,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END)	SDR,
      MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END)	ODT,
-     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END)	CTC
+     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END)	CTC,
+     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 12 THEN [clr].[Value] ELSE NULL END)	HFC,
+     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	KUD
  	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
@@ -4683,15 +4699,9 @@ END --sp_SelectReviewFrom_Coaching_Log
 
 
 
-GO
-
 
 
 GO
-
-
-
-
 
 
 

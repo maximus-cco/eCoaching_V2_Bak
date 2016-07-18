@@ -1,8 +1,10 @@
 /*
-File: eCoaching_Functions.sql (24)
+File: eCoaching_Functions.sql (25)
 Last Modified By: Susmitha Palacherla
-Date: 6/28/2016
+Date: 7/15/2016
 
+Version 25,   7/15/2016
+1. Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add HFC & KUD feeds per TFS 3179 & 3186
 
 Version 24,  6/28/2016
 1. Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add code CTC per TFS 2268
@@ -515,6 +517,7 @@ GO
 
 
 
+
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
@@ -525,6 +528,7 @@ GO
 -- TFS 2282 - To add ODT - 3/22/2016
 -- TFS 2470 - To add OTH - 4/11/2016
 -- TFS 2268 - To add CTC - 6/15/2016
+-- TFS 3179 & 3186 - To add HFC & KUD - 7/14/2016
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -562,6 +566,8 @@ BEGIN
             WHEN N'ODT' THEN 233
             WHEN N'OTH' THEN 42
             WHEN N'CTC' THEN 73
+            WHEN N'HFC' THEN 12
+            WHEN N'KUD' THEN 42
         ELSE -1
       END
     ELSE
@@ -575,7 +581,11 @@ END  -- fn_intSubCoachReasonIDFromRptCode()
 
 
 
+
 GO
+
+
+
 
 
 
