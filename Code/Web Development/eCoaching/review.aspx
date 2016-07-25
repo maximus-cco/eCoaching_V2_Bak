@@ -336,7 +336,6 @@
                     <asp:Label ID="ReassignedToMgrName" runat="server" Text='<%# Eval("strReassignedMgrName")%>' Visible="false" />
                     <asp:Label ID="isCTC" runat="server" Text='<%# Eval("Quality / CTC") %>' Visible="false" />
                     <asp:Label ID="isHigh5Club" runat="server" Text='<%# Eval("Quality / HFC") %>' Visible="false" />
-                    <asp:Label ID="isKudo" runat="server" Text='<%# Eval("Quality / KUD") %>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">

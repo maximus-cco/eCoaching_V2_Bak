@@ -28,8 +28,6 @@ Public Class review
         "Using a scale from one to five, callers are able to rate their overall satisfaction. Top box, or a rating of ""5"", indicates the caller was extremely satisfied!  " &
         "Thank you for taking good care of your callers; you make a difference for each caller AND for the CCO!"
 
-    Public Const REVIEW_QUALITY_KUDO_CLUB = "Kudo text goes here"
-
     Public Const PENDING_MGR_REVIEW = "Pending Manager Review"
 
     Dim pHolder As Label
@@ -47,9 +45,6 @@ Public Class review
 
     Dim lblisHigh5Club As Label
     Dim isHigh5Club As Boolean
-
-    Dim lblisKudo As Label
-    Dim isKudo As Boolean
 
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim FromURL As String
@@ -130,15 +125,6 @@ Public Class review
         End If
     End Sub
 
-    Private Sub SetIsKudo()
-        lblisKudo = ListView1.Items(0).FindControl("isKudo")
-        If (lblisKudo.Text = "0") Then
-            isKudo = False
-        Else
-            isKudo = True
-        End If
-    End Sub
-
     Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
         ' Get the user employee ID from session.
         m_strUserEmployeeID = Session("eclUser").EmployeeID
@@ -162,15 +148,10 @@ Public Class review
 
         SetIsCTC()
         SetIsHigh5Club()
-        SetIsKudo()
 
-        If (isHigh5Club OrElse isKudo) Then
+        If (isHigh5Club) Then
             pnlStaticText.Visible = True
-            If (isHigh5Club) Then
-                lblStaticText.Text = REVIEW_QUALITY_HIGH5_CLUB
-            Else
-                lblStaticText.Text = REVIEW_QUALITY_KUDO_CLUB
-            End If
+            lblStaticText.Text = REVIEW_QUALITY_HIGH5_CLUB
         End If
 
         pHolder = ListView1.Items(0).FindControl("Label50")
@@ -338,8 +319,8 @@ Public Class review
 
 
 
-                    ' It is from IQS or it is CTC or high CSAT5 or kudo.
-                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo) Then
+                    ' It is from IQS or it is CTC or high CSAT5.
+                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club) Then
 
                         'If ((pHolder5.Text = "IQS") And (pHolder6.Text = "True")) Then
 
@@ -566,8 +547,8 @@ Public Class review
             If (statusLevel = 1) Then
                 pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
-                ' IQS or CTC or high CSAT5 or kudo
-                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo) AndAlso Len(pHolder8.Text) > 4) Then
+                ' IQS or CTC or high CSAT5
+                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club) AndAlso Len(pHolder8.Text) > 4) Then
                     pnlEmpAckReinforceLog.Visible = True ' 1. Check the box below to acknowledge the monitor:
                 Else
                     Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
