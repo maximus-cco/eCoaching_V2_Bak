@@ -1,7 +1,9 @@
 /*
-eCoaching_Admin_Tool_Create(03).sql
-Last Modified Date:07/06/2016
+eCoaching_Admin_Tool_Create(04).sql
+Last Modified Date:07/26/2016
 Last Modified By: Susmitha Palacherla
+
+Version 04: Update to SP #16 per TFS 3416 to remove refernce to jobcode WISY13 - 07/26/2016
 
 Version 03: Update to SP #3 per TFS 3091- 07/06/2016
 
@@ -2104,6 +2106,7 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 4/27/12016
@@ -2112,7 +2115,7 @@ GO
 -- Last Modified By: Susmitha Palacherla
 -- Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/27/12016
---
+--  Update admin job code, TFS 3416 - 7/26/2016
 -- =============================================
 
 CREATE PROCEDURE [EC].[sp_AT_Populate_User] 
@@ -2127,14 +2130,13 @@ BEGIN TRY
 -- that result in a non allowed job code. 
  
 BEGIN
-	UPDATE [EC].[AT_User] 
+	
+UPDATE [EC].[AT_User] 
 	SET [Active] = 0
 	FROM [EC].[Employee_Hierarchy] EH JOIN [EC].[AT_User]U
-	ON EH.Emp_ID = U.UserId
-	WHERE EH.Emp_Job_Code <> 'WISY13'
-	AND (EH.Active in ('T', 'D')OR EH.Emp_Job_Code NOT IN 
-	(SELECT DISTINCT JobCode FROM [EC].[AT_Role_Access]
-     WHERE [AddToUser] = 1))
+	ON EH.Emp_ID = U.UserId 
+    WHERE(EH.Active in ('T', 'D')OR EH.Emp_Job_Code NOT IN 
+	(SELECT DISTINCT JobCode FROM [EC].[AT_Role_Access]))
      AND U.Active <> 0
 
 OPTION (MAXDOP 1)
@@ -2151,8 +2153,7 @@ BEGIN
 	FROM [EC].[Employee_Hierarchy] EH JOIN [EC].[AT_User]U
 	ON EH.Emp_ID = U.UserId
 	AND (EH.Active = 'A' AND EH.Emp_Job_Code IN 
-	(SELECT DISTINCT JobCode FROM [EC].[AT_Role_Access]
-     WHERE [AddToUser] = 1))
+	(SELECT DISTINCT JobCode FROM [EC].[AT_Role_Access]))
      AND U.Active = 0
 
 OPTION (MAXDOP 1)
@@ -2222,12 +2223,8 @@ END TRY
 
 
 END --sp_AT_Populate_User
+
 GO
-
-
-
-
-
 
 
 
