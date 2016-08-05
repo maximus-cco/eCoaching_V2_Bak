@@ -1,7 +1,13 @@
 /*
-eCoaching_Quality_Other_Create(02).sql
-Last Modified Date: 7/15/2016
+eCoaching_Quality_Other_Create(03).sql
+Last Modified Date: 8/5/2016
 Last Modified By: Susmitha Palacherla
+
+
+Version 03:8/5/2016
+TFS 3179 & 3186 - To add HFC & KUD 
+Updated procedure [EC].[sp_InsertInto_Coaching_Log_Quality_Other] to fix Startdate value for TFS 3179.
+
 
 
 Version 02: 7/15/2016
@@ -207,12 +213,14 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
 -- Last Updated By: Susmitha Palacherla
 -- Initial Revision: Setup of CTC Load - TFS 2268 -  6/15/2016
 -- Update: HFC and KUD Loads - TFS 3179 and 3186 - 07/15/2016
+-- Update: HFC and KUD Load. Start date fix. TFS 3179 - 08/3/2016
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 AS
@@ -287,7 +295,7 @@ select  Distinct LOWER(cs.EMP_LANID)	[FormName],
 		 THEN  REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br />')
 		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
 		 cs.Submitted_Date			SubmittedDate,
-		 cs.Event_Date				[StartDate],
+		 ISNULL(cs.start_Date,cs.Event_Date)				[StartDate],
 		 0        				    [isCSRAcknowledged],
 		 0                          [isCSE],
 		 0                          [EmailSent],
@@ -378,8 +386,8 @@ END -- sp_InsertInto_Coaching_Log_Quality_Other
 
 
 
-GO
 
+GO
 
 
 
