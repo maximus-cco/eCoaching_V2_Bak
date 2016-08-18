@@ -1,9 +1,11 @@
 /*
-eCoaching_Log_Create(51).sql
-Last Modified Date: 7/15/2016
+eCoaching_Log_Create(52).sql
+Last Modified Date: 8/18/2016
 Last Modified By: Susmitha Palacherla
 
 
+Version 52: 8/18/2016
+1. Updated SP # 45 to add strReportCode check to Quality\KUD check per TFS 3677 (3179)
 
 Version 51: 7/15/2016
 1. Updated SP # 45 to support HFC & KUD feeds per TFS 3179 & 3186 
@@ -4536,7 +4538,7 @@ GO
 -- 4. TFS 2283 to support ODT Training feed - 3/22/2016
 -- 5. TFS 1709 to support Reassigned sups and Mgrs - 5/6/2016
 -- 6. TFS 2268 to support CTC Quality Other feed - 6/23/2016
--- 7. TFS 3179 & 3186 to add support HFC & KUD Quality Other feeds - 7/15/2016
+-- 7. TFS 3179 & 3186 to add support HFC & KUD Quality Other feeds - 8/18/2016
 
 --	=====================================================================
 
@@ -4641,7 +4643,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 	    CASE WHEN cc.ODT is Not NULL Then 1 ELSE 0 END	"Training / ODT",
 	    CASE WHEN cc.CTC is Not NULL Then 1 ELSE 0 END	"Quality / CTC",
 	    CASE WHEN cc.HFC is Not NULL Then 1 ELSE 0 END	"Quality / HFC",
-	    CASE WHEN cc.KUD is Not NULL Then 1 ELSE 0 END	"Quality / KUD",
+	    CASE WHEN (cc.KUD is Not NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"Quality / KUD",
 	  	cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -4702,6 +4704,9 @@ END --sp_SelectReviewFrom_Coaching_Log
 
 
 GO
+
+
+
 
 
 
