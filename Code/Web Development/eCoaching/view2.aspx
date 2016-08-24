@@ -51,7 +51,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Name2" SortExpression="strFormID" Visible="False">
                             <ItemTemplate>
-                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("strFormID") %>'></asp:Label>
+                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("strFormID") %>'></asp:Label>  
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="FormID" SortExpression="strFormID">
@@ -82,29 +82,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label5" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+                                <asp:Label ID="lblCoachingReasonSupPending" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label6" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+                                <asp:Label ID="lblSubCoachingReasonSupPending" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+                                <asp:Label ID="lblValueSupPending" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -220,29 +208,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblCoachingReasonSupTeamPending" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label8" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblSubCoachingReasonSupTeamPending" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label9" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblValueSupTeamPending" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -375,29 +351,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblCoachingReasonMgrTeamCompleted" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label8" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblSubCoachingReasonMgrTeamCompleted" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label9" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblValueMgrTeamCompleted" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -494,29 +458,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label6" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblCoachingReasonCsrCompleted" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblSubCoachingReasonCsrCompleted" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label8" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblValueCsrCompleted" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -616,21 +568,12 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Warning Type" SortExpression="">
                                 <ItemTemplate>
-                                    <asp:Label ID="Label5a" runat="server" Text='' />
-                                    <asp:DataList ID="Dlist1" runat="server">
-                                        <ItemTemplate>
-                                            <asp:Label ID="Label5" runat="server" Text='<%# Eval("CoachingReason") %>' Visible="false" />
-                                        </ItemTemplate>
-                                    </asp:DataList>
+	                                <asp:Label ID="lblWarningTypeSupTeamCompleted" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Warning Reason(s)" SortExpression="">
                                 <ItemTemplate>
-                                    <asp:DataList ID="Dlist2" runat="server">
-                                        <ItemTemplate>
-                                            <asp:Label ID="Label6" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                        </ItemTemplate>
-                                    </asp:DataList>
+                                    <asp:Label ID="lblWarningReasonSupTeamCompleted" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -709,29 +652,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label4" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblCoachingReasonCsrPending" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label5" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblSubCoachingReasonCsrPending" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label6" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblValueCsrPending" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -817,29 +748,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label6" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblCoachingReasonCsrCompleted" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblSubCoachingReasonCsrCompleted" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label8" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblValueCsrCompleted" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -940,29 +859,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label5" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblCoachingReasonMgrPending" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label6" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblSubCoachingReasonMgrPending" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblValueMgrPending" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created" SortExpression="SubmittedDate">
@@ -1091,29 +998,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblCoachingReasonMgrTeamPending" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label8" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblSubCoachingReasonMgrTeamPending" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label9" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblValueMgrTeamPending" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -1253,29 +1148,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblCoachingReasonMgrTeamCompleted" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label8" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblSubCoachingReasonMgrTeamCompleted" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label9" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="lblValueMgrTeamCompleted" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -1372,29 +1255,17 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist1" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label6" runat="server" Text='<%# Eval("CoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="Label5" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sub-coaching Reason" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist2" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="Label4" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Value" ItemStyle-VerticalAlign="Top">
                             <ItemTemplate>
-                                <asp:DataList ID="Dlist3" runat="server">
-                                    <ItemTemplate>
-                                        <asp:Label ID="Label8" runat="server" Text='<%# Eval("value") %>' />
-                                    </ItemTemplate>
-                                </asp:DataList>
+	                            <asp:Label ID="Label7" runat="server" Text='<%# Eval("strValue").ToString().Replace("|", "<br />") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
@@ -1494,21 +1365,12 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Warning Type" SortExpression="">
                                 <ItemTemplate>
-                                    <asp:Label ID="Label5a" runat="server" Text='' />
-                                    <asp:DataList ID="Dlist1" runat="server">
-                                        <ItemTemplate>
-                                            <asp:Label ID="Label5" runat="server" Text='<%# Eval("CoachingReason") %>' Visible="false" />
-                                        </ItemTemplate>
-                                    </asp:DataList>
+	                                <asp:Label ID="lblWarningTypeMgrTeamCompleted" runat="server" Text='<%# Eval("strCoachingReason").ToString().Replace("|", "<br />") %>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Warning Reason(s)" SortExpression="">
                                 <ItemTemplate>
-                                    <asp:DataList ID="Dlist2" runat="server">
-                                        <ItemTemplate>
-                                            <asp:Label ID="Label6" runat="server" Text='<%# Eval("SubCoachingReason") %>' />
-                                        </ItemTemplate>
-                                    </asp:DataList>
+	                                <asp:Label ID="lblWarningReasonMgrTeamCompleted" runat="server" Text='<%# Eval("strSubCoachingReason").ToString().Replace("|", "<br />") %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Created Date" SortExpression="SubmittedDate">
