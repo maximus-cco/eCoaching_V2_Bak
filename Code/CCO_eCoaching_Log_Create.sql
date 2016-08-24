@@ -1,8 +1,11 @@
 /*
-eCoaching_Log_Create(52).sql
-Last Modified Date: 8/18/2016
+eCoaching_Log_Create(53).sql
+Last Modified Date: 8/19/2016
 Last Modified By: Susmitha Palacherla
 
+
+Version 53: 8/19/2016
+1. Updated  Procedures #4,5,7,8,9,15,16,17 - single ecl in a single procedure for display per TFS 3598
 
 Version 52: 8/18/2016
 1. Updated SP # 45 to add strReportCode check to Quality\KUD check per TFS 3677 (3179)
@@ -1207,11 +1210,16 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRCompleted]
 GO
+
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 
 
 --	====================================================================
@@ -1223,14 +1231,19 @@ GO
 -- Modified during dashboard redesign SCR 14422.
 -- 1. To Replace old style joins.
 -- 2. Lan ID association by date.
+-- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRCompleted] @strCSRin nvarchar(30)
 AS
 
 
 BEGIN
+
+SET NOCOUNT ON
+
 DECLARE	
 @nvcSQL nvarchar(max),
+@ParmDefinition NVARCHAR(1000),
 @strFormStatus nvarchar(30),
 @nvcEmpID Nvarchar(10),
 @dtmDate datetime
@@ -1239,30 +1252,44 @@ DECLARE
  SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strCSRin,@dtmDate)
  SET @strFormStatus = 'Completed'
 
-SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
+SET @nvcSQL = N'SELECT [cl].[FormName] strFormID,
 		[eh].[Emp_Name]	strCSRName,
 		[eh].[Sup_Name]	strCSRSupName,
 		[eh].[Mgr_Name]	strCSRMgrName,
 		[S].[Status]	strFormStatus,
-		[cl].[SubmittedDate] SubmittedDate
+		[cl].[SubmittedDate] SubmittedDate,
+		[EC].[fn_strCoachingReasonFromCoachingID]([cl].[CoachingID]) strCoachingReason,
+	    [EC].[fn_strSubCoachingReasonFromCoachingID]([cl].[CoachingID])strSubCoachingReason,
+	    [EC].[fn_strValueFromCoachingID]([cl].[CoachingID])strValue
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
-where cl.EmpID = '''+@nvcEmpID+''' 
+where cl.EmpID = @nvcEmpIDparam 
 and [S].[Status] = '''+@strFormStatus+'''
 and  cl.EmpID <> ''999999''
 Order By [cl].[SubmittedDate] DESC'
 
 		
-EXEC (@nvcSQL)	
-END -- sp_SelectFrom_Coaching_Log_CSRCompleted
+SET @ParmDefinition = N'@nvcEmpIDparam  nvarchar(10)'
+		
+--EXEC (@nvcSQL)	
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+                     @nvcEmpIDparam = @nvcEmpID;
+	    
+
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
+	    
+END --sp_SelectFrom_Coaching_Log_CSRCompleted
+
+
 
 GO
-
-
-
-GO
-
 
 
 ******************************************************************
@@ -1277,11 +1304,19 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRPending]
 GO
+
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
+
+
 
 
 --	====================================================================
@@ -1293,13 +1328,18 @@ GO
 -- Modified during dashboard redesign SCR 14422.
 -- 1. To Replace old style joins.
 -- 2. Lan ID association by date.
+-- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRPending] @strCSRin nvarchar(30)
 AS
 
 BEGIN
+
+SET NOCOUNT ON
+
 DECLARE	
 @nvcSQL nvarchar(max),
+@ParmDefinition NVARCHAR(1000),
 @strFormStatus nvarchar(30),
 @strFormStatus2 nvarchar(30),
 @nvcEmpID Nvarchar(10),
@@ -1310,25 +1350,42 @@ DECLARE
  SET @strFormStatus = 'Pending Employee Review'
  SET @strFormStatus2 = 'Pending Acknowledgement'
 
-SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
+SET @nvcSQL = N'SELECT [cl].[FormName] strFormID,
 		[eh].[Emp_Name]	strCSRName,
 		[S].[Status]	strFormStatus,
-		[cl].[SubmittedDate] SubmittedDate
+		[cl].[SubmittedDate] SubmittedDate,
+		[EC].[fn_strCoachingReasonFromCoachingID]([cl].[CoachingID]) strCoachingReason,
+	    [EC].[fn_strSubCoachingReasonFromCoachingID]([cl].[CoachingID])strSubCoachingReason,
+	    [EC].[fn_strValueFromCoachingID]([cl].[CoachingID])strValue
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
-where  cl.EmpID = '''+@nvcEmpID+''' 
+where  cl.EmpID = @nvcEmpIDparam 
 and ([S].[Status] = '''+@strFormStatus+''' or [S].[Status] = '''+@strFormStatus2+''')
 and cl.EmpID <> ''999999''
 Order By [cl].[SubmittedDate] DESC'
 
+SET @ParmDefinition = N'@nvcEmpIDparam  nvarchar(10)'
 		
-EXEC (@nvcSQL)	
+--EXEC (@nvcSQL)	
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+                     @nvcEmpIDparam = @nvcEmpID;
 	    
-END -- sp_SelectFrom_Coaching_Log_CSRPending
+
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
+	    
+END --sp_SelectFrom_Coaching_Log_CSRPending
+
+
+
+
 GO
-
-
 
 
 
@@ -1623,11 +1680,6 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRCompleted]
 GO
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 
 SET ANSI_NULLS ON
@@ -1635,6 +1687,9 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 
 
 
@@ -1648,6 +1703,7 @@ GO
 -- Modified during dashboard redesign SCR 14422.
 -- 1. To Replace old style joins.
 -- 2. Lan ID association by date.
+-- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRCompleted] 
 
@@ -1661,8 +1717,12 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRCompleted]
 AS
 
 BEGIN
+
+Set NoCount ON
+
 DECLARE	
 @nvcSQL nvarchar(max),
+@ParmDefinition NVARCHAR(1000),
 @strFormStatus nvarchar(30),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8),
@@ -1677,34 +1737,53 @@ SET @nvcMGRID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
 
  
 
-SET @nvcSQL = 'SELECT	[cl].[FormName]	strFormID,
+SET @nvcSQL = N'SELECT	[cl].[FormName]	strFormID,
 		[eh].[Emp_Name]	strCSRName,
 		[eh].[Sup_Name]	strCSRSupName, 
 		[eh].[Mgr_Name]	strCSRMgrName, 
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
-		[cl].[SubmittedDate]	SubmittedDate
+		[cl].[SubmittedDate]	SubmittedDate,
+		[EC].[fn_strCoachingReasonFromCoachingID]([cl].[CoachingID]) strCoachingReason,
+	    [EC].[fn_strSubCoachingReasonFromCoachingID]([cl].[CoachingID])strSubCoachingReason,
+	    [EC].[fn_strValueFromCoachingID]([cl].[CoachingID])strValue
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 [cl].[EmpID] = [eh].[Emp_ID]Join [EC].[DIM_Status] s ON
 [cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
 [cl].[SourceID] = [sc].[SourceID] 
-where eh.[Mgr_ID] = '''+@nvcMGRID+''' 
+where eh.[Mgr_ID] = @nvcMGRIDparam
 and [S].[Status] = '''+@strFormStatus+'''
-and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
-and [eh].[Emp_Name] Like '''+@strCSRin+'''
-and [eh].[Sup_Name] Like  '''+@strCSRSUPin+''' 
-and convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''
-and convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [sc].[SubCoachingSource] Like @strSourceinparam
+and [eh].[Emp_Name] Like @strCSRinparam
+and [eh].[Sup_Name] Like  @strCSRSUPinparam
+and convert(varchar(8),[cl].[SubmittedDate],112) >= @strSDateinparam
+and convert(varchar(8),[cl].[SubmittedDate],112) <= @strEDateinparam
 and eh.[Mgr_ID] <> ''999999''
 Order By [cl].[SubmittedDate] DESC'
 	
-EXEC (@nvcSQL)
+	
+SET @ParmDefinition = N'@strSourceinparam nvarchar(100),@nvcMGRIDparam nvarchar(10),@strCSRSUPinparam nvarchar(30),
+@strCSRinparam nvarchar(30), @strSDateinparam datetime, @strEDateinparam datetime'	
+--EXEC (@nvcSQL)
 --PRINT 	@nvcSQL
-	   
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+@strSourceinparam = @strSourcein,@nvcMGRIDparam = @nvcMGRID,@strCSRSUPinparam = @strCSRSUPin,
+@strCSRinparam = @strCSRin, @strSDateinparam = @strSDatein, @strEDateinparam = @strEDatein;
+
+	    
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
+	    
 END --sp_SelectFrom_Coaching_Log_MGRCSRCompleted
 
 
 GO
+
 
 
 
@@ -1730,6 +1809,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/2011
@@ -1741,6 +1822,7 @@ GO
 --  1. To Replace old style joins.
 --  2. Lan ID association by date.
 --  Modified per TFS 1709 - Admin tool setup to add non hierarchy sups - 5/4/2016
+-- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending] 
 
@@ -1752,8 +1834,12 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending]
 AS
 
 BEGIN
+
+Set NoCount ON
+
 DECLARE	
 @nvcSQL nvarchar(max),
+@ParmDefinition NVARCHAR(1000),
 @nvcMGRID Nvarchar(10),
 @dtmDate datetime
 
@@ -1761,26 +1847,29 @@ DECLARE
 SET @dtmDate  = GETDATE()   
 SET @nvcMGRID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
 
-SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
+SET @nvcSQL = N'SELECT [cl].[FormName]	strFormID,
 		[eh].[Emp_Name]	strCSRName,
 		[eh].[Sup_Name] strCSRSupName, 
 		[eh].[Mgr_Name]	strCSRMgrName, 
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource] strSource,
-		[cl].[SubmittedDate]	SubmittedDate
+		[cl].[SubmittedDate]	SubmittedDate,
+	    [EC].[fn_strCoachingReasonFromCoachingID]([cl].[CoachingID]) strCoachingReason,
+	    [EC].[fn_strSubCoachingReasonFromCoachingID]([cl].[CoachingID])strSubCoachingReason,
+	    [EC].[fn_strValueFromCoachingID]([cl].[CoachingID])strValue
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 [cl].[EmpID] = [eh].[Emp_ID] Join [EC].[DIM_Status] s ON
 [cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
 [cl].[SourceID] = [sc].[SourceID] 
-where eh.[Mgr_ID] = '''+@nvcMGRID+''' 
+where eh.[Mgr_ID] = @nvcMGRIDparam
 and [S].[Status] like ''Pending%''
-and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
-and [eh].[Emp_Name] Like '''+@strCSRin+'''
-and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
+and [sc].[SubCoachingSource] Like @strSourceinparam
+and [eh].[Emp_Name] Like @strCSRinparam
+and [eh].[Sup_Name] Like @strCSRSUPinparam
 and eh.[Mgr_ID] <> ''999999''
 AND (cl.[ReassignedToID] IS NULL OR cl.[ReassignedToID] IN 
 (SELECT DISTINCT Emp_ID FROM EC.Employee_Hierarchy 
-WHERE Sup_ID = '''+@nvcMGRID+'''))
+WHERE Sup_ID = @nvcMGRIDparam))
 
 UNION
 
@@ -1790,25 +1879,44 @@ SELECT [cl].[FormName]	strFormID,
 		[eh].[Mgr_Name]	strCSRMgrName, 
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource] strSource,
-		[cl].[SubmittedDate]	SubmittedDate
+		[cl].[SubmittedDate]	SubmittedDate,
+	    [EC].[fn_strCoachingReasonFromCoachingID]([cl].[CoachingID]) strCoachingReason,
+	    [EC].[fn_strSubCoachingReasonFromCoachingID]([cl].[CoachingID])strSubCoachingReason,
+	    [EC].[fn_strValueFromCoachingID]([cl].[CoachingID])strValue
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 [cl].[EmpID] = [eh].[Emp_ID] Join [EC].[Employee_Hierarchy] rs
 ON rs.Emp_ID = cl.ReassignedToID Join [EC].[DIM_Status] s ON
 [cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
 [cl].[SourceID] = [sc].[SourceID] 
-where rs.[Sup_ID] = '''+@nvcMGRID+''' 
+where rs.[Sup_ID] = @nvcMGRIDparam
 and [S].[Status] like ''Pending%''
-and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
-and [eh].[Emp_Name] Like '''+@strCSRin+'''
-and [rs].[Emp_Name] Like '''+@strCSRSUPin+'''
+and [sc].[SubCoachingSource] Like @strSourceinparam
+and [eh].[Emp_Name] Like @strCSRinparam
+and [rs].[Emp_Name] Like @strCSRSUPinparam
 and eh.[Mgr_ID] <> ''999999''
 AND cl.[ReassignedToID] IS NOT NULL 
 
 Order By [SubmittedDate] DESC'
-		
-EXEC (@nvcSQL)
---PRINT 	(@nvcSQL)   
+	
+SET @ParmDefinition = N'@nvcMGRIDparam nvarchar(10),@strCSRSUPinparam nvarchar(30),
+@strSourceinparam nvarchar(100),@strCSRinparam nvarchar(30)'
+--EXEC (@nvcSQL)
+--PRINT 	@nvcSQL
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+@nvcMGRIDparam = @nvcMGRID,@strCSRSUPinparam = @strCSRSUPin,
+@strSourceinparam = @strSourcein,@strCSRinparam = @strCSRin;
+
+	    
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
+	    
 END --sp_SelectFrom_Coaching_Log_MGRCSRPending
+
 
 GO
 
@@ -1839,6 +1947,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
@@ -1850,6 +1960,7 @@ GO
 -- 2. Lan ID association by date.
 -- Updated per SCR 14818 to support rotating managers for Low CSAT - 05/22/2015
 -- Modified per TFS 1710 Admin Tool setup - 5/2/2016
+-- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending] 
 @strCSRMGRin nvarchar(30),
@@ -1859,12 +1970,16 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending]
 AS
 
 BEGIN
+
+Set NoCount ON
+
 DECLARE	
 @nvcSQL nvarchar(max),
 @nvcSQL1 nvarchar(2000),
 @nvcSQL2 nvarchar(20),
 @nvcSQL3 nvarchar(2000),
 @nvcSQL4 nvarchar(100),
+@ParmDefinition NVARCHAR(1000),
 @strReportCode nvarchar(30),
 @strFormStatus1 nvarchar(50),
 @strFormStatus2 nvarchar(50),
@@ -1885,69 +2000,94 @@ DECLARE
  Set @dtmDate  = GETDATE()   
  Set @nvcMGRID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
 
-SET @nvcSQL1 = 'select DISTINCT x.strFormID
+SET @nvcSQL1 = N'select DISTINCT x.strFormID
         ,x.strCSR
 		,x.strCSRName
 		,x.strCSRSupName
 		,x.strFormStatus
 		,x.submitteddate
-	from (SELECT [cl].[FormName]	strFormID,
+	    ,[EC].[fn_strCoachingReasonFromCoachingID]([cl].[CoachingID]) strCoachingReason
+	    ,[EC].[fn_strSubCoachingReasonFromCoachingID]([cl].[CoachingID])strSubCoachingReason
+	    ,[EC].[fn_strValueFromCoachingID]([cl].[CoachingID])strValue
+	FROM(SELECT [cl].[CoachingID]	CoachingID,
+	    [cl].[FormName]	strFormID,
 		[eh].[Emp_LanID] strCSR,
 		[eh].[Emp_Name]	strCSRName,
 		[eh].[Sup_Name]	strCSRSupName, 
 		[s].[Status]	strFormStatus,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
+		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
-WHERE (([ReassignCount]= 0 AND eh.[Mgr_ID] = '''+@nvcMGRID+''' 
+WHERE (([ReassignCount]= 0 AND eh.[Mgr_ID] = @nvcMGRIDparam
 AND([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus4+''' OR [S].[Status] = '''+@strFormStatus5+''')) 
-OR(cl.[ReassignedToID] = '''+@nvcMGRID+''' AND [ReassignCount]<> 0
+OR(cl.[ReassignedToID] = @nvcMGRIDparam AND [ReassignCount]<> 0
 AND ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus4+''' OR [S].[Status] = '''+@strFormStatus5+''')) 
-OR([ReassignCount]= 0 AND eh.[Sup_ID] = '''+@nvcMGRID+'''
+OR([ReassignCount]= 0 AND eh.[Sup_ID] = @nvcMGRIDparam
 AND ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+''' OR [S].[Status] = '''+@strFormStatus3+''' OR [S].[Status] = '''+@strFormStatus6+''')))
-AND [eh].[Emp_Name] Like '''+@strCSRin+'''
-AND [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
+AND [eh].[Emp_Name] Like @strCSRinparam
+AND [eh].[Sup_Name] Like @strCSRSUPinparam
 AND ([cl].[strReportCode] not like '''+@strReportCode+''' OR [cl].[strReportCode] is NULL)
-AND (eh.[Mgr_ID] <> ''999999'' AND eh.[Sup_ID] <> ''999999''))X'
+AND (eh.[Mgr_ID] <> ''999999'' AND eh.[Sup_ID] <> ''999999''))X JOIN [EC].[Coaching_Log] cl
+ON x.CoachingID = cl.CoachingID'
 
 		
-SET @nvcSQL2 = ' UNION '
+SET @nvcSQL2 = N' UNION '
 
-SET @nvcSQL3 = 'select DISTINCT x.strFormID
+SET @nvcSQL3 = N'select DISTINCT x.strFormID
         ,x.strCSR
 		,x.strCSRName
 		,x.strCSRSupName
 		,x.strFormStatus
 		,x.submitteddate
-	from (SELECT [cl].[FormName]	strFormID,
+	    ,[EC].[fn_strCoachingReasonFromCoachingID]([cl].[CoachingID]) strCoachingReason
+	    ,[EC].[fn_strSubCoachingReasonFromCoachingID]([cl].[CoachingID])strSubCoachingReason
+	    ,[EC].[fn_strValueFromCoachingID]([cl].[CoachingID])strValue
+	from (SELECT [cl].[CoachingID]	CoachingID,
+	    [cl].[FormName]	strFormID,
 		[eh].[Emp_LanID] strCSR,
 		[eh].[Emp_Name]	strCSRName,
 		[eh].[Sup_Name]	strCSRSupName, 
 		[s].[Status]	strFormStatus,
 		[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
+	    FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
-WHERE (([ReassignCount]= 0 AND cl.[MgrID] = '''+@nvcMGRID+''' AND [S].[Status] = '''+@strFormStatus1+''')
-OR (cl.[ReassignedToID] = '''+@nvcMGRID+''' AND [ReassignCount]<> 0 AND [S].[Status] = '''+@strFormStatus1+''')
-OR ([ReassignCount]= 0 AND eh.[Sup_ID] = '''+@nvcMGRID+''' AND [S].[Status] = '''+@strFormStatus2+'''))
-AND [eh].[Emp_Name] Like '''+@strCSRin+'''
-AND [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
+WHERE (([ReassignCount]= 0 AND cl.[MgrID] = @nvcMGRIDparam AND [S].[Status] = '''+@strFormStatus1+''')
+OR (cl.[ReassignedToID] = @nvcMGRIDparam AND [ReassignCount]<> 0 AND [S].[Status] = '''+@strFormStatus1+''')
+OR ([ReassignCount]= 0 AND eh.[Sup_ID] = @nvcMGRIDparam AND [S].[Status] = '''+@strFormStatus2+'''))
+AND [eh].[Emp_Name] Like @strCSRinparam
+AND [eh].[Sup_Name] Like @strCSRSUPinparam
 AND [cl].[strReportCode] like '''+@strReportCode+'''
-AND (cl.[MgrID] <> ''999999'' AND eh.[Sup_ID] <> ''999999'')) X'
+AND (cl.[MgrID] <> ''999999'' AND eh.[Sup_ID] <> ''999999''))X JOIN [EC].[Coaching_Log] cl
+ON x.[CoachingID] = cl.[CoachingID]'
 
-SET @nvcSQL4 = '  Order By [SubmittedDate] DESC'
+SET @nvcSQL4 = N'  Order By [SubmittedDate] DESC'
 
 
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 + @nvcSQL4
 
-	
-	
-EXEC (@nvcSQL)	
---Print @nvcsql
+SET @ParmDefinition = N'@nvcMGRIDparam nvarchar(10),@strCSRinparam nvarchar(30),
+@strCSRSUPinparam nvarchar(30)'
+
+--EXEC (@nvcSQL)
+--PRINT 	@nvcSQL
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+@nvcMGRIDparam = @nvcMGRID,@strCSRinparam = @strCSRin,@strCSRSUPinparam = @strCSRSUPin;
+
+
 	    
-END -- sp_SelectFrom_Coaching_Log_MGRPending
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
+	    
+END --sp_SelectFrom_Coaching_Log_MGRPending
+
+
 GO
 
 
@@ -2398,6 +2538,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/2011
@@ -2408,6 +2552,7 @@ GO
 -- Modified during dashboard redesign SCR 14422.
 -- 1. To Replace old style joins.
 -- 2. Lan ID association by date.
+-- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRCompleted] 
 @strSourcein nvarchar(100),
@@ -2420,8 +2565,11 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRCompleted]
 AS
 
 BEGIN
+Set NoCount ON
+
 DECLARE	
 @nvcSQL nvarchar(max),
+@ParmDefinition NVARCHAR(1000),
 @strFormStatus nvarchar(30),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8),
@@ -2435,33 +2583,53 @@ Set @strEDate = convert(varchar(8),@strEDatein,112)
 Set @dtmDate  = GETDATE()   
 Set @nvcSUPID = EC.fn_nvcGetEmpIdFromLanID(@strCSRSUPin,@dtmDate)
 
-SET @nvcSQL = 'SELECT	[cl].[FormName]	strFormID,
+SET @nvcSQL = N'SELECT	[cl].[FormName]	strFormID,
 		[eh].[Emp_Name]	strCSRName,
 		[eh].[Sup_Name]	strCSRSupName, 
 		[eh].[Mgr_Name]	strCSRMgrName, 
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
-		[cl].[SubmittedDate]	SubmittedDate
+		[cl].[SubmittedDate]	SubmittedDate,
+	    [EC].[fn_strCoachingReasonFromCoachingID]([cl].[CoachingID]) strCoachingReason,
+	    [EC].[fn_strSubCoachingReasonFromCoachingID]([cl].[CoachingID])strSubCoachingReason,
+	    [EC].[fn_strValueFromCoachingID]([cl].[CoachingID])strValue
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] sc
 ON cl.SourceID = sc.SourceID 
-where [eh].[Sup_ID] = '''+@nvcSUPID +''' 
-and [eh].[Mgr_Name] Like '''+@strCSRMGRin+'''
+where [eh].[Sup_ID] = @nvcSUPIDinparam 
+and [eh].[Mgr_Name] Like @strCSRMGRinparam
 and [S].[Status] = '''+@strFormStatus+'''
-and [eh].[Emp_Name] Like '''+@strCSRin+'''
-and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
-and convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''
-and convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
+and [eh].[Emp_Name] Like @strCSRinparam
+and [sc].[SubCoachingSource] Like @strSourceinparam
+and convert(varchar(8),[cl].[SubmittedDate],112) >= @strSDateinparam
+and convert(varchar(8),[cl].[SubmittedDate],112) <= @strEDateinparam
 and [eh].[Sup_ID] <> ''999999''
 Order By [cl].[SubmittedDate] DESC'
 
-	
-EXEC (@nvcSQL)	
+SET @ParmDefinition = N'@nvcSUPIDinparam nvarchar(10),@strCSRinparam nvarchar(30), @strSourceinparam nvarchar(100),
+@strCSRMGRinparam nvarchar(30),@strSDateinparam datetime, @strEDateinparam datetime'	
+--EXEC (@nvcSQL)	
+--PRINT @nvcSQL
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+@nvcSUPIDinparam = @nvcSUPID,@strCSRinparam = @strCSRin, @strSourceinparam = @strSourcein,
+@strCSRMGRinparam = @strCSRMGRin,@strSDateinparam = @strSDatein, @strEDateinparam = @strEDatein;
+	    
+	    
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
 	    
 END --sp_SelectFrom_Coaching_Log_SUPCSRCompleted
 
 GO
+
+
+
 
 
 ******************************************************************
@@ -2477,12 +2645,16 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRPending]
 GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
+
 
 
 
@@ -2496,6 +2668,7 @@ GO
 -- Modified during dashboard redesign SCR 14422.
 -- 1. To Replace old style joins.
 -- 2. Lan ID association by date.
+-- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRPending] 
 
@@ -2506,39 +2679,60 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRPending]
 AS
 
 BEGIN
+Set NoCount ON
+
 DECLARE	
 @nvcSQL nvarchar(max),
+@ParmDefinition NVARCHAR(1000),
 @nvcSUPID Nvarchar(10),
 @dtmDate datetime
 
 Set @dtmDate  = GETDATE()   
 Set @nvcSUPID = EC.fn_nvcGetEmpIdFromLanID(@strCSRSUPin,@dtmDate)
 
-Set @nvcSQL = 'SELECT	[cl].[FormName]	strFormID,
+Set @nvcSQL = N'SELECT	[cl].[FormName]	strFormID,
 		[eh].[Emp_Name]	strCSRName,
 		[eh].[Sup_Name]	strCSRSupName, 
 		[eh].[Mgr_Name]	strCSRMgrName, 
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
-		[cl].[SubmittedDate]	SubmittedDate
+		[cl].[SubmittedDate]	SubmittedDate,
+	    [EC].[fn_strCoachingReasonFromCoachingID]([cl].[CoachingID]) strCoachingReason,
+	    [EC].[fn_strSubCoachingReasonFromCoachingID]([cl].[CoachingID])strSubCoachingReason,
+	    [EC].[fn_strValueFromCoachingID]([cl].[CoachingID])strValue
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] sc
 ON cl.SourceID = sc.SourceID 
-where [eh].[Sup_ID] = '''+@nvcSUPID +''' 
+where [eh].[Sup_ID] = @nvcSUPIDparam 
 and [S].[Status] like ''Pending%''
-and [eh].[Emp_Name] Like '''+@strCSRin+'''
-and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
+and RTRIM(LTRIM([eh].[Emp_Name])) Like @strCSRinparam
+and [sc].[SubCoachingSource] Like @strSourceinparam
 and [eh].[Sup_ID] <> ''999999''
 Order By [eh].[Sup_LanID],[cl].[SubmittedDate] DESC'
 
-		
-EXEC (@nvcSQL)	
-	    
-END--sp_SelectFrom_Coaching_Log_SUPCSRPending
 
+SET @ParmDefinition = N'@nvcSUPIDparam nvarchar(10),@strCSRinparam nvarchar(30), @strSourceinparam nvarchar(100)'
+		
+--EXEC (@nvcSQL)	
+--PRINT @nvcSQL
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+@nvcSUPIDparam = @nvcSUPID,@strCSRinparam = @strCSRin, @strSourceinparam = @strSourcein;
+
+
+	    
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
+	    
+END --sp_SelectFrom_Coaching_Log_SUPCSRPending
 
 GO
+
 
 
 
@@ -2554,11 +2748,16 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPPending]
 GO
+
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 
 
 
@@ -2572,15 +2771,18 @@ GO
 -- 1. To Replace old style joins.
 -- 2. Lan ID association by date.
 -- Modified per TFS 1710 Admin Tool setup - 5/2/2016
--- Modified for TFS 2268 CTC feed to add "Pending Acknowledgement" to filter - 5/2/2016
+-- Modified per TFS 2268 CTC feed to add "Pending Acknowledgement" to filter - 5/2/2016
+-- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPPending] @strCSRSUPin nvarchar(30)
 AS
 
 
 BEGIN
+Set NoCount ON
 DECLARE	
 @nvcSQL nvarchar(max),
+@ParmDefinition NVARCHAR(1000),
 @strFormStatus1 nvarchar(30),
 @strFormStatus2 nvarchar(30),
 @strFormStatus3 nvarchar(30),
@@ -2597,31 +2799,45 @@ DECLARE
  Set @dtmDate  = GETDATE()   
  Set @nvcSUPID = EC.fn_nvcGetEmpIdFromLanID(@strCSRSUPin,@dtmDate)
  
-SET @nvcSQL = 'SELECT [cl].[FormName] strFormID,
+SET @nvcSQL = N'SELECT [cl].[FormName] strFormID,
 			[eh].[Emp_LanID] strCSR,
 			[eh].[Emp_Name]	strCSRName,
 			[eh].[Sup_Name] strCSRSupName,
 			[S].[Status]	strFormStatus,
-			[cl].[SubmittedDate] SubmittedDate
+			[cl].[SubmittedDate] SubmittedDate,
+		    [EC].[fn_strCoachingReasonFromCoachingID](cl.CoachingID) strCoachingReason,
+	        [EC].[fn_strSubCoachingReasonFromCoachingID](cl.CoachingID)strSubCoachingReason,
+	        [EC].[fn_strValueFromCoachingID](cl.CoachingID)strValue
 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
 cl.StatusID = s.StatusID
 WHERE (
-([ReassignCount]= 0 AND (eh.[Sup_ID] = '''+@nvcSUPID+''' OR eh.[Mgr_ID] = '''+@nvcSUPID+''')
+([ReassignCount]= 0 AND (eh.[Sup_ID] = @nvcSUPIDparam OR eh.[Mgr_ID] = @nvcSUPIDparam)
 AND ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+'''OR [S].[Status] = '''+@strFormStatus3+'''OR [S].[Status] = '''+@strFormStatus4+'''))
-OR (cl.[ReassignedToId] = '''+@nvcSUPID+''' AND [ReassignCount]<> 0 AND [S].[Status] = '''+@strFormStatus1+''')
-OR (eh.[Emp_ID] = '''+@nvcSUPID+''' AND [S].[Status] = '''+@strFormStatus2+''')
-OR (eh.[Emp_ID] = '''+@nvcSUPID+''' AND [S].[Status] = '''+@strFormStatus5+''')
+OR (cl.[ReassignedToId] = @nvcSUPIDparam AND [ReassignCount]<> 0 AND [S].[Status] = '''+@strFormStatus1+''')
+OR (eh.[Emp_ID] = @nvcSUPIDparam AND [S].[Status] = '''+@strFormStatus2+''')
+OR (eh.[Emp_ID] = @nvcSUPIDparam AND [S].[Status] = '''+@strFormStatus5+''')
 )
 AND (eh.[Sup_ID] <> ''999999'' AND eh.[Mgr_ID] <> ''999999'')
 ORDER BY [cl].[SubmittedDate] DESC'
+
+SET @ParmDefinition = N'@nvcSUPIDparam nvarchar(10)'
 		
-EXEC (@nvcSQL)	
+--EXEC (@nvcSQL)	
 --Print @nvcSQL
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+                     @nvcSUPIDparam = @nvcSUPID;
+
+
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
 	    
 END --sp_SelectFrom_Coaching_Log_SUPPending
-
-
 
 GO
 

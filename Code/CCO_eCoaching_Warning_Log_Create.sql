@@ -1,10 +1,13 @@
 /*
-eCoaching_Warning_Log_Create(10).sql
-Last Modified Date: 10/21/2015
+eCoaching_Warning_Log_Create(11).sql
+Last Modified Date: 8/19/2016
 Last Modified By: Susmitha Palacherla
 
 
-Version 10:
+Version 11: 8/19/2016
+1. Updated  Procedures #6,7 - single ecl in a single procedure for display per TFS 3598
+
+Version 10:10/18/2015
 1.  Updates for TFS 861 Ato add Warnings for all Modules
     Updated Table #1 to remove not null constraint on ProgramName and add new column Behavior
      Updated SP#2 for adding Behavior to the insert for Training module ecls submitted
@@ -714,13 +717,17 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/09/2014
 --	Description: *	This procedure selects the CSR Warning records from the Warning_Log table
--- Last Modified Date: 12/02/2014
 -- Last Updated By: Susmitha Palacherla
--- Modified to add functionality for acting managers during testing of SCR 13542.
+-- Modified SCR 13542 to add functionality for acting managers  - 12/02/2014
+-- Modified per TFS 3598 to add Warning Reason fields and use sp_executesql - 8/15/2016 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted] 
 @strCSRSUPin nvarchar(30),
@@ -731,8 +738,11 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted]
 AS
 
 BEGIN
+SET NOCOUNT ON
+
 DECLARE	
 @nvcSQL nvarchar(max),
+@ParmDefinition NVARCHAR(1000),
 @strFormStatus nvarchar(30),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8),
@@ -751,24 +761,43 @@ SET @nvcSQL = 'SELECT	[wl].[FormName]	strFormID,
 		[eh].[Mgr_Name]	strCSRMgrName, 
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
-		[wl].[SubmittedDate]	SubmittedDate
+		[wl].[SubmittedDate]	SubmittedDate,
+	    [EC].[fn_strCoachingReasonFromWarningID]([wl].[WarningID]) strCoachingReason,
+	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason,
+	    [EC].[fn_strValueFromWarningID]([wl].[WarningID])strValue
 FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl 
 ON [wl].[EmpID] = [eh].[Emp_ID] JOIN  [EC].[DIM_Status]s
 ON [wl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source]sc
 ON [wl].[SourceID] = [sc].[SourceID]
-WHERE ([eh].[Sup_LanID] =  '''+@strCSRSUPin+''' OR [eh].[Mgr_LanID] = '''+@strCSRSUPin+''')
+WHERE ([eh].[Sup_ID] =  @nvcSupIDparam OR [eh].[Mgr_ID] = @nvcSupIDparam)
 and [s].[Status] = '''+@strFormStatus+'''
-and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
-and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) >= @strSDateinparam
+and convert(varchar(8),[wl].[SubmittedDate],112) <= @strEDateinparam
 and [wl].[Active] like '''+ CONVERT(NVARCHAR,@bitActive) + '''
-and ((eh.Sup_ID = '''+@nvcSupID+''' and eh.Sup_ID <> ''999999'')OR (eh.Mgr_ID = '''+@nvcSupID+''' and eh.Mgr_ID <> ''999999''))
+and (eh.Sup_ID <> ''999999''OR eh.Mgr_ID <> ''999999'')
 Order By [wl].[SubmittedDate] DESC'
 
 	
-EXEC (@nvcSQL)	
+SET @ParmDefinition = N'@nvcSupIDparam nvarchar(10),@strSDateinparam datetime, @strEDateinparam datetime'	
+--EXEC (@nvcSQL)	
 --PRINT @nvcSQL
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+@nvcSupIDparam = @nvcSupID,@strSDateinparam = @strSDatein, @strEDateinparam = @strEDatein;
+	    
+	    
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
 	    
 END --sp_SelectFrom_Warning_Log_SUPCSRCompleted
+
+
+GO
+
 
 
 
@@ -801,12 +830,19 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
+
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/09/2014
 --	Description: *	This procedure selects the CSR Warning records from the Warning_Log table
--- Last Modified Date: 
--- Last Updated By: 
+--  Modified per TFS 3598 to add Warning Reason fields and use sp_executesql - 8/15/2016 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Warning_Log_MGRCSRCompleted] 
 @strCSRMGRin nvarchar(30),
@@ -817,8 +853,11 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Warning_Log_MGRCSRCompleted]
 AS
 
 BEGIN
+SET NOCOUNT ON
+
 DECLARE	
 @nvcSQL nvarchar(max),
+@ParmDefinition NVARCHAR(1000),
 @strFormStatus nvarchar(30),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8),
@@ -832,29 +871,49 @@ Set @dtmDate  = GETDATE()
 Set @nvcMgrID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
  
 
-SET @nvcSQL = 'SELECT	[wl].[FormName]	strFormID,
+SET @nvcSQL = N'SELECT	[wl].[FormName]	strFormID,
 		[eh].[Emp_Name]	strCSRName,
 		[eh].[Sup_Name]	strCSRSupName, 
 		[eh].[Mgr_Name]	strCSRMgrName, 
 		[s].[Status]	strFormStatus,
 		[sc].[SubCoachingSource]	strSource,
-		[wl].[SubmittedDate]	SubmittedDate
+		[wl].[SubmittedDate]	SubmittedDate,
+	    [EC].[fn_strCoachingReasonFromWarningID]([wl].[WarningID]) strCoachingReason,
+	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason,
+	    [EC].[fn_strValueFromWarningID]([wl].[WarningID])strValue
 FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl 
 ON [wl].[EmpID] = [eh].[Emp_ID] JOIN  [EC].[DIM_Status]s
 ON [wl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source]sc
 ON [wl].[SourceID] = [sc].[SourceID]
-WHERE ([eh].[Mgr_LanID] = '''+@strCSRMGRin+''' OR [eh].[Sup_LanID] = '''+@strCSRMGRin+''')
+WHERE ([eh].[Mgr_ID] = @nvcMgrIDparam OR [eh].[Sup_ID] = @nvcMgrIDparam)
 and [s].[Status] = '''+@strFormStatus+'''
-and convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''
-and convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''
+and convert(varchar(8),[wl].[SubmittedDate],112) >= @strSDateinparam
+and convert(varchar(8),[wl].[SubmittedDate],112) <= @strEDateinparam
 and [wl].[Active] like '''+ CONVERT(NVARCHAR,@bitActive) + '''
-and ((eh.Mgr_ID = '''+@nvcMgrID+''' and eh.Mgr_ID <> ''999999'')OR (eh.Sup_ID = '''+@nvcMgrID+''' and eh.Sup_ID <> ''999999''))
+and (eh.Mgr_ID <> ''999999''OR eh.Sup_ID <> ''999999'')
 Order By [wl].[SubmittedDate] DESC'
 	
-EXEC (@nvcSQL)	
-	   
+SET @ParmDefinition = N'@nvcMgrIDparam nvarchar(30),@strSDateinparam datetime, @strEDateinparam datetime'	
+--EXEC (@nvcSQL)	
+--PRINT @nvcSQL
+
+EXECUTE sp_executesql @nvcSQL, @ParmDefinition,
+@nvcMgrIDparam = @nvcMgrID,@strSDateinparam = @strSDatein, @strEDateinparam = @strEDatein;
+	    
+	    
+If @@ERROR <> 0 GoTo ErrorHandler
+    Set NoCount OFF
+    Return(0)
+  
+ErrorHandler:
+    Return(@@ERROR)
+	    
 END --sp_SelectFrom_Warning_Log_MGRCSRCompleted
+
+
 GO
+
+
 
 
 ******************************************************************
