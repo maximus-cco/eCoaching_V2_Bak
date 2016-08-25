@@ -994,8 +994,6 @@ GO
 
 
 
-
-
 --9. sp_SelectFrom_Warning_Log_SUPCSRCompleted
 
 IF EXISTS (
@@ -1062,9 +1060,8 @@ SET @nvcSQL = 'SELECT	[wl].[FormName]	strFormID,
 		[sc].[SubCoachingSource]	strSource,
 		[wl].[SubmittedDate]	SubmittedDate,
 	    [EC].[fn_strCoachingReasonFromWarningID]([wl].[WarningID]) strCoachingReason,
-	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason,
-	    [EC].[fn_strValueFromWarningID]([wl].[WarningID])strValue
-FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl 
+	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason
+	    FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl 
 ON [wl].[EmpID] = [eh].[Emp_ID] JOIN  [EC].[DIM_Status]s
 ON [wl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source]sc
 ON [wl].[SourceID] = [sc].[SourceID]
@@ -1169,8 +1166,7 @@ SET @nvcSQL = N'SELECT	[wl].[FormName]	strFormID,
 		[sc].[SubCoachingSource]	strSource,
 		[wl].[SubmittedDate]	SubmittedDate,
 	    [EC].[fn_strCoachingReasonFromWarningID]([wl].[WarningID]) strCoachingReason,
-	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason,
-	    [EC].[fn_strValueFromWarningID]([wl].[WarningID])strValue
+	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason
 FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl 
 ON [wl].[EmpID] = [eh].[Emp_ID] JOIN  [EC].[DIM_Status]s
 ON [wl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source]sc
@@ -1210,3 +1206,5 @@ GO
 
 
 --*****************************************************
+
+
