@@ -1,8 +1,11 @@
 /*
-eCoaching_Warning_Log_Create(11).sql
-Last Modified Date: 8/19/2016
+eCoaching_Warning_Log_Create(12).sql
+Last Modified Date: 8/24/2016
 Last Modified By: Susmitha Palacherla
 
+Version 12: 8/24/2016
+1. Updated  Procedures #6,7 - single ecl in a single procedure for display per TFS 3598
+   Remove 'value' from return that was added in version 11.
 
 Version 11: 8/19/2016
 1. Updated  Procedures #6,7 - single ecl in a single procedure for display per TFS 3598
@@ -763,9 +766,8 @@ SET @nvcSQL = 'SELECT	[wl].[FormName]	strFormID,
 		[sc].[SubCoachingSource]	strSource,
 		[wl].[SubmittedDate]	SubmittedDate,
 	    [EC].[fn_strCoachingReasonFromWarningID]([wl].[WarningID]) strCoachingReason,
-	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason,
-	    [EC].[fn_strValueFromWarningID]([wl].[WarningID])strValue
-FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl 
+	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason
+	    FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl 
 ON [wl].[EmpID] = [eh].[Emp_ID] JOIN  [EC].[DIM_Status]s
 ON [wl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source]sc
 ON [wl].[SourceID] = [sc].[SourceID]
@@ -879,9 +881,8 @@ SET @nvcSQL = N'SELECT	[wl].[FormName]	strFormID,
 		[sc].[SubCoachingSource]	strSource,
 		[wl].[SubmittedDate]	SubmittedDate,
 	    [EC].[fn_strCoachingReasonFromWarningID]([wl].[WarningID]) strCoachingReason,
-	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason,
-	    [EC].[fn_strValueFromWarningID]([wl].[WarningID])strValue
-FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl 
+	    [EC].[fn_strSubCoachingReasonFromWarningID]([wl].[WarningID])strSubCoachingReason
+	 FROM [EC].[Employee_Hierarchy] eh join  [EC].[Warning_Log] wl 
 ON [wl].[EmpID] = [eh].[Emp_ID] JOIN  [EC].[DIM_Status]s
 ON [wl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source]sc
 ON [wl].[SourceID] = [sc].[SourceID]
