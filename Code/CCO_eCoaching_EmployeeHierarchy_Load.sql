@@ -1,6 +1,10 @@
 /*
-File: eCoaching_PS_Employee_Hierarchy_Load.sql (14)
-Date: 6/10/2016
+File: eCoaching_PS_Employee_Hierarchy_Load.sql (15)
+Date: 09/09/2016
+
+
+Version 15: 09/09/2016
+Modified Procedure (#5) as part of TFS 3441 to change inactivations rules 
 
 
 Version 14: 6/10/2016 -  Additonal changes for TFS 2332
@@ -1050,9 +1054,6 @@ GO
 
 
 
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date:    04/09/2014
@@ -1062,6 +1063,7 @@ GO
 -- Modified per TFS 549 - To Inactivate Surveys for termed Employees and Expired Surveys.
 -- Surveys expire 5 days from Creation date - 09/04/2015
 -- Admin tool setup per TFS 1709-  To log Inactivations in audit tables - 4/27/12016
+-- Updated to not Inactivate Warning logs for termed Employees per TFS 3441 - 09/08/2016
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
 AS
@@ -1096,13 +1098,13 @@ INSERT INTO [EC].[AT_Warning_Inactivate_Reactivate_Audit]
 		 ,'Inactivate'
 		 ,GetDate()
 	 	 ,'999998'
-		 ,'Employee Inactive'
+		 ,'Employee Deceased'
 		 ,'Employee Hierarchy Load Process'
 FROM [EC].[Warning_Log] W JOIN [EC].[Employee_Hierarchy]H
 ON W.[EmpLanID] = H.[Emp_LanID]
 AND W.[EmpID] = H.[Emp_ID]
 WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
-AND H.[Active] in ('T','D')
+AND H.[Active] = 'D'
 AND H.[End_Date]<> '99991231'
 AND W.[StatusID] <> 2	 
 OPTION (MAXDOP 1)
@@ -1118,7 +1120,7 @@ FROM [EC].[Warning_Log] W JOIN [EC].[Employee_Hierarchy]H
 ON W.[EmpLanID] = H.[Emp_LanID]
 AND W.[EmpID] = H.[Emp_ID]
 WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
-AND H.[Active] in ('T','D')
+AND H.[Active] = 'D'
 AND H.[End_Date]<> '99991231'
 AND W.[StatusID] <> 2
 OPTION (MAXDOP 1)
@@ -1326,6 +1328,7 @@ END TRY
   END CATCH
 
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
+
 
 
 

@@ -1,7 +1,9 @@
 /*
-eCoaching_Admin_Tool_Create(04).sql
-Last Modified Date:07/26/2016
+eCoaching_Admin_Tool_Create(05).sql
+Last Modified Date:09/09/2016
 Last Modified By: Susmitha Palacherla
+
+Version 05: Updates to SPs #3,4,13,14,15 per TFS 3441 to change functionality for inactive users - 09/09/2016
 
 Version 04: Update to SP #16 per TFS 3416 to remove refernce to jobcode WISY13 - 07/26/2016
 
@@ -849,11 +851,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -863,6 +860,7 @@ GO
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/20/12016
 --  Updated to remove Mgr site restriction for non admins, TFS 3091 - 07/05/2016
+--  Updated to add Employees in Leave status for Inactivation, TFS 3441 - 09/07/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Employees_Coaching_Inactivation_Reactivation] 
 
@@ -896,12 +894,11 @@ IF @strActionin = N'Inactivate'
 
 SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name 
  FROM [EC].[Employee_Hierarchy] Emp JOIN [EC].[Coaching_Log] Fact WITH(NOLOCK)
- ON Emp.Emp_ID = Fact.EmpID  JOIN [EC].[Employee_Hierarchy]MGR
- ON Emp.Mgr_ID = MGR.Emp_ID 
+ ON Emp.Emp_ID = Fact.EmpID  
  WHERE Fact.StatusID NOT IN (1,2)
  AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
  AND Fact.EmpID <> ''999999''
- AND Emp.Active = ''A'''
+ AND Emp.Active NOT IN  (''T'',''D'')'
  + @strConditionalSite 
  + ' AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
  ORDER BY Emp.Emp_Name'
@@ -927,10 +924,9 @@ EXEC (@nvcSQL)
 END --sp_AT_Select_Employees_Coaching_Inactivation_Reactivation
 
 
+
+
 GO
-
-
-
 
 --***************************************
 
@@ -957,6 +953,9 @@ GO
 
 
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -966,6 +965,7 @@ GO
 --  Last Modified date: 
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/20/12016
+--  Updated to add Employees in Leave status for Inactivation, TFS 3441 - 09/07/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Employees_Warning_Inactivation_Reactivation] 
 
@@ -994,7 +994,7 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
  WHERE Fact.StatusID = 1
  AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
  AND Fact.EmpID <> ''999999''
- AND Emp.Active = ''A''
+ AND Emp.Active NOT IN  (''T'',''D'')
  AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
  ORDER BY Emp.Emp_Name'
 
@@ -1009,7 +1009,7 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
  WHERE Fact.StatusID = 2
  AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
  AND Fact.EmpID <> ''999999''
- AND Emp.Active = ''A''
+  AND Emp.Active = ''A''
  AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
  ORDER BY Emp.Emp_Name'
  
@@ -1018,9 +1018,10 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
 EXEC (@nvcSQL)	
 END --sp_AT_Select_Employees_Warning_Inactivation_Reactivation
 
-
-
 GO
+
+
+
 
 
 
@@ -1731,14 +1732,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/28/2016
@@ -1746,6 +1739,8 @@ GO
 --  ecls assigned to them. Same module and site as the logged in user performing the reassign.
 -- Last Updated By: 
 -- Initial revision per TFS 1709 - 4/28/2016
+-- Updated to add Employees in Leave status for Reassignment and 
+-- removed Active check for reassigned and review managers per TFS 3441 - 09/07/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users] 
 @strRequesterin nvarchar(30), @intModuleIdin INT, @intStatusIdin INT
@@ -1795,8 +1790,7 @@ END
 -- UNION
 -- Reassigned ecls
 -- UNION
--- LCS ecls
-
+-- Non reassigned LCS ecls
 
 SET @nvcSQL = @strConditionalSelect +
 'FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ' +
@@ -1808,13 +1802,15 @@ AND NOT (CL.statusid = 5 AND ISNULL(CL.strReportCode,'' '') like ''LCS%'')'
 + @strConditionalSite 
 + @strConditionalRestrict
 + 'AND (eh.SUP_Name is NOT NULL AND eh.MGR_Name is NOT NULL)
-AND eh.Active = ''A''
+AND eh.Active NOT IN  (''T'',''D'')
 
 UNION 
 
+
 SELECT DISTINCT rm.Emp_ID UserID, rm.Emp_Name UserName
 FROM [EC].[Employee_Hierarchy] rm JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
-ON cl.ReassignedToID = rm.Emp_ID 
+ON cl.ReassignedToID = rm.Emp_ID JOIN [EC].[Employee_Hierarchy] eh
+ON eh.Emp_ID = cl.EmpID
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
 AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND cl.ReassignedToID is not NULL 
@@ -1822,14 +1818,14 @@ AND (cl.ReassignCount < 2 and cl.ReassignCount <> 0)
 AND (rm.Emp_Name is NOT NULL AND rm.Emp_Name <> ''Unknown'')'
 + @strConditionalSite 
 + 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' 
-AND rm.Active = ''A''
-
+AND eh.Active NOT IN  (''T'',''D'')
 
 UNION 
 
 SELECT DISTINCT rm.Emp_ID UserID, rm.Emp_Name UserName
 FROM [EC].[Employee_Hierarchy] rm JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
-ON cl.MgrID = rm.Emp_ID 
+ON cl.MgrID = rm.Emp_ID JOIN [EC].[Employee_Hierarchy] eh
+ON eh.Emp_ID = cl.EmpID
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
 AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND cl.MgrID is not NULL
@@ -1838,7 +1834,7 @@ AND CL.ReassignCount = 0
 AND (rm.Emp_Name is NOT NULL AND rm.Emp_Name <> ''Unknown'')'
 + @strConditionalSite 
 + 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' 
-AND rm.Active = ''A''
+AND eh.Active NOT IN  (''T'',''D'')
 Order By UserName'
 
 --PRINT @nvcSQL		
@@ -1847,15 +1843,7 @@ EXEC (@nvcSQL)
 
 End --sp_AT_Select_ReassignFrom_Users
 
-
-
-
-
 GO
-
-
-
-
 
 
 
@@ -1892,6 +1880,8 @@ GO
 -- can be reassigned to. users at the same level and site as the original owner. 
 -- Last Updated By: 
 -- Initial revision per TFS 1709 - 4/28/2016
+-- Updated to add Employees in Leave status for Reassignment and 
+-- added Active check for reassigned to supervisors and managers per TFS 3441 - 09/07/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_ReassignTo_Users] 
 @strRequesterin nvarchar(30),@strFromUserIdin nvarchar(10), @intModuleIdin INT, @intStatusIdin INT
@@ -1905,7 +1895,7 @@ DECLARE
 --@intModuleID INT,
 @intRequesterSiteID int,
 @intFromUserSiteID int,
-@strSelect nvarchar(100),
+@strSelect nvarchar(1000),
 @dtmDate datetime
 
 --cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
@@ -1919,7 +1909,16 @@ OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
 
 
 BEGIN
-SET @strSelect = N'SELECT DISTINCT eh.SUP_ID UserID, eh.SUP_Name UserName '
+SET @nvcSQL = N'SELECT DISTINCT sh.EMP_ID UserID, sh.Emp_Name UserName
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy]sh
+ON eh.SUP_ID = sh.EMP_ID
+WHERE cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+'''
+AND (eh.SUP_Name is NOT NULL AND eh.SUP_Name <> ''Unknown'')
+AND eh.SUP_ID <> '''+@strFromUserIdin+''' 
+AND eh.Active NOT IN (''T'',''D'')
+AND sh.Active = ''A''
+Order By UserName'
 END
 
 ELSE IF 
@@ -1927,18 +1926,19 @@ ELSE IF
 OR (@intStatusIdin = 7 AND @intModuleIdin = 2))
 
 BEGIN
-SET @strSelect = N'SELECT DISTINCT eh.MGR_ID UserID, eh.MGR_Name UserName '
+
+SET @nvcSQL = N'SELECT DISTINCT mh.EMP_ID UserID, mh.Emp_Name UserName
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy]mh
+ON eh.MGR_ID = mh.EMP_ID
+WHERE cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+'''
+AND (eh.MGR_Name is NOT NULL AND eh.MGR_Name <> ''Unknown'')
+AND eh.MGR_ID <> '''+@strFromUserIdin+'''
+AND eh.Active NOT IN (''T'',''D'')
+AND mh.Active = ''A''
+Order By UserName'
 END
 			 
-
-SET @nvcSQL = @strSelect +
-'FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
-cl.EmpID = eh.Emp_ID 
-WHERE cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+'''
-AND (eh.SUP_Name is NOT NULL AND eh.MGR_Name is NOT NULL AND eh.SUP_Name <> ''Unknown'' AND eh.MGR_Name <> ''Unknown'')
-AND (eh.SUP_ID <> '''+@strFromUserIdin+''' AND eh.MGR_ID <> '''+@strFromUserIdin+''')
-AND EH.Active = ''A''
-Order By UserName'
 
 --PRINT @nvcSQL		
 EXEC (@nvcSQL)
@@ -1950,12 +1950,7 @@ End --sp_AT_Select_ReassignTo_Users
 
 
 
-
-
-
-
 GO
-
 
 
 
@@ -1981,6 +1976,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -1989,6 +1985,7 @@ GO
 --  Last Modified By: 
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/27/12016
+--  Updated to add Employees in Leave status for Reassignment per TFS 3441 - 09/07/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Reassign] 
 @istrOwnerin nvarchar(10), @intStatusIdin INT, @intModuleIdin INT
@@ -2040,6 +2037,7 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 	 + @strConditionalWhere +
 	 'AND fact.ReassignCount = 0
 	
+	
      UNION
      
      SELECT fact.CoachingID 
@@ -2048,6 +2046,8 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 	 WHERE rm.Emp_ID = '''+@istrOwnerin+''' 
 	 AND (fact.ReassignCount < 2 and fact.ReassignCount <> 0)
 	 AND fact.ReassignedToID is not NULL
+	 
+	 
      UNION
      
      SELECT fact.CoachingID 
@@ -2055,7 +2055,8 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 	 ON [Fact].[MgrID] = [rm].[Emp_ID]
 	 WHERE rm.Emp_ID = '''+@istrOwnerin+''' 
 	 AND fact.strReportCode like ''LCS%''
-	 AND fact.ReassignCount = 0)Selected 
+	 AND fact.ReassignCount = 0
+	 )Selected 
 	 
 	 ON Selected.CoachingID = cfact.CoachingID JOIN [EC].[Employee_Hierarchy] eh
 	 ON [cfact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
@@ -2064,7 +2065,7 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 	 
 	WHERE cfact.StatusId = '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 	AND cfact.Moduleid = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
-  	 
+  	AND eh.Active NOT IN  (''T'',''D'') 
    ORDER BY cfact.FormName DESC'
    
 --Print @nvcSQL
@@ -2073,8 +2074,6 @@ EXEC (@nvcSQL)
 END --sp_AT_Select_Logs_Reassign
 
 GO
-
-
 
 
 
