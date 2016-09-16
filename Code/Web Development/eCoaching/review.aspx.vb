@@ -1,11 +1,3 @@
-Imports System.Data.SqlClient
-Imports System.Net.Mail
-Imports System
-Imports System.Configuration
-Imports System.Web.UI.WebControls
-Imports AjaxControlToolkit
-
-
 Public Class review
     Inherits BasePage
 
@@ -55,6 +47,9 @@ Public Class review
 
     Dim lblisKudo As Label
     Dim isKudo As Boolean
+
+    Dim lblIsAttendance As Label
+    Dim isAttendance As Boolean
 
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim FromURL As String
@@ -144,6 +139,15 @@ Public Class review
         End If
     End Sub
 
+    Private Sub SetIsAttendance()
+        lblIsAttendance = ListView1.Items(0).FindControl("isAttendance")
+        If (lblIsAttendance.Text = "0") Then
+            isAttendance = False
+        Else
+            isAttendance = True
+        End If
+    End Sub
+
     Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
         ' Get the user employee ID from session.
         m_strUserEmployeeID = Session("eclUser").EmployeeID
@@ -168,6 +172,7 @@ Public Class review
         SetIsCTC()
         SetIsHigh5Club()
         SetIsKudo()
+        SetIsAttendance()
 
         If (isHigh5Club OrElse isKudo) Then
             pnlStaticText.Visible = True
@@ -346,8 +351,8 @@ Public Class review
 
 
 
-                    ' It is from IQS or it is CTC or high CSAT5 or kudo.
-                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo) Then
+                    ' It is from IQS or it is CTC or high CSAT5 or kudo or seasonal attendance.
+                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance) Then
 
                         'If ((pHolder5.Text = "IQS") And (pHolder6.Text = "True")) Then
 
@@ -578,8 +583,8 @@ Public Class review
             If (statusLevel = 1) Then
                 pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
-                ' IQS or CTC or high CSAT5 or kudo
-                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo) AndAlso Len(pHolder8.Text) > 4) Then
+                ' IQS or CTC or high CSAT5 or kudo or seasonal attendance
+                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance) AndAlso Len(pHolder8.Text) > 4) Then
                     pnlEmpAckReinforceLog.Visible = True ' 1. Check the box below to acknowledge the monitor:
                 Else
                     Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
@@ -1559,7 +1564,7 @@ Public Class review
 
         Else
 
-                Label116.Text = "Please correct all fields indicated in red to proceed."
+            Label116.Text = "Please correct all fields indicated in red to proceed."
 
 
         End If
