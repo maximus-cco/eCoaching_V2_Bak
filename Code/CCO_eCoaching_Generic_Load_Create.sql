@@ -1,8 +1,11 @@
 /*
-eCoaching_Generic_Create(01).sql
-Last Modified Date: 4/11/2016
+eCoaching_Generic_Create(02).sql
+Last Modified Date:9/11/2016
 Last Modified By: Susmitha Palacherla
 
+
+Version 02: 9/11/2016
+Updated sp#1 to support ATT SEA feed per TFS 3972
 
 
 Version 01: 4/11/2016
@@ -191,10 +194,13 @@ GO
 
 
 
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/11/2016
---  Created per TFS 2470 to load the Generic feed(s)
+--  Created per TFS 2470 to load the Generic feed(s)- 4/11/2016
+-- Modified to accomodate Attendance feed for seasonal employees per TFS 3972 - 09/15/2016
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic]
 AS
@@ -245,7 +251,7 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
-        213                             [SourceID],
+        [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])[SourceID],
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intGetSiteIDFromLanID](cs.CSR_LANID,@dtmDate)[SiteID],
         LOWER(cs.CSR_LANID)				[EmpLanID],
@@ -257,12 +263,18 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
          0			[isUCID],
          0          [isVerintID],
 		-- EC.fn_nvcHtmlEncode(cs.TextDescription)		[Description],
-		 REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '      '  ,'<br />')[Description],	-- CHAR(13) + CHAR(10)
+		 CASE 
+		 WHEN cs.[Report_Code] like 'SEA%'
+		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br /> <br />')
+		 ELSE REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '      '  ,'<br />') END [Description],	-- CHAR(13) + CHAR(10)
 		 cs.Submitted_Date			SubmittedDate,
 		 cs.Start_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
 		 0                          [isCSE],
-		 1                          [EmailSent],
+		 CASE 
+		 WHEN cs.[Report_Code] like 'SEA%'
+		 THEN 0
+		 ELSE 1	END					[EmailSent],
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
 		 1							[ModuleID],
@@ -294,8 +306,11 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[SubCoachingReasonID]
            ,[Value])
     SELECT cf.[CoachingID],
-           5,
-           [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
+         CASE 
+		 WHEN cf.strReportCode like 'SEA%'
+		 THEN 3
+		 ELSE 5	END,					
+         [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
            os.[CoachReason_Current_Coaching_Initiatives]
     FROM [EC].[Generic_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
     ON os.[Report_ID] = cf.[numReportID] AND  os.[Report_Code] = cf.[strReportCode]
@@ -339,7 +354,11 @@ END -- sp_InsertInto_Coaching_Log_Generic
 
 
 
+
+
 GO
+
+
 
 
 

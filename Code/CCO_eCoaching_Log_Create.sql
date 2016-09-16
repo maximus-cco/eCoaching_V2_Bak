@@ -1,8 +1,10 @@
 /*
-eCoaching_Log_Create(53).sql
-Last Modified Date: 8/19/2016
+eCoaching_Log_Create(54).sql
+Last Modified Date: 9/16/2016
 Last Modified By: Susmitha Palacherla
 
+Version 54: 9/16/2016
+1. Updated SP # 45 to add ADD flag for ATT SEA feed  TFS 3972
 
 Version 53: 8/19/2016
 1. Updated  Procedures #4,5,7,8,9,15,16,17 - single ecl in a single procedure for display per TFS 3598
@@ -4736,11 +4738,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -4754,8 +4751,9 @@ GO
 -- 4. TFS 2283 to support ODT Training feed - 3/22/2016
 -- 5. TFS 1709 to support Reassigned sups and Mgrs - 5/6/2016
 -- 6. TFS 2268 to support CTC Quality Other feed - 6/23/2016
--- 7. TFS 3179 & 3186 to add support HFC & KUD Quality Other feeds - 8/18/2016
-
+-- 7. TFS 3179 & 3186 to add support HFC & KUD Quality Other feeds - 7/15/2016
+-- 8. TFS 3677 to update Quality\KUD Flag - 8/18/2016
+-- 9. TFS 3972 to ADD SEA flag - 9/15/2016
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4860,6 +4858,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 	    CASE WHEN cc.CTC is Not NULL Then 1 ELSE 0 END	"Quality / CTC",
 	    CASE WHEN cc.HFC is Not NULL Then 1 ELSE 0 END	"Quality / HFC",
 	    CASE WHEN (cc.KUD is Not NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"Quality / KUD",
+	    CASE WHEN (cc.SEA is Not NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"OTH / SEA",
 	  	cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -4890,7 +4889,8 @@ SET @nvcSQL3 = '  (SELECT  ccl.FormName,
      MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END)	ODT,
      MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END)	CTC,
      MAX(CASE WHEN [clr].[SubCoachingReasonID] = 12 THEN [clr].[Value] ELSE NULL END)	HFC,
-     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	KUD
+     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	KUD,
+     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA
  	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
@@ -4913,12 +4913,6 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
-
-
-
-
-
-
 GO
 
 

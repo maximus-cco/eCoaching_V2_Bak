@@ -1,7 +1,11 @@
 /*
-File: eCoaching_Functions.sql (25)
+File: eCoaching_Functions.sql (26)
 Last Modified By: Susmitha Palacherla
-Date: 7/15/2016
+Date: 9/16/2016
+
+
+Version 26,   9/16/2016
+1. Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add ATT SEA flag  per TFS 3972
 
 Version 25,   7/15/2016
 1. Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add HFC & KUD feeds per TFS 3179 & 3186
@@ -513,11 +517,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
@@ -529,6 +528,7 @@ GO
 -- TFS 2470 - To add OTH - 4/11/2016
 -- TFS 2268 - To add CTC - 6/15/2016
 -- TFS 3179 & 3186 - To add HFC & KUD - 7/14/2016
+-- TFS 3972 - To add SEA - 9/15/2016
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -568,6 +568,7 @@ BEGIN
             WHEN N'CTC' THEN 73
             WHEN N'HFC' THEN 12
             WHEN N'KUD' THEN 42
+            WHEN N'SEA' THEN 42
         ELSE -1
       END
     ELSE
@@ -578,23 +579,7 @@ RETURN @intSubCoachReasonID
 END  -- fn_intSubCoachReasonIDFromRptCode()
 
 
-
-
-
-
 GO
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*****************************************************/
