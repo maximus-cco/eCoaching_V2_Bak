@@ -1,0 +1,102 @@
+/*
+
+TFS 3877
+
+Historical dashboard access and admin role
+
+1. update Historical dashboard ACL Table record to Set 'admin = Y' for Mark and scott
+
+Table [EC].[Historical_Dashboard_ACL]
+
+
+For Admin Tool access
+
+1. Insert users into User Table
+2. Insert records into User_Role link table
+3. Insert records into Role access table
+
+Table [EC].[AT_User]
+Table [EC].[AT_User_Role_Link]
+Table [EC].[AT_Role_Access]
+
+
+****************************************************
+
+		ACL ADMIN
+
+****************************************************/
+
+
+-- run below select to see if users have been added to ACL table
+
+/*
+SELECT [Row_ID]
+      ,[User_LanID]
+      ,[User_Name]
+      ,[Role]
+      ,[End_Date]
+      ,[Updated_By]
+      ,[IsAdmin]
+  FROM [EC].[Historical_Dashboard_ACL]
+  where User_LanID in ('mark.hackman','scott.potter')
+GO
+
+*/
+
+--1. update Historical dashboard ACL Table record to Set 'admin = Y' for Mark and scott
+
+UPDATE [EC].[Historical_Dashboard_ACL]
+SET IsAdmin = 'Y'
+WHERE User_LanID in ('mark.hackman','scott.potter')
+
+
+
+/****************************************************
+
+		ADMIN TOOL
+
+****************************************************/
+
+
+
+--1. Insert users into User Table
+
+INSERT INTO [EC].[AT_User]
+            ([UserId],
+            [UserLanID],
+			[UserName],
+			[EmpJobCode],
+			[Active])        
+VALUES
+('343549','Mark.Hackman', 'Hackman, Mark G','WACQ13',1),
+('408246','Scott.Potter', 'Potter, Scott E','WACQ13',1)
+          
+GO
+
+
+--2. Insert records into User_Role link table
+
+
+INSERT INTO [EC].[AT_User_Role_Link]
+            ([UserId] ,
+			[RoleId])  
+VALUES
+('343549',101),
+('343549',103),
+('408246',101),
+('408246',103)
+
+
+
+--3. Insert records into Role access table
+
+INSERT INTO [EC].[AT_Role_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[RoleId]
+           ,[RoleDescription]
+           ,[AddToUser]
+           ,[isActive])
+              VALUES
+           ('WACQ13','Sr Specialist, Quality (CS)',101,'CoachingAdmin',0,1),
+           ('WACQ13','Sr Specialist, Quality (CS)',103,'WarningAdmin',0,1)
