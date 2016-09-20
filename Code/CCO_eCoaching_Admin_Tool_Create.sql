@@ -1,7 +1,10 @@
 /*
-eCoaching_Admin_Tool_Create(05).sql
-Last Modified Date:09/09/2016
+eCoaching_Admin_Tool_Create(06).sql
+Last Modified Date:09/20/2016
 Last Modified By: Susmitha Palacherla
+
+Version 06: Added records for additional admin users with jobcode WACQ13 per tfs 3877 - 09/20/2016
+Tables #4,6,11
 
 Version 05: Updates to SPs #3,4,13,14,15 per TFS 3441 to change functionality for inactive users - 09/09/2016
 
@@ -172,7 +175,9 @@ INSERT INTO [EC].[AT_User]
 			[EmpJobCode],
 			[Active])        
 VALUES
-('500306','JohnEric.Tiongson', 'John Eric Z','WISY13',1)
+('500306','JohnEric.Tiongson', 'John Eric Z','WISY13',1),
+('343549','Mark.Hackman', 'Hackman, Mark G','WACQ13',1),
+('408246','Scott.Potter', 'Potter, Scott E','WACQ13',1)
           
 GO
 
@@ -238,7 +243,11 @@ INSERT INTO [EC].[AT_User_Role_Link]
 			[RoleId])  
 VALUES
 (500306,101),
-(500306,103)
+(500306,103),
+('343549',101),
+('343549',103),
+('408246',101),
+('408246',103)
 
 
 --************************************************
@@ -448,7 +457,9 @@ INSERT INTO [EC].[AT_Role_Access]
            ('WIHD50','Manager, Help Desk',102,'CoachingUser',1,1),
            ('WTTR50','Manager, Training',102,'CoachingUser',1,1),
            ('WPPM13','Sr Analyst, Program',102,'CoachingUser',1,1),
-           ('WISY13','Sr Analyst, Systems',103,'WarningAdmin',0,1)
+           ('WISY13','Sr Analyst, Systems',103,'WarningAdmin',0,1),
+           ('WACQ13','Sr Specialist, Quality (CS)',101,'CoachingAdmin',0,1),
+           ('WACQ13','Sr Specialist, Quality (CS)',103,'WarningAdmin',0,1)
       
 
 --***************************************
