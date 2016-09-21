@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(54).sql
-Last Modified Date: 9/16/2016
+eCoaching_Log_Create(55).sql
+Last Modified Date: 9/21/2016
 Last Modified By: Susmitha Palacherla
+
+Version 55: 9/21/2016
+1. Updated SP # 56 to add submission to all modules for Qs specialists designated by program
+employee ids hardcoded into sp per tfs 3877 - 09/21/2016
 
 Version 54: 9/16/2016
 1. Updated SP # 45 to add ADD flag for ATT SEA feed  TFS 3972
@@ -6054,6 +6058,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	7/31/14
@@ -6061,9 +6066,10 @@ GO
 --  If Job code exists in the submisison table returns the valid submission modules.
 --  If job code does not exist in the submisisons table returns 'CSR' as a valid sumission module.
 --  Last Modified By: Susmitha Palacherla
---  Last Modified Date: 10/21/2015 
---  Modified per TFS 861 to add Warnings to all Modules 
- 
+--  Modified per TFS 861 to add Warnings to all Modules - 10/21/2015 
+-- Modified per TFS 3877 to hard code Employee Ids for Mark Hackman and Scott Potter
+-- to allow LSA and Training submissions which their job code does not have access to - 09/21/2016
+-- 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Modules_By_Job_Code] 
 @nvcEmpLanIDin nvarchar(30)
@@ -6118,10 +6124,10 @@ SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, ''0-Qua
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION 
 SELECT CASE WHEN [LSA]= 1 THEN N''LSA'' ELSE NULL END as Module, ''0-LSA-4-0-1-1-0'' as BySite from [EC].[Module_Submission] 
-where Job_Code = '''+@nvcEmpJobCode+'''
+where Job_Code = '''+@nvcEmpJobCode+''' OR '''+@nvcEmpID+''' in (''343549'',''408246'')
 UNION 
 SELECT CASE WHEN [Training]= 1 THEN N''Training'' ELSE NULL END as Module, ''0-Training-5-1-1-0-1'' as BySite from [EC].[Module_Submission] 
-where Job_Code = '''+@nvcEmpJobCode+''')AS Modulelist
+where Job_Code = '''+@nvcEmpJobCode+''' OR '''+@nvcEmpID+''' in (''343549'',''408246''))AS Modulelist
 where Module is not Null '
 --Print @nvcSQL
 
@@ -6129,7 +6135,9 @@ EXEC (@nvcSQL)
 END --sp_Select_Modules_By_Job_Code
 
 
+
 GO
+
 
 
 
