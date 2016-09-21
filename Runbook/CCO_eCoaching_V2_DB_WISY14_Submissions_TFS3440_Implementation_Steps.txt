@@ -1,0 +1,16 @@
+/*
+
+TFS 3440
+
+
+1. updates WISY13 to WISY14 in Table [EC].[Module_Submission]
+
+*/
+-- run below below update in an ssms window pointing to ecoaching database
+
+update [EC].[Module_Submission]
+set [Job_Code]= 'WISY14'
+,[Job_Code_Description]= 'Principal Analyst, Systems'
+where [Job_Code] = 'wisy13'
+
+--**********************************
