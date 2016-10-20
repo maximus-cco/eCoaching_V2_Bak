@@ -1,7 +1,10 @@
 /*
-eCoaching_Maintenance_Create(18).sql
-Last Modified Date: 7/15/2016
+eCoaching_Maintenance_Create(19).sql
+Last Modified Date: 10/11/2016
 Last Modified By: Susmitha Palacherla
+
+Version 19: 10/11/2016
+1. Added tables #3 and 4 and SP #8 to support Coaching log Archive process per TFS 3932.
 
 
 Version 18: 7/15/2016
@@ -81,7 +84,8 @@ Summary
 Tables
 1. Create Table  [EC].[Migrated_Employees] -- Obsolete
 2. Create Table [EC].[Inactivations_Stage]
-
+3. Create Table [EC].[Coaching_Log_Archive]
+4. Create Table [EC].[Coaching_Log_Reason_Archive]
 
 
 Procedures
@@ -92,6 +96,7 @@ Procedures
 5.  SP [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]-- Obsolete (Not used)
 6.  SP [EC].[sp_SelectCoaching4Reminder]
 7.  SP [EC].[sp_UpdateReminderMailSent] 
+8.  SP [EC].[sp_Insert_Into_Coaching_Log_Archive] 
 
 */
 
@@ -135,6 +140,122 @@ CREATE TABLE [EC].[Inactivations_Stage](
 	[ProcessDate] [datetime] NULL
 ) ON [PRIMARY]
 
+GO
+
+
+
+--3. Create Table [EC].[Coaching_Log_Archive]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_Archive](
+	[CoachingID] [bigint] NOT NULL,
+	[FormName] [nvarchar](50) NOT NULL,
+	[ProgramName] [nvarchar](50) NULL,
+	[SourceID] [int] NOT NULL,
+	[StatusID] [int] NOT NULL,
+	[SiteID] [int] NOT NULL,
+	[EmpLanID] [nvarchar](50) NOT NULL,
+	[EmpID] [nvarchar](10) NOT NULL,
+	[SubmitterID] [nvarchar](10) NULL,
+	[EventDate] [datetime] NULL,
+	[CoachingDate] [datetime] NULL,
+	[isAvokeID] [bit] NULL,
+	[AvokeID] [nvarchar](40) NULL,
+	[isNGDActivityID] [bit] NULL,
+	[NGDActivityID] [nvarchar](40) NULL,
+	[isUCID] [bit] NULL,
+	[UCID] [nvarchar](40) NULL,
+	[isVerintID] [bit] NULL,
+	[VerintID] [nvarchar](40) NULL,
+	[VerintEvalID] [nvarchar](20) NULL,
+	[Description] [nvarchar](max) NULL,
+	[CoachingNotes] [nvarchar](4000) NULL,
+	[isVerified] [bit] NULL,
+	[SubmittedDate] [datetime] NULL,
+	[StartDate] [datetime] NULL,
+	[SupReviewedAutoDate] [datetime] NULL,
+	[isCSE] [bit] NULL,
+	[MgrReviewManualDate] [datetime] NULL,
+	[MgrReviewAutoDate] [datetime] NULL,
+	[MgrNotes] [nvarchar](3000) NULL,
+	[isCSRAcknowledged] [bit] NULL,
+	[CSRReviewAutoDate] [datetime] NULL,
+	[CSRComments] [nvarchar](3000) NULL,
+	[EmailSent] [bit] NULL,
+	[numReportID] [int] NULL,
+	[strReportCode] [nvarchar](30) NULL,
+	[isCoachingRequired] [bit] NULL,
+	[strReasonNotCoachable] [nvarchar](30) NULL,
+	[txtReasonNotCoachable] [nvarchar](3000) NULL,
+	[VerintFormName] [nvarchar](50) NULL,
+	[ModuleID] [int] NULL,
+	[SupID] [nvarchar](20) NULL,
+	[MgrID] [nvarchar](20) NULL,
+	[Review_SupID] [nvarchar](20) NULL,
+	[Review_MgrID] [nvarchar](20) NULL,
+	[Behavior] [nvarchar](30) NULL,
+	[SurveySent] [bit] NULL,
+	[NotificationDate] [datetime] NULL,
+	[ReminderSent] [bit] NULL,
+	[ReminderDate] [datetime] NULL,
+	[ReminderCount] [int] NULL,
+	[ReassignDate] [datetime] NULL,
+	[ReassignCount] [int] NOT NULL,
+	[ReassignedToID] [nvarchar](20) NULL,
+	[ArchivedBy] [nvarchar](50) NULL,
+	[ArchivedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Coaching_Log_Archive] PRIMARY KEY CLUSTERED 
+(
+	[CoachingID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Archive] ADD  CONSTRAINT [ArchivedBy_def]  DEFAULT ('Manual') FOR [ArchivedBy]
+GO
+
+
+
+
+--4. Create Table [EC].[Coaching_Log_Reason_Archive]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_Reason_Archive](
+	[CoachingID] [bigint] NOT NULL,
+	[CoachingReasonID] [bigint] NOT NULL,
+	[SubCoachingReasonID] [bigint] NOT NULL,
+	[Value] [nvarchar](30) NOT NULL,
+	[ArchivedBy] [nvarchar](50) NULL,
+	[ArchivedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Coaching_Log_Reason_Archive] PRIMARY KEY CLUSTERED 
+(
+	[CoachingID] ASC,
+	[CoachingReasonID] ASC,
+	[SubCoachingReasonID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Reason_Archive]  WITH NOCHECK ADD  CONSTRAINT [fkCoachingIDArchive] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log_Archive] ([CoachingID])
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Reason_Archive] CHECK CONSTRAINT [fkCoachingIDArchive]
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Reason_Archive] ADD  CONSTRAINT [ArchivedByReason_def]  DEFAULT ('Manual') FOR [ArchivedBy]
 GO
 
 
@@ -863,3 +984,252 @@ END --sp_UpdateReminderMailSent
 
 
 GO
+
+--***************************************************************************
+
+
+--8.  SP [EC].[sp_Insert_Into_Coaching_Log_Archive] 
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Insert_Into_Coaching_Log_Archive' 
+)
+   DROP PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create Date:   10/10/2016
+-- Description:	Archive Inactive Coaching logs older than 1 year
+-- Last Modified By: Susmitha Palacherla
+-- Revision History:
+-- Intial Revision: Created per TFS 3932 - 10/10/2016
+-- =============================================
+CREATE PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive]@strArchivedBy nvarchar(50)= 'Automated Process'
+
+AS
+BEGIN
+
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+
+BEGIN TRY
+PRINT @strArchivedBy
+
+-- Archive coaching logs older than n years
+
+BEGIN
+INSERT INTO [EC].[Coaching_Log_Archive]
+           ([CoachingID]
+           ,[FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+           ,[EmpLanID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[EventDate]
+           ,[CoachingDate]
+           ,[isAvokeID]
+           ,[AvokeID]
+           ,[isNGDActivityID]
+           ,[NGDActivityID]
+           ,[isUCID]
+           ,[UCID]
+           ,[isVerintID]
+           ,[VerintID]
+           ,[VerintEvalID]
+           ,[Description]
+           ,[CoachingNotes]
+           ,[isVerified]
+           ,[SubmittedDate]
+           ,[StartDate]
+           ,[SupReviewedAutoDate]
+           ,[isCSE]
+           ,[MgrReviewManualDate]
+           ,[MgrReviewAutoDate]
+           ,[MgrNotes]
+           ,[isCSRAcknowledged]
+           ,[CSRReviewAutoDate]
+           ,[CSRComments]
+           ,[EmailSent]
+           ,[numReportID]
+           ,[strReportCode]
+           ,[isCoachingRequired]
+           ,[strReasonNotCoachable]
+           ,[txtReasonNotCoachable]
+           ,[VerintFormName]
+           ,[ModuleID]
+           ,[SupID]
+           ,[MgrID]
+           ,[Review_SupID]
+           ,[Review_MgrID]
+           ,[Behavior]
+           ,[SurveySent]
+           ,[NotificationDate]
+           ,[ReminderSent]
+           ,[ReminderDate]
+           ,[ReminderCount]
+           ,[ReassignDate]
+           ,[ReassignCount]
+           ,[ReassignedToID]
+           ,[ArchivedBy]
+           ,[ArchivedDate])
+     SELECT [CoachingID]
+      ,[FormName]
+      ,[ProgramName]
+      ,[SourceID]
+      ,[StatusID]
+      ,[SiteID]
+      ,[EmpLanID]
+      ,[EmpID]
+      ,[SubmitterID]
+      ,[EventDate]
+      ,[CoachingDate]
+      ,[isAvokeID]
+      ,[AvokeID]
+      ,[isNGDActivityID]
+      ,[NGDActivityID]
+      ,[isUCID]
+      ,[UCID]
+      ,[isVerintID]
+      ,[VerintID]
+      ,[VerintEvalID]
+      ,[Description]
+      ,[CoachingNotes]
+      ,[isVerified]
+      ,[SubmittedDate]
+      ,[StartDate]
+      ,[SupReviewedAutoDate]
+      ,[isCSE]
+      ,[MgrReviewManualDate]
+      ,[MgrReviewAutoDate]
+      ,[MgrNotes]
+      ,[isCSRAcknowledged]
+      ,[CSRReviewAutoDate]
+      ,[CSRComments]
+      ,[EmailSent]
+      ,[numReportID]
+      ,[strReportCode]
+      ,[isCoachingRequired]
+      ,[strReasonNotCoachable]
+      ,[txtReasonNotCoachable]
+      ,[VerintFormName]
+      ,[ModuleID]
+      ,[SupID]
+      ,[MgrID]
+      ,[Review_SupID]
+      ,[Review_MgrID]
+      ,[Behavior]
+      ,[SurveySent]
+      ,[NotificationDate]
+      ,[ReminderSent]
+      ,[ReminderDate]
+      ,[ReminderCount]
+      ,[ReassignDate]
+      ,[ReassignCount]
+      ,[ReassignedToID]
+      ,@strArchivedBy
+      ,GetDate()
+  FROM [EC].[Coaching_Log] CL
+  WHERE CL.StatusID = 2
+  and CL.[SubmittedDate] < dateadd(year,-1,getdate())
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+
+-- Archive coaching log reasons for coaching logs older than n years
+
+BEGIN
+INSERT INTO [EC].[Coaching_Log_Reason_Archive]
+           ([CoachingID]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[Value]
+           ,[ArchivedBy]
+           ,[ArchivedDate])
+    SELECT CLR.[CoachingID]
+      ,[CoachingReasonID]
+      ,[SubCoachingReasonID]
+      ,ISNULL([Value],'')
+      ,@strArchivedBy
+      ,GETDATE()
+  FROM [EC].[Coaching_Log_Reason]CLR JOIN [EC].[Coaching_Log] CL
+  ON CLR.CoachingID = CL.CoachingID
+    WHERE CL.StatusID = 2
+  and CL.[SubmittedDate] < dateadd(year,-1,getdate())
+OPTION (MAXDOP 1)
+END
+
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+-- Delete archived coaching log reason records
+
+BEGIN
+	DELETE CLR
+	FROM [EC].[Coaching_Log_Reason]CLR JOIN [EC].[Coaching_Log_Reason_Archive]CLRA 
+    ON CLR.[CoachingID] = CLRA.[CoachingID] JOIN [EC].[Coaching_Log] CL
+    ON CLR.[CoachingID] = CL.[CoachingID]
+   WHERE CL.StatusID = 2
+  and CL.[SubmittedDate] < dateadd(year,-1,getdate())
+	
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+
+-- Delete archived coaching log records
+
+BEGIN
+	DELETE CL
+	FROM [EC].[Coaching_Log] CL JOIN [EC].[Coaching_Log_Archive]CLA
+	ON CL.[CoachingID] = CLA.[CoachingID]
+  WHERE CL.StatusID = 2
+  and CL.[SubmittedDate] < dateadd(year,-1,getdate())
+OPTION (MAXDOP 1)
+END
+
+
+COMMIT TRANSACTION
+END TRY
+
+  BEGIN CATCH
+  ROLLBACK TRANSACTION
+  END CATCH
+
+END  -- [EC].[sp_Insert_Into_Coaching_Log_Archive]
+
+
+
+
+
+GO
+
+
+
+
+
