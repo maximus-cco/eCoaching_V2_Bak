@@ -1,7 +1,10 @@
 /*
-eCoaching_Log_Create(56).sql
-Last Modified Date: 10/7/2016
+eCoaching_Log_Create(57).sql
+Last Modified Date: 10/17/2016
 Last Modified By: Susmitha Palacherla
+
+Version 57: 10/17/2016
+1. Updated  SP#45 to fix Shared coaching sub-reasons may cause unexpected display issue in UI per TFS 3758
 
 Version 56: 10/7/2016
 1. Updated  Procedures #4,5,7,8,9,15,16,17 - single ecl in a single procedure for display per TFS 3923
@@ -49,7 +52,7 @@ Version 46: 4/15/2016
 
 
 Version 45: 3/23/2016
-1. Updated SP # SP#45 to support ODT feed per TFS 2283
+1. Updated SP#45 to support ODT feed per TFS 2283
 2. Updated SP # 50 add ODT to Sup update workflow per TFS 2283
 
 Version 44: 3/4/2016
@@ -4821,6 +4824,7 @@ GO
 -- 7. TFS 3179 & 3186 to add support HFC & KUD Quality Other feeds - 7/15/2016
 -- 8. TFS 3677 to update Quality\KUD Flag - 8/18/2016
 -- 9. TFS 3972 to ADD SEA flag - 9/15/2016
+--10. TFS 3758 Shared coaching sub-reasons may cause unexpected display issue in user interface - 10/14/2016
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4911,21 +4915,21 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		cl.AvokeID	strBehaviorAnalyticsID,
 		cl.isNGDActivityID	isNGDActivityID,
 		cl.NGDActivityID	strNGDActivityID,
-		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END "Customer Service Escalation",
-		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
-		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL AND cc.SDR is NULL AND cc.ODT is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
-		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
-		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
-		CASE WHEN cc.OMRIAE is Not NULL Then 1 ELSE 0 END	"OMR / IAE",
-		CASE WHEN cc.OMRIAT is Not NULL Then 1 ELSE 0 END	"OMR / IAT",
-		CASE WHEN cc.OMRISQ is Not NULL Then 1 ELSE 0 END	"OMR / ISQ",
-		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
-		CASE WHEN cc.SDR is Not NULL Then 1 ELSE 0 END	"Training / SDR",
-	    CASE WHEN cc.ODT is Not NULL Then 1 ELSE 0 END	"Training / ODT",
-	    CASE WHEN cc.CTC is Not NULL Then 1 ELSE 0 END	"Quality / CTC",
-	    CASE WHEN cc.HFC is Not NULL Then 1 ELSE 0 END	"Quality / HFC",
-	    CASE WHEN (cc.KUD is Not NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"Quality / KUD",
-	    CASE WHEN (cc.SEA is Not NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"OTH / SEA",
+		CASE WHEN (cc.CSE = ''Opportunity'' AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END "Customer Service Escalation",
+		CASE WHEN (cc.CCI is Not NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"Current Coaching Initiative",
+		CASE WHEN (cc.OMR is Not NULL AND cc.LCS is NULL AND cc.SDR is NULL AND cc.ODT is NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"OMR / Exceptions",
+		CASE WHEN (cc.ETSOAE is Not NULL AND cl.strReportCode like ''OAE%'') Then 1 ELSE 0 END	"ETS / OAE",
+		CASE WHEN (cc.ETSOAS is Not NULL AND cl.strReportCode like ''OAS%'') Then 1 ELSE 0 END	"ETS / OAS",
+		CASE WHEN (cc.OMRIAE is Not NULL AND cl.strReportCode like ''IAE%'') Then 1 ELSE 0 END	"OMR / IAE",
+		CASE WHEN (cc.OMRIAT is Not NULL AND cl.strReportCode like ''IAT%'') Then 1 ELSE 0 END	"OMR / IAT",
+		CASE WHEN (cc.OMRISQ is Not NULL AND cl.strReportCode like ''ISQ%'') Then 1 ELSE 0 END	"OMR / ISQ",
+		CASE WHEN (cc.LCS is Not NULL AND cl.strReportCode like ''LCS%'') Then 1 ELSE 0 END	"LCS",
+		CASE WHEN (cc.SDR is Not NULL AND cl.strReportCode like ''SDR%'') Then 1 ELSE 0 END	"Training / SDR",
+	    CASE WHEN (cc.ODT is Not NULL AND cl.strReportCode like ''ODT%'') Then 1 ELSE 0 END	"Training / ODT",
+	    CASE WHEN (cc.CTC is Not NULL AND cl.strReportCode like ''CTC%'') Then 1 ELSE 0 END	"Quality / CTC",
+	    CASE WHEN (cc.HFC is Not NULL AND cl.strReportCode like ''HFC%'') Then 1 ELSE 0 END	"Quality / HFC",
+	    CASE WHEN (cc.KUD is Not NULL AND cl.strReportCode like ''KUD%'') Then 1 ELSE 0 END	"Quality / KUD",
+	    CASE WHEN (cc.SEA is Not NULL AND cl.strReportCode like ''SEA%'') Then 1 ELSE 0 END	"OTH / SEA",
 	  	cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -4981,11 +4985,6 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
-
-
-
-
-
 
 
 
