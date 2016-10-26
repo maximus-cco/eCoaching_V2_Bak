@@ -1,8 +1,11 @@
 /*
-File: eCoaching_Functions.sql (26)
+File: eCoaching_Functions.sql (27)
 Last Modified By: Susmitha Palacherla
-Date: 9/16/2016
+Date: 10/26/2016
 
+Version 27, 10/26/2016
+1. Added 1 new function #44) to to support reassigned recipients for remindersper  TFS 4353
+[EC].[fn_strMgrEmailFromEmpID]
 
 Version 26,   9/16/2016
 1. Updated Fn#5 [EC].[fn_intSubCoachReasonIDFromRptCode] to add ATT SEA flag  per TFS 3972
@@ -15,7 +18,7 @@ Version 24,  6/28/2016
 
 
 Version 23, 6/13/2016
-1. Added 1new Function 3 function #43) to support the new HR check per TFS 2332
+1. Added 1 new function #43) to support the new HR check per TFS 2332
 [EC].[fn_strCheckIf_HRUser] 
 
 
@@ -175,7 +178,8 @@ List of Functions:
 40.[EC].[fn_strCheckIfATCoachingAdmin] 
 41.[EC].[fn_strCheckIfATWarningAdmin] 
 42.[EC].[fn_strStatusFromStatusID]
-
+43. [EC].[fn_strCheckIf_HRUser] 
+44.[EC].[fn_strMgrEmailFromEmpID]
 */
 
 
@@ -2923,5 +2927,76 @@ IF @nvcActive = 'A'	AND @strEmpJobCode LIKE 'WH%'
 END --fn_strCheckIf_HRUser
 
 GO
+
+--*********************************************************************************
+
+
+--44. FUNCTION [EC].[fn_strMgrEmailFromEmpID] 
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strMgrEmailFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strMgrEmailFromEmpID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 10/21/2016
+-- Description:	Given an Employee ID, fetches the Email address of the Employee's Manager from the  Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version : TFS 4353 for fetching Mgr Email for Reassigned Mgrs and Mgrs
+-- =============================================
+CREATE FUNCTION [EC].[fn_strMgrEmailFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(50)
+AS
+BEGIN
+	DECLARE 
+	  @strMgrEmpID nvarchar(10)
+	  ,@strMgrEmail nvarchar(50)
+
+  SET @strMgrEmpID = (SELECT Mgr_ID
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID)
+  
+  IF     (@strMgrEmpID IS NULL OR @strMgrEmpID = 'Unknown')
+  SET    @strMgrEmpID = N'999999'
+  
+ SET @strMgrEmail = (SELECT Emp_Email
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strMgrEmpID)
+  
+  IF  @strMgrEmail IS NULL 
+  SET @strMgrEmail = N'UnKnown'
+  
+  RETURN  @strMgrEmail 
+END -- fn_strMgrEmailFromEmpID
+
+
+
+
+
+
+GO
+
+
+
+
 
 --*********************************************************************************
