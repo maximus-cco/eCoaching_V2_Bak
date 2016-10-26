@@ -1,7 +1,9 @@
 /*
 eCoaching_Admin_Tool_Create(06).sql
-Last Modified Date:09/20/2016
+Last Modified Date:10/26/2016
 Last Modified By: Susmitha Palacherla
+
+Version 07: Update to SP #12 per TFS 4353- 10/26/2016
 
 Version 06: Added records for additional admin users with jobcode WACQ13 per tfs 3877 - 09/20/2016
 Tables #4,6,11
@@ -66,7 +68,7 @@ Procedures
 
 
 
-*/
+
 
 
  --Details
@@ -518,7 +520,7 @@ GO
 
 
 
-/**************************************************************
+**************************************************************
 
 
 
@@ -1581,8 +1583,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 ---------------------------------------------------------------------------------------------------------
 -- MULTIPLE ASTERISKS (***) DESIGNATE SECTIONS OF THE STORED PROCEDURE TEMPLATE THAT SHOULD BE CUSTOMIZED
+--  Initial Revision per TFS 1709 Admin tool setup - 5/12/2016
+--  Modified per TFS 4353 to reset recminder attributes for reassigned logs - 10/21/2016
 ---------------------------------------------------------------------------------------------------------
 -- REQUIRED PARAMETERS:
 -- INPUT: @***sampleInputVariable varchar(35)***
@@ -1669,18 +1675,24 @@ END
           
              
 WAITFOR DELAY '00:00:00:02'  -- Wait for 2 ms
-    --PRINT 'STEP1'
+    --PRINT 'END STEP1'
 
 
 UPDATE [EC].[Coaching_Log]
-SET [ReassignedToID] =  @strAssignedId,
-    [ReassignDate]= Getdate(),
-	[ReassignCount] = ReassignCount + 1
+SET [ReassignedToID] =  @strAssignedId
+    ,[ReassignDate]= Getdate()
+	,[ReassignCount] = ReassignCount + 1
+	,[ReminderSent]= 0
+    ,[ReminderDate]= NULL
+    ,[ReminderCount]= 0
 FROM [EC].[Coaching_Log]CL JOIN @tableIds ID 
 ON CL.CoachingID = ID.ID 
 								
 						
-          
+WAITFOR DELAY '00:00:00:02'  -- Wait for 2 ms
+    --PRINT 'END STEP2'      
+    
+      
 
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -1714,7 +1726,10 @@ ON CL.CoachingID = ID.ID
 return 0
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 
+
+
 GO
+
 
 
 

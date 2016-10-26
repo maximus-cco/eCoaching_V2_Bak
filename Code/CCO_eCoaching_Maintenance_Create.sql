@@ -1,7 +1,10 @@
 /*
-eCoaching_Maintenance_Create(19).sql
-Last Modified Date: 10/11/2016
+eCoaching_Maintenance_Create(20).sql
+Last Modified Date: 10/26/2016
 Last Modified By: Susmitha Palacherla
+
+Version 20: 10/26/2016
+1. Updated Sp#6   [EC].[sp_SelectCoaching4Reminder] to incorporate reassigned recipients per TFS 4353
 
 Version 19: 10/11/2016
 1. Added tables #3 and 4 and SP #8 to support Coaching log Archive process per TFS 3932.
@@ -315,7 +318,7 @@ GO
 
 --******************************************************************
 
--2. Create SP  [EC].[sp_SelectCoaching4Contact] 
+--2. Create SP  [EC].[sp_SelectCoaching4Contact] 
 
 IF EXISTS (
   SELECT * 
@@ -420,7 +423,7 @@ GO
 --***************************************************************************************************************
 
 
--3. Create SP  [EC].[sp_UpdateFeedMailSent] 
+--3. Create SP  [EC].[sp_UpdateFeedMailSent] 
 
 IF EXISTS (
   SELECT * 
@@ -474,7 +477,7 @@ GO
 
 --***************************************************************************************************************
 
--4. Create SP [EC].[sp_Inactivations_From_Feed] 
+--4. Create SP [EC].[sp_Inactivations_From_Feed] 
 
 IF EXISTS (
   SELECT * 
@@ -671,7 +674,7 @@ GO
 
 
 
--5. Create SP[EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]
+--5. Create SP[EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]
 
 IF EXISTS (
   SELECT * 
@@ -767,6 +770,9 @@ GO
 
 
 
+
+
+
 --	====================================================================
 --	Author:		       Susmitha Palacherla
 --	Create Date:	   02/09/2016
@@ -775,6 +781,7 @@ GO
 --  Initial revision per TFS Change request 1710 - 02/09/2016
 --  Updated to limit to 2 reminders per status per TFS 2145 - 3/2/2016
 --  Updated to replace Hierarchy mgr with Review mgr for LCS Mgr recipients per TFS 2182 - 3/8/2016
+--  Modified per TFS 4353 to update recipients for reassigned logs - 10/21/2016
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Reminder]
 AS
@@ -810,6 +817,8 @@ SET @nvcSQL1 = ';WITH TempMain AS
 		,x.ReminderDate	
 		,x.ReminderCount   
 		,x.ReassignDate   
+		,x.ReassignCount
+		,x.ReassignToID
 FROM 
 	
 -- Verint-GDIT Logs
@@ -826,6 +835,8 @@ FROM
 		,cl.ReminderDate	ReminderDate
 		,cl.ReminderCount   ReminderCount
 		,cl.ReassignDate    ReassignDate 
+		,cl.ReassignCount   ReassignCount
+		,cl.ReassignedToID    ReassignToID
 		, CASE
 		WHEN (ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) >  '''+CONVERT(VARCHAR,@intHrs1)+''' ) THEN ''Sup''
 		WHEN (ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) >'''+CONVERT(VARCHAR,@intHrs1)+''' )THEN ''Sup''
@@ -848,7 +859,7 @@ AND ((ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate],[Notificat
 
 -- LCS OMR Logs
 
-SET @nvcSQL2 = ' UNION
+SET @nvcSQL2 = ' UNION 
 SELECT   cl.CoachingID	numID	
 			,cl.FormName	strFormID
 		,cl.EmpID strEmpID
@@ -861,6 +872,8 @@ SELECT   cl.CoachingID	numID
 		,cl.ReminderDate	ReminderDate
 		,cl.ReminderCount   ReminderCount
 		,cl.ReassignDate    ReassignDate 
+		,cl.ReassignCount   ReassignCount
+		,cl.ReassignedToID    ReassignToID
 		, CASE
 		WHEN (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate],[NotificationDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''') THEN ''ReviewMgr''
 		WHEN (ReminderSent = ''True'' AND cl.Statusid = 5 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')THEN ''ReviewMgr''
@@ -886,7 +899,6 @@ AND ((ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([Reas
 (ReminderSent = ''True'' AND [ReminderCount] < 2 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate],[ReminderDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+''')OR
 (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]),GetDate()) > '''+CONVERT(VARCHAR,@intHrs2)+'''))'
 
-
 SET @nvcSQL3 = 
  ' ) x )SELECT 
          numid CoachingID
@@ -894,14 +906,21 @@ SET @nvcSQL3 =
 		,strStatus
 		,strSubCoachingSource
 		,strValue
-		,CASE WHEN Remind = ''Sup'' THEN eh.Sup_Email	
-		      WHEN Remind = ''Mgr'' THEN eh.Mgr_Email
-		      WHEN Remind = ''ReviewMgr'' Then [EC].[fn_strEmpEmailFromEmpID](strMgr)
+		,CASE WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND Remind = ''Sup'') THEN eh.Sup_Email
+			 WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND Remind = ''Sup'') THEN [EC].[fn_strEmpEmailFromEmpID](ReassignToID)		
+		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND Remind = ''Mgr'') THEN eh.Mgr_Email
+		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND Remind = ''Mgr'') THEN [EC].[fn_strEmpEmailFromEmpID](ReassignToID)	
+		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND Remind = ''ReviewMgr'') THEN [EC].[fn_strEmpEmailFromEmpID](strMgr)
+		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND Remind = ''ReviewMgr'') THEN [EC].[fn_strEmpEmailFromEmpID](ReassignToID)		
 		      ELSE '''' END strToEmail
-		,CASE WHEN RemindCC = ''Mgr'' THEN eh.Mgr_Email	
-		      WHEN RemindCC = ''SrMgr'' THEN [EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
-		      WHEN RemindCC = ''ReviewSrMgr'' THEN [EC].[fn_strSupEmailFromEmpID](strMgr)
-		      WHEN RemindCC = ''Mgr/SrMgr'' THEN eh.Mgr_Email + '';'' +[EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		,CASE WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND RemindCC = ''Mgr'') THEN eh.Mgr_Email	
+			 WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND RemindCC = ''Mgr'') THEN [EC].[fn_strSupEmailFromEmpID](ReassignToID)
+		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND RemindCC = ''SrMgr'') THEN [EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND RemindCC = ''SrMgr'') THEN [EC].[fn_strMgrEmailFromEmpID](ReassignToID)
+		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND RemindCC = ''ReviewSrMgr'') THEN [EC].[fn_strSupEmailFromEmpID](strMgr)
+		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND RemindCC = ''ReviewSrMgr'') THEN [EC].[fn_strSupEmailFromEmpID](ReassignToID)
+		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND RemindCC = ''Mgr/SrMgr'') THEN eh.Mgr_Email + '';'' +[EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND RemindCC = ''Mgr/SrMgr'') THEN [EC].[fn_strSupEmailFromEmpID](ReassignToID) + '';'' + [EC].[fn_strMgrEmailFromEmpID](ReassignToID)
 		      ELSE '''' END strCCEmail
 		 ,NotificationDate	
 		,ReminderSent	
@@ -914,10 +933,10 @@ SET @nvcSQL3 =
 	   	ORDER BY NotificationDate desc'
 
         
-SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
+SET @nvcSQL = @nvcSQL1 +   @nvcSQL2 +   @nvcSQL3 
 EXEC (@nvcSQL)	
 	    
---PRINT @nvcsql  
+--print @nvcsql  
 	    
 END --sp_SelectCoaching4Reminder
 
@@ -925,7 +944,13 @@ END --sp_SelectCoaching4Reminder
 
 
 
+
+
+
 GO
+
+
+
 
 --***************************************************************************************************************
 
