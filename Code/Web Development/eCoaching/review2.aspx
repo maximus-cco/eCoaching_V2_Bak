@@ -210,6 +210,7 @@
                         </asp:Table>
                     </asp:Panel>
                     <asp:Label ID="Label96" runat="server" Text='<%# Eval("strFormID") %>' Visible="false" />
+                    <asp:Label ID="CoachingMonitorYesNo" runat="server" Text='<%# Eval("isCoachingMonitor") %>' Visible="false"></asp:Label>
                     <asp:Label ID="Label50" runat="server" Text='<%# Eval("strFormStatus") %>' Visible="false" />
                     <asp:Label ID="Label51" runat="server" Text='<%# Eval("SubmittedDate") %>' Visible="false" />
                     <asp:Label ID="Label52" runat="server" Text='<%# Eval("CoachingDate") %>' Visible="false" />
@@ -294,6 +295,9 @@
         <br />
         <asp:Label ID="Label117" runat="server" Text="FormID:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
         <asp:Label ID="Label118" runat="server" Text="" CssClass="sidetext"></asp:Label>
+        <br />
+        <asp:Label ID="lblCoachMonitorYesNo" runat="server" Text="Coaching Monitor:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
+        <asp:Label ID="txtCoachMonitorYesNo" runat="server" Text="" CssClass="sidetext"></asp:Label>
         <br />
         <asp:Label ID="Label2" runat="server" Text="Status:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
         <asp:Label ID="Label3" runat="server" Text="New" CssClass="sidetext"></asp:Label>

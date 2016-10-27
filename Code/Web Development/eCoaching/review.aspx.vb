@@ -198,6 +198,11 @@ Public Class review
         Label15.Text = pHolder.Text
         pHolder = ListView1.Items(0).FindControl("Label96")
         Label118.Text = pHolder.Text
+
+        ' Coaching Monitor Yes/No?
+        pHolder = ListView1.Items(0).FindControl("CoachingMonitorYesNo")
+        txtCoachMonitorYesNo.Text = pHolder.Text
+
         pHolder = ListView1.Items(0).FindControl("Label59")
         Label23.Text = pHolder.Text
 
