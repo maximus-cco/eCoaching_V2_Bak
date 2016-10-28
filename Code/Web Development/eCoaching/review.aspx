@@ -741,6 +741,7 @@
                         </asp:Table>
                     </asp:Panel>
                     <asp:Label ID="Label96" runat="server" Text='<%# Eval("strFormID") %>' Visible="false" />
+                    <asp:Label ID="CoachingMonitorYesNo" runat="server" Text='<%# Eval("isCoachingMonitor") %>' Visible="false"></asp:Label>
                     <asp:Label ID="Label50" runat="server" Text='<%# Eval("strFormStatus") %>' Visible="false" />
                     <asp:Label ID="Label51" runat="server" Text='<%# Eval("SubmittedDate") %>' Visible="false" />
                     <asp:Label ID="Label52" runat="server" Text='<%# Eval("CoachingDate") %>' Visible="false" />
