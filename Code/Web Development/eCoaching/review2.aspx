@@ -296,9 +296,6 @@
         <asp:Label ID="Label117" runat="server" Text="FormID:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
         <asp:Label ID="Label118" runat="server" Text="" CssClass="sidetext"></asp:Label>
         <br />
-        <asp:Label ID="lblCoachMonitorYesNo" runat="server" Text="Coaching Monitor:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
-        <asp:Label ID="txtCoachMonitorYesNo" runat="server" Text="" CssClass="sidetext"></asp:Label>
-        <br />
         <asp:Label ID="Label2" runat="server" Text="Status:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
         <asp:Label ID="Label3" runat="server" Text="New" CssClass="sidetext"></asp:Label>
         <br />
@@ -331,6 +328,9 @@
             <br />
             <asp:Label ID="Label63" runat="server" Text="Scorecard Name:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
             <asp:Label ID="Label64" runat="server" CssClass="sidetext"></asp:Label>
+            <br />
+            <asp:Label ID="lblCoachMonitorYesNo" runat="server" Text="Coaching Monitor:" ForeColor="Black" CssClass="sidelabel"></asp:Label>&nbsp;
+            <asp:Label ID="txtCoachMonitorYesNo" runat="server" Text="" CssClass="sidetext"></asp:Label>
             <br />
         </asp:Panel>
         <asp:Panel ID="Panel19" runat="server">

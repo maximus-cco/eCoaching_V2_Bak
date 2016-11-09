@@ -248,24 +248,6 @@ Partial Public Class review2
     Protected WithEvents Label118 As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''lblCoachMonitorYesNo control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblCoachMonitorYesNo As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
-    '''txtCoachMonitorYesNo control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtCoachMonitorYesNo As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
     '''Label2 control.
     '''</summary>
     '''<remarks>
@@ -453,6 +435,24 @@ Partial Public Class review2
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Label64 As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''lblCoachMonitorYesNo control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblCoachMonitorYesNo As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''txtCoachMonitorYesNo control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtCoachMonitorYesNo As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
     '''Panel19 control.
