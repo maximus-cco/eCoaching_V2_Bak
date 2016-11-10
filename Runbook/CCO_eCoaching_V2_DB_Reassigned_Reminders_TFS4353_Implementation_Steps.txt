@@ -156,6 +156,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:		       Susmitha Palacherla
 --	Create Date:	   02/09/2016
@@ -289,20 +290,20 @@ SET @nvcSQL3 =
 		,strStatus
 		,strSubCoachingSource
 		,strValue
-		,CASE WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND Remind = ''Sup'') THEN eh.Sup_Email
+		,CASE WHEN ( ReassignCount = 0  AND Remind = ''Sup'') THEN eh.Sup_Email
 			 WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND Remind = ''Sup'') THEN [EC].[fn_strEmpEmailFromEmpID](ReassignToID)		
-		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND Remind = ''Mgr'') THEN eh.Mgr_Email
+		     WHEN ( ReassignCount = 0  AND Remind = ''Mgr'') THEN eh.Mgr_Email
 		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND Remind = ''Mgr'') THEN [EC].[fn_strEmpEmailFromEmpID](ReassignToID)	
-		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND Remind = ''ReviewMgr'') THEN [EC].[fn_strEmpEmailFromEmpID](strMgr)
+		     WHEN ( ReassignCount = 0  AND Remind = ''ReviewMgr'') THEN [EC].[fn_strEmpEmailFromEmpID](strMgr)
 		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND Remind = ''ReviewMgr'') THEN [EC].[fn_strEmpEmailFromEmpID](ReassignToID)		
 		      ELSE '''' END strToEmail
-		,CASE WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND RemindCC = ''Mgr'') THEN eh.Mgr_Email	
+		,CASE WHEN ( ReassignCount = 0  AND RemindCC = ''Mgr'') THEN eh.Mgr_Email	
 			 WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND RemindCC = ''Mgr'') THEN [EC].[fn_strSupEmailFromEmpID](ReassignToID)
-		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND RemindCC = ''SrMgr'') THEN [EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		     WHEN ( ReassignCount = 0  AND RemindCC = ''SrMgr'') THEN [EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
 		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND RemindCC = ''SrMgr'') THEN [EC].[fn_strMgrEmailFromEmpID](ReassignToID)
-		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND RemindCC = ''ReviewSrMgr'') THEN [EC].[fn_strSupEmailFromEmpID](strMgr)
+		     WHEN ( ReassignCount = 0  AND RemindCC = ''ReviewSrMgr'') THEN [EC].[fn_strSupEmailFromEmpID](strMgr)
 		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND RemindCC = ''ReviewSrMgr'') THEN [EC].[fn_strSupEmailFromEmpID](ReassignToID)
-		     WHEN ( ReassignCount = 0 AND ReassignToID is NULL AND RemindCC = ''Mgr/SrMgr'') THEN eh.Mgr_Email + '';'' +[EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
+		     WHEN ( ReassignCount = 0  AND RemindCC = ''Mgr/SrMgr'') THEN eh.Mgr_Email + '';'' +[EC].[fn_strEmpEmailFromEmpID](eh.SrMgrLvl1_ID)
 		     WHEN ( ReassignCount <> 0 AND ReassignToID is not NULL AND RemindCC = ''Mgr/SrMgr'') THEN [EC].[fn_strSupEmailFromEmpID](ReassignToID) + '';'' + [EC].[fn_strMgrEmailFromEmpID](ReassignToID)
 		      ELSE '''' END strCCEmail
 		 ,NotificationDate	
@@ -324,7 +325,11 @@ EXEC (@nvcSQL)
 END --sp_SelectCoaching4Reminder
 
 
+
 GO
+
+
+
 
 PRINT ('  Procedure sp_SelectCoaching4Reminder  Updated...')
 
