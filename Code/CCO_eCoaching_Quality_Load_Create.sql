@@ -1,7 +1,11 @@
 /*
-eCoaching_Quality_Create(09).sql
-Last Modified Date: 09/01/2015
+eCoaching_Quality_Create(10).sql
+Last Modified Date: 10/31/2016
 Last Modified By: Susmitha Palacherla
+
+Version 10: 10/31/2016
+1.  Updated per TFS 3757 to Import additional attribute isCoachingMonitor
+     Updated impacted tables to add new Column and Stored procedures.
 
 Version 09:
 1. Updated following procedures to force CRLF in Decsription in Quality logs during load and update.(TFS 283)
@@ -93,7 +97,8 @@ CREATE TABLE [EC].[Quality_Coaching_Stage](
 	[Source] [nvarchar](30) NULL,
 	[Oppor_Rein] [nvarchar](20) NULL,
 	[Date_Inserted] [datetime] NULL,
-                  [VerintFormName] [nvarchar) (50) NULL
+        [VerintFormName] [nvarchar) (50) NULL,
+	[isCoachingMonitor] nvarchar(3)	
 ) ON [PRIMARY]
 
 GO
@@ -137,7 +142,8 @@ CREATE TABLE [EC].[Quality_Coaching_Fact](
 	[Source] [nvarchar](30) NULL,
 	[Oppor_Rein] [nvarchar](20) NULL,
 	[Date_Inserted] [datetime] NULL,
-                  [VerintFormName] [nvarchar) (50) NULL
+        [VerintFormName] [nvarchar) (50) NULL,
+	[isCoachingMonitor] nvarchar(3)
 ) ON [PRIMARY]
 
 GO
@@ -176,7 +182,8 @@ CREATE TABLE [EC].[Quality_Coaching_Rejected](
 	[Oppor_Rein] [nvarchar](20) NULL,
 	[Reject_reason] [nvarchar](40) NULL,
 	[Date_Rejected] [datetime] NULL,
-	[VerintFormName] [nvarchar) (50) NULL
+	[VerintFormName] [nvarchar) (50) NULL,
+	[isCoachingMonitor] nvarchar(3)
 ) ON [PRIMARY]
 
 GO
@@ -238,16 +245,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --    ====================================================================
---    Author:           Susmitha Palacherla
---    Create Date:      02/23/2014
---    Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
+-- Author:           Susmitha Palacherla
+-- Create Date:      02/23/2014
+-- Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 08/31/2015
--- Last Updated By: Susmitha Palacherla
--- Modified per TFS 283 to force CRLF in Description value when viewed in UI.
-
+-- Modified per TFS 283 to force CRLF in Description value when viewed in UI - 08/31/2015
+-- Updated per TFS 3757 to add isCoachingMonitor attribute - 10/28/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
@@ -292,7 +299,7 @@ BEGIN TRY
            ,[ModuleID]
            ,[SupID]
            ,[MgrID]
-           )
+           ,[isCoachingMonitor])
 
             SELECT DISTINCT
             lower(csr.Emp_LanID)	[FormName],
@@ -323,7 +330,9 @@ BEGIN TRY
 		    qs.VerintFormname [verintFormName],
 		    1 [ModuleID],
 		    ISNULL(csr.[Sup_ID],'999999') [SupID],
-		    ISNULL(csr.[Mgr_ID],'999999')[MgrID]
+		    ISNULL(csr.[Mgr_ID],'999999')[MgrID],
+		    qs.isCoachingMonitor [isCoachingMonitor]
+		    
 FROM [EC].[Quality_Coaching_Stage] qs 
 join EC.Employee_Hierarchy csr on qs.User_EMPID = csr.Emp_ID
 left outer join EC.Coaching_Log cf on qs.Eval_ID = cf.VerintEvalID
@@ -390,7 +399,11 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
+
+
 GO
+
+
 
 
 
@@ -417,15 +430,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      04/23/2014
 --    Description:     This procedure updates the Quality scorecards into the Coaching_Log table. 
 --                     The txtdescription is updated in the Coaching_Log table.
---                     The updated Oppor/Re-In value is updated in the Coaching_Reasons Table.
--- Last Modified Date: 08/31/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per TFS 283 to force CRLF in Description value when viewed in UI.
+-- Modified per TFS 283 to force CRLF in Description value when viewed in UI - 08/31/2015
+-- Modified per TFS 3757 to update isCoachingMonitor - 11/10/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality]
   
@@ -439,7 +453,8 @@ BEGIN TRY
 -- Update txtDescription for existing records
 
  UPDATE [EC].[Coaching_Log]
- SET [Description] = REPLACE(EC.fn_nvcHtmlEncode(S.[Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />')
+ SET [Description] = REPLACE(EC.fn_nvcHtmlEncode(S.[Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />'),
+ isCoachingMonitor = S.isCoachingMonitor
  FROM [EC].[Quality_Coaching_Stage]S INNER JOIN [EC].[Coaching_Log]F
  ON S.[Eval_ID] = F.[VerintEvalID]
  AND S.[Journal_ID] = F.[VerintID]
@@ -493,9 +508,10 @@ END TRY
 END -- sp_Update_Coaching_Log_Quality
 
 
-
-
 GO
+
+
+
 
 
 
@@ -521,13 +537,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --    ====================================================================
---    Author:           Susmitha Palacherla
---    Create Date:      05/14/2014
---    Description:     This procedure updates the existing records in the Quality Fact table
+--  Author:           Susmitha Palacherla
+--  Create Date:      05/14/2014
+--  Description:     This procedure updates the existing records in the Quality Fact table
 --                     and inserts new records.
---   Modified Date:    07/18/2014
---   Description:      Updated per SCR 13054 to add additional column VerintFormName.
+--  Updated per SCR 13054 to add additional column VerintFormName - 07/18/2014
+--  Updated per TFS 3757 to add isCoachingMonitor attribute - 10/28/2016
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update_Quality_Fact]
   
@@ -578,7 +596,8 @@ INSERT INTO [EC].[Quality_Coaching_Fact]
            ,[Source]
            ,[Oppor_Rein]
            ,[Date_Inserted]
-           ,[VerintFormName])
+           ,[VerintFormName]
+           ,[isCoachingMonitor])
      SELECT
        S.[Eval_ID]
       ,S.[Eval_Date]
@@ -601,6 +620,7 @@ INSERT INTO [EC].[Quality_Coaching_Fact]
       ,S.[Oppor_Rein]
       ,S.[Date_Inserted]
       ,S.[VerintFormName]
+      ,S.[isCoachingMonitor]
       FROM
 	[EC].[Quality_Coaching_Stage] S LEFT OUTER JOIN
 	[EC].[Quality_Coaching_Fact] F ON 
@@ -640,7 +660,11 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_Update_Quality_Fact
+
+
 GO
+
+
 
 
 
