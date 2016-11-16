@@ -1,7 +1,11 @@
 /*
-eCoaching_Log_Create(57).sql
-Last Modified Date: 10/17/2016
+eCoaching_Log_Create(58).sql
+Last Modified Date: 11/16/2016
 Last Modified By: Susmitha Palacherla
+
+Version 58: 11/16/2016
+1. Updated  SP#45 to add new column isCoachingMonitor and added column to table #1 per TFS 3757
+
 
 Version 57: 10/17/2016
 1. Updated  SP#45 to fix Shared coaching sub-reasons may cause unexpected display issue in UI per TFS 3758
@@ -432,12 +436,21 @@ CREATE TABLE [EC].[Coaching_Log](
 	[strReasonNotCoachable] [nvarchar](30) NULL,
 	[txtReasonNotCoachable] [nvarchar](3000) NULL,
 	[VerintFormName] [nvarchar]50) NULL,
-                  [ModuleID][int],
-                  [SupID] [nvarchar](20) NULL,
-                  [MgrID] [nvarchar](20) NULL,
-                  [Review_SupID] [nvarchar](20) NULL,
-                  [Review_MgrID] [nvarchar](20) NULL,
-                  [Behavior] [nvarchar](30) NULL,
+        [ModuleID][int],
+        [SupID] [nvarchar](20) NULL,
+        [MgrID] [nvarchar](20) NULL,
+        [Review_SupID] [nvarchar](20) NULL,
+        [Review_MgrID] [nvarchar](20) NULL,
+        [Behavior] [nvarchar](30) NULL,
+        [SurveySent][bit] DEFAULT (0) NULL,
+        [NotificationDate] [datetime] NULL,
+        [ReminderSent][bit] DEFAULT (0),
+        [ReminderDate] [datetime] NULL,
+        [ReminderCount][int] DEFAULT (0),
+        [ReassignDate] [datetime] NULL,
+        [ReassignCount] [INT] DEFAULT(0)NOT NULL,
+        [ReassignedToID][nvarchar](20) NULL,
+        [isCoachingMonitor] nvarchar(3) NULL,
  CONSTRAINT [PK_Coaching_Log] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC
@@ -4808,6 +4821,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -4825,6 +4841,7 @@ GO
 -- 8. TFS 3677 to update Quality\KUD Flag - 8/18/2016
 -- 9. TFS 3972 to ADD SEA flag - 9/15/2016
 --10. TFS 3758 Shared coaching sub-reasons may cause unexpected display issue in user interface - 10/14/2016
+--11. TFS 3757 Include Yes/No value to coaching monitor question - 10/27/2016
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -4911,6 +4928,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		cl.isVerintID	isVerintMonitor,
 		cl.VerintID	strVerintID,
 		cl.VerintFormName VerintFormName,
+		cl.isCoachingMonitor isCoachingMonitor,
 		cl.isAvokeID	isBehaviorAnalyticsMonitor,
 		cl.AvokeID	strBehaviorAnalyticsID,
 		cl.isNGDActivityID	isNGDActivityID,
@@ -4984,7 +5002,13 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
+
+
+
 GO
+
 
 
 
