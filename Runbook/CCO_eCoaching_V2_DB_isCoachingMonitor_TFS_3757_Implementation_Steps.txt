@@ -755,15 +755,6 @@ END -- sp_Update_Coaching_Log_Quality
 GO
 
 
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Coaching_Log' 
-)
-   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
-GO
-
 
 --*********************************************************
 --*********************************************************
