@@ -70,7 +70,6 @@
             radioButtonList.DataTextField = "Text"
             radioButtonList.DataValueField = "Value"
             radioButtonList.DataBind()
-            radioButtonList.SelectedIndex = 0
         Next
 
         If (handler.ShowHotTopic(survey)) Then

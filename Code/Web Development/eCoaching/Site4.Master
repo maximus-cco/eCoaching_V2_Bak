@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>eCoaching - My Survey</title>
     <link href="~/styles/bootstrap-3.2.0.min.css" rel="stylesheet" type="text/css" />
     <link href="~/styles/Site.css" rel="stylesheet" type="text/css" />

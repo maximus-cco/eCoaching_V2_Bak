@@ -36,11 +36,14 @@
                         <asp:Label ID="FailMsgLabel" runat="server" EnableViewState="false" />
                     </div>
 
+                    <div id="validationErrorDiv" class="error"></div>
+
                     <%-- Question 1--%>
-                    <asp:Label ID="Question1Label" CssClass="question" runat="server" AssociatedControlID="Question1RadioButtonList" />
-                    <br />
-                    <asp:RadioButtonList ID="Question1RadioButtonList" CssClass="radioButtonList" runat="server">
-                    </asp:RadioButtonList>
+                    <asp:Label ID="Question1Label" CssClass="question required" runat="server" AssociatedControlID="Question1RadioButtonList" />
+                    <asp:RequiredFieldValidator 
+                        runat="server" ID="RequiredQ1" ValidationGroup="validationGroup" ControlToValidate="Question1RadioButtonList" 
+                        ErrorMessage="Please select an answer." />
+                    <asp:RadioButtonList ID="Question1RadioButtonList" CssClass="radioButtonList" runat="server"></asp:RadioButtonList>
                     <asp:Label ID="Question1TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question1TextBox" />
                     <br />
                     <asp:TextBox ID="Question1TextBox" Rows="10" TextMode="MultiLine" runat="server" />
@@ -48,10 +51,12 @@
 
                     <%-- Question 2--%>
                     <br />
-                    <asp:Label ID="Question2Label" CssClass="question" runat="server" AssociatedControlID="Question2RadioBUttonList" />
-                    <br />
-                    <asp:RadioButtonList ID="Question2RadioBUttonList" CssClass="radioButtonList" runat="server">
-                    </asp:RadioButtonList>
+                    <asp:Label ID="Question2Label" CssClass="question required" runat="server" AssociatedControlID="Question2RadioBUttonList" />
+                    <asp:RequiredFieldValidator 
+                        runat="server" ID="RequiredQ2" ValidationGroup="validationGroup" ControlToValidate="Question2RadioButtonList" 
+                        ErrorMessage="Please select an answer." />
+                    <asp:RadioButtonList ID="Question2RadioBUttonList" CssClass="radioButtonList" runat="server"></asp:RadioButtonList>
+
                     <asp:Label ID="Question2TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question2TextBox" />
                     <br />
                     <asp:TextBox ID="Question2TextBox" Rows="5" TextMode="MultiLine" runat="server" />
@@ -59,8 +64,10 @@
                     <%-- Question 3--%>
                     <br />
                     <br />
-                    <asp:Label ID="Question3Label" CssClass="question" runat="server" AssociatedControlID="Question3RadioButtonList" />
-                    <br />
+                    <asp:Label ID="Question3Label" CssClass="question required" runat="server" AssociatedControlID="Question3RadioButtonList" />
+                    <asp:RequiredFieldValidator 
+                        runat="server" ID="RequiredQ3" ValidationGroup="validationGroup" ControlToValidate="Question3RadioButtonList" 
+                        ErrorMessage="Please select an answer." />
                     <asp:RadioButtonList ID="Question3RadioButtonList" CssClass="radioButtonList" runat="server">
                     </asp:RadioButtonList>
                     <asp:Label ID="Question3TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question3TextBox" />
@@ -70,8 +77,10 @@
                     <%-- Question 4--%>
                     <br />
                     <br />
-                    <asp:Label ID="Question4Label" CssClass="question" runat="server" AssociatedControlID="Question4RadioButtonList" />
-                    <br />
+                    <asp:Label ID="Question4Label" CssClass="question required" runat="server" AssociatedControlID="Question4RadioButtonList" />
+                    <asp:RequiredFieldValidator 
+                        runat="server" ID="RequiredQ4" ValidationGroup="validationGroup" ControlToValidate="Question4RadioButtonList" 
+                        ErrorMessage="Please select an answer." />
                     <asp:RadioButtonList ID="Question4RadioButtonList" CssClass="radioButtonList" RepeatDirection="Horizontal" runat="server">
                     </asp:RadioButtonList>
                     <asp:Label ID="Question4TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question4TextBox" />
@@ -81,8 +90,10 @@
                     <%-- Question 5--%>
                     <br />
                     <br />
-                    <asp:Label ID="Question5Label" CssClass="question" runat="server" AssociatedControlID="Question5RadioButtonList" />
-                    <br />
+                    <asp:Label ID="Question5Label" CssClass="question required" runat="server" AssociatedControlID="Question5RadioButtonList" />
+                    <asp:RequiredFieldValidator 
+                        runat="server" ID="RequiredQ5" ValidationGroup="validationGroup" ControlToValidate="Question5RadioButtonList" 
+                        ErrorMessage="Please select an answer." />
                     <asp:RadioButtonList ID="Question5RadioButtonList" CssClass="radioButtonList" RepeatDirection="Horizontal" runat="server">
                     </asp:RadioButtonList>
                     <asp:Label ID="Question5TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question5TextBox" />
@@ -94,7 +105,9 @@
                         <br />
                         <br />
                         <asp:Label ID="Question6Label" CssClass="question" runat="server" AssociatedControlID="Question6RadioButtonList" />
-                        <br />
+                        <asp:RequiredFieldValidator 
+                            runat="server" ID="RequiredQ6" ValidationGroup="validationGroup" ControlToValidate="Question6RadioButtonList" 
+                            ErrorMessage="Please select an answer." />
                         <asp:RadioButtonList ID="Question6RadioButtonList" CssClass="radioButtonList" runat="server">
                         </asp:RadioButtonList>
                         <asp:Label ID="Question6TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question6TextBox" />
@@ -114,7 +127,7 @@
                     <br />
                     <br />
                     <div style="text-align: center">
-                        <asp:Button ID="btnSubmit" CssClass="subuttons" Text="<%$ Resources:LocalizedText, Submit %>" runat="server" />
+                        <asp:Button ID="btnSubmit" CssClass="subuttons" Text="<%$ Resources:LocalizedText, Submit %>" runat="server" ValidationGroup="validationGroup"/>
                     </div>
                 </asp:Panel>
             </ContentTemplate>
@@ -143,8 +156,17 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder2" runat="server">
     <script>
         $(document).ready(function () {
+
             $("form").submit(function () {
-                $('#<%= btnSubmit.ClientID%>').attr("disabled", "true");
+                if (Page_ClientValidate()) {
+                    $('#validationErrorDiv').text("");
+                    $('#<%= btnSubmit.ClientID%>').attr("disabled", "true");
+                }
+                else
+                {
+                    scrollTo(0, 0);
+                    $('#validationErrorDiv').text("Please correct the error(s) below and submit again.");
+                }
             });
 
             Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);

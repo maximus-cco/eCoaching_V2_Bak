@@ -12,7 +12,7 @@ Option Explicit On
 
 
 Partial Public Class MySurvey
-
+    
     '''<summary>
     '''MyScriptManager control.
     '''</summary>
@@ -21,7 +21,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents MyScriptManager As Global.System.Web.UI.ScriptManager
-
+    
     '''<summary>
     '''UpdateProgress1 control.
     '''</summary>
@@ -30,7 +30,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents UpdateProgress1 As Global.System.Web.UI.UpdateProgress
-
+    
     '''<summary>
     '''MySurveyUpdatePanel control.
     '''</summary>
@@ -39,7 +39,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents MySurveyUpdatePanel As Global.System.Web.UI.UpdatePanel
-
+    
     '''<summary>
     '''SuccessMsgLabel control.
     '''</summary>
@@ -48,7 +48,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents SuccessMsgLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''AccessDeniedMsgLabel control.
     '''</summary>
@@ -57,7 +57,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents AccessDeniedMsgLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''QuestionsPanel control.
     '''</summary>
@@ -66,7 +66,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents QuestionsPanel As Global.System.Web.UI.WebControls.Panel
-
+    
     '''<summary>
     '''InstructionLabel control.
     '''</summary>
@@ -75,7 +75,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents InstructionLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''TitleLabel control.
     '''</summary>
@@ -84,7 +84,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents TitleLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''MySurveyLogLinkButton control.
     '''</summary>
@@ -93,7 +93,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents MySurveyLogLinkButton As Global.System.Web.UI.WebControls.LinkButton
-
+    
     '''<summary>
     '''FailMsgLabel control.
     '''</summary>
@@ -102,7 +102,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents FailMsgLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''Question1Label control.
     '''</summary>
@@ -111,7 +111,16 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question1Label As Global.System.Web.UI.WebControls.Label
-
+    
+    '''<summary>
+    '''RequiredQ1 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RequiredQ1 As Global.System.Web.UI.WebControls.RequiredFieldValidator
+    
     '''<summary>
     '''Question1RadioButtonList control.
     '''</summary>
@@ -120,7 +129,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question1RadioButtonList As Global.System.Web.UI.WebControls.RadioButtonList
-
+    
     '''<summary>
     '''Question1TextBoxLabel control.
     '''</summary>
@@ -129,7 +138,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question1TextBoxLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''Question1TextBox control.
     '''</summary>
@@ -138,7 +147,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question1TextBox As Global.System.Web.UI.WebControls.TextBox
-
+    
     '''<summary>
     '''Question2Label control.
     '''</summary>
@@ -147,7 +156,16 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question2Label As Global.System.Web.UI.WebControls.Label
-
+    
+    '''<summary>
+    '''RequiredQ2 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RequiredQ2 As Global.System.Web.UI.WebControls.RequiredFieldValidator
+    
     '''<summary>
     '''Question2RadioBUttonList control.
     '''</summary>
@@ -156,7 +174,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question2RadioBUttonList As Global.System.Web.UI.WebControls.RadioButtonList
-
+    
     '''<summary>
     '''Question2TextBoxLabel control.
     '''</summary>
@@ -165,7 +183,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question2TextBoxLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''Question2TextBox control.
     '''</summary>
@@ -174,7 +192,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question2TextBox As Global.System.Web.UI.WebControls.TextBox
-
+    
     '''<summary>
     '''Question3Label control.
     '''</summary>
@@ -183,7 +201,16 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question3Label As Global.System.Web.UI.WebControls.Label
-
+    
+    '''<summary>
+    '''RequiredQ3 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RequiredQ3 As Global.System.Web.UI.WebControls.RequiredFieldValidator
+    
     '''<summary>
     '''Question3RadioButtonList control.
     '''</summary>
@@ -192,7 +219,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question3RadioButtonList As Global.System.Web.UI.WebControls.RadioButtonList
-
+    
     '''<summary>
     '''Question3TextBoxLabel control.
     '''</summary>
@@ -201,7 +228,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question3TextBoxLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''Question3TextBox control.
     '''</summary>
@@ -210,7 +237,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question3TextBox As Global.System.Web.UI.WebControls.TextBox
-
+    
     '''<summary>
     '''Question4Label control.
     '''</summary>
@@ -219,7 +246,16 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question4Label As Global.System.Web.UI.WebControls.Label
-
+    
+    '''<summary>
+    '''RequiredQ4 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RequiredQ4 As Global.System.Web.UI.WebControls.RequiredFieldValidator
+    
     '''<summary>
     '''Question4RadioButtonList control.
     '''</summary>
@@ -228,7 +264,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question4RadioButtonList As Global.System.Web.UI.WebControls.RadioButtonList
-
+    
     '''<summary>
     '''Question4TextBoxLabel control.
     '''</summary>
@@ -237,7 +273,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question4TextBoxLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''Question4TextBox control.
     '''</summary>
@@ -246,7 +282,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question4TextBox As Global.System.Web.UI.WebControls.TextBox
-
+    
     '''<summary>
     '''Question5Label control.
     '''</summary>
@@ -255,7 +291,16 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question5Label As Global.System.Web.UI.WebControls.Label
-
+    
+    '''<summary>
+    '''RequiredQ5 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RequiredQ5 As Global.System.Web.UI.WebControls.RequiredFieldValidator
+    
     '''<summary>
     '''Question5RadioButtonList control.
     '''</summary>
@@ -264,7 +309,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question5RadioButtonList As Global.System.Web.UI.WebControls.RadioButtonList
-
+    
     '''<summary>
     '''Question5TextBoxLabel control.
     '''</summary>
@@ -273,7 +318,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question5TextBoxLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''Question5TextBox control.
     '''</summary>
@@ -282,7 +327,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question5TextBox As Global.System.Web.UI.WebControls.TextBox
-
+    
     '''<summary>
     '''HotTopicPanel control.
     '''</summary>
@@ -291,7 +336,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents HotTopicPanel As Global.System.Web.UI.WebControls.Panel
-
+    
     '''<summary>
     '''Question6Label control.
     '''</summary>
@@ -300,7 +345,16 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question6Label As Global.System.Web.UI.WebControls.Label
-
+    
+    '''<summary>
+    '''RequiredQ6 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RequiredQ6 As Global.System.Web.UI.WebControls.RequiredFieldValidator
+    
     '''<summary>
     '''Question6RadioButtonList control.
     '''</summary>
@@ -309,7 +363,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question6RadioButtonList As Global.System.Web.UI.WebControls.RadioButtonList
-
+    
     '''<summary>
     '''Question6TextBoxLabel control.
     '''</summary>
@@ -318,7 +372,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question6TextBoxLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''Question6TextBox control.
     '''</summary>
@@ -327,7 +381,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Question6TextBox As Global.System.Web.UI.WebControls.TextBox
-
+    
     '''<summary>
     '''CommentTextBoxLabel control.
     '''</summary>
@@ -336,7 +390,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents CommentTextBoxLabel As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''CommentTextBox control.
     '''</summary>
@@ -345,7 +399,7 @@ Partial Public Class MySurvey
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents CommentTextBox As Global.System.Web.UI.WebControls.TextBox
-
+    
     '''<summary>
     '''btnSubmit control.
     '''</summary>
