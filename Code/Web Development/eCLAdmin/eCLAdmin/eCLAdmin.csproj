@@ -156,7 +156,6 @@
     <Compile Include="Models\EmployeeLog\LogDetailBase.cs" />
     <Compile Include="Models\EmployeeLog\Module.cs" />
     <Compile Include="Models\EmployeeLog\Reason.cs" />
-    <Compile Include="Models\EmployeeLog\ReviewInfo.cs" />
     <Compile Include="Models\EmployeeLog\Status.cs" />
     <Compile Include="Models\EmployeeLog\Type.cs" />
     <Compile Include="Models\EmployeeLog\WarningLogDetail.cs" />
@@ -221,7 +220,6 @@
     <Content Include="Content\timeline.css" />
     <Content Include="EmailTemplates\EmployeeLogReactivation.html" />
     <Content Include="EmailTemplates\EmployeeLogReassignment.html" />
-    <Content Include="Error.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

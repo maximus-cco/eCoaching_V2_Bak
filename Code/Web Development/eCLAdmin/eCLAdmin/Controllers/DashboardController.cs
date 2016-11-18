@@ -63,9 +63,9 @@ namespace eCLAdmin.Controllers
 
             DashboardGraphViewModel dgvm = new DashboardGraphViewModel()
             {
-                CoachingCompleted = dashboardService.GetChartDataCoachingCompleted("lili.huang", firstDayOfMonth, lastDayOfMonth),
-                CoachingPending = dashboardService.GetChartDataCoachingPending("lili.huang", firstDayOfMonth, lastDayOfMonth),
-                WarningActive = dashboardService.GetChartDataWarningActive("lili.huang", firstDayOfMonth, lastDayOfMonth)
+                CoachingCompleted = dashboardService.GetChartDataCoachingCompleted(GetUserFromSession().LanId, firstDayOfMonth, lastDayOfMonth),
+                CoachingPending = dashboardService.GetChartDataCoachingPending(GetUserFromSession().LanId, firstDayOfMonth, lastDayOfMonth),
+                WarningActive = dashboardService.GetChartDataWarningActive(GetUserFromSession().LanId, firstDayOfMonth, lastDayOfMonth)
             };
 
             model.GraphViewModel = dgvm;
@@ -128,8 +128,8 @@ namespace eCLAdmin.Controllers
             int rowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
             int totalRecords = 0;
 
-            List<EmployeeLog> logs = dashboardService.GetLogList("Richard.Graybill", logStatus, (bool)Session["Coaching"], firstDayOfMonth, lastDayOfMonth, pageSize, rowStartIndex, sortColumn, sortColumnDir, search);
-            totalRecords = dashboardService.GetLogListTotal("Richard.Graybill", logStatus, (bool)Session["Coaching"], firstDayOfMonth, lastDayOfMonth, search);
+            List<EmployeeLog> logs = dashboardService.GetLogList(GetUserFromSession().LanId, logStatus, (bool)Session["Coaching"], firstDayOfMonth, lastDayOfMonth, pageSize, rowStartIndex, sortColumn, sortColumnDir, search);
+            totalRecords = dashboardService.GetLogListTotal(GetUserFromSession().LanId, logStatus, (bool)Session["Coaching"], firstDayOfMonth, lastDayOfMonth, search);
 
             var data = logs;
             return Json(new { draw = draw, recordsFiltered = totalRecords, recordsTotal = totalRecords, data = data }, JsonRequestBehavior.AllowGet);

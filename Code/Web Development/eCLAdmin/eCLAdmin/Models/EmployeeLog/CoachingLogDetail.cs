@@ -26,7 +26,6 @@ namespace eCLAdmin.Models.EmployeeLog
         public string CoachingNotes { get; set; } // txtCoachingNotes
         public string MgrNotes { get; set; }
 
-        public ReviewInfo ReviewInformation { get; set; }
         public string SupReviewedAutoDate { get; set; }
         public string MgrReviewManualDate { get; set; }
         public string MgrReviewAutoDate { get; set; }
