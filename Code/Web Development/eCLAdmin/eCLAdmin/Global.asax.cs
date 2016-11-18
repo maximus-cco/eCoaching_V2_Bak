@@ -1,10 +1,13 @@
-﻿using eCLAdmin.Repository;
+﻿using eCLAdmin.Controllers;
+using eCLAdmin.Repository;
 using eCLAdmin.Services;
 using log4net;
 using SimpleInjector;
 using SimpleInjector.Integration.Web;
 using SimpleInjector.Integration.Web.Mvc;
+using System;
 using System.IO;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -38,6 +41,8 @@ namespace eCLAdmin
             container.Register<IEmployeeLogService, EmployeeLogService>(Lifestyle.Scoped);
             container.Register<IEmployeeLogRepository, EmployeeLogRepository>(Lifestyle.Scoped);
             container.Register<IEmailService, EmailService>(Lifestyle.Scoped);
+            container.Register<IDashboardService, DashboardService>(Lifestyle.Scoped);
+            container.Register<IDashboardRepository, DashboardRepository>(Lifestyle.Scoped);
             //container.Register<IUserService, UserService>(Lifestyle.Scoped);
 
             // 3. Optionally verify the container's configuration
@@ -46,5 +51,25 @@ namespace eCLAdmin
             // 4. Store the container for use by the application
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
         }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            logger.Debug("Enter - Application_Error");
+
+            Exception ex = Server.GetLastError();
+            if (ex != null)
+            {
+                logger.Debug("ex: " + ex.Message);
+            }
+            else
+            {
+                logger.Debug("exception is null");
+            }
+
+            Server.ClearError();
+            logger.Debug("Redirect to error");
+            Response.RedirectToRoute("Error");
+        }
+
     }
 }

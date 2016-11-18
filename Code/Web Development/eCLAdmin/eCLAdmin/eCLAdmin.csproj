@@ -65,6 +65,10 @@
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Linq.Dynamic, Version=1.0.5840.25917, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.6\lib\net40\System.Linq.Dynamic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -134,6 +138,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Extensions\EclHtmlHelper.cs" />
@@ -142,11 +147,19 @@
     <Compile Include="Extensions\EclExtendedMethods.cs" />
     <Compile Include="Filters\EclExceptionAttribute.cs" />
     <Compile Include="Filters\SessionCheckAttribute.cs" />
+    <Compile Include="Models\Dashboard\ChartBase.cs" />
+    <Compile Include="Models\Dashboard\ChartCoachingCompleted.cs" />
+    <Compile Include="Models\Dashboard\ChartCoachingPending.cs" />
+    <Compile Include="Models\Dashboard\ChartWarningActive.cs" />
     <Compile Include="Models\Email.cs" />
+    <Compile Include="Models\EmployeeLog\CoachingLogDetail.cs" />
+    <Compile Include="Models\EmployeeLog\LogDetailBase.cs" />
     <Compile Include="Models\EmployeeLog\Module.cs" />
     <Compile Include="Models\EmployeeLog\Reason.cs" />
+    <Compile Include="Models\EmployeeLog\ReviewInfo.cs" />
     <Compile Include="Models\EmployeeLog\Status.cs" />
     <Compile Include="Models\EmployeeLog\Type.cs" />
+    <Compile Include="Models\EmployeeLog\WarningLogDetail.cs" />
     <Compile Include="Models\Site.cs" />
     <Compile Include="Models\User\Entitlement.cs" />
     <Compile Include="Models\User\Role.cs" />
@@ -161,17 +174,23 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\EmployeeLog\EmployeeLog.cs" />
+    <Compile Include="Repository\DashboardRepository.cs" />
+    <Compile Include="Repository\IDashboardRepository.cs" />
     <Compile Include="Repository\ISiteRepository.cs" />
     <Compile Include="Repository\IUserRepository.cs" />
     <Compile Include="Repository\SiteRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
+    <Compile Include="Services\DashboardService.cs" />
     <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\IDashboardService.cs" />
     <Compile Include="Services\IEmailService.cs" />
     <Compile Include="Services\IUserService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Utilities\EclAdminUtil.cs" />
     <Compile Include="Utilities\EmailUtil.cs" />
     <Compile Include="Utilities\FileUtil.cs" />
+    <Compile Include="ViewModels\DashboardGraphViewModel.cs" />
+    <Compile Include="ViewModels\DashboardIndexViewModel.cs" />
     <Compile Include="ViewModels\EmployeeLogSelectEditorViewModel.cs" />
     <Compile Include="ViewModels\EmployeeLogSelectViewModel.cs" />
     <Compile Include="Models\EmployeeLog\Employee.cs" />
@@ -188,41 +207,59 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrapValidator.css" />
-    <Content Include="Content\bootstrapValidator.min.css" />
+    <Content Include="Content\dataTables.bootstrap.css" />
+    <Content Include="Content\dataTables.responsive.css" />
     <Content Include="Content\Images\ajax-loader.gif" />
     <Content Include="Content\Images\ajax-spinner.gif" />
     <Content Include="Content\Images\ecl-logo-small.png" />
     <Content Include="Content\Images\ecl-logo.png" />
     <Content Include="Content\Images\eCL.png" />
+    <Content Include="Content\Images\favicon.ico" />
+    <Content Include="Content\morris.css" />
+    <Content Include="Content\sb-admin-2.css" />
+    <Content Include="Content\timeline.css" />
     <Content Include="EmailTemplates\EmployeeLogReactivation.html" />
     <Content Include="EmailTemplates\EmployeeLogReassignment.html" />
+    <Content Include="Error.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap-maxlength.js" />
-    <Content Include="Scripts\bootstrap-select.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\Test.pubxml" />
     <Content Include="Scripts\bootstrapValidator.js" />
     <Content Include="Scripts\bootstrapValidator.min.js" />
     <None Include="Scripts\jquery-2.2.0.intellisense.js" />
+    <Content Include="Scripts\eCLAdmin\dashboard.js" />
+    <Content Include="Scripts\eCLAdmin\dashboardList.js" />
+    <Content Include="Scripts\eCLAdmin\dashboardIndex.js" />
+    <Content Include="Scripts\dataTables.bootstrap.js" />
+    <Content Include="Scripts\dataTables.bootstrap.min.js" />
+    <Content Include="Scripts\eCLAdmin\searchForInactivate.js" />
     <Content Include="Scripts\jquery-2.2.0.js" />
     <Content Include="Scripts\jquery-2.2.0.min.js" />
-    <Content Include="Scripts\jquery.bootstrap-duallistbox.js" />
+    <Content Include="Scripts\jquery.dataTables.js" />
+    <Content Include="Scripts\jquery.dataTables.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
-    <Content Include="Scripts\jquery-2.2.0.min.map" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\morris-data.js" />
+    <Content Include="Scripts\morris.js" />
+    <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\eCLAdmin\layout.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -254,12 +291,18 @@
     <Content Include="Views\Unauthorized\Index.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Home\SessionExpire.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\Dashboard\_Chart.cshtml" />
+    <Content Include="Views\Dashboard\_List.cshtml" />
+    <Content Include="Views\Dashboard\_CoachingDetail.cshtml" />
+    <Content Include="Views\Dashboard\_Dashboard.cshtml" />
+    <Content Include="Views\Dashboard\_WarningDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
@@ -283,7 +326,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>55137</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:55220/</IISUrl>
+          <IISUrl>http://localhost:55221/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:55221/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
