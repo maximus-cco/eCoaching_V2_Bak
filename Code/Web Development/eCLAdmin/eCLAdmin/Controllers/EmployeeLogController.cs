@@ -363,11 +363,6 @@ namespace eCLAdmin.Controllers
             emailService.Send(email, logNames, Request.ServerVariables["SERVER_NAME"].ToLower());
         }
         
-        private User GetUserFromSession()
-        {
-            return (User)Session["AuthenticatedUser"];
-        }
-
         private IEnumerable<SelectListItem> GetEmpltyModuleList()
         {
             List<Module> moduleList = new List<Module>();

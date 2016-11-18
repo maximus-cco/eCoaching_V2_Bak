@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using eCLAdmin.Models.User;
+using log4net;
 using System;
 using System.Web.Mvc;
 
@@ -16,6 +17,11 @@ namespace eCLAdmin.Controllers
 
             filterContext.Result = this.RedirectToAction("Index", "Error");
             filterContext.ExceptionHandled = true;
+        }
+
+        protected User GetUserFromSession()
+        {
+            return (User)Session["AuthenticatedUser"];
         }
     }
 }

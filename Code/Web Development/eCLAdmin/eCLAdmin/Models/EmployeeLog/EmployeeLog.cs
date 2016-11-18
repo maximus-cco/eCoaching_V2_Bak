@@ -14,5 +14,9 @@
         public int StatusId { get; set; }
         public int PreviousStatusId { get; set; }
         public string CreatedDate { get; set; }
+
+        public string Reasons { get; set; }
+        public string SubReasons { get; set; }
+        public string Value { get; set; }
     }
 }

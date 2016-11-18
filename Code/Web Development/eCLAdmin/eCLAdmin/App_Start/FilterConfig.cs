@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using eCLAdmin.Filters;
+using System.Web.Mvc;
 
 namespace eCLAdmin
 {
@@ -6,6 +7,7 @@ namespace eCLAdmin
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
+            filters.Add(new EclExceptionAttribute());
             filters.Add(new HandleErrorAttribute());
         }
     }

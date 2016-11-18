@@ -183,10 +183,10 @@ table {
   border-spacing: 0;
   border-collapse: collapse;
 }
-td,
+/*td,
 th {
   padding: 0;
-}
+}*/
 /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
 @media print {
   *,
@@ -5251,7 +5251,7 @@ a.thumbnail.active {
 .list-group-item {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  padding: 1px 15px;
   margin-bottom: -1px;
   background-color: #fff;
   border: 1px solid #ddd;

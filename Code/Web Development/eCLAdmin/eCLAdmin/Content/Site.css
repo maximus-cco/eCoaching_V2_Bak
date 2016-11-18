@@ -98,8 +98,8 @@ ul.navbar-nav {
 }
 
 .modal-content {
-    width: 600px !important;
-    margin: 30px auto !important;
+    width: 600px;
+    margin: 30px auto;
 }
 
 .vertical-align {
@@ -110,4 +110,24 @@ ul.navbar-nav {
 .loadinggif {
     background:url("../Content/Images/ajax-loader.gif") no-repeat center;
 }
+
+
+.panel-heading-collapse {
+    cursor: pointer;
+}
+
+/* CSS Method for adding Font Awesome Chevron Icons */
+ .accordion-toggle:after {
+    /* symbol for "opening" panels */
+    font-family:'FontAwesome';
+    content:"\f077";
+    float: right;
+    color: inherit;
+}
+.panel-heading.collapsed .accordion-toggle:after {
+    /* symbol for "collapsed" panels */
+    content:"\f078";
+}
+
+
  
