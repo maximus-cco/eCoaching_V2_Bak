@@ -291,6 +291,7 @@
     <Content Include="Views\Dashboard\_CoachingDetail.cshtml" />
     <Content Include="Views\Dashboard\_Dashboard.cshtml" />
     <Content Include="Views\Dashboard\_WarningDetail.cshtml" />
+    <Content Include="Views\EmployeeLog\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
