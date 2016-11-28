@@ -11,7 +11,7 @@
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" rel="stylesheet" type="text/css">
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/scripts")
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -77,9 +77,6 @@
         </div>
     </div>
     
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    
     <div class="container body-content">
         @RenderBody()
         <hr />
@@ -95,13 +92,6 @@
         <div class="modal-content">
         </div>
     </div>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="@Url.Content("~/Scripts/sb-admin-2.js")"></script>
-    <!-- DataTables JavaScript -->
-    <script src="@Url.Content("~/Scripts/raphael-min.js")"></script>
-    <!-- Custom eCLAdmin layout page JavaScript -->
-    <script src="@Url.Content("~/Scripts/eCLAdmin/layout.js")"></script>
 
     @RenderSection("scripts", required: false)
 </body>

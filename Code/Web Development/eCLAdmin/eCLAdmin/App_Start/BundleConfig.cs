@@ -1,4 +1,5 @@
-﻿using System.Web.Optimization;
+﻿using eCLAdmin.App_Start;
+using System.Web.Optimization;
 
 namespace eCLAdmin
 {
@@ -7,24 +8,31 @@ namespace eCLAdmin
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.min.js",
-                        "~/Scripts/jquery.validate.min.js",
-                        "~/Scripts/jquery.unobtrusive-ajax.min.js",
-                        "~/Scripts/jquery.dataTables.js"));
+            // javascript across web app
+            var scriptBundle = new ScriptBundle("~/bundles/scripts");
+            scriptBundle.Orderer = new EclBundleOrderer();
+            scriptBundle.Include(
+                        "~/Scripts/modernizr-*",
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/jquery.unobtrusive-ajax.js",
+                        "~/Scripts/jquery.dataTables.js",
+                        "~/Scripts/bootstrap.js",
+                        "~/Scripts/dataTables.bootstrap.js",
+                        "~/Scripts/respond.js",
+                        "~/Scripts/raphael.js",
+                        "~/Scripts/eCLAdmin/layout.js");
+            bundles.Add(scriptBundle);
 
-            // Use the development version of Modernizr to develop with and learn from. Then, when you're
-            // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
-            bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-                        "~/Scripts/modernizr-*"));
+            // javascript for dashboard page
+            var dashboardScriptBundle = new ScriptBundle("~/bundles/scripts/dashboard");
+            dashboardScriptBundle.Orderer = new EclBundleOrderer();
+            dashboardScriptBundle.Include(
+                        "~/Scripts/eCLAdmin/dashboard.js",
+                        "~/Scripts/morris.js",
+                        "~/Scripts/eCLAdmin/dashboardIndex.js");
+            bundles.Add(dashboardScriptBundle);
 
-            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.min.js",
-                      "~/Scripts/dataTables.bootstrap.min.js",
-                      "~/Scripts/bootstrap-maxlength.js",
-                      "~/Scripts/bootstrapValidator.min.js",
-                      "~/Scripts/respond.min.js"));
-
+            // css across web app
             bundles.Add(new StyleBundle("~/Content/css").Include(
                        "~/Content/*.css"));
         }
