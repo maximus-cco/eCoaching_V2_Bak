@@ -1,7 +1,9 @@
 /*
-eCoaching_Admin_Tool_Create(06).sql
-Last Modified Date:10/26/2016
+eCoaching_Admin_Tool_Create(08).sql
+Last Modified Date:11/28/2016
 Last Modified By: Susmitha Palacherla
+
+Version 08: Update to SP #16 during TFS 3027 to fix logic for role assignment for allowed job codes- 11/28/2016
 
 Version 07: Update to SP #12 per TFS 4353- 10/26/2016
 
@@ -2132,6 +2134,9 @@ GO
 
 
 
+
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 4/27/12016
@@ -2141,8 +2146,8 @@ GO
 -- Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/27/12016
 --  Update admin job code, TFS 3416 - 7/26/2016
+--  Updated logic for role assignment for job code change within allowed job codes during TFS 3027 - 11/28/2016
 -- =============================================
-
 CREATE PROCEDURE [EC].[sp_AT_Populate_User] 
 AS
 BEGIN
@@ -2160,9 +2165,26 @@ UPDATE [EC].[AT_User]
 	SET [Active] = 0
 	FROM [EC].[Employee_Hierarchy] EH JOIN [EC].[AT_User]U
 	ON EH.Emp_ID = U.UserId 
-    WHERE(EH.Active in ('T', 'D')OR EH.Emp_Job_Code NOT IN 
-	(SELECT DISTINCT JobCode FROM [EC].[AT_Role_Access]))
+    WHERE(EH.Active in ('T', 'D')OR
+    EH.Emp_Job_Code NOT IN 
+	(SELECT DISTINCT JobCode FROM [EC].[AT_Role_Access])
+	OR(EH.Active = 'A' AND EH.Emp_Job_Code <> U.EmpJobCode))
      AND U.Active <> 0
+
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
+
+-- Delete Role link tables for Inactive users
+
+BEGIN
+	DELETE URL
+	FROM [EC].[AT_User]U JOIN EC.AT_User_Role_Link URL
+	ON U.UserId = URL.UserId
+	WHERE U.Active = 0
+	
 
 OPTION (MAXDOP 1)
 END
@@ -2174,7 +2196,8 @@ WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 BEGIN
     UPDATE [EC].[AT_User] 
-	SET [Active] = 1
+	SET [Active] = 1,
+	EmpJobCode = EH.Emp_Job_Code
 	FROM [EC].[Employee_Hierarchy] EH JOIN [EC].[AT_User]U
 	ON EH.Emp_ID = U.UserId
 	AND (EH.Active = 'A' AND EH.Emp_Job_Code IN 
@@ -2227,17 +2250,6 @@ BEGIN
 OPTION (MAXDOP 1)
 END
 
--- Delete Role link tables for Inactive users
-
-BEGIN
-	DELETE URL
-	FROM [EC].[AT_User]U JOIN EC.AT_User_Role_Link URL
-	ON U.UserId = URL.UserId
-	WHERE U.Active = 0
-	
-
-OPTION (MAXDOP 1)
-END
 
 COMMIT TRANSACTION
 END TRY
@@ -2248,6 +2260,9 @@ END TRY
 
 
 END --sp_AT_Populate_User
+
+
+
 
 GO
 
