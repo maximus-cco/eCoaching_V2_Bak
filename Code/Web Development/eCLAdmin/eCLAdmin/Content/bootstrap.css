@@ -5946,7 +5946,10 @@ button.close {
 .modal-body {
   position: relative;
   padding: 15px;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
 }
+
 .modal-footer {
   padding: 15px;
   text-align: right;
