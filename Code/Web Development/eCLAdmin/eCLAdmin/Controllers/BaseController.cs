@@ -1,4 +1,5 @@
 ﻿using eCLAdmin.Models.User;
+using eCLAdmin.Services;
 using log4net;
 using System;
 using System.Web.Mvc;
@@ -21,7 +22,20 @@ namespace eCLAdmin.Controllers
 
         protected User GetUserFromSession()
         {
+            User user = (User)Session["AuthenticatedUser"];
+            if (user == null)
+            {
+                logger.Debug("User in session is null!!!");
+            }
+
             return (User)Session["AuthenticatedUser"];
+        }
+
+        protected bool IsAccessAllowed(string entitlement)
+        {
+            User user = (User) Session["AuthenticatedUser"];
+            IUserService userService = new UserService();
+            return userService.UserIsEntitled(user, entitlement);
         }
     }
 }

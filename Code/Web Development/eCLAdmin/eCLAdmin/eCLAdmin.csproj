@@ -229,6 +229,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\Test.pubxml" />
     <Content Include="Scripts\eCLAdmin\dashboard.js" />
+    <Content Include="Scripts\eCLAdmin\dashboardChart.js" />
     <Content Include="Scripts\eCLAdmin\dashboardList.js" />
     <Content Include="Scripts\eCLAdmin\dashboardIndex.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />

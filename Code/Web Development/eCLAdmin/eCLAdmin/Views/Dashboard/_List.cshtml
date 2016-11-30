@@ -25,8 +25,17 @@
                                         <th>Submitter Name</th>
                                         <th>Source</th>
                                         <th>Status</th>
-                                        <th>Coaching Reason</th>
-                                        <th>Sub-coaching Reason</th>
+                                        @if ((bool)(ViewBag.Coaching))
+                                        {
+                                            <th>Coaching Reason</th>
+                                            <th>Sub-coaching Reason</th>
+                                        }
+                                        else
+                                        {
+                                            <th>Warning Type</th>
+                                            <th>Warning Reason(s)</th>
+                                        }
+
                                         <th>Value</th>
                                         <th>Submitted Date</th>
                                     </tr>

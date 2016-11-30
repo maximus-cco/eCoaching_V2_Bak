@@ -26,6 +26,12 @@ namespace eCLAdmin.Controllers
         // GET: Dashboard
         public ActionResult Index()
         {
+            // Check if user is allowed to access
+            if (!IsAccessAllowed("SeniorManagerDashboard"))
+            {
+                return RedirectToAction("Index", "Unauthorized");
+            }
+
             DashboardIndexViewModel model = new DashboardIndexViewModel();
             Session["SelectedMonthYear"] = model.SelectedMonthYear;
 
@@ -48,6 +54,7 @@ namespace eCLAdmin.Controllers
             return View(model);
         }
 
+        [HttpPost]
         public PartialViewResult FetchDataByMonth(string SelectedMonthYear)
         {
             Session["SelectedMonthYear"] = SelectedMonthYear;
@@ -77,6 +84,7 @@ namespace eCLAdmin.Controllers
         public ActionResult GetPending()
         {
             ViewBag.LogStatus = "Pending";
+            ViewBag.Coaching = true;
             Session["Coaching"] = true;
             return PartialView("_List");
         }
@@ -85,6 +93,7 @@ namespace eCLAdmin.Controllers
         public ActionResult GetCompleted()
         {
             ViewBag.LogStatus = "Completed";
+            ViewBag.Coaching = true;
             Session["Coaching"] = true;
             return PartialView("_List");
         }
@@ -93,10 +102,12 @@ namespace eCLAdmin.Controllers
         public ActionResult GetActive()
         {
             ViewBag.LogStatus = "Active";
+            ViewBag.Coaching = false;
             Session["Coaching"] = false;
             return PartialView("_List");
         }
 
+        [HttpPost]
         public ActionResult LoadData(string logStatus)
         {
             var selectedMonthYear = Session["SelectedMonthYear"];

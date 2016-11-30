@@ -45,6 +45,7 @@ namespace eCLAdmin
         public const string ECOACHING_URL_ST = "https://f3420-mpmd01.vangent.local/coach3/default.aspx";
 
         public const string SITE_ADMIN_EMAIL = "johneric.tiongson@gdit.com";
+        public const string SITE_EMAIL_SUBJECT = "Dashboard and Manage Employee Logs";
     }
 
     public enum EmployeeLogType
