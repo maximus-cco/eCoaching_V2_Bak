@@ -57,9 +57,6 @@
 
                 $("#module").html(options.join(''));
                 $("#module").removeClass('loadinggif');
-            },
-            error: function (ex) {
-                alert('Failed to retrieve modules.' + ex);
             }
         });
 
@@ -107,9 +104,6 @@
 
                 $("#employee").html(options.join(''));
                 $("#employee").removeClass('loadinggif');
-            },
-            error: function (ex) {
-                alert('Failed to retrieve employees.' + ex);
             }
         });
         return false;

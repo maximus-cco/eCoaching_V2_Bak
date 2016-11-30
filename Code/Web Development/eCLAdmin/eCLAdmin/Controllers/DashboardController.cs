@@ -1,4 +1,5 @@
-﻿using eCLAdmin.Models.EmployeeLog;
+﻿using eCLAdmin.Filters;
+using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Services;
 using eCLAdmin.ViewModels;
 using log4net;
@@ -9,6 +10,7 @@ using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
 {
+    [SessionCheck]
     public class DashboardController : BaseController
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(DashboardController));
@@ -57,6 +59,11 @@ namespace eCLAdmin.Controllers
         [HttpPost]
         public PartialViewResult FetchDataByMonth(string SelectedMonthYear)
         {
+            logger.Debug("!!!!!Entered FetchDataByMonth at: " + GetCurrentTimestamp(DateTime.Now));
+
+            logger.Debug("statusCode=" + this.ControllerContext.HttpContext.Response.StatusCode);
+
+
             Session["SelectedMonthYear"] = SelectedMonthYear;
 
             DateTime monthYear = Convert.ToDateTime(SelectedMonthYear);
@@ -77,7 +84,14 @@ namespace eCLAdmin.Controllers
 
             model.GraphViewModel = dgvm;
 
+            logger.Debug("!!!!!Leaving FetchDataByMonth at: " + GetCurrentTimestamp(DateTime.Now));
+
             return PartialView("_Dashboard", model);
+        }
+
+        private string GetCurrentTimestamp(DateTime value)
+        {
+            return value.ToString("yyyyMMddHHmmssffff");
         }
 
         [HttpPost]

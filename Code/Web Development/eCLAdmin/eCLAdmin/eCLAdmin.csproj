@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\EclBundleOrderer.cs" />
@@ -257,7 +258,6 @@
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\EmployeeLog\EditorTemplates\EmployeeLogSelectEditorViewModel.cshtml" />
     <Content Include="Views\EmployeeLog\SearchForInactivate.cshtml" />
     <Content Include="Views\Shared\_SearchEmployeeLogResultPartial.cshtml" />
@@ -272,14 +272,14 @@
     <Content Include="Views\Shared\_ModulePartial.cshtml" />
     <Content Include="Views\Unauthorized\Index.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
-    <Content Include="Views\Home\SessionExpire.cshtml" />
+    <Content Include="Views\Shared\SessionExpire.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Dashboard\_Chart.cshtml" />
     <Content Include="Views\Dashboard\_List.cshtml" />
     <Content Include="Views\Dashboard\_CoachingDetail.cshtml" />
     <Content Include="Views\Dashboard\_Dashboard.cshtml" />
     <Content Include="Views\Dashboard\_WarningDetail.cshtml" />
-    <Content Include="Views\EmployeeLog\Index.cshtml" />
+    <Content Include="Views\Shared\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

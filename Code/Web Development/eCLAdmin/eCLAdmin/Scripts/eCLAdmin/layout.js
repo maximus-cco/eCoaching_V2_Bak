@@ -23,6 +23,20 @@
     $('body').on('click', '#CancelModal', function () {
         return false;
     });
+
+    $.ajaxSetup(
+      {
+          // Global ajax error function
+          error: function (ex) {
+              hideSpinner();
+              if (ex.status === 403) {
+                  window.location = "Home/SessionExpire";
+              }
+              else {
+                  alert("An error has occurred during ajax call.");
+              }
+          }
+      });
 });
 
 function showSpinner() {

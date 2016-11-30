@@ -23,16 +23,6 @@ namespace eCLAdmin
                         "~/Scripts/eCLAdmin/layout.js");
             bundles.Add(scriptBundle);
 
-            // javascript for dashboard page
-            var dashboardScriptBundle = new ScriptBundle("~/bundles/scripts/dashboard");
-            dashboardScriptBundle.Orderer = new EclBundleOrderer();
-            dashboardScriptBundle.Include(
-                        "~/Scripts/morris.js",
-                        "~/Scripts/eCLAdmin/dashboardIndex.js",
-                        "~/Scripts/eCLAdmin/dashboard.js",
-                        "~/Scripts/eCLAdmin/dashboardChart.js");
-            bundles.Add(dashboardScriptBundle);
-
             // css across web app
             bundles.Add(new StyleBundle("~/Content/css").Include(
                        "~/Content/*.css"));

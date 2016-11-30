@@ -73,9 +73,6 @@ $(document).ready(function () {
 
                 success: function (data) {
                     $('.modal-content').html(data);
-                },
-                error: function (ex) {
-                    alert('Failed to retrieve log detail.' + ex);
                 }
             });
         }
