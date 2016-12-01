@@ -1,7 +1,9 @@
 /*
-eCoaching_Admin_Tool_Create(01).sql
-Last Modified Date:11/17/2016
+eCoaching_Admin_Tool_Create(02).sql
+Last Modified Date:12/1/2016
 Last Modified By: Susmitha Palacherla
+
+Version 02: Update to SP #7 from V&V feedback . TFS 3027 SMgr Dashboard setup - 12/1/2016 - SCP
 
 
 Version 01: Initial Revision . TFS 3027 SMgr Dashboard setup - 11/17/2016 - SCP
@@ -786,7 +788,6 @@ GO
 
 
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/01/2016
@@ -832,6 +833,9 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		 ELSE ''NA''
 	END  strReassignedSupName,	
 	CASE
+		WHEN cl.[Review_SupID] IS NOT NULL THEN ISNULL(suph.Emp_Name,''Unknown'')
+		ELSE ''NA'' END strReviewSup,
+	CASE
 		 WHEN cl.[strReportCode] like ''LCS%'' AND cl.[MgrID] <> '''+@nvcMgrID+'''
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[MgrID])+ '' (Assigned Reviewer)''
 		 ELSE eh.Mgr_Name 
@@ -845,6 +849,9 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_MgrID])
 		 ELSE ''NA''
 	END strReassignedMgrName, 
+	CASE
+		WHEN cl.[Review_MgrID] IS NOT NULL THEN ISNULL(mgrh.Emp_Name,''Unknown'')
+		ELSE ''NA'' END strReviewMgr,
 	    CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey'',''IQS'',''Verint-GDIT Supervisor'')
 		THEN 1 ELSE 0 END 	isIQS,
 		CASE WHEN sc.SubCoachingSource = ''Coach the coach''
@@ -889,8 +896,14 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectFrom_SRMGR_EmployeeCoaching_Review
 
-GO
 
+
+
+
+
+
+
+GO
 
 
 
