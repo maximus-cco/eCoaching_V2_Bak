@@ -10,50 +10,17 @@ Test - eCoachingTest
 Prod - eCoaching
 
 
+Summary
+1. Create Table [EC].[Coaching_Log_Archive]
+2. Create Table [EC].[Coaching_Log_Reason_Archive]
+3. Create Procedure [EC].[sp_Insert_Into_Coaching_Log_Archive]
+4. Execute Procedure [EC].[sp_Insert_Into_Coaching_Log_Archive]
 
+*******************************************************************************************************************************************/
 
+--1. Create Table [EC].[Coaching_Log_Archive]
 
-****************************************************************************************************************************
-
-
-****************************************************************************
-****						Summary										*****
-****																	*****
-****	Create Archive tables for coaching Log and coahing log Reason	*****
-****	Create a stored procedure to Archive records			*****
-
-****																	*****
-*****************************************************************************
-****						Tables										*****
-****	Create Table Coaching_Log_Reason_Archive			*****
-****	Create Table Coaching_Log_Archive				*****
-****																	*****
-*****************************************************************************
-****						Functions									*****
-****	No Functions this release					*****
-****																	*****
-*****************************************************************************
-****						Stored Procedures							*****
-****	Create a stored procedure to Archive records	     		*****
-****																	*****
-*****************************************************************************
-****						Miscellaneous								*****
-****	No Miscellaneous changes this release							*****
-****																	*****
-*****************************************************************************
-****						Cleanup SQL									*****
-****	No Special Cleanup this release									*****
-****																	*****
-*****************************************************************************/
-
-/****************************************************************************
-****					Start Here!!!									*****
-****																	*****
-****					Tables											*****
-*****************************************************************************/
-PRINT ('  Starting Table Creates...')
-
-PRINT ('  Create table  Coaching_Log_Archive...')
+--********************************************************************************************************************************************
 
 SET ANSI_NULLS ON
 GO
@@ -116,8 +83,9 @@ CREATE TABLE [EC].[Coaching_Log_Archive](
 	[ReassignDate] [datetime] NULL,
 	[ReassignCount] [int] NOT NULL,
 	[ReassignedToID] [nvarchar](20) NULL,
-	[ArchivedBy] [nvarchar](50) NULL,
+        [ArchivedBy] [nvarchar](50) NULL,
 	[ArchivedDate] [datetime] NOT NULL,
+        [isCoachingMonitor] nvarchar(3) NULL,
  CONSTRAINT [PK_Coaching_Log_Archive] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC
@@ -129,12 +97,14 @@ GO
 ALTER TABLE [EC].[Coaching_Log_Archive] ADD  CONSTRAINT [ArchivedBy_def]  DEFAULT ('Manual') FOR [ArchivedBy]
 GO
 
+--********************************************************************************************************************************************
 
 
-PRINT ('  Table Coaching_Log_Archive Created...')
+--2. Create Table [EC].[Coaching_Log_Reason_Archive]
 
 
-PRINT ('  Create table  Coaching_Log_Reason_Archive...')
+--********************************************************************************************************************************************
+
 
 SET ANSI_NULLS ON
 GO
@@ -170,24 +140,11 @@ ALTER TABLE [EC].[Coaching_Log_Reason_Archive] ADD  CONSTRAINT [ArchivedByReason
 GO
 
 
-PRINT ('  Table Coaching_Log_Reason_Archive Created...')
+--********************************************************************************************************************************************
 
+--3. create Procedure [EC].[sp_Insert_Into_Coaching_Log_Archive]
 
-
-PRINT ('  Table Changes Complete...')
-
-/****************************************************************************
-****																	*****
-****					Functions										*****
-*****************************************************************************/
-PRINT ('  No Function Updates this release...')
-
-/****************************************************************************
-****																	*****
-****					Stored Procedures								*****
-*****************************************************************************/
-PRINT ('  Create Procedure sp_Insert_Into_Coaching_Log_Archive...')
-
+--********************************************************************************************************************************************
 
 
 
@@ -205,11 +162,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 
 -- =============================================
@@ -422,43 +374,36 @@ END TRY
 
 END  -- [EC].[sp_Insert_Into_Coaching_Log_Archive]
 
-
-
-
-
 GO
 
 
 
 
 
+--********************************************************************************************************************************************
+
+--4. Execute Procedure [EC].[sp_Insert_Into_Coaching_Log_Archive]
+
+--********************************************************************************************************************************************
 
 
 
+DECLARE    @return_value int
+
+EXEC @return_value = [EC].[sp_Insert_Into_Coaching_Log_Archive]
+           @strArchivedBy = N'Manual'
+
+SELECT     'Return Value' = @return_value
+
+GO
 
 
 
+--********************************************************************************************************************************************
 
+--------------------------------------------END OF INSTALLATION-------------------------------------------------------------------------------
 
-
-PRINT ('  Procedure sp_Insert_Into_Coaching_Log_Archive Created...')
-
-PRINT ('  Stored Procedure Changes Complete...')
-
-/****************************************************************************
-****																	*****
-****					Miscellaneous									*****
-*****************************************************************************/
-PRINT ('  No Miscellaneous Changes this release...')
-
-/****************************************************************************
-****																	*****
-****					Cleanup											*****
-*****************************************************************************/
-PRINT ('  No Special Cleanup this release...')
-
-/*-----------------------------       All Done!     ----------------------------------------*/
-PRINT ('  RunOnce Script has completed...')
+--********************************************************************************************************************************************
 
 
 
