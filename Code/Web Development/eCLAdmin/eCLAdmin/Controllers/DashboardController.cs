@@ -61,11 +61,7 @@ namespace eCLAdmin.Controllers
         {
             logger.Debug("!!!!!Entered FetchDataByMonth at: " + GetCurrentTimestamp(DateTime.Now));
 
-            logger.Debug("statusCode=" + this.ControllerContext.HttpContext.Response.StatusCode);
-
-
             Session["SelectedMonthYear"] = SelectedMonthYear;
-
             DateTime monthYear = Convert.ToDateTime(SelectedMonthYear);
             DateTime firstDayOfMonth = Convert.ToDateTime(monthYear);
             DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
@@ -97,6 +93,8 @@ namespace eCLAdmin.Controllers
         [HttpPost]
         public ActionResult GetPending()
         {
+            logger.Debug("Entered GetPending");
+
             ViewBag.LogStatus = "Pending";
             ViewBag.Coaching = true;
             Session["Coaching"] = true;
@@ -106,6 +104,8 @@ namespace eCLAdmin.Controllers
         [HttpPost]
         public ActionResult GetCompleted()
         {
+            logger.Debug("Entered GetCompleted");
+
             ViewBag.LogStatus = "Completed";
             ViewBag.Coaching = true;
             Session["Coaching"] = true;
@@ -115,6 +115,8 @@ namespace eCLAdmin.Controllers
         [HttpPost]
         public ActionResult GetActive()
         {
+            logger.Debug("Entered GetActive");
+
             ViewBag.LogStatus = "Active";
             ViewBag.Coaching = false;
             Session["Coaching"] = false;
@@ -124,6 +126,8 @@ namespace eCLAdmin.Controllers
         [HttpPost]
         public ActionResult LoadData(string logStatus)
         {
+            logger.Debug("Entered LoadData");
+
             var selectedMonthYear = Session["SelectedMonthYear"];
 
             DateTime monthYear = Convert.ToDateTime(selectedMonthYear);
@@ -164,6 +168,8 @@ namespace eCLAdmin.Controllers
         [ValidateInput(false)]
         public ActionResult GetLogDetail(int logId)
         {
+            logger.Debug("Entered GetLogDetail");
+
             string partialView = "_CoachingDetail";
             bool isCoaching = (bool)Session["Coaching"];
 

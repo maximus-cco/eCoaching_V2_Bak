@@ -18,16 +18,17 @@ namespace eCLAdmin.Filters
             if (session.IsNewSession)
             {
                 // session has expired, redirect to session expired page
-
                 if (filterContext.HttpContext.Request.IsAjaxRequest())
                 {
                     logger.Debug("!!!!!!!!!!ajax call session expired!");
-                    filterContext.HttpContext.Response.StatusCode = 403;
                     // http://stackoverflow.com/questions/29414682/how-to-handle-ajax-beginform-onerror-onfailure-callback
                     filterContext.HttpContext.Response.TrySkipIisCustomErrors = true;
+
+                    filterContext.Result = new HttpStatusCodeResult(403, "Session Expired");
                 }
                 else
                 {
+                    logger.Debug("!!!!!!!! Session expired!");
                     filterContext.Result = new RedirectToRouteResult(
                                 new RouteValueDictionary {
                                                 { "action", "SessionExpire" },

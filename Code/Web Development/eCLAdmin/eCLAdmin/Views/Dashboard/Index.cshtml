@@ -17,7 +17,8 @@
                     HttpMethod = "POST",
                     UpdateTargetId = "dashboard",
                     OnBegin = "showSpinner",
-                    OnComplete = "hideSpinner"
+                    OnComplete = "hideSpinner",
+                    OnFailure = "handleAjaxError"
                 },
 
                 new { id = "filert-form"}

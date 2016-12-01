@@ -27,9 +27,9 @@
     $.ajaxSetup(
       {
           // Global ajax error function
-          error: function (ex) {
+          error: function (xhr, status, errorMsg) {
               hideSpinner();
-              if (ex.status === 403) {
+              if (xhr.status === 403) {
                   window.location = "Home/SessionExpire";
               }
               else {
@@ -57,4 +57,14 @@ function resetModuleDropdown() {
 
 function resetReviewerDropdown() {
     $('#reviewer-dropdown').find('option:gt(0)').remove()
+}
+
+function handleAjaxError(xhr, status, error)
+{
+    if (xhr.status === 403) {
+        window.location = "Home/SessionExpire";
+    }
+    else {
+        window.location = "Error/Index";
+    }
 }
