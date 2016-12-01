@@ -145,11 +145,13 @@ namespace eCLAdmin.Repository
                         logDetail.CoachingNotes = dataReader["txtCoachingNotes"].ToString();
                         logDetail.Behavior = dataReader["txtDescription"].ToString();
 
+                        logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
+
                         logDetail.EmployeeComments = dataReader["txtCSRComments"].ToString();
                         logDetail.EmployeeReviewDate = dataReader["CSRReviewAutoDate"].ToString();
 
                         logDetail.SupReviewedAutoDate = dataReader["SupReviewedAutoDate"].ToString();
-                        logDetail.MgrReviewManualDate = dataReader["MgrReviewManualDate"].ToString();
+                        logDetail.MgrReviewAutoDate = dataReader["MgrReviewAutoDate"].ToString();
 
                         break;
                     }

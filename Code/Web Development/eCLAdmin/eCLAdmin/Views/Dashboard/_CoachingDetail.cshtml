@@ -114,6 +114,21 @@
                 </div>
             </div>
             <!-- /.panael-group -->
+            <div class="panel-group" id="accordion-manager-notes">
+                <div class="panel panel-info">
+                    <div class="panel-heading panel-heading-collapse" data-toggle="collapse" data-parent="#accordion-manager-notes" data-target="#collapse-manager-notes">
+                        <h4 class="panel-title accordion-toggle">
+                            Manager Notes:
+                        </h4>
+                    </div>
+                    <div id="collapse-manager-notes" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            @Html.Raw(@Model.MgrNotes)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.panael-group -->
             <div class="panel-group" id="accordion-employee-review-info">
                 <div class="panel panel-info">
                     <div class="panel-heading panel-heading-collapse" data-toggle="collapse" data-parent="#accordion-employee-review-info" data-target="#collapse-employee-review-info">
@@ -157,7 +172,7 @@
                     </div>
                     <div id="collapse-supervisor-review" class="panel-collapse collapse in">
                         <div class="panel-body">
-                            @Html.Raw(@Model.SupervisorName)
+                            @Html.Raw(@Model.ReassignedSupervisorName)
                             <br />
                             Reviewed and acknowledged on: @Model.SupReviewedAutoDate
                         </div>
@@ -174,9 +189,9 @@
                     </div>
                     <div id="collapse-manager-review" class="panel-collapse collapse in">
                         <div class="panel-body">
-                            @Model.ManagerName
+                            @Html.Raw(@Model.ReassignedManagerName)
                             <br />
-                            Reviewed and acknowledged on: @Model.MgrReviewManualDate
+                            Reviewed and acknowledged on: @Model.MgrReviewAutoDate
                         </div>
                     </div>
                 </div>
