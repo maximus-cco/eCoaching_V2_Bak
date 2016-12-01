@@ -80,7 +80,7 @@ namespace eCLAdmin.Repository
                         log.Reasons = dataReader["strCoachingReason"].ToString();
                         log.SubReasons = dataReader["strSubCoachingReason"].ToString();
                         log.Value = dataReader["strValue"].ToString();
-                        log.CreatedDate = dataReader["SubmittedDate"].ToString();
+                        log.CreatedDate = dataReader["SubmittedDate"].ToString() + " PDT";
 
                         employeeLogs.Add(log);
                     }
@@ -113,8 +113,8 @@ namespace eCLAdmin.Repository
                         logDetail.Source = dataReader["strSource"].ToString();
                         logDetail.Status = dataReader["strFormStatus"].ToString();
                         logDetail.Type = dataReader["strFormType"].ToString();
-                        logDetail.CreatedDate = dataReader["SubmittedDate"].ToString();
-                        logDetail.EventDate = dataReader["CoachingDate"].ToString();
+                        logDetail.CreatedDate = dataReader["SubmittedDate"].ToString() + " PDT";
+                        logDetail.EventDate = dataReader["CoachingDate"].ToString() + " PDT";
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
                         logDetail.EmployeeName = dataReader["strCSRName"].ToString();
                         logDetail.EmployeeSite = dataReader["strCSRSite"].ToString();
@@ -148,11 +148,13 @@ namespace eCLAdmin.Repository
                         logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
 
                         logDetail.EmployeeComments = dataReader["txtCSRComments"].ToString();
-                        logDetail.EmployeeReviewDate = dataReader["CSRReviewAutoDate"].ToString();
+                        logDetail.EmployeeReviewDate = dataReader["CSRReviewAutoDate"].ToString() + " PDT";
 
-                        logDetail.SupReviewedAutoDate = dataReader["SupReviewedAutoDate"].ToString();
-                        logDetail.MgrReviewAutoDate = dataReader["MgrReviewAutoDate"].ToString();
+                        logDetail.SupReviewedAutoDate = dataReader["SupReviewedAutoDate"].ToString() + " PDT";
+                        logDetail.MgrReviewAutoDate = dataReader["MgrReviewAutoDate"].ToString() + " PDT";
 
+                        logDetail.ReviewedSupervisorName = dataReader["strreviewsup"].ToString();
+                        logDetail.ReviewedManagerName = dataReader["strreviewmgr"].ToString();
                         break;
                     }
                 }
@@ -184,8 +186,8 @@ namespace eCLAdmin.Repository
                         logDetail.Source = dataReader["strSource"].ToString();
                         logDetail.Status = dataReader["strFormStatus"].ToString();
                         logDetail.Type = dataReader["strFormType"].ToString();
-                        logDetail.CreatedDate = dataReader["SubmittedDate"].ToString();
-                        logDetail.EventDate = dataReader["warningDate"].ToString();
+                        logDetail.CreatedDate = dataReader["SubmittedDate"].ToString() + " PDT";
+                        logDetail.EventDate = dataReader["warningDate"].ToString() + " PDT";
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
                         logDetail.EmployeeName = dataReader["strCSRName"].ToString();
                         logDetail.EmployeeSite = dataReader["strCSRSite"].ToString();

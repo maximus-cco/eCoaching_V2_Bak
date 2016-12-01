@@ -7,6 +7,11 @@ namespace eCLAdmin.Models.EmployeeLog
         public string ReassignedSupervisorName { get; set; }
         public string ReassignedManagerName { get; set; }
 
+        // Supervisor who did the review
+        public string ReviewedSupervisorName { get; set; }
+        // Manager who did the review
+        public string ReviewedManagerName { get; set; }
+
         public bool IsIqs { get; set; }
         public bool IsUcid { get; set; }
         public bool IsVerintMonitor { get; set; }
