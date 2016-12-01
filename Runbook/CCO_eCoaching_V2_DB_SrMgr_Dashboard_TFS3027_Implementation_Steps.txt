@@ -1522,14 +1522,155 @@ GO
 
 /****************************************************************************
 																	
-				Miscellaneous									
+				INDEXES
+
 *****************************************************************************/
 
-PRINT ('  No Miscellaneous Changes this release...')
 
-/****************************************************************************
+PRINT ('  INDEX creation started....')
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_DIM_Date_26_613577224__K1_2') 
+    DROP INDEX _dta_index_DIM_Date_26_613577224__K1_2 
+ON [EC].[DIM_Date] ; 
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_DIM_Date_26_613577224__K1_2] ON [EC].[DIM_Date] 
+(
+	[DateKey] ASC
+)
+INCLUDE ( [FullDate]) WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+--*********************************
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Coaching_Log_26_1333579789__K5_K24_K41_1_8') 
+    DROP INDEX _dta_index_Coaching_Log_26_1333579789__K5_K24_K41_1_8 
+ON [EC].[Coaching_Log]; 
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_Coaching_Log_26_1333579789__K5_K24_K41_1_8] ON [EC].[Coaching_Log] 
+(
+	[StatusID] ASC,
+	[SubmittedDate] ASC,
+	[ModuleID] ASC
+)
+INCLUDE ( [CoachingID],
+[EmpID]) WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+--*********************************
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_26_846626059__K24_K1_K25_K26') 
+    DROP INDEX _dta_index_Employee_Hierarchy_26_846626059__K24_K1_K25_K26
+ON [EC].[Employee_Hierarchy] ; 
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_Employee_Hierarchy_26_846626059__K24_K1_K25_K26] ON [EC].[Employee_Hierarchy] 
+(
+	[SrMgrLvl1_ID] ASC,
+	[Emp_ID] ASC,
+	[SrMgrLvl2_ID] ASC,
+	[SrMgrLvl3_ID] ASC
+
+	
+)WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+
+--*********************************
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_26_846626059__K26_K1_K24_K25') 
+    DROP INDEX _dta_index_Employee_Hierarchy_26_846626059__K26_K1_K24_K25 
+ON [EC].[Employee_Hierarchy] ; 
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_Employee_Hierarchy_26_846626059__K26_K1_K24_K25] ON [EC].[Employee_Hierarchy] 
+(
+	[SrMgrLvl3_ID] ASC,
+	[Emp_ID] ASC,
+	[SrMgrLvl1_ID] ASC,
+	[SrMgrLvl2_ID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+
+--*********************************
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_26_846626059__K25_K1_K24_K26') 
+    DROP INDEX _dta_index_Employee_Hierarchy_26_846626059__K25_K1_K24_K26 
+ON [EC].[Employee_Hierarchy] ; 
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_Employee_Hierarchy_26_846626059__K25_K1_K24_K26] ON [EC].[Employee_Hierarchy] 
+(
+	[SrMgrLvl2_ID] ASC,
+	[Emp_ID] ASC,
+	[SrMgrLvl1_ID] ASC,
+	[SrMgrLvl3_ID] ASC
+	
+	
+)WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+
+--*********************************
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Coaching_Log_Reason_26_1269579561__K1_K4') 
+    DROP INDEX _dta_index_Coaching_Log_Reason_26_1269579561__K1_K4 
+ON [EC].[Coaching_Log_Reason] ; 
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_Coaching_Log_Reason_26_1269579561__K1_K4] ON [EC].[Coaching_Log_Reason] 
+(
+	[CoachingID] ASC,
+	[Value] ASC
+)WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+
+--*********************************
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Warning_Log_26_1828201563__K17_K5_K15_K16_K1_K8') 
+    DROP INDEX _dta_index_Warning_Log_26_1828201563__K17_K5_K15_K16_K1_K8 
+ON [EC].[Warning_Log] ; 
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_Warning_Log_26_1828201563__K17_K5_K15_K16_K1_K8] ON [EC].[Warning_Log] 
+(
+	[Active] ASC,
+	[StatusID] ASC,
+	[SubmittedDate] ASC,
+	[ModuleID] ASC,
+	[WarningID] ASC,
+	[EmpID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+PRINT ('  INDEX creation completed....')
+								
+/*****************************************************************************
 																	
-					Cleanup											
+					Cleanup	
+										
 *****************************************************************************/
 
 PRINT ('  No Special Cleanup this release...')
