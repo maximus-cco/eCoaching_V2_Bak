@@ -1,7 +1,14 @@
 /*
-eCoaching_Admin_Tool_Create(08).sql
-Last Modified Date:11/28/2016
+eCoaching_Admin_Tool_Create(09).sql
+Last Modified Date:12/1/2016
 Last Modified By: Susmitha Palacherla
+
+Version 09: Made follwing table inserts to support srMgr dashboard  per TFS 3027 - 11/28/2016
+New role 105 ‘SeniorManager ‘ added to role table
+New Entitlement 208 ‘SeniorManagerDashboard’ added to entitlement table
+Role 105 linked to entitlement 208 in Role entitlement link table
+A record added to role access table for job code WACS60 and Role 105.
+
 
 Version 08: Update to SP #16 during TFS 3027 to fix logic for role assignment for allowed job codes- 11/28/2016
 
@@ -207,7 +214,8 @@ VALUES
 ('CoachingAdmin',1),
 ('CoachingUser',0),
 ('WarningAdmin',1),
-('WarningUser',0)
+('WarningUser',0),
+('SeniorManager',0)
 
           
 GO
@@ -277,7 +285,8 @@ VALUES
 ('ManageCoachingLogs'),
 ('ManageWarningLogs'),
 ('ReactivateCoachingLogs'),
-('ReactivateWarningLogs')
+('ReactivateWarningLogs'),
+('SeniorManagerDashboard')
 
 
 --************************************************
@@ -326,7 +335,8 @@ VALUES
 (103,203),
 (103,205),
 (101,206),
-(103,207)
+(103,207),
+(105,208)
 
 
 
@@ -463,7 +473,8 @@ INSERT INTO [EC].[AT_Role_Access]
            ('WPPM13','Sr Analyst, Program',102,'CoachingUser',1,1),
            ('WISY13','Sr Analyst, Systems',103,'WarningAdmin',0,1),
            ('WACQ13','Sr Specialist, Quality (CS)',101,'CoachingAdmin',0,1),
-           ('WACQ13','Sr Specialist, Quality (CS)',103,'WarningAdmin',0,1)
+           ('WACQ13','Sr Specialist, Quality (CS)',103,'WarningAdmin',0,1),
+           ('WACS60','Sr Manager, Customer Service',105,'SeniorManager',1,1)
       
 
 --***************************************
