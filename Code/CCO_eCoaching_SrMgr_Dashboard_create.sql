@@ -1,10 +1,15 @@
 /*
-eCoaching_Admin_Tool_Create(02).sql
-Last Modified Date:12/1/2016
+eCoaching_Admin_Tool_Create(03).sql
+Last Modified Date:12/2/2016
 Last Modified By: Susmitha Palacherla
 
-Version 02: Update to SP #7 from V&V feedback . TFS 3027 SMgr Dashboard setup - 12/1/2016 - SCP
+Version 03: Update to SPs # 1,2,4,7,9 from V&V feedback . TFS 3027 SMgr Dashboard setup - 12/2/2016 - SCP
+added event date to coaching review #7
+csr auto date for comp #1,2,4,9
 
+
+Version 02: Update to SP #7 from V&V feedback . TFS 3027 SMgr Dashboard setup - 12/1/2016 - SCP
+Added review sup and mgr in # 7
 
 Version 01: Initial Revision . TFS 3027 SMgr Dashboard setup - 11/17/2016 - SCP
 
@@ -74,6 +79,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/01/2016
@@ -99,17 +105,13 @@ BEGIN
 	@nvcSQL nvarchar(max),
 	@strSrMgrEmpID nvarchar(10),
 	@strFormStatus nvarchar(30),
- --@strSDatein datetime,
- --@strEDatein datetime,
 	@strSDate nvarchar(8),
 	@strEDate nvarchar(8),
 	@intStatusID INT,
 	@whereStatus nvarchar(200)
 	
 	DECLARE @CountResults TABLE (CountReturned INT) 
-	
---SET @strSDatein = DATEADD(month,@intReportMonth-1,DATEADD(year,@intReportYear-1900,0)) 
---SET @strEDatein = DATEADD(day,-1,DATEADD(month,@intReportMonth,DATEADD(year,@intReportYear-1900,0)))
+
 
 --PRINT @strSDatein
 --PRINT @strEDatein
@@ -124,13 +126,17 @@ SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strEMPSRMGRin, GET
 
 IF @strStatus = 'Pending'
 BEGIN
-	SET @whereStatus = ' AND [cl].[StatusId] NOT IN (1,2) '
+	SET @whereStatus = ' AND convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''  
+	AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
+	AND [cl].[StatusId] NOT IN (1,2) '
 END
 
 
 IF @strStatus = 'Completed'
 BEGIN
-	SET @whereStatus = ' AND [cl].[StatusId] = 1 '
+	SET @whereStatus = ' AND convert(varchar(8),[cl].[CSRReviewAutoDate],112) >= '''+@strSDate+'''  
+	AND convert(varchar(8),[cl].[CSRReviewAutoDate],112) <= '''+@strEDate+'''
+	AND [cl].[StatusId] = 1 '
 END
 
 IF @bitisCoaching = 1
@@ -141,9 +147,8 @@ SET @nvcSQL = 'WITH TempMain AS
 	(SELECT DISTINCT [cl].[FormName]	strFormID
 	FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 	[cl].[EmpID] = [eh].[Emp_ID] 
-	WHERE (eh.SrMgrLvl1_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl2_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl3_ID = '''+@strSrMgrEmpID+''')
-    AND convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''  
-	AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' + @whereStatus 
+	WHERE (eh.SrMgrLvl1_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl2_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl3_ID = '''+@strSrMgrEmpID+''')'
++   @whereStatus 
 + ' AND [cl].[ModuleID] in (1,2)
     AND '''+@strSrMgrEmpID+''' <> ''999999''
 	 GROUP BY [cl].[FormName]) x)
@@ -174,7 +179,9 @@ SET @Count = (SELECT CountReturned FROM @CountResults)
 END --sp_SelectFrom_Log_SRMGR_Count
 
 
+
 GO
+
 
 
 
@@ -192,12 +199,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Detail_Count]
 GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -255,13 +262,16 @@ SET @SearchExpression = ' AND ([eh].[Emp_Name] LIKE '''+@searchBy+''' OR [eh].[S
 
 IF @strStatus = 'Pending'
 BEGIN
-	SET @whereStatus = ' AND [cl].[StatusId] NOT IN (1,2) '
+	SET @whereStatus = ' AND convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''  
+	AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
+	AND [cl].[StatusId] NOT IN (1,2) '
 END
-
 
 IF @strStatus = 'Completed'
 BEGIN
-	SET @whereStatus = ' AND [cl].[StatusId] = 1 '
+	SET @whereStatus = ' AND convert(varchar(8),[cl].[CSRReviewAutoDate],112) >= '''+@strSDate+'''  
+	AND convert(varchar(8),[cl].[CSRReviewAutoDate],112) <= '''+@strEDate+'''
+	AND [cl].[StatusId] = 1 '
 END
 
 IF @bitisCoaching = 1
@@ -272,11 +282,9 @@ SET @nvcSQL = 'WITH TempMain AS
 	(SELECT DISTINCT [cl].[FormName]	strFormID
 	FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
 	[cl].[EmpID] = [eh].[Emp_ID] 
-	WHERE (eh.SrMgrLvl1_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl2_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl3_ID = '''+@strSrMgrEmpID+''')
-    AND convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''  
-	AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' 
-	+ @whereStatus +
-	+ @SearchExpression +
+WHERE (eh.SrMgrLvl1_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl2_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl3_ID = '''+@strSrMgrEmpID+''')'
++   @whereStatus 
++   @SearchExpression 
 + ' AND [cl].[ModuleID] in (1,2)
     AND '''+@strSrMgrEmpID+''' <> ''999999''
 	 GROUP BY [cl].[FormName]) x)
@@ -307,8 +315,10 @@ SET @Count = (SELECT CountReturned FROM @CountResults)
  
 END --sp_SelectFrom_SRMGR_Detail_Count
 
-
 GO
+
+
+
 
 
 
@@ -408,6 +418,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/01/2016
@@ -455,22 +466,21 @@ SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strEMPSRMGRin, GET
 SET @LowerBand  = @startRowIndex 
 SET @UpperBand  = @startRowIndex + @PageSize 
 
-SET @where = ' WHERE (eh.SrMgrLvl1_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl2_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl3_ID = '''+@strSrMgrEmpID+''')' +
-             ' AND convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
-			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
-			 ' AND '''+@strSrMgrEmpID+''' <> ''999999'''
-			 
-			 
+		 
 IF @strStatus = 'Completed'
 BEGIN
-	SET @where = @where + ' AND [cl].[StatusID] = 1' + 
-	                      ' AND [cl].[ModuleID] in (1,2) '
+	SET @where =   ' AND convert(varchar(8),[cl].[CSRReviewAutoDate],112) >= '''+@strSDate+'''' +  
+	               ' AND convert(varchar(8),[cl].[CSRReviewAutoDate],112) <= '''+@strEDate+'''' +
+	               ' AND [cl].[StatusID] = 1' + 
+	               ' AND [cl].[ModuleID] in (1,2) '
 END
 
 IF @strStatus = 'Pending'
 BEGIN
-	SET @where = @where + ' AND [cl].[StatusID] NOT IN (1,2)' +
-	                      ' AND [cl].[ModuleID] in (1,2) '
+	SET @where =   ' AND convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+	               ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+                   ' AND [cl].[StatusID] NOT IN (1,2)' +
+                   ' AND [cl].[ModuleID] in (1,2) '
 END
 
 
@@ -521,7 +531,9 @@ SET @nvcSQL1 = 'WITH TempMain AS
 	[cl].[EmpID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh ON
 	ISNULL([cl].[SubmitterID],''999999'') = [sh].[Emp_ID] JOIN [EC].[DIM_Status] s ON
 	[cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] so ON
-	[cl].[SourceID] = [so].[SourceID]'
+	[cl].[SourceID] = [so].[SourceID]
+	WHERE (eh.SrMgrLvl1_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl2_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl3_ID = '''+@strSrMgrEmpID+''')
+    AND '''+@strSrMgrEmpID+''' <> ''999999'''
 	+ @where +
 	+ @SearchExpression +
 	+ ' GROUP BY [cl].[FormName],[cl].[CoachingID],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name], 
@@ -552,8 +564,8 @@ EXEC (@nvcSQL)
 --Print @nvcSQL	   
 END --sp_SelectFrom_SRMGR_EmployeeCoaching
 
-
 GO
+
 
 
 
@@ -779,11 +791,15 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_EmployeeCoaching_Review]
 GO
+
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 
@@ -819,6 +835,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		s.Status	strFormStatus,
 		cl.SubmittedDate	SubmittedDate,
 		cl.CoachingDate	CoachingDate,
+		cl.EventDate	EventDate,
 		sh.Emp_Name	strSubmitterName,
 		eh.Emp_Name	strCSRName,
 		st.City	strCSRSite,
@@ -895,18 +912,7 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectFrom_SRMGR_EmployeeCoaching_Review
-
-
-
-
-
-
-
-
 GO
-
-
-
 
 
 --**********************************
@@ -1018,6 +1024,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/01/2016
@@ -1064,18 +1072,17 @@ WHERE convert(varchar(8),Datekey) >= '''+@strSDate+'''
   WhERe Value in (''Met goal'',''Did not meet goal'',''Opportunity'',''Reinforcement'') )ReasonValues)x
 GROUP BY x.WeekNum, x.Value
 ), Selected AS
- (SELECT cl.CoachingID,  cl.submitteddate, datediff(week, dateadd(month, datediff(month, 0, [cl].[SubmittedDate]), 0), [cl].[SubmittedDate]) +1 WeekNum, clr.Value
+ (SELECT cl.CoachingID,  cl.CSRReviewAutoDate, datediff(week, dateadd(month, datediff(month, 0, [cl].[CSRReviewAutoDate]), 0), [cl].[CSRReviewAutoDate]) +1 WeekNum, clr.Value
   FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log]cl
   ON eh.Emp_ID = cl.EmpID JOIN [EC].[Coaching_Log_Reason]clr 
   ON cl.CoachingID = clr.CoachingID 
-  WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+''' 
-	AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
+  WHERE convert(varchar(8),[cl].[CSRReviewAutoDate],112) >= '''+@strSDate+''' 
+	AND convert(varchar(8),[cl].[CSRReviewAutoDate],112) <= '''+@strEDate+'''
   AND cl.StatusId = 1
   AND cl.ModuleID in (1,2)
   AND (eh.SrMgrLvl1_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl2_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl3_ID = '''+@strSrMgrEmpID+''')
   AND '''+@strSrMgrEmpID+''' <> ''999999''
-  ) 
-  
+  )  
   Select CompletedByWeeks.WeekNum, CompletedByWeeks.Value, Count(Selected.CoachingID)LogCount
   From CompletedByWeeks LEFT OUTER JOIN Selected
   ON CompletedByWeeks.WeekNum = Selected.WeekNum
@@ -1089,9 +1096,8 @@ GROUP BY x.WeekNum, x.Value
 Exec (@nvcSQL) 
 END --sp_SelectFrom_SRMGR_Completed_CoachingByWeek
 
+
 GO
-
-
 
 
 
@@ -1294,11 +1300,6 @@ END --sp_SelectFrom_SRMGR_Active_WarningByWeek
 
 
 GO
+--*******************************************************************************************************
 
 
-
-
-
-
-
---**********************************
