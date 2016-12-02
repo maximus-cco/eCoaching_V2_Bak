@@ -114,7 +114,8 @@ namespace eCLAdmin.Repository
                         logDetail.Status = dataReader["strFormStatus"].ToString();
                         logDetail.Type = dataReader["strFormType"].ToString();
                         logDetail.CreatedDate = AppendPdt(dataReader["SubmittedDate"].ToString());
-                        logDetail.EventDate = AppendPdt(dataReader["CoachingDate"].ToString());
+                        logDetail.CoachingDate = AppendPdt(dataReader["CoachingDate"].ToString());
+                        logDetail.EventDate = AppendPdt(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
                         logDetail.EmployeeName = dataReader["strCSRName"].ToString();
                         logDetail.EmployeeSite = dataReader["strCSRSite"].ToString();

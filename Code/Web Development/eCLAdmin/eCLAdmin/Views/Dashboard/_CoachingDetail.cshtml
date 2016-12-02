@@ -3,49 +3,56 @@
     <h3 class="modal-title">@Model.FormName</h3>
 </div>
 
-<div class="modal-body">
+<div class="modal-body" style="font-size: small;">
     <div class="row">
         <div class="col-lg-4">
-            <ul class="list-group" style="font-size: smaller;">
+            <ul class="list-group" >
                 <li class="list-group-item list-group-item-info"><strong>Status:</strong> @Model.Status</li>
                 <li class="list-group-item list-group-item-info"><strong>Date Submitted:</strong> @Model.CreatedDate</li>
                 <li class="list-group-item list-group-item-info"><strong>Type:</strong> @Model.Type</li>
-                <li class="list-group-item list-group-item-info"><strong>Date of Event:</strong> @Model.EventDate</li>
+            @if (Model.IsTypeDirect)
+            {
+                <li class="list-group-item list-group-item-info"><strong>Date Of Coaching:</strong> @Model.CoachingDate</li>
+            }
+            else
+            {
+                <li class="list-group-item list-group-item-info"><strong>Date Of Event:</strong> @Model.EventDate</li>
+            }
                 <li class="list-group-item list-group-item-info"><strong>Source:</strong> @Model.Source</li>
                 <li class="list-group-item list-group-item-info"><strong>Site:</strong> @Model.EmployeeSite</li>
             </ul>
 
-            @if (Model.IsVerintMonitor)
-            {
-                <ul class="list-group" style="font-size: smaller;">
-                    <li class="list-group-item list-group-item-info"><strong>Verint ID:</strong> @Model.VerintId</li>
-                    <li class="list-group-item list-group-item-info"><strong>Scorecard Name:</strong> @Model.VerintFormName</li>
-                    <li class="list-group-item list-group-item-info"><strong>Coaching Monitor:</strong> @Model.CoachingMonitor</li>
-                </ul>
-            }
+        @if (Model.IsVerintMonitor)
+        {
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info"><strong>Verint ID:</strong> @Model.VerintId</li>
+                <li class="list-group-item list-group-item-info"><strong>Scorecard Name:</strong> @Model.VerintFormName</li>
+                <li class="list-group-item list-group-item-info"><strong>Coaching Monitor:</strong> @Model.CoachingMonitor</li>
+            </ul>
+        }
 
-            @if (Model.IsBehaviorAnalyticsMonitor)
-            {
-                <ul class="list-group" style="font-size: smaller;">
-                    <li class="list-group-item list-group-item-info"><strong>Avoke ID:</strong> @Model.BehaviorAnalyticsId</li>
-                </ul>
-            }
+        @if (Model.IsBehaviorAnalyticsMonitor)
+        {
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info"><strong>Avoke ID:</strong> @Model.BehaviorAnalyticsId</li>
+            </ul>
+        }
 
-            @if (Model.IsNgdActivityId)
-            {
-                <ul class="list-group" style="font-size: smaller;">
-                    <li class="list-group-item list-group-item-info"><strong>NGD Activity ID:</strong> @Model.NgdActivityId</li>
-                </ul>
-            }
+        @if (Model.IsNgdActivityId)
+        {
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info"><strong>NGD Activity ID:</strong> @Model.NgdActivityId</li>
+            </ul>
+        }
 
-            @if (Model.IsUcid)
-            {
-                <ul class="list-group" style="font-size: smaller;">
-                    <li class="list-group-item list-group-item-info"><strong>Universal Call ID:</strong> @Model.Ucid</li>
-                </ul>
-            }
+        @if (Model.IsUcid)
+        {
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info"><strong>Universal Call ID:</strong> @Model.Ucid</li>
+            </ul>
+        }
 
-            <ul class="list-group" style="font-size: smaller;">
+            <ul class="list-group">
                 <li class="list-group-item list-group-item-info"><strong>Employee:</strong> @Model.EmployeeName</li>
                 <li class="list-group-item list-group-item-info"><strong>Supervisor:</strong> @Model.SupervisorName</li>
                 <li class="list-group-item list-group-item-info"><strong>Reassigned Supervisor:</strong> @Model.ReassignedSupervisorName</li>
@@ -65,7 +72,7 @@
                     </div>
                     <div id="collapse-reasons" class="panel-collapse collapse in">
                         <div class="panel-body">
-                          <table class="table">
+                          <table class="table" style="margin-bottom: 0px;">
                               <thead>
                                   <tr>
                                       <th>Reasons</th>

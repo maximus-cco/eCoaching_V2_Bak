@@ -29,6 +29,7 @@ namespace eCLAdmin.Models.EmployeeLog
 
         public string Behavior { get; set; } // txtDescription
         public string CoachingNotes { get; set; } // txtCoachingNotes
+        public string CoachingDate { get; set; } // Date coached
         public string MgrNotes { get; set; }
 
         public string SupReviewedAutoDate { get; set; }

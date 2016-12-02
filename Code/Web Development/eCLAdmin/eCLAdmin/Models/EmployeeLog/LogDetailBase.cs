@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace eCLAdmin.Models.EmployeeLog
 {
@@ -18,11 +15,19 @@ namespace eCLAdmin.Models.EmployeeLog
         public string ManagerName { get; set; }
         public string SubmitterName { get; set; }
         public string CreatedDate { get; set; } // SubmittedDate
-        public string EventDate { get; set; }
+        public string EventDate { get; set; } // Date happened
 
         //public List<Reason> Reasons { get; set; }
         public string Reasons { get; set; }
         public string SubReasons { get; set; }
         public string Value { get; set; }
+
+        public bool IsTypeDirect
+        {
+            get
+            {
+                return String.IsNullOrWhiteSpace(Type) ? false : "Direct".Equals(Type.Trim(), StringComparison.OrdinalIgnoreCase);
+            }
+        }
     }
 }
