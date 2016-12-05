@@ -207,7 +207,6 @@
     <Compile Include="DAL\DBUtility.vb" />
     <Compile Include="DAL\MySurveyDBAccess.vb" />
     <Compile Include="DAL\MySurveyLogDetailDBAccess.vb" />
-    <Compile Include="DAL\ReviewDBAccess.vb" />
     <Compile Include="DAL\UserDBAccess.vb" />
     <Compile Include="default.aspx.designer.vb">
       <DependentUpon>default.aspx</DependentUpon>
