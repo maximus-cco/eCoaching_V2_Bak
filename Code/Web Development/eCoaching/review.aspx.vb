@@ -1460,31 +1460,35 @@ Public Class review
             SqlDataSource5.UpdateParameters("bitisCSRAcknowledged").DefaultValue = CheckBox2.Checked
             SqlDataSource5.Update()
 
-            ' Send email to csr hierarchey (Supervisor and manager)
-            Dim elcUser As User = Session("eclUser")
-            Dim strSubject = "eCoaching Log Completed(" & elcUser.Name & ")"
-            Dim toList As New List(Of String)
-            Dim strEmailContent = "The following eCoaching Log has been completed. Please see the employee's comments below:" & vbCrLf _
-                                & " <br />" & vbCrLf _
-                                & " Form ID: " & strFormName & vbCrLf _
-                                & " <br />" & vbCrLf _
-                                & " Comments: " & TextBox4.Text & vbCrLf
-
-            pHolder = ListView1.Items(0).FindControl("SupEmail")
-            toList.Add(pHolder.Text)
-            pHolder = ListView1.Items(0).FindControl("MgrEmail")
-            toList.Add(pHolder.Text)
-
+            ' If CSRs complete logs, then email csr comment entered to hierarchey (Supervisor and manager)
             If (eclHandler.IsCSRUser(Session("eclUser"))) Then
-                EclUtils.SendEmail(toList, strSubject, strEmailContent, GetEmailLogoPath())
+                EmailComment(strFormName, TextBox4.Text)
             End If
 
             FromURL = Request.ServerVariables("URL")
-                Response.Redirect("next1.aspx?FromURL=" & FromURL)
-            Else
-                Label116.Text = "Please correct all fields indicated in red to proceed."
+            Response.Redirect("next1.aspx?FromURL=" & FromURL)
+        Else
+            Label116.Text = "Please correct all fields indicated in red to proceed."
         End If
     End Sub
+
+    Private Function EmailComment(formName As String, comment As String) As Boolean
+        Dim elcUser As User = Session("eclUser")
+        Dim strSubject = "eCoaching Log Completed(" & elcUser.Name & ")"
+        Dim toList As New List(Of String)
+        Dim strEmailContent = "The following eCoaching Log has been completed. Please see the employee's comments below:" & vbCrLf _
+                            & " <br />" & vbCrLf _
+                            & " Form ID: " & formName & vbCrLf _
+                            & " <br />" & vbCrLf _
+                            & " Comments: " & comment & vbCrLf
+
+        pHolder = ListView1.Items(0).FindControl("SupEmail")
+        toList.Add(pHolder.Text)
+        pHolder = ListView1.Items(0).FindControl("MgrEmail")
+        toList.Add(pHolder.Text)
+
+        Return EclUtils.SendEmail(toList, strSubject, strEmailContent, GetEmailLogoPath())
+    End Function
 
     Protected Sub Button6_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button6.Click
         'CSR Pending Ack Submit
