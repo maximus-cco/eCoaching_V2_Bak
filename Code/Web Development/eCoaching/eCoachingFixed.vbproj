@@ -196,7 +196,6 @@
     <Compile Include="BLL\HistoricalDashboardHandler.vb" />
     <Compile Include="BLL\MySurveyHandler.vb" />
     <Compile Include="BLL\MySurveyLogDetailViewHandler.vb" />
-    <Compile Include="BLL\ReviewHandler.vb" />
     <Compile Include="BLL\UserHandler.vb" />
     <Compile Include="common\util\EclUtils.vb" />
     <Compile Include="common\util\StringUtils.vb" />
