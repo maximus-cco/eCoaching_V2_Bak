@@ -91,6 +91,8 @@ Public Class review
     ' Historical_Dashboard_ACL.Role as "ARC"
     Private m_blnUserIsARCCsr As Boolean
 
+    Private eclHandler = New ECLHandler()
+
     Private Function IsAccessAllowed() As Boolean
         ' The user submitted the log.
         If (m_strUserEmployeeID = m_strSubmitterEmployeeID) Then
@@ -1459,23 +1461,28 @@ Public Class review
             SqlDataSource5.Update()
 
             ' Send email to csr hierarchey (Supervisor and manager)
-            Dim strSubject = "CSR Comment"
+            Dim elcUser As User = Session("eclUser")
+            Dim strSubject = "eCoaching Log Completed(" & elcUser.Name & ")"
             Dim toList As New List(Of String)
-            Dim strEmailContent = " Form ID: " & strFormName & vbCrLf _
+            Dim strEmailContent = "The following eCoaching Log has been completed. Please see the employee's comments below:" & vbCrLf _
                                 & " <br />" & vbCrLf _
-                                & " CSR Comment: " & TextBox4.Text & vbCrLf
+                                & " Form ID: " & strFormName & vbCrLf _
+                                & " <br />" & vbCrLf _
+                                & " Comments: " & TextBox4.Text & vbCrLf
 
             pHolder = ListView1.Items(0).FindControl("SupEmail")
             toList.Add(pHolder.Text)
             pHolder = ListView1.Items(0).FindControl("MgrEmail")
             toList.Add(pHolder.Text)
 
-            EclUtils.SendEmail(toList, strSubject, strEmailContent, GetEmailLogoPath())
+            If (eclHandler.IsCSRUser(Session("eclUser"))) Then
+                EclUtils.SendEmail(toList, strSubject, strEmailContent, GetEmailLogoPath())
+            End If
 
             FromURL = Request.ServerVariables("URL")
-            Response.Redirect("next1.aspx?FromURL=" & FromURL)
-        Else
-            Label116.Text = "Please correct all fields indicated in red to proceed."
+                Response.Redirect("next1.aspx?FromURL=" & FromURL)
+            Else
+                Label116.Text = "Please correct all fields indicated in red to proceed."
         End If
     End Sub
 
