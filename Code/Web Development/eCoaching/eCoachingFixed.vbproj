@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -30,6 +30,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -195,7 +196,9 @@
     <Compile Include="BLL\HistoricalDashboardHandler.vb" />
     <Compile Include="BLL\MySurveyHandler.vb" />
     <Compile Include="BLL\MySurveyLogDetailViewHandler.vb" />
+    <Compile Include="BLL\ReviewHandler.vb" />
     <Compile Include="BLL\UserHandler.vb" />
+    <Compile Include="common\util\EclUtils.vb" />
     <Compile Include="common\util\StringUtils.vb" />
     <Compile Include="DAL\HistoricalDashboardDBAccess.vb" />
     <Compile Include="common\BasePage.vb">
@@ -204,6 +207,7 @@
     <Compile Include="DAL\DBUtility.vb" />
     <Compile Include="DAL\MySurveyDBAccess.vb" />
     <Compile Include="DAL\MySurveyLogDetailDBAccess.vb" />
+    <Compile Include="DAL\ReviewDBAccess.vb" />
     <Compile Include="DAL\UserDBAccess.vb" />
     <Compile Include="default.aspx.designer.vb">
       <DependentUpon>default.aspx</DependentUpon>
@@ -400,11 +404,13 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50547</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:51498/</IISUrl>
+          <IISUrl>http://localhost:50546/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:50546/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -1434,17 +1434,16 @@ Public Class review
         'CSR Submit
         Page.Validate()
 
+        Dim strFormName = Request.QueryString("id")
+
         If Page.IsValid Then
 
-            ''add dtmSupReviewedAutoDate = current date to update fields
-            SqlDataSource5.UpdateParameters("nvcFormID").DefaultValue = Request.QueryString("id")
+            SqlDataSource5.UpdateParameters("nvcFormID").DefaultValue = strFormName
             SqlDataSource5.UpdateParameters("nvcFormStatus").DefaultValue = "Completed"
             SqlDataSource5.UpdateParameters("dtmCSRReviewAutoDate").DefaultValue = CDate(DateTime.Now())
 
             If (Len(TextBox4.Text) > 3000) Then
-
                 TextBox4.Text = Left(TextBox4.Text, 3000)
-
             End If
 
             TextBox4.Text = Server.HtmlEncode(TextBox4.Text)
@@ -1455,26 +1454,29 @@ Public Class review
             TextBox4.Text = Replace(TextBox4.Text, Chr(148), "&rdquo;")
             TextBox4.Text = Replace(TextBox4.Text, "-", "&ndash;")
 
-
             SqlDataSource5.UpdateParameters("nvcCSRComments").DefaultValue = TextBox4.Text
             SqlDataSource5.UpdateParameters("bitisCSRAcknowledged").DefaultValue = CheckBox2.Checked
-
-
             SqlDataSource5.Update()
+
+            ' Send email to csr hierarchey (Supervisor and manager)
+            Dim strSubject = "CSR Comment"
+            Dim toList As New List(Of String)
+            Dim strEmailContent = " Form ID: " & strFormName & vbCrLf _
+                                & " <br />" & vbCrLf _
+                                & " CSR Comment: " & TextBox4.Text & vbCrLf
+
+            pHolder = ListView1.Items(0).FindControl("SupEmail")
+            toList.Add(pHolder.Text)
+            pHolder = ListView1.Items(0).FindControl("MgrEmail")
+            toList.Add(pHolder.Text)
+
+            EclUtils.SendEmail(toList, strSubject, strEmailContent, GetEmailLogoPath())
 
             FromURL = Request.ServerVariables("URL")
             Response.Redirect("next1.aspx?FromURL=" & FromURL)
-
-            'Response.Redirect("next1.aspx")  ' Response.Redirect("view2.aspx")
-
         Else
-
             Label116.Text = "Please correct all fields indicated in red to proceed."
-
-
         End If
-
-
     End Sub
 
     Protected Sub Button6_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button6.Click

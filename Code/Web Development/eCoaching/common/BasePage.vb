@@ -38,4 +38,8 @@ Public MustInherit Class BasePage
 
         Return lanId
     End Function
+
+    Function GetEmailLogoPath() As String
+        Return Server.MapPath("images") & "\BCC-eCL-LOGO-10142011-185x40.png"
+    End Function
 End Class
