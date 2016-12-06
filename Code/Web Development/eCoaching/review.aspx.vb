@@ -1553,7 +1553,11 @@ Public Class review
     End Sub
 
     Private Function IsCompleteCsrModule(moduleName As String, status As String) As Boolean
-        If String.IsNullOrWhiteSpace(moduleName) OrElse Not String.Equals(moduleName.Trim(), "CSR", StringComparison.OrdinalIgnoreCase) Then
+        If (String.IsNullOrWhiteSpace(moduleName) _
+                OrElse Not String.Equals(moduleName.Trim(), "CSR", StringComparison.OrdinalIgnoreCase) _
+                OrElse String.IsNullOrWhiteSpace(status) _
+                OrElse Not String.Equals(status.Trim(), "completed", StringComparison.OrdinalIgnoreCase)) Then
+
             Return False
         End If
 
