@@ -1474,10 +1474,10 @@ Public Class review
 
     Private Function EmailComment(formName As String, comment As String) As Boolean
         Dim elcUser As User = Session("eclUser")
-        Dim strSubject = "eCoaching Log Completed(" & elcUser.Name & ")"
+        Dim strSubject = "eCoaching Log Completed (" & elcUser.Name & ")"
         Dim toList As New List(Of String)
         Dim strEmailContent = "The following eCoaching Log has been completed. Please see the employee's comments below:" & vbCrLf _
-                            & " <br />" & vbCrLf _
+                            & " <br /><br />" & vbCrLf _
                             & " Form ID: " & formName & vbCrLf _
                             & " <br />" & vbCrLf _
                             & " Comments: " & comment & vbCrLf
@@ -1529,28 +1529,36 @@ Public Class review
         If Page.IsValid Then
 
             ''add dtmSupReviewedAutoDate = current date to update fields
-            SqlDataSource9.UpdateParameters("nvcFormID").DefaultValue = Request.QueryString("id")
+            Dim formName = Request.QueryString("id")
+            Dim comment = StringUtils.Sanitize(txtAcknowledgeComments.Text)
+            SqlDataSource9.UpdateParameters("nvcFormID").DefaultValue = formName
             SqlDataSource9.UpdateParameters("nvcFormStatus").DefaultValue = nextStep
             SqlDataSource9.UpdateParameters("dtmCSRReviewAutoDate").DefaultValue = CDate(DateTime.Now())
             SqlDataSource9.UpdateParameters("bitisCSRAcknowledged").DefaultValue = CheckBox1.Checked
-            SqlDataSource9.UpdateParameters("nvcCSRComments").DefaultValue = StringUtils.Sanitize(txtAcknowledgeComments.Text)
-
+            SqlDataSource9.UpdateParameters("nvcCSRComments").DefaultValue = comment
             SqlDataSource9.Update()
+
+            Dim moduleName As String = TryCast(ListView1.Items(0).FindControl("Label31"), Label).Text
+            If IsCompleteCsrModule(moduleName, nextStep) Then
+                EmailComment(formName, comment)
+            End If
 
             FromURL = Request.ServerVariables("URL")
             Response.Redirect("next1.aspx?FromURL=" & FromURL)
-
             'Response.Redirect("next1.aspx")  ' Response.Redirect("view2.aspx")
-
         Else
-
             Label116.Text = "Please correct all fields indicated in red to proceed."
-
-
         End If
 
-
     End Sub
+
+    Private Function IsCompleteCsrModule(moduleName As String, status As String) As Boolean
+        If String.IsNullOrWhiteSpace(moduleName) OrElse Not String.Equals(moduleName.Trim(), "CSR", StringComparison.OrdinalIgnoreCase) Then
+            Return False
+        End If
+
+        Return True
+    End Function
 
     ' Management acknowledge
     ' For CTC, manager acknowledge;
@@ -1570,13 +1578,19 @@ Public Class review
 
         If Page.IsValid Then
 
+            Dim formName = Request.QueryString("id")
             ''add dtmSupReviewedAutoDate = current date to update fields
-            SqlDataSource10.UpdateParameters("nvcFormID").DefaultValue = Request.QueryString("id")
+            SqlDataSource10.UpdateParameters("nvcFormID").DefaultValue = formName
             SqlDataSource10.UpdateParameters("nvcReviewSupLanID").DefaultValue = lan
             SqlDataSource10.UpdateParameters("nvcFormStatus").DefaultValue = nextStep
             SqlDataSource10.UpdateParameters("dtmSUPReviewAutoDate").DefaultValue = CDate(DateTime.Now())
-
             SqlDataSource10.Update()
+
+            Dim moduleName As String = TryCast(ListView1.Items(0).FindControl("Label31"), Label).Text
+            If IsCompleteCsrModule(moduleName, nextStep) Then
+                Dim csrComment = TryCast(ListView1.Items(0).FindControl("CsrComment"), Label).Text
+                EmailComment(formName, csrComment)
+            End If
 
             FromURL = Request.ServerVariables("URL")
             Response.Redirect("next1.aspx?FromURL=" & FromURL)

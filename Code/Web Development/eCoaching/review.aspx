@@ -341,6 +341,7 @@
                     <asp:Label ID="isAttendance" runat="server" Text='<%# Eval("OTH / SEA") %>' Visible="false" />
                     <asp:Label ID="SupEmail" runat="server" Text='<%# Eval("strCSRSupEmail") %>' Visible="false" />
                     <asp:Label ID="MgrEmail" runat="server" Text='<%# Eval("strCSRMgrEmail") %>' Visible="false" />
+                    <asp:Label ID="CsrComment" runat="server" Text='<%# Eval(server.htmldecode("txtCSRComments")) %>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">
