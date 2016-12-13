@@ -1,8 +1,12 @@
 /*
-eCoaching_Generic_Create(02).sql
-Last Modified Date:9/11/2016
+eCoaching_Generic_Create(03).sql
+Last Modified Date:12/12/2016
 Last Modified By: Susmitha Palacherla
 
+Version 03: 12/12/2016
+Changes to support ad-hoc generic feeds with variations by including attributes in the files- TFS 4916
+Added additional columns to tables 1,3 and 4
+Updated sp#1 to support the new mappings 
 
 Version 02: 9/11/2016
 Updated sp#1 to support ATT SEA feed per TFS 3972
@@ -54,12 +58,21 @@ CREATE TABLE [EC].[Generic_Coaching_Stage](
 	[Submitter_Name] [nvarchar](30) NULL,
 	[Submitter_Email] [nvarchar](50) NULL,
 	[CSR_LANID] [nvarchar](30) NULL,
-	[CSR_EMPID] [nvarchar](20) NULL,
+	[CSR_EMPID] [nvarchar](10) NULL,
 	[CSR_Site] [nvarchar](20) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
-	[TextDescription] [nvarchar](3000) NULL,
-	[FileName] [nvarchar](260) NULL
+	[TextDescription] [nvarchar](4000) NULL,
+	[FileName] [nvarchar](260) NULL,
+        [Module_ID] [int] NULL,
+	[Source_ID] [int] NULL,
+	[isCSE] [bit] NULL,
+	[Status_ID] [int] NULL,
+	[Submitter_ID] [nvarchar](10) NULL,
+	[CoachingReason_ID] [int] NULL,
+	[SubCoachingReason_ID] [int] NULL,
+	[Value] [nvarchar](30) NULL,
+	[EmailSent] [bit] NULL
             
 ) ON [PRIMARY]
 
@@ -122,7 +135,16 @@ CREATE TABLE [EC].[Generic_Coaching_Rejected](
 	[TextDescription] [nvarchar](3000) NULL,
 	[FileName] [nvarchar](260) NULL,
 	[Rejected_Reason] [nvarchar](200) NULL,
-	[Rejected_Date] [datetime] NULL
+	[Rejected_Date] [datetime] NULL,
+	[Module_ID] [int] NULL,
+	[Source_ID] [int] NULL,
+	[isCSE] [bit] NULL,
+	[Status_ID] [int] NULL,
+	[Submitter_ID] [nvarchar](10) NULL,
+	[CoachingReason_ID] [int] NULL,
+	[SubCoachingReason_ID] [int] NULL,
+	[Value] [nvarchar](30) NULL,
+	[CSR_EMPID] [nvarchar](10) NULL
               
 ) ON [PRIMARY]
 
@@ -157,7 +179,16 @@ CREATE TABLE [EC].[Generic_Coaching_Fact](
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
-	[FileName] [nvarchar](260) NULL
+	[FileName] [nvarchar](260) NULL,
+	[CSR_EMPID] [nvarchar](10) NULL,
+	[Module_ID] [int] NULL,
+	[Source_ID] [int] NULL,
+	[isCSE] [bit] NULL,
+	[Status_ID] [int] NULL,
+	[Submitter_ID] [nvarchar](10) NULL,
+	[CoachingReason_ID] [int] NULL,
+	[SubCoachingReason_ID] [int] NULL,
+	[Value] [nvarchar](30) NULL
 
 ) ON [PRIMARY]
 
@@ -192,15 +223,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/11/2016
 --  Created per TFS 2470 to load the Generic feed(s)- 4/11/2016
 -- Modified to accomodate Attendance feed for seasonal employees per TFS 3972 - 09/15/2016
+-- Modified to support ad-hoc loads by adding more values to the file. TFS 4916 -12/9/2016
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic]
 AS
@@ -235,6 +263,7 @@ BEGIN TRY
            ,[isUCID]
            ,[isVerintID]
            ,[Description]
+           ,[isVerified]
 	       ,[SubmittedDate]
            ,[StartDate]
            ,[isCSRAcknowledged]
@@ -246,38 +275,76 @@ BEGIN TRY
            ,[SupID]
            ,[MgrID]
            )
-select  Distinct LOWER(cs.CSR_LANID)	[FormName],
-        CASE cs.Program  
+SELECT DISTINCT LOWER(cs.CSR_LANID)	[FormName],
+
+CASE cs.Program  
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
-        ELSE cs.Program  END       [ProgramName],
-        [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])[SourceID],
-        [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
+        ELSE cs.Program  
+ END [ProgramName],
+ 
+ CASE 
+		WHEN cs.[Report_Code] like 'SEA%'
+        THEN [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])
+        ELSE cs.Source_ID 
+  END  [SourceID],
+  
+  CASE
+        WHEN cs.[Report_Code] like 'SEA%'
+        THEN [EC].[fn_strStatusIDFromStatus](cs.Form_Status)
+        ELSE cs.Status_ID 
+  END   [StatusID],
+  
         [EC].[fn_intGetSiteIDFromLanID](cs.CSR_LANID,@dtmDate)[SiteID],
         LOWER(cs.CSR_LANID)				[EmpLanID],
         cs.CSR_EMPID                    [EmpID],
-        [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)[SubmitterID],
+        
+  CASE
+        WHEN cs.[Report_Code] like 'SEA%'
+        THEN [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)
+        ELSE cs.Submitter_ID
+  END   [SubmitterID],
+  
 		cs.Event_Date			            [EventDate],
 		 0			[isAvokeID],
 		 0			[isNGDActivityID],
          0			[isUCID],
          0          [isVerintID],
 		-- EC.fn_nvcHtmlEncode(cs.TextDescription)		[Description],
-		 CASE 
-		 WHEN cs.[Report_Code] like 'SEA%'
+  CASE 
+		 WHEN cs.[Report_Code] like 'SEA%' 
 		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br /> <br />')
-		 ELSE REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '      '  ,'<br />') END [Description],	-- CHAR(13) + CHAR(10)
-		 cs.Submitted_Date			SubmittedDate,
+		 WHEN  cs.[Report_Code] like 'OTH%'
+		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br />')
+		 ELSE REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '      '  ,'<br />') 
+  END [Description],	-- CHAR(13) + CHAR(10)
+  
+         1                          [isVerified],
+		 cs.Submitted_Date			[SubmittedDate],
 		 cs.Start_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
-		 0                          [isCSE],
-		 CASE 
+CASE 
 		 WHEN cs.[Report_Code] like 'SEA%'
 		 THEN 0
-		 ELSE 1	END					[EmailSent],
+		 ELSE cs.isCSE
+  END                          [isCSE],
+		 
+  CASE 
+		 WHEN cs.[Report_Code] like 'SEA%'
+		 THEN 0
+		 ELSE cs.EmailSent
+  END	[EmailSent],
+  
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 1							[ModuleID],
+		 
+CASE 
+		 WHEN cs.[Report_Code] like 'SEA%'
+		 THEN 1
+		 ELSE  cs.Module_ID
+ END		                      [ModuleID],
+  
+  
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
 		 ISNULL(csr.[Mgr_ID],'999999') [MgrID]
 	                   
@@ -306,14 +373,27 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[SubCoachingReasonID]
            ,[Value])
     SELECT cf.[CoachingID],
-         CASE 
+    
+ CASE 
 		 WHEN cf.strReportCode like 'SEA%'
 		 THEN 3
-		 ELSE 5	END,					
-         [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
-           os.[CoachReason_Current_Coaching_Initiatives]
-    FROM [EC].[Generic_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
-    ON os.[Report_ID] = cf.[numReportID] AND  os.[Report_Code] = cf.[strReportCode]
+		 ELSE cs.CoachingReason_ID	
+ END [CoachingReasonID],
+ 
+ CASE 
+		 WHEN cf.strReportCode like 'SEA%'				
+         THEN [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3))
+         ELSE cs.SubCoachingReason_ID	
+ END [SubCoachingReasonID],
+ 
+  CASE 
+		 WHEN cf.strReportCode like 'SEA%'		
+         THEN  cs.[CoachReason_Current_Coaching_Initiatives]
+         ELSE cs.Value 
+ END [Value]
+ 
+    FROM [EC].[Generic_Coaching_Stage] cs JOIN  [EC].[Coaching_Log] cf      
+    ON cs.[Report_ID] = cf.[numReportID] AND  cs.[Report_Code] = cf.[strReportCode]
     LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
     ON cf.[CoachingID] = cr.[CoachingID]  
     WHERE cr.[CoachingID] IS NULL 
@@ -353,9 +433,6 @@ END -- sp_InsertInto_Coaching_Log_Generic
 
 
 
-
-
-
 GO
 
 
@@ -366,6 +443,8 @@ GO
 
 
 
-***************************************************************************************************
+
+
+--***************************************************************************************************
 
 

@@ -1,7 +1,13 @@
 /*
-eCoaching_Maintenance_Create(20).sql
-Last Modified Date: 10/26/2016
+eCoaching_Maintenance_Create(21).sql
+Last Modified Date: 12/12/2016
 Last Modified By: Susmitha Palacherla
+
+
+Version 21: 12/12/2016
+Changes to support ad-hoc generic feeds with variations by including attributes in the files- TFS 4916
+1. Updated SP #2 [EC].[sp_SelectCoaching4Contact]
+
 
 Version 20: 10/26/2016
 1. Updated Sp#6   [EC].[sp_SelectCoaching4Reminder] to incorporate reassigned recipients per TFS 4353
@@ -335,8 +341,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/2013
@@ -347,6 +351,7 @@ GO
 -- Modified per TFS 2283 to add Source 210 for Training feed -- 3/22/2016
 -- Modified per TFS 2268 to add Source 231 for CTC Quality Other feed - 6/15/2016
 -- Modified per TFS 3179 & 3186 to add Source 218 for HFC & KUD Quality Other feeds - 7/15/2016
+-- Modified to make allow more ad-hoc loads by adding more values to the file. TFS 4916 -12/9/2016
 -- --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -391,14 +396,14 @@ FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 ON eh.Emp_ID = cl.EMPID JOIN [EC].[DIM_Status] s 
 ON s.StatusID = cl.StatusID JOIN [EC].[DIM_Source] so
 ON so.SourceID = cl.SourceID JOIN [EC].[DIM_Module] mo
-ON mo.ModuleID = cl.ModuleID
+ON mo.ModuleID = cl.ModuleID 
 WHERE S.Status not in (''Completed'',''Inactive'')
-AND cl.SourceID in (210,211,212,218,221,222,223,224,230,231)
+AND cl.strReportCode is not NULL
 AND cl.EmailSent = ''False''
-AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
-OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL)
-OR (s.Status =''Pending Manager Review'' and eh.Mgr_Email is NOT NULL)
-OR (s.Status =''Pending Employee Review'' and eh.Emp_Email is NOT NULL))
+AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL and eh.Sup_Email <> ''Unknown'')
+OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL and eh.Sup_Email <> ''Unknown'')
+OR ((s.Status =''Pending Manager Review'' OR s.Status =''Pending Sr. Manager Review'') and eh.Mgr_Email is NOT NULL and eh.Mgr_Email <> ''Unknown'')
+OR (s.Status =''Pending Employee Review'' and eh.Emp_Email is NOT NULL and eh.Emp_Email <> ''Unknown''))
 AND LEN(cl.FormName) > 10
 Order By cl.SubmittedDate DESC'
 --and [strCSREmail] = '''+@strFormMail+'''
@@ -410,7 +415,9 @@ END --sp_SelectCoaching4Contact
 
 
 
+
 GO
+
 
 
 

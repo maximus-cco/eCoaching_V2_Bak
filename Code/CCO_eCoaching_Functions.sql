@@ -1,7 +1,13 @@
 /*
-File: eCoaching_Functions.sql (27)
+File: eCoaching_Functions.sql (28)
 Last Modified By: Susmitha Palacherla
-Date: 10/26/2016
+Date: 12/12/2016
+
+Version 28: 12/12/2016
+Changes to support ad-hoc generic feeds with variations by including attributes in the files- TFS 4916
+Added 2 new functions 
+#45 [EC].[fn_strBookListFromLanID]- Returns list of books for a given user asa single string
+#46[EC].[fn_intModuleIDFromEmpID - to get Module for a given employee ID
 
 Version 27, 10/26/2016
 1. Added 1 new function #44) to to support reassigned recipients for remindersper  TFS 4353
@@ -180,6 +186,7 @@ List of Functions:
 42.[EC].[fn_strStatusFromStatusID]
 43. [EC].[fn_strCheckIf_HRUser] 
 44.[EC].[fn_strMgrEmailFromEmpID]
+45.[EC].[fn_intModuleIDFromEmpID
 */
 
 
@@ -2994,6 +3001,145 @@ END -- fn_strMgrEmailFromEmpID
 
 
 GO
+
+
+
+
+
+--*********************************************************************************
+
+
+
+--45. FUNCTION [EC].[fn_strBookListFromLanID] 
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strBookListFromLanID' 
+)
+   DROP FUNCTION [EC].[fn_strBookListFromLanID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:      04/21/2015
+-- Description:	        
+-- This function assumes that there is a table 'BookScans' with lanids(cloumn 'User') and 
+-- list of books(column 'Book').
+-- A User will have as many rows equal to the number of books listed for them.  
+-- For each lanid this function returns the list of books for that given user 
+-- as a single string separated by a '|'
+-- =============================================
+
+CREATE FUNCTION [EC].[fn_strBookListFromLanID]
+  (
+  @LanID nvarchar(50)
+)
+RETURNS NVARCHAR(1000)
+AS
+BEGIN
+  DECLARE @strBookList NVARCHAR(1000)
+  
+  IF @LanID IS NOT NULL
+  BEGIN
+  SET @strBookList = (SELECT STUFF((SELECT '| ' + CAST([Book] AS VARCHAR(2000)) [text()]
+         FROM [EC].[BookScans]m
+         WHERE m.[User] = t.[User]
+         FOR XML PATH(''), TYPE)
+        .value('.','NVARCHAR(MAX)'),1,2,'') List_Output
+FROM [EC].[BookScans] t 
+  where t.[User]=  @LanID
+GROUP BY [User])       
+	END
+    ELSE
+    SET @strBookList = NULL
+        
+RETURN @strBookList
+
+END  -- fn_strBookListFromLanID
+
+
+GO
+
+
+
+
+
+
+
+--*********************************************************************************
+--46. FUNCTION [EC].[fn_intModuleIDFromEmpID] 
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_intModuleIDFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_intModuleIDFromEmpID]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date:  12/12/2016
+-- Description:	Given an Employee ID returns the Module ID for that user if iser belongs to one of the 5 Modules.
+-- Last Modified By:
+-- Revision History:
+--  Created per TFS 4916- setup of ad-hoc generic load - 12/12/2016
+-- =============================================
+CREATE FUNCTION [EC].[fn_intModuleIDFromEmpID] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS int
+AS
+BEGIN
+	DECLARE 
+	@strEmpJobCode nvarchar(20),
+	@intModuleID int
+	
+SET @strEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @strEmpID)
+
+SET @intModuleID = (CASE
+ WHEN (@strEmpJobCode IN ('WACS01', 'WACS02', 'WACS03')) THEN 1
+ WHEN (@strEmpJobCode IN ('WACS40')) THEN 2
+ WHEN (@strEmpJobCode IN ('WACQ02','WACQ03','WACQ12')) THEN 3
+ WHEN (@strEmpJobCode IN ('WIHD01','WIHD02','WIHD03','WIHD04')) THEN 4
+ WHEN (@strEmpJobCode IN ('WTID13','WTTI02','WTTR12','WTTR13')) THEN 5
+ ELSE -1
+ END)
+
+ 
+  RETURN  @intModuleID
+  
+END --fn_intModuleIDFromempID
+
+
+
+GO
+
+
+
 
 
 
