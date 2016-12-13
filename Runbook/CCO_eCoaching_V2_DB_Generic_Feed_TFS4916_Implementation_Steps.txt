@@ -235,6 +235,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/11/2016
@@ -335,7 +337,11 @@ CASE cs.Program
 		 cs.Submitted_Date			[SubmittedDate],
 		 cs.Start_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
-		 0                          [isCSE],
+CASE 
+		 WHEN cs.[Report_Code] like 'SEA%'
+		 THEN 0
+		 ELSE cs.isCSE
+  END                          [isCSE],
 		 
   CASE 
 		 WHEN cs.[Report_Code] like 'SEA%'
@@ -439,7 +445,12 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Generic
 
+
+
 GO
+
+
+
 
 
 --***************************************************************************
@@ -459,6 +470,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/2013
@@ -520,7 +532,7 @@ AND cl.strReportCode is not NULL
 AND cl.EmailSent = ''False''
 AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL and eh.Sup_Email <> ''Unknown'')
 OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL and eh.Sup_Email <> ''Unknown'')
-OR (s.Status =''Pending Manager Review'' and eh.Mgr_Email is NOT NULL and eh.Mgr_Email <> ''Unknown'')
+OR ((s.Status =''Pending Manager Review'' OR s.Status =''Pending Sr. Manager Review'') and eh.Mgr_Email is NOT NULL and eh.Mgr_Email <> ''Unknown'')
 OR (s.Status =''Pending Employee Review'' and eh.Emp_Email is NOT NULL and eh.Emp_Email <> ''Unknown''))
 AND LEN(cl.FormName) > 10
 Order By cl.SubmittedDate DESC'
@@ -533,7 +545,11 @@ END --sp_SelectCoaching4Contact
 
 
 
+
 GO
+
+
+
 
 PRINT (' End Stored Procedures for this release...')
 
