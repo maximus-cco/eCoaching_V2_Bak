@@ -43,7 +43,7 @@ Section 3 -	Stored Procedures
 ***********************SECTION 1 ********************************************
 
  Stage SSIS Package									
-Download file Generic_Coaching.dtsx (change set 36224 )
+Download file Generic_Coaching.dtsx (change set 36238 )
 From: \cms\eCoaching_V2\ETL\ in TFS source control
 
 For Test
@@ -65,7 +65,7 @@ To: \\vdenssdbp07\scorecard-ssis\Coaching
 		
 *****************************************************************************/
 
--- Begin table Updates....
+
 
 --1a. Add additional fields to Staging table
 
@@ -138,7 +138,7 @@ GO
 
 --***********************
 
--- End table Updates....
+
 
 
 /*************************SECTION 3*****************************************
