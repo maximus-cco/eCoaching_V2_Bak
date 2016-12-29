@@ -1,7 +1,11 @@
 /*
-eCoaching_Maintenance_Create(21).sql
-Last Modified Date: 12/12/2016
+eCoaching_Maintenance_Create(22).sql
+Last Modified Date: 12/29/2016
 Last Modified By: Susmitha Palacherla
+
+Version 22: 12/29/2016
+Changes to add condition for IQS(Quality logs) per TFS 5085 
+1. Updated SP #2 [EC].[sp_SelectCoaching4Contact]
 
 
 Version 21: 12/12/2016
@@ -341,6 +345,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/2013
@@ -352,6 +357,7 @@ GO
 -- Modified per TFS 2268 to add Source 231 for CTC Quality Other feed - 6/15/2016
 -- Modified per TFS 3179 & 3186 to add Source 218 for HFC & KUD Quality Other feeds - 7/15/2016
 -- Modified to make allow more ad-hoc loads by adding more values to the file. TFS 4916 -12/9/2016
+-- Modified to add condition for IQS(Quality logs)per TFS 5085 - 12/29/2016
 -- --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -398,7 +404,7 @@ ON s.StatusID = cl.StatusID JOIN [EC].[DIM_Source] so
 ON so.SourceID = cl.SourceID JOIN [EC].[DIM_Module] mo
 ON mo.ModuleID = cl.ModuleID 
 WHERE S.Status not in (''Completed'',''Inactive'')
-AND cl.strReportCode is not NULL
+AND (cl.strReportCode is not NULL OR cl.SourceID in (211,222,223,224,230))
 AND cl.EmailSent = ''False''
 AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL and eh.Sup_Email <> ''Unknown'')
 OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL and eh.Sup_Email <> ''Unknown'')
@@ -416,10 +422,8 @@ END --sp_SelectCoaching4Contact
 
 
 
+
 GO
-
-
-
 
 
 
