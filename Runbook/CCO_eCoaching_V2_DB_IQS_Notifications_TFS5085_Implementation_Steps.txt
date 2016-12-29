@@ -127,7 +127,7 @@ GO
   update [EC].[Coaching_Log]
   set EmailSent = 1
   where SourceID in (211,222,223,224,230)
-  and SubmittedDate > '2016-12-15 17:38:00.000'
+  and SubmittedDate > '2016-12-15 00:00:00.000'
   and EmailSent = 0
   and StatusID not in (1,2)
   and NOT(isCSRAcknowledged = 0 and SupReviewedAutoDate is null)
