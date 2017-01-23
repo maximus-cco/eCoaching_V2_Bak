@@ -1,0 +1,196 @@
+/*
+sp_InsertInto_Coaching_Log_Outlier(01).sql
+Last Modified Date: 1/18/2017
+Last Modified By: Susmitha Palacherla
+
+
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Outlier' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+-- =============================================
+-- Author:		        Susmitha Palacherla
+-- Create date:        03/10/2014
+-- Loads records from [EC].[Outlier_Coaching_Stage]to [EC].[Coaching_Log]
+-- Last Modified Date: 09/16/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per TFS644 to add IAE, IAT Feeds
+-- =============================================
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+AS
+BEGIN
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+
+      DECLARE @maxnumID INT,
+              @dtmDate DATETIME,
+              @strLCSPretext nvarchar(200),
+              @strIAEPretext nvarchar(200),
+              @strIATPretext nvarchar(200)
+              
+      -- Fetches the maximum CoachingID before the insert.
+      SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
+      -- Fetches the Date of the Insert
+      SET @dtmDate  = GETDATE()   
+      SET @strLCSPretext = 'The call associated with this Low CSAT is Verint ID: '
+      SET @strIAEPretext = 'You are receiving this eCL because the ARC received an Inappropriate Escalation for this CSR.  Please review the Verint Call, NGD call record and coach as appropriate. '
+      SET @strIATPretext = 'You are receiving this eCL because the ARC received an Inappropriate Transfer for this CSR.  Please review the Verint Call, NGD call record and coach as appropriate. '
+     
+-- Inserts records from the Outlier_Coaching_Stage table to the Coaching_Log Table
+
+ INSERT INTO [EC].[Coaching_Log]
+           ([FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+           ,[EmpLanID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[EventDate]
+           ,[isAvokeID]
+		   ,[isNGDActivityID]
+           ,[isUCID]
+           ,[isVerintID]
+           ,[Description]
+	       ,[SubmittedDate]
+           ,[StartDate]
+           ,[isCSRAcknowledged]
+           ,[isCSE]
+           ,[EmailSent]
+           ,[numReportID]
+           ,[strReportCode]
+           ,[ModuleID]
+           ,[SupID]
+           ,[MgrID]
+           )
+select  Distinct LOWER(cs.CSR_LANID)	[FormName],
+        CASE cs.Program  
+        WHEN NULL THEN csr.Emp_Program
+        WHEN '' THEN csr.Emp_Program
+        ELSE cs.Program  END       [ProgramName],
+        212                             [SourceID],
+        [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
+        [EC].[fn_intGetSiteIDFromLanID](cs.CSR_LANID,@dtmDate)[SiteID],
+        LOWER(cs.CSR_LANID)				[EmpLanID],
+        cs.CSR_EMPID                    [EmpID],
+        [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)[SubmitterID],
+		cs.Event_Date			            [EventDate],
+		 0			[isAvokeID],
+		 0			[isNGDActivityID],
+         0			[isUCID],
+         0          [isVerintID],
+	     CASE WHEN cs.Report_Code LIKE 'LCS%' 
+		 THEN @strLCSPretext + EC.fn_nvcHtmlEncode(cs.TextDescription)
+		 WHEN cs.Report_Code LIKE 'IAE%' 
+		 THEN @strIAEPretext + '<br />' + EC.fn_nvcHtmlEncode(cs.TextDescription) + '<br />' + cs.CD1 + '<br />' + cs.CD2
+		 WHEN cs.Report_Code LIKE 'IAT%' 
+		 THEN @strIATPretext + '<br />' + EC.fn_nvcHtmlEncode(cs.TextDescription) + '<br />' + cs.CD1 + '<br />' + cs.CD2
+		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
+		  cs.Submitted_Date			SubmittedDate,
+		  		 cs.Start_Date				[StartDate],
+		 0        				    [isCSRAcknowledged],
+		 0                          [isCSE],
+		 0                          [EmailSent],
+		 cs.Report_ID				[numReportID],
+		 cs.Report_Code				[strReportCode],
+		 1							[ModuleID],
+		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
+		 CASE WHEN cs.Report_Code LIKE 'LCS%' THEN ISNULL(cs.[RMgr_ID],'999999')
+		 ELSE ISNULL(csr.[Mgr_ID],'999999')END  [MgrID]
+	                   
+from [EC].[Outlier_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR_EMPID = csr.Emp_ID
+left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
+where cf.numReportID is Null and cf.strReportCode is null
+
+
+-- Updates the strFormID value
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+UPDATE [EC].[Coaching_Log]
+SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+where [FormName] not like 'eCL%'    
+OPTION (MAXDOP 1)
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+ -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
+
+
+INSERT INTO [EC].[Coaching_Log_Reason]
+           ([CoachingID]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[Value])
+    SELECT cf.[CoachingID],
+           9,
+           [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
+           os.[CoachReason_Current_Coaching_Initiatives]
+    FROM [EC].[Outlier_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
+    ON os.[Report_ID] = cf.[numReportID] AND  os.[Report_Code] = cf.[strReportCode]
+    LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
+    ON cf.[CoachingID] = cr.[CoachingID]  
+    WHERE cr.[CoachingID] IS NULL 
+ OPTION (MAXDOP 1)   
+ 
+                  
+COMMIT TRANSACTION
+END TRY
+
+      
+      BEGIN CATCH
+      IF @@TRANCOUNT > 0
+      ROLLBACK TRANSACTION
+
+
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+
+    SELECT @ErrorMessage = ERROR_MESSAGE(),
+           @ErrorSeverity = ERROR_SEVERITY(),
+           @ErrorState = ERROR_STATE()
+
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+  END CATCH  
+END -- sp_InsertInto_Coaching_Log_Outlier
+
+
+
+
+GO
+
