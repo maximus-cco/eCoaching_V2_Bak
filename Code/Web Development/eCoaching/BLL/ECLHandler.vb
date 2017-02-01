@@ -55,7 +55,8 @@
                  jobCode.StartsWith("WPSM"),
                  jobCode.StartsWith("WEEX"),
                  jobCode.StartsWith("WISY"),
-                 jobCode.StartsWith("WPWL51")
+                 jobCode.StartsWith("WPWL51"),
+                 jobCode.StartsWith("WPOP")
 
                 retValue = True
         End Select
