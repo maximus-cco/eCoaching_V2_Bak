@@ -1,0 +1,178 @@
+/* 
+Install one index at a time against eCoaching databae in target environment.
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+
+-- Added 1 new index for warning_Log table
+--1.
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Warning_Log_2_846626059__K8_1_2_4_5_9_17') 
+    DROP INDEX _dta_index_Warning_Log_2_846626059__K8_1_2_4_5_9_17 
+ON [EC].[Warning_Log]  
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_Warning_Log_2_846626059__K8_1_2_4_5_9_17] ON [EC].[Warning_Log] 
+(
+	[EmpID] ASC
+)
+INCLUDE ( [WarningID],
+[FormName],
+[SourceID],
+[StatusID],
+[SubmittedDate],
+[Active]) WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+
+GO
+--******************************************************
+
+
+--Added two new indexes for warning_log_reason table
+
+--1.
+
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Warning_Log_Reason_26_1269579561__K4') 
+    DROP INDEX _dta_index_Warning_Log_Reason_26_1269579561__K4 ON [EC].[Warning_Log_Reason] 
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_Warning_Log_Reason_26_1269579561__K4] ON [EC].[Warning_Log_Reason]
+     (
+     [Value]ASC
+     )
+     WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+
+
+
+--*************************************************************************
+
+--2.
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Warning_Log_Reason_26_1269579561__K1_K4') 
+    DROP INDEX _dta_index_Warning_Log_Reason_26_1269579561__K1_K4 
+ON [EC].[Warning_Log_Reason] 
+GO
+
+
+CREATE NONCLUSTERED INDEX [_dta_index_Warning_Log_Reason_26_1269579561__K1_K4] ON [EC].[Warning_Log_Reason] 
+(
+	[WarningID] ASC,
+	[Value] ASC
+)WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+
+--****************************************************************
+
+-- DROP unused index on Employee_Hierarchy table
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_28_69575286__K4_K1_2_10_16') 
+    DROP INDEX _dta_index_Employee_Hierarchy_28_69575286__K4_K1_2_10_16 ON [EC].[Employee_Hierarchy] 
+GO
+
+
+--****************************************************************
+
+--Added three new indexes for for table Employee_Hierarchy
+
+--1.
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_31_133575514__K1_K2_K10_K16') 
+    DROP INDEX _dta_index_Employee_Hierarchy_31_133575514__K1_K2_K10_K16 ON [EC].[Employee_Hierarchy]; 
+GO
+
+CREATE NONCLUSTERED INDEX [_dta_index_Employee_Hierarchy_31_133575514__K1_K2_K10_K16] ON [EC].[Employee_Hierarchy] 
+(
+	[Emp_ID] ASC,
+	[Emp_Name] ASC,
+	[Sup_Name] ASC,
+	[Mgr_Name] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+
+--****************************************************************
+
+--2.
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_26_K22_K5_K4_K6_K2_3_7_10_11_12_14_16_17_18_20') 
+    DROP INDEX _dta_index_Employee_Hierarchy_26_K22_K5_K4_K6_K2_3_7_10_11_12_14_16_17_18_20 ON [EC].[Employee_Hierarchy]
+GO
+
+CREATE NONCLUSTERED INDEX [_dta_index_Employee_Hierarchy_26_K22_K5_K4_K6_K2_3_7_10_11_12_14_16_17_18_20] ON [EC].[Employee_Hierarchy] 
+(
+	[End_Date] ASC,
+	[Emp_Site] ASC,
+	[Emp_LanID] ASC,
+	[Emp_Job_Code] ASC,
+	[Emp_Name] ASC
+)
+INCLUDE ( [Emp_Email],
+[Emp_Job_Description],
+[Sup_Name],
+[Sup_Email],
+[Sup_LanID],
+[Sup_Job_Description],
+[Mgr_Name],
+[Mgr_Email],
+[Mgr_LanID],
+[Mgr_Job_Description]) WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+
+GO
+
+--******************************************************
+
+--3.
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_26_846626059__K1_K2_K10_4_9_15') 
+    DROP INDEX _dta_index_Employee_Hierarchy_26_846626059__K1_K2_K10_4_9_15 ON [EC].[Employee_Hierarchy]
+GO
+
+CREATE NONCLUSTERED INDEX [_dta_index_Employee_Hierarchy_26_846626059__K1_K2_K10_4_9_15] ON [EC].[Employee_Hierarchy] 
+(
+	[Emp_ID] ASC,
+	[Emp_Name] ASC,
+	[Sup_Name] ASC
+)
+INCLUDE ( [Emp_LanID],
+[Sup_ID],
+[Mgr_ID]) WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+
+--****************************************************************
+
+
+--1. AT_Coaching_Inactivate_Reactivate_Audit - _dta_index_AT_Coaching_Inactivate_Reactivat_26_1435079__K3_K4
+
+--1.
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_AT_Coaching_Inactivate_Reactivat_26_1435079__K3_K4') 
+    DROP INDEX _dta_index_AT_Coaching_Inactivate_Reactivat_26_1435079__K3_K4 ON [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+GO
+
+CREATE NONCLUSTERED INDEX [_dta_index_AT_Coaching_Inactivate_Reactivat_26_1435079__K3_K4] ON [EC].[AT_Coaching_Inactivate_Reactivate_Audit] 
+(
+	[FormName] ASC,
+	[LastKnownStatus] ASC
+)WITH (SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
+
+
+
+
+--****************************************************************
