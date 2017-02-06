@@ -1,9 +1,10 @@
 /*
-fn_intSubCoachReasonIDFromRptCode(01).sql
-Last Modified Date: 1/18/2017
+fn_intSubCoachReasonIDFromRptCode(02).sql
+Last Modified Date: 2/3/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -20,12 +21,13 @@ IF EXISTS (
 GO
 
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 -- =============================================
@@ -40,6 +42,7 @@ GO
 -- TFS 2268 - To add CTC - 6/15/2016
 -- TFS 3179 & 3186 - To add HFC & KUD - 7/14/2016
 -- TFS 3972 - To add SEA - 9/15/2016
+-- TFS 5309 - To add NPN - 02/01/2017
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -80,6 +83,7 @@ BEGIN
             WHEN N'HFC' THEN 12
             WHEN N'KUD' THEN 42
             WHEN N'SEA' THEN 42
+            WHEN N'NPN' THEN 42
         ELSE -1
       END
     ELSE
@@ -91,5 +95,8 @@ END  -- fn_intSubCoachReasonIDFromRptCode()
 
 
 
+
+
 GO
+
 
