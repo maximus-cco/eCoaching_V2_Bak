@@ -1,9 +1,10 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(01).sql
-Last Modified Date: 1/18/2017
+sp_SelectReviewFrom_Coaching_Log(02).sql
+Last Modified Date: 2/3/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -29,6 +30,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -47,6 +50,7 @@ GO
 -- 9. TFS 3972 to ADD SEA flag - 9/15/2016
 --10. TFS 3758 Shared coaching sub-reasons may cause unexpected display issue in user interface - 10/14/2016
 --11. TFS 3757 Include Yes/No value to coaching monitor question - 10/27/2016
+--12. TFS 5309 NPN Load.  - 02/01/2017
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -152,6 +156,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 	    CASE WHEN (cc.CTC is Not NULL AND cl.strReportCode like ''CTC%'') Then 1 ELSE 0 END	"Quality / CTC",
 	    CASE WHEN (cc.HFC is Not NULL AND cl.strReportCode like ''HFC%'') Then 1 ELSE 0 END	"Quality / HFC",
 	    CASE WHEN (cc.KUD is Not NULL AND cl.strReportCode like ''KUD%'') Then 1 ELSE 0 END	"Quality / KUD",
+	    CASE WHEN (cc.NPN is Not NULL AND cl.strReportCode like ''NPN%'') Then 1 ELSE 0 END	"Quality / NPN",
 	    CASE WHEN (cc.SEA is Not NULL AND cl.strReportCode like ''SEA%'') Then 1 ELSE 0 END	"OTH / SEA",
 	  	cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
@@ -184,7 +189,8 @@ SET @nvcSQL3 = '  (SELECT  ccl.FormName,
      MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END)	CTC,
      MAX(CASE WHEN [clr].[SubCoachingReasonID] = 12 THEN [clr].[Value] ELSE NULL END)	HFC,
      MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	KUD,
-     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA
+     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA,
+     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN
  	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
@@ -213,5 +219,10 @@ END --sp_SelectReviewFrom_Coaching_Log
 
 
 
+
+
 GO
+
+
+
 

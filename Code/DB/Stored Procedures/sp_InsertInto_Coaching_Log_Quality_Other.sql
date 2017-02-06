@@ -1,9 +1,10 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Other(01).sql
-Last Modified Date: 1/18/2017
+sp_InsertInto_Coaching_Log_Quality_Other(02).sql
+Last Modified Date: 2/3/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -27,6 +28,9 @@ GO
 
 
 
+
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
@@ -34,6 +38,7 @@ GO
 -- Initial Revision: Setup of CTC Load - TFS 2268 -  6/15/2016
 -- Update: HFC and KUD Loads - TFS 3179 and 3186 - 07/15/2016
 -- Update: HFC and KUD Load. Start date fix. TFS 3179 - 08/3/2016
+-- Update: NPN Load. TFS 5309 - 02/01/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 AS
@@ -149,6 +154,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            CASE WHEN cf.strReportCode like 'CTC%' THEN 21 
            WHEN cf.strReportCode like 'HFC%' THEN 10 
            WHEN cf.strReportCode like 'KUD%' THEN 11
+           WHEN cf.strReportCode like 'NPN%' THEN 5
            ELSE 14 END,
            [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
            qs.[CoachReason_Current_Coaching_Initiatives]
@@ -193,5 +199,10 @@ END TRY
 END -- sp_InsertInto_Coaching_Log_Quality_Other
 
 
+
+
+
 GO
+
+
 
