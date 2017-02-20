@@ -1,97 +1,0 @@
--- Please implement in eCoaching DB on vdenssdbp07\scorp01
-
-Summary 
-Implement the 3 sql statements below ONE AFTER THE OTHER 
-
---<Begin Step1>
-/*
-
-Delete from [EC].[Email_Notifications]
-where [Module]in ('Supervisor' ,'Quality')
-
-*/
---</End Step1>
-
---<Begin Step2>
-/*
-
-INSERT INTO [EC].[Email_Notifications]
-           ([Module]
-           ,[Submission]
-           ,[Source]
-           ,[SubSource]
-           ,[isCSE]
-           ,[Status]
-           ,[Recipient]
-           ,[Subject]
-           ,[Body]
-           ,[isCCRecipient]
-           ,[CCRecipient])
-     VALUES
-           ('Supervisor','UI','Direct','Walk-By',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
-           ('Supervisor','UI','Direct','CSR Reported Issue',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
-           ('Supervisor','UI','Direct','Training and Development',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
-           ('Supervisor','UI','Direct','Internal CCO Reporting',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
-           ('Supervisor','UI','Direct','DMEPOS Escalations',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
-           ('Supervisor','UI','Direct','Walk-By',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received  on <strong> strDateTime.',0,'NA'),
-           ('Supervisor','UI','Direct','CSR Reported Issue',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received  on <strong>  strDateTime </strong> .',0,'NA'),
-           ('Supervisor','UI','Direct','Training and Development',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received  on <strong>  strDateTime </strong> . ',0,'NA'),
-           ('Supervisor','UI','Direct','Internal CCO Reporting',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received  on <strong>  strDateTime </strong> . ',0,'NA'),
-           ('Supervisor','UI','Direct','DMEPOS Escalations',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received  on <strong>  strDateTime </strong> . ',0,'NA'),
-           ('Supervisor','UI','Indirect','Walk-By',0,'Pending Manager Review','Supervisor','eCL: Pending Manager Review','A new eCoaching Log has been entered on behalf of  <strong> strPerson </strong> on <strong>  strDateTime  </strong>   that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Supervisor','UI','Indirect','CSR Reported Issue',0,'Pending Manager Review','Supervisor','eCL: Pending Manager Review','A new eCoaching Log has been entered on behalf of  <strong> strPerson </strong> on <strong>  strDateTime  </strong>   that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Supervisor','UI','Indirect','Training and Development',0,'Pending Manager Review','Supervisor','eCL: Pending Manager Review','A new eCoaching Log has been entered on behalf of  <strong> strPerson </strong> on <strong>  strDateTime  </strong>   that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Supervisor','UI','Indirect','Internal CCO Reporting',0,'Pending Manager Review','Supervisor','eCL: Pending Manager Review','A new eCoaching Log has been entered on behalf of  <strong> strPerson </strong> on <strong>  strDateTime  </strong>   that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Supervisor','UI','Indirect','DMEPOS Escalations',0,'Pending Manager Review','Supervisor','eCL: Pending Manager Review','A new eCoaching Log has been entered on behalf of  <strong> strPerson </strong> on <strong>  strDateTime  </strong>   that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Supervisor','UI','Indirect','Walk-By',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
-           ('Supervisor','UI','Indirect','CSR Reported Issue',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
-           ('Supervisor','UI','Indirect','Training and Development',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
-           ('Supervisor','UI','Indirect','Internal CCO Reporting',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA'),
-           ('Supervisor','UI','Indirect','DMEPOS Escalations',1,'Pending Sr. Manager Review','Manager','eCL: Pending Sr. Manager Review','A new eCoaching Log has been entered and requires your action. Please click on the link below to review and verify that the eCL entered on <strong> strDateTime </strong> for <strong> strPerson </strong> is a valid Customer Service Escalation (CSE). Further directions are provided on the form.',0,'NA')
-
-*/
---</End  Step2>
-
-
-
---<Begin Step3>
-/*
-
-INSERT INTO [EC].[Email_Notifications]
-           ([Module]
-           ,[Submission]
-           ,[Source]
-           ,[SubSource]
-           ,[isCSE]
-           ,[Status]
-           ,[Recipient]
-           ,[Subject]
-           ,[Body]
-           ,[isCCRecipient]
-           ,[CCRecipient])
-     VALUES
-           ('Quality','UI','Direct','Supervisor Coaching',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Direct','Manager Coaching',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Direct','Verint Quality Monitoring',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Direct','Quality Call Listening',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Direct','CMS Reported Item',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Direct','Leadership Listening',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Direct','Walk-By',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Direct','CSR Reported Issue',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Direct','Training and Development',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Direct','Internal CCO Reporting',0,'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',0,'NA'),
-           ('Quality','UI','Indirect','Supervisor Coaching',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Quality','UI','Indirect','Manager Coaching',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Quality','UI','Indirect','Verint Quality Monitoring',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Quality','UI','Indirect','Quality Call Listening',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Quality','UI','Indirect','CMS Reported Item',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Quality','UI','Indirect','Leadership Listening',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Quality','UI','Indirect','Walk-By',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Quality','UI','Indirect','CSR Reported Issue',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Quality','UI','Indirect','Training and Development',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
-           ('Quality','UI','Indirect','Internal CCO Reporting',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>  that requires your action. Please click on the link below to review the eCoaching log.',0,'NA')
-       
-GO
-
-*/
---</End Step3>

@@ -1,8 +1,0 @@
---Run the below update in SSMS window pointing to eCoaching DB in target environment.
-
-Update [EC].[ETS_Description]
-Set [Description]= N'It appears the supervisor may have missed the deadline to approve this timecard.
-      Please research and coach as necessary..
-
-      The time period, manager name, and name of employee whose timecard requires action are below:'
- Where [ReportCode]= 'OAS'
