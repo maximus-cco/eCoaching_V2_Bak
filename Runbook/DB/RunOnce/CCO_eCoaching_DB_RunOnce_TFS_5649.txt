@@ -1,0 +1,61 @@
+/* 
+Run one statement at a time
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+--1. Create table
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[NPN_Description](
+	[NPNCode] [nvarchar](20) NOT NULL,
+	[NPNDescription] [nvarchar](4000) NOT NULL
+) ON [PRIMARY]
+
+GO
+
+
+--***************************
+
+
+--2. Populate table 
+
+
+INSERT INTO [EC].[NPN_Description]
+           ([NPNCode]
+           ,[NPNDescription])
+     VALUES
+           ('#NPNFFM1',
+'When completing an application, CSRs are required to ask consumers the question “Tell us if you’re getting help from one of these people.”  If the consumer indicates that they are receiving help from a Navigator, Certified Application Counselor, Agent/Broker, or non-Navigator assistance personnel, the CSR must enter the national producer number (NPN) in the appropriate field.
+
+On this call a new application was started but the consumer was not asked if he or she had been assisted. Please make certain to ask this required question on future calls. #NPNFFM1'),
+            ('#NPNFFM2',
+'When completing an application, CSRs are required to ask consumers the question “Tell us if you’re getting help from one of these people.”  If the consumer indicates that they are receiving help from a Navigator, Certified Application Counselor, Agent/Broker, or non-Navigator assistance personnel, the CSR must enter the national producer number (NPN) in the appropriate field.
+
+On this call a new application was started, the consumer indicated they had assistance, but the NPN was not entered in the appropriate field. Please make certain to enter the NPN information correctly on future calls. #NPNFFM2'),
+			('#NPNFFM3',
+'When updating an application, CSRs are required to ask consumers the question “Tell us if you’re getting help from one of these people.”  If the consumer indicates that they are receiving help from a Navigator, Certified Application Counselor, Agent/Broker, or non-Navigator assistance personnel, the CSR must enter the national producer number (NPN) in the appropriate field.
+
+On this call the application was updated using Reporting a Life Change but the consumer was not asked if he or she had been assisted. Please make certain to ask this required question on future calls. #NPNFFM3'),
+	        ('#NPNFFM4',
+'When updating an application, CSRs are required to ask consumers the question “Tell us if you’re getting help from one of these people.”  If the consumer indicates that they are receiving help from a Navigator, Certified Application Counselor, Agent/Broker, or non-Navigator assistance personnel, the CSR must enter the national producer number (NPN) in the appropriate field.
+
+On this call the application was updated using Reporting a Life Change and the consumer indicated they had assistance, but the NPN was not entered in the appropriate field. Please make certain to enter the NPN information correctly on future calls. #NPNFFM4'),
+	        ('#NPNFFM5',
+'When updating an application, CSRs are required to ask consumers the question “Tell us if you’re getting help from one of these people.”  If the consumer indicates that they are receiving help from a Navigator, Certified Application Counselor, Agent/Broker, or non-Navigator assistance personnel, the CSR must enter the national producer number (NPN) in the appropriate field.
+
+On this call the application was updated using Reporting a Life Change. There was data in the application indicating the consumer was assisted. The consumer was not asked if he or she had been assisted in order to confirm the validity of the information in the application. Please make certain to ask this required question on future calls. #NPNFFM5')
+
+
+--***************************
+
+
