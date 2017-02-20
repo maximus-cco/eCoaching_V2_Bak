@@ -1,0 +1,30 @@
+
+/*
+
+TFS 3756 - CTC  Feed Fix
+
+
+Implement in eCoaching database in target environment.
+
+
+Dev - eCoahingDev
+Test - eCoachingTest
+Prod - eCoaching
+
+
+
+****************************************
+
+
+FETCH AND STAGE SSIS PACKAGE
+
+TFS LOCATION:\cms\eCoaching_V2\ETL\
+Quality_Other_Coaching.dtsx(Changeset 35156)
+
+To
+\\vdenssdbp07\scorecard-ssis\Coaching\
+(overwrite existing)
+
+*******************************************
+
+

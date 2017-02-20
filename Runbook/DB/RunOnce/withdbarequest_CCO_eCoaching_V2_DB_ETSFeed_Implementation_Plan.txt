@@ -1,0 +1,1286 @@
+/*
+Implementation Notes for SCR 13659
+Summary
+
+There are 2 sections for the Implementation
+Section 1 to stage the ssis package and config file
+Section 2 to create the supporting database objects.
+
+Section 1 Summary
+
+1. Stage the SSIS package and config file
+2. Setup sql agent job
+3. submit ticket for DBA to map config file in job
+
+
+Section 2 summary
+
+1. Create Staging Table
+2. Create Rejected Table
+3. Create Description mapping Table
+4. Insert Records to Description Mapping Table
+5.Insert records to DIM Source table
+6. Alter Table Coaching Log to add sup and mgr IDs
+7. Insert records to DIM Subcoaching Reason table
+8. Create ETS Coaching Fact table 
+9. Create ETS File List Table
+10. Insert records for Email Notifications
+11. Create Function for Initial Description from ReportCode
+12. Create Procedure to insert into rejected table
+13. Create function for Subcoaching reason id from report code
+14. Create procedure to insert ETS records to Coaching log table
+15. Update ETS Coaching Fact table 
+16. Update select for coaching contact to include ETS
+17. Update Manager pending sp to add source filter.
+18. Create Procedure to Update Staging Table
+
+
+Copy into an SSMS window pointed to the eCoaching database in the target environment
+(vdenssdbp07\scorp01) and run with nothingg selected.
+
+**********************************************************************************************
+
+--Details: Section 1
+
+************************************************************************************************/
+-- Get the following files from VM.
+a. ETS_Coaching.dtsx (VM version 1.1)
+b. Prod_ETS_Coaching.dtsConfig (VM version 1.0)
+
+--1. Stage files to following directory
+ \\vdenssdbp07\scorecard-ssis\Coaching
+
+--2. Setup sql agent job
+
+Job General tab
+ Job Name- CoachingETSLoad
+Owner - VNGT\sqlsscorp01
+
+
+Job Steps Tab
+Step 1- Step General Tab
+    Step Name - ETS feed Load
+   Type -SSIS Integration Package
+   Run as - BccScrdSQLAgent
+Package Source - File System
+Package -\\Vdenssdbp07\scorecard-SSIS\Coaching\ETS_Coaching.dtsx
+Configurations Tab - \\Vdenssdbp07\scorecard-SSIS\Coaching\Prod_ETS_Coaching.dtsConfig 
+
+Step 1- Step Advanced tab
+On success Go to next step
+On failure Quit the job reporting failure
+
+Step 2- Step General Tab
+    Step Name - Notifications
+   Type -Operating System (CmdExec)
+Runas - BccScrdSQLAgent
+Command - start /w wscript.exe "\\vdenssdbp07\scorecard-ssis\Coaching\Notifications\Notifications_prod.vbs"
+Package -\\Vdenssdbp07\scorecard-SSIS\Coaching\ETS_Coaching.dtsx
+Configurations Tab - \\Vdenssdbp07\scorecard-SSIS\Coaching\Prod_ETS_Coaching.dtsConfig 
+
+Step 2- Step Advanced tab
+On success Quit the job reporting success
+On failure Quit the job reporting failure
+
+Job Schedules tab
+Name- Weekly
+Schedule Type - Reccurring
+Occurs - Weekly (Check all week days)
+Frequency - Occurs every 2 Hours between 12:000 and 8:00 PM
+
+
+--*********************************************************************************************
+
+
+
+
+/****************************************************************************************
+Details - Section 2
+Run steps 1 through 10 in this section one at a time.
+Steps 11 through 18 can be copied into an ssms window and run at once with nothing selected.
+
+********************************************************************************************/
+
+
+--1. Create Staging Table
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ETS_Coaching_Stage](
+	[Report_Code][nvarchar](20) NULL,
+                  [Report_ID] [int] NULL,
+	[Event_Date] [datetime] NULL,
+	[Submitted_Date] [datetime] NULL,
+	[Emp_ID] [nvarchar](20) NULL,
+	[Emp_LanID] [nvarchar](30) NULL,
+	[Emp_Site] [nvarchar](20) NULL,
+	[Emp_Program] [nvarchar](30) NULL,
+	[Emp_SupID] [nvarchar](20) NULL,
+	[Emp_MgrID] [nvarchar](20) NULL,
+	[Emp_Role] [nvarchar](3) NULL,
+	[Project_Number] [nvarchar](8) NULL,
+	[Task_Number] [nvarchar](8) NULL,
+	[Task_Name] [nvarchar](60) NULL,
+	[Time_Code] [nvarchar](8) NULL,
+	[Associated_Person] [nvarchar](30) NULL,
+	[Hours] [nvarchar](8) NULL,
+	[Sat] [nvarchar](8) NULL,
+	[Sun] [nvarchar](8) NULL,
+	[Mon] [nvarchar](8) NULL,
+	[Tue] [nvarchar](8) NULL,
+	[Wed] [nvarchar](8) NULL,
+	[Thu] [nvarchar](8) NULL,
+	[Fri] [nvarchar](8) NULL,
+	[Exemp_Status] [nvarchar](20) NULL,
+	[TextDescription] [nvarchar](max) NULL,
+	[FileName] [nvarchar](260) NULL,
+                  [Reject_Reason] [nvarchar](200) NULL
+) ON [PRIMARY]
+
+GO
+
+
+
+
+--*******************************************
+
+--2. Create Rejected Table
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ETS_Coaching_Rejected](
+	[Report_Code] [nvarchar](20) NULL,
+	[Event_Date] [datetime] NULL,
+	[Emp_ID] [nvarchar](20) NULL,
+	[Emp_LanID] [nvarchar](30) NULL,
+	[Emp_Site] [nvarchar](20) NULL,
+	[Emp_Program] [nvarchar](30) NULL,
+	[Emp_SupID] [nvarchar](20) NULL,
+	[Emp_MgrID] [nvarchar](20) NULL,
+	[Emp_Role] [nvarchar](3) NULL,
+	[Project_Number] [nvarchar](8) NULL,
+	[Task_Number] [nvarchar](8) NULL,
+	[Task_Name] [nvarchar](60) NULL,
+	[Time_Code] [nvarchar](8) NULL,
+	[Associated_Person] [nvarchar](30) NULL,
+	[Hours] [nvarchar](8) NULL,
+	[Sat] [nvarchar](8) NULL,
+	[Sun] [nvarchar](8) NULL,
+	[Mon] [nvarchar](8) NULL,
+	[Tue] [nvarchar](8) NULL,
+	[Wed] [nvarchar](8) NULL,
+	[Thu] [nvarchar](8) NULL,
+	[Fri] [nvarchar](8) NULL,
+	[Exemp_Status] [nvarchar](20) NULL,
+	[FileName] [nvarchar](260) NULL,
+	[Reject_Reason] [nvarchar](200) NULL,
+	[Reject_Date] [datetime] NULL
+) ON [PRIMARY]
+
+GO
+
+--*******************************************
+
+--3. Create Description mapping Table
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ETS_Description](
+	[ReportCode] [nvarchar](20) NOT NULL,
+	[ReportDescription] [nvarchar](100) NULL,
+	[Description] [nvarchar](MAX) NULL
+) ON [PRIMARY]
+
+GO
+
+--*******************************************
+
+--4. Insert Records to Description Mapping Table
+
+INSERT INTO [EC].[ETS_Description]
+           ([ReportCode]
+           ,[ReportDescription]
+           ,[Description])
+     VALUES
+          ('EA','Excused Absence',
+  N'The employee recorded incorrect Excused Absence hours.
+  All paid leave (General Leave or floating Holiday time) must be exhausted before using Excused Absence 080984 | 3517.
+  Excused Absence cannot be taken for full days of leave and you must have some worked hours recorded for the days this project|task code is used.
+  Exempt employees absent for a full day must use LWOP 080984 | 9005.'),
+          ('EOT','Exempt Over Time',
+  N'The exempt employee incorrectly recorded overtime hours.
+  Exempt employees are expected to occasionally exceed the standard workweek (Saturday through Friday) as assigned tasks may demand. 
+  In most cases such work, which exceeds the standard workweek, is not eligible for additional pay and should be recorded as straight time.
+  CCO exempt employees should not charge overtime without direction from CCO Communications.'),
+          ('FWH','Future Worked Hours',
+  N'The employee has entered worked hours in advance.  
+  The only circumstances in which worked hours should be entered in advance are:
+   When the employee’s Friday shift doesn’t start until after the stated deadline for them to sign their timecard or
+   When the employee is working off-site or traveling and will not have access to ETS.
+   If this employee doesn’t fall under one of these situations please coach them and have them remove the future worked hours from their timecard.'),
+          ('FWHA','Future Worked Hours (Approver)',
+   N'The employee has approved a timecard with worked hours entered in advance.  
+  The only circumstances in which worked hours should be entered in advance are:
+   When the employee’s Friday shift doesn’t start until after the stated deadline for them to approve timecards or
+   When the employee is working off-site or traveling and will not have access to ETS for approvals.
+   If this employee doesn’t fall under one of these situations please coach them and have them remove the future worked hours from their timecard.'),
+          ('HOL','Incorrect Holiday',
+N'The non-exempt employee recorded incorrect hours on a holiday or recorded holiday hours on an incorrect day. 
+As a reminder, per HR-POL-203 Holidays, for employees with GSA administered benefits:
+Holiday can only be recorded on the day it is observed. 
+To receive holiday pay, other paid hours must be recorded in the week in which a holiday is observed. 
+ If an employee works on the observed holiday, holiday and time worked would be recorded.  
+If the observed holiday falls on an employee’s scheduled day-off, only holiday hours would be recorded. 
+Leave time cannot be recorded on a day in which a holiday is recorded. 
+Shift and bilingual premiums do not apply to holiday hours. 
+When an employee takes a fixed holiday off, the time must be charged in a whole-day increment to holiday, regardless of the total number of hours worked in the particular pay period.'),
+          ('HOLA','Incorrect Holiday (Approver)',
+N'A timecard was approved with incorrect hours recorded on a holiday or holiday hours recorded on an incorrect day. 
+As a reminder, per HR-POL-203 Holidays, for employees with GSA administered benefits:
+Holiday can only be recorded on the day it is observed. 
+To receive holiday pay, other paid hours must be recorded in the week in which a holiday is observed. 
+If an employee works on the observed holiday, holiday and time worked would be recorded.  
+If the observed holiday falls on an employee’s scheduled day-off, only holiday hours would be recorded. 
+Leave time cannot be recorded on a day in which a holiday is recorded. 
+Shift and bilingual premiums do not apply to holiday hours. 
+When an employee takes a fixed holiday off, the time must be charged in a whole-day increment to holiday, regardless of the total number of hours worked in the particular pay 
+period.'),
+          ('ITD','Invalid Timecodes Direct',
+  N'The employee recorded worked hours with a time code that is not valid in the CCO program.
+  Please see your supervisor for a list of valid time codes used in the CCO.'),
+          ('ITDA','Invalid Timecodes Direct (Approver)',
+  N'The employee approved a timecard with a time code that is not valid in the CCO program.  
+  The list of valid time codes can be found in the Common_CCO_Time_Codes document on CCO Knowledge Net under the timekeeping category.'),
+          ('ITI','Invalid Timecodes Indirect',
+   N'The employee recorded paid leave with an invalid time code.  
+   Paid leave is not eligible for shift or bilingual premium.  All paid leave must be recorded with time code of 01 or *.'),
+          ('ITIA','Invalid Timecodes Indirect (Approver)',
+  N'The employee approved a timecard that had paid leave with and invalid time code. 
+  Paid leave is not eligible for shift or bilingual premium.  
+  All paid leave must be recorded with time code of 01 or *.'),
+          ('UTL','Utilization','TBD'),
+          ('UTLA','Utilization (Approver)','TBD')
+      
+GO
+
+
+--**************************************************************************
+
+--5.Insert records to DIM Source table
+
+INSERT INTO [EC].[DIM_Source]
+           ([SourceID]
+           ,[CoachingSource]
+           ,[SubCoachingSource]
+           ,[isActive]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality])
+     VALUES
+           (121,'Direct','ETS',1,0,0,0),
+           (221,'Indirect','ETS',1,0,0,0)
+           
+GO
+
+--*******************************************
+--6. Alter Table Coaching Log to add sup and mgr IDs
+
+ALTER table [EC].[Coaching_Log]
+ADD SupID nvarchar(20), MgrID nvarchar(20)
+GO
+
+--*******************************************
+--7. Insert records to DIM Subcoaching Reason table
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+        ('Excused absence, paid leave'),
+		('Exempt OT Hours'),
+		('Future hours'),
+		('Future hours (Approver)'),
+		('Holiday Hours'),
+		('Holiday Hours (Approver)'),
+		('Invalid time code – Direct'),
+		('Invalid time code – Direct (Approver)'),
+		('Invalid time code – Paid leave') ,
+		('Invalid time code – Paid leave (Approver)'),
+		('Utilization'),
+		('Utilization (Approver)')
+
+GO
+
+--*******************************************
+
+--8. Create ETS Coaching Fact table 
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ETS_Coaching_Fact](
+	[Report_Code] [nvarchar](20) NULL,
+	[Event_Date] [datetime] NULL,
+	[Emp_ID] [nvarchar](20) NULL,
+	[Project_Number] [nvarchar](8) NULL,
+	[Task_Number] [nvarchar](8) NULL,
+	[Task_Name] [nvarchar](60) NULL,
+	[Time_Code] [nvarchar](8) NULL,
+	[Associated_Person] [nvarchar](30) NULL,
+	[Hours] [nvarchar](8) NULL,
+	[Sat] [nvarchar](8) NULL,
+	[Sun] [nvarchar](8) NULL,
+	[Mon] [nvarchar](8) NULL,
+	[Tue] [nvarchar](8) NULL,
+	[Wed] [nvarchar](8) NULL,
+	[Thu] [nvarchar](8) NULL,
+	[Fri] [nvarchar](8) NULL,
+	[Exemp_Status] [nvarchar](20) NULL,
+	[Inserted_Date] [datetime] NULL,
+	[FileName] [nvarchar](260) NULL
+) ON [PRIMARY]
+
+GO
+
+
+
+--*******************************************
+
+--9. Create ETS File List Table
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ETS_FileList](
+	[File_SeqNum] [int] IDENTITY(1,1) NOT NULL,
+	[File_Name] [nvarchar](260) NULL,
+	[File_LoadDate] [datetime] NULL,
+	[Count_Staged] [int] NULL,
+	[Count_Loaded] [int] NULL,
+	[Count_Rejected] [int] NULL
+) ON [PRIMARY]
+
+GO
+
+
+--*******************************************
+
+-- 10. Insert records for Email Notifications
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+ 	 ('CSR','ETS','Indirect','ETS',0,'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong>  on <strong> strDateTime </strong> that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
+     ('Supervisor','ETS','Indirect','ETS',0,'Pending Manager Review','Supervisor','eCL: Pending Manager Review','A new eCoaching Log has been entered on behalf of  <strong> strPerson </strong> on <strong>  strDateTime  </strong> that requires your action. Please click on the link below to review the eCoaching log.',0,'NA')
+GO
+
+
+
+
+--*******************************************
+
+-- 11. Create Function for Initial Description from ReportCode
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strETSDescriptionFromRptCode' 
+)
+   DROP FUNCTION [EC].[fn_strETSDescriptionFromRptCode]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:         11/3/2014
+-- Description:	        Given a 3 or 4 letter ETS Report Code returns the Text Description
+-- associated with that Report. 
+-- =============================================
+CREATE FUNCTION [EC].[fn_strETSDescriptionFromRptCode] (
+  @strRptCode NVARCHAR(10)
+)
+RETURNS NVARCHAR(MAX)
+AS
+BEGIN
+  DECLARE @strDescription NVARCHAR(MAX)
+  
+  IF @strRptCode IS NOT NULL
+  BEGIN
+  SET @strDescription = (SELECT [Description] FROM [EC].[ETS_Description]
+                         WHERE [ReportCode]= @strRptCode)       
+	END
+    ELSE
+    SET @strDescription = NULL
+        
+RETURN @strDescription
+
+END  -- fn_strETSDescriptionFromRptCode
+
+GO
+
+--*******************************************
+
+
+--12. Create SP [EC].[sp_InsertInto_ETS_Rejected]
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_ETS_Rejected' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_ETS_Rejected]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create date: 11/19/14
+-- Description:	Determines rejection Reason for ETS logs.
+-- Populates the records with reject reasons to the Reject table.
+
+-- =============================================
+CREATE PROCEDURE [EC].[sp_InsertInto_ETS_Rejected] 
+
+AS
+BEGIN
+
+-- Determine and populate Reject Reasons
+
+
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [Reject_Reason]= N'Report Code not valid.'
+WHERE LEFT([Report_Code],LEN([Report_Code])-8) NOT IN 
+(SELECT DISTINCT ReportCode FROM [EC].[ETS_Description])
+	
+OPTION (MAXDOP 1)
+END  
+    
+  
+    
+WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+
+
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [Reject_Reason]= N'Employee Not found in Hierarchy table.'
+WHERE EMP_ID NOT IN 
+(SELECT DISTINCT EMP_ID FROM [EC].[Employee_Hierarchy])
+AND [Reject_Reason]is NULL
+	
+OPTION (MAXDOP 1)
+END  
+    
+    
+WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+
+
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [Reject_Reason]= CASE WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('EA', 'EOT','FWH','HOL','ITD', 'ITI', 'UTL')
+AND [Emp_Role]not in ( 'C','S') THEN N'Employee does not have a CSR or Supervisor job code.'
+WHEN LEFT(Report_Code,LEN(Report_Code)-8) IN ('FWHA','HOLA','ITDA', 'ITIA', 'UTLA') 
+AND [Emp_Role] <> 'S' THEN N'Approver does not have a Supervisor job code.'
+ELSE NULL END
+WHERE [Emp_Role] NOT in ('C','S')AND [Reject_Reason]is NULL
+OPTION (MAXDOP 1)
+END  
+   
+
+
+    
+WAITFOR DELAY '00:00:00.03' -- Wait for 5 ms
+    
+
+-- Write rejected records to Rejected table.
+
+BEGIN
+INSERT INTO [EC].[ETS_Coaching_Rejected]
+           ([Report_Code]
+           ,[Event_Date]
+           ,[Emp_ID]
+           ,[Emp_LanID]
+           ,[Emp_Site]
+           ,[Emp_Program]
+           ,[Emp_SupID]
+           ,[Emp_MgrID]
+           ,[Emp_Role]
+           ,[Project_Number]
+           ,[Task_Number]
+           ,[Task_Name]
+           ,[Time_Code]
+           ,[Associated_Person]
+           ,[Hours]
+           ,[Sat]
+           ,[Sun]
+           ,[Mon]
+           ,[Tue]
+           ,[Wed]
+           ,[Thu]
+           ,[Fri]
+           ,[Exemp_Status]
+           ,[FileName]
+           ,[Reject_Reason]
+           ,[Reject_Date])
+          SELECT S.[Report_Code]
+           ,S.[Event_Date]
+           ,S.[Emp_ID]
+           ,S.[Emp_LanID]
+           ,S.[Emp_Site]
+           ,S.[Emp_Program]
+           ,S.[Emp_SupID]
+           ,S.[Emp_MgrID]
+           ,S.[Emp_Role]
+           ,S.[Project_Number]
+           ,S.[Task_Number]
+           ,S.[Task_Name]
+           ,S.[Time_Code]
+           ,S.[Associated_Person]
+           ,S.[Hours]
+           ,S.[Sat]
+           ,S.[Sun]
+           ,S.[Mon]
+           ,S.[Tue]
+           ,S.[Wed]
+           ,S.[Thu]
+           ,S.[Fri]
+           ,S.[Exemp_Status]
+           ,S.[FileName]
+           ,S.[Reject_Reason]
+           ,GETDATE()
+           FROM [EC].[ETS_Coaching_Stage] S
+           WHERE S.[Reject_Reason] is not NULL
+      
+
+OPTION (MAXDOP 1)
+END
+
+END  -- [EC].[sp_InsertInto_ETS_Rejected]
+GO
+
+
+
+
+
+--*******************************************
+
+
+
+
+--13. Create function for Subcoaching reason id from report code
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_intSubCoachReasonIDFromETSRptCode' 
+)
+   DROP FUNCTION [EC].[fn_intSubCoachReasonIDFromETSRptCode]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:         11/11/2014
+-- Description:	  Given the 3 or 4 letter ETS Report Code returns the Sub coaching reason for the ETS log.
+-- =============================================
+CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromETSRptCode] (
+  @strRptCode NVARCHAR(10)
+)
+RETURNS INT
+AS
+BEGIN
+  DECLARE @intSubCoachReasonID INT
+  
+  IF @strRptCode IS NOT NULL
+    SET @intSubCoachReasonID =
+      CASE @strRptCode 
+ 
+			WHEN N'EA' THEN 97
+			WHEN N'EOT' THEN 98
+			WHEN N'FWH' THEN 99
+			WHEN N'FWHA' THEN 100
+			WHEN N'HOL' THEN 101
+			WHEN N'HOLA' THEN 102
+			WHEN N'ITD' THEN 103
+			WHEN N'ITDA' THEN 104
+			WHEN N'ITI' THEN 105
+			WHEN N'ITIA' THEN 106
+			WHEN N'UTL' THEN 107
+			WHEN N'UTLA' THEN 108
+		
+        ELSE -1
+      END
+    ELSE
+    SET @intSubCoachReasonID = -1
+        
+RETURN @intSubCoachReasonID  
+
+END  -- fn_intSubCoachReasonIDFromETSRptCode()
+
+GO
+
+
+
+
+--*******************************************
+
+
+
+--14. Create procedure to insert ETS records to Coaching log table
+
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_ETS' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_ETS]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:      11/07/2014
+--    Description:     This procedure inserts the ETS records into the Coaching_Log table. 
+--                     The main attributes of the eCL are written to the Coaching_Log table.
+--                     The Coaching Reasons are written to the Coaching_Reasons Table.
+-- Last Modified Date: 11/19/2014
+-- Last Updated By: Susmitha Palacherla
+-- Added IDs to the insert statement with a value of 'False'
+
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_ETS]
+@Count INT OUTPUT
+  
+AS
+BEGIN
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+      
+      DECLARE @maxnumID INT
+       -- Fetches the maximum CoachingID before the insert.
+      SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])    
+      
+      
+      -- Inserts records from the Quality_Coaching_Stage table to the Coaching_Log Table
+
+         INSERT INTO [EC].[Coaching_Log]
+           ([FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+           ,[EmpLanID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[EventDate]
+           ,[isAvokeID]
+		   ,[isNGDActivityID]
+           ,[isUCID]
+           ,[isVerintID]
+           ,[Description]
+	       ,[SubmittedDate]
+           ,[StartDate]
+           ,[isCSE]
+           ,[isCSRAcknowledged]
+           ,[numReportID]
+           ,[strReportCode]
+           ,[ModuleID]
+           ,[SupID]
+           ,[MgrID]
+           )
+
+            SELECT DISTINCT
+            lower(es.Emp_LanID)	[FormName],
+            es.Emp_Program   [ProgramName],
+            221             [SourceID],
+            CASE es.emp_role when 'C' THEN 6 
+            WHEN 'S' THEN 5 ELSE -1 END[StatusID],
+            [EC].[fn_intSiteIDFromEmpID](LTRIM(es.EMP_ID))[SiteID],
+            lower(es.Emp_LanID)	[EmpLanID],
+            es.EMP_ID [EmpID],
+            '999999'	 [SubmitterID],       
+            es.Event_Date [EventDate],
+            0			[isAvokeID],
+		    0			[isNGDActivityID],
+            0			[isUCID],
+            0          [isVerintID],
+            REPLACE(EC.fn_nvcHtmlEncode(es.TextDescription), CHAR(13) + CHAR(10) ,'<br />')[Description],	
+            es.Submitted_Date  [SubmittedDate], 
+		    es.Event_Date	[StartDate],
+		    0 [isCSE],			
+		    0 [isCSRAcknowledged],
+		    es.Report_ID [numReportID],
+		    es.Report_Code [strReportCode],
+		    CASE es.emp_role when 'C' THEN 1
+            WHEN 'S' THEN 2 ELSE -1 END [ModuleID],
+            es.Emp_SupID [SupID],
+            es.Emp_MgrID [MgrID]
+            
+FROM [EC].[ETS_Coaching_Stage] es 
+left outer join EC.Coaching_Log cf on es.Report_Code = cf.strReportCode
+and es.Event_Date = cf.EventDate and  es.Report_ID = cf.numReportID
+where cf.strReportCode is null and cf.EventDate is NULL and cf.numReportID is NULL
+OPTION (MAXDOP 1)
+
+SELECT @Count =@@ROWCOUNT
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+UPDATE [EC].[Coaching_Log]
+SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+where [FormName] not like 'eCL%'    
+OPTION (MAXDOP 1)
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+ 
+  -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
+
+INSERT INTO [EC].[Coaching_Log_Reason]
+           ([CoachingID]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[Value])
+    SELECT cf.[CoachingID],
+           22,
+           [EC].[fn_intSubCoachReasonIDFromETSRptCode](LEFT(cf.strReportCode,LEN(cf.strReportCode)-8)),
+           'Opportunity' 
+    FROM [EC].[ETS_Coaching_Stage] es  INNER JOIN  [EC].[Coaching_Log] cf      
+    ON (es.[Report_Code] = cf.[strReportCode]
+   and es.Event_Date = cf.EventDate and es.Emp_ID = cf.EmpID and es.Report_ID = cf.numReportID)
+    LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
+    ON cf.[CoachingID] = cr.[CoachingID]  
+    WHERE cr.[CoachingID] IS NULL 
+ OPTION (MAXDOP 1)  
+
+                  
+COMMIT TRANSACTION
+END TRY
+
+      
+      BEGIN CATCH
+      IF @@TRANCOUNT > 0
+      ROLLBACK TRANSACTION
+
+
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+
+    SELECT @ErrorMessage = ERROR_MESSAGE(),
+           @ErrorSeverity = ERROR_SEVERITY(),
+           @ErrorState = ERROR_STATE()
+
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+  END CATCH  
+END -- sp_InsertInto_Coaching_Log_ETS
+GO
+
+
+
+
+
+
+
+
+
+--*******************************************
+
+--15. Update ETS Coaching Fact table 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Update_ETS_Fact' 
+)
+   DROP PROCEDURE [EC].[sp_Update_ETS_Fact]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:      11/11/2014
+--    Description:     This procedure inserts new ETS records into Fact table.
+--   Modified Date:    
+--   Description:    
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_Update_ETS_Fact]
+  
+AS
+BEGIN
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+      
+
+ -- Append new records to ETS Fact Table
+
+INSERT INTO [EC].[ETS_Coaching_Fact]
+           ([Report_Code]
+           ,[Event_Date]
+           ,[Emp_ID]
+           ,[Project_Number]
+           ,[Task_Number]
+           ,[Task_Name]
+           ,[Time_Code]
+           ,[Associated_Person]
+           ,[Hours]
+           ,[Sat]
+           ,[Sun]
+           ,[Mon]
+           ,[Tue]
+           ,[Wed]
+           ,[Thu]
+           ,[Fri]
+           ,[Exemp_Status]
+           ,[Inserted_Date]
+           ,[FileName])
+   SELECT S.[Report_Code]
+      ,S.[Event_Date]
+      ,S.[Emp_ID]
+      ,S.[Project_Number]
+      ,S.[Task_Number]
+      ,S.[Task_Name]
+      ,S.[Time_Code]
+      ,S.[Associated_Person]
+      ,S.[Hours]
+      ,S.[Sat]
+      ,S.[Sun]
+      ,S.[Mon]
+      ,S.[Tue]
+      ,S.[Wed]
+      ,S.[Thu]
+      ,S.[Fri]
+      ,S.[Exemp_Status]
+      ,GETDATE()
+      ,S.[FileName]
+  FROM [EC].[ETS_Coaching_Stage]S LEFT OUTER JOIN [EC].[ETS_Coaching_Fact]F
+  ON S.[Report_Code] = F.[Report_Code]
+  AND S.[Emp_ID]= F.[Emp_ID]
+  AND S.[Event_Date]= F.[Event_Date]
+  WHERE  F.[Report_Code]IS NULL AND F.[Emp_ID]IS NULL AND F.[Event_Date]IS NULL
+                  
+COMMIT TRANSACTION
+END TRY
+
+      
+      BEGIN CATCH
+      IF @@TRANCOUNT > 0
+      ROLLBACK TRANSACTION
+
+
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+
+    SELECT @ErrorMessage = ERROR_MESSAGE(),
+           @ErrorSeverity = ERROR_SEVERITY(),
+           @ErrorState = ERROR_STATE()
+
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+  END CATCH  
+END -- sp_Update_ETS_Fact
+
+GO
+
+
+
+
+--*******************************************
+
+--16. Update select for coaching contact to include ETS
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectCoaching4Contact' 
+)
+   DROP PROCEDURE [EC].[sp_SelectCoaching4Contact]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:		       Jourdain Augustin
+--	Create Date:	   6/10/13
+--	Description: 	   This procedure queries db for feed records to send out mail
+-- Last Modified Date: 11/12/2014
+-- Last Updated By: Susmitha Palacherla
+-- Modified per SCR 13659 to include the ETS feed.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus1 nvarchar(30),
+@strFormStatus2 nvarchar(30),
+@intSource1 int,
+@intSource2 int,
+@strFormType nvarchar(30),
+@strFormMail nvarchar (30)
+
+ Set @strFormStatus1 = 'Completed'
+ Set @strFormStatus2 = 'Inactive'
+
+ 
+ Set @strFormType = 'Indirect'
+--Set @strFormMail = 'jourdain.augustin@gdit.com'
+ 
+SET @nvcSQL = 'SELECT   cl.CoachingID	numID	
+		,cl.FormName	strFormID
+		,s.Status		strFormStatus
+		,eh.Emp_Email	strCSREmail
+		,eh.Sup_Email	strCSRSupEmail
+		,eh.Mgr_Email	strCSRMgrEmail
+		,so.SubCoachingSource	strSource
+		,eh.Emp_Name	strCSRName
+		,so.CoachingSource	strFormType
+		,cl.SubmittedDate	SubmittedDate
+		,cl.CoachingDate	CoachingDate
+		,cl.EmailSent	EmailSent
+		,cl.sourceid
+		,cl.isCSE
+		,mo.Module
+FROM [EC].[Employee_Hierarchy] eh,
+	 [EC].[DIM_Status] s,
+	 [EC].[Coaching_Log] cl,
+	 [EC].[DIM_Source] so,
+	 [EC].[DIM_Module] mo
+WHERE cl.EMPID = eh.Emp_ID
+AND cl.StatusID = s.StatusID
+AND cl.SourceID = so.SourceID
+AND cl.ModuleID = mo.ModuleID
+AND S.Status <> '''+@strFormStatus1+'''
+AND S.Status <> '''+@strFormStatus2+'''
+AND cl.SourceID in (211,212,221)
+AND cl.EmailSent = ''False''
+AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
+OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL)
+OR (s.Status =''Pending Manager Review'' and eh.Mgr_Email is NOT NULL)
+OR (s.Status =''Pending Employee Review'' and eh.Emp_Email is NOT NULL))
+AND LEN(cl.FormName) > 10
+Order By cl.SubmittedDate DESC'
+--and [strCSREmail] = '''+@strFormMail+'''
+EXEC (@nvcSQL)	
+	    
+END --sp_SelectCoaching4Contact
+
+GO
+
+
+
+
+--*******************************************
+
+
+--17. Update Manager pending sp to add source filter.
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MGRCSRPending' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending]
+GO
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	11/16/11
+--	Description: *	This procedure selects the CSR e-Coaching records from the Coaching_Log table
+-- Where the status is Prnding Review. 
+-- Last Modified Date: 11/19/2014
+-- Last Updated By: Susmitha Palacherla
+-- Modified to add missing Source filter discovered during testing for SCR 13659.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending] 
+
+@strCSRMGRin nvarchar(30),
+@strCSRSUPin nvarchar(30),
+@strSourcein nvarchar(100),
+@strCSRin nvarchar(30) 
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max)
+
+
+
+
+SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID,
+		[eh].[Emp_Name]	strCSRName,
+		[eh].[Sup_Name]	strCSRSupName, 
+		[eh].[Mgr_Name]	strCSRMgrName, 
+		[s].[Status]	strFormStatus,
+		[sc].[SubCoachingSource] strSource,
+		[cl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh,
+	 [EC].[DIM_Status] s,
+	 [EC].[DIM_Source] sc,
+	 [EC].[Coaching_Log] cl WITH(NOLOCK)
+where [cl].[EmpID] = [eh].[Emp_ID]
+and [cl].[StatusID] = [s].[StatusID]
+and [cl].[SourceID] = [sc].[SourceID]  
+and [eh].[Mgr_LanID] = '''+@strCSRMGRin+'''
+and [S].[Status] like ''Pending%''
+and [sc].[SubCoachingSource] Like '''+@strSourcein+'''
+and [eh].[Emp_Name] Like '''+@strCSRin+'''
+and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
+Order By [SubmittedDate] DESC'
+		
+EXEC (@nvcSQL)	   
+END --sp_SelectFrom_Coaching_Log_MGRCSRPending
+
+GO
+
+
+
+
+
+--*******************************************
+--18. Update ETS staging table
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Update_ETS_Coaching_Stage' 
+)
+   DROP PROCEDURE [EC].[sp_Update_ETS_Coaching_Stage]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		   Susmitha Palacherla
+-- Create date: 10/30/2014
+-- Description:	Performs the following actions.
+-- Removes Alpha characters from first 2 positions of Emp_ID
+-- Populate Employee and Hierarchy attributes from Employee Table
+-- Inserts non CSR and supervisor records into Rejected table
+-- Deletes rejected records.
+-- Sets the detailed Description value by concatenating other attributes.
+-- Last update: 11/19/2014
+-- Modified to populate a Report_ID for non rejected records and Reject_Reason for rejected records
+
+-- =============================================
+CREATE PROCEDURE [EC].[sp_Update_ETS_Coaching_Stage] 
+@Count INT OUTPUT
+AS
+BEGIN
+
+
+
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [Emp_ID]= [EC].[RemoveAlphaCharacters]([Emp_ID])  
+OPTION (MAXDOP 1)
+END  
+    
+    
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+    
+-- Populate Attributes from Employee Table
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [Emp_LanID] = EMP.[Emp_LanID]
+    ,[Emp_Site]= EMP.[Emp_Site]
+    ,[Emp_Program]= EMP.[Emp_Program]
+    ,[Emp_SupID]= EMP.[Sup_ID]
+    ,[Emp_MgrID]= EMP.[Mgr_ID]
+    ,[Emp_Role]= 
+    CASE WHEN EMP.[Emp_Job_Code]in ('WACS01', 'WACS02','WACS03') THEN 'C'
+    WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
+    ELSE 'O' END
+    ,[TextDescription] = [EC].[fn_strETSDescriptionFromRptCode] (LEFT([Report_Code],LEN([Report_Code])-8))
+FROM [EC].[ETS_Coaching_Stage] STAGE JOIN [EC].[Employee_Hierarchy]EMP
+ON LTRIM(STAGE.Emp_ID) = LTRIM(EMP.Emp_ID)
+
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
+-- Reject records not belonging to CSRs and Supervisors
+BEGIN
+EXEC [EC].[sp_InsertInto_ETS_Rejected] 
+END
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
+
+-- Delete rejected records
+
+BEGIN
+DELETE FROM [EC].[ETS_Coaching_Stage]
+WHERE [Reject_Reason]is not NULL
+
+SELECT @Count =@@ROWCOUNT
+
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
+-- Assign Record ID
+
+BEGIN
+
+DECLARE @id INT 
+SET @id = 0 
+UPDATE [EC].[ETS_Coaching_Stage]
+SET @id = [Report_ID] = @id + 1 
+
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
+-- Populate TextDescription by concatenating the individual detail fields.
+
+BEGIN
+UPDATE [EC].[ETS_Coaching_Stage]
+SET [TextDescription] = ([TextDescription] + CHAR(13) + CHAR (10) + ' ' + CHAR(13) + CHAR (10) +  'The date, project and task numbers, time code, total and daily hours are below:' 
++ CHAR(13) + CHAR (10) + ' ' + CHAR(13) + CHAR (10) +  LEFT([Event_Date],LEN([Event_Date])-8)+ ' | ' + [Project_Number]+ ' | ' + [Task_Number] 
+      + ' | ' + [Task_Name] + ' | ' + [Time_Code]  + ' | ' + [Associated_Person] + ' | ' + [Hours] 
+      + ' | ' + [Sat] + ' | ' + [Sun] + ' | ' + [Mon] + ' | ' + [Tue] + ' | ' + [Wed] + ' | ' + [Thu] + ' | ' + [Fri] )
+
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
+END  -- [EC].[sp_Update_ETS_Coaching_Stage]
+GO
+
+--*******************************************
+
+
+/*
+
+DB Ticket
+
+Instance - vdenssdbp07\scorp01
+SQL agent JOB-  CoachingETSLoad
+Step name- ETS feed Load
+Please add the config file in the configurations tab of this step.
+File - N:\scorecard-SSIS\Coaching\Prod_ETS_Coaching.dtsConfig 
+
+screenshot of job attached.
+
+*/

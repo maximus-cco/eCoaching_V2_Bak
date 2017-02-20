@@ -1,0 +1,760 @@
+
+/*
+
+TFS 3757  - Add is coaching monitor value to ecl
+
+Implement in eCoaching database in target environment.
+
+
+Dev - eCoahingDev
+Test - eCoachingTest
+Prod - eCoaching
+
+
+
+****************************************
+
+IMPLEMENTATION SUMMARY
+
+SECTION 1
+Stage SSIS Package
+
+SECTION 2 - Modify TABLES
+1.[EC].[Quality_Coaching_Stage]
+2. [EC].[Quality_Coaching_Fact]
+3. [EC].[Quality_Coaching_Rejected]
+4. [EC].[Coaching_Log]
+
+
+
+ 
+SECTION 3 - Create/Modify PROCEDURES AND FUNCTIONS
+1. [EC].[sp_InsertInto_Coaching_Log_Quality]
+2. [EC].[sp_Update_Quality_Fact]
+3. [EC].[sp_SelectReviewFrom_Coaching_Log]
+4. [EC].[sp_Update_Coaching_Log_Quality]
+
+***************************************
+
+	IMPLEMENTATION DETAILS
+
+***************************************
+
+SECTION 1 
+
+***************************************
+ 
+Fetch and Stage ssis Package
+
+--Fetch the following ssis Package from TFS source Control and stage accordingly.
+   IQS_Coaching.dtsx (Changeset 35892 )
+
+FROM 
+\cms\eCoaching_V2\ETL\ in Source Control
+
+TO
+ \\vdenssdbp07\scorecard-ssis\Coaching\
+
+
+***************************************
+SECTION 2
+
+**************************************/
+
+--1.[EC].[Quality_Coaching_Stage]
+ALTER table [EC].[Quality_Coaching_Stage]
+ADD [isCoachingMonitor] nvarchar(3) NULL
+
+
+--2. [EC].[Quality_Coaching_Fact]
+ALTER table [EC].[Quality_Coaching_Fact]
+ADD [isCoachingMonitor] nvarchar(3) NULL
+
+
+--3. [EC].[Quality_Coaching_Rejected]
+ALTER table [EC].[Quality_Coaching_Rejected]
+ADD [isCoachingMonitor] nvarchar(3) NULL
+
+--4. [EC].[Coaching_Log]
+ALTER table [EC].[Coaching_Log]
+ADD [isCoachingMonitor] nvarchar(3) NULL
+
+
+-5.Update historical data
+
+update EC.Coaching_Log
+set [isCoachingMonitor]= 'NA'
+where SourceID in (211,222,223,224,230)
+and [isCoachingMonitor] is NULL
+
+--***************************************
+
+
+--***************************************
+
+
+--***************************************
+
+--***************************************
+
+
+--***************************************
+/***************************************
+
+
+--SECTION 3 - Create/Modify PROCEDURES 
+  COPY EVERYTHING FROM HERE ON INTO AN SSMS WINDOW
+POINTING TO eCoaching DB AND RUN WITH NOTHING SELECTED    
+ 
+***************************************/
+--1.[EC].[sp_InsertInto_Coaching_Log_Quality]
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Quality' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--    ====================================================================
+-- Author:           Susmitha Palacherla
+-- Create Date:      02/23/2014
+-- Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
+--                     The main attributes of the eCL are written to the Coaching_Log table.
+--                     The Coaching Reasons are written to the Coaching_Reasons Table.
+-- Modified per TFS 283 to force CRLF in Description value when viewed in UI - 08/31/2015
+-- Updated per TFS 3757 to add isCoachingMonitor attribute - 10/28/2016
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
+@Count INT OUTPUT
+  
+AS
+BEGIN
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+      
+      DECLARE @maxnumID INT,
+      @strSourceType NVARCHAR(20)
+       -- Fetches the maximum CoachingID before the insert.
+      SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])    
+      SET @strSourceType = 'Indirect'
+      
+      -- Inserts records from the Quality_Coaching_Stage table to the Coaching_Log Table
+
+         INSERT INTO [EC].[Coaching_Log]
+           ([FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+           ,[EmpLanID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[EventDate]
+           ,[isAvokeID]
+		   ,[isNGDActivityID]
+           ,[isUCID]
+           ,[isVerintID]
+           ,[VerintID]
+           ,[VerintEvalID]
+           ,[Description]
+	       ,[SubmittedDate]
+           ,[StartDate]
+           ,[isCSE]
+           ,[isCSRAcknowledged]
+           ,[VerintFormName]
+           ,[ModuleID]
+           ,[SupID]
+           ,[MgrID]
+           ,[isCoachingMonitor])
+
+            SELECT DISTINCT
+            lower(csr.Emp_LanID)	[FormName],
+            CASE qs.Program  
+            WHEN NULL THEN csr.Emp_Program
+            WHEN '' THEN csr.Emp_Program
+            ELSE qs.Program  END       [ProgramName],
+            [EC].[fn_intSourceIDFromSource](@strSourceType, qs.Source)[SourceID],
+            [EC].[fn_strStatusIDFromIQSEvalID](qs.CSE, qs.Oppor_Rein )[StatusID],
+            [EC].[fn_intSiteIDFromEmpID](LTRIM(qs.User_EMPID))[SiteID],
+            lower(csr.Emp_LanID)	[EmpLanID],
+            qs.User_EMPID [EmpID],
+            qs.Evaluator_ID	 [SubmitterID],       
+            qs.Call_Date [EventDate],
+            0			[isAvokeID],
+		    0			[isNGDActivityID],
+            0			[isUCID],
+            1 [isVerintID],
+            qs.Journal_ID	[VerintID],
+            qs.Eval_ID [VerintEvalID],
+            --EC.fn_nvcHtmlEncode(qs.Summary_CallerIssues)[Description],	
+            REPLACE(EC.fn_nvcHtmlEncode(qs.[Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />')[Description],
+            GetDate()  [SubmittedDate], 
+		    qs.Eval_Date	[StartDate],
+		    CASE WHEN qs.CSE = '' THEN 0
+	            	ELSE 1 END	[isCSE],			
+		    0 [isCSRAcknowledged],
+		    qs.VerintFormname [verintFormName],
+		    1 [ModuleID],
+		    ISNULL(csr.[Sup_ID],'999999') [SupID],
+		    ISNULL(csr.[Mgr_ID],'999999')[MgrID],
+		    qs.isCoachingMonitor [isCoachingMonitor]
+		    
+FROM [EC].[Quality_Coaching_Stage] qs 
+join EC.Employee_Hierarchy csr on qs.User_EMPID = csr.Emp_ID
+left outer join EC.Coaching_Log cf on qs.Eval_ID = cf.VerintEvalID
+where cf.VerintEvalID is null
+OPTION (MAXDOP 1)
+
+SELECT @Count =@@ROWCOUNT
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+UPDATE [EC].[Coaching_Log]
+SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+where [FormName] not like 'eCL%'    
+OPTION (MAXDOP 1)
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+ -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
+
+INSERT INTO [EC].[Coaching_Log_Reason]
+           ([CoachingID]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[Value])
+    SELECT cf.[CoachingID],
+           10,
+           42,
+           qs.[Oppor_Rein]
+    FROM [EC].[Quality_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
+    ON qs.[Eval_ID] = cf.[VerintEvalID] 
+    LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
+    ON cf.[CoachingID] = cr.[CoachingID]  
+    WHERE cr.[CoachingID] IS NULL 
+ OPTION (MAXDOP 1)   
+ 
+                  
+COMMIT TRANSACTION
+END TRY
+
+      
+      BEGIN CATCH
+      IF @@TRANCOUNT > 0
+      ROLLBACK TRANSACTION
+
+
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+
+    SELECT @ErrorMessage = ERROR_MESSAGE(),
+           @ErrorSeverity = ERROR_SEVERITY(),
+           @ErrorState = ERROR_STATE()
+
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+  END CATCH  
+END -- sp_InsertInto_Coaching_Log_Quality
+
+
+GO
+
+
+
+
+--***************************************
+
+--***************************************
+--2.[EC].[sp_Update_Quality_Fact]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Update_Quality_Fact' 
+)
+   DROP PROCEDURE [EC].[sp_Update_Quality_Fact]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--    ====================================================================
+--  Author:           Susmitha Palacherla
+--  Create Date:      05/14/2014
+--  Description:     This procedure updates the existing records in the Quality Fact table
+--                     and inserts new records.
+--  Updated per SCR 13054 to add additional column VerintFormName - 07/18/2014
+--  Updated per TFS 3757 to add isCoachingMonitor attribute - 10/28/2016
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_Update_Quality_Fact]
+  
+AS
+BEGIN
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+      
+-- Update existing records in quality Fact Table
+
+ UPDATE [EC].[Quality_Coaching_Fact]
+ SET [Summary_CallerIssues] = S.[Summary_CallerIssues],
+     [Date_Inserted]=S.[Date_Inserted],
+     [Oppor_Rein]= S.[Oppor_Rein]
+ FROM [EC].[Quality_Coaching_Stage]S INNER JOIN [EC].[Quality_Coaching_Fact]F
+ ON S.[Eval_ID] = F.[Eval_ID]
+ AND S.[Journal_ID] = F.[Journal_ID]
+ WHERE F.[Eval_ID] is NOT NULL
+ OPTION (MAXDOP 1)       
+           
+        
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+
+ -- Append new records to Quality Fact Table
+
+INSERT INTO [EC].[Quality_Coaching_Fact]
+           ([Eval_ID]
+           ,[Eval_Date]
+           ,[Eval_Site_ID]
+           ,[User_ID]
+           ,[User_EMPID]
+           ,[User_LANID]
+           ,[SUP_ID]
+           ,[SUP_EMPID]
+           ,[MGR_ID]
+           ,[MGR_EMPID]
+           ,[Journal_ID]
+           ,[Call_Date]
+           ,[Summary_CallerIssues]
+           ,[Coaching_Goal_Discussion]
+           ,[CSE]
+           ,[Evaluator_ID]
+           ,[Program]
+           ,[Source]
+           ,[Oppor_Rein]
+           ,[Date_Inserted]
+           ,[VerintFormName]
+           ,[isCoachingMonitor])
+     SELECT
+       S.[Eval_ID]
+      ,S.[Eval_Date]
+      ,S.[Eval_Site_ID]
+      ,S.[User_ID]
+      ,S.[User_EMPID]
+      ,S.[User_LANID]
+      ,S.[SUP_ID]
+      ,S.[SUP_EMPID]
+      ,S.[MGR_ID]
+      ,S.[MGR_EMPID]
+      ,S.[Journal_ID]
+      ,S.[Call_Date]
+      ,S.[Summary_CallerIssues]
+      ,S.[Coaching_Goal_Discussion]
+      ,S.[CSE]
+      ,S.[Evaluator_ID]
+      ,S.[Program]
+      ,S.[Source]
+      ,S.[Oppor_Rein]
+      ,S.[Date_Inserted]
+      ,S.[VerintFormName]
+      ,S.[isCoachingMonitor]
+      FROM
+	[EC].[Quality_Coaching_Stage] S LEFT OUTER JOIN
+	[EC].[Quality_Coaching_Fact] F ON 
+	S.[Eval_ID] = F.[Eval_ID]
+    WHERE(F.[Eval_ID] IS NULL) 
+
+ OPTION (MAXDOP 1)   
+ 
+                  
+COMMIT TRANSACTION
+END TRY
+
+      
+      BEGIN CATCH
+      IF @@TRANCOUNT > 0
+      ROLLBACK TRANSACTION
+
+
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+
+    SELECT @ErrorMessage = ERROR_MESSAGE(),
+           @ErrorSeverity = ERROR_SEVERITY(),
+           @ErrorState = ERROR_STATE()
+
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+  END CATCH  
+END -- sp_Update_Quality_Fact
+
+
+GO
+
+
+
+
+
+
+--***************************************
+
+--***************************************
+
+
+--3. [EC].[sp_SelectReviewFrom_Coaching_Log]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Coaching_Log' 
+)
+   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	08/26/2014
+--	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
+-- SQL split into 3 parts to overcome sql string size restriction.
+
+-- Last Updated By: Susmitha Palacherla
+-- 1. TFS 1877 to support OMR Low CSAT logs should be viewable by hierarchy manger - 2/17/2016
+-- 2. TFS 1914 to support  OMR Short Calls feed with Manager Review - 2/17/2016
+-- 3. TFS 1732 to support SDR Training feed - 3/2/2016
+-- 4. TFS 2283 to support ODT Training feed - 3/22/2016
+-- 5. TFS 1709 to support Reassigned sups and Mgrs - 5/6/2016
+-- 6. TFS 2268 to support CTC Quality Other feed - 6/23/2016
+-- 7. TFS 3179 & 3186 to add support HFC & KUD Quality Other feeds - 7/15/2016
+-- 8. TFS 3677 to update Quality\KUD Flag - 8/18/2016
+-- 9. TFS 3972 to ADD SEA flag - 9/15/2016
+--10. TFS 3758 Shared coaching sub-reasons may cause unexpected display issue in user interface - 10/14/2016
+--11. TFS 3757 Include Yes/No value to coaching monitor question - 10/27/2016
+--	=====================================================================
+
+CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
+AS
+
+BEGIN
+DECLARE	
+
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
+@nvcEmpID nvarchar(10),
+@nvcMgrID nvarchar(10)
+
+
+SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [FormName]= @strFormIDin)	 
+SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] = @nvcEmpID)
+
+  SET @nvcSQL1 = 'SELECT  cl.CoachingID 	numID,
+		cl.FormName	strFormID,
+		m.Module,
+		sc.CoachingSource	strFormType,
+		s.Status	strFormStatus,
+		cl.EventDate	EventDate,
+		cl.CoachingDate	CoachingDate,
+		cl.SubmitterID strSubmitterID,
+		cl.SupID strCLSupID,
+		cl.MgrID strCLMgrID,
+		sh.Emp_LanID	strSubmitter,		
+		sh.Emp_Name	strSubmitterName,
+		sh.Emp_Email	strSubmitterEmail,	
+		cl.EmpID strEmpID,		
+		cl.EmpLanID	strEmpLanID,
+		eh.Emp_Name	strCSRName,
+		eh.Emp_Email	strCSREmail,
+		st.City	strCSRSite,
+		eh.Sup_ID strCSRSupID,
+		eh.Sup_LanID strCSRSup,
+		eh.Sup_Name strCSRSupName,
+		eh.Sup_Email  strCSRSupEmail,
+	CASE 
+	     WHEN (cl.[statusId]in (6,8) AND cl.[ModuleID] in (1,3,4,5) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
+		 WHEN (cl.[statusId]= 5 AND cl.[ModuleID] = 2 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
+		 WHEN (cl.[Review_SupID]is NOT NULL and cl.[Review_SupID] = cl.[ReassignedToID] and [ReassignCount]= 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_SupID])
+		 ELSE ''NA''
+	END  strReassignedSupName,	
+		eh.Mgr_ID strCSRMgrID,
+	CASE 
+		 WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
+		 ELSE eh.Mgr_LanID 
+	END strCSRMgr,
+	CASE
+		 WHEN cl.[strReportCode] like ''LCS%'' AND cl.[MgrID] <> '''+@nvcMgrID+'''
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[MgrID])+ '' (Assigned Reviewer)''
+		 ELSE eh.Mgr_Name 
+	END strCSRMgrName,
+		eh.Mgr_Email strCSRMgrEmail,
+	CASE 
+	     WHEN (cl.[statusId]= 5  AND cl.[ModuleID] in (1,3,4,5) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
+		 WHEN (cl.[statusId]= 7  AND cl.[ModuleID] = 2 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
+		 WHEN (cl.[Review_MgrID]is NOT NULL AND cl.[Review_MgrID] = cl.[ReassignedToID]and [ReassignCount]= 0)
+		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_MgrID])
+		 ELSE ''NA''
+	END strReassignedMgrName, '
+	
+	  SET @nvcSQL2 = 'CASE
+		WHEN cl.[Review_SupID] IS NOT NULL THEN ISNULL(suph.Emp_Name,''Unknown'')
+		ELSE ISNULL(mgrh.Emp_Name,''Unknown'')END strReviewer,
+		cl.ReassignedToID,
+        sc.SubCoachingSource	strSource,
+        CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey'',''IQS'',''Verint-GDIT Supervisor'')
+		THEN 1 ELSE 0 END 	isIQS,
+		CASE WHEN sc.SubCoachingSource = ''Coach the coach''
+		THEN 1 ELSE 0 END 	isCTC,
+		cl.isUCID    isUCID,
+		cl.UCID	strUCID,
+		cl.isVerintID	isVerintMonitor,
+		cl.VerintID	strVerintID,
+		cl.VerintFormName VerintFormName,
+		cl.isCoachingMonitor isCoachingMonitor,
+		cl.isAvokeID	isBehaviorAnalyticsMonitor,
+		cl.AvokeID	strBehaviorAnalyticsID,
+		cl.isNGDActivityID	isNGDActivityID,
+		cl.NGDActivityID	strNGDActivityID,
+		CASE WHEN (cc.CSE = ''Opportunity'' AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END "Customer Service Escalation",
+		CASE WHEN (cc.CCI is Not NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"Current Coaching Initiative",
+		CASE WHEN (cc.OMR is Not NULL AND cc.LCS is NULL AND cc.SDR is NULL AND cc.ODT is NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"OMR / Exceptions",
+		CASE WHEN (cc.ETSOAE is Not NULL AND cl.strReportCode like ''OAE%'') Then 1 ELSE 0 END	"ETS / OAE",
+		CASE WHEN (cc.ETSOAS is Not NULL AND cl.strReportCode like ''OAS%'') Then 1 ELSE 0 END	"ETS / OAS",
+		CASE WHEN (cc.OMRIAE is Not NULL AND cl.strReportCode like ''IAE%'') Then 1 ELSE 0 END	"OMR / IAE",
+		CASE WHEN (cc.OMRIAT is Not NULL AND cl.strReportCode like ''IAT%'') Then 1 ELSE 0 END	"OMR / IAT",
+		CASE WHEN (cc.OMRISQ is Not NULL AND cl.strReportCode like ''ISQ%'') Then 1 ELSE 0 END	"OMR / ISQ",
+		CASE WHEN (cc.LCS is Not NULL AND cl.strReportCode like ''LCS%'') Then 1 ELSE 0 END	"LCS",
+		CASE WHEN (cc.SDR is Not NULL AND cl.strReportCode like ''SDR%'') Then 1 ELSE 0 END	"Training / SDR",
+	    CASE WHEN (cc.ODT is Not NULL AND cl.strReportCode like ''ODT%'') Then 1 ELSE 0 END	"Training / ODT",
+	    CASE WHEN (cc.CTC is Not NULL AND cl.strReportCode like ''CTC%'') Then 1 ELSE 0 END	"Quality / CTC",
+	    CASE WHEN (cc.HFC is Not NULL AND cl.strReportCode like ''HFC%'') Then 1 ELSE 0 END	"Quality / HFC",
+	    CASE WHEN (cc.KUD is Not NULL AND cl.strReportCode like ''KUD%'') Then 1 ELSE 0 END	"Quality / KUD",
+	    CASE WHEN (cc.SEA is Not NULL AND cl.strReportCode like ''SEA%'') Then 1 ELSE 0 END	"OTH / SEA",
+	  	cl.Description txtDescription,
+		cl.CoachingNotes txtCoachingNotes,
+		cl.isVerified,
+		cl.SubmittedDate,
+		cl.StartDate,
+		cl.SupReviewedAutoDate,
+		cl.isCSE,
+		cl.MgrReviewManualDate,
+		cl.MgrReviewAutoDate,
+		cl.MgrNotes txtMgrNotes,
+		cl.isCSRAcknowledged,
+		cl.isCoachingRequired,
+		cl.CSRReviewAutoDate,
+		cl.CSRComments txtCSRComments
+	    FROM  [EC].[Coaching_Log] cl JOIN'
+	    
+SET @nvcSQL3 = '  (SELECT  ccl.FormName,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''Customer Service Escalation'' THEN [clr].[Value] ELSE NULL END)	CSE,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''Current Coaching Initiative'' THEN [clr].[Value] ELSE NULL END)	CCI,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 120 THEN [clr].[Value] ELSE NULL END)	ETSOAE,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 29 THEN [clr].[Value] ELSE NULL END)	OMRIAE,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 231 THEN [clr].[Value] ELSE NULL END)	OMRIAT,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END)	OMRISQ,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END)	SDR,
+     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END)	ODT,
+     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END)	CTC,
+     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 12 THEN [clr].[Value] ELSE NULL END)	HFC,
+     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	KUD,
+     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA
+ 	 FROM [EC].[Coaching_Log_Reason] clr,
+	 [EC].[DIM_Coaching_Reason] cr,
+	 [EC].[Coaching_Log] ccl 
+	 WHERE [ccl].[FormName] = '''+@strFormIDin+'''
+	 AND [clr].[CoachingReasonID] = [cr].[CoachingReasonID]
+	 AND [ccl].[CoachingID] = [clr].[CoachingID] 
+	 GROUP BY ccl.FormName ) cc
+ON [cl].[FormName] = [cc].[FormName] JOIN  [EC].[Employee_Hierarchy] eh
+	 ON [cl].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
+	 ON [cl].[SubmitterID] = [sh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] suph
+	 ON ISNULL([cl].[Review_SupID],''999999'') = [suph].[Emp_ID] JOIN [EC].[Employee_Hierarchy] mgrh
+	 ON ISNULL([cl].[Review_MgrID],''999999'') = [mgrh].[Emp_ID]JOIN [EC].[DIM_Status] s
+	 ON [cl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source] sc
+     ON [cl].[SourceID] = [sc].[SourceID] JOIN [EC].[DIM_Site] st
+	 ON [cl].[SiteID] = [st].[SiteID] JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
+Order By [cl].[FormName]'
+		
+SET @nvcSQL =  @nvcSQL1 +  @nvcSQL2 +  @nvcSQL3
+EXEC (@nvcSQL)
+--Print (@nvcSQL)
+	    
+END --sp_SelectReviewFrom_Coaching_Log
+
+
+
+
+
+GO
+
+
+--*********************************************************
+--*********************************************************
+
+--4.[EC].[sp_Update_Coaching_Log_Quality]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Update_Coaching_Log_Quality' 
+)
+   DROP PROCEDURE [EC].[sp_Update_Coaching_Log_Quality]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:      04/23/2014
+--    Description:     This procedure updates the Quality scorecards into the Coaching_Log table. 
+--                     The txtdescription is updated in the Coaching_Log table.
+-- Last Updated By: Susmitha Palacherla
+-- Modified per TFS 283 to force CRLF in Description value when viewed in UI - 08/31/2015
+-- Modified per TFS 3757 to update isCoachingMonitor - 11/10/2016
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality]
+  
+AS
+BEGIN
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+      
+-- Update txtDescription for existing records
+
+ UPDATE [EC].[Coaching_Log]
+ SET [Description] = REPLACE(EC.fn_nvcHtmlEncode(S.[Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />'),
+ isCoachingMonitor = S.isCoachingMonitor
+ FROM [EC].[Quality_Coaching_Stage]S INNER JOIN [EC].[Coaching_Log]F
+ ON S.[Eval_ID] = F.[VerintEvalID]
+ AND S.[Journal_ID] = F.[VerintID]
+ WHERE F.[VerintEvalID] is NOT NULL
+ OPTION (MAXDOP 1)       
+           
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+
+ -- Update Oppor/Re-In value in Coaching_Log_reason table for each record updated in Coaching_log table.
+
+ UPDATE [EC].[Coaching_Log_reason]
+ SET  [Value]= S.[Oppor_Rein]        
+ FROM [EC].[Quality_Coaching_Stage] S JOIN  [EC].[Coaching_Log] F 
+    ON S.[Eval_ID] = F.[VerintEvalID]  JOIN  [EC].[Coaching_Log_Reason] R
+    ON F.[CoachingID] = R.[CoachingID]  
+    WHERE S.[Oppor_Rein] <> [Value]
+ OPTION (MAXDOP 1)   
+ 
+                  
+COMMIT TRANSACTION
+END TRY
+
+      
+      BEGIN CATCH
+      IF @@TRANCOUNT > 0
+      ROLLBACK TRANSACTION
+
+
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+
+    SELECT @ErrorMessage = ERROR_MESSAGE(),
+           @ErrorSeverity = ERROR_SEVERITY(),
+           @ErrorState = ERROR_STATE()
+
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+  END CATCH  
+END -- sp_Update_Coaching_Log_Quality
+
+GO
+
+
+
+--*********************************************************
+--*********************************************************

@@ -1,0 +1,573 @@
+/*
+Run in an ssms window pointing to eCoaching DB in target environment. and run with nothing selected
+
+Summary
+
+Delete manually added record for Laurie Eaton
+sp_Select_Sources_For_Dashboard
+sp_SelectFrom_Coaching_Log_HistoricalSUP
+sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
+
+*/
+--Details
+--1. Delete manually added record for Laurie Eaton
+
+
+Delete FROM [EC].[EmployeeID_To_LanID]
+where EmpID = '806387'
+GO
+
+Delete FROM [EC].[Employee_Hierarchy]
+where Emp_ID = '806387'
+GO
+
+
+
+--************************************************************************************************
+
+--FROM HERE ON COPY ENTIRE CODE INTO SSMS WINDOW AND RUN WITH NOTHING SELECTED.
+
+--*************************************************************************************************
+--2. Create SP [EC].[sp_Select_Sources_For_Dashboard]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Sources_For_Dashboard' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Sources_For_Dashboard]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/06/2015
+--	Description: *	This procedure selects Sources to be displayed in the dashboard
+--  Source dropdown list.
+--  Last Modified: 06/11/2015
+--  Last Modified Bt: Susmitha Palacherla
+--  Modified per SCR 14916 to add additional HR job codes.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Sources_For_Dashboard] 
+@strUserin nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max),
+	@strjobcode  nvarchar(20),
+	@nvcEmpID nvarchar(10),
+	@dtmDate datetime
+	
+		
+	
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
+SET @strjobcode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcEmpID)	
+	
+
+
+-- Check users job code and show 'Warning' as a source only for HR users.
+
+IF @strjobcode in ('WHER13', 'WHER50',
+'WHHR12', 'WHHR13', 'WHHR14',
+'WHHR50', 'WHHR60', 'WHHR80',
+'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
+
+SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
+(SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
+UNION
+SELECT [SubCoachingSource] SourceText,  [SubCoachingSource] SourceValue, 02 Sortorder From [EC].[DIM_Source]
+Where [SubCoachingSource] <> ''Unknown''
+and [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+ELSE
+
+SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
+(SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
+UNION
+SELECT  [SubCoachingSource] SourceText,  [SubCoachingSource] SourceValue, 02 Sortorder From [EC].[DIM_Source]
+Where [SubCoachingSource] not in ( ''Warning'',''Unknown'')
+and [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Sources_For_Dashboard
+GO
+
+
+
+
+--***************************************************************
+--3. Create SP [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_HistoricalSUP' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	4/30/2012
+--	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
+--  Last Modified: 06/11/2015
+--  Last Modified Bt: Susmitha Palacherla
+--  Modified per SCR 14916 to add additional HR job codes.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP] 
+
+@strSourcein nvarchar(100),
+@strCSRSitein nvarchar(30),
+@strCSRin nvarchar(30),
+@strSUPin nvarchar(30),
+@strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@strStatusin nvarchar(30), 
+@strjobcode  nvarchar(20),
+@strvalue  nvarchar(30),
+@PageSize int,
+@startRowIndex int, 
+@sortBy nvarchar(100),
+@sortASC nvarchar(1)
+AS
+
+--[cl].[SubmittedDate]
+BEGIN
+
+
+SET NOCOUNT ON
+
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
+@nvcSQL4 nvarchar(max),
+@nvcSQL5 nvarchar(max),
+@strSDate nvarchar(10),
+@strEDate nvarchar(10),
+@UpperBand int,
+@LowerBand int,
+@SortExpression nvarchar(100),
+@SortOrder nvarchar(10) ,
+@OrderKey nvarchar(10),
+@where nvarchar(max)        
+
+SET @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+SET @LowerBand  = @startRowIndex 
+SET @UpperBand  = @startRowIndex + @PageSize 
+
+SET @where = ' WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [cl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [clr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [cl].[EmpID] =   '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+'''' 
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [cl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[cl].[SiteID]) = '''+@strCSRSitein+''''
+END			 
+
+--PRINT @UpperBand
+IF @sortASC = 'y' 
+SET @SortOrder = ' ASC' ELSE 
+SET @SortOrder = ' DESC' 
+SET @OrderKey = 'orderkey, '
+SET  @SortExpression = @OrderKey + @sortBy +  @SortOrder
+
+--PRINT @SortExpression
+
+SET @nvcSQL1 = 'WITH TempMain AS 
+        (select DISTINCT x.strFormID
+        ,x.strCoachingID
+        ,x.strCSRName
+		,x.strCSRSupName
+		,x.strCSRMgrName
+		,x.strFormStatus
+		,x.strSource
+		,x.SubmittedDate
+		,x.strSubmitterName
+		,x.orderkey
+		,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
+from (
+     SELECT DISTINCT [cl].[FormName]	strFormID
+        ,[cl].[CoachingID]	strCoachingID
+    	,[eh].[Emp_Name]	strCSRName
+		,[eh].[Sup_Name]	strCSRSupName
+		,[eh].[Mgr_Name]	strCSRMgrName
+		,[s].[Status]		strFormStatus
+		,[so].[SubCoachingSource]	strSource
+		,[cl].[SubmittedDate]	SubmittedDate
+		,[sh].[Emp_Name]	strSubmitterName
+	   	,''ok1'' orderkey
+		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID' +  @where 
+
+
+SET @where = ' WHERE convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [wl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [wlr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [wl].[EmpID] = '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+''''
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [wl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[wl].[SiteID]) = '''+@strCSRSitein+''''
+END	
+
+SET @nvcSQL2 = ' UNION
+     SELECT DISTINCT [wl].[FormName]	strFormID
+        ,[wl].[WarningID]	strCoachingID
+     	,[eh].[Emp_Name]	strCSRName
+		,[eh].[Sup_Name]	strCSRSupName
+		,[eh].[Mgr_Name]	strCSRMgrName
+		,[s].[Status]		strFormStatus
+		,[so].[SubCoachingSource]	strSource
+		,[wl].[SubmittedDate]	SubmittedDate
+		,[sh].[Emp_Name]	strSubmitterName
+	   	,''ok2'' orderkey
+		FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH(NOLOCK)
+ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON wl.SourceID = so.SourceID' + @where 
+
+
+SET @nvcSQL3 = ' ) x )
+
+ SELECT strFormID
+		,strCSRName
+	    ,strCSRSupName
+		,strCSRMgrName
+		,strFormStatus
+		,strSource
+		,SubmittedDate
+		,strSubmitterName
+	    ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strCoachingReasonFromCoachingID](T.strCoachingID)
+	     ELSE [EC].[fn_strCoachingReasonFromWarningID](T.strCoachingID) END strCoachingReason
+	    ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strSubCoachingReasonFromCoachingID](T.strCoachingID)
+	     ELSE [EC].[fn_strSubCoachingReasonFromWarningID](T.strCoachingID) END strSubCoachingReason
+	    ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strValueFromCoachingID](T.strCoachingID)
+	     ELSE [EC].[fn_strValueFromWarningID](T.strCoachingID)END strValue
+		,RowNumber                 
+		FROM TempMain T
+		WHERE RowNumber >= '''+CONVERT(VARCHAR,@LowerBand)+'''  AND RowNumber < '''+CONVERT(VARCHAR, @UpperBand) +
+        ''' ORDER BY ' + @SortExpression  
+
+ 
+ IF @strjobcode in ('WHER13', 'WHER50',
+'WHHR12', 'WHHR13', 'WHHR14',
+'WHHR50', 'WHHR60', 'WHHR80',
+'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
+
+ELSE
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL3
+
+
+EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
+	    
+END -- try2_SelectFrom_Coaching_Log_HistoricalSUP
+
+
+
+
+
+GO
+
+
+
+
+
+
+
+--***************************************************************
+--4. Create SP [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_HistoricalSUP_Count' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	05/28/2015
+--	Description: *	This procedure returns the count of completed   e-Coaching  records that will be 
+--  displayed for the selected criteria on the SUP historical page.
+-- Create per SCR 14893 dashboard redesign performance round 2.
+--  Last Modified: 06/11/2015
+--  Last Modified Bt: Susmitha Palacherla
+--  Modified per SCR 14916 to add additional HR job codes.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count] 
+
+@strSourcein nvarchar(100),
+@strCSRSitein nvarchar(30),
+@strCSRin nvarchar(30),
+@strSUPin nvarchar(30),
+@strMGRin nvarchar(30),
+@strSubmitterin nvarchar(30),
+@strSDatein datetime,
+@strEDatein datetime,
+@strStatusin nvarchar(30), 
+@strjobcode  nvarchar(20),
+@strvalue  nvarchar(30)
+--@intRecordCount int OUT
+
+AS
+
+
+BEGIN
+
+SET NOCOUNT ON
+
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
+@strFormStatus nvarchar(30),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8),
+@where nvarchar(max) 
+      
+    
+SET @strFormStatus = 'Inactive'
+SET @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+
+SET @where = ' WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [cl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [clr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [cl].[EmpID] =   '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+'''' 
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [cl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[cl].[SiteID]) = '''+@strCSRSitein+''''
+END			 
+
+SET @nvcSQL1 = 'WITH TempCoaching AS 
+        (select DISTINCT x.strFormID
+	from (
+     SELECT DISTINCT [cl].[FormName]	strFormID
+	 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)
+ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON cl.SiteID = si.SiteID JOIN  [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+ON cl.CoachingID = clr.CoachingID'
++ @where + 
+' GROUP BY [cl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[cl].[SubmittedDate],[sh].[Emp_Name],[cl].[CoachingID]'
+
+SET @where = ' WHERE convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''' +  
+			 ' AND convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+'''' +
+			 ' AND [wl].[StatusID] <> 2'
+			 
+IF @strSourcein <> '%'
+BEGIN
+	SET @where = @where + ' AND [so].[SubCoachingSource] = '''+@strSourcein+''''
+END
+IF @strStatusin <> '%'
+BEGIN
+	SET @where = @where + ' AND [s].[Status] = '''+@strStatusin+''''
+END
+IF @strvalue <> '%'
+BEGIN
+	SET @where = @where + ' AND [wlr].[value] = '''+@strvalue+''''
+END
+IF @strCSRin <> '%' 
+BEGIN
+	SET @where = @where + ' AND [wl].[EmpID] = '''+@strCSRin+'''' 
+END
+IF @strSUPin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Sup_ID] = '''+@strSUPin+'''' 
+END
+IF @strMGRin <> '%'
+BEGIN
+	SET @where = @where + ' AND [eh].[Mgr_ID] = '''+@strMGRin+''''
+END	
+IF @strSubmitterin <> '%'
+BEGIN
+	SET @where = @where + ' AND [wl].[SubmitterID] = '''+@strSubmitterin+'''' 
+END
+IF @strCSRSitein <> '%'
+BEGIN
+	SET @where = @where + ' AND CONVERT(varchar,[wl].[SiteID]) = '''+@strCSRSitein+''''
+END	
+
+
+SET @nvcSQL2 = ' UNION
+     SELECT DISTINCT [wl].[FormName]	strFormID
+	FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH(NOLOCK)
+ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+ON wl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s
+ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
+ON wl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si
+ON wl.SiteID = si.SiteID JOIN  [EC].[Warning_Log_Reason] wlr WITH (NOLOCK)
+ON wl.WarningID = wlr.WarningID'
++ @where + 
+' GROUP BY [wl].[FormName],[eh].[Emp_Name],[eh].[Sup_Name],[eh].[Mgr_Name],
+[s].[Status],[so].[SubCoachingSource],[wl].[SubmittedDate],[sh].[Emp_Name],[wl].[WarningID]'
+
+SET @nvcSQL3 = ' ) x
+ )
+ SELECT count(strFormID) FROM TempCoaching'
+	   
+  
+ IF @strjobcode in ('WHER13', 'WHER50',
+'WHHR12', 'WHHR13', 'WHHR14',
+'WHHR50', 'WHHR60', 'WHHR80',
+'WHHR11', 'WHRC11', 'WHRC12', 'WHRC13')
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 
+
+ELSE
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL3
+
+EXEC (@nvcSQL)	
+
+--PRINT @nvcSQL
+	    
+END -- sp_SelectFrom_Coaching_Log_HistoricalSUP_Count
+
+
+
+GO
+
+
+
+
+
+
+--***************************************************************

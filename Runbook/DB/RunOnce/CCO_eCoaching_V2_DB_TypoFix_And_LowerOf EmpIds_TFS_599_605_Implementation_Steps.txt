@@ -1,0 +1,274 @@
+/*
+Copy to ssms window pointing to eCoaching DB in target environment and run with nothing selected.
+Test - eCoachingTest on vrivfssdbt02\scort01,1438
+Prod eCoaching on vdenssdbp07\scorp01
+
+Summary
+TFS 599
+[EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted] -41
+[EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeam] -40
+[EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR] -24
+
+TFS 605
+[EC].[sp_Whoami]
+
+
+*****************************************/
+
+--1 Create SP  [EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogMgrDistinctCSR' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR]
+GO
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	11/16/11
+--	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 08/25/2015
+-- Modified per TFS 599 to fix typo for 'All Employees'
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR] @strCSRMGRin nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@strFormStatus2 nvarchar(30),
+@strFormStatus3 nvarchar(30),
+@nvcMGRID Nvarchar(10),
+@dtmDate datetime
+
+Set @strFormStatus = 'Pending Manager Review'
+Set @strFormStatus2 = 'Pending Supervisor Review'
+Set @strFormStatus3 = 'Pending Acknowledgement'
+Set @dtmDate  = GETDATE()   
+Set @nvcMGRID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
+
+
+SET @nvcSQL =  'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where (([eh].[Mgr_ID] =   '''+@nvcMGRID+''' and [S].[Status] = '''+@strFormStatus+''')
+ OR ([eh].[Sup_ID] =   '''+@nvcMGRID+''' and ([S].[Status] = '''+@strFormStatus2+''' or [S].[Status] = '''+@strFormStatus3+''')))
+and eh.Emp_Name is NOT NULL
+and ([eh].[Mgr_ID] <> ''999999'' AND [eh].[Sup_ID] <> ''999999'')) X
+ORDER BY X.Sortorder, X.EmpText'
+		
+		
+EXEC (@nvcSQL)
+--PRINT @nvcSQL
+	
+
+End --sp_SelectFrom_Coaching_LogMgrDistinctCSR
+
+
+GO
+--****************************************
+
+--2. Create SP  [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeam]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogSupDistinctCSRTeam' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeam]
+GO
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	11/16/11
+--	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 08/25/2015
+-- Modified per TFS 599 to fix typo for 'All Employees'
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeam] 
+@strCSRSUPin nvarchar(30)
+AS
+
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSUPID Nvarchar(10),
+@dtmDate datetime
+
+ Set @dtmDate  = GETDATE()   
+ Set @nvcSUPID = EC.fn_nvcGetEmpIdFromLanID(@strCSRSUPin,@dtmDate)
+
+SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where eh.Sup_ID = '''+@nvcSUPID+'''
+and [S].[Status] like ''Pending%''
+and eh.Emp_Name is NOT NULL
+and eh.Sup_ID <> ''999999'') X
+ORDER BY X.Sortorder, X.EmpText'
+
+		
+EXEC (@nvcSQL)
+--PRINT @nvcSQL	
+
+End --sp_SelectFrom_Coaching_LogSupDistinctCSRTeam
+GO
+
+
+--*****************************************************
+--3. Create SP  [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	11/16/11
+--	Description: *	This procedure selects the distinct CSRs from e-Coaching records to display on dashboard for filter. 
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 08/25/2015
+-- Modified per TFS 599 to fix typo for 'All Employees'
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted] 
+@strCSRSUPin nvarchar(30)
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus nvarchar(30),
+@nvcSUPID Nvarchar(10),
+@dtmDate datetime
+
+
+ Set @strFormStatus = 'Completed'
+ Set @dtmDate  = GETDATE()   
+ Set @nvcSUPID = EC.fn_nvcGetEmpIdFromLanID(@strCSRSUPin,@dtmDate)
+
+
+SET @nvcSQL = 'SELECT X.EmpText, X.EmpValue FROM
+(SELECT ''All Employees'' EmpText, ''%'' EmpValue, 01 Sortorder From [EC].[Employee_Hierarchy]
+UNION
+SELECT DISTINCT eh.Emp_Name	EmpText, eh.Emp_Name EmplValue, 02 Sortorder
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID 
+where eh.Sup_ID = '''+@nvcSUPID+'''
+and [S].[Status] = '''+@strFormStatus+'''
+and eh.Emp_Name is NOT NULL
+and eh.Sup_ID <> ''999999'') X
+ORDER BY X.Sortorder, X.EmpText'
+
+		
+EXEC (@nvcSQL)
+--PRINT @nvcSQL	
+
+End --sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted
+GO
+
+
+
+--***********************************************************
+
+--4. Create SP  [EC].[sp_Whoami]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Whoami' 
+)
+   DROP PROCEDURE [EC].[sp_Whoami]
+GO
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+--	====================================================================
+--	Author:			Jourdain Augustin
+--	Create Date:	07/22/13
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date: 8/25/2015
+-- Updated per TFS 605  to return lower employee ID and also look for Active not in ('T','D')
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Whoami] 
+
+(
+ @strUserin	Nvarchar(30)
+)
+AS
+
+BEGIN
+DECLARE	
+@EmpID nvarchar(100),
+@nvcSQL nvarchar(max)
+
+
+SET @EmpID = (Select [EC].[fn_nvcGetEmpIdFromLanId](@strUserin,GETDATE()))
+
+ SET @nvcSQL = 'SELECT [Emp_Job_Code] as EmpJobCode,
+                       [Emp_Email] as EmpEmail,
+                       [Emp_Name] as EmpName,
+                       lower([Emp_ID]) as EmpID
+              FROM [EC].[Employee_Hierarchy]WITH(NOLOCK)
+              WHERE [Emp_ID] = '''+@EmpID+'''
+              AND [Active] not in  (''T'', ''D'')'
+              
+            
+		
+EXEC (@nvcSQL)	
+--Print @nvcSQL
+END --sp_Whoami
+
+
+GO

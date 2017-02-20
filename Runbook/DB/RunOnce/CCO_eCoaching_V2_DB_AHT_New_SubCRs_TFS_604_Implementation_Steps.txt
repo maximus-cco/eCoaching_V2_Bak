@@ -1,0 +1,47 @@
+/*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+
+Summary
+1.Add record(s) to TABLE [EC].[DIM_Sub_Coaching_Reason]
+2.Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+3: General updates
+
+*/
+
+-- step1: add subcoaching reasons
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+('Appropriate use of hold')
+
+GO
+
+
+
+
+--step2: add into coaching reason selection
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+(1, 'AHT',230,'Appropriate use of hold',1,1,1,1,1,1,0,1,0,0,0,0)
+
+GO
+
+

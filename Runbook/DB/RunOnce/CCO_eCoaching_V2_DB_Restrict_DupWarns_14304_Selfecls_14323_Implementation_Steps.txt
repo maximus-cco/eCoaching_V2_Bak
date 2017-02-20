@@ -1,0 +1,277 @@
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_Warning_Log' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_Warning_Log]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:      10/03/2014
+--    Description:     This procedure inserts the Warning records into the Warning_Log table. 
+--                     The main attributes of the Warning are written to the warning_Log table.
+--                     The Warning Reasons are written to the Warning_Reasons Table.
+-- Last Modified Date: 02/18/2015
+-- Last Updated By: Susmitha Palacherla
+-- Updated per SCR 14304 to check if warning exists and report as Dup
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
+(     @nvcFormName Nvarchar(50),
+      @nvcProgramName Nvarchar(50),
+      @nvcEmpLanID Nvarchar(40),
+      @SiteID INT,
+      @nvcSubmitter Nvarchar(40),
+      @dtmEventDate datetime,
+      @intCoachReasonID1 INT,
+      @nvcSubCoachReasonID1 Nvarchar(255),
+      @dtmSubmittedDate datetime ,
+      @ModuleID INT,
+      @isDup BIT OUTPUT
+      )
+   
+AS
+BEGIN
+   
+DECLARE @RetryCounter INT
+SET @RetryCounter = 1
+
+RETRY: -- Label RETRY
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+      
+    --	Fetch the Employee ID of the current User (@nvcCSR) and Employee ID of the Submitter (@nvcSubmitter).
+
+	DECLARE @nvcEmpID Nvarchar(10),
+	        @nvcSubmitterID	Nvarchar(10),
+	        @nvcSupID nvarchar(10),
+	        @nvcMgrID nvarchar(10),
+	        @nvcNotPassedSiteID INT,
+	        @dtmDate datetime,
+	        @intWarnIDExists BIGINT
+	        
+	  
+	 	        
+	SET @dtmDate  = GETDATE()   
+	SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanID,@dtmDate)
+	SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
+	SET @nvcSupID = (Select Sup_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)
+	SET @nvcMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)  
+	SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
+	SET @isDup = 1
+	
+SET @intWarnIDExists = (SELECT WL.WarningID
+FROM [EC].[Warning_Log]WL join [EC].[Warning_Log_Reason]WLR
+ON WL.WarningID = WLR.WarningID
+WHERE WL.[EmpID]= @nvcEmpID
+AND WL.[WarningGivenDate]= @dtmEventDate 
+AND WLR.[CoachingReasonID] = @intCoachReasonID1
+AND WLR.[SubCoachingReasonID]= @nvcSubCoachReasonID1
+AND [Active] = 1)
+
+
+IF @intWarnIDExists IS NULL 
+        
+ BEGIN 
+         INSERT INTO [EC].[Warning_Log]
+           ([FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+           ,[EmpLanID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[SupID]
+           ,[MgrID]
+           ,[WarningGivenDate]
+           ,[SubmittedDate]
+           ,[ModuleID])
+     VALUES
+           (@nvcFormName
+           ,@nvcProgramName 
+           ,120
+           ,1
+           ,ISNULL(@SiteID,@nvcNotPassedSiteID)
+           ,@nvcEmpLanID
+           ,@nvcEmpID 
+           ,@nvcSubmitterID
+           ,@nvcSupID
+           ,@nvcMgrID
+           ,@dtmEventDate 
+	       ,@dtmSubmittedDate 
+		   ,@ModuleID)
+            
+    
+     --PRINT 'STEP1'
+            
+    SELECT @@IDENTITY AS 'Identity';
+    --PRINT @@IDENTITY
+    
+    DECLARE @I BIGINT = @@IDENTITY,
+            @MaxSubReasonRowID INT,
+            @SubReasonRowID INT
+    
+
+
+ IF NOT @intCoachReasonID1 IS NULL
+  BEGIN
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID1, ','))
+       --PRINT  @MaxSubReasonRowID
+       SET @SubReasonRowID = 1
+	
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+   BEGIN
+   
+   
+		INSERT INTO [EC].[Warning_Log_Reason]
+            ([WarningID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID1,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID1, ',')where Rowid = @SubReasonRowID ),
+             'Opportunity')       
+             
+		SET @SubReasonRowID = @SubReasonRowID + 1
+
+     END           
+  END
+ 
+ SET @isDup = 0
+ END       
+
+COMMIT TRANSACTION
+END TRY
+      
+      BEGIN CATCH
+	--PRINT 'Rollback Transaction'
+	ROLLBACK TRANSACTION
+	DECLARE @DoRetry bit; -- Whether to Retry transaction or not
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+    
+     SET @doRetry = 0;
+     SELECT @ErrorMessage = ERROR_MESSAGE(),
+            @ErrorSeverity = ERROR_SEVERITY(),
+            @ErrorState = ERROR_STATE()
+    
+    
+    IF ERROR_NUMBER() = 1205 -- Deadlock Error Number
+	BEGIN
+		SET @doRetry = 1; -- Set @doRetry to 1 only for Deadlock
+	END
+	IF @DoRetry = 1
+	BEGIN
+		SET @RetryCounter = @RetryCounter + 1 -- Increment Retry Counter By one
+		IF (@RetryCounter > 3) -- Check whether Retry Counter reached to 3
+		BEGIN
+			RAISERROR(@ErrorMessage, 18, 1) -- Raise Error Message if 
+				-- still deadlock occurred after three retries
+		END
+		ELSE
+		BEGIN
+			WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+			GOTO RETRY	-- Go to Label RETRY
+		END
+	END
+	ELSE
+	BEGIN
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+   END
+  END CATCH  
+
+  END -- sp_InsertInto_Warning_Log
+
+GO
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Employees_By_Module' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Employees_By_Module]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	7/31/14
+--	Description: *	This procedure pulls the list of Employee names to be displayed 
+--  in the drop downs for the selected Module using the job_code in the Employee_Selection table.
+--  Created to replace the sp_SelectCSRsbyLocation used by the original CSR Module 
+--  Last Modified By: Susmitha Palacherla
+--  Last Modified date; Susmitha Palacherla
+--  Modified per SCR 14323 to restrict users from submitting ecls for themselves by
+--  by preventing them from appearing in the drop downs.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Employees_By_Module] 
+
+@strModulein nvarchar(30), @strCSRSitein nvarchar(30)= NULL,
+@strUserLanin nvarchar(20)
+
+AS
+
+BEGIN
+DECLARE	
+@isBySite BIT,
+@nvcSQL nvarchar(max),
+@nvcSQL01 nvarchar(max),
+@nvcSQL02 nvarchar(max),
+@nvcSQL03 nvarchar(max)
+
+SET @nvcSQL01 = 'select [Emp_Name] + '' ('' + [Emp_LanID] + '') '' + [Emp_Job_Description] as FrontRow1
+	  ,[Emp_Name] + ''$'' + [Emp_Email] + ''$'' + [Emp_LanID] + ''$'' + [Sup_Name] + ''$'' + [Sup_Email] + ''$'' + [Sup_LanID] + ''$'' + [Sup_Job_Description] + ''$'' + [Mgr_Name] + ''$'' + [Mgr_Email] + ''$'' + [Mgr_LanID] + ''$'' + [Mgr_Job_Description]  + ''$'' + [Emp_Site] as BackRow1, [Emp_Site]
+       from [EC].[Employee_Hierarchy] WITH (NOLOCK) JOIN [EC].[Employee_Selection]
+       on [EC].[Employee_Hierarchy].[Emp_Job_Code]= [EC].[Employee_Selection].[Job_Code]
+where [EC].[Employee_Selection].[is'+ @strModulein + ']= 1
+and [Emp_lanID] <> '''+@strUserLanin+ ''''
+
+SET @nvcSQL02 = ' and [Emp_Site] = ''' +@strCSRSitein + ''''
+
+
+SET @nvcSQL03 = ' and [End_Date] = ''99991231''
+and [Emp_LanID]is not NULL and [Sup_LanID] is not NULL and [Mgr_LanID]is not NULL
+order By [Emp_Name] ASC'
+
+--IF @strModulein = 'CSR'
+SET @isBySite = (SELECT BySite FROM [EC].[DIM_Module] Where [Module] = @strModulein and isActive =1)
+IF @isBySite = 1
+
+SET @nvcSQL = @nvcSQL01 + @nvcSQL02 +@nvcSQL03 
+ELSE
+SET @nvcSQL = @nvcSQL01 + @nvcSQL03 
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Employees_By_Module
+GO
+

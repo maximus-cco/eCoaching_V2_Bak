@@ -1,0 +1,202 @@
+/*
+
+Summary
+
+These instructions cover the implementation for the following SCRs.
+SCR 14803 - SMTP Relay Server Transfer
+SCR 14951 -  Historical Dashboard not showing warnings for HR 
+SCR 14955 - Duplicate LAN ID caused system error 
+
+1. Download files from Version Manager
+2.Stage ssis packages and Config files on Packages share on Production DB server
+3. Install Stored Procedures
+
+
+*/
+
+--Details
+-- Step1. Get files from Version Manager
+
+1. \cms\eCoaching_V2\ETL\Outlier_Coaching.dtsx (VM Revision 1.1)
+2. \cms\eCoaching_V2\ETL\Prod_ETS_Coaching.dtsConfig (VM Revision 1.2)
+3. \cms\eCoaching_V2\ETL\Prod_Outlier_Coaching.dtsConfig (VM Revision 1.2)
+3. \cms\eCoaching_V2\ETL\Notifications_prod.vbs (VM Revision 1.5)
+
+--***************************************************************
+
+
+2a .Copy these 3 files
+1. \cms\eCoaching_V2\ETL\Outlier_Coaching.dtsx (VM Revision 1.1)
+2. \cms\eCoaching_V2\ETL\Prod_ETS_Coaching.dtsConfig (VM Revision 1.2)
+3. \cms\eCoaching_V2\ETL\Prod_Outlier_Coaching.dtsConfig (VM Revision 1.2)
+
+To
+\\vdenssdbp07\scorecard-ssis\Coaching\
+
+
+
+
+2b. Copy the file 
+\cms\eCoaching_V2\ETL\Notifications_prod.vbs (VM Revision 1.5)
+
+To
+
+\\vdenssdbp07\scorecard-ssis\Coaching\Notifications\
+
+--***************************************************************
+
+--3. Install Sored procedures
+--From here on you can select and paste into SSMS window and run with nothing selected
+-- or install each of the 2 stored procedures one at a time.
+
+--3a. Create SP  [EC].[sp_Select_Sources_For_Dashboard]
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Sources_For_Dashboard' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Sources_For_Dashboard]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	03/06/2015
+--	Description: *	This procedure selects Sources to be displayed in the dashboard
+--  Source dropdown list.
+--  Last Modified Date: 05/11/2015
+--  Last Modified By: Susmitha Palacherla
+--  Modified per SCR 14955 to add current lanid logic
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Sources_For_Dashboard] 
+@strUserin nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max),
+	@strjobcode  nvarchar(20),
+	@nvcEmpID nvarchar(10),
+	@dtmDate datetime
+	
+		
+	
+SET @dtmDate  = GETDATE()  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
+SET @strjobcode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcEmpID)	
+	
+
+
+-- Check users job code and show 'Warning' as a source only for HR users.
+
+IF @strjobcode in ('WHER13', 'WHER50',
+'WHHR12', 'WHHR13', 'WHHR14',
+'WHHR50', 'WHHR60', 'WHHR80')
+
+SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
+(SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
+UNION
+SELECT [SubCoachingSource] SourceText, [SubCoachingSource] SourceValue, 02 Sortorder From [EC].[DIM_Source]
+Where [SubCoachingSource] <> ''Unknown''
+and [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+ELSE
+
+SET @nvcSQL = 'SELECT X.SourceText, X.SourceValue FROM
+(SELECT ''All Sources'' SourceText, ''%'' SourceValue, 01 Sortorder From [EC].[DIM_Source]
+UNION
+SELECT [SubCoachingSource] SourceText, [SubCoachingSource] SourceValue, 02 Sortorder From [EC].[DIM_Source]
+Where [SubCoachingSource] not in ( ''Warning'',''Unknown'')
+and [isActive]= 1)X
+ORDER BY X.Sortorder'
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Sources_For_Dashboard
+GO
+
+
+--***********************************************************************
+
+--3b. Create SP  [EC].[sp_SelectReviewFrom_Coaching_Log_Reasons_Combined] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Coaching_Log_Reasons_Combined' 
+)
+   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Reasons_Combined]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	05/12/2015
+--	Description: 	This procedure displays the Coaching Log or Warning log Reasons 
+--  and Sub Coaching Reason values for a given Form Name.
+
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Reasons_Combined] @strFormIDin nvarchar(50)
+AS
+
+BEGIN
+	DECLARE	
+
+	@nvcSQL nvarchar(max),
+	@intCoachingID INT,
+	@intWarningID INT
+
+ 
+SET @intCoachingID = (SELECT CoachingID From [EC].[Coaching_Log]where[FormName]=@strFormIDin)
+
+IF @intCoachingID IS NULL
+
+BEGIN
+
+SET @intWarningID = (SELECT WarningID From [EC].[Warning_Log]where[FormName]=@strFormIDin)
+
+
+SET @nvcSQL = 'SELECT cr.CoachingReason, scr.SubCoachingReason, wlr.value
+FROM [EC].[Warning_Log_Reason] wlr join [EC].[DIM_Coaching_Reason] cr
+ON[wlr].[CoachingReasonID] = [cr].[CoachingReasonID]Join [EC].[DIM_Sub_Coaching_Reason]scr
+ON [wlr].[SubCoachingReasonID]= [scr].[SubCoachingReasonID]
+Where WarningID = '''+CONVERT(NVARCHAR(20),@intWarningID) + '''
+ORDER BY cr.CoachingReason,scr.SubCoachingReason,wlr.value'
+
+END
+
+ELSE
+
+SET @nvcSQL = 'SELECT cr.CoachingReason, scr.SubCoachingReason, clr.value
+FROM [EC].[Coaching_Log_Reason] clr join [EC].[DIM_Coaching_Reason] cr
+ON[clr].[CoachingReasonID] = [cr].[CoachingReasonID]Join [EC].[DIM_Sub_Coaching_Reason]scr
+ON [clr].[SubCoachingReasonID]= [scr].[SubCoachingReasonID]
+Where CoachingID = '''+CONVERT(NVARCHAR(20),@intCoachingID) + '''
+ORDER BY cr.CoachingReason,scr.SubCoachingReason,clr.value'
+
+		
+EXEC (@nvcSQL)	
+--Print (@nvcSQL)
+	    
+END --sp_SelectReviewFrom_Coaching_Log_Reasons_Combined
+
+GO
+
+--******************************************************************

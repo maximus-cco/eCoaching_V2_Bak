@@ -1,0 +1,783 @@
+/*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+SCR 15029
+
+Update [EC].[Coaching_Reason_Selection]
+Set [Supervisor]= 1
+ where coachingreasonid = 1
+and [SubCoachingReasonID] in (122,123,124,125,126)
+  
+
+Summary for SCR 14818
+
+1. Get Stage SSIS Package fro VM and Stage on DB server.
+2. Add Rmgr_ID col to 3 tables
+3. Install Stored Procedures and Functions
+
+
+
+
+*/
+
+
+
+--Details
+
+-- Step1. Get Stage SSIS Package fro VM and Stage on DB server.
+Get SSIS Package Outlier_Coaching.dtsx (VM revision 1.3)
+From \cms\eCoaching_V2\ETL\
+and stage to 
+\\vdenssdbp07\scorecard-ssis\Coaching\
+(overwriting existing file)
+
+
+-- Step2. Add Rmgr_ID col to 3 tables
+
+ALTER table [EC].[Outlier_Coaching_Stage]
+ADD [RMgr_ID][nvarchar](20) NULL
+GO
+
+
+ALTER table [EC].[Outlier_Coaching_Rejected]
+ADD [RMgr_ID][nvarchar](20) NULL
+GO
+
+
+ALTER table [EC].[Outlier_Coaching_Fact]
+ADD [RMgr_ID][nvarchar](20) NULL
+GO
+
+
+--***************************************************************
+
+
+-- Step3: Install Stored procedures.
+
+--FROM HERE ON COPY TO SSMS WINDOW POINTING TO 
+--eCOACHING DB AND RUN WITH NOTHING SELECTED.
+
+--3a.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Outlier' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		        Susmitha Palacherla
+-- Create date:        03/10/2014
+-- Loads records from [EC].[Outlier_Coaching_Stage]to [EC].[Coaching_Log]
+-- Last Modified Date: 05/12/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per SCR 14818 to support LCSAT feed.
+
+-- =============================================
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+AS
+BEGIN
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+
+      DECLARE @maxnumID INT,
+              @dtmDate DATETIME,
+              @strLCSPretext nvarchar(80)
+      -- Fetches the maximum CoachingID before the insert.
+      SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
+      -- Fetches the Date of the Insert
+      SET @dtmDate  = GETDATE()   
+      SET @strLCSPretext = 'The call associated with this Low CSAT is Verint ID: '
+-- Inserts records from the Outlier_Coaching_Stage table to the Coaching_Log Table
+
+ INSERT INTO [EC].[Coaching_Log]
+           ([FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+           ,[EmpLanID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[EventDate]
+           ,[isAvokeID]
+		   ,[isNGDActivityID]
+           ,[isUCID]
+           ,[isVerintID]
+           ,[Description]
+	       ,[SubmittedDate]
+           ,[StartDate]
+           ,[isCSRAcknowledged]
+           ,[isCSE]
+           ,[EmailSent]
+           ,[numReportID]
+           ,[strReportCode]
+           ,[ModuleID]
+           ,[SupID]
+           ,[MgrID]
+           )
+select  Distinct LOWER(cs.CSR_LANID)	[FormName],
+        CASE cs.Program  
+        WHEN NULL THEN csr.Emp_Program
+        WHEN '' THEN csr.Emp_Program
+        ELSE cs.Program  END       [ProgramName],
+        212                             [SourceID],
+        [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
+        [EC].[fn_intGetSiteIDFromLanID](cs.CSR_LANID,@dtmDate)[SiteID],
+        LOWER(cs.CSR_LANID)				[EmpLanID],
+        cs.CSR_EMPID                    [EmpID],
+        [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)[SubmitterID],
+		cs.Event_Date			            [EventDate],
+		 0			[isAvokeID],
+		 0			[isNGDActivityID],
+         0			[isUCID],
+         0          [isVerintID],
+		 CASE WHEN cs.Report_Code LIKE 'LCS%' 
+		 THEN @strLCSPretext + EC.fn_nvcHtmlEncode(cs.TextDescription)
+		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
+	     cs.Submitted_Date			SubmittedDate,
+		 cs.Start_Date				[StartDate],
+		 0        				    [isCSRAcknowledged],
+		 0                          [isCSE],
+		 0                          [EmailSent],
+		 cs.Report_ID				[numReportID],
+		 cs.Report_Code				[strReportCode],
+		 1							[ModuleID],
+		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
+		 CASE WHEN cs.Report_Code LIKE 'LCS%' THEN ISNULL(cs.[RMgr_ID],'999999')
+		 ELSE ISNULL(csr.[Mgr_ID],'999999')END  [MgrID]
+	                   
+from [EC].[Outlier_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR_EMPID = csr.Emp_ID
+left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
+where cf.numReportID is Null and cf.strReportCode is null
+
+
+-- Updates the strFormID value
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+UPDATE [EC].[Coaching_Log]
+SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+where [FormName] not like 'eCL%'    
+OPTION (MAXDOP 1)
+
+WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+ -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
+
+
+INSERT INTO [EC].[Coaching_Log_Reason]
+           ([CoachingID]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[Value])
+    SELECT cf.[CoachingID],
+           9,
+           [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
+           os.[CoachReason_Current_Coaching_Initiatives]
+    FROM [EC].[Outlier_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
+    ON os.[Report_ID] = cf.[numReportID] AND  os.[Report_Code] = cf.[strReportCode]
+    LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
+    ON cf.[CoachingID] = cr.[CoachingID]  
+    WHERE cr.[CoachingID] IS NULL 
+ OPTION (MAXDOP 1)   
+ 
+                  
+COMMIT TRANSACTION
+END TRY
+
+      
+      BEGIN CATCH
+      IF @@TRANCOUNT > 0
+      ROLLBACK TRANSACTION
+
+
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+
+    SELECT @ErrorMessage = ERROR_MESSAGE(),
+           @ErrorSeverity = ERROR_SEVERITY(),
+           @ErrorState = ERROR_STATE()
+
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+  END CATCH  
+END -- sp_InsertInto_Coaching_Log_Outlier
+GO
+
+
+
+
+--3b.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MGRPending' 
+)
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	11/16/11
+--	Description: This procedure selects the Pending e-Coaching records 
+--  for a given Manager in the Manager Dashboard.
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date:  05/22/2015
+-- Updated per SCR 14818 to support rotating managers for Low CSAT
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending] 
+@strCSRMGRin nvarchar(30),
+@strCSRin nvarchar(30),
+@strCSRSUPin nvarchar(30) 
+
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@nvcSQL1 nvarchar(2000),
+@nvcSQL2 nvarchar(20),
+@nvcSQL3 nvarchar(2000),
+@nvcSQL4 nvarchar(100),
+@strReportCode nvarchar(30),
+@strFormStatus1 nvarchar(50),
+@strFormStatus2 nvarchar(50),
+@strFormStatus3 nvarchar(50),
+@strFormStatus4 nvarchar(50),
+@strFormStatus5 nvarchar(50),
+@strFormStatus6 nvarchar(50),
+@nvcMGRID Nvarchar(10),
+@dtmDate datetime
+
+ Set @strReportCode = 'LCS%'
+ Set @strFormStatus1 = 'Pending Manager Review'
+ Set @strFormStatus2 = 'Pending Supervisor Review'
+ Set @strFormStatus3 = 'Pending Acknowledgement'
+ Set @strFormStatus4 = 'Pending Sr. Manager Review'
+ Set @strFormStatus5 = 'Pending Deputy Program Manager Review'
+ Set @strFormStatus6 = 'Pending Quality Lead Review'
+ Set @dtmDate  = GETDATE()   
+ Set @nvcMGRID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
+
+SET @nvcSQL1 = 'select DISTINCT x.strFormID
+        ,x.strCSR
+		,x.strCSRName
+		,x.strCSRSupName
+		,x.strFormStatus
+		,x.submitteddate
+	from (SELECT [cl].[FormName]	strFormID,
+		[eh].[Emp_LanID] strCSR,
+		[eh].[Emp_Name]	strCSRName,
+		[eh].[Sup_Name]	strCSRSupName, 
+		[s].[Status]	strFormStatus,
+		[cl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID
+where ((eh.[Mgr_ID] = '''+@nvcMGRID+''' and ([S].[Status] = '''+@strFormStatus1+''' OR
+[S].[Status] = '''+@strFormStatus4+''' OR [S].[Status] = '''+@strFormStatus5+''')) OR
+(eh.[Sup_ID] = '''+@nvcMGRID+'''and ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+''' OR [S].[Status] = '''+@strFormStatus3+''' OR [S].[Status] = '''+@strFormStatus6+''')))
+and [eh].[Emp_Name] Like '''+@strCSRin+'''
+and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
+and ([cl].[strReportCode] not like '''+@strReportCode+''' OR [cl].[strReportCode] is NULL)
+and (eh.[Mgr_ID] <> ''999999'' and eh.[Sup_ID] <> ''999999''))X'
+
+		
+SET @nvcSQL2 = ' UNION '
+
+SET @nvcSQL3 = 'select DISTINCT x.strFormID
+        ,x.strCSR
+		,x.strCSRName
+		,x.strCSRSupName
+		,x.strFormStatus
+		,x.submitteddate
+	from (SELECT [cl].[FormName]	strFormID,
+		[eh].[Emp_LanID] strCSR,
+		[eh].[Emp_Name]	strCSRName,
+		[eh].[Sup_Name]	strCSRSupName, 
+		[s].[Status]	strFormStatus,
+		[cl].[SubmittedDate]	SubmittedDate
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
+cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s ON 
+cl.StatusID = s.StatusID
+where ((cl.[MgrID] = '''+@nvcMGRID+''' and [S].[Status] = '''+@strFormStatus1+''') OR
+(eh.[Sup_ID] = '''+@nvcMGRID+''' and [S].[Status] = '''+@strFormStatus2+'''))
+and [eh].[Emp_Name] Like '''+@strCSRin+'''
+and [eh].[Sup_Name] Like '''+@strCSRSUPin+'''
+and [cl].[strReportCode] like '''+@strReportCode+'''
+and (cl.[MgrID] <> ''999999'' and eh.[Sup_ID] <> ''999999'')) X'
+
+SET @nvcSQL4 = '  Order By [SubmittedDate] DESC'
+
+
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2 +  @nvcSQL3 + @nvcSQL4
+
+	
+	
+EXEC (@nvcSQL)	
+--Print @nvcsql
+	    
+END -- sp_SelectFrom_Coaching_Log_MGRPending
+
+GO
+
+
+
+
+
+
+
+
+--3c.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectCoaching4Contact' 
+)
+   DROP PROCEDURE [EC].[sp_SelectCoaching4Contact]
+GO
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:		       Jourdain Augustin
+--	Create Date:	   6/10/13
+--	Description: 	   This procedure queries db for feed records to send out mail
+-- Last Updated By: Susmitha Palacherla
+-- Last Modified Date:  05/14/2015
+-- Updated per SCR 14818 to support rotating managers for Low CSAT
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
+AS
+
+BEGIN
+DECLARE	
+@nvcSQL nvarchar(max),
+@strFormStatus1 nvarchar(30),
+@strFormStatus2 nvarchar(30),
+@intSource1 int,
+@intSource2 int,
+@strFormType nvarchar(30),
+@strFormMail nvarchar (30)
+
+ --Set @strFormStatus1 = 'Completed'
+ --Set @strFormStatus2 = 'Inactive'
+
+
+ --Set @strFormType = 'Indirect'
+--Set @strFormMail = 'jourdain.augustin@gdit.com'
+ 
+SET @nvcSQL = 'SELECT   cl.CoachingID	numID	
+		,cl.FormName	strFormID
+		,s.Status		strFormStatus
+		,eh.Emp_Email	strCSREmail
+		,eh.Sup_Email	strCSRSupEmail
+		,CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN [EC].[fn_strEmpEmailFromEmpID](cl.[MgrID])
+		 ELSE eh.Mgr_Email END	strCSRMgrEmail
+		,so.SubCoachingSource	strSource
+		,eh.Emp_Name	strCSRName
+		,so.CoachingSource	strFormType
+		,cl.SubmittedDate	SubmittedDate
+		,cl.CoachingDate	CoachingDate
+		,cl.EmailSent	EmailSent
+		,cl.sourceid
+		,cl.isCSE
+		,mo.Module
+FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
+ON eh.Emp_ID = cl.EMPID JOIN [EC].[DIM_Status] s 
+ON s.StatusID = cl.StatusID JOIN [EC].[DIM_Source] so
+ON so.SourceID = cl.SourceID JOIN [EC].[DIM_Module] mo
+ON mo.ModuleID = cl.ModuleID
+WHERE S.Status not in (''Completed'',''Inactive'')
+AND cl.SourceID in (211,212,221,222,223,224)
+AND cl.EmailSent = ''False''
+AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL)
+OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL)
+OR (s.Status =''Pending Manager Review'' and eh.Mgr_Email is NOT NULL)
+OR (s.Status =''Pending Employee Review'' and eh.Emp_Email is NOT NULL))
+AND LEN(cl.FormName) > 10
+Order By cl.SubmittedDate DESC'
+--and [strCSREmail] = '''+@strFormMail+'''
+EXEC (@nvcSQL)	
+	    
+END --sp_SelectCoaching4Contact
+GO
+
+--3d.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strEmpEmailFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strEmpEmailFromEmpID]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 05/13/2015
+-- Description:	Given an Employee ID, fetches the Email address from the Employee Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version : SCR 14818 for loading LCSAT feed.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strEmpEmailFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strEmpEmail nvarchar(50)
+
+
+  
+  SELECT @strEmpEmail = Emp_Email
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strEmpId
+  
+  IF  @strEmpEmail IS NULL 
+  SET @strEmpEmail = N'UnKnown'
+  
+  RETURN  @strEmpEmail 
+END -- fn_strEmpEmailFromEmpID
+
+GO
+
+
+--3e.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strEmpLanIDFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strEmpLanIDFromEmpID]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 05/13/2015
+-- Description:	Given an Employee ID, fetches the Lan ID from the Employee Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version : SCR 14818 for loading LCSAT feed.
+-- =============================================
+CREATE FUNCTION [EC].[fn_strEmpLanIDFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strEmpLanID nvarchar(30)
+
+
+  
+  SELECT @strEmpLanID = Emp_LanID
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strEmpId
+  
+  IF  @strEmpLanID IS NULL 
+  SET @strEmpLanID = N'UnKnown'
+  
+  RETURN  @strEmpLanID 
+END -- fn_strEmpLanIDFromEmpID
+
+
+GO
+
+
+--3f.
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Coaching_Log' 
+)
+   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	08/26/2014
+--	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date: 05/28/2015
+-- Updated per SCR 14818 to support rotation managers for LCS Feed.
+--	=====================================================================
+
+CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
+AS
+
+BEGIN
+DECLARE	
+
+@nvcSQL nvarchar(max)
+	 
+  SET @nvcSQL = 'SELECT  cl.CoachingID 	numID,
+		cl.FormName	strFormID,
+		m.Module,
+		sc.CoachingSource	strFormType,
+		s.Status	strFormStatus,
+		cl.EventDate	EventDate,
+		cl.CoachingDate	CoachingDate,
+		sh.Emp_LanID	strSubmitter,		
+		sh.Emp_Name	strSubmitterName,
+		sh.Emp_Email	strSubmitterEmail,			
+		cl.EmpLanID	strEmpLanID,
+		eh.Emp_Name	strCSRName,
+		eh.Emp_Email	strCSREmail,
+		st.City	strCSRSite,
+		eh.Sup_LanID strCSRSup,
+		eh.Sup_Name	 strCSRSupName,
+		eh.Sup_Email  strCSRSupEmail,
+		CASE WHEN cl.[strReportCode] like ''LCS%'' 
+		 THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
+		 ELSE eh.Mgr_LanID END	strCSRMgr,
+		eh.Mgr_Name  strCSRMgrName,
+		eh.Mgr_Email strCSRMgrEmail,
+		ISNULL(suph.Emp_Name,''Unknown'') strReviewer,
+        sc.SubCoachingSource	strSource,
+        CASE WHEN sc.SubCoachingSource in (''Verint-GDIT'',''Verint-TQC'',''LimeSurvey '',''IQS'')
+		THEN 1 ELSE 0 END 	isIQS,
+		cl.isUCID    isUCID,
+		cl.UCID	strUCID,
+		cl.isVerintID	isVerintMonitor,
+		cl.VerintID	strVerintID,
+		cl.VerintFormName VerintFormName,
+		cl.isAvokeID	isBehaviorAnalyticsMonitor,
+		cl.AvokeID	strBehaviorAnalyticsID,
+		cl.isNGDActivityID	isNGDActivityID,
+		cl.NGDActivityID	strNGDActivityID,
+		CASE WHEN cc.CSE = ''Opportunity'' Then 1 ELSE 0 END	"Customer Service Escalation",
+		CASE WHEN cc.CCI is Not NULL Then 1 ELSE 0 END	"Current Coaching Initiative",
+		CASE WHEN cc.OMR is Not NULL AND cc.LCS is NULL Then 1 ELSE 0 END	"OMR / Exceptions",
+		CASE WHEN cc.ETSOAE is Not NULL Then 1 ELSE 0 END	"ETS / OAE",
+		CASE WHEN cc.ETSOAS is Not NULL Then 1 ELSE 0 END	"ETS / OAS",
+		CASE WHEN cc.LCS is Not NULL Then 1 ELSE 0 END	"LCS",
+		cl.Description txtDescription,
+		cl.CoachingNotes txtCoachingNotes,
+		cl.isVerified,
+		cl.SubmittedDate,
+		cl.StartDate,
+		cl.SupReviewedAutoDate,
+		cl.isCSE,
+		cl.MgrReviewManualDate,
+		cl.MgrReviewAutoDate,
+		cl.MgrNotes txtMgrNotes,
+		cl.isCSRAcknowledged,
+		cl.isCoachingRequired,
+		cl.CSRReviewAutoDate,
+		cl.CSRComments txtCSRComments
+	    FROM  [EC].[Coaching_Log] cl JOIN
+	  (SELECT  ccl.FormName,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''Customer Service Escalation'' THEN [clr].[Value] ELSE NULL END)	CSE,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''Current Coaching Initiative'' THEN [clr].[Value] ELSE NULL END)	CCI,
+	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 120 THEN [clr].[Value] ELSE NULL END)	ETSOAE,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END)	LCS
+	 FROM [EC].[Coaching_Log_Reason] clr,
+	 [EC].[DIM_Coaching_Reason] cr,
+	 [EC].[Coaching_Log] ccl 
+	 WHERE [ccl].[FormName] = '''+@strFormIDin+'''
+	 AND [clr].[CoachingReasonID] = [cr].[CoachingReasonID]
+	 AND [ccl].[CoachingID] = [clr].[CoachingID] 
+	 GROUP BY ccl.FormName ) cc
+ON [cl].[FormName] = [cc].[FormName] JOIN  [EC].[Employee_Hierarchy] eh
+	 ON [cl].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
+	 ON [cl].[SubmitterID] = [sh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] suph
+	 ON ISNULL([cl].[Review_SupID],''999999'') = [suph].[Emp_ID] JOIN [EC].[Employee_Hierarchy] mgrh
+	 ON ISNULL([cl].[Review_MgrID],''999999'') = [mgrh].[Emp_ID]JOIN [EC].[DIM_Status] s
+	 ON [cl].[StatusID] = [s].[StatusID] JOIN [EC].[DIM_Source] sc
+     ON [cl].[SourceID] = [sc].[SourceID] JOIN [EC].[DIM_Site] st
+	 ON [cl].[SiteID] = [st].[SiteID] JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
+Order By [cl].[FormName]'
+		
+
+EXEC (@nvcSQL)
+--Print (@nvcSQL)
+	    
+END --sp_SelectReviewFrom_Coaching_Log
+
+GO
+
+
+
+--3g
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_Outlier_Rejected' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author:		        Susmitha Palacherla
+-- Create date:         01/15/2014
+-- Description:	 
+-- Loads all records from [EC].[Outlier_Coaching_Stage]Table
+-- that dont have a corresponding CSR Lanid in the Employee_Hierarchy table
+-- Into the Outliers rejected Table.
+-- Last Modified Date: 05/12/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per SCR 14818 to support LCSAT feed.
+-- =============================================
+CREATE PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
+AS
+BEGIN
+
+-- Inserts records from the Outlier_Coaching_Stage table to the Outlier_Rejected table.
+
+INSERT INTO [EC].[Outlier_Coaching_Rejected]
+           ([Report_ID]
+           ,[Report_Code]
+           ,[Form_Type]
+           ,[Source]
+           ,[Form_Status]
+           ,[Event_Date]
+           ,[Submitted_Date]
+           ,[Start_Date]
+           ,[Submitter_LANID]
+           ,[Submitter_Name]
+           ,[Submitter_Email]
+           ,[CSR_LANID]
+           ,[CSR_Site]
+           ,[CoachReason_Current_Coaching_Initiatives]
+           ,[TextDescription]
+           ,[FileName]
+           ,[Rejected_Reason]
+           ,[Rejected_Date]
+           ,[RMgr_ID])
+ SELECT S.[Report_ID]
+      ,S.[Report_Code]
+      ,S.[Form_Type]
+      ,S.[Source]
+      ,S.[Form_Status]
+      ,S.[Event_Date]
+      ,S.[Submitted_Date]
+      ,S.[Start_Date]
+      ,S.[Submitter_LANID]
+      ,S.[Submitter_Name]
+      ,S.[Submitter_Email]
+      ,S.[CSR_LANID]
+      ,S.[CSR_Site]
+      ,S.[CoachReason_Current_Coaching_Initiatives]
+      ,S.[TextDescription]
+      ,S.[FileName]
+      ,'CSR_LANID not found in Hierarchy Table'
+      ,GETDATE()
+      ,S.RMgr_ID
+  FROM [EC].[Outlier_Coaching_Stage]S left outer join [EC].[Outlier_Coaching_Rejected] R 
+  ON S.Report_ID = R.Report_ID and S.Report_Code = R.Report_Code and S.CSR_LANID = R.CSR_LANID
+  LEFT OUTER JOIN EC.[Employee_Hierarchy]H
+  ON S.CSR_LANID = H.Emp_LanID
+  WHERE H.Emp_LanID is NULL 
+  AND R.Report_ID is NULL and R.Report_Code  is NULL and  R.CSR_LANID is NULL
+	                   
+
+END -- sp_InsertInto_Outlier_Rejected
+
+
+GO
+
+
+
+
+
+
+--***************************************************************
+
+
