@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Other(02).sql
-Last Modified Date: 2/3/2017
+sp_InsertInto_Coaching_Log_Quality_Other(03).sql
+Last Modified Date: 2/20/2017
 Last Modified By: Susmitha Palacherla
 
+Version 03: Add table [EC].[NPN_Description] to Get NPN Description from table. TFS 5649 - 02/20/2017
 
 Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
 
@@ -19,12 +20,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -39,6 +40,7 @@ GO
 -- Update: HFC and KUD Loads - TFS 3179 and 3186 - 07/15/2016
 -- Update: HFC and KUD Load. Start date fix. TFS 3179 - 08/3/2016
 -- Update: NPN Load. TFS 5309 - 02/01/2017
+-- Update: Get NPN Description from table. TFS 5649 - 02/17/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 AS
@@ -111,6 +113,8 @@ select  Distinct LOWER(cs.EMP_LANID)	[FormName],
 		-- EC.fn_nvcHtmlEncode(cs.TextDescription)		[Description],
 		 CASE WHEN cs.Report_Code LIKE 'CTC%' 
 		 THEN  REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br />')
+		 WHEN cs.Report_Code LIKE 'NPN%' 
+		 THEN  REPLACE(EC.fn_nvcHtmlEncode([EC].[fn_strNPNDescriptionFromCode](cs.TextDescription)), CHAR(13) + CHAR(10) ,'<br />')
 		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
 		 cs.Submitted_Date			SubmittedDate,
 		 ISNULL(cs.start_Date,cs.Event_Date)				[StartDate],
@@ -202,7 +206,6 @@ END -- sp_InsertInto_Coaching_Log_Quality_Other
 
 
 
+
 GO
-
-
 
