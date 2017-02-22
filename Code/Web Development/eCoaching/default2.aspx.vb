@@ -2163,6 +2163,22 @@ Public Class default2
         End If
     End Sub
 
+    ' Refresh coaching reasons section to make sure Opportunity/Reinforcement display correct for Recognition reason.
+    Protected Sub warnlist_SelectedIndexChanged(sender As Object, e As EventArgs) Handles warnlist.SelectedIndexChanged
+        Dim lan As String = TryCast(Session("eclUser"), User).LanID
+
+        ' EC.sp_Select_CoachingReasons_By_Module
+        SqlDataSource12.SelectParameters("strSourcein").DefaultValue = "Direct"
+        SqlDataSource12.SelectParameters("strModulein").DefaultValue = DropDownList3.SelectedItem.Text
+        SqlDataSource12.SelectParameters("isSplReason").DefaultValue = False
+        SqlDataSource12.SelectParameters("splReasonPrty").DefaultValue = 2
+        SqlDataSource12.SelectParameters("strCSRin").DefaultValue = Label17.Text
+        SqlDataSource12.SelectParameters("strSubmitterin").DefaultValue = lan
+
+        GridView4.DataBind()
+    End Sub
+
+
     Protected Sub cseradio2_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cseradio2.SelectedIndexChanged
         Dim lan As String = TryCast(Session("eclUser"), User).LanID
 

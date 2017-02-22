@@ -314,6 +314,7 @@
 
 
         function togglemenu(check, menu, button, dropd) {
+
             var status = check.checked;
             //alert(status);
             // var rdio;
@@ -1025,7 +1026,7 @@
                         ErrorMessage="Indicate whether this record is a WARNING or not." CssClass="EMessage"
                         Display="Dynamic" Width="400px">Indicate whether this record is a WARNING or not.&nbsp;</asp:RequiredFieldValidator>
                     <br />
-                    <asp:RadioButtonList ID="warnlist" runat="server">
+                    <asp:RadioButtonList ID="warnlist" runat="server" AutoPostBack="true">
                         <asp:ListItem Value="Yes" Text="Yes" onClick="javascript: toggle3('1','warngroup1');"></asp:ListItem>
                         <asp:ListItem Value="No" Text="No" onClick="javascript: toggle3('0','warngroup1');"
                             Selected="True"></asp:ListItem>
