@@ -59,7 +59,8 @@ namespace eCLAdmin
             Exception ex = Server.GetLastError();
             if (ex != null)
             {
-                logger.Debug("ex: " + ex.Message);
+                logger.Debug("ex: " + ex.InnerException.Message + 
+                    Environment.NewLine + ex.InnerException.StackTrace);
             }
             else
             {
@@ -67,8 +68,9 @@ namespace eCLAdmin
             }
 
             Server.ClearError();
+
             logger.Debug("Redirect to error");
-            Response.RedirectToRoute("Error");
+            Response.Redirect("/Error/Index");
         }
 
     }

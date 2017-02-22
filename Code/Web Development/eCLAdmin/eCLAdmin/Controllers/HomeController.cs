@@ -27,7 +27,12 @@ namespace eCLAdmin.Controllers
 
             logger.Debug("Leaving HomeController.Index");
 
-            return View(user);
+            if (userService.UserIsEntitled(user, "SeniorManagerDashboard"))
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            return View();
         }
 
         public ActionResult SessionExpire()
