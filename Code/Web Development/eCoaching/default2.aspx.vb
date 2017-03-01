@@ -2163,7 +2163,7 @@ Public Class default2
         End If
     End Sub
 
-    ' Refresh coaching reasons section to make sure Opportunity/Reinforcement display correct for Recognition reason.
+    ' Refresh coaching reason sections to make sure Opportunity/Reinforcement display correct
     Protected Sub warnlist_SelectedIndexChanged(sender As Object, e As EventArgs) Handles warnlist.SelectedIndexChanged
         Dim lan As String = TryCast(Session("eclUser"), User).LanID
 
@@ -2175,7 +2175,11 @@ Public Class default2
         SqlDataSource12.SelectParameters("strCSRin").DefaultValue = Label17.Text
         SqlDataSource12.SelectParameters("strSubmitterin").DefaultValue = lan
 
+        ' There are coaching reason sections
+        GridView2.DataBind()
         GridView4.DataBind()
+        GridView5.DataBind()
+        GridView6.DataBind()
     End Sub
 
 
