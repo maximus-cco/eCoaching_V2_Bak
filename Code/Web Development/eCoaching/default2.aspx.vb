@@ -432,6 +432,12 @@ Public Class default2
 
     Protected Sub RadioButtonList1_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs)
         Button1_Click() '  Next1.Enabled = True
+
+        ' There are coaching reason sections
+        GridView2.DataBind()
+        GridView4.DataBind()
+        GridView5.DataBind()
+        GridView6.DataBind()
     End Sub
 
     Protected Sub Button1_Click()
