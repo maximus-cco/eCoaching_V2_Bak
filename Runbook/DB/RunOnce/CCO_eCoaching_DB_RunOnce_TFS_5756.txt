@@ -1,0 +1,50 @@
+/* 
+
+TFS 5756
+
+Run one statement at a time
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+--1. Insert rows into Role access table
+
+
+INSERT INTO [EC].[AT_Role_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[RoleId]
+           ,[RoleDescription]
+           ,[AddToUser]
+           ,[isActive])
+     VALUES
+           ('WPPM50','Manager, Program',102,'CoachingUser',1,1)
+        
+GO
+
+
+
+--***************************
+
+
+--2.  Insert rows into Module access table
+
+
+
+INSERT INTO [EC].[AT_Module_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[ModuleId]
+           ,[Module]
+           ,[isActive])
+     VALUES
+          ('WPPM50','Manager, Program',1,'CSR',1),
+          ('WPPM50','Manager, Program',2,'Supervisor',1)
+GO
+
+--***************************
+
+
