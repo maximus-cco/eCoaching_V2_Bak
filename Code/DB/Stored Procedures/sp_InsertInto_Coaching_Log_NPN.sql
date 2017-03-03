@@ -1,7 +1,10 @@
 /*
-sp_InsertInto_Coaching_Log_NPN(01).sql
-Last Modified Date: 2/28/2017
+sp_InsertInto_Coaching_Log_NPN(02).sql
+Last Modified Date: 03/02/2017
 Last Modified By: Susmitha Palacherla
+
+
+Version 02: Additional update from V&V feedback - TFS 5653 - 03/02/2017
 
 Version 01: Document Initial Revision - TFS 5653 - 2/28/2017
 
@@ -130,22 +133,21 @@ WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
  -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
 
-INSERT INTO [EC].[Coaching_Log_Reason]
+ INSERT INTO [EC].[Coaching_Log_Reason]
            ([CoachingID]
            ,[CoachingReasonID]
            ,[SubCoachingReasonID]
            ,[Value])
-    SELECT cf.[CoachingID],
+        SELECT cf.[CoachingID],
            5,
            42,
            'Opportunity'
-    FROM [EC].[Quality_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
-    ON qs.[Journal_ID] = cf.[VerintID] 
-    LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
-    ON cf.[CoachingID] = cr.[CoachingID]  
-    WHERE cr.[CoachingID] IS NULL 
- OPTION (MAXDOP 1)   
- 
+  FROM (SELECT * FROM EC.Coaching_Log with (nolock)
+  WHERE SourceID = 218 AND strReportCode LIKE 'NPN%')cf     
+  LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
+  ON cf.[CoachingID] = cr.[CoachingID]  
+  WHERE cr.[CoachingID] IS NULL  
+ OPTION (MAXDOP 1) 
                   
 COMMIT TRANSACTION
 END TRY
