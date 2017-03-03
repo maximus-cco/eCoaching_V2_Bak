@@ -1,9 +1,10 @@
 /*
-fn_NPNQualityRecs(01).sql
-Last Modified Date: 2/28/2017
+fn_NPNQualityRecs(02).sql
+Last Modified Date: 03/02/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Additional update from V&V feedback - TFS 5653 - 03/02/2017
 
 Version 01: Document Initial Revision - TFS 5653 - 02/28/2017
 
@@ -72,8 +73,7 @@ DECLARE
  
   )
  
-  SELECT 
-    CL.[EmpID], 
+   SELECT DISTINCT CL.[EmpID], 
 	SUBSTRING(CL.[EmpLanID],1,30), 
 	SUBSTRING(CL.[ProgramName], 1,20),
 	CL.[SiteID], 
@@ -81,18 +81,20 @@ DECLARE
 	CL.[VerintID],
     substring(CL.[Description], patindex ('%#NPNFFM%', CL.[Description]), 8) as NPNCode
     
-FROM EC.Coaching_Log CL with (nolock)join EC.Employee_Hierarchy EH
+FROM EC.Coaching_Log CL with (nolock) join EC.Employee_Hierarchy EH
 ON CL.EmpID = EH. Emp_ID
 left outer join (Select * from EC.Coaching_Log with (nolock) where SourceID = 218)CN
 on CL.VerintID  = CN.VerintID 
 and CL.EmpID  = CN.EmpID 
 and CL.EventDate = CN.EventDate
-where CL.SourceID = 223
+where CL.[SourceID] = 223
 AND CL.[Description] like '%NPNFFM%'
+AND NOT (CL.[Description] like '%PPOM%' OR CL.VerintFormName like '%PPOM%')
 AND CL.[StatusID] <> 2
 AND EH.[Active] = 'A'
 AND [EC].[fn_intDatetime_to_YYYYMMDD](CL.[SubmittedDate]) BETWEEN @intBeginDate AND @intEndDate 
 and (CN.VerintID is null and CN.EmpID is null and CN.EventDate is null) 
+
 
 	
 
