@@ -1,4 +1,5 @@
-﻿using eCLAdmin.Models.Report;
+﻿using eCLAdmin.Filters;
+using eCLAdmin.Models.Report;
 using eCLAdmin.Models.User;
 using log4net;
 using System;
@@ -9,16 +10,37 @@ using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
 {
+    [SessionCheck]
     public class ReportController : BaseController
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(ReportController));
 
-        // GET: Report
-        public ActionResult ReportTemplate(string ReportName, string ReportDescription, int Width, int Height)
+        private readonly int REPORT_WIDTH = 100;
+        private readonly int REPORT_HEIGHT = 650;
+        private readonly string REPORT_TEMPLATE = "ReportTemplate";
+
+        private readonly string COACHING_SUMMARY_REPORT_NAME = "CoachingSummary";
+        private readonly string COACHING_SUMMARY_REPORT_DESCRIPTION = "Coaching Log Summary";
+        private readonly string AD_HOC_REPORT_NAME = "";
+        private readonly string AD_HOC_REPORT_DESCRIPTION = "";
+
+        [EclAuthorize]
+        public ActionResult RunCoachingSummary()
+        {
+            return View(REPORT_TEMPLATE, GetReportInfo(COACHING_SUMMARY_REPORT_NAME, COACHING_SUMMARY_REPORT_DESCRIPTION, REPORT_WIDTH, REPORT_HEIGHT));
+        }
+
+        [EclAuthorize]
+        private ActionResult RunAdHoc()
+        {
+            return View(REPORT_TEMPLATE, GetReportInfo(AD_HOC_REPORT_NAME, AD_HOC_REPORT_DESCRIPTION, REPORT_WIDTH, REPORT_HEIGHT));
+        }
+
+        public ReportInfo GetReportInfo(string reportName, string reportDescription, int width, int height)
         {
             //Server.MapPath("~/Content/Images/ecl-logo-small.png");
 
-            logger.Debug("%%%%%%%%%%%%%%%%%inside report controller");
+            logger.Debug("%%%%%%%%%%%%%%%%%inside GetReportInfo");
 
             string reportAspxPath = "~/Reports/ReportTemplate.aspx";// Server.MapPath("~/Reports/ReportTemplate.aspx");
 
@@ -26,14 +48,14 @@ namespace eCLAdmin.Controllers
 
             var rptInfo = new ReportInfo
             {
-                ReportName = ReportName,
-                ReportDescription = ReportDescription,
+                ReportName = reportName,
+                ReportDescription = reportDescription,
                 
-                ReportURL = String.Format(reportAspxPath + "?ReportName={0}&Height={1}", ReportName, Height),
+                ReportURL = String.Format(reportAspxPath + "?ReportName={0}&Height={1}", reportName, height),
 
 
-                Width = Width,
-                Height = Height
+                Width = width,
+                Height = height
             };
 
             logger.Debug("!!!!!URL=" + rptInfo.ReportURL);
@@ -41,7 +63,7 @@ namespace eCLAdmin.Controllers
 
             Session["JobCode"] = GetUserFromSession().JobCode;
 
-            return View(rptInfo);
+            return rptInfo;
         }
     }
 }

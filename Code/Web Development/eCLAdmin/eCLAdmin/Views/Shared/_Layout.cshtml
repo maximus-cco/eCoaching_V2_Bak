@@ -68,13 +68,25 @@
                     }
 
 @*Report*@
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                           role="button" aria-expanded="false">Report<span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                                <li>@Html.ActionLink("eCoaching Summary", "ReportTemplate", "Report", new { ReportName = "CoachingSummary", ReportDescription = "eCoaching Log Summary", Width = 100, Height = 650 }, null)</li>
-                        </ul>
-                    </li>
+                    @if (ViewContext.Controller.IsEntitled("Reports"))
+                    {
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button" aria-expanded="false">Report<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                @if (ViewContext.Controller.IsEntitled("Report-RunCoachingSummary"))
+                                {
+                                    <li>@Html.ActionLink("Coaching Summary", "RunCoachingSummary", "Report")</li>
+                                }
+                            </ul>
+                            <ul class="dropdown-menu" role="menu">
+                                @if (ViewContext.Controller.IsEntitled("Report-RunAdHoc"))
+                                {
+                                    <li>@Html.ActionLink("Ad Hoc", "RunAdHoc", "Report")</li>
+                                }
+                            </ul>
+                        </li>
+                    }
 @*End Report*@
 
                 </ul>
