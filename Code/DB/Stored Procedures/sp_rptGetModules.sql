@@ -49,14 +49,20 @@ AS
   SET @returnMessage = @storedProcedureName + ' completed successfully'
 -------------------------------------------------------------------------------------
 -- *** BEGIN: INSERT CUSTOM CODE HERE ***
-  SELECT dm.ModuleID AS ModuleId, modules.ModuleName
-  FROM  
-   (SELECT job_code, CSR, supervisor, quality, lsa, training FROM ec.Module_Submission) ms
-  UNPIVOT
-  (Access FOR ModuleName IN (csr, supervisor, quality, lsa, training)) AS modules 
-  JOIN EC.DIM_Module dm ON dm.Module = modules.ModuleName 
-  WHERE Job_Code = @JobCode
-  AND Access =1
+  --For now, return all modules
+  SELECT -1 AS ModuleId, 'All' As ModuleName
+  UNION
+  SELECT ModuleID AS ModuleId, Module AS ModuleName from EC.DIM_Module 
+  WHERE isActive = 1
+
+  --SELECT dm.ModuleID AS ModuleId, modules.ModuleName
+  --FROM  
+  -- (SELECT job_code, CSR, supervisor, quality, lsa, training FROM ec.Module_Submission) ms
+  --UNPIVOT
+  --(Access FOR ModuleName IN (csr, supervisor, quality, lsa, training)) AS modules 
+  --JOIN EC.DIM_Module dm ON dm.Module = modules.ModuleName 
+  --WHERE Job_Code = @JobCode
+  --AND Access =1
 
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
