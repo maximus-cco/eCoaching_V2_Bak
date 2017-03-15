@@ -30,12 +30,6 @@ namespace eCLAdmin.Controllers
             return View(REPORT_TEMPLATE, GetReportInfo(COACHING_SUMMARY_REPORT_NAME, COACHING_SUMMARY_REPORT_DESCRIPTION, REPORT_WIDTH, REPORT_HEIGHT));
         }
 
-        [EclAuthorize]
-        private ActionResult RunAdHoc()
-        {
-            return View(REPORT_TEMPLATE, GetReportInfo(AD_HOC_REPORT_NAME, AD_HOC_REPORT_DESCRIPTION, REPORT_WIDTH, REPORT_HEIGHT));
-        }
-
         public ReportInfo GetReportInfo(string reportName, string reportDescription, int width, int height)
         {
             //Server.MapPath("~/Content/Images/ecl-logo-small.png");

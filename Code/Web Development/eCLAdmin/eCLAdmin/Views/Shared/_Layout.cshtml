@@ -79,12 +79,6 @@
                                     <li>@Html.ActionLink("Coaching Summary", "RunCoachingSummary", "Report")</li>
                                 }
                             </ul>
-                            <ul class="dropdown-menu" role="menu">
-                                @if (ViewContext.Controller.IsEntitled("Report-RunAdHoc"))
-                                {
-                                    <li>@Html.ActionLink("Ad Hoc", "RunAdHoc", "Report")</li>
-                                }
-                            </ul>
                         </li>
                     }
 @*End Report*@
