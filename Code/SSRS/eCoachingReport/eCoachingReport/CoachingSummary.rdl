@@ -3320,7 +3320,7 @@
             <DataSetName>CoachingSummary</DataSetName>
             <Top>0.03in</Top>
             <Height>0.5in</Height>
-            <Width>45.01666in</Width>
+            <Width>45.01667in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3344,21 +3344,13 @@
   <ReportParameters>
     <ReportParameter Name="strSDatein">
       <DataType>DateTime</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>=DateAdd(DateInterval.Day, 1-WeekDay(Today), DateAdd(DateInterval.Day, -7, Today))</Value>
-        </Values>
-      </DefaultValue>
-      <Prompt>Select Start Date</Prompt>
+      <Prompt>Start Date</Prompt>
+      <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="strEDatein">
       <DataType>DateTime</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>=DateAdd(DateInterval.Day, 7-WeekDay(Today), DateAdd(DateInterval.Day, -7, Today))</Value>
-        </Values>
-      </DefaultValue>
-      <Prompt>Select End Date</Prompt>
+      <Prompt>End Date</Prompt>
+      <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="intModulein">
       <DataType>String</DataType>
@@ -3367,7 +3359,7 @@
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Prompt>Select Module</Prompt>
+      <Prompt>Module</Prompt>
       <ValidValues>
         <DataSetReference>
           <DataSetName>ModRef</DataSetName>
@@ -3375,6 +3367,7 @@
           <LabelField>Module</LabelField>
         </DataSetReference>
       </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="intStatusin">
       <DataType>String</DataType>
@@ -3383,7 +3376,7 @@
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Prompt>Select Status</Prompt>
+      <Prompt>Status</Prompt>
       <ValidValues>
         <DataSetReference>
           <DataSetName>StatusRef</DataSetName>
@@ -3391,6 +3384,7 @@
           <LabelField>Status</LabelField>
         </DataSetReference>
       </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="intSitein">
       <DataType>String</DataType>
@@ -3399,7 +3393,7 @@
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Prompt>Select Site</Prompt>
+      <Prompt>Site</Prompt>
       <ValidValues>
         <DataSetReference>
           <DataSetName>SiteRef</DataSetName>
@@ -3407,6 +3401,7 @@
           <LabelField>Site</LabelField>
         </DataSetReference>
       </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="strEmpin">
       <DataType>String</DataType>
@@ -3415,7 +3410,7 @@
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Prompt>Select an Employee</Prompt>
+      <Prompt>Employee</Prompt>
       <ValidValues>
         <DataSetReference>
           <DataSetName>EmpRef</DataSetName>
@@ -3423,6 +3418,7 @@
           <LabelField>EmpName</LabelField>
         </DataSetReference>
       </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="intCoachReasonin">
       <DataType>String</DataType>
@@ -3431,7 +3427,8 @@
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Prompt>Select Coaching Reason</Prompt>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Coaching Reason</Prompt>
       <ValidValues>
         <DataSetReference>
           <DataSetName>CRRef</DataSetName>
@@ -3439,6 +3436,7 @@
           <LabelField>CoachingReason</LabelField>
         </DataSetReference>
       </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="intSubCoachReasonin">
       <DataType>String</DataType>
@@ -3447,7 +3445,8 @@
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Prompt>Select SubCoaching Reason</Prompt>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>SubCoaching Reason</Prompt>
       <ValidValues>
         <DataSetReference>
           <DataSetName>SubCRRef</DataSetName>
@@ -3455,6 +3454,7 @@
           <LabelField>SubCoachingReason</LabelField>
         </DataSetReference>
       </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
