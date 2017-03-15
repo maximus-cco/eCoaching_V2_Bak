@@ -1,151 +1,190 @@
-SET QUOTED_IDENTIFIER ON 
-GO
-SET ANSI_NULLS ON 
-GO
-
-if exists (select * from dbo.sysobjects where id = object_id('[EC].[sp_rptCoachingSummary]') and OBJECTPROPERTY(id, 'IsProcedure') = 1)
-drop procedure EC.sp_rptCoachingSummary
-GO
-
-/******************************************************************************* 
-sp_rptCoachingSummary
-Description:
-	Returns a list of coaching logs for a given time period and given module(s)
-
-Tables:
+/*
+sp_rptCoachingSummary(02).sql
+Last Modified Date: 03/14/2017
+Last Modified By: Susmitha Palacherla
 
 
-Input Parameters:
+Version 02: Document Initial Revision - Suzy -  TFS 5621 - 03/14/2017
 
-Resultset:
-	
- *******************************************************************************/
+Version 01: Document Initial Revision - Lili -  TFS 5621 - 03/09/2017
 
-CREATE  PROCEDURE [EC].[sp_rptCoachingSummary]
-(
-   @StartDate datetime,
-   @EndDate datetime,
-   @JobCode varchar(10),
-   @ModuleId int,
- --@userEmployeeId	varchar(20),
- 
- ------------------------------------------------------------------------------------
--- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
-   @returnCode int OUTPUT,
-   @returnMessage varchar(80) OUTPUT
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_rptCoachingSummary' 
 )
+   DROP PROCEDURE [EC].[sp_rptCoachingSummary]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	3/14/2017
+--	Description: Selects list of Coaching Log Attributes for Coaching Summary Report.
+--  Last Modified: 
+--  Last Modified By:
+--  Revision History:
+--  Initial Revision - TFS 5621 - 03/14/2017
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_rptCoachingSummary] 
+
+
+
+@intModulein int = -1,
+@intStatusin int = -1, 
+@intSitein int = -1,
+@strEmpin nvarchar(10)= '-1',
+@intCoachReasonin int = -1,
+@intSubCoachReasonin int = -1,
+@strSDatein datetime,
+@strEDatein datetime
+
 AS
-   DECLARE @storedProcedureName varchar(80)
-   DECLARE @transactionCount int
 
-   SET @transactionCount = @@TRANCOUNT
-   SET @returnCode = 0
 
-   --Only start a transaction if one has not already been started
-   IF @transactionCount = 0
-   BEGIN
-      BEGIN TRANSACTION currentTransaction
-   END
--- THE PRECEDING CODE SHOULD NOT BE MODIFIED
--------------------------------------------------------------------------------------
-   SET @storedProcedureName = OBJECT_NAME(@@PROCID)
-   SET @returnMessage = @storedProcedureName + ' completed successfully'
--------------------------------------------------------------------------------------
--- *** BEGIN: INSERT CUSTOM CODE HERE ***
-
--- Create a temp table to hold resultset from sp_rptGetModules
-CREATE TABLE #modules (ModuleId int, ModuleName varchar(20))
-
-INSERT INTO #modules EXEC [EC].sp_rptGetModules @JobCode, @returnCode, @returnMessage
-
-SELECT cl.ModuleID
-      ,m.Module 
-      ,cl.CoachingID
-      ,FormName
-      ,s.Status
-      ,ProgramName
-      ,EmpID
-      ,eh.Emp_Name
-      ,site.City
-      ,SupID
-      ,eh1.Emp_Name AS SupName
-      ,MgrID
-      ,eh2.Emp_Name AS MgrName
-      ,eh.Sup_ID AS CurrentSupID
-      ,eh.Sup_Name AS CurrentSupName
-      ,eh.Mgr_ID AS CurrentMgrID
-      ,eh.Mgr_Name AS CurrentMgrName
-      ,cl.Review_SupID AS RvwSupID
-      ,eh3.Emp_Name AS RvwSupName
-      ,eh4.Emp_ID AS RvwMgrID
-      ,eh4.Emp_Name AS RvwMgrName
-      ,LTRIM(RTRIM(REPLACE(Description, '<br />', ''))) AS Description
-      ,COALESCE(CoachingNotes,'-') AS CoachingNotes    
-      ,ISNULL(CONVERT(varchar(20),EventDate,121),'-') AS EventDate
-      ,ISNULL(CONVERT(varchar(20),CoachingDate,121),'-') AS CoachingDate
-      ,ISNULL(CONVERT(varchar(20),SubmittedDate,121),'-') AS SubmittedDate
-      ,src.CoachingSource
-      ,src.SubCoachingSource
-      ,cr.CoachingReason
-      ,sr.SubCoachingReason
-      ,clr.Value
-      ,SubmitterID
-      ,eh5.Emp_Name AS SubmitterName
-      ,ISNULL(CONVERT(varchar(20),SupReviewedAutoDate,121),'-') AS SupRvwDate
-      ,ISNULL(CONVERT(varchar(20),MgrReviewManualDate,121),'-') AS MgrRvwManualDate
-      ,ISNULL(CONVERT(varchar(20),MgrReviewAutoDate,121),'-') AS MgrRvwAutoDate
-      ,COALESCE(MgrNotes,'-') AS MgrNotes
-      ,ISNULL(CONVERT(varchar(20),CSRReviewAutoDate,121),'-') AS EmpRvwDate
-      ,REPLACE(COALESCE(CSRComments,'-'), CHAR(13) + char(10) + '<br />', '') AS EmpComments     
-      ,Behavior
-      ,strReportCode AS rptCode
-      ,ISNULL(CONVERT(varchar(20),VerintID),'-') AS VerintID
-      ,VerintFormName
-      ,isCoachingMonitor
-  FROM Coaching_Log cl
-  JOIN DIM_Module m ON m.ModuleID = cl.ModuleID  
-  JOIN Employee_Hierarchy eh ON eh.Emp_ID = cl.EmpID
-  JOIN Employee_Hierarchy eh1 ON eh1.Emp_ID = cl.SupID
-  JOIN Employee_Hierarchy eh2 ON eh2.Emp_ID = cl.MgrID 
-  JOIN Employee_Hierarchy eh3 ON eh3.Emp_ID = cl.Review_SupID
-  JOIN Employee_Hierarchy eh4 ON eh4.Emp_ID = cl.Review_MgrID 
-  JOIN Employee_Hierarchy eh5 on eh5.Emp_ID = cl.SubmitterID
-  JOIN DIM_Site site ON site.SiteID = cl.SiteID
-  JOIN DIM_Source src ON src.SourceID = cl.SourceID
-  JOIN DIM_Status s ON s.StatusID = cl.StatusID
-  JOIN Coaching_Log_Reason clr ON clr.CoachingID = cl.CoachingID
-  JOIN DIM_Coaching_Reason cr ON cr.CoachingReasonID = clr.CoachingReasonID		 
-  JOIN DIM_Sub_Coaching_Reason sr ON sr.SubCoachingReasonID = clr.SubCoachingReasonID
-  WHERE
-  SubmittedDate BETWEEN (@StartDate) AND (@EndDate) AND
-  ((@ModuleId = -1 AND cl.ModuleID in (SELECT ModuleId FROM #modules)) OR cl.ModuleID = @ModuleId)
-  ORDER BY cl.CoachingID
-  
-  -- Drop the temp table
-  DROP TABLE #modules
-
--- *** END: INSERT CUSTOM CODE HERE ***
--------------------------------------------------------------------------------------
--- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
-ENDPROC:
---  Commit or Rollback Transaction Only If We were NOT already in a Transaction
-IF @transactionCount = 0
 BEGIN
-	IF @returnCode = 0
-	BEGIN
-		-- Commit Transaction
-		commit transaction currentTransaction
-	END
-	ELSE 
-	BEGIN
-		-- Rollback Transaction
-		rollback transaction currentTransaction
-	END
-END
 
-PRINT STR(@returnCode) + ' ' + @returnMessage
-RETURN @returnCode
+SET NOCOUNT ON
 
--- THE PRECEDING CODE SHOULD NOT BE MODIFIED
--------------------------------------------------------------------------------------
+DECLARE	
+@strSDate nvarchar(10),
+@strEDate nvarchar(10)
+       
+
+SET @strSDate = convert(varchar(8),@strSDatein,112)
+Set @strEDate = convert(varchar(8),@strEDatein,112)
+
+  SELECT p.ModuleID AS [Module ID]
+              ,c.Module AS [Module Name]
+              ,p.CoachingID AS [Coaching ID]
+			  ,p.FormName AS [Form Name]
+			  ,c.Status
+			  ,p.EmpID AS [Employee ID]
+    	      ,c.EmpName AS [Employee Name]
+    	      ,c.Site
+    	      ,c.LogSupID AS [Supervisor Employee ID]
+			  ,c.LogSupName AS [Supervisor Name]
+			  ,c.LogMgrID AS [Manager Employee ID]
+			  ,c.LogMgrName AS [Manager Name]
+			  ,c.HierarchySupID AS [Current Supervisor Employee ID]
+			  ,c.HierarchySupName  AS [Current Supervisor Name]
+			  ,c.HierarchyMgrID AS [Current Manager Employee ID]
+			  ,c.HierarchyMgrName  AS [Current Manager Name]
+		      ,ISNULL(c.ReviewSupID,'-')AS [Review Supervisor Employee ID]
+	          ,ISNULL(c.ReviewSupName,'-')AS [Review Supervisor Name]
+	          ,ISNULL(c.ReviewMgrID,'-')AS [Review Manager Employee ID]
+		      ,ISNULL(c.ReviewMgrName,'-')AS [Review Manager Name]
+	          ,LTRIM(RTRIM(REPLACE(c.Description, '<br />', ''))) AS [Description]
+              ,COALESCE(c.CoachingNotes,'-') AS [Coaching Notes]    
+              ,ISNULL(CONVERT(varchar,c.EventDate,121),'-') AS [Event Date]
+              ,ISNULL(CONVERT(varchar,c.CoachingDate,121),'-') AS [Coaching Date]
+              ,ISNULL(CONVERT(varchar,c.SubmittedDate,121),'-') AS [Submitted Date]
+		      ,c.Source AS [Coaching Source]
+		      ,c.SubSource AS [Sub Coaching Source]
+		      ,[EC].[fn_strCoachingReasonFromCoachingID](c.CoachingID) AS [Coaching Reason]
+	          ,[EC].[fn_strSubCoachingReasonFromCoachingID](c.CoachingID)AS [SubCoaching Reason]
+	          ,[EC].[fn_strValueFromCoachingID](c.CoachingID)AS [Value]
+		      ,c.SubmitterID AS [Submitter ID]
+		      ,c.SubmitterName AS [Submitter Name]
+		      ,ISNULL(CONVERT(varchar,c.SupReviewedDate,121),'-') AS [Supervisor Reviewed Date]
+              ,ISNULL(CONVERT(varchar,c.MgrReviewedMDate,121),'-') AS [Manager Reviewed Manual Date]
+			  ,ISNULL(CONVERT(varchar,c.MgrReviewedADate,121),'-') AS [Manager Reviewed Auto Date]
+              ,ISNULL(c.MgrNotes,'-') AS [Manager Notes]
+              ,ISNULL(CONVERT(varchar,c.EmpReviewedDate,121),'-') AS [Employee Reviewed Date]
+              ,ISNULL(c.EmpComments,'-') AS [Employee Comments]
+              ,c.ProgramName 
+              ,ISNULL(c.Behavior,'-')AS [Behavior]
+              ,ISNULL(c.ReportCode,'-') AS [Report Code]
+              ,ISNULL(c.VerintID,'-') AS [Verint ID]
+              ,ISNULL(c.VerintFormName,'-') AS [Verint Form Name]
+              ,ISNULL(c.isCoachingMonitor,'-') AS [Coaching Monitor]
+      FROM [EC].[Coaching_Log] p 
+      JOIN  (SELECT [cl].[ModuleID] ModuleID
+              ,[mo].[Module]Module
+              ,[cl].[CoachingID] CoachingID
+			  ,[cl].[FormName]	FormName
+			  ,[s].[Status]	Status
+			  ,[cl].[EmpID]	EmpID
+    	      ,[eh].[Emp_Name]	EmpName
+    	      ,[si].[City]	Site
+    	      ,[cl].[SupID]	LogSupID
+			  ,[suph].[Emp_Name]	LogSupName
+			  ,[cl].[MgrID]	LogMgrID
+			  ,[mgrh].[Emp_Name]	LogMgrName
+			  ,[eh].[Sup_ID]	HierarchySupID
+			  ,[eh].[Sup_Name]	HierarchySupName
+			  ,[eh].[Mgr_ID]	HierarchyMgrID
+			  ,[eh].[Mgr_Name]	HierarchyMgrName
+		      ,[cl].[Review_SupID]	ReviewSupID
+	          ,[rsuph].[Emp_Name]	ReviewSupName
+	          ,[cl].[Review_MgrID]	ReviewMgrID
+		      ,[rmgrh].[Emp_Name]	ReviewMgrName
+		      ,[cl].[Description]	Description
+		      ,[cl].[CoachingNotes]	CoachingNotes
+		      ,[cl].[EventDate]	EventDate
+		      ,[cl].[CoachingDate]	CoachingDate
+		      ,[cl].[SubmittedDate]	SubmittedDate
+		      ,[so].[CoachingSource] Source
+		      ,[so].[SubCoachingSource]	SubSource
+		      ,[dcr].[CoachingReason]CoachingReason
+		      ,[dscr].[SubCoachingReason]SubCoachingReason
+		      ,[clr].[Value]Value
+		      ,[cl].[SubmitterID]	SubmitterID
+		      ,[sh].[Emp_Name]	SubmitterName
+		      ,[cl].[SupReviewedAutoDate] SupReviewedDate
+              ,[cl].[MgrReviewManualDate] MgrReviewedMDate
+			  ,[cl].[MgrReviewAutoDate] MgrReviewedADate
+              ,[cl].[MgrNotes] MgrNotes
+              ,[cl].[CSRReviewAutoDate] EmpReviewedDate
+              ,[cl].[CSRComments] EmpComments
+              ,[cl].[ProgramName]	ProgramName
+              ,[cl].[Behavior]	Behavior
+              ,[cl].[strReportCode]	ReportCode
+              ,[cl].[VerintID]	VerintID
+              ,[cl].[VerintFormName]	VerintFormName
+              ,[cl].[isCoachingMonitor]	isCoachingMonitor
+		FROM [EC].[Employee_Hierarchy] eh 
+		JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)ON cl.EmpID = eh.Emp_ID
+		JOIN [EC].[Employee_Hierarchy] sh ON ISNULL(cl.SubmitterID,'999999') = sh.EMP_ID 
+		JOIN [EC].[Employee_Hierarchy] suph ON ISNULL(cl.SupID,'999999') = suph.EMP_ID 
+		JOIN [EC].[Employee_Hierarchy] mgrh ON ISNULL(cl.MgrID, '999999') = mgrh.EMP_ID 
+		JOIN [EC].[Employee_Hierarchy] rsuph ON ISNULL(cl.Review_SupID,'999999') = rsuph.EMP_ID 
+		JOIN [EC].[Employee_Hierarchy] rmgrh ON ISNULL(cl.Review_MgrID, '999999') = rmgrh.EMP_ID 
+		JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
+		JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
+		JOIN [EC].[DIM_Module] mo ON cl.ModuleID = mo.ModuleID 
+		JOIN [EC].[DIM_Site] si ON cl.SiteID = si.SiteID 
+		JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)ON cl.CoachingID = clr.CoachingID
+		JOIN [EC].[DIM_Coaching_Reason]dcr ON dcr.CoachingReasonID = clr.CoachingReasonID
+		JOIN [EC].[DIM_Sub_Coaching_Reason]dscr ON dscr.SubCoachingReasonID = clr.SubCoachingReasonID 
+		WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= @strSDate
+	    AND convert(varchar(8),[cl].[SubmittedDate],112) <= @strEDate
+		AND [cl].[StatusID] <> 2
+  	    AND  (([cl].[ModuleID] =(@intModulein) or @intModulein = -1) 
+		AND  ([cl].[StatusID] =(@intStatusin) or @intStatusin = -1) 
+		AND  ([cl].[SiteID] =(@intSitein) or @intSitein = -1) 
+        AND  ([clr].[CoachingReasonID] = (@intCoachReasonin) or @intCoachReasonin = -1) 
+        AND  ([clr].[SubCoachingReasonID] = (@intSubCoachReasonin)or @intSubCoachReasonin = -1)
+        AND ([cl].[EmpID]= (@strEmpin)or @strEmpin = '-1'))
+		)c
+		ON p.CoachingID = c.CoachingID
+        ORDER BY p.SubmittedDate DESC
+
+	    
+END -- sp_rptCoachingSummary
+
+
+
+GO
 
