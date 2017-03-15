@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>eCoaching</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@intCoachReasonin">
+          <DefaultValue>-1</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>SELECT SubCoachingReasonID, SubCoachingReason
+FROM     (SELECT - 1 AS SubCoachingReasonID, 'All' AS SubCoachingReason
+                  UNION
+                  SELECT DISTINCT clr.SubCoachingReasonID, dscr.SubCoachingReason
+                  FROM     EC.Coaching_Log_Reason AS clr INNER JOIN
+                                    EC.DIM_Sub_Coaching_Reason AS dscr ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID
+                 WHERE  (clr.CoachingReasonID =(@intCoachReasonin) or @intCoachReasonin = -1) ) AS s
+                 WHERE SubCoachingReason &lt;&gt; 'unknown'
+ORDER BY CASE WHEN SubCoachingReasonID = - 1 THEN 0 ELSE 1 END, SubCoachingReason</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="SubCoachingReasonID">
+        <DataField>SubCoachingReasonID</DataField>
+        <rd:TypeName>System.Int64</rd:TypeName>
+      </Field>
+      <Field Name="SubCoachingReason">
+        <DataField>SubCoachingReason</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

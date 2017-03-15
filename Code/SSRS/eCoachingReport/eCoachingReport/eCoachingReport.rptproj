@@ -9,8 +9,28 @@
   </DataSources>
   <DataSets>
     <ProjectItem>
-      <Name>Modules.rsd</Name>
-      <FullPath>Modules.rsd</FullPath>
+      <Name>CoachingReasonList.rsd</Name>
+      <FullPath>CoachingReasonList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>EmployeeList.rsd</Name>
+      <FullPath>EmployeeList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>ModuleList.rsd</Name>
+      <FullPath>ModuleList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>SiteList.rsd</Name>
+      <FullPath>SiteList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>StatusList.rsd</Name>
+      <FullPath>StatusList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>SubCoachingReasonList.rsd</Name>
+      <FullPath>SubCoachingReasonList.rsd</FullPath>
     </ProjectItem>
   </DataSets>
   <Reports>
@@ -27,10 +47,10 @@
         <OutputPath>bin\Debug</OutputPath>
         <TargetServerVersion>SSRS2008R2</TargetServerVersion>
         <TargetServerURL>http://vrivfssdbt02.vangent.local/ReportServer_SCORD01</TargetServerURL>
-        <TargetFolder>eCoaching/Development/Reports</TargetFolder>
-        <TargetDataSourceFolder>eCoaching/Development/DataSources</TargetDataSourceFolder>
+        <TargetFolder>/eCoaching/Development/Reports</TargetFolder>
+        <TargetDataSourceFolder>/eCoaching/Development/DataSources</TargetDataSourceFolder>
         <OverwriteDataSources>true</OverwriteDataSources>
-        <TargetDatasetFolder>eCoaching/Development/Datasets</TargetDatasetFolder>
+        <TargetDatasetFolder>/eCoaching/Development/Datasets</TargetDatasetFolder>
         <OverwriteDatasets>true</OverwriteDatasets>
         <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
       </Options>
@@ -42,7 +62,7 @@
         <OutputPath>bin\DebugLocal</OutputPath>
         <TargetServerVersion>SSRS2016</TargetServerVersion>
         <TargetServerURL>http://localhost/reportserver</TargetServerURL>
-        <TargetFolder>eCoachingReport</TargetFolder>
+        <TargetFolder>eCoachingAdhocReports</TargetFolder>
         <TargetDataSourceFolder>Data Sources</TargetDataSourceFolder>
         <TargetDatasetFolder>Datasets</TargetDatasetFolder>
         <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
@@ -55,7 +75,7 @@
         <OutputPath>bin\Release</OutputPath>
         <TargetServerVersion>SSRS2016</TargetServerVersion>
         <TargetServerURL>http://localhost/reportserver</TargetServerURL>
-        <TargetFolder>eCoachingReport</TargetFolder>
+        <TargetFolder>eCoachingAdhocReports</TargetFolder>
         <TargetDataSourceFolder>Data Sources</TargetDataSourceFolder>
         <TargetDatasetFolder>Datasets</TargetDatasetFolder>
         <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
