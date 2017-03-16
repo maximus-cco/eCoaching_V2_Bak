@@ -1,11 +1,7 @@
 ﻿using eCLAdmin.Filters;
 using eCLAdmin.Models.Report;
-using eCLAdmin.Models.User;
 using log4net;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
@@ -15,22 +11,17 @@ namespace eCLAdmin.Controllers
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(ReportController));
 
-        private readonly int REPORT_WIDTH = 100;
-        private readonly int REPORT_HEIGHT = 650;
-        private readonly string REPORT_TEMPLATE = "ReportTemplate";
-
-        private readonly string COACHING_SUMMARY_REPORT_NAME = "CoachingSummary";
-        private readonly string COACHING_SUMMARY_REPORT_DESCRIPTION = "Coaching Log Summary";
-        private readonly string AD_HOC_REPORT_NAME = "";
-        private readonly string AD_HOC_REPORT_DESCRIPTION = "";
-
         [EclAuthorize]
         public ActionResult RunCoachingSummary()
         {
-            return View(REPORT_TEMPLATE, GetReportInfo(COACHING_SUMMARY_REPORT_NAME, COACHING_SUMMARY_REPORT_DESCRIPTION, REPORT_WIDTH, REPORT_HEIGHT));
+            return View(Constants.REPORT_TEMPLATE, 
+                            GetReportInfo(Constants.COACHING_SUMMARY_REPORT_NAME,
+                                                            Constants.COACHING_SUMMARY_REPORT_DESCRIPTION,
+                                                            Constants.REPORT_WIDTH,
+                                                            Constants.REPORT_HEIGHT));
         }
 
-        public ReportInfo GetReportInfo(string reportName, string reportDescription, int width, int height)
+        private ReportInfo GetReportInfo(string reportName, string reportDescription, int width, int height)
         {
             //Server.MapPath("~/Content/Images/ecl-logo-small.png");
 
