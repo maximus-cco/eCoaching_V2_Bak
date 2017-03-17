@@ -1,10 +1,13 @@
 /*
-sp_rptCoachingSummary(02).sql
-Last Modified Date: 03/14/2017
+sp_rptCoachingSummary(03).sql
+Last Modified Date: 03/17/2017
 Last Modified By: Susmitha Palacherla
 
 
-Version 02: Document Initial Revision - Suzy -  TFS 5621 - 03/14/2017
+
+Version 03: Updated formatting - Suzy -  TFS 5621 - 03/17/2017
+
+Version 02: Updated parameters - Suzy -  TFS 5621 - 03/14/2017
 
 Version 01: Document Initial Revision - Lili -  TFS 5621 - 03/09/2017
 
@@ -28,7 +31,7 @@ GO
 
 
 
---	====================================================================
+/******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/14/2017
 --	Description: Selects list of Coaching Log Attributes for Coaching Summary Report.
@@ -36,11 +39,10 @@ GO
 --  Last Modified By:
 --  Revision History:
 --  Initial Revision - TFS 5621 - 03/14/2017
---	=====================================================================
+ *******************************************************************************/
+
 CREATE PROCEDURE [EC].[sp_rptCoachingSummary] 
-
-
-
+(
 @intModulein int = -1,
 @intStatusin int = -1, 
 @intSitein int = -1,
@@ -48,22 +50,39 @@ CREATE PROCEDURE [EC].[sp_rptCoachingSummary]
 @intCoachReasonin int = -1,
 @intSubCoachReasonin int = -1,
 @strSDatein datetime,
-@strEDatein datetime
-
+@strEDatein datetime,
+ ------------------------------------------------------------------------------------
+-- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
+   @returnCode int OUTPUT,
+   @returnMessage varchar(80) OUTPUT
+)
 AS
+   DECLARE @storedProcedureName varchar(80)
+   DECLARE @transactionCount int
 
+   SET @transactionCount = @@TRANCOUNT
+   SET @returnCode = 0
 
-BEGIN
+   --Only start a transaction if one has not already been started
+   IF @transactionCount = 0
+   BEGIN
+      BEGIN TRANSACTION currentTransaction
+   END
+-- THE PRECEDING CODE SHOULD NOT BE MODIFIED
+-------------------------------------------------------------------------------------
+   SET @storedProcedureName = OBJECT_NAME(@@PROCID)
+   SET @returnMessage = @storedProcedureName + ' completed successfully'
+-------------------------------------------------------------------------------------
+-- *** BEGIN: INSERT CUSTOM CODE HERE ***
 
 SET NOCOUNT ON
 
 DECLARE	
 @strSDate nvarchar(10),
 @strEDate nvarchar(10)
-       
 
 SET @strSDate = convert(varchar(8),@strSDatein,112)
-Set @strEDate = convert(varchar(8),@strEDatein,112)
+SET @strEDate = convert(varchar(8),@strEDatein,112)
 
   SELECT p.ModuleID AS [Module ID]
               ,c.Module AS [Module Name]
@@ -182,9 +201,33 @@ Set @strEDate = convert(varchar(8),@strEDatein,112)
         ORDER BY p.SubmittedDate DESC
 
 	    
-END -- sp_rptCoachingSummary
+-- *** END: INSERT CUSTOM CODE HERE ***
+-------------------------------------------------------------------------------------
+-- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
+ENDPROC:
+--  Commit or Rollback Transaction Only If We were NOT already in a Transaction
+IF @transactionCount = 0
+BEGIN
+	IF @returnCode = 0
+	BEGIN
+		-- Commit Transaction
+		commit transaction currentTransaction
+	END
+	ELSE 
+	BEGIN
+		-- Rollback Transaction
+		rollback transaction currentTransaction
+	END
+END
 
+PRINT STR(@returnCode) + ' ' + @returnMessage
+RETURN @returnCode
 
+-- THE PRECEDING CODE SHOULD NOT BE MODIFIED
+-------------------------------------------------------------------------------------
 
 GO
+
+
+
 
