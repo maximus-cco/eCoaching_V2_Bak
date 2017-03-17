@@ -5,5 +5,5 @@
     <ConnectString>Data Source=VRIVFSSDBT02\SCORD01,1437;Initial Catalog=eCoachingDev</ConnectString>
     <IntegratedSecurity>true</IntegratedSecurity>
   </ConnectionProperties>
-  <DataSourceID>b9da8017-84f3-4703-9476-aafb9ca5028b</DataSourceID>
+  <DataSourceID>725ae293-72af-4889-a1d1-3b88f21a7a4c</DataSourceID>
 </RptDataSource>

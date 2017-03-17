@@ -43,6 +43,14 @@
           <QueryParameter Name="@strEDatein">
             <Value>=Parameters!strEDatein.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@returnCode">
+            <Value>0</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@returnMessage">
+            <Value>success</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>EC.sp_rptCoachingSummary</CommandText>
@@ -271,6 +279,18 @@
     <DataSet Name="ModRef">
       <SharedDataSet>
         <SharedDataSetReference>ModuleList</SharedDataSetReference>
+        <QueryParameters>
+          <QueryParameter Name="@nvcEmpLanIDin">
+            <Value>=Parameters!nvcEmpLanIDin.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@returnCode">
+            <Value>0</Value>
+          </QueryParameter>
+          <QueryParameter Name="@returnMessage">
+            <Value>success</Value>
+          </QueryParameter>
+        </QueryParameters>
       </SharedDataSet>
       <Fields>
         <Field Name="ModuleID">
@@ -3342,6 +3362,16 @@
     </ReportSection>
   </ReportSections>
   <ReportParameters>
+    <ReportParameter Name="nvcEmpLanIDin">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=mid(User!UserID , InStr(User!UserID,"\")+1)</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Logged in User</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
     <ReportParameter Name="strSDatein">
       <DataType>DateTime</DataType>
       <Prompt>Start Date</Prompt>
@@ -3354,11 +3384,6 @@
     </ReportParameter>
     <ReportParameter Name="intModulein">
       <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>-1</Value>
-        </Values>
-      </DefaultValue>
       <Prompt>Module</Prompt>
       <ValidValues>
         <DataSetReference>
@@ -3465,42 +3490,47 @@
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>1</RowIndex>
-          <ParameterName>intModulein</ParameterName>
+          <ParameterName>strEDatein</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>1</RowIndex>
-          <ParameterName>intStatusin</ParameterName>
+          <ParameterName>intModulein</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>2</RowIndex>
-          <ParameterName>strEmpin</ParameterName>
+          <ParameterName>intSitein</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>strEmpin</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
           <RowIndex>3</RowIndex>
           <ParameterName>intCoachReasonin</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>3</RowIndex>
-          <ParameterName>intSubCoachReasonin</ParameterName>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>nvcEmpLanIDin</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
+          <ColumnIndex>1</ColumnIndex>
           <RowIndex>0</RowIndex>
           <ParameterName>strSDatein</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>strEDatein</ParameterName>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>intStatusin</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
-          <RowIndex>2</RowIndex>
-          <ParameterName>intSitein</ParameterName>
+          <RowIndex>4</RowIndex>
+          <ParameterName>intSubCoachReasonin</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

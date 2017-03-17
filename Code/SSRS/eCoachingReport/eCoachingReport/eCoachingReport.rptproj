@@ -49,7 +49,6 @@
         <TargetServerURL>http://vrivfssdbt02.vangent.local/ReportServer_SCORD01</TargetServerURL>
         <TargetFolder>/eCoaching/Development/Reports</TargetFolder>
         <TargetDataSourceFolder>/eCoaching/Development/DataSources</TargetDataSourceFolder>
-        <OverwriteDataSources>true</OverwriteDataSources>
         <TargetDatasetFolder>/eCoaching/Development/Datasets</TargetDatasetFolder>
         <OverwriteDatasets>true</OverwriteDatasets>
         <TargetReportPartFolder>Report Parts</TargetReportPartFolder>

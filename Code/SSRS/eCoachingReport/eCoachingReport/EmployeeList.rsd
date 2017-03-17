@@ -9,7 +9,7 @@
           <ReadOnly>false</ReadOnly>
           <Nullable>false</Nullable>
           <OmitFromQuery>false</OmitFromQuery>
-          <rd:DbType>Object</rd:DbType>
+          <rd:DbType>Int32</rd:DbType>
         </DataSetParameter>
       </DataSetParameters>
       <CommandText>Select s.EmpID, s.EmpName

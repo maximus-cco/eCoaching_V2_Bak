@@ -4,7 +4,8 @@
     <Query>
       <DataSourceReference>eCoaching</DataSourceReference>
       <CommandText>SELECT StatusID, CASE WHEN [StatusID] = - 1 THEN 'All' ELSE [Status] END AS Status
-FROM     EC.DIM_Status</CommandText>
+FROM     EC.DIM_Status
+WHERE StatusID &lt;&gt; 2</CommandText>
     </Query>
     <Fields>
       <Field Name="StatusID">

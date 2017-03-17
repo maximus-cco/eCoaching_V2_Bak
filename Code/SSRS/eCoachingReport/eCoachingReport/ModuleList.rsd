@@ -4,8 +4,30 @@
   <DataSet Name="ModuleList">
     <Query>
       <DataSourceReference>eCoaching</DataSourceReference>
-      <CommandText>SELECT ModuleID, CASE WHEN [ModuleID] = - 1 THEN 'All' ELSE [Module] END AS Module
-FROM     EC.DIM_Module</CommandText>
+      <DataSetParameters>
+        <DataSetParameter Name="@nvcEmpLanIDin">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>true</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>String</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@returnCode">
+          <DefaultValue>0</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@returnMessage">
+          <DefaultValue>sp_rptModulesByRole completed successfully</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>AnsiString</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandType>StoredProcedure</CommandType>
+      <CommandText>EC.sp_rptModulesByRole</CommandText>
     </Query>
     <Fields>
       <Field Name="ModuleID">
