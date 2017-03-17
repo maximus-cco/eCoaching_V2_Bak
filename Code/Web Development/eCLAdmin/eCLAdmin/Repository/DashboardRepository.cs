@@ -1,5 +1,6 @@
 ﻿using eCLAdmin.Models.Dashboard;
 using eCLAdmin.Models.EmployeeLog;
+using eCLAdmin.Utilities;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -80,7 +81,7 @@ namespace eCLAdmin.Repository
                         log.Reasons = dataReader["strCoachingReason"].ToString();
                         log.SubReasons = dataReader["strSubCoachingReason"].ToString();
                         log.Value = dataReader["strValue"].ToString();
-                        log.CreatedDate = AppendPdt(dataReader["SubmittedDate"].ToString());
+                        log.CreatedDate = EclAdminUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
 
                         employeeLogs.Add(log);
                     }
@@ -88,124 +89,6 @@ namespace eCLAdmin.Repository
             }
 
             return employeeLogs;
-        }
-
-        public CoachingLogDetail GetCoachingDetail(long id)
-        {
-            CoachingLogDetail logDetail = new CoachingLogDetail();
-
-            using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_SRMGR_Review]", connection))
-            {
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.CommandTimeout = 300;
-                command.Parameters.AddWithValue("@intFormIDin", id);
-                command.Parameters.AddWithValue("@bitisCoaching", true);
-
-                connection.Open();
-
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        logDetail.LogId = (long)dataReader["numID"];
-                        logDetail.FormName = dataReader["strFormID"].ToString();
-                        logDetail.Source = dataReader["strSource"].ToString();
-                        logDetail.Status = dataReader["strFormStatus"].ToString();
-                        logDetail.Type = dataReader["strFormType"].ToString();
-                        logDetail.CreatedDate = AppendPdt(dataReader["SubmittedDate"].ToString());
-                        logDetail.CoachingDate = AppendPdt(dataReader["CoachingDate"].ToString());
-                        logDetail.EventDate = AppendPdt(dataReader["EventDate"].ToString());
-                        logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
-                        logDetail.EmployeeName = dataReader["strCSRName"].ToString();
-                        logDetail.EmployeeSite = dataReader["strCSRSite"].ToString();
-
-                        logDetail.IsVerintMonitor = Convert.ToBoolean(dataReader["isVerintMonitor"].ToString());
-                        logDetail.VerintId = dataReader["strVerintID"].ToString();
-                        logDetail.VerintFormName = dataReader["VerintFormName"].ToString();
-                        logDetail.CoachingMonitor = dataReader["isCoachingMonitor"].ToString();
-
-                        logDetail.IsBehaviorAnalyticsMonitor = Convert.ToBoolean(dataReader["isBehaviorAnalyticsMonitor"].ToString());
-                        logDetail.BehaviorAnalyticsId = dataReader["strBehaviorAnalyticsID"].ToString();
-
-                        logDetail.IsNgdActivityId = Convert.ToBoolean(dataReader["isNGDActivityID"].ToString());
-                        logDetail.NgdActivityId = dataReader["strNGDActivityID"].ToString();
-
-                        logDetail.IsUcid = Convert.ToBoolean(dataReader["isUCID"].ToString());
-                        logDetail.Ucid = dataReader["strUCID"].ToString();
-
-                        logDetail.SupervisorName = dataReader["strCSRSupName"].ToString();
-                        logDetail.ReassignedSupervisorName = dataReader["strReassignedSupName"].ToString();
-                        logDetail.ManagerName = dataReader["strCSRMgrName"].ToString();
-                        logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
-
-                        logDetail.Reasons = dataReader["strCoachingReason"].ToString();
-                        logDetail.SubReasons = dataReader["strSubCoachingReason"].ToString();
-                        logDetail.Value = dataReader["strValue"].ToString();
-
-                        logDetail.CoachingNotes = dataReader["txtCoachingNotes"].ToString();
-                        logDetail.Behavior = dataReader["txtDescription"].ToString();
-
-                        logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
-
-                        logDetail.EmployeeComments = dataReader["txtCSRComments"].ToString();
-                        logDetail.EmployeeReviewDate = AppendPdt(dataReader["CSRReviewAutoDate"].ToString());
-
-                        logDetail.SupReviewedAutoDate = AppendPdt(dataReader["SupReviewedAutoDate"].ToString());
-                        logDetail.MgrReviewAutoDate = AppendPdt(dataReader["MgrReviewAutoDate"].ToString());
-
-                        logDetail.ReviewedSupervisorName = dataReader["strreviewsup"].ToString();
-                        logDetail.ReviewedManagerName = dataReader["strreviewmgr"].ToString();
-                        break;
-                    }
-                }
-            }
-
-            return logDetail;
-        }
-
-        public WarningLogDetail GetWarningDetail(long id)
-        {
-            WarningLogDetail logDetail = new WarningLogDetail();
-
-            using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_SRMGR_Review]", connection))
-            {
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.CommandTimeout = 300;
-                command.Parameters.AddWithValue("@intFormIDin", id);
-                command.Parameters.AddWithValue("@bitisCoaching", false);
-
-                connection.Open();
-
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        logDetail.LogId = (long)dataReader["numID"];
-                        logDetail.FormName = dataReader["strFormID"].ToString();
-                        logDetail.Source = dataReader["strSource"].ToString();
-                        logDetail.Status = dataReader["strFormStatus"].ToString();
-                        logDetail.Type = dataReader["strFormType"].ToString();
-                        logDetail.CreatedDate = AppendPdt(dataReader["SubmittedDate"].ToString());
-                        logDetail.EventDate = AppendPdt(dataReader["warningDate"].ToString());
-                        logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
-                        logDetail.EmployeeName = dataReader["strCSRName"].ToString();
-                        logDetail.EmployeeSite = dataReader["strCSRSite"].ToString();
-
-                        logDetail.SupervisorName = dataReader["strCSRSupName"].ToString();
-                        logDetail.ManagerName = dataReader["strCSRMgrName"].ToString();
-
-                        logDetail.Reasons = dataReader["strCoachingReason"].ToString();
-                        logDetail.SubReasons = dataReader["strSubCoachingReason"].ToString();
-                        logDetail.Value = dataReader["strValue"].ToString();
-
-                        break;
-                    }
-                }
-            }
-
-            return logDetail;
         }
 
         public List<ChartCoachingCompleted> GetChartDataCoachingCompleted(string userLanId, DateTime startTime, DateTime endTime)
@@ -406,16 +289,6 @@ namespace eCLAdmin.Repository
             }
 
             return count;
-        }
-
-        private string AppendPdt(string str)
-        {
-            if (String.IsNullOrWhiteSpace(str))
-            {
-                return str;
-            }
-
-            return str + " PDT";
         }
     }
 }

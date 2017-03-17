@@ -13,19 +13,18 @@ using System.Web.Mvc;
 namespace eCLAdmin.Controllers
 {
     [SessionCheck]
-    public class EmployeeLogController : BaseController
+    public class EmployeeLogController : EmployeeLogBaseController
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(EmployeeLogController));
 
         private readonly IEmployeeService employeeService;
-        private readonly IEmployeeLogService employeeLogService;
         private readonly IEmailService emailService;
 
         public EmployeeLogController(IEmployeeService employeeService, IEmployeeLogService employeeLogService, IEmailService emailService)
+            : base(employeeLogService)
         {
             logger.Debug("Entered EmployeeLogController(IEmployeeService, IEmployeeLogService, EMailService)");
             this.employeeService = employeeService;
-            this.employeeLogService = employeeLogService;
             this.emailService = emailService;
         }
 
@@ -44,7 +43,7 @@ namespace eCLAdmin.Controllers
             // Employee log types - coaching or warning
             ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_INACTIVATE);
             // Empty module list
-            ViewBag.Modules = GetEmpltyModuleList();
+            ViewBag.Modules = GetEmptyModuleList();
             // Empty employee list
             List<Employee> employeeList = new List<Employee>();
             employeeList.Insert(0, new Employee { Id = "-1", Name = "Please select an employee" });
@@ -157,7 +156,7 @@ namespace eCLAdmin.Controllers
 
             ViewBag.SubTitle = "Reactivate Employee Logs";
             // Empty module list
-            ViewBag.Modules = GetEmpltyModuleList();
+            ViewBag.Modules = GetEmptyModuleList();
             // Employee log types - coaching or warning
             ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REACTIVATE);
             // Empty employee list
@@ -363,13 +362,64 @@ namespace eCLAdmin.Controllers
             emailService.Send(email, logNames, Request.ServerVariables["SERVER_NAME"].ToLower());
         }
         
-        private IEnumerable<SelectListItem> GetEmpltyModuleList()
+        private IEnumerable<SelectListItem> GetEmptyModuleList()
         {
             List<Module> moduleList = new List<Module>();
             moduleList.Insert(0, new Module { Id = -1, Name = "Please select a module" });
             IEnumerable<SelectListItem> emptyModuleList = new SelectList(moduleList, "Id", "Name");
 
             return emptyModuleList;
+        }
+
+        [HttpGet]
+        //[EclAuthorize]
+        public ActionResult SearchForDelete()
+        {
+            logger.Debug("Entered SearchForDelete [get]...");
+            return View(new EmployeeLog());
+        }
+
+        [HttpPost]
+        public ActionResult SearchForDelete(EmployeeLog logToDelete)
+        {
+            logger.Debug("Entered SearchForDelete [post]...");
+
+            // Clean up delete message
+            ViewBag.Success = null;
+            ViewBag.Fail = null;
+
+            return PartialView("_LogsForDeletePartial", employeeLogService.GetLogsByLogName(logToDelete.FormName));
+        }
+
+        public ActionResult ViewLogDetail(int id, bool isCoaching)
+        {
+            return base.GetLogDetail(id, isCoaching);
+        }
+
+        [HttpGet]
+        public ActionResult InitDelete(int id, bool isCoaching)
+        {
+            EmployeeLog log = new EmployeeLog();
+            log.ID = id;
+            log.IsCoaching = isCoaching;
+
+            return PartialView("_Delete", log);
+        }
+
+        [HttpPost]
+        public ActionResult Delete(int id, bool isCoaching)
+        {
+            bool success = employeeLogService.Delete(id, isCoaching);
+            if (success)
+            {
+                ViewBag.Success = "The log has been successfully deleted.";
+            }
+            else
+            {
+                ViewBag.Fail = "Failed to delete the log.";
+            }
+
+            return View("SearchForDelete");
         }
     }
 }

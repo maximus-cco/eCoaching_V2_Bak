@@ -14,6 +14,8 @@ namespace eCLAdmin
             scriptBundle.Include(
                         "~/Scripts/modernizr-*",
                         "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/jquery.validate.js",
+                        "~/Scripts/jquery.validate.unobtrusive.js",
                         "~/Scripts/jquery.unobtrusive-ajax.js",
                         "~/Scripts/jquery.dataTables.js",
                         "~/Scripts/bootstrap.js",

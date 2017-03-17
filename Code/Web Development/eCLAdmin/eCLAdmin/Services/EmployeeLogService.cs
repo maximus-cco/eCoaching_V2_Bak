@@ -137,5 +137,33 @@ namespace eCLAdmin.Services
 
             return retValue;
         }
+
+        public List<EmployeeLog> GetLogsByLogName(string logName)
+        {
+            return employeeLogRepository.GetLogsByLogName(logName);
+        }
+
+        public LogDetailBase GetLogDetail(long logId, bool isCoaching)
+        {
+            LogDetailBase logDetail = null;
+            if (isCoaching)
+            {
+                logDetail = employeeLogRepository.GetCoachingDetail(logId);
+            }
+            else
+            {
+                logDetail = employeeLogRepository.GetWarningDetail(logId);
+            }
+
+            logDetail.Reasons = logDetail.Reasons.Replace("|", "<br />");
+            logDetail.SubReasons = logDetail.SubReasons.Replace("|", "<br />");
+            logDetail.Value = logDetail.Value.Replace("|", "<br />");
+            return logDetail;
+        }
+
+        public bool Delete(long logId, bool isCoaching)
+        {
+            return employeeLogRepository.Delete(logId, isCoaching);
+        }
     }
 }

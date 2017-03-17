@@ -11,17 +11,15 @@ using System.Web.Mvc;
 namespace eCLAdmin.Controllers
 {
     [SessionCheck]
-    public class DashboardController : BaseController
+    public class DashboardController : EmployeeLogBaseController
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(DashboardController));
 
-        private readonly IEmployeeLogService employeeLogService;
         private readonly IDashboardService dashboardService;
 
-        public DashboardController(IEmployeeLogService employeeLogService, IDashboardService dashboardService)
+        public DashboardController(IEmployeeLogService employeeLogService, IDashboardService dashboardService) : base(employeeLogService)
         {
             logger.Debug("Entered DashboardController(IEmployeeLogService, IDashboardService)");
-            this.employeeLogService = employeeLogService;
             this.dashboardService = dashboardService;
         }
 
@@ -168,17 +166,7 @@ namespace eCLAdmin.Controllers
         [ValidateInput(false)]
         public ActionResult GetLogDetail(int logId)
         {
-            logger.Debug("Entered GetLogDetail");
-
-            string partialView = "_CoachingDetail";
-            bool isCoaching = (bool)Session["Coaching"];
-
-            if (!isCoaching)
-            {
-                partialView = "_WarningDetail";
-            }
-
-            return PartialView(partialView, dashboardService.GetLogDetail(logId, isCoaching));
+            return base.GetLogDetail(logId, (bool)Session["Coaching"]);
         }
     }
 }

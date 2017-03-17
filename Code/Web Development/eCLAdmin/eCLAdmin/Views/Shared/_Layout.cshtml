@@ -54,10 +54,11 @@
                                 {
                                     <li>@Html.ActionLink("Reactivate Employee Logs", "SearchForReactivate", "EmployeeLog")</li>
                                 }
-                                @if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForDelete"))
-                                {
-                                    <li><a href="#">Delete Employee Logs</a></li>
-                                }
+                                @*@if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForDelete"))
+                                {*@
+                                    <li role="presentation" class="divider"></li>
+                                    <li>@Html.ActionLink("Delete Employee Logs", "SearchForDelete", "EmployeeLog")</li>
+                                @*}*@
                             </ul>
                         </li>
                     }

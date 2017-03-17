@@ -21,5 +21,11 @@ namespace eCLAdmin.Services
         bool ProcessActivation(string userLanId, string action, int employeeLogType, List<long> employeeLogIds, int reasonId, string otherReasonText, string comment);
 
         bool ProcessReassignment(string userLanId, List<long> employeeLogIds, string assignedToEmployeeId, int reasonId, string otherReasonText, string comment);
+
+        List<EmployeeLog> GetLogsByLogName(string logName);
+
+        LogDetailBase GetLogDetail(long logId, bool isCoaching);
+
+        bool Delete(long logId, bool isCoaching);
     }
 }

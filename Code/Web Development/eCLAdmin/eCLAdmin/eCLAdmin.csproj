@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\EmployeeLogBase\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +158,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
+    <Compile Include="Controllers\EmployeeLogBaseController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -260,10 +262,16 @@
     <Content Include="Scripts\eCLAdmin\dashboardList.js" />
     <Content Include="Scripts\eCLAdmin\dashboardIndex.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
-    <Content Include="Scripts\eCLAdmin\searchForInactivate.js" />
+    <Content Include="Scripts\eCLAdmin\logSearchForDelete.js" />
+    <Content Include="Scripts\eCLAdmin\logSearchForInactivate.js" />
     <Content Include="Scripts\jquery-2.2.0.js" />
     <Content Include="Scripts\jquery.dataTables.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\morris.js" />
     <Content Include="Scripts\raphael.js" />
@@ -302,11 +310,14 @@
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Dashboard\_Chart.cshtml" />
     <Content Include="Views\Dashboard\_List.cshtml" />
-    <Content Include="Views\Dashboard\_CoachingDetail.cshtml" />
+    <Content Include="Views\Shared\_CoachingDetail.cshtml" />
     <Content Include="Views\Dashboard\_Dashboard.cshtml" />
-    <Content Include="Views\Dashboard\_WarningDetail.cshtml" />
+    <Content Include="Views\Shared\_WarningDetail.cshtml" />
     <Content Include="Views\Shared\Index.cshtml" />
     <Content Include="Views\Report\ReportTemplate.cshtml" />
+    <Content Include="Views\EmployeeLog\SearchForDelete.cshtml" />
+    <Content Include="Views\EmployeeLog\_LogsForDeletePartial.cshtml" />
+    <Content Include="Views\EmployeeLog\_Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

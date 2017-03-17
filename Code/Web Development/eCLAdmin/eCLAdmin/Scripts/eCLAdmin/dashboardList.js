@@ -1,6 +1,7 @@
 ﻿var oTable;
 $(document).ready(function () {
-    $('.modal-content').css('width', '1000px');
+    $('#modal-container').css('margin-top', '0%');
+    $('.modal-content').css('width', '60%');
 
     // Initialize datatable
     oTable = $('#dataTables-coaching-log-list').DataTable({

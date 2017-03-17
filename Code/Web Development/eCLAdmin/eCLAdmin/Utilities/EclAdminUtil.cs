@@ -1,6 +1,7 @@
 ﻿using eCLAdmin.Extensions;
 using eCLAdmin.ViewModels;
 using log4net;
+using System;
 using System.Collections.Generic;
 
 namespace eCLAdmin.Utilities
@@ -45,6 +46,16 @@ namespace eCLAdmin.Utilities
             }
 
             return logType;
+        }
+
+        public static string AppendPdt(string str)
+        {
+            if (String.IsNullOrWhiteSpace(str))
+            {
+                return str;
+            }
+
+            return str + " PDT";
         }
     }
 }

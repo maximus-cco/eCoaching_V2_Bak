@@ -37,24 +37,6 @@ namespace eCLAdmin.Services
             return logs;
         }
 
-        public LogDetailBase GetLogDetail(long id, bool isCoaching)
-        {
-            LogDetailBase logDetail = null;
-            if (isCoaching)
-            {
-                logDetail = dashboardRepository.GetCoachingDetail(id);
-            }
-            else
-            {
-                logDetail = dashboardRepository.GetWarningDetail(id);
-            }
-
-            logDetail.Reasons = logDetail.Reasons.Replace("|", "<br />");
-            logDetail.SubReasons = logDetail.SubReasons.Replace("|", "<br />");
-            logDetail.Value = logDetail.Value.Replace("|", "<br />");
-            return logDetail;
-        }
-
         public List<ChartCoachingCompleted> GetChartDataCoachingCompleted(string userLanId, DateTime startTime, DateTime endTime)
         {
             return dashboardRepository.GetChartDataCoachingCompleted(userLanId, startTime, endTime);

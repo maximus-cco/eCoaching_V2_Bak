@@ -18,6 +18,14 @@ namespace eCLAdmin.Repository
         void ProcessActivation(string userLanId, string action, int employeeLogType, List<long> employeeLogIds, int reasonId, string otherReasonText, string comment);
 
         void ProcessReassignment(string userLanId, List<long> employeeLogIds, string assignedToEmployeeId, int reasonId, string otherReasonText, string comment);
+
+        List<EmployeeLog> GetLogsByLogName(string logName);
+
+        CoachingLogDetail GetCoachingDetail(long logId);
+
+        WarningLogDetail GetWarningDetail(long logId);
+
+        bool Delete(long logId, bool isCoaching);
     }
 
 }
