@@ -1,0 +1,21 @@
+﻿@model eCLAdmin.Models.EmployeeLog.EmployeeLog
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h3 class="modal-title">Attention</h3>
+</div>
+
+@using (Html.BeginForm("Delete", "EmployeeLog", FormMethod.Post, new { id = "form-delete-log" }))
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.IsCoaching)
+
+    <div class="modal-body">
+        The log will be permanently deleted. Click Delete if you wish to proceed.
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="submit" id="btn-inactivate" class="btn btn-primary">Delete</button>
+    </div>
+}

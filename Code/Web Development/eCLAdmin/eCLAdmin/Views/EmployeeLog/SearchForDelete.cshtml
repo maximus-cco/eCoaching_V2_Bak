@@ -1,0 +1,125 @@
+﻿@model eCLAdmin.Models.EmployeeLog.EmployeeLog
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Manage Employee Logs";
+}
+
+<h2>Delete Employee Log</h2>
+<br />
+
+<!-- Search Form -->
+@using (Ajax.BeginForm("SearchForDelete",
+                       "EmployeeLog",
+                       FormMethod.Post,
+                       new AjaxOptions
+                       {
+                           InsertionMode = InsertionMode.Replace,
+                           HttpMethod = "POST",
+                           UpdateTargetId = "search-result",
+                           OnBegin = "processSearchOnBegin",
+                           OnComplete = "processSearchOnComplete"
+                       },
+                       new { id = "search-form", @class = "form-horizontal" }
+    ))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.FormName, new { @class="control-label col-sm-2"})
+        @Html.TextBoxFor(m => m.FormName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.FormName, "", new { @class = "col-sm-offset-2 field-validation-error" })
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2">
+            <button class="btn btn-primary" type="submit" id="btn-search">
+                <span class="glyphicon glyphicon-search"></span>&nbsp;Search
+            </button>
+        </div>
+    </div>
+}
+
+<!-- Log(s) found -->
+<div id="search-result"></div> 
+
+<!-- Success Message-->
+@if (ViewBag.Success != null)
+{
+    <div class="alert alert-success alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        @ViewBag.Success
+    </div>
+}
+
+<!-- Fail Message-->
+@if (ViewBag.Fail != null)
+{
+    <div class="alert alert-danger alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        @ViewBag.Fail
+    </div>
+}
+
+<script src="@Url.Content("~/Scripts/eCLAdmin/logSearchForDelete.js")"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @*<div class="panel panel-default">
+            <div class="panel-heading">
+                Total record(s) found: <span class="badge">@Model.EmployeeLogs.Count</span>
+                <div id="total-selected" class="pull-right">
+                </div>
+                <br />
+            </div>
+
+                <table class="table table-hover" id="search-result-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="checkall" /></th>
+                            <th data-sortable="true">FormName</th>
+                            <th>Employee Name</th>
+                            <th>Supervisor Name</th>
+                            <th>Manager Name</th>
+                            <th>Submitter Name</th>
+                            <th>Created Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @Html.EditorFor(model => model.EmployeeLogs)
+                    </tbody>
+                </table>
+            }
+        </div>*@
+
+
+    @*<form id="form-delete-EmployeeLog">
+            <p class="text-right">
+                @Html.ActionLink("Inactivate ", // Link Text
+                        "InitInactivateModal", // Action Method Name
+                        "EmployeeLog", // Controller Name
+                        new
+                        {
+                            @class = "modal-link btn btn-primary",
+                            @style = "display: none;",
+                            id = "lk-inactivate"
+                        })
+            </p>
+            <div id="search-result">
+
+            </div>
+        </form>*@
+
+    <!-- script -->
+    <script src="@Url.Content("~/Scripts/eCLAdmin/searchForDelete.js")"></script>
+
+

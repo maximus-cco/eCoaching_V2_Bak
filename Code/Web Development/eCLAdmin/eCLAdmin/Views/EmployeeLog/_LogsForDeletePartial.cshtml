@@ -1,0 +1,50 @@
+﻿@model IEnumerable<eCLAdmin.Models.EmployeeLog.EmployeeLog>
+
+<br />
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Total record(s) found: <span class="badge">@Model.Count()</span>
+        <div id="total-selected" class="pull-right">
+        </div>
+        <br />
+    </div>
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(m => m.FormName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.EmployeeLanId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.EmployeeId)
+            </th>
+ 
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink("View", "ViewLogDetail", "EmployeeLog", new { id = item.ID, isCoaching = item.IsCoaching }, new { @class = "modal-link view-log-detail" }) |
+                    @Html.ActionLink("Delete", "InitDelete", "EmployeeLog", new {  id = item.ID, isCoaching = item.IsCoaching }, new { @class = "modal-link delete-log" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FormName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeLanId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+
+            </tr>
+        }
+
+    </table>
+</div>
+
+

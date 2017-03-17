@@ -318,6 +318,7 @@
     <Content Include="Views\EmployeeLog\SearchForDelete.cshtml" />
     <Content Include="Views\EmployeeLog\_LogsForDeletePartial.cshtml" />
     <Content Include="Views\EmployeeLog\_Delete.cshtml" />
+    <Content Include="Views\EmployeeLog\_LogDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
