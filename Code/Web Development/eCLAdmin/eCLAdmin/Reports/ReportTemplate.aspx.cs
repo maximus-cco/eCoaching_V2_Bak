@@ -30,7 +30,7 @@ namespace eCLAdmin.Reports
                     logger.Debug("Path=" + rvSiteMapping.ServerReport.ReportPath);
 
 
-                    ReportParameter param = new ReportParameter("JobCode", (string) Session["JobCode"]);
+                    ReportParameter param = new ReportParameter("LanId", (string) Session["LanId"]);
                     rvSiteMapping.ServerReport.SetParameters(new ReportParameter[] { param });
 
                     rvSiteMapping.ServerReport.Refresh();

@@ -46,7 +46,7 @@ namespace eCLAdmin.Controllers
             logger.Debug("!!!!!URL=" + rptInfo.ReportURL);
             logger.Debug("%%%%%%%%%%%%%%%%%leaving report controller");
 
-            Session["JobCode"] = GetUserFromSession().JobCode;
+            Session["LanId"] = GetUserFromSession().LanId;
 
             return rptInfo;
         }
