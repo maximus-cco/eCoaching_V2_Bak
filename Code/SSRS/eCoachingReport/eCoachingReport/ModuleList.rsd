@@ -5,9 +5,9 @@
     <Query>
       <DataSourceReference>eCoaching</DataSourceReference>
       <DataSetParameters>
-        <DataSetParameter Name="@nvcEmpLanIDin">
+        <DataSetParameter Name="@LanID">
           <ReadOnly>false</ReadOnly>
-          <Nullable>true</Nullable>
+          <Nullable>false</Nullable>
           <OmitFromQuery>false</OmitFromQuery>
           <rd:DbType>String</rd:DbType>
         </DataSetParameter>
