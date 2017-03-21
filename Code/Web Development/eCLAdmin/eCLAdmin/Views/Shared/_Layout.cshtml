@@ -54,11 +54,11 @@
                                 {
                                     <li>@Html.ActionLink("Reactivate Employee Logs", "SearchForReactivate", "EmployeeLog")</li>
                                 }
-                                @*@if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForDelete"))
-                                {*@
+                                @if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForDelete"))
+                                {
                                     <li role="presentation" class="divider"></li>
                                     <li>@Html.ActionLink("Delete Employee Logs", "SearchForDelete", "EmployeeLog")</li>
-                                @*}*@
+                                }
                             </ul>
                         </li>
                     }
@@ -73,11 +73,11 @@
                     {
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                               role="button" aria-expanded="false">Report<span class="caret"></span></a>
+                               role="button" aria-expanded="false">Reporting<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 @if (ViewContext.Controller.IsEntitled("Report-RunCoachingSummary"))
                                 {
-                                    <li>@Html.ActionLink("Coaching Summary", "RunCoachingSummary", "Report")</li>
+                                    <li>@Html.ActionLink("Coaching Log Summary", "RunCoachingSummary", "Report")</li>
                                 }
                             </ul>
                         </li>

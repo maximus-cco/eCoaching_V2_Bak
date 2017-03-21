@@ -11,6 +11,11 @@ namespace eCLAdmin.Controllers
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(ReportController));
 
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         [EclAuthorize]
         public ActionResult RunCoachingSummary()
         {

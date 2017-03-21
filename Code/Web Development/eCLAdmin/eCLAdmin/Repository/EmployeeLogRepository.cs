@@ -307,7 +307,7 @@ namespace eCLAdmin.Repository
                         cl.EmployeeId = dataReader["EmpID"].ToString();
                         //cl.Source = dataReader["SourceID"].ToString();
                         // TODO: get it from database
-                        cl.IsCoaching = true;
+                        cl.IsCoaching = dataReader["isCoaching"].ToString() == "1" ? true : false ;
 
                         employeeLogs.Add(cl);
                     } // end while
@@ -442,7 +442,7 @@ namespace eCLAdmin.Repository
             string sqlDeleteLog = "delete from [ec].[Coaching_Log] where [CoachingID] = @logId";
             if (!isCoaching)
             {
-                sqlDeleteReason = "delete from [ec].[Warning_Log_Reason] where [WarningID] = @ID";
+                sqlDeleteReason = "delete from [ec].[Warning_Log_Reason] where [WarningID] = @logId";
                 sqlDeleteLog = "delete from [ec].[Warning_Log] where [WarningID] = @logId";
             }
 

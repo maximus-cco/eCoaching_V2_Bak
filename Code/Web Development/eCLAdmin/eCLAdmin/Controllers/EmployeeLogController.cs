@@ -372,7 +372,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpGet]
-        //[EclAuthorize]
+        [EclAuthorize]
         public ActionResult SearchForDelete()
         {
             logger.Debug("Entered SearchForDelete [get]...");
