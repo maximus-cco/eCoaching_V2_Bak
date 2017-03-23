@@ -1,0 +1,279 @@
+/* 
+
+TFS 6011
+
+RUN THE BELOW STEPS IN ORDER ONE AT A TIME
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+
+/*
+
+
+--********BEFORE STARTING IMPLEMENTATION TAKE BACKUPS OF AFFECTED TABLES*****----
+
+-- This is for Prod.
+-- backups taken in test on 03/23/2017
+
+
+SELECT *  into [EC].[Employee_Hierarchy_pre6011]
+from [EC].[Employee_Hierarchy]
+
+SELECT *  into [EC].[CSR_Hierarchy_pre6011]
+from [EC].[CSR_Hierarchy]
+
+SELECT *  into [EC].[EmployeeID_To_LanID_pre6011]
+from [EC].[EmployeeID_To_LanID]
+
+*/
+
+-- Implementation Steps begin here
+
+--1. Update attributes for employee record for 300207 to expected values for Dagon.Schrott
+
+
+--SELECT * from [EC].[Employee_Hierarchy]
+--where Emp_ID like '%300207'
+
+UPDATE [EC].[Employee_Hierarchy]
+SET    [Emp_Name]= 'Schrott, Dagon G'
+      ,[Emp_Email]= 'Dagon.Schrott@GDIT.com'
+      ,[Emp_LanID]= 'Dagon.Schrott'
+      ,[Emp_Site]= 'Lawrence'
+      ,[Emp_Job_Code]= 'WACS02'
+      ,[Emp_Job_Description]= 'Specialist, Customer Service'
+      ,[Emp_Program]= 'Medicare'
+      ,[Sup_ID]= '414895'
+      ,[Sup_Name]= 'Reeder, Maggie F'
+      ,[Sup_Email]= 'Maggie.Reeder@GDIT.com'
+      ,[Sup_LanID]= 'Maggie.Reeder'
+      ,[Sup_Job_Code]= 'WACS40'
+      ,[Sup_Job_Description]= 'Supervisor, Customer Service'
+      ,[Mgr_ID]= '336144'
+      ,[Mgr_Name]= 'Kissoon, Khadine T'
+      ,[Mgr_Email]= 'Khadine.Kissoon@GDIT.com'
+      ,[Mgr_LanID]= 'khadine.kissoon'
+      ,[Mgr_Job_Code]= 'WACS50'
+      ,[Mgr_Job_Description]= 'Manager, Customer Service'
+      ,[Start_Date]= 2014117
+      ,[End_Date]= 99991231
+      ,[Active]= 'A'
+      ,[SrMgrLvl1_ID]= '412776'
+      ,[SrMgrLvl2_ID]= '250232'
+      ,[SrMgrLvl3_ID]= '223496'
+WHERE [EMP_ID] = '300207' --WV300207
+
+
+
+--***************************
+
+
+--2.  Clean up employee ID To lan ID Table
+
+/*
+
+Run this select
+
+SELECT [EmpID]
+      ,[StartDate]
+      ,[EndDate]
+      ,[LanID]
+      ,[DatetimeInserted]
+      ,[DatetimeLastUpdated]
+  FROM [EC].[EmployeeID_To_LanID]
+  WHERE [EMPID] like '%300207'
+GO
+
+*/
+
+--If the above select returns 2 records for empID 300207:
+-- one with lanid 'Dagon.Schrott' and one with lanid 'Jordan.Thorpe'
+-- run these 2 statements
+
+Delete from [EC].[EmployeeID_To_LanID]
+where [EmpID]= '300207'
+and LanID = 'Jordan.Thorpe'
+GO
+
+UPDATE [EC].[EmployeeID_To_LanID]
+SET [StartDate]= 20141117
+,[EndDate]= 99991231
+,[LanID] = 'Dagon.Schrott'
+,[DatetimeInserted]= '2014-11-17 17:05:42.947'
+,[DatetimeLastUpdated]= '2014-11-17 17:05:42.947'
+WHERE [EmpID]= '300207'
+GO
+
+-- Else If there is only one record with Employee ID 300207
+-- Run this 
+
+UPDATE [EC].[EmployeeID_To_LanID]
+SET [StartDate]= 20141117
+,[EndDate]= 99991231
+,[LanID] = 'Dagon.Schrott'
+,[DatetimeInserted]= '2014-11-17 17:05:42.947'
+,[DatetimeLastUpdated]= '2014-11-17 17:05:42.947'
+WHERE [EmpID]= '300207'
+
+--***************************
+
+
+-- 3. Create table [EC].[Employee_Ids_With_Prefixes]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Employee_Ids_With_Prefixes](
+	[Emp_ID] [nvarchar](10) NOT NULL,
+	[Emp_Name] [nvarchar](70) NULL,
+	[Emp_LanID] [nvarchar](30) NULL,
+	[Start_Date] [datetime] NULL,
+        [Inserted_Date][datetime] NULL
+	) ON [PRIMARY]
+
+GO
+
+
+--***************************
+
+--4. Install latest procedure from TFS
+\cms\eCoaching_V2\Code\DB\Stored Procedures\sp_Update_Employee_Hierarchy_Stage.sql
+
+--***************************
+
+--5. Install latest procedure from TFS
+\cms\eCoaching_V2\Code\DB\Stored Procedures\sp_Update_ETS_Coaching_Stage.sql
+
+
+--***************************
+/*
+
+******************PART 2*************************
+
+THESE ARE DATA UPDATES THAT WILL BE RUN AFTER AN EMPLOYEE LOAD IF AND AS NEEDED
+NEED NOT BE RUN DURING IMPLEMENTATION
+
+*/
+
+
+--***************************
+
+--1. [EC].[Employee_Hierarchy]
+/*
+
+SELECT * from [EC].[Employee_Hierarchy]
+where Emp_ID = 'W300207' 
+*/
+
+Update [EC].[Employee_Hierarchy]
+SET End_Date = 20170302
+,Active = 'T'
+where Emp_ID = 'W300207' 
+
+--***************************
+
+--2.[EC].[CSR_Hierarchy]
+
+/*
+SELECT *
+  FROM [EC].[CSR_Hierarchy]
+  where EmpID = 'W300207'
+GO
+*/
+
+update [EC].[CSR_Hierarchy]
+set StartDate = '2017-01-03 00:00:00.000'
+,EndDate = '2017-03-02 00:00:00.000'
+ where EmpID = 'W300207'
+
+
+--***************************
+
+--3. [EC].[EmployeeID_To_LanID]
+/*
+
+SELECT [EmpID]
+      ,[StartDate]
+      ,[EndDate]
+      ,[LanID]
+      ,[DatetimeInserted]
+      ,[DatetimeLastUpdated]
+  FROM [EC].[EmployeeID_To_LanID]
+  WHERE [EMPID] like '%300207'
+GO
+
+*/
+
+
+Delete from [EC].[EmployeeID_To_LanID]
+where [EMPID] like '300207'
+and [LanID]= 'Jordan.Thorpe'
+
+
+INSERT INTO [EC].[EmployeeID_To_LanID]
+           ([EmpID]
+           ,[StartDate]
+           ,[EndDate]
+           ,[LanID]
+           ,[DatetimeInserted]
+           ,[DatetimeLastUpdated])
+     VALUES
+           ('W300207',20170103,20170302,'Jordan.Thorpe','2017-01-03 17:04:58.287','2017-03-02 17:04:57.010')
+        
+GO
+
+
+
+--***************************
+
+--4A. [EC].[Coaching_Log]
+
+/*
+SELECT * FROM [EC].[Coaching_Log]
+WHERE EmpID = '300207'
+AND EmpLanID = 'Jordan.Thorpe'
+AND FormName LIKE 'eCL-dagon.schrott%'
+AND SiteID = 10
+ORDER BY SubmittedDate 
+GO
+
+
+*/
+-- 175 records
+
+Update[EC].[Coaching_Log] 
+set EmpLanID = 'dagon.schrott'
+WHERE EmpID = '300207'
+AND EmpLanID = 'Jordan.Thorpe'
+AND FormName LIKE 'eCL-dagon.schrott%'
+AND SiteID = 10
+
+--***************************
+
+--5B.[EC].[Coaching_Log]
+
+SELECT * FROM [EC].[Coaching_Log]
+WHERE EmpID = '300207'
+AND EmpLanID = 'Jordan.Thorpe'
+AND FormName LIKE '%Jordan.Thorpe%'
+and SiteID = 16
+ORDER BY SubmittedDate 
+GO
+
+
+
+UPDATE [EC].[Coaching_Log] 
+SET EmpID = 'W300207'
+WHERE EmpID = '300207'
+AND EmpLanID = 'Jordan.Thorpe'
+AND FormName LIKE '%Jordan.Thorpe%'
+AND SiteID = 16
+
+--***************************
