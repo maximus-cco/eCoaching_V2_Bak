@@ -1,9 +1,9 @@
 /*
-sp_Update_ETS_Coaching_Stage(01).sql
-Last Modified Date: 1/18/2017
+sp_Update_ETS_Coaching_Stage(02).sql
+Last Modified Date: 3/22/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -29,6 +29,7 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 10/30/2014
@@ -38,10 +39,10 @@ GO
 -- Inserts non CSR and supervisor records into Rejected table
 -- Deletes rejected records.
 -- Sets the detailed Description value by concatenating other attributes.
--- Last Modified Date - 01/05/2015
+-- Revision History
 -- Last Modified By - Susmitha Palacherla
--- Modified per scr 14031 to incorporate the compliance reports.
-
+-- Modified per scr 14031 to incorporate the compliance reports - 01/05/2015
+-- Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_ETS_Coaching_Stage] 
 @Count INT OUTPUT
@@ -52,7 +53,9 @@ BEGIN
 
 BEGIN
 UPDATE [EC].[ETS_Coaching_Stage]
-SET [Emp_ID]= [EC].[RemoveAlphaCharacters]([Emp_ID])  
+SET [Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Emp_ID])),' ',''))
+WHERE [Emp_ID] NOT IN
+ (SELECT DISTINCT [Emp_ID]FROM [EC].[Employee_Ids_With_Prefixes])
 OPTION (MAXDOP 1)
 END  
     
@@ -139,5 +142,7 @@ END  -- [EC].[sp_Update_ETS_Coaching_Stage]
 
 
 
+
 GO
+
 

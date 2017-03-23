@@ -1,9 +1,9 @@
 /*
-sp_Update_Employee_Hierarchy_Stage(01).sql
-Last Modified Date: 1/18/2017
+sp_Update_Employee_Hierarchy_Stage(02).sql
+Last Modified Date: 3/22/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -30,24 +30,40 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/2/2013
 -- Description:	Performs the following actions.
 -- Deletes records with missing Employee IDs
--- Removes Alpha characters from first 2 positions of Emp_ID, Sup_EMP_ID, Mgr_Emp_ID
--- Removes leading and Trailing spaces from emp and Sup Ids from eWFM and Employee Hierarchy staging tables.
+-- Removes Alpha characters from first 2 positions of Sup_EMP_ID, Mgr_Emp_ID
+-- and all leading and trainilin spaces from the IDs
+-- Removes # from LanID and Email address of inactive employees
+-- Inserts Employee Ids Reusing the numeric part of an existing Employee ID into a tracking table
+-- Removes Alpha characters from first 2 positions of all Emp_IDs 
+-- that do not need the prefix retained for uniqueness.
+-- Removes leading and Trailing spaces from emp and Sup Ids from eWFM staging table.
 -- Updates CSR Sup ID values with the SUP from WFM
 -- Deletes records with Missing SUP IDs
 -- Populates Supervisor attributes
 -- Populates Manager attributes
--- Last update: 09/03/2015
+--Revision History:
 -- Updated per TFS 641 to trim leading and trailing spaces in Employee and Supervisor Ids 
--- from eWFM and PeopleSoft before using in Employee Hierarchy table.
+-- from eWFM and PeopleSoft before using in Employee Hierarchy table - 09/03/2015
+-- Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage] 
 AS
 BEGIN
+
+DECLARE @RetryCounter INT
+SET @RetryCounter = 1
+
+RETRY: -- Label RETRY
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
 
 -- Delete records where Employee ID is a missing or a blank.
 BEGIN
@@ -58,20 +74,59 @@ END
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
 
--- Removes Alpha characters from first 2 positions of Emp_ID, Sup_EMP_ID, Mgr_Emp_ID
+-- Removes Alpha characters from first 2 positions of Sup_EMP_ID, Mgr_Emp_ID
 -- and removes all leading and trailing spaces.
+-- Removes # from LanID and Email address of inactive employees
 BEGIN
 UPDATE [EC].[Employee_Hierarchy_Stage]
-SET [Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Emp_ID])),' ','')),
-    [Sup_EMP_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Sup_EMP_ID])),' ','')),
+SET [Sup_EMP_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Sup_EMP_ID])),' ','')),
     [Mgr_Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Mgr_Emp_ID])),' ','')),
     [Emp_LanID]= REPLACE([Emp_LanID], '#',''),
     [Emp_Email]= REPLACE([Emp_Email], '#','')
+ 
 OPTION (MAXDOP 1)
 END  
  WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
+ -- Inserts Employee Ids sharing the numeric part of an existing Employee IDs
+ -- into a tracking table
 
+BEGIN
+INSERT INTO [EC].[Employee_Ids_With_Prefixes]
+	([Emp_ID],[Emp_Name],[Emp_LanID],[Start_Date],[Inserted_Date])
+	SELECT S.[Emp_ID],
+	S.[Emp_Name],
+	S.[Emp_LanID],
+	S.[Start_Date],
+	GETDATE()[Inserted_Date]
+  FROM (SELECT HS.[Emp_ID], HS.[Emp_Name],HS.[Emp_LanID],HS.[Start_Date]
+  FROM [EC].[Employee_Hierarchy_Stage]HS LEFT OUTER JOIN[EC].[Employee_Hierarchy]H
+  ON [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(HS.[Emp_ID])),' ',''))= H.[Emp_ID]
+  WHERE REPLACE(HS.[Emp_LanID], '#','') <> H.Emp_LanID
+  AND REPLACE(HS.[Emp_Name],'''', '') <> H.Emp_Name
+  AND CONVERT(nvarchar(8),HS.[Start_Date],112)<> H.Start_Date
+  AND HS.[Emp_ID] NOT IN (SELECT DISTINCT EMPID FROM [EC].[EmployeeID_To_LanID]))S
+  LEFT OUTER JOIN [EC].[Employee_Ids_With_Prefixes]PE
+  ON S.Emp_ID = PE.Emp_ID
+  WHERE PE.Emp_ID IS NULL
+ 
+OPTION (MAXDOP 1)
+END 
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+-- Removes Alpha characters from first 2 positions of Emp_ID
+-- and removes all leading and trailing spaces for those Employees
+-- that do not need the prefix retained for uniqueness.
+
+BEGIN
+UPDATE [EC].[Employee_Hierarchy_Stage]
+SET [Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Emp_ID])),' ',''))
+WHERE [Emp_ID] NOT IN
+ (SELECT DISTINCT [Emp_ID]FROM [EC].[Employee_Ids_With_Prefixes])
+ 
+OPTION (MAXDOP 1)
+END  
+ WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
 -- Remove leading and trailing spaces from Emp and Sup Ids from EWFM.
 BEGIN
@@ -80,6 +135,7 @@ SET [Emp_ID]= REPLACE(LTRIM(RTRIM([Emp_ID])),' ',''),
    [Sup_ID]= REPLACE(LTRIM(RTRIM([Sup_ID])),' ','')
 END
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
 
 
     
@@ -96,6 +152,7 @@ WHERE INFO.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
 OPTION (MAXDOP 1)
 END
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
 
 
 -- Update Mgr_Emp_ID to be Supervisor's supervisor
@@ -116,6 +173,7 @@ OPTION (MAXDOP 1)
 END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
 
 
 
@@ -147,9 +205,60 @@ BEGIN
 OPTION (MAXDOP 1)
 END
 
+COMMIT TRANSACTION
+END TRY
+      
+      BEGIN CATCH
+	--PRINT 'Rollback Transaction'
+	ROLLBACK TRANSACTION
+	DECLARE @DoRetry bit; -- Whether to Retry transaction or not
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+    
+     SET @doRetry = 0;
+     SELECT @ErrorMessage = ERROR_MESSAGE(),
+            @ErrorSeverity = ERROR_SEVERITY(),
+            @ErrorState = ERROR_STATE()
+    
+    
+    IF ERROR_NUMBER() = 1205 -- Deadlock Error Number
+	BEGIN
+		SET @doRetry = 1; -- Set @doRetry to 1 only for Deadlock
+	END
+	IF @DoRetry = 1
+	BEGIN
+		SET @RetryCounter = @RetryCounter + 1 -- Increment Retry Counter By one
+		IF (@RetryCounter > 3) -- Check whether Retry Counter reached to 3
+		BEGIN
+			RAISERROR(@ErrorMessage, 18, 1) -- Raise Error Message if 
+				-- still deadlock occurred after three retries
+		END
+		ELSE
+		BEGIN
+			WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+			GOTO RETRY	-- Go to Label RETRY
+		END
+	END
+	ELSE
+	BEGIN
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+   END
+  END CATCH  
+
 END  -- [EC].[sp_Update_Employee_Hierarchy_Stage]
 
 
-
 GO
+
 
