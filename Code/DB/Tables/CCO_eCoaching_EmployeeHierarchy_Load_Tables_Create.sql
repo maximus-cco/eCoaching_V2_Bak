@@ -1,9 +1,10 @@
 /*
-File: eCoaching_EmployeeHierarchy_Load_Tables_Create(01).sql 
-Last Modified Date: 1/18/2017
+File: eCoaching_EmployeeHierarchy_Load_Tables_Create(02).sql 
+Last Modified Date: 3/22/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
+Added table 8. [EC].[Employee_Ids_With_Prefixes]
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -22,7 +23,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 5. [EC].[CSR_Hierarchy]
 6. [EC].[HR_Hierarchy_Stage]
 7. [EC].[HR_Access]-- Obsolete
- 
+8. [EC].[Employee_Ids_With_Prefixes]
 
 **************************************************************
 
@@ -352,3 +353,22 @@ GO
 --******************************************************
 
 
+--8. Create table [EC].[Employee_Ids_With_Prefixes]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Employee_Ids_With_Prefixes](
+	[Emp_ID] [nvarchar](10) NOT NULL,
+	[Emp_Name] [nvarchar](70) NULL,
+	[Emp_LanID] [nvarchar](30) NULL,
+	[Start_Date] [datetime] NULL,
+        [Inserted_Date][datetime] NULL
+	) ON [PRIMARY]
+
+GO
+
+--******************************************************
