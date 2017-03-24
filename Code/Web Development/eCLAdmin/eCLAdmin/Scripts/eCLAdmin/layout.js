@@ -30,10 +30,10 @@
           error: function (xhr, status, errorMsg) {
               hideSpinner();
               if (xhr.status === 403) {
-                  window.location = "Home/SessionExpire";
+                  window.location = sessionExpiredUrl;
               }
               else {
-                  alert("An error has occurred during ajax call.");
+                  alert("An error has occurred.");
               }
           }
       });
@@ -62,9 +62,9 @@ function resetReviewerDropdown() {
 function handleAjaxError(xhr, status, error)
 {
     if (xhr.status === 403) {
-        window.location = "Home/SessionExpire";
+        window.location = sessionExpiredUrl;
     }
     else {
-        window.location = "Error/Index";
+        window.location = errorUrl;
     }
 }
