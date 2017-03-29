@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>eCoaching</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@intModulein">
+          <DefaultValue>-1</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>SELECT CoachingReasonID, CoachingReason
+FROM     (SELECT - 1 AS CoachingReasonID, 'All' AS CoachingReason
+                  UNION
+                  SELECT DISTINCT wlr.CoachingReasonID, dcr.CoachingReason
+                  FROM     EC.warning_log AS wl INNER JOIN
+                                    EC.warning_log_Reason AS wlr ON wl.WarningID = wlr.WarningID INNER JOIN
+                                    EC.DIM_Coaching_Reason AS dcr ON wlr.CoachingReasonID = dcr.CoachingReasonID
+                 WHERE  (wl.ModuleID =(@intModulein) or @intModulein = -1) ) AS s
+ORDER BY CASE WHEN CoachingReasonID = - 1 THEN 0 ELSE 1 END, CoachingReason</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="CoachingReasonID">
+        <DataField>CoachingReasonID</DataField>
+        <rd:TypeName>System.Int64</rd:TypeName>
+      </Field>
+      <Field Name="CoachingReason">
+        <DataField>CoachingReason</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

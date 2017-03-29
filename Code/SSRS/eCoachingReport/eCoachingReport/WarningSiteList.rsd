@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>eCoaching</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@intModulein">
+          <DefaultValue>-1</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>SELECT SiteID, Site
+FROM  (
+SELECT -1 AS SiteID, 'All' AS Site
+UNION
+SELECT DISTINCT wl.SiteID, cs.City AS Site
+FROM     EC.Warning_Log AS wl INNER JOIN EC.DIM_Site cs
+ON wl.SiteID = cs.SiteID
+WHERE  (wl.ModuleID =(@intModulein) or @intModulein = -1)
+and cs.City &lt;&gt; 'Unknown'
+)AS S
+ORDER BY CASE WHEN SiteID = - 1 THEN 0 ELSE 1 END, Site</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="SiteID">
+        <DataField>SiteID</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="Site">
+        <DataField>Site</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>
