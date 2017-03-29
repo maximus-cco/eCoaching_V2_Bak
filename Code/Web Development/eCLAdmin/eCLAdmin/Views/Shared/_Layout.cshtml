@@ -79,6 +79,10 @@
                                 {
                                     <li>@Html.ActionLink("Coaching Log Summary", "RunCoachingSummary", "Report")</li>
                                 }
+                                @if (ViewContext.Controller.IsEntitled("Report-RunWarningSummary"))
+                                {
+                                    <li>@Html.ActionLink("Warning Log Summary", "RunWarningSummary", "Report")</li>
+                                }
                             </ul>
                         </li>
                     }

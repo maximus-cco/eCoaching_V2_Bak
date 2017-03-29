@@ -53,6 +53,8 @@ namespace eCLAdmin
 
         public const string COACHING_SUMMARY_REPORT_NAME = "CoachingSummary";
         public const string COACHING_SUMMARY_REPORT_DESCRIPTION = "Coaching Log Summary";
+        public const string WARNING_SUMMARY_REPORT_NAME = "WarningSummary";
+        public const string WARNING_SUMMARY_REPORT_DESCRIPTION = "Warning Log Summary";
     }
 
     public enum EmployeeLogType

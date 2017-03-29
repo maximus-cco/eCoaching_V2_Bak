@@ -21,37 +21,34 @@ namespace eCLAdmin.Controllers
         {
             return View(Constants.REPORT_TEMPLATE, 
                             GetReportInfo(Constants.COACHING_SUMMARY_REPORT_NAME,
-                                                            Constants.COACHING_SUMMARY_REPORT_DESCRIPTION,
-                                                            Constants.REPORT_WIDTH,
-                                                            Constants.REPORT_HEIGHT));
+                                Constants.COACHING_SUMMARY_REPORT_DESCRIPTION,
+                                Constants.REPORT_WIDTH,
+                                Constants.REPORT_HEIGHT));
+        }
+
+        [EclAuthorize]
+        public ActionResult RunWarningSummary()
+        {
+            return View(Constants.REPORT_TEMPLATE,
+                            GetReportInfo(Constants.WARNING_SUMMARY_REPORT_NAME,
+                                Constants.WARNING_SUMMARY_REPORT_DESCRIPTION,
+                                Constants.REPORT_WIDTH,
+                                Constants.REPORT_HEIGHT));
         }
 
         private ReportInfo GetReportInfo(string reportName, string reportDescription, int width, int height)
         {
-            //Server.MapPath("~/Content/Images/ecl-logo-small.png");
+            logger.Debug("Inside GetReportInfo");
 
-            logger.Debug("%%%%%%%%%%%%%%%%%inside GetReportInfo");
-
-            string reportAspxPath = "~/Reports/ReportTemplate.aspx";// Server.MapPath("~/Reports/ReportTemplate.aspx");
-
-            logger.Debug("!!!!!=" + reportAspxPath);
-
+            Session["LanId"] = GetUserFromSession().LanId;
             var rptInfo = new ReportInfo
             {
                 ReportName = reportName,
                 ReportDescription = reportDescription,
-                
-                ReportURL = String.Format(reportAspxPath + "?ReportName={0}&Height={1}", reportName, height),
-
-
+                ReportURL = String.Format("~/Reports/ReportTemplate.aspx" + "?ReportName={0}&Height={1}", reportName, height),
                 Width = width,
                 Height = height
             };
-
-            logger.Debug("!!!!!URL=" + rptInfo.ReportURL);
-            logger.Debug("%%%%%%%%%%%%%%%%%leaving report controller");
-
-            Session["LanId"] = GetUserFromSession().LanId;
 
             return rptInfo;
         }
