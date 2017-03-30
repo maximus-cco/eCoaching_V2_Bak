@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>eCoaching</DataSourceReference>
+      <CommandText>Select s.Emp_ID, s.Emp_Name
+FROM (Select '-1' as Emp_ID, 'All' as Emp_Name
+UNION
+SELECT DISTINCT eh.Emp_ID EmpID, EH.[Emp_Name] EmpName 
+FROM    EC.Employee_Hierarchy eh)AS s
+ORDER BY CASE WHEN Emp_ID = '-1' THEN 0 ELSE 1 END, Emp_Name</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="Emp_ID">
+        <DataField>Emp_ID</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Emp_Name">
+        <DataField>Emp_Name</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>
