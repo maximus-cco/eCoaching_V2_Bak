@@ -1,9 +1,9 @@
 /*
-sp_rptModulesByRole(01).sql
-Last Modified Date: 03/16/2017
+sp_rptModulesByRole(02).sql
+Last Modified Date: 03/23/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Additional Update. TFS 5621. Updated parameter name for lanID - 03/23/2017
 
 Version 01: Document Initial Revision - Lili -  TFS 5621 - 03/09/2017
 
@@ -26,6 +26,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/14/2017
@@ -34,10 +39,11 @@ GO
 --  Last Modified By:
 --  Revision History:
 --  Initial Revision - TFS 5621 - 03/14/2017
+--  Updated parameter to @LanID - TFS 5621 - 03/23/2017
  *******************************************************************************/
 CREATE PROCEDURE [EC].[sp_rptModulesByRole] 
 (
-@nvcEmpLanIDin nvarchar(30)= null,
+@LanID nvarchar(30)= null,
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
    @returnCode int OUTPUT,
@@ -68,20 +74,21 @@ DECLARE
 	@nvcEmpID nvarchar(10),
 	@intRoleID nvarchar(30),
 	@dtmDate datetime
-	
-IF @nvcEmpLanIDin = '211palasu'
+
+IF @LanID = '211palasu'
 BEGIN
-SET @nvcEmpLanIDin = 'susmitha.palacherla'
-END
+SET @LanID = 'susmitha.palacherla'
+END	
 
 SET @dtmDate  = GETDATE()  
-SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@LanID,@dtmDate)
 
 
- SELECT DISTINCT ModuleID, CASE WHEN [ModuleID] = - 1 THEN 'All' ELSE [Module] END AS Module
+ SELECT DISTINCT ModuleID, CASE WHEN [ModuleID] = -1 THEN 'All' ELSE [Module] END AS Module
                FROM [EC].[DIM_Module]
                WHERE [ModuleId] IN (
-               
+   -- To display the 'All' option for SysAdmins only
+                
        SELECT  DISTINCT -1 as [ModuleID] 
                      FROM [EC].[AT_Role_Module_Link]
 		             WHERE [RoleId] IN (
@@ -92,6 +99,9 @@ SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
 		                     WHERE u.UserID = @nvcEmpID
 		                     AND R.IsSysAdmin=1)
 UNION        
+
+-- To display the individual Module list for Role code
+
 					 SELECT DISTINCT([ModuleID]) 
                      FROM [EC].[AT_Role_Module_Link]
 		             WHERE [RoleId] IN (
@@ -126,9 +136,11 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
+
+
+
+
+
 GO
-
-
-
 
 
