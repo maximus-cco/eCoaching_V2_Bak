@@ -1,0 +1,248 @@
+/* 
+
+TFS 5420 - Infrastructure for Report access control
+
+Run one statement at a time
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+
+
+
+
+--**************************************
+--1.
+
+INSERT INTO [EC].[AT_User]
+            ([UserId],
+            [UserLanID],
+			[UserName],
+			[EmpJobCode],
+			[Active])        
+VALUES
+('345712','susmitha.palacherla', 'Palacherla, Susmitha','WISO13',1),
+('379750','lisa.stein', 'Stein, Lisa D','WSTE12',1)          
+GO
+
+--**************************************
+--2.
+
+ALTER TABLE [EC].[AT_Role]
+ALTER COLUMN [RoleDescription] [NVARCHAR](40)not null
+GO
+
+
+INSERT INTO [EC].[AT_Role]
+            ([RoleDescription],
+			[IsSysAdmin])        
+VALUES
+('ReportCoachingAdmin',1),--106
+('ReportWarningAdmin',1),
+('ReportCoachingCSRUser',0),
+('ReportWarningCSRUser',0),
+('ReportCoachingSupUser',0),
+('ReportWarningSupUser',0),
+('ReportCoachingQualUser',0),
+('ReportWarningQualUser',0),
+('ReportCoachingLSAUser',0),
+('ReportWarningLSAUser',0),
+('ReportCoachingTrainUser',0),
+('ReportWarningTrainUser',0)
+GO
+
+--**************************************
+--3.
+
+INSERT INTO [EC].[AT_User_Role_Link]
+            ([UserId] ,
+			[RoleId])  
+VALUES
+
+
+(345712,106),
+(345712,107),
+(380017,106),
+(380017,107),
+(379750,106),
+(379750,107),
+(343549,106),
+(343549,107),
+(408246,106),
+(408246,107),
+(365226,106),
+(365226,107),
+(500306,106),
+(500306,107)
+
+
+
+--**************************************
+
+--4.
+
+INSERT INTO [EC].[AT_Entitlement]
+            ([EntitlementDescription])
+		     
+VALUES
+('Reports'),
+('Report-RunCoachingSummary'),
+('Report-RunWarningSummary'),
+('Report-RunHierarchySummary'),
+('Report-RunAdminActivitySummary')
+
+
+--**************************************
+
+--5.
+
+INSERT INTO [EC].[AT_Role_Entitlement_Link]
+(RoleId,EntitlementId)
+VALUES
+(106,209),
+(106,210),
+(106,212),
+(106,213),
+(107,209),
+(107,211),
+(108,209),
+(108,210),
+(109,209),
+(109,211),
+(110,209),
+(110,210),
+(111,209),
+(111,211),
+(112,209),
+(112,210),
+(113,209),
+(113,211),
+(114,209),
+(114,210),
+(115,209),
+(115,211),
+(116,209),
+(116,210),
+(117,209),
+(117,211)
+
+--**************************************
+
+
+--6.
+
+--[EC].[AT_Role_Module_Link]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[AT_Role_Module_Link](
+	[RoleId] [int]NOT NULL,
+	[ModuleId] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC,
+	[ModuleId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [EC].[AT_Role_Module_Link]  WITH NOCHECK ADD  CONSTRAINT [fkRMLRoleId] FOREIGN KEY([RoleId])
+REFERENCES [EC].[AT_Role] ([RoleId])
+GO
+
+ALTER TABLE [EC].[AT_Role_Module_Link] CHECK CONSTRAINT [fkRMLRoleId]
+GO
+
+ALTER TABLE [EC].[AT_Role_Module_Link]  WITH NOCHECK ADD  CONSTRAINT [fkRMLModuleId] FOREIGN KEY([ModuleId])
+REFERENCES [EC].[DIM_Module] ([ModuleId])
+GO
+
+ALTER TABLE [EC].[AT_Role_Module_Link] CHECK CONSTRAINT [fkRMLModuleId]
+GO
+
+
+
+
+
+--**************************************
+
+--7.
+
+INSERT INTO [EC].[AT_Role_Module_Link]
+           ([RoleId]
+           ,[ModuleId])
+     VALUES
+        	(106, 1), 
+		(106, 2), 
+		(106, 3), 
+		(106, 4), 
+		(106, 5), 
+		(107, 1), 
+		(107, 2), 
+		(107, 3), 
+		(107, 4), 
+		(107, 5), 
+		(108, 1), 
+		(109, 1), 
+		(110, 2), 
+		(111, 2), 
+		(112, 3), 
+		(113, 3), 
+		(114, 4), 
+		(115, 4), 
+		(116, 5), 
+		(117, 5)
+
+          
+GO
+
+
+--**************************************
+
+--8.
+
+
+INSERT INTO [eCoachingTest].[EC].[AT_Role_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[RoleId]
+           ,[RoleDescription]
+           ,[AddToUser]
+           ,[isActive])
+     VALUES
+           ('WISO12','Engineer, Software',106,'ReportCoachingAdmin',0,1),
+           ('WISO12','Engineer, Software',107,'ReportWarningAdmin',0,1),
+           ('WISO13','Sr Engineer, Software',106,'ReportCoachingAdmin',0,1),
+           ('WISO13','Sr Engineer, Software',107,'ReportWarningAdmin',0,1),
+           ('WSTE12','Engineer, Test',106,'ReportCoachingAdmin',0,1),
+           ('WSTE12','Engineer, Test',107,'ReportWarningAdmin',0,1),
+           ('WSTE13','Sr Engineer, Test',106,'ReportCoachingAdmin',0,1),
+           ('WSTE13','Sr Engineer, Test',107,'ReportWarningAdmin',0,1),
+           ('WISY14','Principal Analyst, Systems',106,'ReportCoachingAdmin',0,1),
+           ('WISY14','Principal Analyst, Systems',107,'ReportWarningAdmin',0,1),
+           ('WACQ13','Sr Specialist, Quality (CS)',106,'ReportCoachingAdmin',0,1),  
+           ('WACQ13','Sr Specialist, Quality (CS)',107,'ReportWarningAdmin',0,1)                      
+      
+GO
+
+
+--**************************************
+
+
+
+
+--**************************************
+
+
+
+--**************************************
+
+
