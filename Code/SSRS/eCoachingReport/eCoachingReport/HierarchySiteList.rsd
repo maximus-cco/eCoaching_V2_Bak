@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSet Name="DataSet1">
+    <Query>
+      <DataSourceReference>eCoaching</DataSourceReference>
+      <CommandText>SELECT  Site
+FROM  (
+SELECT 'All' AS Site
+UNION
+SELECT DISTINCT Emp_Site AS Site
+FROM     EC.Employee_Hierarchy eh  join EC.DIM_Site ds
+ON eh.Emp_Site = ds.city
+WHERE Emp_Site &lt;&gt; 'Unknown'
+UNION
+SELECT DISTINCT 'Other' AS Site
+FROM     EC.Employee_Hierarchy 
+WHERE Emp_Site = 'Other'
+)AS S
+ORDER BY CASE 
+WHEN Site = 'All' THEN 0
+WHEN Site = 'OTHER' THEN 2
+ELSE 1 END, Site</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="Site">
+        <DataField>Site</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>
