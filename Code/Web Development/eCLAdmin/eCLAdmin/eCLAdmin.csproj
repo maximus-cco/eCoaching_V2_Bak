@@ -264,6 +264,7 @@
     <Content Include="Scripts\dataTables.bootstrap.js" />
     <Content Include="Scripts\eCLAdmin\logSearchForDelete.js" />
     <Content Include="Scripts\eCLAdmin\logSearchForInactivate.js" />
+    <Content Include="Scripts\eCLAdmin\report.js" />
     <Content Include="Scripts\jquery-2.2.0.js" />
     <Content Include="Scripts\jquery.dataTables.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
