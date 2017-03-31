@@ -1,9 +1,9 @@
 /*
-sp_rptHierarchySummary(01).sql
-Last Modified Date: 03/29/2017
+sp_rptHierarchySummary(02).sql
+Last Modified Date: 03/31/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Added Site filter - TFS 5621 - 03/31/2017
 
 Version 01: Document Initial Revision - Suzy Palacherla -  TFS 5621 - 03/29/2017
 
@@ -18,7 +18,6 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_rptHierarchySummary]
 GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -28,18 +27,21 @@ GO
 
 
 
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2017
---	Description: Displays the hierarchy for a given employee.
+--	Description: Displays the hierarchy for a given employee at a give site.
 --  Last Modified: 
 --  Last Modified By:
 --  Revision History:
---  Initial Revision - TFS 5621 - 03/27/2017
+--  Initial Revision - TFS 5621 - 03/31/2017
+
  *******************************************************************************/
 CREATE PROCEDURE [EC].[sp_rptHierarchySummary] 
 (
-@strEmpin nvarchar(10)= '-1',
+@strEmpSitein nvarchar(20),
+@strEmpin nvarchar(10),
 
 
  ------------------------------------------------------------------------------------
@@ -94,6 +96,7 @@ SET NOCOUNT ON
 		      ,eh.Active AS [Status]
         FROM [EC].[Employee_Hierarchy] eh 
 		WHERE ([eh].[Emp_ID]= (@strEmpin)or @strEmpin = '-1')
+		       AND ([eh].[Emp_Site] = (@strEmpSitein)or @strEmpSitein = 'All')
         ORDER BY eh.Emp_Name
 
 	    
@@ -123,6 +126,10 @@ RETURN @returnCode
 -------------------------------------------------------------------------------------
 
 
+
 GO
+
+
+
 
 
