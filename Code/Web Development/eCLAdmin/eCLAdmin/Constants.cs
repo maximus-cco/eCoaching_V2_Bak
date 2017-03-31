@@ -47,14 +47,16 @@ namespace eCLAdmin
         public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
         public const string SITE_EMAIL_SUBJECT = "Dashboard and Manage Employee Logs";
 
+        // Reports
         public const int REPORT_WIDTH = 100;
         public const int REPORT_HEIGHT = 650;
         public const string REPORT_TEMPLATE = "ReportTemplate";
-
         public const string COACHING_SUMMARY_REPORT_NAME = "CoachingSummary";
         public const string COACHING_SUMMARY_REPORT_DESCRIPTION = "Coaching Log Summary";
         public const string WARNING_SUMMARY_REPORT_NAME = "WarningSummary";
         public const string WARNING_SUMMARY_REPORT_DESCRIPTION = "Warning Log Summary";
+        public const string HIERARCHY_SUMMARY_REPORT_NAME = "HierarchySummary";
+        public const string HIERARCHY_SUMMARY_REPORT_DESCRIPTION = "Hierarchy Summary";
     }
 
     public enum EmployeeLogType

@@ -13,18 +13,20 @@ namespace eCLAdmin.Reports
         protected void Page_Load(object sender, EventArgs e)
         {
             logger.Debug("@@@@@@@@@@@@@@@@@@@@@@@@Inside Page_Load");
+            string reportName = String.Empty;
 
             if (!IsPostBack)
             {
                 try
                 {
-                    String reportFolder = System.Configuration.ConfigurationManager.AppSettings["SSRSReportsFolder"].ToString();
+                    string reportFolder = System.Configuration.ConfigurationManager.AppSettings["SSRSReportsFolder"].ToString();
+                    reportName = Request["ReportName"].ToString();
 
                     rvSiteMapping.Height = Unit.Pixel(Convert.ToInt32(Request["Height"]) - 58);
                     rvSiteMapping.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Remote;
 
                     rvSiteMapping.ServerReport.ReportServerUrl = new Uri(System.Configuration.ConfigurationManager.AppSettings["ECL.Properties.Reports.BaseSsrsUrl"]);
-                    rvSiteMapping.ServerReport.ReportPath = String.Format("/{0}/Reports/{1}", reportFolder, Request["ReportName"].ToString());
+                    rvSiteMapping.ServerReport.ReportPath = String.Format("/{0}/Reports/{1}", reportFolder, reportName);
 
                     logger.Debug("URL=" + rvSiteMapping.ServerReport.ReportServerUrl);
                     logger.Debug("Path=" + rvSiteMapping.ServerReport.ReportPath);
@@ -37,7 +39,7 @@ namespace eCLAdmin.Reports
                 }
                 catch (Exception ex)
                 {
-                    logger.Debug("##############" + ex.StackTrace);
+                    logger.Debug("##############Exception when trying to render report:" + reportName + ex.StackTrace);
                 }
             }
 

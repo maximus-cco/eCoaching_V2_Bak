@@ -36,6 +36,16 @@ namespace eCLAdmin.Controllers
                                 Constants.REPORT_HEIGHT));
         }
 
+        [EclAuthorize]
+        public ActionResult RunHierarchySummary()
+        {
+            return View(Constants.REPORT_TEMPLATE,
+                            GetReportInfo(Constants.HIERARCHY_SUMMARY_REPORT_NAME,
+                                Constants.HIERARCHY_SUMMARY_REPORT_DESCRIPTION,
+                                Constants.REPORT_WIDTH,
+                                Constants.REPORT_HEIGHT));
+        }
+
         private ReportInfo GetReportInfo(string reportName, string reportDescription, int width, int height)
         {
             logger.Debug("Inside GetReportInfo");

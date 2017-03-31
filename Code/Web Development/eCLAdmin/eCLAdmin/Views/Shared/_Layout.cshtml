@@ -83,6 +83,11 @@
                                 {
                                     <li>@Html.ActionLink("Warning Log Summary", "RunWarningSummary", "Report")</li>
                                 }
+                                @if (ViewContext.Controller.IsEntitled("Report-RunHierarchySummary"))
+                                {
+                                    <li role="presentation" class="divider"></li>
+                                    <li>@Html.ActionLink("Hierarchy Summary", "RunHierarchySummary", "Report")</li>
+                                }
                             </ul>
                         </li>
                     }
