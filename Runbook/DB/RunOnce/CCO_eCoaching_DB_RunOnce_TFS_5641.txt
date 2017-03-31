@@ -1,0 +1,72 @@
+/* 
+
+TFS 5641 - Delete log to admin tool
+
+Run one statement at a time
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+
+
+--1.
+
+INSERT INTO [EC].[AT_Role]
+            ([RoleDescription],
+			[IsSysAdmin])        
+VALUES
+('SuperUser',1)--118
+
+GO
+
+
+--*********************
+
+--2.
+
+INSERT INTO [EC].[AT_User_Role_Link]
+            ([UserId] ,
+			[RoleId])  
+VALUES
+(500306,118)
+
+GO
+
+--*********************
+
+--3.
+
+INSERT INTO [EC].[AT_Entitlement]
+            ([EntitlementDescription])
+		     
+VALUES
+('EmployeeLog-SearchForDelete')
+
+
+--*********************
+--4.
+
+INSERT INTO [EC].[AT_Role_Entitlement_Link]
+(RoleId,EntitlementId)
+VALUES
+(118,214)
+
+
+
+--******************************
+
+
+--5.get below file and run in ssms with nothing selected.
+-- Update sp [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]
+
+
+\eCoaching_V2\Code\DB\Stored Procedures\sp_SelectReviewFrom_Coaching_Log_For_Delete.sql
+
+
+
+
+
+--*********************
