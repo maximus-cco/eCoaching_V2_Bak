@@ -29,6 +29,10 @@
       <FullPath>CoachingSubReasonList.rsd</FullPath>
     </ProjectItem>
     <ProjectItem>
+      <Name>HierarchyEmployeeList.rsd</Name>
+      <FullPath>HierarchyEmployeeList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
       <Name>ModuleList.rsd</Name>
       <FullPath>ModuleList.rsd</FullPath>
     </ProjectItem>
@@ -57,8 +61,8 @@
       <FullPath>WarningSubReasonList.rsd</FullPath>
     </ProjectItem>
     <ProjectItem>
-      <Name>HierarchyEmployeeList.rsd</Name>
-      <FullPath>HierarchyEmployeeList.rsd</FullPath>
+      <Name>HierarchySiteList.rsd</Name>
+      <FullPath>HierarchySiteList.rsd</FullPath>
     </ProjectItem>
   </DataSets>
   <Reports>
@@ -67,12 +71,12 @@
       <FullPath>CoachingSummary.rdl</FullPath>
     </ProjectItem>
     <ProjectItem>
-      <Name>WarningSummary.rdl</Name>
-      <FullPath>WarningSummary.rdl</FullPath>
-    </ProjectItem>
-    <ProjectItem>
       <Name>HierarchySummary.rdl</Name>
       <FullPath>HierarchySummary.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>WarningSummary.rdl</Name>
+      <FullPath>WarningSummary.rdl</FullPath>
     </ProjectItem>
   </Reports>
   <Configurations>

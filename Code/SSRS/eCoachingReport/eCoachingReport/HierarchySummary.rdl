@@ -14,6 +14,9 @@
       <Query>
         <DataSourceName>eCoaching</DataSourceName>
         <QueryParameters>
+          <QueryParameter Name="@strEmpSitein">
+            <Value>=Parameters!strEmpSitein.Value</Value>
+          </QueryParameter>
           <QueryParameter Name="@strEmpin">
             <Value>=Parameters!strEmpin.Value</Value>
           </QueryParameter>
@@ -106,6 +109,11 @@
     <DataSet Name="HierarchyEmployeeRef">
       <SharedDataSet>
         <SharedDataSetReference>HierarchyEmployeeList</SharedDataSetReference>
+        <QueryParameters>
+          <QueryParameter Name="@strEmpSitein">
+            <Value>=Parameters!strEmpSitein.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
       </SharedDataSet>
       <Fields>
         <Field Name="Emp_ID">
@@ -114,6 +122,17 @@
         </Field>
         <Field Name="Emp_Name">
           <DataField>Emp_Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="HierarchysiteRef">
+      <SharedDataSet>
+        <SharedDataSetReference>HierarchySiteList</SharedDataSetReference>
+      </SharedDataSet>
+      <Fields>
+        <Field Name="Site">
+          <DataField>Site</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -2200,6 +2219,17 @@
     </ReportSection>
   </ReportSections>
   <ReportParameters>
+    <ReportParameter Name="strEmpSitein">
+      <DataType>String</DataType>
+      <Prompt>Employee site</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>HierarchysiteRef</DataSetName>
+          <ValueField>Site</ValueField>
+          <LabelField>Site</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
     <ReportParameter Name="strEmpin">
       <DataType>String</DataType>
       <Prompt>Employee</Prompt>
@@ -2215,11 +2245,16 @@
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>1</NumberOfColumns>
-      <NumberOfRows>1</NumberOfRows>
+      <NumberOfRows>2</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>0</RowIndex>
+          <ParameterName>strEmpSitein</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
           <ParameterName>strEmpin</ParameterName>
         </CellDefinition>
       </CellDefinitions>
