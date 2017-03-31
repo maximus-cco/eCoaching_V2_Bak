@@ -1,0 +1,152 @@
+--SQl used for Employee table issues
+
+/*
+Summary of Changes
+1.	DBA restored the backup from the 26th to a eCoaching_Restore
+2.	Manually imported data from restored DB into the following tables using Import task
+	Employee_Hierarchy
+	CSR_Hierarchy
+	EmployeeID_To_LanID
+3.	Updated Status ID in Coaching_Log table with StatusID from AT_Coaching_Inactivate_Reactivate_Audit where [ActionTimestamp] > '2017-03-26 00:00:00.000'
+4.	Made backup of AT_Coaching_Inactivate_Reactivate_Audit table  to AT_Coaching_Inactivate_Reactivate_Audit_03272017
+5.	Deleted From AT_Coaching_Inactivate_Reactivate_Audit where [ActionTimestamp] > '2017-03-26 00:00:00.000'
+6.	Reset Identity in AT_Coaching_Inactivate_Reactivate_Audit to 69897
+7.	Additionally copied data for tables AT_User and AT_User_Role_Link from Restored Database
+
+
+
+*/
+
+--1. Cleanup of Status in Coaching log table
+
+select cl.* from ec.Coaching_Log cl join EC.[AT_Coaching_Inactivate_Reactivate_Audit]audit
+on cl.CoachingID = audit.coachingid
+and cl.FormName = audit.formname
+where audit.[ActionTimestamp] >  '2017-03-26 00:00:24.380' 
+and cl.StatusID = 2
+
+select audit.* from ec.Coaching_Log cl join EC.[AT_Coaching_Inactivate_Reactivate_Audit]audit
+on cl.CoachingID = audit.coachingid
+and cl.FormName = audit.formname
+where audit.[ActionTimestamp] >  '2017-03-26 00:00:24.380' 
+and cl.StatusID = 2
+order by seqnum
+
+
+*
+update cl
+set statusid = audit.[LastKnownStatus]
+from ec.Coaching_Log cl join EC.[AT_Coaching_Inactivate_Reactivate_Audit]audit
+on cl.CoachingID = audit.coachingid
+and cl.FormName = audit.formname
+where audit.[ActionTimestamp] >  '2017-03-26 00:00:24.380' 
+and cl.StatusID = 2
+*/
+
+
+
+
+
+--2. Clean up of AT_Coaching_Inactivate_Reactivate_Audit table
+
+select * into [EC].[AT_Coaching_Inactivate_Reactivate_Audit_03272017]
+FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+
+/*
+delete  FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+where SeqNum > 69897
+
+
+
+
+DBCC CheckIdent("[EC].[AT_Coaching_Inactivate_Reactivate_Audit]", RESEED,69897)
+
+*/
+
+select MAX([SeqNum]) from [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+
+
+--3. Drop constraints and Add Constraints for AT_User and AT_User_Role_Link tables
+
+-- Drop constraints prior to data copy from restoreed DB
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[EC].[fkRoleId]') AND parent_object_id = OBJECT_ID(N'[EC].[AT_User_Role_Link]'))
+ALTER TABLE [EC].[AT_User_Role_Link] DROP CONSTRAINT [fkRoleId]
+GO
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[EC].[fkUserId]') AND parent_object_id = OBJECT_ID(N'[EC].[AT_User_Role_Link]'))
+ALTER TABLE [EC].[AT_User_Role_Link] DROP CONSTRAINT [fkUserId]
+GO
+
+-- Then after copying over from restored DB: 
+-- ADD constraints
+ALTER TABLE [EC].[AT_User_Role_Link]  WITH NOCHECK ADD  CONSTRAINT [fkRoleId] FOREIGN KEY([RoleId])
+REFERENCES [EC].[AT_Role] ([RoleId])
+GO
+
+ALTER TABLE [EC].[AT_User_Role_Link] CHECK CONSTRAINT [fkRoleId]
+GO
+
+ALTER TABLE [EC].[AT_User_Role_Link]  WITH NOCHECK ADD  CONSTRAINT [fkUserId] FOREIGN KEY([UserId])
+REFERENCES [EC].[AT_User] ([UserId])
+GO
+
+ALTER TABLE [EC].[AT_User_Role_Link] CHECK CONSTRAINT [fkUserId]
+GO
+
+--****************************
+
+--Post checks
+
+SELECT [Emp_ID]
+      ,[Emp_Name]
+      ,[Emp_Email]
+      ,[Emp_LanID]
+      ,[Emp_Site]
+      ,[Emp_Job_Code]
+      ,[Emp_Job_Description]
+      ,[Emp_Program]
+      ,[Sup_ID]
+      ,[Sup_Name]
+      ,[Sup_Email]
+      ,[Sup_LanID]
+      ,[Sup_Job_Code]
+      ,[Sup_Job_Description]
+      ,[Mgr_ID]
+      ,[Mgr_Name]
+      ,[Mgr_Email]
+      ,[Mgr_LanID]
+      ,[Mgr_Job_Code]
+      ,[Mgr_Job_Description]
+      ,[Start_Date]
+      ,[End_Date]
+      ,[Active]
+      ,[SrMgrLvl1_ID]
+      ,[SrMgrLvl2_ID]
+      ,[SrMgrLvl3_ID]
+  FROM [EC].[Employee_Hierarchy]
+    where Active = 'A'
+GO
+--11059 rows
+
+
+select MAX(end_date)
+FROM [EC].[Employee_Hierarchy]
+where End_Date <> 99991231
+
+--20170325
+
+
+select COUNT(*)
+from [eCoaching].[EC].[CSR_Hierarchy]
+
+--529124
+
+select COUNT(*)
+from [eCoaching].[EC].[Employee_Hierarchy]
+--63147
+
+select COUNT(*)
+from [eCoaching].[EC].[EmployeeID_To_LanID]
+
+--102167
