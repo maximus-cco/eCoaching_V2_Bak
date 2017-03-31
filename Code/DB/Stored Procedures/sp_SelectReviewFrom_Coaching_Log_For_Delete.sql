@@ -1,9 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log_For_Delete(01).sql
-Last Modified Date: 1/25/2017
+sp_SelectReviewFrom_Coaching_Log_For_Delete(02).sql
+Last Modified Date: 3/21/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to add IsCoaching to return. TFS 5641 - 03/21/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/25/2017
 
@@ -29,15 +29,21 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	06/08/2015
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
---  Initial Revision per SCR 14478.
+--  Revision History: 
+--  Initial Revision per SCR 14478- 06/08/2015
+-- Updated to add IsCoaching to return. TFS 5641 - 03/21/2017
 
 --	=====================================================================
 
-CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete] @strFormIDin nvarchar(50)
+CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete] 
+@strFormIDin nvarchar(50)
+
 AS
 
 BEGIN
@@ -49,13 +55,15 @@ DECLARE
 SET @intCoachID = (SELECT  [CoachingID] FROM  [EC].[Coaching_Log] WITH (NOLOCK)
 	 	WHERE [FormName] = @strFormIDin)
 	 	
-IF 	 @intCoachID IS NOT NULL
+IF 	 @intCoachID IS NOT NULL		
+
 
   SET @nvcSQL = 'SELECT  [CoachingID]CoachingID,
 			[FormName],
 			[EmpLanID],
 			[EmpID],
-			[SourceID]
+			[SourceID],
+			1[isCoaching]
 		FROM  [EC].[Coaching_Log] WITH (NOLOCK)
 	 	WHERE [FormName] = '''+@strFormIDin+''''
 	 
@@ -65,17 +73,15 @@ ELSE
 			[FormName],
 			[EmpLanID],
 			[EmpID],
-			[SourceID]
+			[SourceID],
+			0[isCoaching]
 		FROM  [EC].[Warning_Log] WITH (NOLOCK)
-	 	WHERE [FormName] = '''+@strFormIDin+''''
-	 		
+	 	WHERE [FormName] = '''+@strFormIDin+''''	 		
 
 EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log_For_Delete
-
-
 
 
 GO
