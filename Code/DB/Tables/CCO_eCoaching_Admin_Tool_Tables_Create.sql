@@ -1,9 +1,9 @@
 /*
-eCoaching_Admin_Tool_Tables_Create(01).sql
-Last Modified Date: 1/18/2017
+eCoaching_Admin_Tool_Tables_Create(02).sql
+Last Modified Date: 3/17/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Infrastructure for Reporting access  - TFS 5420 - 3/17/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -27,7 +27,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 11.[EC].[AT_Role_Access]
 12.[EC].[AT_Reassign_Status_For_Module]
 13.[EC].[IdsTableType]
-
+14.[EC].[AT_Role_Module_Link]
 
 
 
@@ -141,8 +141,9 @@ INSERT INTO [EC].[AT_User]
 VALUES
 ('500306','JohnEric.Tiongson', 'John Eric Z','WISY13',1),
 ('343549','Mark.Hackman', 'Hackman, Mark G','WACQ13',1),
-('408246','Scott.Potter', 'Potter, Scott E','WACQ13',1)
-          
+('408246','Scott.Potter', 'Potter, Scott E','WACQ13',1),
+('345712','susmitha.palacherla', 'Palacherla, Susmitha','WISO13',1),
+('379750','lisa.stein', 'Stein, Lisa D','WSTE12',1)          
 GO
 
 
@@ -168,7 +169,19 @@ VALUES
 ('CoachingUser',0),
 ('WarningAdmin',1),
 ('WarningUser',0),
-('SeniorManager',0)
+('SeniorManager',0),
+('ReportCoachingAdmin',1),
+('ReportWarningAdmin',1),
+('ReportCoachingCSRUser',0),
+('ReportWarningCSRUser',0),
+('ReportCoachingSupUser',0),
+('ReportWarningSupUser',0),
+('ReportCoachingQualUser',0),
+('ReportWarningQualUser',0),
+('ReportCoachingLSAUser',0),
+('ReportWarningLSAUser',0),
+('ReportCoachingTrainUser',0),
+('ReportWarningTrainUser',0)
 
           
 GO
@@ -212,8 +225,21 @@ VALUES
 ('343549',101),
 ('343549',103),
 ('408246',101),
-('408246',103)
-
+('408246',103),
+(345712,106),
+(345712,107),
+(380017,106),
+(380017,107),
+(379750,106),
+(379750,107),
+(343549,106),
+(343549,107),
+(408246,106),
+(408246,107),
+(365226,106),
+(365226,107),
+(500306,106),
+(500306,107)
 
 --************************************************
 
@@ -239,7 +265,12 @@ VALUES
 ('ManageWarningLogs'),
 ('ReactivateCoachingLogs'),
 ('ReactivateWarningLogs'),
-('SeniorManagerDashboard')
+('SeniorManagerDashboard'),
+('Reports'),
+('Report-RunCoachingSummary'),
+('Report-RunWarningSummary'),
+('Report-RunEmployeeSummary'),
+('Report-RunAdminAuditSummary')
 
 
 --************************************************
@@ -289,7 +320,33 @@ VALUES
 (103,205),
 (101,206),
 (103,207),
-(105,208)
+(105,208),
+(106,209),
+(106,210),
+(106,212),
+(106,213),
+(107,209),
+(107,211),
+(108,209),
+(108,210),
+(109,209),
+(109,211),
+(110,209),
+(110,210),
+(111,209),
+(111,211),
+(112,209),
+(112,210),
+(113,209),
+(113,211),
+(114,209),
+(114,210),
+(115,209),
+(115,211),
+(116,209),
+(116,210),
+(117,209),
+(117,211)
 
 
 
@@ -483,6 +540,68 @@ GO
 
 --***************************************
 
+--14.[EC].[AT_Role_Module_Link]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[AT_Role_Module_Link](
+	[RoleId] [int]NOT NULL,
+	[ModuleId] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC,
+	[ModuleId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [EC].[AT_Role_Module_Link]  WITH NOCHECK ADD  CONSTRAINT [fkRMLRoleId] FOREIGN KEY([RoleId])
+REFERENCES [EC].[AT_Role] ([RoleId])
+GO
+
+ALTER TABLE [EC].[AT_Role_Module_Link] CHECK CONSTRAINT [fkRMLRoleId]
+GO
+
+ALTER TABLE [EC].[AT_Role_Module_Link]  WITH NOCHECK ADD  CONSTRAINT [fkRMLModuleId] FOREIGN KEY([ModuleId])
+REFERENCES [EC].[DIM_Module] ([ModuleId])
+GO
+
+ALTER TABLE [EC].[AT_Role_Module_Link] CHECK CONSTRAINT [fkRMLModuleId]
+GO
 
 
 
+
+INSERT INTO [EC].[AT_Role_Module_Link]
+           ([RoleId]
+           ,[ModuleId])
+     VALUES
+        	(106, 1), 
+		(106, 2), 
+		(106, 3), 
+		(106, 4), 
+		(106, 5), 
+		(107, 1), 
+		(107, 2), 
+		(107, 3), 
+		(107, 4), 
+		(107, 5), 
+		(108, 1), 
+		(109, 1), 
+		(110, 2), 
+		(111, 2), 
+		(112, 3), 
+		(113, 3), 
+		(114, 4), 
+		(115, 4), 
+		(116, 5), 
+		(117, 5)
+         
+GO
+
+--***************************************
