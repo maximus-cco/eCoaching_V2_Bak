@@ -1,7 +1,9 @@
 /*
-sp_rptHierarchySummary(02).sql
-Last Modified Date: 03/31/2017
+sp_rptHierarchySummary(03).sql
+Last Modified Date: 04/10/2017
 Last Modified By: Susmitha Palacherla
+
+Version 03: Added Aspect fields and removed Module name - TFS 5621 - 04/10/2017
 
 Version 02: Added Site filter - TFS 5621 - 03/31/2017
 
@@ -28,15 +30,15 @@ GO
 
 
 
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2017
---	Description: Displays the hierarchy for a given employee at a give site.
+--	Description: Displays the hierarchy for a given employee.
 --  Last Modified: 
 --  Last Modified By:
 --  Revision History:
---  Initial Revision - TFS 5621 - 03/31/2017
-
+--  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/10/2017)
  *******************************************************************************/
 CREATE PROCEDURE [EC].[sp_rptHierarchySummary] 
 (
@@ -71,13 +73,6 @@ AS
 SET NOCOUNT ON
 
        SELECT  eh.Emp_ID AS [Employee ID]
-          ,CASE 
-               WHEN eh.Emp_Job_Code IN ('WACS01', 'WACS02', 'WACS03') THEN 'CSR'
-               WHEN eh.Emp_Job_Code = 'WACS40' THEN 'Supervisor'
-               WHEN eh.Emp_Job_Code IN ('WACQ02', 'WACQ12', 'WACQ03')THEN 'Quality'
-               WHEN eh.Emp_Job_Code IN ('WIHD01', 'WIHD02', 'WIHD03', 'WIHD04')THEN 'LSA'
-               WHEN eh.Emp_Job_Code IN ('WTID13', 'WTTI02', 'WTTR12', 'WTTR13') THEN 'Training'
-               ELSE 'NA' END AS [Module Name]
               ,eh.Emp_Name AS [Employee Name]
               ,ISNULL(eh.Emp_Site,'Unknown') AS [Site]
               ,ISNULL(eh.Emp_Job_Code,'-') AS [Employee Job Code]
@@ -94,7 +89,11 @@ SET NOCOUNT ON
 		      ,ISNULL(eh.Start_Date,'-')AS [Start Date]
 		      ,ISNULL(eh.End_Date,'-') AS [End Date]
 		      ,eh.Active AS [Status]
-        FROM [EC].[Employee_Hierarchy] eh 
+		      ,ISNULL(ess.Emp_Job_Code, '-') AS [Aspect Job Title]
+		      ,ISNULL(ess.Emp_Program, '-') AS [Aspect Skill]
+		      ,ISNULL(ess.Emp_Status, '-') AS [Aspect Status]
+        FROM [EC].[Employee_Hierarchy] eh LEFT OUTER JOIN [EC].[EmpID_To_SupID_Stage]ess
+        ON eh.Emp_ID = LTRIM(ess.Emp_ID)
 		WHERE ([eh].[Emp_ID]= (@strEmpin)or @strEmpin = '-1')
 		       AND ([eh].[Emp_Site] = (@strEmpSitein)or @strEmpSitein = 'All')
         ORDER BY eh.Emp_Name
@@ -127,8 +126,8 @@ RETURN @returnCode
 
 
 
-GO
 
+GO
 
 
 

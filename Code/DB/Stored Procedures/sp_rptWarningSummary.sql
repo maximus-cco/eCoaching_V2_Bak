@@ -1,8 +1,9 @@
 /*
-sp_rptWarningSummary(01).sql
-Last Modified Date: 03/27/2017
+sp_rptWarningSummary(02).sql
+Last Modified Date: 04/10/2017
 Last Modified By: Susmitha Palacherla
 
+Version 02: Added State - TFS 5621 - 04/10/2017
 
 
 Version 01: Document Initial Revision - Suzy Palacherla -  TFS 5621 - 03/27/2017
@@ -36,7 +37,7 @@ GO
 --  Last Modified: 
 --  Last Modified By:
 --  Revision History:
---  Initial Revision - TFS 5621 - 03/27/2017
+--  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/10/2017)
  *******************************************************************************/
 
 CREATE PROCEDURE [EC].[sp_rptWarningSummary] 
@@ -112,6 +113,7 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 		      ,ISNULL(w.SubmitterName,'Unknown') AS [Submitter Name]
 		      ,ISNULL(w.ProgramName,'-') AS [Program Name]
               ,ISNULL(w.Behavior,'-')AS [Behavior]
+              ,ISNULL(w.[State],'-')AS [State]
       FROM [EC].[Warning_Log] p 
       JOIN  (SELECT [wl].[ModuleID] ModuleID
               ,[mo].[Module]Module
@@ -141,6 +143,8 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 		      ,[sh].[Emp_Name]	SubmitterName
 		      ,[wl].[ProgramName]	ProgramName
               ,[wl].[Behavior]	Behavior
+              ,CASE WHEN [wl].[Active] = 1 THEN 'Active' 
+               ELSE 'Expired' END AS [State]
         FROM [EC].[Employee_Hierarchy] eh 
 		JOIN [EC].[Warning_Log] wl WITH(NOLOCK)ON wl.EmpID = eh.Emp_ID
 		JOIN [EC].[Employee_Hierarchy] sh ON ISNULL(wl.SubmitterID,'999999') = sh.EMP_ID 
