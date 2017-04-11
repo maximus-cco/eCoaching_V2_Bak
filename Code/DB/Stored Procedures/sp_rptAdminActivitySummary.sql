@@ -1,0 +1,239 @@
+/*
+sp_rptAdminActivitySummary(01).sql
+Last Modified Date: 04/11/2017
+Last Modified By: Susmitha Palacherla
+
+
+
+Version 01: Document Initial Revision - Suzy Palacherla -  TFS 5621 - 04/11/2017
+
+*/
+
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_rptAdminActivitySummary' 
+)
+   DROP PROCEDURE [EC].[sp_rptAdminActivitySummary]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+/******************************************************************************* 
+--	Author:			Susmitha Palacherla
+--	Create Date:	3/27/2017
+--	Description: Displays the Admin Activity Logs for selected Type, Action and Date Range.
+--  Last Modified: 
+--  Last Modified By:
+--  Revision History:
+--  Initial Revision - TFS 5621 - 4/10/2017
+ *******************************************************************************/
+CREATE PROCEDURE [EC].[sp_rptAdminActivitySummary] 
+(
+@strTypein nvarchar(10),
+@strActivityin nvarchar(20),
+@strFormin nvarchar(50),
+@strSDatein datetime,
+@strEDatein datetime,
+
+ ------------------------------------------------------------------------------------
+-- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
+   @returnCode int OUTPUT,
+   @returnMessage varchar(80) OUTPUT
+)
+AS
+   DECLARE @storedProcedureName varchar(80)
+   DECLARE @transactionCount int
+
+   SET @transactionCount = @@TRANCOUNT
+   SET @returnCode = 0
+
+   --Only start a transaction if one has not already been started
+   IF @transactionCount = 0
+   BEGIN
+      BEGIN TRANSACTION currentTransaction
+   END
+-- THE PRECEDING CODE SHOULD NOT BE MODIFIED
+-------------------------------------------------------------------------------------
+   SET @storedProcedureName = OBJECT_NAME(@@PROCID)
+   SET @returnMessage = @storedProcedureName + ' completed successfully'
+-------------------------------------------------------------------------------------
+-- *** BEGIN: INSERT CUSTOM CODE HERE ***
+
+
+
+SET NOCOUNT ON
+
+DECLARE	
+@strSDate nvarchar(10),
+@strEDate nvarchar(10)
+
+SET @strSDate = convert(varchar(8),@strSDatein,112)
+SET @strEDate = convert(varchar(8),@strEDatein,112)
+
+-- Create a temp table to hold all Coaching admin activity logs for selected period
+
+CREATE TABLE #CoachingAdminActivity ([Module Id] int, [Module Name] nvarchar(20),[Form Name] nvarchar(50), [Last Known Status]nvarchar(100),
+[Action] nvarchar(20), [Action Date] datetime, [Requester ID] nvarchar(20), [Requester Name] nvarchar(50), [Assigned To ID] nvarchar(20),
+[Assigned To Name] nvarchar(50), [Reason] nvarchar(250), [Requester Comments] nvarchar(4000) )
+
+IF @strTypein in ('Coaching', 'All')
+
+BEGIN
+
+-- Insert logs from Coaching inactivation reactivation audit table
+
+INSERT INTO #CoachingAdminActivity 
+([Module Id],[Module Name], [Form Name], [Last Known Status],
+[Action], [Action Date], [Requester ID], [Requester Name], [Assigned To ID],
+[Assigned To Name], [Reason], [Requester Comments])
+(
+SELECT cl.ModuleID AS [Module ID], dm.Module AS [Module Name], cira.FormName AS [Form Name],
+ds.Status AS [Last Known status], cira.Action AS [Action], cira.ActionTimestamp AS [action Date],
+cira.RequesterID AS [Requester ID], 
+CASE WHEN cira.RequesterID = '999998' 
+THEN 'Hierarchy Load Process'
+ELSE rh.Emp_Name END AS [Requester Name], 'NA' AS [Assigned To ID], 'NA' AS [Assigned To Name],
+cira.Reason AS [Reason], ISNULL(cira.RequesterComments,'-') AS [Requester Comments]
+FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit]cira JOIN [EC].[Coaching_Log]cl
+  ON cira.CoachingID = cl.CoachingID JOIN [EC].[DIM_Module] dm
+  ON cl.ModuleID = dm.ModuleID JOIN [EC].[DIM_Status]ds
+  ON cira.LastKnownStatus = ds.StatusID LEFT OUTER JOIN [EC].[Employee_Hierarchy]rh
+  ON cira.RequesterID = rh.Emp_ID
+WHERE convert(varchar(8),cira.ActionTimestamp,112) >= @strSDate
+AND convert(varchar(8),cira.ActionTimestamp,112) <= @strEDate
+
+UNION
+
+-- Insert logs from Coaching reassign audit table
+
+SELECT cl.ModuleID AS [Module ID], dm.Module AS [Module Name], cra.FormName AS [Form Name],
+ds.Status AS [Last Known status], 'Reassign' AS [Action], cra.ActionTimestamp AS [action Date],
+cra.RequesterID AS [Requester ID],
+CASE WHEN cra.RequesterID = '999998' 
+THEN 'Hierarchy Load Process'
+ELSE rh.Emp_Name END AS [Requester Name], cra.AssignedToID AS [Assigned To ID],
+ah.Emp_Name AS [Assigned To Name],cra.Reason AS [Reason], ISNULL(cra.RequesterComments,'-') AS [Requester Comments]
+FROM [EC].[AT_Coaching_Reassign_Audit]cra JOIN [EC].[Coaching_Log]cl
+  ON cra.CoachingID = cl.CoachingID JOIN [EC].[DIM_Module] dm
+  ON cl.ModuleID = dm.ModuleID JOIN [EC].[DIM_Status]ds
+  ON cra.LastKnownStatus = ds.StatusID LEFT OUTER JOIN [EC].[Employee_Hierarchy]rh
+  ON cra.RequesterID = rh.Emp_ID LEFT OUTER JOIN [EC].[Employee_Hierarchy]ah
+  ON cra.AssignedToID = ah.Emp_ID
+WHERE convert(varchar(8),cra.ActionTimestamp,112) >= @strSDate
+AND convert(varchar(8),cra.ActionTimestamp,112) <= @strEDate
+)
+
+END
+
+-- Create a temp table to hold all Warning admin activity logs for selected period
+
+
+CREATE TABLE #WarningAdminActivity ([Module Id] int, [Module Name] nvarchar(20),[Form Name] nvarchar(50), [Last Known Status]nvarchar(100),
+[Action] nvarchar(20), [Action Date] datetime, [Requester ID] nvarchar(20), [Requester Name] nvarchar(50), [Assigned To ID] nvarchar(20),
+[Assigned To Name] nvarchar(50), [Reason] nvarchar(250), [Requester Comments] nvarchar(4000) )
+
+IF @strTypein in ('Warning', 'All')
+
+BEGIN
+
+-- Insert logs from warning Inactivation Reactivation audit table
+
+INSERT INTO #WarningAdminActivity 
+([Module Id],[Module Name], [Form Name], [Last Known Status],
+[Action], [Action Date], [Requester ID], [Requester Name], [Assigned To ID],
+[Assigned To Name], [Reason], [Requester Comments])
+(
+SELECT wl.ModuleID AS [Module ID], dm.Module AS [Module Name], wira.FormName AS [Form Name],
+ds.Status AS [Last Known status], wira.Action AS [Action], wira.ActionTimestamp AS [action Date],
+wira.RequesterID AS [Requester ID], 
+CASE WHEN wira.RequesterID = '999998' 
+THEN 'Hierarchy Load Process'
+ELSE rh.Emp_Name END AS [Requester Name], 'NA' AS [Assigned To ID], 'NA' AS [Assigned To Name],
+wira.Reason AS [Reason], ISNULL(wira.RequesterComments,'-') AS [Requester Comments]
+FROM [EC].[AT_Warning_Inactivate_Reactivate_Audit]wira JOIN [EC].[Warning_Log]wl
+  ON wira.WarningID = wl.WarningID JOIN [EC].[DIM_Module] dm
+  ON wl.ModuleID = dm.ModuleID JOIN [EC].[DIM_Status]ds
+  ON wira.LastKnownStatus = ds.StatusID LEFT OUTER JOIN [EC].[Employee_Hierarchy]rh
+  ON wira.RequesterID = rh.Emp_ID
+WHERE convert(varchar(8),wira.ActionTimestamp,112) >= @strSDate
+AND convert(varchar(8),wira.ActionTimestamp,112) <= @strEDate
+)
+END
+
+-- Display all selected coaching audit logs
+
+IF @strTypein = 'Coaching'
+
+SELECT * FROM #CoachingAdminActivity 
+WHERE ([Form Name] =(@strFormin) or @strFormin = 'All') 
+AND ([Action] =(@strActivityin) or @strActivityin = 'All') 
+ORDER BY [Action Date]
+
+-- Display all selected warning audit logs
+
+IF @strTypein = 'Warning'
+
+SELECT * FROM #WarningAdminActivity 
+WHERE ([Form Name] =(@strFormin) or @strFormin = 'All') 
+AND ([Action] =(@strActivityin) or @strActivityin = 'All') 
+ORDER BY [Action Date]
+
+-- Display all selected coaching and warning audit logs
+
+IF @strTypein = 'All'
+
+SELECT s.* FROM
+(SELECT * FROM #CoachingAdminActivity 
+UNION
+SELECT * FROM #WarningAdminActivity 
+)s
+WHERE ([Form Name] =(@strFormin) or @strFormin = 'All') 
+AND ([Action] =(@strActivityin) or @strActivityin = 'All') 
+ORDER BY [Action Date]
+
+  -- Drop the temp tables
+  
+  DROP TABLE #CoachingAdminActivity 
+  DROP TABLE #WarningAdminActivity 
+	    
+-- *** END: INSERT CUSTOM CODE HERE ***
+-------------------------------------------------------------------------------------
+-- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
+ENDPROC:
+--  Commit or Rollback Transaction Only If We were NOT already in a Transaction
+IF @transactionCount = 0
+BEGIN
+	IF @returnCode = 0
+	BEGIN
+		-- Commit Transaction
+		commit transaction currentTransaction
+	END
+	ELSE 
+	BEGIN
+		-- Rollback Transaction
+		rollback transaction currentTransaction
+	END
+END
+
+PRINT STR(@returnCode) + ' ' + @returnMessage
+RETURN @returnCode
+
+-- THE PRECEDING CODE SHOULD NOT BE MODIFIED
+-------------------------------------------------------------------------------------
+
+GO
+
+
+
