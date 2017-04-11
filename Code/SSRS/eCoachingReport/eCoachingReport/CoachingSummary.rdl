@@ -5159,11 +5159,6 @@
     </ReportParameter>
     <ReportParameter Name="strEmpin">
       <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>-1</Value>
-        </Values>
-      </DefaultValue>
       <Prompt>Employee</Prompt>
       <ValidValues>
         <DataSetReference>
