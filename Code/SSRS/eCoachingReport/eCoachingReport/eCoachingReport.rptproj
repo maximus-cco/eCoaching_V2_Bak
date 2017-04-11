@@ -33,6 +33,10 @@
       <FullPath>HierarchyEmployeeList.rsd</FullPath>
     </ProjectItem>
     <ProjectItem>
+      <Name>HierarchySiteList.rsd</Name>
+      <FullPath>HierarchySiteList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
       <Name>ModuleList.rsd</Name>
       <FullPath>ModuleList.rsd</FullPath>
     </ProjectItem>
@@ -61,8 +65,16 @@
       <FullPath>WarningSubReasonList.rsd</FullPath>
     </ProjectItem>
     <ProjectItem>
-      <Name>HierarchySiteList.rsd</Name>
-      <FullPath>HierarchySiteList.rsd</FullPath>
+      <Name>AdminLogTypeList.rsd</Name>
+      <FullPath>AdminLogTypeList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>AdminActionList.rsd</Name>
+      <FullPath>AdminActionList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>AdminFormList.rsd</Name>
+      <FullPath>AdminFormList.rsd</FullPath>
     </ProjectItem>
   </DataSets>
   <Reports>
@@ -77,6 +89,10 @@
     <ProjectItem>
       <Name>WarningSummary.rdl</Name>
       <FullPath>WarningSummary.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>AdminActivitySummary.rdl</Name>
+      <FullPath>AdminActivitySummary.rdl</FullPath>
     </ProjectItem>
   </Reports>
   <Configurations>
