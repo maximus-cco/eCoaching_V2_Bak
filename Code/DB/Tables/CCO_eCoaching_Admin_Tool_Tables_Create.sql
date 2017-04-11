@@ -1,7 +1,9 @@
 /*
-eCoaching_Admin_Tool_Tables_Create(02).sql
-Last Modified Date: 3/17/2017
+eCoaching_Admin_Tool_Tables_Create(03).sql
+Last Modified Date: 4/11/2017
 Last Modified By: Susmitha Palacherla
+
+version 03: Access for Mark Hackman's new job code WPSM13- TFS 6246 - 4/11/2017
 
 Version 02: Infrastructure for Reporting access  - TFS 5420 - 3/17/2017
 
@@ -140,7 +142,7 @@ INSERT INTO [EC].[AT_User]
 			[Active])        
 VALUES
 ('500306','JohnEric.Tiongson', 'John Eric Z','WISY13',1),
-('343549','Mark.Hackman', 'Hackman, Mark G','WACQ13',1),
+('343549','Mark.Hackman', 'Hackman, Mark G','WPSM13',1),
 ('408246','Scott.Potter', 'Potter, Scott E','WACQ13',1),
 ('345712','susmitha.palacherla', 'Palacherla, Susmitha','WISO13',1),
 ('379750','lisa.stein', 'Stein, Lisa D','WSTE12',1)          
@@ -484,7 +486,9 @@ INSERT INTO [EC].[AT_Role_Access]
            ('WISY13','Sr Analyst, Systems',103,'WarningAdmin',0,1),
            ('WACQ13','Sr Specialist, Quality (CS)',101,'CoachingAdmin',0,1),
            ('WACQ13','Sr Specialist, Quality (CS)',103,'WarningAdmin',0,1),
-           ('WACS60','Sr Manager, Customer Service',105,'SeniorManager',1,1)
+           ('WACS60','Sr Manager, Customer Service',105,'SeniorManager',1,1),
+	   ('WPSM13','Sr Analyst, Functional',101,'CoachingAdmin',0,1),
+           ('WPSM13','Sr Analyst, Functional',103,'WarningAdmin',0,1),
       
 
 --***************************************
