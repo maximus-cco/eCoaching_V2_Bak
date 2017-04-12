@@ -54,6 +54,20 @@ namespace eCLAdmin
                         "~/Scripts/eCLAdmin/dashboardList.js");
             bundles.Add(dashboardListScriptBundle);
 
+            // javascript bundle for 'log search for delete'
+            var logSearchForDeleteScriptBundle = new ScriptBundle("~/bundles/scripts/logSearchForDelete");
+            logSearchForDeleteScriptBundle.Orderer = new EclBundleOrderer();
+            logSearchForDeleteScriptBundle.Include(
+                        "~/Scripts/eCLAdmin/logSearchForDelete.js");
+            bundles.Add(logSearchForDeleteScriptBundle);
+
+            // javascript bundle for 'log delete'
+            var logDeleteScriptBundle = new ScriptBundle("~/bundles/scripts/logDelete");
+            logDeleteScriptBundle.Orderer = new EclBundleOrderer();
+            logDeleteScriptBundle.Include(
+                        "~/Scripts/eCLAdmin/logDelete.js");
+            bundles.Add(logDeleteScriptBundle);
+
             // css across web app
             bundles.Add(new StyleBundle("~/Content/css").Include(
                        "~/Content/*.css"));
