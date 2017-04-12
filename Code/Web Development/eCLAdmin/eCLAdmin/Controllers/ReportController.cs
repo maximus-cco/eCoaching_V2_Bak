@@ -46,6 +46,16 @@ namespace eCLAdmin.Controllers
                                 Constants.REPORT_HEIGHT));
         }
 
+        [EclAuthorize]
+        public ActionResult RunAdminActivitySummary()
+        {
+            return View(Constants.REPORT_TEMPLATE,
+                            GetReportInfo(Constants.ADMIN_ACTIVITY_REPORT_NAME,
+                                Constants.ADMIN_ACTIVITY_REPORT_DESCRIPTION,
+                                Constants.REPORT_WIDTH,
+                                Constants.REPORT_HEIGHT));
+        }
+
         private ReportInfo GetReportInfo(string reportName, string reportDescription, int width, int height)
         {
             logger.Debug("Inside GetReportInfo");

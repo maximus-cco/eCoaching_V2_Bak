@@ -12,7 +12,7 @@ namespace eCLAdmin.Reports
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            logger.Debug("@@@@@@@@@@@@@@@@@@@@@@@@Inside Page_Load");
+            logger.Debug("Inside Page_Load");
             string reportName = String.Empty;
 
             if (!IsPostBack)
@@ -31,19 +31,22 @@ namespace eCLAdmin.Reports
                     logger.Debug("URL=" + rvSiteMapping.ServerReport.ReportServerUrl);
                     logger.Debug("Path=" + rvSiteMapping.ServerReport.ReportPath);
 
+                    if (reportName == Constants.COACHING_SUMMARY_REPORT_NAME ||
+                            reportName == Constants.WARNING_SUMMARY_REPORT_NAME)
+                    {
+                        ReportParameter param = new ReportParameter("LanID", (string)Session["LanId"]);
+                        rvSiteMapping.ServerReport.SetParameters(new ReportParameter[] { param });
 
-                    ReportParameter param = new ReportParameter("LanId", (string) Session["LanId"]);
-                    rvSiteMapping.ServerReport.SetParameters(new ReportParameter[] { param });
-
-                    rvSiteMapping.ServerReport.Refresh();
+                        rvSiteMapping.ServerReport.Refresh();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    logger.Debug("##############Exception when trying to render report:" + reportName + ex.StackTrace);
+                    logger.Debug("Exception when trying to render report:" + reportName + ". " + ex.Message);
                 }
             }
 
-            logger.Debug("@@@@@@@@@@@@@@@@@@@@@@@@Leaving page_load");
+            logger.Debug("Leaving page_load");
 
         }
     }

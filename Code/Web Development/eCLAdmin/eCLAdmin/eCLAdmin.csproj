@@ -262,6 +262,7 @@
     <Content Include="Scripts\eCLAdmin\dashboardList.js" />
     <Content Include="Scripts\eCLAdmin\dashboardIndex.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
+    <Content Include="Scripts\eCLAdmin\logDelete.js" />
     <Content Include="Scripts\eCLAdmin\logSearchForDelete.js" />
     <Content Include="Scripts\eCLAdmin\logSearchForInactivate.js" />
     <Content Include="Scripts\eCLAdmin\report.js" />

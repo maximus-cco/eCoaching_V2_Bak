@@ -88,6 +88,11 @@
                                     <li role="presentation" class="divider"></li>
                                     <li>@Html.ActionLink("Hierarchy Summary", "RunHierarchySummary", "Report")</li>
                                 }
+                                @if (ViewContext.Controller.IsEntitled("Report-RunHierarchySummary"))
+                                {
+                                    <li role="presentation" class="divider"></li>
+                                    <li>@Html.ActionLink("Admin Activity Summary", "RunAdminActivitySummary", "Report")</li>
+                                }
                             </ul>
                         </li>
                     }

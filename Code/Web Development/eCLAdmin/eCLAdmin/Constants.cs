@@ -57,6 +57,8 @@ namespace eCLAdmin
         public const string WARNING_SUMMARY_REPORT_DESCRIPTION = "Warning Log Summary";
         public const string HIERARCHY_SUMMARY_REPORT_NAME = "HierarchySummary";
         public const string HIERARCHY_SUMMARY_REPORT_DESCRIPTION = "Hierarchy Summary";
+        public const string ADMIN_ACTIVITY_REPORT_NAME = "AdminActivitySummary";
+        public const string ADMIN_ACTIVITY_REPORT_DESCRIPTION = "Admin Activity Summary";
     }
 
     public enum EmployeeLogType
