@@ -3428,6 +3428,7 @@
           <Value>susmitha.palacherla</Value>
         </Values>
       </DefaultValue>
+      <Prompt>Lan ID</Prompt>
       <Hidden>true</Hidden>
     </ReportParameter>
     <ReportParameter Name="strSDatein">
