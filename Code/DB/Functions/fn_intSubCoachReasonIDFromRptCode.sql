@@ -1,8 +1,9 @@
 /*
-fn_intSubCoachReasonIDFromRptCode(02).sql
-Last Modified Date: 2/3/2017
+fn_intSubCoachReasonIDFromRptCode(03).sql
+Last Modified Date: 4/13/2017
 Last Modified By: Susmitha Palacherla
 
+Version 03: New Breaks BRN and BRL AND MSR feeds - TFS 6145 - 4/13/2017
 
 Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
 
@@ -30,6 +31,7 @@ GO
 
 
 
+
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
@@ -43,6 +45,7 @@ GO
 -- TFS 3179 & 3186 - To add HFC & KUD - 7/14/2016
 -- TFS 3972 - To add SEA - 9/15/2016
 -- TFS 5309 - To add NPN - 02/01/2017
+-- TFS 6145 - To add BRL and BRN - 04/12/2017
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -84,6 +87,9 @@ BEGIN
             WHEN N'KUD' THEN 42
             WHEN N'SEA' THEN 42
             WHEN N'NPN' THEN 42
+            WHEN N'BRN' THEN 238
+            WHEN N'BRL' THEN 239
+            WHEN N'MSR' THEN 42
         ELSE -1
       END
     ELSE
@@ -97,6 +103,9 @@ END  -- fn_intSubCoachReasonIDFromRptCode()
 
 
 
+
 GO
+
+
 
 
