@@ -434,8 +434,7 @@
                 <div runat="server" id="panel0a" style="visibility: hidden; display: none;">
                     <asp:Label ID="Label135" runat="server" Text="3. What was the main reason this item was not coachable?" CssClass="question"></asp:Label>&nbsp; 
                     <br />
-                    <asp:DropDownList ID="DropDownList2" runat="server" class="TextBox">
-                        <asp:ListItem Value="Other" Selected="True">Other</asp:ListItem>
+                    <asp:DropDownList ID="ddlNonCoachableReason" runat="server" class="TextBox">
                     </asp:DropDownList>
                     <br />
                     <br />

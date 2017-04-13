@@ -491,13 +491,13 @@ Partial Public Class review
     Protected WithEvents Label135 As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''DropDownList2 control.
+    '''ddlNonCoachableReason control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents DropDownList2 As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents ddlNonCoachableReason As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
     '''Label136 control.

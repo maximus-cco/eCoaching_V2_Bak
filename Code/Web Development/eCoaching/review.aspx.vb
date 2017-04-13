@@ -155,6 +155,17 @@ Public Class review
     End Sub
 
     Protected Sub Page_Load2(ByVal sender As Object, ByVal e As System.EventArgs) Handles ListView1.DataBound 'record modifyable
+        ' Load Non Coachable Reason Dropdown
+        Dim exceededTimeOfBreak As Label = ListView1.Items(0).FindControl("exceededTimeOfBreak") ' OMR / BRL
+        Dim exceededNumberOfBreaks As Label = ListView1.Items(0).FindControl("exceededNumberOfBreaks") ' OMR / BRK
+        Dim reasons As List(Of String) = New List(Of String)()
+        If (exceededTimeOfBreak.Text = "1" Or exceededNumberOfBreaks.Text = "1") Then
+            reasons.Add("Approved accommodation on file")
+        End If
+        reasons.Add("Other")
+        ddlNonCoachableReason.DataSource = reasons
+        ddlNonCoachableReason.DataBind()
+
         ' Get the user employee ID from session.
         m_strUserEmployeeID = Session("eclUser").EmployeeID
 
@@ -394,9 +405,6 @@ Public Class review
                         Dim omrIat As Label = ListView1.Items(0).FindControl("LabelOmrIat")
                         Dim trainingShortDuration As Label = ListView1.Items(0).FindControl("LabelShortDurationReport")
                         Dim trainingOverdue As Label = ListView1.Items(0).FindControl("LabelOverDueTraining")
-
-                        Dim exceededTimeOfBreak As Label = ListView1.Items(0).FindControl("exceededTimeOfBreak")
-                        Dim exceededNumberOfBreaks As Label = ListView1.Items(0).FindControl("exceededNumberOfBreaks")
 
                         ' Is it OMR/IAE (Inappropriate ARC Escalation) or OMR/IAT (Inappropriate ARC Transfer)
                         ' Or Training/SDR (short duration in training) or Training/ODT (Overdue Training)
@@ -1222,6 +1230,9 @@ Public Class review
         Dim eclUser As User = Session("eclUser")
         Dim lan As String = eclUser.LanID
 
+        Dim reasonSelected As String = ddlNonCoachableReason.SelectedValue
+
+
         Dim moduleName As String = TryCast(ListView1.Items(0).FindControl("Label31"), Label).Text
         Dim recordStatus As String = TryCast(ListView1.Items(0).FindControl("Label50"), Label).Text
 
@@ -1255,9 +1266,6 @@ Public Class review
 
             'MsgBox("TextBox1")
         End If
-
-
-
 
         Page.Validate()
         If Page.IsValid Then
@@ -1393,7 +1401,7 @@ Public Class review
 
                 ''     SqlDataSource7.UpdateParameters("nvcstrCoachReason_Current_Coaching_Initiatives").DefaultValue = "Not Coachable"
                 SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Inactive"
-                SqlDataSource7.UpdateParameters("nvcstrReasonNotCoachable").DefaultValue = "Other"
+                SqlDataSource7.UpdateParameters("nvcstrReasonNotCoachable").DefaultValue = reasonSelected
 
                 'crop text if it is larger than 3000 chars
                 If (Len(TextBox1.Text) > 3000) Then
@@ -1856,6 +1864,4 @@ Public Class review
 
         Return retValue
     End Function
-
-
 End Class
