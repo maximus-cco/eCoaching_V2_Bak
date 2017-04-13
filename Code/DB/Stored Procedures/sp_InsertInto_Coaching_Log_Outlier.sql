@@ -1,9 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Outlier(01).sql
-Last Modified Date: 1/18/2017
+sp_InsertInto_Coaching_Log_Outlier(02).sql
+Last Modified Date: 4/13/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: New Breaks BRN and BRL feeds - TFS 6145 - 4/13/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -29,13 +29,15 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
 -- Loads records from [EC].[Outlier_Coaching_Stage]to [EC].[Coaching_Log]
 -- Last Modified Date: 09/16/2015
 -- Last Updated By: Susmitha Palacherla
--- Modified per TFS644 to add IAE, IAT Feeds
+-- Modified per TFS 644 to add IAE, IAT Feeds
+-- Modified per TFS 6145 to add BRN and BRL Feeds - 4/12/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 AS
@@ -50,6 +52,7 @@ BEGIN TRY
               @strLCSPretext nvarchar(200),
               @strIAEPretext nvarchar(200),
               @strIATPretext nvarchar(200)
+           
               
       -- Fetches the maximum CoachingID before the insert.
       SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
@@ -58,7 +61,8 @@ BEGIN TRY
       SET @strLCSPretext = 'The call associated with this Low CSAT is Verint ID: '
       SET @strIAEPretext = 'You are receiving this eCL because the ARC received an Inappropriate Escalation for this CSR.  Please review the Verint Call, NGD call record and coach as appropriate. '
       SET @strIATPretext = 'You are receiving this eCL because the ARC received an Inappropriate Transfer for this CSR.  Please review the Verint Call, NGD call record and coach as appropriate. '
-     
+ 
+      
 -- Inserts records from the Outlier_Coaching_Stage table to the Coaching_Log Table
 
  INSERT INTO [EC].[Coaching_Log]
@@ -147,7 +151,11 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[SubCoachingReasonID]
            ,[Value])
     SELECT cf.[CoachingID],
-           9,
+    CASE 
+		WHEN (cf.strReportCode like 'BRN%' OR cf.strReportCode like 'BRL%') 
+		THEN 56 
+		ELSE 9
+     END,
            [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
            os.[CoachReason_Current_Coaching_Initiatives]
     FROM [EC].[Outlier_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
@@ -192,5 +200,7 @@ END -- sp_InsertInto_Coaching_Log_Outlier
 
 
 
+
 GO
+
 

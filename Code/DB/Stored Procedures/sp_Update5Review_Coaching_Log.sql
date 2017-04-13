@@ -1,9 +1,9 @@
 /*
-sp_Update5Review_Coaching_Log(01).sql
-Last Modified Date: 1/18/2017
+sp_Update5Review_Coaching_Log(02).sql
+Last Modified Date: 4/13/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: New Breaks BRN and BRL feeds - TFS 6145 - 4/13/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -34,6 +34,7 @@ GO
 --    Updated per TFS 1732 to support Training sdr  feed  - 3/4/2016
 --    Updated per TFS 2283 to support Training odt feed  - 3/22/2016
 --    Updated per TFS 1709 Admin tool setup to reset reassign count to 0 - 5/2/2016
+--    Updated per TFS 6145  to support Training brl and brn feeds  - 4/13/2017
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
@@ -71,7 +72,7 @@ SET @nvcCat = (select RTRIM(LEFT(strReportCode,LEN(strReportCode)-8)) from EC.Co
 
 
 --IF LEFT(@nvcCat,LEN(@nvcCat)-8) IN ('OAE','OAS')
-  IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT')
+  IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN')
 
 BEGIN      
 UPDATE 	EC.Coaching_Log
@@ -93,7 +94,7 @@ SET Value = (CASE WHEN @bitisCoachingRequired = 'True' then 'Opportunity' ELSE '
   	FROM EC.Coaching_Log cl INNER JOIN EC.Coaching_Log_Reason clr
 	ON cl.CoachingID = clr.CoachingID
 	WHERE cl.FormName = @nvcFormID
-and clr.SubCoachingReasonID in (120,121,29,231,232,233)
+and clr.SubCoachingReasonID in (120,121,29,231,232,233,238,239)
         OPTION (MAXDOP 1)
 
 END
@@ -174,4 +175,10 @@ END --sp_Update5Review_Coaching_Log
 
 
 GO
+
+
+
+
+GO
+
 
