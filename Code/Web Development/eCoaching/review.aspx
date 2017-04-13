@@ -342,6 +342,8 @@
                     <asp:Label ID="SupEmail" runat="server" Text='<%# Eval("strCSRSupEmail") %>' Visible="false" />
                     <asp:Label ID="MgrEmail" runat="server" Text='<%# Eval("strCSRMgrEmail") %>' Visible="false" />
                     <asp:Label ID="CsrComment" runat="server" Text='<%# Eval(server.htmldecode("txtCSRComments")) %>' Visible="false" />
+                    <asp:Label ID="exceededTimeOfBreak" runat="server" Text='<%# Eval(Server.HtmlDecode("OMR / BRL")) %>' Visible="false" />
+                    <asp:Label ID="exceededNumberOfBreaks" runat="server" Text='<%# Eval(Server.HtmlDecode("OMR / BRN")) %>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">

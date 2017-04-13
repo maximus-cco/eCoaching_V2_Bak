@@ -27,6 +27,10 @@ Public Class review
     Public Const REVIEW_QUALITY_KUDO_SUPERVISOR = "Click <a href='https://cco.gdit.com/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " &
         "to listen to CSR kudos."
 
+    Public Const REVIEW_OMR_BREAK_TEXT = "You are receiving this eCL record because an Employee on your team was identified in a Break Outlier Report. " &
+        "Please review the <a href='https://cco.gdit.com/bi/ReportsCatalog/BreakPolicyReporting/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a> " &
+        "and refer to HCSD-POL-HR-MISC-08, Break Time Policy, for additional information And provide the details in the record below."
+
     Public Const PENDING_MGR_REVIEW = "Pending Manager Review"
 
     Dim pHolder As Label
@@ -313,16 +317,12 @@ Public Class review
         'outside panels
         Dim pHolder7 As Label
         pHolder7 = ListView1.Items(0).FindControl("Label31")
-        ' MsgBox(lan)
-        'MsgBox(pHolder7.Text)
-
         recStatus = DataList1.Items(0).FindControl("LabelStatus")
-
         statusLevel = GetRecordStatusLevel(pHolder7.Text, recStatus.Text)
 
         'pHolder = ListView1.Items(0).FindControl("Label45") ' strCSRSup
 
-        Dim logModule = "Supervisor"
+        'Dim logModule = "Supervisor"
         ' The user is the employee's current supervisor
         If (m_strUserEmployeeID = m_strHierarchySupEmployeeID OrElse m_strUserEmployeeID = m_strReassignedToEmployeeID) Then
             '        OrElse logModule = "Supervisor") Then
@@ -355,8 +355,6 @@ Public Class review
                     ' Pending Supervisor Review (CSR, Training, and LSA modules), Or
                     ' Pending Manager Review (Supervisor module), Or
                     ' Pending Quality Lead Review (Quality module)
-
-
 
                     ' It is from IQS or it is CTC or high CSAT5 or kudo or seasonal attendance.
                     If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance) Then
@@ -397,9 +395,19 @@ Public Class review
                         Dim trainingShortDuration As Label = ListView1.Items(0).FindControl("LabelShortDurationReport")
                         Dim trainingOverdue As Label = ListView1.Items(0).FindControl("LabelOverDueTraining")
 
+                        Dim exceededTimeOfBreak As Label = ListView1.Items(0).FindControl("exceededTimeOfBreak")
+                        Dim exceededNumberOfBreaks As Label = ListView1.Items(0).FindControl("exceededNumberOfBreaks")
 
-                        ' Is it OMR/IAE (Inappropriate ARC Escalation) or OMR/IAT (Inappropriate ARC Transfer) or Training/SDR (short duration in training) or Training/ODT (Overdue Training)
-                        If (pHolder2v.Text = "1" OrElse pHolder2w.Text = "1" OrElse omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse trainingShortDuration.Text = "1" OrElse trainingOverdue.Text = "1") Then
+                        ' Is it OMR/IAE (Inappropriate ARC Escalation) or OMR/IAT (Inappropriate ARC Transfer)
+                        ' Or Training/SDR (short duration in training) or Training/ODT (Overdue Training)
+                        ' Or OMR/BRL (exceed break length) or OMR/BRN (exceed break numbers)
+                        If (pHolder2v.Text = "1" OrElse pHolder2w.Text = "1" _
+                                OrElse omrIae.Text = "1" _
+                                OrElse omrIat.Text = "1" _
+                                OrElse trainingShortDuration.Text = "1" _
+                                OrElse trainingOverdue.Text = "1" _
+                                OrElse exceededTimeOfBreak.Text = "1" _
+                                OrElse exceededNumberOfBreaks.Text = "1") Then
                             Panel37.Visible = True ' coaching required question group
                             Label138.Text = "3. Provide the details from the coaching session including action plans developed"
                             CalendarExtender4.EndDate = TodaysDate
@@ -428,6 +436,14 @@ Public Class review
                                 Label134.Text = REVIEW_TRAINING_OVERDUE_TRAINING_TEXT
                                 Label132.Text = String.Empty
                             End If
+
+                            ' Breaks related
+                            If (exceededTimeOfBreak.Text = "1" OrElse exceededNumberOfBreaks.Text = "1") Then
+                                HyperLink1.Text = String.Empty
+                                Label134.Text = REVIEW_OMR_BREAK_TEXT
+                                Label132.Text = String.Empty
+                            End If
+
                         Else ' not from IQS, not ETS/OAE/OAS, not OMR/IAE, not OMR/IAT, not Training/SDR, not Training/ODT
                             Panel25.Visible = True
                             calendarButtonExtender.EndDate = TodaysDate
@@ -460,14 +476,8 @@ Public Class review
 
                         panelHolder.Visible = True
                     End If
-
             End Select
-
-
-
-        End If
-
-        ' MsgBox("testing1")
+        End If ' End The user is the employee current supervisor
 
 
         pHolder = ListView1.Items(0).FindControl("Label75")  ' strCSRMgr
@@ -1284,6 +1294,9 @@ Public Class review
                 Dim trainingShortDuration As Label = ListView1.Items(0).FindControl("LabelShortDurationReport") ' Training / SDR
                 Dim trainingOverdue As Label = ListView1.Items(0).FindControl("LabelOverDueTraining") ' Training / ODT
 
+                Dim exceededTimeOfBreak As Label = ListView1.Items(0).FindControl("exceededTimeOfBreak") ' OMR / BRL
+                Dim exceededNumberOfBreaks As Label = ListView1.Items(0).FindControl("exceededNumberOfBreaks") ' OMR / BRK
+
                 Select Case pHolder7.Text ' Module check
 
                     Case "CSR", "Training"
@@ -1293,8 +1306,10 @@ Public Class review
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
                         End If
 
-                        '  OMR/IAE, OMR/IAT, ETS/OAE, Training/SDR, Training/ODT
-                        If (omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1" OrElse trainingShortDuration.Text = "1" OrElse trainingOverdue.Text = "1") Then
+                        ' OMR/IAE, OMR/IAT, ETS/OAE, Training/SDR, Training/ODT
+                        ' OMR/BRL, OMR/BRN
+                        If (omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1" OrElse trainingShortDuration.Text = "1" OrElse trainingOverdue.Text = "1" _
+                                OrElse exceededTimeOfBreak.Text = "1" OrElse exceededNumberOfBreaks.Text = "1") Then
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
                         End If
 
