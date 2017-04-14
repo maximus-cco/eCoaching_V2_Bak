@@ -1,6 +1,6 @@
 /* 
 
-TFS 6246 - Delete log to admin tool
+TFS 6246 - Access to mark Hackmans new job code to the admin tool
 
 Run one statement at a time
 
@@ -19,7 +19,8 @@ Production – VDENSSDBP07\SCORP01,1436 – eCoaching
 --where UserId = '343549'
 
 update EC.AT_User
-set Active = 1
+set Active = 1,
+EmpJobCode = 'WPSM13'
 where UserId = '343549'
 
 
@@ -28,7 +29,7 @@ where UserId = '343549'
 --2. Insert records into User_Role link table
 
 --select * from [EC].[AT_User_Role_Link]
---where UserId = '408246'
+--where UserId = '343549'
 
 
 INSERT INTO [EC].[AT_User_Role_Link]
