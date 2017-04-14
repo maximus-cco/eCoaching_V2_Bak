@@ -1,0 +1,48 @@
+/* 
+
+TFS 6145- Breaks feeds
+
+Run one statement at a time
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+
+
+
+
+
+--1. add record in coaching reason table
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReason])
+     VALUES
+('Breaks')
+
+
+
+--2. add record in sub coaching reason table
+
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+          ('Exceed Number of Breaks'),
+          ('Exceed Break Length')
+GO
+
+
+--3. Cross check for codes files being installed
+-- These are the stored procedures/functions marked in runbook
+
+fn_intSubCoachReasonIDFromRptCode.sql
+sp_InsertInto_Coaching_Log_Outlier
+sp_SelectReviewFrom_Coaching_Log]
+sp_Update5Review_Coaching_Log.sql
+
+
+--4. ssis package marked in runbook
+Outlier_Coaching.dtsx
