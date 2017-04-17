@@ -4,11 +4,7 @@
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
     <DataSource Name="eCoaching">
-      <ConnectionProperties>
-        <DataProvider>SQL</DataProvider>
-        <ConnectString>Data Source=VRIVFSSDBT02\SCORD01,1437;Initial Catalog=eCoachingDev</ConnectString>
-        <IntegratedSecurity>true</IntegratedSecurity>
-      </ConnectionProperties>
+      <DataSourceReference>eCoaching</DataSourceReference>
       <rd:SecurityType>Integrated</rd:SecurityType>
       <rd:DataSourceID>e1205cbf-975c-4e6a-8a35-c9338922f8e7</rd:DataSourceID>
     </DataSource>
