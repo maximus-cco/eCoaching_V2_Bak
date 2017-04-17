@@ -29,12 +29,15 @@ VALUES
 GO
 
 --**************************************
---2.
+--2a.
 
 ALTER TABLE [EC].[AT_Role]
 ALTER COLUMN [RoleDescription] [NVARCHAR](40)not null
 GO
 
+
+
+--2b.
 
 INSERT INTO [EC].[AT_Role]
             ([RoleDescription],
@@ -210,7 +213,7 @@ GO
 --8.
 
 
-INSERT INTO [eCoachingTest].[EC].[AT_Role_Access]
+INSERT INTO [EC].[AT_Role_Access]
            ([JobCode]
            ,[JobCodeDescription]
            ,[RoleId]
@@ -229,7 +232,9 @@ INSERT INTO [eCoachingTest].[EC].[AT_Role_Access]
            ('WISY14','Principal Analyst, Systems',106,'ReportCoachingAdmin',0,1),
            ('WISY14','Principal Analyst, Systems',107,'ReportWarningAdmin',0,1),
            ('WACQ13','Sr Specialist, Quality (CS)',106,'ReportCoachingAdmin',0,1),  
-           ('WACQ13','Sr Specialist, Quality (CS)',107,'ReportWarningAdmin',0,1)                      
+           ('WACQ13','Sr Specialist, Quality (CS)',107,'ReportWarningAdmin',0,1),
+           ('WPSM13','Sr Analyst, Functional',106,'ReportCoachingAdmin',0,1),  
+           ('WPSM13','Sr Analyst, Functional',107,'ReportWarningAdmin',0,1)                         
       
 GO
 
