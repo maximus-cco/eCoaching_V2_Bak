@@ -332,7 +332,7 @@
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>2in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -386,10 +386,10 @@
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>2in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>2in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -3399,7 +3399,7 @@
             <DataSetName>WarningSummary</DataSetName>
             <Top>0.04167in</Top>
             <Height>0.5in</Height>
-            <Width>29in</Width>
+            <Width>32in</Width>
             <Style>
               <Border>
                 <Style>None</Style>

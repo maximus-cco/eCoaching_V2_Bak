@@ -159,10 +159,10 @@
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>2in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>2in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -414,6 +414,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1539,14 +1540,14 @@
             </TablixRowHierarchy>
             <DataSetName>AdminActivitySummary</DataSetName>
             <Height>0.43in</Height>
-            <Width>12in</Width>
+            <Width>14in</Width>
             <Style />
           </Tablix>
         </ReportItems>
         <Height>0.43in</Height>
         <Style />
       </Body>
-      <Width>12in</Width>
+      <Width>14in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
