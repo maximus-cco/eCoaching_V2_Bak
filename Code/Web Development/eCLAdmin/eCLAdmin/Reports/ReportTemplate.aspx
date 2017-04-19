@@ -8,15 +8,11 @@
     <head runat="server">
         <title></title>
         <script src="../Scripts/jquery-2.2.0.js"></script>
-        <script src="../Scripts/jquery-ui-1.12.1.js"></script>
     </head>
     <body style="margin: 0px; padding: 0px;">
         <form id="form1" runat="server">
             <div>
-                <asp:ScriptManager ID="scriptManagerReport" runat="server">
-<%--                    <Scripts>
-                        <asp:ScriptReference Assembly="ReportViewerForMvc" Name="ReportViewerForMvc.Scripts.PostMessage.js" />
-                    </Scripts>--%>
+                <asp:ScriptManager ID="scriptManagerReport" AsyncPostBackTimeOut="0" runat="server">
                 </asp:ScriptManager>
                 <rsweb:ReportViewer  id="rvSiteMapping" runat ="server" AsyncRendering="false" KeepSessionAlive="true" ShowPrintButton="false"  ZoomMode="Percent" Width="100%" Height="100%" SizeToReportContent="false" > 
                 </rsweb:ReportViewer> 
