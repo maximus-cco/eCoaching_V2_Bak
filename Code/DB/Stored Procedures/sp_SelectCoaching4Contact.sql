@@ -1,9 +1,9 @@
 /*
-sp_SelectCoaching4Contact(01).sql
-Last Modified Date: 1/18/2017
+sp_SelectCoaching4Contact(02).sql
+Last Modified Date: 4/24/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: support for QS Lead Email for OMR Breaks feeds per TFS 6377 - 04/24/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -28,6 +28,9 @@ GO
 
 
 
+
+
+
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/2013
@@ -40,6 +43,7 @@ GO
 -- Modified per TFS 3179 & 3186 to add Source 218 for HFC & KUD Quality Other feeds - 7/15/2016
 -- Modified to make allow more ad-hoc loads by adding more values to the file. TFS 4916 -12/9/2016
 -- Modified to add condition for IQS(Quality logs)per TFS 5085 - 12/29/2016
+-- Modified to add support for QS Lead Email for OMR Breaks feeds - 04/24/2017
 -- --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -91,7 +95,8 @@ AND cl.EmailSent = ''False''
 AND ((s.status =''Pending Acknowledgement'' and eh.Emp_Email is NOT NULL and eh.Sup_Email is NOT NULL and eh.Sup_Email <> ''Unknown'')
 OR (s.Status =''Pending Supervisor Review'' and eh.Sup_Email is NOT NULL and eh.Sup_Email <> ''Unknown'')
 OR ((s.Status =''Pending Manager Review'' OR s.Status =''Pending Sr. Manager Review'') and eh.Mgr_Email is NOT NULL and eh.Mgr_Email <> ''Unknown'')
-OR (s.Status =''Pending Employee Review'' and eh.Emp_Email is NOT NULL and eh.Emp_Email <> ''Unknown''))
+OR (s.Status =''Pending Employee Review'' and eh.Emp_Email is NOT NULL and eh.Emp_Email <> ''Unknown'')
+OR (s.Status =''Pending Quality Lead Review'' and eh.Sup_Email is NOT NULL and eh.Sup_Email <> ''Unknown''))
 AND LEN(cl.FormName) > 10
 Order By cl.SubmittedDate DESC'
 --and [strCSREmail] = '''+@strFormMail+'''
@@ -102,5 +107,10 @@ EXEC (@nvcSQL)
 END --sp_SelectCoaching4Contact
 
 
+
+
+
 GO
+
+
 
