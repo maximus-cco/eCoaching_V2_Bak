@@ -1,9 +1,10 @@
 /*
-sp_Update_Outlier_Coaching_Stage(01).sql
+sp_Update_Outlier_Coaching_Stage(02).sql
 Last Modified Date: 04/24/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: slight update to EmpID update logic - Suzy Palacherla -  TFS 6377 - 04/24/2017
 
 Version 01: Document Initial Revision - Suzy Palacherla -  TFS 6377 - 04/24/2017
 
@@ -19,12 +20,13 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -60,7 +62,7 @@ WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
 BEGIN
 UPDATE [EC].[Outlier_Coaching_Stage]
 SET [CSR_EMPID]=[CSR_LANID]
-WHERE NOT ISNULL([CSR_LANID],' ') like '%.%'
+WHERE NOT ISNULL([CSR_LANID],' ') like '%.%' AND [CSR_EMPID] IS NULL
 OPTION (MAXDOP 1)
 END 
  
@@ -80,7 +82,7 @@ WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
 BEGIN
 UPDATE [EC].[Outlier_Coaching_Stage]
 SET [CSR_EMPID]= [EC].[fn_nvcGetEmpIdFromLanId] ([CSR_LANID],[Submitted_Date])
-WHERE  ISNULL([CSR_LANID],' ') like '%.%'
+WHERE  ISNULL([CSR_LANID],' ') like '%.%' AND [CSR_EMPID] IS NULL
 OPTION (MAXDOP 1)
 END 
  
@@ -165,9 +167,9 @@ WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
 END  -- [EC].[sp_Update_Outlier_Coaching_Stage]
 
 
+
+
 GO
-
-
 
 
 
