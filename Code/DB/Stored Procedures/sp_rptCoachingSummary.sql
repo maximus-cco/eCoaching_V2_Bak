@@ -1,9 +1,9 @@
 /*
-sp_rptCoachingSummary(03).sql
-Last Modified Date: 03/17/2017
+sp_rptCoachingSummary(04).sql
+Last Modified Date: 04/19/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 04: Updated Joins to use left join - Suzy -  TFS 5621 - 04/19/2017
 
 Version 03: Updated formatting - Suzy -  TFS 5621 - 03/17/2017
 
@@ -31,6 +31,10 @@ GO
 
 
 
+
+
+
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/14/2017
@@ -38,7 +42,7 @@ GO
 --  Last Modified: 
 --  Last Modified By:
 --  Revision History:
---  Initial Revision - TFS 5621 - 03/14/2017
+--  Initial Revision - TFS 5621 -  03/14/2017 (Modified 04/19/2017)
  *******************************************************************************/
 
 CREATE PROCEDURE [EC].[sp_rptCoachingSummary] 
@@ -92,23 +96,29 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 			  ,p.EmpID AS [Employee ID]
     	      ,c.EmpName AS [Employee Name]
     	      ,c.Site
-    	      ,c.LogSupID AS [Supervisor Employee ID]
-			  ,c.LogSupName AS [Supervisor Name]
-			  ,c.LogMgrID AS [Manager Employee ID]
-			  ,c.LogMgrName AS [Manager Name]
-			  ,c.HierarchySupID AS [Current Supervisor Employee ID]
-			  ,c.HierarchySupName  AS [Current Supervisor Name]
-			  ,c.HierarchyMgrID AS [Current Manager Employee ID]
-			  ,c.HierarchyMgrName  AS [Current Manager Name]
+    	      ,ISNULL(c.LogSupID,'-') AS [Supervisor Employee ID]
+			  ,CASE WHEN c.LogSupID IS NULL THEN '-'
+			   ELSE c.LogSupName END AS [Supervisor Name]
+			  ,ISNULL(c.LogMgrID,'-') AS [Manager Employee ID]
+			  ,CASE WHEN c.LogMgrID IS NULL THEN '-'
+			   ELSE c.LogMgrName END AS [Manager Name]
+			  ,ISNULL(c.HierarchySupID,'-') AS [Current Supervisor Employee ID]
+			  ,ISNULL(c.HierarchySupName,'-')  AS [Current Supervisor Name]
+			  ,ISNULL(c.HierarchyMgrID,'-') AS [Current Manager Employee ID]
+			  ,ISNULL(c.HierarchyMgrName,'-')  AS [Current Manager Name]
 		      ,ISNULL(c.ReviewSupID,'-')AS [Review Supervisor Employee ID]
-	          ,ISNULL(c.ReviewSupName,'-')AS [Review Supervisor Name]
+	          ,CASE 
+	           WHEN c.ReviewSupID IS NULL THEN '-' 
+	           ELSE c.ReviewSupName END AS [Review Supervisor Name]
 	          ,ISNULL(c.ReviewMgrID,'-')AS [Review Manager Employee ID]
-		      ,ISNULL(c.ReviewMgrName,'-')AS [Review Manager Name]
-	          ,LTRIM(RTRIM(REPLACE(c.Description, '<br />', ''))) AS [Description]
-              ,COALESCE(c.CoachingNotes,'-') AS [Coaching Notes]    
-              ,ISNULL(CONVERT(varchar,c.EventDate,121),'-') AS [Event Date]
-              ,ISNULL(CONVERT(varchar,c.CoachingDate,121),'-') AS [Coaching Date]
-              ,ISNULL(CONVERT(varchar,c.SubmittedDate,121),'-') AS [Submitted Date]
+		      ,CASE 
+		       WHEN c.ReviewMgrID IS NULL  THEN '-'
+		       ELSE c.ReviewMgrName END AS [Review Manager Name]
+		       ,LTRIM(RTRIM(REPLACE(p.Description, '<br />', ''))) AS [Description]
+              ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
+              ,ISNULL(CONVERT(varchar,p.EventDate,121),'-') AS [Event Date]
+              ,ISNULL(CONVERT(varchar,p.CoachingDate,121),'-') AS [Coaching Date]
+              ,ISNULL(CONVERT(varchar,p.SubmittedDate,121),'-') AS [Submitted Date]
 		      ,c.Source AS [Coaching Source]
 		      ,c.SubSource AS [Sub Coaching Source]
 		      ,[EC].[fn_strCoachingReasonFromCoachingID](c.CoachingID) AS [Coaching Reason]
@@ -116,19 +126,19 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 	          ,[EC].[fn_strValueFromCoachingID](c.CoachingID)AS [Value]
 		      ,c.SubmitterID AS [Submitter ID]
 		      ,c.SubmitterName AS [Submitter Name]
-		      ,ISNULL(CONVERT(varchar,c.SupReviewedDate,121),'-') AS [Supervisor Reviewed Date]
-              ,ISNULL(CONVERT(varchar,c.MgrReviewedMDate,121),'-') AS [Manager Reviewed Manual Date]
-			  ,ISNULL(CONVERT(varchar,c.MgrReviewedADate,121),'-') AS [Manager Reviewed Auto Date]
-              ,ISNULL(c.MgrNotes,'-') AS [Manager Notes]
-              ,ISNULL(CONVERT(varchar,c.EmpReviewedDate,121),'-') AS [Employee Reviewed Date]
-              ,ISNULL(c.EmpComments,'-') AS [Employee Comments]
-              ,c.ProgramName 
-              ,ISNULL(c.Behavior,'-')AS [Behavior]
-              ,ISNULL(c.ReportCode,'-') AS [Report Code]
-              ,ISNULL(c.VerintID,'-') AS [Verint ID]
-              ,ISNULL(c.VerintFormName,'-') AS [Verint Form Name]
-              ,ISNULL(c.isCoachingMonitor,'-') AS [Coaching Monitor]
-      FROM [EC].[Coaching_Log] p 
+		      ,ISNULL(CONVERT(varchar,p.SupReviewedAutoDate,121),'-') AS [Supervisor Reviewed Date]
+              ,ISNULL(CONVERT(varchar,p.MgrReviewManualDate,121),'-') AS [Manager Reviewed Manual Date]
+			  ,ISNULL(CONVERT(varchar,p.MgrReviewAutoDate,121),'-') AS [Manager Reviewed Auto Date]
+              ,COALESCE(p.MgrNotes,'-') AS [Manager Notes]
+              ,ISNULL(CONVERT(varchar,p.CSRReviewAutoDate,121),'-') AS [Employee Reviewed Date]
+              ,COALESCE(p.CSRComments,'-') AS [Employee Comments]
+              ,ISNULL(p.ProgramName ,'-') AS [ProgramName]
+              ,ISNULL(p.Behavior,'-')AS [Behavior]
+              ,ISNULL(p.strReportCode,'-') AS [Report Code]
+              ,ISNULL(p.VerintID,'-') AS [Verint ID]
+              ,ISNULL(p.VerintFormName,'-') AS [Verint Form Name]
+              ,ISNULL(p.isCoachingMonitor,'-') AS [Coaching Monitor]
+      FROM [EC].[Coaching_Log] p WITH(NOLOCK)
       JOIN  (SELECT [cl].[ModuleID] ModuleID
               ,[mo].[Module]Module
               ,[cl].[CoachingID] CoachingID
@@ -149,11 +159,6 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 	          ,[rsuph].[Emp_Name]	ReviewSupName
 	          ,[cl].[Review_MgrID]	ReviewMgrID
 		      ,[rmgrh].[Emp_Name]	ReviewMgrName
-		      ,[cl].[Description]	Description
-		      ,[cl].[CoachingNotes]	CoachingNotes
-		      ,[cl].[EventDate]	EventDate
-		      ,[cl].[CoachingDate]	CoachingDate
-		      ,[cl].[SubmittedDate]	SubmittedDate
 		      ,[so].[CoachingSource] Source
 		      ,[so].[SubCoachingSource]	SubSource
 		      ,[dcr].[CoachingReason]CoachingReason
@@ -161,32 +166,20 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 		      ,[clr].[Value]Value
 		      ,[cl].[SubmitterID]	SubmitterID
 		      ,[sh].[Emp_Name]	SubmitterName
-		      ,[cl].[SupReviewedAutoDate] SupReviewedDate
-              ,[cl].[MgrReviewManualDate] MgrReviewedMDate
-			  ,[cl].[MgrReviewAutoDate] MgrReviewedADate
-              ,[cl].[MgrNotes] MgrNotes
-              ,[cl].[CSRReviewAutoDate] EmpReviewedDate
-              ,[cl].[CSRComments] EmpComments
-              ,[cl].[ProgramName]	ProgramName
-              ,[cl].[Behavior]	Behavior
-              ,[cl].[strReportCode]	ReportCode
-              ,[cl].[VerintID]	VerintID
-              ,[cl].[VerintFormName]	VerintFormName
-              ,[cl].[isCoachingMonitor]	isCoachingMonitor
-		FROM [EC].[Employee_Hierarchy] eh 
-		JOIN [EC].[Coaching_Log] cl WITH(NOLOCK)ON cl.EmpID = eh.Emp_ID
-		JOIN [EC].[Employee_Hierarchy] sh ON ISNULL(cl.SubmitterID,'999999') = sh.EMP_ID 
-		JOIN [EC].[Employee_Hierarchy] suph ON ISNULL(cl.SupID,'999999') = suph.EMP_ID 
-		JOIN [EC].[Employee_Hierarchy] mgrh ON ISNULL(cl.MgrID, '999999') = mgrh.EMP_ID 
-		JOIN [EC].[Employee_Hierarchy] rsuph ON ISNULL(cl.Review_SupID,'999999') = rsuph.EMP_ID 
-		JOIN [EC].[Employee_Hierarchy] rmgrh ON ISNULL(cl.Review_MgrID, '999999') = rmgrh.EMP_ID 
-		JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
-		JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
-		JOIN [EC].[DIM_Module] mo ON cl.ModuleID = mo.ModuleID 
-		JOIN [EC].[DIM_Site] si ON cl.SiteID = si.SiteID 
-		JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)ON cl.CoachingID = clr.CoachingID
-		JOIN [EC].[DIM_Coaching_Reason]dcr ON dcr.CoachingReasonID = clr.CoachingReasonID
-		JOIN [EC].[DIM_Sub_Coaching_Reason]dscr ON dscr.SubCoachingReasonID = clr.SubCoachingReasonID 
+		FROM [EC].[Coaching_Log] cl WITH(NOLOCK)JOIN [EC].[DIM_Status] s 
+		ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
+		ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Module] mo
+		ON cl.ModuleID = mo.ModuleID JOIN [EC].[DIM_Site] si 
+		ON cl.SiteID = si.SiteID JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK)
+		ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr 
+		ON dcr.CoachingReasonID = clr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+		ON dscr.SubCoachingReasonID = clr.SubCoachingReasonID JOIN [EC].[Employee_Hierarchy] eh 
+		ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+		ON cl.SubmitterID = sh.EMP_ID LEFT JOIN [EC].[Employee_Hierarchy] suph
+		ON cl.SupID = suph.EMP_ID LEFT JOIN [EC].[Employee_Hierarchy] mgrh 
+		ON cl.MgrID = mgrh.EMP_ID  LEFT JOIN [EC].[Employee_Hierarchy] rsuph
+		ON cl.Review_SupID = rsuph.EMP_ID  LEFT JOIN [EC].[Employee_Hierarchy] rmgrh
+		ON cl.Review_MgrID = rmgrh.EMP_ID 
 		WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= @strSDate
 	    AND convert(varchar(8),[cl].[SubmittedDate],112) <= @strEDate
 		AND [cl].[StatusID] <> 2
@@ -196,7 +189,12 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
         AND  ([clr].[CoachingReasonID] = (@intCoachReasonin) or @intCoachReasonin = -1) 
         AND  ([clr].[SubCoachingReasonID] = (@intSubCoachReasonin)or @intSubCoachReasonin = -1)
         AND ([cl].[EmpID]= (@strEmpin)or @strEmpin = '-1'))
-		)c
+            GROUP BY [cl].[ModuleID],[mo].[Module],[cl].[CoachingID],[cl].[FormName],[s].[Status]	
+			  ,[cl].[EmpID],[eh].[Emp_Name],[si].[City],[cl].[SupID],[suph].[Emp_Name],[cl].[MgrID]	
+			  ,[mgrh].[Emp_Name],[eh].[Sup_ID],[eh].[Sup_Name] ,[eh].[Mgr_ID],[eh].[Mgr_Name]	
+		      ,[cl].[Review_SupID],[rsuph].[Emp_Name],[cl].[Review_MgrID],[rmgrh].[Emp_Name]	
+		      ,[so].[CoachingSource],[so].[SubCoachingSource],[dcr].[CoachingReason]
+		      ,[dscr].[SubCoachingReason],[clr].[Value],[cl].[SubmitterID],[sh].[Emp_Name])c
 		ON p.CoachingID = c.CoachingID
         ORDER BY p.SubmittedDate DESC
 
@@ -226,8 +224,11 @@ RETURN @returnCode
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
 
-GO
 
+
+
+
+GO
 
 
 

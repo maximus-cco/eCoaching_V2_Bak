@@ -1,10 +1,11 @@
 /*
-sp_rptWarningSummary(02).sql
-Last Modified Date: 04/10/2017
+sp_rptWarningSummary(03).sql
+Last Modified Date: 04/19/2017
 Last Modified By: Susmitha Palacherla
 
-Version 02: Added State - TFS 5621 - 04/10/2017
+Version 03: Updated Joins to use left join - Suzy -  TFS 5621 - 04/19/2017
 
+Version 02: Added State - TFS 5621 - 04/10/2017
 
 Version 01: Document Initial Revision - Suzy Palacherla -  TFS 5621 - 03/27/2017
 
@@ -28,8 +29,6 @@ GO
 
 
 
-
-
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2017
@@ -37,7 +36,7 @@ GO
 --  Last Modified: 
 --  Last Modified By:
 --  Revision History:
---  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/10/2017)
+--  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/19/2017)
  *******************************************************************************/
 
 CREATE PROCEDURE [EC].[sp_rptWarningSummary] 
@@ -93,14 +92,16 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 			  ,p.EmpID AS [Employee ID]
     	      ,w.EmpName AS [Employee Name]
     	      ,w.Site
-    	      ,w.LogSupID AS [Supervisor Employee ID]
-			  ,w.LogSupName AS [Supervisor Name]
-			  ,w.LogMgrID AS [Manager Employee ID]
-			  ,w.LogMgrName AS [Manager Name]
-			  ,ISNULL(w.HierarchySupID,'Unknown') AS [Current Supervisor Employee ID]
-			  ,ISNULL(w.HierarchySupName,'Unknown')  AS [Current Supervisor Name]
-			  ,ISNULL(w.HierarchyMgrID,'Unknown') AS [Current Manager Employee ID]
-			  ,ISNULL(w.HierarchyMgrName,'Unknown')  AS [Current Manager Name]
+    	      ,ISNULL(w.LogSupID,'-') AS [Supervisor Employee ID]
+			  ,CASE WHEN w.LogSupID IS NULL THEN '-'
+			   ELSE w.LogSupName END AS [Supervisor Name]
+			  ,ISNULL(w.LogMgrID,'-') AS [Manager Employee ID]
+			  ,CASE WHEN w.LogMgrID IS NULL THEN '-'
+			   ELSE w.LogMgrName END AS [Manager Name]
+			  ,ISNULL(w.HierarchySupID,'-') AS [Current Supervisor Employee ID]
+			  ,ISNULL(w.HierarchySupName,'-')  AS [Current Supervisor Name]
+			  ,ISNULL(w.HierarchyMgrID,'-') AS [Current Manager Employee ID]
+			  ,ISNULL(w.HierarchyMgrName,'-')  AS [Current Manager Name]
 		      ,ISNULL(CONVERT(varchar,w.WarningGivenDate,121),'-') AS [Warning given Date]
               ,ISNULL(CONVERT(varchar,w.SubmittedDate,121),'-') AS [Submitted Date]
               ,ISNULL(CONVERT(varchar,w.WarningExpiryDate,121),'-') AS [Expiration Date]
@@ -114,7 +115,7 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 		      ,ISNULL(w.ProgramName,'-') AS [Program Name]
               ,ISNULL(w.Behavior,'-')AS [Behavior]
               ,ISNULL(w.[State],'-')AS [State]
-      FROM [EC].[Warning_Log] p 
+      FROM [EC].[Warning_Log] p WITH(NOLOCK)
       JOIN  (SELECT [wl].[ModuleID] ModuleID
               ,[mo].[Module]Module
               ,[wl].[WarningID] WarningID
@@ -145,18 +146,18 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
               ,[wl].[Behavior]	Behavior
               ,CASE WHEN [wl].[Active] = 1 THEN 'Active' 
                ELSE 'Expired' END AS [State]
-        FROM [EC].[Employee_Hierarchy] eh 
-		JOIN [EC].[Warning_Log] wl WITH(NOLOCK)ON wl.EmpID = eh.Emp_ID
-		JOIN [EC].[Employee_Hierarchy] sh ON ISNULL(wl.SubmitterID,'999999') = sh.EMP_ID 
-		JOIN [EC].[Employee_Hierarchy] suph ON ISNULL(wl.SupID,'999999') = suph.EMP_ID 
-		JOIN [EC].[Employee_Hierarchy] mgrh ON ISNULL(wl.MgrID, '999999') = mgrh.EMP_ID 
-		JOIN [EC].[DIM_Status] s ON wl.StatusID = s.StatusID 
-		JOIN [EC].[DIM_Source] so ON wl.SourceID = so.SourceID 
-		JOIN [EC].[DIM_Module] mo ON wl.ModuleID = mo.ModuleID 
-		JOIN [EC].[DIM_Site] si ON wl.SiteID = si.SiteID 
-		JOIN [EC].[Warning_Log_Reason] wlr WITH (NOLOCK)ON wl.WarningID = wlr.WarningID
-		JOIN [EC].[DIM_Coaching_Reason]dcr ON dcr.CoachingReasonID = wlr.CoachingReasonID
-		JOIN [EC].[DIM_Sub_Coaching_Reason]dscr ON dscr.SubCoachingReasonID = wlr.SubCoachingReasonID 
+        FROM [EC].[Warning_Log] wl WITH(NOLOCK) JOIN [EC].[DIM_Status] s 
+		ON wl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
+		ON wl.SourceID = so.SourceID JOIN [EC].[DIM_Module] mo
+		ON wl.ModuleID = mo.ModuleID JOIN [EC].[DIM_Site] si 
+		ON wl.SiteID = si.SiteID JOIN [EC].[Warning_Log_Reason] wlr WITH (NOLOCK)
+		ON wl.WarningID = wlr.WarningID JOIN [EC].[DIM_Coaching_Reason]dcr 
+		ON dcr.CoachingReasonID = wlr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr 
+		ON dscr.SubCoachingReasonID = wlr.SubCoachingReasonID JOIN [EC].[Employee_Hierarchy] eh 
+		ON wl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
+		ON wl.SubmitterID = sh.EMP_ID LEFT JOIN [EC].[Employee_Hierarchy] suph
+		ON wl.SupID = suph.EMP_ID LEFT JOIN [EC].[Employee_Hierarchy] mgrh
+		ON wl.MgrID = mgrh.EMP_ID 
 		WHERE convert(varchar(8),[wl].[SubmittedDate],112) >= @strSDate
 	    AND convert(varchar(8),[wl].[SubmittedDate],112) <= @strEDate
 	    AND  (([wl].[ModuleID] =(@intModulein) or @intModulein = -1) 
@@ -195,6 +196,9 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
+
+
+
 
 
 
