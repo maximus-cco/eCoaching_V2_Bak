@@ -1,7 +1,10 @@
 /*
-sp_InsertInto_Coaching_Log_Outlier(02).sql
-Last Modified Date: 4/13/2017
+sp_InsertInto_Coaching_Log_Outlier(03).sql
+Last Modified Date: 4/24/2017
 Last Modified By: Susmitha Palacherla
+
+Version 03: Support for Sup and quality Modules in 
+Breaks feeds and also added Output param to capture count of Loaded records - TFS 6377 - 04/24/2017
 
 Version 02: New Breaks BRN and BRL feeds - TFS 6145 - 4/13/2017
 
@@ -25,11 +28,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
@@ -38,8 +36,12 @@ GO
 -- Last Updated By: Susmitha Palacherla
 -- Modified per TFS 644 to add IAE, IAT Feeds
 -- Modified per TFS 6145 to add BRN and BRL Feeds - 4/12/2017
+-- Modified per TFS 6377 to add support for Sup and quality Modules in 
+-- Breaks feeds and also added Output param to capture count of Loaded records.
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+@Count INT OUTPUT
+
 AS
 BEGIN
 
@@ -51,8 +53,8 @@ BEGIN TRY
               @dtmDate DATETIME,
               @strLCSPretext nvarchar(200),
               @strIAEPretext nvarchar(200),
-              @strIATPretext nvarchar(200)
-           
+              @strIATPretext nvarchar(200),
+              @strBRText nvarchar(200)
               
       -- Fetches the maximum CoachingID before the insert.
       SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
@@ -61,7 +63,7 @@ BEGIN TRY
       SET @strLCSPretext = 'The call associated with this Low CSAT is Verint ID: '
       SET @strIAEPretext = 'You are receiving this eCL because the ARC received an Inappropriate Escalation for this CSR.  Please review the Verint Call, NGD call record and coach as appropriate. '
       SET @strIATPretext = 'You are receiving this eCL because the ARC received an Inappropriate Transfer for this CSR.  Please review the Verint Call, NGD call record and coach as appropriate. '
- 
+
       
 -- Inserts records from the Outlier_Coaching_Stage table to the Coaching_Log Table
 
@@ -121,7 +123,11 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
 		 0                          [EmailSent],
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 1							[ModuleID],
+		 CASE cs.Emp_Role 
+			 WHEN 'C' THEN 1
+			 WHEN 'S' THEN 2 
+			 WHEN 'Q' THEN 3
+			 ELSE -1 END                  [ModuleID],
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
 		 CASE WHEN cs.Report_Code LIKE 'LCS%' THEN ISNULL(cs.[RMgr_ID],'999999')
 		 ELSE ISNULL(csr.[Mgr_ID],'999999')END  [MgrID]
@@ -129,11 +135,13 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
 from [EC].[Outlier_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR_EMPID = csr.Emp_ID
 left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
 where cf.numReportID is Null and cf.strReportCode is null
+OPTION (MAXDOP 1)
 
+SELECT @Count =@@ROWCOUNT
 
 -- Updates the strFormID value
 
-WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+WAITFOR DELAY '00:00:00:02'  -- Wait for 2 ms
 
 UPDATE [EC].[Coaching_Log]
 SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
@@ -201,6 +209,9 @@ END -- sp_InsertInto_Coaching_Log_Outlier
 
 
 
+
+
 GO
+
 
 
