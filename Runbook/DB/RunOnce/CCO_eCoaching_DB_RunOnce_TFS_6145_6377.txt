@@ -1,0 +1,97 @@
+/* 
+
+TFS 6145 and 6377- Breaks feeds
+
+Run one statement at a time
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+
+
+
+
+
+--1. add record in coaching reason table
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReason])
+     VALUES
+('Breaks')
+
+
+
+--2. add record in sub coaching reason table
+
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+          ('Exceed Number of Breaks'),
+          ('Exceed Break Length')
+GO
+
+
+
+--3. 
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+           ('Quality','Outlier','Indirect','OMR',0,'Pending Quality Lead Review','Supervisor','eCL: Pending Quality Lead Review',
+           'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>   that requires your action. Please click on the link below to review the eCoaching log.',
+           0,'NA'),
+            ('Supervisor','Outlier','Indirect','OMR',0,'Pending Manager Review','Supervisor','Pending Manager Review',
+           'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>   that requires your action. Please click on the link below to review the eCoaching log.',
+           0,'NA')
+
+          
+GO
+
+
+--4.
+ALTER TABLE [EC].[Outlier_Coaching_Stage]
+ADD Emp_Role nvarchar(3), Reject_Reason nvarchar(200),Emp_Active nvarchar(1)
+GO
+
+ALTER TABLE [EC].[Outlier_Coaching_Rejected]
+ADD CSR_EMPID nvarchar(20)
+GO
+
+
+ALTER TABLE [EC].[Outlier_Coaching_Fact]
+ADD CSR_EMPID nvarchar(20)
+GO
+
+
+--5.Codes files being installed 
+-- These are the stored procedures/functions marked in runbook
+
+--function
+
+fn_intSubCoachReasonIDFromRptCode.sql
+
+-- stored Procedures
+
+sp_Update_Outlier_Coaching_Stage
+sp_InsertInto_Outlier_Rejected
+sp_InsertInto_Coaching_Log_Outlier
+sp_SelectCoaching4Contact.sql
+sp_SelectReviewFrom_Coaching_Log]
+sp_Update5Review_Coaching_Log.sql
+
+
+--6. ssis package marked in runbook
+Outlier_Coaching.dtsx
