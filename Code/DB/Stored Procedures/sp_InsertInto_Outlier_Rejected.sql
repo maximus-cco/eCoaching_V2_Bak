@@ -1,9 +1,10 @@
 /*
-sp_InsertInto_Outlier_Rejected(01).sql
-Last Modified Date: 04/24/2017
+sp_InsertInto_Outlier_Rejected(02).sql
+Last Modified Date: 04/25/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Missed Program insert into Rejected Table - Suzy Palacherla -  TFS 6377 - 04/25/2017
 
 Version 01: Document Initial Revision - Suzy Palacherla -  TFS 6377 - 04/24/2017
 */
@@ -24,6 +25,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 -- =============================================
@@ -109,6 +112,7 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
            ,[Submitter_Email]
            ,[CSR_LANID]
            ,[CSR_Site]
+           ,[Program]
            ,[CoachReason_Current_Coaching_Initiatives]
            ,[TextDescription]
            ,[FileName]
@@ -131,6 +135,7 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
       ,S.[Submitter_Email]
       ,S.[CSR_LANID]
       ,S.[CSR_Site]
+      ,S.[Program]
       ,S.[CoachReason_Current_Coaching_Initiatives]
       ,S.[TextDescription]
       ,S.[FileName]
@@ -151,5 +156,3 @@ END
 
 END -- sp_InsertInto_Outlier_Rejected
 GO
-
-
