@@ -7,19 +7,35 @@ Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "eCoachingReport", "eCoachin
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Default = Debug|Default
-		DebugLocal|Default = DebugLocal|Default
-		Release|Default = Release|Default
+		Debug|Any PC = Debug|Any PC
+		DebugLocal|Any PC = DebugLocal|Any PC
+		Dev|Any PC = Dev|Any PC
+		LoadTest|Any PC = LoadTest|Any PC
+		Production|Any PC = Production|Any PC
+		Release|Any PC = Release|Any PC
+		SysTest|Any PC = SysTest|Any PC
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Default.ActiveCfg = Debug
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Default.Build.0 = Debug
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Default.Deploy.0 = Debug
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.DebugLocal|Default.ActiveCfg = DebugLocal
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.DebugLocal|Default.Build.0 = DebugLocal
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Release|Default.ActiveCfg = Release
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Release|Default.Build.0 = Release
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Release|Default.Deploy.0 = Release
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.ActiveCfg = Debug
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.Build.0 = Debug
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.Deploy.0 = Debug
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.DebugLocal|Any PC.ActiveCfg = DebugLocal
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.DebugLocal|Any PC.Build.0 = DebugLocal
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.ActiveCfg = Dev
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.Build.0 = Dev
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.Deploy.0 = Dev
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.ActiveCfg = LoadTest
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.Build.0 = LoadTest
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.Deploy.0 = LoadTest
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Production|Any PC.ActiveCfg = Production
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Production|Any PC.Build.0 = Production
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Production|Any PC.Deploy.0 = Production
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Release|Any PC.ActiveCfg = Release
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Release|Any PC.Build.0 = Release
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Release|Any PC.Deploy.0 = Release
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.ActiveCfg = SysTest
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.Build.0 = SysTest
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.Deploy.0 = SysTest
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

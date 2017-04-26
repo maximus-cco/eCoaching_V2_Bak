@@ -9,6 +9,18 @@
   </DataSources>
   <DataSets>
     <ProjectItem>
+      <Name>AdminActionList.rsd</Name>
+      <FullPath>AdminActionList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>AdminFormList.rsd</Name>
+      <FullPath>AdminFormList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>AdminLogTypeList.rsd</Name>
+      <FullPath>AdminLogTypeList.rsd</FullPath>
+    </ProjectItem>
+    <ProjectItem>
       <Name>CoachingEmployeeList.rsd</Name>
       <FullPath>CoachingEmployeeList.rsd</FullPath>
     </ProjectItem>
@@ -64,20 +76,12 @@
       <Name>WarningSubReasonList.rsd</Name>
       <FullPath>WarningSubReasonList.rsd</FullPath>
     </ProjectItem>
-    <ProjectItem>
-      <Name>AdminLogTypeList.rsd</Name>
-      <FullPath>AdminLogTypeList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>AdminActionList.rsd</Name>
-      <FullPath>AdminActionList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>AdminFormList.rsd</Name>
-      <FullPath>AdminFormList.rsd</FullPath>
-    </ProjectItem>
   </DataSets>
   <Reports>
+    <ProjectItem>
+      <Name>AdminActivitySummary.rdl</Name>
+      <FullPath>AdminActivitySummary.rdl</FullPath>
+    </ProjectItem>
     <ProjectItem>
       <Name>CoachingSummary.rdl</Name>
       <FullPath>CoachingSummary.rdl</FullPath>
@@ -89,10 +93,6 @@
     <ProjectItem>
       <Name>WarningSummary.rdl</Name>
       <FullPath>WarningSummary.rdl</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>AdminActivitySummary.rdl</Name>
-      <FullPath>AdminActivitySummary.rdl</FullPath>
     </ProjectItem>
   </Reports>
   <Configurations>
@@ -133,6 +133,58 @@
         <TargetFolder>eCoachingAdhocReports</TargetFolder>
         <TargetDataSourceFolder>Data Sources</TargetDataSourceFolder>
         <TargetDatasetFolder>Datasets</TargetDatasetFolder>
+        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>LoadTest</Name>
+      <Options>
+        <OutputPath>bin\Debug</OutputPath>
+        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+        <TargetServerURL>http://vdenssdbp07.vangent.local/ReportServer_SCORP01</TargetServerURL>
+        <TargetFolder>/eCoaching/LoadTest/Reports</TargetFolder>
+        <TargetDataSourceFolder>/eCoaching/LoadTest/DataSources</TargetDataSourceFolder>
+        <TargetDatasetFolder>/eCoaching/LoadTest/Datasets</TargetDatasetFolder>
+        <OverwriteDatasets>true</OverwriteDatasets>
+        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>SysTest</Name>
+      <Options>
+        <OutputPath>bin\Debug</OutputPath>
+        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+        <TargetServerURL>http://vrivfssdbt02.vangent.local/ReportServer_SCORD01</TargetServerURL>
+        <TargetFolder>/eCoaching/SystemTest/Reports</TargetFolder>
+        <TargetDataSourceFolder>/eCoaching/SystemTest/DataSources</TargetDataSourceFolder>
+        <TargetDatasetFolder>/eCoaching/SystemTest/Datasets</TargetDatasetFolder>
+        <OverwriteDatasets>true</OverwriteDatasets>
+        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>Production</Name>
+      <Options>
+        <OutputPath>bin\Debug</OutputPath>
+        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+        <TargetServerURL>http://vdenssdbp07.vangent.local/ReportServer_SCORP01</TargetServerURL>
+        <TargetFolder>/eCoaching/Production/Reports</TargetFolder>
+        <TargetDataSourceFolder>/eCoaching/Production/DataSources</TargetDataSourceFolder>
+        <TargetDatasetFolder>/eCoaching/Production/Datasets</TargetDatasetFolder>
+        <OverwriteDatasets>true</OverwriteDatasets>
+        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+      </Options>
+    </Configuration>
+    <Configuration>
+      <Name>Dev</Name>
+      <Options>
+        <OutputPath>bin\Debug</OutputPath>
+        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+        <TargetServerURL>http://vrivfssdbt02.vangent.local/ReportServer_SCORD01</TargetServerURL>
+        <TargetFolder>/eCoaching/Development/Reports</TargetFolder>
+        <TargetDataSourceFolder>/eCoaching/Development/DataSources</TargetDataSourceFolder>
+        <TargetDatasetFolder>/eCoaching/Development/Datasets</TargetDatasetFolder>
+        <OverwriteDatasets>true</OverwriteDatasets>
         <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
       </Options>
     </Configuration>
