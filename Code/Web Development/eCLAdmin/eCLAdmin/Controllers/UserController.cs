@@ -26,11 +26,13 @@ namespace eCLAdmin.Controllers
 
         //
         // GET: /ManageAccessControl/
+        [EclAuthorize]
         public ActionResult Index()
         {
             return View();
         }
 
+        [EclAuthorize]
         public ActionResult eCoachingAccessControlList()
         {
             logger.Debug("Entered eCoachingAccessControlList");
