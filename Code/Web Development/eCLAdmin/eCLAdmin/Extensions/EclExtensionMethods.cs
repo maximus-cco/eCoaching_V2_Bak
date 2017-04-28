@@ -1,17 +1,19 @@
-﻿using eCLAdmin.Models.User;
+﻿using eCLAdmin.Models;
+using eCLAdmin.Models.User;
 using eCLAdmin.Services;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace eCLAdmin.Extensions
 {
-    public static class EclExtendedMethods
+    public static class EclExtensionMethods
     {
-        static ILog logger = LogManager.GetLogger(typeof(EclExtendedMethods));
+        static ILog logger = LogManager.GetLogger(typeof(EclExtensionMethods));
 
         public static bool IsEntitled(this ControllerBase controller, string entitlementName)
         {
@@ -54,6 +56,42 @@ namespace eCLAdmin.Extensions
             sqlParameter.TypeName = "EC.IdsTableType";
 
             return sqlParameter;
+        }
+
+        public static IEnumerable<SelectListItem> ToSelectListItems(this IEnumerable<eCoachingAccessControlRole> roles, string selectedValue)
+        {
+            return
+                roles.Select(role =>
+                          new SelectListItem
+                          {
+                              Selected = (role.Value.ToUpper() == selectedValue),
+                              Text = role.Name,
+                              Value = role.Value
+                          });
+        }
+
+        public static IEnumerable<SelectListItem> ToSelectListItems(this IEnumerable<NameLanId> nameLanIdList, string selectedValue)
+        {
+            return
+                nameLanIdList.Select(nameLanId =>
+                          new SelectListItem
+                          {
+                              Selected = (nameLanId.LanId.ToUpper() == selectedValue),
+                              Text = nameLanId.Name,
+                              Value = nameLanId.LanId
+                          });
+        }
+
+        public static IEnumerable<SelectListItem> ToSelectListItems(this IEnumerable<Site> siteList, string selectedValue)
+        {
+            return
+                siteList.Select(site =>
+                          new SelectListItem
+                          {
+                              Selected = (site.Id == selectedValue),
+                              Text = site.Name,
+                              Value = site.Id
+                          });
         }
     }
 }

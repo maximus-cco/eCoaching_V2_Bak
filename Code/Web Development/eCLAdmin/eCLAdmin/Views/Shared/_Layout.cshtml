@@ -63,11 +63,6 @@
                         </li>
                     }
 
-                    @if (ViewContext.Controller.IsEntitled("ManageUsers"))
-                    {
-                        <li>@Html.ActionLink("Manage Users", "List", "User")</li>
-                    }
-
 @*Report*@
                     @if (ViewContext.Controller.IsEntitled("Reports"))
                     {
@@ -97,6 +92,21 @@
                         </li>
                     }
 @*End Report*@
+
+
+                    @*@if (ViewContext.Controller.IsEntitled("Users"))
+                        {*@
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                           role="button" aria-expanded="false">Users<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            @*@if (ViewContext.Controller.IsEntitled("User-eCoachingACL"))
+                                {*@
+                            <li>@Html.ActionLink("eCoaching ACL", "eCoachingAccessControlList", "User")</li>
+                            @*}*@
+                        </ul>
+                    </li>
+                    @*}*@
 
                 </ul>
                 <ul class="nav navbar-nav navbar-right">

@@ -1,0 +1,38 @@
+﻿<h2>eCoaching Access Control</h2>
+<br />
+<div id="message"></div>
+<br />
+
+<a href="#" class="modal-link" action="add" id="lnk-add-user"><u>Add</u></a>
+<br />
+<br />
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="dataTable_wrapper">
+            <table class="tables table-striped table-bordered" id="dataTables-ecoaching-access-control-list" style="width: 100%; font-size: small;" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>RowId</th> @*hidden column*@
+                        <th>User LAN ID</th>
+                        <th>User Name</th>
+                        <th>Role</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+            </table>
+        </div> 
+        <!-- /.dataTable_wrapper -->
+    </div>
+    <!-- col-lg-13 -->
+</div>
+<!-- /.row -->
+
+<script>
+    var getUserListUrl = '@Url.Action("GetEcoachingAccessControlList")';
+    var showDeleteModalUrl = '@Url.Action("InitEcoachingAccessControlDelete")';
+    var showEditUserUrl = '@Url.Action("InitEcoachingAccessControlEdit")';
+    var showAddUserUrl = '@Url.Action("InitEcoachingAccessControlAdd")';
+</script>
+
+@Scripts.Render("~/bundles/scripts/eCoachingAccessControlList")

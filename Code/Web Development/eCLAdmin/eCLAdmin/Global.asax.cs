@@ -43,7 +43,8 @@ namespace eCLAdmin
             container.Register<IEmailService, EmailService>(Lifestyle.Scoped);
             container.Register<IDashboardService, DashboardService>(Lifestyle.Scoped);
             container.Register<IDashboardRepository, DashboardRepository>(Lifestyle.Scoped);
-            //container.Register<IUserService, UserService>(Lifestyle.Scoped);
+            container.Register<IUserService, UserService>(Lifestyle.Scoped);
+            container.Register<ISiteService, SiteService>(Lifestyle.Scoped);
 
             // 3. Optionally verify the container's configuration
             container.Verify();

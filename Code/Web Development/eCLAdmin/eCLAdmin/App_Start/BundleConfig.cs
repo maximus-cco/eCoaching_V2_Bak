@@ -14,6 +14,7 @@ namespace eCLAdmin
             scriptBundle.Include(
                         "~/Scripts/modernizr-*",
                         "~/Scripts/jquery-{version}.js",
+                         "~/Scripts/select2.js",
                         "~/Scripts/jquery.validate.js",
                         "~/Scripts/jquery.validate.unobtrusive.js",
                         "~/Scripts/jquery.unobtrusive-ajax.js",
@@ -67,6 +68,34 @@ namespace eCLAdmin
             logDeleteScriptBundle.Include(
                         "~/Scripts/eCLAdmin/logDelete.js");
             bundles.Add(logDeleteScriptBundle);
+
+            // javascript bundle for eCoaching Access Control list
+            var eCoachingAccessControlListScriptBundle = new ScriptBundle("~/bundles/scripts/eCoachingAccessControlList");
+            eCoachingAccessControlListScriptBundle.Orderer = new EclBundleOrderer();
+            eCoachingAccessControlListScriptBundle.Include(
+                        "~/Scripts/eCLAdmin/eCoachingAccessControlList.js");
+            bundles.Add(eCoachingAccessControlListScriptBundle);
+
+            // javascript bundle for eCoaching Access Control delete
+            var eCoachingAccessControlDeleteScriptBundle = new ScriptBundle("~/bundles/scripts/eCoachingAccessControlDelete");
+            eCoachingAccessControlDeleteScriptBundle.Orderer = new EclBundleOrderer();
+            eCoachingAccessControlDeleteScriptBundle.Include(
+                        "~/Scripts/eCLAdmin/eCoachingAccessControlDelete.js");
+            bundles.Add(eCoachingAccessControlDeleteScriptBundle);
+
+            // javascript bundle for eCoaching Access Control update
+            var eCoachingAccessControlUpdateScriptBundle = new ScriptBundle("~/bundles/scripts/eCoachingAccessControlUpdate");
+            eCoachingAccessControlUpdateScriptBundle.Orderer = new EclBundleOrderer();
+            eCoachingAccessControlUpdateScriptBundle.Include(
+                        "~/Scripts/eCLAdmin/eCoachingAccessControlUpdate.js");
+            bundles.Add(eCoachingAccessControlUpdateScriptBundle);
+
+            // javascript bundle for eCoaching Access Control add
+            var eCoachingAccessControlAddScriptBundle = new ScriptBundle("~/bundles/scripts/eCoachingAccessControlAdd");
+            eCoachingAccessControlAddScriptBundle.Orderer = new EclBundleOrderer();
+            eCoachingAccessControlAddScriptBundle.Include(
+                        "~/Scripts/eCLAdmin/eCoachingAccessControlAdd.js");
+            bundles.Add(eCoachingAccessControlAddScriptBundle);
 
             // css across web app
             bundles.Add(new StyleBundle("~/Content/css").Include(

@@ -16,12 +16,7 @@
 
     //clear modal cache, so that new content can be loaded
     $('#modal-container').on('hidden.bs.modal', function () {
-        $(this).removeData('bs.modal');
-    });
-
-    //$('#CancelModal').on('click', function () {
-    $('body').on('click', '#CancelModal', function () {
-        return false;
+        $(this).removeData('bs.modal').find(".modal-content").empty();
     });
 
     $.ajaxSetup(

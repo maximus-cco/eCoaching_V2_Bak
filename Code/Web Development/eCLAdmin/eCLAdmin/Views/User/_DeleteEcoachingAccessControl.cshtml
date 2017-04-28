@@ -1,0 +1,27 @@
+﻿@model eCLAdmin.ViewModels.eCoachingAccessControlViewModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h3 class="modal-title">Delete (@Model.LanId)</h3>
+</div>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-delete-ecoaching-access-control" }))
+{
+    @Html.HiddenFor(m => m.RowId)
+
+    <div class="modal-body">
+        Are you sure you wish to delete this user?
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" id="btn-cancel" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="submit" id="btn-delete" class="btn btn-primary">Yes</button>
+    </div>
+}
+
+
+<script>
+    var deleteUserUrl = '@Url.Action("DeleteEcoachingAccessControl")';
+</script>
+
+@Scripts.Render("~/bundles/scripts/eCoachingAccessControlDelete")

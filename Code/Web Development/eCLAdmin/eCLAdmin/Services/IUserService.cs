@@ -11,6 +11,16 @@ namespace eCLAdmin.Services
 
         bool UserIsEntitled(User user, string entitlementName);
 
-        //List<Entitlement> GetEntitlementsByUserLanId(string userLanId);
+        List<eCoachingAccessControl> GetEcoachingAccessControlList();
+
+        bool DeleteEcoachingAccessControl(int rowId, string deletedBy);
+
+        eCoachingAccessControl GetEcoachingAccessControl(int rowId);
+
+        List<NameLanId> GetEcoachingAccessControlsToAdd(string siteId);
+        
+        bool UpdateEcoachingAccessControl(eCoachingAccessControl user);
+
+        int AddEcoachingAccessControl(eCoachingAccessControl user);
     }
 }

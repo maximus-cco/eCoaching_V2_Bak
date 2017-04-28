@@ -162,10 +162,10 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Extensions\EclExtensionMethods.cs" />
     <Compile Include="Extensions\EclHtmlHelper.cs" />
     <Compile Include="Extensions\EnumExtension.cs" />
     <Compile Include="Filters\EclAuthorizeAttribute.cs" />
-    <Compile Include="Extensions\EclExtendedMethods.cs" />
     <Compile Include="Filters\EclExceptionAttribute.cs" />
     <Compile Include="Filters\SessionCheckAttribute.cs" />
     <Compile Include="Models\Dashboard\ChartBase.cs" />
@@ -182,7 +182,10 @@
     <Compile Include="Models\EmployeeLog\WarningLogDetail.cs" />
     <Compile Include="Models\Report\ReportInfo.cs" />
     <Compile Include="Models\Site.cs" />
+    <Compile Include="Models\User\eCoachingAccessControl.cs" />
+    <Compile Include="Models\User\eCoachingAccessControlRole.cs" />
     <Compile Include="Models\User\Entitlement.cs" />
+    <Compile Include="Models\User\NameLanId.cs" />
     <Compile Include="Models\User\Role.cs" />
     <Compile Include="Models\User\User.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -212,13 +215,17 @@
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\IDashboardService.cs" />
     <Compile Include="Services\IEmailService.cs" />
+    <Compile Include="Services\ISiteService.cs" />
     <Compile Include="Services\IUserService.cs" />
+    <Compile Include="Services\SiteService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Utilities\EclAdminUtil.cs" />
     <Compile Include="Utilities\EmailUtil.cs" />
     <Compile Include="Utilities\FileUtil.cs" />
     <Compile Include="ViewModels\DashboardGraphViewModel.cs" />
     <Compile Include="ViewModels\DashboardIndexViewModel.cs" />
+    <Compile Include="ViewModels\eCoachingAccessControlAddViewModel.cs" />
+    <Compile Include="ViewModels\eCoachingAccessControlViewModel.cs" />
     <Compile Include="ViewModels\EmployeeLogSelectEditorViewModel.cs" />
     <Compile Include="ViewModels\EmployeeLogSelectViewModel.cs" />
     <Compile Include="Models\EmployeeLog\Employee.cs" />
@@ -262,6 +269,10 @@
     <Content Include="Scripts\eCLAdmin\dashboardList.js" />
     <Content Include="Scripts\eCLAdmin\dashboardIndex.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
+    <Content Include="Scripts\eCLAdmin\eCoachingAccessControlAdd.js" />
+    <Content Include="Scripts\eCLAdmin\eCoachingAccessControlDelete.js" />
+    <Content Include="Scripts\eCLAdmin\eCoachingAccessControlList.js" />
+    <Content Include="Scripts\eCLAdmin\eCoachingAccessControlUpdate.js" />
     <Content Include="Scripts\eCLAdmin\logDelete.js" />
     <Content Include="Scripts\eCLAdmin\logSearchForDelete.js" />
     <Content Include="Scripts\eCLAdmin\logSearchForInactivate.js" />
@@ -298,7 +309,6 @@
     <Content Include="Views\EmployeeLog\SearchForInactivate.cshtml" />
     <Content Include="Views\Shared\_SearchEmployeeLogResultPartial.cshtml" />
     <Content Include="Views\EmployeeLog\SearchForReassign.cshtml" />
-    <Content Include="Views\User\List.cshtml" />
     <Content Include="Views\EmployeeLog\_InactivatePartial.cshtml" />
     <Content Include="Views\Shared\_CommentPartial.cshtml" />
     <Content Include="Views\EmployeeLog\_ReassignPartial.cshtml" />
@@ -321,6 +331,10 @@
     <Content Include="Views\EmployeeLog\_LogsForDeletePartial.cshtml" />
     <Content Include="Views\EmployeeLog\_Delete.cshtml" />
     <Content Include="Views\EmployeeLog\_LogDetail.cshtml" />
+    <Content Include="Views\User\eCoachingAccessControlList.cshtml" />
+    <Content Include="Views\User\_AddEcoachingAccessControl.cshtml" />
+    <Content Include="Views\User\_DeleteEcoachingAccessControl.cshtml" />
+    <Content Include="Views\User\_EditEcoachingAccessControl.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

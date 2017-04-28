@@ -129,5 +129,10 @@ ul.navbar-nav {
     content:"\f078";
 }
 
+#dataTables-ecoaching-access-control-list td:nth-child(4),
+#dataTables-ecoaching-access-control-list th:nth-child(4) {
+    text-align : center;
+}
+
 
  

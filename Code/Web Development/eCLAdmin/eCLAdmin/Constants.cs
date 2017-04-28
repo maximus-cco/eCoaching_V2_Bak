@@ -59,6 +59,18 @@ namespace eCLAdmin
         public const string HIERARCHY_SUMMARY_REPORT_DESCRIPTION = "Hierarchy Summary";
         public const string ADMIN_ACTIVITY_REPORT_NAME = "AdminActivitySummary";
         public const string ADMIN_ACTIVITY_REPORT_DESCRIPTION = "Admin Activity Summary";
+
+        // For eCoaching Access Control
+        // Role ECL
+        public const string ECOACHING_ACCESS_ROLE_ECL = "ECL";
+        public const string ECOACHING_ACCESS_ROLE_ECL_DESCRIPTION = "ECL";
+        // Role ARC
+        public const string ECOACHING_ACCESS_ROLE_ARC = "ARC";
+        public const string ECOACHING_ACCESS_ROLE_ARC_DESCRIPTION = "ARC";
+        // Duplicate record
+        public const int DUPLICATE_RECORD = -2627;
+        // End date 
+        public const string ECOACHING_ACCESS_END_DATE = "99991231";
     }
 
     public enum EmployeeLogType

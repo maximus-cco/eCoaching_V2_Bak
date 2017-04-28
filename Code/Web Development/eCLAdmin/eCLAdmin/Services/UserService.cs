@@ -1,4 +1,5 @@
-﻿using eCLAdmin.Models.User;
+﻿using eCLAdmin.Models;
+using eCLAdmin.Models.User;
 using eCLAdmin.Repository;
 using log4net;
 using System.Collections.Generic;
@@ -8,9 +9,8 @@ namespace eCLAdmin.Services
 {
     public class UserService : IUserService
     {
-        private IUserRepository userRepository = new UserRepository();
-
         readonly ILog logger = LogManager.GetLogger(typeof(UserService));
+        private IUserRepository userRepository = new UserRepository();
 
         public List<User> GetAllUsers()
         {
@@ -41,6 +41,36 @@ namespace eCLAdmin.Services
                     e => e.Name == entitlementName).ToList().Count > 0);
 
             return isEntitled;
+        }
+
+        public List<eCoachingAccessControl> GetEcoachingAccessControlList()
+        {
+            return userRepository.GetEcoachingAccessControlList();
+        }
+
+        public bool DeleteEcoachingAccessControl(int rowId, string updatedBy)
+        {
+            return userRepository.DeleteEcoachingAccessControl(rowId, updatedBy);
+        }
+
+        public eCoachingAccessControl GetEcoachingAccessControl(int rowId)
+        {
+            return userRepository.GetEcoachingAccessControl(rowId);
+        }
+
+        public bool UpdateEcoachingAccessControl(eCoachingAccessControl user)
+        {
+            return userRepository.UpdateEcoachingAccessControl(user);
+        }
+
+        public List<NameLanId> GetEcoachingAccessControlsToAdd(string siteId)
+        {
+            return userRepository.GetEcoachingAccessControlsToAdd(siteId);
+        }
+
+        public int AddEcoachingAccessControl(eCoachingAccessControl user)
+        {
+            return userRepository.AddEcoachingAccessControl(user);
         }
     }
 }
