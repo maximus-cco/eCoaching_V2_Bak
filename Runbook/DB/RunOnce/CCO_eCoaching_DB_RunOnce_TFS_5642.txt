@@ -1,0 +1,66 @@
+/* 
+
+TFS 5642 - ACL in Admin Tool
+
+Run one statement at a time
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+
+
+--1.
+
+INSERT INTO [EC].[AT_Role]
+            ([RoleDescription],
+			[IsSysAdmin])        
+VALUES
+('ACLAdmin',1)--119
+
+GO
+
+
+--*********************
+
+--2.
+
+INSERT INTO [EC].[AT_User_Role_Link]
+            ([UserId] ,
+			[RoleId])  
+VALUES
+('500306',119),
+('345712',119),
+('380017',119),
+('365226',119),
+('408246',119),
+('379750',119),
+('343549',119)
+GO
+
+--*********************
+
+--3.
+
+INSERT INTO [EC].[AT_Entitlement]
+            ([EntitlementDescription])
+		     
+VALUES
+('Users'),
+('User-eCoachingAccessControlList')
+GO
+
+--*********************
+--4.
+
+INSERT INTO [EC].[AT_Role_Entitlement_Link]
+(RoleId,EntitlementId)
+VALUES
+(119,215),
+(119,216)
+GO
+
+
+--*********************
