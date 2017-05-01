@@ -67,7 +67,7 @@ BEGIN
         END -- IF
         ELSE
         BEGIN
-            UPDATE Historical_Dashboard_ACL SET End_Date = '99991231' WHERE User_LanID = @userLanId;
+            UPDATE Historical_Dashboard_ACL SET End_Date = '99991231', Role = @userRole WHERE User_LanID = @userLanId;
         END; -- ELSE
     END TRY
     
