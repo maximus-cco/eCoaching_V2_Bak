@@ -28,8 +28,8 @@ Public Class review
         "to listen to CSR kudos."
 
     Public Const REVIEW_OMR_BREAK_TEXT = "You are receiving this eCL record because an Employee on your team was identified in a Break Outlier Report. " &
-        "Please review the <a href='https://cco.gdit.com/bi/ReportsCatalog/AvayaBreakPolicyReporting/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a> " &
-        "and refer to HCSD-POL-HR-MISC-08 Break Time Policy for additional information and provide the details in the record below."
+        "Please review the <b><a href='https://cco.gdit.com/bi/ReportsCatalog/AvayaBreakPolicyReporting/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a>, " &
+        "the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below."
 
     Public Const PENDING_MGR_REVIEW = "Pending Manager Review"
 
