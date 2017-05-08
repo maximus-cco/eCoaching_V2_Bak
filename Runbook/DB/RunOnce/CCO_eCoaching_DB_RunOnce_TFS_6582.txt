@@ -1,0 +1,30 @@
+/* 
+
+TFS 6582 - Change log workflow when it is direct and source is Quality Specialist Coaching
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+
+
+--1.
+
+
+update [EC].[Email_Notifications]
+set [Status]='Pending Employee Review'
+      ,[Recipient]='Employee'
+      ,[Subject]='eCL: Pending Employee Review'
+      ,[Body]='A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching  opportunity received on <strong> strDateTime </strong>.'
+      ,[isCCRecipient]='0'
+      ,[CCRecipient]='NA'
+where Module = 'CSR'
+   and Submission = 'UI'
+   and Source = 'Direct'
+   and isCSE = 0
+   and SubSource = 'Quality Specialist Coaching'
+GO
+
+--*********************
