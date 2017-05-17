@@ -1882,7 +1882,7 @@ Public Class default2
         'mySmtpClient = New SmtpClient("vadentexp01") ''old
         mySmtpClient = New SmtpClient("smtpout.gdit.com") ''new
 
-        'mySmtpClient.Send(myMessage)
+        mySmtpClient.Send(myMessage)
     End Sub
 
     Protected Sub ARC_Selected(ByVal sender As Object, ByVal e As SqlDataSourceStatusEventArgs) Handles SqlDataSource14.Selected
