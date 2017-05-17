@@ -1,9 +1,10 @@
 /*
-sp_Populate_Employee_Hierarchy(01).sql
-Last Modified Date: 1/18/2017
+sp_Populate_Employee_Hierarchy(02).sql
+Last Modified Date: 5/17/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Change how email addresses with apostrophes are stored - TFS 6614 - 5/17/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -26,14 +27,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
 -- Description:	Performs the following actions.
 -- Updates existing records and Inserts New records from the Staging table.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 2/18/2016
--- updated during TFS 1710 to populate SrLvlMgr IDs
+-- updated during TFS 1710 to populate SrLvlMgr IDs - 2/18/2016
+-- updated during TFS 6614 to Change how email addresses with apostrophes are stored - 05/16/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
@@ -87,7 +90,7 @@ WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy]
 	   SET [Emp_Name] = Replace(S.[Emp_Name],'''', '')
-	      ,[Emp_Email] = Replace(S.[Emp_Email],'''','''''')
+	      ,[Emp_Email] = S.[Emp_Email]
 		  ,[Emp_LanID] = S.Emp_LanID
 		  ,[Emp_Site] =  [EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site)
 		  ,[Emp_Job_Code] = S.Emp_Job_Code
@@ -95,13 +98,13 @@ BEGIN
 		  ,[Emp_Program] = S.Emp_Program
 		  ,[Sup_ID] = S.Sup_EMP_ID
 		  ,[Sup_Name] = Replace(S.[Sup_Name],'''', '')
-		  ,[Sup_Email] = Replace(S.[Sup_Email],'''','''''')
+		  ,[Sup_Email] = S.[Sup_Email]
 		  ,[Sup_LanID] = S.Sup_LanID
 		  ,[Sup_Job_Code] = S.Sup_Job_Code 
 		  ,[Sup_Job_Description] = S.Sup_Job_Description
 		  ,[Mgr_ID] = S.Mgr_EMP_ID 
 		  ,[Mgr_Name] = Replace(S.[Mgr_Name],'''', '')
-		  ,[Mgr_Email] = Replace(S.[Mgr_Email],'''','''''')
+		  ,[Mgr_Email] = S.[Mgr_Email]
 		  ,[Mgr_LanID] = S.Mgr_LanID
 		  ,[Mgr_Job_Code] = S.Mgr_Job_Code 
 		  ,[Mgr_Job_Description] = S.Mgr_Job_Description
@@ -143,7 +146,7 @@ BEGIN
 			  )
 							 SELECT S.[Emp_ID]
 						      ,Replace(S.[Emp_Name],'''', '')
-                              ,Replace(S.[Emp_Email],'''','''''')
+                                                      ,S.[Emp_Email]
 							  ,S.[Emp_LanID]
 							  ,[EC].[fn_strSiteNameFromSiteLocation](S.[Emp_Site])
 							  ,S.[Emp_Job_Code]
@@ -151,13 +154,13 @@ BEGIN
 							  ,S.[Emp_Program]
 							  ,S.[Sup_Emp_ID]
 							  ,Replace(S.[Sup_Name],'''', '')
-							  ,Replace(S.[Sup_Email],'''','''''')
+							  ,S.[Sup_Email]
 							  ,S.[Sup_LanID]
 							  ,S.[Sup_Job_Code]
 							  ,S.[Sup_Job_Description]
 							  ,S.[Mgr_Emp_ID]
 							  ,Replace(S.[Mgr_Name],'''', '')
-							  ,Replace(S.[Mgr_Email],'''','''''')
+							  ,S.[Mgr_Email]
 							  ,S.[Mgr_LanID]
 							  ,S.[Mgr_Job_Code]
 							  ,S.[Mgr_Job_Description]
@@ -185,5 +188,8 @@ BEGIN
 
 END --sp_Populate_Employee_Hierarchy
 
+
+
 GO
+
 
