@@ -1075,7 +1075,7 @@ Public Class default2
             '     MsgBox(msg)
         End If
 
-        If (found > 13 AndAlso Page.IsValid) Then ' Selected Reasons can not exceed 12
+        If (found < 13 AndAlso Page.IsValid) Then ' Selected Reasons can not exceed 12
             Dim mailString As String
             Dim statusName As String
 
@@ -1882,7 +1882,7 @@ Public Class default2
         'mySmtpClient = New SmtpClient("vadentexp01") ''old
         mySmtpClient = New SmtpClient("smtpout.gdit.com") ''new
 
-        mySmtpClient.Send(myMessage)
+        'mySmtpClient.Send(myMessage)
     End Sub
 
     Protected Sub ARC_Selected(ByVal sender As Object, ByVal e As SqlDataSourceStatusEventArgs) Handles SqlDataSource14.Selected
