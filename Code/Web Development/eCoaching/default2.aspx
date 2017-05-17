@@ -1132,7 +1132,7 @@
                     <br />
                     <br />
                     <asp:Label ID="Label90" runat="server" Text="Coaching Reasons"></asp:Label>
-                    <br />
+                    <asp:Label ID="lblErrorMsgMaxReasons" runat="server" Text="" CssClass="EMessage"></asp:Label>
                     <div runat="server" id="csegroup" style="visibility: hidden; display: none;">
                         <asp:GridView ID="GridView5" runat="server" AutoGenerateColumns="False" GridLines="None"
                             DataSourceID="SqlDataSource18" Width="536px">

@@ -929,6 +929,7 @@ Public Class default2
         state = "closed"
 
         found = 0
+        ' Go throug all Reasons
         For i As Integer = 0 To (grid.Rows.Count - 1)
             For k As Integer = 0 To (grid.Columns.Count - 1)
                 Dim childc As Control
@@ -1023,7 +1024,14 @@ Public Class default2
             If (state = "open") Then
                 found = found + 1
             End If
+
+            ' Maximum Reasons to select is 12.
+            If (found > 12) Then
+                Exit For
+            End If
         Next ' end of row
+
+
 
         If (found = 0) Then
             Label239.Text = ""
@@ -1067,7 +1075,7 @@ Public Class default2
             '     MsgBox(msg)
         End If
 
-        If Page.IsValid Then
+        If (found > 13 AndAlso Page.IsValid) Then ' Selected Reasons can not exceed 12
             Dim mailString As String
             Dim statusName As String
 
@@ -1276,6 +1284,9 @@ Public Class default2
             FromURL = Request.ServerVariables("URL")
             Response.Redirect("next1.aspx?FromURL=" & FromURL)
         Else
+            If (found > 12) Then
+                lblErrorMsgMaxReasons.Text = "You have selected more than 12 reasons."
+            End If
             Label2.Text = "Please correct all fields indicated in red to proceed."
         End If
     End Sub
@@ -1460,6 +1471,11 @@ Public Class default2
                 If (state = "open") Then
                     found = found + 1
                 End If
+
+                ' Maximum Reasons seleted is 12
+                If (found > 12) Then
+                    Exit For
+                End If
             Next ' end of row
         Else
             'disarm validation for regular coaching
@@ -1536,7 +1552,7 @@ Public Class default2
             Next
         End If
 
-        If Page.IsValid Then
+        If (found < 13 AndAlso Page.IsValid) Then ' maximum reasons selected is 12
             Dim mailString As String
             Dim statusName2 As String
 
@@ -1813,6 +1829,9 @@ Public Class default2
                 Response.Redirect("next1.aspx?FromURL=" & FromURL)
             End If ' if warning is yes
         Else
+            If (found > 12) Then
+                lblErrorMsgMaxReasons.Text = "You have selected more than 12 reasons."
+            End If
             Label169.Text = "Please correct all fields indicated in red to proceed."
         End If
     End Sub
