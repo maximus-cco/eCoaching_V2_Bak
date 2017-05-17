@@ -36,7 +36,7 @@ Public Class default2
     Dim chars As String = "0123456789"
     Dim digit
     Dim found
-    Dim coachR(13, 3)
+    Dim coachR(50, 3)
 
     Dim copy As Boolean = False
     Dim strCopy As String
@@ -1024,11 +1024,6 @@ Public Class default2
             If (state = "open") Then
                 found = found + 1
             End If
-
-            ' Maximum Reasons to select is 12.
-            If (found > 12) Then
-                Exit For
-            End If
         Next ' end of row
 
 
@@ -1285,7 +1280,7 @@ Public Class default2
             Response.Redirect("next1.aspx?FromURL=" & FromURL)
         Else
             If (found > 12) Then
-                lblErrorMsgMaxReasons.Text = "You have selected more than 12 reasons."
+                lblErrorMsgMaxReasonsIndirect.Text = "You may only select up to 12 coaching reasons."
             End If
             Label2.Text = "Please correct all fields indicated in red to proceed."
         End If
@@ -1472,10 +1467,6 @@ Public Class default2
                     found = found + 1
                 End If
 
-                ' Maximum Reasons seleted is 12
-                If (found > 12) Then
-                    Exit For
-                End If
             Next ' end of row
         Else
             'disarm validation for regular coaching
@@ -1830,7 +1821,7 @@ Public Class default2
             End If ' if warning is yes
         Else
             If (found > 12) Then
-                lblErrorMsgMaxReasons.Text = "You have selected more than 12 reasons."
+                lblErrorMsgMaxReasons.Text = "You may only select up to 12 coaching reasons."
             End If
             Label169.Text = "Please correct all fields indicated in red to proceed."
         End If

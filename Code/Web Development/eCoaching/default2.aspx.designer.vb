@@ -734,6 +734,15 @@ Partial Public Class default2
     Protected WithEvents Label91 As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
+    '''lblErrorMsgMaxReasonsIndirect control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblErrorMsgMaxReasonsIndirect As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
     '''csegroup2 control.
     '''</summary>
     '''<remarks>

@@ -745,7 +745,7 @@
                 <br />
                 <br />
                 <asp:Label ID="Label91" runat="server" Text="Coaching Reasons"></asp:Label>
-                <br />
+                <asp:Label ID="lblErrorMsgMaxReasonsIndirect" runat="server" Text="" CssClass="EMessage"></asp:Label>
                 <div runat="server" id="csegroup2" style="visibility: visible; display: inline;">
                     <asp:GridView ID="GridView6" runat="server" AutoGenerateColumns="False" GridLines="None"
                         DataSourceID="SqlDataSource21" Width="536px">
