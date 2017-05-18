@@ -1,6 +1,22 @@
-'variables for database connection and recordset
-Dim myConnection, myCommand, adoRec
+' Begin - Environment Related
+' Test
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=VRIVFSSDBT02\SCORT01,1438"
+Const eCoachingUrl = "https://f3420-mpmd01.vangent.local/coach3/default.aspx"
+Const fromAddress = "VIPTest@GDIT.com"
+Const imgPath = "\\vrivfssdbt02\integrationservices\Coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
+' End - Environment Related
 
+' Non-Environment Related
+Const smtpServer = "smtpout.gdit.com" 
+Const cdoReferenceTypeName = 1
+Const cdoSendUsingPort = 2
+Const adStateOpen = 1
+Const adCmdStoredProc = 4
+
+
+'variables for database connection and recordset
+Dim dbConn, rs
 
 'variables for values returned from query
 Dim strPerson
@@ -12,377 +28,263 @@ Dim strCoachReason
 Dim strSource
 Dim strFormStatus
 Dim numID
-Dim mailArray
-Dim mailSent
-Dim rCount
-Dim sConn
+Dim arrEmail
 Dim strModule
 Dim strSourceID
 Dim isCSE
 Dim isOMRARC
 
-Dim mainArray
-Dim jMax
+Dim arrResultSet
+Dim totalPendingEmail
 
-rCount = 0
-mailSent = True
-dim sql1, sql2
+dim spGetEmailToSend : spGetEmailToSend = "EC.sp_SelectCoaching4Contact"
 
-'connect to database and run stored procedure
-Set myConnection = CreateObject("ADODB.Connection")
+On Error Resume Next
 
-myConnection.Open "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=VRIVFSSDBT02\SCORT01,1438"
-sql1 = "EC.sp_SelectCoaching4Contact"
-Set adoRec = myConnection.execute(sql1) 
+' Connect to database
+Set dbConn = CreateObject("ADODB.Connection")
+dbConn.Open dbConnStr
+' Get pending email to send
+Set rs = dbConn.execute(spGetEmailToSend) 
 
-mainArray = adoRec.GetRows()
-jMax = UBound(mainArray, 2)
+If Err.Number <> 0 Then
+    Err.Clear
+    SafeQuit rs, dbConn
+End If
 
+arrResultSet = rs.GetRows()
+If Err.Number <> 0 Then
+    Err.Clear
+    SafeQuit rs, dbConn
+End If
 
-adoRec.Close
-set adoRec = Nothing
+totalPendingEmail = UBound(arrResultSet, 2)
 
-myConnection.Close
-set myConnection = Nothing
+SafeCloseRecordSet rs
+SafeCloseDbConn dbConn
 
-'change the 5 to jMax to go through the entire list
+' Send pending email
+For i = 0 to totalPendingEmail
+    numID = arrResultSet(0, i)
+    strFormID = arrResultSet(1, i)
+    strFormStatus = arrResultSet(2, i)
+    strEmail = arrResultSet(3, i) & "," & arrResultSet(4, i) & "," & arrResultSet(5, i)
+    strSource = arrResultSet(6, i)
+    strPerson = arrResultSet(7, i)
+    strSourceID = arrResultSet(12, i)
+    isCSE = arrResultSet(13, i)
+    strModule = arrResultSet(14, i)	
+    isOMRARC = arrResultSet(15, i) ' 1 for IAT and IAE OMR Feeds
 
-For j = 0 to jMax
-
-	numID = mainArray(0,j)
-	strPerson = mainArray(7,j)
-	strFormID = mainArray(1,j)
-	strEmail = mainArray(3,j) &","& mainArray(4,j) & "," & mainArray(5,j)
-	strSource = mainArray(6,j)
-	strFormStatus = mainArray(2,j)
-	strModule = mainArray(14,j)
-	strSourceID = mainArray(12,j)
-	isCSE = mainArray(13,j)
-	isOMRARC = mainArray(15,j) 'Will be 1 for IAT and IAE OMR Feeds
-
-
-	'configure the subject line
-	strSubject = "eCL: " & strFormStatus & " (" & strPerson & ")"
-
-	'send mail
-	mailArray = Split(strEmail, ",")
-
-	if ((len(mailArray(0))> 8) AND (len(mailArray(1))> 8) AND (len(mailArray(2))> 8)) then
-
-		SendMail strEmail, strSubject, strFormID, strFormStatus, strPerson, strSource, numID, strModule, strSourceID, isCSE
-
-	end if
-
-	rCount = rCount + 1
-
-next
-
-
-
+    strSubject = "eCL: " & strFormStatus & " (" & strPerson & ")"
+    arrEmail = Split(strEmail, ",")
+    If ((len(arrEmail(0))> 8) AND (len(arrEmail(1))> 8) AND (len(arrEmail(2))> 8)) then
+        SendMail strEmail, strSubject, strFormID, strFormStatus, strPerson, strSource, numID, strModule, strSourceID, isCSE
+    End If
+Next
 
 
 Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSource, numID, module, strSourceID, isCSE)
-'msgbox(strFormID)
+    ' msgBox("Try to send email for logID = " & numID)
 
-'variables for sending mail
-Dim htmlbody
-Dim ToCopy
-Dim ToAddress
-Dim ToSubject
-Dim mailArray
-Dim mailTo
-Dim mailCopy
-Dim mailCc
-Dim mailBody
-Dim i
-
-
-'strEmail= "jourdain.augustin@gdit.com,jourdain.augustin@gdit.com,jourdain.augustin@gdit.com"
-'setup an array of possible e-mail addresses
-
-mailArray = Split(strEmail, ",")
-
-
-
-
-
-
-dim objRS, objCmd, arrMail
-
-Set myConnection = CreateObject("ADODB.Connection")
-
-myConnection.Open "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=VRIVFSSDBT02\SCORT01,1438"
-
-
-'objRS.CursorLocation = adUseClient
-'objRS.CursorType = adOpenStatic
-
-set objRS = CreateObject("ADODB.Recordset")
-
-set objCmd = CreateObject("ADODB.Command")
-set objCmd.ActiveConnection = myConnection
-
-objCmd.CommandText = "EC.sp_Select_Email_Attributes"
-objCmd.CommandType = 4 'adCmdStoredProc
-
-'msgbox(strSourceID)
-'msgbox(isCSE)
-objCmd.Parameters("@strModulein") = module
-objCmd.Parameters("@intSourceIDin") = strSourceID
-objCmd.Parameters("@bitisCSEin") = isCSE
-
-Set objRS = objCmd.Execute
-'msgbox("testing1")
-	if (objRS.State = 1) then 'adStateOpen
-'msgbox("testing2")
-		if (NOT objRS.EOF) then
-'msgbox("testing3")
-			arrMail = objRS.GetRows()
-			objRS.Close
-			Set objRS = Nothing
-
-			myConnection.Close
-			set myConnection = Nothing
-			
-For i = 0 to UBound(arrMail, 2)
-
-
-	if (strFormStatus = arrMail(1, i)) then
-
-		mailTo = arrMail(2, i)
-		mailCopy = arrMail(4, i)
-		mailCc = arrMail(5, i)
-		mailBody = arrMail(3, i)	
-
-	end if
-
-Next
-			
-
-                strPerson = Replace(strPerson, "'", "")
-
-'Begin check for OMRARC
-              Select Case (isOMRARC)
-	Case 1
-	mailBody = "This eCoaching Log has been created in reference to an inappropriate escalation or transfer to the ARC.  Please review and coach your CSR accordingly."
+    Dim htmlbody
+    Dim ToCopy
+    Dim ToAddress
+    Dim ToSubject
+    Dim mailArray
+    Dim mailTo
+    Dim mailCopy
+    Dim mailCc
+    Dim mailBody
+    Dim i
+    dim objRS, objCmd, arrMail
 	
-        End Select
-
-'End check for OMRARC
-
-
-                Select Case (mailTo)
-
-                    Case "Employee"
-
-                        ToAddress = mailArray(0)
-
-
-                    Case "Supervisor"
-
-                        ToAddress = mailArray(1)
-
-                    Case "Manager"
-
-                        ToAddress = mailArray(2)
-
-                    Case Else
-
-                        ToAddress = mailArray(0)
-
-                End Select
-
-
-  'Begin check for Copy/CC
-
-                 Select Case (mailCopy) 'If (mailCopy = "1") Then
-  
-                 Case "True"
-
-                    Select Case (mailCc)
-
-                        Case "Employee"
-
-                            ToCopy = mailArray(0)
-
-
-                        Case "Supervisor"
-
-                            ToCopy = mailArray(1)
-
-                        Case "Manager"
-
-                            ToCopy = mailArray(2)
-
-			Case Else
+	dim spUpdateEmailSent
 	
-                            ToCopy = ""
+	On Error Resume Next
+	
+    ' Setup an array of possible e-mail addresses
+    mailArray = Split(strEmail, ",")
 
-                    End Select
+    Set dbConn = CreateObject("ADODB.Connection")
+    dbConn.Open dbConnStr
 
-         End Select     'End If
+    Set objRS = CreateObject("ADODB.Recordset")
+    Set objCmd = CreateObject("ADODB.Command")
+    Set objCmd.ActiveConnection = dbConn
 
-  'End check for Copy/CC
+    objCmd.CommandText = "EC.sp_Select_Email_Attributes"
+    objCmd.CommandType = adCmdStoredProc
 
-                strSubject = "PHASE II - eCL: " & strFormStatus & " (" & strPerson & ") - PHASE II"
+    objCmd.Parameters("@strModulein") = module
+    objCmd.Parameters("@intSourceIDin") = strSourceID
+    objCmd.Parameters("@bitisCSEin") = isCSE
 
+    Set objRS = objCmd.Execute
+    arrMail = objRS.GetRows()
+	If (Err.Number <> 0) Then
+	    Err.Clear
+	    SafeCloseRecordSet objRS
+		SafeCloseDbConn dbConn
+		
+		' Return
+		Exit Sub
+	End If	
+	
+	SafeCloseRecordSet objRS
+	SafeCloseDbConn dbConn
+	
+    For i = 0 to UBound(arrMail, 2)
+        If (strFormStatus = arrMail(1, i)) then
+            mailTo = arrMail(2, i)
+            mailCopy = arrMail(4, i)
+            mailCc = arrMail(5, i)
+            mailBody = arrMail(3, i)	
+        End If
+    Next ' End For
 
-                strCtrMessage = (mailBody)
-                strCtrMessage = Replace(strCtrMessage, "strDateTime", Now)
-                strCtrMessage = Replace(strCtrMessage, "strPerson", strPerson)
+    strPerson = Replace(strPerson, "'", "")
 
-                strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
-    & "  <a href=""https://f3420-mpmd01.vangent.local/coach3/default.aspx"" target=""_blank"">Please click here to open the coaching application and select the &#39;My Dashboard&#39; tab to view the below form ID for details.</a>"
-'msgbox(strCtrMessage)
+    Select Case (isOMRARC)
+        Case 1
+            mailBody = "This eCoaching Log has been created in reference to an inappropriate escalation or transfer to the ARC.  Please review and coach your CSR accordingly."
+    End Select
 
+    Select Case (mailTo)
+        Case "Employee"
+            ToAddress = mailArray(0)
+        Case "Supervisor"
+            ToAddress = mailArray(1)
+        Case "Manager"
+            ToAddress = mailArray(2)
+        Case Else
+            ToAddress = mailArray(0)
+    End Select
 
+    Select Case (mailCopy) 'If (mailCopy = "1") Then
+        Case "True"
+            Select Case (mailCc)
+                Case "Employee"
+                    ToCopy = mailArray(0)
+                Case "Supervisor"
+                    ToCopy = mailArray(1)
+                Case "Manager"
+                    ToCopy = mailArray(2)
+                Case Else
+                    ToCopy = ""
+            End Select ' End Select Case (mailCc)
+    End Select ' End Select Case (mailCopy)
 
+    strSubject = "PHASE II - eCL: " & strFormStatus & " (" & strPerson & ") - PHASE II"
+    ToSubject = strSubject
 
+    strCtrMessage = (mailBody)
+    strCtrMessage = Replace(strCtrMessage, "strDateTime", Now)
+    strCtrMessage = Replace(strCtrMessage, "strPerson", strPerson)
+    strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
+ 		& "  <a href=""" & eCoachingUrl & """ target=""_blank"">Please click here to open the coaching application and select the &#39;My Dashboard&#39; tab to view the below form ID for details.</a>"
 
-
-
-
-
-
-
-
-
-'assign network SMTP server
-Const SMTPServer1 = "smtpout.gdit.com"  '"denexcp01.vangent.local" 
-
-'assign message from address
-Const FromAddress = "VIPTest@GDIT.com"
-
-'add test to subject line
-ToSubject = strSubject
-
-
-'check form status to determine message content and addressee(s)
-
-
-
-
-
-
-'configure HTML message
-
+    ' Check form status to determine message content and addressee(s)
+    ' Configure HTML message
     htmlbody = "<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">" & vbCrLf _
-& "<html>" & vbCrLf _
-& "<head>" & vbCrLf _
-& "<title>eCoaching Log Automated Messaging</title>" & vbCrLf _
-& "<meta http-equiv=Content-Type content=""text/html; charset=iso-8859-1"">" & vbCrLf _
-& "</head>" & vbCrLf _
-& "<body style=""font-family: Tahoma,sans-serif; font-size: 10.0pt;"">" & vbCrLf _
-& "<p>** This is an automated email. Do not reply to this email. **</p>" & vbCrLf _
-& "<p>" & vbCrLf _
-& strCtrMessage & vbCrLf _
-& "<br />" & vbCrLf _
-& "Form ID: " & strFormID & vbCrLf _
-& "<br /> <br />" & vbCrLf _
-& "(Please do not respond to this automated notification)" & vbCrLf _
-& "<br /> <br />" & vbCrLf _
-& "Thank you," & vbCrLf _
-& "<br /> eCoaching Log Team <br />" & vbCrLf _
-& "<img border=""0"" src=""cid:BCC-eCL-LOGO-10142011-185x40.png"" />" & vbCrLf _
-& "</body>" & vbCrLf _
-& "</html>"& vbCrLf 
+        & "<html>" & vbCrLf _
+        & "<head>" & vbCrLf _
+        & "<title>eCoaching Log Automated Messaging</title>" & vbCrLf _
+        & "<meta http-equiv=Content-Type content=""text/html; charset=iso-8859-1"">" & vbCrLf _
+        & "</head>" & vbCrLf _
+        & "<body style=""font-family: Tahoma,sans-serif; font-size: 10.0pt;"">" & vbCrLf _
+        & "<p>** This is an automated email. Do not reply to this email. **</p>" & vbCrLf _
+        & "<p>" & vbCrLf _
+        & strCtrMessage & vbCrLf _
+        & "<br />" & vbCrLf _
+        & "Form ID: " & strFormID & vbCrLf _
+        & "<br /> <br />" & vbCrLf _
+        & "(Please do not respond to this automated notification)" & vbCrLf _
+        & "<br /> <br />" & vbCrLf _
+        & "Thank you," & vbCrLf _
+        & "<br /> eCoaching Log Team <br />" & vbCrLf _
+		& "<img border=""0"" src=""cid:" & imgName & """ />" & vbCrLf _
+        & "</body>" & vbCrLf _
+        & "</html>"& vbCrLf 
+		
+	'variables for configuring mail message
+    Dim objMsg 
+    Dim objConfiguration 
+    Dim objFields 
+    Dim objBodyPart 
+
+    Set objMsg = CreateObject("CDO.Message")
+    Set objConfiguration = CreateObject("CDO.Configuration")
+    Set objBodyPart = objMsg.AddRelatedBodyPart(imgPath, imgName, CdoReferenceTypeName)
+
+	objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgName & ">"""
+    objBodyPart.Fields.Update
+
+    Set objFields = objConfiguration.Fields
+    With objFields
+            .Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = cdoSendUsingPort
+            .Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = smtpServer
+            .Item("http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout") = 10 
+            .Update
+    End With
+	
+    ' Apply the settings to the message.
+    With objMsg
+        Set .Configuration = objConfiguration
+            .MimeFormatted = True
+            ' change to line to ToAddress to go to the correct destination and uncomment the .CC line
+           .To =  ToAddress '"susmitha.palacherla@gdit.com" 
+           .Cc = ToCopy
+           .From = fromAddress
+           .Subject = ToSubject
+           .HTMLBody = htmlbody
+           .Send
+    End With
+	
+    ' Clean up variables.
+    Set objMsg = Nothing
+    Set objConfiguration = Nothing
+    Set objFields = Nothing
+    Set objBodyPart = Nothing
+
+    If Err.Number = 0 Then ' Email was successfully sent
+	    Set dbConn = CreateObject("ADODB.Connection")
+        dbConn.Open dbConnStr
+
+        ' Update record to indicate mail has been sent - replace fromID field with new mail column
+        ' Use numbers because the actual string values aren't recognized without adovbs.inc - http://www.af-chicago.org/app/adovbs.inc
+        spUpdateEmailSent = "EXEC EC.sp_UpdateFeedMailSent @nvcNumID ='" & numID & "'"
+
+        dbConn.execute(spUpdateEmailSent), , 129
+        SafeCloseDbConn dbConn
+	Else
+	    Err.Clear
+	End If
+
+End Sub
 
 
+Sub SafeCloseRecordSet (rs)
+    If Not (rs Is Nothing) Then
+	    If rs.State = adStateOpen Then 
+			rs.close
+	    End If
+		Set rs = Nothing
+	End If
+End Sub
 
-'variables for configuring mail message
-Dim iMsg 
-Dim iConf 
-Dim Flds 
+Sub SafeCloseDbConn ( dbConn)
+    If Not (dbConn Is Nothing) Then
+	    If dbConn.State = adStateOpen Then 
+		    dbConn.Close
+		End If
+		Set dbConn = Nothing
+	End If
+End Sub
 
-Dim objBP 
-Const cdoReferenceTypeName = 1
-
-
-Const cdoSendUsingPort = 2
-
-set iMsg = CreateObject("CDO.Message")
-
-set iConf = CreateObject("CDO.Configuration")
-'C:\bit9prog\dev\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png
-'C:\bit9prog\dev\images
-'C:\bit9prog\dev\Notifications\images\
-'N:\scorecard-ssis\coaching\notifications\images\BCC-eCL-LOGO-10142011-185x40.png
-
-Set objBP = iMsg.AddRelatedBodyPart("\\vrivfssdbt02\integrationservices\Coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png", "BCC-eCL-LOGO-10142011-185x40.png", CdoReferenceTypeName)
-
-
-objBP.Fields.Item("urn:schemas:mailheader:Content-ID") = "<BCC-eCL-LOGO-10142011-185x40.png>"
-objBP.Fields.Update
-
-Set Flds = iConf.Fields
-
-With Flds
-    .Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = cdoSendUsingPort
-    .Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = SMTPServer1
-    .Item("http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout") = 10 
-    .Update
-End With
-
-
-' Apply the settings to the message.
-With iMsg
-    Set .Configuration = iConf
-    .MimeFormatted = True
-'change to line to ToAddress to go to the correct destination and uncomment the .CC line
-    .To =  ToAddress '"susmitha.palacherla@gdit.com" 
-    .Cc = ToCopy
-    .From = "VIPTest@GDIT.com"
-    .Subject = ToSubject
-    .HTMLBody = htmlbody
-  .Send
-End With
-' Clean up variables.
-Set iMsg = Nothing
-Set iConf = Nothing
-Set Flds = Nothing
-
-
-
-
-Set myConnection = CreateObject("ADODB.Connection")
-myConnection.Open "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=VRIVFSSDBT02\SCORT01,1438"
-
-
-
-
-'Update record to indicate mail has been sent - replace fromID field with new mail column
-' use numbers because the actual string values aren't recognized without adovbs.inc - http://www.af-chicago.org/app/adovbs.inc
-
-'sql2 = "Update EC.Coaching_Log Set EmailSent = '" & mailSent &"' where (strFormID = '"& strFormID &"')"
-'sql2 = "EXEC EC.sp_UpdateFeedMailSent @nvcFormID ='" & strFormID & "'"
-sql2 = "EXEC EC.sp_UpdateFeedMailSent @nvcNumID ='" & numID & "'"
-
-
-myConnection.execute(sql2), , 129
-
-myConnection.Close 
-set myConnection = Nothing
-
-
-
-
-
-
-
-
-
-	end if
-
-
-else
-		'objRS.Close
-		set objRS = Nothing
-
-		myConnection.Close
-		set myConnection = Nothing
-
-end if
-
-
-
+Sub SafeQuit (rs, dbConn)
+    SafeCloseRecordSet rs
+	SafeCloseDbConn dbConn
+	
+	Wscript.Quit
 End Sub
