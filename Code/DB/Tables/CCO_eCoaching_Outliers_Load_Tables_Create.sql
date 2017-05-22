@@ -1,9 +1,11 @@
 /*
-CCO_eCoaching_Outliers_Load_Tables_Create(01).sql
+CCO_eCoaching_Outliers_Load_Tables_Create(02).sql
 
-Last Modified Date: 1/18/2017
+Last Modified Date: 5/22/2017
 Last Modified By: Susmitha Palacherla
 
+
+Version 02: TFS 6625 - Updated field size for Site value to 30  in tables 1,3 and 4 - TFS 6625- 5/22/2017
 
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -52,7 +54,7 @@ CREATE TABLE [EC].[Outlier_Coaching_Stage](
 	[Submitter_Email] [nvarchar](50) NULL,
 	[CSR_LANID] [nvarchar](30) NULL,
 	[CSR_EMPID] [nvarchar](20) NULL,
-	[CSR_Site] [nvarchar](20) NULL,
+	[CSR_Site] [nvarchar](30) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
@@ -115,7 +117,7 @@ CREATE TABLE [EC].[Outlier_Coaching_Rejected](
 	[Submitter_Name] [nvarchar](30) NULL,
 	[Submitter_Email] [nvarchar](50) NULL,
 	[CSR_LANID] [nvarchar](30) NULL,
-	[CSR_Site] [nvarchar](20) NULL,
+	[CSR_Site] [nvarchar](30) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
@@ -154,7 +156,7 @@ CREATE TABLE [EC].[Outlier_Coaching_Fact](
 	[Submitter_Name] [nvarchar](30) NULL,
 	[Submitter_Email] [nvarchar](50) NULL,
 	[CSR_LANID] [nvarchar](30) NULL,
-	[CSR_Site] [nvarchar](20) NULL,
+	[CSR_Site] [nvarchar](30) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
