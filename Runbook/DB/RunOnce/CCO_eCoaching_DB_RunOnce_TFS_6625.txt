@@ -1,0 +1,42 @@
+/*---------------------------------------------------------------
+
+TFS 6625 - Accomodate longer site names from Outlier feeds
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+PRINT ('  Begin Table Updates...')
+
+
+--1. Alter Site field size in OMR tables
+
+ALTER TABLE [EC].[Outlier_Coaching_Stage]
+ALTER COLUMN [CSR_Site] [nvarchar](30) 
+GO
+
+ALTER TABLE [EC].[Outlier_Coaching_Rejected]
+ALTER COLUMN [CSR_Site] [nvarchar](30)
+GO
+
+
+ALTER TABLE [EC].[Outlier_Coaching_Fact]
+ALTER COLUMN [CSR_Site] [nvarchar](30)
+GO
+
+
+
+--************************************************************
+PRINT ('  Table Updates completed...')
