@@ -1,9 +1,11 @@
 /*
-CCO_eCoaching_ETS_Load_Tables_Create.sql(01).sql
-Last Modified Date: 1/18/2017
+CCO_eCoaching_ETS_Load_Tables_Create.sql(02).sql
+Last Modified Date: 5/22/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Update tables 1,3 and 4
+to accommodate longer Task and project numbers - TFS 6624 - 5/22/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -49,8 +51,8 @@ CREATE TABLE [EC].[ETS_Coaching_Stage](
 	[Emp_SupID] [nvarchar](20) NULL,
 	[Emp_MgrID] [nvarchar](20) NULL,
 	[Emp_Role] [nvarchar](3) NULL,
-	[Project_Number] [nvarchar](8) NULL,
-	[Task_Number] [nvarchar](8) NULL,
+	[Project_Number] [nvarchar](20) NULL,
+	[Task_Number] [nvarchar](20) NULL,
 	[Task_Name] [nvarchar](60) NULL,
 	[Time_Code] [nvarchar](30) NULL,
 	[Associated_Person] [nvarchar](30) NULL,
@@ -118,8 +120,8 @@ CREATE TABLE [EC].[ETS_Coaching_Rejected](
 	[Emp_SupID] [nvarchar](20) NULL,
 	[Emp_MgrID] [nvarchar](20) NULL,
 	[Emp_Role] [nvarchar](3) NULL,
-	[Project_Number] [nvarchar](8) NULL,
-	[Task_Number] [nvarchar](8) NULL,
+	[Project_Number] [nvarchar](20) NULL,
+	[Task_Number] [nvarchar](20) NULL,
 	[Task_Name] [nvarchar](60) NULL,
 	[Time_Code] [nvarchar](30) NULL,
 	[Associated_Person] [nvarchar](30) NULL,
@@ -153,8 +155,8 @@ CREATE TABLE [EC].[ETS_Coaching_Fact](
 	[Report_Code] [nvarchar](20) NULL,
 	[Event_Date] [datetime] NULL,
 	[Emp_ID] [nvarchar](20) NULL,
-	[Project_Number] [nvarchar](8) NULL,
-	[Task_Number] [nvarchar](8) NULL,
+	[Project_Number] [nvarchar](20) NULL,
+	[Task_Number] [nvarchar](20) NULL,
 	[Task_Name] [nvarchar](60) NULL,
 	[Time_Code] [nvarchar](30) NULL,
 	[Associated_Person] [nvarchar](30) NULL,
