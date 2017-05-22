@@ -1,8 +1,10 @@
 /*
-sp_InsertInto_Outlier_Rejected(02).sql
-Last Modified Date: 04/25/2017
+sp_InsertInto_Outlier_Rejected(03).sql
+Last Modified Date: 05/22/2017
 Last Modified By: Susmitha Palacherla
 
+
+Version 03: Updated to add rejection logic for invalid LCS Review Mgr ID - Suzy Palacherla -  TFS 6612 - 05/22/2017
 
 Version 02: Missed Program insert into Rejected Table - Suzy Palacherla -  TFS 6377 - 04/25/2017
 
@@ -35,6 +37,7 @@ GO
 -- Description:	 
 -- Populates Reject Reason(s) and Inserts Rejected logs to Rejected table.
 -- Initial revision. TFS 6377 - 04/24/2017
+-- Updated to add rejection logic for invalid LCS Review Mgr ID - TFS 6612 - 05/22/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
 AS
@@ -96,6 +99,23 @@ END
   
 WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
+
+-- Employee not found in Hierrachy table
+
+BEGIN
+UPDATE [EC].[Outlier_Coaching_Stage]
+SET [Reject_Reason]= N'Review Manager not active or valid.'
+WHERE Report_Code LIKE 'LCS%'
+AND (RMgr_ID = '' OR
+RMgr_ID NOT IN 
+(SELECT DISTINCT EMP_ID FROM [EC].[Employee_Hierarchy]
+ WHERE Emp_Job_Code = 'WACS50'
+ AND Active = 'A'))
+AND [Reject_Reason]is NULL
+	
+OPTION (MAXDOP 1)
+END  
+
 --Insert Rejected Records into Rejected Table
 BEGIN
 INSERT INTO [EC].[Outlier_Coaching_Rejected]
@@ -156,3 +176,5 @@ END
 
 END -- sp_InsertInto_Outlier_Rejected
 GO
+
+
