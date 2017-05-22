@@ -1,0 +1,54 @@
+/*---------------------------------------------------------------
+
+TFS 6624 - Accommodate longer task and project numbers in ETS feeds
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+PRINT ('  Begin Table Updates...')
+
+
+--1. Alter Site field size in ETS tables
+
+ALTER TABLE [EC].[ETS_Coaching_Stage]
+ALTER COLUMN [Project_Number] [nvarchar](20) 
+GO
+
+ALTER TABLE [EC].[ETS_Coaching_Stage]
+ALTER COLUMN [Task_Number] [nvarchar](20) 
+GO
+
+
+ALTER TABLE [EC].[ETS_Coaching_Rejected]
+ALTER COLUMN [Project_Number] [nvarchar](20)
+GO
+
+ALTER TABLE [EC].[ETS_Coaching_Rejected]
+ALTER COLUMN [Task_Number] [nvarchar](20)
+GO
+
+
+ALTER TABLE [EC].[ETS_Coaching_Fact]
+ALTER COLUMN [Project_Number] [nvarchar](20)
+GO
+
+
+ALTER TABLE [EC].[ETS_Coaching_Fact]
+ALTER COLUMN [Task_Number] [nvarchar](20)
+GO
+
+--************************************************************
+PRINT ('  Table Updates completed...')
