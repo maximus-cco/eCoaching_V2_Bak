@@ -1,0 +1,19 @@
+/*---------------------------------------------------------------
+
+TFS 6614 - Change how email addresses with apostrophes are stored
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+------------------------------------------------------------*/
+
+There are no database updates, only a file copy.
+
+Copy file HR_Employee_Information.csv
+
+FROM
+\\vrivscors01\bcc scorecards\Coaching\HRInfo\Backup\
+
+TO
+\\vrivscors01\bcc scorecards\Coaching\HRInfo\
+(overwriting existing file)
