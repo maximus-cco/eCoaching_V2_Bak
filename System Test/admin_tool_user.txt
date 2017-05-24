@@ -1,0 +1,89 @@
+/*
+
+eCoaching Log test scripts to change access to admin tool
+
+*/
+
+-- see if i'm there
+select * from EC.AT_User
+where UserId = '380017'
+
+-- put me there
+insert into EC.AT_User
+(UserId, UserLanID, UserName, EmpJobCode, Active)
+values ('380017','Doug.Stearns','Stearns, Douglas R', 'WACS60', 1)
+
+-- change me there
+update EC.AT_User
+set 
+EmpJobCode = 'WACS01'
+--Active = 1 -- 1=active/0=inactive
+--UserLanID = 'DougR.Stearns'
+where UserId = '380017'
+
+
+-- see if i'm there
+select * from EC.AT_User_Role_Link
+where UserId = '380017'
+
+-- put me there
+-- 101 CoachingAdmin
+-- 102 CoachingUser
+-- 103 WarningAdmin
+-- 104 WarningUser
+-- 105 SeniorManager
+-- 106 ReportCoachingAdmin
+-- 107 ReportWarningAdmin
+-- 108 ReportCoachingCSRUser
+-- 109 ReportWarningCSRUser
+-- 110 ReportCoachingSupUser
+-- 111 ReportWarningSupUser
+-- 112 ReportCoachingQualUser
+-- 113 ReportWarningQualUser
+-- 114 ReportCoachingLSAUser
+-- 115 ReportWarningLSAUser
+-- 116 ReportCoachingTrainUser
+-- 117 ReportWarningTrainUser
+-- 118 SuperUser
+-- 119 ACLAdmin
+insert into EC.AT_User_Role_Link
+ (UserId, RoleId)
+ values ('380017',101)
+
+-- due to foreign key constraints - can't change me there
+-- so have to delete me there
+delete from EC.AT_User_Role_Link
+where UserId = '380017'
+and RoleId in (106)
+
+-- what i can do
+select u.UserId, 
+       u.UserLanID,
+       u.EmpJobCode,
+--       ma.Module,
+       rel.RoleId, 
+       r.RoleDescription, 
+       r.IsSysAdmin, 
+       rel.EntitlementId, 
+       e.EntitlementDescription
+from EC.AT_User u
+--join EC.AT_Module_Access ma on u.EmpJobCode = ma.JobCode
+join EC.AT_User_Role_Link url on u.UserId = url.UserId
+join EC.AT_Role_Entitlement_Link rel on url.RoleId = rel.RoleId
+join EC.AT_Role r on rel.RoleId = r.RoleId
+join EC.AT_Entitlement e on e.EntitlementId = rel.EntitlementId
+where u.UserId in ('380017')
+order by u.UserId, /*ma.Module,*/ rel.RoleId, rel.EntitlementId
+
+-- who can do what
+select r.RoleId, 
+       r.RoleDescription, 
+       r.IsSysAdmin, 
+       e.EntitlementId, 
+       e.EntitlementDescription 
+from EC.AT_Role_Entitlement_Link rel
+join EC.AT_Role r on r.RoleId = rel.RoleId
+join EC.AT_Entitlement e on e.EntitlementId = rel.EntitlementId
+--where r.RoleId in ()
+--order by r.RoleId, e.EntitlementId
+order by e.EntitlementId, r.RoleId

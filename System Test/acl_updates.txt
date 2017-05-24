@@ -1,0 +1,29 @@
+/*
+
+ecoaching historical dashboard access control list
+
+*/
+
+
+-- entry in acl table
+select * from EC.Historical_Dashboard_ACL
+where row_id = 188 -- (dev = 175, test = 188, prod = 342)
+
+-- change role in acl
+update EC.Historical_Dashboard_ACL
+set [Role] = 'ARC' 
+--set [Role] = 'ECL'
+--set [Role] = 'SrMgr'  -- no longer used
+where row_id = 188
+
+-- change lanid in acl
+update EC.Historical_Dashboard_ACL
+set User_LanID = 'dougr.stearns'
+--set User_LanID = 'doug.stearns'
+where row_id = 188
+
+-- change admin in acl
+update EC.Historical_Dashboard_ACL
+set IsAdmin = 'Y'
+--set IsAdmin = 'N'
+where row_id = 188

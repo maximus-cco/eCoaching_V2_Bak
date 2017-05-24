@@ -1,0 +1,93 @@
+/* ***********************************************
+    ecoaching logs
+*/ ***********************************************
+-- find submitted ones
+select * from EC.Coaching_Log
+where SubmitterID = '380017'
+and SubmittedDate > '2017-05-12 00:00:00.000'
+order by SubmittedDate
+
+-- find specific ecl
+select * from EC.Coaching_Log
+where CoachingID in (681883, 681888)
+
+-- change ecl to doug
+update EC.Coaching_Log
+set emplanid = 'doug.stearns',
+empid = '380017'
+where CoachingID in (681883, 681888)
+
+-- change ecl back
+update EC.Coaching_Log
+set emplanid = 'christopher.kalkman',
+empid = '368329'
+where CoachingID in (681883, 681888)
+
+-- find related reasons/sub-reasons
+select * from EC.Coaching_Log_Reason
+where CoachingID in (681883, 681888)
+
+/* ***********************************************
+    ecoaching logs
+*/ ***********************************************
+
+
+/* ***********************************************
+    reset ecoaching logs
+*/ ***********************************************
+
+update EC.Coaching_Log
+set StatusID = 5,
+CoachingDate = null,   -- need to comment out for direct logs 
+CoachingNotes = null,   -- need to comment out for direct logs
+SupReviewedAutoDate = null,
+isCSE = 0,   -- 0=no 1=yes
+MgrReviewManualDate = null,
+MgrReviewAutoDate = null,
+MgrNotes = null,
+isCSRAcknowledged = 0,   -- may need to be null or 0 (unchecked)
+CSRReviewAutoDate = null,
+CSRComments = null,
+isCoachingRequired = null,
+strReasonNotCoachable = null,
+txtReasonNotCoachable = null,
+Review_SupID = null,
+Review_MgrID = null
+where CoachingID in (689340)
+
+/* ***********************************************
+    reset ecoaching logs
+*/ ***********************************************
+
+
+/* ***********************************************
+    warning logs
+*/ ***********************************************
+-- find submitted ones
+select * from EC.Warning_Log
+where SubmitterID = '380017'
+and SubmittedDate > '2017-05-12 00:00:00.000'
+order by SubmittedDate
+
+-- find specific ecl
+select * from EC.Warning_Log
+where WarningID in (681883, 681888)
+
+-- change ecl to doug
+update EC.Warning_Log
+set emplanid = 'doug.stearns',
+empid = '380017'
+where WarningID in (681883, 681888)
+
+-- change ecl back
+update EC.Warning_Log
+set emplanid = 'David.Hinman',
+empid = '346638'
+where WarningID in (681883, 681888)
+
+-- find related reasons/sub-reasons
+select * from EC.Warning_Log_Reason
+where WarningID in (681883, 681888)
+/* ***********************************************
+    warning logs
+*/ ***********************************************

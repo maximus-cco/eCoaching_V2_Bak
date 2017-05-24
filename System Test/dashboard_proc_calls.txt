@@ -1,0 +1,45 @@
+/*
+
+ecoaching dashboard procedure calls
+
+*/
+
+-- csr my dashboard
+exec ec.sp_SelectFrom_Coaching_Log_CSRPending 'Christopher.Kalkman'
+exec ec.sp_SelectFrom_Coaching_Log_CSRCompleted 'Christopher.Kalkman'
+
+-- supervisor dashboard
+exec ec.sp_SelectFrom_Coaching_Log_SUPPending 'doug.stearns'
+exec ec.sp_SelectFrom_Coaching_Log_SUPCSRPending 'doug.stearns', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_SUPCSRCompleted '%', 'doug.stearns', '%', '%', '2017-05-01', '2017-05-31'
+exec ec.sp_SelectFrom_Warning_Log_SUPCSRCompleted 'doug.stearns', '2017-05-01', '2017-05-31', '0'
+exec ec.sp_SelectFrom_Coaching_Log_MGRPending 'Calvin.Jones', '%', '%'
+
+-- manager dashboard
+exec ec.sp_SelectFrom_Coaching_Log_MGRCSRPending 'Timothy.Queen', '%', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MGRCSRCompleted '%', 'Timothy.Queen', '%', '%', '2017-05-01', '2017-05-31'
+exec ec.sp_SelectFrom_Warning_Log_MGRCSRCompleted 'Timothy.Queen', '2017-05-01', '2017-05-31', '%'
+
+-- staff submitted
+exec ec.sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff 'doug.stearns', '%', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MyPenSubmitted_DashboardStaff 'doug.stearns', '%', '%', '%'
+
+-- my submitted
+exec ec.sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard 'doug.stearns'
+exec ec.sp_SelectFrom_Coaching_Log_MySubmitted_DashboardMGR 'doug.stearns', '%', '%', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MySubmitted_DashboardSUP 'doug.stearns', '%', '%', '%', '%'
+
+-- historical dashboard
+exec EC.sp_SelectFrom_Coaching_Log_HistoricalSUP 'doug.stearns', '%', '%', '%', '%', '%', '%', '2013-10-30', '2015-05-01', '%', 'WSTE13', '%', 20000, 1, 'SubmittedDate', 'n'
+exec EC.sp_SelectFrom_Coaching_Log_HistoricalSUP_Count 'doug.stearns', '%', '%', '%', '%', '%', '%', '2013-10-30', '2015-05-01', '%', 'WSTE13', '%'
+
+-- historical export
+exec EC.sp_SelectFrom_Coaching_Log_HistoricalSUP 'doug.stearns', '%', '%', '%', '%', '%', '%', '2015-01-01', '2015-07-10', '%', 'WSTE13', '%', '500', '1', 'strFormID', 'y'
+exec EC.sp_SelectFrom_Coaching_Log_Historical_Export '%', '%', '%', '%', '%', '%', '2015-01-01', '2015-07-10', '%', '%' 
+
+-- review page
+exec EC.sp_SelectReviewFrom_Coaching_Log 'eCL-william.leferink-698866'
+exec EC.sp_SelectReviewFrom_Coaching_Log_Reasons 'eCL-william.leferink-698866'
+
+exec EC.sp_SelectReviewFrom_Warning_Log 'eCL-Christopher.Kalkman-193'
+exec EC.sp_SelectReviewFrom_Warning_Log_Reasons 'eCL-Christopher.Kalkman-193'

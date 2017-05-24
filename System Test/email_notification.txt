@@ -1,0 +1,64 @@
+/*************************************************
+     email for coaching logs from feeds
+*************************************************/
+-- stored procedure to show logs that need emails sent
+exec EC.sp_SelectCoaching4Contact 
+
+select * from EC.Coaching_Log
+where EmailSent = 0
+and StatusID not in (1,2)
+
+-- update logs to set email as sent
+update EC.Coaching_Log
+set EmailSent = 1, 
+NotificationDate = getdate()
+where EmailSent = 0 
+and StatusID not in (1,2)
+
+-- update logs to set email as not sent
+update EC.Coaching_Log
+set EmailSent = 0
+where CoachingID in (689247)
+
+
+/*************************************************
+     email reminders for coaching logs
+*************************************************/
+-- stored procedure to show logs that need emails reminders sent
+exec EC.sp_SelectCoaching4Reminder 
+
+-- set the initial email notification date
+update EC.Coaching_Log
+set NotificationDate = '2016-02-22 13:14:27'
+where CoachingID in ()
+
+-- update notification date in past - first reminder - iqs=48; omr=72
+update EC.Coaching_Log
+set NotificationDate = dateadd(hour,-49,NotificationDate)
+where CoachingID in ()
+
+-- update reminder date in past - second plus reminder - iqs=48; omr=72
+update EC.Coaching_Log
+set ReminderDate = dateadd(hour,-73,ReminderDate)
+where CoachingID in ()
+
+-- update mgr review auto date in past - omr sup reminder - omr=72
+update EC.Coaching_Log
+set MgrReviewAutoDate = dateadd(hour,-73,MgrReviewAutoDate)
+where CoachingID in ()
+
+-- reset reminder fields 
+update EC.Coaching_Log
+set ReminderSent = 0, 
+    ReminderDate = null, 
+    ReminderCount = 0
+where CoachingID in ()
+
+-- show date difference
+select CoachingID, FormName, 
+DATEDIFF(hh, NotificationDate, getdate()) as [note date],
+DATEDIFF(hh, MgrReviewAutoDate, getdate()) as [rev date],
+DATEDIFF(hh, ReminderDate, getdate()) as [remind date]
+from EC.Coaching_Log
+where CoachingID in ()
+

@@ -1,0 +1,36 @@
+/* ***********************************************
+    ecoaching warning logs - join other tables
+*/ ***********************************************
+-- select columns and decrypt
+SELECT wl.WarningID,
+       wl.FormName,
+       wl.ProgramName,
+       dsrc.CoachingSource,
+       dsrc.SubCoachingSource,
+       dstat.Status,
+       dsite.City,
+       wl.EmpLanID,
+       wl.EmpID,
+       wl.SubmitterID,
+       wl.SupID,
+       wl.MgrID,
+       wl.WarningGivenDate,
+       wl.SubmittedDate,
+       wl.ModuleID,
+       wl.Active,
+       dcr.CoachingReason,
+       dscr.SubCoachingReason,
+       wlr.[Value]
+  FROM EC.Warning_Log wl
+  join EC.Warning_Log_Reason wlr on wl.WarningID = wlr.WarningID
+  join EC.DIM_Coaching_Reason dcr on wlr.CoachingReasonID = dcr.CoachingReasonID
+  join EC.DIM_Sub_Coaching_Reason dscr on wlr.SubCoachingReasonID = dscr.SubCoachingReasonID
+  join EC.DIM_Source dsrc on wl.SourceID = dsrc.SourceID
+  join EC.DIM_Status dstat on wl.StatusID = dstat.StatusID
+  join EC.DIM_Site dsite on wl.SiteID = dsite.SiteID
+ where wl.SubmitterID = '380017'
+   and wl.SubmittedDate > '2014-10-12 00:00:00.000'
+ order by wl.WarningID
+/* ***********************************************
+    ecoaching warning logs - join other tables
+*/ ***********************************************

@@ -1,0 +1,63 @@
+/* ***********************************************
+    ecoaching logs - join other tables
+   *********************************************** */
+-- select columns 
+SELECT cl.CoachingID,
+       cl.FormName,
+       cl.ProgramName,
+       dsrc.CoachingSource,
+       dsrc.SubCoachingSource,
+       dstat.Status,
+       dsite.City,
+       cl.EmpLanID,
+       cl.EmpID,
+       cl.SubmitterID,
+       cl.EventDate,
+       cl.CoachingDate,
+       cl.AvokeID,
+       cl.NGDActivityID,
+       cl.UCID,
+       cl.VerintID,
+       cl.VerintEvalID,
+       cl.Description,
+       cl.CoachingNotes,
+       cl.isVerified,
+       cl.SubmittedDate,
+       cl.StartDate,
+       cl.SupReviewedAutoDate,
+       cl.isCSE,
+       cl.MgrReviewManualDate,
+       cl.MgrReviewAutoDate,
+       cl.MgrNotes,
+       cl.isCSRAcknowledged,
+       cl.CSRReviewAutoDate,
+       cl.CSRComments,
+       cl.EmailSent,
+       cl.numReportID,
+       cl.strReportCode,
+       cl.isCoachingRequired,
+       cl.strReasonNotCoachable,
+       cl.txtReasonNotCoachable,
+       cl.VerintFormName,
+       dm.Module,
+       dcr.CoachingReason,
+       dscr.SubCoachingReason,
+       clr.[Value]
+  FROM EC.Coaching_Log cl
+  join EC.Coaching_Log_Reason clr on cl.CoachingID = clr.CoachingID
+  join EC.DIM_Coaching_Reason dcr on clr.CoachingReasonID = dcr.CoachingReasonID
+  join EC.DIM_Sub_Coaching_Reason dscr on clr.SubCoachingReasonID = dscr.SubCoachingReasonID
+  join EC.DIM_Source dsrc on cl.SourceID = dsrc.SourceID
+  join EC.DIM_Status dstat on cl.StatusID = dstat.StatusID
+  join EC.DIM_Site dsite on cl.SiteID = dsite.SiteID
+  join EC.DIM_Module dm on cl.ModuleID = dm.ModuleID
+  where cl.SubmitterID = '999999'
+   and cl.SubmittedDate > '2014-10-01 00:00:00.000'
+   and (cl.strReportCode like 'BRN20170411'
+   or cl.strReportCode like 'BRL20170411')
+  order by cl.CoachingID
+/* ***********************************************
+    ecoaching logs - join other tables
+   *********************************************** */
+  
+  
