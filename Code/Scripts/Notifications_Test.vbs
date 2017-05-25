@@ -90,7 +90,6 @@ Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSourc
     Dim htmlbody
     Dim ToCopy
     Dim ToAddress
-    Dim ToSubject
     Dim mailArray
     Dim mailTo
     Dim mailCopy
@@ -175,9 +174,6 @@ Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSourc
             End Select ' End Select Case (mailCc)
     End Select ' End Select Case (mailCopy)
 
-    strSubject = "PHASE II - eCL: " & strFormStatus & " (" & strPerson & ") - PHASE II"
-    ToSubject = strSubject
-
     strCtrMessage = (mailBody)
     strCtrMessage = Replace(strCtrMessage, "strDateTime", Now)
     strCtrMessage = Replace(strCtrMessage, "strPerson", strPerson)
@@ -236,7 +232,7 @@ Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSourc
            .To =  ToAddress '"susmitha.palacherla@gdit.com" 
            .Cc = ToCopy
            .From = fromAddress
-           .Subject = ToSubject
+           .Subject = strSubject
            .HTMLBody = htmlbody
            .Send
     End With
