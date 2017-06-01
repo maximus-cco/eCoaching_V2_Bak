@@ -1,7 +1,10 @@
 /*
-sp_Update5Review_Coaching_Log(02).sql
-Last Modified Date: 4/13/2017
+sp_Update5Review_Coaching_Log(03).sql
+Last Modified Date: 06/01/2017
 Last Modified By: Susmitha Palacherla
+
+Version 03: Updated to increase size for
+param @nvcstrReasonNotCoachable to 100 - TFS 6881 - 06/01/2017
 
 Version 02: New Breaks BRN and BRL feeds - TFS 6145 - 4/13/2017
 
@@ -25,6 +28,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/2012
@@ -35,12 +39,13 @@ GO
 --    Updated per TFS 2283 to support Training odt feed  - 3/22/2016
 --    Updated per TFS 1709 Admin tool setup to reset reassign count to 0 - 5/2/2016
 --    Updated per TFS 6145  to support Training brl and brn feeds  - 4/13/2017
+--    Updated per TFS 6881 to increase size for param @nvcstrReasonNotCoachable to 100 - 06/01/2017
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
       @nvcFormID Nvarchar(50),
       @nvcFormStatus Nvarchar(30),
-      @nvcstrReasonNotCoachable Nvarchar(30),
+      @nvcstrReasonNotCoachable Nvarchar(100),
       @nvcReviewerLanID Nvarchar(20),
       @dtmReviewAutoDate datetime,
       @dtmReviewManualDate datetime,
@@ -174,11 +179,8 @@ END CATCH
 END --sp_Update5Review_Coaching_Log
 
 
-GO
-
-
-
 
 GO
+
 
 
