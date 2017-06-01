@@ -199,9 +199,16 @@
             <asp:BoundField DataField="value">
                 <ItemStyle CssClass="review"></ItemStyle>
             </asp:BoundField>
+
+            <asp:TemplateField>
+                <ItemTemplate>
+                    <asp:HiddenField ID="hfSubReason" runat="server" Value='<%# Eval("SubCoachingReason") %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
         </Columns>
         <RowStyle BackColor="#DEDFDE" ForeColor="Black" />
     </asp:GridView>
+
     <asp:SqlDataSource ID="SqlDataSource8" runat="server" ConnectionString="<%$ ConnectionStrings:CoachingConnectionString %>"
         SelectCommand="EC.sp_SelectReviewFrom_Coaching_Log_Reasons" SelectCommandType="StoredProcedure"
         DataSourceMode="DataReader" EnableViewState="True" ViewStateMode="Enabled">

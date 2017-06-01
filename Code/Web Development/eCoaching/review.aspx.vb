@@ -33,6 +33,8 @@ Public Class review
 
     Public Const PENDING_MGR_REVIEW = "Pending Manager Review"
 
+    Public Const OMR_IAE_SUBREASON = "OMR: Inappropriate ARC Escalation"
+
     Dim pHolder As Label
     Dim panelHolder As Panel
     Dim pHolder2 As Label
@@ -162,6 +164,26 @@ Public Class review
         If (exceededTimeOfBreak.Text = "1" Or exceededNumberOfBreaks.Text = "1") Then
             reasons.Add("Approved accommodation on file")
         End If
+
+        ' TFS 6881 - Add noncoachable reasons for OMR: Inappropriate ARC Escalation
+        Dim isOmrInappropriateArcEsclation As Boolean = False
+        For i As Integer = (GridView2.Rows.Count - 1) To 0 Step -1
+            Dim row As GridViewRow = GridView2.Rows(i)
+            Dim hfSubReason As HiddenField = row.FindControl("hfSubReason")
+            Dim strSubReason As String = hfSubReason.Value
+            If (String.Compare(strSubReason, OMR_IAE_SUBREASON, True) = 0) Then
+                isOmrInappropriateArcEsclation = True
+                Exit For
+            End If
+        Next
+
+        If isOmrInappropriateArcEsclation Then
+            reasons.Add("Agent no longer employed Or on LOA")
+            reasons.Add("Disagree - Escalation was inappropriate")
+            reasons.Add("ISG Or Supervisor told agent to escalate")
+            reasons.Add("Not enough information to coach")
+        End If
+
         reasons.Add("Other")
         ddlNonCoachableReason.DataSource = reasons
         ddlNonCoachableReason.DataBind()
