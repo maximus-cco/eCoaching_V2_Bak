@@ -178,7 +178,7 @@ Public Class review
         Next
 
         If isOmrInappropriateArcEsclation Then
-            reasons.Add("Agent no longer employed Or on LOA")
+            reasons.Add("Agent no longer employed or on LOA")
             reasons.Add("Escalation was appropriate")
             reasons.Add("ISG or Supervisor told agent to escalate")
             reasons.Add("Not enough information to coach")
