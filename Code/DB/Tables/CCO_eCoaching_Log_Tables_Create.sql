@@ -1,17 +1,18 @@
 /*
-CCO_eCoaching_Log_Tables_Create.sql(01).sql
+CCO_eCoaching_Log_Tables_Create.sql(02).sql
 
-Last Modified Date: 1/18/2017
+Last Modified Date: 06/01/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to increase column size for
+strReasonNotCoachable in Coaching_Log to 100 - TFS 6881 - 06/01/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 
 **************************************************************
 
---Table list
+-- Table list
 
 **************************************************************
 
@@ -76,7 +77,7 @@ CREATE TABLE [EC].[Coaching_Log](
 	[numReportID] [int] NULL,
 	[strReportCode] [nvarchar](30) NULL,
 	[isCoachingRequired] [bit] NULL,
-	[strReasonNotCoachable] [nvarchar](30) NULL,
+	[strReasonNotCoachable] [nvarchar](100) NULL,
 	[txtReasonNotCoachable] [nvarchar](3000) NULL,
 	[VerintFormName] [nvarchar]50) NULL,
         [ModuleID][int],
