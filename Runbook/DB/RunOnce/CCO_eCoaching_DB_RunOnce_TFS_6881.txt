@@ -1,0 +1,36 @@
+/*---------------------------------------------------------------
+
+TFS 6881 - Accommodate longer Reasons for not Coachable IAE OMT logs in tables and sps.
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+PRINT ('  Begin Table Updates...')
+
+
+--1. Alter strReasonNotCoachable field size in tables
+
+ALTER TABLE [EC].[Coaching_Log]
+ALTER COLUMN [strReasonNotCoachable] [nvarchar](100) 
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Archive]
+ALTER COLUMN [strReasonNotCoachable] [nvarchar](100) 
+GO
+
+
+--************************************************************
+PRINT ('  Table Updates completed...')
