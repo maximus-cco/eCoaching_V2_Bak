@@ -37,7 +37,10 @@ Public Class review
         "If you have any questions, please see your supervisor."
     Public Const REVIEW_SCORECARD_MSRS = "To review your full details, please visit the CCO " &
         "<a href='https://f3420-mwbp11.vangent.local/scorecard/csrscorecard.aspx' target='_blank'>Performance Scorecard</a>. " &
-        "If you have any questions, please submit an escalation via the CCO Performance Scorecard Information Station SharePoint site."
+        "If you have any questions, please " &
+        "<a href='https://cco.gdit.com/Reports/Performance_Scorecard/Lists/Scorecard_Escalated_Issues_Log/NewIssue.aspx' target='_blank'>submit an escalation</a> via the " &
+        "<a href='https://f3420-mwbp11.vangent.local/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard Information Station SharePoint</a> " &
+        "site."
 
 
     Public Const PENDING_MGR_REVIEW = "Pending Manager Review"
