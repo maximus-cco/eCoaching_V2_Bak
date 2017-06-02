@@ -31,6 +31,15 @@ Public Class review
         "Please review the <b><a href='https://cco.gdit.com/bi/ReportsCatalog/AvayaBreakPolicyReporting/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a>, " &
         "the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below."
 
+    ' Performance Scorecard MSR and MSRS static text
+    Public Const REVIEW_SCORECARD_MSR = "To review your full details, please visit the CCO " &
+        "<a href='https://f3420-mwbp11.vangent.local/scorecard/csrscorecard.aspx' target='_blank'>Performance Scorecard</a>. " &
+        "If you have any questions, please see your supervisor."
+    Public Const REVIEW_SCORECARD_MSRS = "To review your full details, please visit the CCO " &
+        "<a href='https://f3420-mwbp11.vangent.local/scorecard/csrscorecard.aspx' target='_blank'>Performance Scorecard</a>. " &
+        "If you have any questions, please submit an escalation via the CCO Performance Scorecard Information Station SharePoint site."
+
+
     Public Const PENDING_MGR_REVIEW = "Pending Manager Review"
 
     Public Const OMR_IAE_SUBREASON = "OMR: Inappropriate ARC Escalation"
@@ -53,6 +62,14 @@ Public Class review
 
     Dim lblisKudo As Label
     Dim isKudo As Boolean
+
+    ' Performance Scorecard with report code MSR
+    Dim lblIsScorecardMsr As Label
+    Dim isScorecardMsr As Boolean
+
+    ' Performance Scorecard with report code MSRS
+    Dim lblIsScorecardMsrs As Label
+    Dim isScorecardMsrs As Boolean
 
     Dim lblIsAttendance As Label
     Dim isAttendance As Boolean
@@ -147,6 +164,24 @@ Public Class review
         End If
     End Sub
 
+    Private Sub SetIsScorecardMsr()
+        lblIsScorecardMsr = ListView1.Items(0).FindControl("isScorecardMsr")
+        If (lblIsScorecardMsr.Text = "0") Then
+            isScorecardMsr = False
+        Else
+            isScorecardMsr = True
+        End If
+    End Sub
+
+    Private Sub SetIsScorecardMsrs()
+        lblIsScorecardMsrs = ListView1.Items(0).FindControl("isScorecardMsrs")
+        If (lblIsScorecardMsrs.Text = "0") Then
+            isScorecardMsrs = False
+        Else
+            isScorecardMsrs = True
+        End If
+    End Sub
+
     Private Sub SetIsAttendance()
         lblIsAttendance = ListView1.Items(0).FindControl("isAttendance")
         If (lblIsAttendance.Text = "0") Then
@@ -213,15 +248,23 @@ Public Class review
         SetIsKudo()
         SetIsAttendance()
 
-        If (isHigh5Club OrElse isKudo) Then
+        SetIsScorecardMsr()
+        SetIsScorecardMsrs()
+
+        If (isHigh5Club OrElse isKudo OrElse isScorecardMsr OrElse isScorecardMsrs) Then
             pnlStaticText.Visible = True
+
             If (isHigh5Club) Then
                 lblStaticText.Text = REVIEW_QUALITY_HIGH5_CLUB
-            Else
+            ElseIf (isKudo) Then
                 lblStaticText.Text = REVIEW_QUALITY_KUDO_CSR
                 If (m_strUserEmployeeID = m_strHierarchySupEmployeeID) Then ' User is the CSR's supervisor
                     lblStaticText.Text = REVIEW_QUALITY_KUDO_SUPERVISOR
                 End If
+            ElseIf (isScorecardMsr) Then
+                lblStaticText.Text = REVIEW_SCORECARD_MSR
+            ElseIf (isScorecardMsrs) Then
+                lblStaticText.Text = REVIEW_SCORECARD_MSRS
             End If
         End If
 
@@ -389,8 +432,9 @@ Public Class review
                     ' Pending Manager Review (Supervisor module), Or
                     ' Pending Quality Lead Review (Quality module)
 
-                    ' It is from IQS or it is CTC or high CSAT5 or kudo or seasonal attendance.
-                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance) Then
+                    ' It is from IQS or it is CTC or high CSAT5 or kudo or seasonal attendance
+                    ' or performance scorecard MSR or MSRS.
+                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs) Then
 
                         'If ((pHolder5.Text = "IQS") And (pHolder6.Text = "True")) Then
 
@@ -631,7 +675,8 @@ Public Class review
                 pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
                 ' IQS or CTC or high CSAT5 or kudo or seasonal attendance
-                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance) AndAlso Len(pHolder8.Text) > 4) Then
+                ' or performance scorecard MSR or MSRS.
+                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs) AndAlso Len(pHolder8.Text) > 4) Then
                     pnlEmpAckReinforceLog.Visible = True ' 1. Check the box below to acknowledge the monitor:
                 Else
                     Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
