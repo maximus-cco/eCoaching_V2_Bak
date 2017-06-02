@@ -1,8 +1,10 @@
 /*
-sp_Update_Outlier_Coaching_Stage(02).sql
-Last Modified Date: 04/24/2017
+sp_Update_Outlier_Coaching_Stage(03).sql
+Last Modified Date: 06/02/2017
 Last Modified By: Susmitha Palacherla
 
+
+Version 03: Updated to fix typo in Missing Site and Comments - TFS 6147 - 06/02/2017
 
 Version 02: slight update to EmpID update logic - Suzy Palacherla -  TFS 6377 - 04/24/2017
 
@@ -28,6 +30,8 @@ GO
 
 
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 04/24/2017
@@ -37,6 +41,7 @@ GO
 -- Populates Role and Active status 
 -- Rejects records and deletes rejected records per business rules.
 -- Initial revision. TFS 6377 - 04/24/2017
+-- Updated to fix typo in Missing Site and Comments - TFS 6147 - 06/02/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage] 
 @Count INT OUTPUT
@@ -52,7 +57,7 @@ WHERE [CSR_LANID]IS NULL AND NOT ISNULL([CSR_EMPID],' ') like '%.%'
 OPTION (MAXDOP 1)
 END  
 
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 --  Populate EmpID and or LanID for files that can
 --  have either EmpID or LanID arrive in strCSR
@@ -66,7 +71,7 @@ WHERE NOT ISNULL([CSR_LANID],' ') like '%.%' AND [CSR_EMPID] IS NULL
 OPTION (MAXDOP 1)
 END 
  
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms  
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms  
  
 -- Replace above copied EmpIds with LANIds
 BEGIN
@@ -76,7 +81,7 @@ WHERE NOT ISNULL([CSR_LANID],' ') like '%.%'
 OPTION (MAXDOP 1)
 END  
       
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
  -- Populate EmpID for lanID coming in strCSR (non LCS, IAE, IAT, BRL, BRN)
 BEGIN
@@ -86,7 +91,7 @@ WHERE  ISNULL([CSR_LANID],' ') like '%.%' AND [CSR_EMPID] IS NULL
 OPTION (MAXDOP 1)
 END 
  
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms  
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms  
  
 -- Replace unknown Employee Ids with ''
 BEGIN
@@ -96,7 +101,7 @@ WHERE  [CSR_EMPID]='999999'
 OPTION (MAXDOP 1)
 END  
       
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 -- Populate Missing program
 BEGIN
@@ -108,20 +113,20 @@ WHERE (S.Program IS NULL OR S.Program ='')
 OPTION (MAXDOP 1)
 END  
       
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 
 -- Populate Missing Site
 BEGIN
 UPDATE [EC].[Outlier_Coaching_Stage]
-SET [Program]= H.[Emp_Site]
+SET [CSR_Site]= H.[Emp_Site]
 FROM [EC].[Outlier_Coaching_Stage]S JOIN [EC].[Employee_Hierarchy]H
 ON S.[CSR_EMPID]=H.[Emp_ID]
 WHERE (S.CSR_Site IS NULL OR S.CSR_Site ='')
 OPTION (MAXDOP 1)
 END  
       
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 -- Populate Roles AND Active
 BEGIN
@@ -140,14 +145,14 @@ ON LTRIM(STAGE.CSR_EMPID) = LTRIM(EMP.Emp_ID)
 OPTION (MAXDOP 1)
 END
 
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 -- Reject records not belonging to CSRs and Supervisors
 BEGIN
 EXEC [EC].[sp_InsertInto_Outlier_Rejected] 
 END
 
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 
 -- Delete rejected records
@@ -161,7 +166,7 @@ OPTION (MAXDOP 1)
 END
 
 
-WAITFOR DELAY '00:00:00.01' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 
 END  -- [EC].[sp_Update_Outlier_Coaching_Stage]
@@ -169,7 +174,8 @@ END  -- [EC].[sp_Update_Outlier_Coaching_Stage]
 
 
 
-GO
 
+
+GO
 
 

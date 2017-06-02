@@ -1,7 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(03).sql
-Last Modified Date: 4/13/2017
+sp_SelectReviewFrom_Coaching_Log(04).sql
+Last Modified Date: 06/02/2017
 Last Modified By: Susmitha Palacherla
+
+Version 04: Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
 
 Version 03: New Breaks BRN and BRL feeds - TFS 6145 - 4/13/2017
 
@@ -20,7 +22,6 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
 GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -46,7 +47,8 @@ GO
 --10. TFS 3758 Shared coaching sub-reasons may cause unexpected display issue in user interface - 10/14/2016
 --11. TFS 3757 Include Yes/No value to coaching monitor question - 10/27/2016
 --12. TFS 5309 NPN Load.  - 02/01/2017
---13. TFS 6145 BRN and BRL Feeds = 4/12/2017
+--13. TFS 6145 BRN and BRL Feeds - 4/12/2017
+--14. TFS 6147 Updated to support MSR and MSRS Feeds - 06/02/2017
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -154,8 +156,10 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 	    CASE WHEN (cc.CTC is Not NULL AND cl.strReportCode like ''CTC%'') Then 1 ELSE 0 END	"Quality / CTC",
 	    CASE WHEN (cc.HFC is Not NULL AND cl.strReportCode like ''HFC%'') Then 1 ELSE 0 END	"Quality / HFC",
 	    CASE WHEN (cc.KUD is Not NULL AND cl.strReportCode like ''KUD%'') Then 1 ELSE 0 END	"Quality / KUD",
-	    CASE WHEN (cc.NPN is Not NULL AND cl.strReportCode like ''NPN%'') Then 1 ELSE 0 END	"Quality / NPN",
+	    CASE WHEN (cc.NPN_PSC is Not NULL AND cl.strReportCode like ''NPN%'') Then 1 ELSE 0 END	"Quality / NPN",
 	    CASE WHEN (cc.SEA is Not NULL AND cl.strReportCode like ''SEA%'') Then 1 ELSE 0 END	"OTH / SEA",
+	    CASE WHEN (cc.NPN_PSC is Not NULL AND cl.strReportCode like ''MSR2%'') Then 1 ELSE 0 END	"PSC / MSR",
+	    CASE WHEN (cc.NPN_PSC is Not NULL AND cl.strReportCode like ''MSRS%'') Then 1 ELSE 0 END	"PSC / MSRS",
 	  	cl.Description txtDescription,
 		cl.CoachingNotes txtCoachingNotes,
 		cl.isVerified,
@@ -190,7 +194,7 @@ SET @nvcSQL3 = '  (SELECT  ccl.FormName,
      MAX(CASE WHEN [clr].[SubCoachingReasonID] = 12 THEN [clr].[Value] ELSE NULL END)	HFC,
      MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	KUD,
      MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA,
-     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN
+     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC
  	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
 	 [EC].[Coaching_Log] ccl 
@@ -213,7 +217,6 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
-
 GO
 
 

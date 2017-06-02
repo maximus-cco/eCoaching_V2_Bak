@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Outlier(03).sql
-Last Modified Date: 4/24/2017
+sp_InsertInto_Coaching_Log_Outlier(04).sql
+Last Modified Date: 06/02/2017
 Last Modified By: Susmitha Palacherla
+
+Version 04: Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
 
 Version 03: Support for Sup and quality Modules in 
 Breaks feeds and also added Output param to capture count of Loaded records - TFS 6377 - 04/24/2017
@@ -21,12 +23,13 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 -- =============================================
 -- Author:		        Susmitha Palacherla
@@ -37,7 +40,8 @@ GO
 -- Modified per TFS 644 to add IAE, IAT Feeds
 -- Modified per TFS 6145 to add BRN and BRL Feeds - 4/12/2017
 -- Modified per TFS 6377 to add support for Sup and quality Modules in 
--- Breaks feeds and also added Output param to capture count of Loaded records.
+-- Breaks feeds and also added Output param to capture count of Loaded records - 4/24/2017
+-- Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 @Count INT OUTPUT
@@ -98,7 +102,8 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
-        212                             [SourceID],
+        CASE WHEN cs.Report_Code LIKE 'MSR%'
+        THEN 232 ELSE 212 END	[SourceID],                        
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intGetSiteIDFromLanID](cs.CSR_LANID,@dtmDate)[SiteID],
         LOWER(cs.CSR_LANID)				[EmpLanID],
@@ -162,6 +167,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     CASE 
 		WHEN (cf.strReportCode like 'BRN%' OR cf.strReportCode like 'BRL%') 
 		THEN 56 
+		WHEN cf.strReportCode like 'MSR%' THEN 5
 		ELSE 9
      END,
            [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
@@ -211,7 +217,8 @@ END -- sp_InsertInto_Coaching_Log_Outlier
 
 
 
-GO
 
+
+GO
 
 
