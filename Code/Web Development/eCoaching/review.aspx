@@ -199,12 +199,6 @@
             <asp:BoundField DataField="value">
                 <ItemStyle CssClass="review"></ItemStyle>
             </asp:BoundField>
-
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <asp:HiddenField ID="hfSubReason" runat="server" Value='<%# Eval("SubCoachingReason") %>' />
-                </ItemTemplate>
-            </asp:TemplateField>
         </Columns>
         <RowStyle BackColor="#DEDFDE" ForeColor="Black" />
     </asp:GridView>
@@ -231,7 +225,7 @@
                     <asp:Table ID="Table2" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                         <asp:TableRow>
                             <asp:TableCell CssClass="wrapped">
-                                <asp:Label ID="txtDescriptionLabel" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
+                                <asp:Label ID="txtDescriptionLabel" runat="server" Text='<%# Eval(Server.HtmlDecode("txtDescription")) %>'></asp:Label>
                             </asp:TableCell>
                         </asp:TableRow>
                     </asp:Table>
@@ -354,6 +348,7 @@
                     <asp:Label ID="isScorecardMsr" runat="server" Text='<%# Eval(Server.HtmlDecode("PSC / MSR")) %>' Visible="false" />
                     <asp:Label ID="isScorecardMsrs" runat="server" Text='<%# Eval(Server.HtmlDecode("PSC / MSRS")) %>' Visible="false" />
                 </ItemTemplate>
+
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">
                         <span runat="server" id="itemPlaceholder" />
