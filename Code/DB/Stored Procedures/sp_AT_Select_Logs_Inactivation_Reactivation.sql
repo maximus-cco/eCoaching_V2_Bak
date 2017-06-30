@@ -1,9 +1,9 @@
 /*
-sp_AT_Select_Logs_Inactivation_Reactivation(01).sql
-Last Modified Date: 1/18/2017
+sp_AT_Select_Logs_Inactivation_Reactivation(02).sql
+Last Modified Date: 6/30/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Allow for Inactivation of completed logs from admin tool - TFS 5223 - 6/30/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -25,6 +25,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -34,6 +36,7 @@ GO
 --  Last Modified date: 
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/2/12016
+--  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 06/30/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
@@ -75,10 +78,6 @@ SET @nvcTableName = ',Aud.LastKnownStatus, [EC].[fn_strStatusFromStatusID](Aud.L
 IF @strActionin = N'Reactivate'
 SET @nvcWhere = ' WHERE Fact.StatusID = 2 '
 ELSE 
-IF @strTypein = N'Coaching' AND @strActionin = 'Inactivate'
-SET @nvcWhere = ' WHERE Fact.StatusID NOT IN (1,2) '
-ELSE
-IF @strTypein = N'Warning' AND @strActionin = 'Inactivate'
 SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 
 
@@ -109,6 +108,8 @@ SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 
 EXEC (@nvcSQL)	
 END --sp_AT_Select_Logs_Inactivation_Reactivation
+
+
 
 
 GO

@@ -1,9 +1,9 @@
 /*
-sp_AT_Select_Employees_Coaching_Inactivation_Reactivation(01).sql
-Last Modified Date: 1/18/2017
+sp_AT_Select_Employees_Coaching_Inactivation_Reactivation(02).sql
+Last Modified Date: 6/30/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Allow for Inactivation of completed logs from admin tool - TFS 5223 - 6/30/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -23,15 +23,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -42,6 +33,7 @@ GO
 --  Initial Revision. Admin tool setup, TFS 1709- 4/20/12016
 --  Updated to remove Mgr site restriction for non admins, TFS 3091 - 07/05/2016
 --  Updated to add Employees in Leave status for Inactivation, TFS 3441 - 09/07/2016
+--  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 06/30/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Employees_Coaching_Inactivation_Reactivation] 
 
@@ -76,7 +68,7 @@ IF @strActionin = N'Inactivate'
 SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name 
  FROM [EC].[Employee_Hierarchy] Emp JOIN [EC].[Coaching_Log] Fact WITH(NOLOCK)
  ON Emp.Emp_ID = Fact.EmpID  
- WHERE Fact.StatusID NOT IN (1,2)
+ WHERE Fact.StatusID <> 2
  AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
  AND Fact.EmpID <> ''999999''
  AND Emp.Active NOT IN  (''T'',''D'')'
@@ -103,10 +95,6 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name
 
 EXEC (@nvcSQL)	
 END --sp_AT_Select_Employees_Coaching_Inactivation_Reactivation
-
-
-
-
-
 GO
+
 
