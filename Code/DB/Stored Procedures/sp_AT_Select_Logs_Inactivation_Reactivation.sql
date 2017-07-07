@@ -1,9 +1,12 @@
 /*
 sp_AT_Select_Logs_Inactivation_Reactivation(02).sql
-Last Modified Date: 6/30/2017
+Last Modified Date: 7/7/2017
 Last Modified By: Susmitha Palacherla
 
-Version 02: Allow for Inactivation of completed logs from admin tool - TFS 5223 - 6/30/2017
+Version 03: additional chnanges per requirements update.
+Allow for Inactivation of completed logs from admin tool - TFS 7152 -  7/7/2017
+
+Version 02: Allow for Inactivation of completed logs from admin tool - TFS 7152 - 6/30/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -27,6 +30,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -40,16 +44,22 @@ GO
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
-@strTypein nvarchar(10)= NULL, @strActionin nvarchar(10), @strEmployeein nvarchar(10),  @intModuleIdin INT
+@strRequesterLanId nvarchar(30),@strTypein nvarchar(10)= NULL, @strActionin nvarchar(10), @strEmployeein nvarchar(10),  @intModuleIdin INT
 AS
 
 BEGIN
 DECLARE	
 @nvcTableName nvarchar(500),
-@nvcWhere nvarchar(100),
+@nvcWhere nvarchar(200),
+@strRequesterID nvarchar(10),
+@strATCoachAdminUser nvarchar(10),
+@dtmDate datetime,
 @nvcSQL nvarchar(max),
 @strID nvarchar(30)
 
+SET @dtmDate  = GETDATE()   
+SET @strRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterLanId,@dtmDate)
+SET @strATCoachAdminUser = EC.fn_strCheckIfATCoachingAdmin(@strRequesterID) 
 
 IF @strTypein = N'Coaching' 
 SET @strID = 'Fact.CoachingID LogID, '
@@ -75,11 +85,35 @@ SET @nvcTableName = ',Aud.LastKnownStatus, [EC].[fn_strStatusFromStatusID](Aud.L
  ON Aud.FormName = Fact.Formname '
 
 
-IF @strActionin = N'Reactivate'
-SET @nvcWhere = ' WHERE Fact.StatusID = 2 '
-ELSE 
-SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
+IF @strActionin = N'Inactivate' 
+   BEGIN
+	  IF @strATCoachAdminUser = 'YES'
 
+--Special conditions for Coaching Admins 
+--Display  Completed logs submitted in the last 3 months
+
+         BEGIN
+			 SET @nvcWhere = ' WHERE (Fact.StatusID not in (1,2) 
+			 OR (Fact.StatusID = 1 AND Fact.SubmittedDate > DATEADD(MM,-3, GETDATE()))) '
+         END
+      
+         ELSE
+         
+  --For Non Coaching Admins(Regular users like Supervisors and Managers)
+  --Do not display  completed logs
+       
+       BEGIN
+			 SET @nvcWhere = ' WHERE Fact.StatusID not in (1,2)  '
+	   END 
+  END
+
+ELSE 
+
+-- If Action is Reactivation
+
+     BEGIN
+		SET @nvcWhere = ' WHERE Fact.StatusID = 2 '
+     END
 
 
  SET @nvcSQL = 'SELECT DISTINCT '+@strID+' 
@@ -112,5 +146,7 @@ END --sp_AT_Select_Logs_Inactivation_Reactivation
 
 
 
+
 GO
+
 

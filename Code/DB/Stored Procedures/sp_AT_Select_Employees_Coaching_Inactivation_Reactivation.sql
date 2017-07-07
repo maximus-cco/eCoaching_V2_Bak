@@ -1,9 +1,12 @@
 /*
-sp_AT_Select_Employees_Coaching_Inactivation_Reactivation(02).sql
-Last Modified Date: 6/30/2017
+sp_AT_Select_Employees_Coaching_Inactivation_Reactivation(03).sql
+Last Modified Date: 7/7/2017
 Last Modified By: Susmitha Palacherla
 
-Version 02: Allow for Inactivation of completed logs from admin tool - TFS 5223 - 6/30/2017
+Version 03: additional chnanges per requirements update.
+Allow for Inactivation of completed logs from admin tool - TFS 7152 -  7/7/2017
+
+Version 02: Allow for Inactivation of completed logs from admin tool - TFS 7152 - 6/30/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -22,6 +25,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -46,7 +50,6 @@ DECLARE
 @nvcWhere nvarchar(50),
 @strRequesterID nvarchar(10),
 @intRequesterSiteID int,
-@strConditionalSite nvarchar(100),
 @strATCoachAdminUser nvarchar(10),
 @dtmDate datetime,
 @nvcSQL nvarchar(max)
@@ -56,45 +59,74 @@ SET @strRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterLanId,@dtmDate)
 SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@strRequesterID)
 SET @strATCoachAdminUser = EC.fn_strCheckIfATCoachingAdmin(@strRequesterID) 
 
-SET @strConditionalSite = ' '
-IF @strATCoachAdminUser <> 'YES'
+-- If Action is Inactivation
 
-BEGIN
-	SET @strConditionalSite = ' AND Fact.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+''' '
-END	
+IF @strActionin = N'Inactivate' 
+   BEGIN
+	  IF @strATCoachAdminUser = 'YES'
+	  
+--Special conditions for Coaching Admins 
+--Display Users with Completed logs submitted in the last 3 months
+--No site Restriction
 
-IF @strActionin = N'Inactivate'
-
-SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name 
- FROM [EC].[Employee_Hierarchy] Emp JOIN [EC].[Coaching_Log] Fact WITH(NOLOCK)
- ON Emp.Emp_ID = Fact.EmpID  
- WHERE Fact.StatusID <> 2
- AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
- AND Fact.EmpID <> ''999999''
- AND Emp.Active NOT IN  (''T'',''D'')'
- + @strConditionalSite 
- + ' AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
- ORDER BY Emp.Emp_Name'
+         BEGIN
+			 SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name 
+			 FROM [EC].[Employee_Hierarchy] Emp JOIN [EC].[Coaching_Log] Fact WITH(NOLOCK)
+			 ON Emp.Emp_ID = Fact.EmpID  
+			 WHERE (Fact.StatusID not in (1,2) 
+			 OR (Fact.StatusID = 1 AND Fact.SubmittedDate > DATEADD(MM,-3, GETDATE())))
+			 AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
+			 AND Fact.EmpID <> ''999999''
+			 AND Emp.Active NOT IN  (''T'',''D'')
+			 AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
+			 ORDER BY Emp.Emp_Name'
+      END
+      
+         ELSE
+         
+  --For Non Coaching Admins(Regular users like supervisors and Managers)
+  --Do not display usesr with completed logs
+  --Display only users with Coaching logs at the same site as the logged in user
+       
+       BEGIN
+			 SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name 
+			 FROM [EC].[Employee_Hierarchy] Emp JOIN [EC].[Coaching_Log] Fact WITH(NOLOCK)
+			 ON Emp.Emp_ID = Fact.EmpID  
+			 WHERE Fact.StatusID NOT IN (1,2)
+			 AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
+			 AND Fact.EmpID <> ''999999''
+			 AND Emp.Active NOT IN  (''T'',''D'')
+			 AND Fact.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+'''
+			 AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
+			 ORDER BY Emp.Emp_Name'
+	 END 
+END
 
 ELSE 
 
-SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name 
- FROM [EC].[Employee_Hierarchy]Emp JOIN [EC].[Coaching_Log] Fact WITH(NOLOCK)
- ON Emp.Emp_ID = Fact.EmpID JOIN (Select * FROM
- [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
- WHERE LastKnownStatus <> 2) Aud
- ON Aud.FormName = Fact.Formname
- WHERE Fact.StatusID = 2
- AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
- AND Fact.EmpID <> ''999999''
- AND Emp.Active = ''A''
- AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
- ORDER BY Emp.Emp_Name'
- 
+
+-- If Action is Reactivation
+
+     BEGIN
+		SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,Emp.Emp_Name 
+		 FROM [EC].[Employee_Hierarchy]Emp JOIN [EC].[Coaching_Log] Fact WITH(NOLOCK)
+		 ON Emp.Emp_ID = Fact.EmpID JOIN (Select * FROM
+		 [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+		 WHERE LastKnownStatus <> 2) Aud
+		 ON Aud.FormName = Fact.Formname
+		 WHERE Fact.StatusID = 2
+		 AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
+		 AND Fact.EmpID <> ''999999''
+		 AND Emp.Active = ''A''
+		 AND Fact.EmpLanID <> '''+@strRequesterLanId+''' 
+		 ORDER BY Emp.Emp_Name'
+    END
+    
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
 END --sp_AT_Select_Employees_Coaching_Inactivation_Reactivation
+
 GO
 
 
