@@ -75,7 +75,7 @@ namespace eCLAdmin.Repository
             return statuses;
         }
 
-        public List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action)
+        public List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action, string userLanId)
         {
             string logType = EclAdminUtil.GetLogTypeNameById(logTypeId);
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
@@ -89,6 +89,7 @@ namespace eCLAdmin.Repository
                 command.Parameters.AddWithValue("@strTypein", logType);
                 command.Parameters.AddWithValue("@strActionin", action);
                 command.Parameters.AddWithValue("@strEmployeein", employeeId);
+                command.Parameters.AddWithValue("@strRequesterLanId", userLanId);
 
                 connection.Open();
 

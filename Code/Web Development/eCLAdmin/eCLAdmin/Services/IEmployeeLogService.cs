@@ -10,7 +10,7 @@ namespace eCLAdmin.Services
 
         List<Models.EmployeeLog.Type> GetTypes(User user, string action);
 
-        List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action);
+        List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action, string userLanId);
 
         List<EmployeeLog> GetPendingLogsByReviewerEmpId(int moduleId, int statusId, string reviewerEmpId);
 

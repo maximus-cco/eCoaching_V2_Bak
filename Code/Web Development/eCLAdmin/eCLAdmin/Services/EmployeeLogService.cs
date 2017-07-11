@@ -73,9 +73,9 @@ namespace eCLAdmin.Services
             return types;
         }
 
-        public List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action)
+        public List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action, string userLanId)
         {
-            return employeeLogRepository.GetLogsByEmpIdAndAction(moduleId, logTypeId, employeeId, action);
+            return employeeLogRepository.GetLogsByEmpIdAndAction(moduleId, logTypeId, employeeId, action, userLanId);
         }
 
         public List<EmployeeLog> GetPendingLogsByReviewerEmpId(int moduleId, int statusId, string reviewerEmpId)
