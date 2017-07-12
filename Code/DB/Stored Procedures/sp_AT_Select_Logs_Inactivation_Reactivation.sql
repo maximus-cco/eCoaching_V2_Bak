@@ -1,9 +1,12 @@
 /*
-sp_AT_Select_Logs_Inactivation_Reactivation(02).sql
-Last Modified Date: 7/7/2017
+sp_AT_Select_Logs_Inactivation_Reactivation(04).sql
+Last Modified Date: 7/12/2017
 Last Modified By: Susmitha Palacherla
 
-Version 03: additional chnanges per requirements update.
+Version 04: additional changes per requirements update.
+Remove 3 month restriction for warning logs - TFS 7152 -  7/12/2017
+
+Version 03: additional changes per requirements update.
 Allow for Inactivation of completed logs from admin tool - TFS 7152 -  7/7/2017
 
 Version 02: Allow for Inactivation of completed logs from admin tool - TFS 7152 - 6/30/2017
@@ -20,11 +23,13 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation]
 GO
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -40,7 +45,7 @@ GO
 --  Last Modified date: 
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/2/12016
---  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 06/30/2017
+--  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 07/12/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
@@ -85,35 +90,35 @@ SET @nvcTableName = ',Aud.LastKnownStatus, [EC].[fn_strStatusFromStatusID](Aud.L
  ON Aud.FormName = Fact.Formname '
 
 
-IF @strActionin = N'Inactivate' 
-   BEGIN
-	  IF @strATCoachAdminUser = 'YES'
 
---Special conditions for Coaching Admins 
---Display  Completed logs submitted in the last 3 months
+-- If Action is Reactivation: 
+-- Display Inactive logs
 
-         BEGIN
-			 SET @nvcWhere = ' WHERE (Fact.StatusID not in (1,2) 
-			 OR (Fact.StatusID = 1 AND Fact.SubmittedDate > DATEADD(MM,-3, GETDATE()))) '
-         END
-      
-         ELSE
-         
-  --For Non Coaching Admins(Regular users like Supervisors and Managers)
-  --Do not display  completed logs
-       
-       BEGIN
-			 SET @nvcWhere = ' WHERE Fact.StatusID not in (1,2)  '
-	   END 
-  END
-
+IF @strActionin = N'Reactivate'
+SET @nvcWhere = ' WHERE Fact.StatusID = 2 '
 ELSE 
 
--- If Action is Reactivation
+-- If Action is Inactivation and Coaching
+-- For non Coaching Admins display all logs that are not Inactive or completed
 
-     BEGIN
-		SET @nvcWhere = ' WHERE Fact.StatusID = 2 '
-     END
+IF @strTypein = N'Coaching' AND @strActionin = 'Inactivate' AND @strATCoachAdminUser = 'NO'
+SET @nvcWhere = ' WHERE Fact.StatusID NOT IN (1,2) '
+ELSE 
+
+-- If Action is Inactivation and Coaching
+--Special conditions for Coaching Admins 
+--Display  Completed logs submitted in the last 3 months in addition to the other Active status logs
+
+IF @strTypein = N'Coaching' AND @strActionin = 'Inactivate' AND @strATCoachAdminUser = 'YES'
+SET @nvcWhere = ' WHERE (Fact.StatusID not in (1,2) 
+			 OR (Fact.StatusID = 1 AND Fact.SubmittedDate > DATEADD(MM,-3, GETDATE()))) '
+ELSE
+
+-- If Action is Inactivation and Warning
+-- Display all completed logs 
+
+IF @strTypein = N'Warning' AND @strActionin = 'Inactivate'
+SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 
 
  SET @nvcSQL = 'SELECT DISTINCT '+@strID+' 
@@ -147,6 +152,9 @@ END --sp_AT_Select_Logs_Inactivation_Reactivation
 
 
 
+
 GO
+
+
 
 
