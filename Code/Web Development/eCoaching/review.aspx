@@ -353,6 +353,8 @@
                     <asp:Label ID="exceededNumberOfBreaks" runat="server" Text='<%# Eval(Server.HtmlDecode("OMR / BRN")) %>' Visible="false" />
                     <asp:Label ID="isScorecardMsr" runat="server" Text='<%# Eval(Server.HtmlDecode("PSC / MSR")) %>' Visible="false" />
                     <asp:Label ID="isScorecardMsrs" runat="server" Text='<%# Eval(Server.HtmlDecode("PSC / MSRS")) %>' Visible="false" />
+                    <asp:Label ID="isHNC" runat="server" Text='<%# Eval(Server.HtmlDecode("ETS / HNC")) %>' Visible="false" />
+                    <asp:Label ID="isICC" runat="server" Text='<%# Eval(Server.HtmlDecode("ETS / ICC")) %>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">

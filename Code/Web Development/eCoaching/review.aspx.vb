@@ -42,6 +42,13 @@ Public Class review
         "<a href='https://cco.gdit.com/Reports/Performance_Scorecard/default.aspx' target='_blank'>CCO Performance Scorecard Information Station</a> " &
         "SharePoint site."
 
+    ' ETS/HNC ETS/ICC
+    ' Currently this is only for CSRs. Data feeds loaded as Pending Supervisor Review.
+    ' Display this link only for Supervisors
+    Public Const REVIEW_HNC_ICC = "Click " &
+        "<a href='https://cco.gdit.com/Initiatives/floorcheck/Timecard_Compliance_Reporting/Timcard%20Changes%20Reports/Forms/AllItems.aspx' target='_blank'>here</a>" &
+        " to view the report containing the details of these changes."
+
 
     Public Const PENDING_MGR_REVIEW = "Pending Manager Review"
 
@@ -76,6 +83,12 @@ Public Class review
 
     Dim lblIsAttendance As Label
     Dim isAttendance As Boolean
+
+    ' ETS/HNC and ICC.
+    Dim lblIsHNC As Label
+    Dim isHNC As Boolean
+    Dim lblIsICC As Label
+    Dim isICC As Boolean
 
     Dim TodaysDate As String = DateTime.Today.ToShortDateString()
     Dim FromURL As String
@@ -185,6 +198,24 @@ Public Class review
         End If
     End Sub
 
+    Private Sub SetIsHNC()
+        lblIsHNC = ListView1.Items(0).FindControl("isHNC")
+        If (lblIsHNC.Text = "0") Then
+            isHNC = False
+        Else
+            isHNC = True
+        End If
+    End Sub
+
+    Private Sub SetIsICC()
+        lblIsICC = ListView1.Items(0).FindControl("isICC")
+        If (lblIsICC.Text = "0") Then
+            isICC = False
+        Else
+            isICC = True
+        End If
+    End Sub
+
     Private Sub SetIsAttendance()
         lblIsAttendance = ListView1.Items(0).FindControl("isAttendance")
         If (lblIsAttendance.Text = "0") Then
@@ -254,6 +285,9 @@ Public Class review
         SetIsScorecardMsr()
         SetIsScorecardMsrs()
 
+        SetIsHNC()
+        SetIsICC()
+
         If (isHigh5Club OrElse isKudo OrElse isScorecardMsr OrElse isScorecardMsrs) Then
             pnlStaticText.Visible = True
 
@@ -268,6 +302,17 @@ Public Class review
                 lblStaticText.Text = REVIEW_SCORECARD_MSR
             ElseIf (isScorecardMsrs) Then
                 lblStaticText.Text = REVIEW_SCORECARD_MSRS
+            End If
+        End If
+
+        If (isHNC OrElse isICC) Then
+            Dim lblModule As Label = ListView1.Items(0).FindControl("Label31")
+            Dim lblStatus As Label = ListView1.Items(0).FindControl("Label50")
+
+            statusLevel = GetRecordStatusLevel(lblModule.Text, lblStatus.Text)
+            If (statusLevel = 2) Then
+                pnlStaticText.Visible = True
+                lblStaticText.Text = REVIEW_HNC_ICC
             End If
         End If
 
