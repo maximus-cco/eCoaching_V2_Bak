@@ -1,9 +1,9 @@
 /*
-fn_intSubCoachReasonIDFromETSRptCode(01).sql
-Last Modified Date: 1/18/2017
+fn_intSubCoachReasonIDFromETSRptCode(02).sql
+Last Modified Date: 7/24/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to incorporate HNC and ICC Reports per TFS 7174 - 07/24/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -20,21 +20,19 @@ IF EXISTS (
 GO
 
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         11/11/2014
 -- Description:	  Given the 3 or 4 letter ETS Report Code returns the Sub coaching reason for the ETS log.
--- Last Modified: 01/07/2015
--- Modified per SCR 14031 to incorporate ETS Outstanding Action (Compliance) reports.
+-- Revision History: 
+-- Modified to incorporate Compliance reports - SCR 14031 - 01/07/2015
+-- Modified to incorporate HNC and ICC Reports - TFS 7174 - 07/21/2017
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromETSRptCode] (
   @strRptCode NVARCHAR(10)
@@ -63,6 +61,8 @@ BEGIN
 			WHEN N'UTLA' THEN 108
                                                       WHEN N'OAE' THEN 120
 			WHEN N'OAS' THEN 121
+			WHEN N'HNC' THEN 240
+			WHEN N'ICC' THEN 241
 		
         ELSE -1
       END
@@ -73,7 +73,6 @@ RETURN @intSubCoachReasonID
 
 END  -- fn_intSubCoachReasonIDFromETSRptCode()
 
-
-
 GO
+
 
