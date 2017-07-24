@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_ETS_Load_Tables_Create.sql(02).sql
-Last Modified Date: 5/22/2017
+CCO_eCoaching_ETS_Load_Tables_Create.sql(03).sql
+Last Modified Date: 7/24/2017
 Last Modified By: Susmitha Palacherla
 
+Version 03: Added rows to ETS_Description to support HNC and ICC files per TFS 7174 - 07/24/2017
 
 Version 02: Update tables 1,3 and 4
 to accommodate longer Task and project numbers - TFS 6624 - 5/22/2017
@@ -271,7 +272,24 @@ period.'),
   N'The supervisor did not approve or reject the timecard below by the Friday deadline.
       Please review and take action as necessary.
 
-      The time period, manager name, and name of employee whose timecard requires action are below:')
+      The time period, manager name, and name of employee whose timecard requires action are below:'),
+          ('HNC','High Number of Changes',
+  N'The employee made an unusually high number of changes on their timecard for last week.  While not all timecard changes can be avoided, large numbers of timecard changes are often a sign that an employee may not understand the correct process for calculating and entering time in ETS.  
+
+Many of the employees who made high numbers of changes also failed to accurately explain why the changes were being made.  Please refer to the communication linked on the report page that explains the required level of detail and contains examples of appropriate timecard change reasons.
+
+If the changes were avoidable, please coach the employee on the correct way to calculate and enter time in ETS.  If the employee failed to provide adequate change reasons, please coach the employee on the required level of detail for timecard change reasons.  There is no need to make changes to the change category or reason for current or previous timecards.
+
+The date and number of changes is shown below:'),
+
+ 	('ICC','Incorrect Change Categories',        
+ N'The employee selected incorrect Change Categories when changing previously entered hours in ETS last week.  It is important that employees select the best available change category when changing previous ETS entries.
+
+Many of the employees who selected incorrect change categories also failed to accurately explain why the changes were being made.  Please refer to the communication linked on the report page that explains the required level of detail and contains examples of appropriate timecard change reasons.
+
+Please coach the employee on selecting the correct change categories in ETS when adjustments are needed.  If the employee failed to provide adequate change reasons, please also coach the employee on the required level of detail for timecard change reasons.  There is no need to make changes to the change category or reason for current or previous timecards.
+
+The timecard date and number of changes with incorrect change categories is shown below:')
 
 GO
       
