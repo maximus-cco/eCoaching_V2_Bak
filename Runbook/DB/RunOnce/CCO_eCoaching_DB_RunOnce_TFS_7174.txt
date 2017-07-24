@@ -1,0 +1,58 @@
+/* 
+
+TFS 7174 - Incorporate 2 new feeds (HNC and ICC)
+
+Development - VRIVFSSDBT02/SCORD01,1437 - eCoachingDev
+Test - VRIVFSSDBT02/SCORT01,1438 - eCoachingTest
+Production – VDENSSDBP07\SCORP01,1436 – eCoaching
+
+*/
+
+
+
+--***************************
+
+
+--1. Insert rows to ETS Description Table.
+
+INSERT INTO [EC].[ETS_Description]
+           ([ReportCode]
+           ,[ReportDescription]
+           ,[Description])
+     VALUES
+          ('HNC','High Number of Changes',
+  N'The employee made an unusually high number of changes on their timecard for last week.  While not all timecard changes can be avoided, large numbers of timecard changes are often a sign that an employee may not understand the correct process for calculating and entering time in ETS.  
+
+Many of the employees who made high numbers of changes also failed to accurately explain why the changes were being made.  Please refer to the communication linked on the report page that explains the required level of detail and contains examples of appropriate timecard change reasons.
+
+If the changes were avoidable, please coach the employee on the correct way to calculate and enter time in ETS.  If the employee failed to provide adequate change reasons, please coach the employee on the required level of detail for timecard change reasons.  There is no need to make changes to the change category or reason for current or previous timecards.
+
+The date and number of changes is shown below:'),
+
+ 	('ICC','Incorrect Change Categories',        
+ N'The employee selected incorrect Change Categories when changing previously entered hours in ETS last week.  It is important that employees select the best available change category when changing previous ETS entries.
+
+Many of the employees who selected incorrect change categories also failed to accurately explain why the changes were being made.  Please refer to the communication linked on the report page that explains the required level of detail and contains examples of appropriate timecard change reasons.
+
+Please coach the employee on selecting the correct change categories in ETS when adjustments are needed.  If the employee failed to provide adequate change reasons, please also coach the employee on the required level of detail for timecard change reasons.  There is no need to make changes to the change category or reason for current or previous timecards.
+
+The timecard date and number of changes with incorrect change categories is shown below:')
+     
+GO
+
+
+--***************************
+
+--2. Insert rows to DIM_sub_Coaching_Reason
+
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+        ('High Number of Changes'),
+		('Incorrect Change Category')
+GO
+
+--***************************
+
+
