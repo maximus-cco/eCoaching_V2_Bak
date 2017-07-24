@@ -1,7 +1,10 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(04).sql
-Last Modified Date: 06/02/2017
+sp_SelectReviewFrom_Coaching_Log(05).sql
+
+Last Modified Date: 7/24/2017
 Last Modified By: Susmitha Palacherla
+
+Version 05: Updated to incorporate HNC and ICC Reports per TFS 7174 - 07/24/2017
 
 Version 04: Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
 
@@ -28,6 +31,15 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
+
+
+
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -49,6 +61,7 @@ GO
 --12. TFS 5309 NPN Load.  - 02/01/2017
 --13. TFS 6145 BRN and BRL Feeds - 4/12/2017
 --14. TFS 6147 Updated to support MSR and MSRS Feeds - 06/02/2017
+--15. Modified to incorporate HNC and ICC Reports - TFS 7174 - 07/21/2017
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -145,13 +158,15 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		CASE WHEN (cc.OMR is Not NULL AND cc.LCS is NULL AND cc.SDR is NULL AND cc.ODT is NULL AND cl.strReportCode is Not NULL) Then 1 ELSE 0 END	"OMR / Exceptions",
 		CASE WHEN (cc.ETSOAE is Not NULL AND cl.strReportCode like ''OAE%'') Then 1 ELSE 0 END	"ETS / OAE",
 		CASE WHEN (cc.ETSOAS is Not NULL AND cl.strReportCode like ''OAS%'') Then 1 ELSE 0 END	"ETS / OAS",
+		CASE WHEN (cc.ETSHNC is Not NULL AND cl.strReportCode like ''HNC%'') Then 1 ELSE 0 END	"ETS / HNC",
+		CASE WHEN (cc.ETSICC is Not NULL AND cl.strReportCode like ''ICC%'') Then 1 ELSE 0 END	"ETS / ICC",
 		CASE WHEN (cc.OMRBRN is Not NULL AND cl.strReportCode like ''BRN%'') Then 1 ELSE 0 END	"OMR / BRN",
 		CASE WHEN (cc.OMRBRL is Not NULL AND cl.strReportCode like ''BRL%'') Then 1 ELSE 0 END	"OMR / BRL",
 		CASE WHEN (cc.OMRIAE is Not NULL AND cl.strReportCode like ''IAE%'') Then 1 ELSE 0 END	"OMR / IAE",
 		CASE WHEN (cc.OMRIAT is Not NULL AND cl.strReportCode like ''IAT%'') Then 1 ELSE 0 END	"OMR / IAT",
 		CASE WHEN (cc.OMRISQ is Not NULL AND cl.strReportCode like ''ISQ%'') Then 1 ELSE 0 END	"OMR / ISQ",
 		CASE WHEN (cc.LCS is Not NULL AND cl.strReportCode like ''LCS%'') Then 1 ELSE 0 END	"LCS",
-				CASE WHEN (cc.SDR is Not NULL AND cl.strReportCode like ''SDR%'') Then 1 ELSE 0 END	"Training / SDR",
+		CASE WHEN (cc.SDR is Not NULL AND cl.strReportCode like ''SDR%'') Then 1 ELSE 0 END	"Training / SDR",
 	    CASE WHEN (cc.ODT is Not NULL AND cl.strReportCode like ''ODT%'') Then 1 ELSE 0 END	"Training / ODT",
 	    CASE WHEN (cc.CTC is Not NULL AND cl.strReportCode like ''CTC%'') Then 1 ELSE 0 END	"Quality / CTC",
 	    CASE WHEN (cc.HFC is Not NULL AND cl.strReportCode like ''HFC%'') Then 1 ELSE 0 END	"Quality / HFC",
@@ -182,6 +197,8 @@ SET @nvcSQL3 = '  (SELECT  ccl.FormName,
 	 MAX(CASE WHEN [cr].[CoachingReason] = ''OMR / Exceptions'' THEN [clr].[Value] ELSE NULL END)	OMR,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 120 THEN [clr].[Value] ELSE NULL END)	ETSOAE,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 121 THEN [clr].[Value] ELSE NULL END)	ETSOAS,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 240 THEN [clr].[Value] ELSE NULL END)	ETSHNC,
+	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 241 THEN [clr].[Value] ELSE NULL END)	ETSICC,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 29 THEN [clr].[Value] ELSE NULL END)	OMRIAE,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 231 THEN [clr].[Value] ELSE NULL END)	OMRIAT,
 	 MAX(CASE WHEN [clr].[SubCoachingReasonID] = 238 THEN [clr].[Value] ELSE NULL END)	OMRBRN,
