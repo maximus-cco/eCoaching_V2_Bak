@@ -3,11 +3,11 @@
 <DTSConfigurationFileInfo GeneratedBy="VNGT\211palasu" GeneratedFromPackageName="Employee_Hierarchy" GeneratedFromPackageID="{731A965E-74D8-4C80-AD62-5E1145C101DC}" GeneratedDate="5/16/2017 7:33:45 PM"/>
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoaching</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[ServerName]" ValueType="String"><ConfiguredValue>VDENSSDBP07\SCORP01,1436</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[ServerName]" ValueType="String"><ConfiguredValue>F3420-ECLDBP01</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpout.gdit.com</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::CcEmail].Properties[Value]" ValueType="String"><ConfiguredValue>Lili.Huang@GDIT.com;David.Hinman@GDIT.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::CcEmail].Properties[Value]" ValueType="String"><ConfiguredValue>David.Hinman@gdit.com;Lili.Huang@GDIT.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FileDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\HRInfo\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FromEmail].Properties[Value]" ValueType="String"><ConfiguredValue>eCoachingProd@gdit.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FromEmail].Properties[Value]" ValueType="String"><ConfiguredValue>eCoaching@gdit.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmail].Properties[Value]" ValueType="String"><ConfiguredValue>susmitha.palacherla@gdit.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::WFMFileDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\EmpInfo\</ConfiguredValue></Configuration>
 </DTSConfiguration>

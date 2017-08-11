@@ -1,11 +1,14 @@
-<?xml version="1.0"?><DTSConfiguration><DTSConfigurationHeading><DTSConfigurationFileInfo GeneratedBy="VNGT\palasu" GeneratedFromPackageName="eCL_Surveys" GeneratedFromPackageID="{5935C644-1A96-420A-9122-46D5AD971041}" GeneratedDate="9/4/2015 11:25:22 AM"/></DTSConfigurationHeading>
+<?xml version="1.0"?><DTSConfiguration>
+<DTSConfigurationHeading>
+<DTSConfigurationFileInfo GeneratedBy="VNGT\palasu" GeneratedFromPackageName="eCL_Surveys" GeneratedFromPackageID="{5935C644-1A96-420A-9122-46D5AD971041}" GeneratedDate="7/25/2017 2:51:50 PM"/>
+</DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoaching</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>VDENSSDBP07\SCORP01</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>f3420-ecldbp01</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpout.gdit.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FailMessage].Properties[Value]" ValueType="String"><ConfiguredValue>Survey Generation failed in Prod.</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::Resend].Properties[Value]" ValueType="Boolean"><ConfiguredValue>0</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[CCLine]" ValueType="String"><ConfiguredValue>David.Hinman@gdit.com;Lili.Huang@GDIT.com</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[FromLine]" ValueType="String"><ConfiguredValue>VIPProd@gdit.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[FromLine]" ValueType="String"><ConfiguredValue>eCoaching@gdit.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[Subject]" ValueType="String"><ConfiguredValue>Survey Generation Failed</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[ToLine]" ValueType="String"><ConfiguredValue>susmitha.palacherla@gdit.com</ConfiguredValue></Configuration>
 </DTSConfiguration>

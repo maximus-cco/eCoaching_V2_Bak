@@ -3,11 +3,11 @@
 <DTSConfigurationFileInfo GeneratedBy="VNGT\211palasu" GeneratedFromPackageName="Employee_Hierarchy" GeneratedFromPackageID="{731A965E-74D8-4C80-AD62-5E1145C101DC}" GeneratedDate="5/16/2017 7:33:45 PM"/>
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingDev</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[ServerName]" ValueType="String"><ConfiguredValue>VRIVFSSDBT02\SCORD01,1437</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[ServerName]" ValueType="String"><ConfiguredValue>F3420-ECLDBD01</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpout.gdit.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::CcEmail].Properties[Value]" ValueType="String"><ConfiguredValue>susmitha.palacherla@gdit.com</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FileDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\HRInfo\Dev\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FileDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbd01\data\coaching\HRInfo\</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FromEmail].Properties[Value]" ValueType="String"><ConfiguredValue>eCoachingDev@gdit.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmail].Properties[Value]" ValueType="String"><ConfiguredValue>susmitha.palacherla@gdit.com</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::WFMFileDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\BCC Scorecards\Coaching\EmpInfo\Dev\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::WFMFileDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbd01\data\coaching\EmpInfo\</ConfiguredValue></Configuration>
 </DTSConfiguration>
