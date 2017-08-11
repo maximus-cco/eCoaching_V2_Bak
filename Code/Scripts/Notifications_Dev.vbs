@@ -1,19 +1,20 @@
-' Begin - Environment Related
 ' Dev
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingDev;Data Source=VRIVFSSDBT02\SCORD01,1437"
+
+' Begin - Environment Related
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingDev;Data Source=F3420-ECLDBD01"
 Const eCoachingUrl = "https://f3420-mpmd01.vangent.local/coach3/default.aspx"
-Const fromAddress = "VIPDev@GDIT.com"
-Const imgPath = "\\vrivfssdbt02\integrationservices\Coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
+Const fromAddress = "eCoachingDev@gdit.com"
+Const imgPath = "\\f3420-ecldbd01\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
 ' End - Environment Related
 
-
-' Non-Environment Related
+' Begin - Non-Environment Related
+Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
 Const smtpServer = "smtpout.gdit.com" 
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1
 Const adCmdStoredProc = 4
+' End - Non-Environment Related
 
 
 'variables for database connection and recordset
@@ -98,8 +99,7 @@ Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSourc
     Dim mailBody
     Dim i
     dim objRS, objCmd, arrMail
-	
-	dim spUpdateEmailSent
+    dim spUpdateEmailSent
 	
 	On Error Resume Next
 	
