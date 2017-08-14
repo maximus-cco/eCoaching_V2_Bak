@@ -11,14 +11,11 @@ Global
 		DebugLocal|Any PC = DebugLocal|Any PC
 		Dev|Any PC = Dev|Any PC
 		LoadTest|Any PC = LoadTest|Any PC
-		Production|Any PC = Production|Any PC
-		Release|Any PC = Release|Any PC
 		SysTest|Any PC = SysTest|Any PC
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.ActiveCfg = Debug
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.Build.0 = Debug
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.Deploy.0 = Debug
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.DebugLocal|Any PC.ActiveCfg = DebugLocal
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.DebugLocal|Any PC.Build.0 = DebugLocal
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.ActiveCfg = Dev
@@ -27,12 +24,6 @@ Global
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.ActiveCfg = LoadTest
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.Build.0 = LoadTest
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.Deploy.0 = LoadTest
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Production|Any PC.ActiveCfg = Production
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Production|Any PC.Build.0 = Production
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Production|Any PC.Deploy.0 = Production
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Release|Any PC.ActiveCfg = Release
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Release|Any PC.Build.0 = Release
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Release|Any PC.Deploy.0 = Release
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.ActiveCfg = SysTest
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.Build.0 = SysTest
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.Deploy.0 = SysTest

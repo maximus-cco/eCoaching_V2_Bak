@@ -141,7 +141,7 @@
       <Options>
         <OutputPath>bin\Debug</OutputPath>
         <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://vdenssdbp07.vangent.local/ReportServer_SCORP01</TargetServerURL>
+        <TargetServerURL>http://f3420-ecldbp01.vangent.local/ReportServer</TargetServerURL>
         <TargetFolder>/eCoaching/LoadTest/Reports</TargetFolder>
         <TargetDataSourceFolder>/eCoaching/LoadTest/DataSources</TargetDataSourceFolder>
         <TargetDatasetFolder>/eCoaching/LoadTest/Datasets</TargetDatasetFolder>
@@ -154,10 +154,10 @@
       <Options>
         <OutputPath>bin\Debug</OutputPath>
         <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://vrivfssdbt02.vangent.local/ReportServer_SCORD01</TargetServerURL>
-        <TargetFolder>/eCoaching/SystemTest/Reports</TargetFolder>
-        <TargetDataSourceFolder>/eCoaching/SystemTest/DataSources</TargetDataSourceFolder>
-        <TargetDatasetFolder>/eCoaching/SystemTest/Datasets</TargetDatasetFolder>
+        <TargetServerURL>http://f3420-ecldbt01.vangent.local/ReportServer</TargetServerURL>
+        <TargetFolder>/eCoaching/Reports</TargetFolder>
+        <TargetDataSourceFolder>/eCoaching/DataSources</TargetDataSourceFolder>
+        <TargetDatasetFolder>/eCoaching/Datasets</TargetDatasetFolder>
         <OverwriteDatasets>true</OverwriteDatasets>
         <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
       </Options>
@@ -167,7 +167,7 @@
       <Options>
         <OutputPath>bin\Debug</OutputPath>
         <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://vdenssdbp07.vangent.local/ReportServer_SCORP01</TargetServerURL>
+        <TargetServerURL>http://f3420-ecldbp01.vangent.local/ReportServer</TargetServerURL>
         <TargetFolder>/eCoaching/Production/Reports</TargetFolder>
         <TargetDataSourceFolder>/eCoaching/Production/DataSources</TargetDataSourceFolder>
         <TargetDatasetFolder>/eCoaching/Production/Datasets</TargetDatasetFolder>
@@ -180,10 +180,10 @@
       <Options>
         <OutputPath>bin\Debug</OutputPath>
         <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://vrivfssdbt02.vangent.local/ReportServer_SCORD01</TargetServerURL>
-        <TargetFolder>/eCoaching/Development/Reports</TargetFolder>
-        <TargetDataSourceFolder>/eCoaching/Development/DataSources</TargetDataSourceFolder>
-        <TargetDatasetFolder>/eCoaching/Development/Datasets</TargetDatasetFolder>
+        <TargetServerURL>http://f3420-ecldbd01.vangent.local/ReportServer</TargetServerURL>
+        <TargetFolder>/eCoaching/Reports</TargetFolder>
+        <TargetDataSourceFolder>/eCoaching/DataSources</TargetDataSourceFolder>
+        <TargetDatasetFolder>/eCoaching/Datasets</TargetDatasetFolder>
         <OverwriteDatasets>true</OverwriteDatasets>
         <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
       </Options>
