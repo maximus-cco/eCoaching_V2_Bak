@@ -1,7 +1,9 @@
 /*
-sp_rptCoachingSummary(04).sql
-Last Modified Date: 04/19/2017
+sp_rptCoachingSummary(05).sql
+Last Modified Date: 08/16/2017
 Last Modified By: Susmitha Palacherla
+
+Version 05: Updated during 2012 upgrade to add distinct clause - TFS 7106 - 08/16/2017
 
 Version 04: Updated Joins to use left join - Suzy -  TFS 5621 - 04/19/2017
 
@@ -29,12 +31,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/14/2017
@@ -43,6 +39,7 @@ GO
 --  Last Modified By:
 --  Revision History:
 --  Initial Revision - TFS 5621 -  03/14/2017 (Modified 04/19/2017)
+--  Updated during 2012 upgrade to add distinct clause - TFS 7106 - 08/16/2017
  *******************************************************************************/
 
 CREATE PROCEDURE [EC].[sp_rptCoachingSummary] 
@@ -88,7 +85,7 @@ DECLARE
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 SET @strEDate = convert(varchar(8),@strEDatein,112)
 
-  SELECT p.ModuleID AS [Module ID]
+  SELECT DISTINCT p.ModuleID AS [Module ID]
               ,c.Module AS [Module Name]
               ,p.CoachingID AS [Coaching ID]
 			  ,p.FormName AS [Form Name]
@@ -139,7 +136,7 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
               ,ISNULL(p.VerintFormName,'-') AS [Verint Form Name]
               ,ISNULL(p.isCoachingMonitor,'-') AS [Coaching Monitor]
       FROM [EC].[Coaching_Log] p WITH(NOLOCK)
-      JOIN  (SELECT [cl].[ModuleID] ModuleID
+      JOIN  (SELECT distinct [cl].[ModuleID] ModuleID
               ,[mo].[Module]Module
               ,[cl].[CoachingID] CoachingID
 			  ,[cl].[FormName]	FormName
@@ -196,7 +193,7 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 		      ,[so].[CoachingSource],[so].[SubCoachingSource],[dcr].[CoachingReason]
 		      ,[dscr].[SubCoachingReason],[clr].[Value],[cl].[SubmitterID],[sh].[Emp_Name])c
 		ON p.CoachingID = c.CoachingID
-        ORDER BY p.SubmittedDate DESC
+        ORDER BY [Submitted Date] DESC
 
 	    
 -- *** END: INSERT CUSTOM CODE HERE ***
@@ -228,7 +225,8 @@ RETURN @returnCode
 
 
 
-GO
 
+
+GO
 
 
