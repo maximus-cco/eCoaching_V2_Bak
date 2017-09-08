@@ -355,6 +355,8 @@
                     <asp:Label ID="isScorecardMsrs" runat="server" Text='<%# Eval(Server.HtmlDecode("PSC / MSRS")) %>' Visible="false" />
                     <asp:Label ID="isHNC" runat="server" Text='<%# Eval(Server.HtmlDecode("ETS / HNC")) %>' Visible="false" />
                     <asp:Label ID="isICC" runat="server" Text='<%# Eval(Server.HtmlDecode("ETS / ICC")) %>' Visible="false" />
+                    <!-- New Attendance Discrepancy feed -->
+                    <asp:Label ID="isDTT" runat="server" Text='<%# Eval(Server.HtmlDecode("OTH / DTT")) %>' Visible="false" />
                 </ItemTemplate>
                 <LayoutTemplate>
                     <div id="itemPlaceholderContainer" runat="server">

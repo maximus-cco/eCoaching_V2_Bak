@@ -67,6 +67,10 @@ Public Class review
     Dim lblisCTC As Label
     Dim isCTC As Boolean
 
+    ' New Attendance Discrepancy feed
+    Dim lblisDTT As Label
+    Dim isDTT As Boolean
+
     Dim lblisHigh5Club As Label
     Dim isHigh5Club As Boolean
 
@@ -159,6 +163,15 @@ Public Class review
             isCTC = False
         Else
             isCTC = True
+        End If
+    End Sub
+
+    Private Sub SetIsDTT()
+        lblisDTT = ListView1.Items(0).FindControl("isDTT")
+        If (lblisDTT.Text = "0") Then
+            isDTT = False
+        Else
+            isDTT = True
         End If
     End Sub
 
@@ -287,6 +300,8 @@ Public Class review
 
         SetIsHNC()
         SetIsICC()
+
+        SetIsDTT()
 
         If (isHigh5Club OrElse isKudo OrElse isScorecardMsr OrElse isScorecardMsrs) Then
             pnlStaticText.Visible = True
@@ -480,9 +495,9 @@ Public Class review
                     ' Pending Manager Review (Supervisor module), Or
                     ' Pending Quality Lead Review (Quality module)
 
-                    ' It is from IQS or it is CTC or high CSAT5 or kudo or seasonal attendance
+                    ' It is from IQS or it is CTC or high CSAT5 or kudo or seasonal attendance or DTT
                     ' or performance scorecard MSR or MSRS.
-                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs) Then
+                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs OrElse isDTT) Then
 
                         'If ((pHolder5.Text = "IQS") And (pHolder6.Text = "True")) Then
 
@@ -722,9 +737,9 @@ Public Class review
             If (statusLevel = 1) Then
                 pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
-                ' IQS or CTC or high CSAT5 or kudo or seasonal attendance
+                ' IQS or CTC or high CSAT5 or kudo or seasonal attendance or DTT
                 ' or performance scorecard MSR or MSRS.
-                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs) AndAlso Len(pHolder8.Text) > 4) Then
+                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs OrElse isDTT) AndAlso Len(pHolder8.Text) > 4) Then
                     pnlEmpAckReinforceLog.Visible = True ' 1. Check the box below to acknowledge the monitor:
                 Else
                     Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
