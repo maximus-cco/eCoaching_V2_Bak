@@ -1,0 +1,106 @@
+/*---------------------------------------------------------------
+
+TFS 7646 - New Attendance discrepancy feed for ecoaching
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+PRINT ('  Begin Table Updates...')
+
+
+--1. Add records to DIM_Source table
+
+INSERT INTO [EC].[DIM_Source]
+           ([SourceID]
+           ,[CoachingSource]
+           ,[SubCoachingSource]
+           ,[isActive]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+		   ,[LSA]
+		   ,[Training])
+     VALUES
+           (133,'Direct','Empower',1,0,0,0,0,0),
+           (233,'Indirect','Empower',1,0,0,0,0,0)
+
+
+
+--select * from [EC].[DIM_Source]
+--where subCoachingsource = 'Empower'
+--order by source
+
+--************************************************************
+
+
+--2. Insert rows to DIM_sub_Coaching_Reason
+
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+        ('Discrepancy Tracking')
+	
+GO
+
+
+
+--select * from [EC].[DIM_Sub_Coaching_Reason]
+--where subcoachingReason = 'Discrepancy Tracking'
+
+--***************************
+
+
+--3. Add records to Email_Notifications table
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+            ('Supervisor','Generic','Indirect','Empower',0,'Pending Acknowledgement','Employee','eCL: Pending Acknowledgement',
+           'A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',
+           1,'Supervisor')
+
+GO
+
+
+
+--select * from [EC].[Email_Notifications]
+--where module = 'Supervisor'
+--and Source = 'Indirect'
+--and subSource= 'Empower'
+--************************************************************
+
+--4. Add columns to [EC].[Generic_Coaching_Stage]
+
+ALTER Table [EC].[Generic_Coaching_Stage]
+ADD [Emp_Role] [nvarchar](3) NULL,
+[Reject_Reason] [nvarchar](200) NULL
+GO
+
+
+PRINT ('  Table Updates completed...')

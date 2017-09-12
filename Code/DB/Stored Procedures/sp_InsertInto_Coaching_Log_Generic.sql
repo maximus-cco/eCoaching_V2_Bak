@@ -1,9 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Generic(01).sql
-Last Modified Date: 1/18/2017
+sp_InsertInto_Coaching_Log_Generic(02).sql
+Last Modified Date: 9/1/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to support DTT feed - TFS 7646 -  9/1/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -28,14 +28,21 @@ GO
 
 
 
+
+
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/11/2016
 --  Created per TFS 2470 to load the Generic feed(s)- 4/11/2016
 -- Modified to accomodate Attendance feed for seasonal employees per TFS 3972 - 09/15/2016
--- Modified to support ad-hoc loads by adding more values to the file. TFS 4916 -12/9/2016
+-- Modified to support ad-hoc loads by adding more values to the file. TFS 4916 - 12/9/2016
+-- Modified to support DTT feed. TFS 7646 - 8/31/2017
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic]
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
+@Count INT OUTPUT
+
 AS
 BEGIN
 
@@ -89,13 +96,13 @@ CASE cs.Program
  END [ProgramName],
  
  CASE 
-		WHEN cs.[Report_Code] like 'SEA%'
+		WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
         THEN [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])
         ELSE cs.Source_ID 
   END  [SourceID],
   
   CASE
-        WHEN cs.[Report_Code] like 'SEA%'
+        WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
         THEN [EC].[fn_strStatusIDFromStatus](cs.Form_Status)
         ELSE cs.Status_ID 
   END   [StatusID],
@@ -105,7 +112,7 @@ CASE cs.Program
         cs.CSR_EMPID                    [EmpID],
         
   CASE
-        WHEN cs.[Report_Code] like 'SEA%'
+        WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
         THEN [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)
         ELSE cs.Submitter_ID
   END   [SubmitterID],
@@ -129,13 +136,13 @@ CASE cs.Program
 		 cs.Start_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
 CASE 
-		 WHEN cs.[Report_Code] like 'SEA%'
+		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
 		 THEN 0
 		 ELSE cs.isCSE
   END                          [isCSE],
 		 
   CASE 
-		 WHEN cs.[Report_Code] like 'SEA%'
+		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
 		 THEN 0
 		 ELSE cs.EmailSent
   END	[EmailSent],
@@ -146,6 +153,8 @@ CASE
 CASE 
 		 WHEN cs.[Report_Code] like 'SEA%'
 		 THEN 1
+		  WHEN cs.[Report_Code] like 'DTT%'
+		 THEN 2
 		 ELSE  cs.Module_ID
  END		                      [ModuleID],
   
@@ -157,7 +166,9 @@ from [EC].[Generic_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR_
 left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
 where cf.numReportID is Null and cf.strReportCode is null
 
+OPTION (MAXDOP 1)
 
+SELECT @Count =@@ROWCOUNT
 -- Updates the strFormID value
 
 WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
@@ -180,19 +191,19 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     SELECT cf.[CoachingID],
     
  CASE 
-		 WHEN cf.strReportCode like 'SEA%'
+		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
 		 THEN 3
 		 ELSE cs.CoachingReason_ID	
  END [CoachingReasonID],
  
  CASE 
-		 WHEN cf.strReportCode like 'SEA%'				
+		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')			
          THEN [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3))
          ELSE cs.SubCoachingReason_ID	
  END [SubCoachingReasonID],
  
   CASE 
-		 WHEN cf.strReportCode like 'SEA%'		
+		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')		
          THEN  cs.[CoachReason_Current_Coaching_Initiatives]
          ELSE cs.Value 
  END [Value]
@@ -239,5 +250,10 @@ END -- sp_InsertInto_Coaching_Log_Generic
 
 
 
+
+
+
+
 GO
+
 
