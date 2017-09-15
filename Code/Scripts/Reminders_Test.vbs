@@ -28,7 +28,7 @@ Dim strToEmail
 Dim strCCEmail 
 Dim strSubject 
 Dim strCtrMessage
-
+Dim strsubCoachingSource
 
 Dim arrResultSet
 Dim totalPendingEmail
@@ -71,6 +71,7 @@ For j = 0 to totalPendingEmail
 	strFormName = arrResultSet(1,j)
 	strToEmail = arrResultSet(5,j) 
         strCCEmail = arrResultSet(6,j) 
+	strsubCoachingSource = arrResultSet(3,j) 'Empower for DTT Feeds
 	
 
 
@@ -108,6 +109,12 @@ On Error Resume Next
 
   strSubject = "Alert! eCoaching Log Past Due Follow-up:  "  &  strFormName 
   mailbody =  strFormName & " requires your attention.  Please review and discuss with the employee."
+
+  Select Case (strsubCoachingSource)
+  Case "Empower"
+  mailBody = strFormName & " requires your attention.  Please review the log and take appropriate action."
+  End Select
+
   strCtrMessage = (mailBody)
            
 
