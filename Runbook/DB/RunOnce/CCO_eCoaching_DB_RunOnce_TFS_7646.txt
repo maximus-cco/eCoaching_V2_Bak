@@ -38,7 +38,7 @@ INSERT INTO [EC].[DIM_Source]
      VALUES
            (133,'Direct','Empower',1,0,0,0,0,0),
            (233,'Indirect','Empower',1,0,0,0,0,0)
-
+GO
 
 
 --select * from [EC].[DIM_Source]
