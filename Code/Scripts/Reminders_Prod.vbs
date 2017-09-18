@@ -120,7 +120,7 @@ On Error Resume Next
            
 
   strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
-  & "  <a href=""https://f3420-mpmd01.vangent.local/coach3/default.aspx"" target=""_blank"">Please click here to open the coaching application and select the &#39;My Dashboard&#39; tab to view the below form ID for details.</a>"
+  & "  <a href=""" & eCoachingUrl & """ target=""_blank"">Please click here to open the coaching application and select the &#39;My Dashboard&#39; tab to view the below form ID for details.</a>"
 
                
   strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
