@@ -1,0 +1,85 @@
+/*---------------------------------------------------------------
+
+TFS 7541 - IQS - need to send ATA forms to eCoaching
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+--Other Updates
+SP - [EC].[sp_InsertInto_Coaching_Log_Quality]
+SP - [EC].[sp_InsertInto_IQS_Rejected] (New)
+SP - [EC].[sp_SelectReviewFrom_Coaching_Log]
+SSIS Package - IQS_Coaching.dtsx
+
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+PRINT ('  Begin Table Updates...')
+
+
+--1. Increase size of reject_Reason in [EC].[Quality_Coaching_Rejected]
+
+  ALTER TABLE [EC].[Quality_Coaching_Rejected]
+  ALTER COLUMN [Reject_reason] nvarchar(200);
+  GO
+
+
+
+--************************************************************
+
+--2. Add columns to [EC].[Quality_Coaching_Stage]
+
+ALTER Table [EC].[Quality_Coaching_Stage]
+ADD [Emp_Role] [nvarchar](3) NULL,
+[Module] int NULL,
+[Reject_Reason] [nvarchar](200) NULL
+GO
+
+
+
+--************************************************************
+
+
+--3. Add records to Email_Notifications table
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+            ('Quality','IQS','Indirect','Verint-GDIT',0,'Pending Acknowledgement','Employee','eCL: Pending Acknowledgement',
+           'A new eCoaching Log has been entered and requires your action. Please click on the link below to review and acknowledge the eCL entered on <strong> strDateTime </strong>.',           1,'Supervisor')
+
+GO
+
+
+
+--select * from [EC].[Email_Notifications]
+--where module = 'Supervisor'
+--and Source = 'Indirect'
+--and subSource= 'Empower'
+--************************************************************
+
+
+
+PRINT ('  Table Updates completed...')
