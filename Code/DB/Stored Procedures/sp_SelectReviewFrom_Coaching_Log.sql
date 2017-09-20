@@ -1,8 +1,10 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(06).sql
+sp_SelectReviewFrom_Coaching_Log(07).sql
 
-Last Modified Date: 9/1/2017
+Last Modified Date: 09/19/2017
 Last Modified By: Susmitha Palacherla
+
+Version 07: Modified to use LEFT Join on Submitter table for unknown Submitters - TFS 7541 - 09/19/2017
 
 Version 06: New OTH DTT - TFS 7646 - 9/1/2017
 
@@ -37,6 +39,9 @@ GO
 
 
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -60,6 +65,7 @@ GO
 --14. TFS 6147 Updated to support MSR and MSRS Feeds - 06/02/2017
 --15. Modified to incorporate HNC and ICC Feed - TFS 7174 - 07/21/2017
 --16. Modified to incorporate DTT feed - TFS 7646 - 09/01/2017
+--17. Modified to use LEFT Join on Submitter table for unknown Submitters - TFS 7541 - 09/19/2017
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -171,7 +177,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 	    CASE WHEN (cc.KUD is Not NULL AND cl.strReportCode like ''KUD%'') Then 1 ELSE 0 END	"Quality / KUD",
 	    CASE WHEN (cc.NPN_PSC is Not NULL AND cl.strReportCode like ''NPN%'') Then 1 ELSE 0 END	"Quality / NPN",
 	    CASE WHEN (cc.SEA is Not NULL AND cl.strReportCode like ''SEA%'') Then 1 ELSE 0 END	"OTH / SEA",
-	    CASE WHEN (cc.DTT is Not NULL AND cl.strReportCode like ''DTT%'') Then 1 ELSE 0 END	"OTH / DTT",
+		CASE WHEN (cc.DTT is Not NULL AND cl.strReportCode like ''DTT%'') Then 1 ELSE 0 END	"OTH / DTT",
 	    CASE WHEN (cc.NPN_PSC is Not NULL AND cl.strReportCode like ''MSR2%'') Then 1 ELSE 0 END	"PSC / MSR",
 	    CASE WHEN (cc.NPN_PSC is Not NULL AND cl.strReportCode like ''MSRS%'') Then 1 ELSE 0 END	"PSC / MSRS",
 	  	cl.Description txtDescription,
@@ -210,7 +216,7 @@ SET @nvcSQL3 = '  (SELECT  ccl.FormName,
      MAX(CASE WHEN [clr].[SubCoachingReasonID] = 12 THEN [clr].[Value] ELSE NULL END)	HFC,
      MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	KUD,
      MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA,
-     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 242) THEN [clr].[Value] ELSE NULL END)	DTT,
+	  MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 242) THEN [clr].[Value] ELSE NULL END)	DTT,
      MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC
  	 FROM [EC].[Coaching_Log_Reason] clr,
 	 [EC].[DIM_Coaching_Reason] cr,
@@ -220,7 +226,7 @@ SET @nvcSQL3 = '  (SELECT  ccl.FormName,
 	 AND [ccl].[CoachingID] = [clr].[CoachingID] 
 	 GROUP BY ccl.FormName ) cc
 ON [cl].[FormName] = [cc].[FormName] JOIN  [EC].[Employee_Hierarchy] eh
-	 ON [cl].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
+	 ON [cl].[EMPID] = [eh].[Emp_ID] LEFT JOIN [EC].[Employee_Hierarchy] sh
 	 ON [cl].[SubmitterID] = [sh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] suph
 	 ON ISNULL([cl].[Review_SupID],''999999'') = [suph].[Emp_ID] JOIN [EC].[Employee_Hierarchy] mgrh
 	 ON ISNULL([cl].[Review_MgrID],''999999'') = [mgrh].[Emp_ID]JOIN [EC].[DIM_Status] s
@@ -234,6 +240,9 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
+
 
 GO
 

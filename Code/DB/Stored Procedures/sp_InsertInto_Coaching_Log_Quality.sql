@@ -1,9 +1,11 @@
 /*
-sp_InsertInto_Coaching_Log_Quality(01).sql
-Last Modified Date: 1/18/2017
+sp_InsertInto_Coaching_Log_Quality(02).sql
+Last Modified Date: 09/19/2017
 Last Modified By: Susmitha Palacherla
 
 
+
+Version 02: Updated to Incorporate ATA Scorecards - TFS 7541 - 09/19/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -29,6 +31,8 @@ GO
 
 
 
+
+
 --    ====================================================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      02/23/2014
@@ -37,6 +41,7 @@ GO
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
 -- Modified per TFS 283 to force CRLF in Description value when viewed in UI - 08/31/2015
 -- Updated per TFS 3757 to add isCoachingMonitor attribute - 10/28/2016
+-- Updated to Incorporate ATA Scorecards - TFS 7541 - 09/19/2017
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
@@ -110,7 +115,7 @@ BEGIN TRY
 	            	ELSE 1 END	[isCSE],			
 		    0 [isCSRAcknowledged],
 		    qs.VerintFormname [verintFormName],
-		    1 [ModuleID],
+		    qs.Module [ModuleID],
 		    ISNULL(csr.[Sup_ID],'999999') [SupID],
 		    ISNULL(csr.[Mgr_ID],'999999')[MgrID],
 		    qs.isCoachingMonitor [isCoachingMonitor]
@@ -140,9 +145,11 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[SubCoachingReasonID]
            ,[Value])
     SELECT cf.[CoachingID],
-           10,
-           42,
-           qs.[Oppor_Rein]
+			CASE 
+			WHEN (cf.ModuleID = 3) THEN 15 ELSE 10
+			END,
+        42,
+        qs.[Oppor_Rein]
     FROM [EC].[Quality_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
     ON qs.[Eval_ID] = cf.[VerintEvalID] 
     LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
@@ -184,5 +191,8 @@ END -- sp_InsertInto_Coaching_Log_Quality
 
 
 
+
+
 GO
+
 

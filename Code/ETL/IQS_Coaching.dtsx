@@ -12,8 +12,8 @@
   DTS:ObjectName="IQS_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="265"
-  DTS:VersionGUID="{7E30A5BE-E3FE-4F34-BE71-EB36299137A5}">
+  DTS:VersionBuild="269"
+  DTS:VersionGUID="{64A05506-7580-47F5-8C8F-D0339633E9E9}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -52,7 +52,7 @@ Right("0" + (DT_STR,4,1252) DatePart("m",getdate()),2) +
 Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv.zip.encrypt"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_out\Test_eCL_IQS_Scorecard_20170810.csv.zip.encrypt" />
+          DTS:ConnectionString="\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_out\Test_eCL_IQS_Scorecard_20170919.csv.zip.encrypt" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -74,7 +74,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
           DTS:AlwaysCheckForRowDelimiters="False"
-          DTS:ConnectionString="\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Decrypt_out\Test_eCL_IQS_Scorecard_20170810.csv">
+          DTS:ConnectionString="\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Decrypt_out\Test_eCL_IQS_Scorecard_20170919.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -352,7 +352,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="DayOfWeek">
       <DTS:VariableValue
-        DTS:DataType="3">5</DTS:VariableValue>
+        DTS:DataType="3">3</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -381,7 +381,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="EncryptedFile">
       <DTS:VariableValue
-        DTS:DataType="8">\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_out\Test_eCL_IQS_Scorecard_20170810.csv.zip.encrypt</DTS:VariableValue>
+        DTS:DataType="8">\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_out\Test_eCL_IQS_Scorecard_20170919.csv.zip.encrypt</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -440,7 +440,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="FileName">
       <DTS:VariableValue
-        DTS:DataType="8">Test_eCL_IQS_Scorecard_20170810.csv</DTS:VariableValue>
+        DTS:DataType="8">Test_eCL_IQS_Scorecard_20170919.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -1944,80 +1944,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
               </outputs>
             </component>
             <component
-              refId="Package\Load  Quality Staging Table\Derived Column"
-              componentClassID="DTSTransform.DerivedColumn.3"
-              contactInfo="Derived Column;Microsoft Corporation;Microsoft SqlServer v9; (C) 2005 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
-              description="Updates column values using expressions"
-              name="Derived Column"
-              usesDispositions="true">
-              <inputs>
-                <input
-                  refId="Package\Load  Quality Staging Table\Derived Column.Inputs[Derived Column Input]"
-                  description="Input to the Derived Column Transformation"
-                  name="Derived Column Input">
-                  <externalMetadataColumns />
-                </input>
-              </inputs>
-              <outputs>
-                <output
-                  refId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Output]"
-                  description="Default Output of the Derived Column Transformation"
-                  exclusionGroup="1"
-                  name="Derived Column Output"
-                  synchronousInputId="Package\Load  Quality Staging Table\Derived Column.Inputs[Derived Column Input]">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Output].Columns[Reject_Reason]"
-                      dataType="wstr"
-                      errorOrTruncationOperation="Computation"
-                      errorRowDisposition="FailComponent"
-                      length="22"
-                      lineageId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Output].Columns[Reject_Reason]"
-                      name="Reject_Reason"
-                      truncationRowDisposition="FailComponent">
-                      <properties>
-                        <property
-                          containsID="true"
-                          dataType="System.String"
-                          description="Derived Column Expression"
-                          name="Expression">"'Employee ID Not Found"</property>
-                        <property
-                          containsID="true"
-                          dataType="System.String"
-                          description="Derived Column Friendly Expression"
-                          expressionType="Notify"
-                          name="FriendlyExpression">"'Employee ID Not Found"</property>
-                      </properties>
-                    </outputColumn>
-                  </outputColumns>
-                  <externalMetadataColumns />
-                </output>
-                <output
-                  refId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Error Output]"
-                  description="Error Output of the Derived Column Transformation"
-                  exclusionGroup="1"
-                  isErrorOut="true"
-                  name="Derived Column Error Output"
-                  synchronousInputId="Package\Load  Quality Staging Table\Derived Column.Inputs[Derived Column Input]">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
-                      dataType="i4"
-                      lineageId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
-                      name="ErrorCode"
-                      specialFlags="1" />
-                    <outputColumn
-                      refId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
-                      dataType="i4"
-                      lineageId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
-                      name="ErrorColumn"
-                      specialFlags="2" />
-                  </outputColumns>
-                  <externalMetadataColumns />
-                </output>
-              </outputs>
-            </component>
-            <component
               refId="Package\Load  Quality Staging Table\IQS Decrypted File"
               componentClassID="DTSAdapter.FlatFileSource.3"
               contactInfo="Flat File Source;Microsoft Corporation;Microsoft SqlServer v9; (C) 2005 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
@@ -2755,529 +2681,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
               </outputs>
             </component>
             <component
-              refId="Package\Load  Quality Staging Table\Lookup User Attributes"
-              componentClassID="DTSTransform.Lookup.3"
-              contactInfo="Lookup;Microsoft Corporation;Microsoft SqlServer v9; (C) 2005 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
-              description="Looks up values in a reference dataset by using exact matching."
-              name="Lookup User Attributes"
-              usesDispositions="true"
-              version="6">
-              <properties>
-                <property
-                  dataType="System.String"
-                  description="Specifies the SQL statement that generates the lookup table."
-                  expressionType="Notify"
-                  name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">select * from [EC].[Employee_Hierarchy]</property>
-                <property
-                  dataType="System.String"
-                  description="Specifies a SQL statement that uses parameters to generate the lookup table."
-                  expressionType="Notify"
-                  name="SqlCommandParam"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">select * from (select * from [EC].[Employee_Hierarchy]) [refTable]
-where [refTable].[Emp_ID] = ?</property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies the cache type of the lookup table."
-                  name="CacheType"
-                  typeConverter="CacheType">0</property>
-                <property
-                  dataType="System.Int32"
-                  description="Maximum Memory Usage for Reference Cache on a 32 bit platform."
-                  name="MaxMemoryUsage">25</property>
-                <property
-                  dataType="System.Int64"
-                  description="Maximum Memory Usage for Reference Cache on a 64 bit platform."
-                  name="MaxMemoryUsage64">25</property>
-                <property
-                  dataType="System.String"
-                  description="Indicates whether to reference metadata in an XML format."
-                  name="ReferenceMetadataXml">&lt;referenceMetadata&gt;&lt;referenceColumns&gt;&lt;referenceColumn name="Emp_ID" dataType="DT_WSTR" length="10" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Emp_Name" dataType="DT_WSTR" length="70" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Emp_Email" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Emp_LanID" dataType="DT_WSTR" length="30" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Emp_Site" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Emp_Job_Code" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Emp_Job_Description" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Sup_ID" dataType="DT_WSTR" length="10" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Sup_Name" dataType="DT_WSTR" length="70" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Sup_Email" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Sup_LanID" dataType="DT_WSTR" length="20" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Sup_Job_Code" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Sup_Job_Description" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Mgr_ID" dataType="DT_WSTR" length="10" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Mgr_Name" dataType="DT_WSTR" length="70" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Mgr_Email" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Mgr_LanID" dataType="DT_WSTR" length="20" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Mgr_Job_Code" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Mgr_Job_Description" dataType="DT_WSTR" length="50" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="End_Date" dataType="DT_WSTR" length="10" precision="0" scale="0" codePage="0"/&gt;&lt;referenceColumn name="Active" dataType="DT_WSTR" length="1" precision="0" scale="0" codePage="0"/&gt;&lt;/referenceColumns&gt;&lt;/referenceMetadata&gt;</property>
-                <property
-                  containsID="true"
-                  dataType="System.String"
-                  description="Specifies the list of lineage identifiers that map to the parameters that the SQL statement in the SQLCommand property uses. Entries in the list are separated by semicolons."
-                  name="ParameterMap">#{Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[UserEmpID]};</property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies the column code page to use when code page information is unavailable from the data source."
-                  name="DefaultCodePage">1252</property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies the type of connection used to access the reference dataset."
-                  name="ConnectionType"
-                  typeConverter="LookupConnectionType">0</property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies how the Lookup transformation handles rows without matching entries in the reference data set."
-                  name="NoMatchBehavior"
-                  typeConverter="LookupNoMatchBehavior">0</property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies the percentage of the cache that is allocated for rows with no matching entries in the reference dataset."
-                  name="NoMatchCachePercentage">0</property>
-                <property
-                  dataType="System.Boolean"
-                  description="Determines whether duplicate keys in the reference data should be treated as errors when full cache mode is used."
-                  name="TreatDuplicateKeysAsError">false</property>
-              </properties>
-              <connections>
-                <connection
-                  refId="Package\Load  Quality Staging Table\Lookup User Attributes.Connections[OleDbConnection]"
-                  connectionManagerID="Package.ConnectionManagers[destnationdb]"
-                  connectionManagerRefId="Package.ConnectionManagers[destnationdb]"
-                  description="Connection manager used to access lookup data."
-                  name="OleDbConnection" />
-              </connections>
-              <inputs>
-                <input
-                  refId="Package\Load  Quality Staging Table\Lookup User Attributes.Inputs[Lookup Input]"
-                  name="Lookup Input">
-                  <inputColumns>
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Lookup User Attributes.Inputs[Lookup Input].Columns[UserEmpID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="UserEmpID"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[UserEmpID]">
-                      <properties>
-                        <property
-                          dataType="System.String"
-                          description="Specifies the column in the reference table that a column joins."
-                          name="JoinToReferenceColumn">Emp_ID</property>
-                        <property
-                          dataType="System.Null"
-                          description="Specifies the column in the reference table from which a column is copied."
-                          name="CopyFromReferenceColumn" />
-                      </properties>
-                    </inputColumn>
-                  </inputColumns>
-                  <externalMetadataColumns />
-                </input>
-              </inputs>
-              <outputs>
-                <output
-                  refId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Match Output]"
-                  errorOrTruncationOperation="Lookup"
-                  errorRowDisposition="RedirectRow"
-                  exclusionGroup="1"
-                  name="Lookup Match Output"
-                  synchronousInputId="Package\Load  Quality Staging Table\Lookup User Attributes.Inputs[Lookup Input]">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Match Output].Columns[User_LanID]"
-                      dataType="wstr"
-                      errorOrTruncationOperation="Copy Column"
-                      length="30"
-                      lineageId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Match Output].Columns[User_LanID]"
-                      name="User_LanID"
-                      truncationRowDisposition="RedirectRow">
-                      <properties>
-                        <property
-                          dataType="System.String"
-                          description="Specifies the column in the reference table from which a column is copied."
-                          name="CopyFromReferenceColumn">Emp_LanID</property>
-                      </properties>
-                    </outputColumn>
-                  </outputColumns>
-                  <externalMetadataColumns />
-                </output>
-                <output
-                  refId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup No Match Output]"
-                  description="The Lookup output that handles rows with no matching entries in the reference dataset. Use this output when the NoMatchBehavior property is set to &quot;Send rows with no matching entries to the no match output.&quot;"
-                  exclusionGroup="1"
-                  name="Lookup No Match Output"
-                  synchronousInputId="Package\Load  Quality Staging Table\Lookup User Attributes.Inputs[Lookup Input]">
-                  <externalMetadataColumns />
-                </output>
-                <output
-                  refId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Error Output]"
-                  exclusionGroup="1"
-                  isErrorOut="true"
-                  name="Lookup Error Output"
-                  synchronousInputId="Package\Load  Quality Staging Table\Lookup User Attributes.Inputs[Lookup Input]">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Error Output].Columns[ErrorCode]"
-                      dataType="i4"
-                      lineageId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Error Output].Columns[ErrorCode]"
-                      name="ErrorCode"
-                      specialFlags="1" />
-                    <outputColumn
-                      refId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Error Output].Columns[ErrorColumn]"
-                      dataType="i4"
-                      lineageId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Error Output].Columns[ErrorColumn]"
-                      name="ErrorColumn"
-                      specialFlags="2" />
-                  </outputColumns>
-                  <externalMetadataColumns />
-                </output>
-              </outputs>
-            </component>
-            <component
-              refId="Package\Load  Quality Staging Table\Quality Coaching Rejected"
-              componentClassID="DTSAdapter.OLEDBDestination.3"
-              contactInfo="OLE DB Destination;Microsoft Corporation;Microsoft SqlServer v9; (C) 2005 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
-              description="OLE DB Destination"
-              name="Quality Coaching Rejected"
-              usesDispositions="true"
-              version="4">
-              <properties>
-                <property
-                  dataType="System.Int32"
-                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
-                  name="CommandTimeout">0</property>
-                <property
-                  dataType="System.String"
-                  description="Specifies the name of the database object used to open a rowset."
-                  name="OpenRowset">[EC].[Quality_Coaching_Rejected]</property>
-                <property
-                  dataType="System.String"
-                  description="Specifies the variable that contains the name of the database object used to open a rowset."
-                  name="OpenRowsetVariable"></property>
-                <property
-                  dataType="System.String"
-                  description="The SQL command to be executed."
-                  name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies the column code page to use when code page information is unavailable from the data source."
-                  name="DefaultCodePage">1252</property>
-                <property
-                  dataType="System.Boolean"
-                  description="Forces the use of the DefaultCodePage property value when describing character data."
-                  name="AlwaysUseDefaultCodePage">false</property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies the mode used to access the database."
-                  name="AccessMode"
-                  typeConverter="AccessMode">3</property>
-                <property
-                  dataType="System.Boolean"
-                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
-                  name="FastLoadKeepIdentity">false</property>
-                <property
-                  dataType="System.Boolean"
-                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destinaton. Applies only if fast load is turned on."
-                  name="FastLoadKeepNulls">false</property>
-                <property
-                  dataType="System.String"
-                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
-                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
-                <property
-                  dataType="System.Int32"
-                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
-                  name="FastLoadMaxInsertCommitSize">0</property>
-              </properties>
-              <connections>
-                <connection
-                  refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Connections[OleDbConnection]"
-                  connectionManagerID="Package.ConnectionManagers[destnationdb]"
-                  connectionManagerRefId="Package.ConnectionManagers[destnationdb]"
-                  description="The OLE DB runtime connection used to access the database."
-                  name="OleDbConnection" />
-              </connections>
-              <inputs>
-                <input
-                  refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input]"
-                  errorOrTruncationOperation="Insert"
-                  errorRowDisposition="FailComponent"
-                  hasSideEffects="true"
-                  name="OLE DB Destination Input">
-                  <inputColumns>
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[Reject_Reason]"
-                      cachedDataType="wstr"
-                      cachedLength="22"
-                      cachedName="Reject_Reason"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Reject_reason]"
-                      lineageId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Output].Columns[Reject_Reason]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[EvalID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="EvalID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Eval_ID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[EvalID]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[EvalDate]"
-                      cachedDataType="date"
-                      cachedName="EvalDate"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Eval_Date]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[EvalDate]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[EvalSiteID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="EvalSiteID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Eval_Site_ID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[EvalSiteID]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[UserID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="UserID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[User_ID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[UserID]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[UserEmpID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="UserEmpID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[User_EMPID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[UserEmpID]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[SupID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="SupID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[SUP_ID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[SupID]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[SupEmpID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="SupEmpID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[SUP_EMPID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[SupEmpID]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[MgrID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="MgrID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[MGR_ID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[MgrID]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[MgrEmpID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="MgrEmpID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[MGR_EMPID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[MgrEmpID]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[JournalNum]"
-                      cachedDataType="wstr"
-                      cachedLength="30"
-                      cachedName="JournalNum"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Journal_ID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[JournalNum]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[CallDate]"
-                      cachedDataType="date"
-                      cachedName="CallDate"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Call_Date]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[CallDate]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[SumOfCallerIssues]"
-                      cachedDataType="nText"
-                      cachedName="SumOfCallerIssues"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Summary_CallerIssues]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[SumOfCallerIssues]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[CoachingDiscussion]"
-                      cachedDataType="wstr"
-                      cachedLength="4000"
-                      cachedName="CoachingDiscussion"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Coaching_Goal_Discussion]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[CoachingDiscussion]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[CSE]"
-                      cachedDataType="wstr"
-                      cachedLength="2"
-                      cachedName="CSE"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[CSE]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[CSE]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[EvaluatorID]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="EvaluatorID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Evaluator_ID]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[EvaluatorID]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[Date_Inserted]"
-                      cachedDataType="date"
-                      cachedName="Date_Inserted"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Date_Rejected]"
-                      lineageId="Package\Load  Quality Staging Table\Trim employee Ids.Outputs[Derived Column Output].Columns[Date_Inserted]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[Oppor_Rein]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="Oppor_Rein"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Oppor_Rein]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Oppor_Rein]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[Source]"
-                      cachedDataType="wstr"
-                      cachedLength="30"
-                      cachedName="Source"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Source]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Source]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[Program]"
-                      cachedDataType="wstr"
-                      cachedLength="20"
-                      cachedName="Program"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Program]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Program]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[VerintFormName]"
-                      cachedDataType="wstr"
-                      cachedLength="50"
-                      cachedName="VerintFormName"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[VerintFormName]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[VerintFormName]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].Columns[isCoachingMonitor]"
-                      cachedDataType="wstr"
-                      cachedLength="3"
-                      cachedName="isCoachingMonitor"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[isCoachingMonitor]"
-                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[isCoachingMonitor]" />
-                  </inputColumns>
-                  <externalMetadataColumns
-                    isUsed="True">
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Eval_ID]"
-                      dataType="wstr"
-                      length="20"
-                      name="Eval_ID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Eval_Date]"
-                      dataType="dbTimeStamp"
-                      name="Eval_Date" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Eval_Site_ID]"
-                      dataType="i4"
-                      name="Eval_Site_ID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[User_ID]"
-                      dataType="wstr"
-                      length="20"
-                      name="User_ID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[User_EMPID]"
-                      dataType="wstr"
-                      length="20"
-                      name="User_EMPID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[User_LANID]"
-                      dataType="wstr"
-                      length="30"
-                      name="User_LANID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[SUP_ID]"
-                      dataType="wstr"
-                      length="20"
-                      name="SUP_ID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[SUP_EMPID]"
-                      dataType="wstr"
-                      length="20"
-                      name="SUP_EMPID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[MGR_ID]"
-                      dataType="wstr"
-                      length="20"
-                      name="MGR_ID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[MGR_EMPID]"
-                      dataType="wstr"
-                      length="20"
-                      name="MGR_EMPID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Journal_ID]"
-                      dataType="wstr"
-                      length="30"
-                      name="Journal_ID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Call_Date]"
-                      dataType="dbTimeStamp"
-                      name="Call_Date" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Summary_CallerIssues]"
-                      dataType="nText"
-                      name="Summary_CallerIssues" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Coaching_Goal_Discussion]"
-                      dataType="wstr"
-                      length="4000"
-                      name="Coaching_Goal_Discussion" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[CSE]"
-                      dataType="wstr"
-                      length="2"
-                      name="CSE" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Evaluator_ID]"
-                      dataType="wstr"
-                      length="20"
-                      name="Evaluator_ID" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Oppor_Rein]"
-                      dataType="wstr"
-                      length="20"
-                      name="Oppor_Rein" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Reject_reason]"
-                      dataType="wstr"
-                      length="40"
-                      name="Reject_reason" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Date_Rejected]"
-                      dataType="dbTimeStamp"
-                      name="Date_Rejected" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Source]"
-                      dataType="wstr"
-                      length="30"
-                      name="Source" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[Program]"
-                      dataType="wstr"
-                      length="20"
-                      name="Program" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[VerintFormName]"
-                      dataType="wstr"
-                      length="50"
-                      name="VerintFormName" />
-                    <externalMetadataColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input].ExternalColumns[isCoachingMonitor]"
-                      dataType="wstr"
-                      length="3"
-                      name="isCoachingMonitor" />
-                  </externalMetadataColumns>
-                </input>
-              </inputs>
-              <outputs>
-                <output
-                  refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Outputs[OLE DB Destination Error Output]"
-                  exclusionGroup="1"
-                  isErrorOut="true"
-                  name="OLE DB Destination Error Output"
-                  synchronousInputId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input]">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
-                      dataType="i4"
-                      lineageId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
-                      name="ErrorCode"
-                      specialFlags="1" />
-                    <outputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
-                      dataType="i4"
-                      lineageId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
-                      name="ErrorColumn"
-                      specialFlags="2" />
-                  </outputColumns>
-                  <externalMetadataColumns />
-                </output>
-              </outputs>
-            </component>
-            <component
               refId="Package\Load  Quality Staging Table\Quality Coaching Stage"
               componentClassID="DTSAdapter.OLEDBDestination.3"
               contactInfo="OLE DB Destination;Microsoft Corporation;Microsoft SqlServer v9; (C) 2005 Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
@@ -3355,13 +2758,6 @@ where [refTable].[Emp_ID] = ?</property>
                       cachedName="Date_Inserted"
                       externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].ExternalColumns[Date_Inserted]"
                       lineageId="Package\Load  Quality Staging Table\Trim employee Ids.Outputs[Derived Column Output].Columns[Date_Inserted]" />
-                    <inputColumn
-                      refId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].Columns[User_LanID]"
-                      cachedDataType="wstr"
-                      cachedLength="30"
-                      cachedName="User_LanID"
-                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].ExternalColumns[User_LANID]"
-                      lineageId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Match Output].Columns[User_LanID]" />
                     <inputColumn
                       refId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].Columns[EvalID]"
                       cachedDataType="wstr"
@@ -3607,6 +3003,20 @@ where [refTable].[Emp_ID] = ?</property>
                       dataType="wstr"
                       length="3"
                       name="isCoachingMonitor" />
+                    <externalMetadataColumn
+                      refId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Role]"
+                      dataType="wstr"
+                      length="3"
+                      name="Emp_Role" />
+                    <externalMetadataColumn
+                      refId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].ExternalColumns[Module]"
+                      dataType="i4"
+                      name="Module" />
+                    <externalMetadataColumn
+                      refId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].ExternalColumns[Reject_Reason]"
+                      dataType="wstr"
+                      length="200"
+                      name="Reject_Reason" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -3660,35 +3070,6 @@ where [refTable].[Emp_ID] = ?</property>
                   refId="Package\Load  Quality Staging Table\Row Count.Outputs[Row Count Output 1]"
                   name="Row Count Output 1"
                   synchronousInputId="Package\Load  Quality Staging Table\Row Count.Inputs[Row Count Input 1]">
-                  <externalMetadataColumns />
-                </output>
-              </outputs>
-            </component>
-            <component
-              refId="Package\Load  Quality Staging Table\Row Count 1"
-              componentClassID="DTSTransform.RowCount.3"
-              contactInfo="Row Count;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
-              description="Counts the rows in a dataset."
-              name="Row Count 1">
-              <properties>
-                <property
-                  dataType="System.String"
-                  description="Specifies the variable to hold the row count."
-                  name="VariableName">User::RejectedCount</property>
-              </properties>
-              <inputs>
-                <input
-                  refId="Package\Load  Quality Staging Table\Row Count 1.Inputs[Row Count Input 1]"
-                  hasSideEffects="true"
-                  name="Row Count Input 1">
-                  <externalMetadataColumns />
-                </input>
-              </inputs>
-              <outputs>
-                <output
-                  refId="Package\Load  Quality Staging Table\Row Count 1.Outputs[Row Count Output 1]"
-                  name="Row Count Output 1"
-                  synchronousInputId="Package\Load  Quality Staging Table\Row Count 1.Inputs[Row Count Input 1]">
                   <externalMetadataColumns />
                 </output>
               </outputs>
@@ -3825,39 +3206,19 @@ where [refTable].[Emp_ID] = ?</property>
               startId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output]" />
             <path
               refId="Package\Load  Quality Staging Table.Paths[Derived Column Output]"
-              endId="Package\Load  Quality Staging Table\Lookup User Attributes.Inputs[Lookup Input]"
+              endId="Package\Load  Quality Staging Table\Row Count.Inputs[Row Count Input 1]"
               name="Derived Column Output"
               startId="Package\Load  Quality Staging Table\Trim employee Ids.Outputs[Derived Column Output]" />
-            <path
-              refId="Package\Load  Quality Staging Table.Paths[Derived Column Output1]"
-              endId="Package\Load  Quality Staging Table\Row Count 1.Inputs[Row Count Input 1]"
-              name="Derived Column Output"
-              startId="Package\Load  Quality Staging Table\Derived Column.Outputs[Derived Column Output]" />
             <path
               refId="Package\Load  Quality Staging Table.Paths[Flat File Source Output]"
               endId="Package\Load  Quality Staging Table\Data Conversion.Inputs[Data Conversion Input]"
               name="Flat File Source Output"
               startId="Package\Load  Quality Staging Table\IQS Decrypted File.Outputs[Flat File Source Output]" />
             <path
-              refId="Package\Load  Quality Staging Table.Paths[Lookup Error Output]"
-              endId="Package\Load  Quality Staging Table\Derived Column.Inputs[Derived Column Input]"
-              name="Lookup Error Output"
-              startId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Error Output]" />
-            <path
-              refId="Package\Load  Quality Staging Table.Paths[Lookup Match Output]"
-              endId="Package\Load  Quality Staging Table\Row Count.Inputs[Row Count Input 1]"
-              name="Lookup Match Output"
-              startId="Package\Load  Quality Staging Table\Lookup User Attributes.Outputs[Lookup Match Output]" />
-            <path
               refId="Package\Load  Quality Staging Table.Paths[Row Count Output 1]"
               endId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input]"
               name="Row Count Output 1"
               startId="Package\Load  Quality Staging Table\Row Count.Outputs[Row Count Output 1]" />
-            <path
-              refId="Package\Load  Quality Staging Table.Paths[Row Count Output 11]"
-              endId="Package\Load  Quality Staging Table\Quality Coaching Rejected.Inputs[OLE DB Destination Input]"
-              name="Row Count Output 1"
-              startId="Package\Load  Quality Staging Table\Row Count 1.Outputs[Row Count Output 1]" />
           </paths>
         </pipeline>
       </DTS:ObjectData>
@@ -4223,6 +3584,20 @@ where [refTable].[Emp_ID] = ?</property>
                           dataType="wstr"
                           length="3"
                           name="isCoachingMonitor" />
+                        <externalMetadataColumn
+                          refId="Package\NPN Record Load\Select NPN Logs for Load\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Role]"
+                          dataType="wstr"
+                          length="3"
+                          name="Emp_Role" />
+                        <externalMetadataColumn
+                          refId="Package\NPN Record Load\Select NPN Logs for Load\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Module]"
+                          dataType="i4"
+                          name="Module" />
+                        <externalMetadataColumn
+                          refId="Package\NPN Record Load\Select NPN Logs for Load\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Reject_Reason]"
+                          dataType="wstr"
+                          length="200"
+                          name="Reject_Reason" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -5234,6 +4609,29 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           SQLTask:SqlStatementSource="Exec [EC].[sp_Update_Quality_Fact]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Update Staging table and reject records"
+      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{B0EE8547-C6F4-4B4F-B4C4-CE7DD372B1E4}"
+      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Update Staging table and reject records"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{5D10059B-A5CC-4046-89F4-274018AD660B}"
+          SQLTask:SqlStatementSource="Exec [EC].[sp_InsertInto_IQS_Rejected] ? output" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::RejectedCount"
+            SQLTask:ParameterDirection="Output"
+            SQLTask:DataType="3"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
   </DTS:Executables>
   <DTS:PrecedenceConstraints>
     <DTS:PrecedenceConstraint
@@ -5263,6 +4661,14 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:ObjectName="Constraint 10"
       DTS:To="Package\Send Mail Task" />
     <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 11]"
+      DTS:CreationName=""
+      DTS:DTSID="{ECD601EF-F0E3-4A67-A654-981BAFEAC240}"
+      DTS:From="Package\Load Coaching_Log"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 11"
+      DTS:To="Package\Update Quality Fact Table" />
+    <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
       DTS:CreationName=""
       DTS:DTSID="{524019FB-58B5-44DF-B913-154002FC8DBB}"
@@ -5273,19 +4679,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
       DTS:CreationName=""
-      DTS:DTSID="{F8D9A71F-3829-4806-B1B5-1E7372A5194D}"
+      DTS:DTSID="{5DE20107-D673-4DAE-BCA5-B2A878213886}"
       DTS:From="Package\Load  Quality Staging Table"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 3"
-      DTS:To="Package\Update Coaching_Log and Coaching_Log_Reason tables" />
+      DTS:To="Package\Update Staging table and reject records" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
       DTS:CreationName=""
-      DTS:DTSID="{9BF23F0B-D646-4C87-854F-B3D2EA364528}"
-      DTS:From="Package\Load Coaching_Log"
+      DTS:DTSID="{8C888D5D-0F61-44EB-8F83-E82FD4F1834E}"
+      DTS:From="Package\Update Staging table and reject records"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 4"
-      DTS:To="Package\Update Quality Fact Table" />
+      DTS:To="Package\Update Coaching_Log and Coaching_Log_Reason tables" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
       DTS:CreationName=""
@@ -5314,7 +4720,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 8]"
       DTS:CreationName=""
-      DTS:DTSID="{EEB327D1-F74C-489E-91EB-B2764C6A7A6E}"
+      DTS:DTSID="{C4644CA6-26E2-405F-BABC-CEBE944FEFF1}"
       DTS:EvalOp="3"
       DTS:Expression="@[User::DayOfWeek] == 2 || @[User::AdhocNPN] == True"
       DTS:From="Package\Delete File"
@@ -5392,121 +4798,133 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="64" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="132,41.6"
           Id="Package\Check if File exists"
-          TopLeft="174.857145834942,28.6117647144621" />
+          TopLeft="168.414284857925,43.294117861553" />
         <NodeLayout
           Size="136,44"
           Id="Package\Decrypt File"
-          TopLeft="5.5,29.8294117132273" />
+          TopLeft="163.557141952125,110.023529137212" />
         <NodeLayout
           Size="136,44"
           Id="Package\Delete File"
-          TopLeft="9.53773584905662,653.753940015114" />
+          TopLeft="121.27142694629,751.388230618143" />
         <NodeLayout
           Size="136,44"
           Id="Package\Load  Quality Staging Table"
-          TopLeft="6.29245283018872,274.24450605285" />
+          TopLeft="173.842856413004,313.788233535265" />
         <NodeLayout
           Size="136,44"
           Id="Package\Load Coaching_Log"
-          TopLeft="6.74528301886789,410.282241901906" />
+          TopLeft="153.271427491247,519.388233389409" />
         <NodeLayout
           Size="136,44"
           Id="Package\Load File List table"
-          TopLeft="10.7830188679245,571.187902279265" />
+          TopLeft="132.699998569488,657.03528991356" />
         <NodeLayout
           Size="108.8,35.2"
           Id="Package\NPN Record Load\Get Dates for Previous Week"
-          TopLeft="151.924528301887,13.1509433962264" />
+          TopLeft="120.5,100.7" />
         <NodeLayout
           Size="108.8,35.2"
           Id="Package\NPN Record Load\Load NPN Logs into Coaching"
-          TopLeft="71.4339622641509,154.924528301887" />
+          TopLeft="5.50000000000005,291.1" />
         <NodeLayout
           Size="108.8,35.2"
           Id="Package\NPN Record Load\Select NPN Logs for Load"
-          TopLeft="69.5471698113207,89.4905660377359" />
+          TopLeft="5.50000000000005,195.9" />
         <NodeLayout
           Size="108.8,35.2"
           Id="Package\NPN Record Load\Truncate Staging Table"
-          TopLeft="12.7924528301886,10.1320754716981" />
+          TopLeft="5.50000000000002,5.50000000000002" />
         <EdgeLayout
           Id="Package\NPN Record Load.PrecedenceConstraints[Constraint]"
-          TopLeft="67.0943396226414,45.2641509433962">
+          TopLeft="43.1,40.7">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="36,44.2264150943396"
+              EndConnector="0,155.2"
               Start="0,0"
-              End="36,36.7264150943396">
+              End="0,147.7">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,22.1132075471698" />
-                  <mssgle:LineSegment
-                    End="36,22.1132075471698" />
-                  <mssgle:LineSegment
-                    End="36,36.7264150943396" />
+                    End="0,147.7" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="10,27.1132075471698,16,16"
+              BoundingBox="-8,65.8500000000001,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\NPN Record Load.PrecedenceConstraints[Constraint 1]"
-          TopLeft="121.433962264151,27.6792452830189">
+          TopLeft="76.7,40.7">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="30.4905660377359,3.0188679245283"
+              EndConnector="98.2,60.0000000000001"
               Start="0,0"
-              End="22.9905660377359,3.0188679245283">
+              End="98.2,52.5000000000001">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="15.245283018868,0" />
+                    End="0,20.5217391304348" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,20.5217391304348"
+                    Point2="0,24.5217391304348"
+                    Point3="4,24.5217391304348" />
                   <mssgle:LineSegment
-                    End="15.245283018868,3.0188679245283" />
+                    End="94.2,24.5217391304348" />
+                  <mssgle:CubicBezierSegment
+                    Point1="94.2,24.5217391304348"
+                    Point2="98.2,24.5217391304348"
+                    Point3="98.2,28.5217391304348" />
                   <mssgle:LineSegment
-                    End="22.9905660377359,3.0188679245283" />
+                    End="98.2,52.5000000000001" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="7.24528301886801,-26,16,16"
+              BoundingBox="41.1,29.5217391304348,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\NPN Record Load.PrecedenceConstraints[Constraint 2]"
-          TopLeft="185.471698113207,48.2830188679245">
+          TopLeft="174.9,135.9">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-61.6226415094339,41.2075471698113"
+              EndConnector="-98.2,60"
               Start="0,0"
-              End="-61.6226415094339,33.7075471698113">
+              End="-98.2,52.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,20.6037735849057" />
+                    End="0,31.4782608695652" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,31.4782608695652"
+                    Point2="0,35.4782608695652"
+                    Point3="-4,35.4782608695652" />
                   <mssgle:LineSegment
-                    End="-61.6226415094339,20.6037735849057" />
+                    End="-94.2,35.4782608695652" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-94.2,35.4782608695652"
+                    Point2="-98.2,35.4782608695652"
+                    Point3="-98.2,39.4782608695652" />
                   <mssgle:LineSegment
-                    End="-61.6226415094339,33.7075471698113" />
+                    End="-98.2,52.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5517,22 +4935,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\NPN Record Load.PrecedenceConstraints[Constraint 3]"
-          TopLeft="103.094339622641,124.622641509434">
+          TopLeft="59.9,231.1">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="22.6415094339624,30.3018867924528"
+              EndConnector="0,60"
               Start="0,0"
-              End="22.6415094339624,22.8018867924528">
+              End="0,52.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,22.7169811320755" />
-                  <mssgle:LineSegment
-                    End="22.6415094339624,22.7169811320755" />
-                  <mssgle:LineSegment
-                    End="22.6415094339624,22.8018867924528" />
+                    End="0,52.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5544,44 +4958,60 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="284,255.2"
-          Size="284,289.6"
+          PanelSize="235.2,381.6"
+          Size="235.2,424.8"
           Id="Package\NPN Record Load"
-          TopLeft="203.877358490566,303.301109826435" />
+          TopLeft="412.014289490057,410.54116490506" />
         <NodeLayout
           Size="108,41.6"
           Id="Package\Pause"
-          TopLeft="12.5714287855187,107.294118590833" />
+          TopLeft="176.414284789805,173.647057982712" />
         <NodeLayout
-          Size="150.4,41.6"
+          Size="130.4,48"
           Id="Package\Send Mail Task"
-          TopLeft="336.571434303206,30.5882357231061" />
+          TopLeft="347.785720114805,37.8117634017574" />
         <NodeLayout
           Size="136,44"
           Id="Package\Truncate Staging Table"
-          TopLeft="7.31132075471692,191.338845675491" />
+          TopLeft="173.271427831844,240.988233972833" />
         <NodeLayout
           Size="136,44"
           Id="Package\Update Coaching_Log and Coaching_Log_Reason tables"
-          TopLeft="5.72641509433959,341.829411713227" />
+          TopLeft="168.128570601405,447.152939829447" />
         <NodeLayout
-          Size="136,44"
+          Size="201.6,41.6"
           Id="Package\Update Quality Fact Table"
-          TopLeft="9.72641509433959,490.282241901906" />
+          TopLeft="128.699998501369,590.352937495749" />
+        <NodeLayout
+          Size="164,41.6"
+          Id="Package\Update Staging table and reject records"
+          TopLeft="157.557142088364,380.470583035954" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="76.0357143927594,73.8294117132273">
+          TopLeft="299.557141952125,132.023529137212">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,33.4647068776061"
+              EndConnector="-15.14285716232,62.4235288454999"
               Start="0,0"
-              End="0,25.9647068776061">
+              End="-7.64285716231996,62.4235288454999">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,25.9647068776061" />
+                    End="18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="18.5,0"
+                    Point2="22.5,0"
+                    Point3="22.5,4" />
+                  <mssgle:LineSegment
+                    End="22.5,58.4235288454999" />
+                  <mssgle:CubicBezierSegment
+                    Point1="22.5,58.4235288454999"
+                    Point2="22.5,62.4235288454999"
+                    Point3="18.5,62.4235288454999" />
+                  <mssgle:LineSegment
+                    End="-7.64285716231996,62.4235288454999" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5592,22 +5022,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="75.1981132075472,235.263373977378">
+          TopLeft="241.557142122424,284.988233972833">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-1.01886792452831,38.9811320754717"
+              EndConnector="0,28.7999995624318"
               Start="0,0"
-              End="-1.01886792452831,31.4811320754717">
+              End="0,21.2999995624318">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,19.5094339622642" />
-                  <mssgle:LineSegment
-                    End="-1.01886792452831,19.5094339622642" />
-                  <mssgle:LineSegment
-                    End="-1.01886792452831,31.4811320754717" />
+                    End="0,21.2999995624318" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5618,42 +5044,88 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 10]"
-          TopLeft="306.857145834942,50.4000002187841">
+          TopLeft="300.414284857925,62.9529406316552">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="29.7142884682636,0"
+              EndConnector="47.3714352568804,0"
               Start="0,0"
-              End="22.2142884682636,0">
+              End="39.8714352568804,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="22.2142884682636,0" />
+                    End="39.8714352568804,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="3.10714423413182,5,16,16"
+              BoundingBox="11.9357176284402,5,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="76.9413747701178,148.894118590833">
+          Id="Package.PrecedenceConstraints[Constraint 11]"
+          TopLeft="221.271427491247,563.388233389409">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,42.444727084658"
+              EndConnector="8.22857101012235,26.9647041063407"
               Start="0,0"
-              End="0,34.944727084658">
+              End="8.22857101012235,19.4647041063407">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,34.944727084658" />
+                    End="0,9.48235205317036" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,9.48235205317036"
+                    Point2="0,13.4823520531704"
+                    Point3="4,13.4823520531704" />
+                  <mssgle:LineSegment
+                    End="4.22857101012235,13.4823520531704" />
+                  <mssgle:CubicBezierSegment
+                    Point1="4.22857101012235,13.4823520531704"
+                    Point2="8.22857101012235,13.4823520531704"
+                    Point3="8.22857101012235,17.4823520531704" />
+                  <mssgle:LineSegment
+                    End="8.22857101012235,19.4647041063407" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="230.414284789805,215.247057982712">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="10.857143042039,25.7411759901211"
+              Start="0,0"
+              End="10.857143042039,18.2411759901211">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,8.87058799506056" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,8.87058799506056"
+                    Point2="0,12.8705879950606"
+                    Point3="4,12.8705879950606" />
+                  <mssgle:LineSegment
+                    End="6.85714304203898,12.8705879950606" />
+                  <mssgle:CubicBezierSegment
+                    Point1="6.85714304203898,12.8705879950606"
+                    Point2="10.857143042039,12.8705879950606"
+                    Point3="10.857143042039,16.8705879950606" />
+                  <mssgle:LineSegment
+                    End="10.857143042039,18.2411759901211" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5664,22 +5136,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="53.4245283018868,318.169034354736">
+          TopLeft="240.699999250684,357.788233535265">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="20.1886792452831,23.6603773584906"
+              EndConnector="0,22.6823495006889"
               Start="0,0"
-              End="20.1886792452831,16.1603773584906">
+              End="0,15.1823495006889">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,17.7358490566038" />
-                  <mssgle:LineSegment
-                    End="20.1886792452831,17.7358490566038" />
-                  <mssgle:LineSegment
-                    End="20.1886792452831,16.1603773584906" />
+                    End="0,15.1823495006889" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5690,22 +5158,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="74.632075471698,454.206770203793">
+          TopLeft="237.842856344885,422.070583035954">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="2.98113207547181,36.0754716981132"
+              EndConnector="0,25.0823567934928"
               Start="0,0"
-              End="2.98113207547181,28.5754716981132">
+              End="0,17.5823567934928">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,18.0377358490566" />
-                  <mssgle:LineSegment
-                    End="2.98113207547181,18.0377358490566" />
-                  <mssgle:LineSegment
-                    End="2.98113207547181,28.5754716981132" />
+                    End="0,17.5823567934928" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5716,22 +5180,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 5]"
-          TopLeft="78.6698113207547,615.112430581152">
+          TopLeft="200.699998569488,701.03528991356">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-22,38.6415094339623"
+              EndConnector="-32.761904956532,50.3529407045834"
               Start="0,0"
-              End="-22,31.1415094339623">
+              End="-32.761904956532,42.8529407045834">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,19.3207547169812" />
+                    End="0,25.860464836439" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,25.860464836439"
+                    Point2="0,29.860464836439"
+                    Point3="-4,29.860464836439" />
                   <mssgle:LineSegment
-                    End="-22,19.3207547169812" />
+                    End="-28.761904956532,29.860464836439" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-28.761904956532,29.860464836439"
+                    Point2="-32.761904956532,29.860464836439"
+                    Point3="-32.761904956532,33.860464836439" />
                   <mssgle:LineSegment
-                    End="-22,31.1415094339623" />
+                    End="-32.761904956532,42.8529407045834" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5742,22 +5214,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 6]"
-          TopLeft="56.8584905660377,534.206770203793">
+          TopLeft="229.499998501369,631.952937495749">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="21.8113207547169,36.9811320754717"
+              EndConnector="-28.7999999318804,25.0823524178106"
               Start="0,0"
-              End="21.8113207547169,29.4811320754717">
+              End="-28.7999999318804,17.5823524178106">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,27.7358490566038" />
+                    End="0,8.54117620890531" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,8.54117620890531"
+                    Point2="0,12.5411762089053"
+                    Point3="-4,12.5411762089053" />
                   <mssgle:LineSegment
-                    End="21.8113207547169,27.7358490566038" />
+                    End="-24.7999999318804,12.5411762089053" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-24.7999999318804,12.5411762089053"
+                    Point2="-28.7999999318804,12.5411762089053"
+                    Point3="-28.7999999318804,16.5411762089053" />
                   <mssgle:LineSegment
-                    End="21.8113207547169,29.4811320754717" />
+                    End="-28.7999999318804,17.5823524178106" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5768,22 +5248,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 7]"
-          TopLeft="52.8584905660377,385.753940015114">
+          TopLeft="236.128570601405,491.152939829447">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="21.7735849056603,24.5283018867925"
+              EndConnector="-14.8571431101583,28.2352935599621"
               Start="0,0"
-              End="21.7735849056603,17.0283018867925">
+              End="-14.8571431101583,20.7352935599621">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,18.377358490566" />
+                    End="0,10.1176467799811" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,10.1176467799811"
+                    Point2="0,14.1176467799811"
+                    Point3="-4,14.1176467799811" />
                   <mssgle:LineSegment
-                    End="21.7735849056603,18.377358490566" />
+                    End="-10.8571431101583,14.1176467799811" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-10.8571431101583,14.1176467799811"
+                    Point2="-14.8571431101583,14.1176467799811"
+                    Point3="-14.8571431101583,18.1176467799811" />
                   <mssgle:LineSegment
-                    End="21.7735849056603,17.0283018867925" />
+                    End="-14.8571431101583,20.7352935599621" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5794,53 +5282,61 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 8]"
-          TopLeft="98.1792452830189,653.753940015114">
+          TopLeft="257.27142694629,773.388230618143">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="247.88679245283,-60.4905660377358"
+              EndConnector="154.742862543768,-150.447065713084"
               Start="0,0"
-              End="247.88679245283,-52.9905660377358">
+              End="147.242862543768,-150.447065713084">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,-30.2641509433963" />
+                    End="73.3714312718838,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="73.3714312718838,0"
+                    Point2="77.3714312718838,0"
+                    Point3="77.3714312718838,-4" />
                   <mssgle:LineSegment
-                    End="247.88679245283,-30.2641509433963" />
+                    End="77.3714312718838,-146.447065713084" />
+                  <mssgle:CubicBezierSegment
+                    Point1="77.3714312718838,-146.447065713084"
+                    Point2="77.3714312718838,-150.447065713084"
+                    Point3="81.3714312718838,-150.447065713084" />
                   <mssgle:LineSegment
-                    End="247.88679245283,-52.9905660377358" />
+                    End="147.242862543768,-150.447065713084" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="115.943396226415,-25.2641509433963,16,16"
+              BoundingBox="69.3714312718838,1,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 9]"
-          TopLeft="174.857145834942,50.6205882138447">
+          TopLeft="232.985713405025,84.894117861553">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-33.3571458349422,0"
+              EndConnector="0,25.129411275659"
               Start="0,0"
-              End="-25.8571458349422,0">
+              End="0,17.629411275659">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="-25.8571458349422,0" />
+                    End="0,17.629411275659" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-20.9285729174711,5,16,16"
+              BoundingBox="-8,0.814705637829512,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -5863,69 +5359,85 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Load  Quality Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
-        <NodeLayout
-          Size="136,44"
-          Id="Package\Load  Quality Staging Table\Quality Coaching Stage"
-          TopLeft="168.254716981132,302.707547169811" />
-        <NodeLayout
-          Size="136,44"
-          Id="Package\Load  Quality Staging Table\Lookup User Attributes"
-          TopLeft="10.8962264150943,239.122641509434" />
-        <NodeLayout
-          Size="136,44"
-          Id="Package\Load  Quality Staging Table\Row Count 1"
-          TopLeft="5.5,385.122641509434" />
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="136,44"
           Id="Package\Load  Quality Staging Table\IQS Decrypted File"
           TopLeft="9.91509433962264,5.5" />
         <NodeLayout
           Size="136,44"
-          Id="Package\Load  Quality Staging Table\Row Count"
-          TopLeft="185.235849056604,233.349056603774" />
+          Id="Package\Load  Quality Staging Table\Quality Coaching Stage"
+          TopLeft="30.5404289215859,305.766370742122" />
         <NodeLayout
           Size="136,44"
-          Id="Package\Load  Quality Staging Table\Quality Coaching Rejected"
-          TopLeft="18.4811320754717,454.481132075472" />
-        <NodeLayout
-          Size="136,44"
-          Id="Package\Load  Quality Staging Table\Derived Column"
-          TopLeft="13.877358490566,320.971698113208" />
+          Id="Package\Load  Quality Staging Table\Trim employee Ids"
+          TopLeft="10.9716981132075,153.235849056604" />
         <NodeLayout
           Size="136,44"
           Id="Package\Load  Quality Staging Table\Data Conversion"
           TopLeft="10.1415094339623,72.6320754716981" />
         <NodeLayout
           Size="136,44"
-          Id="Package\Load  Quality Staging Table\Trim employee Ids"
-          TopLeft="10.9716981132075,153.235849056604" />
+          Id="Package\Load  Quality Staging Table\Row Count"
+          TopLeft="21.2358462637006,224.784350601304" />
         <EdgeLayout
-          Id="Package\Load  Quality Staging Table.Paths[Derived Column Output]"
-          TopLeft="78.8584905660377,197.160377358491">
+          Id="Package\Load  Quality Staging Table.Paths[Flat File Source Output]"
+          TopLeft="77.8018867924528,49.4245283018868">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-0.0754716981132049,41.9622641509434"
+              EndConnector="0.226415094339629,23.2075471698113"
               Start="0,0"
-              End="-0.0754716981132049,34.4622641509434">
+              End="0.226415094339629,15.7075471698113">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,20.9811320754717" />
+                    End="0,11.5849056603774" />
                   <mssgle:LineSegment
-                    End="-0.0754716981132049,20.9811320754717" />
+                    End="0.226415094339629,11.5849056603774" />
                   <mssgle:LineSegment
-                    End="-0.0754716981132049,34.4622641509434" />
+                    End="0.226415094339629,15.7075471698113" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Load  Quality Staging Table.Paths[Derived Column Output]"
+          TopLeft="78.9716981132075,197.235849056604">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="10.2641481504931,27.5485015447003"
+              Start="0,0"
+              End="10.2641481504931,20.0485015447003">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,9.77425077235014" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,9.77425077235014"
+                    Point2="0,13.7742507723501"
+                    Point3="4,13.7742507723501" />
+                  <mssgle:LineSegment
+                    End="6.26414815049309,13.7742507723501" />
+                  <mssgle:CubicBezierSegment
+                    Point1="6.26414815049309,13.7742507723501"
+                    Point2="10.2641481504931,13.7742507723501"
+                    Point3="10.2641481504931,17.7742507723501" />
+                  <mssgle:LineSegment
+                    End="10.2641481504931,20.0485015447003" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5951,187 +5463,64 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Load  Quality Staging Table.Paths[Row Count Output 11]"
-          TopLeft="73.3867924528302,429.047169811321">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="12.9811320754717,25.433962264151"
-              Start="0,0"
-              End="12.9811320754717,17.933962264151">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,12.7169811320755" />
-                  <mssgle:LineSegment
-                    End="12.9811320754717,12.7169811320755" />
-                  <mssgle:LineSegment
-                    End="12.9811320754717,17.933962264151" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Load  Quality Staging Table.Paths[Row Count Output 1]"
-          TopLeft="253.122641509434,277.27358490566">
+          TopLeft="89.2358462637006,268.784350601304">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-16.9811320754717,25.4339622641509"
+              EndConnector="9.30458265788533,36.9820201408174"
               Start="0,0"
-              End="-16.9811320754717,17.9339622641509">
+              End="9.30458265788533,29.4820201408174">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,12.7169811320755" />
+                    End="0,14.4910100704087" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,14.4910100704087"
+                    Point2="0,18.4910100704087"
+                    Point3="4,18.4910100704087" />
                   <mssgle:LineSegment
-                    End="-16.9811320754717,12.7169811320755" />
+                    End="5.30458265788533,18.4910100704087" />
+                  <mssgle:CubicBezierSegment
+                    Point1="5.30458265788533,18.4910100704087"
+                    Point2="9.30458265788533,18.4910100704087"
+                    Point3="9.30458265788533,22.4910100704087" />
                   <mssgle:LineSegment
-                    End="-16.9811320754717,17.9339622641509" />
+                    End="9.30458265788533,29.4820201408174" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Load  Quality Staging Table.Paths[Lookup Match Output]"
-          TopLeft="146.669811320755,261.084905660377">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="38.5660377358491,-5.77358490566039"
-              Start="0,0"
-              End="31.0660377358491,-5.77358490566039">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="31.5849056603774,0" />
-                  <mssgle:LineSegment
-                    End="31.5849056603774,-5.77358490566039" />
-                  <mssgle:LineSegment
-                    End="31.0660377358491,-5.77358490566039" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="-16.6064810583726,5,96.3827734375,11.609375"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Load  Quality Staging Table.Paths[Lookup Error Output]"
-          TopLeft="78.7830188679245,283.047169811321">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="2.98113207547169,37.9245283018868"
-              Start="0,0"
-              End="2.98113207547169,30.4245283018868">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,18.9433962264151" />
-                  <mssgle:LineSegment
-                    End="2.98113207547169,18.9433962264151" />
-                  <mssgle:LineSegment
-                    End="2.98113207547169,30.4245283018868" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="-44.3758206810142,23.9433962264151,91.7327734375,11.609375"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Load  Quality Staging Table.Paths[Flat File Source Output]"
-          TopLeft="77.8018867924528,49.4245283018868">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0.226415094339629,23.2075471698113"
-              Start="0,0"
-              End="0.226415094339629,15.7075471698113">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,11.5849056603774" />
-                  <mssgle:LineSegment
-                    End="0.226415094339629,11.5849056603774" />
-                  <mssgle:LineSegment
-                    End="0.226415094339629,15.7075471698113" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Load  Quality Staging Table.Paths[Derived Column Output1]"
-          TopLeft="81.7641509433962,364.896226415094">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="-8.37735849056604,20.2264150943396"
-              Start="0,0"
-              End="-8.37735849056604,12.7264150943396">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,10.1132075471698" />
-                  <mssgle:LineSegment
-                    End="-8.37735849056604,10.1132075471698" />
-                  <mssgle:LineSegment
-                    End="-8.37735849056604,12.7264150943396" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Load  Quality Staging Table\Quality Coaching Stage">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
   <TaskHost
     design-time-name="Package\NPN Record Load\Select NPN Logs for Load">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="108.8,35.2"
           Id="Package\NPN Record Load\Select NPN Logs for Load\OLE DB Source"
@@ -6163,13 +5552,24 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\NPN Record Load\Select NPN Logs for Load\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
 </Objects>]]></DTS:DesignTimeProperties>
 </DTS:Executable>
