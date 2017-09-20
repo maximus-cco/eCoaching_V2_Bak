@@ -1,10 +1,10 @@
 /*
-CCO_eCoaching_Generic_Load_Tables_Create.sql(01).sql
-Last Modified Date: 1/18/2017
+CCO_eCoaching_Generic_Load_Tables_Create.sql(02).sql
+Last Modified Date: 9/18/2017
 Last Modified By: Susmitha Palacherla
 
 
-
+Version 02: Added columns to Generic_Coaching_Stage per TFS 7646 - 09/18/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 
@@ -33,6 +33,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 CREATE TABLE [EC].[Generic_Coaching_Stage](
 	[Report_ID] [int] NULL,
 	[Report_Code] [nvarchar](20) NULL,
@@ -52,7 +53,7 @@ CREATE TABLE [EC].[Generic_Coaching_Stage](
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](4000) NULL,
 	[FileName] [nvarchar](260) NULL,
-        [Module_ID] [int] NULL,
+	[Module_ID] [int] NULL,
 	[Source_ID] [int] NULL,
 	[isCSE] [bit] NULL,
 	[Status_ID] [int] NULL,
@@ -60,11 +61,13 @@ CREATE TABLE [EC].[Generic_Coaching_Stage](
 	[CoachingReason_ID] [int] NULL,
 	[SubCoachingReason_ID] [int] NULL,
 	[Value] [nvarchar](30) NULL,
-	[EmailSent] [bit] NULL
-            
+	[EmailSent] [bit] NULL,
+	[Emp_Role] [nvarchar](3) NULL,
+	[Reject_Reason] [nvarchar](200) NULL
 ) ON [PRIMARY]
 
 GO
+
 
 
 
