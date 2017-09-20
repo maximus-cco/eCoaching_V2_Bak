@@ -1,10 +1,11 @@
 /*
-CCO_eCoaching_Quality_Load_Tables_Create(01).sql
+CCO_eCoaching_Quality_Load_Tables_Create(02).sql
 
-Last Modified Date: 1/18/2017
+Last Modified Date: 9/18/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated column size on reject_reason in Quality_Coaching_Rejected table
+	     Added columns to Quality_Coaching_Stage per TFS 7541 - 09/18/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -58,9 +59,12 @@ CREATE TABLE [EC].[Quality_Coaching_Stage](
 	[Source] [nvarchar](30) NULL,
 	[Oppor_Rein] [nvarchar](20) NULL,
 	[Date_Inserted] [datetime] NULL,
-        [VerintFormName] [nvarchar) (50) NULL,
-	[isCoachingMonitor] nvarchar(3)	
-) ON [PRIMARY]
+	[VerintFormName] [nvarchar](50) NULL,
+	[isCoachingMonitor] [nvarchar](3) NULL,
+	[Emp_Role] [nvarchar](3) NULL,
+	[Module] [int] NULL,
+	[Reject_Reason] [nvarchar](200) NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
 
@@ -138,7 +142,7 @@ CREATE TABLE [EC].[Quality_Coaching_Rejected](
 	[Program] [nvarchar](20) NULL,
 	[Source] [nvarchar](30) NULL,
 	[Oppor_Rein] [nvarchar](20) NULL,
-	[Reject_reason] [nvarchar](40) NULL,
+	[Reject_reason] [nvarchar](200) NULL,
 	[Date_Rejected] [datetime] NULL,
 	[VerintFormName] [nvarchar) (50) NULL,
 	[isCoachingMonitor] nvarchar(3)
