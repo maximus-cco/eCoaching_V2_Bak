@@ -1,0 +1,94 @@
+/*---------------------------------------------------------------
+
+TFS 8363 - Set up admin tool access for new Program team members
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+--Updates for Admin Tool access
+
+1. Insert users into User Table
+2. Insert records into User_Role link table
+3. Insert records into Role access table
+
+Table [EC].[AT_User]
+Table [EC].[AT_User_Role_Link]
+Table [EC].[AT_Role_Access]
+
+
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+PRINT ('  Begin Table Updates...')
+
+
+--1. Insert users into User Table
+
+INSERT INTO [EC].[AT_User]
+            ([UserId],
+            [UserLanID],
+			[UserName],
+			[EmpJobCode],
+			[Active])        
+VALUES
+('333386','shelly.encke', 'Encke, Shelly J','WPPM11',1),
+('397938','Sara.Stonecipher', 'Stonecipher, Sara M','WPPM11',1)
+          
+GO
+
+
+
+--************************************************************
+--2. Insert records into User_Role link table
+
+
+INSERT INTO [EC].[AT_User_Role_Link]
+            ([UserId] ,
+			[RoleId])  
+VALUES
+('333386',101),
+('333386',103),
+('333386',106),
+('333386',107),
+('397938',101),
+('397938',103),
+('397938',106),
+('397938',107)
+
+GO
+--************************************************************
+
+--3. Insert records into Role access table
+
+INSERT INTO [EC].[AT_Role_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[RoleId]
+           ,[RoleDescription]
+           ,[AddToUser]
+           ,[isActive])
+              VALUES
+           ('WPPM11','Associate Analyst, Program',101,'CoachingAdmin',0,1),
+           ('WPPM11','Associate Analyst, Program',103,'WarningAdmin',0,1),
+           ('WPPM11','Associate Analyst, Program',106,'ReportCoachingAdmin',0,1),
+           ('WPPM11','Associate Analyst, Program',107,'ReportWarningAdmin',0,1)
+
+GO
+
+--************************************************************
+
+
+
+PRINT ('  Table Updates completed...')

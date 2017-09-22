@@ -1,7 +1,10 @@
 /*
-eCoaching_Admin_Tool_Tables_Create(03).sql
-Last Modified Date: 4/11/2017
+eCoaching_Admin_Tool_Tables_Create(04).sql
+Last Modified Date: 9/22/2017
 Last Modified By: Susmitha Palacherla
+
+version 04: Access for new program staaff with jobcode WPPM11- TFS 8363 - 9/22/2017
+Added entries to Tables AT_User, AT_User_Role_Link and AT_Role_Access
 
 version 03: Access for Mark Hackman's new job code WPSM13- TFS 6246 - 4/11/2017
 
@@ -141,11 +144,11 @@ INSERT INTO [EC].[AT_User]
 			[EmpJobCode],
 			[Active])        
 VALUES
-('500306','JohnEric.Tiongson', 'John Eric Z','WISY13',1),
+('500306','JohnEric.Tiongson', 'John Eric Z','WISY14',1),
 ('343549','Mark.Hackman', 'Hackman, Mark G','WPSM13',1),
 ('408246','Scott.Potter', 'Potter, Scott E','WACQ13',1),
-('345712','susmitha.palacherla', 'Palacherla, Susmitha','WISO13',1),
-('379750','lisa.stein', 'Stein, Lisa D','WSTE12',1)          
+('333386','shelly.encke', 'Encke, Shelly J','WPPM11',1),
+('397938','Sara.Stonecipher', 'Stonecipher, Sara M','WPPM11',1)         
 GO
 
 
@@ -184,7 +187,8 @@ VALUES
 ('ReportWarningLSAUser',0),
 ('ReportCoachingTrainUser',0),
 ('ReportWarningTrainUser',0)
-
+('SuperUser',1),
+('ACLAdmin',1)
           
 GO
 
@@ -222,26 +226,30 @@ INSERT INTO [EC].[AT_User_Role_Link]
             ([UserId] ,
 			[RoleId])  
 VALUES
-(500306,101),
-(500306,103),
 ('343549',101),
 ('343549',103),
+('343549',106),
+('343549',107),
+('343549',119),
 ('408246',101),
 ('408246',103),
-(345712,106),
-(345712,107),
-(380017,106),
-(380017,107),
-(379750,106),
-(379750,107),
-(343549,106),
-(343549,107),
-(408246,106),
-(408246,107),
-(365226,106),
-(365226,107),
-(500306,106),
-(500306,107)
+('408246',106),
+('408246',107),
+('408246',119),
+('500306',101),
+('500306',103),
+('500306',106),
+('500306',107),
+('500306',118),
+('500306',119),
+('333386',101),
+('333386',103),
+('333386',106),
+('333386',107),
+('397938',101),
+('397938',103),
+('397938',106),
+('397938',107)
 
 --************************************************
 
@@ -477,18 +485,32 @@ INSERT INTO [EC].[AT_Role_Access]
            ,[AddToUser]
            ,[isActive])
               VALUES
-           ('WISY13','Sr Analyst, Systems',101,'CoachingAdmin',0,1),
-           ('WACS50','Manager, Customer Service',102,'CoachingUser',1,1),
-           ('WACS60','Sr Manager, Customer Service',102,'CoachingUser',1,1),
-           ('WIHD50','Manager, Help Desk',102,'CoachingUser',1,1),
-           ('WTTR50','Manager, Training',102,'CoachingUser',1,1),
-           ('WPPM13','Sr Analyst, Program',102,'CoachingUser',1,1),
-           ('WISY13','Sr Analyst, Systems',103,'WarningAdmin',0,1),
+
            ('WACQ13','Sr Specialist, Quality (CS)',101,'CoachingAdmin',0,1),
            ('WACQ13','Sr Specialist, Quality (CS)',103,'WarningAdmin',0,1),
-           ('WACS60','Sr Manager, Customer Service',105,'SeniorManager',1,1),
+	   ('WACQ13','Sr Specialist, Quality (CS)',106,'ReportCoachingAdmin',0,1),
+           ('WACQ13','Sr Specialist, Quality (CS)',107,'ReportWarningAdmin',0,1),
+           ('WISY14','Principal Analyst, Systems',101,'CoachingAdmin',0,1),
+           ('WISY14','Principal Analyst, Systems',103,'WarningAdmin',0,1),
+           ('WISY14','Principal Analyst, Systems',106,'ReportCoachingAdmin',0,1),
+           ('WISY14','Principal Analyst, Systems',107,'ReportWarningAdmin',0,1),
 	   ('WPSM13','Sr Analyst, Functional',101,'CoachingAdmin',0,1),
            ('WPSM13','Sr Analyst, Functional',103,'WarningAdmin',0,1),
+	   ('WPSM13','Sr Analyst, Functional',106,'ReportCoachingAdmin',0,1),
+           ('WPSM13','Sr Analyst, Functional',107,'ReportWarningAdmin',0,1),
+	   ('WPPM11','Associate Analyst, Program',101,'CoachingAdmin',0,1),
+           ('WPPM11','Associate Analyst, Program',103,'WarningAdmin',0,1),
+           ('WPPM11','Associate Analyst, Program',106,'ReportCoachingAdmin',0,1),
+           ('WPPM11','Associate Analyst, Program',107,'ReportWarningAdmin',0,1),
+           ('WACS50','Manager, Customer Service',102,'CoachingUser',1,1),
+           ('WACS60','Sr Manager, Customer Service',102,'CoachingUser',1,1),
+           ('WACS60','Sr Manager, Customer Service',105,'SeniorManager',1,1),
+           ('WIHD50','Manager, Help Desk',102,'CoachingUser',1,1),
+           ('WTTR50','Manager, Training',102,'CoachingUser',1,1),
+           ('WPPM13','Sr Analyst, Program',102,'CoachingUser',1,1)
+          
+         
+          
       
 
 --***************************************
