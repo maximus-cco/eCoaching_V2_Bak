@@ -1,10 +1,17 @@
 /*
-File: eCoaching_EmployeeHierarchy_Load_Tables_Create(02).sql 
-Last Modified Date: 3/22/2017
+File: eCoaching_EmployeeHierarchy_Load_Tables_Create(03).sql 
+Last Modified Date: 9/22/2017
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to support revised logic for Re-used Ids - TFS 8228- 09/22/2017
+Capture additional attributes like Hire_Date, Emp_ID_Prefix, DeptID, Dept_Desc, Reg/Temp, Full/Part, and Preferred name attributes.
+Added fields to thse tables.
+1. [EC].[Employee_Hierarchy_Stage] 
+2. [EC].[Employee_Hierarchy]
+3. [EC].[HR_Hierarchy_Stage]
+
 Version 02: Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
-Added table 8. [EC].[Employee_Ids_With_Prefixes]
+1. [EC].[Employee_Ids_With_Prefixes]
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -38,8 +45,8 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 -- Author: Susmitha Palacherla
 -- Create Date: 12/02/2013
 -- Description: Used to stage Automated Employee File from Peoplesoft.
--- Last Modified Date:
--- Last Modified By: 
+-- Last Modified Date:09/22/2017
+-- Last Modified By: Susmitha Palacherla - TFS 8228
 
 -- =============================================
 
@@ -72,10 +79,15 @@ CREATE TABLE [EC].[Employee_Hierarchy_Stage](
 	[Mgr_Job_Description] [nvarchar](50) NULL,
 	[Mgr_LanID] [nvarchar](30) NULL,
 	[Start_Date] [datetime] NULL,
-	[Active] [nvarchar](1) NULL
+	[Active] [nvarchar](1) NULL,
+	[Emp_ID_Prefix] [nvarchar](10) NULL,
+	[Hire_Date] [datetime] NULL,
+	[Emp_Pri_Name] [nvarchar](70) NULL,
+	[Dept_ID] [nvarchar](10) NULL DEFAULT ('NA'),
+	[Dept_Description] [nvarchar](60) NULL DEFAULT ('NA'),
+	[Reg_Temp] [nvarchar](3) NULL DEFAULT ('NA'),
+	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA')
 ) ON [PRIMARY]
-
-GO
 
 
 
@@ -86,8 +98,8 @@ GO
 -- Author: Susmitha Palacherla
 -- Create Date: 12/02/2013
 -- Description: Used to store the Employee Information to be used by the Coaching application.
--- Last Modified Date:
--- Last Modified By: 
+-- Last Modified Date:Susmitha Palacherla - TFS 8228
+-- Last Modified By: 09/22/2017
 
 -- =============================================
 
@@ -96,10 +108,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [EC].[Employee_Hierarchy](
+SCREATE TABLE [EC].[Employee_Hierarchy](
 	[Emp_ID] [nvarchar](10) NOT NULL,
 	[Emp_Name] [nvarchar](70) NULL,
 	[Emp_Email] [nvarchar](50) NULL,
@@ -121,15 +130,27 @@ CREATE TABLE [EC].[Employee_Hierarchy](
 	[Mgr_Job_Code] [nvarchar](50) NULL,
 	[Mgr_Job_Description] [nvarchar](50) NULL,
 	[Start_Date] [nvarchar](10) NULL,
-	[End_Date] [nvarchar](10) NULL,
+	[End_Date] [nvarchar](10) NULL CONSTRAINT [DF__Employee___End_D__03317E3D]  DEFAULT ((99991231)),
 	[Active] [nvarchar](1) NULL,
+	[SrMgrLvl1_ID] [nvarchar](10) NULL,
+	[SrMgrLvl2_ID] [nvarchar](10) NULL,
+	[SrMgrLvl3_ID] [nvarchar](10) NULL,
+	[Emp_ID_Prefix] [nvarchar](10) NULL,
+	[Hire_Date] [nvarchar](10) NULL,
+	[Emp_Pri_Name] [nvarchar](70) NULL,
+	[Dept_ID] [nvarchar](10) NULL DEFAULT ('NA'),
+	[Dept_Description] [nvarchar](60) NULL DEFAULT ('NA'),
+	[Reg_Temp] [nvarchar](3) NULL DEFAULT ('NA'),
+	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA'),
  CONSTRAINT [PK_Emp_ID] PRIMARY KEY CLUSTERED 
 (
 	[Emp_ID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
+
+
 
 ALTER TABLE [EC].[Employee_Hierarchy] ADD  CONSTRAINT [DF__Employee___End_D__03317E3D]  DEFAULT ((99991231)) FOR [End_Date]
 GO
@@ -262,8 +283,8 @@ GO
 -- Author: Susmitha Palacherla
 -- Create Date: 04/12/2016
 -- Description: Used to stage HR employee records
--- Last Modified Date:
--- Last Modified By: 
+-- Last Modified Date:09/22/2017
+-- Last Modified By: Susmitha Palacherla - TFS 8228
 
 -- =============================================
 
@@ -296,9 +317,10 @@ CREATE TABLE [EC].[HR_Hierarchy_Stage](
 	[Mgr_Job_Description] [nvarchar](50) NULL,
 	[Mgr_LanID] [nvarchar](30) NULL,
 	[Start_Date] [datetime] NULL,
-	[Active] [nvarchar](1) NULL
+	[Active] [nvarchar](1) NULL,
+	[Emp_ID_Prefix] [nvarchar](10) NULL,
+	[Hire_Date] [datetime] NULL
 ) ON [PRIMARY]
-
 GO
 
 --*****************************************************
