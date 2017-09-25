@@ -1,7 +1,9 @@
 /*
-sp_Update_Employee_Hierarchy_Stage(02).sql
-Last Modified Date: 3/22/2017
+sp_Update_Employee_Hierarchy_Stage(03).sql
+Last Modified Date: 09/22/2017
 Last Modified By: Susmitha Palacherla
+
+Version 03: Updated to revise logic for supporting reused numeric part of Employee ID per TFS 8228 - 9/22/2017
 
 Version 02: Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
 
@@ -25,12 +27,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/2/2013
@@ -51,6 +47,7 @@ GO
 -- Updated per TFS 641 to trim leading and trailing spaces in Employee and Supervisor Ids 
 -- from eWFM and PeopleSoft before using in Employee Hierarchy table - 09/03/2015
 -- Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
+-- Updated to revise logic for supporting reused numeric part of Employee ID per TFS 8228 - 9/22/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage] 
 AS
@@ -73,6 +70,17 @@ OPTION (MAXDOP 1)
 END
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
+-- Populate Emp_Name with Primary Name where No preferred Name populated.
+
+BEGIN
+UPDATE [EC].[Employee_Hierarchy_Stage]
+SET [Emp_Name] = [Emp_Pri_Name]
+WHERE LTRIM(RTRIM(Emp_Name)) = ','
+ 
+OPTION (MAXDOP 1)
+END  
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
 
 -- Removes Alpha characters from first 2 positions of Sup_EMP_ID, Mgr_Emp_ID
 -- and removes all leading and trailing spaces.
@@ -88,27 +96,49 @@ OPTION (MAXDOP 1)
 END  
  WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
+-- Updates Hierarchy table to populate Hire_date with Start_Date and Employee ID with prefix if
+-- record available in Staging table
+BEGIN
+UPDATE eh
+SET  [Emp_ID_Prefix] = hs.[Emp_ID]
+,[Hire_Date]= CONVERT(nvarchar(8),hs.[Start_Date],112)
+From [EC].[Employee_hierarchy] eh Join [EC].[Employee_Hierarchy_Stage]hs
+ON REPLACE(LTRIM(RTRIM(eh.[Emp_ID])),' ','') = [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(HS.[Emp_ID])),' ',''))
+AND ([EC].[fn_strEmpFirstNameFromEmpName] (hs.Emp_Pri_Name) = [EC].[fn_strEmpFirstNameFromEmpName] (eh.Emp_Pri_Name)
+ OR [EC].[fn_strEmpLastNameFromEmpName] (hs.Emp_Pri_Name) =[EC].[fn_strEmpLastNameFromEmpName] (eh.emp_Pri_Name))
+ Where eh.Emp_ID_Prefix like 'WX%'
+ 
+OPTION (MAXDOP 1)
+END  
+ WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
  -- Inserts Employee Ids sharing the numeric part of an existing Employee IDs
  -- into a tracking table
 
 BEGIN
 INSERT INTO [EC].[Employee_Ids_With_Prefixes]
 	([Emp_ID],[Emp_Name],[Emp_LanID],[Start_Date],[Inserted_Date])
-	SELECT S.[Emp_ID],
-	S.[Emp_Name],
-	S.[Emp_LanID],
-	S.[Start_Date],
-	GETDATE()[Inserted_Date]
-  FROM (SELECT HS.[Emp_ID], HS.[Emp_Name],HS.[Emp_LanID],HS.[Start_Date]
+
+     SELECT S.[Emp_ID],
+	   S.[Emp_Name],
+	   S.[Emp_LanID],
+	   S.[Start_Date],
+	   GETDATE()[Inserted_Date]
+ FROM 
+ (SELECT HS.[Emp_ID],
+		HS.[Emp_Name],
+		HS.[Emp_LanID],
+		HS.[Start_Date]
   FROM [EC].[Employee_Hierarchy_Stage]HS LEFT OUTER JOIN[EC].[Employee_Hierarchy]H
   ON [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(HS.[Emp_ID])),' ',''))= H.[Emp_ID]
-  WHERE REPLACE(HS.[Emp_LanID], '#','') <> H.Emp_LanID
-  AND REPLACE(HS.[Emp_Name],'''', '') <> H.Emp_Name
-  AND CONVERT(nvarchar(8),HS.[Start_Date],112)<> H.Start_Date
-  AND HS.[Emp_ID] NOT IN (SELECT DISTINCT EMPID FROM [EC].[EmployeeID_To_LanID]))S
-  LEFT OUTER JOIN [EC].[Employee_Ids_With_Prefixes]PE
-  ON S.Emp_ID = PE.Emp_ID
-  WHERE PE.Emp_ID IS NULL
+	  WHERE CONVERT(nvarchar(8),HS.[Hire_Date],112) <> H.Hire_Date
+	  AND REPLACE(LTRIM(RTRIM(HS.[Emp_ID_Prefix])),' ','') <> REPLACE(LTRIM(RTRIM(H.[Emp_ID_Prefix])),' ','')
+	  AND HS.[Emp_ID] NOT IN 
+ (SELECT DISTINCT EMPID FROM [EC].[EmployeeID_To_LanID])
+ )S LEFT OUTER JOIN [EC].[Employee_Ids_With_Prefixes]PE
+ ON S.Emp_ID = PE.Emp_ID
+ WHERE PE.Emp_ID IS NULL
  
 OPTION (MAXDOP 1)
 END 
@@ -146,12 +176,13 @@ SET [Sup_Emp_ID] = [Sup_ID],
 [Emp_Program]= 
 CASE WHEN WFMSUP.[Emp_Program]like 'FFM%'
 THEN 'Marketplace' ELSE 'Medicare' END
-FROM [EC].[EmpID_To_SupID_Stage] WFMSUP JOIN [EC].[Employee_Hierarchy_Stage]INFO
-ON WFMSUP.Emp_ID = INFO.Emp_ID
-WHERE INFO.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
+FROM [EC].[EmpID_To_SupID_Stage] WFMSUP JOIN [EC].[Employee_Hierarchy_Stage]HS
+ON WFMSUP.Emp_ID = HS.Emp_ID
+WHERE HS.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
 OPTION (MAXDOP 1)
 END
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
 
 
 
@@ -173,6 +204,7 @@ OPTION (MAXDOP 1)
 END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
 
 
 
@@ -257,7 +289,6 @@ END TRY
   END CATCH  
 
 END  -- [EC].[sp_Update_Employee_Hierarchy_Stage]
-
 
 GO
 

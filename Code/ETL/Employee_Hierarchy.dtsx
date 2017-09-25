@@ -14,8 +14,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="Employee_Hierarchy"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="120"
-  DTS:VersionGUID="{C9FCD0CC-1500-413D-8AF6-B2D9ADA228DC}">
+  DTS:VersionBuild="134"
+  DTS:VersionGUID="{A02149AA-F967-464A-9DE2-6362713324BD}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -45,7 +45,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="65001"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\EmpInfo\Dev\Employee_Information_WithProgram.csv">
+          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\EmpInfo\Employee_Information_WithProgram.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -328,34 +328,34 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\HRInfo\Dev\HR_Employee_Information.csv">
+          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\HRInfo\HR_Employee_Information.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="10"
+              DTS:MaximumWidth="50"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_ID"
-              DTS:DTSID="{0C59ED86-DCE6-440B-8E55-3924C644CD28}"
+              DTS:DTSID="{B7393B54-E43D-417D-A332-53D4F80EFE43}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="30"
+              DTS:MaximumWidth="50"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_LanID"
-              DTS:DTSID="{2DFE14A6-0CB7-4856-AD2F-8523C432CE85}"
+              DTS:DTSID="{548A4BCA-9969-4347-B551-DF0461592573}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="70"
+              DTS:MaximumWidth="50"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_Name"
-              DTS:DTSID="{A07AC861-17BA-40EF-82F2-E7DE0A187AAF}"
+              DTS:DTSID="{D43DF645-F063-4163-B7F7-53CDB5B54B7B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -364,16 +364,16 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_Site"
-              DTS:DTSID="{3FA7A34D-7BDF-413A-BFD3-E1C782D7A87B}"
+              DTS:DTSID="{B65DE042-166B-45A4-A109-B1AF338D73B4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="70"
+              DTS:MaximumWidth="50"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_Email"
-              DTS:DTSID="{B72B3404-3EE3-4314-BA87-40E60216DE37}"
+              DTS:DTSID="{16830F25-B0F3-4A94-842D-5C0C6A40C3F0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -382,7 +382,25 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_Job_Code"
-              DTS:DTSID="{E306086C-A3CF-4321-A14E-F08B2AA64AEA}"
+              DTS:DTSID="{178B84BC-E70C-4E29-8B41-3D33D78FFB38}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Emp_Job_Description"
+              DTS:DTSID="{D459BFC9-AC0C-415A-8F6A-0ECEE0F62C9E}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Emp_ID_Prefix"
+              DTS:DTSID="{4BF8CFD5-5841-431C-94E8-A8B5C055997F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -390,8 +408,8 @@
               DTS:MaximumWidth="50"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Emp_Job_Description"
-              DTS:DTSID="{DAB399DB-BD0E-4D56-9D9F-4E1C718530E5}"
+              DTS:ObjectName="Hire_Date"
+              DTS:DTSID="{82FF2172-CACF-4BA3-9C35-29A1BED2EBB0}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -416,7 +434,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\HRInfo\Dev\PS_Employee_Information_07312017.csv">
+          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\HRInfo\PS_Employee_Information_09222017.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -425,7 +443,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="lanid"
-              DTS:DTSID="{C144A978-B427-480B-9521-B12DFA1E8F36}"
+              DTS:DTSID="{6060267B-7851-416F-938B-584D064B225B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -434,7 +452,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="emplid"
-              DTS:DTSID="{3CB5F408-12C2-42B4-9BB9-63E2FCEE479A}"
+              DTS:DTSID="{AEBD03B0-5655-4351-96DD-F38CEA26121B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -443,7 +461,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="first_name"
-              DTS:DTSID="{B6CD9D34-AF4A-43F4-A09D-B0BDC88C4E05}"
+              DTS:DTSID="{8F8FC5E7-BC31-44DF-9C97-831CF7EAE5F1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -452,7 +470,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="middle_name"
-              DTS:DTSID="{1AF112B7-3213-4377-BEDF-2DE3A8ABC6E7}"
+              DTS:DTSID="{FB1007AB-8AA1-4390-847C-0821C9FE6EA0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -461,7 +479,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="last_name"
-              DTS:DTSID="{CA5FA88D-6416-4593-B349-3A4735FBA10D}"
+              DTS:DTSID="{7B9D0F7D-F71E-40F4-9F90-99AEA1290C98}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -470,7 +488,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="locationid"
-              DTS:DTSID="{DD38DB9F-4075-4C2D-9678-812741FAA5A4}"
+              DTS:DTSID="{50A3CF0B-E446-49CA-8225-28A88DEAE6D8}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -479,7 +497,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="location"
-              DTS:DTSID="{AEFE51B2-1279-46F2-85B0-78B5558632B9}"
+              DTS:DTSID="{1C0F822D-938F-4D02-8CB7-D1250FE120D7}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -488,7 +506,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="supervisorid"
-              DTS:DTSID="{C413FCC2-DAC6-400D-B2BD-75EA3D455D7B}"
+              DTS:DTSID="{FA05C3E5-A2A8-46F4-85B5-584B4BE07550}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -497,7 +515,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="managerid"
-              DTS:DTSID="{94CAC2E7-DE9D-4813-9F35-766CB8A330F6}"
+              DTS:DTSID="{DBDD1615-BF2C-44E0-848F-BA4F0F75506A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -506,7 +524,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="jobcodeid"
-              DTS:DTSID="{3C5967BA-FE78-423F-A96E-3406AA8F533B}"
+              DTS:DTSID="{A7FC8130-5BC4-4466-9EB0-02AFB2BF8993}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -515,7 +533,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="jobcode"
-              DTS:DTSID="{7D544C94-C056-4315-8E6C-494448F9F6BB}"
+              DTS:DTSID="{A2860409-DAF7-436D-A6BF-612130A1DA5D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -524,7 +542,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="email_addr"
-              DTS:DTSID="{1F10C5C2-4C6C-418B-8FAB-40F155FB5A2E}"
+              DTS:DTSID="{B618C1C6-5A14-4E73-A6BA-5DA3908239D9}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -533,7 +551,79 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="empl_status"
-              DTS:DTSID="{9A57F17B-7BBE-4F76-ACFE-B9CCF1DE8C76}"
+              DTS:DTSID="{A60B4717-A96A-4450-9530-33249D4F5413}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName=" &quot;last_hire_dt&quot;"
+              DTS:DTSID="{18B01A70-1E2E-4B03-A13C-7C7D2E7DEE32}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName=" &quot;hire_dt&quot;"
+              DTS:DTSID="{3E233B5E-AADC-427B-939D-A55B9D9140E0}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName=" &quot;deptid&quot;"
+              DTS:DTSID="{6DE95EA5-7F0F-4832-BC40-940BEE7132F4}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName=" &quot;dept_desc&quot;"
+              DTS:DTSID="{E42BDBC7-6D69-4FDC-8EE0-ED6657E15534}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName=" &quot;reg_temp&quot;"
+              DTS:DTSID="{B718273D-CC5A-4D2C-84CE-5F44F8479195}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="full_part_time"
+              DTS:DTSID="{6F20D3B8-3E35-4241-800D-6581ABC4763D}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName=" &quot;pref_name_first&quot;"
+              DTS:DTSID="{DE7FB200-5B69-474B-9391-7DB7196E9738}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName=" &quot;pref_name_mi&quot;"
+              DTS:DTSID="{DFAB0DB6-C471-43AF-9BC6-663FCC0C9285}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -541,8 +631,8 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:MaximumWidth="50"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName=" &quot;last_hire_dt&quot;"
-              DTS:DTSID="{4F1D0D3E-CE62-4900-9CFA-6E7A4AD97D11}"
+              DTS:ObjectName=" &quot;pref_name_last&quot;"
+              DTS:DTSID="{750DB414-9ABD-415F-A2FA-3D7BAF56B98B}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -585,7 +675,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:Namespace="User"
       DTS:ObjectName="FileDir">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\HRInfo\Dev\</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\HRInfo\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -605,7 +695,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:Namespace="User"
       DTS:ObjectName="HRFileBackup">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\HRInfo\Dev\Backups\</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\HRInfo\Backups\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -625,7 +715,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:Namespace="User"
       DTS:ObjectName="PSFile">
       <DTS:VariableValue
-        DTS:DataType="8">PS_Employee_Information_07312017.csv</DTS:VariableValue>
+        DTS:DataType="8">PS_Employee_Information_09222017.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -645,7 +735,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:Namespace="User"
       DTS:ObjectName="PSFileName">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\HRInfo\Dev\PS_Employee_Information_07312017.csv</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\HRInfo\PS_Employee_Information_09222017.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -672,7 +762,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:Namespace="User"
       DTS:ObjectName="WFMFileDir">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\EmpInfo\Dev\</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\EmpInfo\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -695,7 +785,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:LocaleID="-1"
       DTS:ObjectName="Delete HR Employees from Staging Table"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -712,7 +802,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:LocaleID="-1"
       DTS:ObjectName="File System Task"
       DTS:TaskContact="File System Task;Microsoft Corporation; Microsoft SQL Server 2008; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <FileSystemData
@@ -731,7 +821,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:LocaleID="-1"
       DTS:ObjectName="HR File Empty"
       DTS:TaskContact="Send Mail Task; Microsoft Corporation; Microsoft SQL Server 2008; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:PropertyExpression
         DTS:Name="CCLine">@[User::CcEmail]</DTS:PropertyExpression>
@@ -759,7 +849,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:LocaleID="-1"
       DTS:ObjectName="Inactivate Coaching Logs for Terms"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -777,7 +867,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:LocaleID="-1"
       DTS:ObjectName="Inactivate Expired Warnings"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -907,12 +997,68 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       cachedName="empl_status"
                       lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[empl_status]" />
                     <inputColumn
-                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[ &quot;last_hire_dt&quot;]"
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[ last_hire_dt]"
                       cachedCodepage="1252"
                       cachedDataType="str"
                       cachedLength="50"
-                      cachedName=" &quot;last_hire_dt&quot;"
-                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ &quot;last_hire_dt&quot;]" />
+                      cachedName=" last_hire_dt"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ last_hire_dt]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[ hire_dt]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName=" hire_dt"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ hire_dt]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[ deptid]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName=" deptid"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ deptid]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[ dept_desc]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName=" dept_desc"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ dept_desc]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[ reg_temp]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName=" reg_temp"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ reg_temp]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[full_part_time]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName="full_part_time"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[full_part_time]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[ pref_name_first]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName=" pref_name_first"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_first]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[ pref_name_mi]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName=" pref_name_mi"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_mi]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[ pref_name_last]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName=" pref_name_last"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_last]" />
                   </inputColumns>
                   <externalMetadataColumns />
                 </input>
@@ -1198,19 +1344,186 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       </properties>
                     </outputColumn>
                     <outputColumn
-                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  &quot;last_hire_dt&quot;]"
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  last_hire_dt]"
                       dataType="date"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
-                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  &quot;last_hire_dt&quot;]"
-                      name="Copy of  &quot;last_hire_dt&quot;"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  last_hire_dt]"
+                      name="Copy of  last_hire_dt"
                       truncationRowDisposition="FailComponent">
                       <properties>
                         <property
                           containsID="true"
                           dataType="System.Int32"
                           description="Specifies the input column used as the source of data for the conversion."
-                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ "last_hire_dt"]}</property>
+                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ last_hire_dt]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  hire_dt]"
+                      dataType="date"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  hire_dt]"
+                      name="Copy of  hire_dt"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ hire_dt]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  deptid]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="10"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  deptid]"
+                      name="Copy of  deptid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ deptid]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  dept_desc]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="60"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  dept_desc]"
+                      name="Copy of  dept_desc"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ dept_desc]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  reg_temp]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="3"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  reg_temp]"
+                      name="Copy of  reg_temp"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ reg_temp]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of full_part_time]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="3"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of full_part_time]"
+                      name="Copy of full_part_time"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[full_part_time]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_first]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="30"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_first]"
+                      name="Copy of  pref_name_first"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_first]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_mi]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="1"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_mi]"
+                      name="Copy of  pref_name_mi"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_mi]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_last]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="30"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_last]"
+                      name="Copy of  pref_name_last"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_last]}</property>
                         <property
                           dataType="System.Boolean"
                           description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -1275,6 +1588,30 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       cachedLength="30"
                       cachedName="Copy of last_name"
                       lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of last_name]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Derived Column.Inputs[Derived Column Input].Columns[Copy of  pref_name_first]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="Copy of  pref_name_first"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_first]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Derived Column.Inputs[Derived Column Input].Columns[Copy of  pref_name_mi]"
+                      cachedDataType="wstr"
+                      cachedLength="1"
+                      cachedName="Copy of  pref_name_mi"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_mi]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Derived Column.Inputs[Derived Column Input].Columns[Copy of  pref_name_last]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="Copy of  pref_name_last"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_last]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Derived Column.Inputs[Derived Column Input].Columns[Copy of emplid]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="Copy of emplid"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of emplid]" />
                   </inputColumns>
                   <externalMetadataColumns />
                 </input>
@@ -1288,13 +1625,13 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                   synchronousInputId="Package\Load Employee Hierarchy Staging Table\Derived Column.Inputs[Derived Column Input]">
                   <outputColumns>
                     <outputColumn
-                      refId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[FullName]"
+                      refId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[FullPrimaryName]"
                       dataType="wstr"
                       errorOrTruncationOperation="Computation"
                       errorRowDisposition="FailComponent"
                       length="64"
-                      lineageId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[FullName]"
-                      name="FullName"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[FullPrimaryName]"
+                      name="FullPrimaryName"
                       truncationRowDisposition="FailComponent">
                       <properties>
                         <property
@@ -1331,6 +1668,52 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                           description="Derived Column Friendly Expression"
                           expressionType="Notify"
                           name="FriendlyExpression">"NA"</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[FullPreferredName]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      length="64"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[FullPreferredName]"
+                      name="FullPreferredName"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">([ISNULL](#{Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_last]}) ? "" : #{Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_last]}) + ", " + ([ISNULL](#{Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_first]}) ? "" : #{Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_first]}) + " " + ([ISNULL](#{Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_mi]}) ? "" : #{Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  pref_name_mi]})</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">(ISNULL([Copy of  pref_name_last]) ? "" : [Copy of  pref_name_last]) + ", " + (ISNULL([Copy of  pref_name_first]) ? "" : [Copy of  pref_name_first]) + " " + (ISNULL([Copy of  pref_name_mi]) ? "" : [Copy of  pref_name_mi])</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[Emp_ID_Prefix]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Computation"
+                      errorRowDisposition="FailComponent"
+                      length="10"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[Emp_ID_Prefix]"
+                      name="Emp_ID_Prefix"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Expression"
+                          name="Expression">#{Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of emplid]}</property>
+                        <property
+                          containsID="true"
+                          dataType="System.String"
+                          description="Derived Column Friendly Expression"
+                          expressionType="Notify"
+                          name="FriendlyExpression">[Copy of emplid]</property>
                       </properties>
                     </outputColumn>
                   </outputColumns>
@@ -1679,15 +2062,191 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       </properties>
                     </outputColumn>
                     <outputColumn
-                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ &quot;last_hire_dt&quot;]"
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ last_hire_dt]"
                       codePage="1252"
                       dataType="str"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;last_hire_dt&quot;]"
                       length="50"
-                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ &quot;last_hire_dt&quot;]"
-                      name=" &quot;last_hire_dt&quot;"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ last_hire_dt]"
+                      name=" last_hire_dt"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ hire_dt]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;hire_dt&quot;]"
+                      length="50"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ hire_dt]"
+                      name=" hire_dt"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ deptid]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;deptid&quot;]"
+                      length="50"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ deptid]"
+                      name=" deptid"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ dept_desc]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;dept_desc&quot;]"
+                      length="50"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ dept_desc]"
+                      name=" dept_desc"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ reg_temp]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;reg_temp&quot;]"
+                      length="50"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ reg_temp]"
+                      name=" reg_temp"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[full_part_time]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[full_part_time]"
+                      length="50"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[full_part_time]"
+                      name="full_part_time"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_first]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;pref_name_first&quot;]"
+                      length="50"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_first]"
+                      name=" pref_name_first"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_mi]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;pref_name_mi&quot;]"
+                      length="50"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_mi]"
+                      name=" pref_name_mi"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_last]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;pref_name_last&quot;]"
+                      length="50"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[ pref_name_last]"
+                      name=" pref_name_last"
                       truncationRowDisposition="FailComponent">
                       <properties>
                         <property
@@ -1787,6 +2346,54 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       dataType="str"
                       length="50"
                       name=" &quot;last_hire_dt&quot;" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;hire_dt&quot;]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name=" &quot;hire_dt&quot;" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;deptid&quot;]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name=" &quot;deptid&quot;" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;dept_desc&quot;]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name=" &quot;dept_desc&quot;" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;reg_temp&quot;]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name=" &quot;reg_temp&quot;" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[full_part_time]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name="full_part_time" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;pref_name_first&quot;]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name=" &quot;pref_name_first&quot;" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;pref_name_mi&quot;]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name=" &quot;pref_name_mi&quot;" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ &quot;pref_name_last&quot;]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name=" &quot;pref_name_last&quot;" />
                   </externalMetadataColumns>
                 </output>
                 <output
@@ -1898,13 +2505,6 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_ID]"
                       lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of emplid]" />
                     <inputColumn
-                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FullName]"
-                      cachedDataType="wstr"
-                      cachedLength="64"
-                      cachedName="FullName"
-                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Name]"
-                      lineageId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[FullName]" />
-                    <inputColumn
                       refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of email_addr]"
                       cachedDataType="wstr"
                       cachedLength="50"
@@ -1961,11 +2561,11 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Mgr_Emp_ID]"
                       lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of managerid]" />
                     <inputColumn
-                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of  &quot;last_hire_dt&quot;]"
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of  last_hire_dt]"
                       cachedDataType="date"
-                      cachedName="Copy of  &quot;last_hire_dt&quot;"
+                      cachedName="Copy of  last_hire_dt"
                       externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Start_Date]"
-                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  &quot;last_hire_dt&quot;]" />
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  last_hire_dt]" />
                     <inputColumn
                       refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Emp_Program]"
                       cachedDataType="wstr"
@@ -1973,6 +2573,61 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       cachedName="Emp_Program"
                       externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Program]"
                       lineageId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[Emp_Program]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FullPreferredName]"
+                      cachedDataType="wstr"
+                      cachedLength="64"
+                      cachedName="FullPreferredName"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Name]"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[FullPreferredName]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of  hire_dt]"
+                      cachedDataType="date"
+                      cachedName="Copy of  hire_dt"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Hire_Date]"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  hire_dt]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FullPrimaryName]"
+                      cachedDataType="wstr"
+                      cachedLength="64"
+                      cachedName="FullPrimaryName"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Pri_Name]"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[FullPrimaryName]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of  deptid]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="Copy of  deptid"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Dept_ID]"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  deptid]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of  dept_desc]"
+                      cachedDataType="wstr"
+                      cachedLength="60"
+                      cachedName="Copy of  dept_desc"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Dept_Description]"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  dept_desc]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of  reg_temp]"
+                      cachedDataType="wstr"
+                      cachedLength="3"
+                      cachedName="Copy of  reg_temp"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Reg_Temp]"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of  reg_temp]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of full_part_time]"
+                      cachedDataType="wstr"
+                      cachedLength="3"
+                      cachedName="Copy of full_part_time"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Full_Part_Time]"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of full_part_time]" />
+                    <inputColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Emp_ID_Prefix]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="Emp_ID_Prefix"
+                      externalMetadataColumnId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_ID_Prefix]"
+                      lineageId="Package\Load Employee Hierarchy Staging Table\Derived Column.Outputs[Derived Column Output].Columns[Emp_ID_Prefix]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -2085,6 +2740,40 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       dataType="wstr"
                       length="20"
                       name="Emp_Program" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_ID_Prefix]"
+                      dataType="wstr"
+                      length="10"
+                      name="Emp_ID_Prefix" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Hire_Date]"
+                      dataType="dbTimeStamp"
+                      name="Hire_Date" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Pri_Name]"
+                      dataType="wstr"
+                      length="70"
+                      name="Emp_Pri_Name" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Dept_ID]"
+                      dataType="wstr"
+                      length="10"
+                      name="Dept_ID" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Dept_Description]"
+                      dataType="wstr"
+                      length="60"
+                      name="Dept_Description" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Reg_Temp]"
+                      dataType="wstr"
+                      length="3"
+                      name="Reg_Temp" />
+                    <externalMetadataColumn
+                      refId="Package\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Full_Part_Time]"
+                      dataType="wstr"
+                      length="3"
+                      name="Full_Part_Time" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -2202,21 +2891,21 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       refId="Package\Load HR Hierarchy Stage\Data Conversion.Inputs[Data Conversion Input].Columns[Emp_ID]"
                       cachedCodepage="1252"
                       cachedDataType="str"
-                      cachedLength="10"
+                      cachedLength="50"
                       cachedName="Emp_ID"
                       lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_ID]" />
                     <inputColumn
                       refId="Package\Load HR Hierarchy Stage\Data Conversion.Inputs[Data Conversion Input].Columns[Emp_LanID]"
                       cachedCodepage="1252"
                       cachedDataType="str"
-                      cachedLength="30"
+                      cachedLength="50"
                       cachedName="Emp_LanID"
                       lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_LanID]" />
                     <inputColumn
                       refId="Package\Load HR Hierarchy Stage\Data Conversion.Inputs[Data Conversion Input].Columns[Emp_Name]"
                       cachedCodepage="1252"
                       cachedDataType="str"
-                      cachedLength="70"
+                      cachedLength="50"
                       cachedName="Emp_Name"
                       lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_Name]" />
                     <inputColumn
@@ -2230,7 +2919,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       refId="Package\Load HR Hierarchy Stage\Data Conversion.Inputs[Data Conversion Input].Columns[Emp_Email]"
                       cachedCodepage="1252"
                       cachedDataType="str"
-                      cachedLength="70"
+                      cachedLength="50"
                       cachedName="Emp_Email"
                       lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_Email]" />
                     <inputColumn
@@ -2247,6 +2936,20 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       cachedLength="50"
                       cachedName="Emp_Job_Description"
                       lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_Job_Description]" />
+                    <inputColumn
+                      refId="Package\Load HR Hierarchy Stage\Data Conversion.Inputs[Data Conversion Input].Columns[Emp_ID_Prefix]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName="Emp_ID_Prefix"
+                      lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_ID_Prefix]" />
+                    <inputColumn
+                      refId="Package\Load HR Hierarchy Stage\Data Conversion.Inputs[Data Conversion Input].Columns[Hire_Date]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName="Hire_Date"
+                      lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Hire_Date]" />
                   </inputColumns>
                   <externalMetadataColumns />
                 </input>
@@ -2405,6 +3108,47 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                           name="FastParse">false</property>
                       </properties>
                     </outputColumn>
+                    <outputColumn
+                      refId="Package\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Emp_ID_Prefix]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="10"
+                      lineageId="Package\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Emp_ID_Prefix]"
+                      name="Copy of Emp_ID_Prefix"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_ID_Prefix]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Hire_Date]"
+                      dataType="date"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Hire_Date]"
+                      name="Copy of Hire_Date"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Hire_Date]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
                   </outputColumns>
                   <externalMetadataColumns />
                 </output>
@@ -2544,7 +3288,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_ID]"
-                      length="10"
+                      length="50"
                       lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_ID]"
                       name="Emp_ID"
                       truncationRowDisposition="FailComponent">
@@ -2566,7 +3310,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_LanID]"
-                      length="30"
+                      length="50"
                       lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_LanID]"
                       name="Emp_LanID"
                       truncationRowDisposition="FailComponent">
@@ -2588,7 +3332,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_Name]"
-                      length="70"
+                      length="50"
                       lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_Name]"
                       name="Emp_Name"
                       truncationRowDisposition="FailComponent">
@@ -2632,7 +3376,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_Email]"
-                      length="70"
+                      length="50"
                       lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_Email]"
                       name="Emp_Email"
                       truncationRowDisposition="FailComponent">
@@ -2691,6 +3435,50 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                           name="UseBinaryFormat">false</property>
                       </properties>
                     </outputColumn>
+                    <outputColumn
+                      refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_ID_Prefix]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_ID_Prefix]"
+                      length="50"
+                      lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Emp_ID_Prefix]"
+                      name="Emp_ID_Prefix"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Hire_Date]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Hire_Date]"
+                      length="50"
+                      lineageId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Hire_Date]"
+                      name="Hire_Date"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
                   </outputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -2698,19 +3486,19 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_ID]"
                       codePage="1252"
                       dataType="str"
-                      length="10"
+                      length="50"
                       name="Emp_ID" />
                     <externalMetadataColumn
                       refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_LanID]"
                       codePage="1252"
                       dataType="str"
-                      length="30"
+                      length="50"
                       name="Emp_LanID" />
                     <externalMetadataColumn
                       refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_Name]"
                       codePage="1252"
                       dataType="str"
-                      length="70"
+                      length="50"
                       name="Emp_Name" />
                     <externalMetadataColumn
                       refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_Site]"
@@ -2722,7 +3510,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_Email]"
                       codePage="1252"
                       dataType="str"
-                      length="70"
+                      length="50"
                       name="Emp_Email" />
                     <externalMetadataColumn
                       refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_Job_Code]"
@@ -2736,6 +3524,18 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       dataType="str"
                       length="50"
                       name="Emp_Job_Description" />
+                    <externalMetadataColumn
+                      refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emp_ID_Prefix]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name="Emp_ID_Prefix" />
+                    <externalMetadataColumn
+                      refId="Package\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Hire_Date]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name="Hire_Date" />
                   </externalMetadataColumns>
                 </output>
                 <output
@@ -2895,6 +3695,19 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       cachedName="Emp_Program"
                       externalMetadataColumnId="Package\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Program]"
                       lineageId="Package\Load HR Hierarchy Stage\Derived Column.Outputs[Derived Column Output].Columns[Emp_Program]" />
+                    <inputColumn
+                      refId="Package\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].Columns[Copy of Emp_ID_Prefix]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="Copy of Emp_ID_Prefix"
+                      externalMetadataColumnId="Package\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].ExternalColumns[Emp_ID_Prefix]"
+                      lineageId="Package\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Emp_ID_Prefix]" />
+                    <inputColumn
+                      refId="Package\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].Columns[Copy of Hire_Date]"
+                      cachedDataType="date"
+                      cachedName="Copy of Hire_Date"
+                      externalMetadataColumnId="Package\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].ExternalColumns[Hire_Date]"
+                      lineageId="Package\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Hire_Date]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -3007,6 +3820,15 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
                       dataType="wstr"
                       length="1"
                       name="Active" />
+                    <externalMetadataColumn
+                      refId="Package\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].ExternalColumns[Emp_ID_Prefix]"
+                      dataType="wstr"
+                      length="10"
+                      name="Emp_ID_Prefix" />
+                    <externalMetadataColumn
+                      refId="Package\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].ExternalColumns[Hire_Date]"
+                      dataType="dbTimeStamp"
+                      name="Hire_Date" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -3100,7 +3922,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:LocaleID="-1"
       DTS:ObjectName="Merge HR with Employee Hierarchy Stage"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -3117,7 +3939,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:LocaleID="-1"
       DTS:ObjectName="Populate Admin Tool user table"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -3135,7 +3957,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:LocaleID="-1"
       DTS:ObjectName="Populate Employee_Hierarchy Table"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -3152,7 +3974,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
       DTS:LocaleID="-1"
       DTS:ObjectName="PS File Empty"
       DTS:TaskContact="Send Mail Task; Microsoft Corporation; Microsoft SQL Server 2008; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:PropertyExpression
         DTS:Name="CCLine">@[User::CcEmail]</DTS:PropertyExpression>
@@ -3188,36 +4010,6 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
           Language="CSharp"
           ReadOnlyVariables="User::PSFileName"
           ReadWriteVariables="User::PSFileExists">
-          <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -3337,6 +4129,35 @@ using System.Runtime.CompilerServices;
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\Settings.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Settings.get_Default():ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Sett" +
+    "ings")]
+
+namespace ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
           <ProjectItem
             Name="ScriptMain.cs"
             Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -3478,34 +4299,35 @@ namespace ST_3ab731b42c8f41cba6c9c5c98a48e559
 	</msb:ItemGroup>
 </c:Project>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\Settings.Designer.cs"
-            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
 //
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
 
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Settings.get_Default():ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Sett" +
-    "ings")]
-
-namespace ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="ST_3ab731b42c8f41cba6c9c5c98a48e559.csproj"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -3805,7 +4627,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       DTS:LocaleID="-1"
       DTS:ObjectName="PS File Missing"
       DTS:TaskContact="Send Mail Task; Microsoft Corporation; Microsoft SQL Server 2008; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:PropertyExpression
         DTS:Name="CCLine">@[User::CcEmail]</DTS:PropertyExpression>
@@ -4841,7 +5663,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       DTS:LocaleID="-1"
       DTS:ObjectName="Update CSR Hierarchy"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -4859,7 +5681,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       DTS:LocaleID="-1"
       DTS:ObjectName="Update Emp ID to Lan ID"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -4877,7 +5699,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       DTS:LocaleID="-1"
       DTS:ObjectName="Update Employee Hierarchy Staging Table and Load HR Info Table"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -4886,16 +5708,16 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
-      DTS:refId="Package\Update Migrated User Logs"
+      DTS:refId="Package\Update LanID on Logs if changed"
       DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:Description="Execute SQL Task"
       DTS:DTSID="{62E65B73-8AE6-4A94-8691-1C78F0C5BBCD}"
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:FailPackageOnFailure="True"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Update Migrated User Logs"
+      DTS:ObjectName="Update LanID on Logs if changed"
       DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -5084,7 +5906,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       DTS:From="Package\Update CSR Hierarchy"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 5"
-      DTS:To="Package\Update Migrated User Logs" />
+      DTS:To="Package\Update LanID on Logs if changed" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
       DTS:CreationName=""
@@ -5097,7 +5919,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
       DTS:CreationName=""
       DTS:DTSID="{CF0A242A-D9B9-40B0-99B4-E897CB3203F9}"
-      DTS:From="Package\Update Migrated User Logs"
+      DTS:From="Package\Update LanID on Logs if changed"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 7"
       DTS:To="Package\Update Emp ID to Lan ID" />
@@ -5131,9 +5953,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       <GraphLayout
         Capacity="64" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="162.4,44"
+          Size="177.6,53.6"
           Id="Package\Delete HR Employees from Staging Table"
-          TopLeft="189.122641509434,216.254716981132" />
+          TopLeft="174.265498399275,216.254716981132" />
         <NodeLayout
           Size="136,44"
           Id="Package\File System Task"
@@ -5145,7 +5967,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         <NodeLayout
           Size="160.8,47.2"
           Id="Package\Inactivate Coaching Logs for Terms"
-          TopLeft="184.481132075472,359.915094339623" />
+          TopLeft="139.338274163837,355.632741338388" />
         <NodeLayout
           Size="136,44"
           Id="Package\Inactivate Expired Warnings"
@@ -5159,7 +5981,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
           Id="Package\Load HR Hierarchy Stage"
           TopLeft="385.27358490566,222.066037735849" />
         <NodeLayout
-          Size="164,44"
+          Size="156,55.2"
           Id="Package\Merge HR with Employee Hierarchy Stage"
           TopLeft="181.688679245283,291.27358490566" />
         <NodeLayout
@@ -5167,9 +5989,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
           Id="Package\Populate Admin Tool user table"
           TopLeft="379.349056603774,589.38679245283" />
         <NodeLayout
-          Size="153.6,44"
+          Size="160.8,52"
           Id="Package\Populate Employee_Hierarchy Table"
-          TopLeft="385.61320754717,359.575471698113" />
+          TopLeft="391.327493358769,366.916648271658" />
         <NodeLayout
           Size="148,35.2"
           Id="Package\PS File Empty"
@@ -5207,12 +6029,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
           Id="Package\Update Emp ID to Lan ID"
           TopLeft="391.72641509434,517.990566037736" />
         <NodeLayout
-          Size="164.8,44"
+          Size="393.6,41.6"
           Id="Package\Update Employee Hierarchy Staging Table and Load HR Info Table"
-          TopLeft="388.028301886792,291.198113207547" />
+          TopLeft="388.028301886792,278.962818918305" />
         <NodeLayout
-          Size="157.6,44"
-          Id="Package\Update Migrated User Logs"
+          Size="237.6,41.6"
+          Id="Package\Update LanID on Logs if changed"
           TopLeft="381.688679245283,438.066037735849" />
         <NodeLayout
           Size="139.2,35.2"
@@ -5278,29 +6100,25 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 10]"
-          TopLeft="385.27358490566,240.405660377359">
+          TopLeft="385.27358490566,237.96037735849">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-34.0377358490566,-2.18867924528302"
+              EndConnector="-33.4080865063846,0"
               Start="0,0"
-              End="-26.5377358490566,-2.18867924528302">
+              End="-25.9080865063846,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="-17.0188679245283,0" />
-                  <mssgle:LineSegment
-                    End="-17.0188679245283,-2.18867924528302" />
-                  <mssgle:LineSegment
-                    End="-26.5377358490566,-2.18867924528302" />
+                    End="-25.9080865063846,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-25.0188679245283,5,16,16"
+              BoundingBox="-20.9540432531923,5,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -5332,22 +6150,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 12]"
-          TopLeft="345.650943396226,313.235849056604">
+          TopLeft="337.688679245283,326.740251572327">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="42.377358490566,-0.0754716981132049"
+              EndConnector="50.3396226415092,-26.977432654022"
               Start="0,0"
-              End="34.877358490566,-0.0754716981132049">
+              End="42.8396226415092,-26.977432654022">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="21.2075471698113,0" />
+                    End="16.9866595801222,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="16.9866595801222,0"
+                    Point2="20.9866595801222,0"
+                    Point3="20.9866595801222,-4" />
                   <mssgle:LineSegment
-                    End="21.2075471698113,-0.0754716981132049" />
+                    End="20.9866595801222,-22.977432654022" />
+                  <mssgle:CubicBezierSegment
+                    Point1="20.9866595801222,-22.977432654022"
+                    Point2="20.9866595801222,-26.977432654022"
+                    Point3="24.9866595801222,-26.977432654022" />
                   <mssgle:LineSegment
-                    End="34.877358490566,-0.0754716981132049" />
+                    End="42.8396226415092,-26.977432654022" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5358,22 +6184,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 13]"
-          TopLeft="270.179245283019,260.179245283019">
+          TopLeft="351.865498399275,250.654716981132">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-6.52830188679246,31.0943396226415"
+              EndConnector="-14.1768191539925,60.3522012578614"
               Start="0,0"
-              End="-6.52830188679246,23.5943396226415">
+              End="-6.67681915399248,60.3522012578614">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,15.5471698113208" />
+                    End="18.5,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="18.5,0"
+                    Point2="22.5,0"
+                    Point3="22.5,4" />
                   <mssgle:LineSegment
-                    End="-6.52830188679246,15.5471698113208" />
+                    End="22.5,56.3522012578614" />
+                  <mssgle:CubicBezierSegment
+                    Point1="22.5,56.3522012578614"
+                    Point2="22.5,60.3522012578614"
+                    Point3="18.5,60.3522012578614" />
                   <mssgle:LineSegment
-                    End="-6.52830188679246,23.5943396226415" />
+                    End="-6.67681915399248,60.3522012578614" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5620,22 +6454,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="470.367924528302,335.122641509434">
+          TopLeft="584.828301886792,320.562818918305">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-7.81132075471697,24.4528301886792"
+              EndConnector="-113.100808528023,46.3538293533538"
               Start="0,0"
-              End="-7.81132075471697,16.9528301886792">
+              End="-113.100808528023,38.8538293533538">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,12.2264150943396" />
+                    End="0,19.1769146766769" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,19.1769146766769"
+                    Point2="0,23.1769146766769"
+                    Point3="-4,23.1769146766769" />
                   <mssgle:LineSegment
-                    End="-7.81132075471697,12.2264150943396" />
+                    End="-109.100808528023,23.1769146766769" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-109.100808528023,23.1769146766769"
+                    Point2="-113.100808528023,23.1769146766769"
+                    Point3="-113.100808528023,27.1769146766769" />
                   <mssgle:LineSegment
-                    End="-7.81132075471697,16.9528301886792" />
+                    End="-113.100808528023,38.8538293533538" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5646,22 +6488,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="385.61320754717,381.537735849057">
+          TopLeft="391.327493358769,392.916648271658">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-39.9622641509434,2.15094339622641"
+              EndConnector="-91.1892191949328,-13.6839069332704"
               Start="0,0"
-              End="-32.4622641509434,2.15094339622641">
+              End="-83.6892191949328,-13.6839069332704">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="-19.9622641509434,0" />
+                    End="-41.5946095974664,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-41.5946095974664,0"
+                    Point2="-45.5946095974664,0"
+                    Point3="-45.5946095974664,-4" />
                   <mssgle:LineSegment
-                    End="-19.9622641509434,2.15094339622641" />
+                    End="-45.5946095974664,-9.68390693327035" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-45.5946095974664,-9.68390693327035"
+                    Point2="-45.5946095974664,-13.6839069332704"
+                    Point3="-49.5946095974664,-13.6839069332704" />
                   <mssgle:LineSegment
-                    End="-32.4622641509434,2.15094339622641" />
+                    End="-83.6892191949328,-13.6839069332704" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5672,22 +6522,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 5]"
-          TopLeft="343.650943396226,460.556603773585">
+          TopLeft="343.771698113207,459.730188679246">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="38.0377358490566,-0.528301886792406"
+              EndConnector="37.916981132076,0"
               Start="0,0"
-              End="30.5377358490566,-0.528301886792406">
+              End="30.416981132076,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="19.0188679245283,0" />
-                  <mssgle:LineSegment
-                    End="19.0188679245283,-0.528301886792406" />
-                  <mssgle:LineSegment
-                    End="30.5377358490566,-0.528301886792406" />
+                    End="30.416981132076,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5698,22 +6544,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 6]"
-          TopLeft="265.047169811321,407.462264150943">
+          TopLeft="219.738274163837,402.832741338388">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0.264150943396203,31.1320754716981"
+              EndConnector="45.6334239493704,35.7615982842539"
               Start="0,0"
-              End="0.264150943396203,23.6320754716981">
+              End="45.6334239493704,28.2615982842539">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,15.5471698113207" />
+                    End="0,13.880799142127" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,13.880799142127"
+                    Point2="0,17.880799142127"
+                    Point3="4,17.880799142127" />
                   <mssgle:LineSegment
-                    End="0.264150943396203,15.5471698113207" />
+                    End="41.6334239493704,17.880799142127" />
+                  <mssgle:CubicBezierSegment
+                    Point1="41.6334239493704,17.880799142127"
+                    Point2="45.6334239493704,17.880799142127"
+                    Point3="45.6334239493704,21.880799142127" />
                   <mssgle:LineSegment
-                    End="0.264150943396203,23.6320754716981" />
+                    End="45.6334239493704,28.2615982842539" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5724,22 +6578,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 7]"
-          TopLeft="460.443396226415,481.990566037736">
+          TopLeft="500.488679245283,479.666037735849">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-0.830188679245282,36"
+              EndConnector="-40.7622641509431,38.324528301887"
               Start="0,0"
-              End="-0.830188679245282,28.5">
+              End="-40.7622641509431,30.824528301887">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,18" />
+                    End="0,15.1622641509435" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,15.1622641509435"
+                    Point2="0,19.1622641509435"
+                    Point3="-4,19.1622641509435" />
                   <mssgle:LineSegment
-                    End="-0.830188679245282,18" />
+                    End="-36.7622641509431,19.1622641509435" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-36.7622641509431,19.1622641509435"
+                    Point2="-40.7622641509431,19.1622641509435"
+                    Point3="-40.7622641509431,23.1622641509435" />
                   <mssgle:LineSegment
-                    End="-0.830188679245282,28.5" />
+                    End="-40.7622641509431,30.824528301887" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5807,218 +6669,260 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
     design-time-name="Package\Load Employee Hierarchy Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="NaN,NaN"
+          Size="154.4,41.6"
           Id="Package\Load Employee Hierarchy Staging Table\Derived Column"
-          TopLeft="NaN,NaN" />
+          TopLeft="14.3,208.7" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="152,41.6"
           Id="Package\Load Employee Hierarchy Staging Table\Flat File Source"
-          TopLeft="NaN,NaN" />
+          TopLeft="15.5,5.49999999999995" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="172,41.6"
           Id="Package\Load Employee Hierarchy Staging Table\OLE DB Destination"
-          TopLeft="NaN,NaN" />
+          TopLeft="5.50000000000004,411.9" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="131.2,41.6"
           Id="Package\Load Employee Hierarchy Staging Table\Row Count"
-          TopLeft="NaN,NaN" />
+          TopLeft="25.9,310.3" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="156.8,41.6"
           Id="Package\Load Employee Hierarchy Staging Table\Data Conversion"
-          TopLeft="NaN,NaN" />
+          TopLeft="13.6714285811599,108.935294143386" />
         <EdgeLayout
           Id="Package\Load Employee Hierarchy Staging Table.Paths[Row Count Output 1]"
-          TopLeft="NaN,NaN">
+          TopLeft="91.5,351.9">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,59.9999999999999"
               Start="0,0"
-              End="0,0">
+              End="0,52.4999999999999">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Load Employee Hierarchy Staging Table.Paths[Flat File Source Output]"
-          TopLeft="NaN,NaN">
+          TopLeft="91.78571429058,47.1">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,61.8352941433863"
               Start="0,0"
-              End="0,0">
+              End="0,54.3352941433863">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,54.3352941433863" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Load Employee Hierarchy Staging Table.Paths[Derived Column Output]"
-          TopLeft="NaN,NaN">
+          TopLeft="91.5,250.3">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,59.9999999999999"
               Start="0,0"
-              End="0,0">
+              End="0,52.4999999999999">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Load Employee Hierarchy Staging Table.Paths[Data Conversion Output]"
-          TopLeft="NaN,NaN">
+          TopLeft="91.78571429058,150.535294143386">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,58.1647058566135"
               Start="0,0"
-              End="0,0">
+              End="0,50.6647058566135">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,50.6647058566135" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Load Employee Hierarchy Staging Table\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
   <TaskHost
     design-time-name="Package\Load HR Hierarchy Stage">
     <LayoutInfo>
       <GraphLayout
-        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="NaN,NaN"
+          Size="172,41.6"
           Id="Package\Load HR Hierarchy Stage\HR Hierarchy Stage"
-          TopLeft="NaN,NaN" />
+          TopLeft="5.50000000000004,411.9" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="156.8,41.6"
           Id="Package\Load HR Hierarchy Stage\Data Conversion"
-          TopLeft="NaN,NaN" />
+          TopLeft="13.1,107.1" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="152,41.6"
           Id="Package\Load HR Hierarchy Stage\Flat File Source"
-          TopLeft="NaN,NaN" />
+          TopLeft="15.5,5.49999999999995" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="131.2,41.6"
           Id="Package\Load HR Hierarchy Stage\Row Count"
-          TopLeft="NaN,NaN" />
+          TopLeft="25.9,310.3" />
         <NodeLayout
-          Size="NaN,NaN"
+          Size="154.4,41.6"
           Id="Package\Load HR Hierarchy Stage\Derived Column"
-          TopLeft="NaN,NaN" />
+          TopLeft="14.3,208.7" />
         <EdgeLayout
           Id="Package\Load HR Hierarchy Stage.Paths[Row Count Output 1]"
-          TopLeft="NaN,NaN">
+          TopLeft="91.5,351.9">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,59.9999999999999"
               Start="0,0"
-              End="0,0">
+              End="0,52.4999999999999">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Load HR Hierarchy Stage.Paths[Flat File Source Output]"
-          TopLeft="NaN,NaN">
+          TopLeft="91.5,47.1">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,59.9999999999999"
               Start="0,0"
-              End="0,0">
+              End="0,52.4999999999999">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Load HR Hierarchy Stage.Paths[Derived Column Output]"
-          TopLeft="NaN,NaN">
+          TopLeft="91.5,250.3">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,59.9999999999999"
               Start="0,0"
-              End="0,0">
+              End="0,52.4999999999999">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Load HR Hierarchy Stage.Paths[Data Conversion Output]"
-          TopLeft="NaN,NaN">
+          TopLeft="91.5,148.7">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="{assembly:Null}"
+              EndConnector="0,59.9999999999999"
               Start="0,0"
-              End="0,0">
+              End="0,52.4999999999999">
               <mssgle:Curve.Segments>
-                <assembly:Null />
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Load HR Hierarchy Stage\HR Hierarchy Stage">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
   <TaskHost
     design-time-name="Package\Stage EmpID To SupID Stage">
     <LayoutInfo>

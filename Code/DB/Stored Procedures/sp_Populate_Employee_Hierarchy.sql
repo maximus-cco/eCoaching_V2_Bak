@@ -1,8 +1,9 @@
 /*
-sp_Populate_Employee_Hierarchy(02).sql
-Last Modified Date: 5/17/2017
+sp_Populate_Employee_Hierarchy(03).sql
+Last Modified Date: 9/22/2017
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to populate preferred name and Hire date attributes. TFS 8228 - 09/21/2017
 
 Version 02: Change how email addresses with apostrophes are stored - TFS 6614 - 5/17/2017
 
@@ -26,9 +27,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
@@ -37,6 +35,7 @@ GO
 -- Last Modified By: Susmitha Palacherla
 -- updated during TFS 1710 to populate SrLvlMgr IDs - 2/18/2016
 -- updated during TFS 6614 to Change how email addresses with apostrophes are stored - 05/16/2017
+-- Updated to populate preferred name and Hire date attributes. TFS 8228 - 09/21/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
@@ -110,6 +109,11 @@ BEGIN
 		  ,[Mgr_Job_Description] = S.Mgr_Job_Description
 		  ,[Start_Date] = CONVERT(nvarchar(8),S.[Start_Date],112)
 		  ,[Active] = S.Active
+		  ,[Emp_Pri_Name] = S.Emp_Pri_Name
+		  ,Dept_ID = S.Dept_ID
+		  ,Dept_Description = S.Dept_Description
+		  ,Reg_Temp = S.Reg_Temp
+		  ,Full_Part_Time = S.Full_Part_Time
 	 FROM [EC].[Employee_Hierarchy]H JOIN [EC].[Employee_Hierarchy_Stage]S
 	 ON H.[Emp_ID] = S.[EMP_ID]
 	 WHERE H.[Emp_ID] is NOT NULL
@@ -143,10 +147,17 @@ BEGIN
 			   ,[Mgr_Job_Description]
 			   ,[Start_Date]
 			   ,[Active]
+			   ,[Emp_ID_Prefix]
+			   ,[Hire_Date]
+			   ,[Emp_Pri_Name]
+		       ,[Dept_ID]
+		       ,[Dept_Description]
+		       ,[Reg_Temp]
+			   ,[Full_Part_Time]
 			  )
 							 SELECT S.[Emp_ID]
 						      ,Replace(S.[Emp_Name],'''', '')
-                                                      ,S.[Emp_Email]
+                              ,S.[Emp_Email]
 							  ,S.[Emp_LanID]
 							  ,[EC].[fn_strSiteNameFromSiteLocation](S.[Emp_Site])
 							  ,S.[Emp_Job_Code]
@@ -166,6 +177,13 @@ BEGIN
 							  ,S.[Mgr_Job_Description]
 							  ,CONVERT(nvarchar(8),S.[Start_Date],112)
 							  ,S.[Active]
+							  ,S.[Emp_ID_Prefix]
+							  ,CONVERT(nvarchar(8),S.[Hire_Date],112)
+							  ,S.[Emp_Pri_Name] 
+							  ,S.[Dept_ID]
+							  ,S.[Dept_Description]
+							  ,S.[Reg_Temp]
+							  ,S.[Full_Part_Time]
 						  FROM [EC].[Employee_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy]H
 						  ON S.Emp_ID = H.Emp_ID
 						  WHERE (H.EMP_ID IS NULL and S.Emp_ID <> '')
@@ -179,16 +197,14 @@ WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 BEGIN
               UPDATE [EC].[Employee_Hierarchy]
               SET [SrMgrLvl1_ID]=	[EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([H].[Emp_ID])		  
-	   ,[SrMgrLvl2_ID]=	[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([H].[Emp_ID])	
-	   ,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
+				 ,[SrMgrLvl2_ID]=	[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([H].[Emp_ID])	
+	             ,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
 	FROM [EC].[Employee_Hierarchy]H
 
      OPTION (MAXDOP 1)
      END
 
 END --sp_Populate_Employee_Hierarchy
-
-
 
 GO
 

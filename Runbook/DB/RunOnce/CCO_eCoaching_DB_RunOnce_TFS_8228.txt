@@ -1,0 +1,310 @@
+/*---------------------------------------------------------------
+
+TFS 8228 - Revise logic to flag re-used Employee Ids and clean up data
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+
+-- *************DO NOT RUN FILE ALL AT ONCE******************--
+-- *********RUN ONE BLOCK AT A TIME OR ONE STATEMENT AT A TIME**************--
+
+
+
+--********BEFORE STARTING IMPLEMENTATION TAKE BACKUPS OF AFFECTED TABLES*****----
+
+--*********************************
+
+--BLOCK 1
+
+--*********************************
+
+IF OBJECT_ID('EC.CSR_Hierarchy_pre8228', 'U') IS NOT NULL
+DROP TABLE [EC].[CSR_Hierarchy_pre8228]
+GO
+
+IF OBJECT_ID('EC.Employee_Hierarchy_pre8228', 'U') IS NOT NULL
+DROP TABLE [EC].[Employee_Hierarchy_pre8228]
+GO
+
+IF OBJECT_ID('EC.EmployeeID_To_LanID_pre8228', 'U') IS NOT NULL
+DROP TABLE [EC].[EmployeeID_To_LanID_pre8228]
+GO
+
+IF OBJECT_ID('EC.Employee_Ids_With_Prefixes_pre8228', 'U') IS NOT NULL
+DROP TABLE [EC].[Employee_Ids_With_Prefixes_pre8228]
+GO
+
+
+--*********************************
+
+--BLOCK 2
+
+--*********************************
+
+SELECT *  into [EC].[Employee_Hierarchy_pre8228]
+from [EC].[Employee_Hierarchy]
+GO
+
+
+SELECT *  into [EC].[CSR_Hierarchy_pre8228]
+from [EC].[CSR_Hierarchy]
+GO
+
+
+SELECT *  into [EC].[EmployeeID_To_LanID_pre8228]
+from [EC].[EmployeeID_To_LanID]
+GO
+
+
+SELECT *  into [EC].[Employee_Ids_With_Prefixes_pre8228]
+from [EC].[Employee_Ids_With_Prefixes]
+GO
+
+
+
+
+
+
+--*********************************
+
+--BLOCK 3
+
+--*********************************
+
+
+delete eh
+from  ec.employee_hierarchy eh join [EC].[Employee_Ids_With_Prefixes_pre8228]pe
+on REPLACE(LTRIM(RTRIM(eh.[Emp_ID])),' ','') = REPLACE(LTRIM(RTRIM(pe.[Emp_ID])),' ','')
+where pe.emp_id <> 'W300207'
+GO
+
+
+delete ch
+from  [EC].[CSR_Hierarchy] ch join [EC].[Employee_Ids_With_Prefixes_pre8228]pe
+on REPLACE(LTRIM(RTRIM(ch.[EmpID])),' ','') = REPLACE(LTRIM(RTRIM(pe.[Emp_ID])),' ','')
+where pe.emp_id <> 'W300207'
+GO
+
+
+delete lan
+from  [EC].[EmployeeID_To_LanID] lan join [EC].[Employee_Ids_With_Prefixes_pre8228]pe
+on REPLACE(LTRIM(RTRIM(lan.[EmpID])),' ','') = REPLACE(LTRIM(RTRIM(pe.[Emp_ID])),' ','')
+where pe.emp_id <> 'W300207'
+GO
+
+
+delete from  [EC].[Employee_Ids_With_Prefixes]
+where emp_id <> 'W300207'
+GO
+
+
+
+
+--*********************************
+
+--BLOCK 4
+
+--*********************************
+
+
+--Add new columns to Employee Hierarchy and Hierarchy Stage tables
+
+ALTER Table [EC].[Employee_hierarchy]
+ADD [Emp_ID_Prefix] [nvarchar](10) NULL,
+[Hire_Date] [nvarchar](10) NULL,
+[Emp_Pri_Name][nvarchar](70) NULL,
+[Dept_ID] [nvarchar](10) DEFAULT 'NA',
+[Dept_Description] [nvarchar](60) DEFAULT 'NA',
+[Reg_Temp] [nvarchar](3) DEFAULT 'NA',
+[Full_Part_Time] [nvarchar](3) DEFAULT 'NA'
+GO
+
+
+
+ALTER Table [EC].[Employee_hierarchy_Stage]
+ADD [Emp_ID_Prefix] [nvarchar](10) NULL,
+[Hire_Date] [datetime] NULL,
+[Emp_Pri_Name][nvarchar](70) NULL,
+[Dept_ID] [nvarchar](10) DEFAULT 'NA',
+[Dept_Description] [nvarchar](60) DEFAULT 'NA',
+[Reg_Temp] [nvarchar](3) DEFAULT 'NA',
+[Full_Part_Time] [nvarchar](3) DEFAULT 'NA'
+GO
+
+
+
+ALTER Table [EC].[HR_Hierarchy_Stage]
+ADD [Emp_ID_Prefix] [nvarchar](10) NULL,
+[Hire_Date] [datetime] NULL
+GO
+
+
+
+
+UPDATE [EC].[Employee_hierarchy]
+SET [Emp_Pri_Name]= [Emp_Name]
+GO
+
+
+
+--*********************************
+
+--BLOCK 5
+
+--*********************************
+
+--Create table to hold History data
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [EC].[EmpHistory](
+	[emplid] [varchar](50) NULL,
+	[hire_dt] [datetime] NULL,
+	[first_name] [varchar](50) NULL,
+	[middle_name] [varchar](50) NULL,
+	[last_name] [varchar](50) NULL,
+	[Hire_date] [nvarchar](10) NULL
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+
+
+--*********************************
+
+--BLOCK 6 ****MANUAL IMPORT TASK*****---
+
+--*********************************
+
+
+--5. Import history data from Dev
+
+/*
+
+Right click eCoaching[Test] database in respective environment
+Tasks--> Import Data
+Add source
+F3420-ECLDBD01 and eCoachingDev
+
+Destination
+F3420-ECLDBP01 and eCoaching for Prod or F3420-ECLDBT01 and eCoachingTest for Test
+
+Copy data from table
+Check the [EC].[EmpHistory] table and follow wizrd to Import
+
+*/
+
+--*****************************************************************
+
+
+
+--*********************************
+
+--BLOCK 7 ****INSTALL BELOW DATABASE OBJECTS AT THIS TIME *******************
+
+--fn_strEmpFirstNameFromEmpName.sql
+--fn_strEmpLastNameFromEmpName.sql
+--sp_Merge_HR_Employee_Hierarchy_Stage.sql
+--sp_Update_Employee_Hierarchy_Stage.sql 
+--sp_Populate_Employee_Hierarchy.sql
+
+
+
+--*********************************
+
+--BLOCK 8
+
+--*********************************
+ 
+
+--Update to populate hire date and  prefix id from history table
+--Begin  Update 8a
+
+UPDATE eh
+SET  [Emp_ID_Prefix] = hist.[emplid]
+,[Hire_Date]= hist.[Hire_date]
+--Select eh.*
+From [EC].[Employee_hierarchy] eh Join [EC].[EmpHistory] hist
+ON REPLACE(LTRIM(RTRIM(eh.[Emp_ID])),' ','') = [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(hist.[emplid])),' ',''))
+AND (hist.first_name = [EC].[fn_strEmpFirstNameFromEmpName] (eh.emp_Name) OR hist.last_name = [EC].[fn_strEmpLastNameFromEmpName] (eh.emp_Name))
+WHERE eh.[Emp_ID] NOT IN 
+(Select [Emp_ID] FROM [EC].[Employee_Ids_With_Prefixes])
+GO 
+--End Update 8a
+
+
+
+
+--Update hiredate and prefix for 999999
+--Begin  Update 8b
+UPDATE [EC].[Employee_hierarchy]
+SET  [Emp_ID_Prefix] = 'WW999999'
+,[Hire_Date]= '20000101'
+Where Emp_ID = '999999'
+GO
+--End Update 8b
+
+
+
+
+--Update hiredate and prefix for records in retain prefix table
+--Begin  Update 8c
+UPDATE eh
+SET  [Emp_ID_Prefix] = hist.[emplid]
+,[Hire_Date]= hist.[Hire_date]
+--Select eh.*
+From [EC].[Employee_hierarchy] eh Join [EC].[EmpHistory] hist
+ON REPLACE(LTRIM(RTRIM(eh.[Emp_ID])),' ','') = REPLACE(LTRIM(RTRIM(hist.[emplid])),' ','')
+WHERE eh.[Emp_ID] IN 
+(Select [Emp_ID] FROM [EC].[Employee_Ids_With_Prefixes])
+GO 
+--End Update 8c
+
+
+
+
+--Populate Prefix employee ID and Hire date for Active Employees with missing attributes
+--Default to WX and Start_Date
+--Begin  Update 8d
+UPDATE [EC].[Employee_hierarchy]
+SET  [Emp_ID_Prefix] = concat('WX', Emp_ID)
+,[Hire_Date]= Start_Date
+from [EC].[Employee_hierarchy] eh
+where [Emp_ID_Prefix] is NULL
+--End Update 8d
+
+
+
+--***************************************************
+
+

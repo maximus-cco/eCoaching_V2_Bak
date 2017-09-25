@@ -1,9 +1,9 @@
 /*
-sp_Merge_HR_Employee_Hierarchy_Stage(01).sql
-Last Modified Date: 1/18/2017
+sp_Merge_HR_Employee_Hierarchy_Stage(02).sql
+Last Modified Date: 9/22/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02:  Updated to populate Emp ID With Prefix and Hire date - TFS 8228 - 09/21/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -25,12 +25,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 04/6/2016
@@ -40,6 +34,7 @@ GO
 -- Last Modified By: 
 -- Last Modified Date: 
 -- Initial Revision - TFS 2332 - 4/6/2016
+-- Updated to populate Emp ID With Prefix and Hire date - TFS 8228 - 09/21/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
 AS
@@ -89,8 +84,15 @@ BEGIN
            ,[Sup_Emp_ID]
            ,[Mgr_Emp_ID]
            ,[Start_Date]
-           ,[Active])
-							 SELECT S.[Emp_ID]
+           ,[Active]
+		   ,[Emp_ID_Prefix]
+	       ,[Hire_Date]
+		   ,[Emp_Pri_Name]
+           ,[Dept_ID]
+           ,[Dept_Description]
+           ,[Reg_Temp]
+           ,[Full_Part_Time])
+							 SELECT S.[Emp_ID_Prefix]
 									  ,S.[Emp_Name]
 									  ,S.[Emp_Email]
 									  ,S.[Emp_Site]
@@ -102,6 +104,13 @@ BEGIN
 									  ,'999999'
 									  ,ISNULL(S.[Start_Date], GETDATE())
 									  ,'A'
+									  ,S.[Emp_ID_Prefix]
+	                                  ,S.[Hire_Date]
+									  ,S.[Emp_Name]
+									  ,'NA'
+									  ,'NA'
+									  ,'NA'
+									  ,'NA'
 						  FROM [EC].[HR_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy_Stage]H
 						  ON S.Emp_ID = H.Emp_ID
 						  WHERE H.EMP_ID IS NULL
@@ -111,11 +120,6 @@ END
 
 
 END --sp_Merge_HR_Employee_Hierarchy_Stage
-
-
-
-
-
-
 GO
+
 
