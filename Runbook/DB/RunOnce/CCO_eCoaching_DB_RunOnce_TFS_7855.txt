@@ -1,0 +1,283 @@
+/*---------------------------------------------------------------
+
+TFS 7855 - Data Encryption - phase 2 remove unused objects
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+--Objects being removed
+
+Tables
+
+Inactivations_Stage*
+Migrated_Employees
+Warning_History_Rejected
+Warning_History_Stage
+Warning_History_FileList
+Aspect_Dates
+CSR_Hierarchy_pre6011
+Employee_Hierarchy_pre6011
+EmployeeID_To_LanID_pre6011
+Dbo.t_EvalIds
+AT_Coaching_Inactivate_Reactivate_Audit_03272017
+Coaching_Log_Bak_20140623
+Historical_Source
+HistoricalMultiCodesForProgram
+HT_Data
+sea11152016_Inactivate
+
+
+
+Stored procedures
+sp_SelectFrom_Coaching_LogDistinctCSRCompleted
+sp_SelectFrom_Coaching_LogDistinctCSRCompleted2
+sp_SelectFrom_Coaching_LogDistinctMGRCompleted
+sp_SelectFrom_Coaching_LogDistinctMGRCompleted2
+sp_SelectFrom_Coaching_LogDistinctSUPCompleted
+sp_SelectFrom_Coaching_LogDistinctSUPCompleted2
+sp_Inactivations_From_Feed*
+
+---------------------------------------------------------------
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Drops
+
+--*************************************************************/
+
+PRINT ('  Begin Table Drops...')
+
+
+--****** Object:  Table [EC].[Inactivations_Stage] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Inactivations_Stage]') AND type in (N'U'))
+DROP TABLE [EC].[Inactivations_Stage]
+GO
+
+
+
+--****** Object:  Table [EC].[Migrated_Employees] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Migrated_Employees]') AND type in (N'U'))
+DROP TABLE [EC].[Migrated_Employees]
+GO
+
+
+
+--****** Object:  Table [EC].[Warning_History_Rejected] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Warning_History_Rejected]') AND type in (N'U'))
+DROP TABLE [EC].[Warning_History_Rejected]
+GO
+
+
+
+--****** Object:  Table [EC].[Warning_History_FileList] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Warning_History_FileList]') AND type in (N'U'))
+DROP TABLE [EC].[Warning_History_FileList]
+GO
+
+
+
+--****** Object:  Table [EC].[Warning_History_Stage] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Warning_History_Stage]') AND type in (N'U'))
+DROP TABLE [EC].[Warning_History_Stage]
+GO
+
+
+--****** Object:  Table [EC].[Aspect_Dates] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Aspect_Dates]') AND type in (N'U'))
+DROP TABLE [EC].[Aspect_Dates]
+GO
+
+
+
+--****** Object:  Table [EC].[CSR_Hierarchy_Pre6011] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[CSR_Hierarchy_Pre6011]') AND type in (N'U'))
+DROP TABLE [EC].[CSR_Hierarchy_Pre6011]
+GO
+
+
+
+--****** Object:  Table [EC].[EmployeeID_To_LanID_Pre6011] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[EmployeeID_To_LanID_Pre6011]') AND type in (N'U'))
+DROP TABLE [EC].[EmployeeID_To_LanID_Pre6011]
+GO
+
+
+--****** Object:  Table [EC].[Employee_Hierarchy_Pre6011] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Employee_Hierarchy_Pre6011]') AND type in (N'U'))
+DROP TABLE [EC].[Employee_Hierarchy_Pre6011]
+GO
+
+
+--****** Object:  Table [dbo].[t_EvalIds] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[t_EvalIds]') AND type in (N'U'))
+DROP TABLE [dbo].[t_EvalIds]
+GO
+
+
+--****** Object:  Table [EC].[AT_Coaching_Inactivate_Reactivate_Audit_03272017] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[AT_Coaching_Inactivate_Reactivate_Audit_03272017]') AND type in (N'U'))
+DROP TABLE [EC].[AT_Coaching_Inactivate_Reactivate_Audit_03272017]
+GO
+
+
+--****** Object:  Table [EC].[Coaching_Log_Bak_20140623] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Coaching_Log_Bak_20140623]') AND type in (N'U'))
+DROP TABLE [EC].[Coaching_Log_Bak_20140623]
+GO
+
+
+
+--****** Object:  Table [EC].[Historical_Source] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Historical_Source]') AND type in (N'U'))
+DROP TABLE [EC].[Historical_Source]
+GO
+
+
+
+
+--****** Object:  Table [EC].[HistoricalMultiCodesForProgram] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[HistoricalMultiCodesForProgram]') AND type in (N'U'))
+DROP TABLE [EC].[HistoricalMultiCodesForProgram]
+GO
+
+
+
+
+--****** Object:  Table [EC].[HT_Data] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[HT_Data]') AND type in (N'U'))
+DROP TABLE [EC].[HT_Data]
+GO
+
+
+
+
+--****** Object:  Table [EC].[sea11152016_Inactivate] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sea11152016_Inactivate]') AND type in (N'U'))
+DROP TABLE [EC].[sea11152016_Inactivate]
+GO
+
+
+
+--****** Object:  Table [EC].[Inactivations_Stage] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Inactivations_Stage]') AND type in (N'U'))
+DROP TABLE [EC].[Inactivations_Stage]
+GO
+
+
+
+PRINT ('  Table Drops completed...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+/****************************************************************************
+****																	
+****					Stored Procedures							
+*****************************************************************************/
+--PRINT ('  No Stored Procedure Updates this release...')
+PRINT ('  Starting Stored Procedure Updates this release...')
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted]
+GO
+
+
+--****** Object:  StoredProcedure [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted2]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted2]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted2]
+GO
+
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted]
+GO
+
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted2]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted2]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted2]
+GO
+
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted]
+GO
+
+
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted2]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted2]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted2]
+GO
+
+
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_Archive_CoachingLogs]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_Archive_CoachingLogs]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_Archive_CoachingLogs]
+GO
+
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_Archive_Inactive_CoachingLogs]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_Archive_Inactive_CoachingLogs]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_Archive_Inactive_CoachingLogs]
+GO
+
+
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_InsertInto_Coaching_Log_SDR]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_InsertInto_Coaching_Log_SDR]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_SDR]
+GO
+
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_Inactivations_From_Feed]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_Inactivations_From_Feed]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_Inactivations_From_Feed]
+GO
+
+
+
+PRINT ('  Obsolete Stored Procedures Removed...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+--****************************************************************************
