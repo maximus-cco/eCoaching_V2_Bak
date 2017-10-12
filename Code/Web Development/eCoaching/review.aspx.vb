@@ -68,6 +68,7 @@ Public Class review
     Dim isCTC As Boolean
 
     ' New Attendance Discrepancy feed
+    ' Logs come from Empower
     Dim lblisDTT As Label
     Dim isDTT As Boolean
 
@@ -495,9 +496,9 @@ Public Class review
                     ' Pending Manager Review (Supervisor module), Or
                     ' Pending Quality Lead Review (Quality module)
 
-                    ' It is from IQS or it is CTC or high CSAT5 or kudo or seasonal attendance or DTT
+                    ' It is from IQS or it is CTC or high CSAT5 or kudo or seasonal attendance
                     ' or performance scorecard MSR or MSRS.
-                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs OrElse isDTT) Then
+                    If (pHolder5.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs) Then
 
                         'If ((pHolder5.Text = "IQS") And (pHolder6.Text = "True")) Then
 
@@ -737,12 +738,20 @@ Public Class review
             If (statusLevel = 1) Then
                 pHolder8 = ListView1.Items(0).FindControl("Label148") 'SupReviewedAutoDate
 
-                ' IQS or CTC or high CSAT5 or kudo or seasonal attendance or DTT
+                ' IQS or CTC or high CSAT5 or kudo or seasonal attendance
                 ' or performance scorecard MSR or MSRS.
-                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs OrElse isDTT) AndAlso Len(pHolder8.Text) > 4) Then
+                If ((pHolder2.Text = "1" OrElse isCTC OrElse isHigh5Club OrElse isKudo OrElse isAttendance OrElse isScorecardMsr OrElse isScorecardMsrs) AndAlso Len(pHolder8.Text) > 4) Then
                     pnlEmpAckReinforceLog.Visible = True ' 1. Check the box below to acknowledge the monitor:
                 Else
+                    If (isDTT) Then
+                        divFeedbackTxtbox.Visible = False
+                        divFeedbackDdl.Visible = True
+                        ddlDttFeedback.DataSource = eclHandler.GetDttFeedbackOptions()
+                        ddlDttFeedback.DataBind()
+                    End If
+
                     Panel30.Visible = True ' 1. Check the box below to acknowledge the coaching opportunity:...
+
                 End If
             End If
 
@@ -1601,15 +1610,21 @@ Public Class review
                 TextBox4.Text = Left(TextBox4.Text, 3000)
             End If
 
-            TextBox4.Text = Server.HtmlEncode(TextBox4.Text)
-            TextBox4.Text = Replace(TextBox4.Text, "�", "&rsquo;")
-            TextBox4.Text = Replace(TextBox4.Text, "�", "&lsquo;")
-            TextBox4.Text = Replace(TextBox4.Text, "'", "&prime;")
-            TextBox4.Text = Replace(TextBox4.Text, Chr(147), "&ldquo;")
-            TextBox4.Text = Replace(TextBox4.Text, Chr(148), "&rdquo;")
-            TextBox4.Text = Replace(TextBox4.Text, "-", "&ndash;")
+            Dim comments As String
+            SetIsDTT()
+            If (isDTT) Then
+                comments = ddlDttFeedback.SelectedValue
+            Else
+                comments = Server.HtmlEncode(TextBox4.Text)
+                comments = Replace(comments, "�", "&rsquo;")
+                comments = Replace(comments, "�", "&lsquo;")
+                comments = Replace(comments, "'", "&prime;")
+                comments = Replace(comments, Chr(147), "&ldquo;")
+                comments = Replace(comments, Chr(148), "&rdquo;")
+                comments = Replace(comments, "-", "&ndash;")
+            End If
 
-            SqlDataSource5.UpdateParameters("nvcCSRComments").DefaultValue = TextBox4.Text
+            SqlDataSource5.UpdateParameters("nvcCSRComments").DefaultValue = comments
             SqlDataSource5.UpdateParameters("bitisCSRAcknowledged").DefaultValue = CheckBox2.Checked
             SqlDataSource5.Update()
 

@@ -252,7 +252,7 @@
                         <asp:Table ID="Table5" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="wrapped">&nbsp;
-                                    <asp:Label ID="Label72" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
+                                    <asp:Label ID="Label72" runat="server" Text='<%# Eval(Server.HtmlDecode("txtCoachingNotes")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -264,7 +264,7 @@
                             <asp:Table ID="Table1" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                                 <asp:TableRow>
                                     <asp:TableCell CssClass="wrapped">&nbsp;
-                                        <asp:Label ID="Label83" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>' />
+                                        <asp:Label ID="Label83" runat="server" Text='<%# Eval(Server.HtmlDecode("txtMgrNotes")) %>' />
                                     </asp:TableCell>
                                 </asp:TableRow>
                             </asp:Table>
@@ -274,7 +274,7 @@
                         <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="wrapped">&nbsp;
-                                    <asp:Label ID="Label85" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
+                                    <asp:Label ID="Label85" runat="server" Text='<%# Eval(Server.HtmlDecode("txtCoachingNotes")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -348,7 +348,7 @@
                     <asp:Label ID="isAttendance" runat="server" Text='<%# Eval("OTH / SEA") %>' Visible="false" />
                     <asp:Label ID="SupEmail" runat="server" Text='<%# Eval("strCSRSupEmail") %>' Visible="false" />
                     <asp:Label ID="MgrEmail" runat="server" Text='<%# Eval("strCSRMgrEmail") %>' Visible="false" />
-                    <asp:Label ID="CsrComment" runat="server" Text='<%# Eval(server.htmldecode("txtCSRComments")) %>' Visible="false" />
+                    <asp:Label ID="CsrComment" runat="server" Text='<%# Eval(Server.HtmlDecode("txtCSRComments")) %>' Visible="false" />
                     <asp:Label ID="exceededTimeOfBreak" runat="server" Text='<%# Eval(Server.HtmlDecode("OMR / BRL")) %>' Visible="false" />
                     <asp:Label ID="exceededNumberOfBreaks" runat="server" Text='<%# Eval(Server.HtmlDecode("OMR / BRN")) %>' Visible="false" />
                     <asp:Label ID="isScorecardMsr" runat="server" Text='<%# Eval(Server.HtmlDecode("PSC / MSR")) %>' Visible="false" />
@@ -569,17 +569,27 @@
                 </asp:CustomValidator>
                 <br />
                 <br />
-                <asp:Label ID="Label87" runat="server" Text="2. Provide any comments or feedback below:" CssClass="question"></asp:Label>
-                <br />
-                <asp:TextBox ID="TextBox4" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes" onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox>
-                <br />
-                <asp:Label ID="Label124" runat="server" Text="[max length: 3,000 chars]"></asp:Label>
-                <br />
-                <asp:Label ID="Label108" runat="server" Text="Provide as much detail as possible"></asp:Label>
+                <div ID="divFeedbackTxtbox" runat="server" Visible="true">
+                    <asp:Label ID="Label87" runat="server" Text="2. Provide any comments or feedback below:" CssClass="question"></asp:Label>
+                    <br />
+                    <asp:TextBox ID="TextBox4" runat="server" Rows="10" TextMode="MultiLine" CssClass="tboxes" onkeyup="return textboxMultilineMaxNumber(this)"></asp:TextBox>
+                    <br />
+                    <asp:Label ID="Label124" runat="server" Text="[max length: 3,000 chars]"></asp:Label>
+                    <br />
+                    <asp:Label ID="Label108" runat="server" Text="Provide as much detail as possible"></asp:Label>
+                </div>
+                <div ID="divFeedbackDdl" runat="server" Visible="false">
+                    <asp:Label ID="lblDttFeedback" runat="server" Text="2. Please select one of the comments below for the log:" CssClass="question"></asp:Label>
+                    <br />
+                    <asp:DropDownList ID="ddlDttFeedback" runat="server" class="TextBox">
+                    </asp:DropDownList>
+                </div>
                 <br />
                 <br />
                 <asp:Button ID="Button4" runat="server" Text="Submit" CssClass="subuttons" />
             </asp:Panel>
+
+
 
             <!-- Employee Acknowledge Reinforcement Logs Panel -->
             <asp:Panel ID="pnlEmpAckReinforceLog" runat="server" Visible="false">
@@ -700,7 +710,7 @@
                     <asp:Table ID="Table7" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                         <asp:TableRow>
                             <asp:TableCell CssClass="wrapped">
-                                <asp:Label ID="Label99" runat="server" Text='<%# Eval(server.htmldecode("txtDescription")) %>'></asp:Label>
+                                <asp:Label ID="Label99" runat="server" Text='<%# Eval(Server.HtmlDecode("txtDescription")) %>'></asp:Label>
                             </asp:TableCell>
                         </asp:TableRow>
                     </asp:Table>
@@ -712,7 +722,7 @@
                             <asp:Table ID="Table8" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                                 <asp:TableRow>
                                     <asp:TableCell CssClass="wrapped">&nbsp;
-                                        <asp:Label ID="Label103" runat="server" Text='<%# Eval(server.htmldecode("txtMgrNotes")) %>' class="review"></asp:Label>
+                                        <asp:Label ID="Label103" runat="server" Text='<%# Eval(Server.HtmlDecode("txtMgrNotes")) %>' class="review"></asp:Label>
                                     </asp:TableCell>
                                 </asp:TableRow>
                             </asp:Table>
@@ -725,14 +735,14 @@
                         <asp:Table ID="Table9" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="wrapped">&nbsp;
-                                    <asp:Label ID="Label72" runat="server" Text='<%# Eval(server.htmldecode("txtCoachingNotes")) %>'></asp:Label>
+                                    <asp:Label ID="Label72" runat="server" Text='<%# Eval(Server.HtmlDecode("txtCoachingNotes")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
                     </asp:Panel>
                     <asp:Label ID="Label80" runat="server" Text="Employee Review Information:" Font-Names="Calibri" Font-Bold="True" />
                     <br />
-                    <asp:Label ID="Label97" runat="server" Text='<%# Eval(server.htmldecode("strCSRName")) %>' Font-Names="Calibri" />
+                    <asp:Label ID="Label97" runat="server" Text='<%# Eval(Server.HtmlDecode("strCSRName")) %>' Font-Names="Calibri" />
                     <br />
                     <asp:Label ID="Label100" runat="server" Text="TBD" Font-Names="Calibri" Font-Bold="False" />&nbsp; 
                     <asp:Label ID="Label101" runat="server" Text='<%# Eval("CSRReviewAutoDate") %>' Font-Names="Calibri" />
@@ -740,7 +750,7 @@
                     <asp:Panel ID="Panel41" runat="server" Visible="false" Style="margin-top: 5px;">
                         <asp:Label ID="Label152" runat="server" Text="Supervisor Review Information:" Font-Names="Calibri" Font-Bold="True" />
                         <br />
-                        <asp:Label ID="Label153" runat="server" Text='<%# Eval(server.htmldecode("strReviewer")) %>' Font-Names="Calibri" />
+                        <asp:Label ID="Label153" runat="server" Text='<%# Eval(Server.HtmlDecode("strReviewer")) %>' Font-Names="Calibri" />
                         <br />
                         <asp:Label ID="Label154" runat="server" Text="Reviewed and acknowledged Quality Monitor on" Font-Names="Calibri" Font-Bold="False" />&nbsp; 
                         <asp:Label ID="Label155" runat="server" Text='<%# Eval("SupReviewedAutoDate") %>' Font-Names="Calibri" />
@@ -752,7 +762,7 @@
                         <asp:Table ID="Table10" CellPadding="0" CellSpacing="0" runat="server" Style="border: 1px solid #cccccc; background-color: #f1f1ec; width: 490px;" class="review">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="wrapped">&nbsp;
-                                    <asp:Label ID="Label95" runat="server" Text='<%# Eval(server.htmldecode("txtCSRComments")) %>'></asp:Label>
+                                    <asp:Label ID="Label95" runat="server" Text='<%# Eval(Server.HtmlDecode("txtCSRComments")) %>'></asp:Label>
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>

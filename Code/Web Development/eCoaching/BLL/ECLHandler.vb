@@ -82,4 +82,18 @@
         Return userDBAccess.IsValidHRUser(eclUser)
     End Function
 
+    ' Move to DAL when the options are from database
+
+    Public Function GetDttFeedbackOptions()
+        Dim options As List(Of String) = New List(Of String)()
+        options.Add("ATT Updated - with Approved Absence")
+        options.Add("ATT Updated - with Unapproved Absence")
+        options.Add("ATT Not Updated - SWP notified that Empower is inaccurate")
+        options.Add("ATT Not Updated and Empower will not be updated")
+        options.Add("ATT Not Updated - CSR Termed")
+        options.Add("CSR on a Leave of Absence")
+        options.Add("Absence is pending HR approval (LOA or WPA)")
+        Return options
+    End Function
+
 End Class
