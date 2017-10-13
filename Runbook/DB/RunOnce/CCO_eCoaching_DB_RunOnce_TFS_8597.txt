@@ -37,7 +37,7 @@ INSERT INTO [EC].[Email_Notifications]
            ,[isCCRecipient]
            ,[CCRecipient])
      VALUES
-            ('Supervisor','Generic','Indirect','Empower',0,'Pending Employee Review','Employee','eCL: Pending Acknowledgement',
+            ('Supervisor','Generic','Indirect','Empower',0,'Pending Employee Review','Employee','eCL: Pending Employee Review',
            'A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',
            1,'Supervisor')
 
