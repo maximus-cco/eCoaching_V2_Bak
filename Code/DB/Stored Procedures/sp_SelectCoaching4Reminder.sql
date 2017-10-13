@@ -1,8 +1,9 @@
 /*
-sp_SelectCoaching4Reminder(02).sql
-Last Modified Date: 09/14/2017
+sp_SelectCoaching4Reminder(03).sql
+Last Modified Date: 10/12/2017
 Last Modified By: Susmitha Palacherla
 
+Version 03: Modified per TFS 8597 to modify DTT reminders to use Notification date - 10/12/2017
 
 Version 02: Added reminders for DTT logs - TFS 7646  - 09/14/2017
 
@@ -27,15 +28,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
-
-
-
 --	====================================================================
 --	Author:		       Susmitha Palacherla
 --	Create Date:	   02/09/2016
@@ -46,6 +38,7 @@ GO
 --  Updated to replace Hierarchy mgr with Review mgr for LCS Mgr recipients per TFS 2182 - 3/8/2016
 --  Modified per TFS 4353 to update recipients for reassigned logs - 10/21/2016
 --  Modified per TFS 7646 to add reminders for DTT logs - 09/14/2017
+--  Modified per TFS 8597 to modify DTT reminders to use Notification date - 10/12/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Reminder]
 AS
@@ -182,11 +175,11 @@ SELECT   cl.CoachingID	numID
 		,cl.ReassignCount   ReassignCount
 		,cl.ReassignedToID    ReassignToID
 		, CASE
-		WHEN (ReminderSent = ''False'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.SupReviewedAutoDate,GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''') THEN ''Emp''
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.NotificationDate,GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''') THEN ''Emp''
 		WHEN (ReminderSent = ''True'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.ReminderDate,GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''')THEN ''Emp''
 		ELSE ''NA'' END Remind
 	  , CASE
-		WHEN (ReminderSent = ''False'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.SupReviewedAutoDate,GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''') THEN ''Sup''
+		WHEN (ReminderSent = ''False'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.NotificationDate,GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''') THEN ''Sup''
 		WHEN (ReminderSent = ''True'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.ReminderDate,GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''')THEN ''Sup/Mgr''
 		ELSE ''NA'' END RemindCC
 FROM  [EC].[Coaching_Log] cl WITH (NOLOCK)
@@ -197,8 +190,8 @@ ON cl.SourceID = so.SourceID
 WHERE clr.CoachingreasonID = 3
 AND clr.SubCoachingreasonID = 242
 AND cl.Statusid = 4 
-AND cl.SupReviewedAutoDate is not NULL
-AND ((ReminderSent = ''False'' AND DATEDIFF(HH, cl.SupReviewedAutoDate,GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''')OR
+AND cl.NotificationDate is not NULL
+AND ((ReminderSent = ''False'' AND DATEDIFF(HH, cl.NotificationDate,GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+''')OR
 (ReminderSent = ''True'' AND [ReminderCount] < 2 AND DATEDIFF(HH, cl.ReminderDate,GetDate()) > '''+CONVERT(VARCHAR,@intHrs1)+'''))'
 
 
@@ -246,11 +239,4 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectCoaching4Reminder
 
-
-
-
-
-
 GO
-
-

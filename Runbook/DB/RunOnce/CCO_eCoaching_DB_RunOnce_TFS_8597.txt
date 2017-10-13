@@ -1,0 +1,52 @@
+/*---------------------------------------------------------------
+
+TFS 8597 -  changes to the discrepancy DTT feed
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+
+
+--3. Add records to Email_Notifications table
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+            ('Supervisor','Generic','Indirect','Empower',0,'Pending Employee Review','Employee','eCL: Pending Acknowledgement',
+           'A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong> strDateTime </strong>.',
+           1,'Supervisor')
+
+GO
+
+
+
+--select * from [EC].[Email_Notifications]
+--where module = 'Supervisor'
+--and Source = 'Indirect'
+--and subSource= 'Empower'
+--************************************************************
