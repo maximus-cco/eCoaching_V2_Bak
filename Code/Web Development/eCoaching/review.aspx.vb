@@ -1597,11 +1597,10 @@ Public Class review
     Protected Sub Button4_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button4.Click
         'CSR Submit
         Page.Validate()
-
-        Dim strFormName = Request.QueryString("id")
+        SetIsDTT()
 
         If Page.IsValid Then
-
+            Dim strFormName = Request.QueryString("id")
             SqlDataSource5.UpdateParameters("nvcFormID").DefaultValue = strFormName
             SqlDataSource5.UpdateParameters("nvcFormStatus").DefaultValue = "Completed"
             SqlDataSource5.UpdateParameters("dtmCSRReviewAutoDate").DefaultValue = CDate(DateTime.Now())
@@ -1611,7 +1610,6 @@ Public Class review
             End If
 
             Dim comments As String
-            SetIsDTT()
             If (isDTT) Then
                 comments = ddlDttFeedback.SelectedValue
             Else
@@ -1637,6 +1635,10 @@ Public Class review
             Response.Redirect("next1.aspx?FromURL=" & FromURL)
         Else
             Label116.Text = "Please correct all fields indicated in red to proceed."
+            ' Remeber the selected value
+            If (isDTT) Then
+                ddlDttFeedback.SelectedValue = ddlDttFeedback.SelectedValue
+            End If
         End If
     End Sub
 
