@@ -1,7 +1,9 @@
 /*
-sp_Populate_Employee_Hierarchy(03).sql
-Last Modified Date: 9/22/2017
+sp_Populate_Employee_Hierarchy(04).sql
+Last Modified Date: 11/15/2017
 Last Modified By: Susmitha Palacherla
+
+Version 04:  Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
 
 Version 03: Updated to populate preferred name and Hire date attributes. TFS 8228 - 09/21/2017
 
@@ -27,6 +29,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
@@ -36,6 +39,8 @@ GO
 -- updated during TFS 1710 to populate SrLvlMgr IDs - 2/18/2016
 -- updated during TFS 6614 to Change how email addresses with apostrophes are stored - 05/16/2017
 -- Updated to populate preferred name and Hire date attributes. TFS 8228 - 09/21/2017
+-- Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
+
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
@@ -114,6 +119,8 @@ BEGIN
 		  ,Dept_Description = S.Dept_Description
 		  ,Reg_Temp = S.Reg_Temp
 		  ,Full_Part_Time = S.Full_Part_Time
+		  ,Term_Date = CONVERT(nvarchar(8),S.[Term_Date],112)
+		  ,FLSA_Status = S.FLSA_Status
 	 FROM [EC].[Employee_Hierarchy]H JOIN [EC].[Employee_Hierarchy_Stage]S
 	 ON H.[Emp_ID] = S.[EMP_ID]
 	 WHERE H.[Emp_ID] is NOT NULL
@@ -154,6 +161,8 @@ BEGIN
 		       ,[Dept_Description]
 		       ,[Reg_Temp]
 			   ,[Full_Part_Time]
+			   ,[Term_Date]
+			   ,[FLSA_Status]
 			  )
 							 SELECT S.[Emp_ID]
 						      ,Replace(S.[Emp_Name],'''', '')
@@ -184,6 +193,8 @@ BEGIN
 							  ,S.[Dept_Description]
 							  ,S.[Reg_Temp]
 							  ,S.[Full_Part_Time]
+							  ,CONVERT(nvarchar(8),S.[Term_Date],112)
+			                  ,S.[FLSA_Status]
 						  FROM [EC].[Employee_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy]H
 						  ON S.Emp_ID = H.Emp_ID
 						  WHERE (H.EMP_ID IS NULL and S.Emp_ID <> '')

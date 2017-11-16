@@ -1,7 +1,14 @@
 /*
-File: eCoaching_EmployeeHierarchy_Load_Tables_Create(03).sql 
-Last Modified Date: 9/22/2017
+File: eCoaching_EmployeeHierarchy_Load_Tables_Create(04).sql 
+Last Modified Date: 11/15/2017
 Last Modified By: Susmitha Palacherla
+
+
+Version 04: Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
+Term_date and FLSA_Status
+Added fields to thse tables.
+1. [EC].[Employee_Hierarchy_Stage] 
+2. [EC].[Employee_Hierarchy]
 
 Version 03: Updated to support revised logic for Re-used Ids - TFS 8228- 09/22/2017
 Capture additional attributes like Hire_Date, Emp_ID_Prefix, DeptID, Dept_Desc, Reg/Temp, Full/Part, and Preferred name attributes.
@@ -86,7 +93,9 @@ CREATE TABLE [EC].[Employee_Hierarchy_Stage](
 	[Dept_ID] [nvarchar](10) NULL DEFAULT ('NA'),
 	[Dept_Description] [nvarchar](60) NULL DEFAULT ('NA'),
 	[Reg_Temp] [nvarchar](3) NULL DEFAULT ('NA'),
-	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA')
+	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA'),
+        [Term_Date] [datetime] NULL,
+        [FLSA_Status] [nvarchar](20) NULL
 ) ON [PRIMARY]
 
 
@@ -142,6 +151,8 @@ SCREATE TABLE [EC].[Employee_Hierarchy](
 	[Dept_Description] [nvarchar](60) NULL DEFAULT ('NA'),
 	[Reg_Temp] [nvarchar](3) NULL DEFAULT ('NA'),
 	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA'),
+        [Term_Date] [nvarchar](10) NULL,
+        [FLSA_Status] [nvarchar](20) NULL,
  CONSTRAINT [PK_Emp_ID] PRIMARY KEY CLUSTERED 
 (
 	[Emp_ID] ASC

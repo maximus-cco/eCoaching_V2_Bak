@@ -1,0 +1,52 @@
+/*---------------------------------------------------------------
+
+TFS 8974 - Include two new columns to HR People Soft feed
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+--sp_Populate_Employee_Hierarchy.sql
+
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+
+--Add new columns to Employee Hierarchy and Hierarchy Stage tables
+
+PRINT ('  Starting Table Updates...')
+
+ALTER Table [EC].[Employee_hierarchy]
+ADD [Term_Date] [nvarchar](10) NULL,
+[FLSA_Status][nvarchar](20) NULL
+GO
+
+
+
+ALTER Table [EC].[Employee_hierarchy_Stage]
+ADD [Term_Date][datetime] NULL,
+[FLSA_Status][nvarchar](20) NULL
+GO
+
+
+PRINT ('  Table Changes Complete...')
+
+--*****************************************************************
+
+
+
+
+
+

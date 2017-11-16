@@ -1,7 +1,9 @@
 /*
-sp_Merge_HR_Employee_Hierarchy_Stage(02).sql
-Last Modified Date: 9/22/2017
+sp_Merge_HR_Employee_Hierarchy_Stage(03).sql
+Last Modified Date: 11/15/2017
 Last Modified By: Susmitha Palacherla
+
+Version 03: Updated to populate 'Exempt' in FLSA status - TFS 8974  - 11/15/2017
 
 Version 02:  Updated to populate Emp ID With Prefix and Hire date - TFS 8228 - 09/21/2017
 
@@ -24,7 +26,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 04/6/2016
@@ -35,6 +36,7 @@ GO
 -- Last Modified Date: 
 -- Initial Revision - TFS 2332 - 4/6/2016
 -- Updated to populate Emp ID With Prefix and Hire date - TFS 8228 - 09/21/2017
+-- Updated to populate 'Exempt' in FLSA status - TFS 8974  - 11/10/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
 AS
@@ -91,7 +93,8 @@ BEGIN
            ,[Dept_ID]
            ,[Dept_Description]
            ,[Reg_Temp]
-           ,[Full_Part_Time])
+           ,[Full_Part_Time]
+		   ,[FLSA_Status])
 							 SELECT S.[Emp_ID_Prefix]
 									  ,S.[Emp_Name]
 									  ,S.[Emp_Email]
@@ -111,6 +114,7 @@ BEGIN
 									  ,'NA'
 									  ,'NA'
 									  ,'NA'
+									  ,'Exempt'
 						  FROM [EC].[HR_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy_Stage]H
 						  ON S.Emp_ID = H.Emp_ID
 						  WHERE H.EMP_ID IS NULL
@@ -120,6 +124,5 @@ END
 
 
 END --sp_Merge_HR_Employee_Hierarchy_Stage
+
 GO
-
-
