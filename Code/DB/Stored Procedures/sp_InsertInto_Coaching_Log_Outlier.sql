@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Outlier(04).sql
-Last Modified Date: 06/02/2017
+sp_InsertInto_Coaching_Log_Outlier(05).sql
+Last Modified Date: 11/16/2017
 Last Modified By: Susmitha Palacherla
+
+Version 05: Updated to support additional Modules - TFS 8793 - 11/16/2017
 
 Version 04: Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
 
@@ -31,6 +33,7 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
@@ -42,6 +45,7 @@ GO
 -- Modified per TFS 6377 to add support for Sup and quality Modules in 
 -- Breaks feeds and also added Output param to capture count of Loaded records - 4/24/2017
 -- Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
+-- Updated to support additional Modules - TFS 8793 - 11/16/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 @Count INT OUTPUT
@@ -128,11 +132,7 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
 		 0                          [EmailSent],
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 CASE cs.Emp_Role 
-			 WHEN 'C' THEN 1
-			 WHEN 'S' THEN 2 
-			 WHEN 'Q' THEN 3
-			 ELSE -1 END                  [ModuleID],
+		 [EC].[fn_intModuleIDFromEmpID](cs.CSR_EMPID)  [ModuleID],
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
 		 CASE WHEN cs.Report_Code LIKE 'LCS%' THEN ISNULL(cs.[RMgr_ID],'999999')
 		 ELSE ISNULL(csr.[Mgr_ID],'999999')END  [MgrID]
@@ -210,6 +210,7 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Outlier
+
 
 
 

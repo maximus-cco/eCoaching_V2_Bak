@@ -1,0 +1,112 @@
+/*---------------------------------------------------------------
+
+TFS 8793 - Additional Modules and Job codes 
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+SELECT * FROM [EC].[DIM_Module]
+GO
+
+SELECT *
+  FROM [EC].[Email_Notifications]
+  where Submission  = 'Outlier'
+  and source = 'Indirect'
+  and recipient = 'Supervisor'
+GO
+
+-- ALTER PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage] 
+
+-- ALTER PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
+
+-- ALTER PROVEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+
+-- ALTER FUNCTION [EC].[fn_intModuleIDFromEmpID] 
+---------------------------------------------------------------*/
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Updates
+
+--************************************************************
+
+
+--Add new columns to Employee Hierarchy and Hierarchy Stage tables
+
+PRINT ('  Starting Table Updates...')
+
+--1. Add new Modules
+
+
+INSERT INTO [EC].[DIM_Module]
+           ([Module]
+           ,[BySite]
+           ,[isActive]
+           ,[ByProgram]
+           ,[ByBehavior])
+     VALUES
+           ('Administration', 0, 0, 0, 0),
+		   ('Analytics Reporting', 0, 0, 0, 0),
+		   ('Production Planning', 0, 0, 0, 0),
+		   ('Program Analyst', 0, 0, 0, 0)
+  
+GO
+
+--***************************************************************
+
+
+--2. Email Notifications
+
+
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+	 ('Administration', 'Outlier', 'Indirect', 'OMR', 0, 'Pending Supervisor Review', 'Supervisor', 'eCL: Pending Supervisor Review', 'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong> that requires 
+your action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+
+	 ('Analytics Reporting', 'Outlier', 'Indirect', 'OMR', 0, 'Pending Supervisor Review', 'Supervisor', 'eCL: Pending Supervisor Review', 'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong> that requires 
+your action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+
+
+	 ('Production Planning', 'Outlier', 'Indirect', 'OMR', 0, 'Pending Supervisor Review', 'Supervisor', 'eCL: Pending Supervisor Review', 'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong> that requires 
+your action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+
+
+	 ('Program Analyst', 'Outlier', 'Indirect', 'OMR', 0, 'Pending Supervisor Review', 'Supervisor', 'eCL: Pending Supervisor Review', 'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong> that requires 
+your action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+
+	 ('LSA', 'Outlier', 'Indirect', 'OMR', 0, 'Pending Supervisor Review', 'Supervisor', 'eCL: Pending Supervisor Review', 'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong> that requires 
+your action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+
+	 ('Training', 'Outlier', 'Indirect', 'OMR', 0, 'Pending Supervisor Review', 'Supervisor', 'eCL: Pending Supervisor Review', 'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong> that requires 
+your action. Please click on the link below to review the eCoaching log.', 0, 'NA')
+
+
+
+PRINT ('  Table Changes Complete...')
+
+--*****************************************************************
+
+
+
+
+
+

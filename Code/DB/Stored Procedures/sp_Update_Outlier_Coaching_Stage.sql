@@ -1,8 +1,9 @@
 /*
-sp_Update_Outlier_Coaching_Stage(03).sql
-Last Modified Date: 06/02/2017
+sp_Update_Outlier_Coaching_Stage(04).sql
+Last Modified Date: 11/17/2017
 Last Modified By: Susmitha Palacherla
 
+Version 04: Added Additional Job codes and Roles - TFS 8793 - 11/16/2017
 
 Version 03: Updated to fix typo in Missing Site and Comments - TFS 6147 - 06/02/2017
 
@@ -32,6 +33,7 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 04/24/2017
@@ -42,6 +44,7 @@ GO
 -- Rejects records and deletes rejected records per business rules.
 -- Initial revision. TFS 6377 - 04/24/2017
 -- Updated to fix typo in Missing Site and Comments - TFS 6147 - 06/02/2017
+-- Added Additional Job codes and Roles - TFS 8793 - 11/16/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage] 
 @Count INT OUTPUT
@@ -134,7 +137,13 @@ UPDATE [EC].[Outlier_Coaching_Stage]
 SET [Emp_Role]= 
     CASE WHEN EMP.[Emp_Job_Code]in ('WACS01', 'WACS02','WACS03') THEN 'C'
     WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
-    WHEN  EMP.[Emp_Job_Code]in ('WACQ02', 'WACQ03','WACQ12 ') THEN 'Q'
+    WHEN  EMP.[Emp_Job_Code]in ('WACQ02', 'WACQ03','WACQ12') THEN 'Q'
+    WHEN  EMP.[Emp_Job_Code]in ('WIHD01','WIHD02','WIHD03','WIHD04', 'WABA11', 'WISA03') THEN 'L'
+	WHEN  EMP.[Emp_Job_Code]in ('WTTR02','WTTI02','WTTR12','WTTR13','WTID13') THEN 'T'
+	WHEN  EMP.[Emp_Job_Code]in ('WABA01','WABA02','WABA03') THEN 'AD'
+	WHEN  EMP.[Emp_Job_Code]in ('WPSM11') THEN 'AR'
+	WHEN  EMP.[Emp_Job_Code]in ('WMPL02','WMPL03') THEN 'PP'
+    WHEN  EMP.[Emp_Job_Code]in ('WPPM11') THEN 'PA'
     ELSE 'O' END
    ,[Emp_Active] =
     CASE WHEN  EMP.[Active] in ('T', 'D', 'P', 'L')THEN 'N'
@@ -170,11 +179,6 @@ WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 
 END  -- [EC].[sp_Update_Outlier_Coaching_Stage]
-
-
-
-
-
 
 GO
 

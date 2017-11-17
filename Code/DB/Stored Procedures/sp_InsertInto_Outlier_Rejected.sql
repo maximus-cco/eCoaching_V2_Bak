@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Outlier_Rejected(03).sql
-Last Modified Date: 05/22/2017
+sp_InsertInto_Outlier_Rejected(04).sql
+Last Modified Date: 11/16/2017
 Last Modified By: Susmitha Palacherla
 
+Version 04: Removed status check for BRL and BRN feeds  - TFS 8793 - 11/16/2017
 
 Version 03: Updated to add rejection logic for invalid LCS Review Mgr ID - Suzy Palacherla -  TFS 6612 - 05/22/2017
 
@@ -31,6 +32,9 @@ GO
 
 
 
+
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/24/2017
@@ -38,6 +42,8 @@ GO
 -- Populates Reject Reason(s) and Inserts Rejected logs to Rejected table.
 -- Initial revision. TFS 6377 - 04/24/2017
 -- Updated to add rejection logic for invalid LCS Review Mgr ID - TFS 6612 - 05/22/2017
+-- Modified during Encryption of sensitive data. Limited attributes being stored for rejected logs. TFS 7856 - 10/23/2017
+-- Removed status check for BRL and BRN feeds  - TFS 8793 - 11/16/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
 AS
@@ -81,12 +87,13 @@ BEGIN
 UPDATE [EC].[Outlier_Coaching_Stage]
 SET [Reject_Reason]= 
 CASE 
-WHEN (LEFT(Report_Code,LEN(Report_Code)-8) IN ('BRL', 'BRN') AND [Form_Status]= 'Pending Supervisor Review') AND [Emp_Role] <> 'C'
-THEN 'Employee not a CSR'
-WHEN (LEFT(Report_Code,LEN(Report_Code)-8) IN ('BRL', 'BRN') AND [Form_Status]= 'Pending Manager Review') AND [Emp_Role] <> 'S'
-THEN 'Employee not a Supervisor'
-WHEN (LEFT(Report_Code,LEN(Report_Code)-8) IN ('BRL', 'BRN') AND [Form_Status]= 'Pending Quality Lead Review') AND [Emp_Role] <> 'Q'
-THEN 'Employee not a Quality Specialist'
+WHEN [Emp_Role] = 'O' THEN 'Invalid Role for Log generation'
+--WHEN (LEFT(Report_Code,LEN(Report_Code)-8) IN ('BRL', 'BRN') AND [Form_Status]= 'Pending Supervisor Review') AND [Emp_Role] <> 'C'
+--THEN 'Employee not a CSR'
+--WHEN (LEFT(Report_Code,LEN(Report_Code)-8) IN ('BRL', 'BRN') AND [Form_Status]= 'Pending Manager Review') AND [Emp_Role] <> 'S'
+--THEN 'Employee not a Supervisor'
+--WHEN (LEFT(Report_Code,LEN(Report_Code)-8) IN ('BRL', 'BRN') AND [Form_Status]= 'Pending Quality Lead Review') AND [Emp_Role] <> 'Q'
+--THEN 'Employee not a Quality Specialist'
 WHEN LEFT(Report_Code,LEN(Report_Code)-8) = 'MSRS'  AND [Emp_Role] <> 'S'
 THEN 'Employee not a Supervisor'
 WHEN LEFT(Report_Code,LEN(Report_Code)-8) NOT IN ('BRL', 'BRN', 'MSRS')  AND [Emp_Role] <> 'C'
@@ -121,51 +128,22 @@ BEGIN
 INSERT INTO [EC].[Outlier_Coaching_Rejected]
            ([Report_ID]
            ,[Report_Code]
-           ,[Form_Type]
            ,[Source]
-           ,[Form_Status]
            ,[Event_Date]
            ,[Submitted_Date]
-           ,[Start_Date]
-           ,[Submitter_LANID]
-           ,[Submitter_Name]
-           ,[Submitter_Email]
-           ,[CSR_LANID]
-           ,[CSR_Site]
-           ,[Program]
-           ,[CoachReason_Current_Coaching_Initiatives]
-           ,[TextDescription]
            ,[FileName]
            ,[Rejected_Reason]
            ,[Rejected_Date]
-           ,[RMgr_ID]
-           ,[CD1]
-           ,[CD2]
-           ,[CSR_EMPID])
+       )
  SELECT S.[Report_ID]
       ,S.[Report_Code]
-      ,S.[Form_Type]
       ,S.[Source]
-      ,S.[Form_Status]
       ,S.[Event_Date]
       ,S.[Submitted_Date]
-      ,S.[Start_Date]
-      ,S.[Submitter_LANID]
-      ,S.[Submitter_Name]
-      ,S.[Submitter_Email]
-      ,S.[CSR_LANID]
-      ,S.[CSR_Site]
-      ,S.[Program]
-      ,S.[CoachReason_Current_Coaching_Initiatives]
-      ,S.[TextDescription]
       ,S.[FileName]
       ,s.[Reject_Reason]
       ,GETDATE()
-      ,S.[RMgr_ID]
-      ,S.[CD1]
-      ,S.[CD2]
-      ,S.[CSR_EMPID]
-  FROM [EC].[Outlier_Coaching_Stage]S left outer join [EC].[Outlier_Coaching_Rejected] R 
+   FROM [EC].[Outlier_Coaching_Stage]S left outer join [EC].[Outlier_Coaching_Rejected] R 
   ON S.Report_ID = R.Report_ID and S.Report_Code = R.Report_Code 
   WHERE R.Report_ID is NULL and R.Report_Code is NULL 
   AND S.[Reject_Reason] is not NULL                
@@ -175,6 +153,8 @@ END
 
 
 END -- sp_InsertInto_Outlier_Rejected
+
 GO
+
 
 
