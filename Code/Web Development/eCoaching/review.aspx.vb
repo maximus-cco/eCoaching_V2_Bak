@@ -2007,6 +2007,39 @@ Public Class review
                     Case "Pending Supervisor Review"
                         retValue = 2
                 End Select
+
+            Case "Program Analyst"
+                Select Case recordStatus
+                    Case "Pending Employee Review"
+                        retValue = 1
+                    Case "Pending Supervisor Review"
+                        retValue = 2
+                End Select
+
+            Case "Administration"
+                Select Case recordStatus
+                    Case "Pending Employee Review"
+                        retValue = 1
+                    Case "Pending Supervisor Review"
+                        retValue = 2
+                End Select
+
+            Case "Analytics Reporting"
+                Select Case recordStatus
+                    Case "Pending Employee Review"
+                        retValue = 1
+                    Case "Pending Supervisor Review"
+                        retValue = 2
+                End Select
+
+            Case "Production Planning"
+                Select Case recordStatus
+                    Case "Pending Employee Review"
+                        retValue = 1
+                    Case "Pending Supervisor Review"
+                        retValue = 2
+                End Select
+
         End Select
 
         Return retValue
