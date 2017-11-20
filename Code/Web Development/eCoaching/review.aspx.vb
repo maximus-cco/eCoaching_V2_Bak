@@ -1445,14 +1445,11 @@ Public Class review
                 Dim exceededNumberOfBreaks As Label = ListView1.Items(0).FindControl("exceededNumberOfBreaks") ' OMR / BRK
 
                 Select Case pHolder7.Text ' Module check
-
                     Case "CSR", "Training"
-
                         ' Current Coaching Initiative, OMR / Exception, Low CSAT
                         If (pHolder1.Text = "1" OrElse pHolder2.Text = "1" OrElse pHolder5.Text = "1") Then
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
                         End If
-
                         ' OMR/IAE, OMR/IAT, ETS/OAE, Training/SDR, Training/ODT
                         ' OMR/BRL, OMR/BRN
                         If (omrIae.Text = "1" OrElse omrIat.Text = "1" OrElse pHolder3.Text = "1" OrElse trainingShortDuration.Text = "1" OrElse trainingOverdue.Text = "1" _
@@ -1461,51 +1458,29 @@ Public Class review
                         End If
 
                     Case "Supervisor"
-
                         If ((pHolder1.Text = "1") Or (pHolder2.Text = "1")) Then
-
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Manager Review"
-
-
                         Else
-
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
-
                         End If
-
-
-
 
                     Case "Quality"
-
-
                         If ((pHolder1.Text = "1") Or (pHolder2.Text = "1")) Then
-
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Quality Lead Review"
-
-
                         Else
-
                             SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
-
                         End If
 
-
-
-
+                    Case "LSA", "Program Analyst", "Administration", "Analytics Reporting", "Production Planning"
+                        SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Employee Review"
                 End Select
 
-
-
                 ' SqlDataSource7.UpdateParameters("nvcFormStatus").DefaultValue = "Pending Supervisor Review"
-
                 SqlDataSource7.UpdateParameters("nvcstrReasonNotCoachable").DefaultValue = ""
 
                 'crop text if it is larger than 3000 chars
                 If (Len(AddlNotes.Text) > 3000) Then
-
                     AddlNotes.Text = Left(AddlNotes.Text, 3000)
-
                 End If
 
                 'encode strings that are not valid and not caught by htmlencode
