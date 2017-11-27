@@ -28,44 +28,35 @@ Public Class view2
         GridView12.DataBind()
 
         ' Title
-        Label6a.Text = eclUser.JobCode 'GetJobCode(Session("userInfo"))
-        Select Case True 'Label6a.Text
-            Case (InStr(1, Label6a.Text, "WACS0", 1) > 0) '"WACS01", "WACS02", "WACS03"
-                '' Label5.Visible = True
-                '' Label4.Visible = True
+        Label6a.Text = If(String.IsNullOrEmpty(eclUser.JobCode), String.Empty, eclUser.JobCode.Trim().ToUpper())
+        Dim jobCode = Label6a.Text
+        Select Case True ' jobCode
+            ' WACS01, WACS02, WACS03
+            Case (InStr(1, jobCode, "WACS0", 1) > 0)
                 Panel2.Visible = True
                 Label26.Text = "Welcome to the Employee Dashboard"
-                ' Label10.Text = "On this page, you can find your pending and completed coaching logs. <p> To view your pending coaching logs at your review, you can find them under My Pending eCoaching Logs.  The logs are displayed in reverse chronological order.  To open an eCoaching Log, click on the file name and complete the log entries. <p> To view your completed coaching logs, you can find them under My Completed eCoaching Logs.  The logs are displayed in reverse chonological order.  To open an eCoaching Log, click on the file name to view the content."
-                ''  drs12.Visible = True
-                '' drs12.Enabled = True
                 SqlDataSource2.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
-                ''GridView2.Visible = True
-                ''GridView2.Enabled = True
                 SqlDataSource1.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
-                ' Label11.Visible = True
-                'GridView1.Visible = True
-                'GridView1.Enabled = True
-                'SqlDataSource7.SelectParameters("strUserin").DefaultValue = lan
 
-                ' Dim spot As Label
-                ' spot = Me.Master.FindControl("Label16")
-                '  spot.Text = "CSR Dashboard"
+            ' WACS50, WACS60, WBCO50, WSQA50, WTTR50, WPOP50, WPOP60, 
+            ' WPPM50, WPPM60, WPPM70, WPPT50, WPPT60, WISO11, WISO13, WISO14, WSTE13, WSTE14
+            ' WISA50, WISA60, WISA70
+            Case InStr(1, jobCode, "50", 1) > 0,
+                 InStr(1, jobCode, "60", 1) > 0,
+                 InStr(1, jobCode, "70", 1) > 0,
+                 InStr(1, jobCode, "WISO", 1) > 0,
+                 InStr(1, jobCode, "WSTE", 1) > 0,
+                 InStr(1, jobCode, "WEEX", 1) > 0,
+                 InStr(1, jobCode, "WISY", 1) > 0,
+                 InStr(1, jobCode, "WPWL51", 1) > 0,
+                 jobCode = "WPPM80" ' Is this true?
 
-            Case (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0) '"WACS50", "WACS60", "WBCO50", "WSQA50", "WTTR50", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPM70", "WPPT50", "WPPT60", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14"
-                'mgr  Or (InStr(1, Label6a.Text, "Engineer", 1) > 0) And (InStr(1, Label6a.Text, "Service Rep", 1) = 0)
                 Panel3.Visible = True
-                ''Label5.Visible = True
-                ''Label4.Visible = True
                 Label26.Text = "Welcome to the Manager Dashboard"
-                '   Label10.Text = "On this page, you can find your pending and completed coaching logs.<p> To view your pending coaching logs at your review, you can find them under My Pending eCoaching Logs.  The logs are displayed in reverse chronological order.  To open an eCoaching Log, click on the file name and complete the log entries. <p> To view your completed coaching logs, you can find them under My Completed eCoaching Logs.  The logs are displayed in reverse chonological order.  To open an eCoaching Log, click on the file name to view the content.  These are logs that you have been completed by your Supervisors and CSRs for review and acknowledgement.  These logs are grouped by Supervisor."
-                '' GridView4.Visible = True
-                ''GridView4.Enabled = True
                 SqlDataSource25.SelectParameters("strUserin").DefaultValue = eclUser.LanID
                 SqlDataSource26.SelectParameters("strUserin").DefaultValue = eclUser.LanID
                 SqlDataSource4.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                 SqlDataSource5.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
-                ''GridView7.Visible = True
-                ''GridView7.Enabled = True
                 SqlDataSource8.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                 SqlDataSource13.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                 SqlDataSource14.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
@@ -74,7 +65,7 @@ Public Class view2
                 SqlDataSource20.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                 SqlDataSource21.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                 SqlDataSource18.SelectParameters("strCSRin").DefaultValue = eclUser.LanID
-                If ((Label6a.Text = "WACS50") Or (Label6a.Text = "WACS60")) Then
+                If (jobCode = "WACS50" OrElse jobCode = "WACS60") Then
                     Panel5.Visible = True
                     SqlDataSource23.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                     If (Date5.Text = "") Then
@@ -111,8 +102,7 @@ Public Class view2
             Case Else
                 Label26.Text = "Welcome to the eCL Dashboard"
 
-                Dim jobCode = UCase(Label6a.Text).Trim()
-                If (InStr(1, jobCode, "40", 1) > 0 OrElse InStr(1, jobCode, "WTTR", 1) > 0 OrElse InStr(1, jobCode, "WTTI", 1) > 0) Then
+                If (InStr(1, jobCode, "40", 1) > 0 OrElse InStr(1, jobCode, "WTTI", 1) > 0) Then
                     Label26.Text = "Welcome to the Supervisor Dashboard"
                 End If
 

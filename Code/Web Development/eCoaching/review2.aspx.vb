@@ -260,15 +260,16 @@ Public Class review2
         SqlDataSource4.SelectParameters("nvcRole").DefaultValue = "SRMGR"
         GridView5.DataBind()
 
-        Select Case True
-            Case (InStr(1, userTitle, "40", 1) > 0), (InStr(1, userTitle, "50", 1) > 0), (InStr(1, userTitle, "60", 1) > 0), (InStr(1, userTitle, "70", 1) > 0), (InStr(1, userTitle, "WISO", 1) > 0), (InStr(1, userTitle, "WSTE", 1) > 0), (InStr(1, userTitle, "WSQE", 1) > 0), (InStr(1, userTitle, "WACQ", 1) > 0), (InStr(1, userTitle, "WPPM", 1) > 0), (InStr(1, userTitle, "WPSM", 1) > 0), (InStr(1, userTitle, "WEEX", 1) > 0), (InStr(1, userTitle, "WPWL51", 1) > 0), (InStr(1, userTitle, "WHER", 1) > 0), (InStr(1, userTitle, "WHHR", 1) > 0),
-                (InStr(1, userTitle, "WHRC", 1) > 0)
-                '"WPWL51","WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50"
-            Case Else
-                If ((Label241.Text = 0) And (Label31.Text = 0)) Then
-                    Response.Redirect("error.aspx")
-                End If
-        End Select
+        ' No need to check again, since user has already been authenticated
+        'Select Case True
+        '    Case (InStr(1, userTitle, "40", 1) > 0), (InStr(1, userTitle, "50", 1) > 0), (InStr(1, userTitle, "60", 1) > 0), (InStr(1, userTitle, "70", 1) > 0), (InStr(1, userTitle, "WISO", 1) > 0), (InStr(1, userTitle, "WSTE", 1) > 0), (InStr(1, userTitle, "WSQE", 1) > 0), (InStr(1, userTitle, "WACQ", 1) > 0), (InStr(1, userTitle, "WPPM", 1) > 0), (InStr(1, userTitle, "WPSM", 1) > 0), (InStr(1, userTitle, "WEEX", 1) > 0), (InStr(1, userTitle, "WPWL51", 1) > 0), (InStr(1, userTitle, "WHER", 1) > 0), (InStr(1, userTitle, "WHHR", 1) > 0),
+        '        (InStr(1, userTitle, "WHRC", 1) > 0)
+        '        '"WPWL51","WACS40", "WMPR40", "WPPT40", "WSQA40", "WTTR40", "WTTR50", "WPSM11", "WPSM12", "WPSM13", "WPSM14", "WPSM15", "WACS50", "WACS60", "WFFA60", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPT50", "WPPT60", "WSQA50", "WSQA70", "WPPM70", "WPPM80", "WEEX90", "WEEX91", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14", "WSQE14", "WSQE15", "WBCO50"
+        '    Case Else
+        '        If ((Label241.Text = 0) And (Label31.Text = 0)) Then
+        '            Response.Redirect("error.aspx")
+        '        End If
+        'End Select
 
         Dim formID
         Dim idArray

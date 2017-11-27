@@ -57,13 +57,24 @@ Public Class view3
                 SqlDataSource10.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
                 SqlDataSource11.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
                 SqlDataSource12.SelectParameters("strCSRSUPin").DefaultValue = eclUser.LanID
-            Case (InStr(1, Label6a.Text, "50", 1) > 0), (InStr(1, Label6a.Text, "60", 1) > 0), (InStr(1, Label6a.Text, "70", 1) > 0), (InStr(1, Label6a.Text, "WISO", 1) > 0), (InStr(1, Label6a.Text, "WSTE", 1) > 0), (InStr(1, Label6a.Text, "WPPM", 1) > 0), (InStr(1, Label6a.Text, "WPSM", 1) > 0), (InStr(1, Label6a.Text, "WEEX", 1) > 0), (InStr(1, Label6a.Text, "WISY", 1) > 0), (InStr(1, Label6a.Text, "WPWL51", 1) > 0) '"WACS50", "WACS60", "WBCO50", "WSQA50", "WTTR50", "WPOP50", "WPOP60", "WPPM50", "WPPM60", "WPPM70", "WPPT50", "WPPT60", "WISO11", "WISO13", "WISO14", "WSTE13", "WSTE14"
+
+            ' *50, *60, *70, WISO*, WSTE*, WEEX*, WISY*, WPWL51
+            Case InStr(1, Label6a.Text, "50", 1) > 0,
+                 InStr(1, Label6a.Text, "60", 1) > 0,
+                 InStr(1, Label6a.Text, "70", 1) > 0,
+                 InStr(1, Label6a.Text, "WISO", 1) > 0,
+                 InStr(1, Label6a.Text, "WSTE", 1) > 0,
+                 InStr(1, Label6a.Text, "WEEX", 1) > 0,
+                 InStr(1, Label6a.Text, "WISY", 1) > 0,
+                 InStr(1, Label6a.Text, "WPWL51", 1) > 0
+
                 Panel3.Visible = True
                 Label26.Text = "Welcome to the My Submitted Dashboard"
                 SqlDataSource17.SelectParameters("strUserin").DefaultValue = eclUser.LanID
                 SqlDataSource18.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                 SqlDataSource19.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
                 SqlDataSource22.SelectParameters("strCSRMGRin").DefaultValue = eclUser.LanID
+
             Case Else
                 Panel4.Visible = True
                 Label9.Visible = True
