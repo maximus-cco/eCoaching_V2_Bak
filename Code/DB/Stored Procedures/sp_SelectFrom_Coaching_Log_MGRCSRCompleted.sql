@@ -1,9 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_MGRCSRCompleted(01).sql
-Last Modified Date: 1/18/2017
+sp_SelectFrom_Coaching_Log_MGRCSRCompleted(02).sql
+Last Modified Date: 11/27/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 01: Modified to support additional Modules (show logs where Mgr is sup of log owner) - TFS 8793 - 11/16/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -25,14 +25,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/2011
@@ -45,6 +37,7 @@ GO
 -- 2. Lan ID association by date.
 -- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 -- Modified per TFS 3923 to fix slow running stored procedures in my dashboard - 9/22/2016
+-- Modified to support additional Modules (show logs where Mgr is sup of log owner) per TFS 8793 - 11/16/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRCompleted] 
 
@@ -99,7 +92,7 @@ FROM (SELECT [cl].[FormName]	strFormID,
 [cl].[EmpID] = [eh].[Emp_ID]Join [EC].[DIM_Status] s ON
 [cl].[StatusID] = [s].[StatusID] JOIN  [EC].[DIM_Source] sc ON
 [cl].[SourceID] = [sc].[SourceID] 
-where eh.[Mgr_ID] = @nvcMGRIDparam
+where (eh.[Mgr_ID] = @nvcMGRIDparam OR eh.[Sup_ID] = @nvcMGRIDparam)
 and [S].[Status] = '''+@strFormStatus+'''
 and [sc].[SubCoachingSource] Like @strSourceinparam
 and [eh].[Emp_Name] Like @strCSRinparam
@@ -145,5 +138,8 @@ ErrorHandler:
 END --sp_SelectFrom_Coaching_Log_MGRCSRCompleted
 
 
+
+
 GO
+
 

@@ -1,8 +1,10 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(07).sql
+sp_SelectReviewFrom_Coaching_Log(08).sql
 
-Last Modified Date: 09/19/2017
+Last Modified Date: 11/27/2017
 Last Modified By: Susmitha Palacherla
+
+Version 08: Modified to support additional Modules per TFS 8793 - 11/16/2017
 
 Version 07: Modified to use LEFT Join on Submitter table for unknown Submitters - TFS 7541 - 09/19/2017
 
@@ -42,6 +44,9 @@ GO
 
 
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -66,6 +71,7 @@ GO
 --15. Modified to incorporate HNC and ICC Feed - TFS 7174 - 07/21/2017
 --16. Modified to incorporate DTT feed - TFS 7646 - 09/01/2017
 --17. Modified to use LEFT Join on Submitter table for unknown Submitters - TFS 7541 - 09/19/2017
+--18. Modified to support additional Modules per TFS 8793 - 11/16/2017
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
@@ -108,7 +114,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		eh.Sup_Name strCSRSupName,
 		eh.Sup_Email  strCSRSupEmail,
 	CASE 
-	     WHEN (cl.[statusId]in (6,8) AND cl.[ModuleID] in (1,3,4,5) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+	     WHEN (cl.[statusId]in (6,8) AND cl.[ModuleID]  NOT in (-1,2) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
 		 WHEN (cl.[statusId]= 5 AND cl.[ModuleID] = 2 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
@@ -129,7 +135,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 	END strCSRMgrName,
 		eh.Mgr_Email strCSRMgrEmail,
 	CASE 
-	     WHEN (cl.[statusId]= 5  AND cl.[ModuleID] in (1,3,4,5) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+	     WHEN (cl.[statusId]= 5  AND cl.[ModuleID] NOT in (-1,2) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
 		 WHEN (cl.[statusId]= 7  AND cl.[ModuleID] = 2 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
@@ -240,6 +246,9 @@ EXEC (@nvcSQL)
 --Print (@nvcSQL)
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
+
 
 
 

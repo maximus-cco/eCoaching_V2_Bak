@@ -1,9 +1,9 @@
 /*
-sp_SelectFrom_SRMGR_EmployeeCoaching_Review(01).sql
-Last Modified Date: 1/18/2017
+sp_SelectFrom_SRMGR_EmployeeCoaching_Review(02).sql
+Last Modified Date: 11/27/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02:  Modified to support additional Modules per TFS 8793 - 11/16/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -25,18 +25,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/01/2016
 --	Description: *	This procedure returns the Review Details for Coaching log selected.
 --  Last Updated By: 
 --  Created per TFS 3027 to implement dashboard for Sr Managers - 11/01/2016
+-- Modified to support additional Modules per TFS 8793 - 11/16/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_SRMGR_EmployeeCoaching_Review] @intFormIDin BIGINT
 AS
@@ -68,7 +63,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		st.City	strCSRSite,
 		eh.Sup_Name strCSRSupName,
 	CASE 
-	     WHEN (cl.[statusId]in (6,8) AND cl.[ModuleID] in (1,3,4,5) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+	     WHEN (cl.[statusId]in (6,8) AND cl.[ModuleID] NOT in (-1,2) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
 		 WHEN (cl.[statusId]= 5 AND cl.[ModuleID] = 2 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
@@ -85,7 +80,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 		 ELSE eh.Mgr_Name 
 	END strCSRMgrName,
 	CASE 
-	     WHEN (cl.[statusId]= 5  AND cl.[ModuleID] in (1,3,4,5) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
+	     WHEN (cl.[statusId]= 5  AND cl.[ModuleID] NOT in (-1,2) AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
 		 WHEN (cl.[statusId]= 7  AND cl.[ModuleID] = 2 AND cl.[ReassignedToID]is NOT NULL and [ReassignCount]<> 0)
 		 THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
@@ -140,5 +135,8 @@ EXEC (@nvcSQL)
 	    
 END --sp_SelectFrom_SRMGR_EmployeeCoaching_Review
 
+
+
 GO
+
 

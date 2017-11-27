@@ -1,9 +1,10 @@
 /*
-sp_SelectFrom_Coaching_Log_MGRPending(01).sql
-Last Modified Date: 1/18/2017
+sp_SelectFrom_Coaching_Log_MGRPending(02).sql
+Last Modified Date: 11/27/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Modified to support additional Modules per TFS 8793 - 11/16/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -27,6 +28,9 @@ GO
 
 
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
@@ -40,6 +44,7 @@ GO
 -- Modified per TFS 1710 Admin Tool setup - 5/2/2016
 -- Modified per TFS 3598 to add Coaching Reason fields and use sp_executesql - 8/15/2016
 -- Modified per TFS 3923 to fix slow running stored procedures in my dashboard - 9/22/2016
+-- Modified to support additional Modules per TFS 8793 - 11/16/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending] 
 @strCSRMGRin nvarchar(30),
@@ -57,6 +62,7 @@ DECLARE
 @strFormStatus4 nvarchar(50),
 @strFormStatus5 nvarchar(50),
 @strFormStatus6 nvarchar(50),
+@strFormStatus7 nvarchar(50),
 @nvcMGRID Nvarchar(10),
 @dtmDate datetime
 
@@ -68,6 +74,7 @@ DECLARE
  Set @strFormStatus4 = 'Pending Sr. Manager Review'
  Set @strFormStatus5 = 'Pending Deputy Program Manager Review'
  Set @strFormStatus6 = 'Pending Quality Lead Review'
+ Set @strFormStatus7 = 'Pending Employee Review'
  Set @dtmDate  = GETDATE()   
  Set @nvcMGRID = EC.fn_nvcGetEmpIdFromLanID(@strCSRMGRin,@dtmDate)
 
@@ -92,6 +99,7 @@ OR((ISNULL([cl].[strReportCode],'' '') not like ''LCS%'') AND [ReassignCount]= 0
 AND ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus2+''' OR [S].[Status] = '''+@strFormStatus3+''' OR [S].[Status] = '''+@strFormStatus6+'''))
 OR((ISNULL([cl].[strReportCode],'' '') not like ''LCS%'') AND cl.[ReassignedToID] = '''+@nvcMGRID+''' AND [ReassignCount]<> 0
 AND ([S].[Status] = '''+@strFormStatus1+''' OR [S].[Status] = '''+@strFormStatus4+''' OR [S].[Status] = '''+@strFormStatus5+''')) 
+OR((ISNULL([cl].[strReportCode],'' '') not like ''LCS%'') AND cl.[EmpID] = '''+@nvcMGRID+''' AND [S].[Status] = '''+@strFormStatus7+''') 
 OR ([cl].[strReportCode] like ''LCS%'' AND [ReassignCount]= 0 AND cl.[MgrID] = '''+@nvcMGRID+''' AND [S].[Status] = '''+@strFormStatus1+''')
 OR ([cl].[strReportCode] like ''LCS%'' AND cl.[ReassignedToID] = '''+@nvcMGRID+''' AND [ReassignCount]<> 0 AND [S].[Status] = '''+@strFormStatus1+''')
 OR ([cl].[strReportCode] like ''LCS%'' AND [ReassignCount]= 0 AND eh.[Sup_ID] ='''+@nvcMGRID+''' AND [S].[Status] = '''+@strFormStatus2+'''))
@@ -122,5 +130,9 @@ ErrorHandler:
 END --sp_SelectFrom_Coaching_Log_MGRPending
 
 
+
+
+
 GO
+
 
