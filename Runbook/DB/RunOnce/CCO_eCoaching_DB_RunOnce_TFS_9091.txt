@@ -1,0 +1,72 @@
+/*
+
+TFS 9091 - Add new sub-coaching reason to Attendance for CSR and Supervisor 
+
+Summary
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+1.Add record(s) to TABLE [EC].[DIM_Sub_Coaching_Reason]
+2.Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+
+SELECT [CoachingReasonID]
+      ,[CoachingReason]
+  FROM [EC].[DIM_Coaching_Reason]
+GO
+
+SELECT [SubCoachingReasonID]
+      ,[SubCoachingReason]
+  FROM [EC].[DIM_Sub_Coaching_Reason]
+GO
+
+
+SELECT *
+  FROM [EC].[Coaching_Reason_Selection]
+  where coachingreasonid = 3
+GO
+
+
+*/
+
+
+-- step1: add subcoaching reasons
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+('Attendance Improvement Discussion')
+
+
+GO
+
+
+
+--step2: add into coaching reason selection
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+(3, 'Attendance',243,'Attendance Improvement Discussion',1,1,1,1,1,1,0,1,0,0,0,0)
+
+
+GO
+
