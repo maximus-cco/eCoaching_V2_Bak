@@ -1,0 +1,245 @@
+/*
+
+SELECT ewfm.*
+  FROM [EC].[EmpID_To_SupID_Stage] ewfm  left outer join [EC].[Employee_Ids_With_Prefixes] pre
+  on ewfm.emp_id = pre.emp_id join [EC].[Employee_Hierarchy] eh 
+  on [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(ewfm.emp_id)),' ','')) = eh.emp_id
+  where ltrim(ewfm.Emp_ID) like 'W%'
+  and eh.Active = 'A'
+  and pre.emp_id is null
+  order by ltrim(ewfm.Emp_ID) 
+GO
+
+
+
+SELECT *
+  FROM [EC].[Employee_Ids_With_Prefixes]
+  where emp_id in 
+  (
+'W305501',
+'W311661',
+'W312346',
+'W312781',
+'W313011'
+
+)
+GO
+
+
+
+*/
+-- Insert records to Prefix table
+
+
+
+INSERT INTO [EC].[Employee_Ids_With_Prefixes]
+           ([Emp_ID]
+           ,[Emp_Name]
+           ,[Emp_LanID]
+           ,[Start_Date]
+           ,[Inserted_Date])
+     VALUES
+           ('W305501', 'Lokossou, Sepopo', 'Sepopo.Lokossou', '2017-09-08 00:00:00.000', '2017-09-08 17:00:08.860'),
+           ('W311661', 'Cornell, Devon L', 'Devon.Cornell', '2017-10-23 00:00:00.000', '2017-10-23 17:00:08.860'),
+		   ('W312346', 'Rucker, Zaven', 'Zaven.Rucker', '2017-11-06 00:00:00.000', '2017-11-06 17:00:08.860'),
+		   ('W312781', 'Baker, Roger M', 'Roger.Baker', '2017-11-06 00:00:00.000', '2017-11-06 17:00:08.860'),
+		   ('W313011', 'Wardrup, Adrian', 'Adrian.Wardrup', '2017-11-13 00:00:00.000', '2017-11-13 17:00:08.860')
+
+GO
+
+
+
+
+
+--******************************
+
+/*
+
+
+SELECT *
+  FROM [EC].[Coaching_Log]
+    where empid in 
+  (
+'305501',
+'311661',
+'312346',
+'312781',
+'313011',
+'W305501',
+'W311661',
+'W312346',
+'W312781',
+'W313011'
+)
+GO
+
+*/
+
+-- Update EmpID in Coaching Log Table to add 'W' Prefix
+
+Update [EC].[Coaching_Log]
+Set EmpID = CONCAT('W', EmpID) where empid in 
+(
+'305501',
+'311661',
+'312346',
+'312781',
+'313011'
+)
+GO
+
+
+--******************************
+
+/*
+
+SELECT *
+  FROM [EC].[EmployeeID_To_LanID]
+    where empid in 
+  (
+'305501',
+'311661',
+'312346',
+'312781',
+'313011',
+'W305501',
+'W311661',
+'W312346',
+'W312781',
+'W313011'
+)
+GO
+
+
+*/
+
+-- Update EmpID in Employee ID To Lan ID Table to add 'W' Prefix
+
+Update [EC].[EmployeeID_To_LanID]
+Set EmpID = CONCAT('W', EmpID) where empid in 
+(
+'305501',
+'311661',
+'312346',
+'312781',
+'313011'
+)
+GO
+
+
+--******************************
+
+/*
+
+SELECT *
+  FROM [EC].[CSR_Hierarchy]
+    where empid in 
+  (
+'305501',
+'311661',
+'312346',
+'312781',
+'313011',
+'W305501',
+'W311661',
+'W312346',
+'W312781',
+'W313011'
+)
+GO
+
+
+*/
+
+-- Update EmpID in CSR Hierarchy Table to add 'W' Prefix
+
+Update [EC].[CSR_Hierarchy]
+Set EmpID = CONCAT('W', EmpID) where empid in 
+(
+'305501',
+'311661',
+'312346',
+'312781',
+'313011'
+)
+GO
+
+
+--******************************
+
+/*
+
+SELECT *
+  FROM [EC].[Warning_Log]
+    where empid in 
+  (
+'305501',
+'311661',
+'312346',
+'312781',
+'313011',
+'W305501',
+'W311661',
+'W312346',
+'W312781',
+'W313011'
+)
+GO
+
+
+*/
+
+-- Update EmpID in Warning Log Table to add 'W' Prefix
+
+Update [EC].[Warning_Log]
+Set EmpID = CONCAT('W', EmpID) where empid in 
+(
+'305501',
+'311661',
+'312346',
+'312781',
+'313011'
+
+)
+GO
+
+
+--******************************
+
+/*
+
+SELECT *
+  FROM [EC].[Survey_Response_Header]
+    where empid in 
+  (
+'305501',
+'311661',
+'312346',
+'312781',
+'313011',
+'W305501',
+'W311661',
+'W312346',
+'W312781',
+'W313011'
+)
+GO
+
+
+*/
+
+-- Update EmpID in Survey Header Table to add 'W' Prefix
+
+Update [EC].[Survey_Response_Header]
+Set EmpID = CONCAT('W', EmpID) where empid in 
+(
+'305501',
+'311661',
+'312346',
+'312781',
+'313011'
+)
+GO
+
+
+--******************************
