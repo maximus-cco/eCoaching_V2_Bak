@@ -1,20 +1,6 @@
-/*
-sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff(01).sql
-Last Modified Date: 1/18/2017
-Last Modified By: Susmitha Palacherla
-
-
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
 IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = 'sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff'
+  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
+  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff' 
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff]
 GO
@@ -25,20 +11,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/2011
 --	Description: This procedure selects the completed records from the Coaching_Log table 
 --  and displays on the My submissions dashboard where the logged in user is the ecl submitter. 
--- Last Updated By: Susmitha Palacherla
--- Last Modified Date: 04/16/2015
--- Modified during dashboard redesign SCR 14422.
--- 1. To Replace old style joins.
--- 2. Lan ID association by date.
+--  Last Updated By: Susmitha Palacherla
+--  Last Modified Date: 04/16/2015
+--  Modified during dashboard redesign SCR 14422.
+--    1. To Replace old style joins.
+--    2. Lan ID association by date.
+--  TFS 7856 encryption/decryption - emp name
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff] 
 @strUserin nvarchar(30),
@@ -48,43 +31,45 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff
 
 AS
 
-
 BEGIN
 DECLARE	
 @nvcSQL nvarchar(max),
 @strFormStatus nvarchar(30),
 @nvcSubmitterID Nvarchar(10),
-@dtmDate datetime
+@dtmDate datetime;
 
- SET @strFormStatus = 'Completed'
- SET @dtmDate  = GETDATE()   
- SET @nvcSubmitterID  = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
-SET @nvcSQL = 'SELECT [cl].[FormName]	strFormID
-		,[s].[Status]	strFormStatus
-		,[eh].[Emp_Name]	strCSRName
-		,[eh].[Sup_Name]	strCSRSupName
-		,[eh].[Mgr_Name]	strCSRMgrName
-		,[cl].[SubmittedDate]	SubmittedDate
-FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
-cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh ON
-cl.SubmitterID = sh.EMP_ID JOIN [EC].[DIM_Status] s ON
-cl.StatusID = s.StatusID
-WHERE sh.Emp_ID = '''+@nvcSubmitterID+''' 
-AND [eh].[Emp_Name] Like '''+@strCSRin+''' 
-AND [eh].[Sup_Name] Like '''+@strCSRSupin+''' 
-AND [eh].[Mgr_Name] Like '''+@strCSRMgrin+''' 
-and s.[Status] = '''+@strFormStatus+'''
-and sh.Emp_ID <> ''999999''
-Order By [cl].[SubmittedDate] DESC'
+SET @strFormStatus = 'Completed'
+SET @dtmDate  = GETDATE()   
+SET @nvcSubmitterID  = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
 
+SET @nvcSQL = '
+SELECT [cl].[FormName]	strFormID
+      ,[s].[Status]		strFormStatus
+      ,[veh].[Emp_Name]	strCSRName
+      ,[veh].[Sup_Name]	strCSRSupName
+      ,[veh].[Mgr_Name]	strCSRMgrName
+      ,[cl].[SubmittedDate]	SubmittedDate
+FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON cl.EmpID = veh.Emp_ID 
+JOIN [EC].[Employee_Hierarchy] sh ON cl.SubmitterID = sh.EMP_ID 
+JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID
+WHERE sh.Emp_ID = ''' + @nvcSubmitterID + ''' 
+  AND [veh].[Emp_Name] LIKE ''' + @strCSRin + ''' 
+  AND [veh].[Sup_Name] LIKE ''' + @strCSRSupin + ''' 
+  AND [veh].[Mgr_Name] LIKE ''' + @strCSRMgrin + ''' 
+  AND s.[Status] = ''' + @strFormStatus + '''
+  AND sh.Emp_ID <> ''999999''
+ORDER BY [cl].[SubmittedDate] DESC';
 		
 EXEC (@nvcSQL)	
 --print @nvcSQL
+
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff
-
-
-
 GO
 

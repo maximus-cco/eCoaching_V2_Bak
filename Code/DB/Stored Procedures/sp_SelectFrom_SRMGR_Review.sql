@@ -1,20 +1,6 @@
-/*
-sp_SelectFrom_SRMGR_Review(01).sql
-Last Modified Date: 1/18/2017
-Last Modified By: Susmitha Palacherla
-
-
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
 IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_SRMGR_Review' 
+  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
+  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_SelectFrom_SRMGR_Review' 
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Review]
 GO
@@ -24,9 +10,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -41,20 +24,10 @@ AS
 
 BEGIN
 
-
 IF @bitisCoaching = 1
-BEGIN 
-EXEC  [EC].[sp_SelectFrom_SRMGR_EmployeeCoaching_Review]  @intFormIDin 
-END
-
-IF @bitisCoaching = 0
-BEGIN 
-EXEC  [EC].[sp_SelectFrom_SRMGR_EmployeeWarning_Review] @intFormIDin 
-END
-
+  EXEC  [EC].[sp_SelectFrom_SRMGR_EmployeeCoaching_Review]  @intFormIDin; 
+ELSE  
+  EXEC  [EC].[sp_SelectFrom_SRMGR_EmployeeWarning_Review] @intFormIDin ;
 	    
 END --sp_SelectFrom_SRMGR_Review
-
-
 GO
-

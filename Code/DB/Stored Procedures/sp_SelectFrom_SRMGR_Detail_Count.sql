@@ -1,20 +1,6 @@
-/*
-sp_SelectFrom_SRMGR_Detail_Count(01).sql
-Last Modified Date: 1/18/2017
-Last Modified By: Susmitha Palacherla
-
-
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
 IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_SRMGR_Detail_Count' 
+  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
+  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_SelectFrom_SRMGR_Detail_Count' 
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Detail_Count]
 GO
@@ -25,11 +11,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/01/2016
@@ -37,6 +18,7 @@ GO
 --  the selected parameters in the Senior leadeship dashboard. 
 --  Last Updated By: 
 --  Created per TFS 3027 to implement dashboard for Sr Managers - 11/01/2016
+--  TFS 7856 encryption/decryption - emp name, emp lanid, email
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_SRMGR_Detail_Count] 
 @strEMPSRMGRin nvarchar(30),
@@ -47,95 +29,98 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_SRMGR_Detail_Count]
 @Count INT OUTPUT,
 @searchBy nvarchar(30)
 
-
-
 AS
 
 BEGIN
-	DECLARE	
-	@nvcSQL nvarchar(max),
-	@strSrMgrEmpID nvarchar(10),
-	@strFormStatus nvarchar(30),
-	@strSDate nvarchar(8),
-	@strEDate nvarchar(8),
-	@intStatusID INT,
-	@whereStatus nvarchar(200),
-	@SearchExpression nvarchar(200) 
-	
-	DECLARE @CountResults TABLE (CountReturned INT) 
-	
 
+DECLARE	
+@nvcSQL nvarchar(max),
+@strSrMgrEmpID nvarchar(10),
+@strFormStatus nvarchar(30),
+@strSDate nvarchar(8),
+@strEDate nvarchar(8),
+@intStatusID INT,
+@whereStatus nvarchar(200),
+@SearchExpression nvarchar(200);
+
+DECLARE @CountResults TABLE (CountReturned INT);
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];	
 
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 SET @strEDate = convert(varchar(8),@strEDatein,112)
-
---PRINT @strSDate
---PRINT @strEDate
-
 SET @strSrMgrEmpID = (SELECT [EC].[fn_nvcGetEmpIdFromLanId] (@strEMPSRMGRin, GETDATE()))
 
 SET @searchBy = '%' + @searchBy + '%'
---PRINT @searchBy
-
-SET @SearchExpression = ' AND ([eh].[Emp_Name] LIKE '''+@searchBy+''' OR [eh].[Sup_Name] LIKE '''+@searchBy+'''' + 
-' OR [eh].[Mgr_Name] LIKE '''+@searchBy+''')'
-
+SET @SearchExpression = ' AND ([eh].[Emp_Name] LIKE ''' + @searchBy + ''' OR [eh].[Sup_Name] LIKE ''' + @searchBy+'''' + 
+' OR [eh].[Mgr_Name] LIKE ''' + @searchBy + ''')'
 
 IF @strStatus = 'Pending'
 BEGIN
-	SET @whereStatus = ' AND convert(varchar(8),[cl].[SubmittedDate],112) >= '''+@strSDate+'''  
-	AND convert(varchar(8),[cl].[SubmittedDate],112) <= '''+@strEDate+'''
-	AND [cl].[StatusId] NOT IN (1,2) '
+	SET @whereStatus = ' AND convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate+'''  
+	AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
+	AND [cl].[StatusId] NOT IN (1, 2) '
 END
 
 IF @strStatus = 'Completed'
 BEGIN
-	SET @whereStatus = ' AND convert(varchar(8),[cl].[CSRReviewAutoDate],112) >= '''+@strSDate+'''  
-	AND convert(varchar(8),[cl].[CSRReviewAutoDate],112) <= '''+@strEDate+'''
+	SET @whereStatus = ' AND convert(varchar(8), [cl].[CSRReviewAutoDate], 112) >= '''+@strSDate+'''  
+	AND convert(varchar(8), [cl].[CSRReviewAutoDate], 112) <= '''+@strEDate+'''
 	AND [cl].[StatusId] = 1 '
 END
 
 IF @bitisCoaching = 1
 
-SET @nvcSQL = 'WITH TempMain AS 
-	(SELECT DISTINCT x.strFormID 
+SET @nvcSQL = 'WITH TempMain 
+AS 
+(
+    SELECT DISTINCT x.strFormID 
 	FROM 
-	(SELECT DISTINCT [cl].[FormName]	strFormID
-	FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON
-	[cl].[EmpID] = [eh].[Emp_ID] 
-WHERE (eh.SrMgrLvl1_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl2_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl3_ID = '''+@strSrMgrEmpID+''')'
-+   @whereStatus 
-+   @SearchExpression 
-+ ' AND [cl].[ModuleID] in (1,2)
-    AND '''+@strSrMgrEmpID+''' <> ''999999''
-	 GROUP BY [cl].[FormName]) x)
-	SELECT count(strFormID) FROM TempMain'
+	(
+	    SELECT DISTINCT [cl].[FormName]	strFormID
+	    FROM [EC].[Employee_Hierarchy] eh 
+		JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON [cl].[EmpID] = [eh].[Emp_ID] 
+        WHERE (eh.SrMgrLvl1_ID = ''' + @strSrMgrEmpID + ''' OR eh.SrMgrLvl2_ID = ''' + @strSrMgrEmpID + ''' OR eh.SrMgrLvl3_ID = ''' + @strSrMgrEmpID + ''')'
+          + @whereStatus 
+          + @SearchExpression + ' 
+		  AND [cl].[ModuleID] in (1, 2)
+          AND ''' + @strSrMgrEmpID + ''' <> ''999999''
+	    GROUP BY [cl].[FormName]
+	) x
+)
+SELECT count(strFormID) FROM TempMain'
 	
 ELSE
 
-SET @nvcSQL = 'WITH TempMain AS 
-	(SELECT DISTINCT x.strFormID 
+SET @nvcSQL = 'WITH TempMain 
+AS 
+(
+    SELECT DISTINCT x.strFormID 
 	FROM 
-	(SELECT DISTINCT [wl].[FormName]	strFormID
-	FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH (NOLOCK) ON
-	[wl].[EmpID] = [eh].[Emp_ID] 
-	WHERE (eh.SrMgrLvl1_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl2_ID = '''+@strSrMgrEmpID+''' OR eh.SrMgrLvl3_ID = '''+@strSrMgrEmpID+''')
-    AND convert(varchar(8),[wl].[SubmittedDate],112) >= '''+@strSDate+'''  
-	AND convert(varchar(8),[wl].[SubmittedDate],112) <= '''+@strEDate+''' 
-	AND [wl].StatusID = 1
-	AND [wl].[Active] = 1
-	AND [wl].[ModuleID] in (1,2) '
-	+ @SearchExpression +
-    ' AND '''+@strSrMgrEmpID+''' <> ''999999''
-	GROUP BY [wl].[FormName]) x)
-	SELECT count(strFormID) FROM TempMain'
+	(
+	    SELECT DISTINCT [wl].[FormName]	strFormID
+	    FROM [EC].[Employee_Hierarchy] eh 
+		JOIN [EC].[Warning_Log] wl WITH (NOLOCK) ON [wl].[EmpID] = [eh].[Emp_ID] 
+	    WHERE (eh.SrMgrLvl1_ID = ''' + @strSrMgrEmpID + ''' OR eh.SrMgrLvl2_ID = ''' + @strSrMgrEmpID + ''' OR eh.SrMgrLvl3_ID = ''' + @strSrMgrEmpID + ''')
+          AND convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''  
+	      AND convert(varchar(8), [wl].[SubmittedDate], 112) <= '''+@strEDate+''' 
+	      AND [wl].StatusID = 1
+	      AND [wl].[Active] = 1
+	      AND [wl].[ModuleID] in (1,2) '
+	      + @SearchExpression + ' 
+	      AND '''+@strSrMgrEmpID+''' <> ''999999''
+	    GROUP BY [wl].[FormName]
+    ) x
+)
+SELECT count(strFormID) FROM TempMain'
 	
-INSERT @CountResults	
-EXEC (@nvcSQL)
-SET @Count = (SELECT CountReturned FROM @CountResults)
+INSERT @CountResults EXEC (@nvcSQL);
+
+SET @Count = (SELECT CountReturned FROM @CountResults);
+
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey]; 
  
 END --sp_SelectFrom_SRMGR_Detail_Count
-
-
 GO
-

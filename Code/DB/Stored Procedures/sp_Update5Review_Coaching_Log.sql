@@ -12,12 +12,9 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
 
-
 IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Update5Review_Coaching_Log' 
+  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
+  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update5Review_Coaching_Log' 
 )
    DROP PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 GO
@@ -27,7 +24,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
@@ -40,147 +36,143 @@ GO
 --    Updated per TFS 1709 Admin tool setup to reset reassign count to 0 - 5/2/2016
 --    Updated per TFS 6145  to support Training brl and brn feeds  - 4/13/2017
 --    Updated per TFS 6881 to increase size for param @nvcstrReasonNotCoachable to 100 - 06/01/2017
+--    TFS 7856 encryption/decryption - emp name, emp lanid, email
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
 (
-      @nvcFormID Nvarchar(50),
-      @nvcFormStatus Nvarchar(30),
-      @nvcstrReasonNotCoachable Nvarchar(100),
-      @nvcReviewerLanID Nvarchar(20),
-      @dtmReviewAutoDate datetime,
-      @dtmReviewManualDate datetime,
-      @bitisCoachingRequired bit,
-      @nvcReviewerNotes Nvarchar(max),
-      @nvctxtReasonNotCoachable Nvarchar(max)
-    
+  @nvcFormID Nvarchar(50),
+  @nvcFormStatus Nvarchar(30),
+  @nvcstrReasonNotCoachable Nvarchar(100),
+  @nvcReviewerLanID Nvarchar(20),
+  @dtmReviewAutoDate datetime,
+  @dtmReviewManualDate datetime,
+  @bitisCoachingRequired bit,
+  @nvcReviewerNotes Nvarchar(max),
+  @nvctxtReasonNotCoachable Nvarchar(max)
 )
 AS
+
 BEGIN
-DECLARE @RetryCounter INT
-SET @RetryCounter = 1
+
+DECLARE @RetryCounter INT;
+SET @RetryCounter = 1;
 
 RETRY: -- Label RETRY
 
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+BEGIN TRANSACTION;
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-BEGIN TRANSACTION
 BEGIN TRY
+DECLARE 
+  @nvcReviewerID Nvarchar(10),
+  @nvcCat Nvarchar (10);
 
-DECLARE @nvcReviewerID Nvarchar(10),
-	    @dtmDate datetime,
-	    @nvcCat Nvarchar (10)
-       
-SET @dtmDate  = GETDATE()   
-SET @nvcReviewerID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewerLanID,@dtmDate)
---SET @nvcCat = (select strReportCode from EC.Coaching_Log where FormName = @nvcFormID) 
-SET @nvcCat = (select RTRIM(LEFT(strReportCode,LEN(strReportCode)-8)) from EC.Coaching_Log where FormName = @nvcFormID) 
+SET @nvcCat = (SELECT RTRIM(LEFT(strReportCode, LEN(strReportCode) - 8)) FROM EC.Coaching_Log WHERE FormName = @nvcFormID) 
 
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+SET @nvcReviewerID = EC.fn_nvcGetEmpIdFromLanID(@nvcReviewerLanID, GETDATE());
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey];
 
---IF LEFT(@nvcCat,LEN(@nvcCat)-8) IN ('OAE','OAS')
-  IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN')
-
+IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN')
 BEGIN      
-UPDATE 	EC.Coaching_Log
-SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
-        Review_SupID = @nvcReviewerID,
-		strReasonNotCoachable = @nvcstrReasonNotCoachable,
-		isCoachingRequired = @bitisCoachingRequired,
-		SupReviewedAutoDate =  @dtmReviewAutoDate,
-		CoachingDate =  @dtmReviewManualDate,
-		CoachingNotes = @nvcReviewerNotes,		   
-		txtReasonNotCoachable = @nvctxtReasonNotCoachable,
-		ReassignCount = 0 
-	WHERE FormName = @nvcFormID
-        OPTION (MAXDOP 1)
-        
+  UPDATE EC.Coaching_Log
+  SET 
+    StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
+    Review_SupID = @nvcReviewerID,
+    strReasonNotCoachable = @nvcstrReasonNotCoachable,
+    isCoachingRequired = @bitisCoachingRequired,
+    SupReviewedAutoDate =  @dtmReviewAutoDate,
+    CoachingDate =  @dtmReviewManualDate,
+    CoachingNotes = @nvcReviewerNotes,		   
+    txtReasonNotCoachable = @nvctxtReasonNotCoachable,
+    ReassignCount = 0 
+  WHERE FormName = @nvcFormID
+  OPTION (MAXDOP 1);
   
-UPDATE EC.Coaching_Log_Reason
-SET Value = (CASE WHEN @bitisCoachingRequired = 'True' then 'Opportunity' ELSE 'Not Coachable' END)
-  	FROM EC.Coaching_Log cl INNER JOIN EC.Coaching_Log_Reason clr
-	ON cl.CoachingID = clr.CoachingID
-	WHERE cl.FormName = @nvcFormID
-and clr.SubCoachingReasonID in (120,121,29,231,232,233,238,239)
-        OPTION (MAXDOP 1)
-
+  UPDATE EC.Coaching_Log_Reason
+  SET 
+    Value = (CASE WHEN @bitisCoachingRequired = 'True' THEN 'Opportunity' ELSE 'Not Coachable' END)
+  FROM EC.Coaching_Log cl 
+  INNER JOIN EC.Coaching_Log_Reason clr ON cl.CoachingID = clr.CoachingID
+  WHERE cl.FormName = @nvcFormID
+    AND clr.SubCoachingReasonID IN (120, 121, 29, 231, 232, 233, 238, 239)
+  OPTION (MAXDOP 1);
 END
 
 ELSE
-
 BEGIN
+  UPDATE EC.Coaching_Log
+  SET
+    StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
+    Review_MgrID = @nvcReviewerID,
+    strReasonNotCoachable = @nvcstrReasonNotCoachable,
+    isCoachingRequired = @bitisCoachingRequired,
+    MgrReviewAutoDate = @dtmReviewAutoDate,
+    MgrReviewManualDate = @dtmReviewManualDate,
+    MgrNotes = @nvcReviewerNotes,		   
+    txtReasonNotCoachable = @nvctxtReasonNotCoachable, 
+    ReminderSent = 0,
+    ReminderDate = NULL,
+    ReminderCount = 0,
+    ReassignCount = 0 
+  WHERE FormName = @nvcFormID
+  OPTION (MAXDOP 1);
 
-UPDATE 	EC.Coaching_Log
-SET StatusID = (select StatusID from EC.DIM_Status where status = @nvcFormStatus),
-        Review_MgrID = @nvcReviewerID,
-		strReasonNotCoachable = @nvcstrReasonNotCoachable,
-		isCoachingRequired = @bitisCoachingRequired,
-		MgrReviewAutoDate = @dtmReviewAutoDate,
-		MgrReviewManualDate = @dtmReviewManualDate,
-		MgrNotes = @nvcReviewerNotes,		   
-		txtReasonNotCoachable = @nvctxtReasonNotCoachable, 
-		ReminderSent = 0,
-        ReminderDate = NULL,
-        ReminderCount = 0,
-        ReassignCount = 0 
-	WHERE FormName = @nvcFormID
-        OPTION (MAXDOP 1)
-
-UPDATE EC.Coaching_Log_Reason
-SET Value = (CASE WHEN @bitisCoachingRequired = 'True' then 'Opportunity' ELSE 'Not Coachable' END)
-  	FROM EC.Coaching_Log cl INNER JOIN EC.Coaching_Log_Reason clr
-	ON cl.CoachingID = clr.CoachingID
-	INNER JOIN EC.DIM_Coaching_Reason cr ON cr.CoachingReasonID = clr.CoachingReasonID
-WHERE cl.FormName = @nvcFormID
-and cr.CoachingReason in ('OMR / Exceptions', 'Current Coaching Initiative')
-        OPTION (MAXDOP 1)
-
-END
+  UPDATE EC.Coaching_Log_Reason
+    SET 
+	  Value = (CASE WHEN @bitisCoachingRequired = 'True' THEN 'Opportunity' ELSE 'Not Coachable' END)
+  FROM EC.Coaching_Log cl 
+  INNER JOIN EC.Coaching_Log_Reason clr ON cl.CoachingID = clr.CoachingID
+  INNER JOIN EC.DIM_Coaching_Reason cr ON cr.CoachingReasonID = clr.CoachingReasonID
+  WHERE cl.FormName = @nvcFormID
+    AND cr.CoachingReason IN ('OMR / Exceptions', 'Current Coaching Initiative')
+  OPTION (MAXDOP 1);
+END -- End IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN')
 	
-COMMIT TRANSACTION
+COMMIT TRANSACTION;
 END TRY
 
 BEGIN CATCH
-	--PRINT 'Rollback Transaction'
-	ROLLBACK TRANSACTION
-	DECLARE @DoRetry bit; -- Whether to Retry transaction or not
-	DECLARE @ErrorMessage NVARCHAR(4000)
-    DECLARE @ErrorSeverity INT
-    DECLARE @ErrorState INT
-    
-	SET @doRetry = 0;
-	
-	IF ERROR_NUMBER() = 1205 -- Deadlock Error Number
-	BEGIN
-		SET @doRetry = 1; -- Set @doRetry to 1 only for Deadlock
-	END
-	IF @DoRetry = 1
-	BEGIN
-		SET @RetryCounter = @RetryCounter + 1 -- Increment Retry Counter By one
-		IF (@RetryCounter > 3) -- Check whether Retry Counter reached to 3
-		BEGIN
-			RAISERROR(@ErrorMessage, 18, 1) -- Raise Error Message if 
-				-- still deadlock occurred after three retries
-		END
-		ELSE
-		BEGIN
-			WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
-			GOTO RETRY	-- Go to Label RETRY
-		END
-	END
-	ELSE
-	BEGIN
-    RAISERROR (@ErrorMessage, -- Message text.
-               @ErrorSeverity, -- Severity.
-               @ErrorState -- State.
-               )
-END               
-END CATCH
+  ROLLBACK TRANSACTION;
+  
+  DECLARE @DoRetry bit; -- Whether to Retry transaction or not
+  DECLARE @ErrorMessage NVARCHAR(4000);
+  DECLARE @ErrorSeverity INT;
+  DECLARE @ErrorState INT;
 
+  SELECT   
+    @ErrorMessage = ERROR_MESSAGE(),  
+    @ErrorSeverity = ERROR_SEVERITY(),  
+    @ErrorState = ERROR_STATE();
+    
+  SET @doRetry = 0;
+	
+  IF ERROR_NUMBER() = 1205 -- Deadlock Error Number
+  BEGIN
+    SET @doRetry = 1;      -- Set @doRetry to 1 only for Deadlock
+  END
+
+  IF @DoRetry = 1
+  BEGIN
+    SET @RetryCounter = @RetryCounter + 1; -- Increment Retry Counter By one
+    IF (@RetryCounter > 3)                 -- Check whether Retry Counter reached to 3
+    BEGIN
+      -- Raise Error Message if still deadlock occurred after three retries
+	  RAISERROR(@ErrorMessage, 18, 1); 
+	END
+    ELSE
+    BEGIN
+      WAITFOR DELAY '00:00:00.05'; -- Wait for 5 ms
+      GOTO RETRY;	               -- Go to Label RETRY
+    END
+  END
+  ELSE -- @DoRetry = 0, not deadlock error
+  BEGIN
+    RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
+  END -- ELSE
+END CATCH;
 
 END --sp_Update5Review_Coaching_Log
-
-
-
 GO
-
-
-
