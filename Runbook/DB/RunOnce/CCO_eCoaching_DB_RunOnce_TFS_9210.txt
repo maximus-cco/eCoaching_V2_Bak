@@ -1,0 +1,53 @@
+/*
+
+TFS 9210 -  Inactivate Arlington site and prevent employees with job code of WISO13 from appearing in drop downs
+
+Summary
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+1.Update flag to not display WISO13 in any module drop down
+2.Set Arlington to inactive in DIM site table
+
+
+Select * from [EC].[Employee_Selection]
+where job_code = 'WISO13'
+GO
+
+
+Select *  from [EC].[DIM_Site]
+Where City = 'Arlington'
+
+GO
+
+
+*/
+
+
+-- step1: Update flag to not display WISO13 in any module drop down
+
+Update [EC].[Employee_Selection]
+Set isCSR = 0
+,issupervisor = 0
+,isQuality = 0
+,isTraining = 0
+,isLSA = 0
+where job_code = 'WISO13'
+
+GO
+
+
+
+--step2: Set Arlington to inactive in DIM site table
+
+Update [EC].[DIM_Site]
+set isActive = 0 
+Where City = 'Arlington'
+
+
+GO
+
