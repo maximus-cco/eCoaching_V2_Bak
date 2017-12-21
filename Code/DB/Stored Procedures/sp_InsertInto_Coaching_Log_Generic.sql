@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Generic(02).sql
-Last Modified Date: 9/1/2017
+sp_InsertInto_Coaching_Log_Generic(03).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
+
+Version 03: Modified to support Encryption of sensitive data. Open Key and Removed LanID- TFS 7856 - 10/23/2017
 
 Version 02: Updated to support DTT feed - TFS 7646 -  9/1/2017
 
@@ -30,8 +32,6 @@ GO
 
 
 
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/11/2016
@@ -39,6 +39,7 @@ GO
 -- Modified to accomodate Attendance feed for seasonal employees per TFS 3972 - 09/15/2016
 -- Modified to support ad-hoc loads by adding more values to the file. TFS 4916 - 12/9/2016
 -- Modified to support DTT feed. TFS 7646 - 8/31/2017
+-- Modified to support Encryption of sensitive data. Open Key and Removed LanID. TFS 7856 - 10/23/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
 @Count INT OUTPUT
@@ -57,7 +58,11 @@ BEGIN TRY
       SET @maxnumID = (SELECT IsNULL(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
       -- Fetches the Date of the Insert
       SET @dtmDate  = GETDATE()   
-      
+  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert] 
+
+     
 -- Inserts records from the Generic_Coaching_Stage table to the Coaching_Log Table
 
   INSERT INTO [EC].[Coaching_Log]
@@ -66,7 +71,6 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
@@ -87,7 +91,7 @@ BEGIN TRY
            ,[SupID]
            ,[MgrID]
            )
-SELECT DISTINCT LOWER(cs.CSR_LANID)	[FormName],
+SELECT DISTINCT LOWER(cs.CSR_EMPID)	[FormName],
 
 CASE cs.Program  
         WHEN NULL THEN csr.Emp_Program
@@ -107,8 +111,7 @@ CASE cs.Program
         ELSE cs.Status_ID 
   END   [StatusID],
   
-        [EC].[fn_intGetSiteIDFromLanID](cs.CSR_LANID,@dtmDate)[SiteID],
-        LOWER(cs.CSR_LANID)				[EmpLanID],
+               [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
         cs.CSR_EMPID                    [EmpID],
         
   CASE
@@ -215,7 +218,13 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     WHERE cr.[CoachingID] IS NULL 
  OPTION (MAXDOP 1)   
  
+  -- Truncate Staging Table
+Truncate Table [EC].[Generic_Coaching_Stage]
+
+
+CLOSE SYMMETRIC KEY [CoachingKey]   
                   
+				                   
 COMMIT TRANSACTION
 END TRY
 
@@ -246,12 +255,6 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Generic
-
-
-
-
-
-
 
 
 GO

@@ -1,10 +1,10 @@
 /*
-sp_Update_Generic_Coaching_Stage(01).sql
-Last Modified Date: 9/1/2017
+sp_Update_Generic_Coaching_Stage(02).sql
+Last Modified Date:  11/27/2017
 Last Modified By: Susmitha Palacherla
 
 
-
+Version 02:Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 Version 01: Document Initial Revision - Added support for DTT generic feed. - TFS 7646 - 9/1/2017
 */
 
@@ -29,6 +29,7 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 08/31/2017
@@ -39,11 +40,15 @@ GO
 -- Last Modified By - Susmitha Palacherla
 -- Revision History
 -- Initial Revision. DTT Feed - TFS 7646 - 08/31/2017
+-- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Generic_Coaching_Stage] 
 @Count INT OUTPUT
 AS
 BEGIN
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
 -- Populate Emp ID if LanID provided in File 
 BEGIN
@@ -60,7 +65,7 @@ WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 -- Populate Attributes from Employee Table
 BEGIN
 UPDATE [EC].[Generic_Coaching_Stage]
-SET [CSR_LANID] = EMP.[Emp_LanID]
+SET [CSR_LANID] = [EC].[fn_strEmpLanIDFromEmpID]([CSR_EMPID])
     ,[CSR_Site]= EMP.[Emp_Site]
     ,[Program]= EMP.[Emp_Program]
     ,[Emp_Role]= 
@@ -96,8 +101,13 @@ SELECT @Count = @@ROWCOUNT
 OPTION (MAXDOP 1)
 END
 
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey];	
+
+
 
 END  -- [EC].[sp_Update_Generic_Coaching_Stage]
+
 
 
 GO

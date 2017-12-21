@@ -1,7 +1,9 @@
 /*
-sp_Update_Employee_Hierarchy_Stage(03).sql
-Last Modified Date: 09/22/2017
+sp_Update_Employee_Hierarchy_Stage(04).sql
+Last Modified Date: 11/27/2017
 Last Modified By: Susmitha Palacherla
+
+Version 04:Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 
 Version 03: Updated to revise logic for supporting reused numeric part of Employee ID per TFS 8228 - 9/22/2017
 
@@ -27,6 +29,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/2/2013
@@ -48,6 +51,7 @@ GO
 -- from eWFM and PeopleSoft before using in Employee Hierarchy table - 09/03/2015
 -- Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
 -- Updated to revise logic for supporting reused numeric part of Employee ID per TFS 8228 - 9/22/2017
+-- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage] 
 AS
@@ -61,6 +65,39 @@ RETRY: -- Label RETRY
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+
+
+
+-- Encrypt name and LanID in Emp ID TO Sup ID Aspect data Staging table
+
+
+BEGIN
+UPDATE [EC].[EmpID_To_SupID_Stage]
+SET [Emp_Name] = EncryptByKey(Key_GUID('CoachingKey'), [Emp_Name_Drop])
+,[Emp_LanID]= EncryptByKey(Key_GUID('CoachingKey'), [Emp_LanID_Drop])
+WHERE [Emp_Name] IS NULL AND [Emp_LanID]IS NULL
+ 
+OPTION (MAXDOP 1)
+END  
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+
+-- Set Unecctypted name and Lan ID to NULL in Emp ID TO Sup ID Aspect data Staging table
+
+BEGIN
+
+UPDATE [EC].[EmpID_To_SupID_Stage]
+SET [Emp_Name_Drop] = NULL
+,[Emp_LanID_Drop]= NULL
+ 
+OPTION (MAXDOP 1)
+END  
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
 
 -- Delete records where Employee ID is a missing or a blank.
 BEGIN
@@ -101,11 +138,11 @@ END
 BEGIN
 UPDATE eh
 SET  [Emp_ID_Prefix] = hs.[Emp_ID]
-,[Hire_Date]= CONVERT(nvarchar(8),hs.[Start_Date],112)
+,[Hire_Date]= CONVERT(nvarchar(8),hs.[Hire_Date],112)
 From [EC].[Employee_hierarchy] eh Join [EC].[Employee_Hierarchy_Stage]hs
 ON REPLACE(LTRIM(RTRIM(eh.[Emp_ID])),' ','') = [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(HS.[Emp_ID])),' ',''))
-AND ([EC].[fn_strEmpFirstNameFromEmpName] (hs.Emp_Pri_Name) = [EC].[fn_strEmpFirstNameFromEmpName] (eh.Emp_Pri_Name)
- OR [EC].[fn_strEmpLastNameFromEmpName] (hs.Emp_Pri_Name) =[EC].[fn_strEmpLastNameFromEmpName] (eh.emp_Pri_Name))
+AND ([EC].[fn_strEmpFirstNameFromEmpName] (hs.Emp_Pri_Name) = [EC].[fn_strEmpFirstNameFromEmpName] (CONVERT(nvarchar(50),DecryptByKey(eh.Emp_Pri_Name)))
+ OR [EC].[fn_strEmpLastNameFromEmpName] (hs.Emp_Pri_Name) =[EC].[fn_strEmpLastNameFromEmpName] (CONVERT(nvarchar(50),DecryptByKey(eh.emp_Pri_Name))))
  Where eh.Emp_ID_Prefix like 'WX%'
  
 OPTION (MAXDOP 1)
@@ -127,8 +164,8 @@ INSERT INTO [EC].[Employee_Ids_With_Prefixes]
 	   GETDATE()[Inserted_Date]
  FROM 
  (SELECT HS.[Emp_ID],
-		HS.[Emp_Name],
-		HS.[Emp_LanID],
+		EncryptByKey(Key_GUID('CoachingKey'), HS.[Emp_Name])[Emp_Name],
+		EncryptByKey(Key_GUID('CoachingKey'), HS.[Emp_LanID])[Emp_LanID],
 		HS.[Start_Date]
   FROM [EC].[Employee_Hierarchy_Stage]HS LEFT OUTER JOIN[EC].[Employee_Hierarchy]H
   ON [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(HS.[Emp_ID])),' ',''))= H.[Emp_ID]
@@ -165,8 +202,6 @@ SET [Emp_ID]= REPLACE(LTRIM(RTRIM([Emp_ID])),' ',''),
    [Sup_ID]= REPLACE(LTRIM(RTRIM([Sup_ID])),' ','')
 END
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
-
-
 
     
 -- Set Sup_Emp_ID  and Program for CSRs from WFM
@@ -205,10 +240,6 @@ END
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
-
-
-
-
 -- Populates Supervisor attributes
 BEGIN 
 UPDATE Emp
@@ -236,6 +267,10 @@ BEGIN
     ON Emp.[Mgr_Emp_ID]= Mgr.[EMP_ID]
 OPTION (MAXDOP 1)
 END
+
+
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey];	 
 
 COMMIT TRANSACTION
 END TRY

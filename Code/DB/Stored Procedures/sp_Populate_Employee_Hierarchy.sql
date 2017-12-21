@@ -1,7 +1,9 @@
 /*
-sp_Populate_Employee_Hierarchy(04).sql
-Last Modified Date: 11/15/2017
+sp_Populate_Employee_Hierarchy(05).sql
+Last Modified Date: 11/17/2017
 Last Modified By: Susmitha Palacherla
+
+Version 05:  Updated to support Encryption of sensitive data - TFS 7856 - 11/17/2017
 
 Version 04:  Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
 
@@ -30,6 +32,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
@@ -40,12 +43,14 @@ GO
 -- updated during TFS 6614 to Change how email addresses with apostrophes are stored - 05/16/2017
 -- Updated to populate preferred name and Hire date attributes. TFS 8228 - 09/21/2017
 -- Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
-
+-- Updated to support Encryption of sensitive data - TFS 7856 - 11/17/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
 BEGIN
 
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
  --Assigns End_Date to Inactive Records with status change in feed
  
@@ -93,28 +98,28 @@ WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 -- Updates Existing Records
 BEGIN
 	UPDATE [EC].[Employee_Hierarchy]
-	   SET [Emp_Name] = Replace(S.[Emp_Name],'''', '')
-	      ,[Emp_Email] = S.[Emp_Email]
-		  ,[Emp_LanID] = S.Emp_LanID
+	   SET [Emp_Name] = EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Emp_Name],'''', ''))
+	      ,[Emp_Email] = EncryptByKey(Key_GUID('CoachingKey'), S.[Emp_Email])
+		  ,[Emp_LanID] = EncryptByKey(Key_GUID('CoachingKey'), S.Emp_LanID)
 		  ,[Emp_Site] =  [EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site)
 		  ,[Emp_Job_Code] = S.Emp_Job_Code
 		  ,[Emp_Job_Description] = S.Emp_Job_Description
 		  ,[Emp_Program] = S.Emp_Program
 		  ,[Sup_ID] = S.Sup_EMP_ID
-		  ,[Sup_Name] = Replace(S.[Sup_Name],'''', '')
-		  ,[Sup_Email] = S.[Sup_Email]
-		  ,[Sup_LanID] = S.Sup_LanID
+		  ,[Sup_Name] = EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Sup_Name],'''', ''))
+		  ,[Sup_Email] = EncryptByKey(Key_GUID('CoachingKey'), S.[Sup_Email])
+		  ,[Sup_LanID] = EncryptByKey(Key_GUID('CoachingKey'), S.Sup_LanID)
 		  ,[Sup_Job_Code] = S.Sup_Job_Code 
 		  ,[Sup_Job_Description] = S.Sup_Job_Description
 		  ,[Mgr_ID] = S.Mgr_EMP_ID 
-		  ,[Mgr_Name] = Replace(S.[Mgr_Name],'''', '')
-		  ,[Mgr_Email] = S.[Mgr_Email]
-		  ,[Mgr_LanID] = S.Mgr_LanID
+		  ,[Mgr_Name] = EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Mgr_Name],'''', ''))
+		  ,[Mgr_Email] = EncryptByKey(Key_GUID('CoachingKey'), S.[Mgr_Email])
+		  ,[Mgr_LanID] = EncryptByKey(Key_GUID('CoachingKey'), S.Mgr_LanID)
 		  ,[Mgr_Job_Code] = S.Mgr_Job_Code 
 		  ,[Mgr_Job_Description] = S.Mgr_Job_Description
 		  ,[Start_Date] = CONVERT(nvarchar(8),S.[Start_Date],112)
 		  ,[Active] = S.Active
-		  ,[Emp_Pri_Name] = S.Emp_Pri_Name
+		  ,[Emp_Pri_Name] = EncryptByKey(Key_GUID('CoachingKey'), S.Emp_Pri_Name)
 		  ,Dept_ID = S.Dept_ID
 		  ,Dept_Description = S.Dept_Description
 		  ,Reg_Temp = S.Reg_Temp
@@ -165,30 +170,30 @@ BEGIN
 			   ,[FLSA_Status]
 			  )
 							 SELECT S.[Emp_ID]
-						      ,Replace(S.[Emp_Name],'''', '')
-                              ,S.[Emp_Email]
-							  ,S.[Emp_LanID]
+						      ,EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Emp_Name],'''', ''))
+                              ,EncryptByKey(Key_GUID('CoachingKey'), S.[Emp_Email])
+							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Emp_LanID)
 							  ,[EC].[fn_strSiteNameFromSiteLocation](S.[Emp_Site])
 							  ,S.[Emp_Job_Code]
 							  ,S.[Emp_Job_Description]
 							  ,S.[Emp_Program]
 							  ,S.[Sup_Emp_ID]
-							  ,Replace(S.[Sup_Name],'''', '')
-							  ,S.[Sup_Email]
-							  ,S.[Sup_LanID]
+							  ,EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Sup_Name],'''', ''))
+							  ,EncryptByKey(Key_GUID('CoachingKey'), S.[Sup_Email])
+							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Sup_LanID)
 							  ,S.[Sup_Job_Code]
 							  ,S.[Sup_Job_Description]
 							  ,S.[Mgr_Emp_ID]
-							  ,Replace(S.[Mgr_Name],'''', '')
-							  ,S.[Mgr_Email]
-							  ,S.[Mgr_LanID]
+							  ,EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Mgr_Name],'''', ''))
+							  ,EncryptByKey(Key_GUID('CoachingKey'), S.[Mgr_Email])
+							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Mgr_LanID)
 							  ,S.[Mgr_Job_Code]
 							  ,S.[Mgr_Job_Description]
 							  ,CONVERT(nvarchar(8),S.[Start_Date],112)
 							  ,S.[Active]
 							  ,S.[Emp_ID_Prefix]
 							  ,CONVERT(nvarchar(8),S.[Hire_Date],112)
-							  ,S.[Emp_Pri_Name] 
+							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Emp_Pri_Name)
 							  ,S.[Dept_ID]
 							  ,S.[Dept_Description]
 							  ,S.[Reg_Temp]
@@ -201,6 +206,9 @@ BEGIN
 
 OPTION (MAXDOP 1)
 END
+
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey];	 
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
     
@@ -216,6 +224,8 @@ BEGIN
      END
 
 END --sp_Populate_Employee_Hierarchy
+
+
 
 GO
 

@@ -1,9 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality(02).sql
-Last Modified Date: 09/19/2017
+sp_InsertInto_Coaching_Log_Quality(03).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 03: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 02: Updated to Incorporate ATA Scorecards - TFS 7541 - 09/19/2017
 
@@ -28,11 +28,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
-
 --    ====================================================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      02/23/2014
@@ -42,8 +37,9 @@ GO
 -- Modified per TFS 283 to force CRLF in Description value when viewed in UI - 08/31/2015
 -- Updated per TFS 3757 to add isCoachingMonitor attribute - 10/28/2016
 -- Updated to Incorporate ATA Scorecards - TFS 7541 - 09/19/2017
+-- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
+ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
   
 AS
@@ -67,7 +63,6 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
@@ -89,7 +84,7 @@ BEGIN TRY
            ,[isCoachingMonitor])
 
             SELECT DISTINCT
-            lower(csr.Emp_LanID)	[FormName],
+            User_EMPID	[FormName],
             CASE qs.Program  
             WHEN NULL THEN csr.Emp_Program
             WHEN '' THEN csr.Emp_Program
@@ -97,7 +92,6 @@ BEGIN TRY
             [EC].[fn_intSourceIDFromSource](@strSourceType, qs.Source)[SourceID],
             [EC].[fn_strStatusIDFromIQSEvalID](qs.CSE, qs.Oppor_Rein )[StatusID],
             [EC].[fn_intSiteIDFromEmpID](LTRIM(qs.User_EMPID))[SiteID],
-            lower(csr.Emp_LanID)	[EmpLanID],
             qs.User_EMPID [EmpID],
             qs.Evaluator_ID	 [SubmitterID],       
             qs.Call_Date [EventDate],
@@ -157,7 +151,10 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     WHERE cr.[CoachingID] IS NULL 
  OPTION (MAXDOP 1)   
  
-                  
+ WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+ --Truncate Staging Table
+ Truncate Table [EC].[Quality_Coaching_Stage]
+
 COMMIT TRANSACTION
 END TRY
 
@@ -188,11 +185,3 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
-
-
-
-
-
-GO
-
-

@@ -1,9 +1,9 @@
 /*
-sp_AT_Coaching_Reassignment(01).sql
-Last Modified Date: 1/18/2017
+sp_AT_Coaching_Reassignment(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -19,9 +19,9 @@ IF EXISTS (
 GO
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -31,6 +31,7 @@ GO
 -- MULTIPLE ASTERISKS (***) DESIGNATE SECTIONS OF THE STORED PROCEDURE TEMPLATE THAT SHOULD BE CUSTOMIZED
 --  Initial Revision per TFS 1709 Admin tool setup - 5/12/2016
 --  Modified per TFS 4353 to reset recminder attributes for reassigned logs - 10/21/2016
+--  Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 ---------------------------------------------------------------------------------------------------------
 -- REQUIRED PARAMETERS:
 -- INPUT: @***sampleInputVariable varchar(35)***
@@ -95,7 +96,9 @@ DECLARE @strRequestrID nvarchar(10),
         @intStatusID int,
         @intLKStatusID int,
      	@dtmDate datetime
-     	
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert] 	
 
 SET @dtmDate  = GETDATE()   
 SET @strRequestrID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterLanId,@dtmDate)
@@ -134,7 +137,7 @@ ON CL.CoachingID = ID.ID
 WAITFOR DELAY '00:00:00:02'  -- Wait for 2 ms
     --PRINT 'END STEP2'      
     
-      
+CLOSE SYMMETRIC KEY [CoachingKey]       
 
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -172,5 +175,6 @@ return 0
 
 
 
-GO
 
+
+GO

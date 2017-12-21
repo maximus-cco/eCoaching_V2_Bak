@@ -1,7 +1,9 @@
 /*
 sp_InsertInto_Outlier_Rejected(04).sql
-Last Modified Date: 11/16/2017
+Last Modified Date: 11/23/2017
 Last Modified By: Susmitha Palacherla
+
+Version 05: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 11/23/2017
 
 Version 04: Removed status check for BRL and BRN feeds  - TFS 8793 - 11/16/2017
 
@@ -29,12 +31,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/24/2017
@@ -42,8 +38,8 @@ GO
 -- Populates Reject Reason(s) and Inserts Rejected logs to Rejected table.
 -- Initial revision. TFS 6377 - 04/24/2017
 -- Updated to add rejection logic for invalid LCS Review Mgr ID - TFS 6612 - 05/22/2017
--- Modified during Encryption of sensitive data. Limited attributes being stored for rejected logs. TFS 7856 - 10/23/2017
 -- Removed status check for BRL and BRN feeds  - TFS 8793 - 11/16/2017
+-- Modified during Encryption of sensitive data. Limited attributes being stored for rejected logs. TFS 7856 - 11/23/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
 AS
@@ -155,6 +151,5 @@ END
 END -- sp_InsertInto_Outlier_Rejected
 
 GO
-
 
 

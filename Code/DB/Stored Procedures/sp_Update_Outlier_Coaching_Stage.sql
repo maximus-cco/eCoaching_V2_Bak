@@ -1,7 +1,10 @@
 /*
-sp_Update_Outlier_Coaching_Stage(04).sql
-Last Modified Date: 11/17/2017
+sp_Update_Outlier_Coaching_Stage(05.sql
+Last Modified Date: 11/27/2017
 Last Modified By: Susmitha Palacherla
+
+
+Version 05: Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 
 Version 04: Added Additional Job codes and Roles - TFS 8793 - 11/16/2017
 
@@ -28,12 +31,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 04/24/2017
@@ -45,12 +42,15 @@ GO
 -- Initial revision. TFS 6377 - 04/24/2017
 -- Updated to fix typo in Missing Site and Comments - TFS 6147 - 06/02/2017
 -- Added Additional Job codes and Roles - TFS 8793 - 11/16/2017
+-- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage] 
 @Count INT OUTPUT
 AS
 BEGIN
 
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
 -- Populate LanID for Employee ID coming in file (LCS, IAE and IAT)
 BEGIN
@@ -66,7 +66,23 @@ WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 --  have either EmpID or LanID arrive in strCSR
 -- (All Other OMR Files)
 
--- EmpID sent in strCSR. Copy to EmpID
+-- For Files where EmpID sent in strCSR. Copy it to EmpID
+-- Prior to copying remove prefix in Value if Emp ID in Employee Hierarchy table does not have prefix
+
+BEGIN
+UPDATE [EC].[Outlier_Coaching_Stage]
+SET [CSR_LANID]= [eh].[Emp_ID]
+FROM [EC].[Outlier_Coaching_Stage] os JOIN [EC].[Employee_Hierarchy] eh 
+ON os.[CSR_LANID] = eh.[Emp_ID_Prefix]
+WHERE NOT ISNULL([CSR_LANID],' ') like '%.%'
+AND [CSR_EMPID] IS NULL
+AND [CSR_LANID] NOT IN
+ (SELECT DISTINCT [Emp_ID]FROM [EC].[Employee_Ids_With_Prefixes])
+OPTION (MAXDOP 1)
+END 
+ 
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
+
 BEGIN
 UPDATE [EC].[Outlier_Coaching_Stage]
 SET [CSR_EMPID]=[CSR_LANID]
@@ -75,7 +91,9 @@ OPTION (MAXDOP 1)
 END 
  
 WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms  
- 
+
+  
+
 -- Replace above copied EmpIds with LANIds
 BEGIN
 UPDATE [EC].[Outlier_Coaching_Stage]
@@ -105,6 +123,9 @@ OPTION (MAXDOP 1)
 END  
       
 WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
+
+
+
 
 -- Populate Missing program
 BEGIN
@@ -174,8 +195,10 @@ SELECT @Count =@@ROWCOUNT
 OPTION (MAXDOP 1)
 END
 
-
 WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
+
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey];	
 
 
 END  -- [EC].[sp_Update_Outlier_Coaching_Stage]

@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_ETS_Rejected(02).sql
-Last Modified Date: 7/26/2017
+sp_InsertInto_ETS_Rejected(03).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
+
+Version 03: Modified to support Encryption of sensitive data - Limited attributes being stored for rejected logs - TFS 7856 - 10/23/2017
 
 Version 02: Updated to incorporate HNC and ICC Reports per TFS 7174 - 07/26/2017
 
@@ -25,12 +27,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 11/19/14
@@ -40,6 +36,7 @@ GO
 -- Last Modified By - Susmitha Palacherla
 -- Modified per scr 14031 to incorporate the compliance reports.
 -- Modified to support HNC and ICC Reports for CSRs. TFS 7174 - 07/21/2017
+-- Modified during Encryption of sensitive data. Limited attributes being stored for rejected logs. TFS 7856 - 10/23/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_ETS_Rejected] 
 
@@ -121,52 +118,12 @@ INSERT INTO [EC].[ETS_Coaching_Rejected]
            ([Report_Code]
            ,[Event_Date]
            ,[Emp_ID]
-           ,[Emp_LanID]
-           ,[Emp_Site]
-           ,[Emp_Program]
-           ,[Emp_SupID]
-           ,[Emp_MgrID]
-           ,[Emp_Role]
-           ,[Project_Number]
-           ,[Task_Number]
-           ,[Task_Name]
-           ,[Time_Code]
-           ,[Associated_Person]
-           ,[Hours]
-           ,[Sat]
-           ,[Sun]
-           ,[Mon]
-           ,[Tue]
-           ,[Wed]
-           ,[Thu]
-           ,[Fri]
-           ,[Exemp_Status]
            ,[FileName]
            ,[Reject_Reason]
            ,[Reject_Date])
           SELECT S.[Report_Code]
            ,S.[Event_Date]
            ,S.[Emp_ID]
-           ,S.[Emp_LanID]
-           ,S.[Emp_Site]
-           ,S.[Emp_Program]
-           ,S.[Emp_SupID]
-           ,S.[Emp_MgrID]
-           ,S.[Emp_Role]
-           ,S.[Project_Number]
-           ,S.[Task_Number]
-           ,S.[Task_Name]
-           ,S.[Time_Code]
-           ,S.[Associated_Person]
-           ,S.[Hours]
-           ,S.[Sat]
-           ,S.[Sun]
-           ,S.[Mon]
-           ,S.[Tue]
-           ,S.[Wed]
-           ,S.[Thu]
-           ,S.[Fri]
-           ,S.[Exemp_Status]
            ,S.[FileName]
            ,S.[Reject_Reason]
            ,GETDATE()
@@ -178,6 +135,7 @@ OPTION (MAXDOP 1)
 END
 
 END  -- [EC].[sp_InsertInto_ETS_Rejected]
-GO
 
+
+GO
 

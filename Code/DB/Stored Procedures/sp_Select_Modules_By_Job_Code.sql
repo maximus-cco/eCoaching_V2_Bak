@@ -1,9 +1,9 @@
 /*
-sp_Select_Modules_By_Job_Code(01).sql
-Last Modified Date: 1/18/2017
+sp_Select_Modules_By_Job_Code(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support Encryption of sensitive data (Open key)- TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -25,12 +25,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	7/31/14
@@ -41,7 +35,7 @@ GO
 --  Modified per TFS 861 to add Warnings to all Modules - 10/21/2015 
 -- Modified per TFS 3877 to hard code Employee Ids for Mark Hackman and Scott Potter
 -- to allow LSA and Training submissions which their job code does not have access to - 09/21/2016
--- 
+--  Modified to support Encryption of sensitive data (Open key)- TFS 7856 - 10/23/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Modules_By_Job_Code] 
 @nvcEmpLanIDin nvarchar(30)
@@ -55,6 +49,9 @@ BEGIN
 	@nvcEmpJobCode nvarchar(30),
 	@nvcCSR nvarchar(30),
 	@dtmDate datetime
+
+-- Open Symmetric Key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
 
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
@@ -104,10 +101,12 @@ where Module is not Null '
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
+
+  -- Clode Symmetric Key
+  CLOSE SYMMETRIC KEY [CoachingKey] 
+
 END --sp_Select_Modules_By_Job_Code
 
-
-
-
 GO
+
 

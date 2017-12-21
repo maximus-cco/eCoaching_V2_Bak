@@ -1,38 +1,25 @@
-SET QUOTED_IDENTIFIER ON 
-GO
-SET ANSI_NULLS ON 
-GO
 
 if exists (select * from dbo.sysobjects where id = object_id('[EC].[sp_HistoricalDashboardAclInsert]') and OBJECTPROPERTY(id, 'IsProcedure') = 1)
 drop procedure EC.sp_HistoricalDashboardAclInsert
 GO
 
-/***************************************************************** 
-sp_HistoricalDashboardAclInsert
-Description:
-	Inserts a record into Historical_Dashboard_ACL table.
+SET QUOTED_IDENTIFIER ON 
+GO
+SET ANSI_NULLS ON 
+GO
 
-Tables:
-	Historical_Dashboard_ACL
+-- =============================================
+-- Author:           Lili Huang
+-- Revision History
+--  Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
+-- =============================================
 
-Input Parameters:
-	@userLanId
-	@userName
-	@userRole
-	@CreatedBy
-	@rowId
-
-Resultset:
-	None
-	
-*****************************************************************/
-
-CREATE  PROCEDURE [EC].[sp_HistoricalDashboardAclInsert]
+CREATE PROCEDURE [EC].[sp_HistoricalDashboardAclInsert]
 (
-    @userLanId        varchar(20),
-    @userName         varchar(20),
-    @userRole         varchar(10),
-    @createdBy        varchar(20),
+    @userLanId        nvarchar(30),
+    @userName         nvarchar(50),
+    @userRole         nvarchar(30),
+    @createdBy        nvarchar(30),
     @rowId            int OUTPUT,
 -------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
@@ -49,25 +36,46 @@ AS
 -------------------------------------------------------------------------------    
 -- *** BEGIN: INSERT CUSTOM CODE HERE ***
 BEGIN
+  
+
+
     BEGIN TRY
-        SELECT @rowId = Row_ID FROM Historical_Dashboard_ACL WHERE User_LanID = @userLanId AND End_Date <> '99991231'; 
+
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
+
+        SELECT @rowId = Row_ID FROM View_Historical_Dashboard_ACL WHERE User_LanID = @userLanId AND End_Date <> '99991231'; 
         IF (@rowId IS NULL)
         BEGIN
             INSERT INTO Historical_Dashboard_ACL 
+			(  [User_LanID]
+               ,[User_Name]
+			   ,[Role]
+               ,[End_Date]
+               ,[IsAdmin]
+			   ,[Updated_By])
             VALUES 
             (
-                @userLanId,
-                @userName,
-                @userRole,
-                '99991231',
-                @createdBy,
-                'N'
-            );
+                  EncryptByKey(Key_GUID('CoachingKey'), @userLanId),
+				  EncryptByKey(Key_GUID('CoachingKey'), @userName),
+                  @userRole,
+				  '99991231',
+				  'N',
+		        EncryptByKey(Key_GUID('CoachingKey'), @createdBy)
+			  --    [EC].[fn_Encrypt_CoachingKey](@userLanId),
+				 --[EC].[fn_Encrypt_CoachingKey](@userName),
+     --             @userRole,
+				 -- '99991231',
+				 -- 'N',
+		   --     [EC].[fn_Encrypt_CoachingKey]( @createdBy)
+             );
+CLOSE SYMMETRIC KEY [CoachingKey] 
+
             SELECT @rowId = SCOPE_IDENTITY();
         END -- IF
         ELSE
         BEGIN
-            UPDATE Historical_Dashboard_ACL SET End_Date = '99991231', Role = @userRole WHERE User_LanID = @userLanId;
+            UPDATE Historical_Dashboard_ACL SET End_Date = '99991231', Role = @userRole 
+			WHERE CONVERT(nvarchar(30),DecryptByKey([User_LanID])) = @userLanId;
         END; -- ELSE
     END TRY
     
@@ -79,5 +87,10 @@ BEGIN
     END CATCH
  
     RETURN @returnCode; 
+
 END
 -- *** END: INSERT CUSTOM CODE HERE ***
+
+
+
+GO

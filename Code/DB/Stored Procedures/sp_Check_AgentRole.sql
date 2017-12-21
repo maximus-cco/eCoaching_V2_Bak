@@ -1,9 +1,10 @@
 /*
-sp_Check_AgentRole(01).sql
-Last Modified Date: 1/18/2017
+sp_Check_AgentRole(02).sql
+Last Modified Date: 10/23/2017
+
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -20,11 +21,12 @@ IF EXISTS (
 GO
 
 
+
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 --	====================================================================
@@ -33,6 +35,7 @@ GO
 --	Last Update:	<>
 --	Description: *	This procedure returns the Row_ID from the ACl table if agent belongs to the role being checked. 
 --  Last Update:    03/12/2014 - Updated per SCR 12359 to add NOLOCK Hint
+--  Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Check_AgentRole]
 (
@@ -43,11 +46,15 @@ AS
 Declare
  @ROWID INT
 
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
+
+
 BEGIN
 
 	SELECT @ROWID = [Row_ID]
 	FROM  [EC].[Historical_Dashboard_ACL] WITH(NOLOCK)
-	WHERE  [User_LanID] = @nvcLANID
+	WHERE CONVERT(nvarchar(70),DecryptByKey([User_LanID])) = @nvcLANID
 	AND [Role]= @nvcRole
 	AND [End_Date]='99991231'
 
@@ -55,8 +62,10 @@ BEGIN
 IF @ROWID IS NULL RETURN 0
 ELSE
 RETURN 	 @ROWID	
-    
-END
+
+CLOSE SYMMETRIC KEY [CoachingKey]      
+END --sp_Check_AgentRole
+
+
 
 GO
-

@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Outlier(05).sql
-Last Modified Date: 11/16/2017
+sp_InsertInto_Coaching_Log_Outlier(06).sql
+Last Modified Date: 11/23/2017
 Last Modified By: Susmitha Palacherla
+
+Version 06: Modified to support Encryption of sensitive data. Opened Key and Removed LanID - TFS 7856 - 11/23/2017
 
 Version 05: Updated to support additional Modules - TFS 8793 - 11/16/2017
 
@@ -25,14 +27,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 GO
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 -- =============================================
 -- Author:		        Susmitha Palacherla
@@ -46,6 +46,7 @@ GO
 -- Breaks feeds and also added Output param to capture count of Loaded records - 4/24/2017
 -- Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
 -- Updated to support additional Modules - TFS 8793 - 11/16/2017
+-- Modified to support Encryption of sensitive data. Opened Key and Removed LanID. TFS 7856 - 11/23/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 @Count INT OUTPUT
@@ -64,6 +65,9 @@ BEGIN TRY
               @strIATPretext nvarchar(200),
               @strBRText nvarchar(200)
               
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert] 
+
       -- Fetches the maximum CoachingID before the insert.
       SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
       -- Fetches the Date of the Insert
@@ -81,7 +85,6 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
@@ -101,7 +104,7 @@ BEGIN TRY
            ,[SupID]
            ,[MgrID]
            )
-select  Distinct LOWER(cs.CSR_LANID)	[FormName],
+select  Distinct LOWER(cs.CSR_EMPID)	[FormName],
         CASE cs.Program  
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
@@ -109,8 +112,7 @@ select  Distinct LOWER(cs.CSR_LANID)	[FormName],
         CASE WHEN cs.Report_Code LIKE 'MSR%'
         THEN 232 ELSE 212 END	[SourceID],                        
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
-        [EC].[fn_intGetSiteIDFromLanID](cs.CSR_LANID,@dtmDate)[SiteID],
-        LOWER(cs.CSR_LANID)				[EmpLanID],
+        [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
         cs.CSR_EMPID                    [EmpID],
         [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)[SubmitterID],
 		cs.Event_Date			            [EventDate],
@@ -179,6 +181,11 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     WHERE cr.[CoachingID] IS NULL 
  OPTION (MAXDOP 1)   
  
+ -- Truncate Staging Table
+Truncate Table [EC].[Outlier_Coaching_Stage]
+
+
+CLOSE SYMMETRIC KEY [CoachingKey]   
                   
 COMMIT TRANSACTION
 END TRY
@@ -210,16 +217,6 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Outlier
-
-
-
-
-
-
-
-
-
-
 GO
 
 

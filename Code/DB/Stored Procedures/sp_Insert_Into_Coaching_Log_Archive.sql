@@ -1,8 +1,9 @@
 /*
-sp_Insert_Into_Coaching_Log_Archive(01).sql
-Last Modified Date: 1/18/2017
+sp_Insert_Into_Coaching_Log_Archive(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -22,9 +23,9 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 -- =============================================
@@ -34,7 +35,7 @@ GO
 -- Last Modified By: Susmitha Palacherla
 -- Revision History:
 -- Intial Revision: Created per TFS 3932 - 10/10/2016
-
+--  Modified to support Encryption of sensitive data - Removed EmpLanID. TFS 7856 - 10/23/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive]@strArchivedBy nvarchar(50)= 'Automated Process'
 
@@ -58,7 +59,6 @@ INSERT INTO [EC].[Coaching_Log_Archive]
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
@@ -115,7 +115,6 @@ INSERT INTO [EC].[Coaching_Log_Archive]
       ,[SourceID]
       ,[StatusID]
       ,[SiteID]
-      ,[EmpLanID]
       ,[EmpID]
       ,[SubmitterID]
       ,[EventDate]
@@ -240,5 +239,6 @@ END TRY
 
 END  -- [EC].[sp_Insert_Into_Coaching_Log_Archive]
 
-GO
 
+
+GO

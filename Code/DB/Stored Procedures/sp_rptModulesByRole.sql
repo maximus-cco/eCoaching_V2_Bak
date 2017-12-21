@@ -1,7 +1,9 @@
 /*
-sp_rptModulesByRole(02).sql
-Last Modified Date: 03/23/2017
+sp_rptModulesByRole(03).sql
+Last Modified Date: 11/28/2017
 Last Modified By: Susmitha Palacherla
+
+Version 03: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 
 Version 02: Additional Update. TFS 5621. Updated parameter name for lanID - 03/23/2017
 
@@ -27,10 +29,6 @@ GO
 
 
 
-
-
-
-
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/14/2017
@@ -40,6 +38,7 @@ GO
 --  Revision History:
 --  Initial Revision - TFS 5621 - 03/14/2017
 --  Updated parameter to @LanID - TFS 5621 - 03/23/2017
+--  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
  *******************************************************************************/
 CREATE PROCEDURE [EC].[sp_rptModulesByRole] 
 (
@@ -74,6 +73,9 @@ DECLARE
 	@nvcEmpID nvarchar(10),
 	@intRoleID nvarchar(30),
 	@dtmDate datetime
+
+-- Open Symmetric Key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
 
 IF @LanID = '211palasu'
 BEGIN
@@ -110,7 +112,8 @@ UNION
 		                    JOIN [EC].[AT_User]u ON u.UserId = ur.UserId 
 		                     WHERE u.UserID = @nvcEmpID))
 		                    
-
+  -- Clode Symmetric Key
+  CLOSE SYMMETRIC KEY [CoachingKey] 
 	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -136,11 +139,7 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
-
-
-
-
-
 GO
+
 
 

@@ -1,9 +1,9 @@
 /*
-sp_InsertInto_IQS_Rejected(01).sql
-Last Modified Date: 9/18/2017
+sp_InsertInto_IQS_Rejected(02).sql
+Last Modified Date: 11/27/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 11/27/2017
 
 Version 01: Document Initial Revision - Incorporate ATA forms in IQS feed. - TFS 7541 - 9/18/2017
 */
@@ -25,15 +25,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 9/18/2017
 -- Description:	Determines rejection reason and rejects  logs.
 -- Revision History:
 -- Initial Revision. Incorporate ATA scorecards - TFS 7541 - 09/18/2017
+-- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_IQS_Rejected] 
 @Count INT OUTPUT
@@ -41,11 +39,13 @@ CREATE PROCEDURE [EC].[sp_InsertInto_IQS_Rejected]
 AS
 BEGIN
 
+-- Open Symmetric Key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
 
 -- Populate Emp Lan ID, Role and Module
 BEGIN
 UPDATE [EC].[Quality_Coaching_Stage]
-SET [User_LANID] = EMP.[Emp_LanID]
+SET [User_LANID] = CONVERT(nvarchar(30),DecryptByKey(EMP.[Emp_LanID]))
     ,[Emp_Role]= 
     CASE WHEN EMP.[Emp_Job_Code]in ('WACS01', 'WACS02','WACS03') THEN 'C'
     WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
@@ -134,7 +134,8 @@ INSERT INTO [EC].[Quality_Coaching_Rejected]
 OPTION (MAXDOP 1)
 END
 
-
+  -- Clode Symmetric Key
+  CLOSE SYMMETRIC KEY [CoachingKey] 
 -- Delete rejected records
 
 BEGIN
@@ -148,6 +149,5 @@ END
 END  -- [EC].[sp_InsertInto_Quality_Rejected]
 
 GO
-
 
 

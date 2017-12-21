@@ -1,9 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Training(01).sql
-Last Modified Date: 1/18/2017
+sp_InsertInto_Coaching_Log_Training(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -25,22 +25,25 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        3/22/2016
 --  Created per TFS 2283 to load the Training feed(s) SDR and ODT
+-- Modified to support Encryption of sensitive data. Opened Key and Removed LanID. TFS 7856 - 10/23/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Training]
+@Count INT OUTPUT
+
 AS
 BEGIN
 
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
+
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
 
       DECLARE @maxnumID INT,
               @dtmDate DATETIME
@@ -58,7 +61,6 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
@@ -78,15 +80,14 @@ BEGIN TRY
            ,[SupID]
            ,[MgrID]
            )
-select  Distinct LOWER(cs.CSR_LANID)	[FormName],
+select  Distinct cs.CSR_EMPID	[FormName],
         CASE cs.Program  
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
         210                             [SourceID],
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
-        [EC].[fn_intGetSiteIDFromLanID](cs.CSR_LANID,@dtmDate)[SiteID],
-        LOWER(cs.CSR_LANID)				[EmpLanID],
+        [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
         cs.CSR_EMPID                    [EmpID],
         [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)[SubmitterID],
 		cs.Event_Date			            [EventDate],
@@ -111,6 +112,7 @@ from [EC].[Training_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR
 left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
 where cf.numReportID is Null and cf.strReportCode is null
 
+SELECT @Count =@@ROWCOUNT
 
 -- Updates the strFormID value
 
@@ -142,6 +144,14 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     WHERE cr.[CoachingID] IS NULL 
  OPTION (MAXDOP 1)   
  
+-- Close the symmetric key with which to encrypt the data.  
+CLOSE SYMMETRIC KEY [CoachingKey]  
+
+
+ WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+-- Truncate Staging Table
+Truncate Table [EC].[Training_Coaching_Stage]
                   
 COMMIT TRANSACTION
 END TRY
@@ -172,11 +182,10 @@ END TRY
     ELSE
       RETURN 1
   END CATCH  
+
+
 END -- sp_InsertInto_Coaching_Log_Training
 
-
-
-
-
 GO
+
 

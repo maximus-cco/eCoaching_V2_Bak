@@ -1,7 +1,9 @@
 /*
-sp_rptHierarchySummary(03).sql
-Last Modified Date: 04/10/2017
+sp_rptHierarchySummary(04).sql
+Last Modified Date: 11/28/2017
 Last Modified By: Susmitha Palacherla
+
+Version 04:  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 
 Version 03: Added Aspect fields and removed Module name - TFS 5621 - 04/10/2017
 
@@ -20,11 +22,15 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_rptHierarchySummary]
 GO
+
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 
@@ -39,6 +45,7 @@ GO
 --  Last Modified By:
 --  Revision History:
 --  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/10/2017)
+--  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
  *******************************************************************************/
 CREATE PROCEDURE [EC].[sp_rptHierarchySummary] 
 (
@@ -72,18 +79,22 @@ AS
 
 SET NOCOUNT ON
 
+-- Open Symmetric Key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
+
+
        SELECT  eh.Emp_ID AS [Employee ID]
-              ,eh.Emp_Name AS [Employee Name]
+              ,CONVERT(nvarchar(50),DecryptByKey(eh.Emp_Name)) AS [Employee Name]
               ,ISNULL(eh.Emp_Site,'Unknown') AS [Site]
               ,ISNULL(eh.Emp_Job_Code,'-') AS [Employee Job Code]
               ,ISNULL(eh.Emp_Job_Description,'-') AS [Employee Job Description]
               ,ISNULL(eh.Emp_Program,'NA') AS [Program]
 			  ,ISNULL(eh.Sup_ID,'-') AS [Supervisor Employee ID]
-			  ,ISNULL(eh.Sup_Name,'-')  AS [Supervisor Name]
+			  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(eh.Sup_Name)),'-')  AS [Supervisor Name]
 			  ,ISNULL(eh.Sup_Job_Code,'-') AS [Supervisor Job Code]
               ,ISNULL(eh.Sup_Job_Description, '-') AS [Supervisor Job Description]
 			  ,ISNULL(eh.Mgr_ID,'-') AS [Manager Employee ID]
-			  ,ISNULL(eh.Mgr_Name,'-')  AS [Manager Name]
+			  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(eh.Mgr_Name)),'-')  AS [Manager Name]
 			  ,ISNULL(eh.Mgr_Job_Code,'-') AS [Manager Job Code]
               ,ISNULL(eh.Mgr_Job_Description, '-') AS [Manager Job Description]
 		      ,ISNULL(eh.Start_Date,'-')AS [Start Date]
@@ -98,6 +109,8 @@ SET NOCOUNT ON
 		       AND ([eh].[Emp_Site] = (@strEmpSitein)or @strEmpSitein = 'All')
         ORDER BY eh.Emp_Name
 
+  -- Clode Symmetric Key
+  CLOSE SYMMETRIC KEY [CoachingKey] 
 	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -127,8 +140,9 @@ RETURN @returnCode
 
 
 
-GO
 
+
+GO
 
 
 

@@ -1,11 +1,11 @@
 /*
-sp_AT_Check_Entitlements(01).sql
-Last Modified Date: 1/18/2017
+sp_AT_Check_Entitlements(02).sql
+Last Modified Date: 11/23/2017
 Last Modified By: Susmitha Palacherla
 
+Version 02: Modified to support Encryption of sensitive data - Open keys TFS 7856 - 11/23/2017
 
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+Version 01:  Initial Revision. Admin tool setup, TFS 1709- 4/2/12016
 
 */
 
@@ -20,9 +20,9 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -35,7 +35,7 @@ GO
 --  Last Modified date: 
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/2/12016
- 
+--  Modified to support Encryption of sensitive data - Open keys TFS 7856 - 10/23/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Check_Entitlements] 
 @nvcEmpLanIDin nvarchar(30)
@@ -48,12 +48,11 @@ BEGIN
 	@nvcEmpID nvarchar(10),
     @dtmDate datetime
 
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
+
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
-
-
-
- 
 
 
 SET @nvcSQL = 'SELECT DISTINCT [EntitlementId], [EntitlementDescription]
@@ -70,7 +69,8 @@ SET @nvcSQL = 'SELECT DISTINCT [EntitlementId], [EntitlementDescription]
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
+CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Check_Entitlements
 
-GO
 
+GO

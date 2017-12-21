@@ -1,7 +1,9 @@
 /*
-sp_rptCoachingSummary(05).sql
-Last Modified Date: 08/16/2017
+sp_rptCoachingSummary(06).sql
+Last Modified Date: 11/28/2017
 Last Modified By: Susmitha Palacherla
+
+Version 06:  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 
 Version 05: Updated during 2012 upgrade to add distinct clause - TFS 7106 - 08/16/2017
 
@@ -31,6 +33,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/14/2017
@@ -40,6 +45,7 @@ GO
 --  Revision History:
 --  Initial Revision - TFS 5621 -  03/14/2017 (Modified 04/19/2017)
 --  Updated during 2012 upgrade to add distinct clause - TFS 7106 - 08/16/2017
+--  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
  *******************************************************************************/
 
 CREATE PROCEDURE [EC].[sp_rptCoachingSummary] 
@@ -85,32 +91,35 @@ DECLARE
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 SET @strEDate = convert(varchar(8),@strEDatein,112)
 
+-- Open Symmetric Key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
+
   SELECT DISTINCT p.ModuleID AS [Module ID]
               ,c.Module AS [Module Name]
               ,p.CoachingID AS [Coaching ID]
 			  ,p.FormName AS [Form Name]
 			  ,c.Status
 			  ,p.EmpID AS [Employee ID]
-    	      ,c.EmpName AS [Employee Name]
+    	      ,CONVERT(nvarchar(50),DecryptByKey(c.EmpName)) AS [Employee Name]
     	      ,c.Site
     	      ,ISNULL(c.LogSupID,'-') AS [Supervisor Employee ID]
 			  ,CASE WHEN c.LogSupID IS NULL THEN '-'
-			   ELSE c.LogSupName END AS [Supervisor Name]
+			   ELSE CONVERT(nvarchar(50),DecryptByKey(c.LogSupName)) END AS [Supervisor Name]
 			  ,ISNULL(c.LogMgrID,'-') AS [Manager Employee ID]
 			  ,CASE WHEN c.LogMgrID IS NULL THEN '-'
-			   ELSE c.LogMgrName END AS [Manager Name]
+			   ELSE CONVERT(nvarchar(50),DecryptByKey(c.LogMgrName))  END AS [Manager Name]
 			  ,ISNULL(c.HierarchySupID,'-') AS [Current Supervisor Employee ID]
-			  ,ISNULL(c.HierarchySupName,'-')  AS [Current Supervisor Name]
+			  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey( c.HierarchySupName)),'-')  AS [Current Supervisor Name]
 			  ,ISNULL(c.HierarchyMgrID,'-') AS [Current Manager Employee ID]
-			  ,ISNULL(c.HierarchyMgrName,'-')  AS [Current Manager Name]
+			  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(c.HierarchyMgrName)),'-')  AS [Current Manager Name]
 		      ,ISNULL(c.ReviewSupID,'-')AS [Review Supervisor Employee ID]
 	          ,CASE 
 	           WHEN c.ReviewSupID IS NULL THEN '-' 
-	           ELSE c.ReviewSupName END AS [Review Supervisor Name]
+	           ELSE CONVERT(nvarchar(50),DecryptByKey(c.ReviewSupName)) END AS [Review Supervisor Name]
 	          ,ISNULL(c.ReviewMgrID,'-')AS [Review Manager Employee ID]
 		      ,CASE 
 		       WHEN c.ReviewMgrID IS NULL  THEN '-'
-		       ELSE c.ReviewMgrName END AS [Review Manager Name]
+		       ELSE CONVERT(nvarchar(50),DecryptByKey(c.ReviewMgrName)) END AS [Review Manager Name]
 		       ,LTRIM(RTRIM(REPLACE(p.Description, '<br />', ''))) AS [Description]
               ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
               ,ISNULL(CONVERT(varchar,p.EventDate,121),'-') AS [Event Date]
@@ -122,7 +131,7 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 	          ,[EC].[fn_strSubCoachingReasonFromCoachingID](c.CoachingID)AS [SubCoaching Reason]
 	          ,[EC].[fn_strValueFromCoachingID](c.CoachingID)AS [Value]
 		      ,c.SubmitterID AS [Submitter ID]
-		      ,c.SubmitterName AS [Submitter Name]
+		      ,CONVERT(nvarchar(50),DecryptByKey(c.SubmitterName)) AS [Submitter Name]
 		      ,ISNULL(CONVERT(varchar,p.SupReviewedAutoDate,121),'-') AS [Supervisor Reviewed Date]
               ,ISNULL(CONVERT(varchar,p.MgrReviewManualDate,121),'-') AS [Manager Reviewed Manual Date]
 			  ,ISNULL(CONVERT(varchar,p.MgrReviewAutoDate,121),'-') AS [Manager Reviewed Auto Date]
@@ -195,7 +204,10 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 		ON p.CoachingID = c.CoachingID
         ORDER BY [Submitted Date] DESC
 
-	    
+  -- Clode Symmetric Key
+  CLOSE SYMMETRIC KEY [CoachingKey] 
+  
+  	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
@@ -220,12 +232,6 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
-
-
-
-
-
-
 
 GO
 

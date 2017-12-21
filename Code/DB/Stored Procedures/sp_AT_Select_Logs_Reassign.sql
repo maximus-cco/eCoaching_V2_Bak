@@ -1,9 +1,10 @@
 /*
-sp_AT_Select_Logs_Reassign(01).sql
-Last Modified Date: 1/18/2017
+sp_AT_Select_Logs_Reassign(02).sql
+Last Modified Date:  10/23/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -19,9 +20,9 @@ IF EXISTS (
 GO
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -34,6 +35,7 @@ GO
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/27/12016
 --  Updated to add Employees in Leave status for Reassignment per TFS 3441 - 09/07/2016
+--  Modified to support Encryption of sensitive data (Open key and use employee View for emp attributes. TFS 7856 - 10/23/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Reassign] 
 @istrOwnerin nvarchar(10), @intStatusIdin INT, @intModuleIdin INT
@@ -43,6 +45,9 @@ BEGIN
 DECLARE	
 @strConditionalWhere nvarchar(100),
 @nvcSQL nvarchar(max)
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
 
 
 IF ((@intStatusIdin IN (6,8) AND @intModuleIdin IN (1,3,4,5))
@@ -67,12 +72,12 @@ END
 
 SET @nvcSQL = 'SELECT cfact.CoachingID,  
         cfact.FormName strFormName,
-		eh.Emp_Name	strEmpName,
-		eh.Sup_Name	strSupName,
+		veh.Emp_Name	strEmpName,
+		veh.Sup_Name	strSupName,
 	    CASE
 		 WHEN cfact.[strReportCode] like ''LCS%'' AND cfact.[MgrID] <> eh.[Mgr_ID]
 		 THEN [EC].[fn_strEmpNameFromEmpID](cfact.[MgrID])+ '' (Assigned Reviewer)''
-		 ELSE eh.Mgr_Name END strMgrName,
+		 ELSE veh.Mgr_Name END strMgrName,
 		 sh.Emp_Name strSubmitter,
 		s.Status,
 		cfact.SubmittedDate strCreatedDate 
@@ -107,7 +112,8 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 	 )Selected 
 	 
 	 ON Selected.CoachingID = cfact.CoachingID JOIN [EC].[Employee_Hierarchy] eh
-	 ON [cfact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
+	 ON [cfact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[View_Employee_Hierarchy] veh
+     ON VEH.Emp_ID = Eh.Emp_ID JOIN [EC].[View_Employee_Hierarchy] sh
 	 ON [cfact].[SubmitterID] = [sh].[Emp_ID]JOIN [EC].[DIM_Status] s
 	 ON [cfact].[StatusID] = [s].[StatusID]
 	 
@@ -119,7 +125,9 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
+CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Logs_Reassign
 
-GO
 
+
+GO

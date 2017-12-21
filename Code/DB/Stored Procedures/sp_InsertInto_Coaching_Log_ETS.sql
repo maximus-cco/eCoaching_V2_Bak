@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_ETS(01).sql
-Last Modified Date: 1/18/2017
+sp_InsertInto_Coaching_Log_ETS(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
+Version 02: Modified to support Encryption of sensitive data. Removed LanID - TFS 7856 - 10/23/2017
 
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -21,9 +22,10 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 
@@ -35,9 +37,9 @@ GO
 --    Description:     This procedure inserts the ETS records into the Coaching_Log table. 
 --                     The main attributes of the eCL are written to the Coaching_Log table.
 --                     The Coaching Reasons are written to the Coaching_Reasons Table.
--- Last Modified Date: 01/06/2015
--- Last Updated By: Susmitha Palacherla
--- Changes for incorporating Compliance Reports per SCR 14031.
+-- Revision History: 
+-- Changes for incorporating Compliance Reports per SCR 14031- 01/06/2015
+-- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_ETS]
@@ -63,7 +65,6 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
@@ -84,13 +85,12 @@ BEGIN TRY
            )
 
             SELECT DISTINCT
-            lower(es.Emp_LanID)	[FormName],
+            lower(es.Emp_ID)	[FormName],
             es.Emp_Program   [ProgramName],
             221             [SourceID],
             CASE es.emp_role when 'C' THEN 6 
             WHEN 'S' THEN 5 ELSE -1 END[StatusID],
             [EC].[fn_intSiteIDFromEmpID](LTRIM(es.EMP_ID))[SiteID],
-            lower(es.Emp_LanID)	[EmpLanID],
             es.EMP_ID [EmpID],
             '999999'	 [SubmitterID],       
             es.Event_Date [EventDate],
@@ -148,6 +148,9 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     WHERE cr.[CoachingID] IS NULL 
  OPTION (MAXDOP 1)  
 
+
+-- Truncate Staging Table
+Truncate Table [EC].[ETS_Coaching_Stage]
                   
 COMMIT TRANSACTION
 END TRY
@@ -181,5 +184,7 @@ END TRY
 END -- sp_InsertInto_Coaching_Log_ETS
 
 
-GO
 
+
+
+GO

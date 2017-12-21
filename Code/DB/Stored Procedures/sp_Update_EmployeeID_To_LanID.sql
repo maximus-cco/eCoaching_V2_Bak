@@ -1,9 +1,10 @@
 /*
-sp_Update_EmployeeID_To_LanID(01).sql
-Last Modified Date: 1/18/2017
+sp_Update_EmployeeID_To_LanID(02).sql
+Last Modified Date:  11/27/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -27,6 +28,8 @@ GO
 
 
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 02/03/2014
@@ -36,7 +39,7 @@ GO
 -- Last Modified By: Susmitha Palacherla
 -- Last Modified Date: 07/25/2014
 -- Modified to fix logic per SCR 12983.
-
+-- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_EmployeeID_To_LanID] 
 AS
@@ -45,7 +48,8 @@ BEGIN
 DECLARE @dtNow DATETIME
 SET @dtNow = GETDATE()
 
-  
+ -- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];  
   
   -- Assigns End_Date to an Employee ID to Lan ID link for Termed Users
   
@@ -120,7 +124,7 @@ BEGIN
 			   @dtNow ,
 			   @dtNow 
 			   FROM [EC].[Employee_Hierarchy]EH LEFT OUTER JOIN [EC].[EmployeeID_To_LanID]LAN
-			   ON EH.[Emp_LanID]= LAN.[LanID]
+			   ON  CONVERT(nvarchar(30),DecryptByKey(EH.[Emp_LanID]))= CONVERT(nvarchar(30),DecryptByKey(LAN.[LanID]))
 			   AND EH.[Emp_ID]= LAN.[EmpID]
 			   WHERE LAN.[LanID]IS NULL
 			   AND EH.[Emp_LanID] IS NOT NULL
@@ -165,8 +169,14 @@ BEGIN
 OPTION (MAXDOP 1)
 END
 
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey];	 
+
 PRINT N'STEP4'
 END --sp_Update_EmployeeID_To_LanID
 
+
+
 GO
+
 

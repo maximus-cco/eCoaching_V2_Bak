@@ -1,7 +1,9 @@
 /*
-sp_Update_ETS_Coaching_Stage(03).sql
-Last Modified Date: 7/24/2017
+sp_Update_ETS_Coaching_Stage(04).sql
+Last Modified Date: 11/27/2017
 Last Modified By: Susmitha Palacherla
+
+Version 04: Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 
 Version 03: Updated to incorporate HNC and ICC Reports per TFS 7174 - 07/24/2017
 
@@ -27,6 +29,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 10/30/2014
@@ -41,13 +45,15 @@ GO
 -- Modified per scr 14031 to incorporate the compliance reports - 01/05/2015
 -- Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
 -- Modified to incorporate HNC and ICC Reports - TFS 7174 - 07/21/2017
+-- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_ETS_Coaching_Stage] 
 @Count INT OUTPUT
 AS
 BEGIN
 
-
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
 BEGIN
 UPDATE [EC].[ETS_Coaching_Stage]
@@ -63,7 +69,7 @@ WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 -- Populate Attributes from Employee Table
 BEGIN
 UPDATE [EC].[ETS_Coaching_Stage]
-SET [Emp_LanID] = EMP.[Emp_LanID]
+SET [Emp_LanID] = CONVERT(nvarchar(30),DecryptByKey(EMP.[Emp_LanID]))
     ,[Emp_Site]= EMP.[Emp_Site]
     ,[Emp_Program]= EMP.[Emp_Program]
     ,[Emp_SupID]= EMP.[Sup_ID]
@@ -145,8 +151,12 @@ END
 
 WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
+
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey];	
+
 END  -- [EC].[sp_Update_ETS_Coaching_Stage]
 
+
+
 GO
-
-

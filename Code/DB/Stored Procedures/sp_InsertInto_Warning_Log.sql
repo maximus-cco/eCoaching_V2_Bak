@@ -1,9 +1,9 @@
 /*
-sp_InsertInto_Warning_Log(01).sql
-Last Modified Date: 1/18/2017
+sp_InsertInto_Warning_Log(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -26,6 +26,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      10/03/2014
@@ -33,9 +37,8 @@ GO
 --                     The main attributes of the Warning are written to the warning_Log table.
 --                     The Warning Reasons are written to the Warning_Reasons Table.
 --  Last Modified By: Susmitha Palacherla
---  Last Modified Date: 10/21/2015 
---  Modified per TFS 861 to add Behavior to the insert to support warnings for Training Module
- 
+--  Modified  to add Behavior to the insert to support warnings for Training Module - per TFS 861 - 10/21/2015 
+ -- Modified to support Encryption of sensitive data. Open key and removed LanID. TFS 7856 - 10/23/2017
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
 (     @nvcFormName Nvarchar(50),
@@ -75,7 +78,8 @@ BEGIN TRY
 	        @dtmDate datetime,
 	        @intWarnIDExists BIGINT
 	        
-	  
+	OPEN SYMMETRIC KEY [CoachingKey]  
+    DECRYPTION BY CERTIFICATE [CoachingCert]    
 	 	        
 	SET @dtmDate  = GETDATE()   
 	SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanID,@dtmDate)
@@ -104,7 +108,6 @@ IF @intWarnIDExists IS NULL
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
            ,[EmpID]
            ,[SubmitterID]
            ,[SupID]
@@ -114,12 +117,11 @@ IF @intWarnIDExists IS NULL
            ,[ModuleID]
            ,[Behavior])
      VALUES
-           (@nvcFormName
+           (@nvcEmpID 
            ,@nvcProgramName 
            ,120
            ,1
            ,ISNULL(@SiteID,@nvcNotPassedSiteID)
-           ,@nvcEmpLanID
            ,@nvcEmpID 
            ,@nvcSubmitterID
            ,@nvcSupID
@@ -129,7 +131,8 @@ IF @intWarnIDExists IS NULL
 		   ,@ModuleID
 		   ,@nvcBehavior)
             
-    
+  CLOSE SYMMETRIC KEY [CoachingKey] 
+     
      --PRINT 'STEP1'
             
     SELECT @@IDENTITY AS 'Identity';
@@ -232,5 +235,7 @@ END TRY
 
 
 
+
 GO
+
 

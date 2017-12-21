@@ -1,7 +1,9 @@
 /*
-sp_rptWarningSummary(03).sql
-Last Modified Date: 04/19/2017
+sp_rptWarningSummary(04).sql
+Last Modified Date: 11/28/2017
 Last Modified By: Susmitha Palacherla
+
+Version 04: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 
 Version 03: Updated Joins to use left join - Suzy -  TFS 5621 - 04/19/2017
 
@@ -28,7 +30,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2017
@@ -37,6 +38,7 @@ GO
 --  Last Modified By:
 --  Revision History:
 --  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/19/2017)
+--  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
  *******************************************************************************/
 
 CREATE PROCEDURE [EC].[sp_rptWarningSummary] 
@@ -84,24 +86,29 @@ DECLARE
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 SET @strEDate = convert(varchar(8),@strEDatein,112)
 
+
+-- Open Symmetric Key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
+
+
   SELECT p.ModuleID AS [Module ID]
               ,w.Module AS [Module Name]
               ,p.WarningID AS [Warning ID]
 			  ,p.FormName AS [Form Name]
 			  ,w.Status
 			  ,p.EmpID AS [Employee ID]
-    	      ,w.EmpName AS [Employee Name]
+    	      ,CONVERT(nvarchar(50),DecryptByKey(w.EmpName)) AS [Employee Name]
     	      ,w.Site
     	      ,ISNULL(w.LogSupID,'-') AS [Supervisor Employee ID]
 			  ,CASE WHEN w.LogSupID IS NULL THEN '-'
-			   ELSE w.LogSupName END AS [Supervisor Name]
+			   ELSE CONVERT(nvarchar(50),DecryptByKey(w.LogSupName)) END AS [Supervisor Name]
 			  ,ISNULL(w.LogMgrID,'-') AS [Manager Employee ID]
 			  ,CASE WHEN w.LogMgrID IS NULL THEN '-'
-			   ELSE w.LogMgrName END AS [Manager Name]
+			   ELSE CONVERT(nvarchar(50),DecryptByKey(w.LogMgrName)) END AS [Manager Name]
 			  ,ISNULL(w.HierarchySupID,'-') AS [Current Supervisor Employee ID]
-			  ,ISNULL(w.HierarchySupName,'-')  AS [Current Supervisor Name]
+			  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.HierarchySupName)),'-')  AS [Current Supervisor Name]
 			  ,ISNULL(w.HierarchyMgrID,'-') AS [Current Manager Employee ID]
-			  ,ISNULL(w.HierarchyMgrName,'-')  AS [Current Manager Name]
+			  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.HierarchyMgrName)),'-')  AS [Current Manager Name]
 		      ,ISNULL(CONVERT(varchar,w.WarningGivenDate,121),'-') AS [Warning given Date]
               ,ISNULL(CONVERT(varchar,w.SubmittedDate,121),'-') AS [Submitted Date]
               ,ISNULL(CONVERT(varchar,w.WarningExpiryDate,121),'-') AS [Expiration Date]
@@ -111,7 +118,7 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 	          ,[EC].[fn_strSubCoachingReasonFromWarningID](w.WarningID)AS [Warning SubReason]
 	          ,[EC].[fn_strValueFromwarningID](w.WarningID)AS [Value]
 		      ,ISNULL(w.SubmitterID,'Unknown') AS [Submitter ID]
-		      ,ISNULL(w.SubmitterName,'Unknown') AS [Submitter Name]
+		      ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.SubmitterName)),'Unknown') AS [Submitter Name]
 		      ,ISNULL(w.ProgramName,'-') AS [Program Name]
               ,ISNULL(w.Behavior,'-')AS [Behavior]
               ,ISNULL(w.[State],'-')AS [State]
@@ -171,7 +178,11 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 		ON p.WarningID = w.WarningID
         ORDER BY p.SubmittedDate DESC
 
-	    
+
+
+  -- Clode Symmetric Key
+  CLOSE SYMMETRIC KEY [CoachingKey] 
+  	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
@@ -196,12 +207,6 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
-
-
-
-
-
-
 GO
 
 

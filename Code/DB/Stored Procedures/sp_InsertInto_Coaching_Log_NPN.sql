@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_NPN(02).sql
-Last Modified Date: 03/02/2017
+sp_InsertInto_Coaching_Log_NPN(03).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
+Version 03: Modified to support Encryption of sensitive data. Removed LanID - TFS 7856 - 10/23/2017
 
 Version 02: Additional update from V&V feedback - TFS 5653 - 03/02/2017
 
@@ -26,10 +27,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
 --    ====================================================================
 -- Author:		      Susmitha Palacherla
 -- Create date:       02/28/2017
@@ -37,6 +34,7 @@ GO
 -- Creates NPN ecls for eligible IQS logs that have been identified and staged.
 -- Last update by:   Susmitha Palacherla
 -- Initial Revision - Created as part of  TFS 5653 - 02/28/2017
+-- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_NPN]
 
@@ -62,7 +60,6 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
@@ -82,7 +79,7 @@ BEGIN TRY
            ,[strReportCode])
 
             SELECT DISTINCT
-            lower(csr.Emp_LanID)	[FormName],
+            lower(qs.User_EMPID)	[FormName],
             CASE qs.Program  
             WHEN NULL THEN csr.Emp_Program
             WHEN '' THEN csr.Emp_Program
@@ -90,7 +87,6 @@ BEGIN TRY
             218   [SourceID],
             6     [StatusID],
             [EC].[fn_intSiteIDFromEmpID](LTRIM(qs.User_EMPID))[SiteID],
-            lower(csr.Emp_LanID)	[EmpLanID],
             qs.User_EMPID [EmpID],
             '999999'	 [SubmitterID],       
             qs.Call_Date [EventDate],
@@ -133,6 +129,22 @@ WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
  -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
 
+--INSERT INTO [EC].[Coaching_Log_Reason]
+--           ([CoachingID]
+--           ,[CoachingReasonID]
+--           ,[SubCoachingReasonID]
+--           ,[Value])
+--    SELECT cf.[CoachingID],
+--           5,
+--           42,
+--           'Opportunity'
+--    FROM [EC].[Quality_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
+--    ON qs.[Journal_ID] = cf.[VerintID] 
+--    LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
+--    ON cf.[CoachingID] = cr.[CoachingID]  
+--    WHERE cr.[CoachingID] IS NULL 
+-- OPTION (MAXDOP 1) 
+  
  INSERT INTO [EC].[Coaching_Log_Reason]
            ([CoachingID]
            ,[CoachingReasonID]
@@ -147,7 +159,12 @@ WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
   LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
   ON cf.[CoachingID] = cr.[CoachingID]  
   WHERE cr.[CoachingID] IS NULL  
- OPTION (MAXDOP 1) 
+ OPTION (MAXDOP 1)  
+
+ WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+-- Truncate Staging Table
+Truncate Table [EC].[Quality_Coaching_Stage]
                   
 COMMIT TRANSACTION
 END TRY
@@ -179,11 +196,6 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
-
-
-
-
-
-
 GO
+
 

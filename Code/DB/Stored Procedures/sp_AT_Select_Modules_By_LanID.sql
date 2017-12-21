@@ -1,9 +1,9 @@
 /*
-sp_AT_Select_Modules_By_LanID(01).sql
-Last Modified Date: 1/18/2017
+sp_AT_Select_Modules_By_LanID(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -19,9 +19,9 @@ IF EXISTS (
 GO
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -32,6 +32,7 @@ GO
 --  Last Modified By: 
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/27/12016
+--  Modified to support Encryption of sensitive data - Open key. TFS 7856 - 10/23/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Modules_By_LanID] 
 @nvcEmpLanIDin nvarchar(30),@strTypein nvarchar(10)= NULL
@@ -46,6 +47,9 @@ BEGIN
 	@strATCoachAdminUser nvarchar(10),
 	@nvcEmpJobCode nvarchar(30),
 	@dtmDate datetime
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
 
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
@@ -76,8 +80,11 @@ SET @nvcSQL = 'SELECT ModuleId, Module
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
+
+CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Modules_By_LanID
 
 
-GO
 
+
+GO

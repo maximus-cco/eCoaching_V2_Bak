@@ -1,9 +1,9 @@
 /*
-sp_AT_Warning_Inactivation_Reactivation(01).sql
-Last Modified Date: 1/18/2017
+sp_AT_Warning_Inactivation_Reactivation(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -19,9 +19,9 @@ IF EXISTS (
 GO
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -67,6 +67,9 @@ as
 -------------------------------------------------------------------------------------
    set @storedProcedureName = 'sp_AT_Warning_Inactivation_Reactivation'
 -------------------------------------------------------------------------------------
+-- Revision History:
+--  Modified to support Encryption of sensitive data - Open key -  TFS 7856 - 10/23/2017
+-------------------------------------------------------------------------------------
 -- Notes: set @returnCode and @returnMessage as appropriate
 --        @returnCode defaults to '0',  @returnMessage defaults to 'ok'
 --        IMPORTANT: do NOT place "return" statements in this custom code section
@@ -92,6 +95,8 @@ DECLARE @strRequestrID nvarchar(10),
         @intLKStatusID int,
      	@dtmDate datetime
      	
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
 
 SET @dtmDate  = GETDATE()   
 SET @strRequestrID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterLanId,@dtmDate)
@@ -122,7 +127,7 @@ WHEN 'Inactivate' THEN 2 ELSE 1 END)
 FROM [EC].[Warning_Log]CL JOIN @tableIds ID ON
 CL.WarningID = ID.ID						
 						
-          
+CLOSE SYMMETRIC KEY [CoachingKey]            
 
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -156,5 +161,6 @@ CL.WarningID = ID.ID
 return 0
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 
-GO
 
+
+GO

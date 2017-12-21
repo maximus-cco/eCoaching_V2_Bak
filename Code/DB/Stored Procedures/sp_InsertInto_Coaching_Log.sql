@@ -1,10 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log(01).sql
-Last Modified Date: 1/18/2017
+sp_InsertInto_Coaching_Log(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
-
-
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -21,9 +20,10 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 
@@ -37,7 +37,7 @@ GO
 -- Last Modified Date: 07/23/2015
 -- Last Updated By: Susmitha Palacherla
 -- Modified per TFS 363/402 to update formname from CoachingID after insert. 
---
+-- Modified to support Encryption of sensitive data. Open key and removed LanID. TFS 7856 - 10/23/2017
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
 (     @nvcFormName Nvarchar(50),
@@ -133,7 +133,8 @@ BEGIN TRY
 	        @nvcNotPassedSiteID INT,
 	        @dtmDate datetime
 	        
-	  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]  
 	        
 	        
 	SET @dtmDate  = GETDATE()   
@@ -149,7 +150,6 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
@@ -181,12 +181,11 @@ BEGIN TRY
            ,[MgrID]
            ,[Behavior])
      VALUES
-           (@nvcFormName
+           (@nvcEmpID 
            ,@nvcProgramName 
            ,@intSourceID 
            ,@intStatusID 
            ,ISNULL(@SiteID,@nvcNotPassedSiteID)
-           ,@nvcEmpLanID
            ,@nvcEmpID 
            ,@nvcSubmitterID
            ,@dtmEventDate 
@@ -218,6 +217,7 @@ BEGIN TRY
 		   ,ISNULL(@nvcMgrID,'999999')
 		   ,@Behaviour)
             
+ CLOSE SYMMETRIC KEY [CoachingKey] 
             
      --PRINT 'STEP1'
             
@@ -573,9 +573,4 @@ END TRY
 
   END -- sp_InsertInto_Coaching_Log
 
-
-
-
-
 GO
-

@@ -1,7 +1,9 @@
 /*
-sp_AT_Select_ReassignFrom_Users(02).sql
-Last Modified Date: 11/27/2017
+sp_AT_Select_ReassignFrom_Users(03).sql
+Last Modified Date: 12/01/2017
 Last Modified By: Susmitha Palacherla
+
+Version 03: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 12/01/2017
 
 Version 02: Modified to support additional Modules - TFS 8793 - 11/16/2017
 
@@ -19,7 +21,6 @@ IF EXISTS (
 GO
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -37,6 +38,7 @@ GO
 -- Updated to add Employees in Leave status for Reassignment and 
 -- removed Active check for reassigned and review managers per TFS 3441 - 09/07/2016
 -- Modified to support additional Modules per TFS 8793 - 11/16/2017
+-- Modified to support Encryption of sensitive data - Open key and use employee View for emp attributes. TFS 7856 - 12/01/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users] 
 @strRequesterin nvarchar(30), @intModuleIdin INT, @intStatusIdin INT
@@ -53,6 +55,10 @@ DECLARE
 @strConditionalRestrict nvarchar(100),
 @dtmDate datetime
 
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
+
 SET @dtmDate  = GETDATE()   
 SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate)
 SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@nvcRequesterID)
@@ -62,7 +68,7 @@ IF ((@intStatusIdin IN (6,8) AND @intModuleIdin NOT in (-1,2))
 OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
 
 BEGIN
-SET @strConditionalSelect = N'SELECT DISTINCT eh.SUP_ID UserID, eh.SUP_Name UserName '
+SET @strConditionalSelect = N'SELECT DISTINCT eh.SUP_ID UserID, veh.SUP_Name UserName '
 SET @strConditionalRestrict = N'AND eh.SUP_ID <> '''+@nvcRequesterID+''' ' 
 END
 
@@ -71,7 +77,7 @@ ELSE IF
 OR (@intStatusIdin = 7 AND @intModuleIdin = 2))
 
 BEGIN
-SET @strConditionalSelect = N'SELECT DISTINCT eh.MGR_ID UserID, eh.MGR_Name UserName '
+SET @strConditionalSelect = N'SELECT DISTINCT eh.MGR_ID UserID, veh.MGR_Name UserName '
 SET @strConditionalRestrict = N'AND eh.MGR_ID <> '''+@nvcRequesterID+''''
 END
 		
@@ -89,37 +95,40 @@ END
 -- Non reassigned LCS ecls
 
 SET @nvcSQL = @strConditionalSelect +
-'FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ' +
-' ON cl.EmpID = eh.Emp_ID 
+'FROM [EC].[View_Employee_Hierarchy] veh JOIN [EC].[Employee_Hierarchy] eh
+ON veh.Emp_ID = eh.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
+ON cl.EmpID = eh.Emp_ID 
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
 AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND CL.ReassignCount = 0
 AND NOT (CL.statusid = 5 AND ISNULL(CL.strReportCode,'' '') like ''LCS%'')'
 + @strConditionalSite 
 + @strConditionalRestrict
-+ 'AND (eh.SUP_Name is NOT NULL AND eh.MGR_Name is NOT NULL)
++ 'AND (veh.SUP_Name is NOT NULL AND veh.MGR_Name is NOT NULL)
 AND eh.Active NOT IN  (''T'',''D'')
 
 UNION 
 
 
-SELECT DISTINCT rm.Emp_ID UserID, rm.Emp_Name UserName
-FROM [EC].[Employee_Hierarchy] rm JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
+SELECT DISTINCT rm.Emp_ID UserID, vrm.Emp_Name UserName
+FROM [EC].[View_Employee_Hierarchy]vrm JOIN [EC].[Employee_Hierarchy] rm 
+ON vrm.Emp_ID = rm.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.ReassignedToID = rm.Emp_ID JOIN [EC].[Employee_Hierarchy] eh
 ON eh.Emp_ID = cl.EmpID
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
 AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND cl.ReassignedToID is not NULL 
 AND (cl.ReassignCount < 2 and cl.ReassignCount <> 0)
-AND (rm.Emp_Name is NOT NULL AND rm.Emp_Name <> ''Unknown'')'
+AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')'
 + @strConditionalSite 
 + 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' 
 AND eh.Active NOT IN  (''T'',''D'')
 
 UNION 
 
-SELECT DISTINCT rm.Emp_ID UserID, rm.Emp_Name UserName
-FROM [EC].[Employee_Hierarchy] rm JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
+SELECT DISTINCT rm.Emp_ID UserID, vrm.Emp_Name UserName
+FROM [EC].[View_Employee_Hierarchy]vrm JOIN [EC].[Employee_Hierarchy] rm
+ON vrm.Emp_ID = rm.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.MgrID = rm.Emp_ID JOIN [EC].[Employee_Hierarchy] eh
 ON eh.Emp_ID = cl.EmpID
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
@@ -127,13 +136,17 @@ AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND cl.MgrID is not NULL
 AND cl.strReportCode like ''LCS%''
 AND CL.ReassignCount = 0
-AND (rm.Emp_Name is NOT NULL AND rm.Emp_Name <> ''Unknown'')'
+AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')'
 + @strConditionalSite 
 + 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' 
 AND eh.Active NOT IN  (''T'',''D'')
 Order By UserName'
 
---PRINT @nvcSQL		
+--PRINT @nvcSQL	
+EXEC (@nvcSQL)
+CLOSE SYMMETRIC KEY [CoachingKey]  
+
+	
 EXEC (@nvcSQL)
 
 
@@ -142,6 +155,5 @@ End --sp_AT_Select_ReassignFrom_Users
 
 
 
+
 GO
-
-

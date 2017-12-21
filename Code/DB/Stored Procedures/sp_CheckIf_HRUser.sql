@@ -1,9 +1,10 @@
 /*
-sp_CheckIf_HRUser(01).sql
-Last Modified Date: 1/18/2017
+sp_CheckIf_HRUser(02).sql
+Last Modified Date: 10/23/2017
+
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -19,18 +20,11 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_CheckIf_HRUser]
 GO
 
+
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/6/2016
@@ -39,7 +33,7 @@ GO
 --  Last Modified By: 
 --  Last Modified Date: 
 --  Created to replace hardcoding in UI code with table lookup. TFS 2232. - 4/6/2016 
- 
+--  Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_CheckIf_HRUser] 
 @nvcEmpLanIDin nvarchar(30)
@@ -52,7 +46,10 @@ BEGIN
 	@nvcEmpID nvarchar(10),
 	@nvcEmpJobCode nvarchar(30),
 	@nvcActive nvarchar(1),
-		@dtmDate datetime
+	@dtmDate datetime
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
 
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
@@ -63,12 +60,9 @@ SET @nvcSQL = 'SELECT  ISNULL(EC.fn_strCheckIf_HRUser('''+@nvcEmpID+'''),''NO'')
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
+
+CLOSE SYMMETRIC KEY [CoachingKey]    
 END --sp_CheckIf_HRUser
-
-
-
-
-
 
 GO
 

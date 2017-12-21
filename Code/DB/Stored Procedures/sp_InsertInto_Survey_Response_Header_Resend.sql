@@ -1,9 +1,10 @@
 /*
-sp_InsertInto_Survey_Response_Header_Resend(01).sql
-Last Modified Date: 1/18/2017
+sp_InsertInto_Survey_Response_Header_Resend(02).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Modified during Encryption of sensitive data. Used Emp LanID from Emp table. TFS 7856 - 10/23/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -25,11 +26,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        8/21/2015
@@ -40,6 +36,7 @@ GO
 -- After a survey is generated for an ecl, the coaching log is updated
 -- in the Coaching_log to indicate that a Survey has been generated based on this ecl.
 -- Created  per TFS 549 to setup CSR survey.
+-- Modified during Encryption of sensitive data. Used Emp LanID from Emp table. TFS 7856 - 10/23/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header_Resend]
 AS
@@ -149,7 +146,6 @@ BEGIN
                    CL.CoachingID,
                    CL.Formname, 
                    CL.EmpID,
-                   CL.EmpLanID,
                    CL.SiteID, 
                    CL.SourceID, 
                    CL.ModuleID,
@@ -205,7 +201,7 @@ SELECT  SCL.SurveyTypeID [SurveyTypeID],
 		SCL.CoachingID  [CoachingID],
 		SCL.FormName    [FormName],
         SCL.EmpID       [EmpID],
-        SCL.EmpLanID    [EmpLanID],
+        EH.Emp_LanID    [EmpLanID],
         SCL.SiteID      [SiteID],
         SCL.SourceID    [SourceID],
         SCL.ModuleID    [ModuleID],
@@ -213,7 +209,8 @@ SELECT  SCL.SurveyTypeID [SurveyTypeID],
         SCL.MonthOfYear,
         SCL.CalendarYear,
         'Open'         [Status]
- FROM Selected SCL JOIN 
+ FROM Selected SCL JOIN [EC].[Employee_Hierarchy] EH
+ ON SCL.EmpID = EH.Emp_ID JOIN 
  --[EC].[Survey_Response_Header] SRH 
  (SELECT [SurveyTypeID],[CalendarYear],[MonthOfYear],[ModuleID],[EmpID], COUNT(*)SCount
 FROM [EC].[Survey_Response_Header]
@@ -282,9 +279,6 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Survey_Response_Header_Resend
-
-
-
-
 GO
+
 

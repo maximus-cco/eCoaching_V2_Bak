@@ -1,10 +1,10 @@
 /*
-sp_rptAdminActivitySummary(01).sql
-Last Modified Date: 04/11/2017
+sp_rptAdminActivitySummary(02).sql
+Last Modified Date: 11/28/2017
 Last Modified By: Susmitha Palacherla
 
 
-
+Version 02: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 Version 01: Document Initial Revision - Suzy Palacherla -  TFS 5621 - 04/11/2017
 
 */
@@ -30,6 +30,9 @@ GO
 
 
 
+
+
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2017
@@ -38,6 +41,7 @@ GO
 --  Last Modified By:
 --  Revision History:
 --  Initial Revision - TFS 5621 - 4/10/2017
+--  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
  *******************************************************************************/
 CREATE PROCEDURE [EC].[sp_rptAdminActivitySummary] 
 (
@@ -82,6 +86,10 @@ DECLARE
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 SET @strEDate = convert(varchar(8),@strEDatein,112)
 
+
+-- Open Symmetric Key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
+
 -- Create a temp table to hold all Coaching admin activity logs for selected period
 
 CREATE TABLE #CoachingAdminActivity ([Module Id] int, [Module Name] nvarchar(20),[Form Name] nvarchar(50), [Last Known Status]nvarchar(100),
@@ -104,7 +112,7 @@ ds.Status AS [Last Known status], cira.Action AS [Action], cira.ActionTimestamp 
 cira.RequesterID AS [Requester ID], 
 CASE WHEN cira.RequesterID = '999998' 
 THEN 'Hierarchy Load Process'
-ELSE rh.Emp_Name END AS [Requester Name], 'NA' AS [Assigned To ID], 'NA' AS [Assigned To Name],
+ELSE CONVERT(nvarchar(50),DecryptByKey(rh.Emp_Name)) END AS [Requester Name], 'NA' AS [Assigned To ID], 'NA' AS [Assigned To Name],
 cira.Reason AS [Reason], ISNULL(cira.RequesterComments,'-') AS [Requester Comments]
 FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit]cira JOIN [EC].[Coaching_Log]cl
   ON cira.CoachingID = cl.CoachingID JOIN [EC].[DIM_Module] dm
@@ -123,8 +131,8 @@ ds.Status AS [Last Known status], 'Reassign' AS [Action], cra.ActionTimestamp AS
 cra.RequesterID AS [Requester ID],
 CASE WHEN cra.RequesterID = '999998' 
 THEN 'Hierarchy Load Process'
-ELSE rh.Emp_Name END AS [Requester Name], cra.AssignedToID AS [Assigned To ID],
-ah.Emp_Name AS [Assigned To Name],cra.Reason AS [Reason], ISNULL(cra.RequesterComments,'-') AS [Requester Comments]
+ELSE CONVERT(nvarchar(50),DecryptByKey(rh.Emp_Name)) END AS [Requester Name], cra.AssignedToID AS [Assigned To ID],
+CONVERT(nvarchar(50),DecryptByKey(ah.Emp_Name)) AS [Assigned To Name],cra.Reason AS [Reason], ISNULL(cra.RequesterComments,'-') AS [Requester Comments]
 FROM [EC].[AT_Coaching_Reassign_Audit]cra JOIN [EC].[Coaching_Log]cl
   ON cra.CoachingID = cl.CoachingID JOIN [EC].[DIM_Module] dm
   ON cl.ModuleID = dm.ModuleID JOIN [EC].[DIM_Status]ds
@@ -160,7 +168,7 @@ ds.Status AS [Last Known status], wira.Action AS [Action], wira.ActionTimestamp 
 wira.RequesterID AS [Requester ID], 
 CASE WHEN wira.RequesterID = '999998' 
 THEN 'Hierarchy Load Process'
-ELSE rh.Emp_Name END AS [Requester Name], 'NA' AS [Assigned To ID], 'NA' AS [Assigned To Name],
+ELSE CONVERT(nvarchar(50),DecryptByKey(rh.Emp_Name)) END AS [Requester Name], 'NA' AS [Assigned To ID], 'NA' AS [Assigned To Name],
 wira.Reason AS [Reason], ISNULL(wira.RequesterComments,'-') AS [Requester Comments]
 FROM [EC].[AT_Warning_Inactivate_Reactivate_Audit]wira JOIN [EC].[Warning_Log]wl
   ON wira.WarningID = wl.WarningID JOIN [EC].[DIM_Module] dm
@@ -207,6 +215,9 @@ ORDER BY [Action Date]
   
   DROP TABLE #CoachingAdminActivity 
   DROP TABLE #WarningAdminActivity 
+
+  -- Clode Symmetric Key
+  CLOSE SYMMETRIC KEY [CoachingKey] 
 	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -233,7 +244,7 @@ RETURN @returnCode
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
 
-GO
 
+GO
 
 

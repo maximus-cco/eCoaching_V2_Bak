@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Other(03).sql
-Last Modified Date: 2/20/2017
+sp_InsertInto_Coaching_Log_Quality_Other(04).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
+
+Version 04: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 03: Add table [EC].[NPN_Description] to Get NPN Description from table. TFS 5649 - 02/20/2017
 
@@ -20,16 +22,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 GO
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 
 -- =============================================
@@ -41,8 +39,11 @@ GO
 -- Update: HFC and KUD Load. Start date fix. TFS 3179 - 08/3/2016
 -- Update: NPN Load. TFS 5309 - 02/01/2017
 -- Update: Get NPN Description from table. TFS 5649 - 02/17/2017
+-- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
+@Count INT OUTPUT
+
 AS
 BEGIN
 
@@ -57,6 +58,11 @@ BEGIN TRY
       SET @maxnumID = (SELECT IsNULL(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
       -- Fetches the Date of the Insert
       SET @dtmDate  = GETDATE()   
+
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
       
 -- Update the value for Pending Acknowledgement
 
@@ -74,8 +80,7 @@ BEGIN TRY
            ,[SourceID]
            ,[StatusID]
            ,[SiteID]
-           ,[EmpLanID]
-           ,[EmpID]
+            ,[EmpID]
            ,[SubmitterID]
            ,[EventDate]
            ,[isAvokeID]
@@ -94,15 +99,14 @@ BEGIN TRY
            ,[SupID]
            ,[MgrID]
            )
-select  Distinct LOWER(cs.EMP_LANID)	[FormName],
+select  Distinct LOWER(cs.EMP_ID)	[FormName],
         CASE cs.Program  
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
         [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])[SourceID],
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
-        [EC].[fn_intGetSiteIDFromLanID](cs.EMP_LANID,@dtmDate)[SiteID],
-        LOWER(cs.EMP_LANID)				[EmpLanID],
+        [EC].[fn_intSiteIDFromEmpID](cs.EMP_ID)[SiteID],
         cs.[EMP_ID]                   [EmpID],
         cs.[Submitter_ID]              [Submitter_ID],
 		cs.Event_Date			            [EventDate],
@@ -133,6 +137,7 @@ from [EC].[Quality_Other_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on c
 left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
 where cf.numReportID is Null and cf.strReportCode is null
 
+SELECT @Count = @@ROWCOUNT
 
 WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
@@ -169,7 +174,15 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     WHERE cr.[CoachingID] IS NULL 
  OPTION (MAXDOP 1)   
  
- 
+-- Close the symmetric key with which to encrypt the data.  
+CLOSE SYMMETRIC KEY [CoachingKey]  
+
+
+ WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+-- Truncate Staging Table
+Truncate Table [EC].[Quality_Other_Coaching_Stage]
+
                   
 COMMIT TRANSACTION
 END TRY
@@ -201,11 +214,6 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality_Other
-
-
-
-
-
-
 GO
+
 

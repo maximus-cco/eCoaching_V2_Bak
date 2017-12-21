@@ -1,7 +1,9 @@
 /*
-sp_AT_Select_Logs_Inactivation_Reactivation(04).sql
-Last Modified Date: 7/12/2017
+sp_AT_Select_Logs_Inactivation_Reactivation(05).sql
+Last Modified Date: 10/23/2017
 Last Modified By: Susmitha Palacherla
+
+Version 05: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
 Version 04: additional changes per requirements update.
 Remove 3 month restriction for warning logs - TFS 7152 -  7/12/2017
@@ -26,15 +28,8 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -45,7 +40,8 @@ GO
 --  Last Modified date: 
 --  Revision History:
 --  Initial Revision. Admin tool setup, TFS 1709- 4/2/12016
---  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 07/12/2017
+--  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 06/30/2017
+--  Modified to support Encryption of sensitive data - Open key and use employee View for emp attributes. TFS 7856 - 10/23/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
@@ -61,6 +57,11 @@ DECLARE
 @dtmDate datetime,
 @nvcSQL nvarchar(max),
 @strID nvarchar(30)
+
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
+
 
 SET @dtmDate  = GETDATE()   
 SET @strRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterLanId,@dtmDate)
@@ -123,18 +124,19 @@ SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 
  SET @nvcSQL = 'SELECT DISTINCT '+@strID+' 
         fact.FormName strFormName,
-		eh.Emp_Name	strEmpName,
-		eh.Sup_Name	strSupName,
+		veh.Emp_Name	strEmpName,
+		veh.Sup_Name	strSupName,
 	    CASE
 		 WHEN  fact.[strReportCode] like ''LCS%'' AND fact.[MgrID] <> eh.[Mgr_ID]
 		 THEN [EC].[fn_strEmpNameFromEmpID](fact.[MgrID])+ '' (Assigned Reviewer)''
-		 ELSE eh.Mgr_Name END strMgrName,
+		 ELSE veh.Mgr_Name END strMgrName,
 		sh.Emp_Name strSubmitter,
 		s.Status,
 		Fact.SubmittedDate strCreatedDate '
   +  @nvcTableName +
  'JOIN [EC].[Employee_Hierarchy] eh
-	 ON [Fact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[Employee_Hierarchy] sh
+	 ON [Fact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[View_Employee_Hierarchy] veh
+     ON VEH.Emp_ID = Eh.Emp_ID JOIN [EC].[View_Employee_Hierarchy] sh
 	 ON [Fact].[SubmitterID] = [sh].[Emp_ID] JOIN [EC].[DIM_Status] s
 	 ON [Fact].[StatusID] = [s].[StatusID] '+
  @nvcWhere +
@@ -146,15 +148,8 @@ SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
+CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Logs_Inactivation_Reactivation
 
 
-
-
-
-
 GO
-
-
-
-
