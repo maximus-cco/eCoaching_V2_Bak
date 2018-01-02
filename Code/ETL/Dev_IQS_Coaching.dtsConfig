@@ -8,12 +8,12 @@
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::AdhocNPN].Properties[Value]" ValueType="Boolean"><ConfiguredValue>0</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::BeginDate].Properties[Value]" ValueType="Int32"><ConfiguredValue>0</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::CCEmail].Properties[Value]" ValueType="String"><ConfiguredValue>susmitha.palacherla@gdit.com</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Decrypt_in\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Decrypt_out\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Encrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_in\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Encrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Encrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Encrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::EndDate].Properties[Value]" ValueType="Int32"><ConfiguredValue>0</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FilePrefix].Properties[Value]" ValueType="String"><ConfiguredValue>Test_eCL_IQS_Scorecard_</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FilePrefix].Properties[Value]" ValueType="String"><ConfiguredValue>Dev_eCL_IQS_Scorecard_</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FromEmail].Properties[Value]" ValueType="String"><ConfiguredValue>eCoachingDev@gdit.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::SystemName].Properties[Value]" ValueType="String"><ConfiguredValue>Dev</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmail].Properties[Value]" ValueType="String"><ConfiguredValue>susmitha.palacherla@gdit.com</ConfiguredValue></Configuration>

@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="CoachingSummaryReport"
   DTS:PackageType="5"
-  DTS:VersionBuild="77"
-  DTS:VersionGUID="{65C90253-1DC8-4104-91DF-A1E8EDD26B8C}">
+  DTS:VersionBuild="78"
+  DTS:VersionGUID="{0546B7BD-42E6-4A05-A5C1-7895B78D1B8B}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -451,7 +451,7 @@
       DTS:ObjectName="dbconn">
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=f3420-ecldbd01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+          DTS:ConnectionString="Data Source=f3420-ecldbd01;Initial Catalog=eCoachingDevEncrypt;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -5349,7 +5349,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Employee Name" />
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Site]"
@@ -5364,7 +5364,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Employee ID]"
@@ -5374,7 +5374,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Manager Name" />
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Employee ID]"
@@ -5384,7 +5384,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Employee ID]"
@@ -5394,7 +5394,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Manager Name" />
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Employee ID]"
@@ -5404,7 +5404,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Employee ID]"
@@ -5414,7 +5414,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Manager Name" />
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Description]"
@@ -5476,7 +5476,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Submitter Name" />
                     <externalMetadataColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Reviewed Date]"
@@ -5586,7 +5586,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       name="Employee Name" />
                     <outputColumn
@@ -5604,7 +5604,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       name="Supervisor Name" />
                     <outputColumn
@@ -5616,7 +5616,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       name="Manager Name" />
                     <outputColumn
@@ -5628,7 +5628,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       name="Current Supervisor Name" />
                     <outputColumn
@@ -5640,7 +5640,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       name="Current Manager Name" />
                     <outputColumn
@@ -5652,7 +5652,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       name="Review Supervisor Name" />
                     <outputColumn
@@ -5664,7 +5664,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       name="Review Manager Name" />
                     <outputColumn
@@ -5738,7 +5738,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\CSR Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       name="Submitter Name" />
                     <outputColumn
@@ -8452,7 +8452,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Employee Name" />
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Site]"
@@ -8467,7 +8467,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Employee ID]"
@@ -8477,7 +8477,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Manager Name" />
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Employee ID]"
@@ -8487,7 +8487,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Employee ID]"
@@ -8497,7 +8497,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Manager Name" />
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Employee ID]"
@@ -8507,7 +8507,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Employee ID]"
@@ -8517,7 +8517,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Manager Name" />
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Description]"
@@ -8579,7 +8579,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Submitter Name" />
                     <externalMetadataColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Reviewed Date]"
@@ -8689,7 +8689,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       name="Employee Name" />
                     <outputColumn
@@ -8707,7 +8707,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       name="Supervisor Name" />
                     <outputColumn
@@ -8719,7 +8719,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       name="Manager Name" />
                     <outputColumn
@@ -8731,7 +8731,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       name="Current Supervisor Name" />
                     <outputColumn
@@ -8743,7 +8743,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       name="Current Manager Name" />
                     <outputColumn
@@ -8755,7 +8755,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       name="Review Supervisor Name" />
                     <outputColumn
@@ -8767,7 +8767,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       name="Review Manager Name" />
                     <outputColumn
@@ -8841,7 +8841,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\LSA Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       name="Submitter Name" />
                     <outputColumn
@@ -11422,7 +11422,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Employee Name" />
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Site]"
@@ -11437,7 +11437,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Employee ID]"
@@ -11447,7 +11447,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Manager Name" />
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Employee ID]"
@@ -11457,7 +11457,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Employee ID]"
@@ -11467,7 +11467,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Manager Name" />
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Employee ID]"
@@ -11477,7 +11477,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Employee ID]"
@@ -11487,7 +11487,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Manager Name" />
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Description]"
@@ -11549,7 +11549,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Submitter Name" />
                     <externalMetadataColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Reviewed Date]"
@@ -11659,7 +11659,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       name="Employee Name" />
                     <outputColumn
@@ -11677,7 +11677,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       name="Supervisor Name" />
                     <outputColumn
@@ -11689,7 +11689,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       name="Manager Name" />
                     <outputColumn
@@ -11701,7 +11701,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       name="Current Supervisor Name" />
                     <outputColumn
@@ -11713,7 +11713,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       name="Current Manager Name" />
                     <outputColumn
@@ -11725,7 +11725,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       name="Review Supervisor Name" />
                     <outputColumn
@@ -11737,7 +11737,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       name="Review Manager Name" />
                     <outputColumn
@@ -11811,7 +11811,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                     <outputColumn
                       refId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Quality Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       name="Submitter Name" />
                     <outputColumn
@@ -11945,14 +11945,35 @@ General Dynamics Information Technology</DTS:VariableValue>
           VSTAMinorVersion="0"
           Language="CSharp">
           <ProjectItem
-            Name="Properties\Settings.settings"
-            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_ac1240f7c371412e9d663af9c57b62fc")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_ac1240f7c371412e9d663af9c57b62fc")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -12323,35 +12344,14 @@ namespace ST_ac1240f7c371412e9d663af9c57b62fc.Properties {
     }
 }]]></ProjectItem>
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_ac1240f7c371412e9d663af9c57b62fc")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_ac1240f7c371412e9d663af9c57b62fc")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.Designer.cs"
             Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -14996,7 +14996,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Employee Name" />
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Site]"
@@ -15011,7 +15011,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Employee ID]"
@@ -15021,7 +15021,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Manager Name" />
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Employee ID]"
@@ -15031,7 +15031,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Employee ID]"
@@ -15041,7 +15041,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Manager Name" />
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Employee ID]"
@@ -15051,7 +15051,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Employee ID]"
@@ -15061,7 +15061,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Manager Name" />
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Description]"
@@ -15123,7 +15123,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Submitter Name" />
                     <externalMetadataColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Reviewed Date]"
@@ -15233,7 +15233,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       name="Employee Name" />
                     <outputColumn
@@ -15251,7 +15251,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       name="Supervisor Name" />
                     <outputColumn
@@ -15263,7 +15263,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       name="Manager Name" />
                     <outputColumn
@@ -15275,7 +15275,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       name="Current Supervisor Name" />
                     <outputColumn
@@ -15287,7 +15287,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       name="Current Manager Name" />
                     <outputColumn
@@ -15299,7 +15299,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       name="Review Supervisor Name" />
                     <outputColumn
@@ -15311,7 +15311,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       name="Review Manager Name" />
                     <outputColumn
@@ -15385,7 +15385,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Supervisor Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       name="Submitter Name" />
                     <outputColumn
@@ -17966,7 +17966,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Employee Name" />
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Site]"
@@ -17981,7 +17981,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Employee ID]"
@@ -17991,7 +17991,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Manager Name" />
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Employee ID]"
@@ -18001,7 +18001,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Employee ID]"
@@ -18011,7 +18011,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Current Manager Name" />
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Employee ID]"
@@ -18021,7 +18021,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Supervisor Name" />
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Employee ID]"
@@ -18031,7 +18031,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Review Manager Name" />
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Description]"
@@ -18093,7 +18093,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       name="Submitter Name" />
                     <externalMetadataColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Reviewed Date]"
@@ -18203,7 +18203,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Name]"
                       name="Employee Name" />
                     <outputColumn
@@ -18221,7 +18221,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Name]"
                       name="Supervisor Name" />
                     <outputColumn
@@ -18233,7 +18233,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Manager Name]"
                       name="Manager Name" />
                     <outputColumn
@@ -18245,7 +18245,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Supervisor Name]"
                       name="Current Supervisor Name" />
                     <outputColumn
@@ -18257,7 +18257,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Current Manager Name]"
                       name="Current Manager Name" />
                     <outputColumn
@@ -18269,7 +18269,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Supervisor Name]"
                       name="Review Supervisor Name" />
                     <outputColumn
@@ -18281,7 +18281,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Review Manager Name]"
                       name="Review Manager Name" />
                     <outputColumn
@@ -18355,7 +18355,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     <outputColumn
                       refId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       dataType="wstr"
-                      length="70"
+                      length="50"
                       lineageId="Package\Training Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Submitter Name]"
                       name="Submitter Name" />
                     <outputColumn
@@ -19326,7 +19326,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\LSA Report">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="172.8,41.6"
           Id="Package\LSA Report\Flat File Destination"
@@ -19362,9 +19362,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -19398,9 +19396,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -19434,9 +19430,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>

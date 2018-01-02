@@ -1,11 +1,10 @@
 /*
-fn_NPNQualityRecs(02).sql
-Last Modified Date: 03/02/2017
+fn_NPNQualityRecs(03).sql
+Last Modified Date: 11/27/2017
 Last Modified By: Susmitha Palacherla
 
-
+Version 03: Updated to support protection sensitive data. Removed LanID from Select. TFS 7856 - 11/27/2017
 Version 02: Additional update from V&V feedback - TFS 5653 - 03/02/2017
-
 Version 01: Document Initial Revision - TFS 5653 - 02/28/2017
 
 */
@@ -27,6 +26,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
 -- =============================================
 -- Author:		      Susmitha Palacherla
 -- Create date:       02/28/2017
@@ -34,6 +37,7 @@ GO
 -- Selects the IQS logs eligible for a follow up NPN log for given date range.
 -- Last update by:   Susmitha Palacherla
 -- Initial Revision - Created as part of  TFS 5653 - 02/28/2017
+-- Updated to support protection sensitive data. Removed LanID from Select. TFS 7856 - 11/27/2017
 -- =============================================
 CREATE FUNCTION [EC].[fn_NPNQualityRecs] 
 (
@@ -60,7 +64,8 @@ DECLARE
 @BeginDate NVARCHAR(8),
 @EndDate NVARCHAR(8)
 
-   
+
+  
   INSERT @Table_NPNQualityRecs
   (
     [EmpID], 
@@ -73,8 +78,8 @@ DECLARE
  
   )
  
-   SELECT DISTINCT CL.[EmpID], 
-	SUBSTRING(CL.[EmpLanID],1,30), 
+  SELECT DISTINCT CL.[EmpID], 
+	'-',
 	SUBSTRING(CL.[ProgramName], 1,20),
 	CL.[SiteID], 
 	CL.[EventDate], 
@@ -96,11 +101,10 @@ AND [EC].[fn_intDatetime_to_YYYYMMDD](CL.[SubmittedDate]) BETWEEN @intBeginDate 
 and (CN.VerintID is null and CN.EmpID is null and CN.EventDate is null) 
 
 
-	
 
 RETURN 
 END -- fn [ec].[fn_NPNQualityRecs] 
 
-
 GO
+
 

@@ -1,10 +1,9 @@
 /*
-fn_strEmpNameFromEmpID(01).sql
-Last Modified Date: 1/18/2017
+fn_strEmpNameFromEmpID(02).sql
+Last Modified Date: 11/01/2017
 Last Modified By: Susmitha Palacherla
 
-
-
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -28,13 +27,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 -- =============================================
 -- Author:		Susmitha Palacherla
 -- Create date: 01/05/2015
 -- Description:	Given an Employee ID, fetches the User Name from the Employee Hierarchy table.
 -- If no match is found returns 'Unknown'
--- Initial version : SCR 14031 for loading ETS Compliance Reports
+-- Initial version - Support loading ETS Compliance Reports - : SCR 14031 - 01/05/2015
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
 -- =============================================
 CREATE FUNCTION [EC].[fn_strEmpNameFromEmpID] 
 (
@@ -48,7 +47,7 @@ BEGIN
 
 
   
-  SELECT @strEmpName = Emp_Name
+  SELECT @strEmpName = CONVERT(nvarchar(70),DecryptByKey(Emp_Name))
   FROM [EC].[Employee_Hierarchy]
   WHERE Emp_ID = @strEmpId
   
@@ -59,4 +58,5 @@ BEGIN
 END
 
 GO
+
 

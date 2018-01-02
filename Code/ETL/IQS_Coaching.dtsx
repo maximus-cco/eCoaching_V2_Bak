@@ -12,8 +12,8 @@
   DTS:ObjectName="IQS_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="269"
-  DTS:VersionGUID="{64A05506-7580-47F5-8C8F-D0339633E9E9}">
+  DTS:VersionBuild="278"
+  DTS:VersionGUID="{35070F78-52D9-4C17-93F0-10C47A4E0869}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:FileUsageType="1"
-          DTS:ConnectionString="\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Decrypt_in\" />
+          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_in\" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -37,7 +37,7 @@
       DTS:ObjectName="destnationdb">
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=f3420-ecldbd01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS-Verint_Coaching-{5D10059B-A5CC-4046-89F4-274018AD660B}destnationdb;" />
+          DTS:ConnectionString="Data Source=f3420-ecldbd01;Initial Catalog=eCoachingDevEncrypt;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS-Verint_Coaching-{5D10059B-A5CC-4046-89F4-274018AD660B}destnationdb;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -52,7 +52,7 @@ Right("0" + (DT_STR,4,1252) DatePart("m",getdate()),2) +
 Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv.zip.encrypt"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_out\Test_eCL_IQS_Scorecard_20170919.csv.zip.encrypt" />
+          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\Test_eCL_IQS_Scorecard_20171206.csv.zip.encrypt" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -74,7 +74,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
           DTS:AlwaysCheckForRowDelimiters="False"
-          DTS:ConnectionString="\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Decrypt_out\Test_eCL_IQS_Scorecard_20170919.csv">
+          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_out\Test_eCL_IQS_Scorecard_20171206.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -332,7 +332,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="BeginDate">
       <DTS:VariableValue
-        DTS:DataType="3">20170701</DTS:VariableValue>
+        DTS:DataType="3">20150101</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -352,7 +352,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="DayOfWeek">
       <DTS:VariableValue
-        DTS:DataType="3">3</DTS:VariableValue>
+        DTS:DataType="3">4</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -361,7 +361,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Decrypt_In">
       <DTS:VariableValue
-        DTS:DataType="8">\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Decrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -370,7 +370,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Decrypt_Out">
       <DTS:VariableValue
-        DTS:DataType="8">\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Decrypt_out\</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -381,7 +381,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="EncryptedFile">
       <DTS:VariableValue
-        DTS:DataType="8">\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_out\Test_eCL_IQS_Scorecard_20170919.csv.zip.encrypt</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\Test_eCL_IQS_Scorecard_20171206.csv.zip.encrypt</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -399,17 +399,16 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Encrypt_In">
       <DTS:VariableValue
-        DTS:DataType="8">\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
       DTS:DTSID="{8799FB92-91E1-499C-B071-1C8B4AE8E3DD}"
-      DTS:Expression="@[User::Encrypt_Out]+@[User::FilePrefix] +&#xA;(DT_STR,4,1252) DatePart(&quot;yyyy&quot;,getdate())+&#xA;Right(&quot;0&quot; + (DT_STR,4,1252) DatePart(&quot;m&quot;,getdate()),2) +&#xA;Right(&quot;0&quot; + (DT_STR,4,1252) DatePart(&quot;d&quot;,getdate()),2)+&quot;.csv.zip.encrypt&quot;"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="Encrypt_Out">
       <DTS:VariableValue
-        DTS:DataType="8">\\vrivscors01\bcc scorecards\Coaching\Apps\Encryption\Encrypt_out\</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -418,7 +417,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="EndDate">
       <DTS:VariableValue
-        DTS:DataType="3">20170729</DTS:VariableValue>
+        DTS:DataType="3">20151231</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -440,7 +439,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="FileName">
       <DTS:VariableValue
-        DTS:DataType="8">Test_eCL_IQS_Scorecard_20170919.csv</DTS:VariableValue>
+        DTS:DataType="8">Test_eCL_IQS_Scorecard_20171206.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -478,7 +477,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="NPNLoad">
       <DTS:VariableValue
-        DTS:DataType="8">SELECT * FROM EC.fn_NPNQualityRecs(20170701,20170729)</DTS:VariableValue>
+        DTS:DataType="8">SELECT * FROM EC.fn_NPNQualityRecs(20150101,20151231)</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -545,6 +544,36 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
           Language="CSharp"
           ReadOnlyVariables="User::EncryptedFile"
           ReadWriteVariables="User::EncryptedFileExists">
+          <ProjectItem
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -664,35 +693,6 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
-          <ProjectItem
-            Name="Properties\Settings.Designer.cs"
-            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties.Settings.get_Default():ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties.Sett" +
-    "ings")]
-
-namespace ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
           <ProjectItem
             Name="ScriptMain.cs"
             Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -835,35 +835,34 @@ namespace ST_c8c2463bd5c3454d9df6e94c8922f66f
 	</msb:ItemGroup>
 </c:Project>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
+            Name="Properties\Settings.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
 
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties.Settings.get_Default():ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties.Sett" +
+    "ings")]
 
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+namespace ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
           <ProjectItem
             Name="ST_c8c2463bd5c3454d9df6e94c8922f66f.csproj"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -3261,7 +3260,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{5D10059B-A5CC-4046-89F4-274018AD660B}"
-          SQLTask:SqlStatementSource="INSERT INTO [EC].[Quality_FileList]&#xA;           ([File_Name]&#xA;           ,[File_LoadDate]&#xA;           ,[Count_Staged]&#xA;            ,[Count_Rejected]&#xA;             ,[Count_Loaded])&#xA;  VALUES (?,GetDate(), ?, ?,?)&#xA;/*&#xA;UPDATE  [EC].[Quality_FileList]&#xA;SET Count_Loaded= (Select count(*)&#xA;FROM  EC.Coaching_Log&#xA;where DATEADD(dd, DATEDIFF(dd, 0, [Submitteddate]), 0)= DATEADD(dd, DATEDIFF(dd, 0, getdate()), 0)&#xA;AND [SourceID] =211)&#xA;where DATEADD(dd, DATEDIFF(dd, 0, [File_LoadDate]), 0)= DATEADD(dd, DATEDIFF(dd, 0, getdate()), 0)&#xA;*/" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          SQLTask:SqlStatementSource="INSERT INTO [EC].[Quality_FileList]&#xA;           ([File_Name]&#xA;           ,[File_LoadDate]&#xA;           ,[Count_Staged]&#xA;            ,[Count_Rejected]&#xA;             ,[Count_Loaded])&#xA;  VALUES (?,GetDate(), ?, ?,?);&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
             SQLTask:DtsVariableName="User::FileName"
@@ -4148,35 +4147,14 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
   </resheader>
 </root>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_193e5478e5864ef598e1c7f28cb71fb9")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_193e5478e5864ef598e1c7f28cb71fb9")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="ScriptMain.cs"
             Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -4344,14 +4322,35 @@ namespace ST_193e5478e5864ef598e1c7f28cb71fb9.Properties {
     }
 }]]></ProjectItem>
           <ProjectItem
-            Name="Properties\Settings.settings"
-            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_193e5478e5864ef598e1c7f28cb71fb9")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_193e5478e5864ef598e1c7f28cb71fb9")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.Designer.cs"
             Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -4975,7 +4974,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Id="Package\Truncate Staging Table"
           TopLeft="173.271427831844,240.988233972833" />
         <NodeLayout
-          Size="136,44"
+          Size="136,52"
           Id="Package\Update Coaching_Log and Coaching_Log_Reason tables"
           TopLeft="168.128570601405,447.152939829447" />
         <NodeLayout
@@ -5158,18 +5157,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="237.842856344885,422.070583035954">
+          TopLeft="237.842856344884,422.070583035954">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,25.0823567934928"
+              EndConnector="0,25.082356793493"
               Start="0,0"
-              End="0,17.5823567934928">
+              End="0,17.582356793493">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,17.5823567934928" />
+                    End="0,17.582356793493" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5248,30 +5247,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 7]"
-          TopLeft="236.128570601405,491.152939829447">
+          TopLeft="304.128570601405,473.152939829447">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-14.8571431101583,28.2352935599621"
+              EndConnector="-14.857143110158,68.235293559962"
               Start="0,0"
-              End="-14.8571431101583,20.7352935599621">
+              End="-7.35714311015801,68.235293559962">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,10.1176467799811" />
+                    End="18.5,0" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,10.1176467799811"
-                    Point2="0,14.1176467799811"
-                    Point3="-4,14.1176467799811" />
+                    Point1="18.5,0"
+                    Point2="22.5,0"
+                    Point3="22.5,4" />
                   <mssgle:LineSegment
-                    End="-10.8571431101583,14.1176467799811" />
+                    End="22.5,64.235293559962" />
                   <mssgle:CubicBezierSegment
-                    Point1="-10.8571431101583,14.1176467799811"
-                    Point2="-14.8571431101583,14.1176467799811"
-                    Point3="-14.8571431101583,18.1176467799811" />
+                    Point1="22.5,64.235293559962"
+                    Point2="22.5,68.235293559962"
+                    Point3="18.5,68.235293559962" />
                   <mssgle:LineSegment
-                    End="-14.8571431101583,20.7352935599621" />
+                    End="-7.35714311015801,68.235293559962" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5359,7 +5358,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Load  Quality Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="136,44"
           Id="Package\Load  Quality Staging Table\IQS Decrypted File"
@@ -5403,7 +5402,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5437,7 +5438,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5463,7 +5466,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5497,7 +5502,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>

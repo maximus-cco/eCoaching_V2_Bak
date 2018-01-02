@@ -1,10 +1,9 @@
 /*
-fn_nvcGetEmpIdFromLanId(01).sql
-Last Modified Date: 1/18/2017
+fn_nvcGetEmpIdFromLanId(02).sql
+Last Modified Date: 11/01/2017
 Last Modified By: Susmitha Palacherla
 
-
-
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -36,9 +35,9 @@ GO
 --	Description:	 
 --  *  Given an LAN ID and a date, return the  Employee ID of the
 --  person who had that LAN ID on that date.
--- last Modified Date: 07/25/2014
 -- Last Modified By: Susmitha Palacherla
--- Modified per SCR 12983 to fix the logic for looking up the Employee ID
+-- Modified to fix the logic for looking up the Employee ID - SCR 12983 - 07/25/2014
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
 --	=============================================
 CREATE FUNCTION [EC].[fn_nvcGetEmpIdFromLanId] 
 (
@@ -49,6 +48,11 @@ RETURNS nvarchar(10)
 AS
 BEGIN
  
+
+--OPEN SYMMETRIC KEY [CoachingKey]  
+--DECRYPTION BY CERTIFICATE [CoachingCert]
+
+
 	 DECLARE @nvcEmpID Nvarchar(10),
 	         @intDate Int,
 	         @intlanempid Int,
@@ -60,7 +64,7 @@ BEGIN
 	
 		SET @intlanempid = (
 	SELECT COUNT(EmpID)
-	FROM EC.EmployeeID_To_LanID
+	FROM EC.View_EmployeeID_To_LanID
 	WHERE 
 	LanID = @nvclanID AND
 	@intDate BETWEEN StartDate AND EndDate
@@ -77,7 +81,7 @@ IF  @intlanempid = 1
 	BEGIN
 	    SET @nvcEmpID = (
 	   SELECT DISTINCT EmpID
-	   FROM EC.EmployeeID_To_LanID
+	   FROM EC.View_EmployeeID_To_LanID
 	    WHERE 
 	    LanID = @nvclanID AND
 	    @intDate BETWEEN StartDate AND EndDate)
@@ -90,8 +94,8 @@ ELSE
 	BEGIN
 	  	 SET @nvcEmpID = (
 		  SELECT DISTINCT LATEST.EmpID FROM
-		 (SELECT LAN.* FROM EC.EmployeeID_To_LanID LAN
-		  JOIN (SELECT LanID, MAX(StartDate)StartDate FROM [EC].[EmployeeID_To_LanID] GROUP BY LanID)MLAN
+		 (SELECT LAN.* FROM EC.View_EmployeeID_To_LanID LAN
+		  JOIN (SELECT LanID, MAX(StartDate)StartDate FROM [EC].[View_EmployeeID_To_LanID] GROUP BY LanID)MLAN
 		  ON LAN.LanID = MLAN.lanID 
 		  AND LAN.StartDate = MLAN.StartDate) AS LATEST
 		  WHERE LATEST.LanID =  @nvclanID AND 
@@ -108,7 +112,7 @@ ELSE
 	SET @intehempid = (
 	SELECT COUNT(Emp_ID)
 	FROM EC.Employee_Hierarchy
-	WHERE Emp_LanID = @nvclanID AND
+	WHERE CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @nvclanID AND
 	@intDate BETWEEN Start_Date AND End_Date
 	)
 -- If exactly one Employee ID is found return it
@@ -119,7 +123,7 @@ IF  @intehempid = 1
 	      SET @nvcEmpID = 
 		  (SELECT DISTINCT Emp_ID
 		  FROM EC.Employee_Hierarchy
-		  WHERE Emp_LanID = @nvclanID
+		  WHERE CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @nvclanID
 		  AND @intDate BETWEEN Start_Date AND End_Date
 		  )
      END
@@ -130,8 +134,9 @@ IF  @intehempid = 1
 	  	 SET @nvcEmpID = (
 		  SELECT DISTINCT LATEST.Emp_ID FROM
 		 (SELECT EH.* FROM EC.Employee_Hierarchy EH
-		  JOIN (SELECT Emp_LanID, MAX(Start_Date)Start_Date FROM EC.Employee_Hierarchy GROUP BY Emp_LanID)MEH
-		  ON EH.Emp_LanID = MEH.Emp_LanID 
+		  JOIN (SELECT CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Emp_LanID], MAX(Start_Date)Start_Date
+		  FROM EC.Employee_Hierarchy GROUP BY CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) )MEH
+		  ON CONVERT(nvarchar(30),DecryptByKey(EH.Emp_LanID))  = MEH.Emp_LanID 
 		  AND EH.Start_Date = MEH.Start_Date) AS LATEST
 		  WHERE LATEST.Emp_LanID =  @nvclanID AND 
 		  @intDate BETWEEN LATEST.Start_Date AND LATEST.End_Date
@@ -150,4 +155,5 @@ END --fn_nvcGetEmpIdFromLanId
 
 
 GO
+
 

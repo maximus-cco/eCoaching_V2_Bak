@@ -1,0 +1,46 @@
+/*
+view_Employee_Hierarchy.sql(01).sql
+Last Modified Date: 11/27/2017
+Last Modified By: Susmitha Palacherla
+
+
+
+Version 01: Initial Revision - Created Modified to support Encrypted attributes. TFS 7856 - 11/27/2017
+*/
+
+
+IF EXISTS (
+  SELECT 1
+    FROM SYS.VIEWS
+   WHERE NAME = N'View_Employee_Hierarchy'
+     AND TYPE = 'V'
+)
+DROP VIEW [EC].[View_Employee_Hierarchy]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE VIEW [EC].[View_Employee_Hierarchy]
+AS  
+SELECT [Emp_ID]
+  	  ,CONVERT(nvarchar(70),DecryptByKey(Emp_Name)) AS [Emp_Name]
+          ,CONVERT(nvarchar(50),DecryptByKey(Emp_Email)) AS [Emp_Email]
+	  ,CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Emp_LanID]
+          ,CONVERT(nvarchar(70),DecryptByKey(Sup_Name)) AS [Sup_Name]
+	  ,CONVERT(nvarchar(50),DecryptByKey(Sup_Email)) AS [Sup_Email]
+	  ,CONVERT(nvarchar(30),DecryptByKey(Sup_LanID)) AS [Sup_LanID]
+   	  ,CONVERT(nvarchar(70),DecryptByKey(Mgr_Name)) AS [Mgr_Name]
+	  ,CONVERT(nvarchar(50),DecryptByKey(Mgr_Email)) AS [Mgr_Email]
+	  ,CONVERT(nvarchar(30),DecryptByKey(Mgr_LanID)) AS [Mgr_LanID]
+  	  ,CONVERT(nvarchar(70),DecryptByKey(Emp_Pri_Name)) AS [Emp_Pri_Name]
+    FROM [EC].[Employee_Hierarchy]
+
+GO
+
+

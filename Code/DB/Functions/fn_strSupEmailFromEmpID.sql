@@ -1,10 +1,9 @@
 /*
-fn_strSupEmailFromEmpID(01).sql
-Last Modified Date: 1/18/2017
+fn_strSupEmailFromEmpID(02).sql
+Last Modified Date: 11/01/2017
 Last Modified By: Susmitha Palacherla
 
-
-
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 
@@ -28,13 +27,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 -- =============================================
 -- Author:		Susmitha Palacherla
 -- Create date: 3/8/2016
 -- Description:	Given an Employee ID, fetches the Email address of the Employee's Supervisor from the  Hierarchy table.
 -- If no match is found returns 'Unknown'
--- Initial version : TFS 2182 for fetching Review Managers Supervisor Email for LCS Reminders.
+-- Initial version -  Review Supervisor Emails for LCS Reminders - TFS 2182 - 3/8/2016
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
 -- =============================================
 CREATE FUNCTION [EC].[fn_strSupEmailFromEmpID] 
 (
@@ -54,7 +53,7 @@ BEGIN
   IF     (@strSupEmpID IS NULL OR @strSupEmpID = 'Unknown')
   SET    @strSupEmpID = N'999999'
   
- SET @strSupEmail = (SELECT Emp_Email
+ SET @strSupEmail = (SELECT CONVERT(nvarchar(50),DecryptByKey(Sup_Email)) 
   FROM [EC].[Employee_Hierarchy]
   WHERE Emp_ID = @strSupEmpID)
   
@@ -65,7 +64,6 @@ BEGIN
 END -- fn_strSupEmailFromEmpID
 
 
-
-
 GO
+
 
