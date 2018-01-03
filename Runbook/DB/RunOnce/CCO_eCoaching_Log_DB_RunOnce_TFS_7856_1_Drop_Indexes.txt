@@ -1,0 +1,63 @@
+/***************************
+Summary
+Open in an ssms window pointing to eCoaching DB in target environment and run with nothing selected
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+*/
+
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Employee_Hierarchy_Emp_LANID') 
+    DROP INDEX IDX_Employee_Hierarchy_Emp_LANID ON [EC].[Employee_Hierarchy]; 
+GO
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Employee_Hierarchy_Emp_Sup_Mgr_Names') 
+    DROP INDEX IDX_Employee_Hierarchy_Emp_Sup_Mgr_Names ON [EC].[Employee_Hierarchy]; 
+GO
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_26_846626059__K1_K2_K10_4_9_15') 
+    DROP INDEX _dta_index_Employee_Hierarchy_26_846626059__K1_K2_K10_4_9_15 ON [EC].[Employee_Hierarchy]
+GO
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_26_K22_K5_K4_K6_K2_3_7_10_11_12_14_16_17_18_20') 
+    DROP INDEX _dta_index_Employee_Hierarchy_26_K22_K5_K4_K6_K2_3_7_10_11_12_14_16_17_18_20 ON [EC].[Employee_Hierarchy]; 
+GO
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'_dta_index_Employee_Hierarchy_31_133575514__K1_K2_K10_K16') 
+    DROP INDEX _dta_index_Employee_Hierarchy_31_133575514__K1_K2_K10_K16 ON [EC].[Employee_Hierarchy]; 
+GO
+
+
+DROP STATISTICS [EC].[Employee_Hierarchy].[_dta_stat_69575286_2_1]
+GO
+
+DROP STATISTICS [EC].[Employee_Hierarchy].[_dta_stat_69575286_1_12_2]
+GO
+
+DROP STATISTICS [EC].[Employee_Hierarchy].[_dta_stat_69575286_16_1_12_2]
+GO
+
+DROP STATISTICS [EC].[Employee_Hierarchy].[_dta_stat_69575286_2_1_12]
+GO
+
+DROP STATISTICS [EC].[Employee_Hierarchy].[_dta_stat_69575286_2_12]
+GO
+
+DROP STATISTICS [EC].[Employee_Hierarchy].[_dta_stat_69575286_1_4]
+GO
+
+DROP STATISTICS [EC].[Employee_Hierarchy].[_dta_stat_69575286_1_12]
+GO
+
+

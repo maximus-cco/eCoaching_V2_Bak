@@ -1,0 +1,989 @@
+/***************************
+Uncomment Database for Target Environment
+
+--USE eCoachingDevEncrypted;  
+--GO  
+
+--USE eCoachingDev;  
+--GO  
+
+--USE eCoachingTest;  
+--GO  
+
+--USE eCoaching;  
+--GO  
+
+*/
+
+
+/*********************************
+	RUN ONE BLOCK AT A TIME
+***********************************/
+
+/***********************************
+            BLOCK 1
+
+***********************************/
+
+-- BEGIN BLOCK 1
+	
+--1. AT_User
+
+ALTER TABLE EC.AT_User
+    ADD UserLanID_Drop nvarchar(30)
+	,UserName_Drop nvarchar(50);   
+GO  
+
+
+UPDATE EC.AT_User  
+SET UserName_Drop = UserName
+,UserLanID_Drop = UserLanID
+GO  
+
+
+ALTER TABLE EC.AT_User
+    ADD UserLanID_Encrypted varbinary(128)
+	,UserName_Encrypted varbinary(256);   
+GO  
+
+
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+GO 
+
+UPDATE EC.AT_User  
+SET UserName_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), UserName)
+,UserLanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), UserLanID)
+GO  
+
+/*
+Select UserLanID AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(UserLanID_Encrypted)) AS [Decrypted LanID],
+ UserLanID_Encrypted, 
+ UserName AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(UserName_Encrypted)) AS [Decrypted Name], UserName_Encrypted
+FROM EC.AT_User
+*/
+
+
+ALTER TABLE EC.AT_User
+DROP COLUMN UserLanID
+GO
+
+ALTER TABLE EC.AT_User
+DROP COLUMN UserName
+GO 
+
+
+sp_rename 'EC.AT_User.UserLanID_Encrypted', 'UserLanID', 'COLUMN';
+GO
+sp_rename 'EC.AT_User.UserName_Encrypted', 'UserName', 'COLUMN';
+GO
+
+/*
+
+Select UserLanID_Drop AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(UserLanID)) AS [Decrypted LanID],
+ UserName_Drop AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(UserName)) AS [Decrypted Name]
+FROM EC.AT_User
+
+*/
+
+
+
+-- END BLOCK 1
+
+
+/***********************************
+            BLOCK 2
+
+***********************************/
+
+-- BEGIN BLOCK 2
+
+
+--2. EmpID_To_SupID_Stage
+
+
+ALTER TABLE [EC].[EmpID_To_SupID_Stage]
+    ADD Emp_Name_Drop nvarchar(50)
+	,Emp_LanID_Drop nvarchar(30);   
+GO  
+
+
+UPDATE [EC].[EmpID_To_SupID_Stage]
+SET Emp_Name_Drop = Emp_Name
+,Emp_LanID_Drop = Emp_LanID
+GO  
+
+
+--***
+ALTER TABLE [EC].[EmpID_To_SupID_Stage]
+    ADD Emp_Name_Encrypted varbinary(256)
+	,Emp_LanID_Encrypted varbinary(128);   
+GO  
+
+
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+GO
+
+UPDATE [EC].[EmpID_To_SupID_Stage]
+SET Emp_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_Name)
+,Emp_LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_LanID)
+GO  
+
+/*
+Select Emp_Name AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(Emp_Name_Encrypted)) AS [Decrypted Name], Emp_Name_Encrypted,
+Emp_LanID AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(Emp_LanID_Encrypted)) AS [Decrypted LanID],
+ Emp_LanID_Encrypted
+FROM [EC].[EmpID_To_SupID_Stage]
+*/
+
+
+ALTER TABLE [EC].[EmpID_To_SupID_Stage]
+DROP COLUMN Emp_LanID
+GO
+
+
+ALTER TABLE [EC].[EmpID_To_SupID_Stage]
+DROP COLUMN Emp_Name
+GO
+
+
+sp_rename 'EC.EmpID_To_SupID_Stage.Emp_LanID_Encrypted', 'Emp_LanID', 'COLUMN';
+GO
+sp_rename 'EC.EmpID_To_SupID_Stage.Emp_Name_Encrypted', 'Emp_Name', 'COLUMN';
+GO
+
+/*
+Select Emp_LanID_Drop AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Decrypted LanID],
+Emp_Name_Drop AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(Emp_Name)) AS [Decrypted Name]
+FROM [EC].[EmpID_To_SupID_Stage]
+
+*/
+
+
+-- END BLOCK 2
+
+/***********************************
+            BLOCK 3
+
+***********************************/
+
+
+-- BEGIN BLOCK 3
+
+--3. Employee_Ids_With_Prefixes
+
+
+ALTER TABLE [EC].[Employee_Ids_With_Prefixes]
+    ADD Emp_Name_Drop nvarchar(50)
+	,Emp_LanID_Drop nvarchar(30);   
+GO  
+
+
+UPDATE [EC].[Employee_Ids_With_Prefixes]
+SET Emp_Name_Drop = Emp_Name
+,Emp_LanID_Drop = Emp_LanID
+GO  
+
+
+ALTER TABLE [EC].[Employee_Ids_With_Prefixes]
+    ADD Emp_Name_Encrypted varbinary(256)
+	,Emp_LanID_Encrypted varbinary(128);   
+GO  
+
+
+
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+GO 
+
+UPDATE [EC].[Employee_Ids_With_Prefixes]
+SET Emp_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_Name)
+,Emp_LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_LanID)
+GO  
+
+/*
+Select Emp_Name AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(Emp_Name_Encrypted)) AS [Decrypted Name], Emp_Name_Encrypted,
+Emp_LanID AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(Emp_LanID_Encrypted)) AS [Decrypted LanID],
+ Emp_LanID_Encrypted
+FROM [EC].[Employee_Ids_With_Prefixes]
+*/
+
+
+ALTER TABLE [EC].[Employee_Ids_With_Prefixes]
+DROP COLUMN Emp_LanID
+GO 
+
+ALTER TABLE [EC].[Employee_Ids_With_Prefixes]
+DROP COLUMN Emp_Name
+GO 
+
+sp_rename 'EC.Employee_Ids_With_Prefixes.Emp_LanID_Encrypted', 'Emp_LanID', 'COLUMN';
+GO 
+sp_rename 'EC.Employee_Ids_With_Prefixes.Emp_Name_Encrypted', 'Emp_Name', 'COLUMN';
+GO 
+
+/*
+Select Emp_LanID_Drop AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Decrypted LanID],
+Emp_Name_Drop AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(Emp_Name)) AS [Decrypted Name]
+FROM [EC].[Employee_Ids_With_Prefixes]
+*/
+
+-- END BLOCK 3
+
+/***********************************
+            BLOCK 4
+
+***********************************/
+
+
+-- BEGIN BLOCK 4
+
+--4. Employee_Hierarchy
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+    ADD Emp_Name_Drop nvarchar(50)
+	,Emp_LanID_Drop nvarchar(30)
+	,Emp_Email_Drop nvarchar(50)   
+	,Sup_Name_Drop nvarchar(50)
+	,Sup_LanID_Drop nvarchar(30)
+	,Sup_Email_Drop nvarchar(50)  
+	,Mgr_Name_Drop nvarchar(50)
+	,Mgr_LanID_Drop nvarchar(30)
+	,Mgr_Email_Drop nvarchar(50)  
+	,Emp_Pri_Name_Drop  nvarchar(50); 
+GO  
+
+
+UPDATE [EC].[Employee_Hierarchy]
+SET Emp_Name_Drop = Emp_Name
+	,Emp_LanID_Drop = Emp_LanID
+	,Emp_Email_Drop = Emp_Email
+	,Sup_Name_Drop =  Sup_Name
+	,Sup_LanID_Drop = Sup_LanID
+	,Sup_Email_Drop = Sup_Email 
+	,Mgr_Name_Drop =  Mgr_Name
+	,Mgr_LanID_Drop =  Mgr_LanID
+	,Mgr_Email_Drop =  Mgr_Email 
+	,Emp_Pri_Name_Drop  =  Emp_Pri_Name
+GO  
+
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+    ADD Emp_Name_Encrypted varbinary(256)
+	,Emp_LanID_Encrypted varbinary(128)
+	,Emp_Email_Encrypted varbinary(256)   
+	,Sup_Name_Encrypted varbinary(256)
+	,Sup_LanID_Encrypted varbinary(128)
+	,Sup_Email_Encrypted varbinary(256)  
+	,Mgr_Name_Encrypted varbinary(256)
+	,Mgr_LanID_Encrypted varbinary(128)
+	,Mgr_Email_Encrypted varbinary(256)  
+	,Emp_Pri_Name_Encrypted  varbinary(256) 
+GO  
+
+
+
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+GO 
+
+
+UPDATE [EC].[Employee_Hierarchy]
+SET Emp_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_Name)
+	,Emp_LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_LanID)
+	,Emp_Email_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_Email) 
+	,Sup_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Sup_Name)
+	,Sup_LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Sup_LanID)
+	,Sup_Email_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Sup_Email) 
+	,Mgr_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Mgr_Name)
+	,Mgr_LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Mgr_LanID)
+	,Mgr_Email_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Mgr_Email) 
+	,Emp_Pri_Name_Encrypted  = EncryptByKey(Key_GUID('CoachingKey'), Emp_Pri_Name)
+GO  
+
+
+/*
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+GO 
+
+
+SELECT [Emp_ID]
+      ,[Emp_Name]
+	  ,CONVERT(nvarchar(70),DecryptByKey(Emp_Name_Encrypted)) AS [Decrypted Emp Name]
+	  ,[Emp_Name_Encrypted]
+
+      ,[Emp_Email]
+	   ,CONVERT(nvarchar(50),DecryptByKey(Emp_Email_Encrypted)) AS [Decrypted Emp Email]
+	   ,[Emp_Email_Encrypted]
+
+      ,[Emp_LanID]
+	  ,CONVERT(nvarchar(30),DecryptByKey(Emp_LanID_Encrypted)) AS [Decrypted Emp LanID]
+      ,[Emp_LanID_Encrypted]
+
+      ,[Sup_Name]
+	   ,CONVERT(nvarchar(70),DecryptByKey(Sup_Name_Encrypted)) AS [Decrypted Sup Name]
+	   ,[Sup_Name_Encrypted]
+
+      ,[Sup_Email]
+	    ,CONVERT(nvarchar(50),DecryptByKey(Sup_Email_Encrypted)) AS [Decrypted Sup Email]
+	  ,[Sup_Email_Encrypted]
+	   
+      ,[Sup_LanID]
+	    ,CONVERT(nvarchar(30),DecryptByKey(Sup_LanID_Encrypted)) AS [Decrypted Sup LanID]
+         ,[Sup_LanID_Encrypted]
+		 
+      ,[Mgr_Name]
+	   ,CONVERT(nvarchar(70),DecryptByKey(Mgr_Name_Encrypted)) AS [Decrypted Mgr Name]
+	  ,[Mgr_Name_Encrypted]
+
+      ,[Mgr_Email]
+	      ,CONVERT(nvarchar(50),DecryptByKey(Mgr_Email_Encrypted)) AS [Decrypted Mgr Email]
+	   ,[Mgr_Email_Encrypted]
+
+      ,[Mgr_LanID]
+	    ,CONVERT(nvarchar(30),DecryptByKey(Mgr_LanID_Encrypted)) AS [Decrypted Mgr LanID]
+    	    ,[Mgr_LanID_Encrypted]
+
+      ,[Emp_Pri_Name]
+	   ,CONVERT(nvarchar(70),DecryptByKey(Emp_Pri_Name_Encrypted)) AS [Decrypted Emp Pri_Name]
+       ,[Emp_Pri_Name_Encrypted]
+	   
+  FROM [EC].[Employee_Hierarchy]
+GO
+
+*/
+--*****************
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Emp_Name
+GO 
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Emp_LanID
+GO 
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Emp_Email
+GO 
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Sup_Name
+GO 
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Sup_LanID
+GO 
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Sup_Email
+GO 
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Emp_Pri_Name
+GO 
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Mgr_Name
+GO 
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Mgr_LanID
+GO 
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Mgr_Email
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Emp_LanID_Encrypted', 'Emp_LanID', 'COLUMN';
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Emp_Name_Encrypted', 'Emp_Name', 'COLUMN';
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Emp_Email_Encrypted', 'Emp_Email', 'COLUMN';
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Sup_LanID_Encrypted', 'Sup_LanID', 'COLUMN';
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Sup_Name_Encrypted', 'Sup_Name', 'COLUMN';
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Sup_Email_Encrypted', 'Sup_Email', 'COLUMN';
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Mgr_LanID_Encrypted', 'Mgr_LanID', 'COLUMN';
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Mgr_Name_Encrypted', 'Mgr_Name', 'COLUMN';
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Mgr_Email_Encrypted', 'Mgr_Email', 'COLUMN';
+GO 
+
+sp_rename 'EC.Employee_Hierarchy.Emp_Pri_Name_Encrypted', 'Emp_Pri_Name', 'COLUMN';
+GO 
+
+
+--*********
+
+/*
+SELECT [Emp_ID]
+      ,[Emp_Name_Drop]
+	  ,CONVERT(nvarchar(70),DecryptByKey(Emp_Name)) AS [Decrypted Emp Name]
+	  ,[Emp_Email_Drop]
+	   ,CONVERT(nvarchar(50),DecryptByKey(Emp_Email)) AS [Decrypted Emp Email]
+	  ,[Emp_LanID_Drop]
+	  ,CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Decrypted Emp LanID]
+      ,[Sup_Name_Drop]
+	   ,CONVERT(nvarchar(70),DecryptByKey(Sup_Name)) AS [Decrypted Sup Name]
+	   ,[Sup_Email_Drop]
+	    ,CONVERT(nvarchar(50),DecryptByKey(Sup_Email)) AS [Decrypted Sup Email]
+        ,[Sup_LanID_Drop]
+	    ,CONVERT(nvarchar(30),DecryptByKey(Sup_LanID)) AS [Decrypted Sup LanID]
+       ,[Mgr_Name_Drop]
+	   ,CONVERT(nvarchar(70),DecryptByKey(Mgr_Name)) AS [Decrypted Mgr Name]
+	   ,[Mgr_Email_Drop]
+	   ,CONVERT(nvarchar(50),DecryptByKey(Mgr_Email)) AS [Decrypted Mgr Email]
+	   ,[Mgr_LanID_Drop]
+	    ,CONVERT(nvarchar(30),DecryptByKey(Mgr_LanID)) AS [Decrypted Mgr LanID]
+        ,[Emp_Pri_Name_Drop]
+	   ,CONVERT(nvarchar(70),DecryptByKey(Emp_Pri_Name)) AS [Decrypted Emp Pri_Name]
+    FROM [EC].[Employee_Hierarchy]
+GO
+
+*/
+
+-- END BLOCK 4
+
+
+/***********************************
+            BLOCK 5
+
+***********************************/
+
+
+-- BEGIN BLOCK 5
+
+
+--5. EmployeeID_To_LanID
+
+sp_RENAME '[EC].[EmployeeID_To_LanID]' , 'EmployeeID_To_LanID_Bak_PreEncryption'
+GO 
+
+
+ALTER TABLE [EC].[EmployeeID_To_LanID_Bak_PreEncryption]
+ADD LanID_Drop nvarchar(30)
+GO  
+
+
+UPDATE [EC].[EmployeeID_To_LanID_Bak_PreEncryption]
+SET LanID_Drop = LanID
+GO  
+
+
+ALTER TABLE [EC].[EmployeeID_To_LanID_Bak_PreEncryption]
+ADD LanID_Encrypted varbinary(128)
+GO  
+
+
+
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+GO 
+
+
+UPDATE [EC].[EmployeeID_To_LanID_Bak_PreEncryption]
+SET LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), LanID)
+GO  
+
+
+/*
+Select LanID AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(LanID_Encrypted)) AS [Decrypted LanID],
+ LanID_Encrypted
+FROM [EC].[EmployeeID_To_LanID_Bak_PreEncryption]
+*/
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [EC].[EmployeeID_To_LanID](
+    [ID] [int] IDENTITY (1,1) NOT NULL,
+	[EmpID] [nvarchar](20) NOT NULL,
+	[StartDate] [int] NOT NULL,
+	[EndDate] [int] NOT NULL,
+	[LanID] [varbinary](128) NOT NULL,
+	[DatetimeInserted] [datetime] NOT NULL,
+	[DatetimeLastUpdated] [datetime] NOT NULL,
+	[LanID_Drop] [nvarchar](30) NULL,
+ CONSTRAINT [PK_EmployeeID_To_LanID2] PRIMARY KEY CLUSTERED 
+(
+[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+--*****
+-- Populate Emp ID To lanID Table
+
+INSERT INTO [EC].[EmployeeID_To_LanID]
+           ([EmpID]
+           ,[StartDate]
+           ,[EndDate]
+           ,[LanID]
+           ,[DatetimeInserted]
+           ,[DatetimeLastUpdated]
+           ,[LanID_Drop]
+           )
+ SELECT 
+            [EmpID]
+           ,[StartDate]
+           ,[EndDate]
+           ,[LanID_Encrypted]
+           ,[DatetimeInserted]
+           ,[DatetimeLastUpdated]
+           ,[LanID_Drop]
+           FROM [EC].[EmployeeID_To_LanID_Bak_PreEncryption]
+		   ORDER BY [DatetimeInserted]
+GO
+
+
+/*
+ SELECT *
+		   FROM [EC].[EmployeeID_To_LanID]
+GO
+*/
+
+-- END BLOCK 5
+
+/***********************************
+            BLOCK 6
+
+***********************************/
+
+
+-- BEGIN BLOCK 6
+
+
+--6. Survey_Response_Header
+
+ALTER TABLE EC.Survey_Response_Header
+    ADD EmpLanID_Drop nvarchar(30),
+	FormName_Drop nvarchar(50)
+GO  
+
+
+UPDATE EC.Survey_Response_Header
+SET EmpLanID_Drop =  EmpLanID,
+FormName_Drop =  FormName
+GO  
+
+
+ALTER TABLE EC.Survey_Response_Header
+    ADD EmpLanID_Encrypted varbinary(128)
+
+GO  
+
+
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+GO
+
+
+UPDATE EC.Survey_Response_Header
+SET EmpLanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), EmpLanID)
+GO  
+
+/*
+Select SurveyID, FormName, EmpLanID  AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(EmpLanID_Encrypted)) AS [Decrypted LanID]
+FROM EC.Survey_Response_Header
+*/
+
+
+ALTER TABLE EC.Survey_Response_Header
+DROP COLUMN EmpLanID 
+GO
+
+sp_rename 'EC.Survey_Response_Header.EmpLanID_Encrypted', 'EmpLanID', 'COLUMN';
+GO
+
+/*
+Select EmpLanID_Drop AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(EmpLanID)) AS [Decrypted LanID]
+FROM [EC].[Survey_Response_Header]
+*/
+
+
+-- END BLOCK 6
+
+
+
+/***********************************
+            BLOCK 7
+
+***********************************/
+
+
+-- BEGIN BLOCK 7
+
+--7.Historical_Dashboard_ACL
+
+ALTER TABLE EC.Historical_Dashboard_ACL
+    ADD User_LanID_Drop nvarchar(30)
+	,User_Name_Drop nvarchar(50)
+ ,Updated_By_Drop nvarchar(50)
+GO  
+
+UPDATE EC.Historical_Dashboard_ACL 
+SET User_Name_Drop =  User_Name
+,User_LanID_Drop =  User_LanID
+,Updated_By_Drop =  Updated_By
+GO  
+
+
+ALTER TABLE EC.Historical_Dashboard_ACL
+    ADD User_LanID_Encrypted varbinary(128)
+	,User_Name_Encrypted varbinary(256)
+ ,Updated_By_Encrypted varbinary(256)
+GO  
+
+
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+GO
+
+UPDATE EC.Historical_Dashboard_ACL 
+SET User_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), User_Name)
+,User_LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), User_LanID)
+,Updated_By_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Updated_By)
+GO  
+
+/*
+Select User_LanID AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(User_LanID_Encrypted)) AS [Decrypted LanID],
+ User_Name AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(User_Name_Encrypted)) AS [Decrypted Name], 
+ Updated_By AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(Updated_By_Encrypted)) AS [Decrypted Updated By]
+FROM EC.Historical_Dashboard_ACL
+*/
+
+
+ALTER TABLE EC.Historical_Dashboard_ACL
+DROP CONSTRAINT  UQ__Historic__431CB6F045F365D3
+ GO 
+
+ALTER TABLE EC.Historical_Dashboard_ACL
+DROP COLUMN User_LanID
+GO
+
+ALTER TABLE EC.Historical_Dashboard_ACL
+DROP COLUMN User_Name
+GO
+
+ALTER TABLE EC.Historical_Dashboard_ACL
+DROP COLUMN  Updated_By
+GO
+
+
+sp_rename 'EC.Historical_Dashboard_ACL.User_LanID_Encrypted', 'User_LanID', 'COLUMN';
+GO
+
+sp_rename 'EC.Historical_Dashboard_ACL.User_Name_Encrypted', 'User_Name', 'COLUMN';
+GO
+
+sp_rename 'EC.Historical_Dashboard_ACL.Updated_By_Encrypted', 'Updated_By', 'COLUMN';
+GO
+
+/*
+Select User_LanID_DROP AS [Original LanID], 
+CONVERT(nvarchar(30),DecryptByKey(User_LanID)) AS [Decrypted LanID],
+ User_Name_DROP AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(User_Name)) AS [Decrypted Name], 
+ Updated_By_DROP AS [Original Name], 
+CONVERT(nvarchar(50),DecryptByKey(Updated_By)) AS [Decrypted Updated By]
+FROM EC.Historical_Dashboard_ACL
+*/
+
+-- END BLOCK 7
+
+
+
+
+
+/***********************************
+            BLOCK 8
+
+***********************************/
+
+
+-- BEGIN BLOCK 8
+
+--8. Coaching_Log
+
+ALTER TABLE EC.Coaching_Log
+    ADD EmpLanID_Drop nvarchar(50),
+    FormName_Drop nvarchar(50)
+GO  
+
+
+UPDATE EC.Coaching_Log  
+SET EmpLanID_Drop =  EmpLanID,
+FormName_Drop =  FormName
+GO  
+
+
+ALTER TABLE EC.Coaching_Log 
+DROP COLUMN EmpLanID
+GO
+
+Update EC.Coaching_Log 
+SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
+GO
+
+
+-- END BLOCK 8
+
+/***********************************
+            BLOCK 9
+
+***********************************/
+
+
+-- BEGIN BLOCK 9
+
+
+--9. Coaching_Log_Archive
+
+ALTER TABLE EC.Coaching_Log_Archive
+    ADD EmpLanID_Drop nvarchar(50),
+    FormName_Drop nvarchar(50)
+GO  
+
+
+UPDATE EC.Coaching_Log_Archive 
+SET EmpLanID_Drop =  EmpLanID,
+FormName_Drop =  FormName
+GO  
+
+ALTER TABLE EC.Coaching_Log_Archive 
+DROP COLUMN EmpLanID
+GO
+
+Update EC.Coaching_Log_Archive 
+SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
+GO
+
+
+-- END BLOCK 9
+
+
+/***********************************
+            BLOCK 10
+
+***********************************/
+
+
+-- BEGIN BLOCK 10
+
+
+--10. Warning_Log
+
+ALTER TABLE EC.Warning_Log
+    ADD EmpLanID_Drop nvarchar(50),
+    FormName_Drop nvarchar(50)
+GO  
+
+
+UPDATE EC.Warning_Log  
+SET EmpLanID_Drop =  EmpLanID,
+FormName_Drop =  FormName
+GO  
+
+ALTER TABLE EC.Warning_Log 
+DROP COLUMN EmpLanID
+GO
+
+Update EC.Warning_Log 
+SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,WarningID)
+GO
+
+
+-- END BLOCK 10
+
+
+/***********************************
+            BLOCK 11
+
+***********************************/
+
+
+-- BEGIN BLOCK 11
+
+
+--11. AT_Coaching_Inactivate_Reactivate_Audit
+
+ALTER TABLE [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+    ADD FormName_Drop nvarchar(50)
+GO
+ 
+
+UPDATE [EC].[AT_Coaching_Inactivate_Reactivate_Audit] 
+SET FormName_Drop = FormName
+GO
+
+UPDATE [EC].[AT_Coaching_Inactivate_Reactivate_Audit] 
+SET FormName =  CL.FormName
+From [EC].[AT_Coaching_Inactivate_Reactivate_Audit] A JOIN EC.Coaching_Log CL
+ON A.CoachingID = CL.CoachingID
+GO 
+
+
+UPDATE [EC].[AT_Coaching_Inactivate_Reactivate_Audit] 
+SET FormName =  CL.FormName
+From [EC].[AT_Coaching_Inactivate_Reactivate_Audit] A JOIN EC.Coaching_Log_Archive CL
+ON A.CoachingID = CL.CoachingID
+GO 
+
+
+-- END BLOCK 11
+
+
+/***********************************
+            BLOCK 12
+
+***********************************/
+
+
+-- BEGIN BLOCK 12
+
+
+--12. AT_Coaching_Reassign_Audit
+
+
+ALTER TABLE [EC].[AT_Coaching_Reassign_Audit]
+    ADD FormName_Drop nvarchar(50)
+GO  
+
+UPDATE [EC].[AT_Coaching_Reassign_Audit] 
+SET FormName_Drop =  FormName
+GO  
+
+
+UPDATE [EC].[AT_Coaching_Reassign_Audit] 
+SET FormName =  CL.FormName
+From [EC].[AT_Coaching_Reassign_Audit] A JOIN EC.Coaching_Log CL
+ON A.CoachingID = CL.CoachingID
+GO 
+
+
+UPDATE [EC].[AT_Coaching_Reassign_Audit] 
+SET FormName =  CL.FormName
+From [EC].[AT_Coaching_Reassign_Audit] A JOIN EC.Coaching_Log_Archive CL
+ON A.CoachingID = CL.CoachingID
+GO 
+
+
+-- END BLOCK 12
+
+
+
+/***********************************
+            BLOCK 13
+
+***********************************/
+
+
+-- BEGIN BLOCK 13
+
+--13.AT_Warning_Inactivate_Reactivate_Audit
+
+ALTER TABLE [EC].[AT_Warning_Inactivate_Reactivate_Audit]
+    ADD FormName_Drop nvarchar(50)
+GO  
+
+UPDATE [EC].[AT_Warning_Inactivate_Reactivate_Audit] 
+SET FormName_Drop = FormName
+GO
+
+UPDATE [EC].[AT_Warning_Inactivate_Reactivate_Audit] 
+SET FormName =  CL.FormName
+From [EC].[AT_Warning_Inactivate_Reactivate_Audit] A JOIN EC.Warning_Log CL
+ON A.WarningID = CL.WarningID
+GO 
+
+
+-- END BLOCK 13
+
+/***********************************
+            BLOCK 14
+
+***********************************/
+
+
+-- BEGIN BLOCK 14
+
+
+--14.Training_Coaching_Stage
+
+ ALTER TABLE [EC].[Training_Coaching_Stage]
+  ADD [Reject_Reason] nvarchar(200);
+  GO
+
+
+-- END BLOCK 14
+
+/***********************************
+            BLOCK 15
+
+***********************************/
+
+
+-- BEGIN BLOCK 15
+ 
+--15.Quality_Other_Coaching_Stage
+
+ ALTER TABLE [EC].[Quality_Other_Coaching_Stage]
+  ADD [Reject_Reason] nvarchar(200);
+  GO
+
+-- END BLOCK 15
