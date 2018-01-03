@@ -39,7 +39,7 @@ GO
 -- Updated to Incorporate ATA Scorecards - TFS 7541 - 09/19/2017
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 --    =====================================================================
-ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
   
 AS
