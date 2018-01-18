@@ -79,7 +79,7 @@ AS
       AND [s].[Status] = ''' + @strFormStatus + '''
       AND convert(varchar(8), [wl].[SubmittedDate], 112) >= @strSDateinparam
       AND convert(varchar(8), [wl].[SubmittedDate], 112) <= @strEDateinparam
-      AND [wl].[Active] = ''' + CONVERT(NVARCHAR, @bitActive) + '''
+      AND [wl].[Active] LIKE ''' + CONVERT(NVARCHAR, @bitActive) + '''
       AND (eh.Sup_ID <> ''999999''OR eh.Mgr_ID <> ''999999'')
     GROUP BY [wl].[FormName], [wl].[WarningID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [sc].[SubCoachingSource], [wl].[SubmittedDate]
   ) X
