@@ -5,8 +5,6 @@ namespace eCLAdmin.Repository
 {
     public interface IEmployeeRepository
     {
-        List<Employee> GetEmployees();
-
         Employee GetEmployee(string employeeId);
 
         List<Employee> GetEmployees(string userLanId, int logTypeId, int moduleId, string action);

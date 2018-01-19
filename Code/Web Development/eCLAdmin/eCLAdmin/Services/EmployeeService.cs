@@ -13,11 +13,6 @@ namespace eCLAdmin.Services
             this.employeeRepository = employeeRepository;
         }
 
-        public List<Employee> GetEmployees()
-        {
-            return employeeRepository.GetEmployees();
-        }
-
         public Employee GetEmployee(string employeeId)
         {
             return employeeRepository.GetEmployee(employeeId);

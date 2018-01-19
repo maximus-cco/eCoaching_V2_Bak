@@ -59,13 +59,14 @@ namespace eCLAdmin.Repository
         public User GetUserByLanId(string lanId)
         {
             User user = null;
-            var userQuery = "select * from EC.AT_User where UserLanID = @userLanId and Active = 1";
-            try
+			var userQuery = "[EC].[sp_AT_Select_User_Details]";
+			try
             {
                 using (SqlConnection connection = new SqlConnection(conn))
                 using (SqlCommand command = new SqlCommand(userQuery, connection))
                 {
-                    command.Parameters.AddWithValue("@userLanId", lanId);
+					command.CommandType = System.Data.CommandType.StoredProcedure;
+					command.Parameters.AddWithValue("@userLanId", lanId);
                     connection.Open();
 
                     using (SqlDataReader dataReader = command.ExecuteReader())
@@ -94,13 +95,14 @@ namespace eCLAdmin.Repository
         public List<eCoachingAccessControl> GetEcoachingAccessControlList()
         {
             List<eCoachingAccessControl> users = new List<eCoachingAccessControl>();
-            var sql = "select Row_ID, User_LanID, User_Name, Role from EC.Historical_Dashboard_ACL where End_Date = '" + Constants.ECOACHING_ACCESS_END_DATE + "'"; 
+			var sql = "[EC].[sp_Select_Users_Historical_Dashboard_ACL]";
             try
             {
                 using (SqlConnection connection = new SqlConnection(conn))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
-                    connection.Open();
+					command.CommandType = System.Data.CommandType.StoredProcedure;
+					connection.Open();
                     using (SqlDataReader dataReader = command.ExecuteReader())
                     {
                         while (dataReader.Read())
@@ -128,20 +130,14 @@ namespace eCLAdmin.Repository
         public List<NameLanId> GetEcoachingAccessControlsToAdd(string siteId)
         {
             List<NameLanId> users = new List<NameLanId>();
-            //var sql = "select Emp_LanID, Emp_Name from EC.Employee_Hierarchy where Active='a' order by Emp_Name";// and Emp_LanID not in (select User_LanID from EC.Historical_Dashboard_ACL)";
-
-            var sql = "select Emp_LanID, Emp_Name from EC.Employee_Hierarchy eh" +
-                        " join EC.DIM_Site s on eh.Emp_Site = s.City" +
-                        " where eh.Active = 'a'" +
-                        " and s.SiteID = @siteId" +
-                        " and eh.Emp_LanID not in (select User_LanID from EC.Historical_Dashboard_ACL where End_Date = '" + Constants.ECOACHING_ACCESS_END_DATE + "')" +
-                        " order by Emp_Name";
-            try
+			var sql = "[EC].[sp_Select_Employees_BySite_NotIn_Hist_ACL]";
+			try
             {
                 using (SqlConnection connection = new SqlConnection(conn))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@siteId", siteId);
+					command.CommandType = System.Data.CommandType.StoredProcedure;
+					command.Parameters.AddWithValue("@siteId", siteId);
                     connection.Open();
                     using (SqlDataReader dataReader = command.ExecuteReader())
                     {
@@ -168,13 +164,14 @@ namespace eCLAdmin.Repository
         public bool DeleteEcoachingAccessControl(int rowId, string deletedBy)
         {
             bool success = false;
-            var sql = "update EC.Historical_Dashboard_ACL set End_Date = @endDate, updated_by = @updatedBy where Row_ID = @rowId";
+			var sql = "[EC].[sp_UpdateHistorical_Dashboard_ACL_EndDate]";
             try
             {
                 using (SqlConnection connection = new SqlConnection(conn))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@updatedBy", deletedBy);
+					command.CommandType = System.Data.CommandType.StoredProcedure;
+					command.Parameters.AddWithValue("@updatedBy", deletedBy);
                     command.Parameters.AddWithValue("@endDate", DateTime.Now.ToString("yyyyMMdd"));
                     command.Parameters.AddWithValue("@rowId", rowId);
                     connection.Open();
@@ -198,13 +195,14 @@ namespace eCLAdmin.Repository
         public eCoachingAccessControl GetEcoachingAccessControl(int rowId)
         {
             eCoachingAccessControl user = new eCoachingAccessControl();
-            var sql = "select User_LanID, User_Name, Role from EC.Historical_Dashboard_ACL where Row_ID = @rowId";
-            try
+			var sql = "[EC].[sp_Select_Row_Historical_Dashboard_ACL]";
+			try
             {
                 using (SqlConnection connection = new SqlConnection(conn))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@rowId", rowId);
+					command.CommandType = System.Data.CommandType.StoredProcedure;
+					command.Parameters.AddWithValue("@rowId", rowId);
                     connection.Open();
 
                     using (SqlDataReader dataReader = command.ExecuteReader())
@@ -231,13 +229,14 @@ namespace eCLAdmin.Repository
         public bool UpdateEcoachingAccessControl(eCoachingAccessControl user)
         {
             bool success = false;
-            var sql = "update EC.Historical_Dashboard_ACL set Role = @role, updated_by = @updatedBy where Row_ID = @rowId";
-            try
+			var sql = "[EC].[sp_UpdateHistorical_Dashboard_ACL_Role]";
+			try
             {
                 using (SqlConnection connection = new SqlConnection(conn))
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@rowId", user.RowId);
+					command.CommandType = System.Data.CommandType.StoredProcedure;
+					command.Parameters.AddWithValue("@rowId", user.RowId);
                     command.Parameters.AddWithValue("@role", user.Role);
                     command.Parameters.AddWithValue("@updatedBy", user.UpdatedBy);
 

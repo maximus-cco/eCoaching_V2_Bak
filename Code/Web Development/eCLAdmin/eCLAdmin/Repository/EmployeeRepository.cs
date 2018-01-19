@@ -10,42 +10,18 @@ namespace eCLAdmin.Repository
     public class EmployeeRepository : IEmployeeRepository
     {
         readonly ILog logger = LogManager.GetLogger(typeof(EmployeeRepository));
-
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
-
-        public List<Employee> GetEmployees()
-        {
-            var employees = new List<Employee>();
-            var query = "select top 500 Emp_ID, emp_name from EC.Employee_Hierarchy where Active = 'A' order by Emp_Name";
-            using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand(query, connection))
-            {
-                connection.Open();
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        Employee emp = new Employee();
-                        emp.Id = dataReader["Emp_ID"].ToString();
-                        emp.Name = dataReader["Emp_Name"].ToString();
-
-                        employees.Add(emp);
-                    }
-                }
-            }
-
-            return employees;
-        }
 
         public Employee GetEmployee(string employeeId)
         {
             Employee employee = new Employee();
-            var query = "select Emp_ID, Emp_Name, Emp_Email, Sup_Name, Sup_Email, Mgr_Name, Mgr_Email from EC.Employee_Hierarchy where Emp_ID=@employeeId";
+			var query = "sp_Select_Rec_Employee_Hierarchy";
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue("employeeId", employeeId);
+				command.CommandType = System.Data.CommandType.StoredProcedure;
+				command.Parameters.AddWithValue("employeeId", employeeId);
                 connection.Open();
                 using (SqlDataReader dataReader = command.ExecuteReader())
                 {

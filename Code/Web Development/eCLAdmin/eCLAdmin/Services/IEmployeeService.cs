@@ -5,8 +5,6 @@ namespace eCLAdmin.Services
 {
     public interface IEmployeeService
     {
-        List<Employee> GetEmployees();
-
         Employee GetEmployee(string employeeId);
 
         List<Employee> GetEmployees(string userLanId, int logTypeId, int moduleId, string action);
