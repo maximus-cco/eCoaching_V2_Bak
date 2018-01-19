@@ -1,20 +1,12 @@
-/***************************
-Uncomment Database for Target Environment
+/*********************************
 
---USE eCoachingDevEncrypted;  
---GO  
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
 
---USE eCoachingDev;  
---GO  
 
---USE eCoachingTest;  
---GO  
-
---USE eCoaching;  
---GO  
-
-*/
-
+***********************************/
 
 /*********************************
 	RUN ONE BLOCK AT A TIME
@@ -57,14 +49,7 @@ SET UserName_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), UserName)
 ,UserLanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), UserLanID)
 GO  
 
-/*
-Select UserLanID AS [Original LanID], 
-CONVERT(nvarchar(30),DecryptByKey(UserLanID_Encrypted)) AS [Decrypted LanID],
- UserLanID_Encrypted, 
- UserName AS [Original Name], 
-CONVERT(nvarchar(50),DecryptByKey(UserName_Encrypted)) AS [Decrypted Name], UserName_Encrypted
-FROM EC.AT_User
-*/
+--**************
 
 
 ALTER TABLE EC.AT_User
@@ -81,6 +66,10 @@ GO
 sp_rename 'EC.AT_User.UserName_Encrypted', 'UserName', 'COLUMN';
 GO
 
+
+-- END BLOCK 1
+
+
 /*
 
 Select UserLanID_Drop AS [Original LanID], 
@@ -93,7 +82,7 @@ FROM EC.AT_User
 
 
 
--- END BLOCK 1
+
 
 
 /***********************************
@@ -118,8 +107,9 @@ SET Emp_Name_Drop = Emp_Name
 ,Emp_LanID_Drop = Emp_LanID
 GO  
 
+--**************
 
---***
+
 ALTER TABLE [EC].[EmpID_To_SupID_Stage]
     ADD Emp_Name_Encrypted varbinary(256)
 	,Emp_LanID_Encrypted varbinary(128);   
@@ -136,15 +126,7 @@ SET Emp_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_Name)
 ,Emp_LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_LanID)
 GO  
 
-/*
-Select Emp_Name AS [Original Name], 
-CONVERT(nvarchar(50),DecryptByKey(Emp_Name_Encrypted)) AS [Decrypted Name], Emp_Name_Encrypted,
-Emp_LanID AS [Original LanID], 
-CONVERT(nvarchar(30),DecryptByKey(Emp_LanID_Encrypted)) AS [Decrypted LanID],
- Emp_LanID_Encrypted
-FROM [EC].[EmpID_To_SupID_Stage]
-*/
-
+--**************************
 
 ALTER TABLE [EC].[EmpID_To_SupID_Stage]
 DROP COLUMN Emp_LanID
@@ -161,6 +143,11 @@ GO
 sp_rename 'EC.EmpID_To_SupID_Stage.Emp_Name_Encrypted', 'Emp_Name', 'COLUMN';
 GO
 
+
+
+-- END BLOCK 2
+
+
 /*
 Select Emp_LanID_Drop AS [Original LanID], 
 CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Decrypted LanID],
@@ -171,7 +158,6 @@ FROM [EC].[EmpID_To_SupID_Stage]
 */
 
 
--- END BLOCK 2
 
 /***********************************
             BLOCK 3
@@ -213,15 +199,7 @@ SET Emp_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_Name)
 ,Emp_LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_LanID)
 GO  
 
-/*
-Select Emp_Name AS [Original Name], 
-CONVERT(nvarchar(50),DecryptByKey(Emp_Name_Encrypted)) AS [Decrypted Name], Emp_Name_Encrypted,
-Emp_LanID AS [Original LanID], 
-CONVERT(nvarchar(30),DecryptByKey(Emp_LanID_Encrypted)) AS [Decrypted LanID],
- Emp_LanID_Encrypted
-FROM [EC].[Employee_Ids_With_Prefixes]
-*/
-
+--**************
 
 ALTER TABLE [EC].[Employee_Ids_With_Prefixes]
 DROP COLUMN Emp_LanID
@@ -236,6 +214,9 @@ GO
 sp_rename 'EC.Employee_Ids_With_Prefixes.Emp_Name_Encrypted', 'Emp_Name', 'COLUMN';
 GO 
 
+
+-- END BLOCK 3
+
 /*
 Select Emp_LanID_Drop AS [Original LanID], 
 CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Decrypted LanID],
@@ -244,7 +225,7 @@ CONVERT(nvarchar(50),DecryptByKey(Emp_Name)) AS [Decrypted Name]
 FROM [EC].[Employee_Ids_With_Prefixes]
 */
 
--- END BLOCK 3
+
 
 /***********************************
             BLOCK 4
@@ -321,58 +302,7 @@ SET Emp_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Emp_Name)
 GO  
 
 
-/*
 
-OPEN SYMMETRIC KEY [CoachingKey]  
-DECRYPTION BY CERTIFICATE [CoachingCert];  
-GO 
-
-
-SELECT [Emp_ID]
-      ,[Emp_Name]
-	  ,CONVERT(nvarchar(70),DecryptByKey(Emp_Name_Encrypted)) AS [Decrypted Emp Name]
-	  ,[Emp_Name_Encrypted]
-
-      ,[Emp_Email]
-	   ,CONVERT(nvarchar(50),DecryptByKey(Emp_Email_Encrypted)) AS [Decrypted Emp Email]
-	   ,[Emp_Email_Encrypted]
-
-      ,[Emp_LanID]
-	  ,CONVERT(nvarchar(30),DecryptByKey(Emp_LanID_Encrypted)) AS [Decrypted Emp LanID]
-      ,[Emp_LanID_Encrypted]
-
-      ,[Sup_Name]
-	   ,CONVERT(nvarchar(70),DecryptByKey(Sup_Name_Encrypted)) AS [Decrypted Sup Name]
-	   ,[Sup_Name_Encrypted]
-
-      ,[Sup_Email]
-	    ,CONVERT(nvarchar(50),DecryptByKey(Sup_Email_Encrypted)) AS [Decrypted Sup Email]
-	  ,[Sup_Email_Encrypted]
-	   
-      ,[Sup_LanID]
-	    ,CONVERT(nvarchar(30),DecryptByKey(Sup_LanID_Encrypted)) AS [Decrypted Sup LanID]
-         ,[Sup_LanID_Encrypted]
-		 
-      ,[Mgr_Name]
-	   ,CONVERT(nvarchar(70),DecryptByKey(Mgr_Name_Encrypted)) AS [Decrypted Mgr Name]
-	  ,[Mgr_Name_Encrypted]
-
-      ,[Mgr_Email]
-	      ,CONVERT(nvarchar(50),DecryptByKey(Mgr_Email_Encrypted)) AS [Decrypted Mgr Email]
-	   ,[Mgr_Email_Encrypted]
-
-      ,[Mgr_LanID]
-	    ,CONVERT(nvarchar(30),DecryptByKey(Mgr_LanID_Encrypted)) AS [Decrypted Mgr LanID]
-    	    ,[Mgr_LanID_Encrypted]
-
-      ,[Emp_Pri_Name]
-	   ,CONVERT(nvarchar(70),DecryptByKey(Emp_Pri_Name_Encrypted)) AS [Decrypted Emp Pri_Name]
-       ,[Emp_Pri_Name_Encrypted]
-	   
-  FROM [EC].[Employee_Hierarchy]
-GO
-
-*/
 --*****************
 
 ALTER TABLE [EC].[Employee_Hierarchy]
@@ -449,7 +379,10 @@ sp_rename 'EC.Employee_Hierarchy.Emp_Pri_Name_Encrypted', 'Emp_Pri_Name', 'COLUM
 GO 
 
 
---*********
+
+-- END BLOCK 4
+
+
 
 /*
 SELECT [Emp_ID]
@@ -478,11 +411,11 @@ GO
 
 */
 
--- END BLOCK 4
 
 
 /***********************************
-            BLOCK 5
+           
+	 BLOCK 5
 
 ***********************************/
 
@@ -523,12 +456,8 @@ SET LanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), LanID)
 GO  
 
 
-/*
-Select LanID AS [Original LanID], 
-CONVERT(nvarchar(30),DecryptByKey(LanID_Encrypted)) AS [Decrypted LanID],
- LanID_Encrypted
-FROM [EC].[EmployeeID_To_LanID_Bak_PreEncryption]
-*/
+
+--**************
 
 SET ANSI_NULLS ON
 GO
@@ -584,13 +513,18 @@ INSERT INTO [EC].[EmployeeID_To_LanID]
 GO
 
 
+-- END BLOCK 5
+
+
+
+
 /*
  SELECT *
 		   FROM [EC].[EmployeeID_To_LanID]
 GO
 */
 
--- END BLOCK 5
+
 
 /***********************************
             BLOCK 6
@@ -631,11 +565,12 @@ UPDATE EC.Survey_Response_Header
 SET EmpLanID_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), EmpLanID)
 GO  
 
-/*
-Select SurveyID, FormName, EmpLanID  AS [Original LanID], 
-CONVERT(nvarchar(30),DecryptByKey(EmpLanID_Encrypted)) AS [Decrypted LanID]
-FROM EC.Survey_Response_Header
-*/
+
+Update [EC].[Survey_Response_Header]
+SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
+GO
+
+--**************
 
 
 ALTER TABLE EC.Survey_Response_Header
@@ -645,6 +580,10 @@ GO
 sp_rename 'EC.Survey_Response_Header.EmpLanID_Encrypted', 'EmpLanID', 'COLUMN';
 GO
 
+
+-- END BLOCK 6
+
+
 /*
 Select EmpLanID_Drop AS [Original LanID], 
 CONVERT(nvarchar(30),DecryptByKey(EmpLanID)) AS [Decrypted LanID]
@@ -652,7 +591,6 @@ FROM [EC].[Survey_Response_Header]
 */
 
 
--- END BLOCK 6
 
 
 
@@ -697,20 +635,9 @@ SET User_Name_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), User_Name)
 ,Updated_By_Encrypted = EncryptByKey(Key_GUID('CoachingKey'), Updated_By)
 GO  
 
-/*
-Select User_LanID AS [Original LanID], 
-CONVERT(nvarchar(30),DecryptByKey(User_LanID_Encrypted)) AS [Decrypted LanID],
- User_Name AS [Original Name], 
-CONVERT(nvarchar(50),DecryptByKey(User_Name_Encrypted)) AS [Decrypted Name], 
- Updated_By AS [Original Name], 
-CONVERT(nvarchar(50),DecryptByKey(Updated_By_Encrypted)) AS [Decrypted Updated By]
-FROM EC.Historical_Dashboard_ACL
-*/
+--**************
 
 
-ALTER TABLE EC.Historical_Dashboard_ACL
-DROP CONSTRAINT  UQ__Historic__431CB6F045F365D3
- GO 
 
 ALTER TABLE EC.Historical_Dashboard_ACL
 DROP COLUMN User_LanID
@@ -734,6 +661,18 @@ GO
 sp_rename 'EC.Historical_Dashboard_ACL.Updated_By_Encrypted', 'Updated_By', 'COLUMN';
 GO
 
+
+ALTER TABLE [EC].[Historical_Dashboard_ACL] ADD UNIQUE NONCLUSTERED 
+(
+	[User_LanID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+
+-- END BLOCK 7
+
+
+
 /*
 Select User_LanID_DROP AS [Original LanID], 
 CONVERT(nvarchar(30),DecryptByKey(User_LanID)) AS [Decrypted LanID],
@@ -744,7 +683,6 @@ CONVERT(nvarchar(50),DecryptByKey(Updated_By)) AS [Decrypted Updated By]
 FROM EC.Historical_Dashboard_ACL
 */
 
--- END BLOCK 7
 
 
 
@@ -782,6 +720,9 @@ GO
 
 
 -- END BLOCK 8
+
+
+
 
 /***********************************
             BLOCK 9
@@ -954,6 +895,8 @@ GO
 
 -- END BLOCK 13
 
+
+
 /***********************************
             BLOCK 14
 
@@ -972,6 +915,8 @@ GO
 
 -- END BLOCK 14
 
+
+
 /***********************************
             BLOCK 15
 
@@ -987,3 +932,7 @@ GO
   GO
 
 -- END BLOCK 15
+
+/***********************************
+            THE END
+***********************************/
