@@ -10,14 +10,23 @@
           <OmitFromQuery>false</OmitFromQuery>
           <rd:DbType>String</rd:DbType>
         </DataSetParameter>
+        <DataSetParameter Name="@returnCode">
+          <DefaultValue>0</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@returnMessage">
+          <DefaultValue>sp_rptEmployeesBySite completed successfully</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>AnsiString</rd:DbType>
+        </DataSetParameter>
       </DataSetParameters>
-      <CommandText>Select s.Emp_ID, s.Emp_Name
-FROM (Select '-1' as Emp_ID, 'All' as Emp_Name
-UNION
-SELECT DISTINCT eh.Emp_ID EmpID, EH.[Emp_Name] EmpName 
-FROM    EC.Employee_Hierarchy eh
-WHERE  (eh.emp_site =(@strEmpSitein) or @strEmpSitein= 'All' ))AS s
-ORDER BY CASE WHEN Emp_ID = '-1' THEN 0 ELSE 1 END, Emp_Name</CommandText>
+      <CommandType>StoredProcedure</CommandType>
+      <CommandText>EC.sp_rptEmployeesBySite</CommandText>
     </Query>
     <Fields>
       <Field Name="Emp_ID">

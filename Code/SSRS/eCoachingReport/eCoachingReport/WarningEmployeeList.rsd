@@ -18,17 +18,23 @@
           <OmitFromQuery>false</OmitFromQuery>
           <rd:DbType>Int32</rd:DbType>
         </DataSetParameter>
+        <DataSetParameter Name="@returnCode">
+          <DefaultValue>0</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@returnMessage">
+          <DefaultValue>sp_rptWarningEmployeesBySiteAndModule completed successfully</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>AnsiString</rd:DbType>
+        </DataSetParameter>
       </DataSetParameters>
-      <CommandText>Select s.EmpID, s.EmpName
-FROM (Select '-1' as EmpID, 'All' as EmpName
-UNION
-SELECT DISTINCT wl.EmpID EmpID, EH.[Emp_Name] EmpName 
-FROM  EC.Warning_Log AS wl JOIN  EC.Employee_Hierarchy eh
-ON wl.EmpID = eh.Emp_ID
-WHERE  (wl.ModuleID =(@intModulein) or @intModulein = -1) 
-and  (wl.SiteID =(@intSitein) or @intSitein = -1) 
-)as S
-ORDER BY CASE WHEN EmpID = '-1' THEN 0 ELSE 1 END, EmpName</CommandText>
+      <CommandType>StoredProcedure</CommandType>
+      <CommandText>EC.sp_rptWarningEmployeesBySiteAndModule</CommandText>
     </Query>
     <Fields>
       <Field Name="EmpID">
