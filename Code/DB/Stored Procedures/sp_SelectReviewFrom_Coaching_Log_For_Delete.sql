@@ -50,7 +50,7 @@ IF @intCoachID IS NOT NULL
   SET @nvcSQL = '
   SELECT [CoachingID] CoachingID,
     [FormName],
-    veh.Emp_LanID,
+    veh.Emp_LanID EmpLanID,
     [EmpID],
     [SourceID],
     1 [isCoaching]
@@ -62,7 +62,7 @@ ELSE
   SET @nvcSQL = '
   SELECT [WarningID] CoachingID,
     [FormName],
-    veh.Emp_LanID,
+    veh.Emp_LanID EmpLanID,
     [EmpID],
     [SourceID],
     0 [isCoaching]
