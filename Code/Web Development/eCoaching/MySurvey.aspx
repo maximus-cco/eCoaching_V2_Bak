@@ -43,7 +43,7 @@
                     <asp:RequiredFieldValidator 
                         runat="server" ID="RequiredQ1" ValidationGroup="validationGroup" ControlToValidate="Question1RadioButtonList" 
                         ErrorMessage="Please select an answer." />
-                    <asp:RadioButtonList ID="Question1RadioButtonList" CssClass="radioButtonList" runat="server"></asp:RadioButtonList>
+                    <asp:RadioButtonList ID="Question1RadioButtonList" CssClass="radioButtonList" RepeatDirection="Horizontal" runat="server"></asp:RadioButtonList>
                     <asp:Label ID="Question1TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question1TextBox" />
                     <br />
                     <asp:TextBox ID="Question1TextBox" Rows="10" TextMode="MultiLine" runat="server" />
@@ -55,7 +55,7 @@
                     <asp:RequiredFieldValidator 
                         runat="server" ID="RequiredQ2" ValidationGroup="validationGroup" ControlToValidate="Question2RadioButtonList" 
                         ErrorMessage="Please select an answer." />
-                    <asp:RadioButtonList ID="Question2RadioBUttonList" CssClass="radioButtonList" runat="server"></asp:RadioButtonList>
+                    <asp:RadioButtonList ID="Question2RadioBUttonList" CssClass="radioButtonList" RepeatDirection="Horizontal" runat="server"></asp:RadioButtonList>
 
                     <asp:Label ID="Question2TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question2TextBox" />
                     <br />
@@ -68,7 +68,7 @@
                     <asp:RequiredFieldValidator 
                         runat="server" ID="RequiredQ3" ValidationGroup="validationGroup" ControlToValidate="Question3RadioButtonList" 
                         ErrorMessage="Please select an answer." />
-                    <asp:RadioButtonList ID="Question3RadioButtonList" CssClass="radioButtonList" runat="server">
+                    <asp:RadioButtonList ID="Question3RadioButtonList" CssClass="radioButtonList" RepeatDirection="Horizontal" runat="server">
                     </asp:RadioButtonList>
                     <asp:Label ID="Question3TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question3TextBox" />
                     <br />
@@ -100,20 +100,32 @@
                     <br />
                     <asp:TextBox ID="Question5TextBox" Rows="5" TextMode="MultiLine" runat="server" />
 
-                    <%-- Hot Topic--%>
+                    <%-- Hot Topic Question --%>
                     <asp:Panel ID="HotTopicPanel" runat="server" Visible="false">
                         <br />
                         <br />
-                        <asp:Label ID="Question6Label" CssClass="question" runat="server" AssociatedControlID="Question6RadioButtonList" />
+                        <asp:Label ID="Question6Label" CssClass="question required" runat="server" AssociatedControlID="Question6RadioButtonList" />
                         <asp:RequiredFieldValidator 
                             runat="server" ID="RequiredQ6" ValidationGroup="validationGroup" ControlToValidate="Question6RadioButtonList" 
                             ErrorMessage="Please select an answer." />
-                        <asp:RadioButtonList ID="Question6RadioButtonList" CssClass="radioButtonList" runat="server">
+                        <asp:RadioButtonList ID="Question6RadioButtonList" CssClass="radioButtonList" RepeatDirection="Horizontal" runat="server">
                         </asp:RadioButtonList>
                         <asp:Label ID="Question6TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question6TextBox" />
                         <br />
                         <asp:TextBox ID="Question6TextBox" Rows="5" TextMode="MultiLine" runat="server" />
                     </asp:Panel>
+
+					<%-- Pilot Site only--%>
+					<asp:Panel ID="PilotSitePanel" runat="server" Visible="false">
+						<br />
+						<br />
+						<asp:Label ID="Question7Label" CssClass="question required" runat="server" AssociatedControlID="Question7RadioButtonList" />
+						<asp:RequiredFieldValidator
+							runat="server" ID="RequiredQ7" ValidationGroup="validationGroup" ControlToValidate="Question7RadioButtonList"
+							ErrorMessage="Please select an answer." />
+						<asp:RadioButtonList ID="Question7RadioButtonList" CssClass="radioButtonList" RepeatDirection="Horizontal" runat="server">
+						</asp:RadioButtonList>
+					</asp:Panel>
 
                     <%-- Additional Comments--%>
                     <br />

@@ -21,19 +21,20 @@ Public Class MySurveyDBAccess
 
     Public Function GetSurveyInfo(surveyID As Integer) As Survey
         Dim survey As New Survey(surveyID)
-        Dim parameters() As SqlParameter = New SqlParameter() _
-        {
-            New SqlParameter("@intSurveyID", surveyID)
-        }
-        Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_Select_SurveyDetails_By_SurveyID", CommandType.StoredProcedure, parameters)
-            Dim row As DataRow = dataTable.Rows(0)
-            survey.EmployeeID = row("EmpID")
-            survey.LogName = row("FormName")
-            survey.Status = row("Status")
-            survey.ContainsHotTopic = row("hasHotTopic")
-        End Using
+		Dim parameters() As SqlParameter = New SqlParameter() _
+		{
+			New SqlParameter("@intSurveyID", surveyID)
+		}
+		Using dataTable As DataTable = DBUtility.ExecuteSelectCommand("EC.sp_Select_SurveyDetails_By_SurveyID", CommandType.StoredProcedure, parameters)
+			Dim row As DataRow = dataTable.Rows(0)
+			survey.EmployeeID = row("EmpID")
+			survey.LogName = row("FormName")
+			survey.Status = row("Status")
+			survey.HasHotTopic = row("hasHotTopic")
+			survey.HasPilot = row("hasPilot")
+		End Using
 
-        Return survey
+		Return survey
     End Function
 
     Public Function GetSurveyQuestions(surveyID As Integer) As ICollection(Of Question)
@@ -48,13 +49,17 @@ Public Class MySurveyDBAccess
                 question.ID = row("QuestionID")
                 question.DisplayOrder = row("DisplayOrder")
 
-                Dim description As String = row("Description")
-                question.QuestionLabel = (From q In description.Split("|") Select q).ToList().ElementAt(0).Trim()
-                question.TextBoxLabel = (From q In description.Split("|") Select q).ToList().ElementAt(1).Trim()
+				Dim description As String = row("Description")
+				' Element 0 is the question text; element 1 is the label text for this question's textbox if there is one
+				Dim temp = (From q In description.Split("|") Select q).ToList()
+				question.QuestionLabel = temp.ElementAt(0).Trim()
+				If (temp.Count > 1) Then
+					question.TextBoxLabel = temp.ElementAt(1).Trim()
+				End If
 
-                question.SurveyID = surveyID
+				question.SurveyID = surveyID
 
-                questions.Add(question)
+				questions.Add(question)
             Next
         End Using
 
@@ -149,28 +154,12 @@ Public Class MySurveyDBAccess
         Return dataTable
     End Function
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Private Function GetAsterisk()
+	''' <summary>
+	''' 
+	''' </summary>
+	''' <returns></returns>
+	''' <remarks></remarks>
+	Private Function GetAsterisk()
         Dim asterisk = New Label()
         asterisk.Text = "*"
 

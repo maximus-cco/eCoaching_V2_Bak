@@ -4,18 +4,20 @@
     Public Property EmployeeID As Integer
     Public Property Questions As ICollection(Of Question)
     Public Property Comment As String
-    Public Property ContainsHotTopic As Boolean
-    Public Property Status As String
+	Public Property HasHotTopic As Boolean
+	Public Property HasPilot As Boolean
+	Public Property Status As String
 
-    Sub New()
+	Sub New()
         ID = -1
         LogName = String.Empty
         EmployeeID = -1
         Questions = New List(Of Question)
         Comment = String.Empty
-        ContainsHotTopic = False
-        Status = String.Empty
-    End Sub
+		HasHotTopic = False
+		Status = String.Empty
+		HasPilot = False
+	End Sub
 
     Sub New(surveyID As Integer)
         ID = surveyID

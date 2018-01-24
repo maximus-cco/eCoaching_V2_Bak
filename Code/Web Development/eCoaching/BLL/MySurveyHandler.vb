@@ -25,16 +25,12 @@
         Return UCase(StringUtils.GetSafeString(survey.Status)) = INACTIVE
     End Function
 
-    Public Function ShowHotTopic(survey As Survey) As Boolean
-        Return survey.ContainsHotTopic
-    End Function
-
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public Function GetSurvey(surveyID As Integer) As Survey
+	''' <summary>
+	''' 
+	''' </summary>
+	''' <returns></returns>
+	''' <remarks></remarks>
+	Public Function GetSurvey(surveyID As Integer) As Survey
         Return mySurveyDBAccess.GetSurvey(surveyID)
     End Function
 
@@ -47,12 +43,12 @@
         Return mySurveyDBAccess.SaveSurvey(survey)
     End Function
 
-    Public Function GetQuestion(survey As Survey, questionDisplayOrder As Integer) As Question
-        Dim questions As List(Of Question) = survey.Questions
-        Dim query = From question In questions.AsEnumerable()
-                    Where question.DisplayOrder = questionDisplayOrder
-                    Select question
-        Return query(0)
-    End Function
+	Public Function GetQuestion(survey As Survey, questionId As Integer) As Question
+		Dim questions As List(Of Question) = survey.Questions
+		Dim query = From question In questions.AsEnumerable()
+					Where question.ID = questionId
+					Select question
+		Return query(0)
+	End Function
 End Class
 
