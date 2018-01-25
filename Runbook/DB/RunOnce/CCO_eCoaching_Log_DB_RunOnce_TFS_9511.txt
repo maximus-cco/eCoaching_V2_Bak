@@ -1,0 +1,276 @@
+/*
+
+TFS 9511 - Pilot Project to have 6th survey question in eCoaching
+
+Summary
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+1. Create and Populate Survey Sites Table
+2. Add New column and  Question to Question DIM
+3. Add New Reponses to Response DIM
+4. Add New column and rows to QAnswer DIM
+
+--Other steps in main run book
+
+1. UPDATE SP [EC].[sp_InsertInto_Survey_Response_Header]
+2. UPDATE SP [EC].[sp_InsertInto_Survey_Response_Header_Resend]
+3. UPDATE SP [EC].[sp_Select_Questions_For_Survey]
+4. UPDATE SP [EC].[sp_Select_SurveyDetails_By_SurveyID]
+5. UPDATE [EC].[sp_Select_Responses_By_Question] 
+6. FUNCTION [EC].[fn_bitCheckIfPilotSurvey] 
+7. FUNCTION [EC].[fn_bitCheckIfHotTopicSurvey] 
+
+
+
+--Test sql
+
+SELECT [SiteID]
+      ,[City]
+      ,[State]
+      ,[StateCity]
+      ,[isActive]
+  FROM [EC].[DIM_Site]
+GO
+
+
+SELECT * FROM [EC].[Survey_Sites] 
+GO
+
+SELECT * FROM [EC].[Survey_DIM_Question]
+GO
+
+
+SELECT * FROM [EC].[Survey_DIM_Response]
+GO
+
+SELECT * FROM [EC].[Survey_DIM_QAnswer]
+GO
+*/
+
+
+-- Create and Populate Survey Sites Table
+
+
+--*****************************************************
+  
+		--Step1
+
+--*****************************************************
+
+--BEGIN BLOCK STEP1
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Survey_Sites](
+	[SiteID] [int] IDENTITY(1,1) NOT NULL,
+	[City] [nvarchar](20) NOT NULL,
+	[isActive] [bit] NULL,
+	[isPilot] [bit] NULL DEFAULT ((0)),
+	[isHotTopic] [bit] NULL DEFAULT ((0)),
+ CONSTRAINT [PK_SurveySite_ID] PRIMARY KEY CLUSTERED 
+(
+	[SiteID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+SET IDENTITY_INSERT [EC].[Survey_Sites] ON
+GO
+
+INSERT INTO [EC].[Survey_Sites]
+           ([SiteID]
+		   ,[City]
+           ,[isActive]
+     )
+ SELECT [SiteID]
+      ,[City]
+      ,[isActive]
+  FROM [EC].[DIM_Site]
+GO
+
+
+SET IDENTITY_INSERT [EC].[Survey_Sites] OFF
+GO
+
+UPDATE [EC].[Survey_Sites]
+SET isPilot = 1 
+WHERE SiteID = 10
+GO
+
+
+
+--END BLOCK STEP1
+
+--*****************************************************
+
+
+--*****************************************************
+  
+		--Step2
+
+--*****************************************************
+
+ 
+--BEGIN BLOCK STEP2
+
+
+ALTER TABLE [EC].[Survey_DIM_Question]
+ADD [isPilot] bit DEFAULT (0)
+GO
+
+UPDATE [EC].[Survey_DIM_Question]
+SET [isActive] = 0
+WHERE [isHotTopic] = 1
+GO
+
+UPDATE [EC].[Survey_DIM_Question]
+SET [isPilot] = 0
+GO
+
+INSERT INTO [EC].[Survey_DIM_Question]
+           ([Description]
+           ,[DisplayOrder]
+           ,[StartDate]
+           ,[EndDate]
+           ,[isHotTopic]
+           ,[isActive]
+           ,[LastUpdateDate]
+	      ,[isPilot])
+     VALUES
+             ('Placeholder for HotTopic Question',98,20300101, 20301231, 1, 0, '2018-02-01 00:00:00.000', 0), -- Comment for Test
+             ('How prepared was your supervisor during your coaching session?',7,20180201, 99991231, 0, 1, '2018-02-01 00:00:00.000', 1)
+GO
+
+
+--END BLOCK STEP2
+
+
+
+
+--*****************************************************
+  
+		--Step3
+
+--*****************************************************
+
+ 
+--BEGIN BLOCK STEP3
+
+
+INSERT INTO [EC].[Survey_DIM_Response]
+           ([Value]
+           ,[isActive]
+           ,[LastUpdateDate])
+     VALUES
+           ('1 - Very Prepared', 1, '2018-02-01 00:00:00.000'),
+	   ('2 - Prepared', 1, '2018-02-01 00:00:00.000'),
+	   ('3 - Neither Prepared or Unprepared', 1, '2018-02-01 00:00:00.000'),
+	   ('4 - Unprepared', 1, '2018-02-01 00:00:00.000'),
+	   ('5 - Very Unprepared', 1, '2018-02-01 00:00:00.000')
+
+GO
+
+
+--END BLOCK STEP3
+
+
+--*****************************************************
+  
+		--Step4
+
+--*****************************************************
+
+ 
+--BEGIN BLOCK STEP4
+
+ALTER TABLE [EC].[Survey_DIM_QAnswer]
+ADD [isPilot] bit DEFAULT (0),
+[ResponseOrder] INT
+GO
+
+UPDATE [EC].[Survey_DIM_QAnswer]
+SET [isActive] = 0
+WHERE [isHotTopic] = 1
+GO
+
+UPDATE [EC].[Survey_DIM_QAnswer]
+SET [isPilot] = 0
+GO
+
+INSERT INTO [EC].[Survey_DIM_QAnswer]
+           ([SurveyTypeID]
+           ,[QuestionID]
+           ,[QuestionNumber]
+           ,[ResponseID]
+           ,[ResponseValue]
+           ,[ResponseType]
+           ,[isHotTopic]
+           ,[StartDate]
+           ,[EndDate]
+           ,[isActive]
+           ,[LastUpdateDate]
+           ,[isPilot])
+     VALUES
+	   (1, 7, 7, 13, '1 - Very Prepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
+           (1, 7, 7, 14, '2 - Prepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
+	   (1, 7, 7, 15, '3 - Neither Prepared or Unprepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
+	   (1, 7, 7, 16, '4 - Unprepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
+	   (1, 7, 7, 17, '5 - Very Unprepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1)
+GO
+
+
+UPDATE [EC].[Survey_DIM_QAnswer]
+SET [ResponseOrder] = [ResponseID]
+WHERE [QuestionID] IN (1,2,3,6)
+GO
+
+
+UPDATE [EC].[Survey_DIM_QAnswer]
+SET [ResponseOrder] = 
+CASE [ResponseID]
+WHEN 4 THEN 1
+WHEN 5 THEN 2
+WHEN 6 THEN 3
+WHEN 7 THEN 4
+WHEN 8 THEN 5 END
+WHERE questionid = 4
+GO
+
+UPDATE [EC].[Survey_DIM_QAnswer]
+SET [ResponseOrder] = 
+CASE [ResponseID]
+WHEN 9 THEN 1
+WHEN 10 THEN 2
+WHEN 6 THEN 3
+WHEN 11 THEN 4
+WHEN 12 THEN 5 END
+WHERE questionid = 5
+GO
+
+UPDATE [EC].[Survey_DIM_QAnswer]
+SET [ResponseOrder] = 
+CASE [ResponseID]
+WHEN 13 THEN 1
+WHEN 14 THEN 2
+WHEN 15 THEN 3
+WHEN 16 THEN 4
+WHEN 17 THEN 5 END
+WHERE questionid = 7
+
+
+--END BLOCK STEP4
+
+--*****************************************************

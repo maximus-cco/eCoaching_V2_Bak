@@ -1,9 +1,9 @@
 /*
-sp_Select_SurveyDetails_By_SurveyID(01).sql
-Last Modified Date: 1/18/2017
+sp_Select_SurveyDetails_By_SurveyID(02).sql
+Last Modified Date: 01/23/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -26,15 +26,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	09/24/2015
 --	Description: Given a survey ID this procedure returns the details of the Survey like
 -- the Employee ID, eCL Form Name and whether or not a Hot Topic question is associated with this Survey.
 -- TFS 549 - CSR Survey Setup - 09/24/2015
+-- Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_SurveyDetails_By_SurveyID] 
 @intSurveyID INT
@@ -42,17 +40,24 @@ CREATE PROCEDURE [EC].[sp_Select_SurveyDetails_By_SurveyID]
 AS
 BEGIN
 	DECLARE	
-	@intSurveyTypeID INT,
+	--@intSurveyTypeID INT,
 	@hasHotTopic BIT,
+	@hasPilot BIT,
 	@nvcSQL nvarchar(max)
 	
-SET @intSurveyTypeID = (SELECT [SurveyTypeID] FROM [EC].[Survey_Response_Header]
-WHERE [SurveyID] = @intSurveyID)
+--SET @intSurveyTypeID = (SELECT [SurveyTypeID] FROM [EC].[Survey_Response_Header]
+--WHERE [SurveyID] = @intSurveyID)
 	
-SET @hasHotTopic = (SELECT [EC].[fn_isHotTopicFromSurveyTypeID] (@intSurveyTypeID))
+SET @hasHotTopic = (SELECT [EC].[fn_bitCheckIfHotTopicSurvey](@intSurveyID))
+SET @hasPilot = (SELECT [EC].[fn_bitCheckIfPilotSurvey](@intSurveyID))
 
 
-SET @nvcSQL = 'SELECT SRH.[EmpID],SRH.[FormName],SRH.[Status],'+CONVERT(NVARCHAR,@hasHotTopic )+' hasHotTopic
+
+SET @nvcSQL = 'SELECT SRH.[EmpID],
+					  SRH.[FormName],
+					  SRH.[Status],
+					  '+CONVERT(NVARCHAR,@hasHotTopic)+' hasHotTopic,
+					   '+CONVERT(NVARCHAR,@hasPilot)+' hasPilot
 			  FROM [EC].[Survey_Response_Header]SRH
 			  WHERE [SurveyID] = '+CONVERT(NVARCHAR,@intSurveyID)+''
 			 
@@ -63,6 +68,6 @@ SET @nvcSQL = 'SELECT SRH.[EmpID],SRH.[FormName],SRH.[Status],'+CONVERT(NVARCHAR
 EXEC (@nvcSQL)	
 END -- sp_Select_SurveyDetails_By_SurveyID
 
-
 GO
+
 

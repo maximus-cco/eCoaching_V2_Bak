@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Survey_Response_Header_Resend(02).sql
-Last Modified Date: 10/23/2017
+sp_InsertInto_Survey_Response_Header_Resend(03).sql
+Last Modified Date: 01/23/2018
 Last Modified By: Susmitha Palacherla
 
+Version 03: Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 
 Version 02: Modified during Encryption of sensitive data. Used Emp LanID from Emp table. TFS 7856 - 10/23/2017
 
@@ -26,6 +27,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        8/21/2015
@@ -37,6 +39,7 @@ GO
 -- in the Coaching_log to indicate that a Survey has been generated based on this ecl.
 -- Created  per TFS 549 to setup CSR survey.
 -- Modified during Encryption of sensitive data. Used Emp LanID from Emp table. TFS 7856 - 10/23/2017
+-- Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header_Resend]
 AS
@@ -161,6 +164,7 @@ BEGIN
   ON CL.EmpID = EH.Emp_ID
   WHERE Statusid = 1 -- Completed
   AND ModuleID = @ModuleID -- Each Module 
+    AND SiteID NOT IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) -- Exclude sites with Pilot Survey here
    AND SourceID <> 224 -- Verint-TQC
   AND isCSRAcknowledged = 1
   AND SurveySent = 0
@@ -169,7 +173,42 @@ BEGIN
  )x
  WHERE x.Rn=1)SP
  ON CL.CoachingID = SP.CoachingID
- AND CL.EmpID = SP.EmpID)
+ AND CL.EmpID = SP.EmpID
+ 
+  UNION
+ 
+ 
+ SELECT DISTINCT @SurveyTypeID SurveyTypeID, 
+                   CL.CoachingID,
+                   CL.Formname, 
+                   CL.EmpID,
+                   CL.SiteID, 
+                   CL.SourceID, 
+                   CL.ModuleID,
+                   CL.Submitteddate, 
+                   DD.MonthOfYear, 
+                   DD.CalendarYear 
+  FROM [EC].[Coaching_Log] CL WITH (NOLOCK) JOIN EC.DIM_Date DD
+  ON DATEADD(dd, DATEDIFF(dd, 0, CL.CSRReviewAutoDate),0) = DD.Fulldate JOIN 
+ (SELECT x.EmpID, x.CoachingID FROM
+  (SELECT  CL.EMPID EmpID, CL.CoachingID CoachingID,ROW_NUMBER() OVER( PARTITION BY CL.EMPID
+   ORDER BY NewID()) AS Rn 
+  FROM [EC].[Coaching_Log] CL WITH (NOLOCK) JOIN [EC].[Coaching_Log_Reason] CLR WITH (NOLOCK)
+  ON CLR.CoachingID  = CL.CoachingID  JOIN [EC].[Employee_Hierarchy]EH
+  ON CL.EmpID = EH.Emp_ID
+  WHERE Statusid = 1 -- Completed
+  AND ModuleID = @ModuleID -- Each Module 
+  AND SiteID IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) -- Include sites with Pilot Survey here
+  AND CLR.CoachingReasonID in (4, 5, 8, 10, 11, 13, 55)
+  AND isCSRAcknowledged = 1
+  AND SurveySent = 0
+  AND CSRReviewAutoDate BETWEEN @StartOfPeriod and @EndOfPeriod
+  AND EH.Active = 'A'
+ )x
+ WHERE x.Rn=1)SP
+ ON CL.CoachingID = SP.CoachingID
+ AND CL.EmpID = SP.EmpID 
+  )
  
  
 --SELECT * FROM Selected
@@ -182,7 +221,7 @@ BEGIN
 
 
 
-   
+
 INSERT INTO [EC].[Survey_Response_Header]
            ([SurveyTypeID]
            ,[CoachingID]
@@ -248,7 +287,7 @@ AND [SurveySent] = 0
 OPTION (MAXDOP 1)
 END
 
-                  
+             
 COMMIT TRANSACTION
 END TRY
 
@@ -279,6 +318,14 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Survey_Response_Header_Resend
+
+
+
+
+
+
+
+
 GO
 
 

@@ -1,9 +1,9 @@
 /*
-sp_Select_Responses_By_Question(01).sql
-Last Modified Date: 1/18/2017
+sp_Select_Responses_By_Question(02).sql
+Last Modified Date: 01/23/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -27,16 +27,13 @@ GO
 
 
 
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	09/24/2015
 --	Description: This procedure returns a list of Questions Ids and all their possible Responses and their display order 
 -- to be displayed in the UI.
 -- TFS 549 - CSR Survey Setup - 09/24/2015
+-- Modified during change to incorporate Pilot Question to fix ordering of responses. TFS 9511 - 01/23/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Responses_By_Question] 
 
@@ -51,7 +48,7 @@ BEGIN
 
 SET @nvcSQL = 'SELECT [QuestionID],[ResponseID],[ResponseValue]
 			  FROM [EC].[Survey_DIM_QAnswer]
-			  ORDER BY [QuestionID]'
+			  ORDER BY [QuestionID],[ResponseOrder]'
 
 
 --Print @nvcSQL
@@ -60,6 +57,6 @@ EXEC (@nvcSQL)
 END --sp_Select_Responses_By_Question
 
 
-
 GO
+
 
