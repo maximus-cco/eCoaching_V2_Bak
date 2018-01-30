@@ -151,7 +151,7 @@ INSERT INTO [EC].[Survey_DIM_Question]
 	      ,[isPilot])
      VALUES
              ('Placeholder for HotTopic Question',98,20300101, 20301231, 1, 0, '2018-02-01 00:00:00.000', 0), -- Comment for Test
-             ('How prepared was your supervisor during your coaching session?',7,20180201, 99991231, 0, 1, '2018-02-01 00:00:00.000', 1)
+             ('How prepared was your supervisor during your coaching session?| Please explain below.',7,20180201, 99991231, 0, 1, '2018-02-01 00:00:00.000', 1)
 GO
 
 
@@ -175,11 +175,11 @@ INSERT INTO [EC].[Survey_DIM_Response]
            ,[isActive]
            ,[LastUpdateDate])
      VALUES
-           ('1 - Very Prepared', 1, '2018-02-01 00:00:00.000'),
-	   ('2 - Prepared', 1, '2018-02-01 00:00:00.000'),
+           ('1 - Very Unprepared', 1, '2018-02-01 00:00:00.000'),
+	   ('2 - Unprepared', 1, '2018-02-01 00:00:00.000'),
 	   ('3 - Neither Prepared or Unprepared', 1, '2018-02-01 00:00:00.000'),
-	   ('4 - Unprepared', 1, '2018-02-01 00:00:00.000'),
-	   ('5 - Very Unprepared', 1, '2018-02-01 00:00:00.000')
+	   ('4 - Prepared', 1, '2018-02-01 00:00:00.000'),
+	   ('5 - Very Prepared', 1, '2018-02-01 00:00:00.000')
 
 GO
 
@@ -210,6 +210,7 @@ UPDATE [EC].[Survey_DIM_QAnswer]
 SET [isPilot] = 0
 GO
 
+
 INSERT INTO [EC].[Survey_DIM_QAnswer]
            ([SurveyTypeID]
            ,[QuestionID]
@@ -224,11 +225,11 @@ INSERT INTO [EC].[Survey_DIM_QAnswer]
            ,[LastUpdateDate]
            ,[isPilot])
      VALUES
-	   (1, 7, 7, 13, '1 - Very Prepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
-           (1, 7, 7, 14, '2 - Prepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
+	   (1, 7, 7, 13, '1 - Very Unprepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
+           (1, 7, 7, 14, '2 - Unprepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
 	   (1, 7, 7, 15, '3 - Neither Prepared or Unprepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
-	   (1, 7, 7, 16, '4 - Unprepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
-	   (1, 7, 7, 17, '5 - Very Unprepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1)
+	   (1, 7, 7, 16, '4 - Prepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1),
+	   (1, 7, 7, 17, '5 - Very Prepared', 'Radio Button',0, 20180201, 99991231, 1, '2018-02-01 00:00:00.000', 1)
 GO
 
 
