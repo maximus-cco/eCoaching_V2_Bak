@@ -419,6 +419,24 @@ Partial Public Class MySurvey
     Protected WithEvents Question7RadioButtonList As Global.System.Web.UI.WebControls.RadioButtonList
     
     '''<summary>
+    '''Question7TextBoxLabel control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Question7TextBoxLabel As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''Question7TextBox control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Question7TextBox As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
     '''CommentTextBoxLabel control.
     '''</summary>
     '''<remarks>

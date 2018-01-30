@@ -50,17 +50,15 @@ Public Class MySurveyDBAccess
                 question.DisplayOrder = row("DisplayOrder")
 
 				Dim description As String = row("Description")
-				' Element 0 is the question text; element 1 is the label text for this question's textbox if there is one
+				' Element 0 is the question text; element 1 is the label text for this question's textbox
 				Dim temp = (From q In description.Split("|") Select q).ToList()
 				question.QuestionLabel = temp.ElementAt(0).Trim()
-				If (temp.Count > 1) Then
-					question.TextBoxLabel = temp.ElementAt(1).Trim()
-				End If
+				question.TextBoxLabel = temp.ElementAt(1).Trim()
 
 				question.SurveyID = surveyID
 
 				questions.Add(question)
-            Next
+			Next
         End Using
 
         Return questions

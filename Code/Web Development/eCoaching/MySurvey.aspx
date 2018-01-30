@@ -125,6 +125,9 @@
 							ErrorMessage="Please select an answer." />
 						<asp:RadioButtonList ID="Question7RadioButtonList" CssClass="radioButtonList" RepeatDirection="Horizontal" runat="server">
 						</asp:RadioButtonList>
+						<asp:Label ID="Question7TextBoxLabel" CssClass="subQuestion" runat="server" AssociatedControlID="Question7TextBox" />
+						<br />
+						<asp:TextBox ID="Question7TextBox" Rows="5" TextMode="MultiLine" runat="server" />
 					</asp:Panel>
 
                     <%-- Additional Comments--%>

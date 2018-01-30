@@ -10,8 +10,8 @@
 
     Sub Page_Error(sender As Object, e As EventArgs)
         Dim ex As Exception = Server.GetLastError().GetBaseException()
-        Session("LastError") = ex.Message
-        Server.ClearError()
+		Session("LastError") = "Error"
+		Server.ClearError()
         Response.Redirect("MySurveyError.aspx")
     End Sub
 
@@ -105,10 +105,8 @@
 				question.Answer.QuestionID = question.ID
 				question.Answer.SingleChoice = tempSingleChoiceQ.SelectedValue
 
-				If (tempMultiLineQ IsNot Nothing) Then
-					' Truncate to max length (4000)
-					question.Answer.MultiLineText = StringUtils.Truncate(Server.HtmlEncode(tempMultiLineQ.Text), CommentMaxLength)
-				End If
+				' Truncate to max length (4000)
+				question.Answer.MultiLineText = StringUtils.Truncate(Server.HtmlEncode(tempMultiLineQ.Text), CommentMaxLength)
 			Next
 
 			' Truncate to max length (4000)
