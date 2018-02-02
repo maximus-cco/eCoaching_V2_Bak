@@ -1,9 +1,9 @@
 /*
-sp_Select_Sources_For_Dashboard(01).sql
-Last Modified Date: 1/18/2017
+sp_Select_Sources_For_Dashboard(02).sql
+Last Modified Date: 1/18/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -25,11 +25,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	03/06/2015
@@ -39,6 +34,7 @@ GO
 --  Last Modified By: Susmitha Palacherla
 --  Modified to add additional HR job code WHHR70 - TFS 1423 - 12/15/2015
 --  Modified to reference table for HR job codes - TFS 2332 - 4/6/2016
+--  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Sources_For_Dashboard] 
 @strUserin nvarchar(30)
@@ -51,7 +47,7 @@ BEGIN
 	@nvcDisplayWarnings nvarchar(5),
 	@dtmDate datetime
 	
-		
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 		
 	
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
@@ -83,10 +79,6 @@ ORDER BY X.Sortorder'
 EXEC (@nvcSQL)	
 END --sp_Select_Sources_For_Dashboard
 
-
-
-
-
-
 GO
+
 

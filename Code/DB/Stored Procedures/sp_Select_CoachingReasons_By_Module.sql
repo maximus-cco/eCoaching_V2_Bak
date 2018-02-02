@@ -1,9 +1,9 @@
 /*
-sp_Select_CoachingReasons_By_Module(01).sql
-Last Modified Date: 1/18/2017
+sp_Select_CoachingReasons_By_Module(02).sql
+Last Modified Date: 1/18/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -27,6 +27,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/20/2014
@@ -35,6 +36,7 @@ GO
 -- Last Modified By: Susmitha Palacherla
 -- Last Modified Date: 09/25/2014
 -- Modified per SCR 13479 to add logic for incorporating WARNINGs.
+-- Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module] 
 @strModulein nvarchar(30), @strSourcein nvarchar(30), @isSplReason BIT, @splReasonPrty INT, @strCSRin nvarchar(30), @strSubmitterin nvarchar(30)
@@ -45,6 +47,8 @@ BEGIN
 	
 	@nvcSQL nvarchar(max),
 	@nvcDirectHierarchy nvarchar(10)
+
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
 	
 SET @nvcDirectHierarchy = [EC].[fn_strDirectUserHierarchy] (@strCSRin, @strSubmitterin, GETDATE())
 
@@ -53,6 +57,8 @@ SET @nvcDirectHierarchy = [EC].[fn_strDirectUserHierarchy] (@strCSRin, @strSubmi
 IF @isSplReason = 1 
 
 IF @nvcDirectHierarchy = 'Yes'
+
+
 
 SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [CoachingReason] as CoachingReason from [EC].[Coaching_Reason_Selection]
 Where ' + @strModulein +' = 1 
@@ -86,5 +92,7 @@ Order by  [CoachingReason]'
 EXEC (@nvcSQL)	
 END -- sp_Select_CoachingReasons_By_Module
 
+
 GO
+
 
