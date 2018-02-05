@@ -46,7 +46,7 @@ SET @nvcSubmitterID  = EC.fn_nvcGetEmpIdFromLanID(@strUserin,@dtmDate)
 
 SET @nvcSQL = '
 SELECT cl.FormName	strFormID
-      ,S.Status		trFormStatus
+      ,S.Status		strFormStatus
       ,veh.Emp_Name	strCSRName
       ,veh.Sup_Name	strCSRSupName
       ,veh.Mgr_Name	strCSRMgrName
