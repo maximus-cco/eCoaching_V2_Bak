@@ -1,0 +1,185 @@
+/*
+
+TFS 7856 - Encryption of Sensitive data
+
+Summary
+Open in an ssms window pointing to eCoaching DB in target environment and run with nothing selected
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+*/
+
+--********************************************************
+
+ALTER TABLE EC.AT_User
+DROP COLUMN UserName_Drop
+GO  
+
+
+ALTER TABLE EC.AT_User
+DROP COLUMN UserName_Drop
+GO  
+
+
+--********************************************************
+
+
+--********************************************************
+
+ALTER TABLE [EC].[Employee_Ids_With_Prefixes]
+DROP COLUMN Emp_LanID_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Ids_With_Prefixes]
+DROP COLUMN Emp_Name_Drop
+GO  
+
+
+--**************************************************
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Emp_Name_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Emp_LanID_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Emp_Email_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Sup_Name_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Sup_LanID_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Sup_Email_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Emp_Pri_Name_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Mgr_Name_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Mgr_LanID_Drop
+GO  
+
+
+ALTER TABLE [EC].[Employee_Hierarchy]
+DROP COLUMN Mgr_Email_Drop
+GO  
+
+--********************************************************
+
+ALTER TABLE [EC].[EmployeeID_To_LanID]
+DROP COLUMN LanID_Drop
+GO  
+
+--********************************************************
+
+ALTER TABLE EC.Survey_Response_Header
+DROP COLUMN EmpLanID_Drop 
+GO  
+
+
+ALTER TABLE EC.Survey_Response_Header
+DROP COLUMN FormName_Drop 
+GO  
+
+--********************************************************
+
+ALTER TABLE EC.Historical_Dashboard_ACL
+DROP COLUMN User_LanID_Drop
+GO  
+
+
+ALTER TABLE EC.Historical_Dashboard_ACL
+DROP COLUMN User_Name_Drop
+
+ALTER TABLE EC.Historical_Dashboard_ACL
+DROP COLUMN  Updated_By_Drop
+GO  
+
+
+--********************************************************
+
+ALTER TABLE EC.Coaching_Log
+DROP COLUMN EmpLanID_Drop
+GO  
+
+ALTER TABLE EC.Coaching_Log
+DROP COLUMN  FormName_Drop
+GO  
+
+
+
+
+--********************************************************
+
+ALTER TABLE EC.Coaching_Log_Archive
+DROP COLUMN EmpLanID_Drop
+GO  
+
+ALTER TABLE EC.Coaching_Log_Archive
+DROP COLUMN  FormName_Drop
+GO  
+
+
+
+--********************************************************
+
+
+ALTER TABLE EC.Warning_Log
+DROP COLUMN EmpLanID_Drop
+GO  
+
+ALTER TABLE EC.Warning_Log
+DROP COLUMN  FormName_Drop
+GO  
+
+--********************************************************
+
+
+ALTER TABLE [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+DROP COLUMN FormName_Drop 
+GO  
+
+--********************************************************
+
+ALTER TABLE [EC].[AT_Coaching_Reassign_Audit]
+DROP COLUMN FormName_Drop 
+GO  
+
+--********************************************************
+
+ALTER TABLE [EC].[AT_Warning_Inactivate_Reactivate_Audit]
+DROP COLUMN FormName_Drop 
+GO  
+
+
+--********************************************************
+
+
+
+
