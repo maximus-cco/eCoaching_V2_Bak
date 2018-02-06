@@ -72,7 +72,7 @@ FROM (SELECT [cl].[FormName] strFormID,
 	  JOIN [EC].[DIM_Source] sc ON cl.SourceID = sc.SourceID 
       WHERE [eh].[Sup_ID] = @nvcSUPIDparam 
         AND [S].[Status] LIKE ''Pending%''
-        AND RTRIM(LTRIM([eh].[Emp_Name])) LIKE @strCSRinparam
+        AND RTRIM(LTRIM([veh].[Emp_Name])) LIKE @strCSRinparam
         AND [sc].[SubCoachingSource] LIKE @strSourceinparam
         AND [eh].[Sup_ID] <> ''999999''
       GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [S].[Status], [sc].[SubCoachingSource], [cl].[SubmittedDate]
