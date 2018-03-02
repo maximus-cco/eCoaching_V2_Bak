@@ -2,9 +2,9 @@
 
 Public Class EclUtils
 
-    Public Shared ReadOnly SMTP_HOST = "smtpout.gdit.com"
+	Public Shared ReadOnly SMTP_HOST = "10.80.102.86" ' smtpout.gdit.com
 
-    Public Shared Function SendEmail(toList As List(Of String), strSubject As String,
+	Public Shared Function SendEmail(toList As List(Of String), strSubject As String,
                                      strEmailContent As String, logoAbsolutePath As String) As Boolean
         Dim retValue = False
 
