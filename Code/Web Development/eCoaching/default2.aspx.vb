@@ -1869,11 +1869,9 @@ Public Class default2
         htmlView.LinkedResources.Add(imageResource)
         myMessage.AlternateViews.Add(htmlView)
 
-        'uncomment/comment to send mail/setup for dev
-        'mySmtpClient = New SmtpClient("vadentexp01") ''old
-        mySmtpClient = New SmtpClient("smtpout.gdit.com") ''new
+		mySmtpClient = New SmtpClient("10.80.102.86") 'smtpout.gdit.com
 
-        mySmtpClient.Send(myMessage)
+		mySmtpClient.Send(myMessage)
     End Sub
 
     Protected Sub ARC_Selected(ByVal sender As Object, ByVal e As SqlDataSourceStatusEventArgs) Handles SqlDataSource14.Selected
