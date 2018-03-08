@@ -34,6 +34,7 @@ GO
 -- If no match is found returns 'Unknown'
 -- Initial version -  Review Supervisor Emails for LCS Reminders - TFS 2182 - 3/8/2016
 -- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+-- Fixed to pull correct Employee Email attribute for the Sups ID. TFS 7856 - 03/08/2018
 -- =============================================
 CREATE FUNCTION [EC].[fn_strSupEmailFromEmpID] 
 (
@@ -53,7 +54,7 @@ BEGIN
   IF     (@strSupEmpID IS NULL OR @strSupEmpID = 'Unknown')
   SET    @strSupEmpID = N'999999'
   
- SET @strSupEmail = (SELECT CONVERT(nvarchar(50),DecryptByKey(Sup_Email)) 
+ SET @strSupEmail = (SELECT CONVERT(nvarchar(50),DecryptByKey(Emp_Email)) 
   FROM [EC].[Employee_Hierarchy]
   WHERE Emp_ID = @strSupEmpID)
   
