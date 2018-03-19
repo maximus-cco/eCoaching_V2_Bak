@@ -20,8 +20,9 @@ GO
 
 
 ALTER TABLE EC.AT_User
-DROP COLUMN UserName_Drop
+DROP COLUMN UserLanID_Drop
 GO  
+
 
 
 --********************************************************
@@ -116,6 +117,7 @@ GO
 
 ALTER TABLE EC.Historical_Dashboard_ACL
 DROP COLUMN User_Name_Drop
+GO
 
 ALTER TABLE EC.Historical_Dashboard_ACL
 DROP COLUMN  Updated_By_Drop

@@ -1,0 +1,122 @@
+/*********************************
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+****************************************
+
+
+Run with Nothing seleted 
+
+
+***********************************/
+	
+
+
+-- 1. IDX_EmployeeID_To_LanID_StartDate_EndDate
+
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_EmployeeID_To_LanID_StartDate_EndDate') 
+    DROP INDEX IDX_EmployeeID_To_LanID_StartDate_EndDate ON [EC].[EmployeeID_To_LanID]; 
+GO
+
+CREATE NONCLUSTERED INDEX IDX_EmployeeID_To_LanID_StartDate_EndDate
+ON [EC].[EmployeeID_To_LanID] ([StartDate],[EndDate])
+INCLUDE ([EmpID])
+GO
+
+--*************************************************************************
+
+-- 2. IDX_AT_Coaching_Inactivate_Reactivate_Audit_CoachingID
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_AT_Coaching_Inactivate_Reactivate_Audit_CoachingID') 
+    DROP INDEX IDX_AT_Coaching_Inactivate_Reactivate_Audit_CoachingID
+ON [EC].[AT_Coaching_Inactivate_Reactivate_Audit]; 
+GO
+
+
+ CREATE INDEX IDX_AT_Coaching_Inactivate_Reactivate_Audit_CoachingID
+ ON [EC].[AT_Coaching_Inactivate_Reactivate_Audit] ([CoachingID])
+GO
+
+
+--*************************************************************************
+
+-- 3. IDX_Coaching_Log_StatusID
+
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Coaching_Log_StatusID') 
+    DROP INDEX IDX_Coaching_Log_StatusID
+ON [EC].[Coaching_Log]; 
+GO
+
+CREATE INDEX IDX_Coaching_Log_StatusID 
+ON [EC].[Coaching_Log] ([StatusID]) INCLUDE ([CoachingID], [FormName], [SourceID], [EmpID], [SubmittedDate], [ModuleID], [ReassignCount], [ReassignedToID])
+GO
+
+
+
+
+--*************************************************************************
+
+-- 4. IDX_Employee_Hierarchy_Active
+
+
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Employee_Hierarchy_Active') 
+    DROP INDEX IDX_Employee_Hierarchy_Active
+ON [EC].[Employee_Hierarchy]; 
+GO
+
+CREATE INDEX IDX_Employee_Hierarchy_Active ON [EC].[Employee_Hierarchy] ([Active]) INCLUDE ([Emp_ID])
+GO
+
+--*************************************************************************
+
+-- 5. IDX_Coaching_Log_ReportID_ReportCode
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Coaching_Log_ReportID_ReportCode') 
+    DROP INDEX IDX_Coaching_Log_ReportID_ReportCode
+ON [EC].[Coaching_Log]; 
+GO
+
+CREATE NONCLUSTERED INDEX IDX_Coaching_Log_ReportID_ReportCode
+ON [EC].[Coaching_Log] ([numReportID],[strReportCode])
+GO
+
+
+--*************************************************************************
+
+-- 6.IDX_Employee_Hierarchy_Site
+
+
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Employee_Hierarchy_Site') 
+    DROP INDEX IDX_Employee_Hierarchy_Site 
+ON [EC].[Employee_Hierarchy]; 
+GO
+
+
+CREATE NONCLUSTERED INDEX IDX_Employee_Hierarchy_Site ON [EC].[Employee_Hierarchy]([Emp_Site])
+GO
+
+
+
+
+
+
+--****************************************************************

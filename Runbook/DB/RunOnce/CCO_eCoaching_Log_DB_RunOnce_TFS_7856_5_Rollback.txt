@@ -1,0 +1,945 @@
+/*
+Pre Implementation Prep
+
+
+1. Prior to Implementing Encryption changes take a backup of the production database
+
+2. Restore the backup with hourly transactions to eCoaching_PreEncryption
+
+3. Complete Implementation per Runbook
+
+*/
+
+/*
+
+
+--Testing
+
+
+    SELECT  NEW.* FROM [eCoaching_PreEncryption].[EC].[Coaching_Log] OLD JOIN [eCoaching].[EC].[Coaching_Log] NEW
+	  ON OLD.CoachingID = NEW.CoachingID
+           AND OLD.EmpID = NEW.EmpID
+ WHERE (
+      OLD.[StatusID] <> NEW.[StatusID]
+      OR OLD.[CoachingDate] <> NEW.[CoachingDate] 
+      OR OLD.[SupReviewedAutoDate] <> NEW.[SupReviewedAutoDate]
+      OR OLD.[MgrReviewManualDate] <> NEW.[MgrReviewManualDate]
+      OR OLD.[MgrReviewAutoDate] <> NEW.[MgrReviewAutoDate]
+      OR OLD.[MgrNotes] <> NEW.[MgrNotes]
+      OR OLD.[isCSRAcknowledged] <> NEW.[isCSRAcknowledged]
+      OR OLD.[CSRReviewAutoDate] <> NEW.[CSRReviewAutoDate]
+      OR OLD.[CSRComments] <> NEW.[CSRComments]
+      OR OLD.[isCoachingRequired] <> NEW.[isCoachingRequired] 
+      OR OLD.[strReasonNotCoachable] <> NEW.[strReasonNotCoachable]
+      OR OLD.[txtReasonNotCoachable] <> NEW.[txtReasonNotCoachable]
+      OR OLD.[Review_SupID] <> NEW.[Review_SupID]
+      OR OLD.[Review_MgrID] <> NEW.[Review_MgrID] 
+      OR OLD.[SurveySent] <> NEW.[SurveySent]
+      OR OLD.[NotificationDate] <> NEW.[NotificationDate] 
+      OR OLD.[ReminderSent] <> NEW.[ReminderSent]
+      OR OLD.[ReminderDate] <> NEW.[ReminderDate]
+      OR OLD.[ReminderCount] <> NEW.[ReminderCount]
+      OR OLD.[ReassignDate] <> NEW.[ReassignDate] 
+      OR OLD.[ReassignCount] <> NEW.[ReassignCount]
+      OR OLD.[ReassignedToID] <> NEW.[ReassignedToID]
+	  )
+GO
+
+
+
+
+
+
+************************/
+
+/*
+Reconciling steps for rollback
+
+Summary of Steps
+
+1. Updates and Inserts to Coaching log table
+2. Updates and Inserts to Coaching log Reason table
+3. Updates and Inserts to Warning log table
+4. Updates and Inserts to Warning log Reason table
+5. Inserts to Coaching Inactivation reactivation audit
+6. Inserts to Warning Inactivation reactivation audit
+7. Inserts to Coaching Reassign audit
+8. Updates and Inserts to Survey header Table
+9. Inserts to Survey details Table
+10. Inserts into File List Tables(ETS_FileList, Generic_FileList, Outlier_FileList, Quality_FileList, Quality_Other_FileList, Training_FileList)
+
+************************/
+
+
+
+
+
+--1A. [EC].[Coaching_Log] Updates
+
+
+
+
+UPDATE OLD
+   SET [StatusID] = NEW.[StatusID]
+      ,[CoachingDate] = NEW.[CoachingDate] 
+      ,[SupReviewedAutoDate] = NEW.[SupReviewedAutoDate]
+      ,[MgrReviewManualDate] = NEW.[MgrReviewManualDate]
+      ,[MgrReviewAutoDate] = NEW.[MgrReviewAutoDate]
+      ,[MgrNotes] = NEW.[MgrNotes]
+      ,[isCSRAcknowledged] = NEW.[isCSRAcknowledged]
+      ,[CSRReviewAutoDate] = NEW.[CSRReviewAutoDate]
+      ,[CSRComments] = NEW.[CSRComments]
+      ,[isCoachingRequired] = NEW.[isCoachingRequired] 
+      ,[strReasonNotCoachable] = NEW.[strReasonNotCoachable]
+      ,[txtReasonNotCoachable] = NEW.[txtReasonNotCoachable]
+      ,[Review_SupID] = NEW.[Review_SupID]
+      ,[Review_MgrID] = NEW.[Review_MgrID] 
+      ,[SurveySent] = NEW.[SurveySent]
+      ,[NotificationDate] = NEW.[NotificationDate] 
+      ,[ReminderSent] = NEW.[ReminderSent]
+      ,[ReminderDate] = NEW.[ReminderDate]
+      ,[ReminderCount] = NEW.[ReminderCount]
+      ,[ReassignDate] = NEW.[ReassignDate] 
+      ,[ReassignCount] = NEW.[ReassignCount]
+      ,[ReassignedToID] = NEW.[ReassignedToID]
+      FROM [eCoaching_PreEncryption].[EC].[Coaching_Log] OLD JOIN [eCoaching].[EC].[Coaching_Log] NEW
+	  ON OLD.CoachingID = NEW.CoachingID
+          AND OLD.EmpID = NEW.EmpID
+         
+ WHERE (
+      OLD.[StatusID] <> NEW.[StatusID]
+      OR OLD.[CoachingDate] <> NEW.[CoachingDate] 
+      OR OLD.[SupReviewedAutoDate] <> NEW.[SupReviewedAutoDate]
+      OR OLD.[MgrReviewManualDate] <> NEW.[MgrReviewManualDate]
+      OR OLD.[MgrReviewAutoDate] <> NEW.[MgrReviewAutoDate]
+      OR OLD.[MgrNotes] <> NEW.[MgrNotes]
+      OR OLD.[isCSRAcknowledged] <> NEW.[isCSRAcknowledged]
+      OR OLD.[CSRReviewAutoDate] <> NEW.[CSRReviewAutoDate]
+      OR OLD.[CSRComments] <> NEW.[CSRComments]
+      OR OLD.[isCoachingRequired] <> NEW.[isCoachingRequired] 
+      OR OLD.[strReasonNotCoachable] <> NEW.[strReasonNotCoachable]
+      OR OLD.[txtReasonNotCoachable] <> NEW.[txtReasonNotCoachable]
+      OR OLD.[Review_SupID] <> NEW.[Review_SupID]
+      OR OLD.[Review_MgrID] <> NEW.[Review_MgrID] 
+      OR OLD.[SurveySent] <> NEW.[SurveySent]
+      OR OLD.[NotificationDate] <> NEW.[NotificationDate] 
+      OR OLD.[ReminderSent] <> NEW.[ReminderSent]
+      OR OLD.[ReminderDate] <> NEW.[ReminderDate]
+      OR OLD.[ReminderCount] <> NEW.[ReminderCount]
+      OR OLD.[ReassignDate] <> NEW.[ReassignDate] 
+      OR OLD.[ReassignCount] <> NEW.[ReassignCount]
+      OR OLD.[ReassignedToID] <> NEW.[ReassignedToID]
+	  )
+GO
+
+
+
+--***************************************************
+
+--1B. [EC].[Coaching_Log] New Logs
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Coaching_Log] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[Coaching_Log]
+           ([CoachingID]
+           ,[FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+	   ,[EmpLanID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[EventDate]
+           ,[CoachingDate]
+           ,[isAvokeID]
+           ,[AvokeID]
+           ,[isNGDActivityID]
+           ,[NGDActivityID]
+           ,[isUCID]
+           ,[UCID]
+           ,[isVerintID]
+           ,[VerintID]
+           ,[VerintEvalID]
+           ,[Description]
+           ,[CoachingNotes]
+           ,[isVerified]
+           ,[SubmittedDate]
+           ,[StartDate]
+           ,[SupReviewedAutoDate]
+           ,[isCSE]
+           ,[MgrReviewManualDate]
+           ,[MgrReviewAutoDate]
+           ,[MgrNotes]
+           ,[isCSRAcknowledged]
+           ,[CSRReviewAutoDate]
+           ,[CSRComments]
+           ,[EmailSent]
+           ,[numReportID]
+           ,[strReportCode]
+           ,[isCoachingRequired]
+           ,[strReasonNotCoachable]
+           ,[txtReasonNotCoachable]
+           ,[VerintFormName]
+           ,[ModuleID]
+           ,[SupID]
+           ,[MgrID]
+           ,[Review_SupID]
+           ,[Review_MgrID]
+           ,[Behavior]
+           ,[SurveySent]
+           ,[NotificationDate]
+           ,[ReminderSent]
+           ,[ReminderDate]
+           ,[ReminderCount]
+           ,[ReassignDate]
+           ,[ReassignCount]
+           ,[ReassignedToID]
+           ,[isCoachingMonitor])
+
+    SELECT NEW.[CoachingID]
+     --'eCL-'+ EH.Emp_LanID +'-'+ convert(varchar,NEW.CoachingID) FormName
+      ,NEW.[FormName]
+      ,NEW.[ProgramName]
+      ,NEW.[SourceID]
+      ,NEW.[StatusID]
+      ,NEW.[SiteID]
+    --, EH.Emp_LanID
+       ,'-'
+      ,NEW.[EmpID]
+      ,NEW.[SubmitterID]
+      ,NEW.[EventDate]
+      ,NEW.[CoachingDate]
+      ,NEW.[isAvokeID]
+      ,NEW.[AvokeID]
+      ,NEW.[isNGDActivityID]
+      ,NEW.[NGDActivityID]
+      ,NEW.[isUCID]
+      ,NEW.[UCID]
+      ,NEW.[isVerintID]
+      ,NEW.[VerintID]
+      ,NEW.[VerintEvalID]
+      ,NEW.[Description]
+      ,NEW.[CoachingNotes]
+      ,NEW.[isVerified]
+      ,NEW.[SubmittedDate]
+      ,NEW.[StartDate]
+      ,NEW.[SupReviewedAutoDate]
+      ,NEW.[isCSE]
+      ,NEW.[MgrReviewManualDate]
+      ,NEW.[MgrReviewAutoDate]
+      ,NEW.[MgrNotes]
+      ,NEW.[isCSRAcknowledged]
+      ,NEW.[CSRReviewAutoDate]
+      ,NEW.[CSRComments]
+      ,NEW.[EmailSent]
+      ,NEW.[numReportID]
+      ,NEW.[strReportCode]
+      ,NEW.[isCoachingRequired]
+      ,NEW.[strReasonNotCoachable]
+      ,NEW.[txtReasonNotCoachable]
+      ,NEW.[VerintFormName]
+      ,NEW.[ModuleID]
+      ,NEW.[SupID]
+      ,NEW.[MgrID]
+      ,NEW.[Review_SupID]
+      ,NEW.[Review_MgrID]
+      ,NEW.[Behavior]
+      ,NEW.[SurveySent]
+      ,NEW.[NotificationDate]
+      ,NEW.[ReminderSent]
+      ,NEW.[ReminderDate]
+      ,NEW.[ReminderCount]
+      ,NEW.[ReassignDate]
+      ,NEW.[ReassignCount]
+      ,NEW.[ReassignedToID]
+      ,NEW.[isCoachingMonitor]
+  FROM [eCoaching].[EC].[Coaching_Log] NEW  LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Coaching_Log]OLD
+  ON NEW.CoachingID = OLD.CoachingID
+  WHERE OLD.CoachingID IS NULL
+ORDER BY NEW.CoachingID
+GO
+
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Coaching_Log] OFF
+GO
+
+
+
+
+
+
+--***************************
+
+
+--1C. 
+
+
+Update [eCoaching_PreEncryption].[EC].[Coaching_Log]
+SET [FormName] = 'eCL-'+ EH.Emp_LanID +'-'+ convert(varchar,[CoachingID]),
+[EmpLanID] = EH.Emp_LanID
+FROM [eCoaching_PreEncryption].[EC].[Coaching_Log] CL JOIN [eCoaching_PreEncryption].[EC].[Employee_Hierarchy]EH
+ON CL.EmpID = EH.Emp_ID
+WHERE [EmpLanID] = '-'
+AND [FormName] NOT LIKE '%.%'
+
+
+
+--***************************
+
+
+--2A. [EC].[Coaching_Log_Reason] Changed Logs
+
+UPDATE OLD
+   SET OLD.[Value] = NEW.[Value]
+  FROM [eCoaching_PreEncryption].[EC].[Coaching_Log_Reason] OLD JOIN [eCoaching].[EC].[Coaching_Log_Reason] NEW
+	  ON OLD.CoachingID = NEW.CoachingID
+	  AND OLD.CoachingReasonID = New.CoachingReasonID
+	  AND OLD.SubCoachingReasonID = New.SubCoachingReasonID 
+ WHERE  OLD.[Value] <> NEW.[Value]
+
+--***************************
+
+
+--2B. [EC].[Coaching_Log_Reason] New Logs
+
+
+INSERT INTO  [eCoaching_PreEncryption].[EC].[Coaching_Log_Reason]
+           ([CoachingID]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[Value])
+
+SELECT NEW.[CoachingID]
+      ,NEW.[CoachingReasonID]
+      ,NEW.[SubCoachingReasonID]
+      ,NEW.[Value]
+   FROM [eCoaching].[EC].[Coaching_Log_Reason] NEW  LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Coaching_Log_Reason]OLD
+  ON NEW.CoachingID = OLD.CoachingID
+  WHERE OLD.CoachingID IS NULL
+ ORDER BY NEW.CoachingID
+GO
+
+
+
+--***************************************************
+
+--3A. [EC].[Warning_Log] Updated Logs
+
+
+UPDATE OLD
+   SET [StatusID] = NEW.[StatusID]
+           FROM [eCoaching_PreEncryption].[EC].[Warning_Log] OLD JOIN [eCoaching].[EC].[Warning_Log] NEW
+	  ON OLD.WarningID = NEW.WarningID
+ WHERE OLD.[StatusID] <> NEW.[StatusID]
+     
+GO
+
+
+
+--***************************
+
+
+
+--3B. [EC].[Warning_Log_Reason] New Logs
+
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Warning_Log] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[Warning_Log]
+           ([WarningID]
+           ,[FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+           ,[EmpLanID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[SupID]
+           ,[MgrID]
+           ,[WarningGivenDate]
+           ,[Description]
+           ,[CoachingNotes]
+           ,[SubmittedDate]
+           ,[ModuleID]
+           ,[Active]
+           ,[numReportID]
+           ,[strReportCode]
+           ,[Behavior])
+
+SELECT NEW.[WarningID]
+          --'eCL-'+ EH.Emp_LanID +'-'+ convert(varchar,NEW.WarningID) FormName
+      ,NEW.[FormName]
+      ,NEW.[ProgramName]
+      ,NEW.[SourceID]
+      ,NEW.[StatusID]
+      ,NEW.[SiteID]
+      --,NEW.[EmpLanID]
+	,'-'
+      ,NEW.[EmpID]
+      ,NEW.[SubmitterID]
+      ,NEW.[SupID]
+      ,NEW.[MgrID]
+      ,NEW.[WarningGivenDate]
+      ,NEW.[Description]
+      ,NEW.[CoachingNotes]
+      ,NEW.[SubmittedDate]
+      ,NEW.[ModuleID]
+      ,NEW.[Active]
+      ,NEW.[numReportID]
+      ,NEW.[strReportCode]
+      ,NEW.[Behavior]
+   FROM [eCoaching].[EC].[Warning_Log] NEW  LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Warning_Log]OLD
+  ON NEW.WarningID = OLD.WarningID
+  WHERE OLD.WarningID IS NULL
+ ORDER BY NEW.WarningID
+GO
+
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Warning_Log] OFF
+GO
+
+
+
+--*************************
+
+--3C. 
+
+Update [eCoaching_PreEncryption].[EC].[Warning_Log]
+SET [FormName] = 'eCL-'+ EH.Emp_LanID +'-'+ convert(varchar,[WarningID]),
+[EmpLanID] = EH.Emp_LanID
+FROM [eCoaching_PreEncryption].[EC].[Warning_Log] WL JOIN [eCoaching_PreEncryption].[EC].[Employee_Hierarchy]EH
+ON WL.EmpID = EH.Emp_ID
+WHERE [EmpLanID] = '-'
+AND [FormName] NOT LIKE '%.%'
+
+
+
+
+
+--*****************************
+
+--4A. [EC].[Warning_Log_Reason] Updated Logs
+
+UPDATE OLD
+   SET OLD.[Value] = NEW.[Value]
+  FROM [eCoaching_PreEncryption].[EC].[Warning_Log_Reason] OLD JOIN [eCoaching].[EC].[Warning_Log_Reason] NEW
+	  ON OLD.WarningID = NEW.WarningID
+	  AND OLD.CoachingReasonID = New.CoachingReasonID
+	  AND OLD.SubCoachingReasonID = New.SubCoachingReasonID 
+ WHERE  OLD.[Value] <> NEW.[Value]
+
+
+
+--***************************
+
+
+
+--4B. [EC].[Warning_Log_Reason] New Logs
+
+
+INSERT INTO  [eCoaching_PreEncryption].[EC].[Warning_Log_Reason]
+           ([WarningID]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[Value])
+
+SELECT NEW.[WarningID]
+      ,NEW.[CoachingReasonID]
+      ,NEW.[SubCoachingReasonID]
+      ,NEW.[Value]
+   FROM [eCoaching].[EC].[Warning_Log_Reason] NEW  LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Warning_Log_Reason]OLD
+  ON NEW.WarningID = OLD.WarningID
+  WHERE OLD.WarningID IS NULL
+ ORDER BY NEW.WarningID
+GO
+
+
+
+--*****************************
+
+--5.[EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[AT_Coaching_Inactivate_Reactivate_Audit] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+           ([SeqNum]
+           ,[CoachingID]
+           ,[FormName]
+           ,[LastKnownStatus]
+           ,[Action]
+           ,[ActionTimestamp]
+           ,[RequesterID]
+           ,[Reason]
+           ,[RequesterComments]
+            )
+
+    SELECT NEW.[SeqNum]
+      ,NEW.[CoachingID]
+      --,NEW.[FormName]
+	  ,'-'
+      ,NEW.[LastKnownStatus]
+      ,NEW.[Action]
+      ,NEW.[ActionTimestamp]
+      ,NEW.[RequesterID]
+      ,NEW.[Reason]
+      ,NEW.[RequesterComments]
+    FROM [eCoaching].[EC].[AT_Coaching_Inactivate_Reactivate_Audit] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[AT_Coaching_Inactivate_Reactivate_Audit]OLD
+  ON NEW.[SeqNum]= OLD.[SeqNum]
+  WHERE OLD.[SeqNum] IS NULL
+ORDER BY NEW.[SeqNum]
+GO
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[AT_Coaching_Inactivate_Reactivate_Audit] OFF
+GO
+
+
+
+--***************************
+
+--5b.
+
+UPDATE [eCoaching_PreEncryption].[EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+SET [FormName] = CL.FormName
+FROM [eCoaching_PreEncryption].[EC].[Coaching_Log] CL JOIN [eCoaching_PreEncryption].[EC].[AT_Coaching_Inactivate_Reactivate_Audit]AUD
+ON CL.CoachingID=  AUD.CoachingID
+WHERE AUD.[FormName] NOT LIKE '%.%'
+AND AUD.[FormName] = '-'
+GO
+
+
+--*****************************
+
+--6. [EC].[AT_Warning_Inactivate_Reactivate_Audit]
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[AT_Warning_Inactivate_Reactivate_Audit] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[AT_Warning_Inactivate_Reactivate_Audit]
+           ([SeqNum]
+           ,[WarningID]
+           ,[FormName]
+           ,[LastKnownStatus]
+           ,[Action]
+           ,[ActionTimestamp]
+           ,[RequesterID]
+           ,[Reason]
+           ,[RequesterComments]
+            )
+
+    SELECT NEW.[SeqNum]
+      ,NEW.[WarningID]
+      --,NEW.[FormName]
+	  ,'-'
+      ,NEW.[LastKnownStatus]
+      ,NEW.[Action]
+      ,NEW.[ActionTimestamp]
+      ,NEW.[RequesterID]
+      ,NEW.[Reason]
+      ,NEW.[RequesterComments]
+    FROM [eCoaching].[EC].[AT_Warning_Inactivate_Reactivate_Audit] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[AT_Warning_Inactivate_Reactivate_Audit]OLD
+  ON NEW.[SeqNum]= OLD.[SeqNum]
+  WHERE OLD.[SeqNum] IS NULL
+ORDER BY NEW.[SeqNum]
+GO
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[AT_Warning_Inactivate_Reactivate_Audit] OFF
+GO
+
+
+
+
+--*****************************
+
+--6b.
+
+UPDATE [eCoaching_PreEncryption].[EC].[AT_Warning_Inactivate_Reactivate_Audit]
+SET [FormName] = WL.FormName
+FROM [eCoaching_PreEncryption].[EC].[Warning_Log] WL JOIN [eCoaching_PreEncryption].[EC].[AT_Warning_Inactivate_Reactivate_Audit]AUD
+ON WL.WarningID=  AUD.WarningID
+WHERE AUD.[FormName] NOT LIKE '%.%'
+AND AUD.[FormName] = '-'
+GO
+
+
+
+
+--*****************************
+
+--7. [EC].[AT_Coaching_Reassign_Audit]
+
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[AT_Coaching_Reassign_Audit] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[AT_Coaching_Reassign_Audit]
+           ([SeqNum]
+           ,[CoachingID]
+           ,[FormName]
+           ,[LastKnownStatus]
+           ,[ActionTimestamp]
+           ,[RequesterID]
+           ,[AssignedToID]
+           ,[Reason]
+           ,[RequesterComments]
+            )
+
+    SELECT NEW.[SeqNum]
+      ,NEW.[CoachingID]
+      --,NEW.[FormName]
+	  ,'-'
+      ,NEW.[LastKnownStatus]
+      ,NEW.[ActionTimestamp]
+      ,NEW.[RequesterID]
+	  ,NEW.[AssignedToID]
+      ,NEW.[Reason]
+      ,NEW.[RequesterComments]
+    FROM [eCoaching].[EC].[AT_Coaching_Reassign_Audit] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[AT_Coaching_Reassign_Audit]OLD
+  ON NEW.[SeqNum]= OLD.[SeqNum]
+  WHERE OLD.[SeqNum] IS NULL
+ORDER BY NEW.[SeqNum]
+GO
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[AT_Coaching_Reassign_Audit] OFF
+GO
+
+--***************************
+
+--7b.
+
+UPDATE [eCoaching_PreEncryption].[EC].[AT_Coaching_Reassign_Audit]
+SET [FormName] = CL.FormName
+FROM [eCoaching_PreEncryption].[EC].[Coaching_Log] CL JOIN [eCoaching_PreEncryption].[EC].[AT_Coaching_Reassign_Audit]AUD
+ON CL.CoachingID=  AUD.CoachingID
+WHERE AUD.[FormName] NOT LIKE '%.%'
+AND AUD.[FormName] = '-'
+GO
+
+--*****************************
+
+--8A. [EC].[Survey_Response_Header] Updates
+
+
+UPDATE OLD
+      SET [CSRComments] = NEW.[CSRComments],
+          [EmailSent] = NEW.[EmailSent],
+          [CompletedDate] = NEW.[CompletedDate],
+          [Status] = NEW.[Status],
+          [InactivationDate] = NEW.[InactivationDate],
+          [InactivationReason] = NEW.[InactivationReason],
+          [NotificationDate] = NEW.[NotificationDate]
+      FROM [eCoaching_PreEncryption].[EC].[Survey_Response_Header] OLD JOIN [eCoaching].[EC].[Survey_Response_Header] NEW
+	  ON OLD.SurveyID = NEW.SurveyID
+          AND OLD.CoachingID = NEW.CoachingID
+          AND OLD.EmpID = NEW.EmpID
+       
+ WHERE (
+         OLD.[CSRComments] <> NEW.[CSRComments]
+      OR OLD.[EmailSent] <> NEW.[EmailSent]
+      OR OLD.[CompletedDate] <> NEW.[CompletedDate]
+      OR OLD.[Status] <> NEW.[Status]
+      OR OLD.[InactivationDate] <> NEW.[InactivationDate]
+      OR OLD.[InactivationReason] <> NEW.[InactivationReason]
+      OR OLD.[NotificationDate] <> NEW.[NotificationDate]
+      )
+GO
+
+
+
+--***************************************************
+
+
+--8B. [EC].[Survey_Response_Header] New Logs
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Survey_Response_Header] ON
+GO
+
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[Survey_Response_Header]
+           ([SurveyID]
+           ,[SurveyTypeID]
+           ,[CoachingID]
+           ,[FormName]
+           ,[EmpID]
+           ,[EmpLanID]
+           ,[SiteID]
+           ,[SourceID]
+           ,[ModuleID]
+           ,[CreatedDate]
+           ,[MonthOfYear]
+           ,[CalendarYear]
+           ,[CSRComments]
+           ,[EmailSent]
+           ,[CompletedDate]
+           ,[Status]
+           ,[InactivationDate]
+           ,[InactivationReason]
+           ,[NotificationDate])
+
+   SELECT NEW.[SurveyID]
+      ,NEW.[SurveyTypeID]
+      ,NEW.[CoachingID]
+      ,'-'
+      ,NEW.[EmpID]
+      ,'-'
+      ,NEW.[SiteID]
+      ,NEW.[SourceID]
+      ,NEW.[ModuleID]
+      ,NEW.[CreatedDate]
+      ,NEW.[MonthOfYear]
+      ,NEW.[CalendarYear]
+      ,NEW.[CSRComments]
+      ,NEW.[EmailSent]
+      ,NEW.[CompletedDate]
+      ,NEW.[Status]
+      ,NEW.[InactivationDate]
+      ,NEW.[InactivationReason]
+      ,NEW.[NotificationDate]
+  FROM [eCoaching].[EC].[Survey_Response_Header] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Survey_Response_Header] OLD
+  ON NEW.SurveyID = OLD.SurveyID
+  WHERE OLD.SurveyID IS NULL
+ORDER BY NEW.SurveyID
+GO
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Survey_Response_Header] OFF
+GO
+
+
+--***************************
+
+--8c.
+
+
+Update [eCoaching_PreEncryption].[EC].[Survey_Response_Header]
+SET [FormName] = 'eCL-'+ EH.Emp_LanID +'-'+ convert(varchar,[CoachingID]),
+[EmpLanID] = EH.Emp_LanID
+FROM [eCoaching_PreEncryption].[EC].[Survey_Response_Header] SH JOIN [eCoaching_PreEncryption].[EC].[Employee_Hierarchy]EH
+ON SH.EmpID = EH.Emp_ID
+WHERE [EmpLanID] = '-'
+AND [FormName]  = '-'
+
+
+
+--***************************
+
+--9a.
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[Survey_Response_Detail]
+           ([SurveyID]
+           ,[QuestionID]
+           ,[ResponseID]
+           ,[UserComments])
+
+SELECT NEW.[SurveyID]
+      ,NEW.[QuestionID]
+      ,NEW.[ResponseID]
+      ,NEW.[UserComments]
+FROM [eCoaching].[EC].[Survey_Response_Detail] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Survey_Response_Detail] OLD
+ON NEW.SurveyID = OLD.SurveyID
+WHERE OLD.SurveyID IS NULL 
+ORDER BY NEW.SurveyID
+GO
+
+
+
+--***************************
+
+
+--10a.ETS_FileList
+
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[ETS_FileList] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[ETS_FileList]
+           ([File_SeqNum]
+           ,[File_Name]
+           ,[File_LoadDate]
+           ,[Count_Staged]
+           ,[Count_Loaded]
+           ,[Count_Rejected])
+
+SELECT NEW.[File_SeqNum]
+      ,NEW.[File_Name]
+      ,NEW.[File_LoadDate]
+      ,NEW.[Count_Staged]
+      ,NEW.[Count_Loaded]
+      ,NEW.[Count_Rejected]
+  FROM [eCoaching].[EC].[ETS_FileList] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[ETS_FileList] OLD
+  ON  NEW.File_SeqNum = OLD.File_SeqNum
+WHERE OLD.File_SeqNum IS NULL 
+ORDER BY NEW.File_SeqNum
+GO
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[ETS_FileList] OFF
+GO
+
+
+--***************************
+
+--10b.Generic_FileList
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Generic_FileList] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[Generic_FileList]
+           ([File_SeqNum]
+           ,[File_Name]
+           ,[File_LoadDate]
+           ,[Count_Staged]
+           ,[Count_Loaded]
+           ,[Count_Rejected])
+
+SELECT NEW.[File_SeqNum]
+      ,NEW.[File_Name]
+      ,NEW.[File_LoadDate]
+      ,NEW.[Count_Staged]
+      ,NEW.[Count_Loaded]
+      ,NEW.[Count_Rejected]
+  FROM [eCoaching].[EC].[Generic_FileList] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Generic_FileList] OLD
+  ON  NEW.File_SeqNum = OLD.File_SeqNum
+WHERE OLD.File_SeqNum IS NULL 
+ORDER BY NEW.File_SeqNum
+GO
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Generic_FileList] OFF
+GO
+
+
+--***************************
+
+--10c.Outlier_FileList
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Outlier_FileList] ON
+GO
+
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[Outlier_FileList]
+           ([File_SeqNum]
+           ,[File_Name]
+           ,[File_LoadDate]
+           ,[Count_Staged]
+           ,[Count_Loaded]
+           ,[Count_Rejected])
+
+SELECT NEW.[File_SeqNum]
+      ,NEW.[File_Name]
+      ,NEW.[File_LoadDate]
+      ,NEW.[Count_Staged]
+      ,NEW.[Count_Loaded]
+      ,NEW.[Count_Rejected]
+  FROM [eCoaching].[EC].[Outlier_FileList] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Outlier_FileList] OLD
+  ON  NEW.File_SeqNum = OLD.File_SeqNum
+WHERE OLD.File_SeqNum IS NULL 
+ORDER BY NEW.File_SeqNum
+GO
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Outlier_FileList] OFF
+GO
+
+--***************************
+
+--10d.Quality_FileList
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Quality_FileList] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[Quality_FileList]
+           ([File_SeqNum]
+           ,[File_Name]
+           ,[File_LoadDate]
+           ,[Count_Staged]
+           ,[Count_Loaded]
+           ,[Count_Rejected])
+
+SELECT NEW.[File_SeqNum]
+      ,NEW.[File_Name]
+      ,NEW.[File_LoadDate]
+      ,NEW.[Count_Staged]
+      ,NEW.[Count_Loaded]
+      ,NEW.[Count_Rejected]
+  FROM [eCoaching].[EC].[Quality_FileList] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Quality_FileList] OLD
+  ON  NEW.File_SeqNum = OLD.File_SeqNum
+WHERE OLD.File_SeqNum IS NULL 
+ORDER BY NEW.File_SeqNum
+GO
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Quality_FileList] OFF
+GO
+
+
+
+
+--***************************
+
+--10e.Quality_Other_FileList
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Quality_Other_FileList] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[Quality_Other_FileList]
+           ([File_SeqNum]
+           ,[File_Name]
+           ,[File_LoadDate]
+           ,[Count_Staged]
+           ,[Count_Loaded]
+           ,[Count_Rejected])
+
+SELECT NEW.[File_SeqNum]
+      ,NEW.[File_Name]
+      ,NEW.[File_LoadDate]
+      ,NEW.[Count_Staged]
+      ,NEW.[Count_Loaded]
+      ,NEW.[Count_Rejected]
+  FROM [eCoaching].[EC].[Quality_Other_FileList] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Quality_Other_FileList] OLD
+  ON  NEW.File_SeqNum = OLD.File_SeqNum
+WHERE OLD.File_SeqNum IS NULL 
+ORDER BY NEW.File_SeqNum
+GO
+
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Quality_Other_FileList] OFF
+GO
+
+
+
+--***************************
+
+--10f.Training_FileList
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Training_FileList] ON
+GO
+
+INSERT INTO [eCoaching_PreEncryption].[EC].[Training_FileList]
+           ([File_SeqNum]
+           ,[File_Name]
+           ,[File_LoadDate]
+           ,[Count_Staged]
+           ,[Count_Loaded]
+           ,[Count_Rejected])
+
+SELECT NEW.[File_SeqNum]
+      ,NEW.[File_Name]
+      ,NEW.[File_LoadDate]
+      ,NEW.[Count_Staged]
+      ,NEW.[Count_Loaded]
+      ,NEW.[Count_Rejected]
+  FROM [eCoaching].[EC].[Training_FileList] NEW LEFT OUTER JOIN [eCoaching_PreEncryption].[EC].[Training_FileList] OLD
+  ON  NEW.File_SeqNum = OLD.File_SeqNum
+WHERE OLD.File_SeqNum IS NULL 
+ORDER BY NEW.File_SeqNum
+GO
+
+SET IDENTITY_INSERT [eCoaching_PreEncryption].[EC].[Training_FileList] OFF
+GO
+
+
+
+
+--***************************
+
+

@@ -5,6 +5,8 @@ Development – F3420-ECLDBD01 - eCoachingDev
 Test - F3420-ECLDBT01 - eCoachingTest
 Production – F3420-ECLDBP01 – eCoaching
 
+-- Last Update to split the EC.Coaching-log updates to multiple steps (Block 8)
+--03/06/2018
 
 ***********************************/
 
@@ -12,12 +14,19 @@ Production – F3420-ECLDBP01 – eCoaching
 	RUN ONE BLOCK AT A TIME
 ***********************************/
 
+
+
 /***********************************
             BLOCK 1
 
 ***********************************/
 
+
+/***********************************
+
 -- BEGIN BLOCK 1
+
+***********************************/
 	
 --1. AT_User
 
@@ -66,8 +75,11 @@ GO
 sp_rename 'EC.AT_User.UserName_Encrypted', 'UserName', 'COLUMN';
 GO
 
+/***********************************
 
 -- END BLOCK 1
+
+***********************************/
 
 
 /*
@@ -85,14 +97,20 @@ FROM EC.AT_User
 
 
 
+
+
 /***********************************
             BLOCK 2
 
 ***********************************/
 
+
+
+/***********************************
+
 -- BEGIN BLOCK 2
 
-
+***********************************/
 --2. EmpID_To_SupID_Stage
 
 
@@ -144,8 +162,11 @@ sp_rename 'EC.EmpID_To_SupID_Stage.Emp_Name_Encrypted', 'Emp_Name', 'COLUMN';
 GO
 
 
+/***********************************
 
 -- END BLOCK 2
+
+***********************************/
 
 
 /*
@@ -159,13 +180,22 @@ FROM [EC].[EmpID_To_SupID_Stage]
 
 
 
+
+
+
+
 /***********************************
             BLOCK 3
 
 ***********************************/
 
 
+
+/***********************************
+
 -- BEGIN BLOCK 3
+
+***********************************/
 
 --3. Employee_Ids_With_Prefixes
 
@@ -214,8 +244,11 @@ GO
 sp_rename 'EC.Employee_Ids_With_Prefixes.Emp_Name_Encrypted', 'Emp_Name', 'COLUMN';
 GO 
 
+/***********************************
 
 -- END BLOCK 3
+
+***********************************/
 
 /*
 Select Emp_LanID_Drop AS [Original LanID], 
@@ -227,13 +260,23 @@ FROM [EC].[Employee_Ids_With_Prefixes]
 
 
 
+
+
+
+
+
+
 /***********************************
             BLOCK 4
 
 ***********************************/
 
 
+/***********************************
+
 -- BEGIN BLOCK 4
+
+***********************************/
 
 --4. Employee_Hierarchy
 
@@ -379,8 +422,12 @@ sp_rename 'EC.Employee_Hierarchy.Emp_Pri_Name_Encrypted', 'Emp_Pri_Name', 'COLUM
 GO 
 
 
+/***********************************
 
 -- END BLOCK 4
+
+***********************************/
+
 
 
 
@@ -413,14 +460,25 @@ GO
 
 
 
+
+
+
+
+
+
+
+
 /***********************************
            
 	 BLOCK 5
 
 ***********************************/
 
+/***********************************
 
 -- BEGIN BLOCK 5
+
+***********************************/
 
 
 --5. EmployeeID_To_LanID
@@ -513,8 +571,11 @@ INSERT INTO [EC].[EmployeeID_To_LanID]
 GO
 
 
+/***********************************
+
 -- END BLOCK 5
 
+***********************************/
 
 
 
@@ -526,14 +587,24 @@ GO
 
 
 
+
+
+
+
+
+
+
+
 /***********************************
             BLOCK 6
 
 ***********************************/
 
+/***********************************
 
 -- BEGIN BLOCK 6
 
+***********************************/
 
 --6. Survey_Response_Header
 
@@ -580,8 +651,11 @@ GO
 sp_rename 'EC.Survey_Response_Header.EmpLanID_Encrypted', 'EmpLanID', 'COLUMN';
 GO
 
+/***********************************
 
 -- END BLOCK 6
+
+***********************************/
 
 
 /*
@@ -594,13 +668,23 @@ FROM [EC].[Survey_Response_Header]
 
 
 
+
+
+
+
+
 /***********************************
             BLOCK 7
 
 ***********************************/
 
 
+/***********************************
+
 -- BEGIN BLOCK 7
+
+***********************************/
+
 
 --7.Historical_Dashboard_ACL
 
@@ -668,9 +752,11 @@ ALTER TABLE [EC].[Historical_Dashboard_ACL] ADD UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 
+/***********************************
 
 -- END BLOCK 7
 
+***********************************/
 
 
 /*
@@ -688,20 +774,43 @@ FROM EC.Historical_Dashboard_ACL
 
 
 
+
+
+
+
 /***********************************
-            BLOCK 8
+        FOR BLOCK 8
+
+****RUN ONE STATEMENT AT A TIME****
+
 
 ***********************************/
 
 
--- BEGIN BLOCK 8
 
 --8. Coaching_Log
+
+
+--Begin 8a
+
 
 ALTER TABLE EC.Coaching_Log
     ADD EmpLanID_Drop nvarchar(50),
     FormName_Drop nvarchar(50)
 GO  
+
+
+--End 8a
+
+
+
+
+--***********************
+
+
+
+
+--Begin 8b
 
 
 UPDATE EC.Coaching_Log  
@@ -710,16 +819,139 @@ FormName_Drop =  FormName
 GO  
 
 
+--End 8b
+
+
+
+
+--***********************
+
+
+
+--Begin 8c
+
 ALTER TABLE EC.Coaching_Log 
 DROP COLUMN EmpLanID
 GO
 
+
+--End 8c
+
+
+
+
+--***********************
+
+
+
+--Begin 8d
+
 Update EC.Coaching_Log 
 SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
+WHERE CoachingID between 1 and 1000000
+GO
+
+--End 8d
+
+
+
+
+
+--***********************
+
+
+
+
+--Begin 8e
+
+Update EC.Coaching_Log 
+SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
+WHERE CoachingID between 1000001 and 2000000
+GO
+
+--End 8e
+
+
+
+
+
+--***********************
+
+
+
+--Begin 8f
+
+Update EC.Coaching_Log 
+SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
+WHERE CoachingID between 2000001 and 3000000
 GO
 
 
+--End 8f
+
+
+
+
+
+--***********************
+
+
+
+
+--Begin 8g
+
+Update EC.Coaching_Log 
+SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
+WHERE CoachingID between 3000001 and 4000000
+GO
+
+--End 8g
+
+
+
+
+--***********************
+
+
+
+--End 8h
+
+Update EC.Coaching_Log 
+SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
+WHERE CoachingID between 4000001 and 5000000
+GO
+
+
+--End 8h
+
+
+
+
+
+--***********************
+
+
+--Begin 8i
+
+Update EC.Coaching_Log 
+SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
+WHERE CoachingID between 5000001 and 6000000
+GO
+
+
+--End 8i
+
+/***********************************
+
 -- END BLOCK 8
+
+***********************************/
+
+
+
+
+
+
 
 
 
@@ -729,8 +961,12 @@ GO
 
 ***********************************/
 
+/***********************************
 
 -- BEGIN BLOCK 9
+
+***********************************/
+
 
 
 --9. Coaching_Log_Archive
@@ -755,7 +991,19 @@ SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,CoachingID)
 GO
 
 
+
+/***********************************
+
 -- END BLOCK 9
+
+***********************************/
+
+
+
+
+
+
+
 
 
 /***********************************
@@ -763,8 +1011,11 @@ GO
 
 ***********************************/
 
+/***********************************
 
 -- BEGIN BLOCK 10
+
+***********************************/
 
 
 --10. Warning_Log
@@ -789,7 +1040,21 @@ SET [FormName] = 'eCL-'+[EmpID] +'-'+ convert(varchar,WarningID)
 GO
 
 
+
+
+/***********************************
+
 -- END BLOCK 10
+
+***********************************/
+
+
+
+
+
+
+
+
 
 
 /***********************************
@@ -797,8 +1062,12 @@ GO
 
 ***********************************/
 
+/***********************************
 
 -- BEGIN BLOCK 11
+
+***********************************/
+
 
 
 --11. AT_Coaching_Inactivate_Reactivate_Audit
@@ -826,7 +1095,21 @@ ON A.CoachingID = CL.CoachingID
 GO 
 
 
+
+
+/***********************************
+
 -- END BLOCK 11
+
+***********************************/
+
+
+
+
+
+
+
+
 
 
 /***********************************
@@ -834,8 +1117,11 @@ GO
 
 ***********************************/
 
+/***********************************
 
 -- BEGIN BLOCK 12
+
+***********************************/
 
 
 --12. AT_Coaching_Reassign_Audit
@@ -864,7 +1150,19 @@ ON A.CoachingID = CL.CoachingID
 GO 
 
 
+
+/***********************************
+
 -- END BLOCK 12
+
+***********************************/
+
+
+
+
+
+
+
 
 
 
@@ -874,7 +1172,12 @@ GO
 ***********************************/
 
 
+/***********************************
+
 -- BEGIN BLOCK 13
+
+***********************************/
+
 
 --13.AT_Warning_Inactivate_Reactivate_Audit
 
@@ -893,7 +1196,18 @@ ON A.WarningID = CL.WarningID
 GO 
 
 
+
+/***********************************
+
 -- END BLOCK 13
+
+***********************************/
+
+
+
+
+
+
 
 
 
@@ -903,7 +1217,11 @@ GO
 ***********************************/
 
 
+/***********************************
+
 -- BEGIN BLOCK 14
+
+***********************************/
 
 
 --14.Training_Coaching_Stage
@@ -913,7 +1231,17 @@ GO
   GO
 
 
+
+
+/***********************************
+
 -- END BLOCK 14
+
+***********************************/
+
+
+
+
 
 
 
@@ -923,7 +1251,13 @@ GO
 ***********************************/
 
 
+/***********************************
+
 -- BEGIN BLOCK 15
+
+***********************************/
+
+
  
 --15.Quality_Other_Coaching_Stage
 
@@ -931,7 +1265,19 @@ GO
   ADD [Reject_Reason] nvarchar(200);
   GO
 
+
+
+/***********************************
+
 -- END BLOCK 15
+
+***********************************/
+
+
+
+
+
+
 
 /***********************************
             THE END

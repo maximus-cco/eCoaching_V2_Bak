@@ -1,0 +1,855 @@
+/*
+fn_bitCheckIfHotTopicSurvey(01).sql
+Last Modified Date: 01/23/2018
+Last Modified By: Susmitha Palacherla
+
+
+Version 01: Document Initial Revision - TFS 9511 - 01/23/2018
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_bitCheckIfHotTopicSurvey' 
+)
+   DROP FUNCTION [EC].[fn_bitCheckIfHotTopicSurvey]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 01/23/2018
+-- Description:	Given an Survey ID , returns a BIt indicating whether the Survey includes a Pilot Question
+-- Last Modified by: Susmitha Palacherla
+-- Revision History
+-- Initial Revision. Created to incorporate Pilot Question. TFS 9511 - 01/23/2018
+-- =============================================
+CREATE FUNCTION [EC].[fn_bitCheckIfHotTopicSurvey] 
+(
+	@intSurveyID INT
+)
+RETURNS BIT
+AS
+BEGIN
+	DECLARE 
+	  @strSiteID INT,
+	  @bitisHotTopic BIT
+	
+
+  SELECT  @strSiteID = [SiteID]
+  FROM [EC].[Survey_Response_Header]
+  WHERE [SurveyID] = @intSurveyID
+  
+    IF @strSiteID IS NULL
+    SET @strSiteID = -1
+
+  SELECT  @bitisHotTopic = [isHotTopic]
+  FROM [EC].[Survey_Sites]
+  WHERE [SiteID] = @strSiteID
+
+  
+  IF  @bitisHotTopic <> 1
+    SET  @bitisHotTopic = 0
+  
+  RETURN   @bitisHotTopic
+  
+END --fn_bitCheckIf @bitisHotTopicSurvey
+
+GO
+
+
+
+
+
+
+
+/*
+fn_bitCheckIfPilotSurvey(01).sql
+Last Modified Date: 01/23/2018
+Last Modified By: Susmitha Palacherla
+
+
+Version 01: Document Initial Revision - TFS 9511 - 01/23/2018
+
+
+*/
+
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_bitCheckIfPilotSurvey' 
+)
+   DROP FUNCTION [EC].[fn_bitCheckIfPilotSurvey]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 01/23/2018
+-- Description:	Given an Survey ID , returns a BIt indicating whether the Survey includes a Pilot Question
+-- Last Modified by: Susmitha Palacherla
+-- Revision History
+-- Initial Revision. Created to incorporate Pilot Question. TFS 9511 - 01/23/2018
+-- =============================================
+CREATE FUNCTION [EC].[fn_bitCheckIfPilotSurvey] 
+(
+	@intSurveyID INT
+)
+RETURNS BIT
+AS
+BEGIN
+	DECLARE 
+	  @strSiteID INT,
+	  @bitisPilot BIT
+	
+
+  SELECT  @strSiteID = [SiteID]
+  FROM [EC].[Survey_Response_Header]
+  WHERE [SurveyID] = @intSurveyID
+  
+    IF @strSiteID IS NULL
+    SET @strSiteID = -1
+
+  SELECT @bitisPilot = [isPilot]
+  FROM [EC].[Survey_Sites]
+  WHERE [SiteID] = @strSiteID
+
+  
+  IF @bitisPilot <> 1
+    SET @bitisPilot = 0
+  
+  RETURN  @bitisPilot
+  
+END --fn_bitCheckIfPilotSurvey
+
+
+GO
+
+
+
+
+
+
+/*
+fn_NPNQualityRecs(03).sql
+Last Modified Date: 11/27/2017
+Last Modified By: Susmitha Palacherla
+
+Version 03: Updated to support protection sensitive data. Removed LanID from Select. TFS 7856 - 11/27/2017
+Version 02: Additional update from V&V feedback - TFS 5653 - 03/02/2017
+Version 01: Document Initial Revision - TFS 5653 - 02/28/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_NPNQualityRecs' 
+)
+   DROP FUNCTION [EC].[fn_NPNQualityRecs]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+-- =============================================
+-- Author:		      Susmitha Palacherla
+-- Create date:       02/28/2017
+-- Description:	
+-- Selects the IQS logs eligible for a follow up NPN log for given date range.
+-- Last update by:   Susmitha Palacherla
+-- Initial Revision - Created as part of  TFS 5653 - 02/28/2017
+-- Updated to support protection sensitive data. Removed LanID from Select. TFS 7856 - 11/27/2017
+-- =============================================
+CREATE FUNCTION [EC].[fn_NPNQualityRecs] 
+(
+	@intBeginDate int,  -- YYYYMMDD
+	@intEndDate int     -- YYYYMMDD
+)
+RETURNS 
+@Table_NPNQualityRecs TABLE 
+(
+    [EmpID] [nvarchar](10) NOT NULL,
+	[EmpLanID] [nvarchar](30) NOT NULL,
+	[ProgramName] [nvarchar](20) NULL,
+	[SiteID] [int] NOT NULL,
+	[EventDate] [datetime] NULL,
+	[VerintID] [nvarchar](30) NULL,
+	[NPNCode] [nvarchar](10) NOT NULL
+
+)
+AS
+BEGIN
+
+DECLARE
+
+@BeginDate NVARCHAR(8),
+@EndDate NVARCHAR(8)
+
+
+  
+  INSERT @Table_NPNQualityRecs
+  (
+    [EmpID], 
+	[EmpLanID], 
+	[ProgramName], 
+	[SiteID], 
+	[EventDate], 
+	[VerintID], 
+	[NPNCode]
+ 
+  )
+ 
+  SELECT DISTINCT CL.[EmpID], 
+	'-',
+	SUBSTRING(CL.[ProgramName], 1,20),
+	CL.[SiteID], 
+	CL.[EventDate], 
+	CL.[VerintID],
+    substring(CL.[Description], patindex ('%#NPNFFM%', CL.[Description]), 8) as NPNCode
+    
+FROM EC.Coaching_Log CL with (nolock) join EC.Employee_Hierarchy EH
+ON CL.EmpID = EH. Emp_ID
+left outer join (Select * from EC.Coaching_Log with (nolock) where SourceID = 218)CN
+on CL.VerintID  = CN.VerintID 
+and CL.EmpID  = CN.EmpID 
+and CL.EventDate = CN.EventDate
+where CL.[SourceID] = 223
+AND CL.[Description] like '%NPNFFM%'
+AND NOT (CL.[Description] like '%PPOM%' OR CL.VerintFormName like '%PPOM%')
+AND CL.[StatusID] <> 2
+AND EH.[Active] = 'A'
+AND [EC].[fn_intDatetime_to_YYYYMMDD](CL.[SubmittedDate]) BETWEEN @intBeginDate AND @intEndDate 
+and (CN.VerintID is null and CN.EmpID is null and CN.EventDate is null) 
+
+
+
+RETURN 
+END -- fn [ec].[fn_NPNQualityRecs] 
+
+GO
+
+
+
+
+
+
+
+/*
+fn_nvcGetEmpIdFromLanId(02).sql
+Last Modified Date: 11/01/2017
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_nvcGetEmpIdFromLanId' 
+)
+   DROP FUNCTION [EC].[fn_nvcGetEmpIdFromLanId]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	=============================================
+--	Author:		Susmitha Palacherla
+--	Create Date: 02/05/2014
+--	Description:	 
+--  *  Given an LAN ID and a date, return the  Employee ID of the
+--  person who had that LAN ID on that date.
+-- Last Modified By: Susmitha Palacherla
+-- Modified to fix the logic for looking up the Employee ID - SCR 12983 - 07/25/2014
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+--	=============================================
+CREATE FUNCTION [EC].[fn_nvcGetEmpIdFromLanId] 
+(
+  @nvcLanID Nvarchar(20),
+  @dtmDate Datetime
+)
+RETURNS nvarchar(10)
+AS
+BEGIN
+ 
+
+--OPEN SYMMETRIC KEY [CoachingKey]  
+--DECRYPTION BY CERTIFICATE [CoachingCert]
+
+
+	 DECLARE @nvcEmpID Nvarchar(10),
+	         @intDate Int,
+	         @intlanempid Int,
+	         @intehempid Int
+	
+	SET @intDate = EC.fn_intDatetime_to_YYYYMMDD (@dtmDate)
+	
+	-- Get count of Employee IDs for given lan ID in the Employe ID To lan ID Table
+	
+		SET @intlanempid = (
+	SELECT COUNT(EmpID)
+	FROM EC.View_EmployeeID_To_LanID
+	WHERE 
+	LanID = @nvclanID AND
+	@intDate BETWEEN StartDate AND EndDate
+	)
+	
+	-- IF at least one Employee ID is found
+	
+IF  @intlanempid > 0
+
+-- If exactly one Employee is Found return that Employee ID
+BEGIN
+
+IF  @intlanempid = 1
+	BEGIN
+	    SET @nvcEmpID = (
+	   SELECT DISTINCT EmpID
+	   FROM EC.View_EmployeeID_To_LanID
+	    WHERE 
+	    LanID = @nvclanID AND
+	    @intDate BETWEEN StartDate AND EndDate)
+	END
+	  
+ELSE 	
+
+-- If more than one Employee iD is found, return the one with the latest start date
+  
+	BEGIN
+	  	 SET @nvcEmpID = (
+		  SELECT DISTINCT LATEST.EmpID FROM
+		 (SELECT LAN.* FROM EC.View_EmployeeID_To_LanID LAN
+		  JOIN (SELECT LanID, MAX(StartDate)StartDate FROM [EC].[View_EmployeeID_To_LanID] GROUP BY LanID)MLAN
+		  ON LAN.LanID = MLAN.lanID 
+		  AND LAN.StartDate = MLAN.StartDate) AS LATEST
+		  WHERE LATEST.LanID =  @nvclanID AND 
+		  @intDate BETWEEN LATEST.StartDate AND LATEST.EndDate
+		  )
+     END
+	END     
+ELSE
+
+-- If No Employee Ids are found in the Employee ID To lan ID Table
+-- Get count of Employee IDs for given Lan ID in the Employe Hierarchy Table
+
+ BEGIN
+	SET @intehempid = (
+	SELECT COUNT(Emp_ID)
+	FROM EC.Employee_Hierarchy
+	WHERE CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @nvclanID AND
+	@intDate BETWEEN Start_Date AND End_Date
+	)
+-- If exactly one Employee ID is found return it
+	
+IF  @intehempid = 1	
+
+	 BEGIN
+	      SET @nvcEmpID = 
+		  (SELECT DISTINCT Emp_ID
+		  FROM EC.Employee_Hierarchy
+		  WHERE CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @nvclanID
+		  AND @intDate BETWEEN Start_Date AND End_Date
+		  )
+     END
+ -- If more than one Employee ID is found, return the one with the latest start date    
+ 
+  ELSE   
+       BEGIN
+	  	 SET @nvcEmpID = (
+		  SELECT DISTINCT LATEST.Emp_ID FROM
+		 (SELECT EH.* FROM EC.Employee_Hierarchy EH
+		  JOIN (SELECT CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Emp_LanID], MAX(Start_Date)Start_Date
+		  FROM EC.Employee_Hierarchy GROUP BY CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) )MEH
+		  ON CONVERT(nvarchar(30),DecryptByKey(EH.Emp_LanID))  = MEH.Emp_LanID 
+		  AND EH.Start_Date = MEH.Start_Date) AS LATEST
+		  WHERE LATEST.Emp_LanID =  @nvclanID AND 
+		  @intDate BETWEEN LATEST.Start_Date AND LATEST.End_Date
+		  )
+     END
+ END	
+ 
+ -- If no Employee ID found for given Lan ID in the Employee ID to Lan ID table
+ -- Then return '999999'
+   
+IF @nvcEmpID IS NULL 
+SET @nvcEmpID = '999999'
+RETURN 	@nvcEmpID
+
+END --fn_nvcGetEmpIdFromLanId
+
+
+GO
+
+
+
+
+
+/*
+fn_strEmpEmailFromEmpID(02).sql
+Last Modified Date: 11/01/2017
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strEmpEmailFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strEmpEmailFromEmpID]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 05/13/2015
+-- Description:	Given an Employee ID, fetches the Email address from the Employee Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version : Support LCSAT feed - SCR 14818 - 05/13/2015
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+-- =============================================
+CREATE FUNCTION [EC].[fn_strEmpEmailFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strEmpEmail nvarchar(50)
+
+
+  
+  SELECT @strEmpEmail = CONVERT(nvarchar(50),DecryptByKey(Emp_Email)) 
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strEmpId
+  
+  IF  @strEmpEmail IS NULL 
+  SET @strEmpEmail = N'UnKnown'
+  
+  RETURN  @strEmpEmail 
+END -- fn_strEmpEmailFromEmpID
+
+
+GO
+
+
+
+
+/*
+fn_strEmpLanIDFromEmpID(02).sql
+Last Modified Date: 11/01/2017
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strEmpLanIDFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strEmpLanIDFromEmpID]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 05/13/2015
+-- Description:	Given an Employee ID, fetches the Lan ID from the Employee Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version : Support LCSAT feed - SCR 14818 - 05/13/2015
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+-- =============================================
+CREATE FUNCTION [EC].[fn_strEmpLanIDFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strEmpLanID nvarchar(30)
+
+
+  
+  SELECT @strEmpLanID = CONVERT(nvarchar(30),DecryptByKey(Emp_LanID))
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strEmpId
+  
+  IF  @strEmpLanID IS NULL 
+  SET @strEmpLanID = N'UnKnown'
+  
+  RETURN  @strEmpLanID 
+END -- fn_strEmpLanIDFromEmpID
+
+
+GO
+
+
+
+
+
+
+/*
+fn_strEmpNameFromEmpID(02).sql
+Last Modified Date: 11/01/2017
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strEmpNameFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strEmpNameFromEmpID]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 01/05/2015
+-- Description:	Given an Employee ID, fetches the User Name from the Employee Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version - Support loading ETS Compliance Reports - : SCR 14031 - 01/05/2015
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+-- =============================================
+CREATE FUNCTION [EC].[fn_strEmpNameFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strEmpName nvarchar(40)
+
+
+  
+  SELECT @strEmpName = CONVERT(nvarchar(70),DecryptByKey(Emp_Name))
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strEmpId
+  
+  IF  @strEmpName IS NULL 
+  SET  @strEmpName = N'UnKnown'
+  
+  RETURN  @strEmpName 
+END
+
+GO
+
+
+
+
+
+
+
+/*
+fn_strMgrEmailFromEmpID(02).sql
+Last Modified Date: 11/01/2017
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strMgrEmailFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strMgrEmailFromEmpID]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 10/21/2016
+-- Description:	Given an Employee ID, fetches the Email address of the Employee's Manager from the  Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version-Support Mgr Email for Reassigned Mgrs and Mgrs - TFS 4353 - 10/21/2016
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+-- Fixed to pull correct Employee Email attribute for the Mgrs ID. TFS 7856 - 03/08/2018
+-- =============================================
+CREATE FUNCTION [EC].[fn_strMgrEmailFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(50)
+AS
+BEGIN
+	DECLARE 
+	  @strMgrEmpID nvarchar(10)
+	  ,@strMgrEmail nvarchar(50)
+
+  SET @strMgrEmpID = (SELECT Mgr_ID
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID)
+  
+  IF     (@strMgrEmpID IS NULL OR @strMgrEmpID = 'Unknown')
+  SET    @strMgrEmpID = N'999999'
+  
+ SET @strMgrEmail = (SELECT CONVERT(nvarchar(50),DecryptByKey(Emp_Email))
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strMgrEmpID)
+  
+  IF  @strMgrEmail IS NULL 
+  SET @strMgrEmail = N'UnKnown'
+  
+  RETURN  @strMgrEmail 
+END -- fn_strMgrEmailFromEmpID
+
+
+GO
+
+
+
+
+
+
+/*
+fn_strSupEmailFromEmpID(02).sql
+Last Modified Date: 11/01/2017
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strSupEmailFromEmpID' 
+)
+   DROP FUNCTION [EC].[fn_strSupEmailFromEmpID]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date: 3/8/2016
+-- Description:	Given an Employee ID, fetches the Email address of the Employee's Supervisor from the  Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Initial version -  Review Supervisor Emails for LCS Reminders - TFS 2182 - 3/8/2016
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+-- Fixed to pull correct Employee Email attribute for the Sups ID. TFS 7856 - 03/08/2018
+-- =============================================
+CREATE FUNCTION [EC].[fn_strSupEmailFromEmpID] 
+(
+	@strEmpId nvarchar(20)  --Emp ID of person 
+)
+RETURNS NVARCHAR(50)
+AS
+BEGIN
+	DECLARE 
+	  @strSupEmpID nvarchar(10)
+	  ,@strSupEmail nvarchar(50)
+
+  SET @strSupEmpID = (SELECT Sup_ID
+  FROM [EC].[Employee_Hierarchy]
+  WHERE [Emp_ID] = @strEmpID)
+  
+  IF     (@strSupEmpID IS NULL OR @strSupEmpID = 'Unknown')
+  SET    @strSupEmpID = N'999999'
+  
+ SET @strSupEmail = (SELECT CONVERT(nvarchar(50),DecryptByKey(Emp_Email)) 
+  FROM [EC].[Employee_Hierarchy]
+  WHERE Emp_ID = @strSupEmpID)
+  
+  IF  @strSupEmail IS NULL 
+  SET @strSupEmail = N'UnKnown'
+  
+  RETURN  @strSupEmail 
+END -- fn_strSupEmailFromEmpID
+
+
+GO
+
+
+
+
+
+
+/*
+fn_strUserName(02).sql
+Last Modified Date: 11/01/2017
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strUserName' 
+)
+   DROP FUNCTION [EC].[fn_strUserName]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date:09/21/2012
+-- Description:	Given a LAN ID, fetches the User Name from the Employee Hierarchy table.
+-- If no match is found returns 'Unknown'
+-- Last Modified By: Susmitha Palacherla
+-- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+-- =============================================
+CREATE FUNCTION [EC].[fn_strUserName] 
+(
+	@strUserLanId nvarchar(30)  -- LAN ID of person requesting CSR scorecard
+)
+RETURNS NVARCHAR(30)
+AS
+BEGIN
+	DECLARE 
+	  @strUserName nvarchar(30)
+
+  -- Strip domain off of the @strRequesterLanId parameter.
+  --SET @strUserLanId = RTRIM(SUBSTRING(@strUserLanId, CHARINDEX(N'\', @strUserLanId) + 1, 100))
+  SET @strUserLanId = SUBSTRING(@strUserLanId, CHARINDEX('\', @strUserLanId) + 1, LEN(@strUserLanId))
+
+  
+  SELECT @strUserName = CONVERT(nvarchar(70),DecryptByKey(Emp_Name))
+  FROM [EC].[Employee_Hierarchy]
+  WHERE CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @strUserLanId
+  
+  IF  @strUserName IS NULL 
+  SET  @strUserName = N'UnKnown'
+  
+  RETURN  @strUserName 
+END
+
+GO
+
+
+
+
+
+
