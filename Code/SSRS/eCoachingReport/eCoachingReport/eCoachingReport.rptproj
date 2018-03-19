@@ -188,5 +188,18 @@
         <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
       </Options>
     </Configuration>
+    <Configuration>
+      <Name>Prod</Name>
+      <Options>
+        <OutputPath>bin\Debug</OutputPath>
+        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+        <TargetServerURL>http://f3420-ecldbp01.vangent.local/ReportServer</TargetServerURL>
+        <TargetFolder>/eCoaching/Production/Reports</TargetFolder>
+        <TargetDataSourceFolder>/eCoaching/Production/DataSources</TargetDataSourceFolder>
+        <TargetDatasetFolder>/eCoaching/Production/Datasets</TargetDatasetFolder>
+        <OverwriteDatasets>true</OverwriteDatasets>
+        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+      </Options>
+    </Configuration>
   </Configurations>
 </Project>

@@ -11,6 +11,7 @@ Global
 		DebugLocal|Any PC = DebugLocal|Any PC
 		Dev|Any PC = Dev|Any PC
 		LoadTest|Any PC = LoadTest|Any PC
+		Prod|Any PC = Prod|Any PC
 		SysTest|Any PC = SysTest|Any PC
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -24,6 +25,9 @@ Global
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.ActiveCfg = LoadTest
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.Build.0 = LoadTest
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.Deploy.0 = LoadTest
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Prod|Any PC.ActiveCfg = Prod
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Prod|Any PC.Build.0 = Prod
+		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Prod|Any PC.Deploy.0 = Prod
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.ActiveCfg = SysTest
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.Build.0 = SysTest
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.Deploy.0 = SysTest
