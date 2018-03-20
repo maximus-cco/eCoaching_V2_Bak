@@ -1,9 +1,9 @@
 /*
-sp_Select_Employees_BySite_NotIn_Hist_ACL(01).sql
-Last Modified Date: 01/18/2017
+sp_Select_Employees_BySite_NotIn_Hist_ACL(02).sql
+Last Modified Date: 03/20/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02:  Added IS NOT NULL TO NOT IN Sub query - TFS 7856 - 03/20/2018
 Version 01:  Initial Revision - Created during encryption of secure data. TFF 7856 - 01/18/2017
 
 */
@@ -36,6 +36,7 @@ GO
 --	Description: Returns active records from Historical Dashboard ACL table
 --  Revision History:    
 --  Initial Revision. Created to replace embedded sql in UI code during encryption of sensitive data. TFS 7856. 01/18/2018
+--  Added IS NOT NULL TO NOT IN Sub query - TFS 7856 - 03/20/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Employees_BySite_NotIn_Hist_ACL]
 @SiteId INT
@@ -60,12 +61,10 @@ WHERE eh.Active = 'A'
 AND eh.Emp_Site = @siteCity
 AND CONVERT(nvarchar(30),DecryptByKey(eh.Emp_LanID))
 NOT IN (SELECT CONVERT(nvarchar(30),DecryptByKey(User_LanID))
-       FROM EC.Historical_Dashboard_ACL where End_Date = 99991231)
+       FROM EC.Historical_Dashboard_ACL where End_Date = 99991231
+       AND CONVERT(nvarchar(30),DecryptByKey(User_LanID)) IS NOT NULL)
        ORDER BY Emp_Name
 	 
-
-
-
 
 
 CLOSE SYMMETRIC KEY [CoachingKey]      
