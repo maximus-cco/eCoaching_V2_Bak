@@ -67,9 +67,9 @@ GO
 --***********************************************************************
 
 
--- UQ__Historic__431CB6F021B6055D for Test Only
---ALTER TABLE [EC].[Historical_Dashboard_ACL] DROP CONSTRAINT [UQ__Historic__431CB6F021B6055D]
---GO
+-- UQ__Historic__431CB6F0267ABA7A for Prod Only
+ALTER TABLE [EC].[Historical_Dashboard_ACL] DROP CONSTRAINT [UQ__Historic__431CB6F0267ABA7A]
+GO
 
 
 DROP STATISTICS [EC].[Employee_Hierarchy].[_dta_stat_133575514_2_1_10_16]
@@ -90,8 +90,3 @@ DROP STATISTICS [EC].[Employee_Hierarchy].[_dta_stat_133575514_10_1]
 GO
 
 --***********************************************************************
-
-
--- UQ__Historic__431CB6F0267ABA7A for Prod Only
---ALTER TABLE [EC].[Historical_Dashboard_ACL] DROP CONSTRAINT [UQ__Historic__431CB6F0267ABA7A]
---GO
