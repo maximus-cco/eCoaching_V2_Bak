@@ -12,8 +12,8 @@
   DTS:ObjectName="IQS_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="278"
-  DTS:VersionGUID="{35070F78-52D9-4C17-93F0-10C47A4E0869}">
+  DTS:VersionBuild="290"
+  DTS:VersionGUID="{62C66152-6920-4C94-BDA6-FCDD74DA0150}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -37,7 +37,7 @@
       DTS:ObjectName="destnationdb">
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=f3420-ecldbd01;Initial Catalog=eCoachingDevEncrypt;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS-Verint_Coaching-{5D10059B-A5CC-4046-89F4-274018AD660B}destnationdb;" />
+          DTS:ConnectionString="Data Source=f3420-ecldbd01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS-Verint_Coaching-{5D10059B-A5CC-4046-89F4-274018AD660B}destnationdb;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -52,7 +52,7 @@ Right("0" + (DT_STR,4,1252) DatePart("m",getdate()),2) +
 Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv.zip.encrypt"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\Test_eCL_IQS_Scorecard_20171206.csv.zip.encrypt" />
+          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\Test_eCL_IQS_Scorecard_20180326.csv.zip.encrypt" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -74,7 +74,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
           DTS:AlwaysCheckForRowDelimiters="False"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_out\Test_eCL_IQS_Scorecard_20171206.csv">
+          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_out\Test_eCL_IQS_Scorecard_20180326.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -83,7 +83,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 0"
-              DTS:DTSID="{A593B2FD-0311-4EF0-8A4C-42F967090584}"
+              DTS:DTSID="{CE6625C2-D52D-4DC7-A312-5704B9C59203}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -92,7 +92,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 1"
-              DTS:DTSID="{97B9487B-1586-426D-9E62-0D09B0ED0CE1}"
+              DTS:DTSID="{3AF99A23-334E-4D5B-993F-5A1A08AAB8BE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -101,7 +101,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 2"
-              DTS:DTSID="{F4B33C89-EC86-485A-B50E-A284066762C0}"
+              DTS:DTSID="{C864A128-FB66-45A1-8468-2F3AC1BA2995}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -110,7 +110,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 3"
-              DTS:DTSID="{E3BC86F9-93E5-43BA-9D4D-FE77C5D29EAA}"
+              DTS:DTSID="{2272C8BC-7047-431E-918E-EAB037FE96D4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -119,7 +119,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 4"
-              DTS:DTSID="{E6C370CF-CF39-48D6-BACD-84349C14C184}"
+              DTS:DTSID="{4EB67D2C-B8AA-4E3F-B677-D83DB76A4CCC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -128,7 +128,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 5"
-              DTS:DTSID="{E9A32524-8F19-454C-BE5D-A92770C07F72}"
+              DTS:DTSID="{47FA5718-6B52-4A99-B91F-BCD9E28BF98C}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -137,7 +137,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 6"
-              DTS:DTSID="{B7F57D1B-27D2-443A-99F6-8B4AD2279A70}"
+              DTS:DTSID="{927C0234-6505-4B3E-AD6F-9D9965DB621D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -146,7 +146,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 7"
-              DTS:DTSID="{CD87E5E4-909D-4F38-A2B0-37AEB40B24E6}"
+              DTS:DTSID="{F16DC0BA-D7FB-46C6-9200-BB2E7A3475A7}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -155,7 +155,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 8"
-              DTS:DTSID="{816A3B85-41A6-4650-86F4-B29A8FFB4981}"
+              DTS:DTSID="{FEDE7684-02BC-4B8E-9F63-1D78BB006B50}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -164,7 +164,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 9"
-              DTS:DTSID="{81710A23-8CC9-417C-BCBB-C2253E1AF02F}"
+              DTS:DTSID="{330E2000-318E-46DA-87AE-1A081DF21316}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -173,7 +173,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 10"
-              DTS:DTSID="{2A6AA067-662B-48B1-89EA-812F8B25A865}"
+              DTS:DTSID="{444FDE77-B196-4AF8-BCCD-92747CFEAD5E}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -182,7 +182,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 11"
-              DTS:DTSID="{034BAAC6-3397-4C08-8B62-FA794AF487D8}"
+              DTS:DTSID="{B9803121-1995-4CB7-8F9A-D4555CA6A5CD}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -191,7 +191,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 12"
-              DTS:DTSID="{97278AF4-014B-482B-9CD0-922527859C7F}"
+              DTS:DTSID="{CECE924F-7414-4E93-A8DA-DD86957D3FD3}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -200,7 +200,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 13"
-              DTS:DTSID="{3CED7134-6926-496E-832B-170E7542ECC8}"
+              DTS:DTSID="{770F13F7-73B6-471E-963C-FB958BFBCF53}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -209,7 +209,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 14"
-              DTS:DTSID="{36706B89-9510-48DE-95E2-2E4CADFB0424}"
+              DTS:DTSID="{7CAC3BBD-8DE6-43F7-9C35-CE0CBBF1CAB7}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -218,7 +218,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 15"
-              DTS:DTSID="{CC2F75AA-4762-4D00-823E-2059940426DC}"
+              DTS:DTSID="{0B89F81A-EBD0-446F-819D-77C391D4B3BA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -227,7 +227,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 16"
-              DTS:DTSID="{9F760F59-9FF5-4BC0-B8F9-0F63A268092E}"
+              DTS:DTSID="{588E6ABF-5A45-4930-98AB-5B3E4FF1E00D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -236,7 +236,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 17"
-              DTS:DTSID="{B764C00E-CE01-4EE2-85E1-CD2A9D6A3B8C}"
+              DTS:DTSID="{93D90799-C9B5-45BC-A54C-C5B394097E82}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -245,7 +245,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 18"
-              DTS:DTSID="{78214508-4B5E-41F2-928C-56DDCF52183F}"
+              DTS:DTSID="{6AD794C7-CB95-43BE-BE63-8BFA84F945AB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -254,7 +254,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 19"
-              DTS:DTSID="{87453BC1-DBF4-4643-885C-7C06F06393CB}"
+              DTS:DTSID="{00B6FE1F-67D3-40E3-AF8B-DF9043BE13BE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -263,7 +263,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 20"
-              DTS:DTSID="{2211AC33-D7F5-49F5-8AFF-739E6AE9CCF0}"
+              DTS:DTSID="{2A7CD8E8-CFF1-40E9-8198-98FC6612AA4F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -272,7 +272,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 21"
-              DTS:DTSID="{620B85B9-B839-43D5-AC42-689F2640A86C}"
+              DTS:DTSID="{42E171F2-99E9-4B7D-8CA6-00540BF563AF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -281,16 +281,25 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 22"
-              DTS:DTSID="{6459B8B5-CF02-4E14-A8BE-1C2A2C7C965C}"
+              DTS:DTSID="{B7FBC08E-D424-4C2C-88CF-3F6D76ACFA0F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
-              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:ColumnDelimiter="_x007C_"
               DTS:MaximumWidth="3"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Column 23"
-              DTS:DTSID="{6C6D6B25-7051-4E5E-A263-44432EB73190}"
+              DTS:DTSID="{6F333591-A365-4A40-9870-BE795E83BB1B}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="10"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Column 24"
+              DTS:DTSID="{125AA44C-4102-4809-AA64-FFF2B2637D9C}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -352,7 +361,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="DayOfWeek">
       <DTS:VariableValue
-        DTS:DataType="3">4</DTS:VariableValue>
+        DTS:DataType="3">2</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -381,7 +390,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="EncryptedFile">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\Test_eCL_IQS_Scorecard_20171206.csv.zip.encrypt</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\Test_eCL_IQS_Scorecard_20180326.csv.zip.encrypt</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -439,7 +448,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="FileName">
       <DTS:VariableValue
-        DTS:DataType="8">Test_eCL_IQS_Scorecard_20171206.csv</DTS:VariableValue>
+        DTS:DataType="8">Test_eCL_IQS_Scorecard_20180326.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -1404,6 +1413,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
                       cachedLength="3"
                       cachedName="isCoachingMonitor"
                       lineageId="Package\Load  Quality Staging Table\IQS Decrypted File.Outputs[Flat File Source Output].Columns[isCoachingMonitor]" />
+                    <inputColumn
+                      refId="Package\Load  Quality Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[EvalStatus]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="EvalStatus"
+                      lineageId="Package\Load  Quality Staging Table\IQS Decrypted File.Outputs[Flat File Source Output].Columns[EvalStatus]" />
                   </inputColumns>
                   <externalMetadataColumns />
                 </input>
@@ -1909,6 +1925,27 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
                           dataType="System.Int32"
                           description="Specifies the input column used as the source of data for the conversion."
                           name="SourceInputColumnLineageID">#{Package\Load  Quality Staging Table\IQS Decrypted File.Outputs[Flat File Source Output].Columns[isCoachingMonitor]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of EvalStatus]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="10"
+                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of EvalStatus]"
+                      name="Copy of EvalStatus"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\Load  Quality Staging Table\IQS Decrypted File.Outputs[Flat File Source Output].Columns[EvalStatus]}</property>
                         <property
                           dataType="System.Boolean"
                           description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -2501,6 +2538,28 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
                           name="UseBinaryFormat">false</property>
                       </properties>
                     </outputColumn>
+                    <outputColumn
+                      refId="Package\Load  Quality Staging Table\IQS Decrypted File.Outputs[Flat File Source Output].Columns[EvalStatus]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load  Quality Staging Table\IQS Decrypted File.Outputs[Flat File Source Output].ExternalColumns[Column 24]"
+                      length="10"
+                      lineageId="Package\Load  Quality Staging Table\IQS Decrypted File.Outputs[Flat File Source Output].Columns[EvalStatus]"
+                      name="EvalStatus"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the data is in binary format."
+                          name="UseBinaryFormat">false</property>
+                      </properties>
+                    </outputColumn>
                   </outputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -2648,6 +2707,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
                       dataType="str"
                       length="3"
                       name="Column 23" />
+                    <externalMetadataColumn
+                      refId="Package\Load  Quality Staging Table\IQS Decrypted File.Outputs[Flat File Source Output].ExternalColumns[Column 24]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="Column 24" />
                   </externalMetadataColumns>
                 </output>
                 <output
@@ -2894,6 +2959,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
                       cachedName="isCoachingMonitor"
                       externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].ExternalColumns[isCoachingMonitor]"
                       lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[isCoachingMonitor]" />
+                    <inputColumn
+                      refId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].Columns[Copy of EvalStatus]"
+                      cachedDataType="wstr"
+                      cachedLength="10"
+                      cachedName="Copy of EvalStatus"
+                      externalMetadataColumnId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].ExternalColumns[EvalStatus]"
+                      lineageId="Package\Load  Quality Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of EvalStatus]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -3016,6 +3088,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
                       dataType="wstr"
                       length="200"
                       name="Reject_Reason" />
+                    <externalMetadataColumn
+                      refId="Package\Load  Quality Staging Table\Quality Coaching Stage.Inputs[OLE DB Destination Input].ExternalColumns[EvalStatus]"
+                      dataType="wstr"
+                      length="10"
+                      name="EvalStatus" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -3597,6 +3674,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
                           dataType="wstr"
                           length="200"
                           name="Reject_Reason" />
+                        <externalMetadataColumn
+                          refId="Package\NPN Record Load\Select NPN Logs for Load\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EvalStatus]"
+                          dataType="wstr"
+                          length="10"
+                          name="EvalStatus" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -4662,11 +4744,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 11]"
       DTS:CreationName=""
-      DTS:DTSID="{ECD601EF-F0E3-4A67-A654-981BAFEAC240}"
+      DTS:DTSID="{FCC9BF51-D21E-497E-A40C-59ABDE6C66AA}"
       DTS:From="Package\Load Coaching_Log"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 11"
-      DTS:To="Package\Update Quality Fact Table" />
+      DTS:To="Package\Load File List table" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
       DTS:CreationName=""
@@ -4703,16 +4785,16 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
       DTS:CreationName=""
-      DTS:DTSID="{5BEBA7B5-9BD4-4BC0-884A-C8995EC0BA39}"
-      DTS:From="Package\Update Quality Fact Table"
+      DTS:DTSID="{B217282B-B5CD-4339-B4FA-AE779F077AD4}"
+      DTS:From="Package\Update Coaching_Log and Coaching_Log_Reason tables"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 6"
-      DTS:To="Package\Load File List table" />
+      DTS:To="Package\Update Quality Fact Table" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
       DTS:CreationName=""
-      DTS:DTSID="{10E13F25-5E27-4D35-87D0-DDE097487F26}"
-      DTS:From="Package\Update Coaching_Log and Coaching_Log_Reason tables"
+      DTS:DTSID="{42783DC4-4850-4F31-8DE8-A389F3A3D93E}"
+      DTS:From="Package\Update Quality Fact Table"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 7"
       DTS:To="Package\Load Coaching_Log" />
@@ -4809,7 +4891,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <NodeLayout
           Size="136,44"
           Id="Package\Delete File"
-          TopLeft="121.27142694629,751.388230618143" />
+          TopLeft="121.84285552745,744.047054044598" />
         <NodeLayout
           Size="136,44"
           Id="Package\Load  Quality Staging Table"
@@ -4817,11 +4899,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <NodeLayout
           Size="136,44"
           Id="Package\Load Coaching_Log"
-          TopLeft="153.271427491247,519.388233389409" />
+          TopLeft="138.414284381089,593.411763839325" />
         <NodeLayout
           Size="136,44"
           Id="Package\Load File List table"
-          TopLeft="132.699998569488,657.03528991356" />
+          TopLeft="128.128569920208,671.717643060651" />
         <NodeLayout
           Size="108.8,35.2"
           Id="Package\NPN Record Load\Get Dates for Previous Week"
@@ -4960,7 +5042,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           PanelSize="235.2,381.6"
           Size="235.2,424.8"
           Id="Package\NPN Record Load"
-          TopLeft="412.014289490057,410.54116490506" />
+          TopLeft="412.585718071217,410.54116490506" />
         <NodeLayout
           Size="108,41.6"
           Id="Package\Pause"
@@ -4976,15 +5058,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <NodeLayout
           Size="136,52"
           Id="Package\Update Coaching_Log and Coaching_Log_Reason tables"
-          TopLeft="168.128570601405,447.152939829447" />
+          TopLeft="168.699999182565,445.929410400523" />
         <NodeLayout
           Size="201.6,41.6"
           Id="Package\Update Quality Fact Table"
-          TopLeft="128.699998501369,590.352937495749" />
+          TopLeft="118.41428404049,523.058818904916" />
         <NodeLayout
           Size="164,41.6"
           Id="Package\Update Staging table and reject records"
-          TopLeft="157.557142088364,380.470583035954" />
+          TopLeft="159.271427831844,381.082347750416" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
           TopLeft="299.557141952125,132.023529137212">
@@ -5067,30 +5149,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 11]"
-          TopLeft="221.271427491247,563.388233389409">
+          TopLeft="206.414284381089,637.411763839325">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="8.22857101012235,26.9647041063407"
+              EndConnector="-10.285714460881,34.3058792213259"
               Start="0,0"
-              End="8.22857101012235,19.4647041063407">
+              End="-10.285714460881,26.8058792213259">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,9.48235205317036" />
+                    End="0,13.1529396106629" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,9.48235205317036"
-                    Point2="0,13.4823520531704"
-                    Point3="4,13.4823520531704" />
+                    Point1="0,13.1529396106629"
+                    Point2="0,17.1529396106629"
+                    Point3="-4,17.1529396106629" />
                   <mssgle:LineSegment
-                    End="4.22857101012235,13.4823520531704" />
+                    End="-6.285714460881,17.1529396106629" />
                   <mssgle:CubicBezierSegment
-                    Point1="4.22857101012235,13.4823520531704"
-                    Point2="8.22857101012235,13.4823520531704"
-                    Point3="8.22857101012235,17.4823520531704" />
+                    Point1="-6.285714460881,17.1529396106629"
+                    Point2="-10.285714460881,17.1529396106629"
+                    Point3="-10.285714460881,21.1529396106629" />
                   <mssgle:LineSegment
-                    End="8.22857101012235,19.4647041063407" />
+                    End="-10.285714460881,26.8058792213259" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5135,18 +5217,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="240.699999250684,357.788233535265">
+          TopLeft="241.557142122424,357.788233535265">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,22.6823495006889"
+              EndConnector="0,23.2941142151511"
               Start="0,0"
-              End="0,15.1823495006889">
+              End="0,15.7941142151511">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,15.1823495006889" />
+                    End="0,15.7941142151511" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5157,18 +5239,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="237.842856344884,422.070583035954">
+          TopLeft="238.985713507204,422.682347750416">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,25.082356793493"
+              EndConnector="0,23.2470626501066"
               Start="0,0"
-              End="0,17.582356793493">
+              End="0,15.7470626501066">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,17.582356793493" />
+                    End="0,15.7470626501066" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5179,30 +5261,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 5]"
-          TopLeft="200.699998569488,701.03528991356">
+          TopLeft="192.985712723829,715.717643060651">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-32.761904956532,50.3529407045834"
+              EndConnector="0,28.3294109839466"
               Start="0,0"
-              End="-32.761904956532,42.8529407045834">
+              End="0,20.8294109839466">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,25.860464836439" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,25.860464836439"
-                    Point2="0,29.860464836439"
-                    Point3="-4,29.860464836439" />
-                  <mssgle:LineSegment
-                    End="-28.761904956532,29.860464836439" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-28.761904956532,29.860464836439"
-                    Point2="-32.761904956532,29.860464836439"
-                    Point3="-32.761904956532,33.860464836439" />
-                  <mssgle:LineSegment
-                    End="-32.761904956532,42.8529407045834" />
+                    End="0,20.8294109839466" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5213,30 +5283,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 6]"
-          TopLeft="229.499998501369,631.952937495749">
+          TopLeft="236.699999182565,497.929410400523">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-28.7999999318804,25.0823524178106"
+              EndConnector="-17.4857151420749,25.1294085043929"
               Start="0,0"
-              End="-28.7999999318804,17.5823524178106">
+              End="-17.4857151420749,17.6294085043929">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,8.54117620890531" />
+                    End="0,8.56470425219644" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,8.54117620890531"
-                    Point2="0,12.5411762089053"
-                    Point3="-4,12.5411762089053" />
+                    Point1="0,8.56470425219644"
+                    Point2="0,12.5647042521964"
+                    Point3="-4,12.5647042521964" />
                   <mssgle:LineSegment
-                    End="-24.7999999318804,12.5411762089053" />
+                    End="-13.4857151420749,12.5647042521964" />
                   <mssgle:CubicBezierSegment
-                    Point1="-24.7999999318804,12.5411762089053"
-                    Point2="-28.7999999318804,12.5411762089053"
-                    Point3="-28.7999999318804,16.5411762089053" />
+                    Point1="-13.4857151420749,12.5647042521964"
+                    Point2="-17.4857151420749,12.5647042521964"
+                    Point3="-17.4857151420749,16.5647042521964" />
                   <mssgle:LineSegment
-                    End="-28.7999999318804,17.5823524178106" />
+                    End="-17.4857151420749,17.6294085043929" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5247,30 +5317,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 7]"
-          TopLeft="304.128570601405,473.152939829447">
+          TopLeft="219.21428404049,564.658818904916">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-14.857143110158,68.235293559962"
+              EndConnector="-12.799999659401,28.752944934409"
               Start="0,0"
-              End="-7.35714311015801,68.235293559962">
+              End="-12.799999659401,21.252944934409">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="18.5,0" />
+                    End="0,10.3764724672045" />
                   <mssgle:CubicBezierSegment
-                    Point1="18.5,0"
-                    Point2="22.5,0"
-                    Point3="22.5,4" />
+                    Point1="0,10.3764724672045"
+                    Point2="0,14.3764724672045"
+                    Point3="-4,14.3764724672045" />
                   <mssgle:LineSegment
-                    End="22.5,64.235293559962" />
+                    End="-8.79999965940098,14.3764724672045" />
                   <mssgle:CubicBezierSegment
-                    Point1="22.5,64.235293559962"
-                    Point2="22.5,68.235293559962"
-                    Point3="18.5,68.235293559962" />
+                    Point1="-8.79999965940098,14.3764724672045"
+                    Point2="-12.799999659401,14.3764724672045"
+                    Point3="-12.799999659401,18.3764724672045" />
                   <mssgle:LineSegment
-                    End="-7.35714311015801,68.235293559962" />
+                    End="-12.799999659401,21.252944934409" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5281,37 +5351,37 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 8]"
-          TopLeft="257.27142694629,773.388230618143">
+          TopLeft="257.84285552745,766.047054044598">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="154.742862543768,-150.447065713084"
+              EndConnector="154.742862543767,-143.105889139538"
               Start="0,0"
-              End="147.242862543768,-150.447065713084">
+              End="147.242862543767,-143.105889139538">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="73.3714312718838,0" />
+                    End="73.3714312718834,0" />
                   <mssgle:CubicBezierSegment
-                    Point1="73.3714312718838,0"
-                    Point2="77.3714312718838,0"
-                    Point3="77.3714312718838,-4" />
+                    Point1="73.3714312718834,0"
+                    Point2="77.3714312718834,0"
+                    Point3="77.3714312718834,-4" />
                   <mssgle:LineSegment
-                    End="77.3714312718838,-146.447065713084" />
+                    End="77.3714312718834,-139.105889139538" />
                   <mssgle:CubicBezierSegment
-                    Point1="77.3714312718838,-146.447065713084"
-                    Point2="77.3714312718838,-150.447065713084"
-                    Point3="81.3714312718838,-150.447065713084" />
+                    Point1="77.3714312718834,-139.105889139538"
+                    Point2="77.3714312718834,-143.105889139538"
+                    Point3="81.3714312718834,-143.105889139538" />
                   <mssgle:LineSegment
-                    End="147.242862543768,-150.447065713084" />
+                    End="147.242862543767,-143.105889139538" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="69.3714312718838,1,16,16"
+              BoundingBox="69.3714312718834,1,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -5361,24 +5431,60 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="136,44"
-          Id="Package\Load  Quality Staging Table\IQS Decrypted File"
-          TopLeft="9.91509433962264,5.5" />
+          Id="Package\Load  Quality Staging Table\Trim employee Ids"
+          TopLeft="10.9716981132075,153.235849056604" />
         <NodeLayout
           Size="136,44"
           Id="Package\Load  Quality Staging Table\Quality Coaching Stage"
           TopLeft="30.5404289215859,305.766370742122" />
         <NodeLayout
           Size="136,44"
-          Id="Package\Load  Quality Staging Table\Trim employee Ids"
-          TopLeft="10.9716981132075,153.235849056604" />
+          Id="Package\Load  Quality Staging Table\Row Count"
+          TopLeft="21.2358462637006,224.784350601304" />
+        <NodeLayout
+          Size="136,44"
+          Id="Package\Load  Quality Staging Table\IQS Decrypted File"
+          TopLeft="9.91509433962264,5.5" />
         <NodeLayout
           Size="136,44"
           Id="Package\Load  Quality Staging Table\Data Conversion"
           TopLeft="10.1415094339623,72.6320754716981" />
-        <NodeLayout
-          Size="136,44"
-          Id="Package\Load  Quality Staging Table\Row Count"
-          TopLeft="21.2358462637006,224.784350601304" />
+        <EdgeLayout
+          Id="Package\Load  Quality Staging Table.Paths[Row Count Output 1]"
+          TopLeft="89.2358462637006,268.784350601304">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="9.30458265788533,36.9820201408174"
+              Start="0,0"
+              End="9.30458265788533,29.4820201408174">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,14.4910100704087" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,14.4910100704087"
+                    Point2="0,18.4910100704087"
+                    Point3="4,18.4910100704087" />
+                  <mssgle:LineSegment
+                    End="5.30458265788533,18.4910100704087" />
+                  <mssgle:CubicBezierSegment
+                    Point1="5.30458265788533,18.4910100704087"
+                    Point2="9.30458265788533,18.4910100704087"
+                    Point3="9.30458265788533,22.4910100704087" />
+                  <mssgle:LineSegment
+                    End="9.30458265788533,29.4820201408174" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
         <EdgeLayout
           Id="Package\Load  Quality Staging Table.Paths[Flat File Source Output]"
           TopLeft="77.8018867924528,49.4245283018868">
@@ -5471,42 +5577,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Load  Quality Staging Table.Paths[Row Count Output 1]"
-          TopLeft="89.2358462637006,268.784350601304">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="9.30458265788533,36.9820201408174"
-              Start="0,0"
-              End="9.30458265788533,29.4820201408174">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,14.4910100704087" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,14.4910100704087"
-                    Point2="0,18.4910100704087"
-                    Point3="4,18.4910100704087" />
-                  <mssgle:LineSegment
-                    End="5.30458265788533,18.4910100704087" />
-                  <mssgle:CubicBezierSegment
-                    Point1="5.30458265788533,18.4910100704087"
-                    Point2="9.30458265788533,18.4910100704087"
-                    Point3="9.30458265788533,22.4910100704087" />
-                  <mssgle:LineSegment
-                    End="9.30458265788533,29.4820201408174" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
@@ -5527,7 +5597,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\NPN Record Load\Select NPN Logs for Load">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="108.8,35.2"
           Id="Package\NPN Record Load\Select NPN Logs for Load\OLE DB Source"
@@ -5559,7 +5629,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>

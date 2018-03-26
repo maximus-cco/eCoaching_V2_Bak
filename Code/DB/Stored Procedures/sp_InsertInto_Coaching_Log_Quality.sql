@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality(03).sql
-Last Modified Date: 10/23/2017
+sp_InsertInto_Coaching_Log_Quality(04).sql
+Last Modified Date: 03/26/2018
 Last Modified By: Susmitha Palacherla
+
+Version 04: Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
 
 Version 03: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
@@ -28,6 +30,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --    ====================================================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      02/23/2014
@@ -38,6 +42,7 @@ GO
 -- Updated per TFS 3757 to add isCoachingMonitor attribute - 10/28/2016
 -- Updated to Incorporate ATA Scorecards - TFS 7541 - 09/19/2017
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
+-- Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
@@ -118,6 +123,8 @@ FROM [EC].[Quality_Coaching_Stage] qs
 join EC.Employee_Hierarchy csr on qs.User_EMPID = csr.Emp_ID
 left outer join EC.Coaching_Log cf on qs.Eval_ID = cf.VerintEvalID
 where cf.VerintEvalID is null
+and qs.EvalStatus = 'Active'
+
 OPTION (MAXDOP 1)
 
 SELECT @Count =@@ROWCOUNT
@@ -185,3 +192,8 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality
+
+
+GO
+
+

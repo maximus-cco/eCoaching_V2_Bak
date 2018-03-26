@@ -1,8 +1,10 @@
 /*
-CCO_eCoaching_Quality_Load_Tables_Create(02).sql
+CCO_eCoaching_Quality_Load_Tables_Create(03).sql
 
-Last Modified Date: 9/18/2017
+Last Modified Date: 03/26/2018
 Last Modified By: Susmitha Palacherla
+
+Version 03: -- Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
 
 Version 02: Updated column size on reject_reason in Quality_Coaching_Rejected table
 	     Added columns to Quality_Coaching_Stage per TFS 7541 - 09/18/2017
@@ -63,7 +65,8 @@ CREATE TABLE [EC].[Quality_Coaching_Stage](
 	[isCoachingMonitor] [nvarchar](3) NULL,
 	[Emp_Role] [nvarchar](3) NULL,
 	[Module] [int] NULL,
-	[Reject_Reason] [nvarchar](200) NULL
+	[Reject_Reason] [nvarchar](200) NULL,
+        [EvalStatus][nvarchar](3) NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
@@ -106,7 +109,8 @@ CREATE TABLE [EC].[Quality_Coaching_Fact](
 	[Oppor_Rein] [nvarchar](20) NULL,
 	[Date_Inserted] [datetime] NULL,
         [VerintFormName] [nvarchar) (50) NULL,
-	[isCoachingMonitor] nvarchar(3)
+	[isCoachingMonitor] nvarchar(3),
+        [EvalStatus][nvarchar](3) NULL
 ) ON [PRIMARY]
 
 GO
