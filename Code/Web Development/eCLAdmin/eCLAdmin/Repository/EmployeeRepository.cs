@@ -15,7 +15,7 @@ namespace eCLAdmin.Repository
         public Employee GetEmployee(string employeeId)
         {
             Employee employee = new Employee();
-			var query = "sp_Select_Rec_Employee_Hierarchy";
+			var query = "[EC].[sp_Select_Rec_Employee_Hierarchy]";
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand(query, connection))

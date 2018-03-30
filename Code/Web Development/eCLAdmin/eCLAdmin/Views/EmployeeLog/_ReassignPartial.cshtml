@@ -76,10 +76,13 @@
                 hideSpinner();
 
                 if (msg.success == true) {
-                    var info = 'The selected logs have been successfully reassigned.';
+                	var info = 'Successfully reassigned the selected log(s).';
+                	if (msg.emailsent == false) {
+                		info += ' Notification email was not sent.';
+                	}
                     $("#message").html('<div class="alert alert-success"><button type="button" class="close">x</button>' + info + '</div>');
                 } else {
-                    var info = 'Failed to reassign the selected logs.';
+                    var info = 'Failed to reassign the selected log(s).';
                     $("#message").html('<div class="alert alert-warning"><button type="button" class="close">x</button>' + info + '</div>');
                 };
 
@@ -87,14 +90,9 @@
                     if (msg.success == true) {
                         initPage();
                     }
-                }, 1000);
+                }, 3000);
             });
 
-            ajaxRequest.fail(function (jqXHR, textStatus) {
-                hideSpinner();
-                var info = 'Failed to reassign the selected log(s).';
-                $("#message").html('<div class="alert alert-danger"><button type="button" class="close">×</button>' + info + '</div>');
-            });
         }) // end of $('#btn-submit-reassign').on('click', function ()
 
     });

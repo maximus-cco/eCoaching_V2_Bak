@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace eCLAdmin.Filters
 {
@@ -8,15 +9,16 @@ namespace eCLAdmin.Filters
 
         public void OnException(ExceptionContext filterContext)
         {
-            logger.Error(filterContext.Exception.StackTrace);
-            logger.Error(filterContext.Exception.Message);
+			logger.Error("Exception: " + filterContext.Exception.StackTrace);
 
-            filterContext.Result = new ViewResult
-            {
-                ViewName = "~/Views/Shared/Error.cshtml"
-            };
-
-            filterContext.ExceptionHandled = true;
-        }
-    }
+			filterContext.Result = new RedirectToRouteResult(
+				new RouteValueDictionary
+				{
+					{ "controller", "Error" },
+					{ "action", "Index" }
+				});
+	
+			filterContext.ExceptionHandled = true;
+		}
+	}
 }

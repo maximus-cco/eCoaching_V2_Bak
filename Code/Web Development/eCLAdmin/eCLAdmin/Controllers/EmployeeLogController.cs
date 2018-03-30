@@ -6,6 +6,7 @@ using eCLAdmin.Services;
 using eCLAdmin.Utilities;
 using eCLAdmin.ViewModels;
 using log4net;
+using System;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
@@ -121,31 +122,44 @@ namespace eCLAdmin.Controllers
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(EmployeeLogs));
         }
 
-        [HttpPost]
-        [ValidateInput(false)]
-        public ActionResult Reassign(EmployeeLogSelectViewModel model, int reason, string assignTo, string otherReason, string comment)
-        {
-            logger.Debug("Entered Reassign [post]...");
+		[HttpPost]
+		[ValidateInput(false)]
+		public ActionResult Reassign(EmployeeLogSelectViewModel model, int reason, string assignTo, string otherReason, string comment)
+		{
+			logger.Debug("Entered Reassign [post]...");
 
-            // Save to database
-            bool success = employeeLogService.ProcessReassignment(
-                                                GetUserFromSession().LanId,
-                                                model.GetSelectedIds(),
-                                                assignTo,
-                                                reason,
-                                                // Sanitize user input
-                                                HttpUtility.HtmlEncode(otherReason),
-                                                HttpUtility.HtmlEncode(comment)
-                                             );
+			// Save to database
+			bool success = employeeLogService.ProcessReassignment(
+												GetUserFromSession().LanId,
+												model.GetSelectedIds(),
+												assignTo,
+												reason,
+												// Sanitize user input
+												HttpUtility.HtmlEncode(otherReason),
+												HttpUtility.HtmlEncode(comment)
+											 );
 
-            // Send email
-            Employee reviewer = employeeService.GetEmployee(assignTo);
-            Employee originalReviewer = employeeService.GetEmployee((string)Session["OriginalReviewer"]);
-            List<string> to = new List<string> { reviewer.Email };
-            List<string> cc = new List<string> { originalReviewer.Email };
-            SendEmail(EmailType.Reassignment, to, cc, model.GetSelectedLogNames());
+			bool emailSent = false;
+			if (success)
+			{
+				try
+				{
+					// Send email
+					Employee reviewer = employeeService.GetEmployee(assignTo);
+					Employee originalReviewer = employeeService.GetEmployee((string)Session["OriginalReviewer"]);
+					List<string> to = new List<string> { reviewer.Email };
+					List<string> cc = new List<string> { originalReviewer.Email };
+					SendEmail(EmailType.Reassignment, to, cc, model.GetSelectedLogNames());
 
-            return Json(new { success = success });
+					emailSent = true;
+				}
+				catch (Exception ex)
+				{
+					logger.Warn("Failed to send email: " + ex.StackTrace);
+				}
+			}
+
+            return Json(new { success = success, emailsent = emailSent });
         }
 
         [HttpGet]
@@ -201,22 +215,32 @@ namespace eCLAdmin.Controllers
                                                 HttpUtility.HtmlEncode(comment)
                                              );
 
-            // Send email notification for Coaching logs Reactivation
-            // Do not cc to anyone.
-            if ((int)EmployeeLogType.Coaching == logType)
+			bool emailSent = false;
+			// Send email notification for Coaching logs Reactivation
+			// Do not cc to anyone.
+			if (success && (int)EmployeeLogType.Coaching == logType)
             {
-                string emailTo = null;
-                Employee employeeInfo = employeeService.GetEmployee(employee);
-                var dict = EclAdminUtil.BuildLogStatusNamesDictionary(model.GetSelectedLogs());
-                foreach (int key in dict.Keys)
-                {
-                    emailTo = EmailUtil.GetEmailTo(module, key, employeeInfo);
-                    List<string> logNames = dict[key];
-                    SendEmail(EmailType.Reactivation, new List<string> { emailTo }, null, logNames);
-                }
+				try
+				{
+					string emailTo = null;
+					Employee employeeInfo = employeeService.GetEmployee(employee);
+					var dict = EclAdminUtil.BuildLogStatusNamesDictionary(model.GetSelectedLogs());
+					foreach (int key in dict.Keys)
+					{
+						emailTo = EmailUtil.GetEmailTo(module, key, employeeInfo);
+						List<string> logNames = dict[key];
+						SendEmail(EmailType.Reactivation, new List<string> { emailTo }, null, logNames);
+					}
+
+					emailSent = true;
+				}
+				catch (Exception ex)
+				{
+					logger.Warn("Failed to send email: " + ex.StackTrace);
+				}
             }
 
-            return Json(new { success = true });
+            return Json(new { success = success, emailsent = emailSent });
         }
 
         // Get employee log modules (csr, training, ...)

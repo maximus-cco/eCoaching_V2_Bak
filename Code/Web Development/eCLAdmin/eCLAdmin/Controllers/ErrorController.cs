@@ -7,7 +7,9 @@ namespace eCLAdmin.Controllers
         // GET: Error
         public ActionResult Index()
         {
-            return View();
+			Session.Abandon();
+
+			return View();
         }
     }
 }

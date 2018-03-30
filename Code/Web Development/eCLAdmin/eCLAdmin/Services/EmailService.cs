@@ -53,44 +53,38 @@ namespace eCLAdmin.Services
                 logger.Debug("Email is null or body is null. Failed to send email.");
                 return;
             }
-            try
-            { 
-                var smtpClient = new SmtpClient(Constants.SMTP_CLIENT);
-                MailMessage mailMessage = new MailMessage();
-                mailMessage.Subject = email.Subject;
-                mailMessage.From = new MailAddress(email.From, "eCoaching Log Admin");
 
-                foreach (string to in email.To)
-                {
-                    mailMessage.To.Add(new MailAddress(to));
-                }
+            var smtpClient = new SmtpClient(Constants.SMTP_CLIENT);
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.Subject = email.Subject;
+            mailMessage.From = new MailAddress(email.From, "eCoaching Log Admin");
 
-                if (email.CC != null)
-                {
-                    foreach (string cc in email.CC)
-                    {
-                        mailMessage.CC.Add(new MailAddress(cc));
-                    }
-                }
-
-                mailMessage.Body = email.Body;
-                mailMessage.IsBodyHtml = true;
-
-                // Embed logo
-                var inline = new Attachment(email.Logo);
-                inline.ContentId = Guid.NewGuid().ToString();
-                inline.ContentDisposition.Inline = true;
-                inline.ContentDisposition.DispositionType = DispositionTypeNames.Inline;
-                mailMessage.Body = mailMessage.Body.Replace("{eCoachingLogo}", string.Format(@"<img src='cid:{0}'/>", inline.ContentId));
-                mailMessage.Attachments.Add(inline);
-
-                smtpClient.Send(mailMessage);
-            }
-            catch (Exception ex)
+            foreach (string to in email.To)
             {
-                logger.Debug(ex.Message);
-                logger.Debug(ex.StackTrace);
+                mailMessage.To.Add(new MailAddress(to));
             }
+
+            if (email.CC != null)
+            {
+                foreach (string cc in email.CC)
+                {
+                    mailMessage.CC.Add(new MailAddress(cc));
+                }
+            }
+
+            mailMessage.Body = email.Body;
+            mailMessage.IsBodyHtml = true;
+
+            // Embed logo
+            var inline = new Attachment(email.Logo);
+            inline.ContentId = Guid.NewGuid().ToString();
+            inline.ContentDisposition.Inline = true;
+            inline.ContentDisposition.DispositionType = DispositionTypeNames.Inline;
+            mailMessage.Body = mailMessage.Body.Replace("{eCoachingLogo}", string.Format(@"<img src='cid:{0}'/>", inline.ContentId));
+            mailMessage.Attachments.Add(inline);
+
+            smtpClient.Send(mailMessage);
+
         }
     }
 }

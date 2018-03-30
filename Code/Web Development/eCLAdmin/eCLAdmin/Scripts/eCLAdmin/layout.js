@@ -28,7 +28,7 @@
                   window.location = sessionExpiredUrl;
               }
               else {
-                  alert("An error has occurred.");
+              	window.location = errorUrl;
               }
           }
       });

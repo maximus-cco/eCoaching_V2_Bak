@@ -40,10 +40,13 @@
                 hideSpinner();
 
                 if (msg.success == true) {
-                    var info = 'The selected logs have been successfully reactivated.';
+                	var info = 'Successfully reactivated the selected log(s).';
+                	if (msg.emailsent == false) {
+                		info += ' Notification email was not sent.';
+                	}
                     $("#message").html('<div class="alert alert-success"><button type="button" class="close">x</button>' + info + '</div>');
                 } else {
-                    var info = 'Failed to reactivate the selected logs.';
+                    var info = 'Failed to reactivate the selected log(s).';
                     $("#message").html('<div class="alert alert-warning"><button type="button" class="close">x</button>' + info + '</div>');
                 };
 
@@ -51,13 +54,7 @@
                     if (msg.success == true) {
                         initPage();
                     }
-                }, 1000);
-            });
-
-            ajaxRequest.fail(function (jqXHR, textStatus) {
-                hideSpinner();
-                var info = 'Failed to reactivate the selected log(s).';
-                $("#message").html('<div class="alert alert-danger"><button type="button" class="close">×</button>' + info + '</div>');
+                }, 3000);
             });
         })
     })
