@@ -1,11 +1,10 @@
 /*
-CCO_eCoaching_Warning_Log_Tables_Create(01).sql
+CCO_eCoaching_Warning_Log_Tables_Create(02).sql
 
-Last Modified Date: 1/18/2017
+Last Modified Date: 04/02/2018
 Last Modified By: Susmitha Palacherla
 
-
-
+version 02: Updated to document changes for data encrryption TFS 7856.
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 **************************************************************
@@ -48,7 +47,7 @@ CREATE TABLE [EC].[Warning_Log](
 	[SourceID] [int] NOT NULL,
 	[StatusID] [int] NOT NULL,
 	[SiteID] [int] NOT NULL,
-	[EmpLanID] [nvarchar](50) NOT NULL,
+	--[EmpLanID] [nvarchar](50) NOT NULL,
 	[EmpID] [nvarchar](10) NOT NULL,
 	[SubmitterID] [nvarchar](10) NULL,
 	[SupID] [nvarchar](10) NOT NULL,

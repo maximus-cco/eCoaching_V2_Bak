@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Log_Tables_Create.sql(02).sql
+CCO_eCoaching_Log_Tables_Create.sql(03).sql
 
-Last Modified Date: 06/01/2017
+Last Modified Date: 04/02/2018
 Last Modified By: Susmitha Palacherla
 
+version 03: Updated to document changes for data encrryption TFS 7856.
 Version 02: Updated to increase column size for
 strReasonNotCoachable in Coaching_Log to 100 - TFS 6881 - 06/01/2017
 
@@ -46,7 +47,7 @@ CREATE TABLE [EC].[Coaching_Log](
 	[SourceID] [int] NOT NULL,
 	[StatusID] [int] NOT NULL,
 	[SiteID] [int] NOT NULL,
-	[EmpLanID] [nvarchar](50) NOT NULL,
+	--[EmpLanID] [nvarchar](50) NOT NULL,
 	[EmpID] [nvarchar](10) NOT NULL,
 	[SubmitterID] [nvarchar](10) NULL,
 	[EventDate] [datetime] NULL,

@@ -1,10 +1,11 @@
 /*
-CCO_eCoaching_Training_Load_Tables_Create(01).sql
+CCO_eCoaching_Training_Load_Tables_Create(02).sql
 
-Last Modified Date: 1/18/2017
+Last Modified Date: 04/02/2018
 Last Modified By: Susmitha Palacherla
 
-
+version 02: Updated to document changes for feed encryption TFS 7854.
+Marked fact table as obsolete
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -19,7 +20,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 1. Create Table [EC].[Training_Coaching_Stage] 
 2. Create Table [EC].[Training_FileList]  
 3. Create Table [EC].[Training_Coaching_Rejected]
-4. Create Table [EC].[Training_Coaching_Fact] 
+4. Create Table [EC].[Training_Coaching_Fact] -- Obsolete with TFS 7854
 
 
 **************************************************************
@@ -127,7 +128,9 @@ GO
 
 --**************************************************************
 
---4. Create Table [EC].[Training_Coaching_Fact]
+--4. Create Table [EC].[Training_Coaching_Fact]-- Obsolete with TFS 7854
+
+/*
 
 SET ANSI_NULLS ON
 GO
@@ -158,5 +161,5 @@ CREATE TABLE [EC].[Training_Coaching_Fact](
 
 GO
 
-
+*/
 --**************************************************************

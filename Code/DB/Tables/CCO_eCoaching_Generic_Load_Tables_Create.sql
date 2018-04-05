@@ -1,8 +1,10 @@
 /*
-CCO_eCoaching_Generic_Load_Tables_Create.sql(02).sql
-Last Modified Date: 9/18/2017
+CCO_eCoaching_Generic_Load_Tables_Create.sql(03).sql
+Last Modified Date: 04/02/2018
 Last Modified By: Susmitha Palacherla
 
+version 03: Updated to document changes for feed encryption TFS 7854.
+Marked fact table as obsolete
 
 Version 02: Added columns to Generic_Coaching_Stage per TFS 7646 - 09/18/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -16,7 +18,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 1. Create Table [EC].[Generic_Coaching_Stage] 
 2. Create Table [EC].[Generic_FileList]  
 3. Create Table [EC].[Generic_Coaching_Rejected]
-4. Create Table [EC].[Generic_Coaching_Fact] 
+4. Create Table [EC].[Generic_Coaching_Fact] -- Obsolete with TFS 7854
 
 
 **************************************************************
@@ -145,8 +147,9 @@ GO
 
 --**************************************************************
 
---4. Create Table [EC].[Generic_Coaching_Fact]
+--4. Create Table [EC].[Generic_Coaching_Fact]-- Obsolete with TFS 7854
 
+/*
 SET ANSI_NULLS ON
 GO
 
@@ -185,6 +188,6 @@ CREATE TABLE [EC].[Generic_Coaching_Fact](
 
 GO
 
-
+*/
 --**************************************************************
 

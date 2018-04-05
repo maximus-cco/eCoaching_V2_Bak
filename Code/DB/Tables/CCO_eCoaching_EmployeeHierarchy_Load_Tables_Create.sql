@@ -1,8 +1,9 @@
 /*
-File: eCoaching_EmployeeHierarchy_Load_Tables_Create(04).sql 
-Last Modified Date: 11/15/2017
+File: eCoaching_EmployeeHierarchy_Load_Tables_Create(05).sql 
+Last Modified Date: 04/02/2018
 Last Modified By: Susmitha Palacherla
 
+version 05: Updated to document changes for data encrryption TFS 7856.
 
 Version 04: Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
 Term_date and FLSA_Status
@@ -119,23 +120,15 @@ GO
 
 SCREATE TABLE [EC].[Employee_Hierarchy](
 	[Emp_ID] [nvarchar](10) NOT NULL,
-	[Emp_Name] [nvarchar](70) NULL,
-	[Emp_Email] [nvarchar](50) NULL,
-	[Emp_LanID] [nvarchar](30) NULL,
+	
 	[Emp_Site] [nvarchar](50) NULL,
 	[Emp_Job_Code] [nvarchar](50) NULL,
 	[Emp_Job_Description] [nvarchar](50) NULL,
 	[Emp_Program] [nvarchar](20) NULL,
 	[Sup_ID] [nvarchar](10) NULL,
-	[Sup_Name] [nvarchar](70) NULL,
-	[Sup_Email] [nvarchar](50) NULL,
-	[Sup_LanID] [nvarchar](20) NULL,
 	[Sup_Job_Code] [nvarchar](50) NULL,
 	[Sup_Job_Description] [nvarchar](50) NULL,
 	[Mgr_ID] [nvarchar](10) NULL,
-	[Mgr_Name] [nvarchar](70) NULL,
-	[Mgr_Email] [nvarchar](50) NULL,
-	[Mgr_LanID] [nvarchar](20) NULL,
 	[Mgr_Job_Code] [nvarchar](50) NULL,
 	[Mgr_Job_Description] [nvarchar](50) NULL,
 	[Start_Date] [nvarchar](10) NULL,
@@ -146,13 +139,22 @@ SCREATE TABLE [EC].[Employee_Hierarchy](
 	[SrMgrLvl3_ID] [nvarchar](10) NULL,
 	[Emp_ID_Prefix] [nvarchar](10) NULL,
 	[Hire_Date] [nvarchar](10) NULL,
-	[Emp_Pri_Name] [nvarchar](70) NULL,
 	[Dept_ID] [nvarchar](10) NULL DEFAULT ('NA'),
 	[Dept_Description] [nvarchar](60) NULL DEFAULT ('NA'),
 	[Reg_Temp] [nvarchar](3) NULL DEFAULT ('NA'),
 	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA'),
         [Term_Date] [nvarchar](10) NULL,
         [FLSA_Status] [nvarchar](20) NULL,
+        [Emp_Name] [varbinary](256) NULL,
+	[Emp_Email] [varbinary](256) NULL,
+	[Emp_LanID] [varbinary](128) NULL,
+        [Sup_Name] [varbinary](256) NULL,
+	[Sup_Email] [varbinary](256) NULL,
+	[Sup_LanID] [varbinary](128) NULL,
+        [Mgr_Name] [varbinary](256) NULL,
+	[Mgr_Email] [varbinary](256) NULL,
+	[Mgr_LanID] [varbinary](128) NULL,
+        [Emp_Pri_Name] [varbinary](256) NULL,
  CONSTRAINT [PK_Emp_ID] PRIMARY KEY CLUSTERED 
 (
 	[Emp_ID] ASC
@@ -193,11 +195,15 @@ GO
 
 CREATE TABLE [EC].[EmpID_To_SupID_Stage](
 	[Emp_ID] [nvarchar](20) NOT NULL,
-	[Emp_Name] [nvarchar](50) NULL,
 	[Emp_Job_Code] [nvarchar](5) NULL,
 	[Emp_Site_Code] [nvarchar](20) NULL,
 	[Sup_ID] [nvarchar](20) NULL,
 	[Emp_Program] [nvarchar](20) NULL
+        [Emp_Status] [nvarchar](10) NULL
+	[Emp_Name_Drop] [nvarchar](50) NULL,
+        [Emp_LanID_Drop] [nvarchar](30) NULL,
+        [Emp_Name] [varbinary](256) NULL,
+	[Emp_LanID] [varbinary](128) NULL,
 ) ON [PRIMARY]
 
 GO
@@ -227,21 +233,24 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [EC].[EmployeeID_To_LanID](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[EmpID] [nvarchar](20) NOT NULL,
 	[StartDate] [int] NOT NULL,
 	[EndDate] [int] NOT NULL,
-	[LanID] [nvarchar](30) NOT NULL,
+	[LanID] [varbinary](128) NOT NULL,
 	[DatetimeInserted] [datetime] NOT NULL,
 	[DatetimeLastUpdated] [datetime] NOT NULL,
- CONSTRAINT [PK_EmployeeID_To_LanID] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_EmployeeID_To_LanID2] PRIMARY KEY CLUSTERED 
 (
-	[LanID] ASC,
-	[StartDate] ASC,
-	[EndDate] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
+
+SET ANSI_PADDING OFF
+GO
+
 
 
 /*********************************************************/
@@ -388,20 +397,24 @@ GO
 
 --8. Create table [EC].[Employee_Ids_With_Prefixes]
 
-SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
 GO
 
-SET QUOTED_IDENTIFIER ON
+SET ANSI_PADDING ON
 GO
 
 CREATE TABLE [EC].[Employee_Ids_With_Prefixes](
 	[Emp_ID] [nvarchar](10) NOT NULL,
-	[Emp_Name] [nvarchar](70) NULL,
-	[Emp_LanID] [nvarchar](30) NULL,
 	[Start_Date] [datetime] NULL,
-        [Inserted_Date][datetime] NULL
-	) ON [PRIMARY]
+	[Inserted_Date] [datetime] NULL,
+	[Emp_Name] [varbinary](256) NULL,
+	[Emp_LanID] [varbinary](128) NULL
+) ON [PRIMARY]
 
 GO
+
+SET ANSI_PADDING OFF
+GO
+
 
 --******************************************************

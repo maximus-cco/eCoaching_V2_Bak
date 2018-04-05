@@ -1,8 +1,11 @@
 /*
-CCO_eCoaching_Quality_Other_Load_Tables_Create(02).sql
+CCO_eCoaching_Quality_Other_Load_Tables_Create(03).sql
 
-Last Modified Date: 2/20/2017
+Last Modified Date: 04/02/2018
 Last Modified By: Susmitha Palacherla
+
+version 03: Updated to document changes for feed encryption TFS 7854.
+Marked fact table as obsolete
 
 Version 02: Add table [EC].[NPN_Description] to Get NPN Description from table. TFS 5649 - 02/20/2017
 
@@ -17,7 +20,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 1.[EC].[Quality_Other_Coaching_Stage]
 2.[EC].[Quality_Other_Coaching_Rejected]
-3.[EC].[Quality_Other_Coaching_Fact]
+3.[EC].[Quality_Other_Coaching_Fact]-- Obsolete with TFS 7854
 4.[EC].[Quality_Other_FileList]
 5.[EC].[NPN_Description]
 
@@ -103,8 +106,9 @@ GO
 --************************************
 
 
---3. Create Table [EC].[Quality_Other_Coaching_Fact]
+--3. Create Table [EC].[Quality_Other_Coaching_Fact]-- Obsolete with TFS 7854
 
+/*
 SET ANSI_NULLS ON
 GO
 
@@ -133,7 +137,7 @@ CREATE TABLE [EC].[Quality_Other_Coaching_Fact](
 ) ON [PRIMARY]
 
 GO
-
+*/
 
 --************************************
 

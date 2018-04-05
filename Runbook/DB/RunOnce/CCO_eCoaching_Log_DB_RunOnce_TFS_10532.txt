@@ -1,0 +1,181 @@
+/*---------------------------------------------------------------
+
+TFS 10532 - Data Encryption - Removal of Missed Objects
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+--Objects being removed
+
+Tables
+CSR_Hierarchy_pre8228
+Employee_Hierarchy_pre8228
+Employee_Ids_With_Prefixes_pre8228
+EmployeeID_To_LanID_Bak_PreEncryption
+EmployeeID_To_LanID_pre8228
+Inactivated_SEA20171003_8531
+ETS_Coaching_Fact
+Generic_Coaching_Fact
+Quality_Other_Coaching_Fact
+Outlier_Coaching_Fact
+Training_Coaching_Fact
+EmpHistory
+
+
+
+
+
+
+Stored procedures
+sp_Update_ETS_Fact
+
+
+---------------------------------------------------------------
+--					Uncomment the appropriate DB
+--USE [eCoachingDev] 
+--USE [eCoachingTest]
+--USE [eCoaching]
+
+
+--************************************************************
+
+--				Tables Drops
+
+--*************************************************************/
+
+PRINT ('  Begin Table Drops...')
+
+
+--****** Object:  Table [EC].[CSR_Hierarchy_pre8228] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[CSR_Hierarchy_pre8228]') AND type in (N'U'))
+DROP TABLE [EC].[CSR_Hierarchy_pre8228]
+GO
+
+
+
+--****** Object:  Table [EC].[Employee_Hierarchy_pre8228] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Employee_Hierarchy_pre8228]') AND type in (N'U'))
+DROP TABLE [EC].[Employee_Hierarchy_pre8228]
+GO
+
+
+
+--****** Object:  Table [EC].[Employee_Ids_With_Prefixes_pre8228] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Employee_Ids_With_Prefixes_pre8228]') AND type in (N'U'))
+DROP TABLE [EC].[Employee_Ids_With_Prefixes_pre8228]
+GO
+
+
+
+--****** Object:  Table [EC].[EmployeeID_To_LanID_Bak_PreEncryption] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[EmployeeID_To_LanID_Bak_PreEncryption]') AND type in (N'U'))
+DROP TABLE [EC].[EmployeeID_To_LanID_Bak_PreEncryption]
+GO
+
+
+
+--****** Object:  Table [EC].[EmployeeID_To_LanID_pre8228] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[EmployeeID_To_LanID_pre8228]') AND type in (N'U'))
+DROP TABLE [EC].[EmployeeID_To_LanID_pre8228]
+GO
+
+
+--****** Object:  Table [EC].[Inactivated_SEA20171003_8531] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Inactivated_SEA20171003_8531]') AND type in (N'U'))
+DROP TABLE [EC].[Inactivated_SEA20171003_8531]
+GO
+
+
+
+--****** Object:  Table [EC].[ETS_Coaching_Fact] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[ETS_Coaching_Fact]') AND type in (N'U'))
+DROP TABLE [EC].[ETS_Coaching_Fact]
+GO
+
+
+
+--****** Object:  Table [EC].[Generic_Coaching_Fact] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Generic_Coaching_Fact]') AND type in (N'U'))
+DROP TABLE [EC].[Generic_Coaching_Fact]
+GO
+
+
+--****** Object:  Table [EC].[Quality_Other_Coaching_Fact] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Quality_Other_Coaching_Fact]') AND type in (N'U'))
+DROP TABLE [EC].[Quality_Other_Coaching_Fact]
+GO
+
+
+--****** Object:  Table [EC].[Outlier_Coaching_Fact] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Outlier_Coaching_Fact]') AND type in (N'U'))
+DROP TABLE [EC].[Outlier_Coaching_Fact]
+GO
+
+
+--****** Object:  Table [EC].[Training_Coaching_Fact] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[Training_Coaching_Fact]') AND type in (N'U'))
+DROP TABLE [EC].[Training_Coaching_Fact]
+GO
+
+
+--****** Object:  Table [EC].[EmpHistory] *****************   
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[EmpHistory]') AND type in (N'U'))
+DROP TABLE [EC].[EmpHistory]
+GO
+
+
+
+
+
+
+PRINT ('  Table Drops completed...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+/****************************************************************************
+****																	
+****					Stored Procedures							
+*****************************************************************************/
+--PRINT ('  Stored Procedure dropped this release...')
+PRINT ('  Starting Stored Procedure drop...')
+
+
+
+--****** Object:  StoredProcedure [EC].[sp_Update_ETS_Fact]  *****************
+  
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[EC].[sp_Update_ETS_Fact]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [EC].[sp_Update_ETS_Fact]
+GO
+
+
+PRINT ('  Obsolete Stored Procedures Removed...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+--****************************************************************************
+
+
+/****************************************************************************
+****																	
+****					Data Update							
+*****************************************************************************/
+--PRINT ('  Removing LanID in IQS Fact...')
+PRINT ('  Starting set LANID to NULl in IQS Fact...')
+
+
+
+--****** Object: Table [EC].[Quality_Coaching_Fact]  *****************
+   UPDATE [EC].[Quality_Coaching_Fact]
+   SET [User_LANID] = NULL
+   GO
+
+
+PRINT ('  LANID set to NULl in IQS Fact...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+--****************************************************************************

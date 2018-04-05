@@ -1,8 +1,11 @@
 /*
-CCO_eCoaching_Outliers_Load_Tables_Create(02).sql
+CCO_eCoaching_Outliers_Load_Tables_Create(03).sql
 
-Last Modified Date: 5/22/2017
+Last Modified Date: 04/02/2018
 Last Modified By: Susmitha Palacherla
+
+version 03: Updated to document changes for feed encryption TFS 7854.
+Marked fact table as obsolete
 
 
 Version 02: TFS 6625 - Updated field size for Site value to 30  in tables 1,3 and 4 - TFS 6625- 5/22/2017
@@ -21,7 +24,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 1. Create Table [EC].[Outlier_Coaching_Stage] 
 2. Create Table [EC].[OutLier_FileList]  
 3. Create Table [EC].[Outlier_Coaching_Rejected]
-4. Create Table [EC].[Outlier_Coaching_Fact] 
+4. Create Table [EC].[Outlier_Coaching_Fact] -- Obsolete with TFS 7854
 
 
 
@@ -135,7 +138,8 @@ GO
 
 --**************************************************************
 
---4. Create Table [EC].[Outlier_Coaching_Fact]
+--4. Create Table [EC].[Outlier_Coaching_Fact]-- Obsolete with TFS 7854
+/*
 
 SET ANSI_NULLS ON
 GO
@@ -167,7 +171,7 @@ CREATE TABLE [EC].[Outlier_Coaching_Fact](
 ) ON [PRIMARY]
 
 GO
-
+*/
 
 --**************************************************************
 

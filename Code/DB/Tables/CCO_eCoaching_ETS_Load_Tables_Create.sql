@@ -1,7 +1,10 @@
 /*
-CCO_eCoaching_ETS_Load_Tables_Create.sql(03).sql
-Last Modified Date: 7/24/2017
+CCO_eCoaching_ETS_Load_Tables_Create.sql(04).sql
+Last Modified Date: 04/02/2018
 Last Modified By: Susmitha Palacherla
+
+version 04: Updated to document changes for feed encryption TFS 7854.
+Marked fact table as obsolete
 
 Version 03: Added rows to ETS_Description to support HNC and ICC files per TFS 7174 - 07/24/2017
 
@@ -21,7 +24,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 1. Create Table [EC].[ETS_Coaching_Stage] 
 2. Create Table [EC].[ETS_FileList]  
 3. Create Table [EC].[ETS_Coaching_Rejected]
-4. Create Table [EC].[ETS_Coaching_Fact] 
+4. Create Table [EC].[ETS_Coaching_Fact] -- Obsolete with TFS 7854
 5. Create Table [EC].[ETS_Description]
 
 
@@ -144,7 +147,8 @@ GO
 
 **************************************************************
 
---4. Create Table [EC].[ETS_Coaching_Fact]
+--4. Create Table [EC].[ETS_Coaching_Fact]-- Obsolete with TFS 7854
+/*
 
 SET ANSI_NULLS ON
 GO
@@ -175,6 +179,8 @@ CREATE TABLE [EC].[ETS_Coaching_Fact](
 ) ON [PRIMARY]
 
 GO
+
+*/
 
 **************************************************************
 

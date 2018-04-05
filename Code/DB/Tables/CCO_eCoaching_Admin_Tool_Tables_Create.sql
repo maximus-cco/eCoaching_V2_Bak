@@ -1,7 +1,9 @@
 /*
-eCoaching_Admin_Tool_Tables_Create(04).sql
-Last Modified Date: 9/22/2017
+eCoaching_Admin_Tool_Tables_Create(05).sql
+Last Modified Date: 04/02/2018
 Last Modified By: Susmitha Palacherla
+
+version 05: Updated to document changes for data encrryption TFS 7856.
 
 version 04: Access for new program staaff with jobcode WPPM11- TFS 8363 - 9/22/2017
 Added entries to Tables AT_User, AT_User_Role_Link and AT_Role_Access
@@ -124,16 +126,32 @@ GO
 
 --4. TABLE [EC].[AT_User]
 
-Create Table [EC].[AT_User]
-(
-UserId NVARCHAR(10) NOT NULL,
-UserLanID NVARCHAR(30) NOT NULL,
-UserName NVARCHAR(50) NOT NULL,
-EmpJobCode NVARCHAR(50) NOT NULL,
-Active bit NULL,
-PRIMARY KEY (UserId)
-)
+SET ANSI_NULLS ON
 GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [EC].[AT_User](
+	[UserId] [nvarchar](10) NOT NULL,
+	[EmpJobCode] [nvarchar](50) NOT NULL,
+	[Active] [bit] NULL,
+	[UserLanID] [varbinary](128) NULL,
+	[UserName] [varbinary](256) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
 
 
 
