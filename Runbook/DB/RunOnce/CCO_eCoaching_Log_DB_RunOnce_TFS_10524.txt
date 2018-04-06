@@ -1,0 +1,53 @@
+/*---------------------------------------------------------------
+
+TFS 10524 - Move apps away from SQL server drives on database servers
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+
+-----------------------------------------------*/
+
+1. Connect to sQL Server using an account a privileged like your VNGT\211 account or AD\SA account
+
+2. update the location of the Config file for the following sql agent jobs:
+a. Remove existing config file from E:\
+b. Add new config file from H:\
+
+
+List of jobs and their new Config files
+
+
+a. CoachingETSLoad
+H:\ssis\Coaching\ConfigFiles\Prod_ETS_Coaching.dtsConfig
+
+b. CoachingGenericLoad
+H:\ssis\Coaching\ConfigFiles\Prod_Generic_Coaching.dtsConfig
+
+c. CoachingHierarchyLoad
+H:\ssis\Coaching\ConfigFiles\Prod_Employee_Hierarchy.dtsConfig
+
+d. CoachingOutlierLoad
+H:\ssis\Coaching\ConfigFiles\Prod_Outliers_Coaching.dtsConfig
+
+e.  CoachingQualityLoad
+H:\ssis\Coaching\ConfigFiles\Prod_Quality_Coaching.dtsConfig
+
+f. CoachingQualityOtherLoad
+H:\ssis\Coaching\ConfigFiles\Prod_Quality_Other_Coaching.dtsConfig
+
+
+g. CoachingSurveyLoad
+H:\ssis\Coaching\ConfigFiles\Prod_eCL_Surveys.dtsConfig
+
+i. CoachingTrainingLoad
+H:\ssis\Coaching\ConfigFiles\Prod_Training_Coaching.dtsConfig
+
+
+j. CoachingSummaryReport
+H:\ssis\Coaching\ConfigFiles\Prod_CoachingSummaryReport.dtsConfig
+
+
