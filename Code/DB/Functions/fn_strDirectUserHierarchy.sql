@@ -1,9 +1,9 @@
 /*
-fn_strDirectUserHierarchy(01).sql
-Last Modified Date: 1/18/2017
+fn_strDirectUserHierarchy(02).sql
+Last Modified Date: 04/10/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -28,43 +28,39 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --	=============================================
 --	Author:		Susmitha Palacherla
 --	Create Date: 09/29/2014
 --	Description:	 
---  *  Given an CSR LAN ID, a Submitter LAN ID and a date, return the  Employee ID of the
--- CSR and Submitter. Then check to see if the Employee ID of the Submitter 
--- equals the employee ID of the Supervisor or Manager.
+--  *  Given a CSR ID, a Submitter ID, checks to see if the submitter 
+-- is the Supervisor or Manager of the given employee.
 -- If it does the function returns a a 'Yes' to Indicate Direct Hierrachy.
--- last Modified Date: 
--- Last Modified By: 
-
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 --	=============================================
 CREATE FUNCTION [EC].[fn_strDirectUserHierarchy] 
 (
-  @strCSRin Nvarchar(20),
-  @strSubmitterin Nvarchar(20),
-  @dtmDate Datetime
+  @strEmpIDin nvarchar(10),
+  @strSubmitterIDin nvarchar(20)
+
 )
 RETURNS nvarchar(10)
 AS
 BEGIN
  
-	 DECLARE @strCSRID nvarchar(10),
-	         @strSubmitterID nvarchar(10),
-	         @strCSRSupID nvarchar(10),
-	         @strCSRMgrID nvarchar(10),
+	 DECLARE @strEmpSupID nvarchar(10),
+	         @strEmpMgrID nvarchar(10),
 	         @DirectHierarchy nvarchar(10)
 	
-	SET @strCSRID = [EC].[fn_nvcGetEmpIdFromLanId] (@strCSRin, @dtmDate)
-	SET @strSubmitterID = [EC].[fn_nvcGetEmpIdFromLanId] (@strSubmitterin, @dtmDate)
-	SET @strCSRSupID = (Select Sup_ID from EC.Employee_Hierarchy Where Emp_ID = @strCSRID)
-	SET @strCSRMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @strCSRID)
+
+	SET @strEmpSupID = (Select Sup_ID from EC.Employee_Hierarchy Where Emp_ID = @strEmpIDin)
+	SET @strEmpMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @strEmpIDin)
 	
 
  SET @DirectHierarchy =
- CASE WHEN @strSubmitterID = @strCSRSupID THEN 'Yes'
-      WHEN @strSubmitterID = @strCSRMgrID THEN 'Yes'
+ CASE WHEN @strSubmitterIDin = @strEmpSupID THEN 'Yes'
+      WHEN @strSubmitterIDin = @strEmpMgrID THEN 'Yes'
       Else 'No' END
       
 
@@ -73,5 +69,9 @@ RETURN @DirectHierarchy
 
 END --fn_strDirectUserHierarchy
 
+
+
 GO
+
+
 

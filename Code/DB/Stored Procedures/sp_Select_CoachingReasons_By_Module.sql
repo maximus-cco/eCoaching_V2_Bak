@@ -1,9 +1,11 @@
 /*
-sp_Select_CoachingReasons_By_Module(02).sql
-Last Modified Date: 1/18/2018
+sp_Select_CoachingReasons_By_Module(03).sql
+Last Modified Date: 04/10/2018
 Last Modified By: Susmitha Palacherla
 
-Version 02: --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
+Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 02: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -28,6 +30,11 @@ GO
 
 
 
+
+
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/20/2014
@@ -37,20 +44,22 @@ GO
 -- Last Modified Date: 09/25/2014
 -- Modified per SCR 13479 to add logic for incorporating WARNINGs.
 -- Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module] 
-@strModulein nvarchar(30), @strSourcein nvarchar(30), @isSplReason BIT, @splReasonPrty INT, @strCSRin nvarchar(30), @strSubmitterin nvarchar(30)
+@intModuleIDin INT, @strSourcein nvarchar(30), @isSplReason BIT, @splReasonPrty INT, @strEmpIDin nvarchar(10), @strSubmitterIDin nvarchar(10)
 
 AS
 BEGIN
 	DECLARE	
 	
 	@nvcSQL nvarchar(max),
+	@strModulein nvarchar(30),
 	@nvcDirectHierarchy nvarchar(10)
 
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
-	
-SET @nvcDirectHierarchy = [EC].[fn_strDirectUserHierarchy] (@strCSRin, @strSubmitterin, GETDATE())
+SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
+SET @nvcDirectHierarchy = [EC].[fn_strDirectUserHierarchy] (@strEmpIDin, @strSubmitterIDin)
 
 --print @nvcDirectHierarchy
 	
@@ -91,6 +100,10 @@ Order by  [CoachingReason]'
 
 EXEC (@nvcSQL)	
 END -- sp_Select_CoachingReasons_By_Module
+
+
+
+
 
 
 GO

@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Warning_Log(02).sql
-Last Modified Date: 10/23/2017
+sp_InsertInto_Warning_Log(03).sql
+Last Modified Date: 04/10/2018
 Last Modified By: Susmitha Palacherla
+
+Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
@@ -26,10 +28,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      10/03/2014
@@ -39,13 +37,13 @@ GO
 --  Last Modified By: Susmitha Palacherla
 --  Modified  to add Behavior to the insert to support warnings for Training Module - per TFS 861 - 10/21/2015 
  -- Modified to support Encryption of sensitive data. Open key and removed LanID. TFS 7856 - 10/23/2017
+ -- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
-(     @nvcFormName Nvarchar(50),
+(     @nvcEmpID Nvarchar(10),
       @nvcProgramName Nvarchar(50),
-      @nvcEmpLanID Nvarchar(40),
       @SiteID INT,
-      @nvcSubmitter Nvarchar(40),
+      @nvcSubmitterID Nvarchar(10),
       @dtmEventDate datetime,
       @intCoachReasonID1 INT,
       @nvcSubCoachReasonID1 Nvarchar(255),
@@ -70,20 +68,19 @@ BEGIN TRY
       
     --	Fetch the Employee ID of the current User (@nvcCSR) and Employee ID of the Submitter (@nvcSubmitter).
 
-	DECLARE @nvcEmpID Nvarchar(10),
-	        @nvcSubmitterID	Nvarchar(10),
+	DECLARE 
+	        --@nvcSubmitterID	Nvarchar(10),
 	        @nvcSupID nvarchar(10),
 	        @nvcMgrID nvarchar(10),
 	        @nvcNotPassedSiteID INT,
-	        @dtmDate datetime,
+	        --@dtmDate datetime,
 	        @intWarnIDExists BIGINT
 	        
 	OPEN SYMMETRIC KEY [CoachingKey]  
     DECRYPTION BY CERTIFICATE [CoachingCert]    
 	 	        
-	SET @dtmDate  = GETDATE()   
-	SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanID,@dtmDate)
-	SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
+
+	--SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
 	SET @nvcSupID = (Select Sup_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)
 	SET @nvcMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)  
 	SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
@@ -231,11 +228,7 @@ END TRY
   END CATCH  
 
   END -- sp_InsertInto_Warning_Log
-
-
-
-
-
 GO
+
 
 

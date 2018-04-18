@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log(02).sql
-Last Modified Date: 10/23/2017
+sp_InsertInto_Coaching_Log(03).sql
+Last Modified Date: 04/10/2018
 Last Modified By: Susmitha Palacherla
 
+Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -20,8 +21,14 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
+
 
 
 
@@ -38,15 +45,15 @@ GO
 -- Last Updated By: Susmitha Palacherla
 -- Modified per TFS 363/402 to update formname from CoachingID after insert. 
 -- Modified to support Encryption of sensitive data. Open key and removed LanID. TFS 7856 - 10/23/2017
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018.
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
-(     @nvcFormName Nvarchar(50),
-      @nvcEmpLanID Nvarchar(40),
+(     @nvcEmpID Nvarchar(10),
       @nvcProgramName Nvarchar(50),
       @intSourceID INT,
-      @intStatusID INT,
+      --@intStatusID INT,
       @SiteID INT,
-      @nvcSubmitter Nvarchar(40),
+      @nvcSubmitterID Nvarchar(10),
       @dtmEventDate datetime,
       @dtmCoachingDate datetime,
       @bitisAvokeID bit  ,
@@ -126,20 +133,21 @@ BEGIN TRY
       
     --	Fetch the Employee ID of the current User (@nvcCSR) and Employee ID of the Submitter (@nvcSubmitter).
 
-	DECLARE @nvcEmpID Nvarchar(10),
-	        @nvcSubmitterID	Nvarchar(10),
+	DECLARE 
+	        --@nvcEmpID Nvarchar(10),
+	        --@nvcSubmitterID	Nvarchar(10),
 	        @nvcSupID Nvarchar(10),
 	        @nvcMgrID Nvarchar(10),
-	        @nvcNotPassedSiteID INT,
-	        @dtmDate datetime
+	        @nvcNotPassedSiteID INT
+	        --@dtmDate datetime
 	        
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert]  
 	        
 	        
-	SET @dtmDate  = GETDATE()   
-	SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanID,@dtmDate)
-	SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
+	--SET @dtmDate  = GETDATE()   
+	--SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanID,@dtmDate)
+	--SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
 	SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
     SET @nvcSupID = (SELECT [Sup_ID] FROM [EC].[Employee_Hierarchy]WHERE [Emp_ID]= @nvcEmpID)
     SET @nvcMgrID = (SELECT [Mgr_ID] FROM [EC].[Employee_Hierarchy]WHERE [Emp_ID]= @nvcEmpID)
@@ -184,7 +192,7 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
            (@nvcEmpID 
            ,@nvcProgramName 
            ,@intSourceID 
-           ,@intStatusID 
+           ,[EC].[fn_intStatusIDFromInsertParams](@ModuleID,  @intSourceID, @bitisCSE)
            ,ISNULL(@SiteID,@nvcNotPassedSiteID)
            ,@nvcEmpID 
            ,@nvcSubmitterID
@@ -573,4 +581,10 @@ END TRY
 
   END -- sp_InsertInto_Coaching_Log
 
+
+
+
+
 GO
+
+

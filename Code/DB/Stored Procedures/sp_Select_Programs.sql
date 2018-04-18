@@ -1,9 +1,9 @@
 /*
-sp_Select_Programs(01).sql
-Last Modified Date: 1/18/2017
+sp_Select_Programs(02).sql
+Last Modified Date: 04/10/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -26,16 +26,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	8/01/14
 --	Description: *	This procedure returns a list of Active Programs to
 --  be made available in the UI submission page.
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Programs] 
-@strModulein nvarchar(30)
+@intModuleIDin int
 
 AS
 BEGIN
@@ -43,10 +42,10 @@ BEGIN
 	@isByProgram BIT,
 	@nvcSQL nvarchar(max)
 	
-SET @isByProgram = (SELECT ByProgram FROM [EC].[DIM_Module] Where [Module] = @strModulein and isActive =1)
+SET @isByProgram = (SELECT ByProgram FROM [EC].[DIM_Module] Where [ModuleID] = @intModuleIDin and isActive =1)
 IF @isByProgram = 1
 
-SET @nvcSQL = 'Select [Program] as Program from [EC].[DIM_Program]
+SET @nvcSQL = 'Select [ProgramID],[Program] as Program from [EC].[DIM_Program]
 Where isActive = 1
 Order by [Program] '
 
@@ -55,7 +54,7 @@ Order by [Program] '
 EXEC (@nvcSQL)	
 END
 
-
-
 GO
+
+
 

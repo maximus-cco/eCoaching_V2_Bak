@@ -1,0 +1,1850 @@
+/*
+
+TFS 7136 – Move new submissions to new architecture
+
+Submission List
+
+[EC].[sp_Select_Employee_Details]--new
+[EC].[sp_Select_Modules_By_Job_Code]
+[EC].[sp_Select_Sites]--new
+[EC].[sp_Select_Employees_By_Module_And_Site]--new
+[EC].[sp_Select_Programs]
+[EC].[sp_Select_Behaviors]
+[EC].[sp_Select_CoachingReasons_By_Module]
+[EC].[sp_Select_Source_By_Module] 
+[EC].[sp_Select_SubCoachingReasons_By_Reason]
+[EC].[sp_Select_CallID_By_Module]
+[EC].[sp_Select_Email_Attributes]
+[EC].[sp_Select_Rec_Employee_Hierarchy]
+[EC].[sp_Select_Values_By_Reason]
+[EC].[sp_InsertInto_Coaching_Log]
+[EC].[sp_InsertInto_Warning_Log]
+
+
+Summary
+Open in an ssms window pointing to eCoaching DB in target environment and run with nothing selected
+
+Database instances and databases
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+*/
+
+
+/*
+sp_InsertInto_Coaching_Log(03).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:      02/03/2014
+--    Description:     This procedure inserts the e-Coaching records into the Coaching_Log table. 
+--                     The main attributes of the eCL are written to the Coaching_Log table.
+--                     The Coaching Reasons are written to the Coaching_Reasons Table.
+-- Last Modified Date: 07/23/2015
+-- Last Updated By: Susmitha Palacherla
+-- Modified per TFS 363/402 to update formname from CoachingID after insert. 
+-- Modified to support Encryption of sensitive data. Open key and removed LanID. TFS 7856 - 10/23/2017
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018.
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
+(     @nvcEmpID Nvarchar(10),
+      @nvcProgramName Nvarchar(50),
+      @intSourceID INT,
+      --@intStatusID INT,
+      @SiteID INT,
+      @nvcSubmitterID Nvarchar(10),
+      @dtmEventDate datetime,
+      @dtmCoachingDate datetime,
+      @bitisAvokeID bit  ,
+      @nvcAvokeID Nvarchar(40) ,
+      @bitisNGDActivityID bit,
+      @nvcNGDActivityID Nvarchar(40) ,
+      @bitisUCID bit,
+      @nvcUCID Nvarchar(40),
+      @bitisVerintID bit,
+      @nvcVerintID Nvarchar(255),
+      @intCoachReasonID1 INT,
+      @nvcSubCoachReasonID1 Nvarchar(255),
+      @nvcValue1 Nvarchar(30),
+      @intCoachReasonID2 INT ,
+      @nvcSubCoachReasonID2 Nvarchar(255),
+      @nvcValue2 Nvarchar(30),
+      @intCoachReasonID3 INT ,
+      @nvcSubCoachReasonID3 Nvarchar(255),
+      @nvcValue3 Nvarchar(30),
+      @intCoachReasonID4 INT ,
+      @nvcSubCoachReasonID4 Nvarchar(255) ,
+      @nvcValue4 Nvarchar(30),
+      @intCoachReasonID5 INT,
+      @nvcSubCoachReasonID5 Nvarchar(255),
+      @nvcValue5 Nvarchar(30),
+      @intCoachReasonID6 INT,
+      @nvcSubCoachReasonID6 Nvarchar(255),
+      @nvcValue6 Nvarchar(30),
+      @intCoachReasonID7 INT,
+      @nvcSubCoachReasonID7 Nvarchar(255),
+      @nvcValue7 Nvarchar(30),
+      @intCoachReasonID8 INT,
+      @nvcSubCoachReasonID8 Nvarchar(255),
+      @nvcValue8 Nvarchar(30),
+      @intCoachReasonID9 INT,
+      @nvcSubCoachReasonID9 Nvarchar(255),
+      @nvcValue9 Nvarchar(30),
+      @intCoachReasonID10 INT,
+      @nvcSubCoachReasonID10 Nvarchar(255),
+      @nvcValue10 Nvarchar(30),
+      @intCoachReasonID11 INT,
+      @nvcSubCoachReasonID11 Nvarchar(255),
+      @nvcValue11 Nvarchar(30),
+      @intCoachReasonID12 INT,
+      @nvcSubCoachReasonID12 Nvarchar(255),
+      @nvcValue12 Nvarchar(30),
+      @nvcDescription Nvarchar(3000) ,
+      @nvcCoachingNotes Nvarchar(3000) ,
+      @bitisVerified bit  ,
+      @dtmSubmittedDate datetime ,
+      @dtmStartDate datetime ,
+      @dtmSupReviewedAutoDate datetime ,
+      @bitisCSE bit  ,
+      @dtmMgrReviewManualDate datetime ,
+      @dtmMgrReviewAutoDate datetime ,
+      @nvcMgrNotes Nvarchar(3000) ,
+      @bitisCSRAcknowledged bit  ,
+      @dtmCSRReviewAutoDate datetime ,
+      @nvcCSRComments Nvarchar(3000),
+      @bitEmailSent bit ,
+      @ModuleID INT,
+      @Behaviour Nvarchar(30),
+      @nvcNewFormName Nvarchar(50)OUTPUT
+      )
+   
+AS
+BEGIN
+   
+DECLARE @RetryCounter INT
+SET @RetryCounter = 1
+
+RETRY: -- Label RETRY
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+      
+    --	Fetch the Employee ID of the current User (@nvcCSR) and Employee ID of the Submitter (@nvcSubmitter).
+
+	DECLARE 
+	        --@nvcEmpID Nvarchar(10),
+	        --@nvcSubmitterID	Nvarchar(10),
+	        @nvcSupID Nvarchar(10),
+	        @nvcMgrID Nvarchar(10),
+	        @nvcNotPassedSiteID INT
+	        --@dtmDate datetime
+	        
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]  
+	        
+	        
+	--SET @dtmDate  = GETDATE()   
+	--SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanID,@dtmDate)
+	--SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
+	SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
+    SET @nvcSupID = (SELECT [Sup_ID] FROM [EC].[Employee_Hierarchy]WHERE [Emp_ID]= @nvcEmpID)
+    SET @nvcMgrID = (SELECT [Mgr_ID] FROM [EC].[Employee_Hierarchy]WHERE [Emp_ID]= @nvcEmpID)
+  
+         INSERT INTO [EC].[Coaching_Log]
+           ([FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[EventDate]
+           ,[CoachingDate]
+           ,[isAvokeID]
+           ,[AvokeID]
+           ,[isNGDActivityID]
+           ,[NGDActivityID]
+           ,[isUCID]
+           ,[UCID]
+           ,[isVerintID]
+           ,[VerintID]
+           ,[Description]
+	       ,[CoachingNotes]
+           ,[isVerified]
+           ,[SubmittedDate]
+           ,[StartDate]
+           ,[SupReviewedAutoDate]
+           ,[isCSE]
+           ,[MgrReviewManualDate]
+           ,[MgrReviewAutoDate]
+           ,[MgrNotes]
+           ,[isCSRAcknowledged]
+           ,[CSRReviewAutoDate]
+           ,[CSRComments]
+           ,[EmailSent]
+           ,[ModuleID]
+           ,[SupID]
+           ,[MgrID]
+           ,[Behavior])
+     VALUES
+           (@nvcEmpID 
+           ,@nvcProgramName 
+           ,@intSourceID 
+           ,[EC].[fn_intStatusIDFromInsertParams](@ModuleID,  @intSourceID, @bitisCSE)
+           ,ISNULL(@SiteID,@nvcNotPassedSiteID)
+           ,@nvcEmpID 
+           ,@nvcSubmitterID
+           ,@dtmEventDate 
+           ,@dtmCoachingDate 
+		   ,@bitisAvokeID 
+           ,@nvcAvokeID 
+           ,@bitisNGDActivityID 
+		   ,@nvcNGDActivityID 
+		   ,@bitisUCID 
+		   ,@nvcUCID 
+		   ,@bitisVerintID 
+		   ,@nvcVerintID 
+		   ,@nvcDescription 
+		   ,@nvcCoachingNotes
+           ,@bitisVerified 
+		   ,@dtmSubmittedDate 
+		   ,@dtmStartDate 
+		   ,@dtmSupReviewedAutoDate 
+		   ,@bitisCSE 
+		   ,@dtmMgrReviewManualDate 
+		   ,@dtmMgrReviewAutoDate 
+		   ,@nvcMgrNotes 
+		   ,@bitisCSRAcknowledged 
+		   ,@dtmCSRReviewAutoDate 
+		   ,@nvcCSRComments
+		   ,@bitEmailSent
+		   ,@ModuleID
+		   ,ISNULL(@nvcSupID,'999999')
+		   ,ISNULL(@nvcMgrID,'999999')
+		   ,@Behaviour)
+            
+ CLOSE SYMMETRIC KEY [CoachingKey] 
+            
+     --PRINT 'STEP1'
+            
+    SELECT @@IDENTITY AS 'Identity';
+    --PRINT @@IDENTITY
+    
+    DECLARE @I BIGINT = @@IDENTITY,
+            @MaxSubReasonRowID INT,
+            @SubReasonRowID INT
+       
+            
+--WAITFOR DELAY '00:00:00:02'  -- Wait for 5 ms
+
+UPDATE [EC].[Coaching_Log]
+SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+where [CoachingID] = @I  AND [FormName] not like 'eCL%'    
+OPTION (MAXDOP 1)
+
+WAITFOR DELAY '00:00:00:01'  -- Wait for 5 ms
+
+SET @nvcNewFormName = (SELECT [FormName] FROM  [EC].[Coaching_Log] WHERE [CoachingID] = @I)
+
+     /*
+           IF NOT @intCoachReasonID1 IS NULL
+       BEGIN
+            INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+            VALUES (@I, @intCoachReasonID1,@intSubCoachReasonID1,
+            CASE WHEN @intCoachReasonID1 = 6 THEN 'Opportunity'
+                 WHEN (@intCoachReasonID1 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID1 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+             ELSE @nvcValue1 END) 
+        END
+        
+        */
+    
+ IF NOT @intCoachReasonID1 IS NULL
+  BEGIN
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID1, ','))
+       --PRINT  @MaxSubReasonRowID
+       SET @SubReasonRowID = 1
+	
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+   BEGIN
+   
+   
+		INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID1,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID1, ',')where Rowid = @SubReasonRowID ),
+             CASE WHEN @intCoachReasonID1 = 6 THEN 'Opportunity'
+                 WHEN (@intCoachReasonID1 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID1 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+             ELSE @nvcValue1 END)       
+             
+		SET @SubReasonRowID = @SubReasonRowID + 1
+
+     END           
+  END
+ 
+        
+       /*  
+        IF NOT @intCoachReasonID2 IS NULL  
+        BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID2,@intSubCoachReasonID2,@nvcValue2)
+        END 
+
+*/
+
+
+ IF NOT @intCoachReasonID2 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID2, ','))
+  	   SET @SubReasonRowID = 1
+	
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID2,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID2, ',')where Rowid = @SubReasonRowID )
+           ,@nvcValue2)       
+         
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+
+    END
+  END 
+
+
+  IF NOT @intCoachReasonID3 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID3, ','))
+  	   SET @SubReasonRowID = 1
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID3,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID3, ',')where Rowid = @SubReasonRowID )
+           , @nvcValue3)        
+             
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+
+    END
+  END      
+   
+	 IF NOT @intCoachReasonID4 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID4, ','))
+       SET @SubReasonRowID = 1
+
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID4,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID4, ',')where Rowid = @SubReasonRowID )
+           , @nvcValue4)        
+             
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+
+    END
+  END  
+  
+   IF NOT @intCoachReasonID5 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID5, ','))
+       SET @SubReasonRowID = 1
+
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID5,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID5, ',')where Rowid = @SubReasonRowID )
+            ,@nvcValue5)        
+             
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+
+    END
+  END     
+
+
+ IF NOT @intCoachReasonID6 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID6, ','))
+       SET @SubReasonRowID = 1
+
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID6,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID6, ',')where Rowid = @SubReasonRowID )
+           , @nvcValue6) 
+                    
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+
+    END
+  END 
+  
+  
+   IF NOT @intCoachReasonID7 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID7, ','))
+ 	   SET @SubReasonRowID = 1
+
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID7,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID7, ',')where Rowid = @SubReasonRowID )
+        , @nvcValue7)        
+             
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+
+    END
+  END 
+  
+  
+  IF NOT @intCoachReasonID8 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID8, ','))
+   	   SET @SubReasonRowID = 1
+
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID8,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID8, ',')where Rowid = @SubReasonRowID )
+          , @nvcValue8)        
+             
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+	
+    END
+  END  
+  
+  
+   IF NOT @intCoachReasonID9 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID9, ','))
+       SET @SubReasonRowID = 1
+
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID9,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID9, ',')where Rowid = @SubReasonRowID )
+          , @nvcValue9)        
+             
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+	
+    END
+  END 
+  
+  
+   IF NOT @intCoachReasonID10 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID10, ','))
+       SET @SubReasonRowID = 1
+
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID10,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID10, ',')where Rowid = @SubReasonRowID )
+            , @nvcValue10)        
+             
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+		
+    END
+  END 
+  
+   IF NOT @intCoachReasonID11 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID11, ','))
+ 	   SET @SubReasonRowID = 1
+
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID11,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID11, ',')where Rowid = @SubReasonRowID )
+            , @nvcValue11)        
+             
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+	
+    END
+  END
+  
+  
+   IF NOT @intCoachReasonID12 IS NULL  
+    BEGIN
+        
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID12, ','))
+	   SET @SubReasonRowID = 1
+
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+    BEGIN
+			INSERT INTO [EC].[Coaching_Log_Reason]
+            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID12,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID12, ',')where Rowid = @SubReasonRowID )
+            ,@nvcValue12) 
+             
+      	SET @SubReasonRowID = @SubReasonRowID + 1
+
+    END
+    
+
+   
+    
+  END  
+COMMIT TRANSACTION
+END TRY
+      
+      BEGIN CATCH
+	--PRINT 'Rollback Transaction'
+	ROLLBACK TRANSACTION
+	DECLARE @DoRetry bit; -- Whether to Retry transaction or not
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+    
+     SET @doRetry = 0;
+     SELECT @ErrorMessage = ERROR_MESSAGE(),
+            @ErrorSeverity = ERROR_SEVERITY(),
+            @ErrorState = ERROR_STATE()
+    
+    
+    IF ERROR_NUMBER() = 1205 -- Deadlock Error Number
+	BEGIN
+		SET @doRetry = 1; -- Set @doRetry to 1 only for Deadlock
+	END
+	IF @DoRetry = 1
+	BEGIN
+		SET @RetryCounter = @RetryCounter + 1 -- Increment Retry Counter By one
+		IF (@RetryCounter > 3) -- Check whether Retry Counter reached to 3
+		BEGIN
+			RAISERROR(@ErrorMessage, 18, 1) -- Raise Error Message if 
+				-- still deadlock occurred after three retries
+		END
+		ELSE
+		BEGIN
+			WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+			GOTO RETRY	-- Go to Label RETRY
+		END
+	END
+	ELSE
+	BEGIN
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+   END
+  END CATCH  
+
+  END -- sp_InsertInto_Coaching_Log
+
+
+
+
+
+GO
+
+
+/*
+sp_InsertInto_Warning_Log(03).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_InsertInto_Warning_Log' 
+)
+   DROP PROCEDURE [EC].[sp_InsertInto_Warning_Log]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:      10/03/2014
+--    Description:     This procedure inserts the Warning records into the Warning_Log table. 
+--                     The main attributes of the Warning are written to the warning_Log table.
+--                     The Warning Reasons are written to the Warning_Reasons Table.
+--  Last Modified By: Susmitha Palacherla
+--  Modified  to add Behavior to the insert to support warnings for Training Module - per TFS 861 - 10/21/2015 
+ -- Modified to support Encryption of sensitive data. Open key and removed LanID. TFS 7856 - 10/23/2017
+ -- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018.
+--    =====================================================================
+CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
+(     @nvcEmpID Nvarchar(10),
+      @nvcProgramName Nvarchar(50),
+      @SiteID INT,
+      @nvcSubmitterID Nvarchar(10),
+      @dtmEventDate datetime,
+      @intCoachReasonID1 INT,
+      @nvcSubCoachReasonID1 Nvarchar(255),
+      @dtmSubmittedDate datetime ,
+      @ModuleID INT,
+      @nvcBehavior Nvarchar(30),
+      @isDup BIT OUTPUT,
+      @nvcNewFormName Nvarchar(50) OUTPUT
+      )
+   
+AS
+BEGIN
+   
+DECLARE @RetryCounter INT
+SET @RetryCounter = 1
+
+RETRY: -- Label RETRY
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRANSACTION
+BEGIN TRY
+      
+    --	Fetch the Employee ID of the current User (@nvcCSR) and Employee ID of the Submitter (@nvcSubmitter).
+
+	DECLARE 
+	        --@nvcSubmitterID	Nvarchar(10),
+	        @nvcSupID nvarchar(10),
+	        @nvcMgrID nvarchar(10),
+	        @nvcNotPassedSiteID INT,
+	        --@dtmDate datetime,
+	        @intWarnIDExists BIGINT
+	        
+	OPEN SYMMETRIC KEY [CoachingKey]  
+    DECRYPTION BY CERTIFICATE [CoachingCert]    
+	 	        
+
+	--SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
+	SET @nvcSupID = (Select Sup_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)
+	SET @nvcMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)  
+	SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
+	SET @isDup = 1
+	
+SET @intWarnIDExists = (SELECT WL.WarningID
+FROM [EC].[Warning_Log]WL join [EC].[Warning_Log_Reason]WLR
+ON WL.WarningID = WLR.WarningID
+WHERE WL.[EmpID]= @nvcEmpID
+AND WL.[WarningGivenDate]= @dtmEventDate 
+AND WLR.[CoachingReasonID] = @intCoachReasonID1
+AND WLR.[SubCoachingReasonID]= @nvcSubCoachReasonID1
+AND [Active] = 1)
+
+
+IF @intWarnIDExists IS NULL 
+        
+ BEGIN 
+         INSERT INTO [EC].[Warning_Log]
+           ([FormName]
+           ,[ProgramName]
+           ,[SourceID]
+           ,[StatusID]
+           ,[SiteID]
+           ,[EmpID]
+           ,[SubmitterID]
+           ,[SupID]
+           ,[MgrID]
+           ,[WarningGivenDate]
+           ,[SubmittedDate]
+           ,[ModuleID]
+           ,[Behavior])
+     VALUES
+           (@nvcEmpID 
+           ,@nvcProgramName 
+           ,120
+           ,1
+           ,ISNULL(@SiteID,@nvcNotPassedSiteID)
+           ,@nvcEmpID 
+           ,@nvcSubmitterID
+           ,@nvcSupID
+           ,@nvcMgrID
+           ,@dtmEventDate 
+	       ,@dtmSubmittedDate 
+		   ,@ModuleID
+		   ,@nvcBehavior)
+            
+  CLOSE SYMMETRIC KEY [CoachingKey] 
+     
+     --PRINT 'STEP1'
+            
+    SELECT @@IDENTITY AS 'Identity';
+    --PRINT @@IDENTITY
+    
+    DECLARE @I BIGINT = @@IDENTITY,
+            @MaxSubReasonRowID INT,
+            @SubReasonRowID INT
+    
+UPDATE [EC].[Warning_Log]
+SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,WarningID)
+where [WarningID] = @I  AND [FormName] not like 'eCL%'    
+OPTION (MAXDOP 1)
+
+WAITFOR DELAY '00:00:00:01'  -- Wait for 5 ms
+
+SET @nvcNewFormName = (SELECT [FormName] FROM  [EC].[Warning_Log] WHERE [WarningID] = @I)
+
+
+ IF NOT @intCoachReasonID1 IS NULL
+  BEGIN
+       SET @MaxSubReasonRowID = (Select MAX(RowID) FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID1, ','))
+       --PRINT  @MaxSubReasonRowID
+       SET @SubReasonRowID = 1
+	
+
+While @SubReasonRowID <= @MaxSubReasonRowID 
+   BEGIN
+   
+   
+		INSERT INTO [EC].[Warning_Log_Reason]
+            ([WarningID],[CoachingReasonID],[SubCoachingReasonID],[Value])
+             VALUES (@I, @intCoachReasonID1,
+            (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID1, ',')where Rowid = @SubReasonRowID ),
+             'Opportunity')       
+             
+		SET @SubReasonRowID = @SubReasonRowID + 1
+
+     END           
+  END
+ 
+ SET @isDup = 0
+ END       
+
+COMMIT TRANSACTION
+
+
+END TRY
+      
+      BEGIN CATCH
+	--PRINT 'Rollback Transaction'
+	ROLLBACK TRANSACTION
+	DECLARE @DoRetry bit; -- Whether to Retry transaction or not
+    DECLARE @ErrorMessage NVARCHAR(4000)
+    DECLARE @ErrorSeverity INT
+    DECLARE @ErrorState INT
+    
+     SET @doRetry = 0;
+     SELECT @ErrorMessage = ERROR_MESSAGE(),
+            @ErrorSeverity = ERROR_SEVERITY(),
+            @ErrorState = ERROR_STATE()
+    
+    
+    IF ERROR_NUMBER() = 1205 -- Deadlock Error Number
+	BEGIN
+		SET @doRetry = 1; -- Set @doRetry to 1 only for Deadlock
+	END
+	IF @DoRetry = 1
+	BEGIN
+		SET @RetryCounter = @RetryCounter + 1 -- Increment Retry Counter By one
+		IF (@RetryCounter > 3) -- Check whether Retry Counter reached to 3
+		BEGIN
+			RAISERROR(@ErrorMessage, 18, 1) -- Raise Error Message if 
+				-- still deadlock occurred after three retries
+		END
+		ELSE
+		BEGIN
+			WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+			GOTO RETRY	-- Go to Label RETRY
+		END
+	END
+	ELSE
+	BEGIN
+    RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               )
+      
+    IF ERROR_NUMBER() IS NULL
+      RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 
+      RETURN ERROR_NUMBER()
+    ELSE
+      RETURN 1
+   END
+  END CATCH  
+
+  END -- sp_InsertInto_Warning_Log
+GO
+
+
+
+/*
+sp_Select_Behaviors(02).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Behaviors' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Behaviors]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	04/10/2015
+--	Description: *	This procedure returns a list of Behaviors to
+--  be made available in the UI submission page for Modules that track Behavior.
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Behaviors] 
+@intModuleIDin int
+
+AS
+BEGIN
+	DECLARE	
+	@isByBehavior BIT,
+	@nvcSQL nvarchar(max)
+	
+SET @isByBehavior = (SELECT ByBehavior FROM [EC].[DIM_Module] Where [ModuleID] = @intModuleIDin and isActive =1)
+IF @isByBehavior = 1
+
+SET @nvcSQL = 'Select [BehaviorID], [Behavior] as Behavior from [EC].[DIM_Behavior]
+Order by CASE WHEN [Behavior] = ''Other'' Then 1 Else 0 END, [Behavior]'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END -- sp_Select_Behaviors
+GO
+
+
+
+/*
+sp_Select_CallID_By_Module(02).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_CallID_By_Module' 
+)
+   DROP PROCEDURE [EC].[sp_Select_CallID_By_Module]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	8/01/14
+--	Description: *	This procedure takes a Module value and returns the Call Ids 
+--                  valid for that Module and the format for the corresponding Ids for validation.
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_CallID_By_Module] 
+@intModuleIDin INT
+
+AS
+BEGIN
+	DECLARE	
+	@strModulein nvarchar(30),
+	@nvcSQL nvarchar(max)
+
+SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
+
+SET @nvcSQL = 'Select [CallIdType] as CallIdType, [Format]as IdFormat from [EC].[CallID_Selection]
+Where ' + @strModulein +' = 1' 
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_CallID_By_Module
+
+GO
+
+
+
+/*
+sp_Select_CoachingReasons_By_Module(03).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 02: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_CoachingReasons_By_Module' 
+)
+   DROP PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	08/20/2014
+--	Description: *	This procedure takes a Module 
+--  and returns the Coaching Reasons associated with the Module. 
+-- Last Modified By: Susmitha Palacherla
+-- Last Modified Date: 09/25/2014
+-- Modified per SCR 13479 to add logic for incorporating WARNINGs.
+-- Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module] 
+@intModuleIDin INT, @strSourcein nvarchar(30), @isSplReason BIT, @splReasonPrty INT, @strEmpIDin nvarchar(10), @strSubmitterIDin nvarchar(10)
+
+AS
+BEGIN
+	DECLARE	
+	
+	@nvcSQL nvarchar(max),
+	@strModulein nvarchar(30),
+	@nvcDirectHierarchy nvarchar(10)
+
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
+SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
+SET @nvcDirectHierarchy = [EC].[fn_strDirectUserHierarchy] (@strEmpIDin, @strSubmitterIDin)
+
+--print @nvcDirectHierarchy
+	
+IF @isSplReason = 1 
+
+IF @nvcDirectHierarchy = 'Yes'
+
+
+
+SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [CoachingReason] as CoachingReason from [EC].[Coaching_Reason_Selection]
+Where ' + @strModulein +' = 1 
+AND IsActive = 1 
+AND ' + @strSourcein +' = 1
+AND [splReason] = 1
+AND [splReasonPrty] = '''+ CONVERT(NVARCHAR,@splReasonPrty) + '''
+Order by  [CoachingReasonID]'
+
+Else
+
+SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [CoachingReason] as CoachingReason from [EC].[Coaching_Reason_Selection]
+Where ' + @strModulein +' = 1 
+AND IsActive = 1 
+AND ' + @strSourcein +' = 1
+AND [splReason] = 1
+AND [splReasonPrty] = 2
+Order by  [CoachingReason]'
+
+ELSE
+
+SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [CoachingReason] as CoachingReason from [EC].[Coaching_Reason_Selection]
+Where ' + @strModulein +' = 1 and 
+IsActive = 1 
+AND ' + @strSourcein +' = 1
+AND [splReason] = 0
+Order by  [CoachingReason]'
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END -- sp_Select_CoachingReasons_By_Module
+
+
+
+
+
+
+GO
+
+
+/*
+sp_Select_Email_Attributes(02).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Email_Attributes' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Email_Attributes]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	8/1814
+--	Description: *	This procedure takes a Module, Source(Direct/Indirect), SubCoachingSource 
+--  and isCSE and returns the Status and Email attributes.
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Email_Attributes] 
+@intModuleIDin INT, @intSourceIDin INT, @bitisCSEin BIT
+
+AS
+BEGIN
+	DECLARE	
+	@Source nvarchar(30),
+	@strModulein nvarchar(30),
+	@SubSource nvarchar(100),
+	@nvcSQL nvarchar(max)
+	
+	SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
+	SET @Source = (Select [CoachingSource] from [EC].[DIM_Source]WHERE [SourceID]=  @intSourceIDin)
+	SET @SubSource = (Select [SubCoachingSource] from [EC].[DIM_Source]WHERE [SourceID]=  @intSourceIDin)
+
+SET @nvcSQL = 'Select [EC].[fn_strStatusIDFromStatus]([Status]) as StatusID, [Status]as StatusName, [Recipient] as Receiver,
+ [Body] as EmailText, [isCCRecipient] as isCCReceiver, [CCRecipient] as CCReceiver
+ from [EC].[Email_Notifications]
+Where [Module]= '''+@strModulein+'''
+and [Source] = '''+@Source+'''
+and [SubSource] = '''+@SubSource+'''
+and [isCSE] = '''+CONVERT(NVARCHAR(1),@bitisCSEin)+''''
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END -- sp_Select_Email_Attributes
+
+
+
+
+GO
+
+
+
+/*
+sp_Select_Employees_By_Module_And_Site(01).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+
+Version 01: Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Employees_By_Module_And_Site' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	04/15/2018
+--	Description: *	This procedure takes a ModuleID and SiteID and returns Employees.
+--  Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site] 
+@intModuleIDin INT, @intSiteIDin INT = -1
+
+
+AS
+
+BEGIN
+DECLARE	
+@isBySite BIT,
+@nvcModulein nvarchar(30),
+@nvcSitein nvarchar(30),
+@dtmDate datetime,
+@nvcSQL nvarchar(max),
+@nvcSQL01 nvarchar(1000),
+@nvcSQL02 nvarchar(1000),
+@nvcSQL03 nvarchar(1000),
+@nvcSQL04 nvarchar(1000)
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
+
+
+
+SET @nvcModulein = (SELECT Module FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
+--SET @nvcSitein = (SELECT City FROM [EC].[DIM_Site] WHERE [SiteID] = @intSiteIDin)
+
+-- General Selection of employees based on Job codes flagged in Employee Selection table.
+
+SET @nvcSQL = 'SELECT EH.Emp_ID
+				,VEH.[Emp_Name] 
+ FROM [EC].[View_Employee_Hierarchy] VEH  WITH (NOLOCK)  JOIN  [EC].[Employee_Hierarchy]EH WITH (NOLOCK) 
+ ON VEH.[Emp_ID]= EH.[Emp_ID] JOIN [EC].[Employee_Selection]
+ ON EH.[Emp_Job_Code]= [EC].[Employee_Selection].[Job_Code] JOIN [EC].[DIM_Site]S
+ ON S.City = EH.Emp_Site
+WHERE [EC].[Employee_Selection].[is'+ @nvcModulein + '] = 1
+AND  (S.SiteID =('''+CONVERT(NVARCHAR,@intSiteIDin)+''') or '''+ CONVERT(NVARCHAR,@intSiteIDin) + ''' = -1)
+AND [Emp_Job_Code] NOT IN (''WTTR12'', ''WTTR13'', ''WTID13'') 
+AND [End_Date] = ''99991231''
+AND VEH.[Emp_LanID]is not NULL and VEH.[Sup_LanID] is not NULL and VEH.[Mgr_LanID]is not NULL
+ORDER BY VEH.[Emp_Name] ASC'
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+
+CLOSE SYMMETRIC KEY [CoachingKey]  
+END --sp_Select_Employees_By_Module
+
+GO
+
+
+
+/*
+sp_Select_Employee_Details(01).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+
+Version 01: Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Employee_Details' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Employee_Details]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	04/15/2018
+--	Description: *	This procedure takes an Employee Lan ID and returns the Employee details.
+--      Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Employee_Details] 
+@nvcEmpLanin nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+	@nvcEmpID Nvarchar(10),
+    @dtmDate datetime,
+	@nvcSQL nvarchar(max)
+	
+
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
+SET @dtmDate  = GETDATE()   
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanin,@dtmDate)
+
+
+
+SET @nvcSQL = 'SELECT EH.[Emp_ID]
+                ,VEH.[Emp_Name] 
+	            ,VEH.[Sup_Name]
+				,VEH.[Mgr_Name]
+				,EH.[Emp_Site] 
+ FROM [EC].[View_Employee_Hierarchy] VEH  WITH (NOLOCK)  JOIN  [EC].[Employee_Hierarchy]EH WITH (NOLOCK) 
+ ON VEH.[Emp_ID]= EH.[Emp_ID] 
+ WHERE EH.[Emp_ID] = '''+@nvcEmpID+ ''''
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END -- sp_Select_Employee_Details
+
+
+GO
+
+
+
+/*
+sp_Select_Modules_By_Job_Code(03).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 02: Modified to support Encryption of sensitive data (Open key)- TFS 7856 - 10/23/2017
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Modules_By_Job_Code' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Modules_By_Job_Code]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	7/31/14
+--	Description: *	This procedure takes the lan ID of the user and looks up the job code.
+--  If Job code exists in the submisison table returns the valid submission modules.
+--  If job code does not exist in the submisisons table returns 'CSR' as a valid sumission module.
+--  Last Modified By: Susmitha Palacherla
+--  Modified per TFS 861 to add Warnings to all Modules - 10/21/2015 
+-- Modified per TFS 3877 to hard code Employee Ids for Mark Hackman and Scott Potter
+-- to allow LSA and Training submissions which their job code does not have access to - 09/21/2016
+--  Modified to support Encryption of sensitive data (Open key)- TFS 7856 - 10/23/2017
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Modules_By_Job_Code] 
+@nvcEmpIDin nvarchar(10)
+
+AS
+BEGIN
+	DECLARE	
+
+	@nvcSQL nvarchar(max),
+	@nvcEmpJobCode nvarchar(30),
+	@nvcCSR nvarchar(30)
+
+
+-- Open Symmetric Key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
+
+
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcEmpIDin)
+
+SET @nvcCSR = (SELECT CASE WHEN [CSR]= 1 THEN N'CSR' ELSE NULL END  as Module FROM [EC].[Module_Submission]
+WHERE Job_Code = @nvcEmpJobCode)
+
+--print @nvcCSR
+
+if @nvcCSR is null
+
+--'''+CONVERT(NVARCHAR,@intModuleIdin)+'''
+
+SET @nvcSQL = 'SELECT TOP 1 CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, 1 AS ModuleID 
+from [EC].[Module_Submission]'
+ 
+ELSE
+
+SET @nvcSQL = 'SELECT Module, ModuleID FROM 
+(SELECT CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, 1 AS ModuleID from [EC].[Module_Submission] 
+where Job_Code = '''+@nvcEmpJobCode+'''
+UNION
+SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, 2 AS ModuleID from [EC].[Module_Submission] 
+where Job_Code = '''+@nvcEmpJobCode+'''
+UNION 
+SELECT CASE WHEN [Quality]= 1 THEN N''Quality'' ELSE NULL END as Module, 3 AS ModuleID from [EC].[Module_Submission] 
+where Job_Code = '''+@nvcEmpJobCode+'''
+UNION 
+SELECT CASE WHEN [LSA]= 1 THEN N''LSA'' ELSE NULL END as Module, 4 AS ModuleID from [EC].[Module_Submission] 
+where Job_Code = '''+@nvcEmpJobCode+''' OR '''+@nvcEmpIDin+''' in (''343549'',''408246'')
+UNION 
+SELECT CASE WHEN [Training]= 1 THEN N''Training'' ELSE NULL END as Module, 5 AS ModuleID from [EC].[Module_Submission] 
+where Job_Code = '''+@nvcEmpJobCode+''' OR '''+@nvcEmpIDin+''' in (''343549'',''408246''))AS Modulelist
+where Module is not Null '
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+
+  -- Clode Symmetric Key
+  CLOSE SYMMETRIC KEY [CoachingKey] 
+
+END --sp_Select_Modules_By_Job_Code
+
+GO
+
+
+
+/*
+sp_Select_Programs(02).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Programs' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Programs]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	8/01/14
+--	Description: *	This procedure returns a list of Active Programs to
+--  be made available in the UI submission page.
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Programs] 
+@intModuleIDin int
+
+AS
+BEGIN
+	DECLARE	
+	@isByProgram BIT,
+	@nvcSQL nvarchar(max)
+	
+SET @isByProgram = (SELECT ByProgram FROM [EC].[DIM_Module] Where [ModuleID] = @intModuleIDin and isActive =1)
+IF @isByProgram = 1
+
+SET @nvcSQL = 'Select [ProgramID],[Program] as Program from [EC].[DIM_Program]
+Where isActive = 1
+Order by [Program] '
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END
+
+GO
+
+
+
+/*
+sp_Select_Rec_Employee_Hierarchy(02).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 01:  Initial Revision - Created during encryption of secure data. TFF 7856 - 01/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Rec_Employee_Hierarchy' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Rec_Employee_Hierarchy]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+--	====================================================================
+--	Author:	Susmitha Palacherla
+--	Create Date: 01/18/2018
+--	Description: Returns a record from Employee Hierarchy table table given an Employee ID.
+--  Revision History:    
+--  Initial Revision. Created to replace embedded sql in UI code during encryption of sensitive data. TFS 7856. 01/18/2018
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Rec_Employee_Hierarchy]
+@EmployeeId nvarchar(10)
+AS
+
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert]
+
+
+BEGIN
+
+SELECT [Emp_ID]
+  	  ,CONVERT(nvarchar(70),DecryptByKey(Emp_Name)) AS [Emp_Name]
+      ,CONVERT(nvarchar(50),DecryptByKey(Emp_Email)) AS [Emp_Email]
+	  ,CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Emp_LanID]
+      ,CONVERT(nvarchar(70),DecryptByKey(Sup_Name)) AS [Sup_Name]
+	  ,CONVERT(nvarchar(50),DecryptByKey(Sup_Email)) AS [Sup_Email]
+	  ,CONVERT(nvarchar(70),DecryptByKey(Mgr_Name)) AS [Mgr_Name]
+	  ,CONVERT(nvarchar(50),DecryptByKey(Mgr_Email)) AS [Mgr_Email]
+ FROM [EC].[Employee_Hierarchy]
+ WHERE [Emp_ID]= @EmployeeId
+
+
+CLOSE SYMMETRIC KEY [CoachingKey]      
+END --sp_Select_Rec_Employee_Hierarchy
+
+GO
+
+
+
+/*
+sp_Select_Sites(01).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+
+Version 01: Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Sites' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Sites]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	04/17/2018
+--	Description: *	This procedure selects active Sites to be displayed in the UI
+--  Created during Submissions move to new architecture - TFS 7136 - 04/10/2018.
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Sites] 
+
+AS
+BEGIN
+	DECLARE	
+	@nvcSQL nvarchar(max)
+
+SET @nvcSQL = 'select distinct * from ec.DIM_Site where city != ''unknown'' and isActive = 1 order by city'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Sites
+
+
+
+GO
+
+
+
+/*
+sp_Select_Source_By_Module(02).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Source_By_Module' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Source_By_Module]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	8/01/14
+--	Description: *	This procedure takes a Module and Source (Direct or Indirect)
+--  and returns the Source IDis for the coresponding Sub Coaching Source.
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Source_By_Module] 
+@intModuleIDin INT, @strSourcein nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+	@strModulein nvarchar(30),
+	@nvcSQL nvarchar(max)
+
+SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
+
+SET @nvcSQL = 'Select [SourceID] as SourceID, [SubCoachingSource]as Source from [EC].[DIM_Source]
+Where ' + @strModulein +' = 1 and 
+IsActive = 1 and 
+CoachingSource =  '''+@strSourcein+'''
+Order by [SubCoachingSource] '
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END --sp_Select_Source_By_Module
+
+
+GO
+
+
+
+/*
+sp_Select_SubCoachingReasons_By_Reason(02).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_SubCoachingReasons_By_Reason' 
+)
+   DROP PROCEDURE [EC].[sp_Select_SubCoachingReasons_By_Reason]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	8/01/14
+--	Description: *	This procedure takes a Module, Direct or Indirect, a Coaching Reason and the submitter lanid 
+--  and returns the Sub Coaching Reasons associated with the Coaching Reason.
+-- Last Modified By: Susmitha Palacherla
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_SubCoachingReasons_By_Reason] 
+@intReasonIDin INT, @intModuleIDin INT, @strSourcein nvarchar(30), @nvcEmpIDin nvarchar(10)
+
+AS
+BEGIN
+	DECLARE	
+	@nvcEmpJobCode nvarchar(30),
+	@strModule nvarchar(30),
+	@strCoachReason nvarchar(30),
+	@nvcSQL nvarchar(max)
+	
+
+SET @strModule = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)	
+SET @strCoachReason = (SELECT [CoachingReason] FROM [EC].[DIM_Coaching_Reason] WHERE [CoachingReasonID] = @intReasonIDin)	
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy WHERE Emp_ID = @nvcEmpIDin)
+
+
+IF  (@strSourcein = 'Direct' and (@nvcEmpJobCode like 'WISY13' OR @nvcEmpJobCode like 'WSQA70' OR @nvcEmpJobCode like '%CS40%' OR @nvcEmpJobCode like '%CS50%' OR @nvcEmpJobCode like '%CS60%'))
+OR
+(@strSourcein = 'Direct' and @strCoachReason in ('Verbal Warning', 'Written Warning' ,'Final Written Warning'))
+
+SET @nvcSQL = 'Select [SubCoachingReasonID] as SubCoachingReasonID, [SubCoachingReason] as SubCoachingReason from [EC].[Coaching_Reason_Selection]
+Where ' + @strModule +' = 1 
+and [CoachingReason] = '''+@strCoachReason +'''
+and [IsActive] = 1 
+AND ' + @strSourcein +' = 1
+Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other Policy (non-Security/Privacy)'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
+
+ELSE
+
+SET @nvcSQL = 'Select [SubCoachingReasonID] as SubCoachingReasonID, [SubCoachingReason] as SubCoachingReason from [EC].[Coaching_Reason_Selection]
+Where ' + @strModule +' = 1 
+and [CoachingReason] = '''+@strCoachReason +'''
+and [IsActive] = 1 
+AND ' + @strSourcein +' = 1
+AND [SubCoachingReason] <> ''ETS''
+Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other Policy (non-Security/Privacy)'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END -- sp_Select_SubCoachingReasons_By_Reason
+
+GO
+
+
+
+/*
+sp_Select_Values_By_Reason(02).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Select_Values_By_Reason' 
+)
+   DROP PROCEDURE [EC].[sp_Select_Values_By_Reason]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	8/01/14
+--	Description: *	This procedure takes a Module and Coaching Reason 
+--  and returns the Values associated with the Coaching Reason for that Module. 
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Select_Values_By_Reason] 
+@intReasonIDin INT, @intModuleIDin INT, @strSourcein nvarchar(30)
+
+AS
+BEGIN
+	DECLARE	
+	@strModulein nvarchar(30),
+	@strReasonin nvarchar(30),
+	@nvcSQL nvarchar(max)
+
+SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
+SET @strReasonin = (SELECT [CoachingReason] FROM [EC].[DIM_Coaching_Reason] WHERE [CoachingReasonID] = @intReasonIDin)	
+
+SET @nvcSQL = 'Select CASE WHEN [isOpportunity] = 1 THEN ''Opportunity'' ElSE NULL END as Value from [EC].[Coaching_Reason_Selection]
+Where ' + @strModulein +' = 1 
+and [CoachingReason] = '''+@strReasonin +'''
+and [IsActive] = 1 
+AND ' + @strSourcein +' = 1
+UNION
+Select CASE WHEN [isReinforcement] = 1 THEN ''Reinforcement'' ElSE NULL END as Value from [EC].[Coaching_Reason_Selection]
+Where ' + @strModulein +' = 1 
+and [CoachingReason] = '''+@strReasonin +'''
+and [IsActive] = 1 
+AND ' + @strSourcein +' = 1'
+
+
+--Print @nvcSQL
+
+EXEC (@nvcSQL)	
+END -- sp_Select_Values_By_Reason
+
+GO
+
+
+

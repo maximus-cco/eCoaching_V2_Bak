@@ -1,9 +1,9 @@
 /*
-sp_Select_SubCoachingReasons_By_Reason(01).sql
-Last Modified Date: 1/18/2017
+sp_Select_SubCoachingReasons_By_Reason(02).sql
+Last Modified Date: 04/10/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -27,42 +27,41 @@ GO
 
 
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	8/01/14
 --	Description: *	This procedure takes a Module, Direct or Indirect, a Coaching Reason and the submitter lanid 
 --  and returns the Sub Coaching Reasons associated with the Coaching Reason.
 -- Last Modified By: Susmitha Palacherla
--- Last Modified Date: 10/29/2014
--- Modified per SCR to display ETS as a Sub coaching Reason irrespective of Job Code
--- for Warnings related Coaching Reasons.
---
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_SubCoachingReasons_By_Reason] 
-@strReasonin nvarchar(200), @strModulein nvarchar(30), @strSourcein nvarchar(30), @nvcEmpLanIDin nvarchar(30)
+@intReasonIDin INT, @intModuleIDin INT, @strSourcein nvarchar(30), @nvcEmpIDin nvarchar(10)
 
 AS
 BEGIN
 	DECLARE	
-	@nvcEmpID nvarchar(10),
 	@nvcEmpJobCode nvarchar(30),
-	@dtmDate datetime,
+	@strModule nvarchar(30),
+	@strCoachReason nvarchar(30),
 	@nvcSQL nvarchar(max)
 	
-	
-SET @dtmDate  = GETDATE()  
-SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
-SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
-WHERE Emp_ID = @nvcEmpID)
+
+SET @strModule = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)	
+SET @strCoachReason = (SELECT [CoachingReason] FROM [EC].[DIM_Coaching_Reason] WHERE [CoachingReasonID] = @intReasonIDin)	
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy WHERE Emp_ID = @nvcEmpIDin)
 
 
 IF  (@strSourcein = 'Direct' and (@nvcEmpJobCode like 'WISY13' OR @nvcEmpJobCode like 'WSQA70' OR @nvcEmpJobCode like '%CS40%' OR @nvcEmpJobCode like '%CS50%' OR @nvcEmpJobCode like '%CS60%'))
 OR
-(@strSourcein = 'Direct' and @strReasonin in ('Verbal Warning', 'Written Warning' ,'Final Written Warning'))
+(@strSourcein = 'Direct' and @strCoachReason in ('Verbal Warning', 'Written Warning' ,'Final Written Warning'))
 
 SET @nvcSQL = 'Select [SubCoachingReasonID] as SubCoachingReasonID, [SubCoachingReason] as SubCoachingReason from [EC].[Coaching_Reason_Selection]
-Where ' + @strModulein +' = 1 
-and [CoachingReason] = '''+@strReasonin +'''
+Where ' + @strModule +' = 1 
+and [CoachingReason] = '''+@strCoachReason +'''
 and [IsActive] = 1 
 AND ' + @strSourcein +' = 1
 Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other Policy (non-Security/Privacy)'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
@@ -70,8 +69,8 @@ Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coachin
 ELSE
 
 SET @nvcSQL = 'Select [SubCoachingReasonID] as SubCoachingReasonID, [SubCoachingReason] as SubCoachingReason from [EC].[Coaching_Reason_Selection]
-Where ' + @strModulein +' = 1 
-and [CoachingReason] = '''+@strReasonin +'''
+Where ' + @strModule +' = 1 
+and [CoachingReason] = '''+@strCoachReason +'''
 and [IsActive] = 1 
 AND ' + @strSourcein +' = 1
 AND [SubCoachingReason] <> ''ETS''
@@ -83,4 +82,6 @@ EXEC (@nvcSQL)
 END -- sp_Select_SubCoachingReasons_By_Reason
 
 GO
+
+
 
