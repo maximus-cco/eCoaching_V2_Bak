@@ -1,0 +1,18 @@
+﻿<h2 class="ecl-page-header">Historical Dashboard</h2>
+<div id="div-historical-index">
+	<div id="div-search">
+		@{ Html.RenderPartial("_Search"); }
+	</div>
+
+	<div id="div-search-result" class="hide">
+		<div class="pull-right">
+			<button class="btn btn-link " type="submit" id="btn-export-excel">
+				<span class="fa fa-file-excel-o"></span>&nbsp;Export to Excel
+			</button>
+		</div>
+		<br /><br />
+		<div id="div-log-list"></div>
+	</div>
+</div>
+
+@Scripts.Render("~/bundles/scripts/dashboard")

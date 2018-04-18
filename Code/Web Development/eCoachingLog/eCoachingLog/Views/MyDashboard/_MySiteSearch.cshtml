@@ -1,0 +1,38 @@
+﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
+
+<!-- Search Form -->
+<div class="row">
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-search-logs-mysite" }))
+{
+	<div class="form-group filters pull-right col-sm-12">
+		<div class="col-sm-3">
+			<div class="radio">
+				<div class="col-sm-3">
+					@Html.RadioButtonFor(m => m.IsCoaching, "true") <strong>Coaching</strong>
+				</div>
+				<div class="col-sm-3">
+					@Html.RadioButtonFor(m => m.IsCoaching, "false") <strong>Warning</strong>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-3  col-sm-offset-2">
+			@Html.DropDownListFor(m => m.LogStatusId, Model.LogStatusSelectList, new { @class = "form-control", id = "select-log-status" })
+		</div>
+		<div class="col-sm-3">
+			@Html.DropDownListFor(m => m.EmployeeId, Model.EmployeeSelectList, new { @class = "form-control", id = "select-employee" })
+		</div>
+		<div class="col-sm-1 text-right">
+			<button type="submit" class="btn btn-info" id="btn-search-logs-mysite">
+				<span class="glyphicon glyphicon-search"></span> Go
+			</button>
+		</div>
+	</div>
+}
+</div>
+<div class="clearfix"></div>
+
+<script>
+	var searchMySiteLogs = '@Url.Action("SearchMySiteLogs")';
+</script>
+
+

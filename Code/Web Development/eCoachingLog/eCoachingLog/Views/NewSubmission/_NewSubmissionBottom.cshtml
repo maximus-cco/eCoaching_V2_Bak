@@ -1,0 +1,32 @@
+﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+<!-- Warning question, this is for direct report only -->
+<div id="div-warning-choice" class='@(@Model.ShowWarningChoice ? "show" : "hide")'>
+    @{Html.RenderPartial("_NewSubmissionWarningChoice"); }
+</div>
+
+<div id="div-coach-warning-questions">
+    @if (Model.ShowWarningQuestions)
+	{
+		Html.RenderPartial("_NewSubmissionWarning");
+	}
+	else
+	{
+		Html.RenderPartial("_NewSubmissionCoach");
+	}
+</div>
+
+<hr />
+<div class="checkbox required" style="padding-left: 20px;">
+    @Html.CheckBoxFor(m => m.VerifiedCheckbox)<strong>I have verified that all the information on this form is true and complete to the best of my knowledge.</strong>
+    @Html.ValidationMessageFor(m => m.VerifiedCheckbox)
+</div>
+
+<div class="form-group">
+    <div class="col-sm-12">
+        <div class="pull-right">
+            <button class="btn btn-info" type="submit" id="btn-submit">Submit</button>
+            <button class="btn btn-default" type="reset" id="btn-cancel">Cancel</button>
+        </div>
+    </div>
+</div>

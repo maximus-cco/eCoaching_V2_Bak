@@ -1,0 +1,60 @@
+﻿<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h3 class="modal-title">@Model.FormName</h3>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-4">
+            <ul class="list-group" style="font-size: smaller;">
+                <li class="list-group-item list-group-item-info"><strong>Status:</strong> @Model.Status</li>
+                <li class="list-group-item list-group-item-info"><strong>Date Submitted:</strong> @Model.CreatedDate</li>
+                <li class="list-group-item list-group-item-info"><strong>Type:</strong> @Model.Type</li>
+                <li class="list-group-item list-group-item-info"><strong>Date the warning was issued:</strong> @Model.EventDate</li>
+                <li class="list-group-item list-group-item-info"><strong>Source:</strong> @Model.Source</li>
+                <li class="list-group-item list-group-item-info"><strong>Site:</strong> @Model.EmployeeSite</li>
+            </ul>
+
+            <ul class="list-group" style="font-size: smaller;">
+                <li class="list-group-item list-group-item-info"><strong>Employee:</strong> @Model.EmployeeName</li>
+                <li class="list-group-item list-group-item-info"><strong>Supervisor:</strong> @Model.SupervisorName</li>
+                <li class="list-group-item list-group-item-info"><strong>Manager:</strong> @Model.ManagerName</li>
+                <li class="list-group-item list-group-item-info"><strong>Submitter:</strong> @Model.SubmitterName</li>
+            </ul>
+        </div>
+        <!-- /.col-lg-4 -->
+        <div class="col-lg-8">
+            <div class="panel-group" id="accordion-reasons">
+                <div class="panel panel-info">
+                    <div class="panel-heading panel-heading-collapse" data-toggle="collapse" data-parent="#accordion-reasons" data-target="#collapse-reasons">
+                        <h4 class="panel-title accordion-toggle">
+                            Coaching Reason(s):
+                        </h4>
+                    </div>
+                    <div id="collapse-reasons" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Warning Type</th>
+                                        <th>Warning Reason(s)</th>
+                                        <th>Values</th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td>@Html.Raw(@Model.Reasons)</td>
+                                    <td>@Html.Raw(@Model.SubReasons)</td>
+                                    <td>@Html.Raw(@Model.Value)</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.panael-group -->
+        </div>
+        <!-- /.col-lg-8 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.modal-body -->

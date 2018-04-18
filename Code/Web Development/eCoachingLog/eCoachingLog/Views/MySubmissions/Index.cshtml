@@ -1,0 +1,250 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="ecl-page-header">My Submissions</div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <table class="table table-striped table-hover" id="my-submission-summary">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Module</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-module="csr">
+                                <td>1</td>
+                                <td >CSR</td>
+                                <td><span class="badge">19</span></td>
+                            </tr>
+                            <tr data-module="lsa">
+                                <td>2</td>
+                                <td >LSA</td>
+                                <td><span class="badge">19</span></td>
+                            </tr>
+                            <tr class="info" data-module="quality">
+                                <td>3</td>
+                                <td >Quality</td>
+                                <td><span class="badge">5</span></td>
+                            </tr>
+                            <tr class="success" data-module="supervisor">
+                                <td>4</td>
+                                <td >Supervisor</td>
+                                <td><span class="badge">3</span></td>
+                            </tr>
+                            <tr class="warning" data-module="training">
+                                <td>5</td>
+                                <td >Training</td>
+                                <td><span class="badge">1</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div id="line-chart" style="height: 240px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/.row-->
+
+    <div class="row" id="div-my-submission-detail" style="display: none;">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    CSR Module &nbsp;&nbsp;&nbsp;<span class="badge">19</span>
+                    @*<div class="pull-right">
+                        <div class="btn-group" role="group">
+                            <div class="dropdown dropdown-lg">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+                                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="form-group">
+                                            <label for="filter">Filter by</label>
+                                            <select class="form-control">
+                                                <option value="0" selected>All Snippets</option>
+                                                <option value="1">Featured</option>
+                                                <option value="2">Most popular</option>
+                                                <option value="3">Top rated</option>
+                                                <option value="4">Most commented</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="contain">Author</label>
+                                            <input class="form-control" type="text" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="contain">Contains the words</label>
+                                            <input class="form-control" type="text" />
+                                        </div>
+                                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped table-hover" id="table-my-submission-detail">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Form ID</th>
+                                <th>Employee Name</th>
+                                <th>Supervisor Name</th>
+                                <th>Manager Name</th>
+                                <th>Status</th>
+                                <th>Coaching Reason</th>
+                                <th>Sub-coaching Reason</th>
+                                <th>Value</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>ecl-test.test-111111</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>Completed</td>
+                                <td>Coaching Reason</td>
+                                <td>Sub Coaching Reason</td>
+                                <td>value</td>
+                                <td>6/29/2017</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>ecl-test.test-222222</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>Completed</td>
+                                <td>Coaching Reason</td>
+                                <td>Sub Coaching Reason</td>
+                                <td>value</td>
+                                <td>6/29/2017</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>ecl-test.test-333333</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>Completed</td>
+                                <td>Coaching Reason</td>
+                                <td>Sub Coaching Reason</td>
+                                <td>value</td>
+                                <td>6/29/2017</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>ecl-test.test-444444</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>Completed</td>
+                                <td>Coaching Reason</td>
+                                <td>Sub Coaching Reason</td>
+                                <td>value</td>
+                                <td>6/29/2017</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>ecl-test.test-555555</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>test, test</td>
+                                <td>Completed</td>
+                                <td>Coaching Reason</td>
+                                <td>Sub Coaching Reason</td>
+                                <td>value</td>
+                                <td>6/29/2017</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+
+</div>
+
+
+
+
+
+
+            @*<form class="form-inline">
+                    <label class="sr-only" for="manager">Manager</label>
+                    <select class="form-control" id="manager">
+                        <option>Select a manager...</option>
+                        <option>All Managers</option>
+                        <option>Manager1</option>
+                        <option>Manager2</option>
+                        <option>Manager3</option>
+                        <option>Manager4</option>
+                        <option>Manager5</option>
+                    </select>
+
+                    <label class="sr-only" for="supervisor">Supervisor</label>
+                    <select class="form-control" id="supervisor">
+                        <option>Select a supervisor...</option>
+                        <option>All Supervisors</option>
+                        <option>Supervisor1</option>
+                        <option>Supervisor2</option>
+                    </select>
+
+                    <label class="sr-only" for="status">Status</label>
+                    <select class="form-control" id="supervisor">
+                        <option>Select a status...</option>
+                        <option>All Statuses</option>
+                        <option>Status1</option>
+                        <option>Status2</option>
+                    </select>
+                    <label class="sr-only" for="employee">Employee</label>
+                    <select class="form-control" id="employee">
+                        <option>Select an employee...</option>
+                        <option>All Employees</option>
+                        <option>Employee1</option>
+                        <option>Employee2</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>*@
+
+            <script type="text/javascript">
+                $(function () {
+                    Morris.Line({
+                        element: 'line-chart',
+                        parseTime: false,
+                        resize: true,
+                        data: [
+                            { y: 'CSR', a: 19 },
+                            { y: 'LSA', a: 19 },
+                            { y: 'Quality', a: 5 },
+                            { y: 'Supervisor', a: 3 },
+                            { y: 'Training', a: 1 }],
+                        xkey: 'y',
+                        ykeys: ['a'],
+                        labels: ['Total']
+                    });
+
+                    $('#my-submission-summary tr').click(function () {
+                        var module = $(this).data("module");
+                        if (module) {
+                            $('#div-my-submission-detail').show();
+                        }
+                    });
+
+                });
+            </script>

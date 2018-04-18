@@ -1,0 +1,59 @@
+﻿@model eCoachingLog.ViewModels.ReviewViewModel
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
+{
+	@Html.HiddenFor(m => m.ShowReviewCoachingCse)
+
+	<div class='form-group mt-2' id='div-is-cse-question'>
+		<label for="IsCse" class='required'>Is the coaching opportunity a confirmed Customer Service Escalation (CSE)?</label><br />
+		@Html.RadioButtonFor(m => m.IsCse, "true") Yes, this is a confirmed Customer Service Escalation. <br />
+		@Html.RadioButtonFor(m => m.IsCse, "false") No, this is not a confirmed Customer Service Escalation.
+		@Html.ValidationMessageFor(m => m.IsCse)
+	</div>
+
+	<div class='form-group mt-2 hide' id='div-date-coached'>
+		<label for="DateCoached" id="label-date-coached" class="required">Enter the date coached:</label>
+		<div class="col-xs-4 input-group date">
+			@Html.TextBoxFor(m => m.DateCoached, new { @class = "form-control" })
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DateCoached)
+	</div>
+
+	<div class='form-group mt-2 hide' id='div-coaching-detail'>
+		<label for="DetailsCoached" class="required">Provide the details from the coaching session including action plans developed:</label>
+		@Html.TextAreaFor(m => m.DetailsCoached, new { @class = "form-control", @rows = "5" })
+		<div class="help-block">
+			Provide as much detail as possible.
+			<span id="behavior-detail-remaining" class="pull-right">3000 remaining</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DetailsCoached)
+	</div>
+
+	<div class='form-group mt-2' id='div-date-reviewed'>
+		<label for="DateReviewed" id="label-date-reviewed" class="required">Enter the date reviewed:</label>
+		<div class="col-xs-4 input-group date">
+			@Html.TextBoxFor(m => m.DateReviewed, new { @class = "form-control" })
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DateReviewed)
+	</div>
+
+	<div class='form-group mt-2' id='div-why-not-cse'>
+		<label for="ReasonNotCse" class="required">Provide explanation for Employee and Supervisor as to reason why this is not a CSE:</label>
+		@Html.TextAreaFor(m => m.ReasonNotCse, new { @class = "form-control", @rows = "5" })
+		<div class="help-block">
+			Provide reason why this is not a CSE.
+			<span id="detail-reason-not-coachable" class="pull-right">3000 remaining</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.ReasonNotCse)
+	</div>
+}
+
+@Scripts.Render("~/bundles/scripts/review")
+
+

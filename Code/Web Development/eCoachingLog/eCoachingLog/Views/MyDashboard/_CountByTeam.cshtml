@@ -1,0 +1,12 @@
+﻿<table class="table table-hover">
+	<tbody>
+		@foreach (var logCount in Model.LogCountList)
+		{
+			<tr>
+				<td><b>@logCount.Description</b></td>
+				<td><b>@logCount.Count</b></td>
+				<td><a href="#" class="my-dashboard-log-list" data-log="_MyPending">View</a></td>
+			</tr>
+		}
+	</tbody>
+</table>

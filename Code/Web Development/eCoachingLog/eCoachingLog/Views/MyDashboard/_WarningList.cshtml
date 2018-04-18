@@ -1,0 +1,38 @@
+﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
+@{
+	Layout = null;
+}
+<div class="panel panel-default">
+	<!-- /.panel-heading -->
+	<div class="panel-body">
+		<div class="dataTable_wrapper">
+			<table class="tables mytable table-hover table-bordered" id="dataTables-warning-log-list" style="width:100%">
+				<thead>
+					<tr>
+						@*hidden column*@
+						<th>FormID</th>
+						<th>Form Name</th>
+						<th>Employee</th>
+						<th>Supervisor</th>
+						<th>Manager</th>
+						<th>Warning Type</th>
+						<th>Warning Reason(s)</th>
+						<th>Created Date (PDT)</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<!-- /.dataTable_wrapper -->
+	</div>
+	<!-- /.panel-body -->
+</div>
+<!-- /.panel -->
+
+@*@Model.Search.SupervisorId*@
+<script>
+	var myDashboardSearch = @Html.Raw(Json.Encode(Model.Search));
+	var supId = '@Html.Raw(Model.Search.SupervisorId)';
+	var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';
+</script>
+
+@Scripts.Render("~/bundles/scripts/myDashboardWarningList")

@@ -1,0 +1,49 @@
+﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+<!-- Employee Information -->
+<div id="div-employee-summary">
+    <div class="form-group">
+        <label for="select-log-module" class="col-sm-1 control-label required">Module</label>
+        <div class="col-sm-2">
+            @Html.DropDownListFor(m => m.ModuleId, Model.ModuleSelectList, new { @class = "form-control", id = "select-log-module" })
+        </div>
+
+        <div id="div-site" class='@(@Model.ShowSiteDropdown ? "show" : "hide")'>
+            <label for="select-site" class="col-sm-1 control-label required">Site</label>
+            <div class="col-sm-2">
+                @Html.DropDownListFor(m => m.SiteId, Model.SiteSelectList, new { @class = "form-control", id = "select-site" })
+            </div>
+        </div>
+
+        <div id="div-employee" class='@(@Model.ShowEmployeeDropdown ? "show" : "hide")'>
+            <label for="select-employee" class="col-sm-1 control-label required">Employee</label>
+            <div class="col-sm-2">
+                @Html.DropDownListFor(m => m.Employee.Id, Model.EmployeeSelectList, new { @class = "form-control", id = "select-employee" })
+            </div>
+        </div>
+
+        <div id="div-program" class='@(@Model.ShowProgramDropdown ? "show" : "hide")'>
+            <label for="program" class="col-sm-1 control-label required">Program</label>
+            <div class="col-sm-2">
+                @Html.DropDownListFor(m => m.ProgramId, Model.ProgramSelectList, new { @class = "form-control", id = "select-program" })
+				@Html.HiddenFor(m => m.ProgramName)
+            </div>
+        </div>
+
+        <div id="div-behavior" class='@(@Model.ShowBehaviorDropdown ? "show" : "hide")'>
+            <label for="behavior" class="col-sm-1 control-label required">Behavior</label>
+            <div class="col-sm-2">
+                @Html.DropDownListFor(m => m.BehaviorId, Model.BehaviorSelectList, new { @class = "form-control", id = "select-behavior" })
+				@Html.HiddenFor(m => m.BehaviorName)
+            </div>
+        </div>
+    </div>
+
+    <div class="row hide" id="div-management">
+        <label class="col-sm-1 control-label">Supervisor</label>
+        <div id="div-supervisor-name" class="col-sm-2 form-control-static">@Model.Employee.SupervisorName</div>
+        <label class="col-sm-1 control-label">Manager</label>
+        <div id="div-manager-name" class="col-sm-2 form-control-static">@Model.Employee.ManagerName</div>
+    </div>
+</div>
+

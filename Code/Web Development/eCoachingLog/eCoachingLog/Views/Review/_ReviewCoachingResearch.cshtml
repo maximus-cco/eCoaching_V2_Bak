@@ -1,0 +1,58 @@
+﻿@model eCoachingLog.ViewModels.ReviewViewModel
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
+{
+	@Html.HiddenFor(m => m.ShowReviewCoachingResearch)
+
+	<div class='form-group mt-2' id='div-date-coached'>
+		<label for="DateCoached" id="label-date-coached" class="required">Date:</label>
+		<div class="col-xs-4 input-group date">
+			@Html.TextBoxFor(m => m.DateCoached, new { @class = "form-control" })
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DateCoached)
+	</div>
+
+	<div class='form-group mt-2' id='div-is-coaching-required-question'>
+		<label for="IsCoachingRequired" class="required">Based on your research does this record require coaching?</label><br />
+		<label class="radio-inline">
+			@Html.RadioButtonFor(m => m.IsCoachingRequired, "true") Yes
+		</label>
+		<label class="radio-inline">
+			@Html.RadioButtonFor(m => m.IsCoachingRequired, "false") No
+		</label>
+		@Html.ValidationMessageFor(m => m.IsCoachingRequired)
+	</div>
+
+	<div class='form-group mt-2' id='div-noncoachable-main-reason'>
+		<label for="MainReasonNotCoachable" class="required">What was the main reason this item was not coachable?</label>
+		@Html.DropDownListFor(m => m.MainReasonNotCoachable, Model.MainReasonNotCoachableList, new { @class = "form-control", style = "width: 350px;" })
+		@Html.ValidationMessageFor(m => m.MainReasonNotCoachable)
+	</div>
+
+	<div class='form-group mt-2' id='div-noncoachable-detail-reason'>
+		<label for="DetailReasonNotCoachable" class="required">Please provide reason/explanation/justification as to why the item was not choachable:</label>
+		@Html.TextAreaFor(m => m.DetailReasonNotCoachable, new { @class = "form-control", @rows = "5" })
+		<div class="help-block">
+			These notes will only be viewed by supervisors.
+			<span id="detail-reason-not-coachable" class="pull-right">3000 remaining</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DetailReasonNotCoachable)
+	</div>
+
+	<div class='form-group mt-2 hide' id='div-coachable-detail-reason'>
+		<label for="DetailReasonCoachable" class="required">Please provide reason/explanation/justification as to why the item is coachable for the Supervisor:</label>
+		@Html.TextAreaFor(m => m.DetailReasonCoachable, new { @class = "form-control", @rows = "5" })
+		<div class="help-block">
+			These notes will only be viewed by supervisors.
+			<span id="detail-reason-coachable" class="pull-right">3000 remaining</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DetailReasonCoachable)
+	</div>
+}
+
+@Scripts.Render("~/bundles/scripts/review")
+
+

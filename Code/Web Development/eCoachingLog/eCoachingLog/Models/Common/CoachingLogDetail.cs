@@ -1,0 +1,68 @@
+﻿namespace eCoachingLog.Models.Common
+{
+	public class CoachingLogDetail : BaseLogDetail
+    {
+        public string ReassignedSupervisorName { get; set; }
+        public string ReassignedManagerName { get; set; }
+
+		public string ReassignedToEmpId { get; set; }
+
+        // Supervisor who did the review
+        public string ReviewedSupervisorName { get; set; }
+        // Manager who did the review
+        public string ReviewedManagerName { get; set; }
+
+        public bool IsIqs { get; set; }
+        public bool IsUcId { get; set; }
+        public bool IsVerintMonitor { get; set; }
+        public bool IsBehaviorAnalyticsMonitor { get; set; }
+        public bool IsNgdActivityId { get; set; }
+        public bool IsCtc { get; set; }
+        public bool IsCse { get; set; }
+
+		public bool IsHigh5Club { get; set; }
+		public bool IsKudo { get; set; }
+		public bool IsAttendance { get; set; }
+		public bool IsScorecardMsr { get; set; }
+		public bool IsScorecardMsrs { get; set; }
+		public bool IsLowCsat { get; set; }
+		public bool IsCurrentCoachingInitiative { get; set; }
+		public bool IsOmrException { get; set; }
+		public bool IsEtsOae { get; set; }
+		public bool IsEtsOas { get; set; }
+		public bool IsOmrIae { get; set; }
+		public bool IsOmrIat { get; set; }
+		public bool IsTrainingShortDuration { get; set; }
+		public bool IsTrainingOverdue { get; set; }
+		public bool IsBrn { get; set; }
+		public bool IsBrl { get; set; }
+		public bool IsDtt { get; set; }
+
+		public bool HasEmpAcknowledged { get; set; }
+
+		public string UcId { get; set; }
+        public string VerintId { get; set; }
+        public string VerintFormName { get; set; }
+        public string CoachingMonitor { get; set; }
+        public string BehaviorAnalyticsId { get; set; }
+        public string NgdActivityId { get; set; }
+
+        public string Behavior { get; set; } // txtDescription
+        public string CoachingNotes { get; set; } // txtCoachingNotes
+        public string CoachingDate { get; set; } // Date coached
+        public string MgrNotes { get; set; }
+
+        public string SupReviewedAutoDate { get; set; }
+        public string MgrReviewManualDate { get; set; }
+        public string MgrReviewAutoDate { get; set; }
+
+        public string EmployeeReviewDate { get; set; }
+        public string EmployeeComments { get; set; }
+
+		public string LogDescription { get; set; }
+
+		public bool IsCoachingRequired { get; set; }
+
+		public int ModuleId { get; set; }
+    }
+}

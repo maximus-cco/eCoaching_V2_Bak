@@ -1,0 +1,15 @@
+﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+<div id="div-submission">
+    <div id="div-new-submission-top">
+        @{Html.RenderPartial("_NewSubmissionTop");}
+    </div>
+
+    <div id="div-new-submission-middle" class='@(@Model.ShowIsCoachingByYou ? "show" : "hide")'>
+        @{Html.RenderPartial("_NewSubmissionIsCoachingByYou");}
+    </div>
+
+    <div id="div-new-submission-bottom" class='@(@Model.ShowCoachWarningDiv ? "show" : "hide")'>
+        @{Html.RenderPartial("_NewSubmissionBottom");}
+    </div>
+</div>

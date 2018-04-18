@@ -1,0 +1,105 @@
+﻿<div class="container-fluid" style="height: 100%;">
+	<div class="row row-eq-height">
+		<div class="col-xs-4" style="background-color: #CEE3F9; padding-top: 30px;">
+			@{Html.RenderPartial("_CoachingLogInfo"); }
+		</div>
+		<!--/.col-xs-4 -->
+		<div class="col-xs-8">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				@if (Model.ShowReviewCoachingFinalPartial)
+				{
+					<h3>Final</h3>
+				}
+				else
+				{
+					<h3>Review</h3>
+					<div class="danger pull-right">Please do NOT include PII or PHI in the log entry.</div>
+
+					<div id="div-error-prompt" class="danger"></div>
+				}
+			</div>
+
+			<div class="modal-body" style="font-size: small;">
+				
+
+				<strong>Coaching Reason(s):</strong>
+				<div class="table-responsive">
+					<table class="table table-hover">
+						@foreach (var reason in Model.LogDetail.Reasons)
+						{
+							<tr>
+								<td>@reason.Description</td>
+								<td>
+									@foreach (var sub in reason.SubReasons)
+									{
+										@sub <br />
+									}
+								</td>
+								<td>@reason.Value</td>
+							</tr>
+						}
+					</table>
+				</div>
+				<div class="mt-2">
+					<strong>Details of the behavior being coached:</strong>
+					<br />
+					@Html.Raw(Model.LogDetail.Behavior)
+				</div>
+
+				@*<div class='mt-2 @(@Model.ShowManagerNotes ? "show" : "hide")'>
+					<strong>Notes from Manager:</strong>
+					<br />
+					@Model.LogDetail.MgrNotes
+				</div>
+				<div class='mt-2 @(@Model.ShowCoachingNotes ? "show" : "hide")'>
+					<strong>Coaching Notes:</strong>
+					<br />
+					@Model.LogDetail.CoachingNotes
+				</div>*@
+
+				<!-- TODO: Add logic to determine what to render: pending, acknowledge, or completed partial view -->
+				<div class="mt-2">
+					@if (Model.ShowAcknowledgePartial)
+					{
+						{ Html.RenderPartial("_AcknowledgeCoaching"); }
+					}
+					else if (Model.ShowReviewCoachingPartial)
+					{
+						{ Html.RenderPartial("_ReviewCoaching"); }
+					}
+					else if (Model.ShowReviewCoachingFinalPartial)
+					{
+						{ Html.RenderPartial("_ReviewCoachingFinal"); }
+					}
+				</div>
+			</div>
+			<!-- /.modal-body -->
+
+			<div class="modal-footer">
+				<div class="form-group">
+					@if (Model.ShowReviewCoachingFinalPartial)
+					{
+						<button class="btn btn-primary float-right" id="btn-close" data-dismiss="modal">Close</button>
+					}
+					else
+					{
+						<button class="btn btn-primary float-right" type="submit" id="btn-submit">Submit</button>
+					}
+				</div>
+			</div>
+		</div>
+		<!--/.col-xs-8 -->
+	</div>
+	<!--/.row -->
+</div>
+
+<script>
+    @*var logName = '@Model.LogDetail.FormName';*@
+
+    $(document).ready(function () {
+    });
+</script>
+
+@Scripts.Render("~/bundles/scripts/myDashboardReview")
+

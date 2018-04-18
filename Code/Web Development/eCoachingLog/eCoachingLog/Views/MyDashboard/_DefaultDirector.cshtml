@@ -1,0 +1,31 @@
+﻿<h2 class="ecl-page-header">My Dashboard</h2>
+<div class="row">
+	<div class="col-xs-9">
+		<div class="panel panel-default">
+			<div class="chart-container">
+				<canvas id="myBar"></canvas>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-3">
+		<div class="panel panel-default">
+			@*<div class="panel-heading">
+				<i class="fa fa-bar-chart-o fa-fw"></i> Today Logs by Site:
+			</div>*@
+			@{ Html.RenderPartial("_CountBySite"); }
+		</div>
+	</div>
+</div>
+
+<!-- Display Log List -->
+<div id="div-log-list">
+</div>
+
+<script>
+	var getLogListUrl = '@Url.Action("GetLogs", "MyDashboard")';
+	var getChartData = '@Url.Action("GetChartData", "MyDashboard")';
+</script>
+
+@Scripts.Render("~/bundles/scripts/dashboard")
+@Scripts.Render("~/bundles/scripts/eclChart")

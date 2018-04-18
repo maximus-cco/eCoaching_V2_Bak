@@ -1,0 +1,82 @@
+﻿@using eCoachingLog.Extensions
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>@ViewBag.Title - eCoaching Log</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" rel="stylesheet" type="text/css">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/scripts")
+</head>
+<body>
+    <div class="container-fluid ecl-logo" id="banner">
+        <div class="row">
+            <img alt="CCO logo" src="~/Content/Images/cco-logo.jpg">
+            <span style="float: right;"><img alt="eCL logo" src="~/Content/Images/eCL-logo.png"></span>
+        </div>
+    </div>
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation" id="topnavbar">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                @*@if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForReassign"))
+                {*@
+                <li>@Html.ActionLink("New Submission", "Index", "NewSubmission")</li>
+                @*}
+                @if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForReassign"))
+                {*@
+                <li>@Html.ActionLink("My Dashboard", "Index", "MyDashboard")</li>
+                @*}*@
+                @if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForReassign"))
+                {
+                    <li>@Html.ActionLink("My Submissions", "Index", "MySubmissions")</li>
+                }
+                @if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForReassign"))
+                {
+                    <li>@Html.ActionLink("Historical Dashboard", "Index", "HistoricalDashboard")</li>
+                }
+            </ul>
+            @*<ul class="nav navbar-right">
+                @if (Session["AuthenticatedUser"] != null)
+                {
+                    <li class="navbar-text">Welcome to eCoaching Log @(((User)Session["AuthenticatedUser"]).Name)</li>
+                }
+            </ul>*@
+        </div>
+    </nav>
+
+    <div class="body-content">
+        <div id="timeout-warning" class="alert alert-danger hide">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            Your session will expire in 5 minutes. Click anywhere on the page to extend your session.
+        </div>
+        <div class="please-wait" style="display: none;"></div>
+        <div id="flash-message">
+            @Vereyon.Web.FlashMessageHtmlHelper.RenderFlashMessages(Html)
+        </div>
+        @RenderBody()
+    </div>
+
+    <div id="modal-container" class="modal fade in" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-content">
+        </div>
+    </div>
+
+    <script>
+        var sessionExpired = false;
+        var logoutUrl = '@Url.Action("Index", "Logout")';
+        var sessionExpiredUrl = '@Url.Action("SessionExpire", "Home")';
+        var errorUrl = '@Url.Action("Index", "Error")';
+        var keepSessionAliveUrl = '@Url.Action("KeepSessionAlive", "Home")';
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

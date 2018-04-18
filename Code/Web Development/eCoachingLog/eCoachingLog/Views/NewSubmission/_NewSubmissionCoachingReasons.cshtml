@@ -1,0 +1,81 @@
+﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+@Html.ValidationMessageFor(m => m.CoachingReasons, "", new { @class = "col-sm-offset-1" })
+<div id="coaching-reasons" class="panel-collapse collapse in">
+    @for (var i = 0; i < Model.CoachingReasons.Count; i++)
+	{
+		var rowNumber = i;
+		if (i == 0 || i % 3 == 0)
+		{
+	@:<div class="row">
+		}
+		<div class="coaching-reason">
+			@Html.HiddenFor(m => m.CoachingReasons[i].ID, new { @class = "reason-id" })
+			<div class="col-sm-3">
+				@Html.CheckBoxFor(m => m.CoachingReasons[i].IsChecked, new { @class = "reason-checkbox", id = rowNumber })
+				<label class="control-label">
+					@Html.DisplayTextFor(m => m.CoachingReasons[i].Text)
+				</label>
+
+				<!-- sub reasons -->
+				@if (Model.CoachingReasons[i].IsChecked)
+				{
+					<div class="col-sm-12 fixed-width wrap-items coaching-subreasons">
+						@Html.ListBoxFor(m => m.CoachingReasons[i].SubReasonIds,
+						 new MultiSelectList(Model.CoachingReasons[i].SubReasons, "ID", "Text", Model.CoachingReasons[i].SubReasonIds),
+						 new { @class = "listbox" })
+						@Html.ValidationMessageFor(m => m.CoachingReasons[i].SubReasonIds)
+					</div>
+				}
+				<!-- values -->
+				<div class='coaching-values'>
+					@if (Model.CoachingReasons[i].OpportunityOption)
+					{
+						<div class="col-sm-6">
+							@Html.RadioButtonFor(m => m.CoachingReasons[i].IsOpportunity, "true", new { @class = "opportunity-radio" }) Opportunity
+						</div>
+					}
+					@if (Model.CoachingReasons[i].ReinforcementOption)
+					{
+						<div class="col-sm-6">
+							@Html.RadioButtonFor(m => m.CoachingReasons[i].IsOpportunity, "false", new { @class = "opportunity-radio" }) Reinforcement
+						</div>
+					}
+				</div>
+				<div class="col-sm-12">
+					@Html.ValidationMessageFor(m => m.CoachingReasons[i].IsOpportunity, "", new { @class = "field-validation-error" })
+				</div>
+			</div>
+		</div>
+		if (i % 3 == 2)
+		{
+	@:</div>
+		}
+	} <!-- end of for loop -->
+</div>
+
+<script>
+    $(function () {
+        $('.listbox').multiselect({
+            includeSelectAllOption: true,
+            buttonWidth: '100%',
+            onDropdownHidden: function (event) {
+                var target = $(event.target);
+                // get the current multiselect dropdown selected values
+                var selectedValues = target.prev('select').val();
+            	//var reasonText = target.closest('.coaching-reason').find('input:hidden.reason-text').val();
+                var reasonId = target.closest('.coaching-reason').find('input:hidden.reason-id').val();
+                var data = $.param({ idsselected: selectedValues, reasonid: reasonId }, true);
+                // Send back to server to update viewmodel in session
+                $.ajax({
+                    type: 'post',
+                    url: '@Url.Action("HandleSubreasonsSelected")',
+                    data: data,
+                    success: function (result) {
+                        $('#coaching-reasons').html(result);
+                    }
+                })
+            }
+        });
+    })
+</script>

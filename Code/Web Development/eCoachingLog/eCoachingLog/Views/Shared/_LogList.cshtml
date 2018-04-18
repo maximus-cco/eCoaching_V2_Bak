@@ -1,0 +1,43 @@
+﻿@*@model eCoachingLog.ViewModels.MyDashboardViewModel*@
+@{
+	Layout = null;
+}
+<div class="panel panel-default">
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+        <div class="dataTable_wrapper">
+            <table class="tables mytable table-hover table-bordered" id="dataTables-coaching-log-list" style="width:100%">
+                <thead>
+                    <tr>
+                        @*hidden column*@
+                        <th>FormID</th>
+                        <th>Form Name</th>
+                        <th>Employee</th>
+						<th>Supervisor</th>
+						<th>Manager</th>
+                        <th>Status</th>
+                        <th>Coaching Reason</th>
+                        <th>Sub-coaching Reason</th>
+                        <th>Value</th>
+                        <th>Created Date</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <!-- /.dataTable_wrapper -->
+    </div>
+    <!-- /.panel-body -->
+</div>
+<!-- /.panel -->
+
+<script>
+	//alert('_LogList');
+	var myDashboardSearch = @Html.Raw(Json.Encode(Model.Search));
+	var supId = '@Html.Raw(Model.Search.SupervisorId)';
+	var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';
+	var loadDataUrl = '@Url.Action("LoadData")';
+	var getLogDetailsUrl = '@Url.Action("GetLogDetail")';
+	//alert('loadDataUrl=' + loadDataUrl);
+</script>
+
+@Scripts.Render("~/bundles/scripts/myDashboardLogList")

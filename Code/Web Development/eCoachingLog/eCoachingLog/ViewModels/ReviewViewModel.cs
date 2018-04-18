@@ -1,0 +1,180 @@
+﻿using eCoachingLog.Models.Common;
+using eCoachingLog.Models.Review;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
+
+namespace eCoachingLog.ViewModels
+{
+	public class ReviewViewModel : IValidatableObject
+	{
+		public CoachingLogDetail LogDetail { get; set; }
+
+		public int LogStatusLevel { get; set; }
+
+		// Data to be collected on the review page
+		// TODO: move these to CoachingLogDetail
+		// So the page will submit these data in CoachingLogDetail model
+		// Common
+		public string InstructionText { get; set; }
+		public DateTime? DateCoached { get; set; }
+		public string DetailsCoached { get; set; }
+
+		// Research related
+		public bool IsCoachingRequired { get; set; }
+		// result from dropdown list
+		public string MainReasonNotCoachable { get; set; }
+		public string DetailReasonNotCoachable { get; set; }
+		public string DetailReasonCoachable { get; set; }
+		// CSE related
+		public bool IsCse { get; set; }
+		public DateTime? DateReviewed { get; set; }
+		public string ReasonNotCse { get; set; }
+		// Pending employee review related
+		public string EmployeeCommentsTextBox { get; set; }
+		// result from dropdown list
+		public string EmployeeCommentsDdl { get; set; }
+
+
+		// TODO: add dropdownlist properties for MainReasonNotCoachable and EmployeeCommentsDdl
+		public IEnumerable<SelectListItem> MainReasonNotCoachableList { get; set; }
+		public IEnumerable<SelectListItem> EmployeeCommentsDdlList { get; set; }
+
+		// Show Manger Notes, Coching Notes
+		public bool ShowManagerNotes { get; set; }
+		public bool ShowCoachingNotes { get; set; }
+
+		// Show Is CSE question
+		//public bool ShowIsCseQuestion { get; set; }
+		//// Show Is Coaching Required question
+		//public bool ShowIsCoachingRequiredQuestion { get; set; }
+
+		public bool ShowAcknowledgePartial { get; set; }
+		public bool ShowReviewCoachingPartial { get; set; }
+		public bool ShowReviewCoachingFinalPartial { get; set; }
+
+		public bool ShowReviewCoachingPending { get; set; }
+		public bool ShowReviewCoachingResearch { get; set; }
+		public bool ShowReviewCoachingCse { get; set; }
+
+		public ReviewViewModel()
+		{
+			this.LogDetail = new CoachingLogDetail();
+			this.MainReasonNotCoachableList = new List<SelectListItem>();
+			this.EmployeeCommentsDdlList = new List<SelectListItem>();
+		}
+
+		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			// TODO: based on the boolean show variables to decide which fields to be checked
+			// Regular Pending
+			if (this.ShowReviewCoachingPending)
+			{
+				if (!this.DateCoached.HasValue)
+				{
+					var dateCoached = new[] { "DateCoached" };
+					yield return new ValidationResult("Provide coaching date.", dateCoached);
+				}
+
+				if (string.IsNullOrEmpty(this.DetailsCoached))
+				{
+					var detailsCoached = new[] { "DetailsCoached" };
+					yield return new ValidationResult("Provide coaching details.", detailsCoached);
+				}
+
+				yield break;
+			}
+
+			// Reasearch
+			if (this.ShowReviewCoachingResearch)
+			{
+				if (!this.DateCoached.HasValue)
+				{
+					var dateCoached = new[] { "DateCoached" };
+					yield return new ValidationResult("Provide coaching date.", dateCoached);
+				}
+
+				if (!this.IsCoachingRequired)
+				{
+					if (string.IsNullOrEmpty(this.MainReasonNotCoachable))
+					{
+						var mainReasonNotCoachable = new[] { "MainReasonNotCoachable" };
+						yield return new ValidationResult("Select a main reason.", mainReasonNotCoachable);
+					}
+
+					if (string.IsNullOrEmpty(this.DetailReasonNotCoachable))
+					{
+						var detailReasonNotCoachable = new[] { "DetailReasonNotCoachable" };
+						yield return new ValidationResult("Provide a non-coachable reason.", detailReasonNotCoachable);
+					}
+				}
+				else
+				{
+					if (string.IsNullOrEmpty(this.DetailReasonCoachable))
+					{
+						var detailReasonCoachable = new[] { "DetailReasonCoachable" };
+						yield return new ValidationResult("Provide a coachable reason.", detailReasonCoachable);
+					}
+				}
+
+				yield break;
+			}
+
+			// CSE
+			if (this.ShowReviewCoachingCse)
+			{
+				if (this.IsCse) // Is CSE
+				{
+					if (!this.DateCoached.HasValue)
+					{
+						var dateCoached = new[] { "DateCoached" };
+						yield return new ValidationResult("Provide coaching date.", dateCoached);
+					}
+
+					if (string.IsNullOrEmpty(this.DetailsCoached))
+					{
+						var detailsCoached = new[] { "DetailsCoached" };
+						yield return new ValidationResult("Provide details coached.", detailsCoached);
+					}
+				}
+				else // Not CSE
+				{
+					if (!this.DateReviewed.HasValue)
+					{
+						var dateReviewed = new[] { "DateReviewed" };
+						yield return new ValidationResult("Provide reviewed date.", dateReviewed);
+					}
+
+					if (string.IsNullOrEmpty(this.ReasonNotCse))
+					{
+						var reasonNotCse = new[] { "ReasonNotCse" };
+						yield return new ValidationResult("Provide reason not cse.", reasonNotCse);
+					}
+				}
+			}
+		} // end Validate 
+
+		public static implicit operator Review(ReviewViewModel vm)
+		{
+			return new Review
+			{
+				DateCoached = vm.DateCoached,
+				DetailsCoached = vm.DetailsCoached,
+				IsCoachingRequired = vm.IsCoachingRequired,
+				MainReasonNotCoachable = vm.MainReasonNotCoachable,
+				DetailReasonNotCoachable = vm.DetailReasonNotCoachable,
+				DetailReasonCoachable = vm.DetailReasonCoachable,
+				IsCse = vm.IsCse,
+				DateReviewed = vm.DateReviewed,
+				ReasonNotCse = vm.ReasonNotCse,
+				EmployeeCommentsTextBox = vm.EmployeeCommentsTextBox,
+				EmployeeCommentsDdl = vm.EmployeeCommentsDdl,
+				ShowReviewCoachingPending = vm.ShowReviewCoachingPending,
+				ShowReviewCoachingResearch = vm.ShowReviewCoachingResearch,
+				ShowReviewCoachingCse = vm.ShowReviewCoachingCse
+			};
+		}
+
+	} // End class ReviewViewModel
+}

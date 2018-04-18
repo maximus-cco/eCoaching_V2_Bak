@@ -1,0 +1,47 @@
+﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+@{
+    ViewBag.Title = "New Submission";
+}
+<h2 class="ecl-page-header">New Submission<span class="danger" style="float: right; font-size: medium;"> Please do NOT include PII or PHI in the log entry.</span> </h2>
+@using (Html.BeginForm("Save", "NewSubmission", FormMethod.Post,
+				new { id = "new-submission-form", @class = "form-horizontal" }))
+{
+    <div class="well">
+        @*@Html.AntiForgeryToken()*@
+        @*@Html.ValidationSummary()*@
+
+        <div id="validation-summary" class="text-danger" hidden="hidden">
+            <ul></ul>
+        </div>
+
+        <div id="div-new-submission-main">
+            @{Html.RenderPartial("_NewSubmission");}
+        </div>
+    </div>
+    <!-- /.well -->
+}
+<!-- end of Html.Beginform-->
+
+<script>
+	var clientValidateCoachingReasons = '@Html.Raw(ViewBag.ClientValidateCoachingReasons)';
+	var validationError = '@Html.Raw(ViewBag.ValidationError)';
+    @*var getEmployeesBySiteModuleUrl = '@Url.Action("GetEmployeesBySiteModule", "NewSubmission")';*@
+    var getEmployeesByModuleUrl = '@Url.Action("GetEmployeesByModule", "NewSubmission")';
+    var resetPageUrl = '@Url.Action("ResetPage", "NewSubmission")';
+    var resetIsCoachingByYouUrl = '@Url.Action("ResetIsCoachingByYou", "NewSubmission")';
+    var resetPageBottomUrl = '@Url.Action("ResetPageBottom", "NewSubmission")';
+    //    var loadWarningTypesUrl = '@Url.Action("GetWarningTypes", "NewSubmission")';
+    var loadCoachUrl = '@Url.Action("ShowCoachQuestions", "NewSubmission")';
+    var loadWarningReasonsUrl = '@Url.Action("GetWarningReasons", "NewSubmission")';
+    var loadCoachingReasonsUrl = '@Url.Action("LoadCoachingReasons", "NewSubmission")';
+    var loadSourcesUrl = '@Url.Action("LoadSources", "NewSubmission")';
+    // Opportunity/Reinforcement options
+    var handleCoachingReasonClicked = '@Url.Action("HandleCoachingReasonClicked", "NewSubmission")';
+    var handleCoachingValueClicked = '@Url.Action("HandleCoachingValueClicked", "NewSubmission")';
+    var redirectToIndex = '@Url.Action("Index", "NewSubmission")';
+
+    var getMgtInfo = '@Url.Action("GetMgtInfo", "NewSubmission")';
+    var handleSiteChangedUrl = '@Url.Action("HandleSiteChanged", "NewSubmission")';
+</script>
+
+@Scripts.Render("~/bundles/scripts/newSubmission")

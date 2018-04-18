@@ -1,0 +1,40 @@
+﻿<b>Log Name:</b> @Model.LogDetail.FormName<br />
+<b>Status:</b> @Model.LogDetail.Status<br />
+<b>Date Submitted:</b> @Model.LogDetail.CreatedDate<br />
+<b>Type:</b> @Model.LogDetail.Type<br />
+@if (Model.LogDetail.IsTypeDirect)
+{
+	<b>Date of Coaching:</b> @Model.LogDetail.CoachingDate<br />
+}
+else
+{
+	<b>Date Of Event:</b> @Model.LogDetail.EventDate<br />
+}
+<b>Source:</b> @Model.LogDetail.Source<br />
+<b>Site:</b> @Model.LogDetail.EmployeeSite<br />
+<br />
+@if (Model.LogDetail.IsVerintMonitor)
+{
+	<b>Verint ID:</b> @Model.LogDetail.VerintId<br />
+		<b>Scorecard Name:</b> @Model.LogDetail.VerintFormName<br />
+		<b>Coaching Monitor:</b> @Model.LogDetail.CoachingMonitor<br />
+}
+@if (Model.LogDetail.IsBehaviorAnalyticsMonitor)
+{
+	<b>Avoke ID:</b> @Model.LogDetail.BehaviorAnalyticsId<br />
+}
+@if (Model.LogDetail.IsNgdActivityId)
+{
+	<b>NGD Activity ID:</b> @Model.LogDetail.NgdActivityId<br />
+}
+@if (Model.LogDetail.IsUcId)
+{
+	<b>Universal CallID:</b> @Model.LogDetail.UcId<br />
+}
+<b>Employee:</b> @Model.LogDetail.EmployeeName<br />
+<b>Supervisor:</b> @Model.LogDetail.SupervisorName<br />
+<b>Reassigned Supervisor:</b> @Model.LogDetail.ReassignedSupervisorName<br />
+<b>Manager:</b> @Model.LogDetail.ManagerName<br />
+<b>Reassigned Manager::</b> @Model.LogDetail.ReassignedManagerName<br />
+<b>Submitter:</b> @Model.LogDetail.SubmitterName<br />
+
