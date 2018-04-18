@@ -170,10 +170,10 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\MyDashboardController.cs" />
     <Compile Include="Controllers\NewSubmissionController.cs" />
-    <Compile Include="Extensions\EclExtensionMethods.cs" />
+    <Compile Include="Extensions\EclExtension.cs" />
     <Compile Include="Extensions\EclHtmlHelper.cs" />
     <Compile Include="Extensions\EnumExtension.cs" />
-    <Compile Include="Extensions\SqlExtensionMethos.cs" />
+    <Compile Include="Extensions\SqlExtension.cs" />
     <Compile Include="Filters\EclAuthorizeAttribute.cs" />
     <Compile Include="Filters\EclExceptionAttribute.cs" />
     <Compile Include="Filters\NoCacheAttribute.cs" />

@@ -1,17 +1,18 @@
-﻿using eCoachingLog.Models.Common;
+﻿using eCoachingLog.Controllers;
+using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using log4net;
-using System;
+using OfficeOpenXml;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Extensions
 {
-    public static class EclExtensionMethods
+	public static class EclExtension
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -31,35 +32,28 @@ namespace eCoachingLog.Extensions
             return true;
         }
 
-        public static SqlParameter AddIdsTableType(this SqlParameterCollection target, string name, List<long> values)
-        {
-            DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("ID", typeof(long));
-            foreach (long value in values)
-            {
-                dataTable.Rows.Add(value);
-            }
+		public static MemoryStream GenerateExcelFile(this LogBaseController controller, DataTable dataTable)
+		{
+			ExcelPackage excelPackage;
+			MemoryStream memoryStream = new MemoryStream();
+			using (excelPackage = new ExcelPackage())
+			{
+				var workSheet = excelPackage.Workbook.Worksheets.Add("eCoachingLog");
+				workSheet.Cells["A1"].LoadFromDataTable(dataTable, true);
+				// Set date columns format				
+				for (var i = 0; i < dataTable.Columns.Count; i++)
+				{
+					if (dataTable.Columns[i].DataType.Name.Equals("DateTime"))
+					{
+						workSheet.Column(i + 1).Style.Numberformat.Format = "yyyy-mm-dd hh:mm";
+					}
+				}
+				excelPackage.SaveAs(memoryStream);
+			}
+			return memoryStream;
+		}
 
-            SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
-            sqlParameter.SqlDbType = SqlDbType.Structured;
-            sqlParameter.TypeName = "EC.IdsTableType";
-
-            return sqlParameter;
-        }
-
-        //public static IEnumerable<SelectListItem> ToSelectListItems(this IEnumerable<eCoachingAccessControlRole> roles, string selectedValue)
-        //{
-        //    return
-        //        roles.Select(role =>
-        //                  new SelectListItem
-        //                  {
-        //                      Selected = (role.Value.ToUpper() == selectedValue),
-        //                      Text = role.Name,
-        //                      Value = role.Value
-        //                  });
-        //}
-
-        public static IEnumerable<SelectListItem> ToSelectListItems(this IEnumerable<NameLanId> nameLanIdList, string selectedValue)
+		public static IEnumerable<SelectListItem> ToSelectListItems(this IEnumerable<NameLanId> nameLanIdList, string selectedValue)
         {
             return
                 nameLanIdList.Select(nameLanId =>
@@ -82,6 +76,5 @@ namespace eCoachingLog.Extensions
                               Value = site.Id.ToString()
                           });
         }
-
     }
 }

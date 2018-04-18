@@ -60,8 +60,8 @@ namespace eCoachingLog
                         "~/Scripts/eCoachingLog/dashboard.js");
             bundles.Add(dashboardScriptBundle);
 
-            // javascript bundle for mydashboard coaching list
-            var logListScriptBundle = new ScriptBundle("~/bundles/scripts/myDashboardLogList");
+            // javascript bundle for log list
+            var logListScriptBundle = new ScriptBundle("~/bundles/scripts/logList");
 			logListScriptBundle.Orderer = new EclBundleOrderer();
 			logListScriptBundle.Include(
 						"~/Scripts/eCoachingLog/logList.js");

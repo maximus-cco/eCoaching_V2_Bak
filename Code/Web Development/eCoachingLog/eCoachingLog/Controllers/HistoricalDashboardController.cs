@@ -1,10 +1,10 @@
-﻿using eCoachingLog.Filters;
+﻿using eCoachingLog.Extensions;
+using eCoachingLog.Filters;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using eCoachingLog.ViewModels;
 using log4net;
-using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -73,7 +73,8 @@ namespace eCoachingLog.Controllers
 		public JsonResult ExportToExcel(HistoricalDashboardViewModel vm)
 		{
 			var searchModel = vm.Search;
-			MemoryStream ms = CreateExcelFile();
+			var logFilter = new LogFilter();
+			MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTable(logFilter));
 			Session["fileName"] = "eCoachingLog_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
 			Session["fileStream"] = ms;
 
@@ -82,9 +83,9 @@ namespace eCoachingLog.Controllers
 
 		public void Download()
 		{
-			MemoryStream memoryStream = Session["fileStream"] as MemoryStream;
+			MemoryStream memoryStream = (MemoryStream)Session["fileStream"];
 			string fileName = (string)Session["fileName"];
-			var fName = fileName;// + ".xlsx";
+			var fName = fileName;
 			Response.Clear();
 			Response.Buffer = true;
 			Response.Charset = "UTF-8";
@@ -94,43 +95,6 @@ namespace eCoachingLog.Controllers
 			memoryStream.WriteTo(Response.OutputStream);
 			Response.Flush();
 			Response.End();
-		}
-
-		static ExcelWorksheet GetWorkSheet(ExcelPackage excelPackage)
-		{
-			var workSheet = excelPackage.Workbook.Worksheets.Add("eCoachingLog");
-			workSheet.View.ShowGridLines = true;
-			return workSheet;
-		}
-
-		private MemoryStream CreateExcelFile()
-		{
-			ExcelPackage excelPackage;
-			MemoryStream result = new MemoryStream();
-			var logFilter = new LogFilter();
-			using (excelPackage = new ExcelPackage())
-			{
-				ExcelWorksheet workSheet = GetWorkSheet(excelPackage);
-				// A1: starting cell
-				var dataTable = empLogService.GetLogDataTable(logFilter);
-				workSheet.Cells["A1"].LoadFromDataTable(dataTable, true);
-				//workSheet.Cells.AutoFitColumns();
-				//var dPos = new List<int>();
-				for (var i = 0; i < dataTable.Columns.Count; i++ )
-				{
-					if (dataTable.Columns[i].DataType.Name.Equals("DateTime"))
-					{
-						//dPos.Add(i);
-						workSheet.Column(i + 1).Style.Numberformat.Format = "yyyy-mm-dd hh:mm";
-					}
-				}
-				//foreach (var pos in dPos)
-				//{
-				//	workSheet.Column(pos + 1).Style.Numberformat.Format = "yyyy-mm-dd hh:mm";
-				//}
-				excelPackage.SaveAs(result);
-			}
-			return result;
 		}
 
 		private HistoricalDashboardViewModel InitHistDashboardViewModel()
@@ -185,13 +149,5 @@ namespace eCoachingLog.Controllers
 
 			return vm;
 		}
-	}
-
-
-	public class CodeDetail
-	{
-		public string Code { get; set; }
-		public string Time { get; set; }
-		public string Date { get; set; }
 	}
 }
