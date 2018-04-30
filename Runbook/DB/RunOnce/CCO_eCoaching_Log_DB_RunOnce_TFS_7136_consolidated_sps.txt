@@ -1,39 +1,4 @@
 /*
-
-TFS 7136 – Move new submissions to new architecture
-
-Submission List
-
-[EC].[sp_Select_Employee_Details]--new
-[EC].[sp_Select_Modules_By_Job_Code]
-[EC].[sp_Select_Sites]--new
-[EC].[sp_Select_Employees_By_Module_And_Site]--new
-[EC].[sp_Select_Programs]
-[EC].[sp_Select_Behaviors]
-[EC].[sp_Select_CoachingReasons_By_Module]
-[EC].[sp_Select_Source_By_Module] 
-[EC].[sp_Select_SubCoachingReasons_By_Reason]
-[EC].[sp_Select_CallID_By_Module]
-[EC].[sp_Select_Email_Attributes]
-[EC].[sp_Select_Rec_Employee_Hierarchy]
-[EC].[sp_Select_Values_By_Reason]
-[EC].[sp_InsertInto_Coaching_Log]
-[EC].[sp_InsertInto_Warning_Log]
-
-
-Summary
-Open in an ssms window pointing to eCoaching DB in target environment and run with nothing selected
-
-Database instances and databases
-
-Development – F3420-ECLDBD01 - eCoachingDev
-Test - F3420-ECLDBT01 - eCoachingTest
-Production – F3420-ECLDBP01 – eCoaching
-
-*/
-
-
-/*
 sp_InsertInto_Coaching_Log(03).sql
 Last Modified Date: 04/10/2018
 Last Modified By: Susmitha Palacherla
@@ -59,14 +24,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
-
 
 
 
@@ -1167,11 +1124,12 @@ GO
 
 
 /*
-sp_Select_Employees_By_Module_And_Site(01).sql
-Last Modified Date: 04/10/2018
+sp_Select_Employees_By_Module_And_Site(02).sql
+Last Modified Date: 04/30/2018
 Last Modified By: Susmitha Palacherla
 
 
+Version 02: Submissions move to new architecture. Additional changes from V&V feedback - TFS 7136 - 04/30/2018
 Version 01: Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
 
 */
@@ -1192,19 +1150,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	04/15/2018
 --	Description: *	This procedure takes a ModuleID and SiteID and returns Employees.
---  Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
+--  Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/30/2018 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site] 
-@intModuleIDin INT, @intSiteIDin INT = -1
+@intModuleIDin INT, @intSiteIDin INT = -1, @nvcUserEmpIDin  nvarchar(10)
 
 
 AS
@@ -1213,6 +1166,7 @@ BEGIN
 DECLARE	
 @isBySite BIT,
 @nvcModulein nvarchar(30),
+@nvcEmpJobCode nvarchar(20),
 @nvcSitein nvarchar(30),
 @dtmDate datetime,
 @nvcSQL nvarchar(max),
@@ -1229,10 +1183,12 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
 
 SET @nvcModulein = (SELECT Module FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
 --SET @nvcSitein = (SELECT City FROM [EC].[DIM_Site] WHERE [SiteID] = @intSiteIDin)
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcUserEmpIDin)
 
 -- General Selection of employees based on Job codes flagged in Employee Selection table.
 
-SET @nvcSQL = 'SELECT EH.Emp_ID
+SET @nvcSQL01 = 'SELECT EH.Emp_ID
 				,VEH.[Emp_Name] 
  FROM [EC].[View_Employee_Hierarchy] VEH  WITH (NOLOCK)  JOIN  [EC].[Employee_Hierarchy]EH WITH (NOLOCK) 
  ON VEH.[Emp_ID]= EH.[Emp_ID] JOIN [EC].[Employee_Selection]
@@ -1240,10 +1196,27 @@ SET @nvcSQL = 'SELECT EH.Emp_ID
  ON S.City = EH.Emp_Site
 WHERE [EC].[Employee_Selection].[is'+ @nvcModulein + '] = 1
 AND  (S.SiteID =('''+CONVERT(NVARCHAR,@intSiteIDin)+''') or '''+ CONVERT(NVARCHAR,@intSiteIDin) + ''' = -1)
-AND [Emp_Job_Code] NOT IN (''WTTR12'', ''WTTR13'', ''WTID13'') 
-AND [End_Date] = ''99991231''
+AND VEH.[Emp_ID] <> '''+ @nvcUserEmpIDin + ''''
+
+
+-- Conditional Filter to restrtict Training staff with specific job codes to submit only for certain job codes.
+
+SET @nvcSQL02 = ' AND [Emp_Job_Code] NOT IN (''WTTR12'', ''WTTR13'', ''WTID13'')' 
+
+
+-- Generic  Filter for all scenarios.
+
+SET @nvcSQL03 = ' AND [End_Date] = ''99991231''
 AND VEH.[Emp_LanID]is not NULL and VEH.[Sup_LanID] is not NULL and VEH.[Mgr_LanID]is not NULL
 ORDER BY VEH.[Emp_Name] ASC'
+
+
+IF @nvcEmpJobCode IN ('WTTR12', 'WTTR13', 'WTID13') 
+
+SET @nvcSQL = @nvcSQL01 + @nvcSQL02 + @nvcSQL03 
+
+ELSE
+SET @nvcSQL = @nvcSQL01 + @nvcSQL03
 
 --Print @nvcSQL
 
@@ -1251,7 +1224,6 @@ EXEC (@nvcSQL)
 
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_Select_Employees_By_Module
-
 GO
 
 
@@ -1688,9 +1660,13 @@ GO
 
 
 /*
-sp_Select_SubCoachingReasons_By_Reason(02).sql
-Last Modified Date: 04/10/2018
+sp_Select_SubCoachingReasons_By_Reason(04).sql
+Last Modified Date: 04/30/2018
 Last Modified By: Susmitha Palacherla
+
+Version 04: Submissions move to new architecture. Additional changes from V&V feedback - TFS 7136 - 04/30/2018
+
+Version 03 : Modified to open Encryption key. TFS 10760 - 04/24/2018
 
 Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 
@@ -1715,17 +1691,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	8/01/14
 --	Description: *	This procedure takes a Module, Direct or Indirect, a Coaching Reason and the submitter lanid 
 --  and returns the Sub Coaching Reasons associated with the Coaching Reason.
 -- Last Modified By: Susmitha Palacherla
--- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/30/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_SubCoachingReasons_By_Reason] 
 @intReasonIDin INT, @intModuleIDin INT, @strSourcein nvarchar(30), @nvcEmpIDin nvarchar(10)
@@ -1735,7 +1707,7 @@ BEGIN
 	DECLARE	
 	@nvcEmpJobCode nvarchar(30),
 	@strModule nvarchar(30),
-	@strCoachReason nvarchar(30),
+	@strCoachReason nvarchar(100),
 	@nvcSQL nvarchar(max)
 	
 
@@ -1770,14 +1742,19 @@ Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coachin
 EXEC (@nvcSQL)	
 END -- sp_Select_SubCoachingReasons_By_Reason
 
+
+
+
 GO
 
 
 
 /*
-sp_Select_Values_By_Reason(02).sql
-Last Modified Date: 04/10/2018
+sp_Select_Values_By_Reason(03).sql
+Last Modified Date: 04/30/2018
 Last Modified By: Susmitha Palacherla
+
+Version 03: Submissions move to new architecture. Additional changes from V&V feedback - TFS 7136 - 04/30/2018
 
 Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 
@@ -1801,17 +1778,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	8/01/14
 --	Description: *	This procedure takes a Module and Coaching Reason 
 --  and returns the Values associated with the Coaching Reason for that Module. 
---  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/30/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Values_By_Reason] 
 @intReasonIDin INT, @intModuleIDin INT, @strSourcein nvarchar(30)
@@ -1820,7 +1792,7 @@ AS
 BEGIN
 	DECLARE	
 	@strModulein nvarchar(30),
-	@strReasonin nvarchar(30),
+	@strReasonin nvarchar(100),
 	@nvcSQL nvarchar(max)
 
 SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
@@ -1843,7 +1815,6 @@ AND ' + @strSourcein +' = 1'
 
 EXEC (@nvcSQL)	
 END -- sp_Select_Values_By_Reason
-
 GO
 
 

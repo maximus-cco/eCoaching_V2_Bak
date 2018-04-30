@@ -1,7 +1,9 @@
 /*
-sp_Select_Values_By_Reason(02).sql
-Last Modified Date: 04/10/2018
+sp_Select_Values_By_Reason(03).sql
+Last Modified Date: 04/30/2018
 Last Modified By: Susmitha Palacherla
+
+Version 03: Submissions move to new architecture. Additional changes from V&V feedback - TFS 7136 - 04/30/2018
 
 Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 
@@ -25,17 +27,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	8/01/14
 --	Description: *	This procedure takes a Module and Coaching Reason 
 --  and returns the Values associated with the Coaching Reason for that Module. 
---  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--  Modified during Submissions move to new architecture - TFS 7136 - 04/30/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Values_By_Reason] 
 @intReasonIDin INT, @intModuleIDin INT, @strSourcein nvarchar(30)
@@ -44,7 +41,7 @@ AS
 BEGIN
 	DECLARE	
 	@strModulein nvarchar(30),
-	@strReasonin nvarchar(30),
+	@strReasonin nvarchar(100),
 	@nvcSQL nvarchar(max)
 
 SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
@@ -67,7 +64,6 @@ AND ' + @strSourcein +' = 1'
 
 EXEC (@nvcSQL)	
 END -- sp_Select_Values_By_Reason
-
 GO
 
 
