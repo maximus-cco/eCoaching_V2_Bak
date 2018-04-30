@@ -4,14 +4,13 @@ using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
 using log4net;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
 namespace eCoachingLog.Services
 {
-    public class EmployeeLogService : IEmployeeLogService 
+	public class EmployeeLogService : IEmployeeLogService 
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -22,21 +21,10 @@ namespace eCoachingLog.Services
             this.employeeLogRepository = employeeLogRepository;
         }
 
-        public List<Module> GetModules(string userLanId, int logTypeId)
-        {
-
-            return employeeLogRepository.GetModules(userLanId, logTypeId);
-        }
-
         public List<Module> GetModules(User user)
         {
 
             return employeeLogRepository.GetModules(user);
-        }
-
-        public List<LogBase> GetLogsByLogName(string logName)
-        {
-            return employeeLogRepository.GetLogsByLogName(logName);
         }
 
         public BaseLogDetail GetLogDetail(long logId, bool isCoaching)
@@ -92,10 +80,10 @@ namespace eCoachingLog.Services
             return employeeLogRepository.GetBehaviors(moduleId);
         }
 
-		public List<LogReason> GetReasonsByLogId(long logId)
+		public List<LogReason> GetReasonsByLogId(long logId, bool isCoaching)
 		{
 			List<LogReason> reasons = new List<LogReason>();
-			var reasonTuples = employeeLogRepository.GetReasonsByLogId(logId);
+			var reasonTuples = employeeLogRepository.GetReasonsByLogId(logId, isCoaching);
 			var distinctReasons = reasonTuples.Select(x => x.Item1).Distinct();
 
 			foreach (var distinctReason in distinctReasons)
@@ -111,9 +99,9 @@ namespace eCoachingLog.Services
 			return reasons;
 		}
 
-		public List<LogBase> GetLogList(string userLanId, string status, bool isCoaching, DateTime startTime, DateTime endTime, int pageSize, int startRowIndex, string sortBy, string sortAsc, string search)
+		public List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search)
 		{
-			List<LogBase> logs = employeeLogRepository.GetLogList(userLanId, status, isCoaching, startTime, endTime, pageSize, startRowIndex, sortBy, sortAsc, search);
+			List<LogBase> logs = employeeLogRepository.GetLogList(logFilter, userId, pageSize, startRowIndex, sortBy, sortDirection, search);
 
 			foreach (LogBase log in logs)
 			{
@@ -125,9 +113,9 @@ namespace eCoachingLog.Services
 			return logs;
 		}
 
-		public int GetLogListTotal(string userLanId, string status, bool isCoaching, DateTime startTime, DateTime endTime, string search)
+		public int GetLogListTotal(LogFilter logFilter, string userId, string search)
 		{
-			return employeeLogRepository.GetLogListTotal(userLanId, status, isCoaching, startTime, endTime, search);
+			return employeeLogRepository.GetLogListTotal(logFilter, userId, search);
 		}
 
 		public IList<LogStatus> GetAllLogStatuses()
@@ -135,9 +123,9 @@ namespace eCoachingLog.Services
 			return this.employeeLogRepository.GetAllLogStatuses();
 		}
 
-		public IList<LogSource> GetAllLogSources(string userLanId)
+		public IList<LogSource> GetAllLogSources(string userEmpId)
 		{
-			return this.employeeLogRepository.GetAllLogSources(userLanId);
+			return this.employeeLogRepository.GetAllLogSources(userEmpId);
 		}
 
 		public IList<LogValue> GetAllLogValues()

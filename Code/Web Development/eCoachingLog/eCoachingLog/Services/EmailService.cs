@@ -1,7 +1,7 @@
 ﻿using eCoachingLog.Models;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Repository;
-using eCoachingLog.Utilities;
+using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Net.Mail;

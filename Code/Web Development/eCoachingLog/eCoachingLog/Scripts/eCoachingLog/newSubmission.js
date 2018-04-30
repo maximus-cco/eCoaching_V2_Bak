@@ -4,9 +4,7 @@
 	// Check unsaved data
     $('#new-submission-form').data('serialize', $('#new-submission-form').serialize());
     $(window).on('beforeunload', function (e) {
-    	//alert('beforeunload');
-    	//alert(validationError);
-    	if ((sessionExpired === false && loggingOut === false && cancelled === false && $('#new-submission-form').serialize() != $('#new-submission-form').data('serialize'))
+    	if ((errorOccured === false && sessionExpired === false && loggingOut === false && cancelled === false && $('#new-submission-form').serialize() != $('#new-submission-form').data('serialize'))
 			|| validationError === 'True') {
             return 'Your submission has NOT been saved yet. If you choose "Leave this page", you will loose all your entries.';
         }
@@ -224,8 +222,8 @@
 
     // Behavior detail textarea remaining characters display
     $('body').on('keyup', '#textarea-behavior-detail', function (e) {
-        var textLength = textAreaMaxLength - $(this).val().length;
-        $('#behavior-detail-remaining').text(textLength + ' remaining');
+        var remaining = textAreaMaxLength - $(this).val().length;
+        $('#behavior-detail-remaining').text(remaining + ' remaining');
     });
 
     // Action plan textarea remaining characters display
@@ -233,28 +231,6 @@
         var textLength = textAreaMaxLength - $(this).val().length;
         $('#action-plan-remaining').text(textLength + ' remaining');
     });
-
-    // How was the coaching opportunity identifed?
-    function loadSourceDropdown(isCoachingByYou) {
-        // ajax call to get coaching reasons and source list
-        $.ajax({
-            type: 'POST',
-            url: loadSourcesUrl,
-            data: {
-                isCoachingByYou: isCoachingByYou
-            },
-            success: function (sources) {
-                $("#select-source").empty();
-                // Load Source drowdown
-                var options = [];
-                $.each(sources, function (i, source) {
-                    options.push('<option value="', source.Value, '">' + source.Text + '</option>');
-                });
-                $("#select-source").html(options.join(''));
-                $("#select-source").removeClass('loadinggif');
-            }
-        });
-    }
 
     function refreshCoachingReasons(isCoachingByYou, isCse) {
     	$(".please-wait").slideDown(500);
@@ -275,9 +251,7 @@
 
     function resetPage(moduleId) {
     	$(".please-wait").slideDown(500);
-
         $('#flash-message').empty();
-
         $.ajax({
             type: 'POST',
             url: resetPageUrl,
@@ -326,13 +300,11 @@
             // validation is done on server side
             return true;
         }
-    	// $(".please-wait").slideUp(500);
 
         return true;
     });
 
     $('body').on('click', '#btn-cancel', function (e) {
-        //$(window).unbind('beforeunload');
         if (confirm("Are you sure you want to cancel this submission?")) {
         	$(".please-wait").slideDown(500);
             cancelled = true;
@@ -344,13 +316,6 @@
         }
     });
 
-    //function validateForm() {
-    //    if (!validateCoachingReasons()) {
-    //        return false;
-    //    }
-    //    return true;
-    //}
-
     function validateCoachingReasons() {
         var coachingReasons = $('#coaching-reasons').find('.reason-checkbox:checkbox');
         // Skip coaching reasons client validation if no reasons displayed
@@ -360,7 +325,7 @@
         var errorMessage = 'At least one coaching reason must be selected.';
         var errorElement = $('span[data-valmsg-for="CoachingReasons"');
         var selectedCoachingReasons = coachingReasons.filter(':checked');
-        // reason-checkbox
+    	// reason-checkbox
         var isValid = selectedCoachingReasons.length >= 1;
         if (!isValid) {
             errorElement.addClass('field-validation-error').removeClass('field-validation-valid').text(errorMessage);
@@ -375,6 +340,11 @@
                 var isValidSub = validateSubReasons(subReasonMultiSelect);
                 isValid = isValid && isValidOpp && isValidSub;
             });
+
+            if (selectedCoachingReasons.length > 12) {
+            	errorMessage = 'Maximum number of selected coaching reasons is 12.';
+            	errorElement.addClass('field-validation-error').removeClass('field-validation-valid').text(errorMessage);
+            }
         }
         return isValid;
     }

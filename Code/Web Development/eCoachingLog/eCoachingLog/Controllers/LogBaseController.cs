@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Models.Common;
-using eCoachingLog.ViewModels;
+using eCoachingLog.Models.User;
 using eCoachingLog.Services;
+using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,9 @@ namespace eCoachingLog.Controllers
     public class LogBaseController : BaseController
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-		// TODO: change to private
 		protected readonly ISiteService siteService;
 		protected readonly IEmployeeService employeeService;
 		protected readonly IEmployeeLogService empLogService;
-
-		//public LogBaseController()
-		//{
-		//	logger.Debug("Entered LogBaseController");
-		//}
 
 		public LogBaseController(ISiteService siteService, IEmployeeService employeeService, IEmployeeLogService empLogService)
 		{
@@ -38,98 +32,46 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult GetLogDetail(int logId, string logType)
+		public ActionResult GetLogDetail(int logId, string isCoaching)
 		{
-			return RedirectToAction("Index", "Review", new { logId = logId, logType = logType });
+			return RedirectToAction("Index", "Review", new { logId = logId, isCoaching = isCoaching == "true" ? true : false });
 		}
 
 		[HttpPost]
-		public ActionResult LoadData(LogFilter myDashboardSearch)
+		public ActionResult LoadData(LogFilter logFilter)
 		{
 			logger.Debug("Entered LoadData");
-
 			// TODO: Based on myDashboardSearch.LogSectionWorkingOn (LogSection), get log list 
 
-			var selectedMonthYear = Session["SelectedMonthYear"];
-
-			//DateTime monthYear = Convert.ToDateTime("201512");
-			DateTime firstDayOfMonth = Convert.ToDateTime("2015-01-01"); //Convert.ToDateTime(monthYear);
-			DateTime lastDayOfMonth = Convert.ToDateTime("2017-01-01"); //firstDayOfMonth.AddMonths(1).AddDays(-1);
-
-			// get Start (paging start index) and length (page size for paging)
+			// Get Start (paging start index) and length (page size for paging)
 			var draw = Request.Form.GetValues("draw").FirstOrDefault();
 			var start = Request.Form.GetValues("start").FirstOrDefault();
 			var length = Request.Form.GetValues("length").FirstOrDefault();
 			//Get Sort columns value
-			var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
-			var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
-
-			if (sortColumnDir == "asc")
-			{
-				sortColumnDir = "Y";
-			}
-			else
-			{
-				sortColumnDir = "N";
-			}
-
+			var sortBy = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+			var sortDirection = Request.Form.GetValues("order[0][dir]").FirstOrDefault() == "asc" ? "Y" : "N";
 			var search = Request.Form.GetValues("search[value]").FirstOrDefault();
-
 			int pageSize = length != null ? Convert.ToInt32(length) : 0;
 			int rowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
 			int totalRecords = 0;
-
-			//logType = "";
-
-			string userLanId = "Takouhi.Bezzegh"; // GetUserFromSession().LanId;
-			var logType = "Pending";
-
-			// TODO:
-			// New service method
-			// dashboardService.GetLogList(myDashboardSearch, userLanId, search)
-
-
-			//List<EmployeeLog> logs = dashboardService.GetLogList(GetUserFromSession().LanId, logStatus, (bool)Session["Coaching"], firstDayOfMonth, lastDayOfMonth, pageSize, rowStartIndex, sortColumn, sortColumnDir, search);
-			List<LogBase> logs = empLogService.GetLogList(userLanId, logType, true, firstDayOfMonth, lastDayOfMonth, pageSize, rowStartIndex, sortColumn, sortColumnDir, search);
-			//totalRecords = dashboardService.GetLogListTotal(GetUserFromSession().LanId, logStatus, (bool)Session["Coaching"], firstDayOfMonth, lastDayOfMonth, search);
-			totalRecords = empLogService.GetLogListTotal(userLanId, logType, true, firstDayOfMonth, lastDayOfMonth, search);
-
-			// TODO: remove, need to re-get data from database
-			string test = (string)Session["review"];
-			if (test == "review")
+			try
 			{
-				logs.RemoveAt(0);
+				User user = GetUserFromSession();
+				List<LogBase> logs = empLogService.GetLogList(logFilter, user.EmployeeId, pageSize, rowStartIndex, sortBy, sortDirection, search);
+				totalRecords = empLogService.GetLogListTotal(logFilter, user.EmployeeId, search);
+				return Json(new { draw = draw, recordsFiltered = totalRecords, recordsTotal = totalRecords, data = logs }, JsonRequestBehavior.AllowGet);
 			}
-			// reset:
-			//Session["review"] = null;
-			string status = (string) Session["Status"];
-			if (status == null)
+			catch (Exception ex)
 			{
-				status = "Pending";
+				logger.Warn(ex.StackTrace);
+				var errorMsg = "Data is currently unavailable, please try again later.";
+				return Json(new { draw = 1, recordsFiltered = 0, recordsTotal = 0, data = new List<LogBase>(), error = errorMsg }, JsonRequestBehavior.AllowGet);
 			}
-
-			foreach (var log in logs)
-			{
-				if (status == "Pending")
-				{
-					log.Status = "Pending Manager Review";
-				}
-				else if (status == "Completed")
-				{
-					log.Status = "Completed";
-				}
-			}
-
-			var data = logs;
-			return Json(new { draw = draw, recordsFiltered = totalRecords, recordsTotal = totalRecords, data = data }, JsonRequestBehavior.AllowGet);
 		}
 
 		protected int GetLogStatusLevel(int moduleId, int statusId)
 		{
 			var statusLevel = -1;
-
-			//moduleId = 1;
-			//statusId = 4;
 			var tuple = new Tuple<int, int>(moduleId, statusId);
 			if (Constants.LogStatusLevel.ContainsKey(tuple))
 			{
@@ -137,16 +79,6 @@ namespace eCoachingLog.Controllers
 			}
 
 			return statusLevel;
-		}
-
-		protected IList<Site> GetSites(int siteId)
-		{
-			return this.siteService.GetAllSites(); // TODO: update service method to GetSites (int siteId)
-		}
-
-		protected IList<Employee> GetEmployeesBySiteAndTitle(int siteId, int titleId)
-		{
-			return this.employeeService.GetEmployeesBySiteAndTitle(-1, titleId);
 		}
 
 		protected IList<Employee> GetAllSubmitters()
@@ -161,51 +93,12 @@ namespace eCoachingLog.Controllers
 
 		protected IList<LogSource> GetAllLogSources()
 		{
-			return this.empLogService.GetAllLogSources(GetUserFromSession().LanId);
+			return this.empLogService.GetAllLogSources(GetUserFromSession().EmployeeId);
 		}
 
 		protected IList<LogValue> GetAllLogValues()
 		{
 			return this.empLogService.GetAllLogValues();
 		}
-
-		//protected int GetLogStatusLevel(int moduleId, int statusId)
-		//{
-		//	int statusLevel = -1;
-
-		//	switch (statusId)
-		//	{
-		//		case Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW:
-		//			statusLevel = 1;
-		//			break;
-		//		case Constants.LOG_STATUS_PENDING_ACKNOWLEDGEMENT:
-		//			statusLevel = 4;
-		//			break;
-		//		case Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW:
-		//			statusLevel = 2;
-		//			break;
-		//		case Constants.LOG_STATUS_PENDING_MANAGER_REVIEW:
-		//			if (Constants.MODULE_CSR == moduleId || Constants.MODULE_TRAINING == moduleId)
-		//			{
-		//				statusLevel = 3;
-		//			}
-		//			else if (Constants.MODULE_SUPERVISOR == moduleId)
-		//			{
-		//				statusLevel = 2;
-		//			}
-		//			break;
-		//		case Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW:
-		//			statusLevel = 2;
-		//			break;
-		//		case Constants.LOG_STATUS_PENDING_SRMANAGER_REVIEW:
-		//		case Constants.LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW:
-		//			statusLevel = 3;
-		//			break;
-		//		default:
-		//			break;
-		//	}
-
-		//	return statusLevel;
-		//}
 	}
 }

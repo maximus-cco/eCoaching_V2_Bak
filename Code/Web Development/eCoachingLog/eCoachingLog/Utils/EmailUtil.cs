@@ -1,6 +1,6 @@
 ﻿using eCoachingLog.Models.Common;
 
-namespace eCoachingLog.Utilities
+namespace eCoachingLog.Utils
 {
 	public class EmailUtil
     {

@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace eCoachingLog.Utilities
+namespace eCoachingLog.Utils
 {
     public class FileUtil
     {

@@ -1,5 +1,5 @@
 ﻿using eCoachingLog.Models.Common;
-using eCoachingLog.Utilities;
+using eCoachingLog.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;

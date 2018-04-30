@@ -4,6 +4,7 @@ using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
+using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
 using System;
@@ -49,30 +50,13 @@ namespace eCoachingLog.Controllers
 			return View((NewSubmissionViewModel)Session["newSubmissionVM"]);
         }
 
-        //[HttpPost]
-        //public JsonResult GetEmployeesBySite(int id)
-        //{
-        //    GetEmployeesByModuleToSession(id);
-        //    var vm = GetNewSubmissionVMFromSession();
-        //    return Json(new SelectList(vm.EmployeeSelectList, "Value", "Text"), JsonRequestBehavior.AllowGet);
-        //}
-        
-        [HttpPost]
-        public JsonResult LoadSources(bool isCoachingByYou)
-        {
-            var vm = GetNewSubmissionVMFromSession();
-            vm.SourceSelectList = GetSources(isCoachingByYou);
-            return Json(new SelectList(vm.SourceSelectList, "Value", "Text"), JsonRequestBehavior.AllowGet);
-        }
-
         private IEnumerable<SelectListItem> GetSources(bool isCoachingByYou)
         {
             var vm = GetNewSubmissionVMFromSession();
             string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? Constants.DIRECT : Constants.INDIRECT;
             int moduleId = vm.ModuleId;
-
             List<LogSource> sourceList = newSubmissionService.GetSourceListByModuleId(moduleId, directOrIndirect);
-            sourceList.Insert(0, new LogSource { Id = "-2", Name = "-- Select a Source --" });
+            sourceList.Insert(0, new LogSource { Id = -2, Name = "-- Select a Source --" });
             IEnumerable<SelectListItem> sources = new SelectList(sourceList, "Id", "Name");
             return sources;
         }
@@ -85,14 +69,13 @@ namespace eCoachingLog.Controllers
                 vm = InitNewSubmissionViewModel(); 
                 Session["newSubmissionVM"] = vm;
             }
-
             return vm;
         }
 
         [HttpPost]
         public ActionResult Save(NewSubmissionViewModel vm)
         {
-			logger.Debug("###################Save");
+			logger.Debug("Entered Save ...");
 			if (ModelState.IsValid)
             {
                 bool isDuplicate = false;
@@ -129,10 +112,8 @@ namespace eCoachingLog.Controllers
 							FlashMessage.Warning("Failed to save your submission.");
 						}
 					}
-
 					return StayOnThisPage(vm);
 				}
-
                 return RedirectToAction("Index");
             }
 
@@ -147,7 +128,6 @@ namespace eCoachingLog.Controllers
             var vm = GetNewSubmissionVMFromSession();
             var logo = Server.MapPath("~/Content/Images/ecl-logo-small.png");
             var template = Server.MapPath("~/EmailTemplates/NewSubmission.html");
-
             return this.emailService.Send(vm, template, logo, logName);
         }
 
@@ -180,15 +160,15 @@ namespace eCoachingLog.Controllers
             vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm);
             vm.ShowProgramDropdown = ShowProgramDropdown(vm);
             vm.ShowBehaviorDropdown = ShowBehaviorDropdown(vm);
-
             vm.ShowIsCoachingByYou = vmInSession.ShowIsCoachingByYou;
             vm.ShowWarningChoice = vmInSession.ShowWarningChoice;
             vm.ShowIsCseChoice = vmInSession.ShowIsCseChoice;
             vm.ShowActionTextBox = vmInSession.ShowActionTextBox;
             vm.ShowCoachWarningDiv = vmInSession.ShowCoachWarningDiv;
             vm.ShowWarningQuestions = vmInSession.ShowWarningQuestions;
+			vm.ShowCallTypeChoice = vmInSession.ShowCallTypeChoice;
 
-            return View("Index", vm);
+			return View("Index", vm);
         }
 
         [HttpPost]
@@ -209,7 +189,6 @@ namespace eCoachingLog.Controllers
 			vm.ShowEmployeeDropdown = true;
 			vm.ProgramSelectList = vmInSession.ProgramSelectList;
 			vm.ShowProgramDropdown = true;
-			//vm.BehaviorSelectList = vmInSession.BehaviorSelectList;
 			vm.CallTypeSelectList = vmInSession.CallTypeSelectList;
 
 			return PartialView("_NewSubmission", vm);
@@ -217,7 +196,7 @@ namespace eCoachingLog.Controllers
 
 		private void GetEmployeesByModuleToSession(int moduleId, int siteId)
         {
-            List<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId);
+            List<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession().EmployeeId);
             employeeList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
             IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
             var vmInSession = GetNewSubmissionVMFromSession();
@@ -248,20 +227,15 @@ namespace eCoachingLog.Controllers
             bool isCoachingByYou, bool? isCse, bool? isWarning)
         {
             NewSubmissionViewModel vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
-            //vm.Employee = vm.EmployeeList.FirstOrDefault(x => x.Id == employeeId);
             vm.IsCoachingByYou = isCoachingByYou;
             vm.IsCse = isCse;
             vm.IsWarning = isWarning;
-            //vm.ProgramId = programId == null ? -1 : programId.Value;
             vm.ShowCoachWarningDiv = true;
             vm.ShowWarningChoice = ShowWarningChoice(vm);
             vm.ShowIsCseChoice = ShowIsCseChoice(vm);
             vm.ShowActionTextBox = ShowActionTextbox(vm);
+			vm.ShowCallTypeChoice = ShowCallTypeChoice(vm);
 
-            //string directOrIndirect = GetDirectOrIndirect(isCoachingByYou);//"direct";
-            //string moduleId = eCoachingLogUtil.GetModuleNameById(GetNewSubmissionVMFromSession().ModuleId); // TODO: update to int, using module id
-            //string userLanId = GetUserFromSession().LanId;
-            //string employeeLanId = GetNewSubmissionVMFromSession().Employee.LanId;
             bool isSpecialResaon = isCse.HasValue && isCse.Value ? true : false;
             int specialReasonPriority = 2;
 
@@ -308,7 +282,6 @@ namespace eCoachingLog.Controllers
             bool specialReason = true;
             int reasonPriority = 1;
             string userLanId = GetUserFromSession().LanId;
-
             // Warning Type Dropdown
             List<WarningType> warningTypeList = this.empLogService.GetWarningTypes(moduleId, source, specialReason, reasonPriority, employeeId, userLanId);
             warningTypeList.Insert(0, new WarningType { Id = -1, Text = "-- Select a Warning Type --" });
@@ -340,15 +313,12 @@ namespace eCoachingLog.Controllers
                 coachingByYou = isCoachingByYou.Value;
             }
 
-            string directOrIndirect = GetDirectOrIndirect(coachingByYou);// "direct";
+            string directOrIndirect = GetDirectOrIndirect(coachingByYou);
             string userLanId = GetUserFromSession().LanId;
-
             // Warning Reasons Dropdown
             List<WarningReason> warningReasonList = this.empLogService.GetWarningReasons(warningTypeId, directOrIndirect, vm.ModuleId, vm.Employee.Id);
             warningReasonList.Insert(0, new WarningReason { Id = -1, Text = "-- Select a Warning Reason --" });
             IEnumerable<SelectListItem> warningReasonSelectList = new SelectList(warningReasonList, "Id", "Text");
-
-
             vm.WarningReasonSelectList = warningReasonSelectList;
 
             return Json(new SelectList(warningReasonSelectList, "Value", "Text"), JsonRequestBehavior.AllowGet);
@@ -396,8 +366,7 @@ namespace eCoachingLog.Controllers
             // Load Employee dropdown for others
             else 
             {
-                // EC.sp_Select_Employees_By_Module_And_Site
-                List<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, -1);
+                List<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, -1, GetUserFromSession().EmployeeId);
                 employeeList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
                 IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
                 vm.EmployeeSelectList = employees;
@@ -407,7 +376,6 @@ namespace eCoachingLog.Controllers
             // Program Dropdown
             if (moduleId != Constants.MODULE_TRAINING)
             {
-                // sp_Select_Programs
                 List<Program> programList = this.programService.GetPrograms(moduleId);
                 programList.Insert(0, new Program { Id = -1, Name = "-- Select a Program --" });
                 IEnumerable<SelectListItem> programSelectList = new SelectList(programList, "Id", "Name");
@@ -415,7 +383,6 @@ namespace eCoachingLog.Controllers
             }
             else // Behavior Dropdown
             {
-                // sp_Select_Behaviors
                 List<Behavior> behaviorList = this.empLogService.GetBehaviors(moduleId);
                 behaviorList.Insert(0, new Behavior { Id = -1, Text = "-- Select a Behavior --" });
                 IEnumerable<SelectListItem> behaviorSelectList = new SelectList(behaviorList, "Id", "Text");
@@ -449,8 +416,10 @@ namespace eCoachingLog.Controllers
             {
 				directOrIndirect = Constants.INDIRECT;
             }
-            List<CoachingReason> reasons = this.empLogService.GetCoachingReasons(directOrIndirect, moduleId, userId, employeeId, isSpecialResaon, specialReasonPriority);
-            return reasons;
+
+			List<CoachingReason> reasons = this.empLogService.GetCoachingReasons(directOrIndirect, moduleId, userId, employeeId, isSpecialResaon, specialReasonPriority);
+
+			return reasons;
         }
 
         [HttpPost]
@@ -502,7 +471,7 @@ namespace eCoachingLog.Controllers
             var thisCoachReason = vm.CoachingReasons.Where(x => x.ID == reasonId).ToList()[0];
             string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? "Direct" : "Indirect";
             List<string> values = this.empLogService.GetValues(reasonId, directOrIndirect, moduleId);
-            List<CoachingSubReason> subReasonList = this.empLogService.GetCoachingSubReasons(reasonId, moduleId, directOrIndirect, GetUserFromSession().LanId);
+            List<CoachingSubReason> subReasonList = this.empLogService.GetCoachingSubReasons(reasonId, moduleId, directOrIndirect, GetUserFromSession().EmployeeId);
             if (values.Any(s => s.Contains("Opportunity")))
             {
                 thisCoachReason.OpportunityOption = true;
@@ -601,7 +570,7 @@ namespace eCoachingLog.Controllers
 
         private bool ShowBehaviorDropdown(NewSubmissionViewModel vm)
         {
-            // training module only
+            // TRAINING module only
             return vm.ModuleId == Constants.MODULE_TRAINING;
         }
 
@@ -616,5 +585,10 @@ namespace eCoachingLog.Controllers
         {
             return vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value;
         }
-    }
+
+		public bool ShowCallTypeChoice(NewSubmissionViewModel vm)
+		{
+			return vm.ModuleId != Constants.MODULE_LSA;
+		}
+	}
 }

@@ -26,7 +26,7 @@ $(document).ready(function () {
             {
             	"data": "FormName", "name": "strFormID",
             	"render": function (data, type, row, meta) {
-            		return '<a href="#"' + 'data-log-id="' + row['ID'] + '" ' + 'data-log-type="warning"' +
+            		return '<a href="#"' + 'data-log-id="' + row['ID'] + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
 						'class="modal-link"' + 'style="color: #337ab7;">' + data + '</a>';
             	}
             },  // Log Name

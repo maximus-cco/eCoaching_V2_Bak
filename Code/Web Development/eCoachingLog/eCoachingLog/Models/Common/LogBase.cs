@@ -33,9 +33,9 @@ namespace eCoachingLog.Models.Common
 		public string SubReasons { get; set; }
 		public string Value { get; set; }
 
-		public bool IsCoaching { get; set; }
-
 		public string WarningType { get; set; }
 		public string WarningReasons { get; set; }
+
+		public bool IsCoaching { get; set; }
 	}
 }

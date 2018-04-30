@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace eCoachingLog
+namespace eCoachingLog.Utils
 {
     public static class Constants
     {
@@ -12,7 +12,7 @@ namespace eCoachingLog
 		public const string CALL_TYPE_VERINT = "Verint";
 		public const string CALL_TYPE_AVOKE = "Avoke";
 		public const string CALL_TYPE_UCID = "UCID";
-		public const string CALL_TYPE_NGDID = "NGD_ID";
+		public const string CALL_TYPE_NGDID = "NGDID";
 
 		public const int MAX_NUMBER_OF_COACHING_REASONS = 12;
 

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using eCoachingLog.Utils;
+using System.Collections.Generic;
 
 namespace eCoachingLog.Models.User
 {

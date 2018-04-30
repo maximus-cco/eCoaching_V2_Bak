@@ -29,6 +29,7 @@ namespace eCoachingLog.ViewModels
         public bool? IsWarning { get; set; }
         public bool? IsCse { get; set; }
         public bool ShowIsCseChoice { get; set; }
+		public bool ShowCallTypeChoice { get; set; }
         public bool IsCallAssociated { get; set; }
         public string CallTypeName { get; set; }
         public string CallId { get; set; }
@@ -189,8 +190,13 @@ namespace eCoachingLog.ViewModels
                 var coachingReasons = new[] { "CoachingReasons" };
                 yield return new ValidationResult("Please select at least one coaching reason.");
             }
-            else
-            {
+            else if (coachingReasonsSelected.Count > 12)
+			{
+				var coachingReasons = new[] { "CoachingReasons" };
+				yield return new ValidationResult("You can only select 12 coaching reasons maximum.");
+			}
+			else 
+			{
                 foreach (CoachingReason cr in coachingReasonsSelected)
                 {
                     if (!cr.IsOpportunity.HasValue || cr.SubReasonIds.Length == 0)
@@ -201,8 +207,7 @@ namespace eCoachingLog.ViewModels
                     }
                 }
             }
-
-        }
+		}
 
         //private IEnumerable<ValidationResult> ValidateWarningQuestions()
         //{

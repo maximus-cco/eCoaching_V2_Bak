@@ -1,13 +1,14 @@
 ﻿using eCoachingLog.Models.Common;
 using eCoachingLog.Services;
+using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
+
 	public class ReviewController : LogBaseController
 	{
 		private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -18,10 +19,45 @@ namespace eCoachingLog.Controllers
 		}
 
 		// GET: Review
-		public ActionResult Index(int logId, string logType)
+		public ActionResult Index(int logId, bool isCoaching)
         {
-			var logDetail = empLogService.GetLogDetail(logId, true);
-			logDetail.Reasons = empLogService.GetReasonsByLogId(logId);
+			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
+			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching);
+
+			// View only if user clicks a log on Historical Dashboard
+			if ("Historical" == (string)Session["currentPage"])
+			{
+				var reviewVM = new ReviewViewModel();
+				if (isCoaching)
+				{
+					reviewVM.LogDetail = (CoachingLogDetail)logDetail;
+				}
+				else
+				{
+					reviewVM.WarningLogDetail = (WarningLogDetail)logDetail;
+				}
+
+				reviewVM.ShowViewCseText = reviewVM.IsCseUnconfirmed && reviewVM.IsCse;
+				reviewVM.ShowViewMgtNotes = reviewVM.ShowViewCseText && !string.IsNullOrEmpty(reviewVM.LogDetail.MgrNotes);
+				if (reviewVM.LogDetail.IsIqs && reviewVM.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
+				{
+					reviewVM.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Quality Monitor on ";
+					reviewVM.ShowViewSupReviewInfo = true;
+				}
+				else
+				{
+					reviewVM.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Coaching on ";
+				}
+
+				if (isCoaching)
+				{
+					return PartialView("_ViewCoachingLog", reviewVM);
+				}
+				else
+				{
+					return PartialView("_ViewWarningLog", reviewVM);
+				}
+			}
 
 			var vm = new AcknowledgeViewModel();
 			vm.LogDetail = (CoachingLogDetail)logDetail;
@@ -29,15 +65,6 @@ namespace eCoachingLog.Controllers
 			var user = GetUserFromSession();
 			// TODO: get user data from db
 			user.JobCode = "Director"; // TODO: set up appropriate role in db
-			bool viewOnly = true;
-			if (viewOnly)
-			{
-				return PartialView("_ViewLog", vm);
-			}
-
-
-
-
 
 			user.EmployeeId = "222222";
 			vm.LogDetail.SupervisorEmpId = "222222";
@@ -91,7 +118,7 @@ namespace eCoachingLog.Controllers
 				}
 			}
 
-			if ("warning" == logType )
+			if (!isCoaching)
 			{
 				return PartialView("_ReviewWarningHome", vm);
 			}
@@ -106,8 +133,6 @@ namespace eCoachingLog.Controllers
 			if (ModelState.IsValid)
 			{
 				// Update database
-
-
 
 				// TODO: remove
 				Session["review"] = "review";
@@ -380,5 +405,9 @@ namespace eCoachingLog.Controllers
 			return false;
 		}
 
+		private bool ShowViewCseText(ReviewViewModel vm)
+		{
+			return vm.IsCseUnconfirmed && vm.IsCse;
+		}
 	}
 }

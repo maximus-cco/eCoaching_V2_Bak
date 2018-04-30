@@ -19,7 +19,7 @@
 				// Call GetLogDetail method.
 				url: getLogDetailsUrl,
 				dataType: 'html',
-				data: { logId: $(this).data("log-id"), logType: $(this).data("log-type") },
+				data: { logId: $(this).data("log-id"), isCoaching: $(this).data("is-coaching") },
 
 				success: function (data) {
 					$('.modal-content').html(data);
@@ -87,18 +87,22 @@
 		if (e.handled !== true) {
 			e.handled = true;
 			$(".please-wait").slideDown(500);
+			// DataTables search box
+			var $searchBox = $('#dataTables-coaching-log-list_filter').find('input.form-control');
+			var searchObj = {
+				searchText: $searchBox.val()
+			};
 			$.ajax({
 				type: 'POST',
 				url: exportToExcelUrl,
-				data: $('#form-search-historical').serialize(),
+				data: $('#form-search-historical').serialize() + '&' + $.param(searchObj),
 				success: function (data) {
-					//alert(data.result);
 					if (data.result === 'ok')
 					{
 						window.location = downloadExcelUrl;
 					}
 					else {
-						alert('error');
+						alert('There was an error when exporting to excel file.');
 					}
 					$(".please-wait").slideUp(500);
 				}

@@ -354,10 +354,11 @@
     <Content Include="Views\HistoricalDashboard\Index.cshtml" />
     <Content Include="Views\MyDashboard\_MySiteLogs.cshtml" />
     <Content Include="Views\MyDashboard\_MySiteSearch.cshtml" />
-    <Content Include="Views\Review\_ViewLog.cshtml" />
+    <Content Include="Views\Review\_ViewCoachingLog.cshtml" />
     <Content Include="Views\MyDashboard\_CountBySite.cshtml" />
     <Content Include="Views\MyDashboard\_CountByTeam.cshtml" />
     <Content Include="Views\HistoricalDashboard\_Search.cshtml" />
+    <Content Include="Views\Review\_ViewWarningLog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

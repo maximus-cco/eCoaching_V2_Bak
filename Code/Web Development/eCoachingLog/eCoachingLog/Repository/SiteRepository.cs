@@ -15,7 +15,7 @@ namespace eCoachingLog.Repository
             var sites = new List<Site>();
 
             using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Sites]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Sites_For_Dashboard]", connection))
             {
 				command.CommandType = CommandType.StoredProcedure;
 				connection.Open();
@@ -25,7 +25,7 @@ namespace eCoachingLog.Repository
                     {
                         Site site = new Site();
                         site.Id = Convert.ToInt32(dataReader["SiteID"]);
-                        site.Name = dataReader["City"].ToString();
+                        site.Name = dataReader["Site"].ToString();
 
                         sites.Add(site);
                     }

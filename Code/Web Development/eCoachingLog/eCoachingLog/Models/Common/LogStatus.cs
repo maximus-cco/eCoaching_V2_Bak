@@ -2,7 +2,7 @@
 {
     public class LogStatus
     {
-        public string Id { get; set; } // TODO: change to int
+        public int Id { get; set; } 
         public string Description { get; set; }
     }
 }

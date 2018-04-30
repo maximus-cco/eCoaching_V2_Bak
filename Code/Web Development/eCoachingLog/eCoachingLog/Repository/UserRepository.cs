@@ -1,13 +1,13 @@
 ﻿using eCoachingLog.Models.User;
+using eCoachingLog.Utils;
 using log4net;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
 namespace eCoachingLog.Repository
 {
-    public class UserRepository : IUserRepository
+	public class UserRepository : IUserRepository
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 

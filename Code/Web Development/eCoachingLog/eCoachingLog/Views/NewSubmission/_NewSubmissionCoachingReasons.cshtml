@@ -16,17 +16,6 @@
 				<label class="control-label">
 					@Html.DisplayTextFor(m => m.CoachingReasons[i].Text)
 				</label>
-
-				<!-- sub reasons -->
-				@if (Model.CoachingReasons[i].IsChecked)
-				{
-					<div class="col-sm-12 fixed-width wrap-items coaching-subreasons">
-						@Html.ListBoxFor(m => m.CoachingReasons[i].SubReasonIds,
-						 new MultiSelectList(Model.CoachingReasons[i].SubReasons, "ID", "Text", Model.CoachingReasons[i].SubReasonIds),
-						 new { @class = "listbox" })
-						@Html.ValidationMessageFor(m => m.CoachingReasons[i].SubReasonIds)
-					</div>
-				}
 				<!-- values -->
 				<div class='coaching-values'>
 					@if (Model.CoachingReasons[i].OpportunityOption)
@@ -42,6 +31,17 @@
 						</div>
 					}
 				</div>
+				<!-- sub reasons -->
+				@if (Model.CoachingReasons[i].IsChecked)
+				{
+					<div class="col-sm-12 fixed-width wrap-items coaching-subreasons">
+						@Html.ListBoxFor(m => m.CoachingReasons[i].SubReasonIds,
+						 new MultiSelectList(Model.CoachingReasons[i].SubReasons, "ID", "Text", Model.CoachingReasons[i].SubReasonIds),
+						 new { @class = "listbox" })
+						@Html.ValidationMessageFor(m => m.CoachingReasons[i].SubReasonIds)
+					</div>
+				}
+
 				<div class="col-sm-12">
 					@Html.ValidationMessageFor(m => m.CoachingReasons[i].IsOpportunity, "", new { @class = "field-validation-error" })
 				</div>

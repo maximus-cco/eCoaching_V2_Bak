@@ -47,7 +47,7 @@
 <div class="form-group">
     <label for="BehaviorDetail" class="col-sm-3 control-label required">Provide details of the behavior to be coached:</label>
     <div class="col-sm-7">
-        @Html.TextAreaFor(m => m.BehaviorDetail, new { @class = "form-control", @rows = "5", id = "textarea-behavior-detail" })
+        @Html.TextAreaFor(m => m.BehaviorDetail, new { @class = "form-control", @rows = "5", id = "textarea-behavior-detail", maxlength = 3000 })
         <div class="help-block">
             Provide as much detail as possible and include all the items from the coaching category.
             <span id="behavior-detail-remaining" class="pull-right">3000 remaining</span>
@@ -59,7 +59,7 @@
 <div class='form-group @(@Model.ShowActionTextBox ? "show" : "hide")' id="div-action-plans">
     <label for="ActionPlans" class="col-sm-3 control-label required">Provide the details from the coaching session including action plans developed:</label>
     <div class="col-sm-7">
-        @Html.TextAreaFor(m => m.ActionPlans, new { @class = "form-control", @rows = "5", id = "textarea-action-plan" })
+        @Html.TextAreaFor(m => m.ActionPlans, new { @class = "form-control", @rows = "5", id = "textarea-action-plan", maxlength = 3000 })
         <div class="help-block">
             Provide as much detail as possible.
             <span id="action-plan-remaining" class="pull-right">3000 remaining</span>
@@ -76,7 +76,7 @@
     </div>
 </div>
 
-<div class="form-group">
+<div class="form-group @(@Model.ShowCallTypeChoice ? "show" : "hide")">
     <label for="IsCallAssociated" class="col-sm-3 control-label required">Is there a Call Record associated with the coaching?</label>
     <div class="col-sm-4">
         <div class="radio">

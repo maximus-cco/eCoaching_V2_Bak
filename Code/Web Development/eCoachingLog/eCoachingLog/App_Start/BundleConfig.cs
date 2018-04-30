@@ -27,7 +27,6 @@ namespace eCoachingLog
 						"~/Scripts/dataTables.responsive.js",
 						"~/Scripts/respond.js",
                         "~/Scripts/raphael.js",
-						// Chart I'm going to use!
 						"~/Scripts/Chart.js",
                         "~/Scripts/eCoachingLog/layout.js");
             bundles.Add(scriptBundle);
@@ -73,14 +72,6 @@ namespace eCoachingLog
 			myDashboardWarningListScriptBundle.Include(
 						"~/Scripts/eCoachingLog/myDashboardWarningList.js");
 			bundles.Add(myDashboardWarningListScriptBundle);
-
-			// javascript bundle for mydashboard review
-			var myDashboardReviewScriptBundle = new ScriptBundle("~/bundles/scripts/myDashboardReview");
-            myDashboardReviewScriptBundle.Orderer = new EclBundleOrderer();
-            myDashboardReviewScriptBundle.Include(
-                        "~/Scripts/eCoachingLog/myDashboardReview.js");
-            bundles.Add(myDashboardReviewScriptBundle);
-
 
 			// javascript bundle for historical dashboard search
 			var hisDashboardSearchScriptBundle = new ScriptBundle("~/bundles/scripts/historicalDashboardSearch");

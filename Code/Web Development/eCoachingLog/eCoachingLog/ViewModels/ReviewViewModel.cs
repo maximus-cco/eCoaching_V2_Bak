@@ -10,6 +10,7 @@ namespace eCoachingLog.ViewModels
 	public class ReviewViewModel : IValidatableObject
 	{
 		public CoachingLogDetail LogDetail { get; set; }
+		public WarningLogDetail WarningLogDetail { get; set; }
 
 		public int LogStatusLevel { get; set; }
 
@@ -28,7 +29,8 @@ namespace eCoachingLog.ViewModels
 		public string DetailReasonNotCoachable { get; set; }
 		public string DetailReasonCoachable { get; set; }
 		// CSE related
-		public bool IsCse { get; set; }
+		public bool IsCse { get; set; } // Confirmed cse
+		public bool IsCseUnconfirmed { get; set; }
 		public DateTime? DateReviewed { get; set; }
 		public string ReasonNotCse { get; set; }
 		// Pending employee review related
@@ -58,6 +60,11 @@ namespace eCoachingLog.ViewModels
 		public bool ShowReviewCoachingResearch { get; set; }
 		public bool ShowReviewCoachingCse { get; set; }
 
+		// To control display on Historical/Review
+		public bool ShowViewCseText { get; set; }
+		public bool ShowViewMgtNotes { get; set; }
+		public bool ShowViewSupReviewInfo { get; set; }
+		
 		public ReviewViewModel()
 		{
 			this.LogDetail = new CoachingLogDetail();
@@ -124,7 +131,7 @@ namespace eCoachingLog.ViewModels
 			// CSE
 			if (this.ShowReviewCoachingCse)
 			{
-				if (this.IsCse) // Is CSE
+				if (this.IsCse) // Confirmed cse
 				{
 					if (!this.DateCoached.HasValue)
 					{
@@ -138,7 +145,7 @@ namespace eCoachingLog.ViewModels
 						yield return new ValidationResult("Provide details coached.", detailsCoached);
 					}
 				}
-				else // Not CSE
+				else // confirmed it is not CSE
 				{
 					if (!this.DateReviewed.HasValue)
 					{

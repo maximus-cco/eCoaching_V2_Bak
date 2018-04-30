@@ -8,10 +8,12 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
+	//[EclAuthorize]
 	[SessionCheck]
 	public class HistoricalDashboardController : LogBaseController
     {
@@ -26,59 +28,83 @@ namespace eCoachingLog.Controllers
 		// GET: HistoricalDashboard
 		public ActionResult Index()
         {
+			Session["currentPage"] = "Historical";
 			var vm = InitHistDashboardViewModel();
-
 			return View(vm);
         }
 
 		public ActionResult ResetPage()
 		{
 			var vm = InitHistDashboardViewModel();
-
 			return PartialView("_Search", vm);
 		}
 
 		public JsonResult GetManagersBySite(int siteId)
 		{
-			var managerList = GetEmployeesBySiteAndTitle(-1, (int)EmployeeTitle.Manager);
-			managerList.Insert(0, new Employee { Id = "-1", Name = "-- Select a Managerr --" });
+			// Site changed, reload managers and reset supervisors and employees to empty
+			var managerList = this.employeeService.GetManagersBySite(siteId);
+			managerList.Insert(0, new Employee { Id = "-2", Name = "-- Select a Manager --" });
 			IEnumerable<SelectListItem> managers = new SelectList(managerList, "Id", "Name");
-			return Json(managers, JsonRequestBehavior.AllowGet );
+			return Json(new { managers = managers, supervisors = ResetSupervisors(), employees = ResetEmployees() }, JsonRequestBehavior.AllowGet );
 		}
 
 		public JsonResult GetSupervisorsByMgr(string mgrId)
 		{
-			var supervisorList = GetEmployeesBySiteAndTitle(-1, (int)EmployeeTitle.Supervisor);
-			supervisorList.Insert(0, new Employee { Id = "-1", Name = "-- Select a Supervisor --" });
+			// Manager changed, reload supervisors and reset employees to empty
+			var supervisorList = this.employeeService.GetSupervisorsByMgr(mgrId);
+			supervisorList.Insert(0, new Employee { Id = "-2", Name = "-- Select a Supervisor --" });
 			IEnumerable<SelectListItem> supervisors = new SelectList(supervisorList, "Id", "Name");
-			return Json(supervisors, JsonRequestBehavior.AllowGet);
+			return Json(new { supervisors = supervisors, employees = ResetEmployees()}, JsonRequestBehavior.AllowGet);
 		}
 
-		public JsonResult GetEmployeesBySup(int supId)
+		public JsonResult GetEmployeesBySup(string supId, int employeeStatus)
 		{
-			var empList = GetEmployeesBySiteAndTitle(-1, (int)EmployeeTitle.Employee);
-			empList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
+			// Supervisor changed, reload employees
+			var empList = this.employeeService.GetEmployeesBySup(supId, employeeStatus);
+			empList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
 			IEnumerable<SelectListItem> employees = new SelectList(empList, "Id", "Name");
 			return Json(employees, JsonRequestBehavior.AllowGet);
+		}
+
+		private IEnumerable<SelectListItem> ResetSupervisors()
+		{
+			var supervisorList = new List<Employee>();
+			supervisorList.Insert(0, new Employee { Id = "-2", Name = "-- Select a Supervisor --" });
+			IEnumerable<SelectListItem> supervisors = new SelectList(supervisorList, "Id", "Name");
+			return supervisors;
+		}
+
+		private IEnumerable<SelectListItem> ResetEmployees()
+		{
+			var employeeList = new List<Employee>();
+			employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
+			IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
+			return employees;
 		}
 
 		[HttpPost]
 		public ActionResult Search(HistoricalDashboardViewModel vm)
 		{
 			logger.Debug("Entered Search...");
-			return PartialView("_LogList", vm);
+			return PartialView("_LogList", vm.Search);
 		}
 
 		[HttpPost]
-		public JsonResult ExportToExcel(HistoricalDashboardViewModel vm)
+		public JsonResult ExportToExcel(HistoricalDashboardViewModel vm, string searchText)
 		{
-			var searchModel = vm.Search;
-			var logFilter = new LogFilter();
-			MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTable(logFilter));
-			Session["fileName"] = "eCoachingLog_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
-			Session["fileStream"] = ms;
-
-			return Json(new { result = "ok" }, JsonRequestBehavior.AllowGet);
+			// Currently 'search' (datatables search box) is not considered when exporting to excel
+			try
+			{
+				MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTable(vm.Search));
+				Session["fileName"] = "eCoachingLog_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
+				Session["fileStream"] = ms;
+				return Json(new { result = "ok" }, JsonRequestBehavior.AllowGet);
+			}
+			catch (Exception ex)
+			{
+				logger.Warn("Exception ExportToExcel: " + ex.Message);
+				return Json(new { result = "fail" }, JsonRequestBehavior.AllowGet);
+			}
 		}
 
 		public void Download()
@@ -101,49 +127,40 @@ namespace eCoachingLog.Controllers
 		{
 			User user = GetUserFromSession();
 			HistoricalDashboardViewModel vm = new HistoricalDashboardViewModel();
-			// Site Dropdown
-			var siteList = GetSites(-1); // -1: all sites
-			siteList.Insert(0, new Site { Id = -1, Name = "-- Select a Site --" });
+			// Site
+			var siteList = this.siteService.GetAllSites();
+			siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });
 			IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name");
 			vm.SiteSelectList = sites;
-
-			// Manager Dropdown
-			var managerList = new List<Employee>();// GetEmployeesBySiteAndTitle(-1, (int)EmployeeTitle.Manager);
-			managerList.Insert(0, new Employee { Id = "-1", Name = "-- Select a Manager --" });
+			// Manager
+			var managerList = new List<Employee>();
+			managerList.Insert(0, new Employee { Id = "-2", Name = "-- Select a Manager --" });
 			IEnumerable<SelectListItem> managers = new SelectList(managerList, "Id", "Name");
 			vm.ManagerSelectList = managers;
-
-			// Supervisor Dropdown
-			var supervisorList = new List<Employee>();// GetEmployeesBySiteAndTitle(-1, (int)EmployeeTitle.Supervisor);
-			supervisorList.Insert(0, new Employee { Id = "-1", Name = "-- Select a Supervisor --" });
+			// Supervisor
+			var supervisorList = new List<Employee>();
+			supervisorList.Insert(0, new Employee { Id = "-2", Name = "-- Select a Supervisor --" });
 			IEnumerable<SelectListItem> supervisors = new SelectList(supervisorList, "Id", "Name");
 			vm.SupervisorSelectList = supervisors;
-
-			// Employee Dropdown
-			var employeeList = new List<Employee>();// GetEmployeesBySiteAndTitle(-1, (int)EmployeeTitle.Employee);
-			employeeList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
+			// Employee
+			var employeeList = new List<Employee>();
+			employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
 			IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
 			vm.EmployeeSelectList = employees;
-
-			// Submitter Dropdown
+			// Submitter
 			var submitterList = GetAllSubmitters();
-			submitterList.Insert(0, new Employee { Id = "-1", Name = "-- Select a Submitter --" });
 			IEnumerable<SelectListItem> submitters = new SelectList(submitterList, "Id", "Name");
 			vm.SubmitterSelectList = submitters;
-
-			// Status Dropdown - get from App Cache, since it is static
+			// Status
 			var statusList = GetAllLogStatuses();
-			statusList.Insert(0, new LogStatus { Id = "-1", Description = "-- Select a Status --" });
 			IEnumerable<SelectListItem> statuses = new SelectList(statusList, "Id", "Description");
 			vm.LogStatusSelectList = statuses;
-			// Source Dropdown - get from App Cache, since it is static
+			// Source
 			var sourceList = GetAllLogSources();
-			sourceList.Insert(0, new LogSource { Id = "-1", Name = "-- Select a Source --" });
 			IEnumerable<SelectListItem> sources = new SelectList(sourceList, "Id", "Name");
 			vm.LogSourceSelectList = sources;
-			// Value Dropdown - get from App Cache, since it is static
+			// Value
 			var valueList = GetAllLogValues();
-			valueList.Insert(0, new LogValue { Id = "-1", Description = "-- Select a Value --" });
 			IEnumerable<SelectListItem> values = new SelectList(valueList, "Id", "Description");
 			vm.LogValueSelectList = values;
 

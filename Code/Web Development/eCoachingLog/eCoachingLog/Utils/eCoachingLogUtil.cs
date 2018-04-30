@@ -4,7 +4,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 
-namespace eCoachingLog.Utilities
+namespace eCoachingLog.Utils
 {
     public static class eCoachingLogUtil
     {
@@ -50,62 +50,35 @@ namespace eCoachingLog.Utilities
             return url;
         }
 
-        //public static string GetModuleNameById(int moduleId)
-        //{
-        //    string moduleName = null;
-        //    switch (moduleId)
-        //    {
-        //        case 1:
-        //            moduleName = "CSR";
-        //            break;
-        //        case 2:
-        //            moduleName = "Supervisor";
-        //            break;
-        //        case 3:
-        //            moduleName = "Quality";
-        //            break;
-        //        case 4:
-        //            moduleName = "LSA";
-        //            break;
-        //        case 5:
-        //            moduleName = "Training";
-        //            break;
-        //        default:
-        //            moduleName = "Unknown";
-        //            break;
-        //    }
+		//public static string GetModuleNameById(int moduleId)
+		//{
+		//    string moduleName = null;
+		//    switch (moduleId)
+		//    {
+		//        case 1:
+		//            moduleName = "CSR";
+		//            break;
+		//        case 2:
+		//            moduleName = "Supervisor";
+		//            break;
+		//        case 3:
+		//            moduleName = "Quality";
+		//            break;
+		//        case 4:
+		//            moduleName = "LSA";
+		//            break;
+		//        case 5:
+		//            moduleName = "Training";
+		//            break;
+		//        default:
+		//            moduleName = "Unknown";
+		//            break;
+		//    }
 
-        //    return moduleName;
-        //}
+		//    return moduleName;
+		//}
 
-        public static int GetModuleIdByName(string name)
-        {
-            int moduleId = -1;
-            if (name == "CSR")
-            {
-                moduleId = 1;
-            }
-            else if (name == "Supervisor")
-            {
-                moduleId = 2;
-            }
-            else if (name == "Quality")
-            {
-                moduleId = 3;
-            }
-            else if (name == "LSA")
-            {
-                moduleId = 4;
-            }
-            else if (name == "Training")
-            {
-                moduleId = 5;
-            }
-
-            return moduleId;
-        }
-
-        public static int GetProgramIdByName(string name)
+		public static int GetProgramIdByName(string name)
         {
             int retVal = -1;
             if (name == "Marketplace")

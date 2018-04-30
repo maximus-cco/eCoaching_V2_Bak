@@ -68,7 +68,8 @@
     </div>
 
     <script>
-        var sessionExpired = false;
+		var sessionExpired = false;
+		var errorOccured = false;
         var logoutUrl = '@Url.Action("Index", "Logout")';
         var sessionExpiredUrl = '@Url.Action("SessionExpire", "Home")';
         var errorUrl = '@Url.Action("Index", "Error")';

@@ -19,6 +19,7 @@
         public bool IsNgdActivityId { get; set; }
         public bool IsCtc { get; set; }
         public bool IsCse { get; set; }
+		public bool IsCseUnconfirmed { get; set; }
 
 		public bool IsHigh5Club { get; set; }
 		public bool IsKudo { get; set; }
@@ -56,7 +57,10 @@
         public string MgrReviewManualDate { get; set; }
         public string MgrReviewAutoDate { get; set; }
 
-        public string EmployeeReviewDate { get; set; }
+		// For completed IQS log: Reviewed and acknowledged Quality Monitor on
+		// For all others: Reviewed and acknowledged Coaching on
+		public string EmployeeReviewLabel { get; set; }
+		public string EmployeeReviewDate { get; set; }
         public string EmployeeComments { get; set; }
 
 		public string LogDescription { get; set; }

@@ -1,5 +1,6 @@
 ﻿using eCoachingLog.Extensions;
 using eCoachingLog.Models.Common;
+using eCoachingLog.Utils;
 using log4net;
 using System.Collections.Generic;
 using System.Data;
@@ -13,7 +14,7 @@ namespace eCoachingLog.Repository
 
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
-        public List<Employee> GetEmployeesByModule(int moduleId, int siteId)
+        public List<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
         {
             var employees = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(conn))
@@ -22,6 +23,7 @@ namespace eCoachingLog.Repository
 				command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValue("@intModuleIDin", moduleId);
 				command.Parameters.AddWithValue("@intSiteIDin", siteId);
+				command.Parameters.AddWithValue("@nvcUserEmpIDin", userEmpId);
                 connection.Open();
                 using (SqlDataReader dataReader = command.ExecuteReader())
                 {
@@ -148,89 +150,63 @@ namespace eCoachingLog.Repository
             return employees;
         }
 
-        public List<Employee> GetPendingReviewers(string userLanId, int moduleId, int logStatusId)
-        {
-            var employees = new List<Employee>();
-
-            using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_ReassignFrom_Users]", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandTimeout = 300;
-                command.Parameters.AddWithValue("@strRequesterin", userLanId);
-                command.Parameters.AddWithValue("@intModuleIdin", moduleId);
-                command.Parameters.AddWithValue("@intStatusIdin", logStatusId);
-
-                connection.Open();
-
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        Employee employee = new Employee();
-                        employee.Id = dataReader["UserID"].ToString();
-                        employee.Name = dataReader["UserName"].ToString();
-
-                        employees.Add(employee);
-                    }
-                }
-            }
-
-            return employees;
-        }
-
-        public List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer)
-        {
-            var employees = new List<Employee>();
-
-            using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_ReassignTo_Users]", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandTimeout = 300;
-                command.Parameters.AddWithValue("@strRequesterin", userLanId);
-                command.Parameters.AddWithValue("@intModuleIdin", moduleId);
-                command.Parameters.AddWithValue("@intStatusIdin", logStatusId);
-                command.Parameters.AddWithValue("@strFromUserIdin", originalReviewer);
-
-                connection.Open();
-
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        Employee employee = new Employee();
-                        employee.Id = dataReader["UserID"].ToString();
-                        employee.Name = dataReader["UserName"].ToString();
-
-                        employees.Add(employee);
-                    }
-                }
-            }
-			return employees;
-        }
-
-		public IList<Employee> GetEmployeesBySiteAndTitle(int siteId, int titleId) // TODO: change int to EmployeeTitle
+		public IList<Employee> GetManagersBySite(int siteId)
 		{
-			var employees = new List<Employee>();
-
-			// TODO: change
-			var sp = "[EC].[sp_SelectFrom_Coaching_LogDistinctMGRCompleted_All]";
-			switch (titleId)
-			{
-				case (int)EmployeeTitle.Employee:
-					sp = "[EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All]";
-					break;
-				case (int)EmployeeTitle.Supervisor:
-					sp = "[EC].[sp_SelectFrom_Coaching_LogDistinctSUPCompleted_All]";
-					break;
-			}
-
+			var managers = new List<Employee>();
 			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand(sp, connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_MGR_BySite]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.CommandTimeout = 300;
+				command.Parameters.AddWithValue("@intSiteID", siteId);
+				connection.Open();
+
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee manager = new Employee();
+						manager.Id = dataReader["ManagerId"].ToString();
+						manager.Name = dataReader["Manager"].ToString();
+						managers.Add(manager);
+					}
+				}
+			}
+			return managers;
+		}
+
+		public IList<Employee> GetSupervisorsByMgr(string mgrId)
+		{
+			var supervisors = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Sup_ByMgr]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValue("@nvcMgrID", mgrId);
+				connection.Open();
+
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee supervisor = new Employee();
+						supervisor.Id = dataReader["SupervisorId"].ToString();
+						supervisor.Name = dataReader["Supervisor"].ToString();
+						supervisors.Add(supervisor);
+					}
+				}
+			}
+			return supervisors;
+		}
+
+		public IList<Employee> GetEmployeesBySup(string supId, int empStatus)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Emp_BySup]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValue("@nvcSupID", supId);
+				command.Parameters.AddWithValue("@intEmpActive", empStatus);
 				connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -238,35 +214,20 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-
-						switch (titleId)
-						{
-							case (int)EmployeeTitle.Manager:
-								employee.Id = dataReader["MGRValue"].ToString();
-								employee.Name = dataReader["MGRText"].ToString();
-								break;
-							case (int)EmployeeTitle.Supervisor:
-								employee.Id = dataReader["SUPValue"].ToString();
-								employee.Name = dataReader["SUPText"].ToString();
-								break;
-							case (int)EmployeeTitle.Employee:
-								employee.Id = dataReader["CSRValue"].ToString();
-								employee.Name = dataReader["CSRText"].ToString();
-								break;
-						}
+						employee.Id = dataReader["EmployeeId"].ToString();
+						employee.Name = dataReader["Employee"].ToString();
 						employees.Add(employee);
 					}
 				}
 			}
 			return employees;
 		}
-
 		public IList<Employee> GetAllSubmitters()
 		{
 			var employees = new List<Employee>();
 
 			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2]", connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Submitter]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = 300;
@@ -277,8 +238,8 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["SubmitterValue"].ToString();
-						employee.Name = dataReader["SubmitterText"].ToString();
+						employee.Id = dataReader["SubmitterID"].ToString();
+						employee.Name = dataReader["Submitter"].ToString();
 						employees.Add(employee);
 					}
 				}

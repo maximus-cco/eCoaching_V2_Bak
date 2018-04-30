@@ -2,6 +2,7 @@
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.MyDashboard;
 using eCoachingLog.Services;
+using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
 using System;
@@ -328,24 +329,6 @@ namespace eCoachingLog.Controllers
 		{
 			logger.Debug("Entered GetLogs");
 
-			// TODO: remove
-			//if (whatLog.Contains("Pending"))
-			//{
-			//	Session["Status"] = "Pending";
-			//}
-			//else if (whatLog.Contains("Warning"))
-			//{
-			//	Session["Status"] = "Warning";
-			//}
-			//else if (whatLog.Contains("Completed"))
-			//{
-			//	Session["Status"] = "Completed";
-			//}
-			//else if (whatLog.Contains("Submission"))
-			//{
-			//	Session["Status"] = "Submission";
-			//}
-
 			// TODO: get log list based on whatLog (_MyPending, _MyCompleted, etc.)
 			// Set vm.Search.LogSectionWorkingOn approriately based on whatLog
 			var vm = InitMyDashboardViewModel();
@@ -353,35 +336,13 @@ namespace eCoachingLog.Controllers
 			return PartialView(whatLog, vm); 
 		}
 
-		//[HttpPost]
-		//public ActionResult GetMyPending()
-		//{
-		//	logger.Debug("Entered GetPending");
-
-		//	var vm = InitMyDashboardViewModel();
-		//	vm.Search.LogSectionWorkingOn = LogSection.Employee_MyPending;
-		//	return PartialView("_MyPending", vm);
-		//}
-
-		//[HttpPost]
-		//public ActionResult GetMyCompleted()
-		//{
-		//	logger.Debug("Entered GetMyCompleted");
-
-		//	// TODO: remove var vm = InitMyDashboardViewModel();
-		//	// Get Completed list from db and save to vm
-		//	var vm = InitMyDashboardViewModel();
-		//	vm.Search.LogSectionWorkingOn = LogSection.Employee_MyCompleted;
-		//	return PartialView("_MyCompleted", vm);
-		//}
-
 		[HttpPost]
 		public ActionResult SearchMyPendingManager(string supervisorId, string employeeId)
 		{
 			var vm = InitMyDashboardViewModel();
 			vm.Search.SupervisorId = supervisorId;
 			vm.Search.EmployeeId = employeeId;
-			return View("_LogList", vm);
+			return View("_LogList", vm.Search);
 		}
 
 		//[HttpPost]
@@ -397,7 +358,7 @@ namespace eCoachingLog.Controllers
 		//}
 
 		[HttpPost]
-		public ActionResult SearchMyTeamPendingManager(string supervisorId, string employeeId, string sourceId)
+		public ActionResult SearchMyTeamPendingManager(string supervisorId, string employeeId, int sourceId)
 		{
 			var vm = InitMyDashboardViewModel();
 			vm.Search.SupervisorId = supervisorId;
@@ -405,12 +366,6 @@ namespace eCoachingLog.Controllers
 			vm.Search.SourceId = sourceId;
 			return View("_LogList", vm);
 		}
-
-		//[HttpPost]
-		//public ActionResult GetLogDetail(int logId, string logType)
-		//{
-		//	return RedirectToAction("Index", "Review", new { logId = logId, logType = logType });
-		//}
 
 		private MyDashboardViewModel InitMyDashboardViewModel()
         {
@@ -427,7 +382,7 @@ namespace eCoachingLog.Controllers
 
 			// TODO: only if user is director
 			List<LogStatus> logStatusList = new List<LogStatus>();
-			logStatusList.Insert(0, new LogStatus { Id = "-1", Description = "-- Select a Status --" });
+			logStatusList.Insert(0, new LogStatus { Id = -1, Description = "-- Select a Status --" });
 			IEnumerable<SelectListItem> logStatus = new SelectList(logStatusList, "Id", "Description");
 			vm.LogStatusSelectList = logStatus;
 

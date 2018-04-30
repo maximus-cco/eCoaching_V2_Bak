@@ -82,6 +82,7 @@ $(function () {
 				window.location = sessionExpiredUrl;
 			}
 			else {
+				errorOccured = true;
 				window.location = errorUrl;
 			}
 		}

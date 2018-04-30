@@ -1,12 +1,14 @@
 ﻿using eCoachingLog.Models.Common;
 using eCoachingLog.Models.MyDashboard;
+using eCoachingLog.Utils;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace eCoachingLog.ViewModels
 {
-    public class MyDashboardViewModel
-    {
+    public class MyDashboardViewModel : BaseViewModel
+	{
+		// TODO: this should go to BaseViewModel
 		public LogFilter Search { get; set; }
 
 		// TODO: wrap them in User

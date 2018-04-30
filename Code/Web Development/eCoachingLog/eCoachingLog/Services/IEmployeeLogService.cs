@@ -2,17 +2,14 @@
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.User;
-using System;
 using System.Collections.Generic;
 using System.Data;
 
 namespace eCoachingLog.Services
 {
-    public interface IEmployeeLogService
+	public interface IEmployeeLogService
     {
-        List<Module> GetModules(string userLanId, int logTypeId);
         List<Module> GetModules(User user);
-        List<LogBase> GetLogsByLogName(string logName);
         BaseLogDetail GetLogDetail(long logId, bool isCoaching);
         // Get call record id and id format
         List<CallType> GetCallTypes(int moduleId);
@@ -22,15 +19,12 @@ namespace eCoachingLog.Services
         List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId);
         List<Behavior> GetBehaviors(int moduleId);
         List<string> GetValues(int reasonId, string directOrIndirect, int moduleId);
-		List<LogReason> GetReasonsByLogId(long logId);
-
-		List<LogBase> GetLogList(string userLanId, string status, bool isCoaching, DateTime startTime, DateTime endTime, int pageSize, int startRowIndex, string sortBy, string sortAsc, string search);
-		int GetLogListTotal(string userLanId, string status, bool isCoaching, DateTime startTime, DateTime endTime, string search);
-
+		List<LogReason> GetReasonsByLogId(long logId, bool isCoaching);
 		IList<LogStatus> GetAllLogStatuses();
-		IList<LogSource> GetAllLogSources(string userLanId);
+		IList<LogSource> GetAllLogSources(string userEmpId);
 		IList<LogValue> GetAllLogValues();
-
 		DataTable GetLogDataTable(LogFilter filter);
+		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
+		int GetLogListTotal(LogFilter logFiler, string userId, string search);
 	}
 }

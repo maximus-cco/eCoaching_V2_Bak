@@ -2,6 +2,7 @@
 using eCoachingLog.Models;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
+using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace eCoachingLog.Repository
                     while (dataReader.Read())
                     {
                         LogSource source = new LogSource();
-                        source.Id = dataReader["SourceID"].ToString();
+						source.Id = (int)dataReader["SourceID"];
                         source.Name = (string)dataReader["Source"];
 
                         sourceList.Add(source);
@@ -58,7 +59,14 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@nvcProgramName", submission.ProgramName);
                 command.Parameters.AddWithValueSafe("@Behaviour", submission.BehaviorName); 
                 command.Parameters.AddWithValueSafe("@intSourceID", submission.SourceId); // How was the coaching identifed?
-                command.Parameters.AddWithValueSafe("@SiteID", submission.SiteId);
+				if (submission.ModuleId == Constants.MODULE_CSR)
+				{
+					command.Parameters.AddWithValueSafe("@SiteID", submission.SiteId);
+				}
+				else
+				{
+					command.Parameters.AddWithValueSafe("@SiteID", null); // Modules other than CSR have no site selection
+				}
                 command.Parameters.AddWithValue("@nvcSubmitterID", user.EmployeeId);
 
                 if (submission.IsDirect.HasValue && submission.IsDirect.Value)

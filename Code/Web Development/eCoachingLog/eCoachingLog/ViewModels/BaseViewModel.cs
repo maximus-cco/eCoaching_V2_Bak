@@ -1,5 +1,4 @@
 ﻿using eCoachingLog.Models.Common;
-using eCoachingLog.Models.User;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
@@ -38,9 +37,11 @@ namespace eCoachingLog.ViewModels
 		public IEnumerable<SelectListItem> LogValueSelectList { get; set; }
 		public IEnumerable<LogStatus> LogValueList { get; set; }
 
+		public LogFilter Search { get; set; }
+
 		public BaseViewModel()
 		{
-			this.SiteId = -1;
+			this.SiteId = -2;
 			this.SiteSelectList = new List<SelectListItem>();
 			this.Manager = new Employee();
 			this.ManagerSelectList = new List<SelectListItem>();
@@ -56,7 +57,7 @@ namespace eCoachingLog.ViewModels
 			this.LogSourceSelectList = new List<SelectListItem>();
 			this.LogValue = new LogValue();
 			this.LogValueSelectList = new List<SelectListItem>();
-
+			this.Search = new LogFilter();
 		}
 	}
 }

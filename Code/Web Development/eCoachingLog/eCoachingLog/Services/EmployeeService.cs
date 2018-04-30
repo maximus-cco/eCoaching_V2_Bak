@@ -13,9 +13,9 @@ namespace eCoachingLog.Services
             this.employeeRepository = employeeRepository;
         }
 
-        public List<Employee> GetEmployeesByModule(int moduleId, int siteId)
+        public List<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
         {
-            return employeeRepository.GetEmployeesByModule(moduleId, siteId);
+            return employeeRepository.GetEmployeesByModule(moduleId, siteId, userEmpId);
         }
 
         public List<Employee> GetEmployeesByModule(int moduleId, string userLanId)
@@ -28,29 +28,29 @@ namespace eCoachingLog.Services
             return employeeRepository.GetEmployee(employeeId);
         }
 
-        public List<Employee> GetEmployees(string userLanId, int logTypeId, int moduleId, string action)
-        {
-            return employeeRepository.GetEmployees(userLanId, logTypeId, moduleId, action);
-        }
-
-        public List<Employee> GetPendingReviewers(string userLanId, int moduleId, int logStatusId)
-        {
-            return employeeRepository.GetPendingReviewers(userLanId, moduleId, logStatusId);
-        }
-
-        public List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer)
-        {
-            return employeeRepository.GetAssignToList(userLanId, moduleId, logStatusId, originalReviewer);
-        }
-
-		public IList<Employee> GetEmployeesBySiteAndTitle(int siteId, int titleId)
-		{
-			return employeeRepository.GetEmployeesBySiteAndTitle(siteId, titleId);
-		}
+		//public IList<Employee> GetEmployeesBySiteAndTitle(int siteId, int titleId)
+		//{
+		//	return employeeRepository.GetEmployeesBySiteAndTitle(siteId, titleId);
+		//}
 
 		public IList<Employee> GetAllSubmitters()
 		{
 			return employeeRepository.GetAllSubmitters();
+		}
+
+		public IList<Employee> GetManagersBySite(int siteId)
+		{
+			return employeeRepository.GetManagersBySite(siteId);
+		}
+
+		public IList<Employee> GetSupervisorsByMgr(string mgrId)
+		{
+			return employeeRepository.GetSupervisorsByMgr(mgrId);
+		}
+
+		public IList<Employee> GetEmployeesBySup(string supId, int empStatus)
+		{
+			return employeeRepository.GetEmployeesBySup(supId, empStatus);
 		}
 	}
 }
