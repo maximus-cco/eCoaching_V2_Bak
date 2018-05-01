@@ -5,6 +5,7 @@ namespace eCoachingLog.Repository
 {
 	public interface ISiteRepository
     {
-        List<Site> GetAllSites();
+        IList<Site> GetAllSites();
+		IList<Site> GetSites();
     }
 }

@@ -5,6 +5,7 @@ namespace eCoachingLog.Services
 {
 	public interface ISiteService
     {
-        List<Site> GetAllSites();
+        IList<Site> GetAllSites();
+		IList<Site> GetSites();
     }
 }

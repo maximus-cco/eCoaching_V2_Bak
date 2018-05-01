@@ -6,6 +6,8 @@ namespace eCoachingLog.Utils
 {
     public static class Constants
     {
+		public const int ALL_SITES = -1;
+
 		public const string DIRECT = "Direct";
 		public const string INDIRECT = "Indirect";
 
@@ -17,7 +19,7 @@ namespace eCoachingLog.Utils
 		public const int MAX_NUMBER_OF_COACHING_REASONS = 12;
 
 		// ec.dim_module table
-		public const int MODULE_UNKNOWN = -1;
+		public const int MODULE_UNKNOWN = 99999;
         public const int MODULE_CSR = 1;
         public const int MODULE_SUPERVISOR = 2;
         public const int MODULE_QUALITY = 3;
@@ -28,7 +30,7 @@ namespace eCoachingLog.Utils
 		public const int MODULE_PRODUCTION_PLANNING = 8;
 		public const int MODULE_PROGRAM_ANALYST = 9;
 
-		public const int LOG_STATUS_UNKNOWN = -1;
+		public const int LOG_STATUS_UNKNOWN = 99999;
         public const int LOG_STATUS_COMPLETED = 1;
         public const int LOG_STATUS_INACTIVE = 2;
         public const int LOG_STATUS_PENDING_ACKNOWLEDGEMENT = 3;
@@ -44,11 +46,9 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_LEVEL_3 = 3;
 		public const int LOG_STATUS_LEVEL_4 = 4;
 
-        public const string ECOACHING_URL_PROD = "https://f3420-mwbp11.vangent.local/coach/default.aspx";
-        public const string ECOACHING_URL_ST = "https://f3420-mpmd01.vangent.local/coach3/default.aspx";
+        public const string ECOACHING_URL_PROD = "https://f3420-mwbp11.vangent.local/eCoachingLog";
+        public const string ECOACHING_URL_ST = "https://f3420-mpmd01.vangent.local/eCoachingLog_st";
 
-        public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
-        public const string SITE_EMAIL_SUBJECT = "Dashboard and Manage Employee Logs";
 
 		// Dictionary<<moduleId, statusId>, statusLevel>
 		public static readonly Dictionary<Tuple<int, int>, int> LogStatusLevel = new Dictionary<Tuple<int, int>, int>
@@ -118,19 +118,4 @@ namespace eCoachingLog.Utils
 		Other = 5,
 	}
 
-	//public enum LogSection
-	//{
-	//	Employee_MyPending,
-	//	Employee_MyCompleted,
-	//	Supervisor_MyPending,
-	//	Supervisor_MyCompleted,
-	//	Supervisor_MyTeamPending,
-	//	Supervisor_MyTeamCompleted,
-	//	Supervisor_MyTeamWarning,
-	//	Manager_MyPending,
-	//	Manager_MyCompleted,
-	//	Manager_MyTeamPending,
-	//	Manager_MyTeamCompleted,
-	//	Manager_MyTeamWarning
-	//}
 }

@@ -197,7 +197,7 @@ namespace eCoachingLog.Controllers
 		private void GetEmployeesByModuleToSession(int moduleId, int siteId)
         {
             List<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession().EmployeeId);
-            employeeList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
+            employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
             IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
             var vmInSession = GetNewSubmissionVMFromSession();
             vmInSession.EmployeeSelectList = employees;
@@ -284,7 +284,7 @@ namespace eCoachingLog.Controllers
             string userLanId = GetUserFromSession().LanId;
             // Warning Type Dropdown
             List<WarningType> warningTypeList = this.empLogService.GetWarningTypes(moduleId, source, specialReason, reasonPriority, employeeId, userLanId);
-            warningTypeList.Insert(0, new WarningType { Id = -1, Text = "-- Select a Warning Type --" });
+            warningTypeList.Insert(0, new WarningType { Id = -2, Text = "-- Select a Warning Type --" });
             IEnumerable<SelectListItem> warningTypes = new SelectList(warningTypeList, "Id", "Text");
 
             return warningTypes;
@@ -300,7 +300,7 @@ namespace eCoachingLog.Controllers
         {
             var vm = GetNewSubmissionVMFromSession();
 
-            if (warningTypeId == -1)
+            if (warningTypeId == -2)
             {
                 vm.WarningReasonSelectList = new List<SelectListItem>();
                 return Json(new SelectList(vm.WarningReasonSelectList, "Value", "Text"), JsonRequestBehavior.AllowGet);
@@ -317,7 +317,7 @@ namespace eCoachingLog.Controllers
             string userLanId = GetUserFromSession().LanId;
             // Warning Reasons Dropdown
             List<WarningReason> warningReasonList = this.empLogService.GetWarningReasons(warningTypeId, directOrIndirect, vm.ModuleId, vm.Employee.Id);
-            warningReasonList.Insert(0, new WarningReason { Id = -1, Text = "-- Select a Warning Reason --" });
+            warningReasonList.Insert(0, new WarningReason { Id = -2, Text = "-- Select a Warning Reason --" });
             IEnumerable<SelectListItem> warningReasonSelectList = new SelectList(warningReasonList, "Id", "Text");
             vm.WarningReasonSelectList = warningReasonSelectList;
 
@@ -339,7 +339,7 @@ namespace eCoachingLog.Controllers
             NewSubmissionViewModel vm = InitNewSubmissionViewModel();
             vm.ModuleId = moduleId;
 
-            if (moduleId == -1) // No module selected
+            if (moduleId == -2) // No module selected
             {
                 Session["newSubmissionVM"] = vm;
                 return PartialView("_NewSubmission", vm);
@@ -357,8 +357,8 @@ namespace eCoachingLog.Controllers
                 }
                 else
                 {
-                    List<Site> siteList = this.siteService.GetAllSites();
-                    siteList.Insert(0, new Site { Id = -1, Name = "-- Select a Site --" });
+                    IList<Site> siteList = this.siteService.GetSites();
+                    siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });
                     IEnumerable<SelectListItem> siteSelectList = new SelectList(siteList, "Id", "Name");
                     vm.SiteSelectList = siteSelectList;
                 }
@@ -366,8 +366,8 @@ namespace eCoachingLog.Controllers
             // Load Employee dropdown for others
             else 
             {
-                List<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, -1, GetUserFromSession().EmployeeId);
-                employeeList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
+                List<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, Constants.ALL_SITES, GetUserFromSession().EmployeeId);
+                employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
                 IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
                 vm.EmployeeSelectList = employees;
                 vm.EmployeeList = employeeList;
@@ -376,15 +376,15 @@ namespace eCoachingLog.Controllers
             // Program Dropdown
             if (moduleId != Constants.MODULE_TRAINING)
             {
-                List<Program> programList = this.programService.GetPrograms(moduleId);
-                programList.Insert(0, new Program { Id = -1, Name = "-- Select a Program --" });
+                IList<Program> programList = this.programService.GetPrograms(moduleId);
+                programList.Insert(0, new Program { Id = -2, Name = "-- Select a Program --" });
                 IEnumerable<SelectListItem> programSelectList = new SelectList(programList, "Id", "Name");
                 vm.ProgramSelectList = programSelectList;
             }
             else // Behavior Dropdown
             {
                 List<Behavior> behaviorList = this.empLogService.GetBehaviors(moduleId);
-                behaviorList.Insert(0, new Behavior { Id = -1, Text = "-- Select a Behavior --" });
+                behaviorList.Insert(0, new Behavior { Id = -2, Text = "-- Select a Behavior --" });
                 IEnumerable<SelectListItem> behaviorSelectList = new SelectList(behaviorList, "Id", "Text");
                 vm.BehaviorSelectList = behaviorSelectList;
             }
@@ -527,7 +527,7 @@ namespace eCoachingLog.Controllers
             NewSubmissionViewModel vm = new NewSubmissionViewModel(user.EmployeeId, user.LanId);
             // Module Dropdown
             List<Module> moduleList = this.empLogService.GetModules(user);
-            moduleList.Insert(0, new Module { Id = -1, Name = "-- Select a Module --" });
+            moduleList.Insert(0, new Module { Id = -2, Name = "-- Select a Module --" });
             IEnumerable<SelectListItem> moduleSelectList = new SelectList(moduleList, "Id", "Name");
             vm.ModuleSelectList = moduleSelectList;
 
@@ -542,7 +542,7 @@ namespace eCoachingLog.Controllers
         private bool ShowEmployeeDropdown(NewSubmissionViewModel vm)
         {
             // No module selected
-            if (vm.ModuleId == -1)
+            if (vm.ModuleId == -2)
             {
                 return false;
             }

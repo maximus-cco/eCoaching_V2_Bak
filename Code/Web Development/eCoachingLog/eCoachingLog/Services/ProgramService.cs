@@ -11,12 +11,7 @@ namespace eCoachingLog.Services
 
         private IProgramRepository programRepository = new ProgramRepository();
 
-        public List<Program> GetAllPrograms()
-        {
-            return programRepository.GetAllPrograms();
-        }
-
-        public List<Program> GetPrograms(int moduleId)
+        public IList<Program> GetPrograms(int moduleId)
         {
             return programRepository.GetPrograms(moduleId);
         }

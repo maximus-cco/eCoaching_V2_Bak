@@ -11,9 +11,14 @@ namespace eCoachingLog.Services
 
         private ISiteRepository siteRepository = new SiteRepository();
 
-        public List<Site> GetAllSites()
+        public IList<Site> GetAllSites()
         {
             return siteRepository.GetAllSites();
         }
-    }
+
+		public IList<Site> GetSites()
+		{
+			return siteRepository.GetSites();
+		}
+	}
 }

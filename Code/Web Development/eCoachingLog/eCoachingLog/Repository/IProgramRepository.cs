@@ -5,7 +5,6 @@ namespace eCoachingLog.Repository
 {
 	interface IProgramRepository
     {
-        List<Program> GetAllPrograms();
-        List<Program> GetPrograms(int moduleId);
+        IList<Program> GetPrograms(int moduleId);
     }
 }

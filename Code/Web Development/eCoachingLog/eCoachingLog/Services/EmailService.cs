@@ -45,25 +45,12 @@ namespace eCoachingLog.Services
 
         private Email BuildEmail(NewSubmission submission)
         {
-            string env = System.Configuration.ConfigurationManager.AppSettings["environment"];
-            string fromAddress = "eCoaching-Dev@gdit.com";
-            string fromDisplayName = "eCoaching Log - Development";
-            string subject = "eCL-Dev: ";
+            string env = System.Configuration.ConfigurationManager.AppSettings["Environment"];
+            string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
+			string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
+			string subject = "eCL: ";
 
-            if (string.CompareOrdinal("st", env) == 0)
-            {
-                fromAddress = "eCoaching-Test@gdit.com";
-                fromDisplayName = "eCoaching Log - Test";
-                subject = "eCL-Test: ";
-            }
-            else if (string.CompareOrdinal("prod", env) == 0)
-            {
-                fromAddress = "eCoaching@gdit.com";
-                fromDisplayName = "eCoaching Log";
-                subject = "eCL: ";
-            }
-
-            Email email = new Email();
+			Email email = new Email();
             Tuple<string, string, string, string> recipientsAndText = GetRecipientsAndBodyTextFromDb(submission);
             string status = recipientsAndText.Item4;
             email.ToAddress = recipientsAndText.Item1; //recipientsAndText.Item1;

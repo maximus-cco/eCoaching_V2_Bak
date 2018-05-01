@@ -25,9 +25,6 @@ $(function () {
 		e.preventDefault();
 
 		var href = $(this).attr('href');
-		//alert(href);
-		//alert(getDefault);
-
 		window.location.pathname = href;
 
 		var $link = $(this);
@@ -40,9 +37,7 @@ $(function () {
 			url: myDashboardDefaultAjax,//'/MyDashboard/Default',
 			dataType: 'html',
 			success: function (data) {
-				//alert(data);
 				$('.body-content').html(data);
-				//$(".please-wait").slideUp(500);
 				$link.prop('disabled', false);
 			}
 		});
@@ -60,12 +55,6 @@ $(function () {
 		$(".please-wait").slideUp(500);
 	});
 
-	// Attach listener to .modal-close-btn's so that when the button is pressed the modal dialog disappears
-	//$('body').on('click', '.modal-close-btn', function () {
-	//    alert('close');
-	//    $('#modal-container').modal('hide');
-	//});
-
 	//clear modal cache, so that new content can be loaded
 	$('#modal-container').on('hidden.bs.modal', function () {
 		$(this).removeData('bs.modal').find(".modal-content").empty();
@@ -77,7 +66,6 @@ $(function () {
 			// Hide spinner
 			$(".please-wait").slideUp(500);
 			if (xhr.status === 403) {
-				//alert('403');
 				sessionExpired = true;
 				window.location = sessionExpiredUrl;
 			}

@@ -10,7 +10,7 @@ namespace eCoachingLog.Repository
     {
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
-        public List<Site> GetAllSites()
+        public IList<Site> GetAllSites()
         {
             var sites = new List<Site>();
 
@@ -26,13 +26,34 @@ namespace eCoachingLog.Repository
                         Site site = new Site();
                         site.Id = Convert.ToInt32(dataReader["SiteID"]);
                         site.Name = dataReader["Site"].ToString();
-
                         sites.Add(site);
-                    }
-                }
-            }
-
+                    } // end while
+                } // end SqlDataReader
+            } // end SqlCommand
             return sites;
         }
-    }
+
+		public IList<Site> GetSites()
+		{
+			var sites = new List<Site>();
+
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Sites]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Site site = new Site();
+						site.Id = Convert.ToInt32(dataReader["SiteID"]);
+						site.Name = dataReader["City"].ToString();
+						sites.Add(site);
+					} // end while
+				} // end using SqlDataReader
+			} // end SqlCommand
+			return sites;
+		}
+	}
 }

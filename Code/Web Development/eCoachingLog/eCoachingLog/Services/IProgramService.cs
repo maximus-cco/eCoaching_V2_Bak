@@ -5,7 +5,6 @@ namespace eCoachingLog.Services
 {
 	public interface IProgramService
     {
-        List<Program> GetAllPrograms();
-        List<Program> GetPrograms(int moduleId);
+        IList<Program> GetPrograms(int moduleId);
     }
 }
