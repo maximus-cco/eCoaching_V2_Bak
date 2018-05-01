@@ -1,11 +1,14 @@
 /*
-eCoaching_Admin_Tool_Tables_Create(05).sql
-Last Modified Date: 04/02/2018
+eCoaching_Admin_Tool_Tables_Create(06).sql
+Last Modified Date: 04/30/2018
 Last Modified By: Susmitha Palacherla
+
+version 06: Access for Scott potter's new job code WPSM12- TFS 10823 - 4/30/2018
 
 version 05: Updated to document changes for data encrryption TFS 7856.
 
-version 04: Access for new program staaff with jobcode WPPM11- TFS 8363 - 9/22/2017
+version 04: Access for new program staff with jobcode WPPM11- TFS 8363 - 9/22/2017
+
 Added entries to Tables AT_User, AT_User_Role_Link and AT_Role_Access
 
 version 03: Access for Mark Hackman's new job code WPSM13- TFS 6246 - 4/11/2017
@@ -164,7 +167,7 @@ INSERT INTO [EC].[AT_User]
 VALUES
 ('500306','JohnEric.Tiongson', 'John Eric Z','WISY14',1),
 ('343549','Mark.Hackman', 'Hackman, Mark G','WPSM13',1),
-('408246','Scott.Potter', 'Potter, Scott E','WACQ13',1),
+('408246','Scott.Potter', 'Potter, Scott E','WPSM12',1),
 ('333386','shelly.encke', 'Encke, Shelly J','WPPM11',1),
 ('397938','Sara.Stonecipher', 'Stonecipher, Sara M','WPPM11',1)         
 GO
@@ -253,7 +256,6 @@ VALUES
 ('408246',103),
 ('408246',106),
 ('408246',107),
-('408246',119),
 ('500306',101),
 ('500306',103),
 ('500306',106),
@@ -504,10 +506,10 @@ INSERT INTO [EC].[AT_Role_Access]
            ,[isActive])
               VALUES
 
-           ('WACQ13','Sr Specialist, Quality (CS)',101,'CoachingAdmin',0,1),
-           ('WACQ13','Sr Specialist, Quality (CS)',103,'WarningAdmin',0,1),
-	   ('WACQ13','Sr Specialist, Quality (CS)',106,'ReportCoachingAdmin',0,1),
-           ('WACQ13','Sr Specialist, Quality (CS)',107,'ReportWarningAdmin',0,1),
+           ('WPSM12','Analyst, Functional',101,'CoachingAdmin',0,1),
+           ('WPSM12','Analyst, Functional',103,'WarningAdmin',0,1),
+	   ('WPSM12','Analyst, Functional',106,'ReportCoachingAdmin',0,1),
+           ('WPSM12','Analyst, Functional',107,'ReportWarningAdmin',0,1),
            ('WISY14','Principal Analyst, Systems',101,'CoachingAdmin',0,1),
            ('WISY14','Principal Analyst, Systems',103,'WarningAdmin',0,1),
            ('WISY14','Principal Analyst, Systems',106,'ReportCoachingAdmin',0,1),

@@ -1,0 +1,69 @@
+/* 
+
+TFS 10823 - Admin Tool access for Scott potters new job code
+
+Run one statement at a time
+
+Development - f3420-ecldbd01 - eCoachingDev
+Test - f3420-ecldbt01 - eCoachingTest
+Production – f3420-ecldbp01 – eCoaching
+
+*/
+
+
+
+
+--1. Update user record to Active
+
+--select * from EC.AT_User
+--where UserId = '408246'
+
+update EC.AT_User
+set Active = 1,
+EmpJobCode = 'WPSM12'
+where UserId = '408246'
+GO
+
+--*********************
+
+--2. Insert records into User_Role link table
+
+--select * from [EC].[AT_User_Role_Link]
+--where UserId = '408246'
+
+
+INSERT INTO [EC].[AT_User_Role_Link]
+            ([UserId] ,
+			[RoleId])  
+VALUES
+('408246',101),
+('408246',103),
+('408246',106),
+('408246',107)
+GO
+
+
+--*********************
+
+
+--3. Insert records into Role access table
+
+--select * from [EC].[AT_Role_Access]
+--where JobCode = 'WPSM12'
+
+
+delete from [EC].[AT_Role_Access]
+where JobCode = 'WACQ13'
+and roleid = 105
+GO
+
+
+Update [EC].[AT_Role_Access]
+set jobcode = 'WPSM12'
+,JobCodeDescription = 'Analyst, Functional'
+where jobcode = 'WACQ13'
+and AddToUser = 0
+GO
+
+
+--*********************
