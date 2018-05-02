@@ -1,0 +1,160 @@
+/*---------------------------------------------------------------
+
+TFS 10797 - Data Encryption - Null out lanIds in Rejected tables
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+
+****************************************************************************
+****																	
+****			Data Update	
+****						
+*****************************************************************************/
+
+/*
+
+ Testing
+--ETS
+
+SELECT * FROM [EC].[ETS_Coaching_Rejected]
+WHERE ([Emp_LanID]is not NULL or [Associated_Person] is not NULL)
+GO
+
+--Generic
+
+SELECT * FROM [EC].[Generic_Coaching_Rejected]
+WHERE CSR_LANID is not NULL
+GO
+
+--Outliers
+
+SELECT * FROM [EC].[Outlier_Coaching_Rejected]
+WHERE CSR_LANID is not NULL
+GO
+
+--Quality
+
+SELECT * FROM [EC].[Quality_Coaching_Rejected]
+WHERE [User_LANID] is not NULL
+GO
+
+--Quality_Other
+
+SELECT * FROM [EC].[Quality_Other_Coaching_Rejected]
+WHERE [EMP_LANID] is not NULL
+order by Rejected_Date
+GO
+
+
+--Training
+
+SELECT * FROM [EC].[Training_Coaching_Rejected]
+WHERE [CSR_LANID] is not NULL
+order by Rejected_Date
+GO
+
+*/
+
+PRINT ('  Setting secure attributes to NULL...')
+
+
+
+--****** Object: Table [EC].[ETS_Coaching_Rejected]  *****************
+
+
+
+  UPDATE [EC].[ETS_Coaching_Rejected]
+   SET [Emp_LanID] = NULL,
+   [Associated_Person] = NULL
+   WHERE ([Emp_LanID]is not NULL or [Associated_Person] is not NULL)
+   GO
+
+PRINT ('  LANID set to NULl in ETS_Coaching_Rejected...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+--*************************************
+
+--****** Object: Table [EC].[Generic_Coaching_Rejected]  *****************
+
+  UPDATE [EC].[Generic_Coaching_Rejected]
+   SET [CSR_LANID] = NULL
+   WHERE [CSR_LANID] is not NULL
+   GO
+
+PRINT ('  LANID set to NULl in Generic_Coaching_Rejected...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+
+
+--*************************************
+
+--****** Object: Table [EC].[Outlier_Coaching_Rejected]  *****************
+
+ UPDATE [EC].[Outlier_Coaching_Rejected]
+   SET [CSR_LANID] = NULL
+   WHERE [CSR_LANID] is not NULL
+   GO
+
+
+PRINT ('  LANID set to NULl in Outlier_Coaching_Rejected...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+
+--*************************************
+
+--****** Object: Table [EC].[Quality_Coaching_Rejected]  *****************
+
+ UPDATE [EC].[Quality_Coaching_Rejected]
+   SET [User_LANID] = NULL
+   WHERE [User_LANID] is not NULL
+   GO
+
+PRINT ('  LANID set to NULl in Quality_Coaching_Rejected...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+
+
+
+--*************************************
+--****** Object: Table [EC].[Quality_Other_Coaching_Rejected]  *****************
+
+ UPDATE [EC].[Quality_Other_Coaching_Rejected]
+   SET  [EMP_LANID] = NULL
+   WHERE  [EMP_LANID] is not NULL
+   GO
+
+
+PRINT ('  LANID set to NULl in Quality_Other_Coaching_Rejected...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+
+--*************************************
+
+--****** Object: Table [EC].[Training_Coaching_Rejected]  *****************
+
+
+ UPDATE [EC].[Training_Coaching_Rejected]
+   SET [CSR_LANID] = NULL
+   WHERE [CSR_LANID] is not NULL
+   GO
+
+
+PRINT ('  LANID set to NULl in Training_Coaching_Rejected...')
+
+WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+--****************************************************************************
