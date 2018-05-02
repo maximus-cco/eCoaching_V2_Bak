@@ -1,7 +1,7 @@
-﻿@{
+﻿@using eCoachingLog.Utils
+@{
     Layout = null;
 }
-
 <!DOCTYPE html>
 <head>
     <meta charset="utf-8" />
@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     @Styles.Render("~/Content/css")
 </head>
-
 <html>
 <body>
     <div class="container-fluid" id="banner">
@@ -23,26 +22,9 @@
     <hr />
     <div class="body-content">
         <h5>
-            An error occurred. Please contact the site administrator for assistance.
+            An error occurred. Please contact the <a href="mailto:@Constants.SITE_ADMIN_EMAIL ?Subject=@Constants.SITE_EMAIL_SUBJECT" target="_top">site administrator</a> for assistance.
         </h5>
     </div>
 </body>
 </html>
-
-
-
-
-
-@*@{
-    ViewBag.Title = "Error";
-}
-
-<div class="container">
-    <div>
-        <h2 class="text-danger">Error</h2>
-        <h4 class="text-danger">
-            An error has occurred while processing your request. Please contact the site administrator for assistance.
-        </h4>
-    </div>
-</div>*@
 

@@ -2,6 +2,7 @@
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
+using eCoachingLog.Utils;
 using log4net;
 using OfficeOpenXml;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace eCoachingLog.Extensions
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static bool IsEntitled(this ControllerBase controller, string entitlementName)
+        public static bool IsAccessAllowed(this ControllerBase controller, string controllerName)
         {
             User user = (User)controller.ControllerContext.HttpContext.Session["AuthenticatedUser"];
             IUserService us = new UserService();
@@ -28,8 +29,24 @@ namespace eCoachingLog.Extensions
                 controller.ControllerContext.HttpContext.Session["AuthenticatedUser"] = user;
             }
 
-            //return us.UserIsEntitled(user, entitlementName);
-            return true;
+			// TODO: have a db table configured to allow access each controller based on jobcodes
+			// sp (getuser) to return controller access permission as well
+			if ("NewSubmission" == controllerName)
+			{
+				return user.Role != UserRole.Employee && user.Role != UserRole.HR;
+			}
+
+			if ("MyDashboard" == controllerName)
+			{
+				return user.Role != UserRole.HR;
+			}
+
+			if ("HistoricalDashboard" == controllerName)
+			{
+				return user.Role != UserRole.Employee;
+			}
+
+			return false;
         }
 
 		public static MemoryStream GenerateExcelFile(this LogBaseController controller, DataTable dataTable)

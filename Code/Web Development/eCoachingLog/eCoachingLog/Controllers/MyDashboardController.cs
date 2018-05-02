@@ -11,12 +11,11 @@ using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
+	[EclAuthorize]
 	[SessionCheck]
 	public class MyDashboardController : LogBaseController
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        //private readonly IEmployeeService employeeService;
 
         public MyDashboardController(ISiteService siteService, IEmployeeLogService employeeLogService, IEmployeeService employeeService) : base(siteService, employeeService, employeeLogService)
         {
@@ -26,13 +25,6 @@ namespace eCoachingLog.Controllers
         // GET: MyDashboard
         public ActionResult Index()
         {
-            var sessionId = Session == null ? null : Session.SessionID;
-            logger.Debug("##############SessionID=" + sessionId);
-
-			var user = GetUserFromSession();
-
-			Session["Status"] = "Pending";
-
 			// Default to pending
 			// Need to tell index page what type of pending to display: Employee, Manager, or Other (Supervisor + Others)
 			// TODO: the default pending page based on user role:
@@ -42,10 +34,11 @@ namespace eCoachingLog.Controllers
 			// Employee "My Pending"
 			// Supervisor and Others "My Pending"
 			// Manager "My Pending"
+			var user = GetUserFromSession();
+			Session["CurrentViewLogStatus"] = "Pending";
 
 			// TODO: Get counts from database based on user lanid, hard coded right now
 			// And save the counts in view model
-
 			var vm = InitMyDashboardViewModel();
 			vm.MyTeamSize = 12;
             return View(vm);
@@ -54,9 +47,7 @@ namespace eCoachingLog.Controllers
 		[HttpPost]
 		public ActionResult GetChartData()
 		{
-			ChartData data = GetChartData_Csr();
-
-
+			ChartData data = GetChartData_Employee();
 			return Json(new
 			{
 				data = data,
@@ -66,10 +57,10 @@ namespace eCoachingLog.Controllers
 				, @"application/json");
 		}
 
-		private ChartData GetChartData_Csr()
+		private ChartData GetChartData_Employee()
 		{
 			ChartData data = new ChartData();
-			data.xLabels = GetChartXLabels_Csr();
+			data.xLabels = GetChartXLabels_Employee();
 			Random rnd = new Random();
 			ChartDatasets dataset = new ChartDatasets();
 			var max = 100;
@@ -301,7 +292,7 @@ namespace eCoachingLog.Controllers
 			return xLabels;
 		}
 
-		private IList<string> GetChartXLabels_Csr()
+		private IList<string> GetChartXLabels_Employee()
 		{
 			IList<string> xLabels = new List<string>();
 			//xLabels.Add("Pending Acknowledgement");
@@ -333,7 +324,7 @@ namespace eCoachingLog.Controllers
 			// Set vm.Search.LogSectionWorkingOn approriately based on whatLog
 			var vm = InitMyDashboardViewModel();
 			//vm.Search.LogSectionWorkingOn = LogSection.Employee_MyPending;
-			return PartialView(whatLog, vm); 
+			return PartialView(whatLog, vm.Search); 
 		}
 
 		[HttpPost]
@@ -372,45 +363,51 @@ namespace eCoachingLog.Controllers
             var user = GetUserFromSession();
             var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
 
-            // only load these dropdowns for supervisor/other and managers, since they have search selections for log list
-            // Supervisor Dropdown
-            // TODO: Get all supervisors under this user (manager)
-            List<Employee> employeeList = employeeService.GetEmployeesByModule(1, "lili.huang");
-            employeeList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
-            IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
-            vm.SupervisorSelectList = employees;
-
+			// only load these dropdowns for supervisor/other and managers, since they have search selections for log list
+			// Supervisor Dropdown
+			// TODO: Get all supervisors under this user (manager)
+			if (user.Role == UserRole.Supervisor || user.Role == UserRole.Other)
+			{
+				List<Employee> employeeList = employeeService.GetEmployeesByModule(1, "lili.huang");
+				employeeList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
+				IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
+				vm.SupervisorSelectList = employees;
+			}
 			// TODO: only if user is director
-			List<LogStatus> logStatusList = new List<LogStatus>();
-			logStatusList.Insert(0, new LogStatus { Id = -1, Description = "-- Select a Status --" });
-			IEnumerable<SelectListItem> logStatus = new SelectList(logStatusList, "Id", "Description");
-			vm.LogStatusSelectList = logStatus;
+			if (user.Role == UserRole.Director)
+			{
+				List<LogStatus> logStatusList = new List<LogStatus>();
+				logStatusList.Insert(0, new LogStatus { Id = -1, Description = "-- Select a Status --" });
+				IEnumerable<SelectListItem> logStatus = new SelectList(logStatusList, "Id", "Description");
+				vm.LogStatusSelectList = logStatus;
+			}
 
 			// TODO: get real employees
-			vm.EmployeeSelectList = employees;
+			//vm.EmployeeSelectList = employees;
 
 			// TODO: move LogSectionWorkingOn to MyDashboardViewModel from MyDashboardSearch
 			// Add check LogSectionWorkingOn to decide which columns to hide
-			if (vm.UserRole != UserRole.Employee)
+			if (vm.Search.UserRole != UserRole.Employee)
 			{
 				vm.ShowSupNameColumn = true;
 			}
-
 
 			// Data to be displayed next to bar chart
 			IList<LogCount> test = new List<LogCount>();
 			LogCount lc = new LogCount();
 			lc.Description = "My Pending";
 			lc.Count = 10;
+			lc.LogListPageName = "_MyPending";
 			test.Add(lc);
 
 			lc = new LogCount();
 			lc.Description = "My Completed";
 			lc.Count = 20;
+			lc.LogListPageName = "_MyCompleted";
 			test.Add(lc);
 
 			vm.LogCountList = test;
-			vm.PercentCompleted = 60;
+			//vm.PercentCompleted = 60;
 			return vm;
         }
     }

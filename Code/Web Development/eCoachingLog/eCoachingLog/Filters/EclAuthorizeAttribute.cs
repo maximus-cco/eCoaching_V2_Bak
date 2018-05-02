@@ -1,5 +1,6 @@
 ﻿using eCoachingLog.Models.User;
 using eCoachingLog.Services;
+using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Web;
@@ -31,26 +32,36 @@ namespace eCoachingLog.Filters
             IUserService us = new UserService();
             User user = (User)session["AuthenticatedUser"];
 
-            // Entitlement string: controller-action
-            string entitlementRequired = String.Format("{0}-{1}",
-                    filterContext.ActionDescriptor.ControllerDescriptor.ControllerName,
-                    filterContext.ActionDescriptor.ActionName);
+			// Access control string: controller name
+			string controllerName = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName;
+			bool isAccessAllowed = false;
+			// TODO: have a db table configured to allow access each controller based on jobcodes
+			// sp (getuser) to return controller access permission as well
+			if ("NewSubmission" == controllerName)
+			{
+				isAccessAllowed = user.Role != UserRole.Employee && user.Role != UserRole.HR;
+			}
+			else if ("MyDashboard" == controllerName)
+			{
+				isAccessAllowed = user.Role != UserRole.HR;
+			}
+			else if ("HistoricalDashboard" == controllerName)
+			{
+				isAccessAllowed = user.Role != UserRole.Employee;
+			}
 
-            logger.Debug("entitlementRequired='" + entitlementRequired + "'");
-
-            // Check if user is allowed to run the controller's action
-            if (!us.UserIsEntitled(user, entitlementRequired))
-            {
-                /*User doesn't have the required entitlement, return our 
+			if (!isAccessAllowed)
+			{
+				/*User is not allowed to access the controller, return our 
                     custom '401 Unauthorized' access error. Since we are setting 
                     filterContext.Result to contain an ActionResult page, the controller's 
                     action will not run. */
 
-                filterContext.Result = new RedirectToRouteResult(
-                                            new RouteValueDictionary {
-                                            { "action", "Index" },
-                                            { "controller", "Unauthorized" } });
-            }
-        }
-    }
+				filterContext.Result = new RedirectToRouteResult(
+											new RouteValueDictionary {
+														 { "action", "Index" },
+														 { "controller", "Unauthorized" } });
+			}
+		}
+	}
 }

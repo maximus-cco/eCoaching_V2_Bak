@@ -13,7 +13,7 @@ $(document).ready(function () {
         	url: loadDataUrl,
             type: "POST",
             datatype: "json",
-        	data: myDashboardSearch,
+        	data: logFilter,
         },
         columns: [
             {

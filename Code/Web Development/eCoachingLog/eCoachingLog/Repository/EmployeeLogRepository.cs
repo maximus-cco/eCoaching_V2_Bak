@@ -380,6 +380,7 @@ namespace eCoachingLog.Repository
 		{
 			List<LogBase> logs = new List<LogBase>();
 			using (SqlConnection connection = new SqlConnection(conn))
+			// TODO: have a driver sp to take care of all searches (my dashboard, historical dashboard)
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Historical]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
@@ -394,7 +395,7 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValue("strEDatein", logFilter.SubmitDateTo);
 				command.Parameters.AddWithValue("@nvcValue", logFilter.ValueId);
 				command.Parameters.AddWithValue("@intStatusIdin", logFilter.StatusId);
-				command.Parameters.AddWithValue("@intEmpActive", logFilter.ActiveEmployee); 
+				command.Parameters.AddWithValue("@intEmpActive", logFilter.ActiveEmployee);
 				command.Parameters.AddWithValue("@PageSize", pageSize);
 				command.Parameters.AddWithValue("@startRowIndex", rowStartIndex);
 				command.Parameters.AddWithValue("@sortBy", sortBy);

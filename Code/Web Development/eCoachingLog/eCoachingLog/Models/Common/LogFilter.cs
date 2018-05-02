@@ -1,9 +1,12 @@
-﻿using System;
+﻿using eCoachingLog.Utils;
+using System;
 
 namespace eCoachingLog.Models.Common
 {
 	public class LogFilter
     {
+		public UserRole UserRole { get; set; }
+
 		public int SiteId { get; set; }
 		public string ManagerId { get; set; }
 		public string SupervisorId { get; set; }

@@ -1,5 +1,6 @@
 ﻿using eCoachingLog.Models.User;
 using eCoachingLog.Services;
+using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
 using System.Web.Mvc;
@@ -24,23 +25,28 @@ namespace eCoachingLog.Controllers
                 return RedirectToAction("Index", "Unauthorized");
             }
 
+			// TODO: set it in server based on what user role returned from db
+			// or based on job code returned from db
+			user.Role = UserRole.HR;
+
 			Session["AuthenticatedUser"] = user;
-			// Landing page
-			return RedirectToAction("Index", "NewSubmission");
+			// Landing page: Historical Dashboard for HR users; My Dashboard all all other users
+			if (user.Role == UserRole.HR)
+			{
+				return RedirectToAction("Index", "HistoricalDashboard");
+			}
+			return RedirectToAction("Index", "MyDashboard");
         }
 
         public JsonResult KeepSessionAlive()
         {
             logger.Debug("######id=" + Session.SessionID);
-            NewSubmissionViewModel vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
-
             return Json(string.Empty, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult SessionExpire()
         {
             Session.Abandon();
-
             return View();
         }
     }

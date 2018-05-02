@@ -8,14 +8,10 @@ namespace eCoachingLog.ViewModels
 {
     public class MyDashboardViewModel : BaseViewModel
 	{
-		// TODO: this should go to BaseViewModel
-		public LogFilter Search { get; set; }
-
 		// TODO: wrap them in User
 		// public User User { get; set; }
 		public string UserId { get; set; }
         public string UserLanId { get; set; }
-		public UserRole UserRole { get; set; }
 
 		// my team size 
 		// if my team size is 1, then no one reports to the user
@@ -32,7 +28,7 @@ namespace eCoachingLog.ViewModels
 
 		// Search (from director)
 		public int LogStatusId { get; set; }
-		public IEnumerable<SelectListItem> LogStatusSelectList { get; set; }
+		//public IEnumerable<SelectListItem> LogStatusSelectList { get; set; }
 
 		public bool IsCoaching { get; set; }
 		public bool IsWarning { get; set; }
@@ -43,8 +39,8 @@ namespace eCoachingLog.ViewModels
 		public string SupervisorId { get; set; }
         public string EmployeeId { get; set; }
 		public string SourceId { get; set; }
-        public IEnumerable<SelectListItem> SupervisorSelectList { get; set; }
-        public IEnumerable<SelectListItem> EmployeeSelectList { get; set; }
+        //public IEnumerable<SelectListItem> SupervisorSelectList { get; set; }
+        //public IEnumerable<SelectListItem> EmployeeSelectList { get; set; }
 		public IEnumerable<SelectListItem> SourceSelectList { get; set; }
 
         // TODO: Remove these. Will use entilement to control show/hide, see Index.cshtml
@@ -114,7 +110,7 @@ namespace eCoachingLog.ViewModels
         {
             this.UserId = userId;
             this.UserLanId = userLanId;
-			this.UserRole = userRole;
+			this.Search.UserRole = userRole;
         }
     }
 }

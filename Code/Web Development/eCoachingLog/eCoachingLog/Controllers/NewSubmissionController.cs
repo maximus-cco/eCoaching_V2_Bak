@@ -15,7 +15,7 @@ using Vereyon.Web;
 
 namespace eCoachingLog.Controllers
 {
-	//[EclAuthorize]
+	[EclAuthorize]
 	[SessionCheck]
     public class NewSubmissionController : LogBaseController
     {

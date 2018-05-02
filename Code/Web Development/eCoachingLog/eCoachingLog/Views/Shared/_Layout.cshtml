@@ -1,6 +1,4 @@
-﻿@*@using eCoachingLog.Extensions*@
-@using eCoachingLog.Models.User
-
+﻿@using eCoachingLog.Models.User
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,32 +22,24 @@
 		<div class="container-fluid">
 			<div class="row col-sm-12">
 				<ul class="nav navbar-nav">
-					@*@if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForReassign"))
-				{*@
+				@if (ViewContext.Controller.IsAccessAllowed("NewSubmission"))
+				{
 					<li>@Html.ActionLink("New Submission", "Index", "NewSubmission")</li>
-					@*}
-				@if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForReassign"))
-				{*@
+				}
+				@if (ViewContext.Controller.IsAccessAllowed("MyDashboard"))
+				{
 					<li>@Html.ActionLink("My Dashboard", "Index", "MyDashboard", null, new { id = "mydashboard" })</li>
-					@*}*@
-					@*@if (ViewContext.Controller.IsEntitled("EmployeeLog-SearchForReassign"))
-				{*@
+				}
+				@if (ViewContext.Controller.IsAccessAllowed("HistoricalDashboard"))
+				{
 					<li>@Html.ActionLink("Historical Dashboard", "Index", "HistoricalDashboard")</li>
-					@*}*@
+				}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="#">Welcome @(((User)Session["AuthenticatedUser"]).Name)!</a></li>
 				</ul>
 			</div>
-			</div>
-
-			@*<ul class="nav navbar-nav navbar-right">
-			@if (Session["AuthenticatedUser"] != null)
-			{
-				<li class="navbar-text">Welcome @(((User)Session["AuthenticatedUser"]).Name)</li>
-			}
-			</ul>*@
-@*</div>*@
+		</div>
     </nav>
 
     <div class="body-content">
@@ -57,7 +47,6 @@
         <div id="flash-message">
             @Vereyon.Web.FlashMessageHtmlHelper.RenderFlashMessages(Html)
         </div>
-
         @RenderBody()
     </div>
 
@@ -73,7 +62,6 @@
         var sessionExpiredUrl = '@Url.Action("SessionExpire", "Home")';
         var errorUrl = '@Url.Action("Index", "Error")';
 		var keepSessionAliveUrl = '@Url.Action("KeepSessionAlive", "Home")';
-
 		var myDashboardDefaultAjax = '@Url.Action("Default", "MyDashboard")';
     </script>
 

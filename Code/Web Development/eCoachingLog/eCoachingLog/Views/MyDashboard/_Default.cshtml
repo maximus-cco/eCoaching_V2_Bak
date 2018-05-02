@@ -6,6 +6,9 @@
 <h2 class="ecl-page-header">My Dashboard</h2>
 <input type="hidden" name="whatlog" id="whatlog" />
 
+<div class="alert alert-info">
+	You currently have 100 pending logs that need you to take action.
+</div>
 <div class="row">
 	<div class="col-xs-6">
 		<div class="panel panel-default">
@@ -15,14 +18,17 @@
 		</div>
 	</div>
 	<div class="col-xs-3">
-		<div class="panel panel-default">
+		<div class="panel panel-green">
+			<div class="panel-heading">
+				<strong>Click View to see log list&nbsp;</strong>
+			</div>
 			<div class="panel-body">
 				@{ Html.RenderPartial("_CountByTeam"); }
 			</div>
 		</div>
 		<br />
 		<!-- Display progress bar-->
-		@if (Model.MyTeamSize == 12)
+		@*@if (Model.MyTeamSize == 12)
 		{
 			<p><b>My Current Month Completion Percentage:</b></p>
 			<div class="progress">
@@ -31,14 +37,14 @@
 					
 				</div>
 			</div>
-		}
+		}*@
 	</div>
-	<div class="col-xs-3">
+	@*<div class="col-xs-3">
 		<div class="notes yellow-bg">
 			<h4>My Pending Logs submitted prior to current month:</h4>
 			<p align="center" class="h1">123</p>
 		</div>
-	</div>
+	</div>*@
 </div>
 
 <div class="alert alert-success hide" id="div-success-msg">

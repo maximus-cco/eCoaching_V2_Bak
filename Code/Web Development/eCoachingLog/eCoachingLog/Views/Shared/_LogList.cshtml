@@ -31,7 +31,7 @@
 <!-- /.panel -->
 
 <script>
-	var myDashboardSearch = @Html.Raw(Json.Encode(Model));
+	var logFilter = @Html.Raw(Json.Encode(Model));
 	var supId = '@Html.Raw(Model.SupervisorId)';
 	var showSupervisorColumn = 'True';
 	var loadDataUrl = '@Url.Action("LoadData")';

@@ -13,7 +13,7 @@ using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
-	//[EclAuthorize]
+	[EclAuthorize]
 	[SessionCheck]
 	public class HistoricalDashboardController : LogBaseController
     {

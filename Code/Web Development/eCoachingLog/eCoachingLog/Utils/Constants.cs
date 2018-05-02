@@ -6,6 +6,9 @@ namespace eCoachingLog.Utils
 {
     public static class Constants
     {
+		public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
+		public const string SITE_EMAIL_SUBJECT = "eCoaching Log";
+
 		public const int ALL_SITES = -1;
 
 		public const string DIRECT = "Direct";
@@ -48,7 +51,6 @@ namespace eCoachingLog.Utils
 
         public const string ECOACHING_URL_PROD = "https://f3420-mwbp11.vangent.local/eCoachingLog";
         public const string ECOACHING_URL_ST = "https://f3420-mpmd01.vangent.local/eCoachingLog_st";
-
 
 		// Dictionary<<moduleId, statusId>, statusLevel>
 		public static readonly Dictionary<Tuple<int, int>, int> LogStatusLevel = new Dictionary<Tuple<int, int>, int>
@@ -93,11 +95,13 @@ namespace eCoachingLog.Utils
 
     public enum UserRole
     {
-        Manager = 1,
-        Supervisor = 2,
-        Employee = 3,
-        Other = 4,
-        Unknown = 5
+		Director = 1,
+		Manager = 2,
+        Supervisor = 3,
+        Employee = 4,
+		HR = 5,
+        Other = 6,
+        Unknown = 7
     }
 
     public enum EmployeeLogType

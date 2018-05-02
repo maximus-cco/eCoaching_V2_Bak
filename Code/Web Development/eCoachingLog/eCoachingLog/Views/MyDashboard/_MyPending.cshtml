@@ -1,4 +1,6 @@
-﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
+﻿@model eCoachingLog.Models.Common.LogFilter
+@using eCoachingLog.Utils
+User Role: @Model.UserRole
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default filterable" id="coaching-log-list">
@@ -18,7 +20,7 @@
 					<br />
 				}
 				<div id="div-my-pending-list">
-					@{Html.RenderPartial("_LogList", Model.Search); }
+					@{Html.RenderPartial("_LogList", Model); }
 				</div>
 			</div>
             <!-- /.panel-body -->

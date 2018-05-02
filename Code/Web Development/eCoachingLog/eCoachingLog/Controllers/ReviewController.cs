@@ -105,7 +105,7 @@ namespace eCoachingLog.Controllers
 				// TODO: check status, if completed
 				//vm.LogDetail.Status = "Completed";
 				//if (vm.LogDetail.Status == "Completed")
-				var status = (string)Session["Status"];
+				var status = (string)Session["CurrentViewLogStatus"];
 				if (status == "Completed" || status == "Submission")
 				{
 					vm.ShowReviewCoachingFinalPartial = true;
