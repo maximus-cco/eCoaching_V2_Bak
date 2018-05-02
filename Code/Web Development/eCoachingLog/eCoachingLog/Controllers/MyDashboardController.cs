@@ -47,7 +47,8 @@ namespace eCoachingLog.Controllers
 		[HttpPost]
 		public ActionResult GetChartData()
 		{
-			ChartData data = GetChartData_Employee();
+			ChartData data = GetChartData_Supervisor();
+
 			return Json(new
 			{
 				data = data,
@@ -80,6 +81,91 @@ namespace eCoachingLog.Controllers
 			data.datasets.Add(dataset2);
 
 			return data;
+		}
+
+		private IList<string> GetChartXLabels_Employee()
+		{
+			IList<string> xLabels = new List<string>();
+			//xLabels.Add("Pending Acknowledgement");
+			//xLabels.Add("Pending Employee Review");
+
+			return xLabels;
+		}
+
+		private ChartData GetChartData_Supervisor()
+		{
+			ChartData data = new ChartData();
+			data.xLabels = GetChartXLabels_Supervisor();
+			Random rnd = new Random();
+			ChartDatasets dataset = new ChartDatasets();
+			var max = 100;
+
+			ChartDatasets dataset1 = new ChartDatasets();
+			dataset1.label = "Pending Acknowledgement";
+			dataset1.data.Add(rnd.Next(1, max));
+			dataset1.backgroundColor = "#2B65EC";
+			dataset1.borderColor = "#2B65EC";
+			data.datasets.Add(dataset1);
+
+			ChartDatasets dataset2 = new ChartDatasets();
+			dataset2.label = "Pending Employee Review";
+			dataset2.data.Add(rnd.Next(1, max));
+			dataset2.backgroundColor = "#93FFE8";
+			dataset2.borderColor = "#93FFE8";
+			data.datasets.Add(dataset2);
+
+			ChartDatasets dataset3 = new ChartDatasets();
+			dataset3.label = "Pending Manager Review";
+			dataset3.data.Add(rnd.Next(1, max));
+			dataset3.backgroundColor = "#FFFF00";
+			dataset3.borderColor = "#FFFF00";
+			data.datasets.Add(dataset3);
+
+			ChartDatasets dataset4 = new ChartDatasets();
+			dataset4.label = "Pending Supervisor Review";
+			dataset4.data.Add(rnd.Next(1, max));
+			dataset4.backgroundColor = "#F88017";
+			dataset4.borderColor = "#F88017";
+			data.datasets.Add(dataset4);
+
+			ChartDatasets dataset5 = new ChartDatasets();
+			dataset5.label = "Pending Sr. Mgr Review";
+			dataset5.data.Add(rnd.Next(1, max));
+			dataset5.backgroundColor = "#4E8975";
+			dataset5.borderColor = "#4E8975";
+			data.datasets.Add(dataset5);
+
+			ChartDatasets dataset6 = new ChartDatasets();
+			dataset6.label = "Pending Qlt Lead Review";
+			dataset6.data.Add(rnd.Next(1, max));
+			dataset6.backgroundColor = "#4B0082";
+			dataset6.borderColor = "#4B0082";
+			data.datasets.Add(dataset6);
+
+			ChartDatasets dataset7 = new ChartDatasets();
+			dataset7.label = "Pending Dep Prg Mgr Review";
+			dataset7.data.Add(rnd.Next(1, max));
+			dataset7.backgroundColor = "#B93B8F";
+			dataset7.borderColor = "#B93B8F";
+			data.datasets.Add(dataset7);
+
+			ChartDatasets dataset8 = new ChartDatasets();
+			dataset8.label = "Warning";
+			dataset8.data.Add(rnd.Next(1, max));
+			dataset8.backgroundColor = "#FF0000";
+			dataset8.borderColor = "#FF0000";
+			data.datasets.Add(dataset8);
+
+			return data;
+		}
+
+		private IList<string> GetChartXLabels_Supervisor()
+		{
+			IList<string> xLabels = new List<string>();
+			//xLabels.Add("Pending Acknowledgement");
+			//xLabels.Add("Pending Employee Review");
+
+			return xLabels;
 		}
 
 		private ChartData GetChartData_Director()
@@ -292,15 +378,6 @@ namespace eCoachingLog.Controllers
 			return xLabels;
 		}
 
-		private IList<string> GetChartXLabels_Employee()
-		{
-			IList<string> xLabels = new List<string>();
-			//xLabels.Add("Pending Acknowledgement");
-			//xLabels.Add("Pending Employee Review");
-
-			return xLabels;
-		}
-
 		[HttpPost]
 		public ActionResult Default()
 		{
@@ -405,6 +482,27 @@ namespace eCoachingLog.Controllers
 			lc.Count = 20;
 			lc.LogListPageName = "_MyCompleted";
 			test.Add(lc);
+
+			if (user.Role == UserRole.Supervisor)
+			{
+				lc = new LogCount();
+				lc.Description = "My Team Pending";
+				lc.Count = 12;
+				lc.LogListPageName = "_MyTeamPending";
+				test.Add(lc);
+
+				lc = new LogCount();
+				lc.Description = "My Team Completed";
+				lc.Count = 15;
+				lc.LogListPageName = "_MyTeamCompleted";
+				test.Add(lc);
+
+				lc = new LogCount();
+				lc.Description = "My Team Warning";
+				lc.Count = 8;
+				lc.LogListPageName = "_MyTeamWarning";
+				test.Add(lc);
+			}
 
 			vm.LogCountList = test;
 			//vm.PercentCompleted = 60;

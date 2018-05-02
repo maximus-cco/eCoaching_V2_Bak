@@ -27,7 +27,7 @@ namespace eCoachingLog.Controllers
 
 			// TODO: set it in server based on what user role returned from db
 			// or based on job code returned from db
-			user.Role = UserRole.HR;
+			user.Role = UserRole.Supervisor;
 
 			Session["AuthenticatedUser"] = user;
 			// Landing page: Historical Dashboard for HR users; My Dashboard all all other users

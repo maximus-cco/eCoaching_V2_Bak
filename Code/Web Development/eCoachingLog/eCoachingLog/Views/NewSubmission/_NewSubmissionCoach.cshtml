@@ -1,7 +1,13 @@
 ﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
-
+@{
+	var dateLabel = "Enter/Select the date of event:";
+	if (Model.IsCoachingByYou.HasValue && Model.IsCoachingByYou.Value)
+	{
+		dateLabel = "Enter/Select the date of coaching:";
+	}
+}
 <div class="form-group">
-    <label for="coaching-date" class="col-sm-3 control-label required" id="label-coaching-date">Enter/Select the date of coaching:</label>
+	<label for="coaching-date" class="col-sm-3 control-label required" id="label-coaching-date">@dateLabel</label>
     <div class="col-sm-2">
         <div class="input-group date">
             @Html.TextBoxFor(m => m.CoachingDate, new { @class = "form-control" })

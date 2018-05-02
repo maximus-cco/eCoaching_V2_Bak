@@ -79,6 +79,10 @@
 		}
 	});
 
+	// Search log
+	$('body').on('click', '#btn-search', function (e) {
+		alert('go');
+	});
 
 	// Export to excel
 	$('body').on('click', '#btn-export-excel', function (e) {
