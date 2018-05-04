@@ -43,6 +43,8 @@ namespace eCoachingLog
             container.Register<IProgramRepository, ProgramRepository>(Lifestyle.Scoped);
             container.Register<INewSubmissionService, NewSubmissionService>(Lifestyle.Scoped);
             container.Register<INewSubmissionRepository, NewSubmissionRepository>(Lifestyle.Scoped);
+			container.Register<ISurveyService, SurveyService>(Lifestyle.Scoped);
+			container.Register<ISurveyRepository, SurveyRepository>(Lifestyle.Scoped);
 
             // 3. Optionally verify the container's configuration
             container.Verify();

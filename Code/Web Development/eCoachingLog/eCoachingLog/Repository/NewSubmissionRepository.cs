@@ -69,6 +69,7 @@ namespace eCoachingLog.Repository
 				}
                 command.Parameters.AddWithValue("@nvcSubmitterID", user.EmployeeId);
 
+				var startDate = submission.CoachingDate;
                 if (submission.IsDirect.HasValue && submission.IsDirect.Value)
                 {
                     command.Parameters.AddWithValueSafe("@dtmEventDate", null);
@@ -78,7 +79,8 @@ namespace eCoachingLog.Repository
                 {
                     command.Parameters.AddWithValueSafe("@dtmEventDate", submission.CoachingDate);
                     command.Parameters.AddWithValueSafe("@dtmCoachingDate", null);
-                }
+					startDate = submission.CoachingDate;
+				}
 
 				// Call Type and Call ID
 				bool isAvokeId = false;
@@ -145,7 +147,7 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@nvcCoachingNotes", submission.Plans);
                 command.Parameters.AddWithValue("@bitisVerified", true);
                 command.Parameters.AddWithValue("@dtmSubmittedDate", DateTime.Now);
-                command.Parameters.AddWithValue("@dtmStartDate", DateTime.Now);
+                command.Parameters.AddWithValue("@dtmStartDate", startDate);
                 command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", null);
                 command.Parameters.AddWithValueSafe("@bitisCSE", submission.IsCse);
                 command.Parameters.AddWithValueSafe("@dtmMgrReviewManualDate", null);

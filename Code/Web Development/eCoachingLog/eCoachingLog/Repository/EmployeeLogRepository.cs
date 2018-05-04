@@ -15,13 +15,12 @@ namespace eCoachingLog.Repository
 	public class EmployeeLogRepository : IEmployeeLogRepository
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
+		private static readonly string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
         // TODO: should it be renamed to spGetModulesByUserId?
         public List<Module> GetModules(User user)
         {
             var modules = new List<Module>();
-            string logType = eCoachingLogUtil.GetLogTypeNameById(1);
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Modules_By_Job_Code]", connection))
@@ -61,7 +60,7 @@ namespace eCoachingLog.Repository
                     while (dataReader.Read())
                     {
                         logDetail.LogId = (long)dataReader["numID"];
-                        logDetail.FormName = dataReader["strFormID"].ToString();
+						logDetail.FormName = dataReader["strFormID"].ToString();
                         logDetail.Source = dataReader["strSource"].ToString();
                         logDetail.Status = dataReader["strFormStatus"].ToString();
                         logDetail.Type = dataReader["strFormType"].ToString();
@@ -71,15 +70,15 @@ namespace eCoachingLog.Repository
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
                         logDetail.EmployeeName = dataReader["strCSRName"].ToString();
                         logDetail.EmployeeSite = dataReader["strCSRSite"].ToString();
-                        logDetail.IsVerintMonitor = Convert.ToBoolean(dataReader["isVerintMonitor"].ToString());
+						logDetail.IsVerintMonitor = dataReader["isVerintMonitor"] == DBNull.Value ? false : (bool) dataReader["isVerintMonitor"];
                         logDetail.VerintId = dataReader["strVerintID"].ToString();
                         logDetail.VerintFormName = dataReader["VerintFormName"].ToString();
-                        logDetail.CoachingMonitor = dataReader["isCoachingMonitor"].ToString();
-                        logDetail.IsBehaviorAnalyticsMonitor = Convert.ToBoolean(dataReader["isBehaviorAnalyticsMonitor"].ToString());
+                        logDetail.CoachingMonitor = dataReader["isCoachingMonitor"].ToString(); // nvarchar(3): NULL, NA, No, Yes
+						logDetail.IsBehaviorAnalyticsMonitor = dataReader["isBehaviorAnalyticsMonitor"] == DBNull.Value ? false : (bool)dataReader["isBehaviorAnalyticsMonitor"];
                         logDetail.BehaviorAnalyticsId = dataReader["strBehaviorAnalyticsID"].ToString();
-                        logDetail.IsNgdActivityId = Convert.ToBoolean(dataReader["isNGDActivityID"].ToString());
+						logDetail.IsNgdActivityId = dataReader["isNGDActivityID"] == DBNull.Value ? false : (bool)dataReader["isNGDActivityID"];
                         logDetail.NgdActivityId = dataReader["strNGDActivityID"].ToString();
-                        logDetail.IsUcId = Convert.ToBoolean(dataReader["isUCID"].ToString());
+                        logDetail.IsUcId = dataReader["isUCID"] == DBNull.Value ? false : (bool)dataReader["isUCID"]; ;
                         logDetail.UcId = dataReader["strUCID"].ToString();
                         logDetail.SupervisorName = dataReader["strCSRSupName"].ToString();
                         logDetail.ReassignedSupervisorName = dataReader["strReassignedSupName"].ToString();
@@ -93,10 +92,9 @@ namespace eCoachingLog.Repository
                         logDetail.SupReviewedAutoDate = eCoachingLogUtil.AppendPdt(dataReader["SupReviewedAutoDate"].ToString());
                         logDetail.MgrReviewAutoDate = eCoachingLogUtil.AppendPdt(dataReader["MgrReviewAutoDate"].ToString());
 						// TODO: find out if these 2 are returning
-						//logDetail.ReviewedSupervisorName = dataReader["strreviewsup"].ToString();
-						//logDetail.ReviewedManagerName = dataReader["strreviewmgr"].ToString();
-
-						logDetail.IsCse = Convert.ToBoolean(dataReader["isCse"].ToString());
+						//logDetail.ReviewedSupervisorName = dataReader["strreviewsup"];
+						//logDetail.ReviewedManagerName = dataReader["strreviewmgr"];
+						logDetail.IsCse = dataReader["isCse"] == DBNull.Value ? false : (bool) dataReader["isCse"];
 						logDetail.IsCseUnconfirmed = Convert.ToInt16(dataReader["Customer Service Escalation"]) == 0 ? false : true;
 
 						break;

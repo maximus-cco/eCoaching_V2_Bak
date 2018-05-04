@@ -1,11 +1,6 @@
 ﻿$(document).ready(function () {
-	//alert('my dashboard ready');
-
 	$('#div-success-msg').hide();
 	$('#div-error-msg').hide();
-
-	$('#modal-container').css('margin-top', '3%');
-	$('.modal-content').css('width', '60%');
 
 	// Display Review Modal
 	$('body').on('click', '.modal-link', function (e) {
@@ -13,7 +8,7 @@
 		e.preventDefault();
 		if (e.handled !== true) {
 			e.handled = true;
-			console.log("!!!Get Detail!!!");
+			//console.log("!!!Get Detail!!!");
 			$.ajax({
 				type: 'POST',
 				// Call GetLogDetail method.
@@ -138,7 +133,7 @@
     	$(this).prop('disabled', true);
 		// Show spinner
     	$(".please-wait").slideDown(500);
-    	console.log("submitReview");
+    	//console.log("submitReview");
     	submitReview(saveUrl, myTable, $('#div-my-pending-text'), 'The log has been successfully updated.', 'Failed to update the log.');
     });
 

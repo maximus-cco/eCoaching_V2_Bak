@@ -150,20 +150,29 @@
     <Compile Include="Controllers\HistoricalDashboardController.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
+    <Compile Include="Controllers\SuveyController.cs" />
     <Compile Include="Models\Common\LogBase.cs" />
     <Compile Include="Models\Common\LogCount.cs" />
     <Compile Include="Models\Common\LogValue.cs" />
     <Compile Include="Models\MyDashboard\ChartData.cs" />
     <Compile Include="Models\MyDashboard\ChartDatasets.cs" />
     <Compile Include="Models\Review\Review.cs" />
+    <Compile Include="Models\Survey\Answer.cs" />
+    <Compile Include="Models\Survey\Question.cs" />
+    <Compile Include="Models\Survey\SingleChoice.cs" />
+    <Compile Include="Models\Survey\Survey.cs" />
     <Compile Include="Repository\IProgramRepository.cs" />
     <Compile Include="Repository\ISiteRepository.cs" />
+    <Compile Include="Repository\ISurveyRepository.cs" />
     <Compile Include="Repository\ProgramRepository.cs" />
     <Compile Include="Repository\SiteRepository.cs" />
+    <Compile Include="Repository\SurveyRepository.cs" />
     <Compile Include="Services\IProgramService.cs" />
     <Compile Include="Services\ISiteService.cs" />
+    <Compile Include="Services\ISurveyService.cs" />
     <Compile Include="Services\ProgramService.cs" />
     <Compile Include="Services\SiteService.cs" />
+    <Compile Include="Services\SurveyService.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\LogBaseController.cs" />
@@ -239,6 +248,7 @@
     <Compile Include="ViewModels\NewSubmissionViewModel.cs" />
     <Compile Include="ViewModels\ReviewViewModel.cs" />
     <Compile Include="Models\NewSubmission\CallType.cs" />
+    <Compile Include="ViewModels\SurveyViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-datetimepicker.min.css" />
@@ -279,6 +289,7 @@
     <Content Include="Scripts\eCoachingLog\myDashboardWarningList.js" />
     <Content Include="Scripts\eCoachingLog\newSubmission.js" />
     <Content Include="Scripts\eCoachingLog\review.js" />
+    <Content Include="Scripts\eCoachingLog\survey.js" />
     <Content Include="Scripts\jquery-2.2.0.js" />
     <Content Include="Scripts\jquery.dataTables.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
@@ -358,6 +369,7 @@
     <Content Include="Views\MyDashboard\_CountByTeam.cshtml" />
     <Content Include="Views\HistoricalDashboard\_Search.cshtml" />
     <Content Include="Views\Review\_ViewWarningLog.cshtml" />
+    <Content Include="Views\Survey\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

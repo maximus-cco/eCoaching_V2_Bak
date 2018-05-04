@@ -6,7 +6,8 @@
 <h2 class="ecl-page-header">My Dashboard</h2>
 <input type="hidden" name="whatlog" id="whatlog" />
 
-<div class="alert alert-info">
+<div class="alert alert-info alert-dismissible fade in">
+	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 	You currently have 100 pending logs that need you to take action.
 </div>
 <div class="row">
@@ -63,13 +64,13 @@
 </div>
 
 <script>
-			var getDefault = '@Url.Action("Default", "MyDashboard")';
-			var getLogListUrl = '@Url.Action("GetLogs", "MyDashboard")';
-			var saveUrl = '@Url.Action("Save", "Review", "MyDashboard")';
-			var getLogDetailsUrl = '@Url.Action("GetLogDetail", "LogBase")';
-			var loadDataUrl = '@Url.Action("LoadData", "LogBase")';
+	var getDefault = '@Url.Action("Default", "MyDashboard")';
+	var getLogListUrl = '@Url.Action("GetLogs", "MyDashboard")';
+	var saveUrl = '@Url.Action("Save", "Review", "MyDashboard")';
+	var getLogDetailsUrl = '@Url.Action("GetLogDetail", "LogBase")';
+	var loadDataUrl = '@Url.Action("LoadData", "LogBase")';
 
-			var getChartData = '@Url.Action("GetChartData", "MyDashboard")';
+	var getChartData = '@Url.Action("GetChartData", "MyDashboard")';
 </script>
 
 @Scripts.Render("~/bundles/scripts/dashboard")

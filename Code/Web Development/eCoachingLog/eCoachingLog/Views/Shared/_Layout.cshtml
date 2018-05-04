@@ -1,4 +1,7 @@
 ﻿@using eCoachingLog.Models.User
+@{
+	var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +24,7 @@
     <nav class="navbar navbar-inverse navbar-static-top" role="navigation" id="topnavbar">
 		<div class="container-fluid">
 			<div class="row col-sm-12">
-				<ul class="nav navbar-nav">
+				<ul class='nav navbar-nav @(@controllerName == "Survey" ? "hide" : "show")'>
 				@if (ViewContext.Controller.IsAccessAllowed("NewSubmission"))
 				{
 					<li>@Html.ActionLink("New Submission", "Index", "NewSubmission")</li>

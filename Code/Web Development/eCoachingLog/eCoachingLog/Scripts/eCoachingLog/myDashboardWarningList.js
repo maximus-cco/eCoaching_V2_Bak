@@ -39,7 +39,7 @@ $(document).ready(function () {
 		],
 
 		"initComplete": function (settings, json) {
-			console.log('dataTables-warning-log-list init complete.');
+			//console.log('dataTables-warning-log-list init complete.');
 		}
 	}); // warningType
 

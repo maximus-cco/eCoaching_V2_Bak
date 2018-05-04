@@ -80,6 +80,13 @@ namespace eCoachingLog
 						"~/Scripts/eCoachingLog/historicalDashboardSearch.js");
 			bundles.Add(hisDashboardSearchScriptBundle);
 
+			// javascript bundle for survey
+			var surveyScriptBundle = new ScriptBundle("~/bundles/scripts/survey");
+			surveyScriptBundle.Orderer = new EclBundleOrderer();
+			surveyScriptBundle.Include(
+						"~/Scripts/eCoachingLog/survey.js");
+			bundles.Add(surveyScriptBundle);
+
 			// css across web app
 			bundles.Add(new StyleBundle("~/Content/css").Include(
 					   "~/Content/bootstrap.css",

@@ -3,6 +3,9 @@
 $(function () {
 	$(".please-wait").slideUp(500);
 
+	$('#modal-container').css('margin-top', '3%');
+	$('.modal-content').css('width', '60%');
+
 	// Init jquery user timeout plugin
 	$(document).userTimeout({
 		keepAliveUrl: keepSessionAliveUrl,

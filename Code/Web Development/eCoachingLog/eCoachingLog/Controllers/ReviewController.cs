@@ -25,7 +25,7 @@ namespace eCoachingLog.Controllers
 			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching);
 
 			// View only if user clicks a log on Historical Dashboard
-			if ("Historical" == (string)Session["currentPage"])
+			if ("Historical" == (string)Session["currentPage"] || "Survey" == (string)Session["currentPage"])
 			{
 				var reviewVM = new ReviewViewModel();
 				if (isCoaching)

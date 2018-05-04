@@ -1,7 +1,6 @@
 ﻿using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using eCoachingLog.Utils;
-using eCoachingLog.ViewModels;
 using log4net;
 using System.Web.Mvc;
 

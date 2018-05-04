@@ -11,8 +11,7 @@ namespace eCoachingLog.Repository
 	public class EmployeeRepository : IEmployeeRepository
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
+        private static readonly string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
         public List<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
         {

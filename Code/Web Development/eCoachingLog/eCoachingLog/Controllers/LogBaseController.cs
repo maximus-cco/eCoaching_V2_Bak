@@ -19,7 +19,7 @@ namespace eCoachingLog.Controllers
 
 		public LogBaseController(ISiteService siteService, IEmployeeService employeeService, IEmployeeLogService empLogService)
 		{
-			logger.Debug("Entered LogBaseController(ISiteService)");
+			logger.Debug("Entered LogBaseController(ISiteService, IEmployeeService, IEmployeeLogService)");
 			this.siteService = siteService;
 			this.employeeService = employeeService;
 			this.empLogService = empLogService;
@@ -27,7 +27,7 @@ namespace eCoachingLog.Controllers
 
 		public LogBaseController(IEmployeeLogService employeeLogService)
         {
-            logger.Debug("Entered EmployeeLogBaseController(IEmployeeLogService)");
+            logger.Debug("Entered LogBaseController(IEmployeeLogService)");
             this.empLogService = employeeLogService;
 		}
 
