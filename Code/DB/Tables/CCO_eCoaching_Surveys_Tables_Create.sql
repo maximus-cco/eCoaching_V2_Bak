@@ -1,10 +1,10 @@
 /*
-CCO_eCoaching_Surveys_Tables_Create(01).sql
+CCO_eCoaching_Surveys_Tables_Create(02).sql
 
-Last Modified Date: 1/18/2017
+Last Modified Date: 05/4/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to add missed changes for Pilot Survey during TFS 10890 - 05/4/2018
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -23,8 +23,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 5. CREATE TABLE Survey_Response_Header
 6. CREATE TABLE Survey_Response_Detail
 7. CREATE TYPE ResponsesTableType
-
-
+8. CREATE TABLE Survey_Sites
 
 **************************************************************
 
@@ -131,6 +130,7 @@ CREATE TABLE [EC].[Survey_DIM_Question](
 	[isHotTopic][bit] NULL,
 	[isActive] [bit] NULL,
 	[LastUpdateDate] [datetime] NULL,
+        [isPilot][bit] NULL
  CONSTRAINT [QuestionID] PRIMARY KEY CLUSTERED 
 (
 	[QuestionID] ASC
@@ -150,18 +150,22 @@ INSERT INTO [EC].[Survey_DIM_Question]
 	,[EndDate] 
 	,[isHotTopic]
 	,[isActive] 
-	,[LastUpdateDate])
-	VALUES
+	,[LastUpdateDate]
+        ,[isPilot])
+  	VALUES
 	( N'Was the call played back for you during your last coaching session? (If applicable). | 
-	 If no, what reason was provided?', 1, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000'),
+	 If no, what reason was provided?', 1, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000',0),
 	(N'Will you be able to apply the information from your last coaching session? |
-	 If yes, how?  If no, why  not?', 2, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000'),
+	 If yes, how?  If no, why  not?', 2, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000',0),
 	(N'Did you find the coaching session valuable/effective? |
-	If yes, what specifically.  If no, why not?', 3, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000'),
+	If yes, what specifically.  If no, why not?', 3, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000',0),
 	('Please rate the effectiveness of the coaching notes provided in the eCL. |
-	Please explain below.', 4, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000'),
+	Please explain below.', 4, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000',0),
 	(N'Please rate your overall coaching experience. |
-	Please explain below.', 5, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000')
+	Please explain below.', 5, 20150901, 99991231,0, 1, '2015-09-01 00:00:00.000',0),
+        ('Placeholder for HotTopic Question',98,20300101, 20301231, 1, 0, '2018-02-01 00:00:00.000', 0), 
+        ('How prepared was your supervisor during your coaching session?| Please explain below.',7,20180201, 99991231, 0, 1, '2018-02-01 00:00:00.000', 1)
+
 	GO
 	
 
@@ -250,7 +254,12 @@ INSERT INTO [EC].[Survey_DIM_Response]
 	( '1 - Very Dissatisfied', 1 , '2015-09-01 00:00:00.000'),
 	( '2 - Dissatisfied', 1, '2015-09-01 00:00:00.000'),
 	( '4 - Satisfied', 1, '2015-09-01 00:00:00.000'),
-	( '5 - Very Satisfied', 1, '2015-09-01 00:00:00.000')
+	( '5 - Very Satisfied', 1, '2015-09-01 00:00:00.000'),
+        ('1 - Very Unprepared', 1, '2018-02-01 00:00:00.000'),
+	('2 - Unprepared', 1, '2018-02-01 00:00:00.000'),
+	('3 - Neither Prepared or Unprepared', 1, '2018-02-01 00:00:00.000'),
+	('4 - Prepared', 1, '2018-02-01 00:00:00.000'),
+	('5 - Very Prepared', 1, '2018-02-01 00:00:00.000')
 GO
 
 
@@ -316,7 +325,9 @@ CREATE TABLE [EC].[Survey_DIM_QAnswer](
 	[StartDate] [int] NULL,
 	[EndDate] [int] NULL,
 	[isActive] [bit] NULL,
-	[LastUpdateDate] [datetime] NULL
+	[LastUpdateDate] [datetime] NULL,
+        [isPilot] bit DEFAULT (0) NULL,
+        [ResponseOrder] INT NULL
 ) ON [PRIMARY]
 
 GO
@@ -379,7 +390,6 @@ CREATE TABLE [EC].[Survey_Response_Header](
 	[CoachingID] [bigint] NOT NULL,
 	[FormName] [nvarchar](50) NOT NULL,
 	[EmpID] [nvarchar](10) NOT NULL,
-	[EmpLanID] [nvarchar](30) NOT NULL,
 	[SiteID] [int] NOT NULL,
 	[SourceID] [int] NOT NULL,
                   [ModuleID] [int] NOT NULL,
@@ -392,7 +402,9 @@ CREATE TABLE [EC].[Survey_Response_Header](
 	[Status] [nvarchar](20) NULL,
 	[InactivationDate] [datetime] NULL,
 	[InactivationReason] [nvarchar](100) NULL,
-                  [NotificationDate] [datetime] NULL,
+        [NotificationDate] [datetime] NULL,
+        [EmpLanID] [varbinary) (128) NULL
+       
  CONSTRAINT [SurveyID] PRIMARY KEY CLUSTERED 
 (
 	[SurveyID] ASC
@@ -455,4 +467,46 @@ GO
 
 
 	    
+--8.
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Survey_Sites](
+	[SiteID] [int] IDENTITY(1,1) NOT NULL,
+	[City] [nvarchar](20) NOT NULL,
+	[isActive] [bit] NULL,
+	[isPilot] [bit] NULL DEFAULT ((0)),
+	[isHotTopic] [bit] NULL DEFAULT ((0)),
+ CONSTRAINT [PK_SurveySite_ID] PRIMARY KEY CLUSTERED 
+(
+	[SiteID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+SET IDENTITY_INSERT [EC].[Survey_Sites] ON
+GO
+
+INSERT INTO [EC].[Survey_Sites]
+           ([SiteID]
+		   ,[City]
+           ,[isActive]
+     )
+ SELECT [SiteID]
+      ,[City]
+      ,[isActive]
+  FROM [EC].[DIM_Site]
+GO
+
+
+SET IDENTITY_INSERT [EC].[Survey_Sites] OFF
+GO
+
+--*****************************************
 
