@@ -106,7 +106,7 @@ namespace eCoachingLog.Repository
 			{
 				comm.CommandType = CommandType.StoredProcedure;
 				comm.Parameters.AddWithValue("@intSurveyID", survey.Id);
-				comm.Parameters.AddWithValue("@nvcUserComments", survey.Comment);
+				comm.Parameters.AddWithValueSafe("@nvcUserComments", survey.Comment);
 				comm.Parameters.AddSurveyResponseTableType("@tableSR", survey);
 				// Output parameter
 				SqlParameter retCodeParam = comm.Parameters.Add("@returnCode", SqlDbType.Int);

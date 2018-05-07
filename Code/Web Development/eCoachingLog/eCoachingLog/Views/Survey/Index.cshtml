@@ -17,24 +17,22 @@
 	{
 		<div class="row">
 			@Html.HiddenFor(m => m.Survey.Questions[i].Id)
-			<label class="control-label">
+			<label class="control-label required">
 				<strong>@Model.Survey.Questions[i].DisplayOrder. @Html.DisplayTextFor(m => m.Survey.Questions[i].Label)</strong>
 			</label> 
 		</div>
 		<div class="form-group">
 			@foreach (SingleChoice sc in Model.Survey.Questions[i].SingleChoices)
 			{
-				@Html.RadioButtonFor(m => m.Survey.Questions[i].SingleChoiceSelected, sc.Value) @:&nbsp; @sc.Text &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+				@Html.RadioButtonFor(m => m.Survey.Questions[i].SingleChoiceSelected, sc.Value, new { @class = "radio-single-choice" }) @:&nbsp; @sc.Text &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			}
+			@Html.ValidationMessageFor(m => m.Survey.Questions[i].SingleChoiceSelected)
 		</div>
 		<div class="form-group">
 			<label class="control-label">
 				@Html.DisplayTextFor(m => m.Survey.Questions[i].TextBoxLabel)
 			</label>
 			@Html.TextAreaFor(m => m.Survey.Questions[i].MultiLineText, new { @class = "form-control", @rows = "2", maxlength = 3000 })
-			<div class="help-block">
-				<span id="behavior-detail-remaining" class="pull-right">3000 remaining</span>
-			</div>
 			@Html.ValidationMessageFor(m => m.Survey.Questions[i].MultiLineText)
 		</div>
 	}
@@ -47,9 +45,6 @@
 	</div>
 	<div class="form-group">
 		@Html.TextAreaFor(m => m.Survey.Comment, new { @class = "form-control", @rows = "2", maxlength = 3000 })
-		<div class="help-block">
-			<span id="behavior-detail-remaining" class="pull-right">3000 remaining</span>
-		</div>
 		@Html.ValidationMessageFor(m => m.Survey.Comment)
 	</div>
 

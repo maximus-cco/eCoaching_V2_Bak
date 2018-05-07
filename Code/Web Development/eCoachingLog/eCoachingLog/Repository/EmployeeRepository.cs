@@ -91,8 +91,10 @@ namespace eCoachingLog.Repository
                         employee.Email = dataReader["Emp_Email"].ToString();
 						employee.LanId = dataReader["Emp_LanID"].ToString();
                         employee.SupervisorName = dataReader["Sup_Name"].ToString();
+						employee.SupervisorId = dataReader["Sup_ID"].ToString();
                         employee.SupervisorEmail = dataReader["Sup_Email"].ToString();
                         employee.ManagerName = dataReader["Mgr_Name"].ToString();
+						employee.ManagerId = dataReader["Mgr_ID"].ToString();
                         employee.ManagerEmail = dataReader["Mgr_Email"].ToString();
 
                         break;
