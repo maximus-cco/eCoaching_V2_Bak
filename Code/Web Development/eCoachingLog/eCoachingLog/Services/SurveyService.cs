@@ -29,5 +29,18 @@ namespace eCoachingLog.Services
 			}
 			return survey;
 		}
+
+		public void Save(Survey survey, out int retCode, out string retMsg)
+		{
+			if (survey == null)
+			{
+				retCode = -1;
+				retMsg = "Survey is null.";
+				return;
+			}
+
+			this.surveyRepository.Save(survey, out retCode, out retMsg);
+
+		}
 	}
 }

@@ -1,6 +1,6 @@
-﻿using eCoachingLog.Models.Survey;
+﻿using eCoachingLog.Extensions;
+using eCoachingLog.Models.Survey;
 using log4net;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -10,18 +10,18 @@ namespace eCoachingLog.Repository
 	public class SurveyRepository : ISurveyRepository
 	{
 		private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
+		private static readonly string connString = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
 		public Survey GetSurveyInfo(int surveyId)
 		{
 			Survey survey = new Survey();
 
-			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SurveyDetails_By_SurveyID]", connection))
+			using (SqlConnection conn = new SqlConnection(connString))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SurveyDetails_By_SurveyID]", conn))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValue("@intSurveyID", surveyId);
-				connection.Open();
+				conn.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -45,26 +45,25 @@ namespace eCoachingLog.Repository
 		{
 			IList<Question> questions = new List<Question>();
 
-			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Questions_For_Survey]", connection))
+			using (SqlConnection conn = new SqlConnection(connString))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Questions_For_Survey]", conn))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValue("@intSurveyID", surveyId);
-				connection.Open();
+				conn.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
 					while (dataReader.Read())
 					{
 						Question q = new Question();
-						q.SurveyId = surveyId;
 						q.Id = (int)dataReader["QuestionID"];
 						q.DisplayOrder = (int)dataReader["DisplayOrder"];
 						string combinedLabel = dataReader["Description"].ToString();
 						// Element 0 is the question label; element 1 is the question textbox label
 						string[] temp = combinedLabel.Split('|');
 						q.Label = temp[0];
-						q.TexBoxLabel = temp[1];
+						q.TextBoxLabel = temp[1];
 
 						questions.Add(q);
 					}
@@ -77,12 +76,12 @@ namespace eCoachingLog.Repository
 		{
 			IList<SingleChoice> singleChoices = new List<SingleChoice>();
 
-			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlConnection conn = new SqlConnection(connString))
 			// The word "Responses" in the sp name actually means the standard radio button questions
-			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Responses_By_Question]", connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Responses_By_Question]", conn))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				connection.Open();
+				conn.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -90,8 +89,8 @@ namespace eCoachingLog.Repository
 					{
 						SingleChoice sc = new SingleChoice();
 						sc.QuestionId = (int)dataReader["QuestionID"];
-						sc.Id = (int)dataReader["ResponseID"];
-						sc.Text = dataReader["ResponseValue"].ToString();
+						sc.Text = dataReader["ResponseValue"].ToString(); // Displayed text
+						sc.Value = (int)dataReader["ResponseID"];
 
 						singleChoices.Add(sc);
 					}
@@ -99,5 +98,29 @@ namespace eCoachingLog.Repository
 			}
 			return singleChoices;
 		}
+
+		public void Save(Survey survey, out int retCode, out string retMsg)
+		{
+			using (SqlConnection conn = new SqlConnection(connString))
+			using (SqlCommand comm = new SqlCommand("[EC].[sp_Update_Survey_Response]", conn))
+			{
+				comm.CommandType = CommandType.StoredProcedure;
+				comm.Parameters.AddWithValue("@intSurveyID", survey.Id);
+				comm.Parameters.AddWithValue("@nvcUserComments", survey.Comment);
+				comm.Parameters.AddSurveyResponseTableType("@tableSR", survey);
+				// Output parameter
+				SqlParameter retCodeParam = comm.Parameters.Add("@returnCode", SqlDbType.Int);
+				retCodeParam.Direction = ParameterDirection.Output;
+				SqlParameter retMsgParam = comm.Parameters.Add("@returnMessage", SqlDbType.VarChar, 100);
+				retMsgParam.Direction = ParameterDirection.Output;
+
+				conn.Open();
+				comm.ExecuteNonQuery();
+
+				retCode = (int)retCodeParam.Value;
+				retMsg = (string)retMsgParam.Value;
+			}
+		}
+
 	}
 }

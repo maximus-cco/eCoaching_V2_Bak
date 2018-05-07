@@ -92,8 +92,13 @@
 	function ReloadEmployees()
 	{
 		$('#select-employee').addClass('loadinggif');
-		var supSelected = $('#select-supervisor').val();
-		$.getJSON(getEmployeesUrl, { supId: supSelected, employeeStatus: $('input:radio[name="Search.ActiveEmployee"]:checked').val() })
+		$.getJSON(getEmployeesUrl,
+			{
+				siteId: $('#select-site').val(),
+				mgrId: $('#select-manager').val(),
+				supId: $('#select-supervisor').val(),
+				employeeStatus: $('input:radio[name="Search.ActiveEmployee"]:checked').val()
+			})
 			.done(function (employees) {
 				var options = [];
 				$.each(employees, function (i, employee) {

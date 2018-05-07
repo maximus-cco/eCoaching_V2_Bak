@@ -29,7 +29,7 @@ namespace eCoachingLog.Repository
 		IList<LogSource> GetAllLogSources(string userEmpId);
 		IList<LogValue> GetAllLogValues();
 
-		DataTable GetLogDataTable(LogFilter logFilter);
+		DataTable GetLogDataTable(LogFilter logFilter, string userId);
 
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFilter, string userId, string search);

@@ -8,5 +8,6 @@ namespace eCoachingLog.Repository
 		Survey GetSurveyInfo(int surveyId);
 		IList<SingleChoice> GetSingleChoices();
 		IList<Question> GetQuestions(int surveyId);
+		void Save(Survey survey, out int retCode, out string retMsg);
     }
 }

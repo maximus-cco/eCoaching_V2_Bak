@@ -68,8 +68,8 @@ namespace eCoachingLog.Repository
                         logDetail.CoachingDate = eCoachingLogUtil.AppendPdt(dataReader["CoachingDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
-                        logDetail.EmployeeName = dataReader["strCSRName"].ToString();
-                        logDetail.EmployeeSite = dataReader["strCSRSite"].ToString();
+                        logDetail.EmployeeName = dataReader["strEmpName"].ToString();
+                        logDetail.EmployeeSite = dataReader["strEmpSite"].ToString();
 						logDetail.IsVerintMonitor = dataReader["isVerintMonitor"] == DBNull.Value ? false : (bool) dataReader["isVerintMonitor"];
                         logDetail.VerintId = dataReader["strVerintID"].ToString();
                         logDetail.VerintFormName = dataReader["VerintFormName"].ToString();
@@ -80,9 +80,9 @@ namespace eCoachingLog.Repository
                         logDetail.NgdActivityId = dataReader["strNGDActivityID"].ToString();
                         logDetail.IsUcId = dataReader["isUCID"] == DBNull.Value ? false : (bool)dataReader["isUCID"]; ;
                         logDetail.UcId = dataReader["strUCID"].ToString();
-                        logDetail.SupervisorName = dataReader["strCSRSupName"].ToString();
+                        logDetail.SupervisorName = dataReader["strEmpSupName"].ToString();
                         logDetail.ReassignedSupervisorName = dataReader["strReassignedSupName"].ToString();
-                        logDetail.ManagerName = dataReader["strCSRMgrName"].ToString();
+                        logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
                         logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
                         logDetail.CoachingNotes = dataReader["txtCoachingNotes"].ToString();
                         logDetail.Behavior = dataReader["txtDescription"].ToString();
@@ -162,10 +162,10 @@ namespace eCoachingLog.Repository
                         logDetail.CreatedDate = eCoachingLogUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
-                        logDetail.EmployeeName = dataReader["strCSRName"].ToString();
-                        logDetail.EmployeeSite = dataReader["strCSRSite"].ToString();
-                        logDetail.SupervisorName = dataReader["strCSRSupName"].ToString();
-                        logDetail.ManagerName = dataReader["strCSRMgrName"].ToString();
+                        logDetail.EmployeeName = dataReader["strEmpName"].ToString();
+                        logDetail.EmployeeSite = dataReader["strEmpSite"].ToString();
+                        logDetail.SupervisorName = dataReader["strEmpSupName"].ToString();
+                        logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
                         break;
                     }
                 }
@@ -409,9 +409,9 @@ namespace eCoachingLog.Repository
 						//log.RowNumber = (long)dataReader["RowNumber"];
 						log.ID = (long)dataReader["strCoachingID"];
 						log.FormName = dataReader["strFormID"].ToString();
-						log.EmployeeName = dataReader["strCSRName"].ToString(); // csr ==> emp name
-						log.SupervisorName = dataReader["strCSRSupName"].ToString(); // csr ==> emp
-						log.ManagerName = dataReader["strCSRMgrName"].ToString();
+						log.EmployeeName = dataReader["strEmpName"].ToString();
+						log.SupervisorName = dataReader["strEmpSupName"].ToString();
+						log.ManagerName = dataReader["strEmpMgrName"].ToString();
 						log.Status = dataReader["strFormStatus"].ToString();
 						log.SubmitterName = dataReader["strSubmitterName"].ToString();
 						log.Source = dataReader["strSource"].ToString();
@@ -522,14 +522,14 @@ namespace eCoachingLog.Repository
 			return logValues;
 		}
 
-		public DataTable GetLogDataTable(LogFilter logFilter)
+		public DataTable GetLogDataTable(LogFilter logFilter, string userId)
 		{
 			DataTable dt = new DataTable();
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Historical_Export]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@nvcUserIdin", "365226");
+				command.Parameters.AddWithValue("@nvcUserIdin", userId);
 				command.Parameters.AddWithValue("@intSourceIdin", logFilter.SourceId);
 				command.Parameters.AddWithValue("@intSiteIdin", logFilter.SiteId);
 				command.Parameters.AddWithValue("@nvcEmpIdin", logFilter.EmployeeId);

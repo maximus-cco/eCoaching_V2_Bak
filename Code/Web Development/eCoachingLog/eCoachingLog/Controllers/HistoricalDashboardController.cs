@@ -57,7 +57,7 @@ namespace eCoachingLog.Controllers
 			return Json(new { supervisors = supervisors, employees = ResetEmployees()}, JsonRequestBehavior.AllowGet);
 		}
 
-		public JsonResult GetEmployeesBySup(string supId, int employeeStatus)
+		public JsonResult GetEmployeesBySup(int siteId, string mgrId, string supId, int employeeStatus)
 		{
 			// Supervisor changed, reload employees
 			var empList = this.employeeService.GetEmployeesBySup(supId, employeeStatus);
@@ -95,7 +95,7 @@ namespace eCoachingLog.Controllers
 			// Currently 'search' (datatables search box) is not considered when exporting to excel
 			try
 			{
-				MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTable(vm.Search));
+				MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTable(vm.Search, GetUserFromSession().EmployeeId));
 				Session["fileName"] = "eCoachingLog_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
 				Session["fileStream"] = ms;
 				return Json(new { result = "ok" }, JsonRequestBehavior.AllowGet);

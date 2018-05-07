@@ -23,7 +23,7 @@ namespace eCoachingLog.Services
 		IList<LogStatus> GetAllLogStatuses();
 		IList<LogSource> GetAllLogSources(string userEmpId);
 		IList<LogValue> GetAllLogValues();
-		DataTable GetLogDataTable(LogFilter filter);
+		DataTable GetLogDataTable(LogFilter filter, string userId);
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFiler, string userId, string search);
 	}

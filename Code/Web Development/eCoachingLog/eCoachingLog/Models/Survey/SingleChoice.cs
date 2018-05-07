@@ -2,17 +2,17 @@
 {
 	public class SingleChoice
 	{
-		// Survey.DIM_QAnswer.ResponseID
-		public int Id { get; set; }
 		// Survey.DIM_QAnswer.ResponseValue
-		public string Text;
+		public string Text { get; set; }
+		// Survey.DIM_QAnswer.ResponseID
+		public int Value { get; set; }
 		// Survey_DIM_QAnswer.QuestionID
-		public int QuestionId { get; set; }
+		public int QuestionId { get; set; } 
 
 		public SingleChoice()
 		{
-			this.Id = -1;
 			this.Text = string.Empty;
+			this.Value = -1;
 			this.QuestionId = -1;
 		}
 	}

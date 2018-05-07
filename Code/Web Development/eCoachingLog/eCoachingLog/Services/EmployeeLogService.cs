@@ -133,9 +133,9 @@ namespace eCoachingLog.Services
 			return this.employeeLogRepository.GetAllLogValues();
 		}
 
-		public DataTable GetLogDataTable(LogFilter logFilter)
+		public DataTable GetLogDataTable(LogFilter logFilter, string userId)
 		{
-			return this.employeeLogRepository.GetLogDataTable(logFilter);
+			return this.employeeLogRepository.GetLogDataTable(logFilter, userId);
 		}
 	}
 }

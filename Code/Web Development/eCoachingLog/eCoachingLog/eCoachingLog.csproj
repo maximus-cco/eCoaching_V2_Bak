@@ -150,14 +150,13 @@
     <Compile Include="Controllers\HistoricalDashboardController.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
-    <Compile Include="Controllers\SuveyController.cs" />
+    <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Models\Common\LogBase.cs" />
     <Compile Include="Models\Common\LogCount.cs" />
     <Compile Include="Models\Common\LogValue.cs" />
     <Compile Include="Models\MyDashboard\ChartData.cs" />
     <Compile Include="Models\MyDashboard\ChartDatasets.cs" />
     <Compile Include="Models\Review\Review.cs" />
-    <Compile Include="Models\Survey\Answer.cs" />
     <Compile Include="Models\Survey\Question.cs" />
     <Compile Include="Models\Survey\SingleChoice.cs" />
     <Compile Include="Models\Survey\Survey.cs" />
@@ -370,6 +369,7 @@
     <Content Include="Views\HistoricalDashboard\_Search.cshtml" />
     <Content Include="Views\Review\_ViewWarningLog.cshtml" />
     <Content Include="Views\Survey\Index.cshtml" />
+    <Content Include="Views\Survey\_Result.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
