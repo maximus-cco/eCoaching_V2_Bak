@@ -281,9 +281,8 @@ namespace eCoachingLog.Controllers
             string source = GetDirectOrIndirect(isCoachingByYou);//"direct";
             bool specialReason = true;
             int reasonPriority = 1;
-            string userLanId = GetUserFromSession().LanId;
             // Warning Type Dropdown
-            List<WarningType> warningTypeList = this.empLogService.GetWarningTypes(moduleId, source, specialReason, reasonPriority, employeeId, userLanId);
+            List<WarningType> warningTypeList = this.empLogService.GetWarningTypes(moduleId, source, specialReason, reasonPriority, employeeId, GetUserFromSession().EmployeeId);
             warningTypeList.Insert(0, new WarningType { Id = -2, Text = "-- Select a Warning Type --" });
             IEnumerable<SelectListItem> warningTypes = new SelectList(warningTypeList, "Id", "Text");
 
