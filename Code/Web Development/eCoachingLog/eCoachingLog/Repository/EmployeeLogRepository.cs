@@ -26,7 +26,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Modules_By_Job_Code]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@nvcEmpIDin", user.EmployeeId);
+                command.Parameters.AddWithValueSafe("@nvcEmpIDin", user.EmployeeId);
 
                 connection.Open();
 
@@ -52,7 +52,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_SelectReviewFrom_Coaching_Log]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@intLogId", logId);
+				command.Parameters.AddWithValueSafe("@intLogId", logId);
 				connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -119,7 +119,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand(spName, connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@intLogId", logId);
+				command.Parameters.AddWithValueSafe("@intLogId", logId);
 				connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -147,7 +147,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_SelectReviewFrom_Warning_Log]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@intLogId", logId);
+                command.Parameters.AddWithValueSafe("@intLogId", logId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -181,7 +181,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_CallID_By_Module]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@intModuleIDin", moduleId);
+                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -208,12 +208,12 @@ namespace eCoachingLog.Repository
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
-                command.Parameters.AddWithValue("@intModuleIDin", moduleId);
-                command.Parameters.AddWithValue("@strSourcein", source);
-                command.Parameters.AddWithValue("@isSplReason", isSpecialReason);
-                command.Parameters.AddWithValue("@splReasonPrty", reasonPriority);
-                command.Parameters.AddWithValue("@strEmpIDin", employeeId);
-                command.Parameters.AddWithValue("@strSubmitterIDin", userId);
+                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
+                command.Parameters.AddWithValueSafe("@strSourcein", source);
+                command.Parameters.AddWithValueSafe("@isSplReason", isSpecialReason);
+                command.Parameters.AddWithValueSafe("@splReasonPrty", reasonPriority);
+                command.Parameters.AddWithValueSafe("@strEmpIDin", employeeId);
+                command.Parameters.AddWithValueSafe("@strSubmitterIDin", userId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -240,10 +240,10 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SubCoachingReasons_By_Reason]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@intReasonIDin", reasonId);
-                command.Parameters.AddWithValue("@strSourcein", directOrIndirect);
-                command.Parameters.AddWithValue("@intModuleIDin", moduleId);
-                command.Parameters.AddWithValue("@nvcEmpIDin", employeeId);
+                command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
+                command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
+                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
+                command.Parameters.AddWithValueSafe("@nvcEmpIDin", employeeId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -301,9 +301,9 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Values_By_Reason]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@intReasonIDin", reasonId);
-                command.Parameters.AddWithValue("@intModuleIDin", moduleId);
-                command.Parameters.AddWithValue("@strSourcein", directOrIndirect);
+                command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
+                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
+                command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -327,10 +327,10 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SubCoachingReasons_By_Reason]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@intReasonIDin", reasonId);
-                command.Parameters.AddWithValue("@intModuleIDin", moduleId);
-                command.Parameters.AddWithValue("@strSourcein", directOrIndirect);
-                command.Parameters.AddWithValue("@nvcEmpIDin", employeeId);
+                command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
+                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
+                command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
+                command.Parameters.AddWithValueSafe("@nvcEmpIDin", employeeId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -355,7 +355,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Behaviors]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@intModuleIDin", moduleId);
+                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -379,26 +379,27 @@ namespace eCoachingLog.Repository
 			List<LogBase> logs = new List<LogBase>();
 			using (SqlConnection connection = new SqlConnection(conn))
 			// TODO: have a driver sp to take care of all searches (my dashboard, historical dashboard)
-			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Historical]", connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Details]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@nvcUserIdin", userId);
-				command.Parameters.AddWithValue("@intSourceIdin", logFilter.SourceId);
-				command.Parameters.AddWithValue("@intSiteIdin", logFilter.SiteId);
-				command.Parameters.AddWithValue("@nvcEmpIdin", logFilter.EmployeeId);
-				command.Parameters.AddWithValue("@nvcSupIdin", logFilter.SupervisorId);
-				command.Parameters.AddWithValue("@nvcMgrIdin", logFilter.ManagerId);
-				command.Parameters.AddWithValue("@nvcSubmitterIdin", logFilter.SubmitterId);
-				command.Parameters.AddWithValue("@strSDatein", logFilter.SubmitDateFrom);
-				command.Parameters.AddWithValue("strEDatein", logFilter.SubmitDateTo);
-				command.Parameters.AddWithValue("@nvcValue", logFilter.ValueId);
-				command.Parameters.AddWithValue("@intStatusIdin", logFilter.StatusId);
-				command.Parameters.AddWithValue("@intEmpActive", logFilter.ActiveEmployee);
-				command.Parameters.AddWithValue("@PageSize", pageSize);
-				command.Parameters.AddWithValue("@startRowIndex", rowStartIndex);
-				command.Parameters.AddWithValue("@sortBy", sortBy);
-				command.Parameters.AddWithValue("@sortASC", sortDirection);
-				command.Parameters.AddWithValue("@nvcSearch", search);
+				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+				command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
+				command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
+				command.Parameters.AddWithValueSafe("@nvcEmpIdin", logFilter.EmployeeId);
+				command.Parameters.AddWithValueSafe("@nvcSupIdin", logFilter.SupervisorId);
+				command.Parameters.AddWithValueSafe("@nvcMgrIdin", logFilter.ManagerId);
+				command.Parameters.AddWithValueSafe("@nvcSubmitterIdin", logFilter.SubmitterId);
+				command.Parameters.AddWithValueSafe("@strSDatein", logFilter.SubmitDateFrom);
+				command.Parameters.AddWithValueSafe("strEDatein", logFilter.SubmitDateTo);
+				command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
+				command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
+				command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
+				command.Parameters.AddWithValueSafe("@PageSize", pageSize);
+				command.Parameters.AddWithValueSafe("@startRowIndex", rowStartIndex);
+				command.Parameters.AddWithValueSafe("@sortBy", sortBy);
+				command.Parameters.AddWithValueSafe("@sortASC", sortDirection);
+				command.Parameters.AddWithValueSafe("@nvcSearch", search);
+				command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
 				connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -432,22 +433,24 @@ namespace eCoachingLog.Repository
 		{
 			int count = -1;
 			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Historical_Count]", connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Count]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@nvcUserIdin", userId);
-				command.Parameters.AddWithValue("@intSourceIdin", logFilter.SourceId);
-				command.Parameters.AddWithValue("@intSiteIdin", logFilter.SiteId);
-				command.Parameters.AddWithValue("@nvcEmpIdin", logFilter.EmployeeId);
-				command.Parameters.AddWithValue("@nvcSupIdin", logFilter.SupervisorId);
-				command.Parameters.AddWithValue("@nvcMgrIdin", logFilter.ManagerId);
-				command.Parameters.AddWithValue("@nvcSubmitterIdin", logFilter.SubmitterId);
-				command.Parameters.AddWithValue("@strSDatein", logFilter.SubmitDateFrom);
-				command.Parameters.AddWithValue("strEDatein", logFilter.SubmitDateTo);
-				command.Parameters.AddWithValue("@nvcValue", logFilter.ValueId);
-				command.Parameters.AddWithValue("@intStatusIdin", logFilter.StatusId);
-				command.Parameters.AddWithValue("@intEmpActive", logFilter.ActiveEmployee);
-				command.Parameters.AddWithValue("@nvcSearch", search);
+				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+				command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
+				command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
+				command.Parameters.AddWithValueSafe("@nvcEmpIdin", logFilter.EmployeeId);
+				command.Parameters.AddWithValueSafe("@nvcSupIdin", logFilter.SupervisorId);
+				command.Parameters.AddWithValueSafe("@nvcMgrIdin", logFilter.ManagerId);
+				command.Parameters.AddWithValueSafe("@nvcSubmitterIdin", logFilter.SubmitterId);
+				command.Parameters.AddWithValueSafe("@strSDatein", logFilter.SubmitDateFrom);
+				command.Parameters.AddWithValueSafe("strEDatein", logFilter.SubmitDateTo);
+				command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
+				command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
+				command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
+				command.Parameters.AddWithValueSafe("@nvcSearch", search);
+				command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
+
 				connection.Open();
 				command.ExecuteNonQuery();
 				count = (int) command.ExecuteScalar();
@@ -484,7 +487,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Sources_For_Dashboard]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@nvcEmpID", userEmpId);
+				command.Parameters.AddWithValueSafe("@nvcEmpID", userEmpId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -529,18 +532,18 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Historical_Export]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@nvcUserIdin", userId);
-				command.Parameters.AddWithValue("@intSourceIdin", logFilter.SourceId);
-				command.Parameters.AddWithValue("@intSiteIdin", logFilter.SiteId);
-				command.Parameters.AddWithValue("@nvcEmpIdin", logFilter.EmployeeId);
-				command.Parameters.AddWithValue("@nvcSupIdin", logFilter.SupervisorId);
-				command.Parameters.AddWithValue("@nvcMgrIdin", logFilter.ManagerId);
-				command.Parameters.AddWithValue("@nvcSubmitterIdin", logFilter.SubmitterId);
-				command.Parameters.AddWithValue("@strSDatein", logFilter.SubmitDateFrom);
-				command.Parameters.AddWithValue("@strEDatein", logFilter.SubmitDateTo);
-				command.Parameters.AddWithValue("@intStatusIdin", logFilter.StatusId);
-				command.Parameters.AddWithValue("@nvcValue", logFilter.ValueId);
-				command.Parameters.AddWithValue("@intEmpActive", logFilter.ActiveEmployee);
+				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+				command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
+				command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
+				command.Parameters.AddWithValueSafe("@nvcEmpIdin", logFilter.EmployeeId);
+				command.Parameters.AddWithValueSafe("@nvcSupIdin", logFilter.SupervisorId);
+				command.Parameters.AddWithValueSafe("@nvcMgrIdin", logFilter.ManagerId);
+				command.Parameters.AddWithValueSafe("@nvcSubmitterIdin", logFilter.SubmitterId);
+				command.Parameters.AddWithValueSafe("@strSDatein", logFilter.SubmitDateFrom);
+				command.Parameters.AddWithValueSafe("@strEDatein", logFilter.SubmitDateTo);
+				command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
+				command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
+				command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
 
 				using (SqlDataAdapter sda = new SqlDataAdapter(command))
 				{

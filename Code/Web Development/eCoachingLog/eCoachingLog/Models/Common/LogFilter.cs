@@ -5,6 +5,8 @@ namespace eCoachingLog.Models.Common
 {
 	public class LogFilter
     {
+		public string LogType { get; set; }
+
 		public UserRole UserRole { get; set; }
 
 		public int SiteId { get; set; }
@@ -27,6 +29,7 @@ namespace eCoachingLog.Models.Common
 
 		public LogFilter()
 		{
+			this.LogType = string.Empty;
 			this.SiteId = -2;
 			this.SourceId = -1;
 			this.EmployeeId = "-2";

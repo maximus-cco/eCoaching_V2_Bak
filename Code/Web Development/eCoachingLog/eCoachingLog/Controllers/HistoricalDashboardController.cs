@@ -3,6 +3,7 @@ using eCoachingLog.Filters;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
+using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
 using System;
@@ -86,6 +87,7 @@ namespace eCoachingLog.Controllers
 		public ActionResult Search(HistoricalDashboardViewModel vm)
 		{
 			logger.Debug("Entered Search...");
+			vm.Search.LogType = Constants.LOG_SEARCH_TYPE_HISTORICAL;
 			return PartialView("_LogList", vm.Search);
 		}
 

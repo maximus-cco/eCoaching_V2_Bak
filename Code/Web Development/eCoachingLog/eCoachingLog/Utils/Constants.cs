@@ -9,6 +9,8 @@ namespace eCoachingLog.Utils
 		public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
 		public const string SITE_EMAIL_SUBJECT = "eCoaching Log";
 
+		public const string LOG_SEARCH_TYPE_HISTORICAL = "Historical";
+
 		public const int ALL_SITES = -1;
 
 		public const string DIRECT = "Direct";

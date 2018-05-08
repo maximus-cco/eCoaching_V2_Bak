@@ -52,10 +52,8 @@ $(function () {
 	// when a link is clicked with these attributes, bootstrap will display the href content in a modal dialog.
 	$('body').on('click', '.modal-link', function (e) {
 		e.preventDefault();
-		$(".please-wait").slideDown(500);
 		$(this).attr('data-target', '#modal-container');
 		$(this).attr('data-toggle', 'modal');
-		$(".please-wait").slideUp(500);
 	});
 
 	//clear modal cache, so that new content can be loaded
