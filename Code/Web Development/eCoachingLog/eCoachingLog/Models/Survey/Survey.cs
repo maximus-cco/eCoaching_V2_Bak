@@ -7,8 +7,8 @@ namespace eCoachingLog.Models.Survey
 {
 	public class Survey
 	{
-		public int Id { get; set; }
-		public int LogId { get; set; }
+		public long Id { get; set; }
+		public long LogId { get; set; }
 		public string LogName { get; set; }
 		public string EmployeeId { get; set; }
 		public IList<Question> Questions { get; set; }
