@@ -16,7 +16,7 @@ namespace eCoachingLog.Services
 			this.surveyRepository = surveyRepository;
 		}
 
-		public Survey GetSurvey(int surveyId)
+		public Survey GetSurvey(long surveyId)
 		{
 			Survey survey = this.surveyRepository.GetSurveyInfo(surveyId);
 			IList<SingleChoice> allSingleChoices = this.surveyRepository.GetSingleChoices();

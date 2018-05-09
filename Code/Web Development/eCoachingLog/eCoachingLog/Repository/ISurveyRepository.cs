@@ -5,9 +5,9 @@ namespace eCoachingLog.Repository
 {
     public interface ISurveyRepository
     {
-		Survey GetSurveyInfo(int surveyId);
+		Survey GetSurveyInfo(long surveyId);
 		IList<SingleChoice> GetSingleChoices();
-		IList<Question> GetQuestions(int surveyId);
+		IList<Question> GetQuestions(long surveyId);
 		void Save(Survey survey, out int retCode, out string retMsg);
     }
 }

@@ -12,7 +12,7 @@ namespace eCoachingLog.Repository
 		private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		private static readonly string connString = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
-		public Survey GetSurveyInfo(int surveyId)
+		public Survey GetSurveyInfo(long surveyId)
 		{
 			Survey survey = new Survey();
 
@@ -28,7 +28,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						survey.Id = surveyId;
-						survey.LogId = 54863;
+						survey.LogId = (long) dataReader["CoachingID"];
 						survey.EmployeeId = dataReader["EmpID"].ToString();
 						survey.LogName = dataReader["FormName"].ToString();
 						survey.Status = dataReader["Status"].ToString();
@@ -41,7 +41,7 @@ namespace eCoachingLog.Repository
 			return survey;
 		}
 
-		public IList<Question> GetQuestions(int surveyId)
+		public IList<Question> GetQuestions(long surveyId)
 		{
 			IList<Question> questions = new List<Question>();
 

@@ -25,8 +25,10 @@ namespace eCoachingLog.Controllers
         {
 			Session["currentPage"] = "Survey";
 
-			var surveyId = Request.QueryString["id"];
-			Survey survey = this.SurveyService.GetSurvey(1);
+			var surveyId = Convert.ToInt64(Request.QueryString["id"]);
+			logger.Debug("SurveyID: " + surveyId);
+
+			Survey survey = this.SurveyService.GetSurvey(surveyId);
 			bool isSurveyValid = true;
 			if (GetUserFromSession().EmployeeId != survey.EmployeeId)
 			{
