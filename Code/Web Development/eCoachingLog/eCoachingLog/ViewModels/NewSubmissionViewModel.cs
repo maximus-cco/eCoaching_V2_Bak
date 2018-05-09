@@ -98,7 +98,7 @@ namespace eCoachingLog.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // Confirm box, this is common to both Warning and Coaching
-            if (!this.VerifiedCheckbox)
+            if (this.IsWarning.HasValue && !this.IsWarning.Value && !this.VerifiedCheckbox)
             {
                 var verifiedCheckbox = new[] { "VerifiedCheckbox" };
                 yield return new ValidationResult("You must select the verification checkbox to submit this form.", verifiedCheckbox);

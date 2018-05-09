@@ -11,7 +11,7 @@ $(function () {
 		keepAliveUrl: keepSessionAliveUrl,
 		logouturl: logoutUrl,
 		session: 1500000, // Display modal dialog after user idles for 25 minutes (25*60*1,000 = 1500,000 milliseconds)
-		force: 290000, // Count down to 0, auto logout; set to 5 minutes minus 10 seconds (5*60*1,000 - 10,000 = 290,000 milliseconds)
+		force: 240000, // Count down to 0, auto logout; set to 4 minutes (4*60*1,000 = 240,000 milliseconds)
 		ui: 'bootstrap',
 		modalBody: 'Your session is about to expire. Please click the button if you wish to stay connected. Otherwise, you will be logged out automatically.'
 	});

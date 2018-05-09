@@ -17,7 +17,7 @@
 </div>
 
 <hr />
-<div class="checkbox required" style="padding-left: 20px;">
+<div class='checkbox required @(@Model.IsWarning.HasValue && @Model.IsWarning.Value ? "hide" : "show")' style="padding-left: 20px;">
     @Html.CheckBoxFor(m => m.VerifiedCheckbox)<strong>I have verified that all the information on this form is true and complete to the best of my knowledge.</strong>
     @Html.ValidationMessageFor(m => m.VerifiedCheckbox)
 </div>

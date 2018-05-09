@@ -202,8 +202,15 @@ namespace eCoachingLog.Repository
                 command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", ns.Employee.Id);
 				command.Parameters.AddWithValueSafe("@nvcProgramName", ns.ProgramName);
-                command.Parameters.AddWithValueSafe("@SiteID", ns.SiteId);
-                command.Parameters.AddWithValueSafe("@nvcSubmitterID", user.EmployeeId);
+				if (ns.ModuleId == Constants.MODULE_CSR)
+				{
+					command.Parameters.AddWithValueSafe("@SiteID", ns.SiteId);
+				}
+				else
+				{
+					command.Parameters.AddWithValueSafe("@SiteID", null); // Modules other than CSR have no site selection
+				}
+				command.Parameters.AddWithValueSafe("@nvcSubmitterID", user.EmployeeId);
                 command.Parameters.AddWithValueSafe("@dtmEventDate", ns.WarningDate);
                 command.Parameters.AddWithValueSafe("@intCoachReasonID1", ns.WarningTypeId);
                 command.Parameters.AddWithValueSafe("@nvcSubCoachReasonID1", ns.WarningReasonId);
