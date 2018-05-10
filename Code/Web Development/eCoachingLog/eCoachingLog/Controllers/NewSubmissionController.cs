@@ -84,6 +84,10 @@ namespace eCoachingLog.Controllers
 				try
 				{
 					logNameSaved = this.newSubmissionService.Save(vm, GetUserFromSession(), out isDuplicate);
+					if (string.IsNullOrEmpty(logNameSaved))
+					{
+						throw new Exception("Failed to save submission.");
+					}
 					FlashMessage.Confirmation(string.Format("Your sumbmission {0} was saved successfully.", logNameSaved));
 					// Only send email for coaching logs
 					if (vm.IsWarning == null || !vm.IsWarning.Value)
@@ -258,8 +262,8 @@ namespace eCoachingLog.Controllers
         {
 			return vm.IsCoachingByYou.HasValue
 				&& vm.IsCoachingByYou.Value
-				&& vm.Employee.SupervisorId != null
-				&& vm.Employee.SupervisorId == vm.UserId;
+				&& ((vm.Employee.SupervisorId != null && vm.Employee.SupervisorId == vm.UserId) ||
+						(vm.Employee.ManagerId != null && vm.Employee.ManagerId == vm.UserId));
 		}
 
         private Employee GetSelectedEmployee()

@@ -1,36 +1,43 @@
 ﻿using eCoachingLog.Models.Survey;
+using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using eCoachingLog.ViewModels;
 using log4net;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
-    public class SurveyController : LogBaseController
+	public class SurveyController : LogBaseController
 	{
 		private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-		private ISurveyService SurveyService;
 
-		public SurveyController(ISurveyService surveyService, IEmployeeLogService empLogService) : base(empLogService)
+		private ISurveyService surveyService;
+		private IUserService userService;
+
+		public SurveyController(ISurveyService surveyService, IUserService userService, IEmployeeLogService empLogService) : base(empLogService)
 		{
 			logger.Debug("Entered SurveyController(ISurveyService, IEmployeeLogService)");
-			this.SurveyService = surveyService;
+			this.surveyService = surveyService;
+			this.userService = userService;
 		}
+
 		// GET: Suvey
 		public ActionResult Index()
         {
-			Session["currentPage"] = "Survey";
+			string userLanId = User.Identity.Name;
+			userLanId = userLanId.Replace(@"AD\", "");
+			User user = this.userService.GetUserByLanId(userLanId);
+			if (user == null)
+			{
+				return RedirectToAction("Index", "Unauthorized");
+			}
 
 			var surveyId = Convert.ToInt64(Request.QueryString["id"]);
-			logger.Debug("SurveyID: " + surveyId);
-
-			Survey survey = this.SurveyService.GetSurvey(surveyId);
+			Survey survey = this.surveyService.GetSurvey(surveyId);
 			bool isSurveyValid = true;
-			if (GetUserFromSession().EmployeeId != survey.EmployeeId)
+			if (user.EmployeeId != survey.EmployeeId)
 			{
 				isSurveyValid = false;
 				ViewBag.Message = "You are not authorized for this survey.";
@@ -45,7 +52,9 @@ namespace eCoachingLog.Controllers
 				isSurveyValid = false;
 				ViewBag.Message = "This survey has expired.";
 			}
-			
+
+			Session["currentPage"] = "Survey";
+
 			if (!isSurveyValid)
 			{
 				return View("_Result");
@@ -60,11 +69,18 @@ namespace eCoachingLog.Controllers
 		[HttpPost]
 		public ActionResult Save(Survey survey)
 		{
+			if (!ModelState.IsValid)
+			{
+				var vm = new SurveyViewModel(survey);
+				// Form not ready to save, redisplay the form
+				return View("Index", vm);
+			}
+
 			int retCode = -1;
 			string retMsg = string.Empty;
 			try
 			{
-				this.SurveyService.Save(survey, out retCode, out retMsg);
+				this.surveyService.Save(survey, out retCode, out retMsg);
 			}
 			catch (Exception ex)
 			{
@@ -74,7 +90,7 @@ namespace eCoachingLog.Controllers
 
 			if (retCode != 0)
 			{
-				ViewBag.Message = "Failed to save your survey. An error has occurred.";
+				ViewBag.Message = "Failed to save your survey. Please try again later.";
 			}
 			else
 			{

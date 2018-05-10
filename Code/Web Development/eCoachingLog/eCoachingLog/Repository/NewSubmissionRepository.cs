@@ -234,21 +234,22 @@ namespace eCoachingLog.Repository
 
                     int returnValue = -1;
                     returnValue = (int)returnParam.Value;
-
-                    if (returnValue != 0)
+					isDuplicate = (bool)isDupParam.Value;
+					if (returnValue != 0 || isDuplicate)
                     {
-                        throw new Exception("Failed to save new submission.");
+						string msg = "The warning log you are trying to submit already exists.";
+						if (returnValue != 0)
+						{
+							msg = "Return value from sp_InsertInto_Warning_Log: " + returnValue;
+						}
+						throw new Exception(msg);
                     }
 
-                    isDuplicate = (bool)isDupParam.Value;
-                    if (!isDuplicate)
-                    {
-                        logNameSaved = (string)newFormNameParam.Value;
-                    }
+                    logNameSaved = (string)newFormNameParam.Value;
                 }
                 catch (Exception ex)
                 {
-                    logger.Error("Failed to save warning log: " + ex.Message);
+                    logger.Warn("Failed to save warning log: " + ex.Message);
 					throw new Exception(ex.Message);
 				}
             } // end Using 
