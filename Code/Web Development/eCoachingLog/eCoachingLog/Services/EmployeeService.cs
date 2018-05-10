@@ -13,25 +13,15 @@ namespace eCoachingLog.Services
             this.employeeRepository = employeeRepository;
         }
 
-        public List<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
+        public IList<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
         {
             return employeeRepository.GetEmployeesByModule(moduleId, siteId, userEmpId);
-        }
-
-        public List<Employee> GetEmployeesByModule(int moduleId, string userLanId)
-        {
-            return employeeRepository.GetEmployeesByModule(moduleId, userLanId);
         }
 
         public Employee GetEmployee(string employeeId)
         {
             return employeeRepository.GetEmployee(employeeId);
         }
-
-		//public IList<Employee> GetEmployeesBySiteAndTitle(int siteId, int titleId)
-		//{
-		//	return employeeRepository.GetEmployeesBySiteAndTitle(siteId, titleId);
-		//}
 
 		public IList<Employee> GetAllSubmitters()
 		{
@@ -48,9 +38,9 @@ namespace eCoachingLog.Services
 			return employeeRepository.GetSupervisorsByMgr(mgrId);
 		}
 
-		public IList<Employee> GetEmployeesBySup(string supId, int empStatus)
+		public IList<Employee> GetEmployeesBySup(int siteId, string mgrId, string supId, int empStatus)
 		{
-			return employeeRepository.GetEmployeesBySup(supId, empStatus);
+			return employeeRepository.GetEmployeesBySup(siteId, mgrId, supId, empStatus);
 		}
 	}
 }

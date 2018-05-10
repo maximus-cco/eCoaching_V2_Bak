@@ -1,6 +1,5 @@
 ﻿using eCoachingLog.Extensions;
 using eCoachingLog.Models.Common;
-using eCoachingLog.Utils;
 using log4net;
 using System.Collections.Generic;
 using System.Data;
@@ -13,16 +12,16 @@ namespace eCoachingLog.Repository
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
-        public List<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
+        public IList<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
         {
             var employees = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Employees_By_Module_And_Site]", connection))
             {
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@intModuleIDin", moduleId);
-				command.Parameters.AddWithValue("@intSiteIDin", siteId);
-				command.Parameters.AddWithValue("@nvcUserEmpIDin", userEmpId);
+				command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
+				command.Parameters.AddWithValueSafe("@intSiteIDin", siteId);
+				command.Parameters.AddWithValueSafe("@nvcUserEmpIDin", userEmpId);
                 connection.Open();
                 using (SqlDataReader dataReader = command.ExecuteReader())
                 {
@@ -40,47 +39,14 @@ namespace eCoachingLog.Repository
             return employees;
         }
 
-        // !!!TODO: need new stored procedure
-		// Get all employees who report to userLanId
-        public List<Employee> GetEmployeesByModule(int moduleId, string userLanId)
-        {
-            var employees = new List<Employee>();
-
-            using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_Employees_Coaching_Inactivation_Reactivation]", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                // TODO: replace these parameters with real ones
-                command.Parameters.AddWithValue("@intModulein", 1);
-                command.Parameters.AddWithValue("@strActionin", "Inactivation");
-                command.Parameters.AddWithValue("@strRequesterLanId", "lili.huang");
-
-                connection.Open();
-
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        Employee employee = new Employee();
-                        employee.Id = dataReader["Emp_ID"].ToString();
-                        employee.Name = dataReader["Emp_Name"].ToString();
-
-                        employees.Add(employee);
-                    }
-                }
-            }
-
-            return employees;
-        }
-
-        public Employee GetEmployee(string employeeId)
+         public Employee GetEmployee(string employeeId)
         {
             Employee employee = new Employee();
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Rec_Employee_Hierarchy]", connection))
             {
 				command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("employeeId", employeeId);
+                command.Parameters.AddWithValueSafe("employeeId", employeeId);
                 connection.Open();
                 using (SqlDataReader dataReader = command.ExecuteReader())
                 {
@@ -104,53 +70,6 @@ namespace eCoachingLog.Repository
             return employee;
         }
 
-        public List<Employee> GetEmployees(string userLanId, int logTypeId, int moduleId, string action)
-        {
-            string logType = null;
-            var employees = new List<Employee>();
-
-            // Set log type
-            if (logTypeId == (int)EmployeeLogType.Coaching)
-            {
-                logType = EmployeeLogType.Coaching.ToDescription();
-            }
-            else if (logTypeId == (int)EmployeeLogType.Warning)
-            {
-                logType = EmployeeLogType.Warning.ToDescription();
-            }
-            else
-            {
-                logType = "unknown";
-            }
-
-            using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_Employees_Inactivation_Reactivation]", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandTimeout = 300;
-                command.Parameters.AddWithValue("@strRequesterLanId", userLanId);
-                command.Parameters.AddWithValue("@strTypein", logType);
-                command.Parameters.AddWithValue("@strActionin", action);
-                command.Parameters.AddWithValue("@intModulein", moduleId);
-
-                connection.Open();
-
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        Employee employee = new Employee();
-                        employee.Id = dataReader["Emp_ID"].ToString();
-                        employee.Name = dataReader["Emp_Name"].ToString();
-
-                        employees.Add(employee);
-                    }
-                }
-            }
-
-            return employees;
-        }
-
 		public IList<Employee> GetManagersBySite(int siteId)
 		{
 			var managers = new List<Employee>();
@@ -158,7 +77,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_MGR_BySite]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@intSiteID", siteId);
+				command.Parameters.AddWithValueSafe("@intSiteID", siteId);
 				connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -182,7 +101,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Sup_ByMgr]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@nvcMgrID", mgrId);
+				command.Parameters.AddWithValueSafe("@nvcMgrID", mgrId);
 				connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -199,15 +118,17 @@ namespace eCoachingLog.Repository
 			return supervisors;
 		}
 
-		public IList<Employee> GetEmployeesBySup(string supId, int empStatus)
+		public IList<Employee> GetEmployeesBySup(int siteId, string mgrId, string supId, int empStatus)
 		{
 			var employees = new List<Employee>();
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Emp_BySup]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("@nvcSupID", supId);
-				command.Parameters.AddWithValue("@intEmpActive", empStatus);
+				command.Parameters.AddWithValueSafe("@intSiteID", siteId);
+				command.Parameters.AddWithValueSafe("@nvcMgrID", mgrId);
+				command.Parameters.AddWithValueSafe("@nvcSupID", supId);
+				command.Parameters.AddWithValueSafe("@intEmpActive", empStatus);
 				connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())

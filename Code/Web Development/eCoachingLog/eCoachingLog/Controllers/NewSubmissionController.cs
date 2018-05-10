@@ -200,7 +200,7 @@ namespace eCoachingLog.Controllers
 
 		private void GetEmployeesByModuleToSession(int moduleId, int siteId)
         {
-            List<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession().EmployeeId);
+            IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession().EmployeeId);
             employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
             IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
             var vmInSession = GetNewSubmissionVMFromSession();
@@ -369,7 +369,7 @@ namespace eCoachingLog.Controllers
             // Load Employee dropdown for others
             else 
             {
-                List<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, Constants.ALL_SITES, GetUserFromSession().EmployeeId);
+                IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, Constants.ALL_SITES, GetUserFromSession().EmployeeId);
                 employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
                 IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
                 vm.EmployeeSelectList = employees;

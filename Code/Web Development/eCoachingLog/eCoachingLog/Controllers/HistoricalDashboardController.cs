@@ -9,7 +9,6 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
@@ -61,7 +60,7 @@ namespace eCoachingLog.Controllers
 		public JsonResult GetEmployeesBySup(int siteId, string mgrId, string supId, int employeeStatus)
 		{
 			// Supervisor changed, reload employees
-			var empList = this.employeeService.GetEmployeesBySup(supId, employeeStatus);
+			var empList = this.employeeService.GetEmployeesBySup(siteId, mgrId, supId, employeeStatus);
 			empList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
 			IEnumerable<SelectListItem> employees = new SelectList(empList, "Id", "Name");
 			return Json(employees, JsonRequestBehavior.AllowGet);
