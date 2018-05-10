@@ -2,9 +2,8 @@
 @using eCoachingLog.Models.Survey
 <div class="containter-fluid" style="padding-bottom: 50px; ">
 	<div class="row" style="padding-bottom: 20px; ">
-		<h4>The CCO Leadership team is asking for your help in providing feedback on your coaching experience. Please take a few minutes to complete this survey. The details from the surveys will be used to improve the effectiveness, content and delivery of discussions regarding your performance. Your comments and feedback will be anonymous and will not be attributed directly to your individual survey.
-			This survey is for <a href="#" class="modal-link" data-log-id="@Model.Survey.LogId">@Model.Survey.LogName</a>.
-		</h4>
+		The CCO Leadership team is asking for your help in providing feedback on your coaching experience. Please take a few minutes to complete this survey. The details from the surveys will be used to improve the effectiveness, content and delivery of discussions regarding your performance. Your comments and feedback will be anonymous and will not be attributed directly to your individual survey.
+		This survey is for <a href="#" class="modal-link" data-log-id="@Model.Survey.LogId">@Model.Survey.LogName</a>.
 	</div>
 @{
 	var additionalCommNbr = Model.Survey.Questions.Count + 1;
