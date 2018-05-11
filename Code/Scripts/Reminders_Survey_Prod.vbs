@@ -2,7 +2,7 @@
 
 'Begin - Environment Related
 Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoaching;Data Source=F3420-ECLDBP01"
-Const eCoachingUrl = "https://F3420-MWBP11.vangent.local/coach/MySurvey.aspx"
+Const eCoachingUrl = "https://f3420-mwbp11.vangent.local/eCoachingLog/Survey"
 Const fromAddress = "eCoaching@gdit.com"
 Const imgPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
 'End - Environment Related

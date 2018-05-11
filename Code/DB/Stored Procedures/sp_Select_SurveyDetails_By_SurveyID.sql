@@ -1,7 +1,9 @@
 /*
-sp_Select_SurveyDetails_By_SurveyID(02).sql
+sp_Select_SurveyDetails_By_SurveyID(03).sql
 Last Modified Date: 01/23/2018
 Last Modified By: Susmitha Palacherla
+
+Version 03: Modified during Survey move to new architecture - TFS 10904 - 05/08/2018
 
 Version 02: Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 
@@ -26,6 +28,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	09/24/2015
@@ -33,6 +36,7 @@ GO
 -- the Employee ID, eCL Form Name and whether or not a Hot Topic question is associated with this Survey.
 -- TFS 549 - CSR Survey Setup - 09/24/2015
 -- Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
+-- Modified during Survey move to new architecture - TFS 10904 - 05/08/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_SurveyDetails_By_SurveyID] 
 @intSurveyID INT
@@ -54,6 +58,7 @@ SET @hasPilot = (SELECT [EC].[fn_bitCheckIfPilotSurvey](@intSurveyID))
 
 
 SET @nvcSQL = 'SELECT SRH.[EmpID],
+                      SRH.[CoachingID],
 					  SRH.[FormName],
 					  SRH.[Status],
 					  '+CONVERT(NVARCHAR,@hasHotTopic)+' hasHotTopic,
