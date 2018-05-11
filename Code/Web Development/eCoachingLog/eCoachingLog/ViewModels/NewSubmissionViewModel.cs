@@ -14,12 +14,8 @@ namespace eCoachingLog.ViewModels
     {
         public string UserId { get; set; }
         public string UserLanId { get; set; }
-
         public int StatusId { get; set; }
-
         public int ModuleId { get; set; }
-        //public int? SiteId { get; set; }
-        //public Employee Employee { get; set; }
         public int? ProgramId { get; set; }
 		public string ProgramName { get; set; }
         public int? BehaviorId { get; set; }
@@ -34,9 +30,6 @@ namespace eCoachingLog.ViewModels
         public string CallTypeName { get; set; }
         public string CallId { get; set; }
         public IEnumerable<SelectListItem> ModuleSelectList { get; set; }
-        //public IEnumerable<SelectListItem> SiteSelectList { get; set; }
-        //public IEnumerable<Employee> EmployeeList { get; set; }
-        //public IEnumerable<SelectListItem> EmployeeSelectList { get; set; }
         public IEnumerable<SelectListItem> ProgramSelectList { get; set; }
         public IEnumerable<SelectListItem> BehaviorSelectList { get; set; }
         public IEnumerable<SelectListItem> WarningTypeSelectList { get; set; }
@@ -44,7 +37,6 @@ namespace eCoachingLog.ViewModels
         public int? WarningTypeId { get; set; }
         public int? WarningReasonId { get; set; }
         public IEnumerable<SelectListItem> CallTypeSelectList { get; set; }
-        //public IEnumerable<CallType> CallTypeList { get; set; }
         public DateTime? CoachingDate { get; set; }
         public DateTime? WarningDate { get; set; }
         public bool ShowWarningChoice { get; set; }
@@ -53,13 +45,10 @@ namespace eCoachingLog.ViewModels
         public bool ShowSubmitDiv { get; set; }
         public bool VerifiedCheckbox { get; set; }
         public List<CoachingReason> CoachingReasons { get; set; }
-
         public string BehaviorDetail { get; set; }
         public string ActionPlans { get; set; }
-
         public int SourceId { get; set; }
         public IEnumerable<SelectListItem> SourceSelectList { get; set; }
-
         public bool ShowSiteDropdown { get; set; }
         public bool ShowEmployeeDropdown { get; set; }
         public bool ShowProgramDropdown { get; set; }
@@ -71,8 +60,6 @@ namespace eCoachingLog.ViewModels
             this.ModuleId = -1;
             this.ProgramId = -1;
             this.ModuleSelectList = new List<SelectListItem>();
-            //this.SiteSelectList = new List<SelectListItem>();
-            //this.EmployeeSelectList = new List<SelectListItem>();
             this.ProgramSelectList = new List<SelectListItem>();
             this.BehaviorSelectList = new List<SelectListItem>();
             this.WarningTypeSelectList = new List<SelectListItem>();
@@ -107,13 +94,13 @@ namespace eCoachingLog.ViewModels
             // Validate warning log questions
             if (this.IsWarning.HasValue && this.IsWarning.Value)
             {
-                if (!this.WarningTypeId.HasValue || this.WarningTypeId.Value == -1)
+                if (!this.WarningTypeId.HasValue || this.WarningTypeId.Value == -2)
                 {
                     var warningTypeId = new[] { "WarningTypeId" };
                     yield return new ValidationResult("Please select a warning type.", warningTypeId);
                 }
 
-                if ((this.WarningReasonId.HasValue && this.WarningReasonId.Value != -1) && (!this.WarningReasonId.HasValue || this.WarningReasonId.Value == -1))
+				if (!this.WarningReasonId.HasValue || this.WarningReasonId.Value == -2)
                 {
                     var warningReasonId = new[] { "WarningReasonId" };
                     yield return new ValidationResult("Please select a warning reason.", warningReasonId); // warning sub reason
