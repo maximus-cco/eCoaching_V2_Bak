@@ -1,5 +1,6 @@
 ﻿using eCoachingLog.Extensions;
 using eCoachingLog.Models.Common;
+using eCoachingLog.Models.User;
 using log4net;
 using System.Collections.Generic;
 using System.Data;
@@ -152,7 +153,6 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Submitter]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.CommandTimeout = 300;
 				connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -162,6 +162,213 @@ namespace eCoachingLog.Repository
 						Employee employee = new Employee();
 						employee.Id = dataReader["SubmitterID"].ToString();
 						employee.Name = dataReader["Submitter"].ToString();
+						employees.Add(employee);
+					}
+				}
+			}
+			return employees;
+		}
+
+		public IList<Employee> GetSupsForMgrMyPending(User user)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctSup]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee employee = new Employee();
+						employee.Id = dataReader["SUPValue"].ToString();
+						employee.Name = dataReader["SUPText"].ToString();
+						employees.Add(employee);
+					}
+				}
+			}
+			return employees;
+		}
+
+		public IList<Employee> GetEmpsForMgrMyPending(User user)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee employee = new Employee();
+						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Name = dataReader["EmpText"].ToString();
+						employees.Add(employee);
+					}
+				}
+			}
+			return employees;
+		}
+
+		public IList<Employee> GetEmpsForSupMyTeamPending(User user)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeam]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@strCSRSUPin", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee employee = new Employee();
+						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Name = dataReader["EmpText"].ToString();
+						employees.Add(employee);
+					}
+				}
+			}
+			return employees;
+		}
+
+		public IList<Employee> GetSupsForMgrMyTeamPending(User user)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctSUPTeam]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee employee = new Employee();
+						employee.Id = dataReader["SUPValue"].ToString();
+						employee.Name = dataReader["SUPText"].ToString();
+						employees.Add(employee);
+					}
+				}
+			}
+			return employees;
+		}
+
+		public IList<Employee> GetEmpsForMgrMyTeamPending(User user)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSRTeam]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee employee = new Employee();
+						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Name = dataReader["EmpText"].ToString();
+						employees.Add(employee);
+					}
+				}
+			}
+			return employees;
+		}
+
+		public IList<Employee> GetMgrsForSupMyTeamCompleted(User user)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogSupDistinctMGRTeamCompleted]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@strCSRSUPin", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee employee = new Employee();
+						employee.Id = dataReader["MgrValue"].ToString();
+						employee.Name = dataReader["MgrText"].ToString();
+						employees.Add(employee);
+					}
+				}
+			}
+			return employees;
+		}
+
+		public IList<Employee> GetEmpsForSupMyTeamCompleted(User user)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@strCSRSUPin", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee employee = new Employee();
+						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Name = dataReader["EmpText"].ToString();
+						employees.Add(employee);
+					}
+				}
+			}
+			return employees;
+		}
+
+		public IList<Employee> GetSupsForMgrMyTeamCompleted(User user)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctSUPTeamCompleted]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee employee = new Employee();
+						employee.Id = dataReader["SUPValue"].ToString();
+						employee.Name = dataReader["SUPText"].ToString();
+						employees.Add(employee);
+					}
+				}
+			}
+			return employees;
+		}
+
+		public IList<Employee> GetEmpsForMgrMyTeamCompleted(User user)
+		{
+			var employees = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSRTeamCompleted]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee employee = new Employee();
+						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
 				}

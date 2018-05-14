@@ -157,7 +157,7 @@ namespace eCoachingLog.Controllers
 			IEnumerable<SelectListItem> statuses = new SelectList(statusList, "Id", "Description");
 			vm.LogStatusSelectList = statuses;
 			// Source
-			var sourceList = GetAllLogSources();
+			var sourceList = GetAllLogSources(user);
 			IEnumerable<SelectListItem> sources = new SelectList(sourceList, "Id", "Name");
 			vm.LogSourceSelectList = sources;
 			// Value

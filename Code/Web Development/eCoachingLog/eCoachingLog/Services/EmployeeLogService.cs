@@ -137,5 +137,15 @@ namespace eCoachingLog.Services
 		{
 			return this.employeeLogRepository.GetLogDataTable(logFilter, userId);
 		}
+
+		public IList<LogState> GetStatesForMyTeamWarning(User user)
+		{
+			if (user == null)
+			{
+				logger.Info("User is null.");
+				return new List<LogState>();
+			}
+			return employeeLogRepository.GetStatesForMyTeamWarning(user);
+		}
 	}
 }

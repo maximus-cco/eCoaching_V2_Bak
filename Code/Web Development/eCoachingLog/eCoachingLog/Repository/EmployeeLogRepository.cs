@@ -91,12 +91,10 @@ namespace eCoachingLog.Repository
                         logDetail.EmployeeReviewDate = eCoachingLogUtil.AppendPdt(dataReader["CSRReviewAutoDate"].ToString());
                         logDetail.SupReviewedAutoDate = eCoachingLogUtil.AppendPdt(dataReader["SupReviewedAutoDate"].ToString());
                         logDetail.MgrReviewAutoDate = eCoachingLogUtil.AppendPdt(dataReader["MgrReviewAutoDate"].ToString());
-						// TODO: find out if these 2 are returning
-						//logDetail.ReviewedSupervisorName = dataReader["strreviewsup"];
-						//logDetail.ReviewedManagerName = dataReader["strreviewmgr"];
+						logDetail.ReviewedSupervisorName = dataReader["strReviewSupervisor"].ToString();
+						logDetail.ReviewedManagerName = dataReader["strReviewManager"].ToString();
 						logDetail.IsCse = dataReader["isCse"] == DBNull.Value ? false : (bool) dataReader["isCse"];
 						logDetail.IsCseUnconfirmed = Convert.ToInt16(dataReader["Customer Service Escalation"]) == 0 ? false : true;
-
 						break;
                     } // End while
                 } // End using SqlDataReader
@@ -551,6 +549,28 @@ namespace eCoachingLog.Repository
 				}
 			}
 			return dt;	
+		}
+
+		public IList<LogState> GetStatesForMyTeamWarning(User user)
+		{
+			var logStates = new List<LogState>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_States_For_Dashboard]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						LogState state = new LogState();
+						state.Id = (int)dataReader["StateValue"];
+						state.Description = dataReader["StateValue"].ToString();
+						logStates.Add(state);
+					}
+				}
+			}
+			return logStates;
 		}
 	}
 }

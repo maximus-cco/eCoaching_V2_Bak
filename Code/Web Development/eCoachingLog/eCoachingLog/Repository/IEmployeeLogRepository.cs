@@ -22,9 +22,6 @@ namespace eCoachingLog.Repository
         List<Behavior> GetBehaviors(int moduleId);
         List<string> GetValues(int reasonId, string directOrIndirect, int moduleId);
 
-		//List<LogBase> GetLogList(string userLanId, string status, bool isCoaching, DateTime startTime, DateTime endTime, int pageSize, int startRowIndex, string sortBy, string sortAsc, string search);
-		//int GetLogListTotal(string userLanId, string status, bool isCoaching, DateTime startTime, DateTime endTime, string search);
-
 		IList<LogStatus> GetAllLogStatuses();
 		IList<LogSource> GetAllLogSources(string userEmpId);
 		IList<LogValue> GetAllLogValues();
@@ -33,5 +30,7 @@ namespace eCoachingLog.Repository
 
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFilter, string userId, string search);
+
+		IList<LogState> GetStatesForMyTeamWarning(User user);
 	}
 }

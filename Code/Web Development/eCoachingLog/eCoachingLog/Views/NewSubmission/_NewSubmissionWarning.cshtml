@@ -18,13 +18,10 @@
 </div>
 
 <div class="form-group">
-    <label for="warning-date" class="col-sm-3 control-label required">Enter/Select the date the warning was issued:</label>
+    <label for="warning-date" class="col-sm-3 control-label required">Enter/Select the date the warning was issued(YYYY-MM-DD):</label>
     <div class="col-sm-2">
-        <div class="input-group date">
-            @Html.TextBoxFor(m => m.WarningDate, new { @class = "form-control" })
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
+        <div class="input-group">
+            @Html.TextBoxFor(m => m.WarningDate, new { @class = "form-control  date-no-manual-input" })
         </div>
         @Html.ValidationMessageFor(m => m.WarningDate)
     </div>

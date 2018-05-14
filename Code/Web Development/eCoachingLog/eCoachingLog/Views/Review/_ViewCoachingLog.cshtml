@@ -35,32 +35,39 @@
 				<div class='mt-2 @(@Model.ShowViewCseText ? "show" : "hide")'>
 					<strong>Coaching Opportunity was a confirmed Customer Service Escalation.</strong><br />
 				</div>
-				<div class='mt-2 @(@Model.ShowViewMgtNotes ? "show" : "hide")'>
-					<strong>Management Notes:</strong><br />
-					@Model.LogDetail.MgrNotes
-				</div>
 				<div class='mt-2 @(@Model.ShowViewCseText ? "hide" : "show")'>
 					<strong>Coaching Opportunity was not a confirmed Customer Service Escalation.</strong><br />
 				</div>
+				<div class='mt-2'>
+					<strong>Manager Notes:</strong><br />
+					@Model.LogDetail.MgrNotes
+				</div>
+				<div class="mt-2">
+					<strong>Manager Review Information:</strong><br />
+					<div class='@(string.IsNullOrEmpty(Model.LogDetail.MgrReviewAutoDate) ? "hide" : "show")'>
+						@Model.LogDetail.ReviewedManagerName<br />
+						Reviewed and acknowledged Quality Monitor on @Model.LogDetail.MgrReviewAutoDate
+					</div>
 				<div class="mt-2">
 					<strong>Coaching Notes:</strong><br />
 					@Model.LogDetail.CoachingNotes
 				</div>
 				<div class="mt-2">
-					<strong>Employee Review Information:</strong><br />
-					@Model.LogDetail.EmployeeName<br />
-					@Model.LogDetail.EmployeeReviewLabel @Model.LogDetail.EmployeeReviewDate
-				</div>
-				<div class="mt-2 @(@Model.ShowViewSupReviewInfo ? "show" : "hide")'">
 					<strong>Supervisor Review Information:</strong><br />
-					@Model.LogDetail.ReviewedSupervisorName<br />
-					Reviewed and acknowledged Quality Monitor on @Model.LogDetail.SupReviewedAutoDate
-				</div>
-
+					<div class='@(string.IsNullOrEmpty(Model.LogDetail.SupReviewedAutoDate) ? "hide" : "show")'>
+						@Model.LogDetail.ReviewedSupervisorName<br />
+						Reviewed and acknowledged Quality Monitor on @Model.LogDetail.SupReviewedAutoDate
+					</div>
 				<div class="mt-2">
 					<strong>Employee Comments/Feedback:</strong><br />
 					@Model.LogDetail.EmployeeComments
 				</div>
+				<div class="mt-2">
+					<strong>Employee Review Information:</strong><br />
+					<div class='@(string.IsNullOrEmpty(Model.LogDetail.EmployeeReviewDate) ? "hide" : "show")'>
+						@Model.LogDetail.EmployeeName<br />
+						@Model.LogDetail.EmployeeReviewLabel @Model.LogDetail.EmployeeReviewDate
+					</div>
 			</div>
 			<!-- /.modal-body -->
 			<div class="modal-footer">

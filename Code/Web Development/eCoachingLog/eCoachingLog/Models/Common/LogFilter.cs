@@ -36,8 +36,8 @@ namespace eCoachingLog.Models.Common
 			this.SupervisorId = "-2";
 			this.ManagerId = "-2";
 			this.SubmitterId = "-1";
-			this.SubmitDateFrom = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd");
-			this.SubmitDateTo = DateTime.Now.ToString("yyyy-MM-dd");
+			this.SubmitDateFrom = DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy");
+			this.SubmitDateTo = DateTime.Now.ToString("MM/dd/yyyy");
 			this.StatusId = -1;
 			this.ValueId = "-1";
 

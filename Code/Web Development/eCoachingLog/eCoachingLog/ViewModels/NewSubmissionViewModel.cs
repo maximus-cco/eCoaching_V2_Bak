@@ -196,15 +196,6 @@ namespace eCoachingLog.ViewModels
             }
 		}
 
-        //private IEnumerable<ValidationResult> ValidateWarningQuestions()
-        //{
-        //    if (this.WarningReasonId == null || this.WarningReasonId.Value == -1)
-        //    {
-        //        var warningReasonId = new[] { "WarningReasonId" };
-        //        yield return new ValidationResult("Please select a warning type.", warningReasonId);
-        //    }
-        //}
-
         public static implicit operator NewSubmission(NewSubmissionViewModel vm)
         {
 			return new NewSubmission

@@ -91,14 +91,22 @@ namespace eCoachingLog.Controllers
 			return this.empLogService.GetAllLogStatuses();
 		}
 
-		protected IList<LogSource> GetAllLogSources()
+		protected IList<LogSource> GetAllLogSources(User user)
 		{
-			return this.empLogService.GetAllLogSources(GetUserFromSession().EmployeeId);
+			return this.empLogService.GetAllLogSources(user.EmployeeId);
 		}
 
 		protected IList<LogValue> GetAllLogValues()
 		{
 			return this.empLogService.GetAllLogValues();
+		}
+
+		protected IEnumerable<SelectListItem> GetLogSourceSelectList(User user)
+		{
+			IList<LogSource> sourceList = GetAllLogSources(user);
+			sourceList.Insert(0, new LogSource { Id = -1, Name = "-- Select a Source" });
+			IEnumerable<SelectListItem> sources = new SelectList(sourceList, "Id", "Name");
+			return sources;
 		}
 	}
 }

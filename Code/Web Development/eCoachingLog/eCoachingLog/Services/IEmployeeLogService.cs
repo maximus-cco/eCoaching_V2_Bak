@@ -26,5 +26,7 @@ namespace eCoachingLog.Services
 		DataTable GetLogDataTable(LogFilter filter, string userId);
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFiler, string userId, string search);
+
+		IList<LogState> GetStatesForMyTeamWarning(User user);
 	}
 }
