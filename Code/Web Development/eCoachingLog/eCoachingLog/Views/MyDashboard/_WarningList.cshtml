@@ -1,4 +1,4 @@
-﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
+﻿@model eCoachingLog.Models.Common.LogFilter
 @{
 	Layout = null;
 }
@@ -30,9 +30,11 @@
 
 @*@Model.Search.SupervisorId*@
 <script>
-	var myDashboardSearch = @Html.Raw(Json.Encode(Model.Search));
-	var supId = '@Html.Raw(Model.Search.SupervisorId)';
-	var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';
+	var myDashboardSearch = @Html.Raw(Json.Encode(Model));
+	var supId = '@Html.Raw(Model.SupervisorId)';
+	@*var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';*@
+	var loadDataUrl = '@Url.Action("LoadData")';
+	var getLogDetailsUrl = '@Url.Action("GetLogDetail")';
 </script>
 
 @Scripts.Render("~/bundles/scripts/myDashboardWarningList")

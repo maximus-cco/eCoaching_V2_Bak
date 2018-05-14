@@ -1,7 +1,9 @@
-﻿@*@Model.UserRole*@
+﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
+@using eCoachingLog.Utils
+User Role: @Model.Search.UserRole
 <div class="row">
 	<div class="col-sm-2"></div>
-@using (Ajax.BeginForm("SearchMyPendingManager",
+@*@using (Ajax.BeginForm("SearchMyPendingManager",
 			"MyDashboard",
 			FormMethod.Post,
 			new AjaxOptions
@@ -12,59 +14,58 @@
 			},
 			new { id = "search-form", @class = "form-horizontal" }
 	))
-{
-	<div class="form-group filters col-sm-10 pull-right">
-		@if (Model.UserRole == UserRole.Supervisor)
-		{
+{*@
+	<form class="form-inline" id="form-search-mydashboard">
+		<div class="form-group filters col-sm-10 pull-right">
+			@if (Model.Search.UserRole == UserRole.Supervisor)
+			{
+				<div class="col-sm-2">
+					@Html.DropDownListFor(m => m.Search.ManagerId, Model.ManagerSelectList, new { id = "select-manager", @class = "form-control reset-search-result" })
+				</div>
+			}
+			@if (Model.Search.UserRole == UserRole.Manager)
+			{
+				<div class="col-sm-2">
+					@Html.DropDownListFor(m => m.Search.SupervisorId, Model.SupervisorSelectList, new { id = "select-supervisor", @class = "form-control reset-search-result" })
+				</div>
+			}
 			<div class="col-sm-2">
-				<select class="form-control" id="manager-selected">
-					<option>All Managers</option>
-				</select>
+				@Html.DropDownListFor(m => m.Search.EmployeeId, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control reset-search-result" })
 			</div>
-		}
-		@if (Model.UserRole == UserRole.Manager)
-		{
+			<div class="col-sm-3">
+				@Html.DropDownListFor(m => m.Search.SourceId, Model.SourceSelectList, new { id = "select-source", @class = "form-control reset-search-result" })
+			</div>
 			<div class="col-sm-2">
-				<select class="form-control" id="supervisor-selected">
-					<option>All Supervisors</option>
-				</select>
+				<div class="input-group date">
+					@Html.TextBoxFor(m => m.Search.SubmitDateFrom, new { @class = "form-control reset-search-result" })
+					<span class="input-group-addon">
+						<span class="glyphicon glyphicon-calendar"></span>
+					</span>
+				</div>
 			</div>
-		}
-		<div class="col-sm-2">
-			<select class="form-control" id="employee-selected">
-				<option>All Employees</option>
-			</select>
-		</div>
-		<div class="col-sm-3">
-			<select class="form-control" id="source-selected">
-				<option>All Sources</option>
-			</select>
-		</div>
-		<div class="col-sm-2">
-			<div class="input-group date">
-				<input type="text" class="form-control" id="coaching-date" placeholder="Submission Start Date">
-				<span class="input-group-addon">
-					<span class="glyphicon glyphicon-calendar"></span>
-				</span>
+			<div class="col-sm-2">
+				<div class="input-group date">
+					@Html.TextBoxFor(m => m.Search.SubmitDateTo, new { @class = "form-control reset-search-result" })
+					<span class="input-group-addon">
+						<span class="glyphicon glyphicon-calendar"></span>
+					</span>
+				</div>
+			</div>
+			<div class="col-sm-1 text-right">
+				<button type="button" class="btn btn-info" id="btn-search">
+					<span class="glyphicon glyphicon-search"></span> Go
+				</button>
 			</div>
 		</div>
-		<div class="col-sm-2">
-			<div class="input-group date">
-				<input type="text" class="form-control" id="coaching-date" placeholder="Submission End Date">
-				<span class="input-group-addon">
-					<span class="glyphicon glyphicon-calendar"></span>
-				</span>
-			</div>
-		</div>
-		<div class="col-sm-1 text-right">
-			<button type="button" class="btn btn-info">
-				<span class="glyphicon glyphicon-search"></span> Go
-			</button>
-		</div>
-	</div>
-}
+		@*}*@
+	</form>
 </div>
 <div class="clearfix"></div>
 
+<script>
+	var searchUrl = '@Url.Action("Search", "MyDashboard")';
+</script>
+
 <script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>
+
 

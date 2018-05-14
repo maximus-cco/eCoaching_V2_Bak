@@ -76,7 +76,29 @@
 
 	// Search log
 	$('body').on('click', '#btn-search', function (e) {
-		alert('go');
+		e.preventDefault();
+
+		//if (!validateMyDashboardSearch()) {
+		//	return;
+		//}
+
+		alert(searchUrl);
+
+		if (e.handled !== true) {
+			e.handled = true;
+			$(".please-wait").slideDown(500);
+			$.ajax({
+				type: 'POST',
+					url: searchUrl,
+					data: $('#form-search-mydashboard').serialize(),
+				success: function (data) {
+					$(".please-wait").slideUp(500);
+					//$('#div-search-result').removeClass('hide');
+					//$('#div-search-result').addClass('show');
+					$('#div-search-result').html(data);
+				}
+			});
+		}
 	});
 
 	// Export to excel
@@ -136,6 +158,11 @@
     	//console.log("submitReview");
     	submitReview(saveUrl, myTable, $('#div-my-pending-text'), 'The log has been successfully updated.', 'Failed to update the log.');
     });
+
+    function validateMyDashboardSearch()
+    {
+    	return true;
+    }
 
     function submitReview(url, tableToRefresh, $countToUpdate, successMsg, errorMsg) {
     	// Do not send hidden input fields (display:none) to server
