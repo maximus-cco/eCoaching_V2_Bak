@@ -376,7 +376,6 @@ namespace eCoachingLog.Repository
 		{
 			List<LogBase> logs = new List<LogBase>();
 			using (SqlConnection connection = new SqlConnection(conn))
-			// TODO: have a driver sp to take care of all searches (my dashboard, historical dashboard)
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Details]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
