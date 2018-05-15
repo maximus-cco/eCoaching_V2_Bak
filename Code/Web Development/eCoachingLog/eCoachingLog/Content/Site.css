@@ -511,6 +511,13 @@ legend {
   transition: border-color ease-in-out 0.2s;
 }
 
+.form-inline {
+    padding:10px;
+}
+.form-inline > * {
+    margin:5px 3px !important;
+}
+
 
 
 

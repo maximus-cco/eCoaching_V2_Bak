@@ -24,8 +24,8 @@ namespace eCoachingLog.Models.Common
 		// Get employees who is active or inactive, or both
 		// 1 - active, 2 - inactive, 3 - both
 		public int ActiveEmployee { get; set; }
-		public string SubmitDateFrom { get; set; }
-		public string SubmitDateTo { get; set; }
+		public DateTime? SubmitDateFrom { get; set; }
+		public DateTime? SubmitDateTo { get; set; }
 
 		public LogFilter()
 		{
@@ -36,8 +36,8 @@ namespace eCoachingLog.Models.Common
 			this.SupervisorId = "-2";
 			this.ManagerId = "-2";
 			this.SubmitterId = "-1";
-			this.SubmitDateFrom = DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy");
-			this.SubmitDateTo = DateTime.Now.ToString("MM/dd/yyyy");
+			this.SubmitDateFrom = DateTime.Now.AddDays(-30);
+			this.SubmitDateTo = DateTime.Now;
 			this.StatusId = -1;
 			this.ValueId = "-1";
 

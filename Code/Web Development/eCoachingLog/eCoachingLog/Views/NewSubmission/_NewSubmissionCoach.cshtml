@@ -10,7 +10,7 @@
 	<label for="coaching-date" class="col-sm-3 control-label required" id="label-coaching-date">@dateLabel</label>
     <div class="col-sm-2">
         <div class="input-group">
-            @Html.TextBoxFor(m => m.CoachingDate, new { @class = "form-control date-no-manual-input" })
+            @Html.TextBoxFor(m => m.CoachingDate, new { @class = "form-control date-no-manual-input", @placeholder = "MM/DD/YYYY" })
         </div>
         @Html.ValidationMessageFor(m => m.CoachingDate)
     </div>

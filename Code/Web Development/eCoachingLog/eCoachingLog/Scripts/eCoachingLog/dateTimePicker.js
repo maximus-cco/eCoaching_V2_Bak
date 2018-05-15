@@ -16,4 +16,9 @@
 		e.preventDefault();
 		return false;
 	});
+
+	// Overrides jquery date validator
+    jQuery.validator.methods.date = function (value, element) {
+    	return moment(value, ["MM/DD/YYYY"], true).isValid();
+    };
 })
