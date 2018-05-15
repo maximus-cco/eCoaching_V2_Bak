@@ -24,8 +24,8 @@ namespace eCoachingLog.Models.Common
 		// Get employees who is active or inactive, or both
 		// 1 - active, 2 - inactive, 3 - both
 		public int ActiveEmployee { get; set; }
-		public DateTime? SubmitDateFrom { get; set; }
-		public DateTime? SubmitDateTo { get; set; }
+		public DateTime SubmitDateFrom { get; set; }
+		public DateTime SubmitDateTo { get; set; }
 
 		public LogFilter()
 		{
