@@ -17,20 +17,17 @@ namespace eCoachingLog.Controllers
             logger.Debug("Entered HomeController.Index");
 
 			string userLanId = User.Identity.Name;
-            userLanId = userLanId.Replace(@"AD\", "");
-            User user = userService.GetUserByLanId(userLanId);
-            if (user == null)
-            {
-                return RedirectToAction("Index", "Unauthorized");
-            }
-
-			// TODO: set it in server based on what user role returned from db
-			// or based on job code returned from db
-			user.Role = UserRole.Supervisor;
+			userLanId = userLanId.Replace(@"AD\", "");
+			User user = this.userService.GetUserByLanId(userLanId);
+			if (user == null)
+			{
+				return RedirectToAction("Index", "Unauthorized");
+			}
 
 			Session["AuthenticatedUser"] = user;
-			// Landing page: Historical Dashboard for HR users; My Dashboard all all other users
-			if (user.Role == UserRole.HR)
+
+			// Landing page: Historical Dashboard for HR users; My Dashboard for all other users
+			if (user.Role == Constants.USER_ROLE_HR)
 			{
 				return RedirectToAction("Index", "HistoricalDashboard");
 			}
