@@ -32,6 +32,8 @@ namespace eCoachingLog.Filters
 
 			// Access control string: controller name
 			string controllerName = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName;
+			// Action name
+			string actionName = filterContext.ActionDescriptor.ActionName;
 			bool isAccessAllowed = false;
 			// TODO: have a db table configured to allow access each controller based on jobcodes
 			// sp (getuser) to return controller access permission as well
@@ -46,6 +48,10 @@ namespace eCoachingLog.Filters
 			else if ("HistoricalDashboard" == controllerName)
 			{
 				isAccessAllowed = user.IsAccessHistoricalDashboard;
+				if ("ExportToExcel" == actionName)
+				{
+					isAccessAllowed = user.IsExportExcel;
+				}
 			}
 
 			if (!isAccessAllowed)
