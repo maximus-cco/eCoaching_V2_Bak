@@ -7,6 +7,5 @@ namespace eCoachingLog.Services
     {
         List<User> GetAllUsers();
         User GetUserByLanId(string lanId);
-        bool UserIsEntitled(User user, string entitlementName);
     }
 }

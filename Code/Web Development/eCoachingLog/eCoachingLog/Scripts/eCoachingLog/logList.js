@@ -1,19 +1,23 @@
 ﻿var myTable;
 $(document).ready(function () {
 	// Initialize datatable
+	$(".please-wait").slideDown(500);
     myTable = $('#dataTables-coaching-log-list').DataTable({
     	renderer: "bootstrap",
 		autowidth: false,
-        processing: true, // Show progress bar
+		language: {
+			processing: "<span>Loading......Please wait...</span>",
+		},
+		processing: true,
         serverSide: true, // Process server side
         filter: true,     // Enable filter (search box)
         orderMulti: false,// Disable multiple column sorting
-		iDisplayLength: 50,
+		iDisplayLength: 25,
         ajax: {
         	url: loadDataUrl,
             type: "POST",
             datatype: "json",
-        	data: logFilter,
+            data: logFilter,
         },
         columns: [
             {
@@ -40,7 +44,7 @@ $(document).ready(function () {
         ],
 
         initComplete: function (settings, json) {
-        	$('dataTables-coaching-log-list_filter').prop('id', 'search-box');
+        	$(".please-wait").slideUp(500);
         }
     }); // myTable
 

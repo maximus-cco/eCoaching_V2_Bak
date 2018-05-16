@@ -1,15 +1,13 @@
 ﻿using eCoachingLog.Models.User;
 using eCoachingLog.Services;
-using eCoachingLog.Utils;
 using log4net;
-using System;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace eCoachingLog.Filters
 {
-    public class EclAuthorizeAttribute : AuthorizeAttribute
+	public class EclAuthorizeAttribute : AuthorizeAttribute
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -39,15 +37,15 @@ namespace eCoachingLog.Filters
 			// sp (getuser) to return controller access permission as well
 			if ("NewSubmission" == controllerName)
 			{
-				isAccessAllowed = user.Role != UserRole.Employee && user.Role != UserRole.HR;
+				isAccessAllowed = user.IsAccessNewSubmission;
 			}
 			else if ("MyDashboard" == controllerName)
 			{
-				isAccessAllowed = user.Role != UserRole.HR;
+				isAccessAllowed = user.IsAccessMyDashboard;
 			}
 			else if ("HistoricalDashboard" == controllerName)
 			{
-				isAccessAllowed = user.Role != UserRole.Employee;
+				isAccessAllowed = user.IsAccessHistoricalDashboard;
 			}
 
 			if (!isAccessAllowed)

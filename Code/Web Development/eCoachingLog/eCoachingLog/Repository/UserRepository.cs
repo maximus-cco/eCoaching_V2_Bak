@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Models.User;
 using eCoachingLog.Utils;
 using log4net;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -20,31 +21,6 @@ namespace eCoachingLog.Repository
             return users;
         }
 
-        public List<Entitlement> GetEntitlementsByUserLanId(string lanId)
-        {
-            List<Entitlement> entitlements = new List<Entitlement>();
-            using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Check_Entitlements]", connection))
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@nvcEmpLanIDin", lanId);
-                connection.Open();
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        Entitlement entitlement = new Entitlement();
-                        entitlement.Id = (int)dataReader["EntitlementId"];
-                        entitlement.Name = dataReader["EntitlementDescription"].ToString();
-
-                        entitlements.Add(entitlement);
-                    }
-                }
-            }
-
-            return entitlements;
-        }
-
         public User GetUserByLanId(string lanId)
         {
             User user = null;
@@ -62,60 +38,14 @@ namespace eCoachingLog.Repository
 						user.LanId = lanId;
 						user.EmployeeId = dataReader["Emp_ID"].ToString();
                         user.Name = dataReader["Emp_Name"].ToString();
-						user.JobCode = "WISO12"; //dataReader["Emp_Job_Code"].ToString();
-                        // TODO: hardcode for now, get from database later
-                        var roleId = 3;
-                        switch (roleId)
-                        {
-                            case 1:
-                                user.Role = UserRole.Manager;
-                                break;
-                            case 2:
-                                user.Role = UserRole.Supervisor;
-                                break;
-                            case 3:
-                                user.Role = UserRole.Employee;
-                                break;
-                            case 4:
-                                user.Role = UserRole.Other;
-                                break;
-                            default:
-                                user.Role = UserRole.Unknown;
-                                break;
-                        }
-                    }
+						user.Role = dataReader["Role"].ToString();
+						user.IsAccessNewSubmission = (dataReader["NewSubmission"] == DBNull.Value) ? false : (bool)dataReader["NewSubmission"];
+						user.IsAccessMyDashboard = (dataReader["MyDashboard"] == DBNull.Value) ? false : (bool)dataReader["MyDashboard"];
+						user.IsAccessHistoricalDashboard = (dataReader["HistoricalDashboard"] == DBNull.Value) ? false : (bool)dataReader["HistoricalDashboard"];
+						user.IsExportExcel = (dataReader["ExcelExport"] == DBNull.Value) ? false : (bool)dataReader["ExcelExport"];
+					}
                 }
             }
-
-
-			//// Remove later because all dbs have encrytion 
-			//user = new User();
-			//user.EmployeeId = "";
-			//user.LanId = "lili.huang";
-			//user.Name = "lili huang";
-			//user.JobCode = "wiso12";
-			//// TODO: hardcode for now, get from database later
-			//var myRoleId = 1;
-			//switch (myRoleId)
-			//{
-			//	case 1:
-			//		user.Role = UserRole.Manager;
-			//		break;
-			//	case 2:
-			//		user.Role = UserRole.Supervisor;
-			//		break;
-			//	case 3:
-			//		user.Role = UserRole.Employee;
-			//		break;
-			//	case 4:
-			//		user.Role = UserRole.Other;
-			//		break;
-			//	default:
-			//		user.Role = UserRole.Unknown;
-			//		break;
-			//}
-			//// End remove
-
 			return user;
         }
     }

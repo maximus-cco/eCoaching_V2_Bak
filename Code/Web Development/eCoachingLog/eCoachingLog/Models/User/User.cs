@@ -1,43 +1,30 @@
-﻿using eCoachingLog.Utils;
-using System.Collections.Generic;
-
-namespace eCoachingLog.Models.User
+﻿namespace eCoachingLog.Models.User
 {
     public class User
     {
         public string EmployeeId { get; set; }
         public string LanId { get; set; }
         public string Name { get; set; }
-        public string JobCode { get; set; }
-        public UserRole Role{get; set;}
-        public List<Entitlement> Entitlements { get; set; }
-
-        public bool IsInRole(UserRole role)
-        {
-            return this.Role == role;
-        }
+        public string Role { get; set;}
+		// Whether the user is allowed to access New Submission page
+		public bool IsAccessNewSubmission { get; set; }
+		// Whether the user is allowed to access My Dashboard page
+		public bool IsAccessMyDashboard { get; set; }
+		// Whether the user is allowed to access Historical Dashboard page
+		public bool IsAccessHistoricalDashboard { get; set; }
+		// Whether the user is allowed to export data to excel on Historical Dashboard page
+		public bool IsExportExcel { get; set; }
 
         public User()
         {
-            EmployeeId = "-1";
-            LanId = "";
-            Name = "";
-            JobCode = "";
-           // Roles = new List<Role>();
-            Entitlements = new List<Entitlement>();
-        }
-
-        public User(string name)
-        {
-            this.Name = name;
-        }
-
-        public User(string employeeId, string lanId, string name, string jobCode)
-        {
-            this.EmployeeId = employeeId;
-            this.LanId = lanId;
-            this.Name = name;
-            this.JobCode = jobCode;
+            this.EmployeeId = "-1";
+			this.LanId = string.Empty;
+			this.Name = string.Empty;
+			this.Role = string.Empty;
+			this.IsAccessNewSubmission = false;
+			this.IsAccessMyDashboard = false;
+			this.IsAccessHistoricalDashboard = false;
+			this.IsExportExcel = false;
         }
     }
 }

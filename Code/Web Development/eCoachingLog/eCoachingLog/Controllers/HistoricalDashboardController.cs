@@ -128,6 +128,7 @@ namespace eCoachingLog.Controllers
 		{
 			User user = GetUserFromSession();
 			HistoricalDashboardViewModel vm = new HistoricalDashboardViewModel();
+			vm.IsExportExcel = user.IsExportExcel;
 			// Site
 			var siteList = this.siteService.GetAllSites();
 			siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });

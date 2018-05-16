@@ -19,38 +19,6 @@ namespace eCoachingLog.Extensions
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static bool IsAccessAllowed(this ControllerBase controller, string controllerName)
-        {
-            User user = (User)controller.ControllerContext.HttpContext.Session["AuthenticatedUser"];
-            IUserService us = new UserService();
-            if (user == null)
-            {
-                string userLanId = controller.ControllerContext.HttpContext.User.Identity.Name;
-                userLanId = userLanId.Replace(@"AD\", "");
-                user = us.GetUserByLanId(userLanId);
-                controller.ControllerContext.HttpContext.Session["AuthenticatedUser"] = user;
-            }
-
-			// TODO: have a db table configured to allow access each controller based on jobcodes
-			// sp (getuser) to return controller access permission as well
-			if ("NewSubmission" == controllerName)
-			{
-				return user.Role != UserRole.Employee && user.Role != UserRole.HR;
-			}
-
-			if ("MyDashboard" == controllerName)
-			{
-				return user.Role != UserRole.HR;
-			}
-
-			if ("HistoricalDashboard" == controllerName)
-			{
-				return user.Role != UserRole.Employee;
-			}
-
-			return false;
-        }
-
 		public static MemoryStream GenerateExcelFile(this LogBaseController controller, DataTable dataTable)
 		{
 			ExcelPackage excelPackage;
@@ -71,18 +39,6 @@ namespace eCoachingLog.Extensions
 			}
 			return memoryStream;
 		}
-
-		public static IEnumerable<SelectListItem> ToSelectListItems(this IEnumerable<NameLanId> nameLanIdList, string selectedValue)
-        {
-            return
-                nameLanIdList.Select(nameLanId =>
-                          new SelectListItem
-                          {
-                              Selected = (nameLanId.LanId.ToUpper() == selectedValue),
-                              Text = nameLanId.Name,
-                              Value = nameLanId.LanId
-                          });
-        }
 
         public static IEnumerable<SelectListItem> ToSelectListItems(this IEnumerable<Site> siteList, int selectedValue)
         {

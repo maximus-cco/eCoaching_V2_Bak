@@ -7,7 +7,7 @@ namespace eCoachingLog.Models.Common
     {
 		public string LogType { get; set; }
 
-		public UserRole UserRole { get; set; }
+		public string UserRole { get; set; }
 
 		public int SiteId { get; set; }
 		public string ManagerId { get; set; }

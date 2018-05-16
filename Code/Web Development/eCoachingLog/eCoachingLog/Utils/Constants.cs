@@ -6,10 +6,21 @@ namespace eCoachingLog.Utils
 {
     public static class Constants
     {
+		public const string USER_ROLE_CSR = "CSR";
+		public const string USER_ROLE_ARC = "ARC";
+		public const string USER_ROLE_SUPERVISOR = "Supervisor";
+		public const string USER_ROLE_MANAGER = "Manager";
+		public const string USER_ROLE_SR_MANAGER = "SrManager";
+		public const string USER_ROLE_DIRECTOR = "Director";
+		public const string USER_ROLE_OTHER = "Other";
+		public const string USER_ROLE_HR = "HR";
+
 		public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
 		public const string SITE_EMAIL_SUBJECT = "eCoaching Log";
 
 		public const string LOG_SEARCH_TYPE_HISTORICAL = "Historical";
+		public const string LOG_SEARCH_TYPE_MY_PENDING = "MyPending";
+		public const string LOG_SEARCH_TYPE_MY_COMPLETED = "MyCompleted";
 
 		public const int ALL_SITES = -1;
 
@@ -95,17 +106,6 @@ namespace eCoachingLog.Utils
 		};
 	}
 
-    public enum UserRole
-    {
-		Director = 1,
-		Manager = 2,
-        Supervisor = 3,
-        Employee = 4,
-		HR = 5,
-        Other = 6,
-        Unknown = 7
-    }
-
     public enum EmployeeLogType
     {
         [Description("Coaching")]
@@ -114,14 +114,4 @@ namespace eCoachingLog.Utils
         [Description("Warning")]
         Warning = 2
     }
-
-	public enum EmployeeTitle
-	{
-		Director = 1,
-		Manager = 2,
-		Supervisor = 3,
-		Employee = 4,
-		Other = 5,
-	}
-
 }

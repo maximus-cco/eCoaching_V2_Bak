@@ -114,7 +114,7 @@ namespace eCoachingLog.Controllers
 			// only load these dropdowns for supervisor/other and managers, since they have search selections for log list
 			// Supervisor Dropdown
 			// TODO: Get all supervisors under this user (manager)
-			if (user.Role == UserRole.Supervisor || user.Role == UserRole.Other)
+			if (user.Role == Constants.USER_ROLE_SUPERVISOR || user.Role == Constants.USER_ROLE_OTHER)
 			{
 				//List<Employee> employeeList = employeeService.GetEmployees(user.EmployeeId, logStatus);
 				//employeeList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
@@ -122,7 +122,7 @@ namespace eCoachingLog.Controllers
 				//vm.SupervisorSelectList = employees;
 			}
 			// TODO: only if user is director
-			if (user.Role == UserRole.Director)
+			if (user.Role == Constants.USER_ROLE_DIRECTOR)
 			{
 				List<LogStatus> logStatusList = new List<LogStatus>();
 				logStatusList.Insert(0, new LogStatus { Id = -1, Description = "-- Select a Status --" });
@@ -135,7 +135,7 @@ namespace eCoachingLog.Controllers
 
 			// TODO: move LogSectionWorkingOn to MyDashboardViewModel from MyDashboardSearch
 			// Add check LogSectionWorkingOn to decide which columns to hide
-			if (vm.Search.UserRole != UserRole.Employee)
+			if (vm.Search.UserRole != Constants.USER_ROLE_CSR)
 			{
 				vm.ShowSupNameColumn = true;
 			}
@@ -155,7 +155,7 @@ namespace eCoachingLog.Controllers
 			lc.LogListPageName = "_MyCompleted";
 			test.Add(lc);
 
-			if (user.Role == UserRole.Supervisor)
+			if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 			{
 				lc = new LogCount();
 				lc.Description = "My Team Pending";
@@ -202,7 +202,7 @@ namespace eCoachingLog.Controllers
 			{
 				// My Pending Section on My Dashboard
 				case "_MyPending": 
-					if (user.Role == UserRole.Manager)
+					if (user.Role == Constants.USER_ROLE_MANAGER)
 					{
 						// Supervisor dropdown
 						vm.SupervisorSelectList = GetSupsForMgrMyPending(user);
@@ -223,13 +223,13 @@ namespace eCoachingLog.Controllers
 					break;
 				// My Team Pending on My Dashboard
 				case "_MyTeamPending": 
-					if (user.Role == UserRole.Supervisor)
+					if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 					{
 						user.EmployeeId = "380158";
 						// Employee dropdown
 						vm.EmployeeSelectList = GetEmpsForSupMyTeamPending(user);
 					}
-					else if (user.Role == UserRole.Manager)
+					else if (user.Role == Constants.USER_ROLE_MANAGER)
 					{
 						// Supervisor dropdown
 						vm.SupervisorSelectList = new SelectList(employeeService.GetSupsForMgrMyTeamPending(user), "Id", "Name");
@@ -241,14 +241,14 @@ namespace eCoachingLog.Controllers
 					break;
 				// My Team Completed on My Dashboard
 				case "_MyTeamCompleted":
-					if (user.Role == UserRole.Supervisor)
+					if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 					{
 						// Manager dropdown
 						vm.ManagerSelectList = new SelectList(employeeService.GetMgrsForSupMyTeamCompleted(user), "Id", "Name");
 						// Employee dropdown
 						vm.EmployeeSelectList = new SelectList(employeeService.GetEmpsForSupMyTeamCompleted(user), "Id", "Name");
 					}
-					else if (user.Role == UserRole.Manager)
+					else if (user.Role == Constants.USER_ROLE_MANAGER)
 					{
 						// Supervisor dropdown
 						vm.SupervisorSelectList = new SelectList(employeeService.GetSupsForMgrMyTeamCompleted(user), "Id", "Name");
@@ -271,7 +271,7 @@ namespace eCoachingLog.Controllers
 
 			// TODO: move LogSectionWorkingOn to MyDashboardViewModel from MyDashboardSearch
 			// Add check LogSectionWorkingOn to decide which columns to hide
-			if (vm.Search.UserRole != UserRole.Employee)
+			if (vm.Search.UserRole != Constants.USER_ROLE_CSR)
 			{
 				vm.ShowSupNameColumn = true;
 			}
@@ -290,7 +290,7 @@ namespace eCoachingLog.Controllers
 			lc.LogListPageName = "_MyCompleted";
 			test.Add(lc);
 
-			if (user.Role == UserRole.Supervisor)
+			if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 			{
 				lc = new LogCount();
 				lc.Description = "My Team Pending";

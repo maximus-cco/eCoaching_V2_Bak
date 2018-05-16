@@ -1,6 +1,7 @@
 ﻿@using eCoachingLog.Models.User
 @{
 	var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+	var user = ((User)Session["AuthenticatedUser"]);
 }
 <!DOCTYPE html>
 <html>
@@ -25,21 +26,21 @@
 		<div class="container-fluid">
 			<div class="row col-sm-12">
 				<ul class='nav navbar-nav @(@controllerName == "Survey" ? "hide" : "show")'>
-				@if (ViewContext.Controller.IsAccessAllowed("NewSubmission"))
+				@if (user.IsAccessNewSubmission)
 				{
 					<li>@Html.ActionLink("New Submission", "Index", "NewSubmission")</li>
 				}
-				@if (ViewContext.Controller.IsAccessAllowed("MyDashboard"))
+				@if (user.IsAccessMyDashboard)
 				{
 					<li>@Html.ActionLink("My Dashboard", "Index", "MyDashboard", null, new { id = "mydashboard" })</li>
 				}
-				@if (ViewContext.Controller.IsAccessAllowed("HistoricalDashboard"))
+				@if (user.IsAccessHistoricalDashboard)
 				{
 					<li>@Html.ActionLink("Historical Dashboard", "Index", "HistoricalDashboard")</li>
 				}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#">Welcome @(((User)Session["AuthenticatedUser"]).Name)!</a></li>
+					<li><a href="#">Welcome, @(@user.Name)</a></li>
 				</ul>
 			</div>
 		</div>

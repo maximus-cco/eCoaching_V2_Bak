@@ -64,8 +64,6 @@ namespace eCoachingLog.Controllers
 
 			var user = GetUserFromSession();
 			// TODO: get user data from db
-			user.JobCode = "Director"; // TODO: set up appropriate role in db
-
 			user.EmployeeId = "222222";
 			vm.LogDetail.SupervisorEmpId = "222222";
 			vm.LogDetail.ModuleId = 1;

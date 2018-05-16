@@ -1,12 +1,11 @@
 ﻿using eCoachingLog.Models.Common;
 using eCoachingLog.Models.MyDashboard;
-using eCoachingLog.Utils;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace eCoachingLog.ViewModels
 {
-    public class MyDashboardViewModel : BaseViewModel
+	public class MyDashboardViewModel : BaseViewModel
 	{
 		// TODO: wrap them in User
 		// public User User { get; set; }
@@ -106,7 +105,7 @@ namespace eCoachingLog.ViewModels
 			this.SourceSelectList = new List<SelectListItem>();
 		}
 
-        public MyDashboardViewModel(string userId, string userLanId, UserRole userRole) : this()
+        public MyDashboardViewModel(string userId, string userLanId, string userRole) : this()
         {
             this.UserId = userId;
             this.UserLanId = userLanId;
