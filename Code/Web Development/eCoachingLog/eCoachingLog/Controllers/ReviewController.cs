@@ -21,11 +21,22 @@ namespace eCoachingLog.Controllers
 		// GET: Review
 		public ActionResult Index(int logId, bool isCoaching)
         {
+			int currentPage = (int) Session["currentPage"];
 			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
+
+			// Check if the user is authorized to view the log detail
+			bool isAuthorizedToView = IsAuthorizedToView(currentPage, logDetail, isCoaching);
+			if (!isAuthorizedToView)
+			{
+				ViewBag.LogName = logDetail.FormName;
+				return PartialView("_Unauthorized");
+			}
+
+			// Get coaching reasons for this log
 			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching);
 
 			// View only if user clicks a log on Historical Dashboard
-			if ("Historical" == (string)Session["currentPage"] || "Survey" == (string)Session["currentPage"])
+			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage || Constants.PAGE_SURVEY == currentPage)
 			{
 				var reviewVM = new ReviewViewModel();
 				if (isCoaching)
@@ -104,6 +115,7 @@ namespace eCoachingLog.Controllers
 				//vm.LogDetail.Status = "Completed";
 				//if (vm.LogDetail.Status == "Completed")
 				var status = (string)Session["CurrentViewLogStatus"];
+				// TODO: Check current log status, what about submission? 
 				if (status == "Completed" || status == "Submission")
 				{
 					vm.ShowReviewCoachingFinalPartial = true;
@@ -123,6 +135,52 @@ namespace eCoachingLog.Controllers
 
 			return PartialView("_ReviewCoachingHome", vm);
         }
+
+		private bool IsAuthorizedToView(int currentPage, BaseLogDetail logDetail, bool isCoaching)
+		{
+			var user = GetUserFromSession();
+			var userJobCode = user.JobCode == null ? string.Empty : user.JobCode.ToUpper();
+			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage)
+			{
+				return (
+					user.EmployeeId == logDetail.SubmitterEmpId
+					|| user.EmployeeId == logDetail.EmployeeId
+					|| user.EmployeeId == logDetail.SupervisorEmpId
+					|| user.EmployeeId == logDetail.ManagerEmpId
+					|| user.IsEcl
+					|| user.Role == Constants.USER_ROLE_SR_MANAGER
+					|| userJobCode.StartsWith("WHHR")
+					|| userJobCode.StartsWith("WHER")
+					|| userJobCode.StartsWith("WHRC")
+				);
+			}
+
+			if (Constants.PAGE_MY_DASHBOARD == currentPage)
+			{
+				return (
+					(user.EmployeeId == logDetail.SubmitterEmpId && user.Role != Constants.USER_ROLE_ARC)
+					|| user.EmployeeId == logDetail.EmployeeId
+					|| user.EmployeeId == logDetail.SubmitterEmpId
+					|| user.EmployeeId == logDetail.ManagerEmpId
+					|| (isCoaching && ((CoachingLogDetail)logDetail).IsCse && user.EmployeeId == logDetail.LogManagerEmpId)
+					|| (isCoaching && 
+							(user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedSupervisorName 
+								|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedManagerName)
+						)
+				);
+			}
+
+			// If it reaches here, it already passes authorization in Survey Controller 
+			if (Constants.PAGE_SURVEY == currentPage)
+			{
+				// To be safe, check again
+				return (
+					user.EmployeeId == logDetail.EmployeeId
+				);
+			}
+
+			return false;
+		}
 
 		[HttpPost]
 		public ActionResult Save(ReviewViewModel vm)

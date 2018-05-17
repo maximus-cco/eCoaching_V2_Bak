@@ -369,6 +369,7 @@
     <Content Include="Views\Review\_ViewWarningLog.cshtml" />
     <Content Include="Views\Survey\Index.cshtml" />
     <Content Include="Views\Survey\_Result.cshtml" />
+    <Content Include="Views\Review\_Unauthorized.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

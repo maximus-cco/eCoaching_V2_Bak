@@ -28,7 +28,7 @@ namespace eCoachingLog.Controllers
 		// GET: HistoricalDashboard
 		public ActionResult Index()
         {
-			Session["currentPage"] = "Historical";
+			Session["currentPage"] = Constants.PAGE_HISTORICAL_DASHBOARD;
 			var vm = InitHistDashboardViewModel();
 			return View(vm);
         }

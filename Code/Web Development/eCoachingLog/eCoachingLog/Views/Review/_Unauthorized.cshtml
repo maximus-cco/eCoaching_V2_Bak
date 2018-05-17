@@ -1,0 +1,21 @@
+﻿<div class="container-fluid" style="height: 100%;">
+	<div class="modal-header">
+		@ViewBag.LogName
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="font-size: large;">X</span></button>
+	</div>
+	<div class="modal-body" style="font-size: small;">
+		<h4>You are not authorized to view this log.</h4>
+	</div>
+	<div class="modal-footer">
+		<div class="form-group">
+			<button class="btn btn-default float-right" id="btn-close" data-dismiss="modal">Close</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(function () {
+		$('#modal-container').css('margin-top', '10%');
+		$('.modal-content').css('width', '30%');
+	});
+</script>

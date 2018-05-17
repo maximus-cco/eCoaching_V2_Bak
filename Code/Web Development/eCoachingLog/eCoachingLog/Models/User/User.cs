@@ -5,7 +5,10 @@
         public string EmployeeId { get; set; }
         public string LanId { get; set; }
         public string Name { get; set; }
+		public string JobCode { get; set; }
         public string Role { get; set;}
+		// Be able to view all logs on Historical Dashboard if true 
+		public bool IsEcl { get; set; }
 		// Whether the user is allowed to access New Submission page
 		public bool IsAccessNewSubmission { get; set; }
 		// Whether the user is allowed to access My Dashboard page
@@ -20,7 +23,9 @@
             this.EmployeeId = "-1";
 			this.LanId = string.Empty;
 			this.Name = string.Empty;
+			this.JobCode = string.Empty;
 			this.Role = string.Empty;
+			this.IsEcl = false;
 			this.IsAccessNewSubmission = false;
 			this.IsAccessMyDashboard = false;
 			this.IsAccessHistoricalDashboard = false;

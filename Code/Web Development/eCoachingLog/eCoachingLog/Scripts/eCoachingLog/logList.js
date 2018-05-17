@@ -6,7 +6,7 @@ $(document).ready(function () {
     	renderer: "bootstrap",
 		autowidth: false,
 		language: {
-			processing: "<span>Loading......Please wait...</span>",
+			processing: "<span>Loading...... Please wait...</span>",
 		},
 		processing: true,
         serverSide: true, // Process server side
