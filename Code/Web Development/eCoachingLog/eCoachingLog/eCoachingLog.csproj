@@ -259,7 +259,6 @@
     <Content Include="Content\Images\cco-logo.jpg" />
     <Content Include="Content\Images\ecl-logo-small.png" />
     <Content Include="Content\Images\ecl-logo.png" />
-    <Content Include="Content\Images\eCL.png" />
     <Content Include="Content\Images\sort_asc.png" />
     <Content Include="Content\Images\sort_asc_disabled.png" />
     <Content Include="Content\Images\sort_both.png" />
