@@ -35,6 +35,7 @@
 	var supId = '@Html.Raw(Model.SupervisorId)';
 	var loadDataUrl = '@Url.Action("LoadData")';
 	var getLogDetailsUrl = '@Url.Action("GetLogDetail")';
+	var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';
 </script>
 
 @Scripts.Render("~/bundles/scripts/logList")

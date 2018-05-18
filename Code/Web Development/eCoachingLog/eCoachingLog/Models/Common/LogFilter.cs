@@ -6,7 +6,6 @@ namespace eCoachingLog.Models.Common
 	public class LogFilter
     {
 		public string LogType { get; set; }
-
 		public string UserRole { get; set; }
 
 		public int SiteId { get; set; }
@@ -17,7 +16,6 @@ namespace eCoachingLog.Models.Common
 		public int StatusId { get; set; }
         public int SourceId { get; set; }
 		public string ValueId { get; set; }
-
 		// Warning specific
 		public bool IsActive { get; set; }
 
@@ -26,6 +24,9 @@ namespace eCoachingLog.Models.Common
 		public int ActiveEmployee { get; set; }
 		public string SubmitDateFrom { get; set; }
 		public string SubmitDateTo { get; set; }
+
+		// Datatables column show/hide
+		public bool ShowSupNameColumn { get; set; }
 
 		public LogFilter()
 		{
@@ -40,8 +41,8 @@ namespace eCoachingLog.Models.Common
 			this.SubmitDateTo = DateTime.Now.ToString("MM/dd/yyyy");
 			this.StatusId = -1;
 			this.ValueId = "-1";
-
 			this.ActiveEmployee = 1;
+			this.ShowSupNameColumn = false;
 		}
 	}
 }

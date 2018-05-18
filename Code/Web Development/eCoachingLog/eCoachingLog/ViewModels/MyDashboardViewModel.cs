@@ -91,9 +91,6 @@ namespace eCoachingLog.ViewModels
             }
         }
 
-		// Datatables column show/hide
-		public bool ShowSupNameColumn { get; set; }
-
         public MyDashboardViewModel()
         {
 			this.LogCountList = new List<LogCount>();

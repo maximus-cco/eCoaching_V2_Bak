@@ -1,6 +1,5 @@
 ﻿$(document).ready(function () {
-
-	$('.employee-status').on('change', function () {
+	$('body').on('change', '.employee-status', function () {
 		var empStatusSelected = $('input:radio[name="Search.ActiveEmployee"]:checked').val();
 		var supervisorSelected = $('#select-supervisor').val();
 		// Reload employees, since a different employee staus radio button is selected
@@ -10,7 +9,7 @@
 		}
 	});
 
-	$('#select-site').on("change", function () {
+	$('body').on('change', '#select-site', function () {
 		$('#select-manager').addClass('loadinggif');
 		var siteSelected = $('#select-site').val();
 		if (siteSelected != -2)
@@ -47,7 +46,7 @@
 		});
 	});
 
-	$('#select-manager').on("change", function () {
+	$('body').on('change', '#select-manager', function () {
 		$('#select-supervisor').addClass('loadinggif');
 		var mgrSelected = $('#select-manager').val();
 		if (mgrSelected != -2) {
@@ -76,14 +75,14 @@
 			});
 	});
 
-	$('#select-supervisor').on("change", function () {
+	$('body').on('change', '#select-supervisor', function () {
 		if ($(this).val() != -2) {
 			$(this).css('border-color', '');
 		}
 		ReloadEmployees();
 	});
 
-	$('#select-employee').on("change", function () {
+	$('body').on('change', '#select-employee', function () {
 		if ($(this).val() != -2) {
 			$(this).css('border-color', '');
 		}
@@ -114,7 +113,7 @@
 			});
 	}
 
-	$('#btn-reset').on("click", function () {
+	$('body').on('click', '#btn-reset', function () {
 		$('#div-search-result').removeClass('show');
 		$('#div-search-result').addClass('hide');
 		$.ajax({
@@ -125,7 +124,7 @@
 		});
 	});
 
-	$('.reset-search-result').on('change', function () {
+	$('body').on('change', '.reset-search-result', function () {
 		$('#div-search-result').removeClass('show');
 		$('#div-search-result').addClass('hide');
 	});
