@@ -1,6 +1,6 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
 @using eCoachingLog.Utils
-User Role: @Model.Search.UserRole
+
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default filterable" id="coaching-log-list">
@@ -12,7 +12,7 @@ User Role: @Model.Search.UserRole
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-				@if (Model.Search.UserRole == UserRole.Manager)
+				@if (Model.Search.UserRole == Constants.USER_ROLE_MANAGER)
 				{
 					<div id="div-my-pending-search">
 						@{ Html.RenderPartial("_MyPendingMgrSearch"); }

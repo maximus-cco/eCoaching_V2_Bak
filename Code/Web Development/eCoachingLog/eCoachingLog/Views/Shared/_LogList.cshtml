@@ -33,11 +33,8 @@
 <script>
 	var logFilter = @Html.Raw(Json.Encode(Model));
 	var supId = '@Html.Raw(Model.SupervisorId)';
-	var showSupervisorColumn = 'True';
 	var loadDataUrl = '@Url.Action("LoadData")';
 	var getLogDetailsUrl = '@Url.Action("GetLogDetail")';
 </script>
 
 @Scripts.Render("~/bundles/scripts/logList")
-
-@*'@Html.Raw(Model.ShowSupNameColumn)';*@

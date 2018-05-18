@@ -260,6 +260,11 @@
     <Content Include="Content\Images\ecl-logo-small.png" />
     <Content Include="Content\Images\ecl-logo.png" />
     <Content Include="Content\Images\eCL.png" />
+    <Content Include="Content\Images\sort_asc.png" />
+    <Content Include="Content\Images\sort_asc_disabled.png" />
+    <Content Include="Content\Images\sort_both.png" />
+    <Content Include="Content\Images\sort_desc.png" />
+    <Content Include="Content\Images\sort_desc_disabled.png" />
     <Content Include="Content\sb-admin-2.css" />
     <Content Include="EmailTemplates\NewSubmission.html" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
