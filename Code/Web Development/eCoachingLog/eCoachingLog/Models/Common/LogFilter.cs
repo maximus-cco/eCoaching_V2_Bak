@@ -42,7 +42,7 @@ namespace eCoachingLog.Models.Common
 			this.StatusId = -1;
 			this.ValueId = "-1";
 			this.ActiveEmployee = 1;
-			this.ShowSupNameColumn = false;
+			this.ShowSupNameColumn = true;
 		}
 	}
 }
