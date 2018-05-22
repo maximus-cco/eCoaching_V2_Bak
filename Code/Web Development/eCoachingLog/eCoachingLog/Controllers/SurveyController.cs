@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Models.Survey;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
+using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
 using System;
@@ -53,7 +54,7 @@ namespace eCoachingLog.Controllers
 				ViewBag.Message = "This survey has expired.";
 			}
 
-			Session["currentPage"] = "Survey";
+			Session["currentPage"] = Constants.PAGE_SURVEY;
 
 			if (!isSurveyValid)
 			{

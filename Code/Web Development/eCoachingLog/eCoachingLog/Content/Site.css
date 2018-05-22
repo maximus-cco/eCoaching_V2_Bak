@@ -67,8 +67,8 @@ table.mytable td {
 .please-wait
 {
     position: fixed;
-    top: 0px;
-    left: 0px;
+    top: 15%;
+    left: 0%;
     min-height: 100%;
     min-width: 100%;
     background-image: url("../Content/Images/ajax-spinner.gif");

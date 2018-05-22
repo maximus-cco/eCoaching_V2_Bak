@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Models;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
+using eCoachingLog.Models.MyDashboard;
 using eCoachingLog.Models.User;
 using System.Collections.Generic;
 using System.Data;
@@ -28,5 +29,8 @@ namespace eCoachingLog.Services
 		int GetLogListTotal(LogFilter logFiler, string userId, string search);
 
 		IList<LogState> GetStatesForMyTeamWarning(User user);
+		IList<LogCount> GetLogCounts(User user);
+
+		IList<ChartDataset> GetChartDataSets(User user);
 	}
 }

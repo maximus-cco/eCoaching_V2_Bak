@@ -69,6 +69,24 @@ namespace eCoachingLog.Utils
         public const string ECOACHING_URL_PROD = "https://f3420-mwbp11.vangent.local/eCoachingLog";
         public const string ECOACHING_URL_ST = "https://f3420-mpmd01.vangent.local/eCoachingLog_st";
 
+		public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
+		{
+			{ "My Pending", "_MyPending" },
+			{ "My Completed", "_MyCompleted" }
+		};
+
+		public static readonly Dictionary<int, string> Colors = new Dictionary<int, string>
+		{
+			{ 1, "#2B65EC" },
+			{ 2, "#93FFE8" },
+			{ 3, "#FFFF00" },
+			{ 4, "#F88017" },
+			{ 5, "#4E8975" },
+			{ 6, "#B93B8F" },
+			{ 7, "#B93B8F" },
+			{ 8, "#FF0000" }
+		};
+
 		// Dictionary<<moduleId, statusId>, statusLevel>
 		public static readonly Dictionary<Tuple<int, int>, int> LogStatusLevel = new Dictionary<Tuple<int, int>, int>
 		{

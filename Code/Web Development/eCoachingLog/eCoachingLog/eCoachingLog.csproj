@@ -156,7 +156,7 @@
     <Compile Include="Models\Common\LogState.cs" />
     <Compile Include="Models\Common\LogValue.cs" />
     <Compile Include="Models\MyDashboard\ChartData.cs" />
-    <Compile Include="Models\MyDashboard\ChartDatasets.cs" />
+    <Compile Include="Models\MyDashboard\ChartDataset.cs" />
     <Compile Include="Models\Review\Review.cs" />
     <Compile Include="Models\Survey\Question.cs" />
     <Compile Include="Models\Survey\SingleChoice.cs" />

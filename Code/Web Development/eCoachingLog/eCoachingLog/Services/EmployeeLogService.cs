@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Models;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
+using eCoachingLog.Models.MyDashboard;
 using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
 using log4net;
@@ -146,6 +147,16 @@ namespace eCoachingLog.Services
 				return new List<LogState>();
 			}
 			return employeeLogRepository.GetStatesForMyTeamWarning(user);
+		}
+
+		public IList<LogCount> GetLogCounts(User user)
+		{
+			return employeeLogRepository.GetLogCounts(user);
+		}
+
+		public IList<ChartDataset> GetChartDataSets(User user)
+		{
+			return employeeLogRepository.GetChartDataSets(user);
 		}
 	}
 }

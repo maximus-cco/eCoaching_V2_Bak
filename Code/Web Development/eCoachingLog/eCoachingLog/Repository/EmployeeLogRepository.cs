@@ -2,6 +2,7 @@
 using eCoachingLog.Models;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
+using eCoachingLog.Models.MyDashboard;
 using eCoachingLog.Models.User;
 using eCoachingLog.Utils;
 using log4net;
@@ -574,6 +575,52 @@ namespace eCoachingLog.Repository
 				}
 			}
 			return logStates;
+		}
+
+		public IList<LogCount> GetLogCounts(User user)
+		{
+			var logCounts = new List<LogCount>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Summary_Count]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						LogCount lc = new LogCount();
+						lc.Description = dataReader["CountType"].ToString();
+						lc.Count = Convert.ToInt32(dataReader["LogCount"]);
+						logCounts.Add(lc);
+					}
+				}
+			}
+			return logCounts;
+		}
+
+		public IList<ChartDataset> GetChartDataSets(User user)
+		{
+			var chartDatasets = new List<ChartDataset>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Summary_Count_ByStatus]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						ChartDataset cds = new ChartDataset();
+						cds.label = dataReader["Status"].ToString();
+						cds.data.Add(Convert.ToInt32(dataReader["LogCount"]));
+						chartDatasets.Add(cds);
+					}
+				}
+			}
+			return chartDatasets;
 		}
 	}
 }

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace eCoachingLog.Models.MyDashboard
 {
-	public class ChartDatasets
+	public class ChartDataset
 	{
 		public string label { get; set; }
 		public IList<int> data {get; set;}
@@ -13,7 +10,7 @@ namespace eCoachingLog.Models.MyDashboard
 		public string backgroundColor { get; set; }
 		public string borderColor { get; set; }
 
-		public ChartDatasets()
+		public ChartDataset()
 		{
 			data = new List<int>();
 		}
