@@ -132,58 +132,26 @@ namespace eCoachingLog.Controllers
 
 			// TODO: get real employees
 			//vm.EmployeeSelectList = employees;
-
+			
 			// TODO: move LogSectionWorkingOn to MyDashboardViewModel from MyDashboardSearch
 			// Add check LogSectionWorkingOn to decide which columns to hide
-			if (vm.Search.UserRole != Constants.USER_ROLE_CSR)
+			if (vm.Search.UserRole == Constants.USER_ROLE_CSR)
 			{
-				vm.ShowSupNameColumn = true;
+				vm.Search.ShowSupNameColumn = false;
 			}
 
 			// Data to be displayed next to bar chart
-			// TODO: call a sp to get description/count
-			IList<LogCount> test = new List<LogCount>();
-			LogCount lc = new LogCount();
-			lc.Description = "My Pending";
-			lc.Count = 10;
-			lc.LogListPageName = "_MyPending";
-			test.Add(lc);
-
-			lc = new LogCount();
-			lc.Description = "My Completed";
-			lc.Count = 20;
-			lc.LogListPageName = "_MyCompleted";
-			test.Add(lc);
-
-			if (user.Role == Constants.USER_ROLE_SUPERVISOR)
+			IList<LogCount> logCountList = empLogService.GetLogCounts(user);
+			foreach (var lc in logCountList)
 			{
-				lc = new LogCount();
-				lc.Description = "My Team Pending";
-				lc.Count = 12;
-				lc.LogListPageName = "_MyTeamPending";
-				test.Add(lc);
+				lc.LogListPageName = Constants.LogTypeToPageName[lc.Description];
 
-				lc = new LogCount();
-				lc.Description = "My Team Completed";
-				lc.Count = 15;
-				lc.LogListPageName = "_MyTeamCompleted";
-				test.Add(lc);
-
-				lc = new LogCount();
-				lc.Description = "My Team Warning";
-				lc.Count = 8;
-				lc.LogListPageName = "_MyTeamWarning";
-				test.Add(lc);
-
-				lc = new LogCount();
-				lc.Description = "My Submission";
-				lc.Count = 123;
-				lc.LogListPageName = "_MySubmission";
-				test.Add(lc);
 			}
 
-			vm.LogCountList = test;
-			//vm.PercentCompleted = 60;
+			vm.LogCountList = logCountList;
+
+			Session["LogCountList"] = logCountList;
+
 			return vm;
         }
 
@@ -191,11 +159,6 @@ namespace eCoachingLog.Controllers
 		{
 			var user = GetUserFromSession();
 			var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
-			//IList<Employee> managerList = new List<Employee>();
-			//IList<Employee> supervisorList = new List<Employee>();
-			//IList<Employee> employeeList = new List<Employee>();
-			//IList<LogSource> sourceList = new List<LogSource>();
-			//IList<LogState> stateList = new List<LogState>();
 
 			// Load dropdowns for search
 			switch (whatLog)
@@ -269,50 +232,6 @@ namespace eCoachingLog.Controllers
 					break;
 			}
 
-			// TODO: move LogSectionWorkingOn to MyDashboardViewModel from MyDashboardSearch
-			// Add check LogSectionWorkingOn to decide which columns to hide
-			if (vm.Search.UserRole != Constants.USER_ROLE_CSR)
-			{
-				vm.ShowSupNameColumn = true;
-			}
-
-			// Data to be displayed next to bar chart
-			IList<LogCount> test = new List<LogCount>();
-			LogCount lc = new LogCount();
-			lc.Description = "My Pending";
-			lc.Count = 10;
-			lc.LogListPageName = "_MyPending";
-			test.Add(lc);
-
-			lc = new LogCount();
-			lc.Description = "My Completed";
-			lc.Count = 20;
-			lc.LogListPageName = "_MyCompleted";
-			test.Add(lc);
-
-			if (user.Role == Constants.USER_ROLE_SUPERVISOR)
-			{
-				lc = new LogCount();
-				lc.Description = "My Team Pending";
-				lc.Count = 12;
-				lc.LogListPageName = "_MyTeamPending";
-				test.Add(lc);
-
-				lc = new LogCount();
-				lc.Description = "My Team Completed";
-				lc.Count = 15;
-				lc.LogListPageName = "_MyTeamCompleted";
-				test.Add(lc);
-
-				lc = new LogCount();
-				lc.Description = "My Team Warning";
-				lc.Count = 8;
-				lc.LogListPageName = "_MyTeamWarning";
-				test.Add(lc);
-			}
-
-			vm.LogCountList = test;
-			//vm.PercentCompleted = 60;
 			return vm;
 		}
 
@@ -351,33 +270,62 @@ namespace eCoachingLog.Controllers
 		[HttpPost]
 		public ActionResult GetChartData()
 		{
-			ChartData data = GetChartData_Supervisor();
+			IList<ChartDataset> dataSets = null;
+			ChartData data = null;
+			try
+			{
+				dataSets = empLogService.GetChartDataSets(GetUserFromSession());
+				data = CreateChartData(dataSets);
+			}
+			catch (Exception ex)
+			{
+				logger.Warn(ex.StackTrace);
+				logger.Warn(ex.Message);
+				// Error, reset
+				// Show "No data to display".
+				dataSets = new List<ChartDataset>();
+				data = new ChartData();
+			}
 
 			return Json(new
 			{
 				data = data,
 				//dataSite = dataSite,
-				chartTitle = "My chart title"
+				chartTitle = string.Empty 
 			}
 				, @"application/json");
+		}
+
+		private ChartData CreateChartData(IList<ChartDataset> dataSets)
+		{
+			ChartData data = new ChartData();
+			int index = 1;
+			foreach (var ds in dataSets)
+			{
+				ds.backgroundColor = Constants.Colors[index];
+				ds.borderColor = Constants.Colors[index];
+				data.datasets.Add(ds);
+				index++;
+			}
+
+			return data;
 		}
 
 		private ChartData GetChartData_Employee()
 		{
 			ChartData data = new ChartData();
-			data.xLabels = GetChartXLabels_Employee();
 			Random rnd = new Random();
-			ChartDatasets dataset = new ChartDatasets();
+			ChartDataset dataset = new ChartDataset();
 			var max = 100;
 
-			ChartDatasets dataset1 = new ChartDatasets();
+			ChartDataset dataset1 = new ChartDataset();
 			dataset1.label = "Pending Acknowledgement";
 			dataset1.data.Add(rnd.Next(1, max));
 			dataset1.backgroundColor = "#2B65EC";
 			dataset1.borderColor = "#2B65EC";
 			data.datasets.Add(dataset1);
 
-			ChartDatasets dataset2 = new ChartDatasets();
+			ChartDataset dataset2 = new ChartDataset();
 			dataset2.label = "Pending Employee Review";
 			dataset2.data.Add(rnd.Next(1, max));
 			dataset2.backgroundColor = "#93FFE8";
@@ -401,59 +349,59 @@ namespace eCoachingLog.Controllers
 			ChartData data = new ChartData();
 			data.xLabels = GetChartXLabels_Supervisor();
 			Random rnd = new Random();
-			ChartDatasets dataset = new ChartDatasets();
+			ChartDataset dataset = new ChartDataset();
 			var max = 100;
 
-			ChartDatasets dataset1 = new ChartDatasets();
+			ChartDataset dataset1 = new ChartDataset();
 			dataset1.label = "Pending Acknowledgement";
 			dataset1.data.Add(rnd.Next(1, max));
 			dataset1.backgroundColor = "#2B65EC";
 			dataset1.borderColor = "#2B65EC";
 			data.datasets.Add(dataset1);
 
-			ChartDatasets dataset2 = new ChartDatasets();
+			ChartDataset dataset2 = new ChartDataset();
 			dataset2.label = "Pending Employee Review";
 			dataset2.data.Add(rnd.Next(1, max));
 			dataset2.backgroundColor = "#93FFE8";
 			dataset2.borderColor = "#93FFE8";
 			data.datasets.Add(dataset2);
 
-			ChartDatasets dataset3 = new ChartDatasets();
+			ChartDataset dataset3 = new ChartDataset();
 			dataset3.label = "Pending Manager Review";
 			dataset3.data.Add(rnd.Next(1, max));
 			dataset3.backgroundColor = "#FFFF00";
 			dataset3.borderColor = "#FFFF00";
 			data.datasets.Add(dataset3);
 
-			ChartDatasets dataset4 = new ChartDatasets();
+			ChartDataset dataset4 = new ChartDataset();
 			dataset4.label = "Pending Supervisor Review";
 			dataset4.data.Add(rnd.Next(1, max));
 			dataset4.backgroundColor = "#F88017";
 			dataset4.borderColor = "#F88017";
 			data.datasets.Add(dataset4);
 
-			ChartDatasets dataset5 = new ChartDatasets();
+			ChartDataset dataset5 = new ChartDataset();
 			dataset5.label = "Pending Sr. Mgr Review";
 			dataset5.data.Add(rnd.Next(1, max));
 			dataset5.backgroundColor = "#4E8975";
 			dataset5.borderColor = "#4E8975";
 			data.datasets.Add(dataset5);
 
-			ChartDatasets dataset6 = new ChartDatasets();
+			ChartDataset dataset6 = new ChartDataset();
 			dataset6.label = "Pending Qlt Lead Review";
 			dataset6.data.Add(rnd.Next(1, max));
 			dataset6.backgroundColor = "#4B0082";
 			dataset6.borderColor = "#4B0082";
 			data.datasets.Add(dataset6);
 
-			ChartDatasets dataset7 = new ChartDatasets();
+			ChartDataset dataset7 = new ChartDataset();
 			dataset7.label = "Pending Dep Prg Mgr Review";
 			dataset7.data.Add(rnd.Next(1, max));
 			dataset7.backgroundColor = "#B93B8F";
 			dataset7.borderColor = "#B93B8F";
 			data.datasets.Add(dataset7);
 
-			ChartDatasets dataset8 = new ChartDatasets();
+			ChartDataset dataset8 = new ChartDataset();
 			dataset8.label = "Warning";
 			dataset8.data.Add(rnd.Next(1, max));
 			dataset8.backgroundColor = "#FF0000";
@@ -477,7 +425,7 @@ namespace eCoachingLog.Controllers
 			ChartData data = new ChartData();
 			data.xLabels = GetChartXLabels_Director();
 			Random rnd = new Random();
-			ChartDatasets dataset = new ChartDatasets();
+			ChartDataset dataset = new ChartDataset();
 			var max = 100;
 			dataset.label = "Completed";
 			dataset.data.Add(rnd.Next(1, max));
@@ -497,7 +445,7 @@ namespace eCoachingLog.Controllers
 			dataset.borderColor = "#4CC417";
 			data.datasets.Add(dataset);
 
-			ChartDatasets dataset1 = new ChartDatasets();
+			ChartDataset dataset1 = new ChartDataset();
 			dataset1.label = "Pending Acknowledgement";
 			dataset1.data.Add(rnd.Next(1, max));
 			dataset1.data.Add(rnd.Next(1, max));
@@ -516,7 +464,7 @@ namespace eCoachingLog.Controllers
 			dataset1.borderColor = "#2B65EC";
 			data.datasets.Add(dataset1);
 
-			ChartDatasets dataset2 = new ChartDatasets();
+			ChartDataset dataset2 = new ChartDataset();
 			dataset2.label = "Pending Employee Review";
 			dataset2.data.Add(rnd.Next(1, max));
 			dataset2.data.Add(rnd.Next(1, max));
@@ -535,7 +483,7 @@ namespace eCoachingLog.Controllers
 			dataset2.borderColor = "#93FFE8";
 			data.datasets.Add(dataset2);
 
-			ChartDatasets dataset3 = new ChartDatasets();
+			ChartDataset dataset3 = new ChartDataset();
 			dataset3.label = "Pending Manager Review";
 			dataset3.data.Add(rnd.Next(1, max));
 			dataset3.data.Add(rnd.Next(1, max));
@@ -554,7 +502,7 @@ namespace eCoachingLog.Controllers
 			dataset3.borderColor = "#FFFF00";
 			data.datasets.Add(dataset3);
 
-			ChartDatasets dataset4 = new ChartDatasets();
+			ChartDataset dataset4 = new ChartDataset();
 			dataset4.label = "Pending Supervisor Review";
 			dataset4.data.Add(rnd.Next(1, max));
 			dataset4.data.Add(rnd.Next(1, max));
@@ -573,7 +521,7 @@ namespace eCoachingLog.Controllers
 			dataset4.borderColor = "#F88017";
 			data.datasets.Add(dataset4);
 
-			ChartDatasets dataset5 = new ChartDatasets();
+			ChartDataset dataset5 = new ChartDataset();
 			dataset5.label = "Pending Sr. Mgr Review";
 			dataset5.data.Add(rnd.Next(1, max));
 			dataset5.data.Add(rnd.Next(1, max));
@@ -592,7 +540,7 @@ namespace eCoachingLog.Controllers
 			dataset5.borderColor = "#4E8975";
 			data.datasets.Add(dataset5);
 
-			ChartDatasets dataset6 = new ChartDatasets();
+			ChartDataset dataset6 = new ChartDataset();
 			dataset6.label = "Pending Qlt Lead Review";
 			dataset6.data.Add(rnd.Next(1, max));
 			dataset6.data.Add(rnd.Next(1, max));
@@ -611,7 +559,7 @@ namespace eCoachingLog.Controllers
 			dataset6.borderColor = "#4B0082";
 			data.datasets.Add(dataset6);
 
-			ChartDatasets dataset7 = new ChartDatasets();
+			ChartDataset dataset7 = new ChartDataset();
 			dataset7.label = "Pending Dep Prg Mgr Review";
 			dataset7.data.Add(rnd.Next(1, max));
 			dataset7.data.Add(rnd.Next(1, max));
@@ -630,7 +578,7 @@ namespace eCoachingLog.Controllers
 			dataset7.borderColor = "#B93B8F";
 			data.datasets.Add(dataset7);
 
-			ChartDatasets dataset8 = new ChartDatasets();
+			ChartDataset dataset8 = new ChartDataset();
 			dataset8.label = "Warning";
 			dataset8.data.Add(rnd.Next(1, max));
 			dataset8.data.Add(rnd.Next(1, max));
