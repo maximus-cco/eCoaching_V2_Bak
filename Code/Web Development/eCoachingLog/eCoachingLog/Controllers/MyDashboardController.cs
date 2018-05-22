@@ -146,6 +146,10 @@ namespace eCoachingLog.Controllers
 			{
 				lc.LogListPageName = Constants.LogTypeToPageName[lc.Description];
 
+				if (lc.Description == "My Pending")
+				{
+					vm.MyTotalPending = lc.Count;
+				}
 			}
 
 			vm.LogCountList = logCountList;

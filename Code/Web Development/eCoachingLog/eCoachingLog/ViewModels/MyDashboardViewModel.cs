@@ -1,5 +1,4 @@
 ﻿using eCoachingLog.Models.Common;
-using eCoachingLog.Models.MyDashboard;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
@@ -20,10 +19,12 @@ namespace eCoachingLog.ViewModels
 
 		public IList<LogCount> LogCountList { get; set; }
 
-		// Progress bar
-		public int PercentCompleted { get; set; }
+		public int MyTotalPending { get; set; }
 
-        public MyDashboardCounts Counts { get; set; }
+		// Progress bar
+		//public int PercentCompleted { get; set; }
+
+       // public MyDashboardCounts Counts { get; set; }
 
 		// Search (from director)
 		public int LogStatusId { get; set; }

@@ -198,7 +198,6 @@
     <Compile Include="Models\Common\LogStatus.cs" />
     <Compile Include="Models\Common\LogType.cs" />
     <Compile Include="Models\Common\WarningLogDetail.cs" />
-    <Compile Include="Models\MyDashboard\MyDashboardCounts.cs" />
     <Compile Include="Models\Common\LogFilter.cs" />
     <Compile Include="Models\NewSubmission\NewSubmission.cs" />
     <Compile Include="Models\Common\Program.cs" />
