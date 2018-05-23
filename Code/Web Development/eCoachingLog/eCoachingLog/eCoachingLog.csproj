@@ -327,7 +327,6 @@
     <Content Include="Views\Shared\_WarningDetail.cshtml" />
     <Content Include="Views\Shared\Index.cshtml" />
     <Content Include="Views\NewSubmission\Index.cshtml" />
-    <Content Include="Views\MyDashboard\Index.cshtml" />
     <Content Include="Views\NewSubmission\_NewSubmission.cshtml" />
     <Content Include="Views\NewSubmission\_NewSubmissionBottom.cshtml" />
     <Content Include="Views\NewSubmission\_NewSubmissionTop.cshtml" />

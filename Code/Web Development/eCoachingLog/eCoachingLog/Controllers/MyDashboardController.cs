@@ -43,7 +43,13 @@ namespace eCoachingLog.Controllers
 			// And save the counts in view model
 			var vm = InitMyDashboardViewModel();
 			vm.MyTeamSize = 12;
-            return View(vm);
+
+			if (user.Role == Constants.USER_ROLE_DIRECTOR)
+			{
+				return View("_DefaultDirector", vm);
+			}
+
+            return View("_Default", vm);
         }
 
 		[HttpPost]
