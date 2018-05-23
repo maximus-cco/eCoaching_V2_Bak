@@ -1,0 +1,19 @@
+﻿<div class="row">
+	<div class="col-xs-9">
+		<div class="panel panel-default">
+			<div class="chart-container-big">
+				<canvas id="myBar"></canvas>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-3 panel panel-default">
+		@{ Html.RenderPartial("_CountBySite"); }
+	</div>
+</div>
+
+<!-- Display Log List -->
+<div id="div-log-list">
+</div>
+
+@Scripts.Render("~/bundles/scripts/eclChart")

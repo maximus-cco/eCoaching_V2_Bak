@@ -297,7 +297,12 @@ canvas {
   position: relative;
   margin: auto;
   height: 30vh;
-  /*width: 70vw;*/
+}
+
+.chart-container-big {
+  position: relative;
+  margin: auto;
+  height: 48vh;
 }
 
 .badge:hover {

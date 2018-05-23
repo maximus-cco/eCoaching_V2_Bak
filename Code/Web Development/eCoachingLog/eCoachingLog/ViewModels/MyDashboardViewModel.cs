@@ -1,5 +1,7 @@
 ﻿using eCoachingLog.Models.Common;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace eCoachingLog.ViewModels
@@ -17,14 +19,9 @@ namespace eCoachingLog.ViewModels
 		// otherwise, display team counts/list as well.
 		public int MyTeamSize { get; set; }
 
-		public IList<LogCount> LogCountList { get; set; }
-
 		public int MyTotalPending { get; set; }
-
-		// Progress bar
-		//public int PercentCompleted { get; set; }
-
-       // public MyDashboardCounts Counts { get; set; }
+		public IList<LogCount> LogCountList { get; set; }
+		public IList<LogCountForSite> LogCountForSiteList { get; set; }
 
 		// Search (from director)
 		public int LogStatusId { get; set; }
@@ -32,8 +29,6 @@ namespace eCoachingLog.ViewModels
 
 		public bool IsCoaching { get; set; }
 		public bool IsWarning { get; set; }
-
-		//       public string LandingPartial { get; set; }
 
 		// Search (for Manager, Supervisor and other)
 		public string SupervisorId { get; set; }
@@ -43,58 +38,40 @@ namespace eCoachingLog.ViewModels
         //public IEnumerable<SelectListItem> EmployeeSelectList { get; set; }
 		public IEnumerable<SelectListItem> SourceSelectList { get; set; }
 
-        // TODO: Remove these. Will use entilement to control show/hide, see Index.cshtml
-        public bool ShowMyPendingCoaching
-        {
-            get
-            {
-                return true;
-            }
-        }
+		// For Director
+		private string selectedMonthYear;
+		public string SelectedMonthYear
+		{
+			get
+			{
+				return DateTime.Now.ToString("MMMM yyyy");
+			}
+			set
+			{
+				selectedMonthYear = value;
+			}
+		}
 
-        public bool ShowMyCompleted
-        {
-            get
-            {
-                return true;
-            }
-        }
+		public IEnumerable<SelectListItem> Months
+		{
+			get
+			{
+				var now = DateTime.Now;
+				var last12Months = Enumerable.Range(0, 12).Select(i => now.AddMonths(-i).ToString("MMMM yyyy"));
 
-        public bool ShowMyTeamPendingCoaching
-        {
-            get
-            {
-                return true;
-            }
-        }
+				return last12Months.Select(
+					month => new SelectListItem
+					{
+						Text = month,
+						Value = Convert.ToDateTime(month).ToString("MMM yyyy", System.Globalization.CultureInfo.InvariantCulture)
+					});
+			}
+		}
 
-        public bool ShowMyTeamCompletedCoaching
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public bool ShowMyTeamWarning
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public bool ShowMySubmission
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public MyDashboardViewModel()
+		public MyDashboardViewModel()
         {
 			this.LogCountList = new List<LogCount>();
+			this.LogCountForSiteList = new List<LogCountForSite>();
 
 			this.Search = new LogFilter();
 			this.LogStatusSelectList = new List<SelectListItem>();
@@ -109,5 +86,5 @@ namespace eCoachingLog.ViewModels
             this.UserLanId = userLanId;
 			this.Search.UserRole = userRole;
         }
-    }
+	}
 }

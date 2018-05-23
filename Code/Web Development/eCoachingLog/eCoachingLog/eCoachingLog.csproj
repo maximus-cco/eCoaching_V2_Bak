@@ -153,7 +153,9 @@
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Models\Common\LogBase.cs" />
     <Compile Include="Models\Common\LogCount.cs" />
+    <Compile Include="Models\Common\LogCountForSite.cs" />
     <Compile Include="Models\Common\LogState.cs" />
+    <Compile Include="Models\Common\LogCountByStatusForSite.cs" />
     <Compile Include="Models\Common\LogValue.cs" />
     <Compile Include="Models\MyDashboard\ChartData.cs" />
     <Compile Include="Models\MyDashboard\ChartDataset.cs" />
@@ -373,6 +375,7 @@
     <Content Include="Views\Survey\Index.cshtml" />
     <Content Include="Views\Survey\_Result.cshtml" />
     <Content Include="Views\Review\_Unauthorized.cshtml" />
+    <Content Include="Views\MyDashboard\_DefaultDirectorBottom.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

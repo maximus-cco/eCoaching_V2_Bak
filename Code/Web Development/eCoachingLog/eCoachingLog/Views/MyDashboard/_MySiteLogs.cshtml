@@ -9,13 +9,13 @@
 			</div>
 			<!-- /.panel-heading -->
 			<div class="panel-body">
-				@if (Model.UserRole == UserRole.Manager)
+				@*@if (Model.UserRole == UserRole.Manager)
 				{
 					<div id="div-my-pending-search">
 						@{ Html.RenderPartial("_MySiteSearch"); }
 					</div>
 					<br />
-							}
+							}*@
 				<div id="div-my-pending-list">
 					@{Html.RenderPartial("_LogList"); }
 				</div>

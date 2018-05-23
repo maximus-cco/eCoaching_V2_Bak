@@ -600,6 +600,31 @@ namespace eCoachingLog.Repository
 			return logCounts;
 		}
 
+		public IList<LogCountForSite> GetLogCountsForSites(User user)
+		{
+			var logCountsForSites = new List<LogCountForSite>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Director_Summary_Count]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						LogCountForSite logCountForSite = new LogCountForSite();
+						logCountForSite.SiteName = dataReader["City"].ToString();
+						logCountForSite.TotalPending = Convert.ToInt32(dataReader["PendingCount"]);
+						logCountForSite.TotalCompleted = Convert.ToInt32(dataReader["CompletedCount"]);
+						logCountForSite.TotalWarning = Convert.ToInt32(dataReader["WarningCount"]);
+						logCountsForSites.Add(logCountForSite);
+					}
+				}
+			}
+			return logCountsForSites;
+		}
+
 		public IList<ChartDataset> GetChartDataSets(User user)
 		{
 			var chartDatasets = new List<ChartDataset>();
@@ -621,6 +646,30 @@ namespace eCoachingLog.Repository
 				}
 			}
 			return chartDatasets;
+		}
+
+		public IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user)
+		{
+			var logCountByStatusForSites = new List<LogCountByStatusForSite>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Director_Summary_Count_ByStatus]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						LogCountByStatusForSite lcs = new LogCountByStatusForSite();
+						lcs.SiteName = dataReader["Site"].ToString();
+						lcs.Status = dataReader["CountType"].ToString();
+						lcs.Count = Convert.ToInt32(dataReader["LogCount"]);
+						logCountByStatusForSites.Add(lcs);
+					}
+				}
+			}
+			return logCountByStatusForSites;
 		}
 	}
 }

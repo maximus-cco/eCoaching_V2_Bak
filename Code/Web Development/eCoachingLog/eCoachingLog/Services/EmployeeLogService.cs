@@ -158,5 +158,15 @@ namespace eCoachingLog.Services
 		{
 			return employeeLogRepository.GetChartDataSets(user);
 		}
+
+		public IList<LogCountForSite> GetLogCountsForSites(User user)
+		{
+			return employeeLogRepository.GetLogCountsForSites(user);
+		}
+
+		public IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user)
+		{
+			return employeeLogRepository.GetLogCountByStatusForSites(user);
+		}
 	}
 }

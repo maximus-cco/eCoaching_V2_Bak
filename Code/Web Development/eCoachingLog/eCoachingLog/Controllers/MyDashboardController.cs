@@ -8,6 +8,7 @@ using eCoachingLog.ViewModels;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
@@ -45,8 +46,6 @@ namespace eCoachingLog.Controllers
             return View(vm);
         }
 
-
-
 		[HttpPost]
 		public ActionResult Default()
 		{
@@ -56,9 +55,10 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult GetLogss()
+		public ActionResult GetDataByMonth(string month)
 		{
-			return View();
+			var vm = InitMyDashboardViewModel();
+			return PartialView("_DefaultDirectorBottom", vm);
 		}
 
 		[HttpPost]
@@ -141,20 +141,30 @@ namespace eCoachingLog.Controllers
 			}
 
 			// Data to be displayed next to bar chart
-			IList<LogCount> logCountList = empLogService.GetLogCounts(user);
-			foreach (var lc in logCountList)
+			if (user.Role == Constants.USER_ROLE_DIRECTOR)
 			{
-				lc.LogListPageName = Constants.LogTypeToPageName[lc.Description];
-
-				if (lc.Description == "My Pending")
+				IList<LogCountForSite> logCountForSiteList = empLogService.GetLogCountsForSites(user);
+				foreach (var lcfs in logCountForSiteList)
 				{
-					vm.MyTotalPending = lc.Count;
+					// set page name here
 				}
+				vm.LogCountForSiteList = logCountForSiteList;
 			}
+			else
+			{
+				IList<LogCount> logCountList = empLogService.GetLogCounts(user);
+				foreach (var lc in logCountList)
+				{
+					lc.LogListPageName = Constants.LogTypeToPageName[lc.Description];
 
-			vm.LogCountList = logCountList;
-
-			Session["LogCountList"] = logCountList;
+					if (lc.Description == "My Pending")
+					{
+						vm.MyTotalPending = lc.Count;
+					}
+				}
+				vm.LogCountList = logCountList;
+				Session["LogCountList"] = logCountList;
+			}
 
 			return vm;
         }
@@ -276,10 +286,19 @@ namespace eCoachingLog.Controllers
 		{
 			IList<ChartDataset> dataSets = null;
 			ChartData data = null;
+			User user = GetUserFromSession();
 			try
 			{
-				dataSets = empLogService.GetChartDataSets(GetUserFromSession());
-				data = CreateChartData(dataSets);
+				if (user.Role != Constants.USER_ROLE_DIRECTOR)
+				{
+					dataSets = empLogService.GetChartDataSets(user);
+					data = CreateChartData(dataSets);
+				}
+				else
+				{
+					var temp = empLogService.GetLogCountByStatusForSites(user);
+					data = CreateChartDataForSites(temp);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -315,323 +334,37 @@ namespace eCoachingLog.Controllers
 			return data;
 		}
 
-		private ChartData GetChartData_Employee()
+		private ChartData CreateChartDataForSites(IList<LogCountByStatusForSite> logCountByStatusList)
 		{
 			ChartData data = new ChartData();
-			Random rnd = new Random();
-			ChartDataset dataset = new ChartDataset();
-			var max = 100;
-
-			ChartDataset dataset1 = new ChartDataset();
-			dataset1.label = "Pending Acknowledgement";
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.backgroundColor = "#2B65EC";
-			dataset1.borderColor = "#2B65EC";
-			data.datasets.Add(dataset1);
-
-			ChartDataset dataset2 = new ChartDataset();
-			dataset2.label = "Pending Employee Review";
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.backgroundColor = "#93FFE8";
-			dataset2.borderColor = "#93FFE8";
-			data.datasets.Add(dataset2);
-
-			return data;
-		}
-
-		private IList<string> GetChartXLabels_Employee()
-		{
-			IList<string> xLabels = new List<string>();
-			//xLabels.Add("Pending Acknowledgement");
-			//xLabels.Add("Pending Employee Review");
-
-			return xLabels;
-		}
-
-		private ChartData GetChartData_Supervisor()
-		{
-			ChartData data = new ChartData();
-			data.xLabels = GetChartXLabels_Supervisor();
-			Random rnd = new Random();
-			ChartDataset dataset = new ChartDataset();
-			var max = 100;
-
-			ChartDataset dataset1 = new ChartDataset();
-			dataset1.label = "Pending Acknowledgement";
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.backgroundColor = "#2B65EC";
-			dataset1.borderColor = "#2B65EC";
-			data.datasets.Add(dataset1);
-
-			ChartDataset dataset2 = new ChartDataset();
-			dataset2.label = "Pending Employee Review";
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.backgroundColor = "#93FFE8";
-			dataset2.borderColor = "#93FFE8";
-			data.datasets.Add(dataset2);
-
-			ChartDataset dataset3 = new ChartDataset();
-			dataset3.label = "Pending Manager Review";
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.backgroundColor = "#FFFF00";
-			dataset3.borderColor = "#FFFF00";
-			data.datasets.Add(dataset3);
-
-			ChartDataset dataset4 = new ChartDataset();
-			dataset4.label = "Pending Supervisor Review";
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.backgroundColor = "#F88017";
-			dataset4.borderColor = "#F88017";
-			data.datasets.Add(dataset4);
-
-			ChartDataset dataset5 = new ChartDataset();
-			dataset5.label = "Pending Sr. Mgr Review";
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.backgroundColor = "#4E8975";
-			dataset5.borderColor = "#4E8975";
-			data.datasets.Add(dataset5);
-
-			ChartDataset dataset6 = new ChartDataset();
-			dataset6.label = "Pending Qlt Lead Review";
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.backgroundColor = "#4B0082";
-			dataset6.borderColor = "#4B0082";
-			data.datasets.Add(dataset6);
-
-			ChartDataset dataset7 = new ChartDataset();
-			dataset7.label = "Pending Dep Prg Mgr Review";
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.backgroundColor = "#B93B8F";
-			dataset7.borderColor = "#B93B8F";
-			data.datasets.Add(dataset7);
-
-			ChartDataset dataset8 = new ChartDataset();
-			dataset8.label = "Warning";
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.backgroundColor = "#FF0000";
-			dataset8.borderColor = "#FF0000";
-			data.datasets.Add(dataset8);
+			var statuses = (from c in logCountByStatusList select c.Status).Distinct();
+			int index = 0;
+			bool xLabelsLoaded = false;
+			foreach (var status in statuses)
+			{
+				index++;
+				xLabelsLoaded = data.xLabels.Count > 0;
+				ChartDataset ds = new ChartDataset();
+				ds.label = status;
+				ds.backgroundColor = Constants.Colors[index];
+				ds.borderColor = Constants.Colors[index];
+				// Go through all sites to get the count for the status
+				foreach (var lcs in logCountByStatusList)
+				{
+					if (lcs.Status == status)
+					{
+						ds.data.Add(lcs.Count);
+						// xLabels, which will be Site Names
+						if (!xLabelsLoaded)
+						{
+							data.xLabels.Add(lcs.SiteName);
+						}
+					}
+				}
+				data.datasets.Add(ds);
+			}
 
 			return data;
-		}
-
-		private IList<string> GetChartXLabels_Supervisor()
-		{
-			IList<string> xLabels = new List<string>();
-			//xLabels.Add("Pending Acknowledgement");
-			//xLabels.Add("Pending Employee Review");
-
-			return xLabels;
-		}
-
-		private ChartData GetChartData_Director()
-		{
-			ChartData data = new ChartData();
-			data.xLabels = GetChartXLabels_Director();
-			Random rnd = new Random();
-			ChartDataset dataset = new ChartDataset();
-			var max = 100;
-			dataset.label = "Completed";
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.data.Add(rnd.Next(1, max));
-			dataset.backgroundColor = "#4CC417";
-			dataset.borderColor = "#4CC417";
-			data.datasets.Add(dataset);
-
-			ChartDataset dataset1 = new ChartDataset();
-			dataset1.label = "Pending Acknowledgement";
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.data.Add(rnd.Next(1, max));
-			dataset1.backgroundColor = "#2B65EC";
-			dataset1.borderColor = "#2B65EC";
-			data.datasets.Add(dataset1);
-
-			ChartDataset dataset2 = new ChartDataset();
-			dataset2.label = "Pending Employee Review";
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.data.Add(rnd.Next(1, max));
-			dataset2.backgroundColor = "#93FFE8";
-			dataset2.borderColor = "#93FFE8";
-			data.datasets.Add(dataset2);
-
-			ChartDataset dataset3 = new ChartDataset();
-			dataset3.label = "Pending Manager Review";
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.data.Add(rnd.Next(1, max));
-			dataset3.backgroundColor = "#FFFF00";
-			dataset3.borderColor = "#FFFF00";
-			data.datasets.Add(dataset3);
-
-			ChartDataset dataset4 = new ChartDataset();
-			dataset4.label = "Pending Supervisor Review";
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.data.Add(rnd.Next(1, max));
-			dataset4.backgroundColor = "#F88017";
-			dataset4.borderColor = "#F88017";
-			data.datasets.Add(dataset4);
-
-			ChartDataset dataset5 = new ChartDataset();
-			dataset5.label = "Pending Sr. Mgr Review";
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.data.Add(rnd.Next(1, max));
-			dataset5.backgroundColor = "#4E8975";
-			dataset5.borderColor = "#4E8975";
-			data.datasets.Add(dataset5);
-
-			ChartDataset dataset6 = new ChartDataset();
-			dataset6.label = "Pending Qlt Lead Review";
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.data.Add(rnd.Next(1, max));
-			dataset6.backgroundColor = "#4B0082";
-			dataset6.borderColor = "#4B0082";
-			data.datasets.Add(dataset6);
-
-			ChartDataset dataset7 = new ChartDataset();
-			dataset7.label = "Pending Dep Prg Mgr Review";
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.data.Add(rnd.Next(1, max));
-			dataset7.backgroundColor = "#B93B8F";
-			dataset7.borderColor = "#B93B8F";
-			data.datasets.Add(dataset7);
-
-			ChartDataset dataset8 = new ChartDataset();
-			dataset8.label = "Warning";
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.data.Add(rnd.Next(1, max));
-			dataset8.backgroundColor = "#FF0000";
-			dataset8.borderColor = "#FF0000";
-			data.datasets.Add(dataset8);
-
-			return data;
-		}
-
-		private IList<string> GetChartXLabels_Director()
-		{
-			IList<string> xLabels = new List<string>();
-			xLabels.Add("Bogalusa");
-			xLabels.Add("Chester");
-			xLabels.Add("Coralville");
-			xLabels.Add("Corbin");
-			xLabels.Add("Hattiesburg");
-			xLabels.Add("London");
-			xLabels.Add("Lawrence");
-			xLabels.Add("Lynn Haven");
-			xLabels.Add("Phoenix");
-			xLabels.Add("Riverview");
-			xLabels.Add("Sandy");
-			xLabels.Add("Waco");
-			xLabels.Add("Winchester");
-
-			//xLabels.Add("Completed");
-			//xLabels.Add("Pending Acknowledgement");
-			//xLabels.Add("Pending Employee Review");
-			//xLabels.Add("Pending Manager Review");
-			//xLabels.Add("Pending Supervisor Review");
-			//xLabels.Add("Pending Sr. Mgr Review");
-			//xLabels.Add("Pending Qlt Lead Review");
-			//xLabels.Add("Pending Dep Prg Mgr Review");
-			//xLabels.Add("Warning");
-
-			return xLabels;
 		}
 	}
 }

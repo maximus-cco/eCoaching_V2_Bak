@@ -54,6 +54,22 @@
 	$('body').on('click', '#a-close', function (e) {
 		$('#coaching-log-list').hide();
 	});
+
+	// My Dashboard (Director) - Month changed
+	$('body').on('change', '#ddl-month', function (e) {
+		e.preventDefault();
+
+		$(".please-wait").slideDown(500)
+		$.ajax({
+			type: 'POST',
+			url: getDataByMonth,
+			data: { month: $('#ddl-month').val() },
+			success: function (data) {
+				$(".please-wait").slideUp(500);
+				$('#div-dashboard-director').html(data);
+			}
+		});
+	});
 	
 	// My Dashboard (Director) - "Site" link clicked
 	$('body').on('click', '.my-dashboard-log-list-by-site', function (e) {
