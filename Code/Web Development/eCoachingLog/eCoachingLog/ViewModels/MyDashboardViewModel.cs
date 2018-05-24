@@ -68,6 +68,10 @@ namespace eCoachingLog.ViewModels
 			}
 		}
 
+		// To control how the bar chart displays
+		// Either by site or by status
+		public bool IsChartBySite { get; set; }
+
 		public MyDashboardViewModel()
         {
 			this.LogCountList = new List<LogCount>();

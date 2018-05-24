@@ -155,6 +155,7 @@ namespace eCoachingLog.Controllers
 					// set page name here
 				}
 				vm.LogCountForSiteList = logCountForSiteList;
+				vm.IsChartBySite = true;
 			}
 			else
 			{
@@ -169,6 +170,7 @@ namespace eCoachingLog.Controllers
 					}
 				}
 				vm.LogCountList = logCountList;
+				vm.IsChartBySite = false;
 				Session["LogCountList"] = logCountList;
 			}
 

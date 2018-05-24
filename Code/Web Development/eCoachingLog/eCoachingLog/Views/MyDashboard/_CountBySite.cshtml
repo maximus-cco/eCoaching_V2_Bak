@@ -11,10 +11,10 @@
 		@foreach (var lcfs in Model.LogCountForSiteList)
 		{
 			<tr>
-				<td>@lcfs.SiteName</td>
-				<td><a href="#" class="my-dashboard-log-list" data-log-type="pending">@lcfs.TotalPending</a></td>
-				<td><a href="#" class="my-dashboard-log-list" data-log-type="completed">@lcfs.TotalCompleted</a></td>
-				<td><a href="#" class="my-dashboard-log-list" data-log-type="warning">@lcfs.TotalWarning</a></td>
+				<td><a href="#" class="my-dashboard-log-list" data-log-type="pending">@lcfs.SiteName</a></td>
+				<td>@lcfs.TotalPending</td>
+				<td>@lcfs.TotalCompleted</td>
+				<td>@lcfs.TotalWarning</td>
 			</tr>
 		}
 	</tbody>

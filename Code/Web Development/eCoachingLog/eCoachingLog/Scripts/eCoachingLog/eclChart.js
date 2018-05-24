@@ -47,7 +47,63 @@ Chart.plugins.register({
 	}
 });
 
-var myOptions = {
+var myOptionsByStatus = {
+	layout: {
+		padding: {
+			bottom: 10
+		}
+	},
+	tooltipCaretSize: 0,
+	responsive: true,
+	maintainAspectRatio: false,
+	title: {
+		display: true
+		//text: 'Log Distribution By Site'
+	},
+	legend: {
+		display: true,
+		position: 'bottom',
+		onClick: function (e, p) {
+			//console.log(p);
+			// ???
+		}
+	},
+	tooltips: {
+		mode: 'nearest', // default to 'index'
+		intersect: true,
+	},
+	hover: {
+		mode: 'nearest',
+		intersect: true
+	},
+	tickes: {
+		min: 0
+	},
+	//scaleIntegersOnly: true,
+	scales: {
+		xAxes: [{
+			display: true,
+			barThickness: 50
+		}],
+		yAxes: [{
+			display: true,
+			ticks: {
+				beginAtZero: true
+			},
+			scaleLabel: {
+				display: true,
+				labelString: 'Total Logs',
+				ticks: {
+					stepSize: 1
+					//beginAtZero : true,
+          			//callback: function(value) { if (value % 1 === 0) {return value; }}
+          		}
+			}
+		}]
+	}
+};
+
+var myOptionsBySite = {
 	layout: {
 		padding: {
 			bottom: 10
@@ -79,6 +135,7 @@ var myOptions = {
 	tickes: {
 		min: 0
 	},
+	//scaleIntegersOnly: true,
 	scales: {
 		xAxes: [{
 			display: true
@@ -98,6 +155,12 @@ var myOptions = {
 
 $(document).ready(function () {
 	var ctx = $("#myBar");
+	var myOptions = myOptionsByStatus;
+	if (isChartBySite === 'True')
+	{
+		myOptions = myOptionsBySite;
+	}
+
 	$.ajax({
 		type: "POST",
 		url: getChartData,
@@ -109,8 +172,6 @@ $(document).ready(function () {
 					data: result.data,
 					options: myOptions
 				});
-			chart.options.title.text = result.chartTitle;
-			//chart.options.tooltips.mode = 'nearest'; // csr
 			chart.update();
 		},
 		error: function (result) {

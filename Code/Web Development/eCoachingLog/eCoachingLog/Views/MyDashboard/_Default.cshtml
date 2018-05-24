@@ -1,7 +1,4 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
-@{
-	Layout = null;
-}
 
 <h2 class="ecl-page-header">My Dashboard</h2>
 <input type="hidden" name="whatlog" id="whatlog" />
@@ -55,6 +52,8 @@
 
 	var getChartData = '@Url.Action("GetChartData", "MyDashboard")';
 	var searchUrl = '@Url.Action("Search", "MyDashboard")';
+
+	var isChartBySite = '@Model.IsChartBySite';
 </script>
 
 @Scripts.Render("~/bundles/scripts/dashboard")

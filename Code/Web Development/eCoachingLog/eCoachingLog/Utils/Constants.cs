@@ -72,7 +72,11 @@ namespace eCoachingLog.Utils
 		public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
 		{
 			{ "My Pending", "_MyPending" },
-			{ "My Completed", "_MyCompleted" }
+			{ "My Completed", "_MyCompleted" },
+			{ "My Submissions", "_MySubmission" },
+			{ "My Team Completed", "_MyTeamCompleted" },
+			{ "My Team Pending", "_MyTeamPending" },
+			{ "My Team Warnings", "_MyTeamWarning" }
 		};
 
 		public static readonly Dictionary<int, string> Colors = new Dictionary<int, string>
