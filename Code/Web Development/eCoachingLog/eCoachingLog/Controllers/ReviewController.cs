@@ -1,4 +1,5 @@
 ﻿using eCoachingLog.Models.Common;
+using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
@@ -22,6 +23,7 @@ namespace eCoachingLog.Controllers
 		public ActionResult Index(int logId, bool isCoaching)
         {
 			int currentPage = (int) Session["currentPage"];
+			
 			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
 
 			// Check if the user is authorized to view the log detail
@@ -74,12 +76,7 @@ namespace eCoachingLog.Controllers
 			vm.LogDetail = (CoachingLogDetail)logDetail;
 
 			var user = GetUserFromSession();
-			// TODO: get user data from db
-			user.EmployeeId = "222222";
-			vm.LogDetail.SupervisorEmpId = "222222";
-			vm.LogDetail.ModuleId = 1;
-
-			vm.LogStatusLevel = 2; // GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
+			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
 
 			// TODO: put instruction text (ie the static text) in db
 			vm.InstructionText = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest <a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>" +
@@ -106,27 +103,34 @@ namespace eCoachingLog.Controllers
 			// Load Review partial
 			else
 			{
-				// TODO: write functions to determine
-				vm.ShowReviewCoachingResearch = false;
-				vm.ShowReviewCoachingCse = false;
-				vm.ShowReviewCoachingPending = false;
-
-				// TODO: check status, if completed
-				//vm.LogDetail.Status = "Completed";
-				//if (vm.LogDetail.Status == "Completed")
-				var status = (string)Session["CurrentViewLogStatus"];
-				// TODO: Check current log status, what about submission? 
-				if (status == "Completed" || status == "Submission")
-				{
+				// TODO: what about submission? 
+				// Show Final or Review
+				if (logDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
+				{ 
 					vm.ShowReviewCoachingFinalPartial = true;
 				}
 				else
 				{
+					// Not completed, display review instead of final.
 					vm.ShowReviewCoachingPartial = true;
-					//vm.ShowReviewCoachingPending = true;
-					vm.ShowReviewCoachingResearch = true;
-				}
-			}
+
+					// There are 3 types of review forms.
+					// Default all to false.
+					vm.ShowReviewCoachingResearch = false;	// Research Form - determine if research is required
+					vm.ShowReviewCoachingCse = false;       // CSE Form - determine if it is CSE
+					vm.ShowReviewCoachingPending = false;   // Regular Pending Form - neither research nor CSE needed
+
+					vm.ShowReviewCoachingResearch = IfResearchCheckNeeded(vm, user);
+					if (!vm.ShowReviewCoachingResearch) // Not Research Form
+					{
+						vm.ShowReviewCoachingCse = IfCseCheckNeeded(vm, user);
+						if (!vm.ShowReviewCoachingCse)	// Not CSE Form
+						{
+							vm.ShowReviewCoachingPending = true;    // Regular Pending Form.
+						} // end if (!vm.ShowReviewCoachingCse)
+					} // end if (!vm.ShowReviewCoachingResearch)
+				} // end if (logDetail.Status.Trim().ToLower() == "completed")
+			} // end if (ShowAckPartial(vm))
 
 			if (!isCoaching)
 			{
@@ -182,6 +186,60 @@ namespace eCoachingLog.Controllers
 			return false;
 		}
 
+		private bool IfResearchCheckNeeded(ReviewViewModel vm, User user)
+		{
+			bool retVal = false;
+			var log = vm.LogDetail;
+
+			if (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
+			{
+				if (vm.LogStatusLevel == 2)
+				{
+					if (log.IsIqs && log.IsCtc && log.IsHigh5Club && log.IsKudo && log.IsAttendance && log.IsScorecardMsr && log.IsScorecardMsrs 
+						&& (log.IsEtsOae || log.IsEtsOas || log.IsOmrIat || log.IsOmrIae || log.IsTrainingShortDuration || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrn || log.IsBrl))
+					{
+						retVal = true;
+					}
+				}
+			}
+			else
+			if (user.EmployeeId == log.ManagerEmpId	// User is current supervisor
+					|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId) // Log is low csat and user was supervisor when log submitted
+					||  (user.EmployeeId == log.ReassignedToEmpId)) // Log got reassigned to user
+			{
+				if (vm.LogStatusLevel == 3)
+				{
+					if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat)
+					{
+						retVal = true;
+					}
+				}
+			}
+
+			return retVal;
+		}
+
+		private bool IfCseCheckNeeded(ReviewViewModel vm, User user)
+		{
+			bool retVal = false;
+			var log = vm.LogDetail;
+
+			if (user.EmployeeId == log.ManagerEmpId
+				|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId)
+				|| (user.EmployeeId == log.ReassignedToEmpId))
+			{
+				if (vm.LogStatusLevel == 3)
+				{
+					if (!log.IsCurrentCoachingInitiative && !log.IsOmrException && !log.IsLowCsat)
+					{
+						retVal = true;
+					}
+				} // end if (vm.LogStatusLevel == 3)
+			}
+
+			return retVal;
+		}
+
 		[HttpPost]
 		public ActionResult Save(ReviewViewModel vm)
 		{
@@ -199,6 +257,7 @@ namespace eCoachingLog.Controllers
 			}
 
 			// ModelState not valid
+			// Display validation message
 			return Json(new { success = false,
 							  valid = false,
 							  errors = ModelState

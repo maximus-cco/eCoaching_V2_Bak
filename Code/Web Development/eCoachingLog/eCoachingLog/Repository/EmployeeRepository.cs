@@ -176,7 +176,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctSup]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId); // TODO: current it accepts lanid
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -184,11 +184,22 @@ namespace eCoachingLog.Repository
 					{
 						Employee employee = new Employee();
 						employee.Id = dataReader["SUPValue"].ToString();
+						// TODO: sp needs to return -1 instead of % (All Supervisors)
+						if (employee.Id == "%")
+						{
+							employee.Id = "-1";
+						}
 						employee.Name = dataReader["SUPText"].ToString();
 						employees.Add(employee);
 					}
 				}
 			}
+
+			var emp = new Employee();
+			emp.Id = "2";
+			emp.Name = "test2";
+			employees.Add(emp);
+
 			return employees;
 		}
 

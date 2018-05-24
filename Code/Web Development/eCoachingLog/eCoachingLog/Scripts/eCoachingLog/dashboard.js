@@ -172,7 +172,7 @@
 		// Show spinner
     	$(".please-wait").slideDown(500);
     	//console.log("submitReview");
-    	submitReview(saveUrl, myTable, $('#div-my-pending-text'), 'The log has been successfully updated.', 'Failed to update the log.');
+    	submitReview(saveUrl, myTable, $('#my-pending-total'), 'The log has been successfully updated.', 'Failed to update the log.');
     });
 
     function validateMyDashboardSearch()

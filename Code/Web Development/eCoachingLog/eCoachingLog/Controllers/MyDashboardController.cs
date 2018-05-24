@@ -37,7 +37,7 @@ namespace eCoachingLog.Controllers
 			// Supervisor and Others "My Pending"
 			// Manager "My Pending"
 			var user = GetUserFromSession();
-			Session["CurrentViewLogStatus"] = "Pending";
+			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
 
 			// TODO: Get counts from database based on user lanid, hard coded right now
 			// And save the counts in view model
@@ -71,45 +71,37 @@ namespace eCoachingLog.Controllers
 		public ActionResult GetLogs(string whatLog)
 		{
 			logger.Debug("Entered GetLogs");
-
-			// TODO: get log list based on whatLog (_MyPending, _MyCompleted, etc.)
-			// Set vm.Search.LogSectionWorkingOn approriately based on whatLog
-			var vm = InitMyDashboardViewModel(whatLog);
-			//vm.Search.LogSectionWorkingOn = LogSection.Employee_MyPending;
-			vm.Search.LogType = Constants.LOG_SEARCH_TYPE_HISTORICAL;
-			return PartialView(whatLog, vm); 
+			return PartialView(whatLog, InitMyDashboardViewModel(whatLog)); 
 		}
 
 		[HttpPost]
 		public ActionResult Search(MyDashboardViewModel vm)
 		{
 			logger.Debug("Entered Search...");
-			vm.Search.LogType = Constants.LOG_SEARCH_TYPE_HISTORICAL; // TODO: change
+			vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING; // TODO: change
 			return PartialView("_LogList", vm.Search);
 		}
 
 
-
-
 // TODO: remove
-		[HttpPost]
-		public ActionResult SearchMyPendingManager(string supervisorId, string employeeId)
-		{
-			var vm = InitMyDashboardViewModel();
-			vm.Search.SupervisorId = supervisorId;
-			vm.Search.EmployeeId = employeeId;
-			return View("_LogList", vm.Search);
-		}
+		//[HttpPost]
+		//public ActionResult SearchMyPendingManager(string supervisorId, string employeeId)
+		//{
+		//	var vm = InitMyDashboardViewModel();
+		//	vm.Search.SupervisorId = supervisorId;
+		//	vm.Search.EmployeeId = employeeId;
+		//	return PartialView("_LogList", vm.Search);
+		//}
 
-		[HttpPost]
-		public ActionResult SearchMyTeamPendingManager(string supervisorId, string employeeId, int sourceId)
-		{
-			var vm = InitMyDashboardViewModel();
-			vm.Search.SupervisorId = supervisorId;
-			vm.Search.EmployeeId = employeeId;
-			vm.Search.SourceId = sourceId;
-			return View("_LogList", vm);
-		}
+		//[HttpPost]
+		//public ActionResult SearchMyTeamPendingManager(string supervisorId, string employeeId, int sourceId)
+		//{
+		//	var vm = InitMyDashboardViewModel();
+		//	vm.Search.SupervisorId = supervisorId;
+		//	vm.Search.EmployeeId = employeeId;
+		//	vm.Search.SourceId = sourceId;
+		//	return View("_LogList", vm);
+		//}
 // End of TODO: remove
 
 		private MyDashboardViewModel InitMyDashboardViewModel()
@@ -191,6 +183,7 @@ namespace eCoachingLog.Controllers
 					{
 						// Supervisor dropdown
 						vm.SupervisorSelectList = GetSupsForMgrMyPending(user);
+
 						// Employee dropdown
 						if (Session["empsForMgrMyPending"] == null)
 						{
@@ -202,6 +195,7 @@ namespace eCoachingLog.Controllers
 							vm.EmployeeSelectList = (SelectList)Session["empsForMgrMyPending"];
 						}
 					}
+					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING;
 					break;
 				// My Completed section on My Dashboard
 				case "_MyCompleted":
