@@ -226,9 +226,9 @@
     				$('#modal-container').modal('hide');
     				// Refresh log list, server side LoadData gets called
     				tableToRefresh.ajax.reload();
-    				// Update count
+    				// Update count display
     				$countToUpdate.html(data.count);
-
+					// Display success message
     				$('#div-success-msg').fadeTo(2000, 500).slideUp(500);
     			}
     			else {

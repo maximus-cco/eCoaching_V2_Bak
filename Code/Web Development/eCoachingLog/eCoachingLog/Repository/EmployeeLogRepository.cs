@@ -3,6 +3,7 @@ using eCoachingLog.Models;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.MyDashboard;
+using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using eCoachingLog.Utils;
 using log4net;
@@ -671,6 +672,27 @@ namespace eCoachingLog.Repository
 				}
 			}
 			return logCountByStatusForSites;
+		}
+
+		public IList<UnCoachableReason> GetUnCoachableReasons(CoachingLogDetail log)
+		{
+			// TODO: get from db, pass in log id
+			var reasons = new List<UnCoachableReason>();
+			UnCoachableReason r1 = new UnCoachableReason();
+			r1.Id = 1;
+			r1.Name = "Agent no longer employeed or on LOA";
+			UnCoachableReason r2 = new UnCoachableReason();
+			r2.Id = 2;
+			r2.Name = "Escalation was appropriate";
+			UnCoachableReason r3 = new UnCoachableReason();
+			r3.Id = 3;
+			r3.Name = "ISG or Supervisor told agent to escalate";
+
+			reasons.Add(r1);
+			reasons.Add(r2);
+			reasons.Add(r3);
+
+			return reasons;
 		}
 	}
 }

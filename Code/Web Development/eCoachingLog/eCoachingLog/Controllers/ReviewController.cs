@@ -1,11 +1,15 @@
 ﻿using eCoachingLog.Models.Common;
+using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Vereyon.Web;
 
 namespace eCoachingLog.Controllers
 {
@@ -128,6 +132,24 @@ namespace eCoachingLog.Controllers
 						{
 							vm.ShowReviewCoachingPending = true;    // Regular Pending Form.
 						} // end if (!vm.ShowReviewCoachingCse)
+					} 
+					else
+					{
+						// Get non coachable reasons
+						if (Session["MainReasonNotCoachableList"] == null)
+						{
+							// Uncoachable reason Dropdown
+							IList<UnCoachableReason> uncoachableReasons = this.empLogService.GetUnCoachableReasons(vm.LogDetail);
+							IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons, "Id", "Name");
+							vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
+
+							Session["MainReasonNotCoachableList"] = uncoachableReasonSelectList;
+						}
+						else
+						{
+							vm.MainReasonNotCoachableList = (IEnumerable<SelectListItem>)Session["MainReasonNotCoachableList"];
+						}
+
 					} // end if (!vm.ShowReviewCoachingResearch)
 				} // end if (logDetail.Status.Trim().ToLower() == "completed")
 			} // end if (ShowAckPartial(vm))

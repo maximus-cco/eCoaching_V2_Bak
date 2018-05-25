@@ -2,6 +2,7 @@
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.MyDashboard;
+using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using System.Collections.Generic;
 using System.Data;
@@ -35,6 +36,7 @@ namespace eCoachingLog.Services
 
 		IList<LogCountForSite> GetLogCountsForSites(User user);
 		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user);
-		
+
+		IList<UnCoachableReason> GetUnCoachableReasons(CoachingLogDetail log);
 	}
 }
