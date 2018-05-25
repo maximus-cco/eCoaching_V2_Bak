@@ -27,7 +27,7 @@
 		@Html.TextAreaFor(m => m.DetailsCoached, new { @class = "form-control", @rows = "5" })
 		<div class="help-block">
 			Provide as much detail as possible.
-			<span id="behavior-detail-remaining" class="pull-right">3000 remaining</span>
+			<span id="cse-detail-remaining" class="pull-right">3000 remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.DetailsCoached)
 	</div>
@@ -48,12 +48,13 @@
 		@Html.TextAreaFor(m => m.ReasonNotCse, new { @class = "form-control", @rows = "5" })
 		<div class="help-block">
 			Provide reason why this is not a CSE.
-			<span id="detail-reason-not-coachable" class="pull-right">3000 remaining</span>
+			<span id="non-cse-remaining" class="pull-right">3000 remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.ReasonNotCse)
 	</div>
 }
 
 @Scripts.Render("~/bundles/scripts/review")
+<script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>
 
 

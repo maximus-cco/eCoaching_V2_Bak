@@ -82,9 +82,6 @@ namespace eCoachingLog.Controllers
 			var user = GetUserFromSession();
 			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
 
-			// TODO: put instruction text (ie the static text) in db
-			vm.InstructionText = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest <a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>" +
-					"Contact Center Operations 46.0 Outlier Management Report(OMR): Outlier Research Process SOP</a> and provide the details in the record below.";
 			// Determine to show/hide Managers Notes and Coaching Notes
 			DetermineMgrSupNotesVisibility(vm);
 
@@ -132,9 +129,18 @@ namespace eCoachingLog.Controllers
 						{
 							vm.ShowReviewCoachingPending = true;    // Regular Pending Form.
 						} // end if (!vm.ShowReviewCoachingCse)
+						else
+						{
+							// TODO: put instruction text (ie the static text) in db
+							vm.InstructionText = "Review the submitted coaching opportunity and determine if it is a confirmed Customer Service Escalation (CSE).  If it is a CSE, setup a meeting with the Employee and Supervisor and report your coaching in the box below.  If it not a CSE, enter notes for the Supervisor to use to coach the Employee.";
+						}
 					} 
-					else
+					else // Research?
 					{
+						// TODO: put instruction text (ie the static text) in db
+						vm.InstructionText = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest <a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>" +
+								"Contact Center Operations 46.0 Outlier Management Report(OMR): Outlier Research Process SOP</a> and provide the details in the record below.";
+
 						// Get non coachable reasons
 						if (Session["MainReasonNotCoachableList"] == null)
 						{

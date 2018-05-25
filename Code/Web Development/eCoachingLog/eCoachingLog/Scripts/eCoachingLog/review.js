@@ -1,10 +1,23 @@
 ﻿$(function () {
 	const maxLength = 3000;
+	// Research - coachable
 	$('body').on('keyup', '#DetailsCoached', function (e) {
 		var remaining = maxLength - $(this).val().length;
 		$('#behavior-detail-remaining').text(remaining + ' remaining');
 	});
-
-
-
+	// Research - not coachable
+	$('body').on('keyup', '#DetailReasonNotCoachable', function (e) {
+		var remaining = maxLength - $(this).val().length;
+		$('#detail-reason-not-coachable').text(remaining + ' remaining');
+	});
+	// Cse - Yes
+	$('body').on('keyup', '#DetailsCoached', function (e) {
+		var remaining = maxLength - $(this).val().length;
+		$('#cse-detail-remaining').text(remaining + ' remaining');
+	});
+	// Cse - No
+	$('body').on('keyup', '#ReasonNotCse', function (e) {
+		var remaining = maxLength - $(this).val().length;
+		$('#non-cse-remaining').text(remaining + ' remaining');
+	});
 })
