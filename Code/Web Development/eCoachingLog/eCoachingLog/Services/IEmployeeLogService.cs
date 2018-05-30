@@ -29,7 +29,7 @@ namespace eCoachingLog.Services
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFiler, string userId, string search);
 
-		IList<LogState> GetStatesForMyTeamWarning(User user);
+		IList<LogState> GetWarningStatuses(User user);
 
 		IList<LogCount> GetLogCounts(User user);
 		IList<ChartDataset> GetChartDataSets(User user);

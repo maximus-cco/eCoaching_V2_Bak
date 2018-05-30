@@ -229,8 +229,6 @@ namespace eCoachingLog.Controllers
 					}
 					// Source dropdown
 					vm.SourceSelectList = new SelectList(empLogService.GetAllLogSources(user.EmployeeId),"Id", "Name");
-
-
 					break;
 				// My Team Completed on My Dashboard
 				case "_MyTeamCompleted":
@@ -257,12 +255,12 @@ namespace eCoachingLog.Controllers
 				case "_MyTeamWarning":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING;
 
-					// State dropdown
-					vm.LogStatusSelectList = new SelectList(empLogService.GetStatesForMyTeamWarning(user), "Id", "Description");
+					// Warning status dropdown
+					vm.WarningStatusSelectList = new SelectList(empLogService.GetWarningStatuses(user), "Id", "Description");
 					break;
 				case "_MySubmission":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SUBMITTED;
-
+					Session["currentPage"] = Constants.PAGE_MY_SUBMISSION;
 					break;
 				default:
 					break;

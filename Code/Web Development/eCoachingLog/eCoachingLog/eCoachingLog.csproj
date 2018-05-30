@@ -381,6 +381,7 @@
     <Content Include="Views\Review\_Unauthorized.cshtml" />
     <Content Include="Views\MyDashboard\_DefaultDirectorBottom.cshtml" />
     <Content Include="Views\MyDashboard\_MyCompletedSearch.cshtml" />
+    <Content Include="Views\MyDashboard\_MySubmissionSearch.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

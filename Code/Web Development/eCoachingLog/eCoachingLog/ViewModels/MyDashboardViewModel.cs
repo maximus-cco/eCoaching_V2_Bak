@@ -38,6 +38,8 @@ namespace eCoachingLog.ViewModels
         //public IEnumerable<SelectListItem> EmployeeSelectList { get; set; }
 		public IEnumerable<SelectListItem> SourceSelectList { get; set; }
 
+		public IEnumerable<SelectListItem> WarningStatusSelectList { get; set; }
+
 		// For Director
 		private string selectedMonthYear;
 		public string SelectedMonthYear
@@ -84,6 +86,7 @@ namespace eCoachingLog.ViewModels
             this.SupervisorSelectList = new List<SelectListItem>();
             this.EmployeeSelectList = new List<SelectListItem>();
 			this.SourceSelectList = new List<SelectListItem>();
+			this.WarningStatusSelectList = new List<SelectListItem>();
 		}
 
         public MyDashboardViewModel(string userId, string userLanId, string userRole) : this()

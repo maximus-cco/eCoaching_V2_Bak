@@ -1,19 +1,19 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
-<form id="form-search-mydashboard">
-	<div class="form-group pull-right col-sm-4">
-		<div class="col-sm-5">
+<div class="row">
+	<form class="form-inline pull-right" id="form-search-mydashboard">
+		<div class="form-group">
 			@Html.DropDownListFor(m => m.Search.EmployeeId, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control" })
 		</div>
-		<div class="col-sm-5">
+		<div class="form-group">
 			@Html.DropDownListFor(m => m.Search.SourceId, Model.SourceSelectList, new { id = "select-source", @class = "form-control" })
 		</div>
-		<div class="col-sm-2">
+		<div class="form-group">
 			<button type="button" class="btn btn-info" id="btn-search">
 				<span class="glyphicon glyphicon-search"></span> Go
 			</button>
 		</div>
-	</div>
-	<div class="clearfix"></div>
-</form>
+	</form>
+</div>
+<div class="clearfix"></div>
 
 

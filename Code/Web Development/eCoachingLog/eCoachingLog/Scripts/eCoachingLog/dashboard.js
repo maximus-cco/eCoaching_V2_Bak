@@ -93,13 +93,9 @@
 	// Search log
 	$('body').on('click', '#btn-search', function (e) {
 		e.preventDefault();
-
 		//if (!validateMyDashboardSearch()) {
 		//	return;
 		//}
-
-		alert(searchUrl);
-
 		if (e.handled !== true) {
 			e.handled = true;
 			$(".please-wait").slideDown(500);

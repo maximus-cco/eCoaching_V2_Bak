@@ -589,7 +589,7 @@ namespace eCoachingLog.Repository
 			return dt;	
 		}
 
-		public IList<LogState> GetStatesForMyTeamWarning(User user)
+		public IList<LogState> GetWarningStatuses(User user)
 		{
 			var logStates = new List<LogState>();
 			using (SqlConnection connection = new SqlConnection(conn))
@@ -602,8 +602,8 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						LogState state = new LogState();
-						state.Id = (int)dataReader["StateValue"];
-						state.Description = dataReader["StateValue"].ToString();
+						state.Id = Convert.ToInt16(dataReader["StateValue"]);
+						state.Description = dataReader["StateText"].ToString();
 						logStates.Add(state);
 					}
 				}

@@ -33,7 +33,7 @@ namespace eCoachingLog.Repository
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFilter, string userId, string search);
 
-		IList<LogState> GetStatesForMyTeamWarning(User user);
+		IList<LogState> GetWarningStatuses(User user);
 
 		IList<LogCount> GetLogCounts(User user);
 		IList<ChartDataset> GetChartDataSets(User user);

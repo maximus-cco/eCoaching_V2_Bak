@@ -1,50 +1,45 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
 @using eCoachingLog.Utils
-User Role: @Model.Search.UserRole
 <div class="row">
-	<div class="col-sm-2"></div>
-	<form class="form-inline" id="form-search-mydashboard">
-		<div class="form-group filters col-sm-10 pull-right">
-			@if (Model.Search.UserRole == Constants.USER_ROLE_SUPERVISOR)
-			{
-				<div class="col-sm-2">
-					@Html.DropDownListFor(m => m.Search.ManagerId, Model.ManagerSelectList, new { id = "select-manager", @class = "form-control reset-search-result" })
-				</div>
-			}
-			@if (Model.Search.UserRole == Constants.USER_ROLE_MANAGER)
-			{
-				<div class="col-sm-2">
-					@Html.DropDownListFor(m => m.Search.SupervisorId, Model.SupervisorSelectList, new { id = "select-supervisor", @class = "form-control reset-search-result" })
-				</div>
-			}
-			<div class="col-sm-2">
-				@Html.DropDownListFor(m => m.Search.EmployeeId, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control reset-search-result" })
+	<form class="form-inline pull-right" id="form-search-mydashboard">
+		@if (Model.Search.UserRole == Constants.USER_ROLE_SUPERVISOR)
+		{
+			<div class="form-group">
+				@Html.DropDownListFor(m => m.Search.ManagerId, Model.ManagerSelectList, new { id = "select-manager", @class = "form-control reset-search-result" })
 			</div>
-			<div class="col-sm-3">
-				@Html.DropDownListFor(m => m.Search.SourceId, Model.SourceSelectList, new { id = "select-source", @class = "form-control reset-search-result" })
+		}
+
+		@if (Model.Search.UserRole == Constants.USER_ROLE_MANAGER)
+		{
+			<div class="form-group">
+				@Html.DropDownListFor(m => m.Search.SupervisorId, Model.SupervisorSelectList, new { id = "select-supervisor", @class = "form-control reset-search-result" })
 			</div>
-			<div class="col-sm-2">
-				<div class="input-group date">
-					@Html.TextBoxFor(m => m.Search.SubmitDateFrom, new { @class = "form-control reset-search-result" })
-					<span class="input-group-addon">
-						<span class="glyphicon glyphicon-calendar"></span>
-					</span>
-				</div>
-			</div>
-			<div class="col-sm-2">
-				<div class="input-group date">
-					@Html.TextBoxFor(m => m.Search.SubmitDateTo, new { @class = "form-control reset-search-result" })
-					<span class="input-group-addon">
-						<span class="glyphicon glyphicon-calendar"></span>
-					</span>
-				</div>
-			</div>
-			<div class="col-sm-1 text-right">
-				<button type="button" class="btn btn-info" id="btn-search">
-					<span class="glyphicon glyphicon-search"></span> Go
-				</button>
-			</div>
+		}
+		<div class="form-group">
+			@Html.DropDownListFor(m => m.Search.EmployeeId, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control reset-search-result" })
 		</div>
+
+		<div class="form-group">
+			@Html.DropDownListFor(m => m.Search.SourceId, Model.SourceSelectList, new { id = "select-source", @class = "form-control reset-search-result" })
+		</div>
+			
+		<div class="input-group date">
+			@Html.TextBoxFor(m => m.Search.SubmitDateFrom, new { @class = "form-control reset-search-result" })
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</span>
+		</div>
+
+		<div class="input-group date">
+			@Html.TextBoxFor(m => m.Search.SubmitDateTo, new { @class = "form-control reset-search-result" })
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</span>
+		</div>
+			
+		<button type="button" class="btn btn-info" id="btn-search">
+			<span class="glyphicon glyphicon-search"></span> Go
+		</button>
 	</form>
 </div>
 <div class="clearfix"></div>

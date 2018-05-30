@@ -18,6 +18,8 @@ namespace eCoachingLog.Utils
 		public const int PAGE_MY_DASHBOARD = 10;
 		public const int PAGE_HISTORICAL_DASHBOARD = 20;
 		public const int PAGE_SURVEY = 30;
+		public const int PAGE_MY_SUBMISSION = 50;
+
 
 		public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
 		public const string SITE_EMAIL_SUBJECT = "eCoaching Log";

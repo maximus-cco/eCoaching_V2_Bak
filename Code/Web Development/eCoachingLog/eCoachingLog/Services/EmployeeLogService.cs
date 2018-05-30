@@ -140,14 +140,14 @@ namespace eCoachingLog.Services
 			return this.employeeLogRepository.GetLogDataTable(logFilter, userId);
 		}
 
-		public IList<LogState> GetStatesForMyTeamWarning(User user)
+		public IList<LogState> GetWarningStatuses(User user)
 		{
 			if (user == null)
 			{
 				logger.Info("User is null.");
 				return new List<LogState>();
 			}
-			return employeeLogRepository.GetStatesForMyTeamWarning(user);
+			return employeeLogRepository.GetWarningStatuses(user);
 		}
 
 		public IList<LogCount> GetLogCounts(User user)

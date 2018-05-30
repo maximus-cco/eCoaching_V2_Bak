@@ -1,28 +1,25 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
 <div class="row">
-	<div class="col-lg-12">
-		<div class="panel panel-default filterable" id="coaching-log-list">
-			<div class="panel-heading">
-				<i class="fa fa-list-alt"></i><span id="title"><strong> My Team's Completed eCoaching Logs </strong></span>
-				<div class="pull-right">
-					<a href="#" id="a-close" style="color: black;">X</a>
-				</div>
+	<div class="panel panel-default filterable" id="coaching-log-list">
+		<div class="panel-heading">
+			<i class="fa fa-list-alt"></i><span id="title"><strong> My Team's Completed eCoaching Logs </strong></span>
+			<div class="pull-right">
+				<a href="#" id="a-close" style="color: black;">X</a>
 			</div>
-			<!-- /.panel-heading -->
-			<div class="panel-body">
-				<div id="div-my-team-completed-search">
-					@{ Html.RenderPartial("_MyTeamCompletedSearch"); }
-				</div>
-				<br />
-				<div id="div-search-result">
-					@{Html.RenderPartial("_LogList", Model.Search); }
-				</div>
-			</div>
-			<!-- /.panel-body -->
 		</div>
-		<!-- /.panel -->
+		<!-- /.panel-heading -->
+		<div class="panel-body">
+			<div id="div-my-team-completed-search">
+				@{ Html.RenderPartial("_MyTeamCompletedSearch"); }
+			</div>
+			<br />
+			<div id="div-search-result">
+				@{Html.RenderPartial("_LogList", Model.Search); }
+			</div>
+		</div>
+		<!-- /.panel-body -->
 	</div>
-	<!-- /.col-lg-12 -->
+	<!-- /.panel -->
 </div>
 <!-- /.row -->
 
