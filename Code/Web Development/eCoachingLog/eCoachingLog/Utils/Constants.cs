@@ -4,8 +4,8 @@ using System.ComponentModel;
 
 namespace eCoachingLog.Utils
 {
-    public static class Constants
-    {
+	public static class Constants
+	{
 		public const string USER_ROLE_CSR = "CSR";
 		public const string USER_ROLE_ARC = "ARC";
 		public const string USER_ROLE_SUPERVISOR = "Supervisor";
@@ -40,34 +40,34 @@ namespace eCoachingLog.Utils
 
 		// ec.dim_module table
 		public const int MODULE_UNKNOWN = 99999;
-        public const int MODULE_CSR = 1;
-        public const int MODULE_SUPERVISOR = 2;
-        public const int MODULE_QUALITY = 3;
-        public const int MODULE_LSA = 4;
-        public const int MODULE_TRAINING = 5;
+		public const int MODULE_CSR = 1;
+		public const int MODULE_SUPERVISOR = 2;
+		public const int MODULE_QUALITY = 3;
+		public const int MODULE_LSA = 4;
+		public const int MODULE_TRAINING = 5;
 		public const int MODULE_ADMIN = 6;
 		public const int MODULE_ANALYTICS_REPORTING = 7;
 		public const int MODULE_PRODUCTION_PLANNING = 8;
 		public const int MODULE_PROGRAM_ANALYST = 9;
 
 		public const int LOG_STATUS_UNKNOWN = 99999;
-        public const int LOG_STATUS_COMPLETED = 1;
-        public const int LOG_STATUS_INACTIVE = 2;
-        public const int LOG_STATUS_PENDING_ACKNOWLEDGEMENT = 3;
-        public const int LOG_STATUS_PENDING_EMPLOYEE_REVIEW = 4;
-        public const int LOG_STATUS_PENDING_MANAGER_REVIEW = 5;
-        public const int LOG_STATUS_PENDING_SUPERVISOR_REVIEW = 6;
-        public const int LOG_STATUS_PENDING_SRMANAGER_REVIEW = 7;
-        public const int LOG_STATUS_PENDING_QUALITYLEAD_REVIEW = 8;
-        public const int LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW = 9;
+		public const int LOG_STATUS_COMPLETED = 1;
+		public const int LOG_STATUS_INACTIVE = 2;
+		public const int LOG_STATUS_PENDING_ACKNOWLEDGEMENT = 3;
+		public const int LOG_STATUS_PENDING_EMPLOYEE_REVIEW = 4;
+		public const int LOG_STATUS_PENDING_MANAGER_REVIEW = 5;
+		public const int LOG_STATUS_PENDING_SUPERVISOR_REVIEW = 6;
+		public const int LOG_STATUS_PENDING_SRMANAGER_REVIEW = 7;
+		public const int LOG_STATUS_PENDING_QUALITYLEAD_REVIEW = 8;
+		public const int LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW = 9;
 
 		public const int LOG_STATUS_LEVEL_1 = 1;
 		public const int LOG_STATUS_LEVEL_2 = 2;
 		public const int LOG_STATUS_LEVEL_3 = 3;
 		public const int LOG_STATUS_LEVEL_4 = 4;
 
-        public const string ECOACHING_URL_PROD = "https://f3420-mwbp11.vangent.local/eCoachingLog";
-        public const string ECOACHING_URL_ST = "https://f3420-mpmd01.vangent.local/eCoachingLog_st";
+		public const string ECOACHING_URL_PROD = "https://f3420-mwbp11.vangent.local/eCoachingLog";
+		public const string ECOACHING_URL_ST = "https://f3420-mpmd01.vangent.local/eCoachingLog_st";
 
 		public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
 		{
@@ -130,14 +130,90 @@ namespace eCoachingLog.Utils
 			{ new Tuple<int, int>(MODULE_PRODUCTION_PLANNING, LOG_STATUS_PENDING_EMPLOYEE_REVIEW), LOG_STATUS_LEVEL_1 },
 			{ new Tuple<int, int>(MODULE_PRODUCTION_PLANNING, LOG_STATUS_PENDING_SUPERVISOR_REVIEW), LOG_STATUS_LEVEL_2 }
 		};
+		//}
+
+		//public enum EmployeeLogType
+		//{
+		//    [Description("Coaching")]
+		//    Coaching = 1,
+
+		//    [Description("Warning")]
+		//    Warning = 2
+		//}
+
+
+		// TODO: move to resource file
+		public const string REVIEW_OMR_SHORT_CALL_TEXT = "You are receiving this eCL because you have been assigned to listen to and provide feedback on calls that have been identified as having a short duration. Details of each call can be found within the Performance Report Catalog by clicking " +
+			"<a href='https://cco.gdit.com/bi/ReportsCatalog/TQC_ShortCall/Forms/AllItems.aspx' target='_blank'>here</a>. " +
+			"Please review the calls and provide specific details on opportunities that requiring coaching.";
+
+		public const string REVIEW_LCAST = " Your are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction. Please " +
+			"REVIEW_CSE the call from a PPoM perspective and provide details on the specific opportunities requiring coaching in the record below.";
+
+		public const string REVIEW_TRAINING_SHORT_DURATION_REPORT_TEXT =
+			"CSRs are scheduled for specific times in Empower to ensure understanding of training materials presented. " +
+			"It is important to utilize the timeframe allotted to successfully understand the training content. " +
+			"Please be aware that the scheduled timeframe is a metric which has been agreed upon by CCO and CMS. " +
+			"You should use all or the majority of the scheduled time to review each eLearning module assigned.";
+
+		public const string REVIEW_TRAINING_OVERDUE_TRAINING_TEXT = "The above training is now overdue. Please have the training completed and provide coaching on the specific reasons it was overdue.";
+
+		public const string REVIEW_QUALITY_HIGH5_CLUB = "Customer satisfaction is critical to our success; therefore, " +
+			"to help gauge our performance, every caller is offered the option to complete a Customer Satisfaction (CSAT) survey. " +
+			"Using a scale from one to five, callers are able to rate their overall satisfaction. Top box, or a rating of 5, indicates the caller was extremely satisfied!  " +
+			"Thank you for taking good care of your callers; you make a difference for each caller AND for the CCO!";
+
+		public const string REVIEW_QUALITY_KUDO_CSR = "Congratulations - you received a Kudos! Click " +
+			"<a href='https://cco.gdit.com/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
+			"to take a listen to what a recent caller had to say about your customer service.";
+
+		public const string REVIEW_QUALITY_KUDO_SUPERVISOR = "Click <a href='https://cco.gdit.com/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
+			"to listen to CSR kudos.";
+
+		public const string REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT = "You are receiving this eCL record because an Employee on your team was identified in a Break Outlier Report. " +
+			"Please review the <b><a href='https://cco.gdit.com/bi/ReportsCatalog/AvayaBreakPolicyReporting/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a>, " +
+			"the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below.";
+
+		//Performance Scorecard MSR and MSRS static text
+		public const string REVIEW_SCORECARD_MSR = "To review your full details, please visit the " +
+			"<a href='https://f3420-mwbp11.vangent.local/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
+			"If you have any questions, please see your supervisor.";
+
+		public const string REVIEW_SCORECARD_MSRS = "To review your full details, please visit the " +
+			"<a href='https://f3420-mwbp11.vangent.local/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
+			"If you have any questions, please " +
+			"<a href='https://cco.gdit.com/Reports/Performance_Scorecard/Lists/Scorecard_Escalated_Issues_Log/NewIssue.aspx' target='_blank'>submit an escalation</a> via the " +
+			"<a href='https://cco.gdit.com/Reports/Performance_Scorecard/default.aspx' target='_blank'>CCO Performance Scorecard Information Station</a> " +
+			"SharePoint site.";
+
+		// ETS/HNC ETS/ICC
+		// Currently this is only for CSRs. Data feeds loaded as Pending Supervisor Review.
+		// Display this link only for Supervisors
+		public const string REVIEW_HNC_ICC = "Click " +
+			"<a href='https://cco.gdit.com/Initiatives/floorcheck/Timecard_Compliance_Reporting/Timcard%20Changes%20Reports/Forms/AllItems.aspx' target='_blank'>here</a>" +
+			" to view the report containing the details of these changes.";
+
+		// CSE form
+		public const string REVIEW_CSE = "Review the submitted coaching opportunity and determine if it is a confirmed Customer Service Escalation (CSE).  If it is a CSE, setup a meeting with the Employee and Supervisor and report your coaching in the box below.  If it not a CSE, enter notes for the Supervisor to use to coach the Employee.";
+
+		// Research form
+		public const string REVIEW_RESEARCH = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest <a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>" +
+								"Contact Center Operations 46.0 Outlier Management Report(OMR): Outlier Research Process SOP</a> and provide the details in the record below.";
+
+		public const string REVIEW_ETS_OAE = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did Not complete their timecard before the deadline laid out in the latest " +
+			"<a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>CCO Performance Scorecard</a>. Contact Center Operations 3.06 Timecard Audit SOP";
+
+		public const string REVIEW_ETS_OAS = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report(also known as the TC Compliance Action report).  Please research why the supervisor did Not approve Or reject their CSR’s timecard before the deadline laid out in the latest " +
+			"<a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>CCO Performance Scorecard</a>. Contact Center Operations 3.06 Timecard Audit SOP";
+
 	}
 
-    public enum EmployeeLogType
-    {
-        [Description("Coaching")]
-        Coaching = 1,
+	public enum EmployeeLogType
+	{
+		[Description("Coaching")]
+		Coaching = 1,
 
-        [Description("Warning")]
-        Warning = 2
-    }
+		[Description("Warning")]
+		Warning = 2
+	}
 }

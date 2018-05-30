@@ -65,7 +65,8 @@ namespace eCoachingLog.Repository
 						logDetail.FormName = dataReader["strFormID"].ToString();
                         logDetail.Source = dataReader["strSource"].ToString();
                         logDetail.Status = dataReader["strFormStatus"].ToString();
-                        logDetail.Type = dataReader["strFormType"].ToString();
+						logDetail.StatusId = Convert.ToInt16(dataReader["strStatusID"].ToString());
+						logDetail.Type = dataReader["strFormType"].ToString();
                         logDetail.CreatedDate = eCoachingLogUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
                         logDetail.CoachingDate = eCoachingLogUtil.AppendPdt(dataReader["CoachingDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
@@ -82,7 +83,7 @@ namespace eCoachingLog.Repository
                         logDetail.BehaviorAnalyticsId = dataReader["strBehaviorAnalyticsID"].ToString();
 						logDetail.IsNgdActivityId = dataReader["isNGDActivityID"] == DBNull.Value ? false : (bool)dataReader["isNGDActivityID"];
                         logDetail.NgdActivityId = dataReader["strNGDActivityID"].ToString();
-                        logDetail.IsUcId = dataReader["isUCID"] == DBNull.Value ? false : (bool)dataReader["isUCID"]; ;
+                        logDetail.IsUcId = dataReader["isUCID"] == DBNull.Value ? false : (bool)dataReader["isUCID"];
                         logDetail.UcId = dataReader["strUCID"].ToString();
                         logDetail.SupervisorName = dataReader["strEmpSupName"].ToString();
 						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString();
@@ -102,6 +103,38 @@ namespace eCoachingLog.Repository
 						logDetail.ReviewedManagerName = dataReader["strReviewManager"].ToString();
 						logDetail.IsCse = dataReader["isCse"] == DBNull.Value ? false : (bool) dataReader["isCse"];
 						logDetail.IsCseUnconfirmed = Convert.ToInt16(dataReader["Customer Service Escalation"]) == 0 ? false : true;
+
+						logDetail.IsOmrShortCall = Convert.ToInt16(dataReader["OMR / ISQ"]) == 0 ? false : true;
+						logDetail.IsOmrIae = Convert.ToInt16(dataReader["OMR / IAE"]) == 0 ? false : true;
+						logDetail.IsOmrIat = Convert.ToInt16(dataReader["OMR / IAT"]) == 0 ? false : true;
+						logDetail.IsOmrException = Convert.ToInt16(dataReader["OMR / Exceptions"]) == 0 ? false : true;
+						logDetail.IsBrl = Convert.ToInt16(dataReader["OMR / BRL"]) == 0 ? false : true;
+						logDetail.IsBrn = Convert.ToInt16(dataReader["OMR / BRN"]) == 0 ? false : true;
+
+						logDetail.IsCurrentCoachingInitiative = Convert.ToInt16(dataReader["Current Coaching Initiative"]) == 0 ? false : true;
+						logDetail.IsLowCsat = Convert.ToInt16(dataReader["LCS"]) == 0 ? false : true;
+						logDetail.IsCoachingRequired = dataReader["isCoachingRequired"] == DBNull.Value ? false : (bool)dataReader["isCoachingRequired"];
+						logDetail.IsIqs = Convert.ToInt16(dataReader["isIQS"]) == 0 ? false : true;
+						logDetail.HasEmpAcknowledged = dataReader["isCSRAcknowledged"] == DBNull.Value ? false : (bool)dataReader["isCSRAcknowledged"];
+
+						logDetail.IsEtsHnc = Convert.ToInt16(dataReader["ETS / HNC"]) == 0 ? false : true;
+						logDetail.IsEtsIcc = Convert.ToInt16(dataReader["ETS / ICC"]) == 0 ? false : true;
+						logDetail.IsEtsOae = Convert.ToInt16(dataReader["ETS / OAE"]) == 0 ? false : true;
+						logDetail.IsEtsOas = Convert.ToInt16(dataReader["ETS / OAS"]) == 0 ? false : true;
+
+						logDetail.IsTrainingShortDuration = Convert.ToInt16(dataReader["Training / SDR"]) == 0 ? false : true;
+						logDetail.IsTrainingOverdue = Convert.ToInt16(dataReader["Training / ODT"]) == 0 ? false : true;
+
+						logDetail.IsCtc = Convert.ToInt16(dataReader["Quality / CTC"]) == 0 ? false : true;
+						logDetail.IsHigh5Club = Convert.ToInt16(dataReader["Quality / HFC"]) == 0 ? false : true;
+						logDetail.IsKudo = Convert.ToInt16(dataReader["Quality / KUD"]) == 0 ? false : true;
+
+						logDetail.IsAttendance = Convert.ToInt16(dataReader["OTH / SEA"]) == 0 ? false : true;
+						logDetail.IsDtt = Convert.ToInt16(dataReader["OTH / DTT"]) == 0 ? false : true;
+
+						logDetail.IsScorecardMsr = Convert.ToInt16(dataReader["PSC / MSR"]) == 0 ? false : true;
+						logDetail.IsScorecardMsrs = Convert.ToInt16(dataReader["PSC / MSRS"]) == 0 ? false : true;
+
 						break;
                     } // End while
                 } // End using SqlDataReader

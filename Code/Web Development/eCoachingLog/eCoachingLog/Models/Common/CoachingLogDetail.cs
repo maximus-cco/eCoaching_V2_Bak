@@ -17,10 +17,10 @@
         public bool IsVerintMonitor { get; set; }
         public bool IsBehaviorAnalyticsMonitor { get; set; }
         public bool IsNgdActivityId { get; set; }
-        public bool IsCtc { get; set; }
         public bool IsCse { get; set; }
 		public bool IsCseUnconfirmed { get; set; }
 
+		public bool IsCtc { get; set; }
 		public bool IsHigh5Club { get; set; }
 		public bool IsKudo { get; set; }
 		public bool IsAttendance { get; set; }
@@ -31,13 +31,16 @@
 		public bool IsOmrException { get; set; }
 		public bool IsEtsOae { get; set; }
 		public bool IsEtsOas { get; set; }
+		public bool IsEtsHnc { get; set; }
+		public bool IsEtsIcc { get; set; }
 		public bool IsOmrIae { get; set; }
 		public bool IsOmrIat { get; set; }
+		public bool IsOmrShortCall { get; set; }
 		public bool IsTrainingShortDuration { get; set; }
 		public bool IsTrainingOverdue { get; set; }
 		public bool IsBrn { get; set; }
-		public bool IsBrl { get; set; }
-		public bool IsDtt { get; set; }
+		public bool IsBrl { get; set; } // break time exceeded
+		public bool IsDtt { get; set; } // New Attendance Discrepancy feed
 
 		public bool HasEmpAcknowledged { get; set; }
 

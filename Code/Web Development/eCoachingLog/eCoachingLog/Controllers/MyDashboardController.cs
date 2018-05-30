@@ -173,7 +173,6 @@ namespace eCoachingLog.Controllers
 		{
 			var user = GetUserFromSession();
 			var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
-
 			// Load dropdowns for search
 			switch (whatLog)
 			{
@@ -195,6 +194,13 @@ namespace eCoachingLog.Controllers
 							vm.EmployeeSelectList = (SelectList)Session["empsForMgrMyPending"];
 						}
 					}
+					else
+					{
+						// Default to all
+						vm.Search.SupervisorId = "-1";
+						vm.Search.ManagerId = "-1";
+					}
+
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING;
 					break;
 				// My Completed section on My Dashboard

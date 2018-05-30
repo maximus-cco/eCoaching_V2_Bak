@@ -172,7 +172,7 @@
 		// Show spinner
     	$(".please-wait").slideDown(500);
     	//console.log("submitReview");
-    	submitReview(saveUrl, myTable, $('#my-pending-total'), 'The log has been successfully updated.', 'Failed to update the log.');
+    	submitReview(saveUrl, myTable, $('#my-pending-total'));
     });
 
     function validateMyDashboardSearch()
@@ -180,7 +180,7 @@
     	return true;
     }
 
-    function submitReview(url, tableToRefresh, $countToUpdate, successMsg, errorMsg) {
+    function submitReview(url, tableToRefresh, $countToUpdate) {
     	// Do not send hidden input fields (display:none) to server
     	$('div:hidden :input').prop("disabled", true);
 
@@ -228,12 +228,15 @@
     				tableToRefresh.ajax.reload();
     				// Update count display
     				$countToUpdate.html(data.count);
-					// Display success message
-    				$('#div-success-msg').fadeTo(2000, 500).slideUp(500);
+    				// Display success message
+    				$('#label-success-msg').text(data.successMsg);
+    				$('#div-success-msg').fadeTo(5000, 500).slideUp(500);
     			}
     			else {
     				$('#modal-container').modal('hide');
-    				$('#div-error-msg').fadeTo(2000, 500).slideUp(500);
+					// Display error message
+    				$('#label-error-msg').text(data.errorMsg);
+    				$('#div-error-msg').fadeTo(8000, 500).slideUp(500);
     			}
     		}
     	});

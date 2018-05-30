@@ -2,7 +2,9 @@
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending"}))
 {
-	@Html.HiddenFor(m => m.ShowReviewCoachingPending)
+	@Html.HiddenFor(m => m.LogDetail.LogId)
+	@Html.HiddenFor(m => m.LogDetail.StatusId)
+	@Html.HiddenFor(m => m.IsRegularPendingForm)
 	<div class='form-group mt-2' id='div-date-coached'>
 		<label for="DateCoached" id="label-date-coached" class="required">Enter the date of coaching:</label>
 		<div class="col-xs-4 input-group date">

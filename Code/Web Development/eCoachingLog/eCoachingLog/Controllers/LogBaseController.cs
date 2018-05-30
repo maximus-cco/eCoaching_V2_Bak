@@ -59,6 +59,7 @@ namespace eCoachingLog.Controllers
 				User user = GetUserFromSession();
 				List<LogBase> logs = empLogService.GetLogList(logFilter, user.EmployeeId, pageSize, rowStartIndex, sortBy, sortDirection, search);
 				totalRecords = empLogService.GetLogListTotal(logFilter, user.EmployeeId, search);
+				Session["TotalPending"] = totalRecords;
 				return Json(new { draw = draw, recordsFiltered = totalRecords, recordsTotal = totalRecords, data = logs }, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)

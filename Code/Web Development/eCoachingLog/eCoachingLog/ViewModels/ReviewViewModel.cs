@@ -56,9 +56,9 @@ namespace eCoachingLog.ViewModels
 		public bool ShowReviewCoachingPartial { get; set; }
 		public bool ShowReviewCoachingFinalPartial { get; set; }
 
-		public bool ShowReviewCoachingPending { get; set; }
-		public bool ShowReviewCoachingResearch { get; set; }
-		public bool ShowReviewCoachingCse { get; set; }
+		public bool IsRegularPendingForm { get; set; }
+		public bool IsResearchPendingForm { get; set; }
+		public bool IsCsePendingForm { get; set; }
 
 		// To control display on Historical/Review
 		public bool ShowViewCseText { get; set; }
@@ -76,7 +76,7 @@ namespace eCoachingLog.ViewModels
 		{
 			// TODO: based on the boolean show variables to decide which fields to be checked
 			// Regular Pending
-			if (this.ShowReviewCoachingPending)
+			if (this.IsRegularPendingForm)
 			{
 				if (!this.DateCoached.HasValue)
 				{
@@ -94,7 +94,7 @@ namespace eCoachingLog.ViewModels
 			}
 
 			// Reasearch
-			if (this.ShowReviewCoachingResearch)
+			if (this.IsResearchPendingForm)
 			{
 				if (!this.DateCoached.HasValue)
 				{
@@ -129,7 +129,7 @@ namespace eCoachingLog.ViewModels
 			}
 
 			// CSE
-			if (this.ShowReviewCoachingCse)
+			if (this.IsCsePendingForm)
 			{
 				if (this.IsCse) // Confirmed cse
 				{
@@ -177,9 +177,9 @@ namespace eCoachingLog.ViewModels
 				ReasonNotCse = vm.ReasonNotCse,
 				EmployeeCommentsTextBox = vm.EmployeeCommentsTextBox,
 				EmployeeCommentsDdl = vm.EmployeeCommentsDdl,
-				ShowReviewCoachingPending = vm.ShowReviewCoachingPending,
-				ShowReviewCoachingResearch = vm.ShowReviewCoachingResearch,
-				ShowReviewCoachingCse = vm.ShowReviewCoachingCse
+				IsRegularPendingForm = vm.IsRegularPendingForm,
+				IsResearchPendingForm = vm.IsResearchPendingForm,
+				IsCsePendingForm = vm.IsCsePendingForm
 			};
 		}
 

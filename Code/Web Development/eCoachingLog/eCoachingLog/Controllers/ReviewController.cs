@@ -5,11 +5,9 @@ using eCoachingLog.Services;
 using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Vereyon.Web;
 
 namespace eCoachingLog.Controllers
 {
@@ -18,20 +16,23 @@ namespace eCoachingLog.Controllers
 	{
 		private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		public ReviewController(IEmployeeLogService employeeLogService) : base(employeeLogService)
+		private readonly IReviewService reviewService;
+
+		public ReviewController(IReviewService reviewService, IEmployeeLogService employeeLogService) : base(employeeLogService)
 		{
 			logger.Debug("Entered ReviewController(IEmployeeLogService)");
+			this.reviewService = reviewService;
 		}
 
 		// GET: Review
 		public ActionResult Index(int logId, bool isCoaching)
         {
-			int currentPage = (int) Session["currentPage"];
-			
+			var user = GetUserFromSession();
+			int currentPage = (int)Session["currentPage"];
 			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
 
 			// Check if the user is authorized to view the log detail
-			bool isAuthorizedToView = IsAuthorizedToView(currentPage, logDetail, isCoaching);
+			bool isAuthorizedToView = this.reviewService.IsAccessAllowed(currentPage, logDetail, isCoaching, user);
 			if (!isAuthorizedToView)
 			{
 				ViewBag.LogName = logDetail.FormName;
@@ -78,8 +79,6 @@ namespace eCoachingLog.Controllers
 
 			var vm = new AcknowledgeViewModel();
 			vm.LogDetail = (CoachingLogDetail)logDetail;
-
-			var user = GetUserFromSession();
 			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
 
 			// Determine to show/hide Managers Notes and Coaching Notes
@@ -117,29 +116,27 @@ namespace eCoachingLog.Controllers
 
 					// There are 3 types of review forms.
 					// Default all to false.
-					vm.ShowReviewCoachingResearch = false;	// Research Form - determine if research is required
-					vm.ShowReviewCoachingCse = false;       // CSE Form - determine if it is CSE
-					vm.ShowReviewCoachingPending = false;   // Regular Pending Form - neither research nor CSE needed
+					vm.IsResearchPendingForm = false;	// Research Form - determine if research is required
+					vm.IsCsePendingForm = false;		// CSE Form - determine if it is CSE
+					vm.IsRegularPendingForm = false;	// Regular Pending Form - neither research nor CSE needed
 
-					vm.ShowReviewCoachingResearch = IfResearchCheckNeeded(vm, user);
-					if (!vm.ShowReviewCoachingResearch) // Not Research Form
+					vm.IsResearchPendingForm = IsResearchPendingForm(vm, user);
+					if (!vm.IsResearchPendingForm) // Not Research Form
 					{
-						vm.ShowReviewCoachingCse = IfCseCheckNeeded(vm, user);
-						if (!vm.ShowReviewCoachingCse)	// Not CSE Form
+						vm.IsCsePendingForm = IsCsePendingForm(vm, user);
+						if (!vm.IsCsePendingForm)	// Not CSE Form
 						{
-							vm.ShowReviewCoachingPending = true;    // Regular Pending Form.
-						} // end if (!vm.ShowReviewCoachingCse)
-						else
+							vm.IsRegularPendingForm = true;    // Regular Pending Form.
+							vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
+						} // end if (!vm.IsCsePendingForm)
+						else // CSE
 						{
-							// TODO: put instruction text (ie the static text) in db
-							vm.InstructionText = "Review the submitted coaching opportunity and determine if it is a confirmed Customer Service Escalation (CSE).  If it is a CSE, setup a meeting with the Employee and Supervisor and report your coaching in the box below.  If it not a CSE, enter notes for the Supervisor to use to coach the Employee.";
+							vm.InstructionText = Constants.REVIEW_CSE;
 						}
 					} 
-					else // Research?
+					else // Research
 					{
-						// TODO: put instruction text (ie the static text) in db
-						vm.InstructionText = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest <a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>" +
-								"Contact Center Operations 46.0 Outlier Management Report(OMR): Outlier Research Process SOP</a> and provide the details in the record below.";
+						vm.InstructionText = Constants.REVIEW_RESEARCH;
 
 						// Get non coachable reasons
 						if (Session["MainReasonNotCoachableList"] == null)
@@ -156,7 +153,7 @@ namespace eCoachingLog.Controllers
 							vm.MainReasonNotCoachableList = (IEnumerable<SelectListItem>)Session["MainReasonNotCoachableList"];
 						}
 
-					} // end if (!vm.ShowReviewCoachingResearch)
+					} // end if (!vm.IsResearchPendingForm)
 				} // end if (logDetail.Status.Trim().ToLower() == "completed")
 			} // end if (ShowAckPartial(vm))
 
@@ -168,53 +165,43 @@ namespace eCoachingLog.Controllers
 			return PartialView("_ReviewCoachingHome", vm);
         }
 
-		private bool IsAuthorizedToView(int currentPage, BaseLogDetail logDetail, bool isCoaching)
+		[HttpPost]
+		public ActionResult Save(ReviewViewModel vm)
 		{
-			var user = GetUserFromSession();
-			var userJobCode = user.JobCode == null ? string.Empty : user.JobCode.ToUpper();
-			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage)
+			bool success = false;
+			User user = GetUserFromSession();
+			if (ModelState.IsValid)
 			{
-				return (
-					user.EmployeeId == logDetail.SubmitterEmpId
-					|| user.EmployeeId == logDetail.EmployeeId
-					|| user.EmployeeId == logDetail.SupervisorEmpId
-					|| user.EmployeeId == logDetail.ManagerEmpId
-					|| user.IsEcl
-					|| user.Role == Constants.USER_ROLE_SR_MANAGER
-					|| userJobCode.StartsWith("WHHR")
-					|| userJobCode.StartsWith("WHER")
-					|| userJobCode.StartsWith("WHRC")
-				);
+				// TODO: add try/catch
+				// Update database
+				success = this.reviewService.CompleteReview(vm, user);
+				return Json(new
+				{
+					success = success,
+					count = (int)Session["TotalPending"],
+					successMsg = "The log [" + vm.LogDetail.LogId + "] has been successfully updated.",
+					errorMsg = "Failed to update the log [" + vm.LogDetail.LogId + "]."
+				});
 			}
 
-			if (Constants.PAGE_MY_DASHBOARD == currentPage)
+			// ModelState not valid
+			// Display validation message
+			return Json(new
 			{
-				return (
-					(user.EmployeeId == logDetail.SubmitterEmpId && user.Role != Constants.USER_ROLE_ARC)
-					|| user.EmployeeId == logDetail.EmployeeId
-					|| user.EmployeeId == logDetail.SubmitterEmpId
-					|| user.EmployeeId == logDetail.ManagerEmpId
-					|| (isCoaching && ((CoachingLogDetail)logDetail).IsCse && user.EmployeeId == logDetail.LogManagerEmpId)
-					|| (isCoaching && 
-							(user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedSupervisorName 
-								|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedManagerName)
-						)
-				);
+				success = false,
+				valid = false,
+				errors = ModelState
+				.Where(x => x.Value.Errors.Count > 0)
+				.ToDictionary(
+					kvp => kvp.Key,
+					kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
+				),
+				allfields = ModelState.Keys
 			}
-
-			// If it reaches here, it already passes authorization in Survey Controller 
-			if (Constants.PAGE_SURVEY == currentPage)
-			{
-				// To be safe, check again
-				return (
-					user.EmployeeId == logDetail.EmployeeId
-				);
-			}
-
-			return false;
+			);
 		}
 
-		private bool IfResearchCheckNeeded(ReviewViewModel vm, User user)
+		private bool IsResearchPendingForm(ReviewViewModel vm, User user)
 		{
 			bool retVal = false;
 			var log = vm.LogDetail;
@@ -247,7 +234,7 @@ namespace eCoachingLog.Controllers
 			return retVal;
 		}
 
-		private bool IfCseCheckNeeded(ReviewViewModel vm, User user)
+		private bool IsCsePendingForm(ReviewViewModel vm, User user)
 		{
 			bool retVal = false;
 			var log = vm.LogDetail;
@@ -266,36 +253,6 @@ namespace eCoachingLog.Controllers
 			}
 
 			return retVal;
-		}
-
-		[HttpPost]
-		public ActionResult Save(ReviewViewModel vm)
-		{
-			bool success = true;
-			if (ModelState.IsValid)
-			{
-				// Update database
-
-				// TODO: remove
-				Session["review"] = "review";
-
-				// TODO: don't hard code 11
-				// If success, then count = count - 1
-				return Json(new { success = success, count = 11 });
-			}
-
-			// ModelState not valid
-			// Display validation message
-			return Json(new { success = false,
-							  valid = false,
-							  errors = ModelState
-									   .Where(x => x.Value.Errors.Count > 0)
-									   .ToDictionary(
-											kvp => kvp.Key,
-											kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
-									   ),
-						      allfields = ModelState.Keys }
-					);
 		}
 
 		private void DetermineMgrSupNotesVisibility(ReviewViewModel vm)

@@ -13,15 +13,15 @@
 	<strong>@Html.Raw(Model.InstructionText)</strong>
 </div>
 
-@if (Model.ShowReviewCoachingPending)
+@if (Model.IsRegularPendingForm)
 {
 	{ Html.RenderPartial("_ReviewCoachingPending"); }
 }
-else if (Model.ShowReviewCoachingResearch)
+else if (Model.IsResearchPendingForm)
 {
 	{ Html.RenderPartial("_ReviewCoachingResearch"); }
 }
-else if (Model.ShowReviewCoachingCse)
+else if (Model.IsCsePendingForm)
 {
 	{ Html.RenderPartial("_ReviewCoachingCse"); }
 }

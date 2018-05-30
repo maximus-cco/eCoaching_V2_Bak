@@ -27,8 +27,8 @@ namespace eCoachingLog.Models.Review
 		public bool ShowAcknowledgePartial { get; set; }
 		public bool ShowReviewCoachingPartial { get; set; }
 
-		public bool ShowReviewCoachingPending { get; set; }
-		public bool ShowReviewCoachingResearch { get; set; }
-		public bool ShowReviewCoachingCse { get; set; }
+		public bool IsRegularPendingForm { get; set; }
+		public bool IsResearchPendingForm { get; set; }
+		public bool IsCsePendingForm { get; set; }
 	}
 }

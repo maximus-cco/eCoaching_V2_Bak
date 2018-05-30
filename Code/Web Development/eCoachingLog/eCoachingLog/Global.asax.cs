@@ -45,9 +45,11 @@ namespace eCoachingLog
             container.Register<INewSubmissionRepository, NewSubmissionRepository>(Lifestyle.Scoped);
 			container.Register<ISurveyService, SurveyService>(Lifestyle.Scoped);
 			container.Register<ISurveyRepository, SurveyRepository>(Lifestyle.Scoped);
+			container.Register<IReviewRepository, ReviewRepository>(Lifestyle.Scoped);
+			container.Register<IReviewService, ReviewService>(Lifestyle.Scoped);
 
-            // 3. Optionally verify the container's configuration
-            container.Verify();
+			// 3. Optionally verify the container's configuration
+			container.Verify();
 
             // 4. Store the container for use by the application
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
