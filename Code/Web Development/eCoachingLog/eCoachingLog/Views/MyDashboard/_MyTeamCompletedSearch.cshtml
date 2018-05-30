@@ -3,27 +3,15 @@
 User Role: @Model.Search.UserRole
 <div class="row">
 	<div class="col-sm-2"></div>
-@*@using (Ajax.BeginForm("SearchMyPendingManager",
-			"MyDashboard",
-			FormMethod.Post,
-			new AjaxOptions
-			{
-				InsertionMode = InsertionMode.Replace,
-				HttpMethod = "POST",
-				UpdateTargetId = "div-my-pending-list"//,
-			},
-			new { id = "search-form", @class = "form-horizontal" }
-	))
-{*@
 	<form class="form-inline" id="form-search-mydashboard">
 		<div class="form-group filters col-sm-10 pull-right">
-			@if (Model.Search.UserRole == UserRole.Supervisor)
+			@if (Model.Search.UserRole == Constants.USER_ROLE_SUPERVISOR)
 			{
 				<div class="col-sm-2">
 					@Html.DropDownListFor(m => m.Search.ManagerId, Model.ManagerSelectList, new { id = "select-manager", @class = "form-control reset-search-result" })
 				</div>
 			}
-			@if (Model.Search.UserRole == UserRole.Manager)
+			@if (Model.Search.UserRole == Constants.USER_ROLE_MANAGER)
 			{
 				<div class="col-sm-2">
 					@Html.DropDownListFor(m => m.Search.SupervisorId, Model.SupervisorSelectList, new { id = "select-supervisor", @class = "form-control reset-search-result" })
@@ -57,7 +45,6 @@ User Role: @Model.Search.UserRole
 				</button>
 			</div>
 		</div>
-		@*}*@
 	</form>
 </div>
 <div class="clearfix"></div>

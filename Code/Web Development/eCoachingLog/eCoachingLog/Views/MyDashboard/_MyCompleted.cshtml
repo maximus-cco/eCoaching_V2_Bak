@@ -12,6 +12,9 @@ User Role: @Model.Search.UserRole
 			</div>
 			<!-- /.panel-heading -->
 			<div class="panel-body">
+				<div id="div-my-team-completed-search">
+					@{ Html.RenderPartial("_MyCompletedSearch"); }
+				</div>
 				<div id="div-search-result">
 					@{Html.RenderPartial("_LogList", Model.Search); }
 				</div>

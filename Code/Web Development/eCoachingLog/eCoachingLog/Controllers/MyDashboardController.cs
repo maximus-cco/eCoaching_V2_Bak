@@ -78,7 +78,6 @@ namespace eCoachingLog.Controllers
 		public ActionResult Search(MyDashboardViewModel vm)
 		{
 			logger.Debug("Entered Search...");
-			vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING; // TODO: change
 			return PartialView("_LogList", vm.Search);
 		}
 
@@ -173,11 +172,21 @@ namespace eCoachingLog.Controllers
 		{
 			var user = GetUserFromSession();
 			var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
+			// Default to all
+			vm.Search.SiteId = -1;
+			vm.Search.EmployeeId = "-1";
+			vm.Search.SupervisorId = "-1";
+			vm.Search.ManagerId = "-1";
+			//vm.Search.SubmitDateFrom = null; // DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy");
+			//vm.Search.SubmitDateTo = null;   // DateTime.Now.ToString("MM/dd/yyyy");
+
 			// Load dropdowns for search
 			switch (whatLog)
 			{
 				// My Pending Section on My Dashboard
-				case "_MyPending": 
+				case "_MyPending":
+					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING;
+
 					if (user.Role == Constants.USER_ROLE_MANAGER)
 					{
 						// Supervisor dropdown
@@ -194,20 +203,17 @@ namespace eCoachingLog.Controllers
 							vm.EmployeeSelectList = (SelectList)Session["empsForMgrMyPending"];
 						}
 					}
-					else
-					{
-						// Default to all
-						vm.Search.SupervisorId = "-1";
-						vm.Search.ManagerId = "-1";
-					}
-
-					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING;
 					break;
 				// My Completed section on My Dashboard
 				case "_MyCompleted":
+					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_COMPLETED;
+					// Default to all
+					vm.Search.SupervisorId = "-1";
+					vm.Search.ManagerId = "-1";
 					break;
 				// My Team Pending on My Dashboard
-				case "_MyTeamPending": 
+				case "_MyTeamPending":
+					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_PENDING;
 					if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 					{
 						user.EmployeeId = "380158";
@@ -223,9 +229,13 @@ namespace eCoachingLog.Controllers
 					}
 					// Source dropdown
 					vm.SourceSelectList = new SelectList(empLogService.GetAllLogSources(user.EmployeeId),"Id", "Name");
+
+
 					break;
 				// My Team Completed on My Dashboard
 				case "_MyTeamCompleted":
+					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_COMPLETED;
+
 					if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 					{
 						// Manager dropdown
@@ -245,10 +255,14 @@ namespace eCoachingLog.Controllers
 					break;
 				// My Team Warning on My Dashboard
 				case "_MyTeamWarning":
+					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING;
+
 					// State dropdown
 					vm.LogStatusSelectList = new SelectList(empLogService.GetStatesForMyTeamWarning(user), "Id", "Description");
 					break;
 				case "_MySubmission":
+					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SUBMITTED;
+
 					break;
 				default:
 					break;

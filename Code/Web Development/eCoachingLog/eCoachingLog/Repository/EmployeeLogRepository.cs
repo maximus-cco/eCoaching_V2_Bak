@@ -489,7 +489,6 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
 
 				connection.Open();
-				command.ExecuteNonQuery();
 				count = (int) command.ExecuteScalar();
 			}
 			return count;

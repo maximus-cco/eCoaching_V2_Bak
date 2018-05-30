@@ -23,8 +23,12 @@ namespace eCoachingLog.Utils
 		public const string SITE_EMAIL_SUBJECT = "eCoaching Log";
 
 		public const string LOG_SEARCH_TYPE_HISTORICAL = "Historical";
+		public const string LOG_SEARCH_TYPE_MY_SUBMITTED = "MySubmitted";
 		public const string LOG_SEARCH_TYPE_MY_PENDING = "MyPending";
 		public const string LOG_SEARCH_TYPE_MY_COMPLETED = "MyCompleted";
+		public const string LOG_SEARCH_TYPE_MY_TEAM_PENDING = "MyTeamPending";
+		public const string LOG_SEARCH_TYPE_MY_TEAM_COMPLETED = "MyTeamCompleted";
+		public const string LOG_SEARCH_TYPE_MY_TEAM_WARNING = "MyTeamWarning";
 
 		public const int ALL_SITES = -1;
 

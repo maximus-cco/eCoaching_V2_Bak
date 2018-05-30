@@ -380,6 +380,7 @@
     <Content Include="Views\Survey\_Result.cshtml" />
     <Content Include="Views\Review\_Unauthorized.cshtml" />
     <Content Include="Views\MyDashboard\_DefaultDirectorBottom.cshtml" />
+    <Content Include="Views\MyDashboard\_MyCompletedSearch.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
