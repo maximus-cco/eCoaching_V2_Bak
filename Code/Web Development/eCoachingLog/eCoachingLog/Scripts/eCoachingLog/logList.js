@@ -54,18 +54,6 @@ $(document).ready(function () {
     	myTable.column('strEmpSupName:name').visible(false);
     }
 
-	// Handle 'GO' button clicked, submit the form
-    $('#form-search-logs-mysite').on('submit', function (e) {
-    	e.preventDefault();
 
-    	// Disable Go button to prevent multiple clicks
-    	$(this).attr('disabled', 'disabled');
-
-    	var ajaxRequest = $.ajax({
-    		url: searchMySiteLogs,
-    		type: 'POST',
-    		data: {}
-    	});
-    })
     
 });

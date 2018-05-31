@@ -348,7 +348,6 @@
     <Content Include="Views\Shared\_LogList.cshtml" />
     <Content Include="Views\MyDashboard\_MyPendingMgrSearch.cshtml" />
     <Content Include="Views\MyDashboard\_MyTeamCompletedSearch.cshtml" />
-    <Content Include="Views\MyDashboard\_MyTeamPendingSearch.cshtml" />
     <Content Include="Views\Review\_ReviewCoachingHome.cshtml" />
     <Content Include="Views\Review\_ReviewCoachingPending.cshtml" />
     <Content Include="Views\Shared\_CoachingLogInfo.cshtml" />
@@ -370,7 +369,7 @@
     <Content Include="Views\MyDashboard\_DefaultDirector.cshtml" />
     <Content Include="Views\HistoricalDashboard\Index.cshtml" />
     <Content Include="Views\MyDashboard\_MySiteLogs.cshtml" />
-    <Content Include="Views\MyDashboard\_MySiteSearch.cshtml" />
+    <Content Include="Views\MyDashboard\_MySiteLogSearch.cshtml" />
     <Content Include="Views\Review\_ViewCoachingLog.cshtml" />
     <Content Include="Views\MyDashboard\_CountBySite.cshtml" />
     <Content Include="Views\MyDashboard\_CountByTeam.cshtml" />

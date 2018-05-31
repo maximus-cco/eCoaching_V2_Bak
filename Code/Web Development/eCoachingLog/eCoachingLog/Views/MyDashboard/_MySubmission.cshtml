@@ -1,30 +1,26 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
 
-<div class="row">
-	<div class="panel panel-default filterable" id="coaching-log-list">
-		<div class="panel-heading">
-			<i class="fa fa-list-alt"></i><span id="title"><strong> My Submitted eCoaching Logs </strong></span>
-			<div class="pull-right">
-				<a href="#" id="a-close" style="color: black;">X</a>
-			</div>
+<div class="panel panel-default filterable" id="coaching-log-list">
+	<div class="panel-heading">
+		<i class="fa fa-list-alt"></i><span id="title"><strong> My Submitted eCoaching Logs </strong></span>
+		<div class="pull-right">
+			<a href="#" id="a-close" style="color: black;">X</a>
 		</div>
-		<!-- /.panel-heading -->
-		<div class="panel-body">
-			@*@if (Model.Search.UserRole == Constants.USER_ROLE_MANAGER)
-			{
-				<div id="div-my-pending-search">
-					@{ Html.RenderPartial("_MySubmissionMgrSearch"); }
-				</div>
-				<br />
-			}*@
-			@{ Html.RenderPartial("_MySubmissionSearch"); }
-			<div id="div-my-pending-list">
-				@{Html.RenderPartial("_LogList", Model.Search); }
-			</div>
-		</div>
-		<!-- /.panel-body -->
 	</div>
-	<!-- /.panel -->
+	<!-- /.panel-heading -->
+	<div class="panel-body">
+		@*@if (Model.Search.UserRole == Constants.USER_ROLE_MANAGER)
+		{
+			<div id="div-my-pending-search">
+				@{ Html.RenderPartial("_MySubmissionMgrSearch"); }
+			</div>
+		}*@
+		@{ Html.RenderPartial("_MySubmissionSearch"); }
+		<div id="div-my-pending-list">
+			@{Html.RenderPartial("_LogList", Model.Search); }
+		</div>
+	</div>
+	<!-- /.panel-body -->
 </div>
-<!-- /.row -->
+<!-- /.panel -->
 

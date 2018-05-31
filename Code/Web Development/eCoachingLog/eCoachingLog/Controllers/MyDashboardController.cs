@@ -27,23 +27,10 @@ namespace eCoachingLog.Controllers
         // GET: MyDashboard
         public ActionResult Index()
         {
-			// Default to pending
-			// Need to tell index page what type of pending to display: Employee, Manager, or Other (Supervisor + Others)
-			// TODO: the default pending page based on user role:
-			// Employee Role: EmployeeMyPending.cshtml
-			// Supervisor Role: SupervisorMyPending.cshtml
-			// etc....,  and inside viewmodel, add "LandingPage" to indicate it is one of these:
-			// Employee "My Pending"
-			// Supervisor and Others "My Pending"
-			// Manager "My Pending"
 			var user = GetUserFromSession();
 			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
 
-			// TODO: Get counts from database based on user lanid, hard coded right now
-			// And save the counts in view model
 			var vm = InitMyDashboardViewModel();
-			vm.MyTeamSize = 12;
-
 			if (user.Role == Constants.USER_ROLE_DIRECTOR)
 			{
 				return View("_DefaultDirector", vm);
@@ -68,10 +55,10 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult GetLogs(string whatLog)
+		public ActionResult GetLogs(string whatLog, string siteName)
 		{
 			logger.Debug("Entered GetLogs");
-			return PartialView(whatLog, InitMyDashboardViewModel(whatLog)); 
+			return PartialView(whatLog, InitMyDashboardViewModel(whatLog, siteName)); 
 		}
 
 		[HttpPost]
@@ -81,27 +68,43 @@ namespace eCoachingLog.Controllers
 			return PartialView("_LogList", vm.Search);
 		}
 
+		[HttpPost]
+		public ActionResult GetChartData()
+		{
+			IList<ChartDataset> dataSets = null;
+			ChartData data = null;
+			User user = GetUserFromSession();
+			try
+			{
+				if (user.Role != Constants.USER_ROLE_DIRECTOR)
+				{
+					dataSets = empLogService.GetChartDataSets(user);
+					data = CreateChartData(dataSets);
+				}
+				else
+				{
+					var temp = empLogService.GetLogCountByStatusForSites(user);
+					data = CreateChartDataForSites(temp);
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.Warn(ex.StackTrace);
+				logger.Warn(ex.Message);
+				// Error, reset
+				// Show "No data to display".
+				dataSets = new List<ChartDataset>();
+				data = new ChartData();
+			}
 
-// TODO: remove
-		//[HttpPost]
-		//public ActionResult SearchMyPendingManager(string supervisorId, string employeeId)
-		//{
-		//	var vm = InitMyDashboardViewModel();
-		//	vm.Search.SupervisorId = supervisorId;
-		//	vm.Search.EmployeeId = employeeId;
-		//	return PartialView("_LogList", vm.Search);
-		//}
-
-		//[HttpPost]
-		//public ActionResult SearchMyTeamPendingManager(string supervisorId, string employeeId, int sourceId)
-		//{
-		//	var vm = InitMyDashboardViewModel();
-		//	vm.Search.SupervisorId = supervisorId;
-		//	vm.Search.EmployeeId = employeeId;
-		//	vm.Search.SourceId = sourceId;
-		//	return View("_LogList", vm);
-		//}
-// End of TODO: remove
+			return Json(new
+			{
+				data = data,
+				//dataSite = dataSite,
+				chartTitle = string.Empty
+			}
+				, @"application/json");
+		}
 
 		private MyDashboardViewModel InitMyDashboardViewModel()
         {
@@ -129,9 +132,6 @@ namespace eCoachingLog.Controllers
 
 			// TODO: get real employees
 			//vm.EmployeeSelectList = employees;
-			
-			// TODO: move LogSectionWorkingOn to MyDashboardViewModel from MyDashboardSearch
-			// Add check LogSectionWorkingOn to decide which columns to hide
 			if (vm.Search.UserRole == Constants.USER_ROLE_CSR)
 			{
 				vm.Search.ShowSupNameColumn = false;
@@ -141,10 +141,6 @@ namespace eCoachingLog.Controllers
 			if (user.Role == Constants.USER_ROLE_DIRECTOR)
 			{
 				IList<LogCountForSite> logCountForSiteList = empLogService.GetLogCountsForSites(user);
-				foreach (var lcfs in logCountForSiteList)
-				{
-					// set page name here
-				}
 				vm.LogCountForSiteList = logCountForSiteList;
 				vm.IsChartBySite = true;
 			}
@@ -168,7 +164,7 @@ namespace eCoachingLog.Controllers
 			return vm;
         }
 
-		private MyDashboardViewModel InitMyDashboardViewModel(string whatLog)
+		private MyDashboardViewModel InitMyDashboardViewModel(string whatLog, string siteName)
 		{
 			var user = GetUserFromSession();
 			var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
@@ -177,8 +173,7 @@ namespace eCoachingLog.Controllers
 			vm.Search.EmployeeId = "-1";
 			vm.Search.SupervisorId = "-1";
 			vm.Search.ManagerId = "-1";
-			//vm.Search.SubmitDateFrom = null; // DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy");
-			//vm.Search.SubmitDateTo = null;   // DateTime.Now.ToString("MM/dd/yyyy");
+			vm.Search.SiteName = siteName;
 
 			// Load dropdowns for search
 			switch (whatLog)
@@ -223,12 +218,12 @@ namespace eCoachingLog.Controllers
 					else if (user.Role == Constants.USER_ROLE_MANAGER)
 					{
 						// Supervisor dropdown
-						vm.SupervisorSelectList = new SelectList(employeeService.GetSupsForMgrMyTeamPending(user), "Id", "Name");
+						vm.SupervisorSelectList = GetSupsForMgrMyTeamPending(user);
 						// Employee dropdown
-						vm.EmployeeSelectList = new SelectList(employeeService.GetEmpsForMgrMyTeamPending(user), "Id", "Name");
+						vm.EmployeeSelectList = GetEmpsForMgrMyTeamPending(user);
 					}
 					// Source dropdown
-					vm.SourceSelectList = new SelectList(empLogService.GetAllLogSources(user.EmployeeId),"Id", "Name");
+					vm.SourceSelectList = GetLogSourceSelectList(user);
 					break;
 				// My Team Completed on My Dashboard
 				case "_MyTeamCompleted":
@@ -237,16 +232,18 @@ namespace eCoachingLog.Controllers
 					if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 					{
 						// Manager dropdown
-						vm.ManagerSelectList = new SelectList(employeeService.GetMgrsForSupMyTeamCompleted(user), "Id", "Name");
+						vm.ManagerSelectList = GetMgrsForSupMyTeamCompleted(user);
 						// Employee dropdown
-						vm.EmployeeSelectList = new SelectList(employeeService.GetEmpsForSupMyTeamCompleted(user), "Id", "Name");
+						vm.EmployeeSelectList = GetEmpsForSupMyTeamCompleted(user);
+						// Source dropdown
+						vm.SourceSelectList = GetLogSourceSelectList(user);
 					}
 					else if (user.Role == Constants.USER_ROLE_MANAGER)
 					{
 						// Supervisor dropdown
-						vm.SupervisorSelectList = new SelectList(employeeService.GetSupsForMgrMyTeamCompleted(user), "Id", "Name");
+						vm.SupervisorSelectList = GetSupsForMgrMyTeamCompleted(user);
 						// Employee dropdown
-						vm.EmployeeSelectList = new SelectList(employeeService.GetEmpsForMgrMyTeamCompleted(user), "Id", "Name");
+						vm.EmployeeSelectList = GetEmpsForMgrMyTeamCompleted(user);
 					}
 					// Source dropdown
 					vm.SourceSelectList = GetLogSourceSelectList(user);
@@ -256,11 +253,16 @@ namespace eCoachingLog.Controllers
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING;
 
 					// Warning status dropdown
-					vm.WarningStatusSelectList = new SelectList(empLogService.GetWarningStatuses(user), "Id", "Description");
+					vm.WarningStatusSelectList = GetWarningStatuses(user);
 					break;
 				case "_MySubmission":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SUBMITTED;
 					Session["currentPage"] = Constants.PAGE_MY_SUBMISSION;
+					break;
+				case "_MySiteLogs":
+					// Default to pending
+					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING;
+
 					break;
 				default:
 					break;
@@ -301,42 +303,116 @@ namespace eCoachingLog.Controllers
 			return empsForSupMyTeamPending;
 		}
 
-		[HttpPost]
-		public ActionResult GetChartData()
+		private SelectList GetSupsForMgrMyTeamPending(User user)
 		{
-			IList<ChartDataset> dataSets = null;
-			ChartData data = null;
-			User user = GetUserFromSession();
-			try
+			SelectList supsForSupMyTeamPending = null;
+			if (Session["supsForSupMyTeamPending"] == null)
 			{
-				if (user.Role != Constants.USER_ROLE_DIRECTOR)
-				{
-					dataSets = empLogService.GetChartDataSets(user);
-					data = CreateChartData(dataSets);
-				}
-				else
-				{
-					var temp = empLogService.GetLogCountByStatusForSites(user);
-					data = CreateChartDataForSites(temp);
-				}
+				supsForSupMyTeamPending = new SelectList(employeeService.GetSupsForMgrMyTeamPending(user), "Id", "Name");
+				Session["supsForSupMyTeamPending"] = supsForSupMyTeamPending;
 			}
-			catch (Exception ex)
+			else
 			{
-				logger.Warn(ex.StackTrace);
-				logger.Warn(ex.Message);
-				// Error, reset
-				// Show "No data to display".
-				dataSets = new List<ChartDataset>();
-				data = new ChartData();
+				supsForSupMyTeamPending = (SelectList)Session["supsForSupMyTeamPending"];
 			}
 
-			return Json(new
+			return supsForSupMyTeamPending;
+		}
+
+		private SelectList GetEmpsForMgrMyTeamPending(User user)
+		{
+			SelectList empsForMgrMyTeamPending = null;
+			if (Session["empsForMgrMyTeamPending"] == null)
 			{
-				data = data,
-				//dataSite = dataSite,
-				chartTitle = string.Empty 
+				empsForMgrMyTeamPending = new SelectList(employeeService.GetEmpsForMgrMyTeamPending(user), "Id", "Name");
+				Session["empsForMgrMyTeamPending"] = empsForMgrMyTeamPending;
 			}
-				, @"application/json");
+			else
+			{
+				empsForMgrMyTeamPending = (SelectList)Session["empsForMgrMyTeamPending"];
+			}
+
+			return empsForMgrMyTeamPending;
+		}
+
+		private SelectList GetMgrsForSupMyTeamCompleted(User user)
+		{
+			SelectList mgrsForSupMyTeamCompleted = null;
+			if (Session["mgrsForSupMyTeamCompleted"] == null)
+			{
+				mgrsForSupMyTeamCompleted = new SelectList(employeeService.GetMgrsForSupMyTeamCompleted(user), "Id", "Name");
+				Session["mgrsForSupMyTeamCompleted"] = mgrsForSupMyTeamCompleted;
+			}
+			else
+			{
+				mgrsForSupMyTeamCompleted = (SelectList)Session["mgrsForSupMyTeamCompleted"];
+			}
+
+			return mgrsForSupMyTeamCompleted;
+		}
+
+		private SelectList GetEmpsForSupMyTeamCompleted(User user)
+		{
+			SelectList empsForSupMyTeamCompleted = null;
+			if (Session["empsForSupMyTeamCompleted"] == null)
+			{
+				empsForSupMyTeamCompleted = new SelectList(employeeService.GetEmpsForSupMyTeamCompleted(user), "Id", "Name");
+				Session["empsForSupMyTeamCompleted"] = empsForSupMyTeamCompleted;
+			}
+			else
+			{
+				empsForSupMyTeamCompleted = (SelectList)Session["empsForSupMyTeamCompleted"];
+			}
+
+			return empsForSupMyTeamCompleted;
+		}
+
+		private SelectList GetSupsForMgrMyTeamCompleted(User user)
+		{
+			SelectList supsForMgrMyTeamCompleted = null;
+			if (Session["supsForMgrMyTeamCompleted"] == null)
+			{
+				supsForMgrMyTeamCompleted = new SelectList(employeeService.GetSupsForMgrMyTeamCompleted(user), "Id", "Name");
+				Session["supsForMgrMyTeamCompleted"] = supsForMgrMyTeamCompleted;
+			}
+			else
+			{
+				supsForMgrMyTeamCompleted = (SelectList)Session["supsForMgrMyTeamCompleted"];
+			}
+
+			return supsForMgrMyTeamCompleted;
+		}
+
+		private SelectList GetEmpsForMgrMyTeamCompleted(User user)
+		{
+			SelectList empsForMgrMyTeamCompleted = null;
+			if (Session["empsForMgrMyTeamCompleted"] == null)
+			{
+				empsForMgrMyTeamCompleted = new SelectList(employeeService.GetEmpsForMgrMyTeamCompleted(user), "Id", "Name");
+				Session["empsForMgrMyTeamCompleted"] = empsForMgrMyTeamCompleted;
+			}
+			else
+			{
+				empsForMgrMyTeamCompleted = (SelectList)Session["empsForMgrMyTeamCompleted"];
+			}
+
+			return empsForMgrMyTeamCompleted;
+		}
+
+		private SelectList GetWarningStatuses(User user)
+		{
+			SelectList warningStatuses = null;
+			if (Session["warningStatuses"] == null)
+			{
+				warningStatuses = new SelectList(empLogService.GetWarningStatuses(user), "Id", "Name");
+				Session["warningStatuses"] = warningStatuses;
+			}
+			else
+			{
+				warningStatuses = (SelectList)Session["warningStatuses"];
+			}
+
+			return warningStatuses;
 		}
 
 		private ChartData CreateChartData(IList<ChartDataset> dataSets)

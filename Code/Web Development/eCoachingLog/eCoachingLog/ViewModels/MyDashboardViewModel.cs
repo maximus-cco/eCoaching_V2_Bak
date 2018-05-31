@@ -13,29 +13,21 @@ namespace eCoachingLog.ViewModels
 		public string UserId { get; set; }
         public string UserLanId { get; set; }
 
-		// my team size 
-		// if my team size is 1, then no one reports to the user
-		// so only display "My Pending" and "My Completed";
-		// otherwise, display team counts/list as well.
-		public int MyTeamSize { get; set; }
-
 		public int MyTotalPending { get; set; }
 		public IList<LogCount> LogCountList { get; set; }
 		public IList<LogCountForSite> LogCountForSiteList { get; set; }
 
 		// Search (from director)
 		public int LogStatusId { get; set; }
-		//public IEnumerable<SelectListItem> LogStatusSelectList { get; set; }
 
 		public bool IsCoaching { get; set; }
 		public bool IsWarning { get; set; }
+		public int LogCategory { get; set; }
 
 		// Search (for Manager, Supervisor and other)
 		public string SupervisorId { get; set; }
         public string EmployeeId { get; set; }
 		public string SourceId { get; set; }
-        //public IEnumerable<SelectListItem> SupervisorSelectList { get; set; }
-        //public IEnumerable<SelectListItem> EmployeeSelectList { get; set; }
 		public IEnumerable<SelectListItem> SourceSelectList { get; set; }
 
 		public IEnumerable<SelectListItem> WarningStatusSelectList { get; set; }

@@ -81,7 +81,10 @@
 			$.ajax({
 				type: 'POST',
 				url: getLogListUrl,
-				data: { whatLog: $(this).data("log") },
+				data: {
+					whatLog: $(this).data("log-type"),
+					siteName: $(this).data("site-name")
+				},
 				success: function (data) {
 					$(".please-wait").slideUp(500);
 					$('#div-log-list').html(data);
@@ -105,8 +108,6 @@
 					data: $('#form-search-mydashboard').serialize(),
 				success: function (data) {
 					$(".please-wait").slideUp(500);
-					//$('#div-search-result').removeClass('hide');
-					//$('#div-search-result').addClass('show');
 					$('#div-search-result').html(data);
 				}
 			});

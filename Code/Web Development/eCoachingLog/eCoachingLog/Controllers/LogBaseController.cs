@@ -94,12 +94,34 @@ namespace eCoachingLog.Controllers
 
 		protected IList<LogSource> GetAllLogSources(User user)
 		{
-			return this.empLogService.GetAllLogSources(user.EmployeeId);
+			IList<LogSource> allLogSources = new List<LogSource>();
+			if (Session["allLogSources"] == null)
+			{
+				allLogSources = this.empLogService.GetAllLogSources(user.EmployeeId);
+				Session["allLogSources"] = allLogSources;
+			}
+			else
+			{
+				allLogSources = (IList<LogSource>)Session["allLogSources"];
+			}
+
+			return allLogSources;
 		}
 
 		protected IList<LogValue> GetAllLogValues()
 		{
-			return this.empLogService.GetAllLogValues();
+			IList<LogValue> allLogValues = new List<LogValue>();
+			if (Session["allLogValues"] == null)
+			{
+				allLogValues = this.empLogService.GetAllLogValues();
+				Session["allLogValues"] = allLogValues;
+			}
+			else
+			{
+				allLogValues = (IList<LogValue>)Session["allLogValues"];
+			}
+
+			return allLogValues;
 		}
 
 		protected IEnumerable<SelectListItem> GetLogSourceSelectList(User user)

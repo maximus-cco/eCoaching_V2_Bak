@@ -31,6 +31,10 @@ namespace eCoachingLog.Utils
 		public const string LOG_SEARCH_TYPE_MY_TEAM_PENDING = "MyTeamPending";
 		public const string LOG_SEARCH_TYPE_MY_TEAM_COMPLETED = "MyTeamCompleted";
 		public const string LOG_SEARCH_TYPE_MY_TEAM_WARNING = "MyTeamWarning";
+		// director dashboard
+		public const string LOG_SEARCH_TYPE_MY_SITE_PENDING = "MySitePending";
+		public const string LOG_SEARCH_TYPE_MY_SITE_COMPLETED = "MySiteCompleted";
+		public const string LOG_SEARCH_TYPE_MY_SITE_WARNING = "MySiteWarning";
 
 		public const int ALL_SITES = -1;
 

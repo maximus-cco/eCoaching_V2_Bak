@@ -603,7 +603,7 @@ namespace eCoachingLog.Repository
 					{
 						LogState state = new LogState();
 						state.Id = Convert.ToInt16(dataReader["StateValue"]);
-						state.Description = dataReader["StateText"].ToString();
+						state.Name = dataReader["StateText"].ToString();
 						logStates.Add(state);
 					}
 				}
