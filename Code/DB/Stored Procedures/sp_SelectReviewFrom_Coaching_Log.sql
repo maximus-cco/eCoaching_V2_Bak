@@ -1,9 +1,10 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(08).sql
+sp_SelectReviewFrom_Coaching_Log(09).sql
 
-Last Modified Date: 11/27/2017
+Last Modified Date: 04/30/2018
 Last Modified By: Susmitha Palacherla
 
+Version 09 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
 Version 08: Modified to support additional Modules per TFS 8793 - 11/16/2017
 Version 07: Modified to use LEFT Join on Submitter table for unknown Submitters - TFS 7541 - 09/19/2017
 Version 06: New OTH DTT - TFS 7646 - 9/1/2017
@@ -26,6 +27,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -52,10 +55,11 @@ GO
 -- 16. Modified to incorporate DTT feed - TFS 7646 - 09/01/2017
 -- 17. Modified to use LEFT Join on Submitter table for unknown Submitters - TFS 7541 - 09/19/2017
 -- 18. Modified to support additional Modules per TFS 8793 - 11/16/2017
--- TFS 7856 encryption/decryption - emp name, emp lanid, email
+-- 19. Encryption/decryption - emp name, emp lanid, email - TFS 7856 - 010/10/2018
+-- 20. Modified during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
 --	=====================================================================
 
-CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @strFormIDin nvarchar(50)
+CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
 AS
 
 BEGIN
@@ -72,7 +76,7 @@ DECLARE
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
-SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [FormName] = @strFormIDin)	 
+SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [CoachingID] = @intLogId)	 
 SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] = @nvcEmpID)
 
 SET @nvcSQL1 = '
@@ -80,6 +84,7 @@ SELECT cl.CoachingID numID,
   cl.FormName strFormID,
   m.Module,
   sc.CoachingSource	strFormType,
+  cl.StatusId strStatusID,
   s.Status strFormStatus,
   cl.EventDate EventDate,
   cl.CoachingDate CoachingDate,
@@ -91,13 +96,13 @@ SELECT cl.CoachingID numID,
   vehSubmitter.Emp_Email strSubmitterEmail,	
   cl.EmpID strEmpID,		
   veh.Emp_LanID strEmpLanID,
-  veh.Emp_Name strCSRName,
-  veh.Emp_Email strCSREmail,
-  st.City strCSRSite,
-  eh.Sup_ID strCSRSupID,
-  veh.Sup_LanID strCSRSup,
-  veh.Sup_Name strCSRSupName,
-  veh.Sup_Email strCSRSupEmail,
+  veh.Emp_Name strEmpName,
+  veh.Emp_Email strEmpEmail,
+  st.City strEmpSite,
+  eh.Sup_ID strEmpSupID,
+  veh.Sup_LanID strEmpSup,
+  veh.Sup_Name strEmpSupName,
+  veh.Sup_Email strEmpSupEmail,
   CASE 
     WHEN (cl.[statusId] IN (6, 8) AND cl.[ModuleID] NOT IN (-1, 2) AND cl.[ReassignedToID] IS NOT NULL AND [ReassignCount] <> 0)
       THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
@@ -107,16 +112,16 @@ SELECT cl.CoachingID numID,
       THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_SupID])
     ELSE ''NA''
   END strReassignedSupName,	
-  eh.Mgr_ID strCSRMgrID,
+  eh.Mgr_ID strEmpMgrID,
   CASE 
     WHEN cl.[strReportCode] LIKE ''LCS%'' THEN [EC].[fn_strEmpLanIDFromEmpID](cl.[MgrID])
     ELSE veh.Mgr_LanID 
-  END strCSRMgr,
+  END strEmpMgr,
   CASE
     WHEN cl.[strReportCode] LIKE ''LCS%'' AND cl.[MgrID] <> ''' + @nvcMgrID + ''' THEN [EC].[fn_strEmpNameFromEmpID](cl.[MgrID]) + '' (Assigned Reviewer)''
     ELSE veh.Mgr_Name 
-  END strCSRMgrName,
-  veh.Mgr_Email strCSRMgrEmail,
+  END strEmpMgrName,
+  veh.Mgr_Email strEmpMgrEmail,
   CASE 
     WHEN (cl.[statusId] = 5  AND cl.[ModuleID] NOT IN (-1, 2) AND cl.[ReassignedToID] IS NOT NULL AND [ReassignCount] <> 0)
       THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
@@ -128,10 +133,10 @@ SELECT cl.CoachingID numID,
   END strReassignedMgrName,';
 	
 SET @nvcSQL2 = '
-  CASE
-    WHEN cl.[Review_SupID] IS NOT NULL THEN ISNULL(vehSup.Emp_Name, ''Unknown'')
-    ELSE ISNULL(vehMgr.Emp_Name, ''Unknown'')
-  END strReviewer,
+  CASE WHEN cl.[Review_SupID] IS NOT NULL THEN vehSup.Emp_Name
+    ELSE cl.[Review_SupID] END strReviewSupervisor,
+    CASE WHEN cl.[Review_MgrID] IS NOT NULL THEN vehMgr.Emp_Name
+    ELSE cl.[Review_MgrID] END strReviewManager,
   cl.ReassignedToID,
   sc.SubCoachingSource strSource,
   CASE 
@@ -219,7 +224,7 @@ JOIN
   FROM [EC].[Coaching_Log_Reason] clr,
     [EC].[DIM_Coaching_Reason] cr,
 	[EC].[Coaching_Log] ccl 
-  WHERE [ccl].[FormName] = ''' + @strFormIDin + '''
+  WHERE [ccl].[CoachingID] = ''' + CONVERT(NVARCHAR, @intLogId) + '''
     AND [clr].[CoachingReasonID] = [cr].[CoachingReasonID]
     AND [ccl].[CoachingID] = [clr].[CoachingID] 
   GROUP BY ccl.FormName 
@@ -242,4 +247,10 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
+
 GO
+
+
+
