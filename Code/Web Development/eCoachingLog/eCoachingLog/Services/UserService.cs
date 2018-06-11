@@ -30,7 +30,8 @@ namespace eCoachingLog.Services
 			{
 				logger.Warn(ex.StackTrace);
 			}
-            return user;
+
+			return user;
         }
     }
 }

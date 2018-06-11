@@ -15,7 +15,9 @@ namespace eCoachingLog.Models.Common
 		public string EmployeeId { get; set; }
         public string EmployeeSite { get; set; }
         public string SupervisorName { get; set; }
+		public string SupervisorEmail { get; set; }
         public string ManagerName { get; set; }
+		public string ManagerEmail { get; set; }
         public string SubmitterName { get; set; }
 		public string SubmitterEmpId { get; set; }
         public string CreatedDate { get; set; } // SubmittedDate

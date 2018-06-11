@@ -111,31 +111,10 @@ namespace eCoachingLog.Controllers
             var user = GetUserFromSession();
             var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
 
-			// only load these dropdowns for supervisor/other and managers, since they have search selections for log list
-			// Supervisor Dropdown
-			// TODO: Get all supervisors under this user (manager)
-			if (user.Role == Constants.USER_ROLE_SUPERVISOR || user.Role == Constants.USER_ROLE_OTHER)
-			{
-				//List<Employee> employeeList = employeeService.GetEmployees(user.EmployeeId, logStatus);
-				//employeeList.Insert(0, new Employee { Id = "-1", Name = "-- Select an Employee --" });
-				//IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
-				//vm.SupervisorSelectList = employees;
-			}
-			// TODO: only if user is director
-			if (user.Role == Constants.USER_ROLE_DIRECTOR)
-			{
-				List<LogStatus> logStatusList = new List<LogStatus>();
-				logStatusList.Insert(0, new LogStatus { Id = -1, Description = "-- Select a Status --" });
-				IEnumerable<SelectListItem> logStatus = new SelectList(logStatusList, "Id", "Description");
-				vm.LogStatusSelectList = logStatus;
-			}
-
-			// TODO: get real employees
-			//vm.EmployeeSelectList = employees;
-			if (vm.Search.UserRole == Constants.USER_ROLE_CSR)
-			{
-				vm.Search.ShowSupNameColumn = false;
-			}
+			//if (vm.Search.UserRole == Constants.USER_ROLE_CSR)
+			//{
+			//	vm.Search.ShowSupNameColumn = false;
+			//}
 
 			// Data to be displayed next to bar chart
 			if (user.Role == Constants.USER_ROLE_DIRECTOR)
@@ -174,6 +153,9 @@ namespace eCoachingLog.Controllers
 			vm.Search.SupervisorId = "-1";
 			vm.Search.ManagerId = "-1";
 			vm.Search.SiteName = siteName;
+			// Default to MyDashboard
+			// Set to MySubmission if "My Submission" link is clicked, used to control review page to be read only or editable
+			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
 
 			// Load dropdowns for search
 			switch (whatLog)
@@ -181,7 +163,6 @@ namespace eCoachingLog.Controllers
 				// My Pending Section on My Dashboard
 				case "_MyPending":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING;
-
 					if (user.Role == Constants.USER_ROLE_MANAGER)
 					{
 						// Supervisor dropdown
@@ -211,7 +192,6 @@ namespace eCoachingLog.Controllers
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_PENDING;
 					if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 					{
-						user.EmployeeId = "380158";
 						// Employee dropdown
 						vm.EmployeeSelectList = GetEmpsForSupMyTeamPending(user);
 					}
@@ -251,13 +231,21 @@ namespace eCoachingLog.Controllers
 				// My Team Warning on My Dashboard
 				case "_MyTeamWarning":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING;
-
+					Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
 					// Warning status dropdown
 					vm.WarningStatusSelectList = GetWarningStatuses(user);
 					break;
 				case "_MySubmission":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SUBMITTED;
 					Session["currentPage"] = Constants.PAGE_MY_SUBMISSION;
+					// Manager dropdown
+					vm.ManagerSelectList = GetMgrsForMySubmission(user, Constants.MY_SUBMISSION_FILTER_MANAGER);
+					// Supervisor dropdown
+					vm.SupervisorSelectList = GetSupsForMySubmission(user, Constants.MY_SUBMISSION_FILTER_SUPERVISOR);
+					// Employee dropdown
+					vm.EmployeeSelectList = GetEmpsForMySubmission(user, Constants.MY_SUBMISSION_FILTER_EMPLOYEE);
+					// Status dropdown
+					vm.LogStatusSelectList = GetLogStatusSelectList();
 					break;
 				case "_MySiteLogs":
 					// Default to pending
@@ -413,6 +401,54 @@ namespace eCoachingLog.Controllers
 			}
 
 			return warningStatuses;
+		}
+
+		private SelectList GetMgrsForMySubmission(User user, string filter)
+		{
+			SelectList mgrsForMySubmission = null;
+			if (Session["mgrsForMySubmission"] == null)
+			{
+				mgrsForMySubmission = new SelectList(employeeService.GetFilterForMySubmission(user, filter), "Id", "Name");
+				Session["mgrsForMySubmission"] = mgrsForMySubmission;
+			}
+			else
+			{
+				mgrsForMySubmission = (SelectList)Session["mgrsForMySubmission"];
+			}
+
+			return mgrsForMySubmission;
+		}
+
+		private SelectList GetSupsForMySubmission(User user, string filter)
+		{
+			SelectList supsForMySubmission = null;
+			if (Session["supsForMySubmission"] == null)
+			{
+				supsForMySubmission = new SelectList(employeeService.GetFilterForMySubmission(user, filter), "Id", "Name");
+				Session["supsForMySubmission"] = supsForMySubmission;
+			}
+			else
+			{
+				supsForMySubmission = (SelectList)Session["supsForMySubmission"];
+			}
+
+			return supsForMySubmission;
+		}
+
+		private SelectList GetEmpsForMySubmission(User user, string filter)
+		{
+			SelectList empsForMySubmission = null;
+			if (Session["empsForMySubmission"] == null)
+			{
+				empsForMySubmission = new SelectList(employeeService.GetFilterForMySubmission(user, filter), "Id", "Name");
+				Session["empsForMySubmission"] = empsForMySubmission;
+			}
+			else
+			{
+				empsForMySubmission = (SelectList)Session["empsForMySubmission"];
+			}
+
+			return empsForMySubmission;
 		}
 
 		private ChartData CreateChartData(IList<ChartDataset> dataSets)

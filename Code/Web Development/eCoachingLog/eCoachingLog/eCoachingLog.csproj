@@ -197,7 +197,6 @@
     <Compile Include="Models\NewSubmission\Behavior.cs" />
     <Compile Include="Models\Common\CoachingReason.cs" />
     <Compile Include="Models\Common\CoachingSubReason.cs" />
-    <Compile Include="Models\Common\Email.cs" />
     <Compile Include="Models\Common\CoachingLogDetail.cs" />
     <Compile Include="Models\Common\BaseLogDetail.cs" />
     <Compile Include="Models\Common\Module.cs" />
@@ -233,7 +232,6 @@
     <Compile Include="Services\NewSubmissionService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Utils\eCoachingLogUtil.cs" />
-    <Compile Include="Utils\EmailUtil.cs" />
     <Compile Include="Utils\FileUtil.cs" />
     <Compile Include="ViewModels\AcknowledgeViewModel.cs" />
     <Compile Include="Models\Common\Employee.cs" />
@@ -271,6 +269,7 @@
     <Content Include="Content\Images\sort_desc.png" />
     <Content Include="Content\Images\sort_desc_disabled.png" />
     <Content Include="Content\sb-admin-2.css" />
+    <Content Include="EmailTemplates\LogCompleted.html" />
     <Content Include="EmailTemplates\NewSubmission.html" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

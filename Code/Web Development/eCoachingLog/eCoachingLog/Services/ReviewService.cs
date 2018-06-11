@@ -12,15 +12,23 @@ namespace eCoachingLog.Services
 		private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		private readonly IReviewRepository reviewRepository;
+		private readonly IEmailService emailService;
 
-		public ReviewService(IReviewRepository reviewRepository)
+		public ReviewService(IReviewRepository reviewRepository, IEmailService emailService)
 		{
 			this.reviewRepository = reviewRepository;
+			this.emailService = emailService;
 		}
 
 		public bool IsAccessAllowed(int currentPage, BaseLogDetail logDetail, bool isCoaching, User user)
 		{
 			var userJobCode = user.JobCode == null ? string.Empty : user.JobCode.ToUpper();
+			// User is allowed to access his/her submissions
+			if (Constants.PAGE_MY_SUBMISSION == currentPage)
+			{
+				return user.EmployeeId == logDetail.SubmitterEmpId;
+			}
+
 			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage)
 			{
 				return (
@@ -135,21 +143,22 @@ namespace eCoachingLog.Services
 			return string.Empty;
 		}
 
-		public bool CompleteReview(ReviewViewModel vm, User user)
+		public bool CompleteReview(ReviewViewModel vm, User user, string emailTempFileName, string logoFileName)
 		{
 			if (vm.IsRegularPendingForm)
 			{
-				return CompleteRegularPendingReview(vm.LogDetail, user);
+				return CompleteRegularPendingReview(vm, user, emailTempFileName, logoFileName);
 			}
 
 			return false;
 		}
 
-		private bool CompleteRegularPendingReview(CoachingLogDetail log, User user)
+		private bool CompleteRegularPendingReview(ReviewViewModel vm, User user, string emailTempFileName, string logoFileName)
 		{
 			string nextStatus = string.Empty;
+			bool success = false;
 			// Determine next status for the log
-			if (log.StatusId == Constants.LOG_STATUS_PENDING_ACKNOWLEDGEMENT)
+			if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_ACKNOWLEDGEMENT)
 			{
 				nextStatus = "Pending Employee Review";
 			}
@@ -158,7 +167,16 @@ namespace eCoachingLog.Services
 				nextStatus = "Completed";
 			}
 
-			return reviewRepository.CompleteRegularPendingReview(log, nextStatus, user);
+			success = reviewRepository.CompleteRegularPendingReview(vm.LogDetail.LogId, vm.DateCoached, vm.DetailsCoached, nextStatus, user);
+			string moduleName = vm.LogDetail.ModuleName;
+			// Email CSR's comments to supervisor and manager 
+			if (success && !string.IsNullOrEmpty(moduleName) && moduleName.Trim().ToUpper() == "CSR" && nextStatus == "Completed")
+			{
+				this.emailService.SendComments(vm.LogDetail, vm.DetailsCoached, emailTempFileName, logoFileName);
+			}
+
+			return success;
+
 		}
 	}
 }

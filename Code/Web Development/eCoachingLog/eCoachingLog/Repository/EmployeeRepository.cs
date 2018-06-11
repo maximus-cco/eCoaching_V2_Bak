@@ -176,7 +176,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctSup]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId); // TODO: current it accepts lanid
+				command.Parameters.AddWithValueSafe("@strCSRMGRIDin", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -194,12 +194,6 @@ namespace eCoachingLog.Repository
 					}
 				}
 			}
-
-			var emp = new Employee();
-			emp.Id = "2";
-			emp.Name = "test2";
-			employees.Add(emp);
-
 			return employees;
 		}
 
@@ -210,7 +204,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strCSRMGRIDin", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -233,7 +227,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeam]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRSUPin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strCSRSUPIDin", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -256,7 +250,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctSUPTeam]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strCSRMGRIDin", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -279,7 +273,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSRTeam]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strCSRMGRIDin", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -302,7 +296,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogSupDistinctMGRTeamCompleted]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRSUPin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strCSRSUPIDin", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -325,7 +319,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogSupDistinctCSRTeamCompleted]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRSUPin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strCSRSUPIDin", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -348,7 +342,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctSUPTeamCompleted]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strCSRMGRIDin", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -371,7 +365,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSRTeamCompleted]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@strCSRMGRin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strCSRMGRIDin", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -386,5 +380,28 @@ namespace eCoachingLog.Repository
 			}
 			return employees;
 		}
+
+		//public IList<Employee> GetSupsForMySubmission(User user)
+		//{
+		//	var employees = new List<Employee>();
+		//	using (SqlConnection connection = new SqlConnection(conn))
+		//	using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR]", connection))
+		//	{
+		//		command.CommandType = CommandType.StoredProcedure;
+		//		command.Parameters.AddWithValueSafe("@strCSRMGRIDin", user.EmployeeId);
+		//		connection.Open();
+		//		using (SqlDataReader dataReader = command.ExecuteReader())
+		//		{
+		//			while (dataReader.Read())
+		//			{
+		//				Employee employee = new Employee();
+		//				employee.Id = dataReader["EmpValue"].ToString();
+		//				employee.Name = dataReader["EmpText"].ToString();
+		//				employees.Add(employee);
+		//			}
+		//		}
+		//	}
+		//	return employees;
+		//}
 	}
 }

@@ -2,36 +2,37 @@
 @using eCoachingLog.Utils
 <div class="row">
 	<form class="form-inline pull-right" id="form-search-mydashboard">
+		@Html.HiddenFor(m => m.Search.LogType)
 		@if (Model.Search.UserRole == Constants.USER_ROLE_SUPERVISOR)
 		{
 			<div class="form-group">
-				@Html.DropDownListFor(m => m.Search.ManagerId, Model.ManagerSelectList, new { id = "select-manager", @class = "form-control reset-search-result" })
+				@Html.DropDownListFor(m => m.Search.ManagerId, Model.ManagerSelectList, new { id = "select-manager", @class = "form-control" })
 			</div>
 		}
 
 		@if (Model.Search.UserRole == Constants.USER_ROLE_MANAGER)
 		{
 			<div class="form-group">
-				@Html.DropDownListFor(m => m.Search.SupervisorId, Model.SupervisorSelectList, new { id = "select-supervisor", @class = "form-control reset-search-result" })
+				@Html.DropDownListFor(m => m.Search.SupervisorId, Model.SupervisorSelectList, new { id = "select-supervisor", @class = "form-control" })
 			</div>
 		}
 		<div class="form-group">
-			@Html.DropDownListFor(m => m.Search.EmployeeId, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control reset-search-result" })
+			@Html.DropDownListFor(m => m.Search.EmployeeId, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control" })
 		</div>
 
 		<div class="form-group">
-			@Html.DropDownListFor(m => m.Search.SourceId, Model.SourceSelectList, new { id = "select-source", @class = "form-control reset-search-result" })
+			@Html.DropDownListFor(m => m.Search.SourceId, Model.SourceSelectList, new { id = "select-source", @class = "form-control" })
 		</div>
 			
 		<div class="input-group date">
-			@Html.TextBoxFor(m => m.Search.SubmitDateFrom, new { @class = "form-control reset-search-result" })
+			@Html.TextBoxFor(m => m.Search.SubmitDateFrom, new { @class = "form-control" })
 			<span class="input-group-addon">
 				<span class="glyphicon glyphicon-calendar"></span>
 			</span>
 		</div>
 
 		<div class="input-group date">
-			@Html.TextBoxFor(m => m.Search.SubmitDateTo, new { @class = "form-control reset-search-result" })
+			@Html.TextBoxFor(m => m.Search.SubmitDateTo, new { @class = "form-control" })
 			<span class="input-group-addon">
 				<span class="glyphicon glyphicon-calendar"></span>
 			</span>

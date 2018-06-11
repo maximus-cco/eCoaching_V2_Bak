@@ -36,6 +36,10 @@ namespace eCoachingLog.Utils
 		public const string LOG_SEARCH_TYPE_MY_SITE_COMPLETED = "MySiteCompleted";
 		public const string LOG_SEARCH_TYPE_MY_SITE_WARNING = "MySiteWarning";
 
+		public const string MY_SUBMISSION_FILTER_MANAGER = "Manager";
+		public const string MY_SUBMISSION_FILTER_SUPERVISOR = "Supervisor";
+		public const string MY_SUBMISSION_FILTER_EMPLOYEE = "Employee";
+
 		public const int ALL_SITES = -1;
 
 		public const string DIRECT = "Direct";

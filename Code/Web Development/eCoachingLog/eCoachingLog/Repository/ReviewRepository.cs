@@ -1,7 +1,6 @@
 ﻿using eCoachingLog.Extensions;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
-using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Data;
@@ -15,20 +14,21 @@ namespace eCoachingLog.Repository
 
 		string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
-		public bool CompleteRegularPendingReview(CoachingLogDetail log, string nextStatus, User user)
+		public bool CompleteRegularPendingReview(long logId, DateTime? dateCoached, string detailsCoached, string nextStatus, User user)
 		{
 			logger.Debug("Entered CompleteRegularPendingReview ...");
 
 			bool success = false;
 
 			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_Update7Review_Coaching_Log]", connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@nvcFormID", log.LogId);
-				command.Parameters.AddWithValueSafe("nvcReviewSupLanID", user.EmployeeId);
-				command.Parameters.AddWithValueSafe("nvcFormStatus", nextStatus); // next status;
-				command.Parameters.AddWithValueSafe("dtmSUPReviewAutoDate", DateTime.Now);
+				command.Parameters.AddWithValueSafe("@nvcFormID", logId);
+				command.Parameters.AddWithValueSafe("@nvcReviewSupLanID", user.LanId); // TODO: emp id
+				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus); // next status;
+				command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", dateCoached);
+				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", detailsCoached);
 
 				try
 				{
@@ -37,20 +37,14 @@ namespace eCoachingLog.Repository
 
 					if (rowsUpdated == 0)
 					{
-						throw new Exception("Couldn't update log [" + log.LogId + "].");
+						throw new Exception("Couldn't update log [" + logId + "].");
 					}
 
 					success = true;
-					// TODO: send email in ReviewController
-					//// Send email if it is CSR module and next status is complete
-					//if (log.ModuleId == Constants.MODULE_CSR && nextStatus == "completed")
-					//{
-					//	EmailComment(log.FormName, comment);
-					//}
 				}
 				catch (Exception ex)
 				{
-					logger.Error("Failed to update log [" + log.LogId + "]: " + ex.Message);
+					logger.Error("Failed to update log [" + logId + "]: " + ex.Message);
 				}
 			} // end Using 
 

@@ -127,9 +127,15 @@ namespace eCoachingLog.Controllers
 		protected IEnumerable<SelectListItem> GetLogSourceSelectList(User user)
 		{
 			IList<LogSource> sourceList = GetAllLogSources(user);
-			sourceList.Insert(0, new LogSource { Id = -1, Name = "-- Select a Source" });
 			IEnumerable<SelectListItem> sources = new SelectList(sourceList, "Id", "Name");
 			return sources;
+		}
+
+		protected IEnumerable<SelectListItem> GetLogStatusSelectList()
+		{
+			IList<LogStatus> statusList = GetAllLogStatuses();
+			IEnumerable<SelectListItem> statuses = new SelectList(statusList, "Id", "Description");
+			return statuses;
 		}
 	}
 }

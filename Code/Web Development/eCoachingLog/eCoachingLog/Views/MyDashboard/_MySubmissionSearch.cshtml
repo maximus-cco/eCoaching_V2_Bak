@@ -4,6 +4,19 @@
 	<form class="form-inline pull-right" id="form-search-mydashboard">
 		@Html.HiddenFor(m => m.Search.LogType)
 		<div class="form-group">
+			@Html.DropDownListFor(m => m.Search.ManagerId, Model.ManagerSelectList, new { id = "select-manager", @class = "form-control" })
+		</div>
+		<div class="form-group">
+			@Html.DropDownListFor(m => m.Search.SupervisorId, Model.SupervisorSelectList, new { id = "select-supervisor", @class = "form-control" })
+		</div>
+		<div class="form-group">
+			@Html.DropDownListFor(m => m.Search.EmployeeId, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control" })
+		</div>
+		<div class="form-group">
+			@Html.DropDownListFor(m => m.Search.StatusId, Model.LogStatusSelectList, new { id = "select-status", @class = "form-control" })
+		</div>
+
+		<div class="form-group">
 			<lable for="sumitted-date">Submitted:&nbsp;</lable>
 			<div class="input-group date">
 				@Html.TextBoxFor(m => m.Search.SubmitDateFrom, new { @class = "form-control" })

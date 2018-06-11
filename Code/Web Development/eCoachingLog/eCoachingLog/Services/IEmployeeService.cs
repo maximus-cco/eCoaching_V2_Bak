@@ -22,5 +22,9 @@ namespace eCoachingLog.Services
 		IList<Employee> GetEmpsForSupMyTeamCompleted(User user);
 		IList<Employee> GetSupsForMgrMyTeamCompleted(User user);
 		IList<Employee> GetEmpsForMgrMyTeamCompleted(User user);
+
+		//IList<Employee> GetSupsForMySubmission(User user);
+
+		IList<Employee> GetFilterForMySubmission(User user, string filter);
 	}
 }

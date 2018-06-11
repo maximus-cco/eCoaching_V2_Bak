@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
+using eCoachingLog.Utils;
 using log4net;
 using System.Collections.Generic;
 
@@ -135,6 +136,25 @@ namespace eCoachingLog.Services
 				return new List<Employee>();
 			}
 			return employeeRepository.GetEmpsForMgrMyTeamCompleted(user);
+		}
+
+		public IList<Employee> GetFilterForMySubmission(User user, string filter)
+		{
+			if (user == null)
+			{
+				logger.Info("User is null.");
+				return new List<Employee>();
+			}
+
+			IList<Employee> list = new List<Employee>();
+			return list;
+
+			//string storedProcedureName = null;
+			//if (user.JobCode.EndsWith("40") || user.JobCode == "WTTR12" || user.JobCode.Contains("WTTI"))
+			//{
+			//	storedProcedureName = "EC.sp_SelectFrom_Coaching_LogSupDistinctSUP";
+			//}
+			//return employeeRepository.GetEmpsForMgrMyPending(user, storedProcedureName);
 		}
 	}
 }

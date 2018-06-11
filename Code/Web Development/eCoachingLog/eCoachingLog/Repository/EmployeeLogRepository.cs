@@ -63,7 +63,8 @@ namespace eCoachingLog.Repository
                     {
                         logDetail.LogId = (long)dataReader["numID"];
 						logDetail.FormName = dataReader["strFormID"].ToString();
-                        logDetail.Source = dataReader["strSource"].ToString();
+						logDetail.ModuleName = dataReader["Module"].ToString();
+						logDetail.Source = dataReader["strSource"].ToString();
                         logDetail.Status = dataReader["strFormStatus"].ToString();
 						logDetail.StatusId = Convert.ToInt16(dataReader["strStatusID"].ToString());
 						logDetail.Type = dataReader["strFormType"].ToString();
@@ -134,6 +135,9 @@ namespace eCoachingLog.Repository
 
 						logDetail.IsScorecardMsr = Convert.ToInt16(dataReader["PSC / MSR"]) == 0 ? false : true;
 						logDetail.IsScorecardMsrs = Convert.ToInt16(dataReader["PSC / MSRS"]) == 0 ? false : true;
+
+						logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
+						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
 
 						break;
                     } // End while

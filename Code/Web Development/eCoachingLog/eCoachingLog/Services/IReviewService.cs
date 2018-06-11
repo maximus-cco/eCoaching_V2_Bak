@@ -8,6 +8,6 @@ namespace eCoachingLog.Services
 	{
 		bool IsAccessAllowed(int currentPage, BaseLogDetail logDetail, bool isCoaching, User user);
 		string GetInstructionText(ReviewViewModel vm, User user);
-		bool CompleteReview(ReviewViewModel vm, User user);
+		bool CompleteReview(ReviewViewModel vm, User user, string emailTempFileName, string logoFileName);
 	}
 }

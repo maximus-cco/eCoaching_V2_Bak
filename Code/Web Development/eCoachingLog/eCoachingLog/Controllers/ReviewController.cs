@@ -174,7 +174,9 @@ namespace eCoachingLog.Controllers
 			{
 				// TODO: add try/catch
 				// Update database
-				success = this.reviewService.CompleteReview(vm, user);
+				string logoFileName = Server.MapPath("~/Content/Images/ecl-logo-small.png");
+				string emailTempFileName = Server.MapPath("~/EmailTemplates/LogCompleted.html");
+				success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logoFileName);
 				return Json(new
 				{
 					success = success,

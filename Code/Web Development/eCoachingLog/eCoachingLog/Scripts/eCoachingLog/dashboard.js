@@ -167,7 +167,7 @@
     	e.preventDefault();
     	$(this).prop('disabled', true);
 		// Show spinner
-    	$(".please-wait").slideDown(500);
+    	//$(".please-wait").slideDown(500);
     	//console.log("submitReview");
     	submitReview(saveUrl, myTable, $('#my-pending-total'));
     });
