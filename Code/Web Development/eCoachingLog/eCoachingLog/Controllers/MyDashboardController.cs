@@ -140,6 +140,7 @@ namespace eCoachingLog.Controllers
 					if (lc.Description == "My Pending")
 					{
 						vm.MyTotalPending = lc.Count;
+						Session["MyTotalPending"] = vm.MyTotalPending;
 					}
 				}
 				vm.LogCountList = logCountList;
@@ -246,11 +247,11 @@ namespace eCoachingLog.Controllers
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SUBMITTED;
 					Session["currentPage"] = Constants.PAGE_MY_SUBMISSION;
 					// Manager dropdown
-					vm.ManagerSelectList = GetMgrsForMySubmission(user, Constants.MY_SUBMISSION_FILTER_MANAGER);
+					vm.ManagerSelectList = GetMgrsForMySubmission(user);
 					// Supervisor dropdown
-					vm.SupervisorSelectList = GetSupsForMySubmission(user, Constants.MY_SUBMISSION_FILTER_SUPERVISOR);
+					vm.SupervisorSelectList = GetSupsForMySubmission(user);
 					// Employee dropdown
-					vm.EmployeeSelectList = GetEmpsForMySubmission(user, Constants.MY_SUBMISSION_FILTER_EMPLOYEE);
+					vm.EmployeeSelectList = GetEmpsForMySubmission(user);
 					// Status dropdown
 					vm.LogStatusSelectList = GetLogStatusSelectList();
 					break;
@@ -410,12 +411,12 @@ namespace eCoachingLog.Controllers
 			return warningStatuses;
 		}
 
-		private SelectList GetMgrsForMySubmission(User user, string filter)
+		private SelectList GetMgrsForMySubmission(User user)
 		{
 			SelectList mgrsForMySubmission = null;
 			if (Session["mgrsForMySubmission"] == null)
 			{
-				mgrsForMySubmission = new SelectList(employeeService.GetFilterForMySubmission(user, filter), "Id", "Name");
+				mgrsForMySubmission = new SelectList(employeeService.GetFiltersForMySubmission(user, Constants.MY_SUBMISSION_FILTER_MANAGER), "Id", "Name");
 				Session["mgrsForMySubmission"] = mgrsForMySubmission;
 			}
 			else
@@ -426,12 +427,12 @@ namespace eCoachingLog.Controllers
 			return mgrsForMySubmission;
 		}
 
-		private SelectList GetSupsForMySubmission(User user, string filter)
+		private SelectList GetSupsForMySubmission(User user)
 		{
 			SelectList supsForMySubmission = null;
 			if (Session["supsForMySubmission"] == null)
 			{
-				supsForMySubmission = new SelectList(employeeService.GetFilterForMySubmission(user, filter), "Id", "Name");
+				supsForMySubmission = new SelectList(employeeService.GetFiltersForMySubmission(user, Constants.MY_SUBMISSION_FILTER_SUPERVISOR), "Id", "Name");
 				Session["supsForMySubmission"] = supsForMySubmission;
 			}
 			else
@@ -442,12 +443,12 @@ namespace eCoachingLog.Controllers
 			return supsForMySubmission;
 		}
 
-		private SelectList GetEmpsForMySubmission(User user, string filter)
+		private SelectList GetEmpsForMySubmission(User user)
 		{
 			SelectList empsForMySubmission = null;
 			if (Session["empsForMySubmission"] == null)
 			{
-				empsForMySubmission = new SelectList(employeeService.GetFilterForMySubmission(user, filter), "Id", "Name");
+				empsForMySubmission = new SelectList(employeeService.GetFiltersForMySubmission(user, Constants.MY_SUBMISSION_FILTER_EMPLOYEE), "Id", "Name");
 				Session["empsForMySubmission"] = empsForMySubmission;
 			}
 			else

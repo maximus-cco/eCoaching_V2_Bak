@@ -715,24 +715,25 @@ namespace eCoachingLog.Repository
 			return logCountByStatusForSites;
 		}
 
-		public IList<UnCoachableReason> GetUnCoachableReasons(CoachingLogDetail log)
+		public IList<UnCoachableReason> GetUnCoachableReasons(string reportCode)
 		{
-			// TODO: get from db, pass in log id
 			var reasons = new List<UnCoachableReason>();
-			UnCoachableReason r1 = new UnCoachableReason();
-			r1.Id = 1;
-			r1.Name = "Agent no longer employeed or on LOA";
-			UnCoachableReason r2 = new UnCoachableReason();
-			r2.Id = 2;
-			r2.Name = "Escalation was appropriate";
-			UnCoachableReason r3 = new UnCoachableReason();
-			r3.Id = 3;
-			r3.Name = "ISG or Supervisor told agent to escalate";
-
-			reasons.Add(r1);
-			reasons.Add(r2);
-			reasons.Add(r3);
-
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_ReasonNotCoachable_By_ReportCode]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@nvcReportCode", reportCode);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						UnCoachableReason reason = new UnCoachableReason();
+						reason.Name = dataReader["ReasonNotCoachable"].ToString();
+						reasons.Add(reason);
+					}
+				}
+			}
 			return reasons;
 		}
 	}

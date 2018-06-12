@@ -41,6 +41,6 @@ namespace eCoachingLog.Repository
 		IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end);
 		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end);
 
-		IList<UnCoachableReason> GetUnCoachableReasons(CoachingLogDetail log);
+		IList<UnCoachableReason> GetUnCoachableReasons(string reportCode);
 	}
 }

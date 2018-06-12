@@ -69,8 +69,7 @@ namespace eCoachingLog.ViewModels
 		public bool ShowViewMgtNotes { get; set; }
 		public bool ShowViewSupReviewInfo { get; set; }
 
-		public bool AcknowledgeMonitor { get; set; }
-		public bool AcknowledgeOpportunity { get; set; }
+		public bool Acknowledge { get; set; }
 
 		public bool IsAckOpportunityLog { get; set; }
 		public bool ShowCommentTextBox { get; set; }
@@ -203,8 +202,7 @@ namespace eCoachingLog.ViewModels
 				WarningLogDetail = vm.WarningLogDetail,
 				LogStatusLevel = vm.LogStatusLevel,
 				IsReinforceLog = vm.IsReinforceLog,
-				AcknowledgeMonitor = vm.AcknowledgeMonitor,
-				AcknowledgeOpportunity = vm.AcknowledgeOpportunity
+				Acknowledge = vm.Acknowledge
 			};
 		}
 

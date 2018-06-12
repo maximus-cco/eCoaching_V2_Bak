@@ -199,7 +199,7 @@ namespace eCoachingLog.Services
 				//}
 
 				nextStatus = "Completed";
-				success = reviewRepository.CompleteAckRegularReview(vm.LogDetail.LogId, vm.AcknowledgeMonitor, comments, nextStatus, user);
+				success = reviewRepository.CompleteAckRegularReview(vm.LogDetail.LogId, vm.Acknowledge, comments, nextStatus, user);
 
 			}
 			// Reinforcement
@@ -208,7 +208,7 @@ namespace eCoachingLog.Services
 				nextStatus = GetNextStatus(vm, user);
 				if (vm.LogDetail.EmployeeId == user.EmployeeId)
 				{
-					success = reviewRepository.CompleteEmpAckReinforceReview(vm.LogDetail.LogId, vm.AcknowledgeMonitor, vm.EmployeeComments, nextStatus, user);
+					success = reviewRepository.CompleteEmpAckReinforceReview(vm.LogDetail.LogId, vm.Acknowledge, vm.EmployeeComments, nextStatus, user);
 				}
 				else
 				{

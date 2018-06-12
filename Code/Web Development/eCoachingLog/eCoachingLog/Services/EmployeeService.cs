@@ -138,7 +138,7 @@ namespace eCoachingLog.Services
 			return employeeRepository.GetEmpsForMgrMyTeamCompleted(user);
 		}
 
-		public IList<Employee> GetFilterForMySubmission(User user, string filter)
+		public IList<Employee> GetFiltersForMySubmission(User user, string filterType)
 		{
 			if (user == null)
 			{
@@ -146,15 +146,7 @@ namespace eCoachingLog.Services
 				return new List<Employee>();
 			}
 
-			IList<Employee> list = new List<Employee>();
-			return list;
-
-			//string storedProcedureName = null;
-			//if (user.JobCode.EndsWith("40") || user.JobCode == "WTTR12" || user.JobCode.Contains("WTTI"))
-			//{
-			//	storedProcedureName = "EC.sp_SelectFrom_Coaching_LogSupDistinctSUP";
-			//}
-			//return employeeRepository.GetEmpsForMgrMyPending(user, storedProcedureName);
+			return employeeRepository.GetFiltersForMySubmission(user, filterType);
 		}
 	}
 }

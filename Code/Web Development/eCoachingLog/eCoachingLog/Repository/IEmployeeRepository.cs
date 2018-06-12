@@ -23,6 +23,6 @@ namespace eCoachingLog.Repository
 		IList<Employee> GetSupsForMgrMyTeamCompleted(User user);
 		IList<Employee> GetEmpsForMgrMyTeamCompleted(User user);
 
-		//IList<Employee> GetSupsForMySubmission(User user);
+		IList<Employee> GetFiltersForMySubmission(User user, string filterType);
 	}
 }

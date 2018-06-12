@@ -44,7 +44,6 @@ namespace eCoachingLog.Models.Review
 		public bool IsReviewForm { get; set; }
 		public bool IsReviewFinalForm { get; set; }
 
-		public bool AcknowledgeMonitor { get; set; }
-		public bool AcknowledgeOpportunity { get; set; }
+		public bool Acknowledge { get; set; }
 	}
 }

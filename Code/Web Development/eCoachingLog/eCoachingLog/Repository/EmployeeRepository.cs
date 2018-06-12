@@ -381,27 +381,28 @@ namespace eCoachingLog.Repository
 			return employees;
 		}
 
-		//public IList<Employee> GetSupsForMySubmission(User user)
-		//{
-		//	var employees = new List<Employee>();
-		//	using (SqlConnection connection = new SqlConnection(conn))
-		//	using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_LogMgrDistinctCSR]", connection))
-		//	{
-		//		command.CommandType = CommandType.StoredProcedure;
-		//		command.Parameters.AddWithValueSafe("@strCSRMGRIDin", user.EmployeeId);
-		//		connection.Open();
-		//		using (SqlDataReader dataReader = command.ExecuteReader())
-		//		{
-		//			while (dataReader.Read())
-		//			{
-		//				Employee employee = new Employee();
-		//				employee.Id = dataReader["EmpValue"].ToString();
-		//				employee.Name = dataReader["EmpText"].ToString();
-		//				employees.Add(employee);
-		//			}
-		//		}
-		//	}
-		//	return employees;
-		//}
+		public IList<Employee> GetFiltersForMySubmission(User user, string filterType)
+		{
+			var filters = new List<Employee>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Populate_Filter_DropDowns]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@nvcUserIdin", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@nvcWhichDropDown", filterType);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Employee emp = new Employee();
+						emp.Id = dataReader["ID"].ToString();
+						emp.Name = dataReader["Name"].ToString();
+						filters.Add(emp);
+					}
+				}
+			}
+			return filters;
+		}
 	}
 }
