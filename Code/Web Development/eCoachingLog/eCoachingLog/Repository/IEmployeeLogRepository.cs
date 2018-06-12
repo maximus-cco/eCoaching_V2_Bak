@@ -38,8 +38,8 @@ namespace eCoachingLog.Repository
 		IList<LogCount> GetLogCounts(User user);
 		IList<ChartDataset> GetChartDataSets(User user);
 
-		IList<LogCountForSite> GetLogCountsForSites(User user);
-		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user);
+		IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end);
+		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end);
 
 		IList<UnCoachableReason> GetUnCoachableReasons(CoachingLogDetail log);
 	}

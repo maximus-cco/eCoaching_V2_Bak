@@ -6,6 +6,7 @@ using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
 using log4net;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -160,14 +161,14 @@ namespace eCoachingLog.Services
 			return employeeLogRepository.GetChartDataSets(user);
 		}
 
-		public IList<LogCountForSite> GetLogCountsForSites(User user)
+		public IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end)
 		{
-			return employeeLogRepository.GetLogCountsForSites(user);
+			return employeeLogRepository.GetLogCountsForSites(user, start, end);
 		}
 
-		public IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user)
+		public IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end)
 		{
-			return employeeLogRepository.GetLogCountByStatusForSites(user);
+			return employeeLogRepository.GetLogCountByStatusForSites(user, start, end);
 		}
 
 		public IList<UnCoachableReason> GetUnCoachableReasons(CoachingLogDetail log)

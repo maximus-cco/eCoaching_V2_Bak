@@ -64,6 +64,7 @@ namespace eCoachingLog.Repository
                         logDetail.LogId = (long)dataReader["numID"];
 						logDetail.FormName = dataReader["strFormID"].ToString();
 						logDetail.ModuleName = dataReader["Module"].ToString();
+						logDetail.ModuleId = (int)dataReader["ModuleId"];
 						logDetail.Source = dataReader["strSource"].ToString();
                         logDetail.Status = dataReader["strFormStatus"].ToString();
 						logDetail.StatusId = Convert.ToInt16(dataReader["strStatusID"].ToString());
@@ -638,7 +639,7 @@ namespace eCoachingLog.Repository
 			return logCounts;
 		}
 
-		public IList<LogCountForSite> GetLogCountsForSites(User user)
+		public IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end)
 		{
 			var logCountsForSites = new List<LogCountForSite>();
 			using (SqlConnection connection = new SqlConnection(conn))
@@ -646,6 +647,8 @@ namespace eCoachingLog.Repository
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strSDatein", start);
+				command.Parameters.AddWithValueSafe("strEDatein", end);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -686,7 +689,7 @@ namespace eCoachingLog.Repository
 			return chartDatasets;
 		}
 
-		public IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user)
+		public IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end)
 		{
 			var logCountByStatusForSites = new List<LogCountByStatusForSite>();
 			using (SqlConnection connection = new SqlConnection(conn))
@@ -694,6 +697,8 @@ namespace eCoachingLog.Repository
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@strSDatein", start);
+				command.Parameters.AddWithValueSafe("strEDatein", end);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{

@@ -77,25 +77,26 @@ namespace eCoachingLog.Controllers
 				}
 			}
 
-			var vm = new AcknowledgeViewModel();
+			var vm = new ReviewViewModel();
 			vm.LogDetail = (CoachingLogDetail)logDetail;
 			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
 
 			// Determine to show/hide Managers Notes and Coaching Notes
 			DetermineMgrSupNotesVisibility(vm);
 
-			if (ShowAckPartial(vm)) // Load Acknowledge partial
-			{
-				vm.ShowAcknowledgePartial = false;
-				vm.ShowReviewCoachingPartial = false;
-				vm.ShowReviewCoachingFinalPartial = true;
-				//vm.CommentSelectList = new SelectList<>();
+			vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 
-				vm.ShowAckMontitor = ShowAckMonitor(vm);
+			if (IsAcknowledgeForm(vm)) // Load Acknowledge partial
+			{
+				vm.IsAcknowledgeForm = true;
+				vm.IsReinforceLog = IsReinforceLog(vm);
+
+				vm.IsReviewForm = false;
+				vm.IsReviewFinalForm = false;
 
 				if (user.EmployeeId == vm.LogDetail.EmployeeId)
 				{
-					vm.ShowAckOpportunity = ShowAckOpportunity(vm);
+					vm.IsAckOpportunityLog = IsAckOpportunityLog(vm);
 					vm.ShowCommentTextBox = ShowCommentTextBox(vm);
 					vm.ShowCommentDdl = ShowCommentDdl(vm);
 				}
@@ -107,12 +108,12 @@ namespace eCoachingLog.Controllers
 				// Show Final or Review
 				if (logDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 				{ 
-					vm.ShowReviewCoachingFinalPartial = true;
+					vm.IsReviewFinalForm = true;
 				}
 				else
 				{
 					// Not completed, display review instead of final.
-					vm.ShowReviewCoachingPartial = true;
+					vm.IsReviewForm = true;
 
 					// There are 3 types of review forms.
 					// Default all to false.
@@ -201,6 +202,12 @@ namespace eCoachingLog.Controllers
 				allfields = ModelState.Keys
 			}
 			);
+		}
+
+		private bool IsReadOnly(ReviewViewModel vm, User user)
+		{
+			// check module
+			return user.EmployeeId == vm.LogDetail.ManagerEmpId;
 		}
 
 		private bool IsResearchPendingForm(ReviewViewModel vm, User user)
@@ -340,7 +347,7 @@ namespace eCoachingLog.Controllers
 			return;
 		}
 
-		private bool ShowAckPartial(AcknowledgeViewModel vm)
+		private bool IsAcknowledgeForm(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
@@ -357,6 +364,12 @@ namespace eCoachingLog.Controllers
 			{
 				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1 ||
 					vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;
+			}
+
+			// Higher management 
+			if (userEmployeeId == vm.LogDetail.ManagerEmpId)
+			{
+				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4; 
 			}
 
 			return false;
@@ -427,7 +440,7 @@ namespace eCoachingLog.Controllers
 			return false;
 		}
 
-		private bool ShowAckMonitor(AcknowledgeViewModel vm)
+		private bool IsReinforceLog(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
@@ -451,14 +464,14 @@ namespace eCoachingLog.Controllers
 				// Pending Employee Review
 				else if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
 				{
-					return !ShowAckOpportunity(vm);
+					return !IsAckOpportunityLog(vm);
 				}
 			}
 
 			return false;
 		}
 
-		private bool ShowAckOpportunity(AcknowledgeViewModel vm)
+		private bool IsAckOpportunityLog(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
@@ -481,27 +494,27 @@ namespace eCoachingLog.Controllers
 			return false;
 		}
 
-		private bool ShowCommentTextBox(AcknowledgeViewModel vm)
+		private bool ShowCommentTextBox(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
 			// User is the employee of the log
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
-				return (ShowAckOpportunity(vm) || ShowAckMonitor(vm));
+				return (IsAckOpportunityLog(vm) || IsReinforceLog(vm));
 			}
 
 			return false;
 		}
 
-		private bool ShowCommentDdl(AcknowledgeViewModel vm)
+		private bool ShowCommentDdl(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
 			// User is the employee of the log
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
-				return (ShowAckOpportunity(vm) && vm.LogDetail.IsDtt);
+				return (IsAckOpportunityLog(vm) && vm.LogDetail.IsDtt);
 			}
 
 			return false;

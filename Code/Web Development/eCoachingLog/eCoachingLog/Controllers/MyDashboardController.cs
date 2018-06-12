@@ -83,7 +83,9 @@ namespace eCoachingLog.Controllers
 				}
 				else
 				{
-					var temp = empLogService.GetLogCountByStatusForSites(user);
+					var startDate = (DateTime) Session["startDate"];
+					var endDate = (DateTime) Session["EndDate"];
+					var temp = empLogService.GetLogCountByStatusForSites(user, startDate, endDate);
 					data = CreateChartDataForSites(temp);
 				}
 			}
@@ -119,7 +121,12 @@ namespace eCoachingLog.Controllers
 			// Data to be displayed next to bar chart
 			if (user.Role == Constants.USER_ROLE_DIRECTOR)
 			{
-				IList<LogCountForSite> logCountForSiteList = empLogService.GetLogCountsForSites(user);
+				var selectedDate = Convert.ToDateTime(vm.SelectedMonthYear);
+				var firstDayOfMonth = (new DateTime(selectedDate.Year, selectedDate.Month, 1)).Date;
+				var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+				Session["startDate"] = firstDayOfMonth;
+				Session["EndDate"] = lastDayOfMonth;
+				IList<LogCountForSite> logCountForSiteList = empLogService.GetLogCountsForSites(user, firstDayOfMonth, lastDayOfMonth);
 				vm.LogCountForSiteList = logCountForSiteList;
 				vm.IsChartBySite = true;
 			}

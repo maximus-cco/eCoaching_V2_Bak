@@ -4,6 +4,7 @@ using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.MyDashboard;
 using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -34,8 +35,8 @@ namespace eCoachingLog.Services
 		IList<LogCount> GetLogCounts(User user);
 		IList<ChartDataset> GetChartDataSets(User user);
 
-		IList<LogCountForSite> GetLogCountsForSites(User user);
-		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user);
+		IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end);
+		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end);
 
 		IList<UnCoachableReason> GetUnCoachableReasons(CoachingLogDetail log);
 	}

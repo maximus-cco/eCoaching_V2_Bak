@@ -34,9 +34,10 @@ namespace eCoachingLog.ViewModels
 		public DateTime? DateReviewed { get; set; }
 		public string ReasonNotCse { get; set; }
 		// Pending employee review related
-		public string EmployeeCommentsTextBox { get; set; }
-		// result from dropdown list
-		public string EmployeeCommentsDdl { get; set; }
+		//public string EmployeeCommentsTextBox { get; set; }
+		//// result from dropdown list
+		//public string EmployeeCommentsDdl { get; set; }
+		public string EmployeeComments { get; set; }
 
 
 		// TODO: add dropdownlist properties for MainReasonNotCoachable and EmployeeCommentsDdl
@@ -52,22 +53,35 @@ namespace eCoachingLog.ViewModels
 		//// Show Is Coaching Required question
 		//public bool ShowIsCoachingRequiredQuestion { get; set; }
 
-		public bool ShowAcknowledgePartial { get; set; }
-		public bool ShowReviewCoachingPartial { get; set; }
-		public bool ShowReviewCoachingFinalPartial { get; set; }
+		public bool IsReviewForm { get; set; }
+		public bool IsReviewFinalForm { get; set; }
+
+		public bool IsReadOnly { get; set; }
 
 		public bool IsRegularPendingForm { get; set; }
 		public bool IsResearchPendingForm { get; set; }
 		public bool IsCsePendingForm { get; set; }
+		public bool IsAcknowledgeForm { get; set; }
+		public bool IsReinforceLog { get; set; }
 
 		// To control display on Historical/Review
 		public bool ShowViewCseText { get; set; }
 		public bool ShowViewMgtNotes { get; set; }
 		public bool ShowViewSupReviewInfo { get; set; }
-		
+
+		public bool AcknowledgeMonitor { get; set; }
+		public bool AcknowledgeOpportunity { get; set; }
+
+		public bool IsAckOpportunityLog { get; set; }
+		public bool ShowCommentTextBox { get; set; }
+		public bool ShowCommentDdl { get; set; }
+
+		public IEnumerable<SelectListItem> CommentSelectList { get; set; }
+
 		public ReviewViewModel()
 		{
 			this.LogDetail = new CoachingLogDetail();
+			this.WarningLogDetail = new WarningLogDetail();
 			this.MainReasonNotCoachableList = new List<SelectListItem>();
 			this.EmployeeCommentsDdlList = new List<SelectListItem>();
 		}
@@ -175,11 +189,22 @@ namespace eCoachingLog.ViewModels
 				IsCse = vm.IsCse,
 				DateReviewed = vm.DateReviewed,
 				ReasonNotCse = vm.ReasonNotCse,
-				EmployeeCommentsTextBox = vm.EmployeeCommentsTextBox,
-				EmployeeCommentsDdl = vm.EmployeeCommentsDdl,
+				EmployeeComments = vm.EmployeeComments,
+				//EmployeeCommentsTextBox = vm.EmployeeCommentsTextBox,
+				//EmployeeCommentsDdl = vm.EmployeeCommentsDdl,
 				IsRegularPendingForm = vm.IsRegularPendingForm,
 				IsResearchPendingForm = vm.IsResearchPendingForm,
-				IsCsePendingForm = vm.IsCsePendingForm
+				IsCsePendingForm = vm.IsCsePendingForm,
+				IsAckOpportunityLog = vm.IsAckOpportunityLog,
+				IsReviewForm = vm.IsReviewForm,
+				IsAcknowledgeForm = vm.IsAcknowledgeForm,
+				IsReviewFinalForm = vm.IsReviewFinalForm,
+				LogDetail = vm.LogDetail,
+				WarningLogDetail = vm.WarningLogDetail,
+				LogStatusLevel = vm.LogStatusLevel,
+				IsReinforceLog = vm.IsReinforceLog,
+				AcknowledgeMonitor = vm.AcknowledgeMonitor,
+				AcknowledgeOpportunity = vm.AcknowledgeOpportunity
 			};
 		}
 
