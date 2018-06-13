@@ -1,9 +1,9 @@
 ﻿$(function () {
 	const maxLength = 3000;
 	// Research - coachable
-	$('body').on('keyup', '#DetailsCoached', function (e) {
+	$('body').on('keyup', '#DetailReasonCoachable', function (e) {
 		var remaining = maxLength - $(this).val().length;
-		$('#behavior-detail-remaining').text(remaining + ' remaining');
+		$('#detail-reason-coachable').text(remaining + ' remaining');
 	});
 	// Research - not coachable
 	$('body').on('keyup', '#DetailReasonNotCoachable', function (e) {

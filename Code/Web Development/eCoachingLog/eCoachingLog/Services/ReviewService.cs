@@ -5,6 +5,7 @@ using eCoachingLog.Repository;
 using eCoachingLog.Utils;
 using log4net;
 using System;
+using System.Collections.Generic;
 
 namespace eCoachingLog.Services
 {
@@ -142,6 +143,35 @@ namespace eCoachingLog.Services
 
 
 			return string.Empty;
+		}
+
+		public IList<string> GetReasonsToSelect(CoachingLogDetail log)
+		{
+			string reportCode = string.Empty;
+
+			log.IsDtt = true;
+			if (log.IsBrl)
+			{
+				reportCode = Constants.LOG_REPORT_CODE_OMRBRL;
+			}
+			else if (log.IsBrn)
+			{
+				reportCode = Constants.LOG_REPORT_CODE_OMRBRN;
+			}
+			else if (log.IsOmrIae)
+			{
+				reportCode = Constants.LOG_REPORT_CODE_OMRIAE;
+			}
+			else if (log.IsDtt)
+			{
+				reportCode = Constants.LOG_REPORT_CODE_OTHDTT;
+			}
+			else
+			{
+				reportCode = Constants.LOG_REPORT_CODE_OTHER;
+			}
+
+			return reviewRepository.GetReasonsToSelect(reportCode);
 		}
 
 		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName)

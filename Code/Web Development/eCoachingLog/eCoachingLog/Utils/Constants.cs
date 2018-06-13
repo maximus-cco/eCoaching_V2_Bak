@@ -49,6 +49,12 @@ namespace eCoachingLog.Utils
 		public const string CALL_TYPE_UCID = "UCID";
 		public const string CALL_TYPE_NGDID = "NGDID";
 
+		public const string LOG_REPORT_CODE_OTHER = "Other";
+		public const string LOG_REPORT_CODE_OMRBRL = "OMR/BRL";
+		public const string LOG_REPORT_CODE_OMRBRN = "OMR/BRN";
+		public const string LOG_REPORT_CODE_OMRIAE = "OMR/IAE";
+		public const string LOG_REPORT_CODE_OTHDTT = "OTH/DTT";
+
 		public const int MAX_NUMBER_OF_COACHING_REASONS = 12;
 
 		// ec.dim_module table

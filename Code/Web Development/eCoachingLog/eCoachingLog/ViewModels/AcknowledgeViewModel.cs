@@ -14,6 +14,6 @@ namespace eCoachingLog.ViewModels
 		//public bool ShowCommentDdl { get; set; }
 
 
-		public IEnumerable<SelectListItem> CommentSelectList { get; set; }
+		//public IEnumerable<SelectListItem> CommentSelectList { get; set; }
 	}
 }

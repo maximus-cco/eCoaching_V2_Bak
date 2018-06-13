@@ -714,28 +714,5 @@ namespace eCoachingLog.Repository
 			}
 			return logCountByStatusForSites;
 		}
-
-		public IList<UnCoachableReason> GetUnCoachableReasons(string reportCode)
-		{
-			var reasons = new List<UnCoachableReason>();
-			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_ReasonNotCoachable_By_ReportCode]", connection))
-			{
-				command.CommandType = CommandType.StoredProcedure;
-				command.Parameters.AddWithValueSafe("@nvcReportCode", reportCode);
-				connection.Open();
-				using (SqlDataReader dataReader = command.ExecuteReader())
-				{
-					while (dataReader.Read())
-					{
-						UnCoachableReason reason = new UnCoachableReason();
-						reason.Id = dataReader["ReasonNotCoachable"].ToString();
-						reason.Name = dataReader["ReasonNotCoachable"].ToString();
-						reasons.Add(reason);
-					}
-				}
-			}
-			return reasons;
-		}
 	}
 }

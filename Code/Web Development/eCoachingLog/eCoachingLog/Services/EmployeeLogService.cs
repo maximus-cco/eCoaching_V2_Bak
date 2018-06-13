@@ -170,24 +170,5 @@ namespace eCoachingLog.Services
 		{
 			return employeeLogRepository.GetLogCountByStatusForSites(user, start, end);
 		}
-
-		public IList<UnCoachableReason> GetUnCoachableReasons(CoachingLogDetail log)
-		{
-			string reportCode = string.Empty;
-			if (log.IsBrl)
-			{
-				reportCode = "OMR/BRL";
-			}
-			else if (log.IsBrn)
-			{
-				reportCode = "OMR/BRN";
-			}
-			else if (log.IsOmrIae)
-			{
-				reportCode = "OMR/IAE";
-			}
-
-			return employeeLogRepository.GetUnCoachableReasons(reportCode);
-		}
 	}
 }

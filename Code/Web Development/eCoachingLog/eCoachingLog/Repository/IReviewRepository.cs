@@ -1,11 +1,13 @@
 ﻿using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using System;
+using System.Collections.Generic;
 
 namespace eCoachingLog.Repository
 {
 	public interface IReviewRepository
 	{
+		IList<string> GetReasonsToSelect(string reportCode);
 		bool CompleteRegularPendingReview(Review review, string nextStatus, User user);
 		bool CompleteAckRegularReview(Review review, string nextStatus, User user);
 		bool CompleteEmpAckReinforceReview(Review review, string nextStatus, User user);

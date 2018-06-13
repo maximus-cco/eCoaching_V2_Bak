@@ -3,6 +3,7 @@ using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using log4net;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -13,6 +14,26 @@ namespace eCoachingLog.Repository
 		private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
+
+		public IList<string> GetReasonsToSelect(string reportCode)
+		{
+			var reasons = new List<string>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Reasons_By_ReportCode]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValueSafe("@nvcReportCode", reportCode);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						reasons.Add(dataReader["Reason"].ToString());
+					}
+				}
+			}
+			return reasons;
+		}
 
 		public bool CompleteRegularPendingReview(Review review, string nextStatus, User user)
 		{
@@ -164,7 +185,7 @@ namespace eCoachingLog.Repository
 			bool success = false;
 
 			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Manager_Pending_Reasearch]", connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Manager_Pending_Research]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);

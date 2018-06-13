@@ -99,6 +99,13 @@ namespace eCoachingLog.Controllers
 					vm.IsAckOpportunityLog = IsAckOpportunityLog(vm);
 					vm.ShowCommentTextBox = ShowCommentTextBox(vm);
 					vm.ShowCommentDdl = ShowCommentDdl(vm);
+					if (vm.ShowCommentDdl)
+					{
+						// Load dtt comment dropdown
+						IList<string> dttReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
+						IEnumerable<SelectListItem> dttReasonSelectList = new SelectList(dttReasons);
+						vm.EmployeeCommentsDdlList = dttReasonSelectList;
+					}
 				}
 			}
 			// Load Review partial
@@ -143,8 +150,8 @@ namespace eCoachingLog.Controllers
 						if (Session["MainReasonNotCoachableList"] == null)
 						{
 							// Uncoachable reason Dropdown
-							IList<UnCoachableReason> uncoachableReasons = this.empLogService.GetUnCoachableReasons(vm.LogDetail);
-							IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons, "Id", "Name");
+							IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
+							IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);
 							vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
 
 							Session["MainReasonNotCoachableList"] = uncoachableReasonSelectList;
@@ -209,7 +216,9 @@ namespace eCoachingLog.Controllers
 		private bool IsReadOnly(ReviewViewModel vm, User user)
 		{
 			// check module
-			return user.EmployeeId == vm.LogDetail.ManagerEmpId && !IsCsePendingForm(vm, user);
+			return user.EmployeeId == vm.LogDetail.ManagerEmpId
+				&& !IsCsePendingForm(vm, user)
+				&& !IsResearchPendingForm(vm, user);
 		}
 
 		private bool IsResearchPendingForm(ReviewViewModel vm, User user)
@@ -221,7 +230,7 @@ namespace eCoachingLog.Controllers
 			{
 				if (vm.LogStatusLevel == 2)
 				{
-					if (log.IsIqs && log.IsCtc && log.IsHigh5Club && log.IsKudo && log.IsAttendance && log.IsScorecardMsr && log.IsScorecardMsrs 
+					if (log.IsIqs && log.IsCtc && log.IsHigh5Club && log.IsKudo && log.IsAttendance && log.IsScorecardMsr && log.IsScorecardMsrs
 						&& (log.IsEtsOae || log.IsEtsOas || log.IsOmrIat || log.IsOmrIae || log.IsTrainingShortDuration || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrn || log.IsBrl))
 					{
 						retVal = true;
@@ -229,9 +238,9 @@ namespace eCoachingLog.Controllers
 				}
 			}
 			else
-			if (user.EmployeeId == log.ManagerEmpId	// User is current supervisor
+			if (user.EmployeeId == log.ManagerEmpId // User is current supervisor
 					|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId) // Log is low csat and user was supervisor when log submitted
-					||  (user.EmployeeId == log.ReassignedToEmpId)) // Log got reassigned to user
+					|| (user.EmployeeId == log.ReassignedToEmpId)) // Log got reassigned to user
 			{
 				if (vm.LogStatusLevel == 3)
 				{
