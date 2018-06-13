@@ -3,6 +3,8 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
 {
 	@Html.HiddenFor(m => m.IsCsePendingForm)
+	@Html.HiddenFor(m => m.LogDetail.LogId)
+	@Html.HiddenFor(m => m.LogDetail.ModuleId)
 
 	<div class='form-group mt-2' id='div-is-cse-question'>
 		<label for="IsCse" class='required'>Is the coaching opportunity a confirmed Customer Service Escalation (CSE)?</label><br />

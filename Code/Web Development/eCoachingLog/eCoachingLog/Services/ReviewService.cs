@@ -3,7 +3,6 @@ using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
 using eCoachingLog.Utils;
-using eCoachingLog.ViewModels;
 using log4net;
 using System;
 
@@ -73,12 +72,12 @@ namespace eCoachingLog.Services
 			return false;
 		}
 
-		public string GetInstructionText(Review vm, User user)
+		public string GetInstructionText(Review review, User user)
 		{
-			var log = vm.LogDetail;
+			var log = review.LogDetail;
 
 			if ((user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
-				&& vm.LogStatusLevel == 2)
+				&& review.LogStatusLevel == 2)
 			{
 				if (log.IsEtsOae)
 				{
@@ -136,7 +135,7 @@ namespace eCoachingLog.Services
 				return Constants.REVIEW_SCORECARD_MSRS;
 			}
 
-			if ((log.IsEtsHnc || log.IsEtsIcc) && vm.LogStatusLevel == 2)
+			if ((log.IsEtsHnc || log.IsEtsIcc) && review.LogStatusLevel == 2)
 			{
 				return Constants.REVIEW_HNC_ICC;
 			}
@@ -145,149 +144,115 @@ namespace eCoachingLog.Services
 			return string.Empty;
 		}
 
-		public bool CompleteReview(Review vm, User user, string emailTempFileName, string logoFileName)
+		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName)
 		{
-			if (vm.IsRegularPendingForm)
+			if (review.IsRegularPendingForm)
 			{
-				return CompleteRegularPendingReview(vm, user, emailTempFileName, logoFileName);
+				return CompleteRegularPendingReview(review, user, emailTempFileName, logoFileName);
 			}
 
-			if (vm.IsAcknowledgeForm)
+			if (review.IsAcknowledgeForm)
 			{
-				return CompleteAckReview(vm, user, emailTempFileName, logoFileName);
+				return CompleteAckReview(review, user, emailTempFileName, logoFileName);
 			}
 
-			if (vm.IsResearchPendingForm)
+			if (review.IsResearchPendingForm)
 			{
-
+				return CompleteResearchPendingReview(review, user);
 			}
 
-			if (vm.IsCsePendingForm)
+			if (review.IsCsePendingForm)
 			{
-
+				return reviewRepository.CompleteCsePendingReview(review, GetNextStatus(review, user), user);
 			}
 
+			// unexpected pending form, should never reach here
 			return false;
 		}
 
-		private bool CompleteRegularPendingReview(Review vm, User user, string emailTempFileName, string logoFileName)
+		private bool CompleteRegularPendingReview(Review review, User user, string emailTempFileName, string logoFileName)
 		{
 			bool success = false;
 			string nextStatus = "Pending Employee Review";
 
-			success = reviewRepository.CompleteRegularPendingReview(vm.LogDetail.LogId, vm.DateCoached, vm.DetailsCoached, nextStatus, user);
+			success = reviewRepository.CompleteRegularPendingReview(review, nextStatus, user);
 			return success;
 		}
 
-		private bool CompleteAckReview(Review vm, User user, string emailTempFileName, string logoFileName)
+		private bool CompleteAckReview(Review review, User user, string emailTempFileName, string logoFileName)
 		{
 			bool success = false;
 			string nextStatus = string.Empty;
 
 			// Opportunity
-			if (!vm.IsReinforceLog)
+			if (!review.IsReinforceLog)
 			{
-				string comments = string.Empty;
-				// TODO: bind dropdown and txtbox to the same field EmployeeComment
-				//if (vm.ShowCommentDdl)
-				//{
-				//	comments = vm.EmployeeCommentsDdl;
-				//}
-				//else
-				//{
-					comments = vm.EmployeeComments;
-				//}
-
 				nextStatus = "Completed";
-				success = reviewRepository.CompleteAckRegularReview(vm.LogDetail.LogId, vm.Acknowledge, comments, nextStatus, user);
-
+				success = reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
 			}
 			// Reinforcement
 			else
 			{
-				nextStatus = GetNextStatus(vm, user);
-				if (vm.LogDetail.EmployeeId == user.EmployeeId)
+				nextStatus = GetNextStatus(review, user);
+				if (review.LogDetail.EmployeeId == user.EmployeeId)
 				{
-					success = reviewRepository.CompleteEmpAckReinforceReview(vm.LogDetail.LogId, vm.Acknowledge, vm.EmployeeComments, nextStatus, user);
+					success = reviewRepository.CompleteEmpAckReinforceReview(review, nextStatus, user);
 				}
 				else
 				{
-					success = reviewRepository.CompleteSupAckReinforceReview(vm.LogDetail.LogId, nextStatus, user);
+					success = reviewRepository.CompleteSupAckReinforceReview(review.LogDetail.LogId, nextStatus, user);
 				}
 			}
 
-			string moduleName = vm.LogDetail.ModuleName;
+			string moduleName = review.LogDetail.ModuleName;
 			// Email CSR's comments to supervisor and manager 
 			if (success && !string.IsNullOrEmpty(moduleName) && moduleName.Trim().ToUpper() == "CSR" && nextStatus == "Completed")
 			{
-				this.emailService.SendComments(vm.LogDetail, vm.DetailsCoached, emailTempFileName, logoFileName);
+				this.emailService.SendComments(review.LogDetail, review.DetailsCoached, emailTempFileName, logoFileName);
 			}
 
 			return success;
 		}
 
-		private bool CompleteResearchPendingReview(ReviewViewModel vm, User user)
+		private bool CompleteResearchPendingReview(Review review, User user)
 		{
-			//@nvcFormID Nvarchar(50),
-			//@nvcFormStatus Nvarchar(30),
-			//@nvcstrReasonNotCoachable Nvarchar(100),
-			//@nvcReviewerLanID Nvarchar(20),
-			//@dtmReviewAutoDate datetime,
-			//@dtmReviewManualDate datetime,
-			//@bitisCoachingRequired bit,
-			//@nvcReviewerNotes Nvarchar(max),
-			//@nvctxtReasonNotCoachable Nvarchar(max)
-
-			bool success = false;
 			string nextStatus = string.Empty;
 
-			long formId = vm.LogDetail.LogId;
-			nextStatus = GetNextStatus(vm, user);
+			long formId = review.LogDetail.LogId;
+			nextStatus = GetNextStatus(review, user);
 			DateTime reviewAutoDate = DateTime.Now;
-			bool bitisCoachingRequired = vm.IsCoachingRequired;
+			bool bitisCoachingRequired = review.IsCoachingRequired;
 			DateTime? dtmReviewManualDate = null;
-			if (vm.LogStatusLevel != 2)
+			if (review.LogStatusLevel != 2)
 			{
-				dtmReviewManualDate = vm.DateCoached;
+				dtmReviewManualDate = review.DateCoached;
 			}
 
 			if (bitisCoachingRequired)
 			{
-				nextStatus = GetNextStatus(vm, user); // TODO:
-				string nvcReviewerNotes = vm.DetailReasonCoachable;
-				if (vm.LogStatusLevel == 2)
+				nextStatus = GetNextStatus(review, user);
+				if (review.LogStatusLevel == 2)
 				{
-					nvcReviewerNotes = FormatCoachingNotes(vm);
+					review.DetailReasonCoachable = FormatCoachingNotes(review);
 				}
 			}
 			else
 			{
 				nextStatus = "Inactive";
-				string nvcstrReasonNotCoachable = vm.MainReasonNotCoachable;
-
-				if (vm.LogStatusLevel == 2)
+				if (review.LogStatusLevel == 2)
 				{
-					string supName = vm.LogDetail.SupervisorName;
-					string reassignedTo = vm.LogDetail.ReassignedSupervisorName;
-
-					nvcstrReasonNotCoachable = FormatCoachingNotes(vm);
+					review.MainReasonNotCoachable = FormatCoachingNotes(review);
 				}
 			}
 
-
-			//success = reviewRepository.CompleteResearchPendingReview(vm.LogDetail.LogId, nextStatus, user.EmployeeId, 
-			//	isCoachRequired, reasonNotCoachable, reasonCoachable, reviewNotes, reviewDate);
-
-
-			return true;
-
+			return reviewRepository.CompleteResearchPendingReview(review, nextStatus, user);
 		}
 
-		private string FormatCoachingNotes(ReviewViewModel vm)
+		private string FormatCoachingNotes(Review review)
 		{
 			string notes = string.Empty;
-			string supName = vm.LogDetail.SupervisorName;
-			string reassignedTo = vm.LogDetail.ReassignedSupervisorName;
+			string supName = review.LogDetail.SupervisorName;
+			string reassignedTo = review.LogDetail.ReassignedSupervisorName;
 
 			if (string.IsNullOrEmpty(reassignedTo) || reassignedTo == "NA")
 			{
@@ -298,36 +263,34 @@ namespace eCoachingLog.Services
 				notes += reassignedTo;
 			}
 
-			notes += " (" + DateTime.Now + " PDT) - " + vm.DateCoached + " " + vm.DetailReasonNotCoachable;
+			notes += " (" + DateTime.Now + " PDT) - " + review.DateCoached + " " + review.DetailReasonNotCoachable;
 
-			if (string.IsNullOrEmpty(vm.LogDetail.CoachingNotes))
+			if (string.IsNullOrEmpty(review.LogDetail.CoachingNotes))
 			{
 				return notes;
 			}
 
-			return vm.LogDetail.CoachingNotes + "<br />" + notes;
+			return review.LogDetail.CoachingNotes + "<br />" + notes;
 		}
 
-		private string GetNextStatus(Review vm, User user)
+		private string GetNextStatus(Review review, User user)
 		{
 			string nextStatus = string.Empty;
-			string moduleName = string.IsNullOrEmpty(vm.LogDetail.ModuleName) ? string.Empty : vm.LogDetail.ModuleName.Trim().ToLower();
-
-			if (vm.IsAcknowledgeForm && vm.IsReinforceLog)
+			int moduleId = review.LogDetail.ModuleId;
+			// Positive (reinforced, met goal) Ack form
+			if (review.IsAcknowledgeForm && review.IsReinforceLog)
 			{
-				// TODO: check if the sp for detail will return module id
-				// TODO: pass back status id instead of text
-				if (vm.LogDetail.EmployeeId == user.EmployeeId)
+				if (review.LogDetail.EmployeeId == user.EmployeeId)
 				{
-					if (moduleName == "csr" || moduleName == "training")
+					if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
 					{
 						nextStatus = "Pending Supervisor Review";
 					}
-					else if (moduleName == "supervisor")
+					else if (moduleId == Constants.MODULE_SUPERVISOR)
 					{
 						nextStatus = "Pending Manager Review";
 					}
-					else if (moduleName == "quality")
+					else if (moduleId == Constants.MODULE_QUALITY)
 					{
 						nextStatus = "Pending Quality Lead Review";
 					}
@@ -336,9 +299,9 @@ namespace eCoachingLog.Services
 						nextStatus = "Completed";
 					}
 				}
-				else
+				else // user is not the log's employee
 				{
-					if(vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_ACKNOWLEDGEMENT)
+					if(review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_ACKNOWLEDGEMENT)
 					{
 						nextStatus = "Pending Employee Review";
 					}
@@ -351,10 +314,11 @@ namespace eCoachingLog.Services
 				return nextStatus;
 			}
 
-			if (vm.IsResearchPendingForm)
+			// Research form
+			if (review.IsResearchPendingForm)
 			{
-				var log = vm.LogDetail;
-				if(moduleName == "csr" || moduleName == "training")
+				var log = review.LogDetail;
+				if(moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
 				{
 					if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat)
 					{
@@ -365,7 +329,7 @@ namespace eCoachingLog.Services
 						nextStatus = "Pending Employee Review";
 					}
 				}
-				else if (moduleName == "supervisor")
+				else if (moduleId == Constants.MODULE_SUPERVISOR)
 				{
 					if (log.IsCurrentCoachingInitiative || log.IsOmrException)
 					{
@@ -376,7 +340,7 @@ namespace eCoachingLog.Services
 						nextStatus = "Pending Employee Review";
 					}
 				}
-				else if (moduleName == "quality")
+				else if (moduleId == Constants.MODULE_QUALITY)
 				{
 					if (log.IsCurrentCoachingInitiative || log.IsOmrException)
 					{
@@ -393,6 +357,27 @@ namespace eCoachingLog.Services
 				}
 
 				return nextStatus;
+			}
+
+			// CSE form
+			if (review.IsCsePendingForm)
+			{
+				if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
+				{
+					nextStatus = "Pending Supervisor Review";
+				}
+				else if (moduleId == Constants.MODULE_SUPERVISOR)
+				{
+					nextStatus = "Pending Manager Review";
+				}
+				else if (moduleId == Constants.MODULE_QUALITY)
+				{
+					nextStatus = "Pending Quality Lead Review";
+				}
+				else
+				{
+					nextStatus = "Unknown";
+				}
 			}
 
 			return nextStatus;

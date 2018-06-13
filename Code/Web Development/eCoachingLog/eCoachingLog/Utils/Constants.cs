@@ -6,6 +6,9 @@ namespace eCoachingLog.Utils
 {
 	public static class Constants
 	{
+		public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
+		public const string SITE_EMAIL_SUBJECT = "eCoaching Log";
+
 		public const string USER_ROLE_CSR = "CSR";
 		public const string USER_ROLE_ARC = "ARC";
 		public const string USER_ROLE_SUPERVISOR = "Supervisor";
@@ -19,10 +22,6 @@ namespace eCoachingLog.Utils
 		public const int PAGE_HISTORICAL_DASHBOARD = 20;
 		public const int PAGE_SURVEY = 30;
 		public const int PAGE_MY_SUBMISSION = 50;
-
-
-		public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
-		public const string SITE_EMAIL_SUBJECT = "eCoaching Log";
 
 		public const string LOG_SEARCH_TYPE_HISTORICAL = "Historical";
 		public const string LOG_SEARCH_TYPE_MY_SUBMITTED = "MySubmitted";
@@ -105,7 +104,6 @@ namespace eCoachingLog.Utils
 			{ 8, "#FF0000" }
 		};
 
-		// Dictionary<<moduleId, statusId>, statusLevel>
 		public static readonly Dictionary<Tuple<int, int>, int> LogStatusLevel = new Dictionary<Tuple<int, int>, int>
 		{
 			// CSR
@@ -144,17 +142,6 @@ namespace eCoachingLog.Utils
 			{ new Tuple<int, int>(MODULE_PRODUCTION_PLANNING, LOG_STATUS_PENDING_EMPLOYEE_REVIEW), LOG_STATUS_LEVEL_1 },
 			{ new Tuple<int, int>(MODULE_PRODUCTION_PLANNING, LOG_STATUS_PENDING_SUPERVISOR_REVIEW), LOG_STATUS_LEVEL_2 }
 		};
-		//}
-
-		//public enum EmployeeLogType
-		//{
-		//    [Description("Coaching")]
-		//    Coaching = 1,
-
-		//    [Description("Warning")]
-		//    Warning = 2
-		//}
-
 
 		// TODO: move to resource file
 		public const string REVIEW_OMR_SHORT_CALL_TEXT = "You are receiving this eCL because you have been assigned to listen to and provide feedback on calls that have been identified as having a short duration. Details of each call can be found within the Performance Report Catalog by clicking " +

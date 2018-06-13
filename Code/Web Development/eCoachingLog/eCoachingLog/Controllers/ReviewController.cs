@@ -209,7 +209,7 @@ namespace eCoachingLog.Controllers
 		private bool IsReadOnly(ReviewViewModel vm, User user)
 		{
 			// check module
-			return user.EmployeeId == vm.LogDetail.ManagerEmpId;
+			return user.EmployeeId == vm.LogDetail.ManagerEmpId && !IsCsePendingForm(vm, user);
 		}
 
 		private bool IsResearchPendingForm(ReviewViewModel vm, User user)
