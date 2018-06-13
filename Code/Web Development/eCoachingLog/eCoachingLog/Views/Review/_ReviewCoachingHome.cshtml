@@ -59,11 +59,11 @@
 				</div>*@
 
 				<div class="mt-2">
-					@if (Model.IsAcknowledgeForm)
+					@if (!Model.IsReadOnly && Model.IsAcknowledgeForm)
 					{
 						{ Html.RenderPartial("_AcknowledgeCoaching"); }
 					}
-					else if (Model.IsReviewForm)
+					else if (!Model.IsReadOnly && Model.IsReviewForm)
 					{
 						{ Html.RenderPartial("_ReviewCoaching"); }
 					}
@@ -81,7 +81,7 @@
 					{
 						<button class="btn btn-primary float-right" id="btn-close" data-dismiss="modal">Close</button>
 					}
-					else
+					else if (Model.IsAcknowledgeForm || Model.IsReviewForm)
 					{
 						<button class="btn btn-primary float-right" type="submit" id="btn-submit">Submit</button>
 					}

@@ -1,5 +1,4 @@
 ﻿using eCoachingLog.Models.Common;
-using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using eCoachingLog.Utils;
@@ -84,15 +83,14 @@ namespace eCoachingLog.Controllers
 			// Determine to show/hide Managers Notes and Coaching Notes
 			DetermineMgrSupNotesVisibility(vm);
 
-			vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-
 			if (IsAcknowledgeForm(vm)) // Load Acknowledge partial
 			{
 				vm.IsAcknowledgeForm = true;
 				vm.IsReinforceLog = IsReinforceLog(vm);
-
 				vm.IsReviewForm = false;
 				vm.IsReviewFinalForm = false;
+
+				vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 
 				if (user.EmployeeId == vm.LogDetail.EmployeeId)
 				{
@@ -132,20 +130,23 @@ namespace eCoachingLog.Controllers
 					if (!vm.IsResearchPendingForm) // Not Research Form
 					{
 						vm.IsCsePendingForm = IsCsePendingForm(vm, user);
-						if (!vm.IsCsePendingForm)	// Not CSE Form
+						if (!vm.IsCsePendingForm)	// Not Research Form, not CSE Form, so this is regular pending review form
 						{
 							vm.IsRegularPendingForm = true;    // Regular Pending Form.
 							vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
+
+							vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 						} // end if (!vm.IsCsePendingForm)
 						else // CSE
 						{
+							vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 							vm.InstructionText = Constants.REVIEW_CSE;
 						}
 					} 
 					else // Research
 					{
+						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 						vm.InstructionText = Constants.REVIEW_RESEARCH;
-
 						// Get non coachable reasons
 						if (Session["MainReasonNotCoachableList"] == null)
 						{
@@ -215,10 +216,30 @@ namespace eCoachingLog.Controllers
 
 		private bool IsReadOnly(ReviewViewModel vm, User user)
 		{
-			// check module
-			return user.EmployeeId == vm.LogDetail.ManagerEmpId
-				&& !IsCsePendingForm(vm, user)
-				&& !IsResearchPendingForm(vm, user);
+			bool readOnly = false;
+			if (vm.IsRegularPendingForm)
+			{
+				// Only Supervisor or reassigned to can enter data on review page
+				if (user.EmployeeId != vm.LogDetail.SupervisorEmpId 
+					&& user.EmployeeId != vm.LogDetail.ReassignedToEmpId)
+				{
+					readOnly = true;
+				}
+			}
+			else if (vm.IsAcknowledgeForm)
+			{
+				// Only Supervisor or reassigned to or employee can enter data on review page
+				if (user.EmployeeId != vm.LogDetail.SupervisorEmpId
+					&& user.EmployeeId != vm.LogDetail.ReassignedToEmpId
+					&& user.EmployeeId != vm.LogDetail.EmployeeId)
+				{
+					readOnly = true;
+				}
+			}
+
+			// No need to check research form and cse form.
+			// Research Form and CSE Form display only for managers, so the form will be editable, which means readOnly is false
+			return readOnly;
 		}
 
 		private bool IsResearchPendingForm(ReviewViewModel vm, User user)
