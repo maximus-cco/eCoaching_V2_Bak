@@ -164,6 +164,7 @@ $(document).ready(function () {
 	$.ajax({
 		type: "POST",
 		url: getChartData,
+		data: { monthYear: $('#ddl-month').val() },
 		dataType: "json",
 		success: function (result) {
 			var chart = new Chart(ctx,

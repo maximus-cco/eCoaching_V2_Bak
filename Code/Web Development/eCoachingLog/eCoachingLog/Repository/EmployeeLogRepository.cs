@@ -729,6 +729,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						UnCoachableReason reason = new UnCoachableReason();
+						reason.Id = dataReader["ReasonNotCoachable"].ToString();
 						reason.Name = dataReader["ReasonNotCoachable"].ToString();
 						reasons.Add(reason);
 					}

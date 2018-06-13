@@ -30,27 +30,37 @@ namespace eCoachingLog.Controllers
 			var user = GetUserFromSession();
 			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
 
-			var vm = InitMyDashboardViewModel();
+			var vm = new MyDashboardViewModel();
 			if (user.Role == Constants.USER_ROLE_DIRECTOR)
 			{
+				var selectedDate = Convert.ToDateTime(vm.SelectedMonthYear);
+				var start = (new DateTime(selectedDate.Year, selectedDate.Month, 1)).Date;
+				var end = start.AddMonths(1).AddDays(-1);
+				vm = InitMyDashboardViewModel(start, end);
 				return View("_DefaultDirector", vm);
 			}
 
-            return View("_Default", vm);
+			vm = InitMyDashboardViewModel(null, null);
+			return View("_Default", vm);
         }
 
 		[HttpPost]
 		public ActionResult Default()
 		{
 			var user = GetUserFromSession();
-			var vm = InitMyDashboardViewModel();
+			var vm = InitMyDashboardViewModel(null, null);
 			return PartialView("_Default", vm);
 		}
 
 		[HttpPost]
 		public ActionResult GetDataByMonth(string month)
 		{
-			var vm = InitMyDashboardViewModel();
+			DateTime selectedMonth = DateTime.Parse(month);
+			// First day of the month
+			var start = (new DateTime(selectedMonth.Year, selectedMonth.Month, 1)).Date; 
+			// Last day of the month
+			var end = start.AddMonths(1).AddDays(-1);
+			var vm = InitMyDashboardViewModel(start, end);
 			return PartialView("_DefaultDirectorBottom", vm);
 		}
 
@@ -58,7 +68,7 @@ namespace eCoachingLog.Controllers
 		public ActionResult GetLogs(string whatLog, string siteName)
 		{
 			logger.Debug("Entered GetLogs");
-			return PartialView(whatLog, InitMyDashboardViewModel(whatLog, siteName)); 
+			return PartialView(whatLog, InitMyDashboardVMByLogType(whatLog, siteName)); 
 		}
 
 		[HttpPost]
@@ -69,7 +79,7 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult GetChartData()
+		public ActionResult GetChartData(string monthYear)
 		{
 			IList<ChartDataset> dataSets = null;
 			ChartData data = null;
@@ -83,9 +93,10 @@ namespace eCoachingLog.Controllers
 				}
 				else
 				{
-					var startDate = (DateTime) Session["startDate"];
-					var endDate = (DateTime) Session["EndDate"];
-					var temp = empLogService.GetLogCountByStatusForSites(user, startDate, endDate);
+					DateTime selectedMonth = DateTime.Parse(monthYear);
+					var start = (new DateTime(selectedMonth.Year, selectedMonth.Month, 1)).Date;
+					var end = start.AddMonths(1).AddDays(-1);
+					var temp = empLogService.GetLogCountByStatusForSites(user, start, end);
 					data = CreateChartDataForSites(temp);
 				}
 			}
@@ -108,7 +119,7 @@ namespace eCoachingLog.Controllers
 				, @"application/json");
 		}
 
-		private MyDashboardViewModel InitMyDashboardViewModel()
+		private MyDashboardViewModel InitMyDashboardViewModel(DateTime? start, DateTime? end)
         {
             var user = GetUserFromSession();
             var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
@@ -121,12 +132,7 @@ namespace eCoachingLog.Controllers
 			// Data to be displayed next to bar chart
 			if (user.Role == Constants.USER_ROLE_DIRECTOR)
 			{
-				var selectedDate = Convert.ToDateTime(vm.SelectedMonthYear);
-				var firstDayOfMonth = (new DateTime(selectedDate.Year, selectedDate.Month, 1)).Date;
-				var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-				Session["startDate"] = firstDayOfMonth;
-				Session["EndDate"] = lastDayOfMonth;
-				IList<LogCountForSite> logCountForSiteList = empLogService.GetLogCountsForSites(user, firstDayOfMonth, lastDayOfMonth);
+				IList<LogCountForSite> logCountForSiteList = empLogService.GetLogCountsForSites(user, start.Value, end.Value);
 				vm.LogCountForSiteList = logCountForSiteList;
 				vm.IsChartBySite = true;
 			}
@@ -151,7 +157,7 @@ namespace eCoachingLog.Controllers
 			return vm;
         }
 
-		private MyDashboardViewModel InitMyDashboardViewModel(string whatLog, string siteName)
+		private MyDashboardViewModel InitMyDashboardVMByLogType(string whatLog, string siteName)
 		{
 			var user = GetUserFromSession();
 			var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
