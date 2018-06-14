@@ -146,7 +146,6 @@ namespace eCoachingLog.Controllers
 					if (lc.Description == "My Pending")
 					{
 						vm.MyTotalPending = lc.Count;
-						Session["MyTotalPending"] = vm.MyTotalPending;
 					}
 				}
 				vm.LogCountList = logCountList;

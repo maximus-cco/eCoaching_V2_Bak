@@ -96,9 +96,6 @@
 	// Search log
 	$('body').on('click', '#btn-search', function (e) {
 		e.preventDefault();
-		//if (!validateMyDashboardSearch()) {
-		//	return;
-		//}
 		if (e.handled !== true) {
 			e.handled = true;
 			$(".please-wait").slideDown(500);
@@ -169,15 +166,11 @@
 		// Show spinner
     	//$(".please-wait").slideDown(500);
     	//console.log("submitReview");
-    	submitReview(saveUrl, myTable, $('#my-pending-total'));
+    	//submitReview(saveUrl, myTable, $('#my-pending-total'));
+    	submitReview(saveUrl, myTable);
     });
 
-    function validateMyDashboardSearch()
-    {
-    	return true;
-    }
-
-    function submitReview(url, tableToRefresh, $countToUpdate) {
+    function submitReview(url, tableToRefresh) {
     	// Do not send hidden input fields (display:none) to server
     	$('div:hidden :input').prop("disabled", true);
 
@@ -206,15 +199,11 @@
 
 				// Display error msgs
     			$.each(data.errors, function (key, value) {
-    				//if (value) {
-    				//alert('key=' + key);
-    				//alert('value=' + value);
-    					var container = $('span[data-valmsg-for="' + key + '"]');
-    					container.removeClass("field-validation-valid").addClass("field-validation-error");
-    					container.html(value);
+    				var container = $('span[data-valmsg-for="' + key + '"]');
+    				container.removeClass("field-validation-valid").addClass("field-validation-error");
+    				container.html(value);
 
-    					$('#' + key).addClass('errorClass');
-    				//}
+    				$('#' + key).addClass('errorClass');
     			});
     		}
     		else
@@ -223,8 +212,8 @@
     				$('#modal-container').modal('hide');
     				// Refresh log list, server side LoadData gets called
     				tableToRefresh.ajax.reload();
-    				// Update count display
-    				$countToUpdate.html(data.count);
+    				//// Update count display
+    				//$countToUpdate.html(data.count);
     				// Display success message
     				$('#label-success-msg').text(data.successMsg);
     				$('#div-success-msg').fadeTo(5000, 500).slideUp(500);

@@ -181,17 +181,14 @@ namespace eCoachingLog.Controllers
 			User user = GetUserFromSession();
 			if (ModelState.IsValid)
 			{
-				// TODO: add try/catch
+				
 				// Update database
 				string logoFileName = Server.MapPath("~/Content/Images/ecl-logo-small.png");
 				string emailTempFileName = Server.MapPath("~/EmailTemplates/LogCompleted.html");
 				success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logoFileName);
-				int myTotalPending = (int)Session["MyTotalPending"] - 1;
-				Session["MyTotalPending"] = myTotalPending;
 				return Json(new
 				{
 					success = success,
-					count = myTotalPending,
 					successMsg = "The log [" + vm.LogDetail.LogId + "] has been successfully updated.",
 					errorMsg = "Failed to update the log [" + vm.LogDetail.LogId + "]."
 				});
