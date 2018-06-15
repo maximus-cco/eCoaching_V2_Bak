@@ -572,6 +572,10 @@ div.dataTables_processing {
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 25%, rgba(255,255,255,0.9) 75%, rgba(255,255,255,0) 100%);
 }
 
+.glyphicon.glyphicon-log-out, .glyphicon.glyphicon-time  {
+    font-size: 60px;
+}
+
 
 
 

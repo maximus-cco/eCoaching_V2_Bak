@@ -1,5 +1,10 @@
 ﻿$(function () {
 	const maxLength = 3000;
+	// Ack - oppotunity
+	$('body').on('keyup', '#textarea-employee-comments', function (e) {
+	var remaining = maxLength - $(this).val().length;
+	$('#employee-comments').text(remaining + ' remaining');
+	});
 	// Research - coachable
 	$('body').on('keyup', '#DetailReasonCoachable', function (e) {
 		var remaining = maxLength - $(this).val().length;

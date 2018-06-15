@@ -14,7 +14,10 @@
 				else
 				{
 					<h3>Review</h3>
-					<div class="danger pull-right">Please do NOT include PII or PHI in the log entry.</div>
+					if (!Model.IsReadOnly)
+					{
+						<div class="danger pull-right">Please do NOT include PII or PHI in the log entry.</div>
+					}
 
 					<div id="div-error-prompt" class="danger"></div>
 				}

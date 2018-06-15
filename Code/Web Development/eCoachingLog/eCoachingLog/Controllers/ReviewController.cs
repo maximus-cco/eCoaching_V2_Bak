@@ -4,6 +4,7 @@ using eCoachingLog.Services;
 using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -181,11 +182,19 @@ namespace eCoachingLog.Controllers
 			User user = GetUserFromSession();
 			if (ModelState.IsValid)
 			{
-				
-				// Update database
-				string logoFileName = Server.MapPath("~/Content/Images/ecl-logo-small.png");
-				string emailTempFileName = Server.MapPath("~/EmailTemplates/LogCompleted.html");
-				success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logoFileName);
+				try
+				{
+					// Update database
+					string logoFileName = Server.MapPath("~/Content/Images/ecl-logo-small.png");
+					string emailTempFileName = Server.MapPath("~/EmailTemplates/LogCompleted.html");
+					success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logoFileName);
+				} 
+				catch (Exception ex)
+				{
+					logger.Error(string.Format("Failed to update log [{0}].", vm.LogDetail.LogId));
+					logger.Error(ex.Message);
+				}
+
 				return Json(new
 				{
 					success = success,

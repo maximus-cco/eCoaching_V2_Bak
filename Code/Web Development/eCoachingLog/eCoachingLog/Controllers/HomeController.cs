@@ -25,7 +25,6 @@ namespace eCoachingLog.Controllers
 			}
 
 			Session["AuthenticatedUser"] = user;
-
 			// Landing page: Historical Dashboard for HR users; My Dashboard for all other users
 			if (user.Role == Constants.USER_ROLE_HR)
 			{
@@ -40,7 +39,7 @@ namespace eCoachingLog.Controllers
             return Json(string.Empty, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult SessionExpire()
+        public ActionResult SessionExpired()
         {
             Session.Abandon();
             return View();
