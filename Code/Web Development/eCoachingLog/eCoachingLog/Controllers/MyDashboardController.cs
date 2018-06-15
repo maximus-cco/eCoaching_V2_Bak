@@ -203,7 +203,7 @@ namespace eCoachingLog.Controllers
 				// My Team Pending on My Dashboard
 				case "_MyTeamPending":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_PENDING;
-					if (user.Role == Constants.USER_ROLE_SUPERVISOR)
+					if (user.Role == Constants.USER_ROLE_SUPERVISOR || user.Role == Constants.USER_ROLE_OTHER)
 					{
 						// Employee dropdown
 						vm.EmployeeSelectList = GetEmpsForSupMyTeamPending(user);

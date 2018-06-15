@@ -184,11 +184,6 @@ namespace eCoachingLog.Repository
 					{
 						Employee employee = new Employee();
 						employee.Id = dataReader["SUPValue"].ToString();
-						// TODO: sp needs to return -1 instead of % (All Supervisors)
-						if (employee.Id == "%")
-						{
-							employee.Id = "-1";
-						}
 						employee.Name = dataReader["SUPText"].ToString();
 						employees.Add(employee);
 					}
