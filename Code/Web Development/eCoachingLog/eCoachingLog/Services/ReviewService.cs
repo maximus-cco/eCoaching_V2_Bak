@@ -52,12 +52,10 @@ namespace eCoachingLog.Services
 					(user.EmployeeId == logDetail.SubmitterEmpId && user.Role != Constants.USER_ROLE_ARC)
 					|| user.EmployeeId == logDetail.EmployeeId
 					|| user.EmployeeId == logDetail.SubmitterEmpId
+					|| user.EmployeeId == logDetail.SupervisorEmpId
 					|| user.EmployeeId == logDetail.ManagerEmpId
+					|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedToEmpId
 					|| (isCoaching && ((CoachingLogDetail)logDetail).IsCse && user.EmployeeId == logDetail.LogManagerEmpId)
-					|| (isCoaching &&
-							(user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedSupervisorName
-								|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedManagerName)
-						)
 				);
 			}
 

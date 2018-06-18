@@ -36,7 +36,7 @@ var loggingOut = false;
 			debug: false,                      		// Shows alerts
 			modalTitle: 'Session Timeout',     		// Modal Title
 			modalBody: 'You\'re being timed out due to inactivity. Please choose to stay signed in or to logoff. Otherwise, you will logged off automatically.',  // Modal body content
-			modalLogOffBtn: 'Log Off',		   		// Modal log off button text
+			modalLogOffBtn: 'Log Out',		   		// Modal log off button text
 			modalStayLoggedBtn: 'Stay Logged In'	// Modal stay logged in button text
 		};
 
@@ -72,7 +72,7 @@ var loggingOut = false;
 
 			startTimer();
 
-			$(document).on('focus click scroll keypress', function () {
+			$(document).on('click scroll keypress', function () {
 				console.log('document: start time');
 				startTimer();
 			});
@@ -148,6 +148,8 @@ var loggingOut = false;
 				default:
 					if ($elapsedTime === $options.session) {
 						if ($options.notify === true) {
+							console.log('focus');
+							$(window).focus();
 							modal();
 						} else {
 							logout();
@@ -243,7 +245,7 @@ var loggingOut = false;
 		var modal = function () {
 			startTimer('logout');
 
-			//$(document).on('focus click scroll keypress', function () {
+			//$(document).on('click scroll keypress', function () {
 			//	console.log('modal: log out !!!!!!!!');
 			//	startTimer('logout');
 			//});
@@ -284,14 +286,14 @@ var loggingOut = false;
 					// since it is registered in init() function
 					//startTimer();
 
-					//$(document).on('focus click scroll keypress', function () {
+					//$(document).on('click scroll keypress', function () {
 					//	console.log('hide.bs.modal focus... click:' + '!!!!!!');
 					//	startTimer();
 					//});
 				});
 
 				$($logoutBtn).on('click', function () {
-				    logout();
+					logout();
 				});
 
 			} else if ($modalUI === 'jqueryui') {
@@ -303,7 +305,7 @@ var loggingOut = false;
 					$jqueryLogout.dialog('close');
 					startTimer();
 
-					$(document).on('focus click scroll keypress', function () {
+					$(document).on('click scroll keypress', function () {
 						console.log('jqueryui: !!!!!!!!!!')
 						startTimer();
 					});
