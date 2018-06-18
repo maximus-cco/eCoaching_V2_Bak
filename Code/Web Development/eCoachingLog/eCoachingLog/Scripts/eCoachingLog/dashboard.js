@@ -99,10 +99,13 @@
 		if (e.handled !== true) {
 			e.handled = true;
 			$(".please-wait").slideDown(500);
+			var pageSizeSelected = {
+				pageSizeSelected: $('input[name=pageSizeSelected').val()
+			};
 			$.ajax({
 				type: 'POST',
 					url: searchUrl,
-					data: $('#form-search-mydashboard').serialize(),
+					data: $('#form-search-mydashboard').serialize() + '&' + $.param(pageSizeSelected),
 				success: function (data) {
 					$(".please-wait").slideUp(500);
 					$('#div-search-result').html(data);

@@ -30,6 +30,8 @@ namespace eCoachingLog.Models.Common
 		// Datatables column show/hide
 		public bool ShowSupNameColumn { get; set; }
 
+		public int PageSize { get; set; }
+
 		public LogFilter()
 		{
 			this.LogType = string.Empty;
@@ -45,6 +47,7 @@ namespace eCoachingLog.Models.Common
 			this.ValueId = "-1";
 			this.ActiveEmployee = 1;
 			this.ShowSupNameColumn = true;
+			this.PageSize = 25;
 		}
 	}
 }

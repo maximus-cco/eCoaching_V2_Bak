@@ -72,9 +72,11 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Search(MyDashboardViewModel vm)
+		public ActionResult Search(MyDashboardViewModel vm, int? pageSizeSelected)
 		{
 			logger.Debug("Entered Search...");
+			logger.Debug("pageSizeSelected = " + pageSizeSelected);
+			vm.Search.PageSize = pageSizeSelected.HasValue ? pageSizeSelected.Value : 25; // Default to 25
 			return PartialView("_LogList", vm.Search);
 		}
 

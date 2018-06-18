@@ -71,7 +71,6 @@ namespace eCoachingLog.ViewModels
 			this.LogCountList = new List<LogCount>();
 			this.LogCountForSiteList = new List<LogCountForSite>();
 
-			this.Search = new LogFilter();
 			this.Search.SupervisorId = "-1"; // Default to All
 			this.Search.EmployeeId = "-1"; // Default to All
 			this.LogStatusSelectList = new List<SelectListItem>();

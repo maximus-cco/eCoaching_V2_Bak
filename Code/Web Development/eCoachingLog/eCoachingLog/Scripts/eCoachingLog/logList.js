@@ -10,9 +10,9 @@ $(document).ready(function () {
 		},
 		processing: true,
         serverSide: true, // Process server side
-        filter: true,     // Enable filter (search box)
+        filter: false,     // Enable filter (search box)
         orderMulti: false,// Disable multiple column sorting
-		iDisplayLength: 25,
+		iDisplayLength: $('#PageSize').val(),
         ajax: {
         	url: loadDataUrl,
             type: "POST",
@@ -47,6 +47,10 @@ $(document).ready(function () {
         	$(".please-wait").slideUp(500);
         }
     }); // myTable
+
+    $('#dataTables-coaching-log-list').on('length.dt', function (e, settings, len) {
+    	$('input[name=pageSizeSelected').val(len);
+	});
 
 	// Dynamically hide column(s)
     if (showSupervisorColumn === 'False')
