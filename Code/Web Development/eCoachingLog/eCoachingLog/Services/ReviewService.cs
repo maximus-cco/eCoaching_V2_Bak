@@ -55,7 +55,7 @@ namespace eCoachingLog.Services
 					|| user.EmployeeId == logDetail.SupervisorEmpId
 					|| user.EmployeeId == logDetail.ManagerEmpId
 					|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedToEmpId
-					|| (isCoaching && ((CoachingLogDetail)logDetail).IsCse && user.EmployeeId == logDetail.LogManagerEmpId)
+					|| (isCoaching && ((CoachingLogDetail)logDetail).IsLowCsat && user.EmployeeId == logDetail.LogManagerEmpId)
 				);
 			}
 
