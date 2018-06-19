@@ -72,10 +72,10 @@ var loggingOut = false;
 
 			startTimer();
 
-			$(document).on('click scroll keypress', function () {
-				console.log('document: start time');
-				startTimer();
-			});
+			//$(document).on('click scroll keypress', function () {
+			//	console.log('document: start time');
+			//	startTimer();
+			//});
 		};
 
 		/**
@@ -256,7 +256,7 @@ var loggingOut = false;
 				$container = $('<div class="modal fade" id="notifyLogout" tabindex="-1" role="dialog" aria-labelledby="notifyLogoutLabel" aria-hidden="true"></div>');
 				$dialog = $('<div class="modal-dialog"></div>');
 				$content = $('<div class="modal-content"></div>');
-				$header = $('<div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><h4 class="modal-title" id="notifyLogoutLabel">' + $options.modalTitle + '</h4></div>');
+				$header = $('<div class="modal-header"><h4 class="modal-title" id="notifyLogoutLabel">' + $options.modalTitle + '</h4></div>');
 				$body = $('<div class="modal-body">' + $options.modalBody + '</div>');
 
 				if ($options.timer === true) {
@@ -282,9 +282,7 @@ var loggingOut = false;
 					$($container).remove();
 					keepSessionAlive();
 					console.log('hide.bs.modal:' + '!!!!!!');
-					// no need to call startTimer(), it will be called automatically when clicking the button
-					// since it is registered in init() function
-					//startTimer();
+					startTimer();
 
 					//$(document).on('click scroll keypress', function () {
 					//	console.log('hide.bs.modal focus... click:' + '!!!!!!');
@@ -305,10 +303,10 @@ var loggingOut = false;
 					$jqueryLogout.dialog('close');
 					startTimer();
 
-					$(document).on('click scroll keypress', function () {
-						console.log('jqueryui: !!!!!!!!!!')
-						startTimer();
-					});
+					//$(document).on('click scroll keypress', function () {
+					//	console.log('jqueryui: !!!!!!!!!!')
+					//	startTimer();
+					//});
 				};
 
 				$jqueryModalOptions[$options.modalLogOffBtn] = function () {

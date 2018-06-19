@@ -370,7 +370,7 @@
     <Content Include="Views\MyDashboard\_MySiteLogSearch.cshtml" />
     <Content Include="Views\Review\_ViewCoachingLog.cshtml" />
     <Content Include="Views\MyDashboard\_CountBySite.cshtml" />
-    <Content Include="Views\MyDashboard\_CountByTeam.cshtml" />
+    <Content Include="Views\MyDashboard\_CountByStatus.cshtml" />
     <Content Include="Views\HistoricalDashboard\_Search.cshtml" />
     <Content Include="Views\Review\_ViewWarningLog.cshtml" />
     <Content Include="Views\Survey\Index.cshtml" />

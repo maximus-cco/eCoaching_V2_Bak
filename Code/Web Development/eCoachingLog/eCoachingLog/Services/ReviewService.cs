@@ -51,7 +51,7 @@ namespace eCoachingLog.Services
 				return (
 					(user.EmployeeId == logDetail.SubmitterEmpId && user.Role != Constants.USER_ROLE_ARC)
 					|| user.EmployeeId == logDetail.EmployeeId
-					|| user.EmployeeId == logDetail.SubmitterEmpId
+					//|| user.EmployeeId == logDetail.SubmitterEmpId
 					|| user.EmployeeId == logDetail.SupervisorEmpId
 					|| user.EmployeeId == logDetail.ManagerEmpId
 					|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedToEmpId
