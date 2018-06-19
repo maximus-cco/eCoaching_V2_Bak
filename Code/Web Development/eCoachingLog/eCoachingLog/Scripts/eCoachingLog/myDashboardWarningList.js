@@ -9,7 +9,7 @@ $(document).ready(function () {
 		"serverSide": true, // Process server side
 		"filter": true,     // Enable filter (search box)
 		"orderMulti": false,// Disable multiple column sorting
-		"iDisplayLength": 50,
+		"iDisplayLength": $('#PageSize').val(),
 		"ajax": {
 			url: loadDataUrl,
 			"type": "POST",

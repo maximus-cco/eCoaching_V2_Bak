@@ -3,6 +3,7 @@
 <div class="row">
 	<form class="form-inline pull-right" id="form-search-mydashboard">
 		@Html.HiddenFor(m => m.Search.LogType)
+		<input type="hidden" name="pageSizeSelected" id="pageSizeSelected" />
 		@if (Model.Search.UserRole == Constants.USER_ROLE_SUPERVISOR)
 		{
 			<div class="form-group">

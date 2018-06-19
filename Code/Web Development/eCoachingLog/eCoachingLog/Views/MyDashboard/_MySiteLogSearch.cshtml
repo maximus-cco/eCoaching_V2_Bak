@@ -3,6 +3,7 @@
 <div class="row">
 	<form class="form-inline pull-right" id="form-search-mydashboard">
 		@Html.HiddenFor(m => m.Search.SiteName)
+		<input type="hidden" name="pageSizeSelected" id="pageSizeSelected" />
 		<div class="form-group" style="padding:0px 5px 0px 50px;">
 			<label class="radio-inline">
 				@Html.RadioButtonFor(m => m.Search.LogType, Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING, new { @class = "log-type" }) Pending

@@ -3,6 +3,7 @@
 <div class="row">
 	<form class="form-inline pull-right" id="form-search-mydashboard">
 		@Html.HiddenFor(m => m.Search.LogType)
+		<input type="hidden" name="pageSizeSelected" id="pageSizeSelected" />
 		<div class="form-group">
 			@Html.DropDownListFor(m => m.Search.ManagerId, Model.ManagerSelectList, new { id = "select-manager", @class = "form-control" })
 		</div>
