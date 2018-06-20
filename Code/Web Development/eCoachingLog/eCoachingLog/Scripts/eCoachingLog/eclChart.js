@@ -41,7 +41,7 @@ Chart.plugins.register({
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
 			//ctx.font = "16px normal 'Helvetica Nueue'";
-			ctx.fillText('Oops! Data is currently unavailable.', width / 2, height / 2);
+			ctx.fillText('No data to display.', width / 2, height / 2);
 			ctx.restore();
 		}
 	}
@@ -88,16 +88,12 @@ var myOptionsByStatus = {
 		yAxes: [{
 			display: true,
 			ticks: {
-				beginAtZero: true
+				beginAtZero: true,
+				callback: function(value) { if (value % 1 === 0) {return value; }}
 			},
 			scaleLabel: {
 				display: true,
-				labelString: 'Total Logs',
-				ticks: {
-					stepSize: 1
-					//beginAtZero : true,
-          			//callback: function(value) { if (value % 1 === 0) {return value; }}
-          		}
+				labelString: 'Total Logs'
 			}
 		}]
 	}

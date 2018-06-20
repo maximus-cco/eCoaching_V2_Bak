@@ -45,14 +45,6 @@ namespace eCoachingLog.Controllers
         }
 
 		[HttpPost]
-		public ActionResult Default()
-		{
-			var user = GetUserFromSession();
-			var vm = InitMyDashboardViewModel(null, null);
-			return PartialView("_Default", vm);
-		}
-
-		[HttpPost]
 		public ActionResult GetDataByMonth(string month)
 		{
 			DateTime selectedMonth = DateTime.Parse(month);

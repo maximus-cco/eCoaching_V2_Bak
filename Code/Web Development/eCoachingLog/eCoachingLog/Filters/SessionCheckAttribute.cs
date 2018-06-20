@@ -32,7 +32,7 @@ namespace eCoachingLog.Filters
                     logger.Debug("!!!!!!!! Session expired!");
                     filterContext.Result = new RedirectToRouteResult(
                                 new RouteValueDictionary {
-                                                { "action", "SessionExpire" },
+                                                { "action", "SessionExpired" },
                                                 { "controller", "Home" } });
                 }
             }

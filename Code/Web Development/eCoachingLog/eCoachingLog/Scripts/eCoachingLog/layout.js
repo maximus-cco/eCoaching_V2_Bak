@@ -24,29 +24,6 @@ $(function () {
 		}
 	});
 
-	// Prevent double click
-	$('#mydashboard').on('click', function (e) {
-		e.preventDefault();
-
-		var href = $(this).attr('href');
-		window.location.pathname = href;
-
-		var $link = $(this);
-		$link.prop('disabled', true);
-		//$(".please-wait").slideDown(500);
-
-		$.ajax({
-			type: 'POST',
-			// Call GetLogDetail method.
-			url: myDashboardDefaultAjax,//'/MyDashboard/Default',
-			dataType: 'html',
-			success: function (data) {
-				$('.body-content').html(data);
-				$link.prop('disabled', false);
-			}
-		});
-	});
-
 	// http://www.codeproject.com/Tips/826002/Bootstrap-Modal-Dialog-Loading-Content-from-MVC-Pa
 	// Initalize modal dialog
 	// attach modal-container bootstrap attributes to links with .modal-link class.
