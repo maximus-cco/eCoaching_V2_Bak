@@ -63,10 +63,9 @@
 		var sessionExpired = false;
 		var errorOccured = false;
         var logoutUrl = '@Url.Action("Index", "Logout")';
-        var sessionExpiredUrl = '@Url.Action("SessionExpire", "Home")';
+        var sessionExpiredUrl = '@Url.Action("SessionExpired", "Home")';
         var errorUrl = '@Url.Action("Index", "Error")';
 		var keepSessionAliveUrl = '@Url.Action("KeepSessionAlive", "Home")';
-		var myDashboardDefaultAjax = '@Url.Action("Default", "MyDashboard")';
     </script>
 
     @RenderSection("scripts", required: false)
