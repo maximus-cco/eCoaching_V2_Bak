@@ -90,9 +90,7 @@ var loggingOut = false;
 		 * @return {undefined}
 		 */
 		var startTimer = function (type) {
-			//alert("startTimer");
-			console.log("start timer");
-
+			//console.log("start timer");
 			clearTimeout($timeoutTimer);
 			clearTimeout($logoutTimer);
 
@@ -148,7 +146,7 @@ var loggingOut = false;
 				default:
 					if ($elapsedTime === $options.session) {
 						if ($options.notify === true) {
-							console.log('focus');
+							//console.log('focus');
 							$(window).focus();
 							modal();
 						} else {
@@ -281,7 +279,7 @@ var loggingOut = false;
 				$($container).on('hide.bs.modal', function () {
 					$($container).remove();
 					keepSessionAlive();
-					console.log('hide.bs.modal:' + '!!!!!!');
+					//console.log('hide.bs.modal:' + '!!!!!!');
 					startTimer();
 
 					//$(document).on('click scroll keypress', function () {

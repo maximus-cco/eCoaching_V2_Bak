@@ -450,7 +450,7 @@ namespace eCoachingLog.Repository
 					{
 						LogBase log = new LogBase();
 						//log.RowNumber = (long)dataReader["RowNumber"];
-						log.ID = (long)dataReader["strCoachingID"];
+						log.ID = (long)dataReader["strLogID"];
 						log.FormName = dataReader["strFormID"].ToString();
 						log.EmployeeName = dataReader["strEmpName"].ToString();
 						log.SupervisorName = dataReader["strEmpSupName"].ToString();
