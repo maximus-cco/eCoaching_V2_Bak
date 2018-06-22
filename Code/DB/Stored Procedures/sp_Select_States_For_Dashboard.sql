@@ -1,10 +1,10 @@
 /*
-sp_Select_States_For_Dashboard(01).sql
-Last Modified Date: 1/18/2017
+sp_Select_States_For_Dashboard(02).sql
+Last Modified Date: 5/20/2017
 Last Modified By: Susmitha Palacherla
 
 
-
+Version 02: Modified during My dashboard move to new architecture - TFS 7137 - 05/20/2018
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -27,12 +27,14 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	03/13/2015
 --	Description: *	This procedure returns list of possible States for Warning Logs.
 --  The 2 possible States of a Warning log are Active (within 91 days of warning given date) and Expired 
 --  for logs that have WarningGivenDate over 91 days.
+--   Modified during My dashboard move to new architecture - TFS 7137 - 05/20/2018
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_States_For_Dashboard] 
 
@@ -45,7 +47,7 @@ BEGIN
 
 
 SET @nvcSQL = 'SELECT X.StateText, X.StateValue FROM
-(SELECT ''All States'' StateText, ''%'' StateValue, 01 Sortorder 
+(SELECT ''All States'' StateText, ''-1'' StateValue, 01 Sortorder 
 UNION
 SELECT ''Active'' StateText, ''1'' StateValue, 02 Sortorder 
 UNION
@@ -61,5 +63,7 @@ EXEC (@nvcSQL)
 END --sp_Select_States_For_Dashboard
 
 
+
 GO
+
 

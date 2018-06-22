@@ -1,10 +1,10 @@
 /*
-CCO_eCoaching_Dimension_Tables_Create(01).sql
-Last Modified Date: 1/18/2017
+CCO_eCoaching_Dimension_Tables_Create(02).sql
+Last Modified Date: 6/13/2018
 Last Modified By: Susmitha Palacherla
 
 
-
+Version 02: UI Move to new architecture  - TFS 7136/7137/7138 - 6/13/2018
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 
@@ -30,6 +30,10 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 12. [EC].[CallID_Selection]
 13. [EC].[Email_Notifications]
 14. [EC].[DIM_Behavior]
+15. [EC].[UI_User_Role] 
+16. [EC].[UI_Role_Page_Access] 
+17. [EC].[UI_Dashboard_Summary_Display]
+18. [EC].[Reasons_By_ReportCode]
 
 
 
@@ -420,3 +424,90 @@ GO
 
 
 --****************************************************************************************
+
+--15. [EC].[UI_User_Role] 
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[UI_User_Role](
+	[RoleId] [int] IDENTITY(101,1) NOT NULL,
+        [RoleName] [nvarchar](40) NOT NULL,
+	[RoleDescription] [nvarchar](1000) NULL
+PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+--****************************************************************************************
+
+--16. [EC].[UI_Role_Page_Access] 
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[UI_Role_Page_Access](
+	[RoleID] [int] NOT NULL,
+	[RoleName] [nvarchar](40) NOT NULL,
+	[NewSubmission] [bit] NOT NULL,
+	[MyDashboard] [bit] NOT NULL,
+	[HistoricalDashboard] [bit] NOT NULL
+	) ON [PRIMARY]
+
+GO
+--****************************************************************************************
+
+
+--17. [EC].[UI_Dashboard_Summary_Display]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[UI_Dashboard_Summary_Display](
+	[RoleId] [int]  NOT NULL,
+	[RoleName] [nvarchar](40) NOT NULL,
+	[MyPending] bit NOT NULL,
+	[MyCompleted] bit NOT NULL,
+	[MyTeamPending] bit NOT NULL,
+	[MyTeamcompleted] bit NOT NULL,
+	[MyTeamWarning] bit NOT NULL,
+	[MySubmission] bit NOT NULL
+	
+PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+--****************************************************************************************
+
+--18. [EC].[Reasons_By_ReportCode]
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Reasons_By_ReportCode](
+	[ReportCode] [nvarchar](20) NOT NULL,
+	[Reason] [nvarchar](100) NULL,
+) ON [PRIMARY] 
+
+GO
+
+--****************************************************************************************
+

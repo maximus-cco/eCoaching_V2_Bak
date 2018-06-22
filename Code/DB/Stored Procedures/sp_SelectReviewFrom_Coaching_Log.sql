@@ -30,6 +30,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -82,6 +84,7 @@ SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] =
 SET @nvcSQL1 = '
 SELECT cl.CoachingID numID,
   cl.FormName strFormID,
+  cl.ModuleID,
   m.Module,
   sc.CoachingSource	strFormType,
   cl.StatusId strStatusID,
@@ -247,6 +250,8 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
 
 
 

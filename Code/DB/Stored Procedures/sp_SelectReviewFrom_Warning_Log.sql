@@ -53,6 +53,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 SET @nvcSQL = '
 SELECT wl.WarningID numID,
   wl.FormName strFormID,
+  wl.ModuleID,
   m.Module,
   ''Direct'' strFormType,
   ''Completed'' strFormStatus,
@@ -94,7 +95,7 @@ Print (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Warning_Log
-GO
 
+GO
 
 

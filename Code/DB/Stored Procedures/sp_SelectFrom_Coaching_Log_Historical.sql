@@ -24,6 +24,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/24/2018
@@ -166,7 +168,7 @@ SET @nvcSQL1 = 'WITH TempMain
 AS 
 (
   SELECT DISTINCT x.strFormID
-				,x.strCoachingID
+				,x.strLogID
 				,x.strEmpName
 				,x.strEmpSupName
 				,x.strEmpMgrName
@@ -179,7 +181,7 @@ AS
   FROM 
   (
     SELECT DISTINCT [cl].[FormName] strFormID
-      ,[cl].[CoachingID] strCoachingID
+      ,[cl].[CoachingID] strLogID
       ,[veh].[Emp_Name]	strEmpName
 	  ,[veh].[Sup_Name]	strEmpSupName
 	  ,[veh].[Mgr_Name] strEmpMgrName
@@ -267,7 +269,7 @@ END
 SET @nvcSQL2 = ' 
 UNION
   SELECT DISTINCT [wl].[FormName]	strFormID
-    ,[wl].[WarningID]	strCoachingID
+    ,[wl].[WarningID]	strLogID
     ,[veh].[Emp_Name]	strEmpName
 	,[veh].[Sup_Name]	strEmpSupName
 	,[veh].[Mgr_Name]	strEmpMgrName
@@ -290,7 +292,7 @@ SET @nvcSQL3 = '
   ) x 
 )
 
-SELECT strCoachingID,
+SELECT strLogID,
    strFormID
   ,strEmpName
   ,strEmpSupName
@@ -299,14 +301,14 @@ SELECT strCoachingID,
   ,strSource
   ,SubmittedDate
   ,strSubmitterName
-  ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strCoachingReasonFromCoachingID](T.strCoachingID)
-	 ELSE [EC].[fn_strCoachingReasonFromWarningID](T.strCoachingID) 
+  ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strCoachingReasonFromCoachingID](T.strLogID)
+	 ELSE [EC].[fn_strCoachingReasonFromWarningID](T.strLogID) 
    END strCoachingReason
-  ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strSubCoachingReasonFromCoachingID](T.strCoachingID)
-	 ELSE [EC].[fn_strSubCoachingReasonFromWarningID](T.strCoachingID) 
+  ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strSubCoachingReasonFromCoachingID](T.strLogID)
+	 ELSE [EC].[fn_strSubCoachingReasonFromWarningID](T.strLogID) 
    END strSubCoachingReason
-  ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strValueFromCoachingID](T.strCoachingID)
-	 ELSE [EC].[fn_strValueFromWarningID](T.strCoachingID)
+  ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strValueFromCoachingID](T.strLogID)
+	 ELSE [EC].[fn_strValueFromWarningID](T.strLogID)
    END strValue
   ,RowNumber                 
 FROM TempMain T
@@ -328,6 +330,7 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 END -- SelectFrom_Coaching_Log_Historical
 
 GO
+
 
 
 

@@ -11,6 +11,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/2013
@@ -25,6 +27,7 @@ GO
 --  Modified to add condition for IQS(Quality logs)per TFS 5085 - 12/29/2016
 --  Modified to add support for QS Lead Email for OMR Breaks feeds per TFS 6377 - 04/24/2017
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
+--  TFS 7137 Move dashboards to new architecture. Replaced Module with ModuleID - 06/22/2018
 -- --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -61,7 +64,7 @@ SELECT cl.CoachingID numID
   ,cl.EmailSent	EmailSent
   ,cl.sourceid
   ,cl.isCSE
-  ,mo.Module
+  ,cl.ModuleID
   ,CASE 
      WHEN SUBSTRING(cl.strReportCode, 1, 3) IN (''IAT'', ''IAE'') THEN 1 
 	 ELSE 0 
@@ -93,4 +96,8 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 PRINT @nvcsql	    
 	    
 END --sp_SelectCoaching4Contact
+
+
 GO
+
+

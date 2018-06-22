@@ -2,7 +2,7 @@
 
 'Begin - Environment Related
 Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=F3420-ECLDBT01"
-Const eCoachingUrl = "https://f3420-mpmd01.vangent.local/coach3/default.aspx"
+Const eCoachingUrl = "https://f3420-mpmd01.vangent.local/eCoachingLog_st/"
 Const fromAddress = "eCoachingTest@gdit.com"
 Const imgPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
 'End - Environment Related
@@ -33,7 +33,7 @@ Dim strSource
 Dim strFormStatus
 Dim numID
 Dim arrEmail
-Dim strModule
+Dim numModule
 Dim strSourceID
 Dim isCSE
 Dim isOMRARC
@@ -77,13 +77,13 @@ For i = 0 to totalPendingEmail
     strPerson = arrResultSet(7, i)
     strSourceID = arrResultSet(12, i)
     isCSE = arrResultSet(13, i)
-    strModule = arrResultSet(14, i)	
+    numModule = arrResultSet(14, i)	
     isOMRARC = arrResultSet(15, i) ' 1 for IAT and IAE OMR Feeds
 
     strSubject = "eCL: " & strFormStatus & " (" & strPerson & ")"
     arrEmail = Split(strEmail, ",")
     If ((len(arrEmail(0))> 8) AND (len(arrEmail(1))> 8) AND (len(arrEmail(2))> 8)) then
-        SendMail strEmail, strSubject, strFormID, strFormStatus, strPerson, strSource, numID, strModule, strSourceID, isCSE
+        SendMail strEmail, strSubject, strFormID, strFormStatus, strPerson, strSource, numID, numModule, strSourceID, isCSE
     End If
 Next
 
@@ -181,7 +181,7 @@ Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSourc
     strCtrMessage = Replace(strCtrMessage, "strDateTime", Now)
     strCtrMessage = Replace(strCtrMessage, "strPerson", strPerson)
     strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
- 		& "  <a href=""" & eCoachingUrl & """ target=""_blank"">Please click here to open the coaching application and select the &#39;My Dashboard&#39; tab to view the below form ID for details.</a>"
+    & "  <a href=""" & eCoachingUrl & """ target=""_blank"">Please click here to open the eCoaching application and view the form details from the &#39;My Pending&#39; section on My Dashboard page.</a>"
 
     ' Check form status to determine message content and addressee(s)
     ' Configure HTML message
