@@ -23,19 +23,31 @@ namespace eCoachingLog.Controllers
 			{
 				return RedirectToAction("Index", "Unauthorized");
 			}
-
 			Session["AuthenticatedUser"] = user;
-			// Landing page: Historical Dashboard for HR users; My Dashboard for all other users
-			if (user.Role == Constants.USER_ROLE_HR)
+
+			// Landing page
+			if (user.IsAccessMyDashboard)
+			{
+				return RedirectToAction("Index", "MyDashboard");
+			}
+
+			if (user.IsAccessHistoricalDashboard)
 			{
 				return RedirectToAction("Index", "HistoricalDashboard");
 			}
-			return RedirectToAction("Index", "MyDashboard");
-        }
+
+			if (user.IsAccessNewSubmission)
+			{
+				return RedirectToAction("Index", "NewSubmission");
+			}
+
+			// redirect to unAuthorized page
+			return RedirectToAction("Index", "Unauthorized");
+		}
 
         public JsonResult KeepSessionAlive()
         {
-            logger.Debug("######id=" + Session.SessionID);
+            logger.Debug("KeepSessionAlive: id=" + Session.SessionID);
             return Json(string.Empty, JsonRequestBehavior.AllowGet);
         }
 

@@ -23,7 +23,6 @@
   border-bottom: 1px solid #e5e5e5;
 }
 
-
 /* styles for validation helpers */
 .field-validation-error {
     color: red;
@@ -90,10 +89,6 @@ table.mytable td {
   float: right;
 }
 
-.modal-body textarea.form-control {
-    max-width: 100%;
-}
-
 ul.navbar-nav {
     font-size: 16px;
 }
@@ -102,15 +97,19 @@ ul.navbar-nav {
     border: 1px solid #e80c4d;
 }
 
-.modal-content {
-    width: 600px;
-    margin: 30px auto;
-		
+#modal-container {
+    margin: 15vh auto;
 }
-
 .modal-body {
-    max-height: 70vh;
+    max-height: 65vh;
     overflow-y: auto;
+}
+.modal-content {
+	width: 70vw;
+	margin: auto;
+}
+.modal-body textarea.form-control {
+    max-width: 100%;
 }
 
 .vertical-align {
@@ -572,14 +571,12 @@ div.dataTables_processing {
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 25%, rgba(255,255,255,0.9) 75%, rgba(255,255,255,0) 100%);
 }
 
-.glyphicon.glyphicon-log-out, .glyphicon.glyphicon-time  {
+.glyphicon.glyphicon-log-out, .glyphicon.glyphicon-time, .glyphicon.glyphicon-ban-circle  {
     font-size: 60px;
 }
 
-
-
-
-
-
-
- 
+.blue-bar {
+	padding-top: 30px; 
+	padding-bottom: 15px; 
+	background-color: #CEE3F9;
+}

@@ -34,7 +34,7 @@
 	var supId = '@Html.Raw(Model.SupervisorId)';
 	@*var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';*@
 	var loadDataUrl = '@Url.Action("LoadData")';
-	var getLogDetailsUrl = '@Url.Action("GetLogDetail")';
+	var getLogDetailsUrl = '@Url.Action("Index", "Review")';
 </script>
 
 @Scripts.Render("~/bundles/scripts/myDashboardWarningList")

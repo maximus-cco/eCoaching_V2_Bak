@@ -32,12 +32,6 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult GetLogDetail(int logId, string isCoaching)
-		{
-			return RedirectToAction("Index", "Review", new { logId = logId, isCoaching = isCoaching == "true" ? true : false });
-		}
-
-		[HttpPost]
 		public ActionResult LoadData(LogFilter logFilter)
 		{
 			logger.Debug("Entered LoadData");
