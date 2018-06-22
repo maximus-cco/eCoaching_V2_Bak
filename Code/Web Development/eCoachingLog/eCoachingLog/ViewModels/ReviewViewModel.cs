@@ -173,6 +173,15 @@ namespace eCoachingLog.ViewModels
 					}
 				}
 			}
+
+			if (this.IsAcknowledgeForm)
+			{
+				if (!this.Acknowledge)
+				{
+					var ack = new[] { "Acknowledge" };
+					yield return new ValidationResult("You must select the checkbox to complete this review.", ack);
+				}
+			}
 		} // end Validate 
 
 		public static implicit operator Review(ReviewViewModel vm)

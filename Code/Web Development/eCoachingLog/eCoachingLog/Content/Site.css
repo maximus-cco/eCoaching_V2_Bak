@@ -25,6 +25,7 @@
 
 /* styles for validation helpers */
 .field-validation-error {
+	display: block;
     color: red;
 }
 
