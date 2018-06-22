@@ -23,7 +23,7 @@
 	<div class='form-group mt-2 @(@Model.IsReinforceLog ? "show" : "hide")'>
 		<label for="AcknowledgeCheckBox" class="required">Check the box below to acknowledge the monitor:</label><br />
 		<label class="checkbox-inline">
-			@Html.CheckBoxFor(m => m.Acknowledge)I have read and understand all the informaito provided on this eCoaching Log.
+			@Html.CheckBoxFor(m => m.Acknowledge)I have read and understand all the information provided on this eCoaching Log.
 		</label>
 		@Html.ValidationMessageFor(m => m.Acknowledge)
 	</div>
@@ -32,7 +32,7 @@
 	<div class='form-group mt-2 @(@Model.IsAckOpportunityLog ? "show" : "hide")'>
 		<label for="AcknowledgeCheckBox" class="required">Check the box below to acknowledge the coaching opportunity:</label><br />
 		<label class="checkbox-inline">
-			@Html.CheckBoxFor(m => m.Acknowledge)I have read and understand all the informaito provided on this eCoaching Log.
+			@Html.CheckBoxFor(m => m.Acknowledge)I have read and understand all the information provided on this eCoaching Log.
 		</label>
 		@Html.ValidationMessageFor(m => m.Acknowledge)
 	</div>

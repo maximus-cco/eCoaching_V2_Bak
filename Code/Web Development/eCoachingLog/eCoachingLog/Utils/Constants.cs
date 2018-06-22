@@ -155,8 +155,8 @@ namespace eCoachingLog.Utils
 			"<a href='https://cco.gdit.com/bi/ReportsCatalog/TQC_ShortCall/Forms/AllItems.aspx' target='_blank'>here</a>. " +
 			"Please review the calls and provide specific details on opportunities that requiring coaching.";
 
-		public const string REVIEW_LCAST = " Your are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction. Please " +
-			"REVIEW_CSE the call from a PPoM perspective and provide details on the specific opportunities requiring coaching in the record below.";
+		public const string REVIEW_LCAST = "You are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction. Please " +
+			"review the call from a PPoM perspective and provide details on the specific opportunities requiring coaching in the record below.";
 
 		public const string REVIEW_TRAINING_SHORT_DURATION_REPORT_TEXT =
 			"CSRs are scheduled for specific times in Empower to ensure understanding of training materials presented. " +
@@ -208,10 +208,10 @@ namespace eCoachingLog.Utils
 		public const string REVIEW_RESEARCH = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest <a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>" +
 								"Contact Center Operations 46.0 Outlier Management Report(OMR): Outlier Research Process SOP</a> and provide the details in the record below.";
 
-		public const string REVIEW_ETS_OAE = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did Not complete their timecard before the deadline laid out in the latest " +
+		public const string REVIEW_ETS_OAE = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did not complete their timecard before the deadline laid out in the latest " +
 			"<a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>CCO Performance Scorecard</a>. Contact Center Operations 3.06 Timecard Audit SOP";
 
-		public const string REVIEW_ETS_OAS = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report(also known as the TC Compliance Action report).  Please research why the supervisor did Not approve Or reject their CSR’s timecard before the deadline laid out in the latest " +
+		public const string REVIEW_ETS_OAS = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report(also known as the TC Compliance Action report).  Please research why the supervisor did not approve Or reject their CSR’s timecard before the deadline laid out in the latest " +
 			"<a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>CCO Performance Scorecard</a>. Contact Center Operations 3.06 Timecard Audit SOP";
 
 	}

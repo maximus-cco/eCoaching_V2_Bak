@@ -257,15 +257,14 @@ namespace eCoachingLog.Controllers
 			{
 				if (vm.LogStatusLevel == 2)
 				{
-					if (log.IsIqs && log.IsCtc && log.IsHigh5Club && log.IsKudo && log.IsAttendance && log.IsScorecardMsr && log.IsScorecardMsrs
-						&& (log.IsEtsOae || log.IsEtsOas || log.IsOmrIat || log.IsOmrIae || log.IsTrainingShortDuration || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrn || log.IsBrl))
+					if (log.IsEtsOae || log.IsEtsOas || log.IsOmrIat || log.IsOmrIae || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrn || log.IsBrl)
 					{
 						retVal = true;
 					}
 				}
 			}
 			else
-			if (user.EmployeeId == log.ManagerEmpId // User is current supervisor
+			if (user.EmployeeId == log.ManagerEmpId // User is current manager
 					|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId) // Log is low csat and user was supervisor when log submitted
 					|| (user.EmployeeId == log.ReassignedToEmpId)) // Log got reassigned to user
 			{
