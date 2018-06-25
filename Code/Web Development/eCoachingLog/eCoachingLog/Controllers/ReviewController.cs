@@ -304,7 +304,7 @@ namespace eCoachingLog.Controllers
 			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
 				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
 			{
-				if ((vm.LogDetail.IsCoachingRequired || vm.LogDetail.IsCse)&& string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
+				if ((vm.LogDetail.IsCoachingRequired || vm.LogDetail.IsCse)&& !string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
 				{
 					vm.ShowManagerNotes = true;
 				}

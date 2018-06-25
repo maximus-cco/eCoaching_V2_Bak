@@ -85,6 +85,11 @@ namespace eCoachingLog.Services
 					{
 						return Constants.REVIEW_OMR;
 					}
+
+					if (log.IsLowCsat)
+					{
+						return Constants.REVIEW_LCAST;
+					}
 				}
 			}
 
@@ -120,11 +125,6 @@ namespace eCoachingLog.Services
 				{
 					return Constants.REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT;
 				}
-			}
-
-			if (log.IsLowCsat)
-			{
-				return Constants.REVIEW_LCAST;
 			}
 
 			if (log.IsOmrShortCall)
