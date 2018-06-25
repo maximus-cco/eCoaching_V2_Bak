@@ -118,7 +118,7 @@ namespace eCoachingLog.Repository
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValueSafe("@nvcFormID", logId);
-				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.LanId);
+				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
 				command.Parameters.AddWithValueSafe("@dtmSUPReviewAutoDate", DateTime.Now);
 
