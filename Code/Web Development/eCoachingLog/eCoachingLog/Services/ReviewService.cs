@@ -193,7 +193,7 @@ namespace eCoachingLog.Services
 		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName)
 		{
 			// Strip potential harmful characters entered by the user
-			var reviewCleaned = CleanInputs(review);
+			// var reviewCleaned = CleanInputs(review);
 
 			if (review.IsRegularPendingForm)
 			{
@@ -232,6 +232,7 @@ namespace eCoachingLog.Services
 		{
 			bool success = false;
 			string nextStatus = "Pending Employee Review";
+			review.DetailsCoached = FormatCoachingNotes(review, user);
 			success = reviewRepository.CompleteRegularPendingReview(review, nextStatus, user);
 			return success;
 		}
@@ -290,7 +291,7 @@ namespace eCoachingLog.Services
 				nextStatus = GetNextStatus(review, user);
 				if (review.LogStatusLevel == 2)
 				{
-					review.DetailReasonCoachable = FormatCoachingNotes(review);
+					review.DetailReasonCoachable = FormatCoachingNotes(review, user);
 				}
 			}
 			else
@@ -298,29 +299,33 @@ namespace eCoachingLog.Services
 				nextStatus = "Inactive";
 				if (review.LogStatusLevel == 2)
 				{
-					review.MainReasonNotCoachable = FormatCoachingNotes(review);
+					review.MainReasonNotCoachable = FormatCoachingNotes(review, user);
 				}
 			}
 
 			return reviewRepository.CompleteResearchPendingReview(review, nextStatus, user);
 		}
 
-		private string FormatCoachingNotes(Review review)
+		private string FormatCoachingNotes(Review review, User user)
 		{
 			string notes = string.Empty;
-			string supName = review.LogDetail.SupervisorName;
-			string reassignedTo = review.LogDetail.ReassignedSupervisorName;
-
-			if (string.IsNullOrEmpty(reassignedTo) || reassignedTo == "NA")
+			notes += user.Name;
+			if (review.DateCoached.HasValue && review.DateCoached.Value != null)
 			{
-				notes += supName;
+				notes += " (" + DateTime.Now + " PDT) - " + review.DateCoached.Value.ToString("MM/dd/yyyy");
 			}
 			else
 			{
-				notes += reassignedTo;
+				notes += " (" + DateTime.Now + " PDT) - " + review.DateCoached;
 			}
-
-			notes += " (" + DateTime.Now + " PDT) - " + review.DateCoached + " " + review.DetailReasonNotCoachable;
+			if (!string.IsNullOrEmpty(review.DetailReasonNotCoachable))
+			{
+				notes += " " + review.DetailReasonNotCoachable;
+			}
+			else
+			{
+				notes += " " + review.DetailsCoached;
+			}
 
 			if (string.IsNullOrEmpty(review.LogDetail.CoachingNotes))
 			{
