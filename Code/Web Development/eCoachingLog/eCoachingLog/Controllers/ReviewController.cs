@@ -147,22 +147,11 @@ namespace eCoachingLog.Controllers
 					else // Research
 					{
 						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-						vm.InstructionText = Constants.REVIEW_RESEARCH;
-						// Get non coachable reasons
-						if (Session["MainReasonNotCoachableList"] == null)
-						{
-							// Uncoachable reason Dropdown
-							IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
-							IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);
-							vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
-
-							Session["MainReasonNotCoachableList"] = uncoachableReasonSelectList;
-						}
-						else
-						{
-							vm.MainReasonNotCoachableList = (IEnumerable<SelectListItem>)Session["MainReasonNotCoachableList"];
-						}
-
+						vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
+						// Uncoachable reason Dropdown
+						IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
+						IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);
+						vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
 					} // end if (!vm.IsResearchPendingForm)
 				} // end if (logDetail.Status.Trim().ToLower() == "completed")
 			} // end if (ShowAckPartial(vm))
@@ -315,7 +304,7 @@ namespace eCoachingLog.Controllers
 			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
 				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
 			{
-				if (vm.LogDetail.IsCoachingRequired && string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
+				if ((vm.LogDetail.IsCoachingRequired || vm.LogDetail.IsCse)&& string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
 				{
 					vm.ShowManagerNotes = true;
 				}

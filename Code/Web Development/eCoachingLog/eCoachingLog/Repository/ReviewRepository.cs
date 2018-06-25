@@ -46,10 +46,22 @@ namespace eCoachingLog.Repository
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
-				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.LanId);
+				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
-				command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", review.DateCoached);
-				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsCoached);
+				// Add time
+				if (review.DateCoached.HasValue && review.DateCoached.Value != null)
+				{
+					DateTime dateCoached = review.DateCoached.Value;
+					DateTime now = DateTime.Now;
+					DateTime dateTimeCoached = new DateTime(dateCoached.Year, dateCoached.Month, dateCoached.Day, now.Hour, now.Minute, now.Second);
+					command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", dateTimeCoached);
+				}
+				else
+				{
+					command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", review.DateCoached);
+				}
+				string notes = user.Name + " (" + review.DateCoached + ") - " + review.DetailsCoached;
+				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", notes);
 
 				try
 				{

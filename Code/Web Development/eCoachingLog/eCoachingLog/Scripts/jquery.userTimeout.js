@@ -72,10 +72,10 @@ var loggingOut = false;
 
 			startTimer();
 
-			//$(document).on('click scroll keypress', function () {
-			//	console.log('document: start time');
-			//	startTimer();
-			//});
+			$(document).on('click scroll keypress', function () {
+				console.log('document: start time');
+				startTimer();
+			});
 		};
 
 		/**

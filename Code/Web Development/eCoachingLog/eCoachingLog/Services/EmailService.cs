@@ -40,11 +40,11 @@ namespace eCoachingLog.Services
 
         public bool Send(NewSubmission submission, string templateFileName, string logoFileName, string logName)
         {
-			string env = System.Configuration.ConfigurationManager.AppSettings["Environment"];
+			//string env = System.Configuration.ConfigurationManager.AppSettings["Environment"];
 			string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
 			string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
 			string subject = "eCL: ";
-			string eCoachingUrl = eCoachingLogUtil.GetAppUrl();
+			string eCoachingUrl = System.Configuration.ConfigurationManager.AppSettings["App.Url"];
 
 			MailMessage msg = new MailMessage();
 			Tuple<string, string, string, string> recipientsAndText = GetRecipientsAndBodyTextFromDb(submission);

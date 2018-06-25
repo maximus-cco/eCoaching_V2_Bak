@@ -98,18 +98,24 @@ ul.navbar-nav {
     border: 1px solid #e80c4d;
 }
 
-#modal-container {
-    margin: 15vh auto;
+#notifyLogout .modal-dialog {
+  width: 50%;
+  margin: 0 auto;
 }
-.modal-body {
+
+#modal-container {
+    margin-top: 5%;
+}
+
+#modal-container .modal-body {
     max-height: 65vh;
     overflow-y: auto;
 }
-.modal-content {
+#modal-container .modal-content {
 	width: 70vw;
 	margin: auto;
 }
-.modal-body textarea.form-control {
+#modal-container .modal-body textarea.form-control {
     max-width: 100%;
 }
 

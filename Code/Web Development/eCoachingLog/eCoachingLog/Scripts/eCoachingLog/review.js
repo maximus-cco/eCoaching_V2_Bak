@@ -18,7 +18,7 @@
 	// Cse - Yes
 	$('body').on('keyup', '#DetailsCoached', function (e) {
 		var remaining = maxLength - $(this).val().length;
-		$('#cse-detail-remaining').text(remaining + ' remaining');
+		$('#detail-remaining').text(remaining + ' remaining');
 	});
 	// Cse - No
 	$('body').on('keyup', '#ReasonNotCse', function (e) {

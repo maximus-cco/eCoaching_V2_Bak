@@ -75,9 +75,27 @@ namespace eCoachingLog.Services
 		{
 			var log = review.LogDetail;
 
+			if (user.EmployeeId == log.ManagerEmpId 
+				|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId)
+				|| user.EmployeeId == log.ReassignedToEmpId)
+			{
+				if (review.LogStatusLevel == 3)
+				{
+					if(log.IsCurrentCoachingInitiative || log.IsOmrException)
+					{
+						return Constants.REVIEW_OMR;
+					}
+				}
+			}
+
 			if ((user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
 				&& review.LogStatusLevel == 2)
 			{
+				if (log.IsOmrIae || log.IsOmrIat)
+				{
+					return Constants.REVIEW_OMR;
+				}
+
 				if (log.IsEtsOae)
 				{
 					return Constants.REVIEW_ETS_OAE;
@@ -98,7 +116,7 @@ namespace eCoachingLog.Services
 					return Constants.REVIEW_TRAINING_OVERDUE_TRAINING_TEXT;
 				}
 
-				if (log.IsBrl)
+				if (log.IsBrl || log.IsBrn)
 				{
 					return Constants.REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT;
 				}
@@ -174,6 +192,9 @@ namespace eCoachingLog.Services
 
 		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName)
 		{
+			// Strip potential harmful characters entered by the user
+			var reviewCleaned = CleanInputs(review);
+
 			if (review.IsRegularPendingForm)
 			{
 				return CompleteRegularPendingReview(review, user, emailTempFileName, logoFileName);
@@ -198,11 +219,19 @@ namespace eCoachingLog.Services
 			return false;
 		}
 
+		private Review CleanInputs(Review review)
+		{
+			review.DetailsCoached = eCoachingLogUtil.CleanInput(review.DetailsCoached);
+			review.EmployeeComments = eCoachingLogUtil.CleanInput(review.EmployeeComments);
+			review.DetailReasonCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonCoachable);
+			review.DetailReasonNotCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonNotCoachable);
+			return review;
+		}
+
 		private bool CompleteRegularPendingReview(Review review, User user, string emailTempFileName, string logoFileName)
 		{
 			bool success = false;
 			string nextStatus = "Pending Employee Review";
-
 			success = reviewRepository.CompleteRegularPendingReview(review, nextStatus, user);
 			return success;
 		}
