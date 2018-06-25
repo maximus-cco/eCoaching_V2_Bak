@@ -90,6 +90,11 @@ namespace eCoachingLog.Services
 					{
 						return Constants.REVIEW_LCAST;
 					}
+
+					if (log.IsOmrShortCall)
+					{
+						return Constants.REVIEW_OMR_SHORT_CALL_TEXT;
+					}
 				}
 			}
 
@@ -125,11 +130,6 @@ namespace eCoachingLog.Services
 				{
 					return Constants.REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT;
 				}
-			}
-
-			if (log.IsOmrShortCall)
-			{
-				return Constants.REVIEW_OMR_SHORT_CALL_TEXT;
 			}
 
 			if (log.IsHigh5Club)
