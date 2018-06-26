@@ -83,6 +83,8 @@ namespace eCoachingLog.ViewModels
 			this.WarningLogDetail = new WarningLogDetail();
 			this.MainReasonNotCoachableList = new List<SelectListItem>();
 			this.EmployeeCommentsDdlList = new List<SelectListItem>();
+			// Default to true
+			this.IsCoachingRequired = true;
 		}
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
