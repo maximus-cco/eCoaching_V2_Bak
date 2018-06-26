@@ -30,7 +30,7 @@
 				</div>
 				<div class="mt-2">
 					<strong>Details of the behavior being coached:</strong><br />
-					@Html.Raw(Model.LogDetail.Behavior)
+					@Html.Raw(WebUtility.HtmlDecode(Model.LogDetail.Behavior)))
 				</div>
 				<div class='mt-2 @(@Model.ShowViewCseText ? "show" : "hide")'>
 					<strong>Coaching Opportunity was a confirmed Customer Service Escalation.</strong><br />
@@ -40,7 +40,7 @@
 				</div>
 				<div class='mt-2'>
 					<strong>Manager Notes:</strong><br />
-					@Model.LogDetail.MgrNotes
+					@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.MgrNotes))
 				</div>
 				<div class="mt-2">
 					<strong>Manager Review Information:</strong><br />
@@ -50,7 +50,7 @@
 					</div>
 				<div class="mt-2">
 					<strong>Coaching Notes:</strong><br />
-					@Model.LogDetail.CoachingNotes
+					@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
 				</div>
 				<div class="mt-2">
 					<strong>Supervisor Review Information:</strong><br />
