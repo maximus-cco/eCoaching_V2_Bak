@@ -28,7 +28,8 @@
         <div class="form-group">
             @Html.LabelFor(m => m.Role, new { @class = "control-label col-sm-2" })
             @Html.RadioButtonFor(m => m.Role, "ECL") ECL &nbsp;&nbsp;
-            @Html.RadioButtonFor(m => m.Role, "ARC") ARC
+            @Html.RadioButtonFor(m => m.Role, "ARC") ARC &nbsp;&nbsp;
+			@Html.RadioButtonFor(m => m.Role, "DIR") Director
             @Html.ValidationMessageFor(m => m.Role, "", new { @class = "col-sm-offset-2 field-validation-error" })
         </div>
 
