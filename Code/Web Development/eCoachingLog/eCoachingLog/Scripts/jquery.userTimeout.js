@@ -73,7 +73,7 @@ var loggingOut = false;
 			startTimer();
 
 			$(document).on('click scroll keypress', function () {
-				console.log('document: start time');
+				keepSessionAlive();
 				startTimer();
 			});
 		};
@@ -279,7 +279,6 @@ var loggingOut = false;
 				$($container).on('hide.bs.modal', function () {
 					$($container).remove();
 					keepSessionAlive();
-					//console.log('hide.bs.modal:' + '!!!!!!');
 					startTimer();
 
 					//$(document).on('click scroll keypress', function () {
