@@ -75,6 +75,11 @@ namespace eCoachingLog.Services
 		{
 			var log = review.LogDetail;
 
+			if (review.IsCsePendingForm)
+			{
+				return Constants.REVIEW_CSE;
+			}
+
 			if (user.EmployeeId == log.ManagerEmpId 
 				|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId)
 				|| user.EmployeeId == log.ReassignedToEmpId)

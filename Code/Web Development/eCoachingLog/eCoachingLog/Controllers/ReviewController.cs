@@ -83,6 +83,8 @@ namespace eCoachingLog.Controllers
 
 			// Determine to show/hide Managers Notes and Coaching Notes
 			DetermineMgrSupNotesVisibility(vm);
+			// Static text (instruction text)
+			vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
 
 			if (IsAcknowledgeForm(vm)) // Load Acknowledge partial
 			{
@@ -134,20 +136,16 @@ namespace eCoachingLog.Controllers
 						if (!vm.IsCsePendingForm)	// Not Research Form, not CSE Form, so this is regular pending review form
 						{
 							vm.IsRegularPendingForm = true;    // Regular Pending Form.
-							vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
-
 							vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 						} // end if (!vm.IsCsePendingForm)
 						else // CSE
 						{
 							vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-							vm.InstructionText = Constants.REVIEW_CSE;
 						}
 					} 
 					else // Research
 					{
 						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-						vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
 						// Uncoachable reason Dropdown
 						IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
 						IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);
