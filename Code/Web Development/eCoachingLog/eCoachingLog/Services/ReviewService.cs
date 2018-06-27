@@ -170,7 +170,6 @@ namespace eCoachingLog.Services
 		{
 			string reportCode = string.Empty;
 
-			log.IsDtt = true;
 			if (log.IsBrl)
 			{
 				reportCode = Constants.LOG_REPORT_CODE_OMRBRL;
@@ -279,36 +278,12 @@ namespace eCoachingLog.Services
 
 		private bool CompleteResearchPendingReview(Review review, User user)
 		{
-			string nextStatus = string.Empty;
-
-			long formId = review.LogDetail.LogId;
-			nextStatus = GetNextStatus(review, user);
-			DateTime reviewAutoDate = DateTime.Now;
-			bool bitisCoachingRequired = review.IsCoachingRequired;
-			DateTime? dtmReviewManualDate = null;
-			if (review.LogStatusLevel != 2)
+			if (review.LogStatusLevel == 2)
 			{
-				dtmReviewManualDate = review.DateCoached;
+				review.DetailReasonNotCoachable = FormatCoachingNotes(review, user);
 			}
 
-			if (bitisCoachingRequired)
-			{
-				nextStatus = GetNextStatus(review, user);
-				if (review.LogStatusLevel == 2)
-				{
-					review.DetailReasonCoachable = FormatCoachingNotes(review, user);
-				}
-			}
-			else
-			{
-				nextStatus = "Inactive";
-				if (review.LogStatusLevel == 2)
-				{
-					review.MainReasonNotCoachable = FormatCoachingNotes(review, user);
-				}
-			}
-
-			return reviewRepository.CompleteResearchPendingReview(review, nextStatus, user);
+			return reviewRepository.CompleteResearchPendingReview(review, GetNextStatus(review, user), user);
 		}
 
 		private string FormatCoachingNotes(Review review, User user)
@@ -384,6 +359,13 @@ namespace eCoachingLog.Services
 			// Research form
 			if (review.IsResearchPendingForm)
 			{
+				// Coaching not required
+				if (!review.IsCoachingRequired)
+				{
+					return "Inactive";
+				}
+
+				// Coaching is required
 				var log = review.LogDetail;
 				if(moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
 				{

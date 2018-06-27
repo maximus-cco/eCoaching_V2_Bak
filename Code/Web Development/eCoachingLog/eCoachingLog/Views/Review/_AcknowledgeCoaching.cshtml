@@ -17,9 +17,10 @@
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
 {
-	@Html.HiddenFor(m => m.LogDetail.LogId)
 	@Html.HiddenFor(m => m.IsAcknowledgeForm)
 	@Html.HiddenFor(m => m.IsReinforceLog)
+	@Html.HiddenFor(m => m.LogDetail.LogId)
+	@Html.HiddenFor(m => m.LogDetail.EmployeeId)
 	@Html.HiddenFor(m => m.LogDetail.ModuleId)
 	@Html.HiddenFor(m => m.LogDetail.StatusId)
 	<div class='form-group mt-2 @(@Model.IsReinforceLog ? "show" : "hide")'>

@@ -3,7 +3,21 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
 {
 	@Html.HiddenFor(m => m.IsResearchPendingForm)
+	@Html.HiddenFor(m => m.LogStatusLevel)
 	@Html.HiddenFor(m => m.LogDetail.LogId)
+	@Html.HiddenFor(m => m.LogDetail.ModuleId)
+	@Html.HiddenFor(m => m.LogDetail.IsCurrentCoachingInitiative)
+
+	@Html.HiddenFor(m => m.LogDetail.IsCurrentCoachingInitiative)
+	@Html.HiddenFor(m => m.LogDetail.IsOmrException)
+	@Html.HiddenFor(m => m.LogDetail.IsLowCsat)
+	@Html.HiddenFor(m => m.LogDetail.IsOmrIae)
+	@Html.HiddenFor(m => m.LogDetail.IsOmrIat)
+	@Html.HiddenFor(m => m.LogDetail.IsEtsOae)
+	@Html.HiddenFor(m => m.LogDetail.IsTrainingShortDuration)
+	@Html.HiddenFor(m => m.LogDetail.IsTrainingOverdue)
+	@Html.HiddenFor(m => m.LogDetail.IsBrl)
+	@Html.HiddenFor(m => m.LogDetail.IsBrn)
 
 	<div class='form-group mt-2' id='div-date-coached'>
 		<label for="DateCoached" id="label-date-coached" class="required">Date:</label>
