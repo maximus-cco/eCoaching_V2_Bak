@@ -55,7 +55,7 @@ namespace eCoachingLog.Controllers
 					reviewVM.WarningLogDetail = (WarningLogDetail)logDetail;
 				}
 
-				reviewVM.ShowViewCseText = reviewVM.IsCseUnconfirmed && reviewVM.IsCse;
+				reviewVM.ShowViewCseText = reviewVM.IsCseUnconfirmed && (reviewVM.IsCse.HasValue && reviewVM.IsCse.Value);
 				reviewVM.ShowViewMgtNotes = reviewVM.ShowViewCseText && !string.IsNullOrEmpty(reviewVM.LogDetail.MgrNotes);
 				if (reviewVM.LogDetail.IsIqs && reviewVM.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 				{
@@ -547,7 +547,7 @@ namespace eCoachingLog.Controllers
 
 		private bool ShowViewCseText(ReviewViewModel vm)
 		{
-			return vm.IsCseUnconfirmed && vm.IsCse;
+			return vm.IsCseUnconfirmed && (vm.IsCse.HasValue && vm.IsCse.Value);
 		}
 	}
 }

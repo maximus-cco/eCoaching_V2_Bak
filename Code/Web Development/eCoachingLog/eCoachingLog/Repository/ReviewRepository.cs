@@ -235,7 +235,7 @@ namespace eCoachingLog.Repository
 				// coaching_log.MgrReviewManualDate
 				var manualDate = review.DateReviewed;
 				var notes = review.ReasonNotCse;
-				if (review.IsCse)
+				if (review.IsCse.HasValue && review.IsCse.Value)
 				{
 					manualDate = review.DateCoached;
 					notes = review.DetailsCoached;

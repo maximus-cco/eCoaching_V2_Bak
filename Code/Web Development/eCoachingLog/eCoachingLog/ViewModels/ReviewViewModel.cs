@@ -29,7 +29,7 @@ namespace eCoachingLog.ViewModels
 		public string DetailReasonNotCoachable { get; set; }
 		public string DetailReasonCoachable { get; set; }
 		// CSE related
-		public bool IsCse { get; set; } // Confirmed cse
+		public bool? IsCse { get; set; } // Confirmed cse
 		public bool IsCseUnconfirmed { get; set; }
 		public DateTime? DateReviewed { get; set; }
 		public string ReasonNotCse { get; set; }
@@ -82,6 +82,8 @@ namespace eCoachingLog.ViewModels
 			this.EmployeeCommentsDdlList = new List<SelectListItem>();
 			// Default to true
 			this.IsCoachingRequired = true;
+			// Defaul to nothing
+			this.IsCse = null;
 		}
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -142,7 +144,7 @@ namespace eCoachingLog.ViewModels
 			// CSE
 			if (this.IsCsePendingForm)
 			{
-				if (this.IsCse) // Confirmed cse
+				if (this.IsCse.HasValue && this.IsCse.Value) // Confirmed cse
 				{
 					if (!this.DateCoached.HasValue)
 					{

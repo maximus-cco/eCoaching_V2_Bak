@@ -12,8 +12,8 @@
 		@Html.RadioButtonFor(m => m.IsCse, "false") No, this is not a confirmed Customer Service Escalation.
 		@Html.ValidationMessageFor(m => m.IsCse)
 	</div>
-
-	<div class='form-group mt-2 hide' id='div-date-coached'>
+<div id="div-cse-yes" class="hide">
+	<div class='form-group mt-2' id='div-date-coached'>
 		<label for="DateCoached" id="label-date-coached" class="required">Enter the date coached:</label>
 		<div class="col-xs-4 input-group date">
 			@Html.TextBoxFor(m => m.DateCoached, new { @class = "form-control" })
@@ -24,7 +24,7 @@
 		@Html.ValidationMessageFor(m => m.DateCoached)
 	</div>
 
-	<div class='form-group mt-2 hide' id='div-coaching-detail'>
+	<div class='form-group mt-2' id='div-coaching-detail'>
 		<label for="DetailsCoached" class="required">Provide the details from the coaching session including action plans developed:</label>
 		@Html.TextAreaFor(m => m.DetailsCoached, new { @class = "form-control", @rows = "5" })
 		<div class="help-block">
@@ -33,7 +33,9 @@
 		</div>
 		@Html.ValidationMessageFor(m => m.DetailsCoached)
 	</div>
+</div>
 
+<div id="div-cse-no" class="hide">
 	<div class='form-group mt-2' id='div-date-reviewed'>
 		<label for="DateReviewed" id="label-date-reviewed" class="required">Enter the date reviewed:</label>
 		<div class="col-xs-4 input-group date">
@@ -54,6 +56,7 @@
 		</div>
 		@Html.ValidationMessageFor(m => m.ReasonNotCse)
 	</div>
+</div>
 }
 
 @Scripts.Render("~/bundles/scripts/review")

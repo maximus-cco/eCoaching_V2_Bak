@@ -22,16 +22,10 @@ namespace eCoachingLog.Models.Review
 		public string DetailReasonCoachable { get; set; }
 	
 		// CSE related
-		public bool IsCse { get; set; }
+		public bool? IsCse { get; set; }
 		public DateTime? DateReviewed { get; set; }
 		public string ReasonNotCse { get; set; }
-		// Pending employee review related
-		//public string EmployeeCommentsTextBox { get; set; }
-		//// result from dropdown list
-		//public string EmployeeCommentsDdl { get; set; }
 		public string EmployeeComments { get; set; }
-
-		//public bool ShowReviewCoachingPartial { get; set; }
 
 		public bool IsRegularPendingForm { get; set; }
 		public bool IsResearchPendingForm { get; set; }
