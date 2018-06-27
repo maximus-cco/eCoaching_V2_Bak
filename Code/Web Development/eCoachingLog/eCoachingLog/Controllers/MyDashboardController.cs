@@ -57,10 +57,10 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult GetLogs(string whatLog, string siteName)
+		public ActionResult GetLogs(string whatLog, string siteName, string month)
 		{
 			logger.Debug("Entered GetLogs");
-			return PartialView(whatLog, InitMyDashboardVMByLogType(whatLog, siteName)); 
+			return PartialView(whatLog, InitMyDashboardVMByLogType(whatLog, siteName, month)); 
 		}
 
 		[HttpPost]
@@ -150,7 +150,7 @@ namespace eCoachingLog.Controllers
 			return vm;
         }
 
-		private MyDashboardViewModel InitMyDashboardVMByLogType(string whatLog, string siteName)
+		private MyDashboardViewModel InitMyDashboardVMByLogType(string whatLog, string siteName, string month)
 		{
 			var user = GetUserFromSession();
 			var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
@@ -257,7 +257,13 @@ namespace eCoachingLog.Controllers
 				case "_MySiteLogs":
 					// Default to pending
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING;
-
+					DateTime selectedMonth = DateTime.Parse(month);
+					// First day of the month
+					var start = (new DateTime(selectedMonth.Year, selectedMonth.Month, 1)).Date;
+					// Last day of the month
+					var end = start.AddMonths(1).AddDays(-1);
+					vm.Search.SubmitDateFrom = Convert.ToString(start);
+					vm.Search.SubmitDateTo = Convert.ToString(end);
 					break;
 				default:
 					break;

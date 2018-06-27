@@ -1,5 +1,8 @@
 ﻿$(function () {
-	$('#div-review-modal-footer').addClass("hide");
+	if ($('#IsCsePendingForm').val() === 'True')
+	{
+		$('#div-review-modal-footer').addClass("hide");
+	}
 
 	$('body').on('click', 'input[name="IsCse"]', function (e) {
 		var isCse = $(this).val();

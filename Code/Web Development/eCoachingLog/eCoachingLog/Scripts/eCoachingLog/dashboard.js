@@ -83,7 +83,8 @@
 				url: getLogListUrl,
 				data: {
 					whatLog: $(this).data("log-type"),
-					siteName: $(this).data("site-name")
+					siteName: $(this).data("site-name"),
+					month: $('#ddl-month').val()
 				},
 				success: function (data) {
 					$(".please-wait").slideUp(500);
