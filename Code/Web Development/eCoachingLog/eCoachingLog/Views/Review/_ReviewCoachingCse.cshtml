@@ -49,7 +49,7 @@
 		<label for="ReasonNotCse" class="required">Provide explanation for Employee and Supervisor as to reason why this is not a CSE:</label>
 		@Html.TextAreaFor(m => m.ReasonNotCse, new { @class = "form-control", @rows = "5" })
 		<div class="help-block">
-			Provide reason why this is not a CSE.
+			Provide as much detail as possible.
 			<span id="non-cse-remaining" class="pull-right">3000 remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.ReasonNotCse)

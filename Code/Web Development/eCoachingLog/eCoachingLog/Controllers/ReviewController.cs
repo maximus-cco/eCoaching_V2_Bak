@@ -138,9 +138,10 @@ namespace eCoachingLog.Controllers
 							vm.IsRegularPendingForm = true;    // Regular Pending Form.
 							vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 						} // end if (!vm.IsCsePendingForm)
-						else // CSE
+						else // CSE Form
 						{
 							vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
+							vm.InstructionText = Constants.REVIEW_CSE;
 						}
 					} 
 					else // Research

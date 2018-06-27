@@ -51,7 +51,6 @@
 		<label for="DetailReasonNotCoachable" class="required">Please provide reason/explanation/justification as to why the item was not coachable:</label>
 		@Html.TextAreaFor(m => m.DetailReasonNotCoachable, new { @class = "form-control", @rows = "5" })
 		<div class="help-block">
-			These notes will only be viewed by supervisors.
 			<span id="detail-reason-not-coachable" class="pull-right">3000 remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.DetailReasonNotCoachable)
@@ -61,7 +60,6 @@
 		<label for="DetailReasonCoachable" class="required">Please provide reason/explanation/justification as to why the item is coachable for the Supervisor:</label>
 		@Html.TextAreaFor(m => m.DetailReasonCoachable, new { @class = "form-control", @rows = "5" })
 		<div class="help-block">
-			These notes will only be viewed by supervisors.
 			<span id="detail-reason-coachable" class="pull-right">3000 remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.DetailReasonCoachable)

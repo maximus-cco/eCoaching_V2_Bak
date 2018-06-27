@@ -75,11 +75,6 @@ namespace eCoachingLog.Services
 		{
 			var log = review.LogDetail;
 
-			if (review.IsCsePendingForm)
-			{
-				return Constants.REVIEW_CSE;
-			}
-
 			if (user.EmployeeId == log.ManagerEmpId 
 				|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId)
 				|| user.EmployeeId == log.ReassignedToEmpId)
@@ -317,7 +312,7 @@ namespace eCoachingLog.Services
 
 		private string GetNextStatus(Review review, User user)
 		{
-			string nextStatus = string.Empty;
+			string nextStatus = "Unknown";
 			int moduleId = review.LogDetail.ModuleId;
 			// Positive (reinforced, met goal) Ack form
 			if (review.IsAcknowledgeForm && review.IsReinforceLog)
@@ -423,12 +418,9 @@ namespace eCoachingLog.Services
 				{
 					nextStatus = "Pending Quality Lead Review";
 				}
-				else
-				{
-					nextStatus = "Unknown";
-				}
 			}
 
+			// if nextStatus is unknown, then something must be wrong
 			return nextStatus;
 		}
 	}
