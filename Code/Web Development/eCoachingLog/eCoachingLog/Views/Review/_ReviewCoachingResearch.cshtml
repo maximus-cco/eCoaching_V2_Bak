@@ -57,7 +57,14 @@
 	</div>
 
 	<div class='form-group mt-2' id='div-coachable-detail-reason'>
-		<label for="DetailReasonCoachable" class="required">Please provide reason/explanation/justification as to why the item is coachable for the Supervisor:</label>
+		@if (Model.IsReviewByManager)
+		{
+			<label for="DetailReasonCoachable" class="required">Please provide reason/explanation/justification as to why the item is coachable for the Supervisor:</label>
+		}
+		else
+		{
+			<label for="DetailReasonCoachable" class="required">Provide the details from the coaching session including action plans developed:</label>
+		}
 		@Html.TextAreaFor(m => m.DetailReasonCoachable, new { @class = "form-control", @rows = "5" })
 		<div class="help-block">
 			<span id="detail-reason-coachable" class="pull-right">3000 remaining</span>

@@ -112,7 +112,6 @@ namespace eCoachingLog.Controllers
 			// Load Review partial
 			else
 			{
-				// TODO: what about submission? 
 				// Show Final or Review
 				if (logDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 				{ 
@@ -146,6 +145,7 @@ namespace eCoachingLog.Controllers
 					} 
 					else // Research
 					{
+						vm.IsReviewByManager = string.CompareOrdinal(Constants.USER_ROLE_MANAGER, user.Role) == 0;
 						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 						// Uncoachable reason Dropdown
 						IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);

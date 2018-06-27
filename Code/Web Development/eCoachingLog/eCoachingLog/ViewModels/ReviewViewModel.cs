@@ -48,15 +48,12 @@ namespace eCoachingLog.ViewModels
 		public bool ShowManagerNotes { get; set; }
 		public bool ShowCoachingNotes { get; set; }
 
-		// Show Is CSE question
-		//public bool ShowIsCseQuestion { get; set; }
-		//// Show Is Coaching Required question
-		//public bool ShowIsCoachingRequiredQuestion { get; set; }
-
 		public bool IsReviewForm { get; set; }
 		public bool IsReviewFinalForm { get; set; }
 
 		public bool IsReadOnly { get; set; }
+
+		public bool IsReviewByManager { get; set; }
 
 		public bool IsRegularPendingForm { get; set; }
 		public bool IsResearchPendingForm { get; set; }
@@ -89,7 +86,6 @@ namespace eCoachingLog.ViewModels
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{
-			// TODO: based on the boolean show variables to decide which fields to be checked
 			// Regular Pending
 			if (this.IsRegularPendingForm)
 			{
