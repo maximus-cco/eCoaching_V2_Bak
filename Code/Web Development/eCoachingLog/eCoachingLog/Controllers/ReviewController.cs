@@ -347,8 +347,13 @@ namespace eCoachingLog.Controllers
 			// User is the employee of the log
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
-				// Display Coaching Notes only
+				// Display Coaching Notes
+				// Display Manager Notes if not empty
 				vm.ShowCoachingNotes = true;
+				if (!string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
+				{
+					vm.ShowManagerNotes = true;
+				}
 
 				return;
 			}

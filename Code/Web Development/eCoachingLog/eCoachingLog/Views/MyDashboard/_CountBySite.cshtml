@@ -11,7 +11,7 @@
 		@foreach (var lcfs in Model.LogCountForSiteList)
 		{
 			<tr>
-				<td><a href="#" class="my-dashboard-log-list-by-site" data-log-type="_MySiteLogs" data-site-name="@lcfs.SiteName">@lcfs.SiteName</a></td>
+				<td><a href="#" class="my-dashboard-log-list-by-site" data-log-type="_MySiteLogs" data-site-id="@lcfs.SiteId">@lcfs.SiteName</a></td>
 				<td>@lcfs.TotalPending</td>
 				<td>@lcfs.TotalCompleted</td>
 				<td>@lcfs.TotalWarning</td>

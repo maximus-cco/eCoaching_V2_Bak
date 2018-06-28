@@ -656,6 +656,7 @@ namespace eCoachingLog.Repository
 					{
 						LogCountForSite logCountForSite = new LogCountForSite();
 						logCountForSite.SiteName = dataReader["City"].ToString();
+						logCountForSite.SiteId = Convert.ToInt32(dataReader["SiteID"]);
 						logCountForSite.TotalPending = Convert.ToInt32(dataReader["PendingCount"]);
 						logCountForSite.TotalCompleted = Convert.ToInt32(dataReader["CompletedCount"]);
 						logCountForSite.TotalWarning = Convert.ToInt32(dataReader["WarningCount"]);

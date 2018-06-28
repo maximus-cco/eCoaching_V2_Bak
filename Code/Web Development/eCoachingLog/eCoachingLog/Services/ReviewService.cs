@@ -273,9 +273,22 @@ namespace eCoachingLog.Services
 
 		private bool CompleteResearchPendingReview(Review review, User user)
 		{
+			// should already be null if no coaching required
+			if (!review.IsCoachingRequired)
+			{
+				review.DateCoached = null;
+			}
+
 			if (review.LogStatusLevel == 2)
 			{
-				review.DetailReasonNotCoachable = FormatCoachingNotes(review, user);
+				if (review.IsCoachingRequired)
+				{
+					review.DetailReasonCoachable = FormatCoachingNotes(review, user);
+				}
+				else
+				{
+					review.DetailReasonNotCoachable = FormatCoachingNotes(review, user);
+				}
 			}
 
 			return reviewRepository.CompleteResearchPendingReview(review, GetNextStatus(review, user), user);
