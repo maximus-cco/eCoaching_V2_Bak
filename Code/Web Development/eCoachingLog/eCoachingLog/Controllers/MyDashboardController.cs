@@ -57,7 +57,7 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult GetLogs(string whatLog, int siteId, string month)
+		public ActionResult GetLogs(string whatLog, int? siteId, string month)
 		{
 			logger.Debug("Entered GetLogs");
 			return PartialView(whatLog, InitMyDashboardVMByLogType(whatLog, siteId, month)); 
@@ -150,7 +150,7 @@ namespace eCoachingLog.Controllers
 			return vm;
         }
 
-		private MyDashboardViewModel InitMyDashboardVMByLogType(string whatLog, int siteId, string month)
+		private MyDashboardViewModel InitMyDashboardVMByLogType(string whatLog, int? siteId, string month)
 		{
 			var user = GetUserFromSession();
 			var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
@@ -263,7 +263,7 @@ namespace eCoachingLog.Controllers
 					var end = start.AddMonths(1).AddDays(-1);
 					vm.Search.SubmitDateFrom = Convert.ToString(start);
 					vm.Search.SubmitDateTo = Convert.ToString(end);
-					vm.Search.SiteId = siteId;
+					vm.Search.SiteId = siteId.Value;
 					break;
 				default:
 					break;
