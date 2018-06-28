@@ -303,25 +303,32 @@ namespace eCoachingLog.Controllers
 			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
 				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
 			{
-				if ((vm.LogDetail.IsCoachingRequired || vm.LogDetail.IsCse)&& !string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
+				// Display Coaching notes always, manager notes if not blank
+				vm.ShowCoachingNotes = true;
+				if (!string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
 				{
 					vm.ShowManagerNotes = true;
 				}
 
-				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
-				{
-					vm.ShowCoachingNotes = vm.LogDetail.IsIqs ||
-						vm.LogDetail.IsCtc ||
-						vm.LogDetail.IsHigh5Club ||
-						vm.LogDetail.IsKudo ||
-						vm.LogDetail.IsAttendance ||
-						vm.LogDetail.IsScorecardMsr ||
-						vm.LogDetail.IsScorecardMsrs;
-				}
-				else
-				{
-					vm.ShowCoachingNotes = true;
-				}
+				//if ((vm.LogDetail.IsCoachingRequired || vm.LogDetail.IsCse)&& !string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
+				//{
+				//	vm.ShowManagerNotes = true;
+				//}
+
+				//if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
+				//{
+				//	vm.ShowCoachingNotes = vm.LogDetail.IsIqs ||
+				//		vm.LogDetail.IsCtc ||
+				//		vm.LogDetail.IsHigh5Club ||
+				//		vm.LogDetail.IsKudo ||
+				//		vm.LogDetail.IsAttendance ||
+				//		vm.LogDetail.IsScorecardMsr ||
+				//		vm.LogDetail.IsScorecardMsrs;
+				//}
+				//else
+				//{
+				//	vm.ShowCoachingNotes = true;
+				//}
 
 				return;
 			}
@@ -334,10 +341,12 @@ namespace eCoachingLog.Controllers
 				(userEmployeeId == vm.LogDetail.LogManagerEmpId && vm.LogDetail.IsLowCsat) ||
 				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
 			{
+				// Display coaching notes always
+				vm.ShowCoachingNotes = true;
+
 				if (vm.LogStatusLevel != Constants.LOG_STATUS_LEVEL_3)
 				{
 					vm.ShowManagerNotes = true;
-					vm.ShowCoachingNotes = true;
 				}
 
 				return;
