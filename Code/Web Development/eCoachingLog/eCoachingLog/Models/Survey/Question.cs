@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace eCoachingLog.Models.Survey
 {
@@ -13,6 +13,7 @@ namespace eCoachingLog.Models.Survey
 		[Required(ErrorMessage = "Please make a selection.")]
 		public int SingleChoiceSelected { get; set; }
 		public string TextBoxLabel {get; set; }
+		[AllowHtml]
 		public string MultiLineText { get; set; }
 
 		public Question()

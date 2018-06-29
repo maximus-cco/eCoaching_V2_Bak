@@ -45,7 +45,9 @@ namespace eCoachingLog.ViewModels
         public bool ShowSubmitDiv { get; set; }
         public bool VerifiedCheckbox { get; set; }
         public List<CoachingReason> CoachingReasons { get; set; }
+		[AllowHtml]
         public string BehaviorDetail { get; set; }
+		[AllowHtml]
         public string ActionPlans { get; set; }
         public int SourceId { get; set; }
         public IEnumerable<SelectListItem> SourceSelectList { get; set; }

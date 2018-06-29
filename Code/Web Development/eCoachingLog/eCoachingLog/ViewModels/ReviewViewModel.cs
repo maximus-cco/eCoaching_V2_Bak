@@ -14,33 +14,29 @@ namespace eCoachingLog.ViewModels
 
 		public int LogStatusLevel { get; set; }
 
-		// Data to be collected on the review page
-		// TODO: move these to CoachingLogDetail
-		// So the page will submit these data in CoachingLogDetail model
 		// Common
 		public string InstructionText { get; set; }
 		public DateTime? DateCoached { get; set; }
+		[AllowHtml]
 		public string DetailsCoached { get; set; }
 
 		// Research related
 		public bool IsCoachingRequired { get; set; }
 		// result from dropdown list
 		public string MainReasonNotCoachable { get; set; }
+		[AllowHtml]
 		public string DetailReasonNotCoachable { get; set; }
+		[AllowHtml]
 		public string DetailReasonCoachable { get; set; }
 		// CSE related
 		public bool? IsCse { get; set; } // Confirmed cse
 		public bool IsCseUnconfirmed { get; set; }
 		public DateTime? DateReviewed { get; set; }
+		[AllowHtml]
 		public string ReasonNotCse { get; set; }
-		// Pending employee review related
-		//public string EmployeeCommentsTextBox { get; set; }
-		//// result from dropdown list
-		//public string EmployeeCommentsDdl { get; set; }
+		[AllowHtml]
 		public string EmployeeComments { get; set; }
 
-
-		// TODO: add dropdownlist properties for MainReasonNotCoachable and EmployeeCommentsDdl
 		public IEnumerable<SelectListItem> MainReasonNotCoachableList { get; set; }
 		public IEnumerable<SelectListItem> EmployeeCommentsDdlList { get; set; }
 
@@ -50,11 +46,8 @@ namespace eCoachingLog.ViewModels
 
 		public bool IsReviewForm { get; set; }
 		public bool IsReviewFinalForm { get; set; }
-
 		public bool IsReadOnly { get; set; }
-
 		public bool IsReviewByManager { get; set; }
-
 		public bool IsRegularPendingForm { get; set; }
 		public bool IsResearchPendingForm { get; set; }
 		public bool IsCsePendingForm { get; set; }
@@ -67,7 +60,6 @@ namespace eCoachingLog.ViewModels
 		public bool ShowViewSupReviewInfo { get; set; }
 
 		public bool Acknowledge { get; set; }
-
 		public bool IsAckOpportunityLog { get; set; }
 		public bool ShowCommentTextBox { get; set; }
 		public bool ShowCommentDdl { get; set; }
@@ -198,8 +190,6 @@ namespace eCoachingLog.ViewModels
 				DateReviewed = vm.DateReviewed,
 				ReasonNotCse = vm.ReasonNotCse,
 				EmployeeComments = vm.EmployeeComments,
-				//EmployeeCommentsTextBox = vm.EmployeeCommentsTextBox,
-				//EmployeeCommentsDdl = vm.EmployeeCommentsDdl,
 				IsRegularPendingForm = vm.IsRegularPendingForm,
 				IsResearchPendingForm = vm.IsResearchPendingForm,
 				IsCsePendingForm = vm.IsCsePendingForm,

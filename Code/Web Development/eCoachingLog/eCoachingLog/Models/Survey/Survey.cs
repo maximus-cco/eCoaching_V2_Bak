@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace eCoachingLog.Models.Survey
 {
@@ -12,6 +10,7 @@ namespace eCoachingLog.Models.Survey
 		public string LogName { get; set; }
 		public string EmployeeId { get; set; }
 		public IList<Question> Questions { get; set; }
+		[AllowHtml]
 		public string Comment { get; set; }
 		public bool HasHotTopic { get; set; }
 		public string Status { get; set; }

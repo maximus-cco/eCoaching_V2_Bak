@@ -1,9 +1,18 @@
 ﻿<div class="row">
 	<div class="col-xs-9">
 		<div class="panel panel-default">
-			<div class="chart-container-big">
-				<canvas id="myBar"></canvas>
-			</div>
+			@if (Model.LogCountForSiteList.Count > 6)
+			{
+				<div class="chart-container-big">
+					<canvas id="myBar"></canvas>
+				</div>
+			}
+			else
+			{
+				<div class="chart-container">
+					<canvas id="myBar"></canvas>
+				</div>
+			}
 		</div>
 	</div>
 

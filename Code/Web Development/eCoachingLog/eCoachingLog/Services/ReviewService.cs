@@ -273,12 +273,6 @@ namespace eCoachingLog.Services
 
 		private bool CompleteResearchPendingReview(Review review, User user)
 		{
-			// should already be null if no coaching required
-			if (!review.IsCoachingRequired)
-			{
-				review.DateCoached = null;
-			}
-
 			if (review.LogStatusLevel == 2)
 			{
 				if (review.IsCoachingRequired)
@@ -289,8 +283,9 @@ namespace eCoachingLog.Services
 				{
 					review.DetailReasonNotCoachable = FormatCoachingNotes(review, user);
 				}
+				// Don't save date entered on the page in coaching_log.CoachingDate, it will be with coachingNotes.
+				review.DateCoached = null;
 			}
-
 			return reviewRepository.CompleteResearchPendingReview(review, GetNextStatus(review, user), user);
 		}
 
@@ -306,9 +301,14 @@ namespace eCoachingLog.Services
 			{
 				notes += " (" + DateTime.Now + " PDT) - " + review.DateCoached;
 			}
+
 			if (!string.IsNullOrEmpty(review.DetailReasonNotCoachable))
 			{
 				notes += " " + review.DetailReasonNotCoachable;
+			}
+			else if (!string.IsNullOrEmpty(review.DetailReasonCoachable))
+			{
+				notes += " " + review.DetailReasonCoachable;
 			}
 			else
 			{
