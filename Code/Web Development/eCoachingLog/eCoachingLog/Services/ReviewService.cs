@@ -327,21 +327,24 @@ namespace eCoachingLog.Services
 			{
 				if (review.LogDetail.EmployeeId == user.EmployeeId)
 				{
-					if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
+					if (review.LogDetail.HasSupAcknowledged)
 					{
-						nextStatus = "Pending Supervisor Review";
-					}
-					else if (moduleId == Constants.MODULE_SUPERVISOR)
-					{
-						nextStatus = "Pending Manager Review";
-					}
-					else if (moduleId == Constants.MODULE_QUALITY)
-					{
-						nextStatus = "Pending Quality Lead Review";
+						nextStatus = "Completed";
 					}
 					else
 					{
-						nextStatus = "Completed";
+						if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
+						{
+							nextStatus = "Pending Supervisor Review";
+						}
+						else if (moduleId == Constants.MODULE_SUPERVISOR)
+						{
+							nextStatus = "Pending Manager Review";
+						}
+						else if (moduleId == Constants.MODULE_QUALITY)
+						{
+							nextStatus = "Pending Quality Lead Review";
+						}
 					}
 				}
 				else // user is not the log's employee

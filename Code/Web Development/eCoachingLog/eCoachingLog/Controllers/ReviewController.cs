@@ -27,6 +27,12 @@ namespace eCoachingLog.Controllers
 		// GET: Review
 		public ActionResult Index(int logId, bool isCoaching)
         {
+			logger.Debug("Entered Review.Index: logId=" + logId + ", isCoaching=" + isCoaching);
+			if (User == null)
+			{
+				logger.Debug("User is NULL!!!!!");
+			}
+
 			var user = GetUserFromSession();
 			int currentPage = (int)Session["currentPage"];
 			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);

@@ -43,6 +43,7 @@
 		public bool IsDtt { get; set; } // New Attendance Discrepancy feed
 
 		public bool HasEmpAcknowledged { get; set; }
+		public bool HasSupAcknowledged { get; set; }
 
 		public string UcId { get; set; }
         public string VerintId { get; set; }

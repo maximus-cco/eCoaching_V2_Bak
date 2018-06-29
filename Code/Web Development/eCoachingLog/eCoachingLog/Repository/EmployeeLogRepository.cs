@@ -118,6 +118,7 @@ namespace eCoachingLog.Repository
 						logDetail.IsCoachingRequired = dataReader["isCoachingRequired"] == DBNull.Value ? false : (bool)dataReader["isCoachingRequired"];
 						logDetail.IsIqs = Convert.ToInt16(dataReader["isIQS"]) == 0 ? false : true;
 						logDetail.HasEmpAcknowledged = dataReader["isCSRAcknowledged"] == DBNull.Value ? false : (bool)dataReader["isCSRAcknowledged"];
+						logDetail.HasSupAcknowledged = Convert.ToInt16(dataReader["isSupAcknowledged"].ToString()) == 0 ? false : true;
 
 						logDetail.IsEtsHnc = Convert.ToInt16(dataReader["ETS / HNC"]) == 0 ? false : true;
 						logDetail.IsEtsIcc = Convert.ToInt16(dataReader["ETS / ICC"]) == 0 ? false : true;
