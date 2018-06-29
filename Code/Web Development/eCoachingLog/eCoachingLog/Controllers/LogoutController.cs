@@ -7,6 +7,7 @@ namespace eCoachingLog.Controllers
         // GET: Logout
         public ActionResult Index()
         {
+			Session.Clear();
             Session.Abandon();
             return View();
         }

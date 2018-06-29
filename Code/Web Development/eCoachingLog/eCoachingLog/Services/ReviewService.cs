@@ -315,7 +315,7 @@ namespace eCoachingLog.Services
 				return notes;
 			}
 
-			return review.LogDetail.CoachingNotes + "<br />" + notes;
+			return eCoachingLogUtil.CleanInput(review.LogDetail.CoachingNotes + "<br />" + notes);
 		}
 
 		private string GetNextStatus(Review review, User user)

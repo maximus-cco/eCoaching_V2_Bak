@@ -7,8 +7,8 @@ namespace eCoachingLog.Controllers
         // GET: Error
         public ActionResult Index()
         {
-            Session.Abandon();
-
+			Session.Clear();
+			Session.Abandon();
             return View();
         }
     }

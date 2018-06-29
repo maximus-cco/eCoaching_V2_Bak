@@ -1,4 +1,6 @@
-﻿namespace eCoachingLog.Models.Common
+﻿using System.Web.Mvc;
+
+namespace eCoachingLog.Models.Common
 {
 	public class CoachingLogDetail : BaseLogDetail
     {
@@ -53,9 +55,11 @@
         public string NgdActivityId { get; set; }
 
         public string Behavior { get; set; } // txtDescription
+		[AllowHtml]
         public string CoachingNotes { get; set; } // txtCoachingNotes
         public string CoachingDate { get; set; } // Date coached
-        public string MgrNotes { get; set; }
+		[AllowHtml]
+		public string MgrNotes { get; set; }
 
         public string SupReviewedAutoDate { get; set; }
         public string MgrReviewManualDate { get; set; }
