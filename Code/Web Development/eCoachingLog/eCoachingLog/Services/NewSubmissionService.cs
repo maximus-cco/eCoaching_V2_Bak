@@ -5,6 +5,7 @@ using eCoachingLog.Repository;
 using eCoachingLog.Utils;
 using log4net;
 using System.Collections.Generic;
+using System.Web;
 
 namespace eCoachingLog.Services
 {
@@ -30,23 +31,18 @@ namespace eCoachingLog.Services
             }
 
 			// Strip potential harmful characters entered by the user
-			var submissionCleaned = CleanInputs(submission);
-			List<CoachingReason> crs = submissionCleaned.CoachingReasons;
+			submission.BehaviorDetail = eCoachingLogUtil.CleanInput(submission.BehaviorDetail);
+			submission.Plans = eCoachingLogUtil.CleanInput(submission.Plans);
+
+			List<CoachingReason> crs = submission.CoachingReasons;
 			// We only care about the selected reasons
-			submissionCleaned.CoachingReasons = crs.FindAll(x => x.IsChecked == true);
-            return newSubmissionRepository.SaveCoachingLog(submissionCleaned, user);
+			submission.CoachingReasons = crs.FindAll(x => x.IsChecked == true);
+            return newSubmissionRepository.SaveCoachingLog(submission, user);
         }
 
         public List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect)
         {
             return newSubmissionRepository.GetSourceListByModuleId(moduleId, directOrIndirect);
         }
-
-		private NewSubmission CleanInputs(NewSubmission submission)
-		{
-			submission.BehaviorDetail = eCoachingLogUtil.CleanInput(submission.BehaviorDetail);
-			submission.Plans = eCoachingLogUtil.CleanInput(submission.Plans);
-			return submission;
-		}
     }
 }

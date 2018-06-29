@@ -6,6 +6,7 @@ using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Web;
 
 namespace eCoachingLog.Services
 {
@@ -192,7 +193,10 @@ namespace eCoachingLog.Services
 		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName)
 		{
 			// Strip potential harmful characters entered by the user
-			// var reviewCleaned = CleanInputs(review);
+			review.DetailsCoached = eCoachingLogUtil.CleanInput(review.DetailsCoached);
+			review.EmployeeComments = eCoachingLogUtil.CleanInput(review.EmployeeComments);
+			review.DetailReasonCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonCoachable);
+			review.DetailReasonNotCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonNotCoachable);
 
 			if (review.IsRegularPendingForm)
 			{
@@ -216,15 +220,6 @@ namespace eCoachingLog.Services
 
 			// unexpected pending form, should never reach here
 			return false;
-		}
-
-		private Review CleanInputs(Review review)
-		{
-			review.DetailsCoached = eCoachingLogUtil.CleanInput(review.DetailsCoached);
-			review.EmployeeComments = eCoachingLogUtil.CleanInput(review.EmployeeComments);
-			review.DetailReasonCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonCoachable);
-			review.DetailReasonNotCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonNotCoachable);
-			return review;
 		}
 
 		private bool CompleteRegularPendingReview(Review review, User user, string emailTempFileName, string logoFileName)

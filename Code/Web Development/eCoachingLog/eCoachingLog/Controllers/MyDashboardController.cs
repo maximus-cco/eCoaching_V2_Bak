@@ -107,7 +107,6 @@ namespace eCoachingLog.Controllers
 			return Json(new
 			{
 				data = data,
-				//dataSite = dataSite,
 				chartTitle = string.Empty
 			}
 				, @"application/json");
