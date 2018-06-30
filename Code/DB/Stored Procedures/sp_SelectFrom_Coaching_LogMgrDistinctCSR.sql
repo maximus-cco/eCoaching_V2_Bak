@@ -14,6 +14,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
@@ -48,7 +49,7 @@ FROM (
 	   JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON cl.EmpID = eh.Emp_ID 
 	   JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
        WHERE  ((cl.[EmpID] = ''' + @strCSRMGRIDin  + '''  AND cl.[StatusID] in (3,4)) ' +  @NewLineChar +
-			  ' OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND eh.Sup_ID = ''' + @strCSRMGRIDin  + ''' AND cl.ModuleID = 2 AND cl.[StatusID] = 5 ' +  @NewLineChar +
+			  ' OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND eh.Sup_ID = ''' + @strCSRMGRIDin  + ''' AND  cl.[StatusID] in (3,5,6,8) ' +  @NewLineChar +
 			  ' OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND  eh.Mgr_ID = '''+ @strCSRMGRIDin  + ''' AND cl.[StatusID] in (5,7,9)) ' +  @NewLineChar +
 			  ' OR ([cl].[strReportCode] LIKE ''LCS%'' AND [ReassignCount] = 0 AND cl.[MgrID] = ''' + @strCSRMGRIDin  + ''' AND [cl].[StatusID]= 5) )' +  @NewLineChar +
 			  ' OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = ''' + @strCSRMGRIDin  + ''' AND  cl.[StatusID] in (5,7,9)) ) 
@@ -64,6 +65,7 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 
 End --sp_SelectFrom_Coaching_LogMgrDistinctCSR
+
 
 
 

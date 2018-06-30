@@ -27,6 +27,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -59,7 +61,7 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID)
 IF @nvcEmpRole <> 'Director' RETURN 1
 
 SET @nvcSQL = '
-	  --SELECT si.City, 
+	  --SELECT si.siteid, si.City, 
 			--   COALESCE(b.PendingCount, 0 ) PendingCount,
 			--   COALESCE(c.CompletedCount, 0 )CompletedCount,
 			--   COALESCE(d.WarningCount, 0 ) WarningCount
@@ -67,12 +69,12 @@ SET @nvcSQL = '
 	  -- WHERE isActive = 1 
 	  -- AND SiteID  <> -1) si
 
-	  	  SELECT si.City, 
+	  	  SELECT si.siteid, si.City, 
 				 COALESCE(b.PendingCount, 0 ) PendingCount,
 				 COALESCE(c.CompletedCount, 0 )CompletedCount,
 				 COALESCE(d.WarningCount, 0 ) WarningCount
 	    FROM 
-		(SELECT DISTINCT eh.Emp_Site City
+		(SELECT DISTINCT si.siteid, eh.Emp_Site City
 		FROM EC.Employee_Hierarchy eh JOIN EC.DIM_Site si
         ON eh.Emp_Site = si.City
         WHERE (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')) si
@@ -133,8 +135,8 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_Dashboard_Director_Summary_Count
 
+
+
 GO
-
-
 
 

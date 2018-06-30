@@ -21,12 +21,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
 GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -194,6 +194,8 @@ SET @nvcSQL2 = '
   cl.MgrReviewAutoDate,
   cl.MgrNotes txtMgrNotes,
   cl.isCSRAcknowledged,
+  CASE WHEN (cl.[Review_SupID] IS NOT NULL AND cl.[Review_SupID] <> '''') THEN 1
+    ELSE 0 END isSupAcknowledged,
   cl.isCoachingRequired,
   cl.CSRReviewAutoDate,
   cl.CSRComments txtCSRComments
@@ -250,9 +252,6 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
-
-
-
 
 
 GO

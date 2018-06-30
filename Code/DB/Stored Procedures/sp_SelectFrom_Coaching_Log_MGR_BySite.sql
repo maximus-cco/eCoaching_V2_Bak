@@ -31,6 +31,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	04/23/2018
@@ -61,7 +63,7 @@ BEGIN
 END
 
 
-
+ IF @intSiteID <> -2
 SET @nvcSQL = '
 SELECT   X.ManagerId, X.Manager
 FROM (
@@ -85,7 +87,8 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 
 End --sp_SelectFrom_Coaching_Log_Mgr_BySite
-GO
 
+
+GO
 
 

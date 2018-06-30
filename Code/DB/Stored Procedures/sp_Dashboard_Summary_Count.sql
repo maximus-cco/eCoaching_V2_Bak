@@ -27,6 +27,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -107,7 +109,7 @@ SET @intMyPending = (SELECT COUNT(cl.CoachingID)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON cl.EmpID = eh.Emp_ID
                  WHERE ((cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
-				 OR (ISNULL([cl].[strReportCode], ' ') NOT LIKE 'LCS%' AND cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND cl.ModuleID = 2 AND cl.[StatusID] = 5 
+				 OR (ISNULL([cl].[strReportCode], ' ') NOT LIKE 'LCS%' AND cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND cl.[StatusID] in (3,5,6,8) 
 			     OR (ISNULL([cl].[strReportCode], ' ') NOT LIKE 'LCS%' AND cl.ReassignCount= 0 AND  eh.Mgr_ID =  @nvcEmpID  AND cl.[StatusID] in (5,7,9)) 
 			     OR ([cl].[strReportCode] LIKE 'LCS%' AND [ReassignCount] = 0 AND cl.[MgrID] = @nvcEmpID AND [cl].[StatusID]= 5) )
 			     OR (cl.ReassignCount <> 0 AND cl.ReassignedToID =  @nvcEmpID AND  cl.[StatusID] in (5,7,9))))
@@ -232,6 +234,8 @@ EXEC (@nvcSQL)
 	
 -- Close Symmetric key
 END -- sp_Dashboard_Summary_Count
+
+
 
 
 

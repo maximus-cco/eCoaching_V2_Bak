@@ -27,6 +27,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -105,14 +106,14 @@ IF @nvcEmpRole in ( 'Manager', 'SrManager')
 
 
 SET @nvcSQL = ';WITH SelectedStatus AS
-				(SELECT StatusID, Status FROM EC.DIM_Status WHERE StatusID in (3,4,5,7,9)),
+				(SELECT StatusID, Status FROM EC.DIM_Status WHERE StatusID in (3,4,5,6,7,8,9)),
 
 			   SelectedLogs AS
 			   (SELECT [cl].[StatusID], Count(CoachingID) LogCount
                FROM [EC].[Coaching_Log] cl WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh 
 			   ON eh.[EMP_ID] = cl.[EmpID] 
 			   WHERE ((cl.[EmpID] = ''' + @nvcEmpID + '''  AND cl.[StatusID] in (3,4)) 
-			OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND eh.Sup_ID = ''' + @nvcEmpID + ''' AND cl.ModuleID = 2 AND cl.[StatusID] = 5 
+			OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND eh.Sup_ID = ''' + @nvcEmpID + ''' AND cl.[StatusID] in (3,5,6,8) 
 			  OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND  eh.Mgr_ID = '''+  @nvcEmpID + ''' AND cl.[StatusID] in (5,7,9))
 			  OR ([cl].[strReportCode] LIKE ''LCS%'' AND [ReassignCount] = 0 AND cl.[MgrID] = ''' + @nvcEmpID + ''' AND [cl].[StatusID]= 5) )
 			  OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = ''' +  @nvcEmpID + ''' AND  cl.[StatusID] in (5,7,9))  
@@ -144,6 +145,7 @@ ErrorHandler:
     Return(@@ERROR);
 	    
 END --sp_Dashboard_Summary_Count_ByStatus
+
 
 
 
