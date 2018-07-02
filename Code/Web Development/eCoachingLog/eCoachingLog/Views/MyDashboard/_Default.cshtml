@@ -10,9 +10,24 @@
 <div class="row">
 	<div class="col-xs-6">
 		<div class="panel panel-default">
-			<div class="chart-container">
-				<canvas id="myBar"></canvas>
-			</div>
+			@if (Model.LogCountList.Count > 7)
+			{
+				<div class="chart-container-big">
+					<canvas id="myBar"></canvas>
+				</div>
+			}
+			else if (Model.LogCountList.Count < 4)
+			{
+				<div class="chart-container-small">
+					<canvas id="myBar"></canvas>
+				</div>
+			}
+			else
+			{
+				<div class="chart-container">
+					<canvas id="myBar"></canvas>
+				</div>
+			}
 		</div>
 	</div>
 	<div class="col-xs-3">

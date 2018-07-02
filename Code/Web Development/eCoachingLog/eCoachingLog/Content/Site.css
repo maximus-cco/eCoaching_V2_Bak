@@ -305,6 +305,12 @@ canvas {
   height: 30vh;
 }
 
+.chart-container-small {
+  position: relative;
+  margin: auto;
+  height: 20vh;
+}
+
 .chart-container-big {
   position: relative;
   margin: auto;

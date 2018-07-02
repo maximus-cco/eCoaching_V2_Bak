@@ -1,9 +1,15 @@
 ﻿<div class="row">
 	<div class="col-xs-9">
 		<div class="panel panel-default">
-			@if (Model.LogCountForSiteList.Count > 6)
+			@if (Model.LogCountForSiteList.Count > 7)
 			{
 				<div class="chart-container-big">
+					<canvas id="myBar"></canvas>
+				</div>
+			}
+			else if (Model.LogCountForSiteList.Count <4)
+			{
+				<div class="chart-container-small">
 					<canvas id="myBar"></canvas>
 				</div>
 			}

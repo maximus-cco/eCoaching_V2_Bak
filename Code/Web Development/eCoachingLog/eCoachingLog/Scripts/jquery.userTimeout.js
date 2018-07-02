@@ -72,7 +72,7 @@ var loggingOut = false;
 
 			startTimer();
 
-			$(document).on('click scroll keypress', function () {
+			$(document).on('click keypress', function () {
 				keepSessionAlive();
 				startTimer();
 			});
