@@ -48,15 +48,22 @@ namespace eCoachingLog.Services
 
 			if (Constants.PAGE_MY_DASHBOARD == currentPage)
 			{
-				return (
-					(user.EmployeeId == logDetail.SubmitterEmpId && user.Role != Constants.USER_ROLE_ARC)
-					|| user.EmployeeId == logDetail.EmployeeId
-					//|| user.EmployeeId == logDetail.SubmitterEmpId
-					|| user.EmployeeId == logDetail.SupervisorEmpId
-					|| user.EmployeeId == logDetail.ManagerEmpId
-					|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedToEmpId
-					|| (isCoaching && ((CoachingLogDetail)logDetail).IsLowCsat && user.EmployeeId == logDetail.LogManagerEmpId)
-				);
+				if (isCoaching)
+				{
+					return (
+						(user.EmployeeId == logDetail.SubmitterEmpId && user.Role != Constants.USER_ROLE_ARC)
+						|| user.EmployeeId == logDetail.EmployeeId
+						|| user.EmployeeId == logDetail.SupervisorEmpId
+						|| user.EmployeeId == logDetail.ManagerEmpId
+						|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedToEmpId
+						|| (isCoaching && ((CoachingLogDetail)logDetail).IsLowCsat && user.EmployeeId == logDetail.LogManagerEmpId)
+					);
+				}
+				else
+				{
+					// If user sees My Team Warning on My Dashboard, then the user can view the detail.
+					return true;
+				}
 			}
 
 			// If it reaches here, it already passes authorization in Survey Controller 
@@ -379,6 +386,11 @@ namespace eCoachingLog.Services
 						nextStatus = "Pending Supervisor Review";
 					}
 					else if (log.IsOmrIae || log.IsOmrIat || log.IsEtsOae || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrl || log.IsBrn)
+					{
+						nextStatus = "Pending Employee Review";
+					}
+
+					if (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
 					{
 						nextStatus = "Pending Employee Review";
 					}
