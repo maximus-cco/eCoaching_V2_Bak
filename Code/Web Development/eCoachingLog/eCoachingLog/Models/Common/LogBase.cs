@@ -3,7 +3,7 @@ using System.Web.Mvc;
 
 namespace eCoachingLog.Models.Common
 {
-	// TODO: create CoachingLog extends LogBase
+	// CoachingLog extends LogBase
 	// WarningLog extends LogBase
 	// LogBase has only common fields
 	public class LogBase

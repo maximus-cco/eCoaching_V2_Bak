@@ -2,9 +2,9 @@
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.MyDashboard;
-using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
+using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -105,9 +105,24 @@ namespace eCoachingLog.Services
 		public List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search)
 		{
 			List<LogBase> logs = employeeLogRepository.GetLogList(logFilter, userId, pageSize, startRowIndex, sortBy, sortDirection, search);
-
 			foreach (LogBase log in logs)
 			{
+				// Log New Text
+				try
+				{
+					if (!string.IsNullOrEmpty(log.CreatedDate) && (DateTime.Now - Convert.ToDateTime(log.CreatedDate)).Days < 1)
+					{
+						log.FormName += " *New!";
+					}
+				}
+				catch (Exception ex)
+				{
+					logger.Debug("Error converting createdate to datetime: " + ex.Message);
+				}
+
+				// Created Date displays PDT
+				log.CreatedDate = eCoachingLogUtil.AppendPdt(log.CreatedDate);
+				// Reasons
 				log.Reasons = log.Reasons.Replace("|", "<br />");
 				log.SubReasons = log.SubReasons.Replace("|", "<br />");
 				log.Value = log.Value.Replace("|", "<br />");

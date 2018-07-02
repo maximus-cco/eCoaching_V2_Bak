@@ -3,7 +3,6 @@ using eCoachingLog.Models;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.MyDashboard;
-using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using eCoachingLog.Utils;
 using log4net;
@@ -462,7 +461,7 @@ namespace eCoachingLog.Repository
 						log.Reasons = dataReader["strCoachingReason"].ToString();
 						log.SubReasons = dataReader["strSubCoachingReason"].ToString();
 						log.Value = dataReader["strValue"].ToString();
-						log.CreatedDate = eCoachingLogUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
+						log.CreatedDate = dataReader["SubmittedDate"].ToString();
 						log.IsCoaching = !string.IsNullOrEmpty(log.Source) && log.Source != "Warning" ? true : false;
 
 						logs.Add(log);
