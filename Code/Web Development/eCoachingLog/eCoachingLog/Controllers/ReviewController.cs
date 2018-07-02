@@ -550,7 +550,9 @@ namespace eCoachingLog.Controllers
 			// User is the employee of the log
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
-				return (IsAckOpportunityLog(vm) || IsReinforceLog(vm));
+				return (!vm.LogDetail.IsDtt 
+					&& (IsAckOpportunityLog(vm) || IsReinforceLog(vm))
+				);
 			}
 
 			return false;

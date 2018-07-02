@@ -38,7 +38,7 @@ namespace eCoachingLog.Services
 					|| user.EmployeeId == logDetail.EmployeeId
 					|| user.EmployeeId == logDetail.SupervisorEmpId
 					|| user.EmployeeId == logDetail.ManagerEmpId
-					|| user.IsEcl
+					|| (user.IsEcl && isCoaching)
 					|| user.Role == Constants.USER_ROLE_SR_MANAGER
 					|| userJobCode.StartsWith("WHHR")
 					|| userJobCode.StartsWith("WHER")
