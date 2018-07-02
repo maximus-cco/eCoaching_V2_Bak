@@ -28,6 +28,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -62,7 +64,8 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID)
 --8 - Pending Quality Lead Review
 --9 - Pending Deputy Program Manager Review
 
-IF @nvcEmpRole in ('CSR', 'ARC')
+
+IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
 
 SET @nvcSQL = ' ;WITH SelectedStatus AS
 				(SELECT StatusID, Status FROM EC.DIM_Status WHERE StatusID in (3,4)),
@@ -80,7 +83,7 @@ SET @nvcSQL = ' ;WITH SelectedStatus AS
 
 
 
-IF @nvcEmpRole in ('Supervisor', 'Other')
+IF @nvcEmpRole = 'Supervisor'
 
 SET @nvcSQL = ';WITH SelectedStatus AS
 				(SELECT StatusID, Status FROM EC.DIM_Status WHERE StatusID in (3,4,6,8)),
@@ -149,6 +152,9 @@ END --sp_Dashboard_Summary_Count_ByStatus
 
 
 
+
+
 GO
+
 
 
