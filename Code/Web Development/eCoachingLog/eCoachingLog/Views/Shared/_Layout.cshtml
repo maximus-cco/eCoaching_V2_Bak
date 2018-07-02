@@ -40,7 +40,12 @@
 				}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#"><span class="glyphicon glyphicon-user"></span>&nbsp;@(@user.Name)</a></li>
+					<li><a href="#"><span class="glyphicon glyphicon-user"></span>@(@user.Name)</a></li>
+					<li>
+						<a href="@Url.Action("Index", "Logout")" class="btn btn-warning">
+							<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Logout
+						</a>
+					</li>
 				</ul>
 			</div>
 		</div>
