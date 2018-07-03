@@ -153,7 +153,12 @@ namespace eCoachingLog.Services
 
 			if (log.IsKudo)
 			{
-				return Constants.REVIEW_QUALITY_KUDO_CSR;
+				if (user.EmployeeId == log.EmployeeId)
+				{
+					return Constants.REVIEW_QUALITY_KUDO_CSR;
+				}
+
+				return Constants.REVIEW_QUALITY_KUDO_SUPERVISOR;
 			}
 
 			if (log.IsScorecardMsr)
