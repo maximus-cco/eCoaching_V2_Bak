@@ -1,6 +1,6 @@
 /*
 CCO_eCoaching_Dimension_Tables_Create(02).sql
-Last Modified Date: 6/13/2018
+Last Modified Date: 07/02/2018
 Last Modified By: Susmitha Palacherla
 
 
@@ -504,7 +504,8 @@ GO
 
 CREATE TABLE [EC].[Reasons_By_ReportCode](
 	[ReportCode] [nvarchar](20) NOT NULL,
-	[Reason] [nvarchar](100) NULL,
+	[Reason] [nvarchar](100) NOT NULL,
+	[DisplayOrder] INT NOT NULL,
 ) ON [PRIMARY] 
 
 GO

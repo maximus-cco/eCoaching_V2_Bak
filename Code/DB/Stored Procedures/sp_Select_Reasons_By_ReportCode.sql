@@ -26,6 +26,8 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	06/12/2108
@@ -45,13 +47,15 @@ BEGIN
 
 SET @nvcSQL = 'Select [Reason] FROM [EC].[Reasons_By_ReportCode]
 WHERE [ReportCode] = '''+ @nvcReportCode  +'''
-ORDER BY CASE WHEN [Reason] = ''Other'' THEN 1 ELSE 0 END, [Reason]'
+ORDER BY [DisplayOrder]'
 
 
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
 END -- sp_Select_Reasons_By_ReportCode
+
+
 GO
 
 
