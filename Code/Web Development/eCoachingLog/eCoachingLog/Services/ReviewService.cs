@@ -48,6 +48,7 @@ namespace eCoachingLog.Services
 
 			if (Constants.PAGE_MY_DASHBOARD == currentPage)
 			{
+				// Coaching log:
 				if (isCoaching)
 				{
 					return (
@@ -59,10 +60,16 @@ namespace eCoachingLog.Services
 						|| (isCoaching && ((CoachingLogDetail)logDetail).IsLowCsat && user.EmployeeId == logDetail.LogManagerEmpId)
 					);
 				}
+				// Warning log:
 				else
 				{
-					// If user sees My Team Warning on My Dashboard, then the user can view the detail.
-					return true;
+					return (
+						user.EmployeeId == logDetail.SubmitterEmpId
+						|| user.EmployeeId == logDetail.EmployeeId
+						|| user.EmployeeId == logDetail.SupervisorEmpId
+						|| user.EmployeeId == logDetail.ManagerEmpId
+						|| user.Role == Constants.USER_ROLE_SR_MANAGER
+					);
 				}
 			}
 

@@ -110,9 +110,13 @@ namespace eCoachingLog.Services
 				// Log New Text
 				try
 				{
-					if (!string.IsNullOrEmpty(log.CreatedDate) && (DateTime.Now - Convert.ToDateTime(log.CreatedDate)).Days < 1)
+					if (!string.IsNullOrEmpty(log.CreatedDate) && (DateTime.Today - Convert.ToDateTime(log.CreatedDate)).Days < 1)
 					{
-						log.FormName += " *New!";
+						log.LogNewText = "New!";
+					}
+					else
+					{
+						log.LogNewText = string.Empty;
 					}
 				}
 				catch (Exception ex)
@@ -121,7 +125,7 @@ namespace eCoachingLog.Services
 				}
 
 				// Created Date displays PDT
-				log.CreatedDate = eCoachingLogUtil.AppendPdt(log.CreatedDate);
+				// log.CreatedDate = eCoachingLogUtil.AppendPdt(log.CreatedDate);
 				// Reasons
 				log.Reasons = log.Reasons.Replace("|", "<br />");
 				log.SubReasons = log.SubReasons.Replace("|", "<br />");

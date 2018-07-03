@@ -30,7 +30,7 @@ $(document).ready(function () {
                 data: "FormName", name: "strFormID",
                 render: function (data, type, row, meta) {
                 	return '<a href="#"' + 'data-log-id="' + row['ID'] + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-						'class="modal-link"' + 'style="color: #337ab7;">' + data + '</a>';
+						'class="modal-link"' + 'style="color: #337ab7;">' + data + '</a>&nbsp;<font color="red">' + row['LogNewText'] + '</font>';
                 }
             },  // Log Name
             { data: "EmployeeName", name: "strEMPName" },
@@ -57,7 +57,4 @@ $(document).ready(function () {
     {
     	myTable.column('strEmpSupName:name').visible(false);
     }
-
-
-    
 });

@@ -205,10 +205,14 @@ namespace eCoachingLog.Repository
                         logDetail.CreatedDate = eCoachingLogUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
-                        logDetail.EmployeeName = dataReader["strEmpName"].ToString();
+						logDetail.SubmitterEmpId = dataReader["strSubmitterID"].ToString();
+						logDetail.EmployeeName = dataReader["strEmpName"].ToString();
+						logDetail.EmployeeId = dataReader["strEmpID"].ToString();
                         logDetail.EmployeeSite = dataReader["strEmpSite"].ToString();
                         logDetail.SupervisorName = dataReader["strEmpSupName"].ToString();
+						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString();
                         logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
+						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString();
                         break;
                     }
                 }
