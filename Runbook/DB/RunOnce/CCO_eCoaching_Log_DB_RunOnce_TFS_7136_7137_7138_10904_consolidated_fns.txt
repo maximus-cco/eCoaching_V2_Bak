@@ -1,0 +1,407 @@
+/*
+fn_intStatusIDFromInsertParams(01).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+
+Version 01: Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
+
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_intStatusIDFromInsertParams' 
+)
+   DROP FUNCTION [EC].[fn_intStatusIDFromInsertParams]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+-- =============================================
+-- Author:              Susmitha Palacherla
+-- Create date:        04/17/2018
+-- Last modified by:    
+-- Last modified date:  
+-- Description:	 Given a Module, isCSE and Source returns StatusID
+-- Created during Submissions move to new architecture - TFS 7136 - 04/10/2018. 
+-- =============================================
+CREATE FUNCTION [EC].[fn_intStatusIDFromInsertParams]
+ (
+@intModuleID INT, 
+@intSourceID INT,
+@bitisCSE bit
+)
+
+RETURNS INT
+AS
+BEGIN
+
+  DECLARE 
+  @strStatus nvarchar(30),
+  @strModule nvarchar(30),
+  @strSource nvarchar(10),
+  @strSubSource nvarchar(40),
+  @intStatusID INT 
+   
+  SET @strModule = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleID)
+  SET @strSource = (SELECT [CoachingSource] FROM [EC].[DIM_Source] WHERE [SourceID]= @intSourceID)
+  SET @strSubSource = (SELECT [SubCoachingSource] FROM [EC].[DIM_Source] WHERE [SourceID]= @intSourceID)
+
+  SET  @strStatus = (SELECT DISTINCT [Status] FROM [EC].[Email_Notifications] WHERE [Module] = @strModule
+  AND [Source] = @strSource  AND [SubSource] = @strSubSource AND [isCSE] = @bitisCSE
+  AND [Submission] = 'UI'
+  )
+
+  IF @strStatus = '' OR @strStatus IS NULL
+  SET @strStatus = 'Unknown'
+  SET @intStatusID = (SELECT [StatusID] FROM [EC].[DIM_Status] WHERE Status = @strStatus)
+
+  
+      
+  RETURN @intStatusID
+  
+END  -- fn_intStatusIDFromInsertParams()
+
+
+
+
+
+GO
+
+
+
+
+/*
+fn_strCheckIf_ACLRole(01).sql
+Last Modified Date: 05/15/2018
+Last Modified By: Susmitha Palacherla
+
+
+Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCheckIf_ACLRole' 
+)
+   DROP FUNCTION [EC].[fn_strCheckIf_ACLRole]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+--	=============================================
+-- Author:		Susmitha Palacherla
+-- Create date:  5/15/2018
+-- Description:	Given an Employee ID and ACLRole returns 0 or 1 based on whether the 
+-- user has an record in ACL table with given ACLRole.
+-- Last Modified By:
+-- Revision History:
+-- Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/15/2018 
+--	=============================================
+CREATE FUNCTION [EC].[fn_strCheckIf_ACLRole] 
+(
+@nvcEmpID Nvarchar(10), @RoleCheck nvarchar(10)
+)
+RETURNS bit
+AS
+BEGIN
+ 
+
+
+	 DECLARE @nvcEmpLanID nvarchar(30),
+	         @intACLRowID int,
+	         @nvcACLRole bit
+	
+	
+	SET @nvcEmpLanID = (SELECT [EC].[fn_strEmpLanIDFromEmpID](@nvcEmpID))
+
+	IF @RoleCheck = 'ARC'
+	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
+						  AND [Role] = 'ARC'
+						  AND [End_Date] = 99991231)
+
+IF @RoleCheck = 'ECL'
+	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
+						  AND [Role] = 'ECL'
+						  AND [End_Date] = 99991231)
+
+	IF @RoleCheck = 'SRM'
+	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
+						  AND [Role] = 'SRM'
+						  AND [End_Date] = 99991231)
+
+	IF @RoleCheck = 'DIR'
+	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
+						  AND [Role] = 'DIR'
+						  AND [End_Date] = 99991231)
+
+	
+IF @intACLRowID IS NOT NULL 
+SET  @nvcACLRole = 1
+ELSE
+SET  @nvcACLRole = 0
+
+RETURN 	@nvcACLRole
+
+END --fn_strCheckIf_ACLRole
+
+GO
+
+
+
+/*
+fn_strCheckIf_ExcelExport(01).sql
+Last Modified Date: 05/18/2018
+Last Modified By: Susmitha Palacherla
+
+
+Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strCheckIf_ExcelExport' 
+)
+   DROP FUNCTION [EC].[fn_strCheckIf_ExcelExport]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date:  5/16/2018
+-- Description:	Given an Employee ID and Role returns if User can Export to Excel
+-- Last Modified By:
+-- Revision History:
+-- Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
+-- =============================================
+
+CREATE FUNCTION [EC].[fn_strCheckIf_ExcelExport] 
+(
+	@nvcEmpID nvarchar(10), @Role nvarchar(40) 
+)
+RETURNS bit
+AS
+BEGIN
+	DECLARE 
+	@strEmpJobCode nvarchar(20),
+	@bitIsHistoricalYes bit,
+	@bitExcelExport bit
+
+SET @strEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @nvcEmpID)	
+	
+SET @bitIsHistoricalYes = (SELECT HistoricalDashboard From [EC].[UI_Role_Page_Access]
+WHERE RoleName = @Role )
+
+IF @bitIsHistoricalYes = 1 AND @strEmpJobCode NOT LIKE '%40'
+SET @bitExcelExport = 1
+ELSE
+SET @bitExcelExport = 0
+
+RETURN   @bitExcelExport
+  
+END --fn_strCheckIf_ExcelExport
+
+
+GO
+
+
+
+/*
+fn_strDirectUserHierarchy(02).sql
+Last Modified Date: 04/10/2018
+Last Modified By: Susmitha Palacherla
+
+Version 02: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+
+Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strDirectUserHierarchy' 
+)
+   DROP FUNCTION [EC].[fn_strDirectUserHierarchy]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+--	=============================================
+--	Author:		Susmitha Palacherla
+--	Create Date: 09/29/2014
+--	Description:	 
+--  *  Given a CSR ID, a Submitter ID, checks to see if the submitter 
+-- is the Supervisor or Manager of the given employee.
+-- If it does the function returns a a 'Yes' to Indicate Direct Hierrachy.
+-- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+--	=============================================
+CREATE FUNCTION [EC].[fn_strDirectUserHierarchy] 
+(
+  @strEmpIDin nvarchar(10),
+  @strSubmitterIDin nvarchar(20)
+
+)
+RETURNS nvarchar(10)
+AS
+BEGIN
+ 
+	 DECLARE @strEmpSupID nvarchar(10),
+	         @strEmpMgrID nvarchar(10),
+	         @DirectHierarchy nvarchar(10)
+	
+
+	SET @strEmpSupID = (Select Sup_ID from EC.Employee_Hierarchy Where Emp_ID = @strEmpIDin)
+	SET @strEmpMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @strEmpIDin)
+	
+
+ SET @DirectHierarchy =
+ CASE WHEN @strSubmitterIDin = @strEmpSupID THEN 'Yes'
+      WHEN @strSubmitterIDin = @strEmpMgrID THEN 'Yes'
+      Else 'No' END
+      
+
+   
+RETURN @DirectHierarchy
+
+END --fn_strDirectUserHierarchy
+
+
+
+GO
+
+
+
+
+/*
+fn_strGetUserRole(01).sql
+Last Modified Date: 05/18/2018
+Last Modified By: Susmitha Palacherla
+
+
+Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'fn_strGetUserRole' 
+)
+   DROP FUNCTION [EC].[fn_strGetUserRole]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+-- =============================================
+-- Author:		Susmitha Palacherla
+-- Create date:  5/16/2018
+-- Description:	Given an Employee ID returns the Role 
+-- Last Modified By:
+-- Revision History:
+-- Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
+-- =============================================
+
+CREATE FUNCTION [EC].[fn_strGetUserRole] 
+(
+	@strEmpID nvarchar(10) 
+)
+RETURNS nvarchar(10)
+AS
+BEGIN
+	DECLARE 
+	@strEmpJobCode nvarchar(20),
+	@strUserRole nvarchar(20)
+	
+SET @strEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
+WHERE Emp_ID = @strEmpID)
+
+ SET @strUserRole = 
+ (SELECT CASE 
+ WHEN (@strEmpJobCode LIKE 'WACS0%' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 0) THEN 'CSR'
+ WHEN (@strEmpJobCode LIKE 'WACS0%' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 1) THEN 'ARC'
+ WHEN (@strEmpJobCode LIKE 'WACQ0%' OR @strEmpJobCode LIKE 'WACQ12' OR @strEmpJobCode LIKE 'WIHD0%'
+ OR  @strEmpJobCode LIKE 'WTTR1%' OR  @strEmpJobCode LIKE 'WTID%'  ) THEN 'Employee'
+  WHEN (@strEmpJobCode LIKE '%40' OR @strEmpJobCode LIKE 'WTTI%' OR @strEmpJobCode LIKE 'WACQ13') THEN 'Supervisor'
+ WHEN ((@strEmpJobCode LIKE '%50' OR @strEmpJobCode LIKE 'WEEX%' OR @strEmpJobCode LIKE 'WISO%'
+ OR @strEmpJobCode LIKE 'WISY%' OR  @strEmpJobCode = 'WPWL51' OR @strEmpJobCode LIKE 'WSTE%'
+ OR @strEmpJobCode LIKE '%60'  OR @strEmpJobCode LIKE '%70') 
+ AND NOT([EC].[fn_strCheckIf_ACLRole](@strEmpID, 'SRM') = 1 OR [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1)) 
+ THEN 'Manager'
+ WHEN  [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'SRM') = 1 THEN 'SrManager'
+ WHEN  [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1 THEN 'Director'
+ WHEN @strEmpJobCode LIKE 'WH%' THEN 'HR'
+ ELSE 'Restricted' END)
+
+ RETURN   @strUserRole
+  
+END --fn_strGetUserRole
+GO
+
+
+

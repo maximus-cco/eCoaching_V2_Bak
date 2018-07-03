@@ -169,7 +169,8 @@ SET @nvcSQL2 = '
   CASE WHEN (cc.ETSICC IS NOT NULL AND cl.strReportCode LIKE ''ICC%'') THEN 1 ELSE 0 END "ETS / ICC",
   CASE WHEN (cc.OMRBRN IS NOT NULL AND cl.strReportCode LIKE ''BRN%'') THEN 1 ELSE 0 END "OMR / BRN",
   CASE WHEN (cc.OMRBRL IS NOT NULL AND cl.strReportCode LIKE ''BRL%'') THEN 1 ELSE 0 END "OMR / BRL",
-  CASE WHEN (cc.OMRIAE IS NOT NULL AND cl.strReportCode LIKE ''IAE%'') THEN 1 ELSE 0 END "OMR / IAE",
+  CASE WHEN (cc.OMRIAE IS NOT NULL AND cl.strReportCode LIKE ''IAE2%'') THEN 1 ELSE 0 END "OMR / IAE",
+  CASE WHEN (cc.OMRIAE IS NOT NULL AND cl.strReportCode LIKE ''IAEF%'') THEN 1 ELSE 0 END "OMR / IAEF",
   CASE WHEN (cc.OMRIAT IS NOT NULL AND cl.strReportCode LIKE ''IAT%'') THEN 1 ELSE 0 END "OMR / IAT",
   CASE WHEN (cc.OMRISQ IS NOT NULL AND cl.strReportCode LIKE ''ISQ%'') THEN 1 ELSE 0 END "OMR / ISQ",
   CASE WHEN (cc.LCS IS NOT NULL AND cl.strReportCode LIKE ''LCS%'') THEN 1 ELSE 0 END "LCS",
@@ -252,6 +253,10 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
+
+
 
 
 GO

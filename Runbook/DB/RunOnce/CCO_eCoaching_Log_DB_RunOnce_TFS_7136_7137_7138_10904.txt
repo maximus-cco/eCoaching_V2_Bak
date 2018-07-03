@@ -1,0 +1,245 @@
+/*
+
+TFS 7136 – Move new submissions to new architecture
+TFS 7137 – Move Historical dashboard to new architecture
+TFS 7138 – Move My Dashboard to new architecture
+TFS 10904 – Move Surveys to new architecture
+
+
+Open in an ssms window pointing to eCoaching DB in target environment and run with nothing selected
+
+
+
+Database instances and databases
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+Summary
+1. Update column value for CallIDType in [EC].[CallID_Selection] from NGD ID to NGDID
+
+
+
+*/
+
+
+
+--1.Update [EC].[CallID_Selection]
+
+Update [EC].[CallID_Selection]
+SET [CallIdType] = 'NGDID'
+Where [CallIdType] = 'NGD ID'
+GO
+
+--***********************
+
+
+--2.Update [EC].[Email_Notifications]
+
+
+update [EC].[Email_Notifications]
+set Body= 'A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received  on <strong>  strDateTime </strong>. '
+  where Module = 'supervisor'
+  and source = 'Direct'
+  and SubSource = 'Walk-By'
+  and subject = 'eCL: Pending Employee Review'
+
+GO
+
+--***********************
+
+--3. Table [EC].[UI_User_Role]
+
+
+-- Begin 3A
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[UI_User_Role](
+	[RoleId] [int] IDENTITY(101,1) NOT NULL,
+        [RoleName] [nvarchar](40) NOT NULL,
+	[RoleDescription] [nvarchar](1000) NULL
+PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+--End 3A
+
+
+
+--Begin 3B
+INSERT INTO [EC].[UI_User_Role]
+           ([RoleName],[RoleDescription])
+     VALUES
+           ('CSR','WACS0% and No ARC in ACL'),
+		   ('ARC','WACS0% and ARC in ACL'),
+		   ('Supervisor','%40 or WTTI% or WACQ13'),
+		   ('Manager','%50 or %60 or %70 or WEEX% or WISO% or WISY% or WPWL% or WSTE%'),
+		   ('SrManager','SRM in ACL'),
+		   ('Director','DIR in ACL'),
+		   ('Employee','WACQ0% or WACQ12 or WIHD0% or WTTR1% or WTID%'),
+                   ('HR','WH%'),
+                    ('Restricted','Not meeting any of the Other Roles')
+  
+GO
+
+--End 3B
+
+--*******************************************************
+
+--4. TABLE [EC].[UI_Role_Page_Access]
+
+
+--Begin 4A
+CREATE TABLE [EC].[UI_Role_Page_Access](
+	[RoleID] [int] NOT NULL,
+	[RoleName] [nvarchar](40) NOT NULL,
+	[NewSubmission] [bit] NOT NULL,
+	[MyDashboard] [bit] NOT NULL,
+	[HistoricalDashboard] [bit] NOT NULL
+	) ON [PRIMARY]
+
+GO
+-- End 4A
+
+
+
+--Begin 4B
+INSERT INTO [EC].[UI_Role_Page_Access]
+           ([RoleID]
+           ,[RoleName]
+           ,[NewSubmission]
+           ,[MyDashboard]
+           ,[HistoricalDashboard])
+     VALUES
+           (101,'CSR', 0, 1, 0),
+           (102,'ARC', 1, 1, 0),
+		   (103,'Supervisor', 1, 1, 1),
+		   (104,'Manager', 1, 1, 1),
+		   (105,'SrManager', 1, 1, 1),
+		   (106,'Director', 1, 1, 1),
+		   (107,'Employee', 1, 1, 0),
+		   (108,'HR', 0, 0, 1),
+                   (109,'Restricted', 1, 1, 0)
+
+GO
+
+--End 4B
+
+--*******************************************************
+
+--5. TABLE [EC].[UI_Dashboard_Summary_Display]
+
+
+--Begin 5A
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[UI_Dashboard_Summary_Display](
+	[RoleId] [int]  NOT NULL,
+	[RoleName] [nvarchar](40) NOT NULL,
+	[MyPending] bit NOT NULL,
+	[MyCompleted] bit NOT NULL,
+	[MyTeamPending] bit NOT NULL,
+	[MyTeamcompleted] bit NOT NULL,
+	[MyTeamWarning] bit NOT NULL,
+	[MySubmission] bit NOT NULL
+	
+PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+--End 5A
+
+
+
+--Begin 5B
+INSERT INTO [EC].[UI_Dashboard_Summary_Display]
+      ([RoleId]
+      ,[RoleName]
+      ,[MyPending]
+      ,[MyCompleted]
+      ,[MyTeamPending]
+      ,[MyTeamcompleted]
+      ,[MyTeamWarning]
+      ,[MySubmission])
+     VALUES
+           (101,'CSR',1,1,0,0,0,0),
+		   (102,'ARC',1,1,0,0,0,1),
+		   (103,'Supervisor',1,1,1,1,1,1),
+		   (104,'Manager',1,1,1,1,1,1),
+		   (105,'SrManager',1,1,1,1,1,1),
+		   (106,'Director',0,0,1,1,1,0),
+		   (107,'Employee',1,1,0,0,0,1),
+                   (108,'HR',0,0,0,0,0,0),
+		   (109,'Restricted',0,0,0,0,0,1)
+
+--End 5B
+
+--*******************************************************
+
+
+--6. TABLE [EC].[Reasons_By_ReportCode]
+
+
+
+-- Begin 6A
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Reasons_By_ReportCode](
+	[ReportCode] [nvarchar](20) NOT NULL,
+	[Reason] [nvarchar](100) NOT NULL,
+	[DisplayOrder] INT NOT NULL,
+) ON [PRIMARY] 
+
+GO
+--End 6A
+
+
+-- Begin 6B
+INSERT INTO [EC].[Reasons_By_ReportCode]
+           ([ReportCode]
+           ,[Reason]
+		   ,[DisplayOrder])
+     VALUES
+           ('OMR/BRL','Approved accommodation on file',101),
+		   ('OMR/BRL','Other',999),
+		   ('OMR/BRN','Approved accommodation on file',201),
+		   ('OMR/BRN','Other',999),
+		   ('OMR/IAE','Agent no longer employed or on LOA',301),
+		   ('OMR/IAE','Escalation was appropriate',302),
+		   ('OMR/IAE','ISG or Supervisor told agent to escalate',303),
+		   ('OMR/IAE','Not enough information to coach',304),
+		   ('OMR/IAE','Other',999),
+            ('Other','Other',999),
+		   ('OTH/DTT', 'ATT Updated - with Approved Absence',401),
+		   ('OTH/DTT', 'ATT Updated - with Unapproved Absence',402),
+		   ('OTH/DTT', 'ATT Not Updated - SWP notified that Empower is inaccurate',403),
+		   ('OTH/DTT', 'ATT Not Updated and Empower will not be updated',404),
+		   ('OTH/DTT', 'ATT Not Updated - CSR Termed',405),
+		   ('OTH/DTT', 'CSR on a Leave of Absence',406),
+		   ('OTH/DTT', 'Absence is pending HR approval (LOA or WPA)',407)
+GO
+
+--End 6B
+
+--*******************************************************

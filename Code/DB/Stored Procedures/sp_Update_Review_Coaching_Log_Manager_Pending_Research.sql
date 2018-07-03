@@ -37,6 +37,8 @@ GO
 
 
 
+
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/2012
@@ -81,7 +83,7 @@ DECLARE
 
 SET @nvcCat = (SELECT RTRIM(LEFT(strReportCode, LEN(strReportCode) - 8)) FROM EC.Coaching_Log WHERE CoachingID = @nvcFormID) 
 
-IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN')
+IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN', 'IAEF')
 BEGIN      
   UPDATE EC.Coaching_Log
   SET 
@@ -184,6 +186,9 @@ END --sp_Update_Review_Coaching_Log_Manager_Pending_Research
 
 
 
+
+
 GO
+
 
 
