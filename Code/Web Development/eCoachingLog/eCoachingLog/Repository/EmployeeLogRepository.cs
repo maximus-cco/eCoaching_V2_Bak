@@ -107,6 +107,7 @@ namespace eCoachingLog.Repository
 
 						logDetail.IsOmrShortCall = Convert.ToInt16(dataReader["OMR / ISQ"]) == 0 ? false : true;
 						logDetail.IsOmrIae = Convert.ToInt16(dataReader["OMR / IAE"]) == 0 ? false : true;
+						logDetail.IsOmrIaef = Convert.ToInt16(dataReader["OMR / IAEF"]) == 0 ? false : true;
 						logDetail.IsOmrIat = Convert.ToInt16(dataReader["OMR / IAT"]) == 0 ? false : true;
 						logDetail.IsOmrException = Convert.ToInt16(dataReader["OMR / Exceptions"]) == 0 ? false : true;
 						logDetail.IsBrl = Convert.ToInt16(dataReader["OMR / BRL"]) == 0 ? false : true;

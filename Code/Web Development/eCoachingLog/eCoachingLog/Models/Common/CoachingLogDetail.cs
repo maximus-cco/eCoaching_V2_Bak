@@ -36,6 +36,7 @@ namespace eCoachingLog.Models.Common
 		public bool IsEtsHnc { get; set; }
 		public bool IsEtsIcc { get; set; }
 		public bool IsOmrIae { get; set; }
+		public bool IsOmrIaef { get; set; }
 		public bool IsOmrIat { get; set; }
 		public bool IsOmrShortCall { get; set; }
 		public bool IsTrainingShortDuration { get; set; }

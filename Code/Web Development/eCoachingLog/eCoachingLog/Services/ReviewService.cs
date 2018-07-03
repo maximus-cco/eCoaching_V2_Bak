@@ -115,7 +115,7 @@ namespace eCoachingLog.Services
 			if ((user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
 				&& review.LogStatusLevel == 2)
 			{
-				if (log.IsOmrIae || log.IsOmrIat)
+				if (log.IsOmrIae || log.IsOmrIaef || log.IsOmrIat)
 				{
 					return Constants.REVIEW_OMR;
 				}
@@ -192,7 +192,7 @@ namespace eCoachingLog.Services
 			{
 				reportCode = Constants.LOG_REPORT_CODE_OMRBRN;
 			}
-			else if (log.IsOmrIae)
+			else if (log.IsOmrIae || log.IsOmrIaef)
 			{
 				reportCode = Constants.LOG_REPORT_CODE_OMRIAE;
 			}
@@ -397,7 +397,7 @@ namespace eCoachingLog.Services
 					{
 						nextStatus = "Pending Supervisor Review";
 					}
-					else if (log.IsOmrIae || log.IsOmrIat || log.IsEtsOae || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrl || log.IsBrn)
+					else if (log.IsOmrIae || log.IsOmrIaef || log.IsOmrIat || log.IsEtsOae || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrl || log.IsBrn)
 					{
 						nextStatus = "Pending Employee Review";
 					}

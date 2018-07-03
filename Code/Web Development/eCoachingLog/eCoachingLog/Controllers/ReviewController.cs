@@ -255,7 +255,7 @@ namespace eCoachingLog.Controllers
 			{
 				if (vm.LogStatusLevel == 2)
 				{
-					if (log.IsEtsOae || log.IsEtsOas || log.IsOmrIat || log.IsOmrIae || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrn || log.IsBrl)
+					if (log.IsEtsOae || log.IsEtsOas || log.IsOmrIat || log.IsOmrIae || log.IsOmrIaef || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrn || log.IsBrl)
 					{
 						retVal = true;
 					}
@@ -479,6 +479,7 @@ namespace eCoachingLog.Controllers
 					(vm.LogDetail.IsEtsOae ||
 						vm.LogDetail.IsEtsOas ||
 						vm.LogDetail.IsOmrIae ||
+						vm.LogDetail.IsOmrIaef ||
 						vm.LogDetail.IsOmrIat ||
 						vm.LogDetail.IsTrainingShortDuration ||
 						vm.LogDetail.IsTrainingOverdue ||
