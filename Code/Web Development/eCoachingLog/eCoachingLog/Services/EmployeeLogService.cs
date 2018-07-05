@@ -41,10 +41,6 @@ namespace eCoachingLog.Services
             {
                 logDetail = employeeLogRepository.GetWarningDetail(logId);
             }
-
-            //logDetail.Reasons = logDetail.Reasons.Replace("|", "<br />");
-            //logDetail.SubReasons = logDetail.SubReasons.Replace("|", "<br />");
-            //logDetail.Value = logDetail.Value.Replace("|", "<br />");
             return logDetail;
         }
 

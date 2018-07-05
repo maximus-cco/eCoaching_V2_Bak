@@ -1,4 +1,5 @@
-﻿using eCoachingLog.Models.Common;
+﻿using eCoachingLog.Filters;
+using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using eCoachingLog.Utils;
@@ -11,7 +12,7 @@ using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
-
+	[SessionCheck]
 	public class ReviewController : LogBaseController
 	{
 		private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -48,12 +49,12 @@ namespace eCoachingLog.Controllers
 			// Get coaching reasons for this log
 			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching);
 
-			// View only if user clicks a log on Historical Dashboard
+			// View only if user clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning
 			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage 
 				|| Constants.PAGE_SURVEY == currentPage 
 				|| Constants.PAGE_MY_SUBMISSION == currentPage
-				// My Dashboard - My Team Warning
-				|| (Constants.PAGE_MY_DASHBOARD == currentPage && "warning" == (string) Session["currentSection"]))
+				// Warning
+				|| !isCoaching)
 			{
 				var reviewVM = new ReviewViewModel();
 				if (isCoaching)

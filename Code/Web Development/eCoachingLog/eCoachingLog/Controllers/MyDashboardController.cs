@@ -29,7 +29,6 @@ namespace eCoachingLog.Controllers
         {
 			var user = GetUserFromSession();
 			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
-			Session["currentSection"] = "coaching";
 
 			var vm = new MyDashboardViewModel();
 			if (user.Role == Constants.USER_ROLE_DIRECTOR)
@@ -162,8 +161,6 @@ namespace eCoachingLog.Controllers
 			// Default to MyDashboard
 			// Set to MySubmission if "My Submission" link is clicked, used to control review page to be read only or editable
 			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
-			// Default to "coaching", update to "warning" when warning section is clicked
-			Session["currentSection"] = "coaching";
 
 			// Load dropdowns for search
 			switch (whatLog)
@@ -240,7 +237,6 @@ namespace eCoachingLog.Controllers
 				case "_MyTeamWarning":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING;
 					Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
-					Session["currentSection"] = "warning";
 					// Warning status dropdown
 					vm.WarningStatusSelectList = GetWarningStatuses(user);
 					break;

@@ -145,37 +145,14 @@
 		}
 	});
 
-
-	//$('.my-dashboard-log-list').on('click', function (e) {
-    //	e.preventDefault();
-
-    //	if (e.handled !== true) {
-    //        e.handled = true;
-	//        $(".please-wait").slideDown(500);
-    //        $.ajax({
-    //            type: 'POST',
-    //            url: getLogListUrl,
-    //            data: { whatLog: $(this).data("log") },
-    //            success: function (data) {
-	//            	$(".please-wait").slideUp(500);
-	//				$('#div-log-list').html(data);
-    //            }
-    //        });
-    //    }
-    //});
-
     $('body').on('click', '#btn-submit', function (e) {
     	e.preventDefault();
     	$(this).prop('disabled', true);
-		// Show spinner
-    	//$(".please-wait").slideDown(500);
-    	//console.log("submitReview");
-    	//submitReview(saveUrl, myTable, $('#my-pending-total'));
     	submitReview(saveUrl, myTable);
     });
 
     function submitReview(url, tableToRefresh) {
-    	// Do not send hidden input fields (display:none) to server
+    	// Do not send input fields in hidden div (display:none) to server
     	$('div:hidden :input').prop("disabled", true);
 
     	var request = $.ajax({

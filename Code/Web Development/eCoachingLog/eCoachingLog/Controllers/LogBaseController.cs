@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
-    public class LogBaseController : BaseController
+	public class LogBaseController : BaseController
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		protected readonly ISiteService siteService;
@@ -35,7 +35,6 @@ namespace eCoachingLog.Controllers
 		public ActionResult LoadData(LogFilter logFilter)
 		{
 			logger.Debug("Entered LoadData");
-			// TODO: Based on myDashboardSearch.LogSectionWorkingOn (LogSection), get log list 
 
 			// Get Start (paging start index) and length (page size for paging)
 			var draw = Request.Form.GetValues("draw").FirstOrDefault();
