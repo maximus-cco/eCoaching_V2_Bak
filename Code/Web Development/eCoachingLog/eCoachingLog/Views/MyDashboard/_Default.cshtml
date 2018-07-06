@@ -3,10 +3,6 @@
 <h2 class="ecl-page-header">My Dashboard</h2>
 <input type="hidden" name="whatlog" id="whatlog" />
 
-<div class="alert alert-info alert-dismissible fade in">
-	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-	You have <span id="my-pending-total" class="lead">@Model.MyTotalPending</span> pending logs that require your action.
-</div>
 <div class="row">
 	<div class="col-xs-6">
 		<div class="panel panel-default">
@@ -42,22 +38,12 @@
 	</div>
 </div>
 
-<div class="alert alert-success" id="div-success-msg">
-	<button type="button" class="close" data-dismiss="alert">x</button>
-	<span id="label-success-msg"></span>
-</div>
-
-<div class="alert alert-danger" id="div-error-msg">
-	<button type="button" class="close" data-dismiss="alert">x</button>
-	<span id="label-error-msg"></span>
-</div>
-
-<!-- Display My Pending by default -->
 <div id="div-log-list">
-	@*@{Html.RenderPartial("_MyPending", Model); }*@
 </div>
 
 <script>
+	var totalPending = '@Model.MyTotalPending';
+	var showPendingText = true;
 	var getLogListUrl = '@Url.Action("GetLogs", "MyDashboard")';
 	var saveUrl = '@Url.Action("Save", "Review")';
 	var getLogDetailsUrl = '@Url.Action("Index", "Review")';

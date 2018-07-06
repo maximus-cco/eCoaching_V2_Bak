@@ -28,6 +28,7 @@ namespace eCoachingLog
 						"~/Scripts/respond.js",
                         "~/Scripts/raphael.js",
 						"~/Scripts/Chart.js",
+						"~/Scripts/bootstrap-notify.js",
                         "~/Scripts/eCoachingLog/layout.js");
             bundles.Add(scriptBundle);
 

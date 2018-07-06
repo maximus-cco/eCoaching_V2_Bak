@@ -1,6 +1,25 @@
 ﻿$(document).ready(function () {
-	$('#div-success-msg').hide();
-	$('#div-error-msg').hide();
+	// Show how many pendings on page inital display
+	if (typeof showPendingText !== 'undefined' && showPendingText === true)
+	{
+		$.notify({
+			title: '<strong>Attention: </strong>',
+			message: 'You have <span class="lead">' + totalPending + '</span> pending logs that require your action.',
+			icon: 'glyphicon glyphicon-info-sign',
+		},
+		{
+			type: 'info',
+			delay: 10000, // 10 seconds
+			placement: {
+				from: "bottom",
+				align: "right"
+			},
+			offset: {
+				x: 20,
+				y: 20
+			}
+		});
+	}
 
 	// Display Review Modal
 	$('body').on('click', '.modal-link', function (e) {
@@ -196,14 +215,42 @@
     				//// Update count display
     				//$countToUpdate.html(data.count);
     				// Display success message
-    				$('#label-success-msg').text(data.successMsg);
-    				$('#div-success-msg').fadeTo(5000, 500).slideUp(500);
+    				$.notify({
+    					message: data.successMsg,
+						icon: 'glyphicon glyphicon-saved',
+    				},
+					{
+						type: 'success',
+						delay: 6000, // 6 seconds
+    					placement: {
+    						from: "bottom",
+							align: "right"
+    					},
+    					offset: {
+    						x: 30,
+    						y: 10
+    					}
+    				});
     			}
     			else {
     				$('#modal-container').modal('hide');
 					// Display error message
-    				$('#label-error-msg').text(data.errorMsg);
-    				$('#div-error-msg').fadeTo(8000, 500).slideUp(500);
+    				$.notify({
+    					message: data.errorMsg,
+    					icon: 'glyphicon glyphicon-warning-sign',
+    				},
+					{
+						type: 'danger',
+						delay: 10000, // 10 seconds
+						placement: {
+							from: "bottom",
+							align: "right"
+						},
+						offset: {
+							x: 30,
+							y: 10
+						}
+					});
     			}
     		}
     	});
@@ -215,7 +262,6 @@
     	resetValidationErrors();
 
     	if (cseSelected === 'true') {
-    		//alert(cseSelected);
     		// Show 'Enter the date coached:'
     		// Hide 'Enter the date reviewed:'
     		$('#div-date-coached').removeClass('hide');
@@ -228,7 +274,6 @@
     		$('#div-why-not-cse').addClass('hide');
     	}
     	else {
-    		//alert(cseSelected);
     		// Hide 'Enter the date coached:'
     		// Show 'Enter the date reviewed:'
     		$('#div-date-reviewed').removeClass('hide');
@@ -249,10 +294,8 @@
     	$("form :input:visible").each(function () {
     		$(this).removeClass('errorClass');
     		var field = $(this).attr("id");
-    		//alert(field);
     		var errorMsg = $('span[data-valmsg-for="' + field + '"]').text();
     		if (errorMsg) {
-    			//alert(errorMsg);
     			$('span[data-valmsg-for="' + field + '"]').html('');
     		}
     	});
