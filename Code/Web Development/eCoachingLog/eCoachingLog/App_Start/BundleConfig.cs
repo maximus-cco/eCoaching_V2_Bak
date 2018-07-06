@@ -90,12 +90,10 @@ namespace eCoachingLog
 
 			// css across web app
 			bundles.Add(new StyleBundle("~/Content/css").Include(
-					   "~/Content/bootstrap.css",
                        "~/Content/bootstrap-datetimepicker.min.css",
                        "~/Content/bootstrap-multiselect.css",
                        "~/Content/dataTables.bootstrap.css",
                        "~/Content/dataTables.responsive.css",
-                       //"~/Content/morris.css",
                        "~/Content/sb-admin-2.css",
                        "~/Content/site.css"
             ));
