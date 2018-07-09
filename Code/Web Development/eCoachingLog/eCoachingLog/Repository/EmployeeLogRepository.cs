@@ -94,6 +94,7 @@ namespace eCoachingLog.Repository
 						logDetail.ReassignedToEmpId = dataReader["ReassignedToID"] == DBNull.Value ? null : dataReader["ReassignedToID"].ToString();
 						logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
 						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString();
+						logDetail.LogManagerEmpId = dataReader["strCLMgrID"].ToString();
                         logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
                         logDetail.CoachingNotes = dataReader["txtCoachingNotes"].ToString();
                         logDetail.Behavior = dataReader["txtDescription"].ToString();

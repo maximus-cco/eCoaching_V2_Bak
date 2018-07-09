@@ -9,7 +9,10 @@
 	@Html.HiddenFor(m => m.LogDetail.SupervisorEmail)
 	@Html.HiddenFor(m => m.LogDetail.ManagerEmail)
 	@Html.HiddenFor(m => m.LogDetail.SupervisorEmpId)
+	@Html.HiddenFor(m => m.LogDetail.ReassignedToEmpId)
 	@Html.HiddenFor(m => m.LogDetail.ManagerEmpId)
+	@Html.HiddenFor(m => m.LogDetail.IsLowCsat)
+	@Html.HiddenFor(m => m.LogDetail.LogManagerEmpId)
 	@Html.HiddenFor(m => m.IsRegularPendingForm)
 	@Html.HiddenFor(m => m.LogDetail.CoachingNotes)
 	<div class='form-group mt-2' id='div-date-coached'>
