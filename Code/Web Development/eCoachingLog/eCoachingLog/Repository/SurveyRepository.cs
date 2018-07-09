@@ -1,5 +1,6 @@
 ﻿using eCoachingLog.Extensions;
 using eCoachingLog.Models.Survey;
+using eCoachingLog.Utils;
 using log4net;
 using System.Collections.Generic;
 using System.Data;
@@ -20,6 +21,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SurveyDetails_By_SurveyID]", conn))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValue("@intSurveyID", surveyId);
 				conn.Open();
 
@@ -49,6 +51,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Questions_For_Survey]", conn))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValue("@intSurveyID", surveyId);
 				conn.Open();
 
@@ -81,6 +84,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Responses_By_Question]", conn))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				conn.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -105,6 +109,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand comm = new SqlCommand("[EC].[sp_Update_Survey_Response]", conn))
 			{
 				comm.CommandType = CommandType.StoredProcedure;
+				comm.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				comm.Parameters.AddWithValue("@intSurveyID", survey.Id);
 				comm.Parameters.AddWithValueSafe("@nvcUserComments", survey.Comment);
 				comm.Parameters.AddSurveyResponseTableType("@tableSR", survey);

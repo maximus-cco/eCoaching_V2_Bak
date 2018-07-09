@@ -1,4 +1,5 @@
 ﻿using eCoachingLog.Models.Common;
+using eCoachingLog.Utils;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -18,7 +19,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Programs]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@intModuleIDin", moduleId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValue("@intModuleIDin", moduleId);
 
                 connection.Open();
 

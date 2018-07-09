@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Extensions;
 using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
+using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Reasons_By_ReportCode]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcReportCode", reportCode);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -45,6 +47,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
 				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
@@ -81,6 +84,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Employee_Acknowledge]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus); // next status;
 				command.Parameters.AddWithValueSafe("@bitisCSRAcknowledged", review.Acknowledge);
@@ -117,6 +121,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Supervisor_Acknowledge]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcFormID", logId);
 				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
@@ -152,6 +157,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Employee_Pending]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus); // next status;
 				command.Parameters.AddWithValueSafe("@bitisCSRAcknowledged", review.Acknowledge);
@@ -188,6 +194,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Manager_Pending_Research]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus); // next status;
 				command.Parameters.AddWithValueSafe("@nvcstrReasonNotCoachable", review.MainReasonNotCoachable);
@@ -228,6 +235,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Manager_Pending_CSE]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus); // next status;
 				command.Parameters.AddWithValueSafe("@nvcReviewMgrID", user.EmployeeId);

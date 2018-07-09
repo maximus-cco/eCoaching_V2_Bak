@@ -1,4 +1,5 @@
 ﻿using eCoachingLog.Models.User;
+using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Employee_Details]", connection))
             {
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValue("@nvcEmpLanin", lanId);
                 connection.Open();
                 using (SqlDataReader dataReader = command.ExecuteReader())

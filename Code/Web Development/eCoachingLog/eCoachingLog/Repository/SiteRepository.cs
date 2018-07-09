@@ -1,4 +1,5 @@
 ﻿using eCoachingLog.Models.Common;
+using eCoachingLog.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,6 +19,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Sites_For_Dashboard]", connection))
             {
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				connection.Open();
                 using (SqlDataReader dataReader = command.ExecuteReader())
                 {
@@ -41,6 +43,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Sites]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{

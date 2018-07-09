@@ -27,7 +27,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Modules_By_Job_Code]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@nvcEmpIDin", user.EmployeeId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@nvcEmpIDin", user.EmployeeId);
 
                 connection.Open();
 
@@ -53,6 +54,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_SelectReviewFrom_Coaching_Log]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@intLogId", logId);
 				connection.Open();
 
@@ -163,6 +165,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand(spName, connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@intLogId", logId);
 				connection.Open();
 
@@ -191,7 +194,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_SelectReviewFrom_Warning_Log]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intLogId", logId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intLogId", logId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -229,7 +233,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_CallID_By_Module]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -255,7 +260,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_CoachingReasons_By_Module]", connection))
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.CommandTimeout = 300;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
                 command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@strSourcein", source);
                 command.Parameters.AddWithValueSafe("@isSplReason", isSpecialReason);
@@ -288,7 +293,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SubCoachingReasons_By_Reason]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
                 command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
                 command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@nvcEmpIDin", employeeId);
@@ -317,7 +323,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_CoachingReasons_By_Module]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
                 command.Parameters.AddWithValueSafe("@isSplReason", isSpecialResaon);
                 command.Parameters.AddWithValueSafe("@splReasonPrty", specialReasonPriority);
@@ -349,7 +356,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Values_By_Reason]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
                 command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
                 connection.Open();
@@ -375,7 +383,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SubCoachingReasons_By_Reason]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
                 command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
                 command.Parameters.AddWithValueSafe("@nvcEmpIDin", employeeId);
@@ -403,7 +412,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Behaviors]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -429,6 +439,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Details]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
 				command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
 				command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
@@ -483,6 +494,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Count]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
 				command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
 				command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
@@ -511,6 +523,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Statuses_For_Dashboard]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -533,6 +546,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Sources_For_Dashboard]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", userEmpId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -556,6 +570,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Values_For_Dashboard]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -578,6 +593,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Historical_Export]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
 				command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
 				command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
@@ -606,6 +622,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Select_States_For_Dashboard]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -628,6 +645,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Summary_Count]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -651,6 +669,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Director_Summary_Count]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@strSDatein", start);
 				command.Parameters.AddWithValueSafe("strEDatein", end);
@@ -679,6 +698,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Summary_Count_ByStatus]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -702,6 +722,7 @@ namespace eCoachingLog.Repository
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Director_Summary_Count_ByStatus]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@strSDatein", start);
 				command.Parameters.AddWithValueSafe("strEDatein", end);

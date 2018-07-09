@@ -26,7 +26,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Source_By_Module]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId); 
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId); 
                 command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
                 connection.Open();
 
@@ -55,7 +56,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_InsertInto_Coaching_Log]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@nvcEmpID", submission.Employee.Id);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@nvcEmpID", submission.Employee.Id);
                 command.Parameters.AddWithValueSafe("@nvcProgramName", submission.ProgramName);
                 command.Parameters.AddWithValueSafe("@Behaviour", submission.BehaviorName); 
                 command.Parameters.AddWithValueSafe("@intSourceID", submission.SourceId); // How was the coaching identifed?
@@ -200,6 +202,7 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_InsertInto_Warning_Log]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", ns.Employee.Id);
 				command.Parameters.AddWithValueSafe("@nvcProgramName", ns.ProgramName);
 				if (ns.ModuleId == Constants.MODULE_CSR)
@@ -269,7 +272,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Email_Attributes]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId); 
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId); 
                 command.Parameters.AddWithValueSafe("@intSourceIDin", sourceId);
                 command.Parameters.AddWithValueSafe("@bitisCSEin", isCse);
                 connection.Open();
@@ -299,7 +303,8 @@ namespace eCoachingLog.Repository
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Email_Attributes]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@intSourceIDin", sourceId);
                 command.Parameters.AddWithValueSafe("@bitisCSEin", isCse);
                 connection.Open();
