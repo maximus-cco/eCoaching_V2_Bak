@@ -63,7 +63,11 @@ namespace eCoachingLog.Controllers
 			var empList = this.employeeService.GetEmployeesBySup(siteId, mgrId, supId, employeeStatus);
 			empList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
 			IEnumerable<SelectListItem> employees = new SelectList(empList, "Id", "Name");
-			return Json(employees, JsonRequestBehavior.AllowGet);
+
+			JsonResult result = Json(employees);
+			result.MaxJsonLength = Int32.MaxValue;
+			result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+			return result;
 		}
 
 		private IEnumerable<SelectListItem> ResetSupervisors()
