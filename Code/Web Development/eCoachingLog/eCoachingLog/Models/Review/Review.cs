@@ -36,7 +36,6 @@ namespace eCoachingLog.Models.Review
 		public bool IsReinforceLog { get; set; }
 
 		public bool IsReviewForm { get; set; }
-		public bool IsReviewFinalForm { get; set; }
 
 		public bool Acknowledge { get; set; }
 	}

@@ -362,7 +362,6 @@
     <Content Include="Views\MyDashboard\_WarningList.cshtml" />
     <Content Include="Views\MyDashboard\_MySubmission.cshtml" />
     <Content Include="Views\Shared\_WarningLogInfo.cshtml" />
-    <Content Include="Views\Review\_ReviewCoachingFinal.cshtml" />
     <Content Include="Views\MyDashboard\_Default.cshtml" />
     <Content Include="Views\MyDashboard\_DefaultDirector.cshtml" />
     <Content Include="Views\HistoricalDashboard\Index.cshtml" />

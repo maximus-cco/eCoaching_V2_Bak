@@ -11,10 +11,6 @@
 	@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
 </div>
 
-<div class="mt-2">
-	@Html.Raw(Model.InstructionText)
-</div>
-
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
 {
 	@Html.HiddenFor(m => m.IsAcknowledgeForm)

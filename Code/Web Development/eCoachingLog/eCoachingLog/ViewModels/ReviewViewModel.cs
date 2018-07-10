@@ -45,7 +45,6 @@ namespace eCoachingLog.ViewModels
 		public bool ShowCoachingNotes { get; set; }
 
 		public bool IsReviewForm { get; set; }
-		public bool IsReviewFinalForm { get; set; }
 		public bool IsReadOnly { get; set; }
 		public bool IsReviewByManager { get; set; }
 		public bool IsRegularPendingForm { get; set; }
@@ -196,7 +195,6 @@ namespace eCoachingLog.ViewModels
 				IsAckOpportunityLog = vm.IsAckOpportunityLog,
 				IsReviewForm = vm.IsReviewForm,
 				IsAcknowledgeForm = vm.IsAcknowledgeForm,
-				IsReviewFinalForm = vm.IsReviewFinalForm,
 				LogDetail = vm.LogDetail,
 				WarningLogDetail = vm.WarningLogDetail,
 				LogStatusLevel = vm.LogStatusLevel,

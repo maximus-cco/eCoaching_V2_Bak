@@ -54,7 +54,9 @@ namespace eCoachingLog.Controllers
 				|| Constants.PAGE_SURVEY == currentPage 
 				|| Constants.PAGE_MY_SUBMISSION == currentPage
 				// Warning
-				|| !isCoaching)
+				|| !isCoaching
+				// Completed
+				|| logDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 			{
 				var reviewVM = new ReviewViewModel();
 				if (isCoaching)
@@ -68,6 +70,7 @@ namespace eCoachingLog.Controllers
 
 				reviewVM.ShowViewCseText = reviewVM.IsCseUnconfirmed && (reviewVM.IsCse.HasValue && reviewVM.IsCse.Value);
 				reviewVM.ShowViewMgtNotes = reviewVM.ShowViewCseText && !string.IsNullOrEmpty(reviewVM.LogDetail.MgrNotes);
+
 				if (reviewVM.LogDetail.IsIqs && reviewVM.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 				{
 					reviewVM.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Quality Monitor on ";
@@ -102,8 +105,6 @@ namespace eCoachingLog.Controllers
 				vm.IsAcknowledgeForm = true;
 				vm.IsReinforceLog = IsReinforceLog(vm);
 				vm.IsReviewForm = false;
-				vm.IsReviewFinalForm = false;
-
 				vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 
 				if (user.EmployeeId == vm.LogDetail.EmployeeId)
@@ -123,47 +124,39 @@ namespace eCoachingLog.Controllers
 			// Load Review partial
 			else
 			{
-				// Show Final or Review
-				if (logDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
-				{ 
-					vm.IsReviewFinalForm = true;
-				}
-				else
+				// Not completed, display review instead of final.
+				vm.IsReviewForm = true;
+
+				// There are 3 types of review forms.
+				// Default all to false.
+				vm.IsResearchPendingForm = false;	// Research Form - determine if research is required
+				vm.IsCsePendingForm = false;		// CSE Form - determine if it is CSE
+				vm.IsRegularPendingForm = false;	// Regular Pending Form - neither research nor CSE needed
+
+				vm.IsResearchPendingForm = IsResearchPendingForm(vm, user);
+				if (!vm.IsResearchPendingForm) // Not Research Form
 				{
-					// Not completed, display review instead of final.
-					vm.IsReviewForm = true;
-
-					// There are 3 types of review forms.
-					// Default all to false.
-					vm.IsResearchPendingForm = false;	// Research Form - determine if research is required
-					vm.IsCsePendingForm = false;		// CSE Form - determine if it is CSE
-					vm.IsRegularPendingForm = false;	// Regular Pending Form - neither research nor CSE needed
-
-					vm.IsResearchPendingForm = IsResearchPendingForm(vm, user);
-					if (!vm.IsResearchPendingForm) // Not Research Form
+					vm.IsCsePendingForm = IsCsePendingForm(vm, user);
+					if (!vm.IsCsePendingForm)	// Not Research Form, not CSE Form, so this is regular pending review form
 					{
-						vm.IsCsePendingForm = IsCsePendingForm(vm, user);
-						if (!vm.IsCsePendingForm)	// Not Research Form, not CSE Form, so this is regular pending review form
-						{
-							vm.IsRegularPendingForm = true;    // Regular Pending Form.
-							vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-						} // end if (!vm.IsCsePendingForm)
-						else // CSE Form
-						{
-							vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-							vm.InstructionText = Constants.REVIEW_CSE;
-						}
-					} 
-					else // Research
-					{
-						vm.IsReviewByManager = string.CompareOrdinal(Constants.USER_ROLE_MANAGER, user.Role) == 0;
+						vm.IsRegularPendingForm = true;    // Regular Pending Form.
 						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-						// Uncoachable reason Dropdown
-						IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
-						IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);
-						vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
-					} // end if (!vm.IsResearchPendingForm)
-				} // end if (logDetail.Status.Trim().ToLower() == "completed")
+					} // end if (!vm.IsCsePendingForm)
+					else // CSE Form
+					{
+						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
+						vm.InstructionText = Constants.REVIEW_CSE;
+					}
+				} 
+				else // Research
+				{
+					vm.IsReviewByManager = string.CompareOrdinal(Constants.USER_ROLE_MANAGER, user.Role) == 0;
+					vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
+					// Uncoachable reason Dropdown
+					IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
+					IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);
+					vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
+				} // end if (!vm.IsResearchPendingForm)
 			} // end if (ShowAckPartial(vm))
 
 			if (!isCoaching)

@@ -9,10 +9,6 @@
 	@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
 </div>
 
-<div class="mt-2">
-	<strong>@Html.Raw(Model.InstructionText)</strong>
-</div>
-
 @if (Model.IsRegularPendingForm)
 {
 	{ Html.RenderPartial("_ReviewCoachingPending"); }
