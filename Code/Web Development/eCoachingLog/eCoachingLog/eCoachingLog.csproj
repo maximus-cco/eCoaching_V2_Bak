@@ -252,6 +252,7 @@
     <Compile Include="ViewModels\SurveyViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\bootstrap-multiselect.css" />
     <Content Include="Content\bootstrapValidator.css" />

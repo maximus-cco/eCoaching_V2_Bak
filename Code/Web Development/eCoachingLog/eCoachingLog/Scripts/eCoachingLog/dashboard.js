@@ -17,7 +17,11 @@
 			offset: {
 				x: 20,
 				y: 20
-			}
+			},
+			animate: {
+				enter: 'animated fadeInUp',
+				exit: 'animated fadeOutDown'
+			},
 		});
 	}
 
@@ -229,7 +233,11 @@
     					offset: {
     						x: 30,
     						y: 10
-    					}
+    					},
+    					animate: {
+    						enter: 'animated fadeInUp',
+    						exit: 'animated fadeOutDown'
+    					},
     				});
     			}
     			else {
@@ -249,7 +257,11 @@
 						offset: {
 							x: 30,
 							y: 10
-						}
+						},
+						animate: {
+							enter: 'animated fadeInUp',
+							exit: 'animated fadeOutDown'
+						},
 					});
     			}
     		}

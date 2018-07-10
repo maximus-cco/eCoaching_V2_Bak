@@ -97,17 +97,18 @@ namespace eCoachingLog.Services
 				{
 					if(log.IsCurrentCoachingInitiative || log.IsOmrException)
 					{
+						// Short Call
+						if (log.IsOmrShortCall)
+						{
+							return Constants.REVIEW_OMR_SHORT_CALL_TEXT;
+						}
+						// Low Csat
+						if (log.IsLowCsat)
+						{
+							return Constants.REVIEW_LCSAT;
+						}
+						// General
 						return Constants.REVIEW_OMR;
-					}
-
-					if (log.IsLowCsat)
-					{
-						return Constants.REVIEW_LCAST;
-					}
-
-					if (log.IsOmrShortCall)
-					{
-						return Constants.REVIEW_OMR_SHORT_CALL_TEXT;
 					}
 				}
 			}
@@ -274,13 +275,18 @@ namespace eCoachingLog.Services
 				}
 			}
 
-			string moduleName = review.LogDetail.ModuleName;
 			// Email CSR's comments to supervisor and manager 
-			if (success && !string.IsNullOrEmpty(moduleName) && moduleName.Trim().ToUpper() == "CSR" && nextStatus == "Completed")
+			if (success && review.LogDetail.ModuleId == Constants.MODULE_CSR && nextStatus == "Completed")
 			{
-				this.emailService.SendComments(review.LogDetail, review.DetailsCoached, emailTempFileName, logoFileName);
+				try
+				{
+					this.emailService.SendComments(review.LogDetail, review.EmployeeComments, emailTempFileName, logoFileName);
+				}
+				catch (Exception ex)
+				{
+					logger.Warn("Failed to send comments email for log [" + review.LogDetail.LogId + "]: " + ex.Message);
+				}
 			}
-
 			return success;
 		}
 

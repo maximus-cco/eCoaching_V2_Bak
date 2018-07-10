@@ -154,7 +154,7 @@ namespace eCoachingLog.Utils
 			"<a href='https://cco.gdit.com/bi/ReportsCatalog/TQC_ShortCall/Forms/AllItems.aspx' target='_blank'>here</a>. " +
 			"Please review the calls and provide specific details on opportunities that requiring coaching.";
 
-		public const string REVIEW_LCAST = "You are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction. Please " +
+		public const string REVIEW_LCSAT = "You are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction. Please " +
 			"review the call from a PPoM perspective and provide details on the specific opportunities requiring coaching in the record below.";
 
 		public const string REVIEW_TRAINING_SHORT_DURATION_REPORT_TEXT =

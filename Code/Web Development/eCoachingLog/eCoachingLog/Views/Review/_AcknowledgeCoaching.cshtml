@@ -25,6 +25,10 @@
 	@Html.HiddenFor(m => m.LogDetail.StatusId)
 	@Html.HiddenFor(m => m.LogDetail.CoachingNotes)
 	@Html.HiddenFor(m => m.LogDetail.HasSupAcknowledged)
+	@Html.HiddenFor(m => m.LogDetail.SupervisorEmail)
+	@Html.HiddenFor(m => m.LogDetail.ManagerEmail)
+	@Html.HiddenFor(m => m.LogDetail.FormName)
+	@Html.HiddenFor(m => m.LogDetail.EmployeeName)
 	<div class='form-group mt-2 @(@Model.IsReinforceLog ? "show" : "hide")'>
 		<label for="AcknowledgeCheckBox" class="required">Check the box below to acknowledge the monitor:</label><br />
 		<label class="checkbox-inline">

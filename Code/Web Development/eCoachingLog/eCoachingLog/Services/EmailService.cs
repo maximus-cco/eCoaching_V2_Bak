@@ -27,13 +27,16 @@ namespace eCoachingLog.Services
 
 		public bool SendComments(CoachingLogDetail log, string comments, string emailTempFileName, string logoFileName)
 		{
+			string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
+			string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
 			string bodyText = FileUtil.ReadFile(emailTempFileName);
 			MailMessage msg =new MailMessage();
 			msg.Body = bodyText.Replace("{formName}", log.FormName);
 			msg.Body = msg.Body.Replace("{comments}", comments);
 			msg.To.Add(log.SupervisorEmail);
 			msg.To.Add(log.ManagerEmail);
-			msg.Subject = "eCoaching Log Completed (" + log.FormName + ")";
+			msg.From = new MailAddress(fromAddress, fromDisplayName);
+			msg.Subject = "eCoaching Log Completed (" + log.EmployeeName + ")";
 
 			return Send(msg, logoFileName);
 		}
@@ -95,7 +98,7 @@ namespace eCoachingLog.Services
 			}
 			catch (Exception ex)
 			{
-				logger.Warn(ex.StackTrace);
+				logger.Warn(string.Format("Failed to send email: {0}, {1}", ex.Message, ex.StackTrace));
 				logger.Warn(msg.Body);
 			}
 			return success;
