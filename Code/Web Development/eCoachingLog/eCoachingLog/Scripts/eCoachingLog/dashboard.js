@@ -22,6 +22,7 @@
 				enter: 'animated fadeInUp',
 				exit: 'animated fadeOutDown'
 			},
+			mouse_over: 'pause',
 		});
 	}
 
@@ -38,7 +39,6 @@
 				url: getLogDetailsUrl,
 				dataType: 'html',
 				data: { logId: $(this).data("log-id"), isCoaching: $(this).data("is-coaching") },
-
 				success: function (data) {
 					$('.modal-content').html(data);
 				}
@@ -141,28 +141,32 @@
 	// Export to excel
 	$('body').on('click', '#btn-export-excel', function (e) {
 		e.preventDefault();
+		// Prevent multiple clicks
+		$(this).prop('disabled', true);
 
 		if (e.handled !== true) {
 			e.handled = true;
 			$(".please-wait").slideDown(500);
-			// DataTables search box
-			var $searchBox = $('#dataTables-coaching-log-list_filter').find('input.form-control');
-			var searchObj = {
-				searchText: $searchBox.val()
-			};
 			$.ajax({
 				type: 'POST',
 				url: exportToExcelUrl,
-				data: $('#form-search-historical').serialize() + '&' + $.param(searchObj),
+				data: $('#form-search-historical').serialize(),
 				success: function (data) {
+					// clean up
+					$('#btn-export-excel').prop('disabled', false);
+					$(".please-wait").slideUp(500);
+
 					if (data.result === 'ok')
 					{
 						window.location = downloadExcelUrl;
 					}
+					else if (data.result === 'hugedata') {
+						alert('You have reached the maximum number of records (6k) that can be exported at a time. Please refine your filters and try again.');
+					}
+					// fail
 					else {
 						alert('There was an error when exporting to excel file.');
 					}
-					$(".please-wait").slideUp(500);
 				}
 			});
 		}
@@ -238,6 +242,7 @@
     						enter: 'animated fadeInUp',
     						exit: 'animated fadeOutDown'
     					},
+    					mouse_over: 'pause',
     				});
     			}
     			else {
@@ -262,6 +267,7 @@
 							enter: 'animated fadeInUp',
 							exit: 'animated fadeOutDown'
 						},
+    					mouse_over: 'pause',
 					});
     			}
     		}

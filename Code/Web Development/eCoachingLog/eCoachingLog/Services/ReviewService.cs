@@ -95,7 +95,7 @@ namespace eCoachingLog.Services
 			{
 				if (review.LogStatusLevel == 3)
 				{
-					if(log.IsCurrentCoachingInitiative || log.IsOmrException)
+					if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat)
 					{
 						// Short Call
 						if (log.IsOmrShortCall)
