@@ -155,7 +155,7 @@ namespace eCLAdmin.Controllers
 				}
 				catch (Exception ex)
 				{
-					logger.Warn("Failed to send email: " + ex.StackTrace);
+					logger.Warn(string.Format("Failed to send email: {0}, {1}", ex.InnerException.Message, ex.StackTrace));
 				}
 			}
 
@@ -236,9 +236,9 @@ namespace eCLAdmin.Controllers
 				}
 				catch (Exception ex)
 				{
-					logger.Warn("Failed to send email: " + ex.StackTrace);
+					logger.Warn(string.Format("Failed to send email: {0}, {1}", ex.InnerException.Message, ex.StackTrace));
 				}
-            }
+			}
 
             return Json(new { success = success, emailsent = emailSent });
         }
