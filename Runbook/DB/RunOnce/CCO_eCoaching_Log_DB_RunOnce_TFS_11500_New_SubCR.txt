@@ -1,0 +1,62 @@
+/*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+
+Summary
+
+
+TFS 11500 - new coaching sub-reason for OMR
+
+1.Add record(s) to TABLE [EC].[DIM_Sub_Coaching_Reason]
+2.Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+
+
+*/
+
+
+--******************* DETAILS*************************
+--****************************************************
+
+--11500 - new coaching sub-reason for OMR
+
+--****************************************************
+
+
+
+-- step1: add subcoaching reasons
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+('OMR: Potential Hardship')
+
+GO
+
+
+
+
+
+--step2: add into coaching reason selection
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+(9, 'OMR / Exceptions',245,'OMR: Potential Hardship',1,1,1,1,1,1,0,0,0,0,0,0)
+
+
+GO
+
