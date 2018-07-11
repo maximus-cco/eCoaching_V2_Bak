@@ -48,6 +48,13 @@ namespace eCoachingLog.Services
 
 			if (Constants.PAGE_MY_DASHBOARD == currentPage)
 			{
+				// Director, Sr. Manager - allow to view any logs in their list
+				if (user.Role == Constants.USER_ROLE_DIRECTOR
+					|| user.Role == Constants.USER_ROLE_SR_MANAGER)
+				{
+					return true;
+				}
+
 				// Coaching log:
 				if (isCoaching)
 				{
