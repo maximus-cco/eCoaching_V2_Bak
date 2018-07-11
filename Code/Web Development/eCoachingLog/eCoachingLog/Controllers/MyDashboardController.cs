@@ -57,10 +57,10 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult GetLogs(string whatLog, int? siteId, string month)
+		public ActionResult GetLogs(string whatLog, int? siteId, string siteName, string month)
 		{
 			logger.Debug("Entered GetLogs");
-			return PartialView(whatLog, InitMyDashboardVMByLogType(whatLog, siteId, month)); 
+			return PartialView(whatLog, InitMyDashboardVMByLogType(whatLog, siteId, siteName, month)); 
 		}
 
 		[HttpPost]
@@ -149,7 +149,7 @@ namespace eCoachingLog.Controllers
 			return vm;
         }
 
-		private MyDashboardViewModel InitMyDashboardVMByLogType(string whatLog, int? siteId, string month)
+		private MyDashboardViewModel InitMyDashboardVMByLogType(string whatLog, int? siteId, string siteName, string month)
 		{
 			var user = GetUserFromSession();
 			var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
@@ -158,6 +158,7 @@ namespace eCoachingLog.Controllers
 			vm.Search.EmployeeId = "-1";
 			vm.Search.SupervisorId = "-1";
 			vm.Search.ManagerId = "-1";
+			vm.Search.SiteName = siteName;
 			// Default to MyDashboard
 			// Set to MySubmission if "My Submission" link is clicked, used to control review page to be read only or editable
 			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;

@@ -107,10 +107,13 @@
 				data: {
 					whatLog: $(this).data("log-type"),
 					siteId: $(this).data("site-id"),
+					siteName: $(this).data("site-name"),
 					month: $('#ddl-month').val()
 				},
 				success: function (data) {
 					$(".please-wait").slideUp(500);
+					//$('#div-search-result').removeClass('hide');
+					//$('#div-search-result').addClass('show');
 					$('#div-log-list').html(data);
 				}
 			});
