@@ -77,7 +77,7 @@ SET @nvcSQL = '
 		(SELECT DISTINCT si.siteid, eh.Emp_Site City
 		FROM EC.Employee_Hierarchy eh JOIN EC.DIM_Site si
         ON eh.Emp_Site = si.City
-        WHERE (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')) si
+        WHERE (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')) si
 
 	    LEFT JOIN
 	    (
@@ -87,7 +87,7 @@ SET @nvcSQL = '
 			   ON cl.EmpID = eh.Emp_ID 	
 			   WHERE convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 			   AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-			   AND (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+			   AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 			   AND cl.StatusID NOT IN (1,2)
 			   AND NOT (cl.siteID = -1 OR cl.StatusID = -1)
 			   GROUP BY site.City) b ON si.City = b.City
@@ -99,7 +99,7 @@ SET @nvcSQL = '
            ON cl.EmpID = eh.Emp_ID
 		   WHERE convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 		   AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-		   AND (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+		   AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 		   AND cl.StatusID = 1
 		   AND NOT (cl.siteID = -1 OR cl.StatusID = -1)
 		   GROUP BY site.City) c ON si.City = c.City
@@ -111,7 +111,7 @@ SET @nvcSQL = '
                  ON wl.EmpID = eh.Emp_ID
 		         WHERE convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 			     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-				 AND (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+				 AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 				 AND wl.siteID <> -1 
 				 GROUP BY site.City) d ON si.City = d.City
      ORDER BY si.City'
@@ -138,5 +138,6 @@ END --sp_Dashboard_Director_Summary_Count
 
 
 GO
+
 
 

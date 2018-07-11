@@ -28,6 +28,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -73,7 +74,7 @@ SET @nvcSQL = ';WITH IncludeStatus AS
 			     ON cl.EmpID = eh.Emp_ID
 			     WHERE convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 			     AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-                 AND(eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+                 AND(eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 				 AND cl.StatusID not in (1,2)
 				 AND NOT (cl.siteID = -1 OR cl.StatusID = -1)
 				 GROUP BY si.City, st.Status
@@ -87,7 +88,7 @@ SET @nvcSQL = ';WITH IncludeStatus AS
 			     ON wl.EmpID = eh.Emp_ID
 				 WHERE convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 			     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-                 AND (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+                 AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 				 AND wl.StatusID = 1
 				 AND wl.siteID <> -1 
 				 GROUP BY si.City, st.Status)
@@ -99,7 +100,7 @@ SET @nvcSQL = ';WITH IncludeStatus AS
 				 (SELECT DISTINCT eh.Emp_Site City
 		         FROM EC.Employee_Hierarchy eh JOIN EC.DIM_Site si
                  ON eh.Emp_Site = si.City
-		         WHERE (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + '''))  site CROSS JOIN IncludeStatus st LEFT JOIN Counts wc
+		         WHERE (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + '''))  site CROSS JOIN IncludeStatus st LEFT JOIN Counts wc
 				 ON site.City = wc.City  
 				 AND st.Status = wc.status 
 				 ORDER BY site.City'
@@ -125,7 +126,11 @@ END --sp_Dashboard_Director_Summary_Count_ByStatus
 
 
 
+
 GO
+
+
+
 
 
 

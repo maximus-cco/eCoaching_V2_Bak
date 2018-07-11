@@ -27,6 +27,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -114,7 +115,7 @@ AS
 	AND wl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
 	AND wl.Active = 1
 	AND wl.siteID <> -1
-	AND (eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+	AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin+ ''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
 	AND convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
 	GROUP BY [wl].[FormName], [wl].[WarningID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [wl].[SubmittedDate], [vehs].[Emp_Name]
@@ -150,7 +151,9 @@ END -- sp_Dashboard_Director_Site_Warning
 
 
 
+
 GO
+
 
 
 

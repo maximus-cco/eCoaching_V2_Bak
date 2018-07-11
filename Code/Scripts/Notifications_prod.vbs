@@ -118,7 +118,7 @@ Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSourc
     objCmd.CommandText = "EC.sp_Select_Email_Attributes"
     objCmd.CommandType = adCmdStoredProc
 
-    objCmd.Parameters("@strModulein") = module
+    objCmd.Parameters("@intModuleIDin") = module
     objCmd.Parameters("@intSourceIDin") = strSourceID
     objCmd.Parameters("@bitisCSEin") = isCSE
 

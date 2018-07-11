@@ -25,6 +25,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -105,7 +106,7 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
 	@where + ' ' + '
 	AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
-	AND (eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+	AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin+ ''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
    	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name]
    ) x 
 ) SELECT count(strFormID) FROM TempMain';
@@ -120,5 +121,9 @@ EXEC (@nvcSQL)
 END -- sp_Dashboard_Director_Site_Pending_Count
 
 GO
+
+
+
+
 
 
