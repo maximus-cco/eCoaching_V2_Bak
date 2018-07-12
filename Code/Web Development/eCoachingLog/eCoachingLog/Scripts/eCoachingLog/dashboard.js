@@ -112,8 +112,8 @@
 				},
 				success: function (data) {
 					$(".please-wait").slideUp(500);
-					//$('#div-search-result').removeClass('hide');
-					//$('#div-search-result').addClass('show');
+					$('#div-search-result-director').removeClass('hide');
+					$('#div-search-result-director').addClass('show');
 					$('#div-log-list').html(data);
 				}
 			});
@@ -141,7 +141,7 @@
 		}
 	});
 
-	// Export to excel
+	// Export to excel - historical
 	$('body').on('click', '#btn-export-excel', function (e) {
 		e.preventDefault();
 		// Prevent multiple clicks
@@ -165,6 +165,41 @@
 					}
 					else if (data.result === 'hugedata') {
 						alert('You have reached the maximum number of records (6k) that can be exported at a time. Please refine your filters and try again.');
+					}
+					// fail
+					else {
+						alert('There was an error when exporting to excel file.');
+					}
+				}
+			});
+		}
+	});
+
+	// Export to excel - my dashboard/director
+	$('body').on('click', '#btn-export-excel-director', function (e) {
+		e.preventDefault();
+		// Prevent multiple clicks
+		$(this).prop('disabled', true);
+
+		if (e.handled !== true) {
+			e.handled = true;
+			$(".please-wait").slideDown(500);
+			$.ajax({
+				type: 'POST',
+				url: exportToExcelUrl,
+				data: $('#form-search-mydashboard').serialize(),
+				success: function (data) {
+					// clean up
+					$('#btn-export-excel-director').prop('disabled', false);
+					$(".please-wait").slideUp(500);
+					// excel generated
+					if (data.result === 'ok') {
+						// download the generated excel file
+						window.location = downloadExcelUrl;
+					}
+					// too much data
+					else if (data.result === 'hugedata') {
+						alert('You have reached the maximum number of records (100,000) that can be exported at a time. Please refine your filters and try again.');
 					}
 					// fail
 					else {

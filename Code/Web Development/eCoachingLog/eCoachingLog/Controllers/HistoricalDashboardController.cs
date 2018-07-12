@@ -95,9 +95,8 @@ namespace eCoachingLog.Controllers
 		}
 
 		[HttpPost]
-		public JsonResult ExportToExcel(HistoricalDashboardViewModel vm, string searchText)
+		public JsonResult ExportToExcel(HistoricalDashboardViewModel vm)
 		{
-			// Currently 'search' (datatables search box) is not considered when exporting to excel
 			try
 			{
 				MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTable(vm.Search, GetUserFromSession().EmployeeId));
@@ -110,22 +109,6 @@ namespace eCoachingLog.Controllers
 				logger.Warn("Exception ExportToExcel: " + ex.Message);
 				return Json(new { result = "fail" }, JsonRequestBehavior.AllowGet);
 			}
-		}
-
-		public void Download()
-		{
-			MemoryStream memoryStream = (MemoryStream)Session["fileStream"];
-			string fileName = (string)Session["fileName"];
-			var fName = fileName;
-			Response.Clear();
-			Response.Buffer = true;
-			Response.Charset = "UTF-8";
-			Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-			// Give user option to open or save the excel file
-			Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
-			memoryStream.WriteTo(Response.OutputStream);
-			Response.Flush();
-			Response.End();
 		}
 
 		private HistoricalDashboardViewModel InitHistDashboardViewModel()

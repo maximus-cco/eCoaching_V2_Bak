@@ -27,6 +27,8 @@ namespace eCoachingLog.Services
 		IList<LogSource> GetAllLogSources(string userEmpId);
 		IList<LogValue> GetAllLogValues();
 		DataTable GetLogDataTable(LogFilter filter, string userId);
+		// Get logs for director that the director is in charge of, for the specified site, status, start/end dates
+		DataTable GetLogDataTable(int siteId, string status, string start, string end, string userId);
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFiler, string userId, string search);
 

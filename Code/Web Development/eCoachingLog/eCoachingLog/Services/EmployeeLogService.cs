@@ -156,6 +156,11 @@ namespace eCoachingLog.Services
 			return this.employeeLogRepository.GetLogDataTable(logFilter, userId);
 		}
 
+		public DataTable GetLogDataTable(int siteId, string status, string start, string end, string userId)
+		{
+			return this.employeeLogRepository.GetLogDataTable(siteId, status, start, end, userId);
+		}
+
 		public IList<LogState> GetWarningStatuses(User user)
 		{
 			if (user == null)

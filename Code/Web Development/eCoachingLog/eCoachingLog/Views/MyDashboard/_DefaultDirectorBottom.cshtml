@@ -29,8 +29,20 @@
 	</div>
 </div>
 
-<!-- Display Log List -->
-<div id="div-log-list">
+<!-- Log List -->
+<div id="div-search-result-director" class="hide">
+	<div class="pull-right">
+		<button class="btn btn-link " type="submit" id="btn-export-excel-director">
+			<span class="glyphicon glyphicon-export"></span>&nbsp;Export to Excel
+		</button>
+	</div>
+	<br />
+	<div id="div-log-list"></div>
 </div>
+
+<script>
+	var exportToExcelUrl = '@Url.Action("ExportToExcelDirector", "MyDashboard")';
+	var downloadExcelUrl = '@Url.Action("Download", "MyDashboard")';
+</script>
 
 @Scripts.Render("~/bundles/scripts/eclChart")

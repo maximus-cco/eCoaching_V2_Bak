@@ -1,4 +1,5 @@
-﻿using eCoachingLog.Filters;
+﻿using eCoachingLog.Extensions;
+using eCoachingLog.Filters;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.MyDashboard;
 using eCoachingLog.Models.User;
@@ -8,6 +9,7 @@ using eCoachingLog.ViewModels;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -510,6 +512,52 @@ namespace eCoachingLog.Controllers
 			}
 
 			return data;
+		}
+
+		[HttpPost]
+		public JsonResult ExportToExcelDirector(MyDashboardViewModel vm)
+		{
+			try
+			{
+				MemoryStream ms = this.GenerateExcelFile(
+										empLogService.GetLogDataTable(
+											vm.Search.SiteId,
+											vm.Search.LogType,
+											vm.Search.SubmitDateFrom,
+											vm.Search.SubmitDateTo,
+											GetUserFromSession().EmployeeId
+										)
+									);
+
+				Session["fileName"] = CreateExcelName(vm);
+				Session["fileStream"] = ms;
+				return Json(new { result = "ok" }, JsonRequestBehavior.AllowGet);
+			}
+			catch (Exception ex)
+			{
+				logger.Warn("Exception ExportToExcel: " + ex.Message);
+				return Json(new { result = "fail" }, JsonRequestBehavior.AllowGet);
+			}
+		}
+
+		private string CreateExcelName(MyDashboardViewModel vm)
+		{
+			// Get status text to be used in the excel file name
+			string status = string.Empty;
+			if (vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING)
+			{
+				status = "Pending";
+			}
+			else if (vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_SITE_COMPLETED)
+			{
+				status = "Completed";
+			}
+			else if (vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_SITE_WARNING)
+			{
+				status = "Warning";
+			}
+
+			return string.Format("eCoachingLog_{0}_{1}_{2}{3}", DateTime.Now.ToString("yyyyMMddHHmmssffff"), vm.Search.SiteName, status, ".xlsx");
 		}
 	}
 }

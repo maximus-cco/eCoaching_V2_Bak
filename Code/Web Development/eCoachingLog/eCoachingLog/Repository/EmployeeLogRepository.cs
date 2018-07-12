@@ -616,6 +616,29 @@ namespace eCoachingLog.Repository
 			return dt;	
 		}
 
+		// Get logs for director that the director is in charge of, for the specified site, status, start/end dates
+		public DataTable GetLogDataTable(int siteId, string status, string start, string end, string userId)
+		{
+			DataTable dt = new DataTable();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Director_Site_Export]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+				command.Parameters.AddWithValueSafe("@intSiteIdin", siteId);
+				command.Parameters.AddWithValueSafe("@nvcStatus", status);
+				command.Parameters.AddWithValueSafe("@strSDatein", start);
+				command.Parameters.AddWithValueSafe("@strEDatein", end);
+
+				using (SqlDataAdapter sda = new SqlDataAdapter(command))
+				{
+					sda.Fill(dt);
+				}
+			}
+			return dt;
+		}
+
 		public IList<LogState> GetWarningStatuses(User user)
 		{
 			var logStates = new List<LogState>();

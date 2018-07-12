@@ -29,6 +29,7 @@ namespace eCoachingLog.Repository
 		IList<LogValue> GetAllLogValues();
 
 		DataTable GetLogDataTable(LogFilter logFilter, string userId);
+		DataTable GetLogDataTable(int siteId, string status, string start, string end, string userId);
 
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFilter, string userId, string search);
