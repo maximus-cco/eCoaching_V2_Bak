@@ -154,6 +154,11 @@ namespace eCoachingLog.Controllers
 				logger.Warn(string.Format("Failed to download excel file: {0}", fileName));
 				logger.Warn(string.Format("Exception message: {0}", ex.Message));
 			}
+			finally
+			{
+				// Clean up Session["fileStream"]
+				Session.Contents.Remove("fileStream");
+			}
 		}
 	}
 }

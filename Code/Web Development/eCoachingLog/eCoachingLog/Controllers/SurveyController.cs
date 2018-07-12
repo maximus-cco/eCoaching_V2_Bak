@@ -35,6 +35,8 @@ namespace eCoachingLog.Controllers
 				return RedirectToAction("Index", "Unauthorized");
 			}
 
+			Session["AuthenticatedUser"] = user;
+
 			var surveyId = Convert.ToInt64(Request.QueryString["id"]);
 			Survey survey = this.surveyService.GetSurvey(surveyId);
 			bool isSurveyValid = true;
