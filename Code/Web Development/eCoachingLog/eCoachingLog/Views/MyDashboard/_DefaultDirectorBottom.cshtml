@@ -1,4 +1,5 @@
-﻿<div class="row">
+﻿@using eCoachingLog.Utils
+<div class="row">
 	<div class="col-xs-9">
 		<div class="panel panel-default">
 			@if (Model.LogCountForSiteList.Count > 7)
@@ -9,7 +10,7 @@
 			}
 			else if (Model.LogCountForSiteList.Count <4)
 			{
-				<div class="chart-container-small">
+				<div class="chart-container-medium">
 					<canvas id="myBar"></canvas>
 				</div>
 			}
@@ -31,7 +32,7 @@
 
 <!-- Log List -->
 <div id="div-search-result-director" class="hide">
-	<div class="pull-right">
+	<div class='pull-right @(@Model.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_SITE_WARNING ? "hide" : "show")'>
 		<button class="btn btn-link " type="submit" id="btn-export-excel-director">
 			<span class="glyphicon glyphicon-export"></span>&nbsp;Export to Excel
 		</button>

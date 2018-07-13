@@ -12,7 +12,7 @@ $(document).ready(function () {
         serverSide: true, // Process server side
         filter: false,     // Enable filter (search box)
         orderMulti: false,// Disable multiple column sorting
-        iDisplayLength: $('#PageSize').val(),
+        iDisplayLength: 25, //$('#PageSize').val(),
 		order: [[9, "desc"]], // Default order by SubmittedDate desc
         ajax: {
         	url: loadDataUrl,

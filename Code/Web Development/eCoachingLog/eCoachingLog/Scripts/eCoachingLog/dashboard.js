@@ -120,6 +120,10 @@
 		}
 	});
 
+	$('body').on('change', '.log-type', function (e) {
+		$('input[name=typeSelected').val($(this).val());
+	});
+
 	// Search log
 	$('body').on('click', '#btn-search', function (e) {
 		e.preventDefault();
@@ -135,6 +139,14 @@
 					data: $('#form-search-mydashboard').serialize() + '&' + $.param(pageSizeSelected),
 				success: function (data) {
 					$(".please-wait").slideUp(500);
+					// Warning logs not allowed to export
+					if ($('input[name=typeSelected').val() === 'MySiteWarning')
+					{
+						$('#btn-export-excel-director').hide();
+					}
+					else {
+						$('#btn-export-excel-director').show();
+					}
 					$('#div-search-result').html(data);
 				}
 			});
