@@ -5,9 +5,10 @@
 
 <head id="Head1" runat="server">
     <script type="text/javascript">
+    	window.location.href = "https://f3420-mpmd01.vangent.local/eCoachingLog_st";
         if (!window.console) window.console = {};
         if (!window.console.log) window.console.log = function () { };
-    </script>
+	</script>
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <title>&nbsp;</title>
     <link href="~/Styles/Site.css" rel="stylesheet" type="text/css" />

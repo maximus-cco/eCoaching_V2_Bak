@@ -4,6 +4,11 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+	<script type="text/javascript">
+    	window.location.href = "https://f3420-mpmd01.vangent.local/eCoachingLog_st";
+        if (!window.console) window.console = {};
+        if (!window.console.log) window.console.log = function () { };
+	</script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>eCoaching - My Survey</title>
     <link href="~/styles/bootstrap-3.2.0.min.css" rel="stylesheet" type="text/css" />
