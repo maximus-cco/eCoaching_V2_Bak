@@ -1,5 +1,6 @@
 ﻿var myTable;
 $(document).ready(function () {
+	var length = $('#PageSize').val();
 	// Initialize datatable
 	$(".please-wait").slideDown(500);
     myTable = $('#dataTables-coaching-log-list').DataTable({
@@ -12,7 +13,7 @@ $(document).ready(function () {
         serverSide: true, // Process server side
         filter: false,     // Enable filter (search box)
         orderMulti: false,// Disable multiple column sorting
-        iDisplayLength: 25, //$('#PageSize').val(),
+        pageLength: length,
 		order: [[9, "desc"]], // Default order by SubmittedDate desc
         ajax: {
         	url: loadDataUrl,
@@ -48,6 +49,9 @@ $(document).ready(function () {
         	$(".please-wait").slideUp(500);
         }
     }); // myTable
+
+	// Set page length
+    myTable.page.len(length);
 
     $('#dataTables-coaching-log-list').on('length.dt', function (e, settings, len) {
     	$('input[name=pageSizeSelected').val(len);
