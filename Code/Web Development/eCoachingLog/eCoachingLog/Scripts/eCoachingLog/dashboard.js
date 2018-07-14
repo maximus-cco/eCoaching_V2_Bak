@@ -33,6 +33,7 @@
 		if (e.handled !== true) {
 			e.handled = true;
 			//console.log("!!!Get Detail!!!");
+			$(".please-wait").slideDown(500);
 			$.ajax({
 				type: 'POST',
 				// Call GetLogDetail method.
@@ -40,7 +41,11 @@
 				dataType: 'html',
 				data: { logId: $(this).data("log-id"), isCoaching: $(this).data("is-coaching") },
 				success: function (data) {
-					$('.modal-content').html(data);
+					$('#modal-container .modal-content').html(data);
+					$('#modal-container').modal();
+				},
+				complete: function () {
+					$(".please-wait").slideUp(500);
 				}
 			});
 		}
