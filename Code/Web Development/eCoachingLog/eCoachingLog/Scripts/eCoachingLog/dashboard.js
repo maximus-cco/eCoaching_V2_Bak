@@ -185,7 +185,7 @@
 					}
 					// fail
 					else {
-						alert('There was an error when exporting to excel file.');
+						alert('Something went wrong while trying to export logs to excel file. Please refine your filters and try again.');
 					}
 				}
 			});
@@ -220,7 +220,7 @@
 					}
 					// fail
 					else {
-						alert('There was an error when exporting to excel file.');
+						alert('Something went wrong while trying to export logs to excel file. Please refine your filters and try again.');
 					}
 				}
 			});

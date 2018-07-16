@@ -251,11 +251,11 @@ namespace eCoachingLog.Controllers
 				{
 					if (log.IsEtsOae || log.IsEtsOas || log.IsOmrIat || log.IsOmrIae || log.IsOmrIaef || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrn || log.IsBrl)
 					{
-						retVal = true;
+						return true;
 					}
 				}
 			}
-			else
+			
 			if (user.EmployeeId == log.ManagerEmpId // User is current manager
 					|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId) // Log is low csat and user was supervisor when log submitted
 					|| (user.EmployeeId == log.ReassignedToEmpId)) // Log got reassigned to user
@@ -394,14 +394,6 @@ namespace eCoachingLog.Controllers
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
-			// User is the Supervisor of the employee
-			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
-				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
-			{
-				return ((vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged) ||
-					vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4);
-			}
-
 			// User is the employee
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
@@ -412,7 +404,15 @@ namespace eCoachingLog.Controllers
 			// Higher management 
 			if (userEmployeeId == vm.LogDetail.ManagerEmpId)
 			{
-				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4; 
+				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;
+			}
+
+			// User is the Supervisor of the employee
+			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
+				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
+			{
+				return ((vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged) ||
+					vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4);
 			}
 
 			return false;

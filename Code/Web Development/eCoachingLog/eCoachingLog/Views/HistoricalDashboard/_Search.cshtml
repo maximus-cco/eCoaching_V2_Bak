@@ -3,7 +3,7 @@
 <fieldset class="scheduler-border">
 	<form class="form-inline"  id="form-search-historical">
 		<div class="form-group">
-			<lable for="sumitted-date">Submitted:&nbsp;</lable>
+			<lable>Submitted:&nbsp;</lable>
 			<div class="input-group date">
 				@Html.TextBoxFor(m => m.Search.SubmitDateFrom, new { @class = "form-control reset-search-result" })
 				<span class="input-group-addon">
@@ -23,6 +23,7 @@
 		</div>
 
 		<div class="form-group" style="padding:0px 5px 0px 50px;">
+			<label>Employee: &nbsp;</label>
 			<label class="radio-inline">
 				@Html.RadioButtonFor(m => m.Search.ActiveEmployee, "1", new { @class = "employee-status reset-search-result" }) Active Employee
 			</label>
