@@ -62,11 +62,7 @@ var myOptionsByStatus = {
 	},
 	legend: {
 		display: true,
-		position: 'bottom',
-		onClick: function (e, p) {
-			//console.log(p);
-			// ???
-		}
+		position: 'bottom'
 	},
 	tooltips: {
 		mode: 'nearest', // default to 'index'
@@ -79,7 +75,6 @@ var myOptionsByStatus = {
 	tickes: {
 		min: 0
 	},
-	//scaleIntegersOnly: true,
 	scales: {
 		xAxes: [{
 			display: true,
@@ -114,11 +109,7 @@ var myOptionsBySite = {
 	},
 	legend: {
 		display: true,
-		position: 'bottom',
-		onClick: function (e, p) {
-			//console.log(p);
-			// ???
-		}
+		position: 'bottom'
 	},
 	tooltips: {
 		mode: 'index', // default to 'index'
@@ -131,7 +122,6 @@ var myOptionsBySite = {
 	tickes: {
 		min: 0
 	},
-	//scaleIntegersOnly: true,
 	scales: {
 		xAxes: [{
 			display: true
@@ -173,7 +163,11 @@ $(document).ready(function () {
 			chart.update();
 		},
 		error: function (result) {
-			alert('error');
+			$('#modal-container .modal-content').html(
+				'<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>Chart</div>' +
+				'<div class="modal-body"><p>Something went wrong while trying to generating bar chart. Please try again at a later time.</p></div>' +
+				'<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>');
+			$('#modal-container').modal();
 		}
 	});
 });

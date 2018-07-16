@@ -180,12 +180,16 @@
 					{
 						window.location = downloadExcelUrl;
 					}
-					else if (data.result === 'hugedata') {
+					else if (data.result === 'oversized') {
 						alert('You have reached the maximum number of records (6k) that can be exported at a time. Please refine your filters and try again.');
 					}
 					// fail
 					else {
-						alert('Something went wrong while trying to export logs to excel file. Please refine your filters and try again.');
+						$('#modal-container .modal-content').html(
+							'<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>Export to Excel</div>' +
+							'<div class="modal-body"><p>Something went wrong while trying to export logs to excel file. Please refine your filters and try again.</p></div>' +
+							'<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>');
+						$('#modal-container').modal();
 					}
 				}
 			});
@@ -215,12 +219,16 @@
 						window.location = downloadExcelUrl;
 					}
 					// too much data
-					else if (data.result === 'hugedata') {
+					else if (data.result === 'oversized') {
 						alert('You have reached the maximum number of records (100,000) that can be exported at a time. Please refine your filters and try again.');
 					}
 					// fail
 					else {
-						alert('Something went wrong while trying to export logs to excel file. Please refine your filters and try again.');
+						$('#modal-container .modal-content').html(
+							'<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>Export to Excel</div>' +
+							'<div class="modal-body"><p>Something went wrong while trying to export logs to excel file. Please try again at a later time.</p></div>' +
+							'<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>');
+						$('#modal-container').modal();
 					}
 				}
 			});
