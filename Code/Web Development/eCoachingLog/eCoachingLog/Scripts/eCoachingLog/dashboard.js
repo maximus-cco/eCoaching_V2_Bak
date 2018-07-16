@@ -3,9 +3,9 @@
 	if (typeof showPendingText !== 'undefined' && showPendingText === true)
 	{
 		$.notify({
-			title: '<strong>Attention: </strong>',
+			//title: '<strong>Attention: </strong>',
 			message: 'You have <span class="lead">' + totalPending + '</span> pending logs that require your action.',
-			icon: 'glyphicon glyphicon-info-sign',
+			icon: 'glyphicon glyphicon-bell',
 		},
 		{
 			type: 'info',
