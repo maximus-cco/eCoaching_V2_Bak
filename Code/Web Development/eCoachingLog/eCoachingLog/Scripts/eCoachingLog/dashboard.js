@@ -43,6 +43,7 @@
 				success: function (data) {
 					$('#modal-container .modal-content').html(data);
 					$('#modal-container').modal();
+					$('#modal-container').modal('handleUpdate');
 				},
 				complete: function () {
 					$(".please-wait").slideUp(500);

@@ -1,4 +1,14 @@
 ﻿$(document).ready(function () {
+	// unbind to fix multi events issue when clicking Reset button
+	$('body').off('change', '.employee-status');
+	$('body').off('change', '#select-site');
+	$('body').off('change', '#select-manager');
+	$('body').off('change', '#select-supervisor');
+	$('body').off('change', '#select-employee');
+	$('body').off('click', '#btn-reset');
+	$('body').off('change', '.reset-search-result');
+	$('body').off('click', '#btn-search-historical');
+
 	$('body').on('change', '.employee-status', function () {
 		var empStatusSelected = $('input:radio[name="Search.ActiveEmployee"]:checked').val();
 		// Inactive: 2; Both: 3 
