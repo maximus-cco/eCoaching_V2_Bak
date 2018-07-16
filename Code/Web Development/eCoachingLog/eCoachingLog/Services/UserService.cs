@@ -20,16 +20,16 @@ namespace eCoachingLog.Services
         public User GetUserByLanId(string lanId)
         {
             User user = userRepository.GetUserByLanId(lanId);
-			try
-			{ 
-				// Format user name
-				string[] temp = user.Name.Split(',');
-				user.Name = string.Format("{0} {1}", temp[1], temp[0]);
-            }
-			catch (Exception ex)
-			{
-				logger.Warn(ex.StackTrace);
-			}
+			//try
+			//{ 
+			//	// Format user name
+			//	string[] temp = user.Name.Split(',');
+			//	user.Name = string.Format("{0} {1}", temp[1].Trim(), temp[0].Trim());
+   //         }
+			//catch (Exception ex)
+			//{
+			//	logger.Warn(ex.StackTrace);
+			//}
 
 			return user;
         }
