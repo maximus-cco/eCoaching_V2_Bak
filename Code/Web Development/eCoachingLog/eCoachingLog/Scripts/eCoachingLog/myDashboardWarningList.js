@@ -2,7 +2,6 @@
 var warningTable;
 $(document).ready(function () {
 	var length = $('#PageSize').val();
-	alert(length);
 	// Initialize datatable
 	warningTable = $('#dataTables-warning-log-list').DataTable({
 		"renderer": "bootstrap",
