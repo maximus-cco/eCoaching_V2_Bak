@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
-	$('.employee-status').on('change', function () {
+	$('body').on('change', '.employee-status', function () {
 		var empStatusSelected = $('input:radio[name="Search.ActiveEmployee"]:checked').val();
-		// Inactive: 2; Both: 3 
+		// Inactive: 2; Both: 3
 		if (empStatusSelected === '2' || empStatusSelected === '3') {
 			$.notify({
 				title : '<strong>Caution: </strong>',
@@ -35,7 +35,7 @@
 		}
 	});
 
-	$('#select-site').on('change', function () {
+	$('body').on('change', '#select-site', function () {
 		$('#select-manager').addClass('loadinggif');
 		var siteSelected = $('#select-site').val();
 		if (siteSelected != -2)
@@ -72,7 +72,7 @@
 		});
 	});
 
-	$('#select-manager').on('change', function () {
+	$('body').on('change', '#select-manager', function () {
 		$('#select-supervisor').addClass('loadinggif');
 		var mgrSelected = $('#select-manager').val();
 		if (mgrSelected != -2) {
@@ -101,14 +101,14 @@
 		});
 	});
 
-	$('#select-supervisor').on('change', function () {
+	$('body').on('change', '#select-supervisor', function () {
 		if ($(this).val() != -2) {
 			$(this).css('border-color', '');
 		}
 		ReloadEmployees();
 	});
 
-	$('#select-employee').on('change', function () {
+	$('body').on('change', '#select-employee', function () {
 		if ($(this).val() != -2) {
 			$(this).css('border-color', '');
 		}
@@ -138,23 +138,32 @@
 		});
 	}
 
-	$('#btn-reset').on('click', function () {
-		$('#div-search-result').removeClass('show');
-		$('#div-search-result').addClass('hide');
-		$.ajax({
-			url: resetPageUrl,
-			success: function (data) {
-				$('#div-search').html(data);
-			}
-		});
+	$('body').on('click', '#btn-reset', function (e) {
+		e.preventDefault();
+
+		if (e.handled !== true) {
+			e.handled = true;
+			$(".please-wait").slideDown(500);
+			$('#div-search-result').removeClass('show');
+			$('#div-search-result').addClass('hide');
+			$.ajax({
+				url: resetPageUrl,
+				success: function (data) {
+					$('#div-search').html(data);
+				},
+				complete: function () {
+					$(".please-wait").slideUp(500);
+				}
+			}) // end ajax
+		} // end if
 	});
 
-	$('.reset-search-result').on('change', function () {
+	$('body').on('change', '.reset-search-result', function () {
 		$('#div-search-result').removeClass('show');
 		$('#div-search-result').addClass('hide');
 	});
 
-	$('#btn-search-historical').on('click', function (e) {
+	$('body').on('click', '#btn-search-historical', function (e) {
 		e.preventDefault();
 
 		if (!validateSearch()) {
@@ -169,11 +178,13 @@
 					url: searchUrl,
 					data: $('#form-search-historical').serialize(),
 					success: function (data) {
-						$(".please-wait").slideUp(500);
 						$('#div-search-result').removeClass('hide');
 						$('#div-search-result').addClass('show');
 						$('#div-log-list').html(data);
-					} // end of success
+					},
+					complete: function () {
+						$(".please-wait").slideUp(500);
+					}
 			}); // end of $.ajax
 		} // end of if (e.handled !== true)
 	});
