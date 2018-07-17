@@ -1,15 +1,18 @@
 ﻿// TODO: rename to warningList.js, since historical dashboard will use it as well
 var warningTable;
 $(document).ready(function () {
+	var length = $('#PageSize').val();
+	alert(length);
 	// Initialize datatable
 	warningTable = $('#dataTables-warning-log-list').DataTable({
 		"renderer": "bootstrap",
 		"autowidth": false,
 		"processing": true, // Show progress bar
 		"serverSide": true, // Process server side
-		"filter": true,     // Enable filter (search box)
+		"filter": false,     // Disable filter (search box)
 		"orderMulti": false,// Disable multiple column sorting
-		"iDisplayLength": $('#PageSize').val(),
+		"pageLength": length,
+		"order": [[7, "desc"]], // Default order by SubmittedDate desc
 		"ajax": {
 			url: loadDataUrl,
 			"type": "POST",
@@ -31,17 +34,23 @@ $(document).ready(function () {
             	}
             },  // Log Name
             { "data": "EmployeeName", "name": "strEMPName" },
-            { "data": "SupervisorName", "name": "supervisorName" },
-			{ "data": "ManagerName", "name": "managerName" },
-            { "data": "WarningType", "name": "warningType" },
-            { "data": "WarningReasons", "name": "warningReasons", "orderable": false },
-            { "data": "CreatedDate", "name": "CreateDate" }
+            { "data": "SupervisorName", "name": "strEmpSupName" },
+			{ "data": "ManagerName", "name": "strEmpMgrName" },
+            { "data": "Reasons", "name": "strCoachingReason", "orderable": false },
+            { "data": "SubReasons", "name": "strSubCoachingReason", "orderable": false },
+            { "data": "CreatedDate", "name": "SubmittedDate" }
 		],
 
 		"initComplete": function (settings, json) {
 			//console.log('dataTables-warning-log-list init complete.');
 		}
 	}); // warningType
+
+	warningTable.page.len(length);
+
+	$('#dataTables-warning-log-list').on('length.dt', function (e, settings, len) {
+		$('input[name=pageSizeSelected').val(len);
+	});
 
 	// Dynamically hide column(s)
 	//if (showSupervisorColumn === 'False') {

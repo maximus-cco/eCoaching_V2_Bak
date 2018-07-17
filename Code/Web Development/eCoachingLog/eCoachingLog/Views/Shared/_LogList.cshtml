@@ -36,7 +36,6 @@
 	var logFilter = @Html.Raw(Json.Encode(Model));
 	var supId = '@Html.Raw(Model.SupervisorId)';
 	var loadDataUrl = '@Url.Action("LoadData")';
-	var getLogDetailsUrl = '@Url.Action("Index", "Review")';
 	var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';
 </script>
 

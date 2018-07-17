@@ -53,11 +53,11 @@ namespace eCoachingLog
                         "~/Scripts/eCoachingLog/eclChart.js");
             bundles.Add(eclChartScriptBundle);
 
-            // javascript bundle for dashboard
-            var dashboardScriptBundle = new ScriptBundle("~/bundles/scripts/dashboard");
+            // javascript bundle for my dashboard
+            var dashboardScriptBundle = new ScriptBundle("~/bundles/scripts/myDashboard");
             dashboardScriptBundle.Orderer = new EclBundleOrderer();
             dashboardScriptBundle.Include(
-                        "~/Scripts/eCoachingLog/dashboard.js");
+                        "~/Scripts/eCoachingLog/myDashboard.js");
             bundles.Add(dashboardScriptBundle);
 
             // javascript bundle for log list
@@ -74,11 +74,11 @@ namespace eCoachingLog
 						"~/Scripts/eCoachingLog/myDashboardWarningList.js");
 			bundles.Add(myDashboardWarningListScriptBundle);
 
-			// javascript bundle for historical dashboard search
-			var hisDashboardSearchScriptBundle = new ScriptBundle("~/bundles/scripts/historicalDashboardSearch");
+			// javascript bundle for historical dashboard
+			var hisDashboardSearchScriptBundle = new ScriptBundle("~/bundles/scripts/historicalDashboard");
 			hisDashboardSearchScriptBundle.Orderer = new EclBundleOrderer();
 			hisDashboardSearchScriptBundle.Include(
-						"~/Scripts/eCoachingLog/historicalDashboardSearch.js");
+						"~/Scripts/eCoachingLog/historicalDashboard.js");
 			bundles.Add(hisDashboardSearchScriptBundle);
 
 			// javascript bundle for survey

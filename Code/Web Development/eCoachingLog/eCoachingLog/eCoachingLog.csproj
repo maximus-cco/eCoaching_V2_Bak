@@ -255,6 +255,7 @@
     <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\bootstrap-multiselect.css" />
+    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrapValidator.css" />
     <Content Include="Content\dataTables.bootstrap.css" />
     <Content Include="Content\dataTables.responsive.css" />
@@ -288,13 +289,12 @@
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\dataTables.responsive.js" />
-    <Content Include="Scripts\eCoachingLog\dashboard.js" />
+    <Content Include="Scripts\eCoachingLog\myDashboard.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
     <Content Include="Scripts\eCoachingLog\dateTimePicker.js" />
     <Content Include="Scripts\eCoachingLog\eclChart.js" />
-    <Content Include="Scripts\eCoachingLog\historicalDashboardSearch.js" />
+    <Content Include="Scripts\eCoachingLog\historicalDashboard.js" />
     <Content Include="Scripts\eCoachingLog\logList.js" />
-    <Content Include="Scripts\eCoachingLog\myDashboardReview.js" />
     <Content Include="Scripts\eCoachingLog\myDashboardWarningList.js" />
     <Content Include="Scripts\eCoachingLog\newSubmission.js" />
     <Content Include="Scripts\eCoachingLog\review.js" />

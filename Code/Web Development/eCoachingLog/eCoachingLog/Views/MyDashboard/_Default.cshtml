@@ -46,16 +46,13 @@
 	var showPendingText = totalPending > 0;
 	var getLogListUrl = '@Url.Action("GetLogs", "MyDashboard")';
 	var saveUrl = '@Url.Action("Save", "Review")';
-	var getLogDetailsUrl = '@Url.Action("Index", "Review")';
 	var loadDataUrl = '@Url.Action("LoadData", "LogBase")';
-
 	var getChartData = '@Url.Action("GetChartData", "MyDashboard")';
 	var searchUrl = '@Url.Action("Search", "MyDashboard")';
-
 	var isChartBySite = '@Model.IsChartBySite';
 </script>
 
-@Scripts.Render("~/bundles/scripts/dashboard")
+@Scripts.Render("~/bundles/scripts/myDashboard")
 @Scripts.Render("~/bundles/scripts/eclChart")
 
 

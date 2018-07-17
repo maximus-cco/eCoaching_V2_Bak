@@ -18,14 +18,6 @@
 		$('#div-review-modal-footer').addClass("show");
 	});
 
-	$('body').on('change', 'input[name="IsCoachingByYou"]', function () {
-		var isCoachingByYou = $(this).val();
-		var isCse = false;
-		var isWarning = false;
-
-		resetPageBottom(isCoachingByYou, isCse, isWarning);
-	});
-
 	const maxLength = 3000;
 	// Ack - oppotunity
 	$('body').on('keyup', '#textarea-employee-comments', function (e) {

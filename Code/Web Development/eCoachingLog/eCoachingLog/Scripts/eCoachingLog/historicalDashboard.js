@@ -226,4 +226,41 @@
 		//$('.validation-summary-valid').css('color', 'red');
 		return valid;
 	}
+
+	// Export to excel - historical
+	$('body').on('click', '#btn-export-excel', function (e) {
+		e.preventDefault();
+		// Prevent multiple clicks
+		$(this).prop('disabled', true);
+
+		if (e.handled !== true) {
+			e.handled = true;
+			$(".please-wait").slideDown(500);
+			$.ajax({
+				type: 'POST',
+				url: exportToExcelUrl,
+				data: $('#form-search-historical').serialize(),
+				success: function (data) {
+					// clean up
+					$('#btn-export-excel').prop('disabled', false);
+					$(".please-wait").slideUp(500);
+
+					if (data.result === 'ok') {
+						window.location = downloadExcelUrl;
+					}
+					else if (data.result === 'oversized') {
+						alert('You have reached the maximum number of records (6k) that can be exported at a time. Please refine your filters and try again.');
+					}
+						// fail
+					else {
+						$('#modal-container .modal-content').html(
+							'<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>Export to Excel</div>' +
+							'<div class="modal-body"><p>Something went wrong while trying to export logs to excel file. Please refine your filters and try again.</p></div>' +
+							'<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>');
+						$('#modal-container').modal();
+					}
+				}
+			});
+		}
+	});
 });

@@ -26,6 +26,32 @@ $(function () {
 		$(this).removeData('bs.modal').find(".modal-content").empty();
 	});
 
+	// Display Review Modal
+	$('body').on('click', '.modal-link', function (e) {
+		//http://blog.roymj.co.in/prevent-jquery-events-firing-multiple-times/
+		e.preventDefault();
+		if (e.handled !== true) {
+			e.handled = true;
+			//console.log("!!!Get Detail!!!");
+			$(".please-wait").slideDown(500);
+			$.ajax({
+				type: 'POST',
+				// Call GetLogDetail method.
+				url: getLogDetailsUrl,
+				dataType: 'html',
+				data: { logId: $(this).data("log-id"), isCoaching: $(this).data("is-coaching") },
+				success: function (data) {
+					$('#modal-container .modal-content').html(data);
+					$('#modal-container').modal();
+					$('#modal-container').modal('handleUpdate');
+				},
+				complete: function () {
+					$(".please-wait").slideUp(500);
+				}
+			});
+		}
+	});
+
 	// Handle global Ajax error
 	$(document).ajaxError(function (event, jqxhr, settings, thrownError) {
 		// Hide spinner

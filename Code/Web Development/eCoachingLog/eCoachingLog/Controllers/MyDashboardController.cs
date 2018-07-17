@@ -71,6 +71,11 @@ namespace eCoachingLog.Controllers
 			logger.Debug("Entered Search...");
 			logger.Debug("pageSizeSelected = " + pageSizeSelected);
 			vm.Search.PageSize = pageSizeSelected.HasValue ? pageSizeSelected.Value : 25; // Default to 25
+			if (vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING)
+			{
+				return PartialView("_WarningList", vm.Search);
+			}
+
 			return PartialView("_LogList", vm.Search);
 		}
 
