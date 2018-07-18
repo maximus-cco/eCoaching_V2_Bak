@@ -29,6 +29,9 @@ GO
 
 
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -91,6 +94,7 @@ SET @nvcSQL = ';WITH IncludeStatus AS
                  AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 				 AND wl.StatusID = 1
 				 AND wl.siteID <> -1 
+				 AND wl.Active = 1
 				 GROUP BY si.City, st.Status)
 
 
@@ -123,14 +127,7 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_Dashboard_Director_Summary_Count_ByStatus
 
-
-
-
-
 GO
-
-
-
 
 
 

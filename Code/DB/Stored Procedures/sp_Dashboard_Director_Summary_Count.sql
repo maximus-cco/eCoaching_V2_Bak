@@ -26,9 +26,6 @@ GO
 
 
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -113,6 +110,8 @@ SET @nvcSQL = '
 			     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
 				 AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 				 AND wl.siteID <> -1 
+				 AND wl.StatusID = 1
+				 AND wl.Active = 1
 				 GROUP BY site.City) d ON si.City = d.City
      ORDER BY si.City'
 
@@ -137,7 +136,9 @@ END --sp_Dashboard_Director_Summary_Count
 
 
 
-GO
 
+
+
+GO
 
 

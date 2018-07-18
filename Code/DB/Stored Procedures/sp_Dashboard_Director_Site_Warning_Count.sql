@@ -27,6 +27,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -87,11 +88,7 @@ EXEC (@nvcSQL)
 
 	    
 END -- sp_Dashboard_Director_Site_Warning_Count
-
-
-
 GO
-
 
 
 
