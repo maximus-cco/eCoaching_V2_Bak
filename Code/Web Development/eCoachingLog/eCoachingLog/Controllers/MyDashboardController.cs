@@ -265,7 +265,7 @@ namespace eCoachingLog.Controllers
 					// Default to pending
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING;
 					// Warning status dropdown
-					vm.WarningStatusSelectList = GetWarningStatuses(user);
+					// vm.WarningStatusSelectList = GetWarningStatuses(user);
 					DateTime selectedMonth = DateTime.Parse(month);
 					// First day of the month
 					var start = (new DateTime(selectedMonth.Year, selectedMonth.Month, 1)).Date;

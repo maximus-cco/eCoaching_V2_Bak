@@ -103,14 +103,13 @@
 	$('body').on('change', '.log-type', function (e) {
 		var logType = $(this).val();
 		$('input[name=typeSelected').val(logType);
-	
-		if (logType === 'MySiteWarning')
-		{
-			$('#div-select-status').show();
-		}
-		else {
-			$('#div-select-status').hide();
-		}
+		//if (logType === 'MySiteWarning')
+		//{
+		//	$('#div-select-status').show();
+		//}
+		//else {
+		//	$('#div-select-status').hide();
+		//}
 	});
 
 	// Search log
