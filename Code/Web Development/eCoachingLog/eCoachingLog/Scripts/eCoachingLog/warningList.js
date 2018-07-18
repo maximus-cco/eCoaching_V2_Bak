@@ -7,6 +7,7 @@ $(document).ready(function () {
 		"autowidth": false,
 		"language": {
 			"processing": "<span>Loading...... Please wait...</span>",
+			"emptyTable": "No matching logs found."
 		},
 		"processing": true, // Show progress bar
 		"serverSide": true, // Process server side

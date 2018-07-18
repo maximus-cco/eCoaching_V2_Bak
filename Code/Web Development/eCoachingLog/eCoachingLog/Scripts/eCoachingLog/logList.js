@@ -8,6 +8,7 @@ $(document).ready(function () {
 		autowidth: false,
 		language: {
 			processing: "<span>Loading...... Please wait...</span>",
+    		emptyTable: "No matching logs found."
 		},
 		processing: true,
         serverSide: true, // Process server side
