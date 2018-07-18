@@ -68,11 +68,11 @@ namespace eCoachingLog
             bundles.Add(logListScriptBundle);
 
 			// javascript bundle for mydashboard warning list
-			var myDashboardWarningListScriptBundle = new ScriptBundle("~/bundles/scripts/myDashboardWarningList");
-			myDashboardWarningListScriptBundle.Orderer = new EclBundleOrderer();
-			myDashboardWarningListScriptBundle.Include(
-						"~/Scripts/eCoachingLog/myDashboardWarningList.js");
-			bundles.Add(myDashboardWarningListScriptBundle);
+			var warningListScriptBundle = new ScriptBundle("~/bundles/scripts/warningList");
+			warningListScriptBundle.Orderer = new EclBundleOrderer();
+			warningListScriptBundle.Include(
+						"~/Scripts/eCoachingLog/warningList.js");
+			bundles.Add(warningListScriptBundle);
 
 			// javascript bundle for historical dashboard
 			var hisDashboardSearchScriptBundle = new ScriptBundle("~/bundles/scripts/historicalDashboard");

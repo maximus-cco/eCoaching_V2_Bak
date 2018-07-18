@@ -7,7 +7,7 @@ $(document).ready(function () {
     	renderer: "bootstrap",
 		autowidth: false,
 		language: {
-			processing: "<span>Processing...... Please wait...</span>",
+			processing: "<span>Loading...... Please wait...</span>",
 		},
 		processing: true,
         serverSide: true, // Process server side
@@ -48,6 +48,7 @@ $(document).ready(function () {
         initComplete: function (settings, json) {
         	$(".please-wait").slideUp(500);
         }
+
     }); // myTable
 
 	// Set page length

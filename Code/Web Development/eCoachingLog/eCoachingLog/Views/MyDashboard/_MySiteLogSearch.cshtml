@@ -25,15 +25,15 @@
 			</label>
 		</div>
 
+		<div class="form-group" id="div-select-status" style="display: none; ">
+			@Html.DropDownListFor(m => m.Search.StatusId, Model.WarningStatusSelectList, new { id = "select-status", @class = "form-control" })
+		</div>
+
 		<button type="submit" class="btn btn-info" id="btn-search">
 			<span class="glyphicon glyphicon-search"></span> Go
 		</button>
 	</form>
 </div>
 <div class="clearfix"></div>
-
-<script>
-	var searchMySiteLogs = '@Url.Action("SearchMySiteLogs")';
-</script>
 
 

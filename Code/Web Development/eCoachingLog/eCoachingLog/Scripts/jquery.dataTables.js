@@ -5146,6 +5146,9 @@
 		else if ( window.console && console.log ) {
 			console.log( msg );
 		}
+
+		// LH: Hide processing message
+		$('#' + settings.sTableId + '_processing').hide();
 	}
 	
 	

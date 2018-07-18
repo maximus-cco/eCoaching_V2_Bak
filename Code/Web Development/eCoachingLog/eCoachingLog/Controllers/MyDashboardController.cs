@@ -71,7 +71,8 @@ namespace eCoachingLog.Controllers
 			logger.Debug("Entered Search...");
 			logger.Debug("pageSizeSelected = " + pageSizeSelected);
 			vm.Search.PageSize = pageSizeSelected.HasValue ? pageSizeSelected.Value : 25; // Default to 25
-			if (vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING)
+			if (vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING 
+				|| vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_SITE_WARNING)
 			{
 				return PartialView("_WarningList", vm.Search);
 			}
@@ -263,6 +264,8 @@ namespace eCoachingLog.Controllers
 				case "_MySiteLogs":
 					// Default to pending
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING;
+					// Warning status dropdown
+					vm.WarningStatusSelectList = GetWarningStatuses(user);
 					DateTime selectedMonth = DateTime.Parse(month);
 					// First day of the month
 					var start = (new DateTime(selectedMonth.Year, selectedMonth.Month, 1)).Date;

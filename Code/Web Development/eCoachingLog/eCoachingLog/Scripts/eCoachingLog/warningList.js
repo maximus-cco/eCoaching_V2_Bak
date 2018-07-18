@@ -1,11 +1,13 @@
-﻿// TODO: rename to warningList.js, since historical dashboard will use it as well
-var warningTable;
+﻿var warningTable;
 $(document).ready(function () {
 	var length = $('#PageSize').val();
 	// Initialize datatable
 	warningTable = $('#dataTables-warning-log-list').DataTable({
 		"renderer": "bootstrap",
 		"autowidth": false,
+		"language": {
+			"processing": "<span>Loading...... Please wait...</span>",
+		},
 		"processing": true, // Show progress bar
 		"serverSide": true, // Process server side
 		"filter": false,     // Disable filter (search box)
@@ -13,7 +15,7 @@ $(document).ready(function () {
 		"pageLength": length,
 		"order": [[7, "desc"]], // Default order by SubmittedDate desc
 		"ajax": {
-			url: loadDataUrl,
+			"url": loadDataUrl,
 			"type": "POST",
 			"datatype": "json",
 			"data": myDashboardSearch
@@ -41,7 +43,7 @@ $(document).ready(function () {
 		],
 
 		"initComplete": function (settings, json) {
-			//console.log('dataTables-warning-log-list init complete.');
+			$(".please-wait").slideUp(500);
 		}
 	}); // warningType
 

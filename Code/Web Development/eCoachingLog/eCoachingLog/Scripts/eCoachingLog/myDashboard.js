@@ -101,7 +101,16 @@
 	});
 
 	$('body').on('change', '.log-type', function (e) {
-		$('input[name=typeSelected').val($(this).val());
+		var logType = $(this).val();
+		$('input[name=typeSelected').val(logType);
+	
+		if (logType === 'MySiteWarning')
+		{
+			$('#div-select-status').show();
+		}
+		else {
+			$('#div-select-status').hide();
+		}
 	});
 
 	// Search log
@@ -118,7 +127,7 @@
 					url: searchUrl,
 					data: $('#form-search-mydashboard').serialize() + '&' + $.param(pageSizeSelected),
 				success: function (data) {
-					$(".please-wait").slideUp(500);
+					// hide please-wait inside DataTables initComplete callback.
 					// Warning logs not allowed to export
 					if ($('input[name=typeSelected').val() === 'MySiteWarning')
 					{

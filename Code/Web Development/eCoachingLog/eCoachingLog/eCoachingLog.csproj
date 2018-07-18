@@ -294,7 +294,7 @@
     <Content Include="Scripts\eCoachingLog\eclChart.js" />
     <Content Include="Scripts\eCoachingLog\historicalDashboard.js" />
     <Content Include="Scripts\eCoachingLog\logList.js" />
-    <Content Include="Scripts\eCoachingLog\myDashboardWarningList.js" />
+    <Content Include="Scripts\eCoachingLog\warningList.js" />
     <Content Include="Scripts\eCoachingLog\newSubmission.js" />
     <Content Include="Scripts\eCoachingLog\review.js" />
     <Content Include="Scripts\eCoachingLog\survey.js" />

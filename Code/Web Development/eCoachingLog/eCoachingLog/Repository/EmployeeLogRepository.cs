@@ -504,7 +504,7 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@nvcMgrIdin", logFilter.ManagerId);
 				command.Parameters.AddWithValueSafe("@nvcSubmitterIdin", logFilter.SubmitterId);
 				command.Parameters.AddWithValueSafe("@strSDatein", logFilter.SubmitDateFrom);
-				command.Parameters.AddWithValueSafe("strEDatein", logFilter.SubmitDateTo);
+				command.Parameters.AddWithValueSafe("@strEDatein", logFilter.SubmitDateTo);
 				command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
 				command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
 				command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
