@@ -27,6 +27,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -148,7 +149,7 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
 	@where + ' ' + '
 	AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
-	AND (eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+	AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin+ ''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
    	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name]
   ) x 
 )
@@ -179,7 +180,6 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_Dashboard_Director_Site_Completed
-
 
 
 GO
@@ -213,6 +213,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -296,7 +297,7 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
 	@where + ' ' + '
 	AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
-	AND (eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+	AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin+ ''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
    	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name]
    ) x 
 ) SELECT count(strFormID) FROM TempMain';
@@ -311,6 +312,137 @@ EXEC (@nvcSQL)
 END -- sp_Dashboard_Director_Site_Completed_Count
 
 
+GO
+
+
+
+
+
+/*
+sp_Dashboard_Director_Site_Export(01).sql
+Last Modified Date: 07/12/2018
+Last Modified By: Susmitha Palacherla
+
+
+Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 07/12/2018
+
+*/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Dashboard_Director_Site_Export' 
+)
+   DROP PROCEDURE [EC].[sp_Dashboard_Director_Site_Export]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--	====================================================================
+--	Author:			Susmitha Palacherla
+--	Create Date:	07/12/2018
+--	Description: *	This procedure is used for Export of Coaching data from Director Dashboard.
+--  Created during My dashboard move to new architecture - TFS 7137 - 07/12/2018
+--	=====================================================================
+CREATE PROCEDURE [EC].[sp_Dashboard_Director_Site_Export] 
+@nvcUserIdin nvarchar(10),
+@intSiteIdin int,
+@strSDatein datetime,
+@strEDatein datetime,
+@nvcStatus nvarchar(50)
+AS
+
+
+BEGIN
+
+
+SET NOCOUNT ON
+
+DECLARE	
+@strSDate nvarchar(10),
+@strEDate nvarchar(10),
+@nvcSQL nvarchar(max),
+@where nvarchar(1000)
+
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+
+SET @strSDate = convert(varchar(8), @strSDatein,112)
+SET @strEDate = convert(varchar(8), @strEDatein,112)
+
+SET @where = ''
+
+IF @nvcStatus  =  N'MySitePending' 
+BEGIN
+SET @where = @where +  ' AND [cl].[StatusID] NOT IN (-1,1,2) '
+END
+
+IF @nvcStatus  =   N'MySiteCompleted'
+BEGIN
+SET @where = @where +  ' AND [cl].[StatusID] = 1 '
+END
+
+
+SET @nvcSQL = 'SELECT [cl].[CoachingID] strLogID
+  ,[cl].[FormName] FormName
+  ,[cl].[ProgramName] ProgramName
+  ,[cl].[EmpID]	EmpID
+  ,[veh].[Emp_Name]	EmpName
+  ,[veh].[Sup_Name]	EmpSupName
+  ,[veh].[Mgr_Name]	EmpMgrName
+  ,[si].[City] FormSite
+  ,[so].[CoachingSource] FormSource
+  ,[so].[SubCoachingSource]	FormSubSource
+  ,[dcr].[CoachingReason] CoachingReason
+  ,[dscr].[SubCoachingReason] SubCoachingReason
+  ,[clr].[Value] Value
+  ,[s].[Status] FormStatus
+  ,[vehs].[Emp_Name] SubmitterName
+  ,[cl].[EventDate]	EventDate
+  ,[cl].[CoachingDate] CoachingDate
+  ,[cl].[VerintID] VerintID
+  ,[cl].[Description] Description
+  ,[cl].[CoachingNotes]	CoachingNotes
+  ,[cl].[SubmittedDate]	SubmittedDate
+  ,[cl].[SupReviewedAutoDate] SupReviewedAutoDate
+  ,[cl].[MgrReviewManualDate] MgrReviewManualDate
+  ,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
+  ,[cl].[MgrNotes] MgrNotes
+  ,[cl].[CSRReviewAutoDate]	EmpReviewAutoDate
+  ,[cl].[CSRComments] EmpComments
+FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+JOIN [EC].[Employee_Hierarchy] eh WITH (NOLOCK) ON eh.[EMP_ID] = veh.[EMP_ID]
+JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)  ON cl.EmpID = eh.Emp_ID 
+LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
+JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
+JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
+JOIN [EC].[DIM_Site] si ON cl.SiteID = si.SiteID 
+JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) ON cl.CoachingID = clr.CoachingID 
+JOIN [EC].[DIM_Coaching_Reason]dcr ON clr.CoachingReasonID = dcr.CoachingReasonID
+JOIN [EC].[DIM_Sub_Coaching_Reason]dscr ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID 
+WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
+AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + ''' ' +
+@where + ' ' + '
+AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
+AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+ORDER BY [cl].[CoachingID]'
+ 
+
+
+EXEC (@nvcSQL)	
+--PRINT @nvcSQL
+
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey]; 	 
+	    
+END -- sp_Dashboard_Director_Site_Coaching_Export
 GO
 
 
@@ -341,6 +473,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -469,7 +602,7 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
 	@where + ' ' + '
 	AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
-	AND (eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+	AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin+ ''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
    	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name]
   ) x 
 )
@@ -533,6 +666,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 --	====================================================================
@@ -615,7 +749,7 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
 	@where + ' ' + '
 	AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
-	AND (eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+	AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin+ ''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
    	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name]
    ) x 
 ) SELECT count(strFormID) FROM TempMain';
@@ -630,6 +764,10 @@ EXEC (@nvcSQL)
 END -- sp_Dashboard_Director_Site_Pending_Count
 
 GO
+
+
+
+
 
 
 
@@ -658,6 +796,9 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 
 
 
@@ -749,7 +890,7 @@ AS
 	AND wl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
 	AND wl.Active = 1
 	AND wl.siteID <> -1
-	AND (eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+	AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin+ ''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
 	AND convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
 	GROUP BY [wl].[FormName], [wl].[WarningID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [wl].[SubmittedDate], [vehs].[Emp_Name]
@@ -783,9 +924,8 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_Dashboard_Director_Site_Warning
 
-
-
 GO
+
 
 
 
@@ -816,6 +956,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 
@@ -866,7 +1008,7 @@ AS
 	AND wl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
 	AND wl.Active = 1
 	AND wl.siteID <> -1
-	AND (eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+	AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin+ ''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
 	AND convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
 	GROUP BY [wl].[FormName], [wl].[WarningID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [wl].[SubmittedDate], [vehs].[Emp_Name]
@@ -879,8 +1021,6 @@ EXEC (@nvcSQL)
 
 	    
 END -- sp_Dashboard_Director_Site_Warning_Count
-
-
 GO
 
 
@@ -912,9 +1052,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 
 
@@ -966,7 +1103,7 @@ SET @nvcSQL = '
 		(SELECT DISTINCT si.siteid, eh.Emp_Site City
 		FROM EC.Employee_Hierarchy eh JOIN EC.DIM_Site si
         ON eh.Emp_Site = si.City
-        WHERE (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')) si
+        WHERE (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')) si
 
 	    LEFT JOIN
 	    (
@@ -976,7 +1113,7 @@ SET @nvcSQL = '
 			   ON cl.EmpID = eh.Emp_ID 	
 			   WHERE convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 			   AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-			   AND (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+			   AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 			   AND cl.StatusID NOT IN (1,2)
 			   AND NOT (cl.siteID = -1 OR cl.StatusID = -1)
 			   GROUP BY site.City) b ON si.City = b.City
@@ -988,7 +1125,7 @@ SET @nvcSQL = '
            ON cl.EmpID = eh.Emp_ID
 		   WHERE convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 		   AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-		   AND (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+		   AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 		   AND cl.StatusID = 1
 		   AND NOT (cl.siteID = -1 OR cl.StatusID = -1)
 		   GROUP BY site.City) c ON si.City = c.City
@@ -1000,8 +1137,10 @@ SET @nvcSQL = '
                  ON wl.EmpID = eh.Emp_ID
 		         WHERE convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 			     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-				 AND (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+				 AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 				 AND wl.siteID <> -1 
+				 AND wl.StatusID = 1
+				 AND wl.Active = 1
 				 GROUP BY site.City) d ON si.City = d.City
      ORDER BY si.City'
 
@@ -1023,6 +1162,9 @@ Return(@@ERROR);
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_Dashboard_Director_Summary_Count
+
+
+
 
 
 
@@ -1055,6 +1197,10 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
 
 
 
@@ -1105,7 +1251,7 @@ SET @nvcSQL = ';WITH IncludeStatus AS
 			     ON cl.EmpID = eh.Emp_ID
 			     WHERE convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 			     AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-                 AND(eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+                 AND(eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 				 AND cl.StatusID not in (1,2)
 				 AND NOT (cl.siteID = -1 OR cl.StatusID = -1)
 				 GROUP BY si.City, st.Status
@@ -1119,9 +1265,10 @@ SET @nvcSQL = ';WITH IncludeStatus AS
 			     ON wl.EmpID = eh.Emp_ID
 				 WHERE convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 			     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-                 AND (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
+                 AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
 				 AND wl.StatusID = 1
 				 AND wl.siteID <> -1 
+				 AND wl.Active = 1
 				 GROUP BY si.City, st.Status)
 
 
@@ -1131,7 +1278,7 @@ SET @nvcSQL = ';WITH IncludeStatus AS
 				 (SELECT DISTINCT eh.Emp_Site City
 		         FROM EC.Employee_Hierarchy eh JOIN EC.DIM_Site si
                  ON eh.Emp_Site = si.City
-		         WHERE (eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + '''))  site CROSS JOIN IncludeStatus st LEFT JOIN Counts wc
+		         WHERE (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + '''))  site CROSS JOIN IncludeStatus st LEFT JOIN Counts wc
 				 ON site.City = wc.City  
 				 AND st.Status = wc.status 
 				 ORDER BY site.City'
@@ -1153,9 +1300,6 @@ ErrorHandler:
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_Dashboard_Director_Summary_Count_ByStatus
-
-
-
 
 GO
 
@@ -1684,6 +1828,7 @@ END --sp_Dashboard_Summary_Count_ByStatus
 
 
 GO
+
 
 
 
@@ -7338,6 +7483,8 @@ GO
 
 
 
+
+
 /*
 sp_SelectReviewFrom_Coaching_Log_Reasons(02).sql
 
@@ -8309,6 +8456,7 @@ END -- sp_Select_Reasons_By_ReportCode
 
 
 GO
+
 
 
 
@@ -9643,6 +9791,7 @@ END --sp_Update_Review_Coaching_Log_Manager_Pending_Research
 
 
 GO
+
 
 
 

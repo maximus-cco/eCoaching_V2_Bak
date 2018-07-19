@@ -1,0 +1,113 @@
+/*********************************
+
+Database instances and databases
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+****************************************
+
+
+Run script for one index at a time.
+
+
+***********************************/
+
+--1.IDX_Historical_Dashboard_ACL_Role
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Historical_Dashboard_ACL_Role') 
+    DROP INDEX IDX_Historical_Dashboard_ACL_Role ON [EC].[Historical_Dashboard_ACL]; 
+GO
+
+
+CREATE INDEX IDX_Historical_Dashboard_ACL_Role ON [EC].[Historical_Dashboard_ACL] ([Role]) 
+INCLUDE ([Row_ID], [End_Date], [User_LanID])
+GO
+
+
+
+--*************************************************************************
+
+
+--2.IDX_EmployeeID_To_LanID_StartDate_EndDate
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_EmployeeID_To_LanID_StartDate_EndDate') 
+    DROP INDEX IDX_EmployeeID_To_LanID_StartDate_EndDate ON [EC].[EmployeeID_To_LanID]; 
+GO
+
+
+
+CREATE INDEX IDX_EmployeeID_To_LanID_StartDate_EndDate ON [EC].[EmployeeID_To_LanID] ([StartDate], [EndDate]) INCLUDE ([LanID])
+GO
+
+
+
+--*************************************************************************
+
+--3.IDX_EmployeeID_To_LanID_StartDate_EndDate_2
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_EmployeeID_To_LanID_StartDate_EndDate_2') 
+    DROP INDEX IDX_EmployeeID_To_LanID_StartDate_EndDate_2 ON [EC].[EmployeeID_To_LanID]; 
+GO
+
+
+
+CREATE INDEX IDX_EmployeeID_To_LanID_StartDate_EndDate_2 ON [EC].[EmployeeID_To_LanID] ([StartDate], [EndDate]) INCLUDE ([EmpID], [LanID])
+GO
+
+
+
+--*************************************************************************
+
+--4.IDX_Coaching_Log_StatusID_EmpID
+
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Coaching_Log_StatusID_EmpID') 
+    DROP INDEX IDX_Coaching_Log_StatusID_EmpID ON [EC].[Coaching_Log]; 
+GO
+
+CREATE INDEX IDX_Coaching_Log_StatusID_EmpID ON [EC].[Coaching_Log] ([StatusID], [EmpID]) INCLUDE ([CoachingID], [FormName], [SourceID], [SubmitterID], [SubmittedDate])
+GO
+
+
+
+--*************************************************************************
+
+--5.IDX_Warning_Log_StatusID_SiteID
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Warning_Log_StatusID_SiteID') 
+    DROP INDEX IDX_Warning_Log_StatusID_SiteID ON [EC].[Warning_Log]; 
+GO
+
+
+CREATE INDEX IDX_Warning_Log_StatusID_SiteID ON [EC].[Warning_Log] ([StatusID],[SiteID]) INCLUDE ([EmpID])
+GO
+
+
+
+--*************************************************************************
+
+
+
+--6. IDX_Coaching_Log_SubmitterID_StatusID
+
+IF EXISTS (SELECT name FROM sys.indexes
+            WHERE name = N'IDX_Coaching_Log_SubmitterID_StatusID') 
+    DROP INDEX IDX_Coaching_Log_SubmitterID_StatusID ON [EC].[Coaching_Log]; 
+GO
+
+
+
+CREATE INDEX IDX_Coaching_Log_SubmitterID_StatusID ON [EC].[Coaching_Log] ([SubmitterID],[StatusID]) INCLUDE ([FormName], [SourceID], [EmpID], [SubmittedDate])
+GO
+
+
+
+--*************************************************************************

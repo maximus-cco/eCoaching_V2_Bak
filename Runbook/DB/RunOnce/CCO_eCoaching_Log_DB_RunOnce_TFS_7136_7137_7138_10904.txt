@@ -6,7 +6,8 @@ TFS 7138 – Move My Dashboard to new architecture
 TFS 10904 – Move Surveys to new architecture
 
 
-Open in an ssms window pointing to eCoaching DB in target environment and run with nothing selected
+Open in an ssms window pointing to eCoaching DB in target environment.
+Run one step at a time.
 
 
 
@@ -53,6 +54,7 @@ GO
 
 
 -- Begin 3A
+
 SET ANSI_NULLS ON
 GO
 
@@ -76,6 +78,7 @@ GO
 
 
 --Begin 3B
+
 INSERT INTO [EC].[UI_User_Role]
            ([RoleName],[RoleDescription])
      VALUES
@@ -99,6 +102,7 @@ GO
 
 
 --Begin 4A
+
 CREATE TABLE [EC].[UI_Role_Page_Access](
 	[RoleID] [int] NOT NULL,
 	[RoleName] [nvarchar](40) NOT NULL,
@@ -108,11 +112,13 @@ CREATE TABLE [EC].[UI_Role_Page_Access](
 	) ON [PRIMARY]
 
 GO
+
 -- End 4A
 
 
 
 --Begin 4B
+
 INSERT INTO [EC].[UI_Role_Page_Access]
            ([RoleID]
            ,[RoleName]
@@ -243,3 +249,34 @@ GO
 --End 6B
 
 --*******************************************************
+
+
+
+-- 7 Eamil Notifications table
+
+
+--select * from [EC].[Email_Notifications]
+--where [Body] like 'A new eCoaching Log has been entered on your behalf.%'
+
+
+--BEGIN 7A
+
+Update [EC].[Email_Notifications]
+set [Body] = 'A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.'
+where [Body] like 'A new eCoaching Log has been entered on your behalf.%'
+
+
+--END 7A
+
+
+--select * from [EC].[Email_Notifications]
+--where [Body] like 'A new eCoaching Log has been entered and requires your action. Please click on the link below to review and acknowledge the eCL entered on%'
+
+
+--BEGIN 7B
+
+Update [EC].[Email_Notifications]
+set [Body] = 'A new eCoaching Log has been entered and requires your action. Please click on the link below to review and acknowledge the eCL entered on <strong>strDateTime</strong>.'
+where [Body] like 'A new eCoaching Log has been entered and requires your action. Please click on the link below to review and acknowledge the eCL entered on%'
+
+--END 7B
