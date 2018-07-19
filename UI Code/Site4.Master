@@ -1,0 +1,41 @@
+<%@ Master Language="VB" AutoEventWireup="false" CodeBehind="Site4.master.vb" Inherits="eCoachingFixed.Site4" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <script type="text/javascript">
+	// Redirect to new eCoaching
+	var oldHref = window.location.href;
+	var newHref = oldHref.replace("coach", "eCoachingLog").replace("MySurvey.aspx", "Survey");
+	window.location.href = newHref;
+	
+        if (!window.console) window.console = {};
+        if (!window.console.log) window.console.log = function () { };
+    </script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>eCoaching - My Survey</title>
+    <link href="~/styles/bootstrap-3.2.0.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/styles/Site.css" rel="stylesheet" type="text/css" />
+    <script src="scripts/jquery-1.11.1.min.js"></script>
+    <script src="Scripts/bootstrap-3.2.0.min.js"></script>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div id="mysurvey-header-photo"></div>
+        <br /> 
+        <div>
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+    </form>
+
+    <br />
+
+    <asp:ContentPlaceHolder ID="ContentPlaceHolder2" runat="server">
+    </asp:ContentPlaceHolder>
+
+</body>
+</html>
