@@ -9,6 +9,8 @@ namespace eCoachingLog.ViewModels
 {
 	public class ReviewViewModel : IValidatableObject
 	{
+		public string ReviewPageName { get; set; }
+
 		public CoachingLogDetail LogDetail { get; set; }
 		public WarningLogDetail WarningLogDetail { get; set; }
 

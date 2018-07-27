@@ -10,6 +10,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using Vereyon.Web;
 
@@ -81,6 +82,8 @@ namespace eCoachingLog.Controllers
                 bool isDuplicate = false;
 				string logNameSaved = null;
 
+				string failMsg = "Failed to save your submission. Please ensure you have entered all required fields.";
+				string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
 				try
 				{
 					logNameSaved = this.newSubmissionService.Save(vm, GetUserFromSession(), out isDuplicate);
@@ -92,7 +95,7 @@ namespace eCoachingLog.Controllers
 					// Only send email for coaching logs
 					if (vm.IsWarning == null || !vm.IsWarning.Value)
 					{
-						var vmInSession = GetNewSubmissionVMFromSession();
+						var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
 						vmInSession.SourceId = vm.SourceId;
 						vmInSession.IsCse = vm.IsCse;
 						if (!SendEmail(logNameSaved)) // Failed to send email
@@ -103,17 +106,17 @@ namespace eCoachingLog.Controllers
 				}
 				catch (Exception ex)
 				{
-					logger.Warn("Exception: " + ex.StackTrace);
+					logger.Warn("Exception: " + ex);
 
 					if (string.IsNullOrEmpty(logNameSaved)) // Failed to save
 					{
 						if (isDuplicate) // Same log already exists
 						{
-							FlashMessage.Info("A warning with the same category and type already exists. Please review your warning section in the My Dashboard for details.");
+							FlashMessage.Info(duplicateMsg);
 						}
 						else
 						{
-							FlashMessage.Warning("Failed to save your submission.");
+							FlashMessage.Warning(failMsg);
 						}
 					}
 					return StayOnThisPage(vm);
@@ -137,9 +140,9 @@ namespace eCoachingLog.Controllers
 
         private ActionResult StayOnThisPage(NewSubmissionViewModel vm)
         {
-            // Repopluate vm from data stored in session so it will be displayed on the page
-            NewSubmissionViewModel vmInSession = GetNewSubmissionVMFromSession();
-            vm.ModuleSelectList = vmInSession.ModuleSelectList;
+			// Repopluate vm from data stored in session so it will be displayed on the page
+			var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+			vm.ModuleSelectList = vmInSession.ModuleSelectList;
             vm.SiteSelectList = vmInSession.SiteSelectList;
             vm.EmployeeSelectList = vmInSession.EmployeeSelectList;
             vm.ProgramSelectList = vmInSession.ProgramSelectList;
@@ -149,7 +152,7 @@ namespace eCoachingLog.Controllers
             vm.UserLanId = vmInSession.UserLanId;
             if (!(vm.IsWarning.HasValue && vm.IsWarning.Value))
             {
-                vm.CoachingReasons = GetCoachReasonsInSession(vm.CoachingReasons);
+                vm.CoachingReasons = SyncCoachReasons(vm.CoachingReasons);
 
                 vm.CallTypeSelectList = vmInSession.CallTypeSelectList;
                 vm.SourceSelectList = vmInSession.SourceSelectList;
@@ -250,7 +253,7 @@ namespace eCoachingLog.Controllers
             }
             else // coaching
             {
-                vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, specialReasonPriority, vm.Employee.LanId);
+                vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, specialReasonPriority);
                 vm.SourceSelectList = GetSources(isCoachingByYou);
                 vm.ShowWarningQuestions = false;
             }
@@ -406,7 +409,7 @@ namespace eCoachingLog.Controllers
             return PartialView("_NewSubmission", vm);
         }
 
-        private List<CoachingReason> GetCoachingReasons(int iModuleId, bool isCoachingByYou, bool isCse, int priority, string empLanId)
+        private List<CoachingReason> GetCoachingReasons(int iModuleId, bool isCoachingByYou, bool isCse, int priority)
         {
             string directOrIndirect = GetDirectOrIndirect(isCoachingByYou);//"direct";
             int moduleId = GetNewSubmissionVMFromSession().ModuleId;
@@ -431,7 +434,7 @@ namespace eCoachingLog.Controllers
             bool coachingByYou = isCoachingByYou.HasValue ? isCoachingByYou.Value : false;
             bool cse = isCse.HasValue ? isCse.Value : false;
             NewSubmissionViewModel vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
-            vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, coachingByYou, cse, 2, vm.Employee.LanId);
+            vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, coachingByYou, cse, 2);
             // Save in session
             vm.IsCoachingByYou = isCoachingByYou;
             vm.IsCse = isCse;
@@ -440,86 +443,122 @@ namespace eCoachingLog.Controllers
         }
 
         [HttpPost]
-        public ActionResult HandleCoachingReasonClicked(bool isChecked, int reasonId)
+        public ActionResult HandleCoachingReasonClicked(bool isChecked, int reasonId, int reasonIndex)
         {
-            var vm = GetNewSubmissionVMFromSession();
-            if (isChecked)
-            {
-                HandleCoachingReasonSelected(vm, reasonId);
-            }
-            else
-            {
-                HandleCoachingReasonUnSelected(vm, reasonId);
-            }
-            return PartialView("_NewSubmissionCoachingReasons", vm);
-        }
+            var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
+			CoachingReason thisReason = null;
+			try
+			{
+				thisReason = vm.CoachingReasons.First(cr => cr.ID == reasonId);
+			}
+			catch (InvalidOperationException ioe)
+			{
+				// Something is wrong, log the exception
+				User user = GetUserFromSession();
+				var userId = user == null ? "usernull" : user.EmployeeId;
+				int reasonsInSessionCount = vm.CoachingReasons == null ? -1 : vm.CoachingReasons.Count;
+				StringBuilder msg = new StringBuilder("Exception: ");
+				msg.Append("[").Append(userId).Append("]")
+					.Append("|ReasonsInSessionCount").Append("[").Append(reasonsInSessionCount).Append("]")
+					.Append("|ReasonIDToSearch").Append("[").Append(reasonId).Append("]: ")
+					.Append(ioe.Message)
+					.Append(Environment.NewLine)
+					.Append(ioe.StackTrace);
+				logger.Warn(msg);
 
-        private void HandleCoachingReasonUnSelected(NewSubmissionViewModel vm, int reasonId)
+				// Reload Coaching Reasons to Session if user is not null (means session not expired yet)
+				// In this case, coaching reasons are reset, and user will lose his/her selections, still better than kicking user out of the system
+				if (user != null)
+				{
+					bool isSpecialResaon = vm.IsCse.HasValue && vm.IsCse.Value ? true : false;
+					bool isCoachingByYou = !vm.IsCoachingByYou.HasValue ? false : vm.IsCoachingByYou.Value;
+					vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, 2);
+					thisReason = vm.CoachingReasons.First(cr => cr.ID == reasonId);
+
+					StringBuilder info = new StringBuilder();
+					info.Append("[").Append(userId).Append("]: ")
+						.Append("Reload coaching reasons to session from database.");
+					logger.Warn(info);
+				}
+			}
+
+			thisReason.IsChecked = isChecked;
+			thisReason.SubReasons = GetSubReasons(reasonId);
+			List<string> values = GetCoachValues(reasonId);
+			if (values.Any(s => s.Contains("Opportunity")))
+			{
+				thisReason.OpportunityOption = true;
+			}
+			if (values.Any(s => s.Contains("Reinforcement")))
+			{
+				thisReason.ReinforcementOption = true;
+			}
+			
+			// _NewSubmissionCoachingReason.cshtml needs it.
+			ViewData["index"] = reasonIndex;
+			return PartialView("_NewSubmissionCoachingReason", thisReason);
+		}
+
+		private List<CoachingSubReason> GetSubReasons(int reasonId)
+		{
+			var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
+			string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? "Direct" : "Indirect";
+			return this.empLogService.GetCoachingSubReasons(reasonId, vm.ModuleId, directOrIndirect, GetUserFromSession().EmployeeId);
+		}
+
+		private List<string> GetCoachValues(int reasonId)
+		{
+			var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
+			string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? "Direct" : "Indirect";
+			return this.empLogService.GetValues(reasonId, directOrIndirect, vm.ModuleId);
+		}
+
+        private List<CoachingReason> SyncCoachReasons(List<CoachingReason> crs)
         {
-            var thisCoachReason = vm.CoachingReasons.Where(x => x.ID == reasonId).ToList()[0];
-            // Set the coach reason to be unselected
-            thisCoachReason.IsChecked = false;
-            // Do not show value selections (Opportunity, Reinforcement)
-            thisCoachReason.OpportunityOption = false;
-            thisCoachReason.ReinforcementOption = false;
-            // Reset value selection to none
-            thisCoachReason.IsOpportunity = null;
-            // Reset all sub reasons to be unselected
-            thisCoachReason.SubReasonIds = null;
-        }
+			NewSubmissionViewModel vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
+			// if vm is null, something must be wrong, don't check if vm is null,
+			List<CoachingReason> reasonsInSession = vm.CoachingReasons;
+			foreach (CoachingReason cr in crs)
+			{
+				CoachingReason crToChange = null;
+				try
+				{
+					crToChange = reasonsInSession.First(c => c.ID == cr.ID);
+					crToChange.IsChecked = cr.IsChecked;
+					crToChange.IsOpportunity = cr.IsOpportunity;
+					crToChange.SubReasonIds = cr.SubReasonIds;
+				}
+				catch (InvalidOperationException ioe)
+				{
+					// Something is wrong, log the exception
+					User user = GetUserFromSession();
+					var userId = user == null ? "usernull" : user.EmployeeId;
+					int reasonsInSessionCount = reasonsInSession == null ? -1 : reasonsInSession.Count;
+					StringBuilder msg = new StringBuilder("Exception: ");
+					msg.Append("[").Append(userId).Append("]")
+						.Append("|ReasonsInSessionCount").Append("[").Append(reasonsInSessionCount).Append("]")
+						.Append("|ReasonIDToSearch").Append("[").Append(cr.ID).Append("]: ")
+						.Append(ioe.Message)
+						.Append(Environment.NewLine)
+						.Append(ioe.StackTrace);
+					logger.Warn(msg);
 
-        private void HandleCoachingReasonSelected(NewSubmissionViewModel vm, int reasonId)
-        {
-			int moduleId = GetNewSubmissionVMFromSession().ModuleId;
-            var thisCoachReason = vm.CoachingReasons.Where(x => x.ID == reasonId).ToList()[0];
-            string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? "Direct" : "Indirect";
-            List<string> values = this.empLogService.GetValues(reasonId, directOrIndirect, moduleId);
-            List<CoachingSubReason> subReasonList = this.empLogService.GetCoachingSubReasons(reasonId, moduleId, directOrIndirect, GetUserFromSession().EmployeeId);
-            if (values.Any(s => s.Contains("Opportunity")))
-            {
-                thisCoachReason.OpportunityOption = true;
-            }
-            if (values.Any(s => s.Contains("Reinforcement")))
-            {
-                thisCoachReason.ReinforcementOption = true;
-            }
+					// Reload Coaching Reasons to Session if user is not null (means session not expired yet)
+					// In this case, coaching reasons are reset, and user will lose his/her selections, still better than kicking user out of the system
+					if (user != null)
+					{
+						bool isSpecialResaon = vm.IsCse.HasValue && vm.IsCse.Value ? true : false;
+						bool isCoachingByYou = !vm.IsCoachingByYou.HasValue ? false : vm.IsCoachingByYou.Value;
+						reasonsInSession = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, 2);
 
-            // Save in session
-            thisCoachReason.SubReasons = subReasonList;
-            thisCoachReason.IsChecked = true;
-        }
-
-        [HttpPost]
-        public ActionResult HandleCoachingValueClicked(int reasonId, bool isOpportunity)
-        {
-            var vm = GetNewSubmissionVMFromSession();
-            var thisCoachReason = vm.CoachingReasons.Where(x => x.ID == reasonId).ToList()[0];
-            thisCoachReason.IsOpportunity = isOpportunity;
-
-            return PartialView("_NewSubmissionCoachingReasons", vm);
-        }
-
-        [HttpPost]
-        public ActionResult HandleSubreasonsSelected(int[] idsSelected, int reasonId)
-        {
-            var vm = GetNewSubmissionVMFromSession();
-            var thisCoachReason = vm.CoachingReasons.Where(x => x.ID == reasonId).ToList()[0];
-            // Save selected sub reason ids in session
-            thisCoachReason.SubReasonIds = idsSelected;
-            return PartialView("_NewSubmissionCoachingReasons", vm);
-        }
-
-        private List<CoachingReason> GetCoachReasonsInSession(List<CoachingReason> crs)
-        {
-            List<CoachingReason> reasonsInSession = GetNewSubmissionVMFromSession().CoachingReasons;
-
-            foreach (CoachingReason cr in crs)
-            {
-                var crToChange = reasonsInSession.First(c => c.ID == cr.ID);
-                crToChange.IsChecked = cr.IsChecked;
-                crToChange.IsOpportunity = cr.IsOpportunity;
-                crToChange.SubReasonIds = cr.SubReasonIds;
-            }
+						StringBuilder info = new StringBuilder();
+						info.Append("[").Append(userId).Append("]: ")
+							.Append("Reload coaching reasons to session from database. User lost selections.");
+						logger.Warn(info);
+					}
+					break;
+				}
+			}
 
             return reasonsInSession;
         }

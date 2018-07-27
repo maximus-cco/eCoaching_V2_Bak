@@ -8,6 +8,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
@@ -29,14 +30,17 @@ namespace eCoachingLog.Controllers
 		public ActionResult Index(int logId, bool isCoaching)
         {
 			logger.Debug("Entered Review.Index: logId=" + logId + ", isCoaching=" + isCoaching);
-			if (User == null)
-			{
-				logger.Debug("User is NULL!!!!!");
-			}
 
 			var user = GetUserFromSession();
+			if (user == null)
+			{
+				logger.Error("User is NULL!!!!!!");
+			}
+
 			int currentPage = (int)Session["currentPage"];
 			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
+			// Get coaching reasons for this log
+			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching);
 
 			// Check if the user is authorized to view the log detail
 			bool isAuthorizedToView = this.reviewService.IsAccessAllowed(currentPage, logDetail, isCoaching, user);
@@ -46,12 +50,36 @@ namespace eCoachingLog.Controllers
 				return PartialView("_Unauthorized");
 			}
 
-			// Get coaching reasons for this log
-			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching);
+			try
+			{
+				var vm = Init(user, currentPage, logDetail, isCoaching);
+				return PartialView(vm.ReviewPageName, vm);
+			}
+			catch (Exception ex)
+			{
+				var userId = user == null ? "usernull" : user.EmployeeId;
+				StringBuilder msg = new StringBuilder("Failed to load detail: ");
+				msg.Append("[")
+					.Append(userId)
+					.Append("] ")
+					.Append("Log[")
+					.Append(logId)
+					.Append("]: ")
+					.Append(ex.Message)
+					.Append(Environment.NewLine)
+					.Append(ex.StackTrace);
+				logger.Warn(msg);
 
-			// View only if user clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning
-			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage 
-				|| Constants.PAGE_SURVEY == currentPage 
+				return PartialView("_Error");
+			}
+        }
+
+		private ReviewViewModel Init(User user, int currentPage, BaseLogDetail logDetail, bool isCoaching)
+		{
+			// Review - Read Only 
+			// User clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning
+			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage
+				|| Constants.PAGE_SURVEY == currentPage
 				|| Constants.PAGE_MY_SUBMISSION == currentPage
 				// Warning
 				|| !isCoaching
@@ -81,16 +109,11 @@ namespace eCoachingLog.Controllers
 					reviewVM.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Coaching on ";
 				}
 
-				if (isCoaching)
-				{
-					return PartialView("_ViewCoachingLog", reviewVM);
-				}
-				else
-				{
-					return PartialView("_ViewWarningLog", reviewVM);
-				}
+				reviewVM.ReviewPageName = isCoaching ? "_ViewCoachingLog" : "_ViewWarningLog";
+				return reviewVM;
 			}
 
+			// Review - Editable
 			var vm = new ReviewViewModel();
 			vm.LogDetail = (CoachingLogDetail)logDetail;
 			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
@@ -129,15 +152,15 @@ namespace eCoachingLog.Controllers
 
 				// There are 3 types of review forms.
 				// Default all to false.
-				vm.IsResearchPendingForm = false;	// Research Form - determine if research is required
-				vm.IsCsePendingForm = false;		// CSE Form - determine if it is CSE
-				vm.IsRegularPendingForm = false;	// Regular Pending Form - neither research nor CSE needed
+				vm.IsResearchPendingForm = false;   // Research Form - determine if research is required
+				vm.IsCsePendingForm = false;        // CSE Form - determine if it is CSE
+				vm.IsRegularPendingForm = false;    // Regular Pending Form - neither research nor CSE needed
 
 				vm.IsResearchPendingForm = IsResearchPendingForm(vm, user);
 				if (!vm.IsResearchPendingForm) // Not Research Form
 				{
 					vm.IsCsePendingForm = IsCsePendingForm(vm, user);
-					if (!vm.IsCsePendingForm)	// Not Research Form, not CSE Form, so this is regular pending review form
+					if (!vm.IsCsePendingForm)   // Not Research Form, not CSE Form, so this is regular pending review form
 					{
 						vm.IsRegularPendingForm = true;    // Regular Pending Form.
 						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
@@ -147,25 +170,21 @@ namespace eCoachingLog.Controllers
 						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 						vm.InstructionText = Constants.REVIEW_CSE;
 					}
-				} 
+				}
 				else // Research
 				{
 					vm.IsReviewByManager = string.CompareOrdinal(Constants.USER_ROLE_MANAGER, user.Role) == 0;
 					vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-					// Uncoachable reason Dropdown
+														  // Uncoachable reason Dropdown
 					IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
 					IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);
 					vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
 				} // end if (!vm.IsResearchPendingForm)
 			} // end if (ShowAckPartial(vm))
 
-			if (!isCoaching)
-			{
-				return PartialView("_ReviewWarningHome", vm);
-			}
-
-			return PartialView("_ReviewCoachingHome", vm);
-        }
+			vm.ReviewPageName = isCoaching ? "_ReviewCoachingHome" : "_ReviewWarningHome";
+			return vm;
+		}
 
 		[HttpPost]
 		public ActionResult Save(ReviewViewModel vm)
@@ -183,8 +202,15 @@ namespace eCoachingLog.Controllers
 				} 
 				catch (Exception ex)
 				{
-					logger.Error(string.Format("Failed to update log [{0}].", vm.LogDetail.LogId));
-					logger.Error(ex.Message);
+					var userId = user == null ? "usernull" : user.EmployeeId;
+					var logId = vm.LogDetail == null ? -99999 : vm.LogDetail.LogId;
+					StringBuilder msg = new StringBuilder("Exception: ");
+					msg.Append("[").Append(userId).Append("]")
+						.Append("|Failed to update log [").Append(logId).Append("]: ")
+						.Append(ex.Message)
+						.Append(Environment.NewLine)
+						.Append(ex.StackTrace);
+					logger.Warn(msg);
 				}
 
 				return Json(new

@@ -15,10 +15,10 @@ namespace eCoachingLog.Controllers
             User user = (User)Session["AuthenticatedUser"];
             if (user == null)
             {
-                logger.Debug("User in session is null!!!");
+                logger.Error("User in session is null!!!");
             }
 
-            return (User)Session["AuthenticatedUser"];
+            return user;
         }
     }
 }

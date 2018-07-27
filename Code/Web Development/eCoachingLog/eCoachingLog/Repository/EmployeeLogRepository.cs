@@ -97,8 +97,8 @@ namespace eCoachingLog.Repository
 						logDetail.LogManagerEmpId = dataReader["strCLMgrID"].ToString();
                         logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
                         logDetail.CoachingNotes = dataReader["txtCoachingNotes"].ToString();
-                        logDetail.Behavior = dataReader["txtDescription"].ToString();
-                        logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
+						logDetail.Behavior = dataReader["txtDescription"].ToString();
+						logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
                         logDetail.EmployeeComments = dataReader["txtCSRComments"].ToString();
                         logDetail.EmployeeReviewDate = eCoachingLogUtil.AppendPdt(dataReader["CSRReviewAutoDate"].ToString());
                         logDetail.SupReviewedAutoDate = eCoachingLogUtil.AppendPdt(dataReader["SupReviewedAutoDate"].ToString());
@@ -335,13 +335,15 @@ namespace eCoachingLog.Repository
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
                 {
-                    while (dataReader.Read())
+					int index = 0;
+					while (dataReader.Read())
                     {
                         CoachingReason cr = new CoachingReason();
                         cr.ID = (int)dataReader["CoachingReasonID"];
                         cr.Text = dataReader["CoachingReason"].ToString();
-
+						cr.Index = index;
                         coachingReasons.Add(cr);
+						index++;
                     } // end while
                 } // end using SqlDataReader
             } // end using SqlCommand
@@ -511,8 +513,16 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@nvcSearch", search);
 				command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
 
-				connection.Open();
-				count = (int) command.ExecuteScalar();
+				try
+				{
+					connection.Open();
+					count = (int)command.ExecuteScalar();
+				}
+				catch (Exception ex)
+				{
+					logger.Error("Failed to get log total: " + ex.Message);
+					throw new Exception(ex.Message);
+				}
 			}
 			return count;
 		}

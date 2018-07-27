@@ -377,6 +377,8 @@
     <Content Include="Views\MyDashboard\_DefaultDirectorBottom.cshtml" />
     <Content Include="Views\MyDashboard\_MyCompletedSearch.cshtml" />
     <Content Include="Views\MyDashboard\_MySubmissionSearch.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmissionCoachingReason.cshtml" />
+    <Content Include="Views\Review\_Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

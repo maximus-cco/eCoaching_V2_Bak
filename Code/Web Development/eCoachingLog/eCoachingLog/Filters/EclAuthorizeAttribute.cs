@@ -1,5 +1,4 @@
 ﻿using eCoachingLog.Models.User;
-using eCoachingLog.Services;
 using log4net;
 using System.Web;
 using System.Web.Mvc;
@@ -18,7 +17,8 @@ namespace eCoachingLog.Filters
             base.OnAuthorization(filterContext);
 
             HttpSessionStateBase session = filterContext.HttpContext.Session;
-            if (session.IsNewSession)
+			User user = (User)session["AuthenticatedUser"];
+			if (session.IsNewSession || user == null) // Check if user is null as well.Sometimes it is new session, but it tells me false
             {
                 logger.Debug("returning from OnAuthorization - session is NEW!");
 
@@ -27,16 +27,11 @@ namespace eCoachingLog.Filters
                 return;
             }
 
-            IUserService us = new UserService();
-            User user = (User)session["AuthenticatedUser"];
-
 			// Access control string: controller name
 			string controllerName = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName;
 			// Action name
 			string actionName = filterContext.ActionDescriptor.ActionName;
 			bool isAccessAllowed = false;
-			// TODO: have a db table configured to allow access each controller based on jobcodes
-			// sp (getuser) to return controller access permission as well
 			if ("NewSubmission" == controllerName)
 			{
 				isAccessAllowed = user.IsAccessNewSubmission;

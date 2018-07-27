@@ -28,31 +28,18 @@
         validateCoachingReasons();
     }
 
-    $('body').on('click', '.coaching-values :radio', function () {
-        var isOpportunity = $(this).val();
-        var reasonId = $(this).closest('.coaching-reason').find('input:hidden.reason-id').val();
-        // Ajax to server to update viewmodel in session
-        $.ajax({
-            type: 'POST',
-            url: handleCoachingValueClicked,
-            data: { reasonId: reasonId, isOpportunity: isOpportunity },
-            success: function (result) {
-                $('#coaching-reasons').html(result);
-            }
-        })
-    });
-
     $('body').on('change', '.reason-checkbox', function () {
         var reasonId = $(this).closest('.coaching-reason').find('input:hidden.reason-id').val();
         var isChecked = $(this).is(':checked');
+        var reasonDivId = $(this).closest('div').attr("id");
+        var reasonIndex = $(this).nextAll('.reasonIndex').first().val();
         $.ajax({
-            type: 'POST',
-            url: handleCoachingReasonClicked,
-            // TODO: use reasonID instead
-            data: { isChecked: isChecked, reasonId: reasonId },
-            success: function (result) {
-                $('#coaching-reasons').html(result);
-            }
+        	type: 'POST',
+        	url: handleCoachingReasonClicked,
+        	data: { isChecked: isChecked, reasonId: reasonId, reasonIndex: reasonIndex },
+        	success: function (result) {
+        		$('#' + reasonDivId).html(result);
+        	}
         });
     });
 
@@ -318,7 +305,7 @@
 
     function validateCoachingReasons() {
         var coachingReasons = $('#coaching-reasons').find('.reason-checkbox:checkbox');
-        // Skip coaching reasons client validation if no reasons displayed
+    	// Skip coaching reasons client validation if no reasons displayed
         if (coachingReasons.length === 0) {
             return true;
         }
@@ -333,11 +320,8 @@
             errorElement.addClass('field-validation-valid').removeClass('field-validation-error').text('');
             selectedCoachingReasons.each(function () {
                 // validate associated radio buttons (opportunity, enhancement), and multiselect (sub reasons)
-                var opportunityRadioName = "CoachingReasons[" + $(this).attr('id') + "].IsOpportunity";
-                var isValidOpp = validateOpportunity(opportunityRadioName);
-                var subReasonMultiSelectId = "#CoachingReasons_" + $(this).attr('id') + "__SubReasonIds";
-                var subReasonMultiSelect = $(subReasonMultiSelectId);
-                var isValidSub = validateSubReasons(subReasonMultiSelect);
+                var isValidOpp = validateOpportunity($(this));
+                var isValidSub = validateSubReasons($(this));
                 isValid = isValid && isValidOpp && isValidSub;
             });
 
@@ -349,22 +333,22 @@
         return isValid;
     }
 
-    function validateOpportunity(opportunityRadioName) {
-        var errorElement = $('span[data-valmsg-for="' + opportunityRadioName + '"');
+    function validateOpportunity(target) {
+    	var errorElement = target.nextAll('.validation-value').first().find('span[data-valmsg-for="IsOpportunity"]');
         var errorMessage = 'Please make a selection.'
-        var isValid = $('input:radio[name="' + opportunityRadioName + '"]').is(':checked');
+        var isValid = target.nextAll('.coaching-values').find('input:radio[name*="IsOpportunity"]').is(':checked');
         if (!isValid) {
             errorElement.addClass('field-validation-error').removeClass('field-validation-valid').text(errorMessage);
         } else {
             errorElement.addClass('field-validation-valid').removeClass('field-validation-error').text('');
         }
-        return isValid;
+        return false;
     }
 
-    function validateSubReasons(subReasonMultiSelect) {
+    function validateSubReasons(target) {
         var errorMessage = 'Please select at least one sub reason.';
-        var errorElement = $('span[data-valmsg-for="' + subReasonMultiSelect.attr('name') + '"');
-        var $subReasons = subReasonMultiSelect.closest('.coaching-subreasons');
+        var errorElement = target.nextAll('.coaching-subreasons').first().find('span[data-valmsg-for="SubReasonIds"]');
+        var $subReasons = target.nextAll('.coaching-subreasons').first();
         var selectedSubReasons = $subReasons.find(':selected').length;
         var isValid = selectedSubReasons >= 1;
         if (!isValid) {

@@ -28,7 +28,7 @@
 
 	<div class='form-group mt-2' id='div-coaching-detail'>
 		<label for="DetailsCoached" class="required">Provide the details from the coaching session including action plans developed:</label>
-		@Html.TextAreaFor(m => m.DetailsCoached, new { @class = "form-control", @rows = "5" })
+		@Html.TextAreaFor(m => m.DetailsCoached, new { @class = "form-control", @rows = "5", maxlength = 3000 })
 		<div class="help-block">
 			Provide as much detail as possible.
 			<span id="detail-remaining" class="pull-right">3000 remaining</span>

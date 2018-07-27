@@ -44,7 +44,7 @@
 
 	<div class='form-group mt-2 @(@Model.ShowCommentTextBox ? "show" : "hide")'>
 		<label for="EmployeeCommentsTextBox">Provide any comments or feedback below:</label>
-		@Html.TextAreaFor(m => m.EmployeeComments, new { @class = "form-control", @rows = "5", id = "textarea-employee-comments" })
+		@Html.TextAreaFor(m => m.EmployeeComments, new { @class = "form-control", @rows = "5", id = "textarea-employee-comments", maxlength = 3000 })
 		<div class="help-block">
 			Provide as much detail as possible.
 			<span id="employee-comments" class="pull-right">3000 remaining</span>

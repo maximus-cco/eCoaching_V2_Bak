@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using eCoachingLog.Models.User;
+using log4net;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -10,7 +11,9 @@ namespace eCoachingLog.Filters
 
         public void OnException(ExceptionContext filterContext)
         {
-            logger.Error(filterContext.Exception);
+			User user = (User)filterContext.HttpContext.Session["AuthenticatedUser"];
+			var userId = user == null ? "usernull" : user.EmployeeId;
+			logger.Error("[" + userId + "] " + filterContext.Exception);
 
             // Error, redirect to error page
             if (filterContext.HttpContext.Request.IsAjaxRequest())

@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using eCoachingLog.Models.User;
+using log4net;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -16,7 +17,8 @@ namespace eCoachingLog.Filters
 
             var session = filterContext.HttpContext.Session;
             logger.Debug("!!!!!!!!!SessionID=" + session.SessionID);
-            if (session.IsNewSession)
+			User user = (User)session["AuthenticatedUser"];
+			if (session.IsNewSession || user == null) // To be safe, check user in session null as well
             {
                 // session has expired, redirect to session expired page
                 if (filterContext.HttpContext.Request.IsAjaxRequest())

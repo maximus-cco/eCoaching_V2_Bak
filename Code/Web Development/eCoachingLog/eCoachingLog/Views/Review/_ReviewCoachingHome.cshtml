@@ -40,7 +40,8 @@
 				<div class="mt-2">
 					<strong>Details of the behavior being coached:</strong>
 					<br />
-					@Html.Raw(HttpUtility.HtmlDecode(Model.LogDetail.Behavior))
+					@*@Html.Raw(HttpUtility.HtmlDecode(Model.LogDetail.Behavior))*@
+					@Html.Raw(Model.LogDetail.Behavior)
 				</ div >
 
 				<div class="mt-2 bg-success @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")">

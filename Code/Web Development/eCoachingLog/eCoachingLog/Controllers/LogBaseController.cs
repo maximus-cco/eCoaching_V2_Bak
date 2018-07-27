@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
@@ -48,9 +49,9 @@ namespace eCoachingLog.Controllers
 			int pageSize = length != null ? Convert.ToInt32(length) : 0;
 			int rowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
 			int totalRecords = 0;
+			User user = GetUserFromSession();
 			try
 			{
-				User user = GetUserFromSession();
 				List<LogBase> logs = empLogService.GetLogList(logFilter, user.EmployeeId, pageSize, rowStartIndex, sortBy, sortDirection, search);
 				totalRecords = empLogService.GetLogListTotal(logFilter, user.EmployeeId, search);
 				Session["TotalPending"] = totalRecords;
@@ -58,7 +59,16 @@ namespace eCoachingLog.Controllers
 			}
 			catch (Exception ex)
 			{
-				logger.Warn(ex.StackTrace);
+				var userId = user == null ? "usernull" : user.EmployeeId;
+				StringBuilder msg = new StringBuilder("Exception: ");
+				msg.Append("[")
+					.Append(userId)
+					.Append("]: ")
+					.Append(ex.Message)
+					.Append(Environment.NewLine)
+					.Append(ex.StackTrace);
+				logger.Warn(msg);
+
 				var errorMsg = "Data is currently unavailable, please try again later.";
 				return Json(new { draw = 1, recordsFiltered = 0, recordsTotal = 0, data = new List<LogBase>(), error = errorMsg }, JsonRequestBehavior.AllowGet);
 			}
