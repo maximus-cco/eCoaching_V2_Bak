@@ -6,6 +6,7 @@ using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace eCoachingLog.Services
 {
@@ -216,7 +217,7 @@ namespace eCoachingLog.Services
 			return reviewRepository.GetReasonsToSelect(reportCode);
 		}
 
-		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName)
+		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName, int logIdInSession)
 		{
 			// Strip potential harmful characters entered by the user
 			review.DetailsCoached = eCoachingLogUtil.CleanInput(review.DetailsCoached);
@@ -245,6 +246,11 @@ namespace eCoachingLog.Services
 			}
 
 			// unexpected pending form, should never reach here
+			StringBuilder sb = new StringBuilder("Unexpceted review form: ");
+			var userId = user == null ? "usernull" : user.EmployeeId;
+			sb.Append("[").Append(userId).Append("]")
+				.Append("|LogId[").Append(logIdInSession).Append("]");
+			logger.Warn(sb);
 			return false;
 		}
 
@@ -285,13 +291,15 @@ namespace eCoachingLog.Services
 			// Email CSR's comments to supervisor and manager 
 			if (success && review.LogDetail.ModuleId == Constants.MODULE_CSR && nextStatus == "Completed")
 			{
-				try
+				if(this.emailService.SendComments(review.LogDetail, review.EmployeeComments, emailTempFileName, logoFileName))
 				{
-					this.emailService.SendComments(review.LogDetail, review.EmployeeComments, emailTempFileName, logoFileName);
-				}
-				catch (Exception ex)
-				{
-					logger.Warn("Failed to send comments email for log [" + review.LogDetail.LogId + "]: " + ex.Message);
+					var userId = user == null ? "usernull" : user.EmployeeId;
+					var logId = review.LogDetail == null ? "logidnull" : review.LogDetail.LogId.ToString();
+					StringBuilder info = new StringBuilder("Failed to send comments email: ");
+					info.Append("[").Append(userId).Append("]")
+						.Append("|logid[").Append(logId).Append("].");
+	
+					logger.Warn(info);
 				}
 			}
 			return success;

@@ -30,6 +30,7 @@ namespace eCoachingLog.Controllers
 		public ActionResult Index(int logId, bool isCoaching)
         {
 			logger.Debug("Entered Review.Index: logId=" + logId + ", isCoaching=" + isCoaching);
+			Session["reviewLogId"] = logId;
 
 			var user = GetUserFromSession();
 			if (user == null)
@@ -198,12 +199,14 @@ namespace eCoachingLog.Controllers
 					// Update database
 					string logoFileName = Server.MapPath("~/Content/Images/ecl-logo-small.png");
 					string emailTempFileName = Server.MapPath("~/EmailTemplates/LogCompleted.html");
-					success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logoFileName);
+					int logIdInSession = (int) Session["reviewLogId"];
+					// Pass logIdInSession to log error if for some reason web form not posted back.
+					success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logoFileName, logIdInSession);
 				} 
 				catch (Exception ex)
 				{
 					var userId = user == null ? "usernull" : user.EmployeeId;
-					var logId = vm.LogDetail == null ? -99999 : vm.LogDetail.LogId;
+					var logId = vm.LogDetail == null ? "logidnull" : vm.LogDetail.LogId.ToString();
 					StringBuilder msg = new StringBuilder("Exception: ");
 					msg.Append("[").Append(userId).Append("]")
 						.Append("|Failed to update log [").Append(logId).Append("]: ")

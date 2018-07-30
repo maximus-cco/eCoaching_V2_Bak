@@ -6,6 +6,7 @@ using log4net;
 using System;
 using System.Net.Mail;
 using System.Net.Mime;
+using System.Text;
 
 namespace eCoachingLog.Services
 {
@@ -98,8 +99,14 @@ namespace eCoachingLog.Services
 			}
 			catch (Exception ex)
 			{
-				logger.Warn(string.Format("Failed to send email: {0}, {1}", ex.Message, ex.StackTrace));
-				logger.Warn(msg.Body);
+				StringBuilder info = new StringBuilder();
+				info.Append("Failed to send email: ")
+					.Append(ex.Message)
+					.Append(Environment.NewLine)
+					.Append(ex.StackTrace);
+
+				logger.Warn(info);
+				//logger.Warn(msg.Body);
 			}
 			return success;
 		}

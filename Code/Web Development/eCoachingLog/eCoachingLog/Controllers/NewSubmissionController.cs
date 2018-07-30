@@ -53,24 +53,13 @@ namespace eCoachingLog.Controllers
 
         private IEnumerable<SelectListItem> GetSources(bool isCoachingByYou)
         {
-            var vm = GetNewSubmissionVMFromSession();
-            string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? Constants.DIRECT : Constants.INDIRECT;
+            var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
+			string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? Constants.DIRECT : Constants.INDIRECT;
             int moduleId = vm.ModuleId;
             List<LogSource> sourceList = newSubmissionService.GetSourceListByModuleId(moduleId, directOrIndirect);
             sourceList.Insert(0, new LogSource { Id = -2, Name = "-- Select a Source --" });
             IEnumerable<SelectListItem> sources = new SelectList(sourceList, "Id", "Name");
             return sources;
-        }
-
-        private NewSubmissionViewModel GetNewSubmissionVMFromSession()
-        {
-            NewSubmissionViewModel vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
-            if (vm == null)
-            {
-                vm = InitNewSubmissionViewModel(); 
-                Session["newSubmissionVM"] = vm;
-            }
-            return vm;
         }
 
         [HttpPost]
@@ -100,7 +89,13 @@ namespace eCoachingLog.Controllers
 						vmInSession.IsCse = vm.IsCse;
 						if (!SendEmail(logNameSaved)) // Failed to send email
 						{
-							logger.Warn(string.Format("Failed to send email [%0]", logNameSaved));
+							var user = GetUserFromSession();
+							var userId = user == null ? "usernull" : user.EmployeeId;
+							StringBuilder msg = new StringBuilder("Failed to send email: ");
+							msg.Append("[").Append(userId).Append("]")
+								.Append("|logname[").Append(logNameSaved).Append("]");
+
+							logger.Warn(msg);
 						};
 					}
 				}
@@ -132,8 +127,8 @@ namespace eCoachingLog.Controllers
 
         private bool SendEmail(string logName)
         {
-            var vm = GetNewSubmissionVMFromSession();
-            var logo = Server.MapPath("~/Content/Images/ecl-logo-small.png");
+            var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
+			var logo = Server.MapPath("~/Content/Images/ecl-logo-small.png");
             var template = Server.MapPath("~/EmailTemplates/NewSubmission.html");
             return this.emailService.Send(vm, template, logo, logName);
         }
@@ -181,8 +176,8 @@ namespace eCoachingLog.Controllers
         [HttpPost]
         public ActionResult HandleSiteChanged(int siteIdSelected)
         {
-            NewSubmissionViewModel vmInSession = GetNewSubmissionVMFromSession();
-            vmInSession.SiteId = siteIdSelected;
+            NewSubmissionViewModel vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+			vmInSession.SiteId = siteIdSelected;
             GetEmployeesByModuleToSession(vmInSession.ModuleId, siteIdSelected);
 			// Since user has selected a different site, reset partial page, 
 			var vm = InitNewSubmissionViewModel();
@@ -206,8 +201,8 @@ namespace eCoachingLog.Controllers
             IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession().EmployeeId);
             employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
             IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
-            var vmInSession = GetNewSubmissionVMFromSession();
-            vmInSession.EmployeeSelectList = employees;
+            var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+			vmInSession.EmployeeSelectList = employees;
             vmInSession.EmployeeList = employeeList;
         }
 
@@ -284,8 +279,8 @@ namespace eCoachingLog.Controllers
         private IEnumerable<SelectListItem> GetWarningTypes(bool isCoachingByYou)
         {
             string employeeId = GetSelectedEmployee().Id;
-            int moduleId = GetNewSubmissionVMFromSession().ModuleId;
-            string source = GetDirectOrIndirect(isCoachingByYou);//"direct";
+			int moduleId = ((NewSubmissionViewModel)Session["newSubmissionVM"]).ModuleId;
+			string source = GetDirectOrIndirect(isCoachingByYou);//"direct";
             bool specialReason = true;
             int reasonPriority = 1;
             // Warning Type Dropdown
@@ -304,9 +299,9 @@ namespace eCoachingLog.Controllers
         [HttpPost]
         public JsonResult GetWarningReasons(int warningTypeId)
         {
-            var vm = GetNewSubmissionVMFromSession();
+            var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
 
-            if (warningTypeId == -2)
+			if (warningTypeId == -2)
             {
                 vm.WarningReasonSelectList = new List<SelectListItem>();
                 return Json(new SelectList(vm.WarningReasonSelectList, "Value", "Text"), JsonRequestBehavior.AllowGet);
@@ -351,7 +346,7 @@ namespace eCoachingLog.Controllers
                 return PartialView("_NewSubmission", vm);
             }
 
-            var vmInSession = GetNewSubmissionVMFromSession();
+            var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
 			string directOrIndirect = (vmInSession.IsCoachingByYou.HasValue && vmInSession.IsCoachingByYou.Value) ? Constants.DIRECT : Constants.INDIRECT;
             // Load Site dropdown for CSR
             if (moduleId == Constants.MODULE_CSR)
@@ -412,9 +407,9 @@ namespace eCoachingLog.Controllers
         private List<CoachingReason> GetCoachingReasons(int iModuleId, bool isCoachingByYou, bool isCse, int priority)
         {
             string directOrIndirect = GetDirectOrIndirect(isCoachingByYou);//"direct";
-            int moduleId = GetNewSubmissionVMFromSession().ModuleId;
+            int moduleId = ((NewSubmissionViewModel)Session["newSubmissionVM"]).ModuleId;
             string userId = GetUserFromSession().EmployeeId;
-            string employeeId = GetNewSubmissionVMFromSession().Employee.Id;
+            string employeeId = ((NewSubmissionViewModel)Session["newSubmissionVM"]).Employee.Id;
             bool isSpecialResaon = isCse;
             int specialReasonPriority = priority;
 
