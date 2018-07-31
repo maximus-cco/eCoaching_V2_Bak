@@ -213,6 +213,15 @@ namespace eCoachingLog.Utils
 		public const string REVIEW_ETS_OAS = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report(also known as the TC Compliance Action report).  Please research why the supervisor did not approve Or reject their CSR’s timecard before the deadline laid out in the latest " +
 			"<a href='https://cco.gdit.com/Resources/SOP/Contact Center Operations/Forms/AllItems.aspx' target='_blank'>Contact Center Operations 3.06 Timecard Audit SOP</a> and provide the details in the record below.";
 
+		public const string REVIEW_OMR_PBH = "Be sure to check the Beneficiary Indicators applet on every call. If a message is on file, the CSR must follow protocol and review it to determine whether the information is applicable to the beneficiary’s reason for calling. However, the CSR must read and follow any messages related to the new Medicare card, regardless of the reason for the call. In addition to reading such messages, the CSR must be sure to log them as \"read\" to document that the information has been relayed to the caller." +  
+			"<br /><br />" +
+			"Remember, it is critical that we follow through with the appropriate action(s) outlined in the CSR Notes portion of the Message Details applet. This includes checking and confirming whether the beneficiary’s correct mailing address is on file. Depending on whether the address is correct, the CSR will take one of the two following actions:" +
+			"<br />" +
+			"- If the address is correct, you must order a replacement card for the beneficiary using the \"Medicare Card\" button (even if they don’t think they need one)." +
+			"<br />" +
+			"- If the address is incorrect, you must refer the beneficiary to the Social Security Administration (SSA) using information in Agent Partner Search." +
+			"<br /><br />" +
+			"When reviewing this type of message, always take the appropriate steps as directed, regardless of the reason for the call. Failing to do so in these cases will result in the beneficiary not receiving his/her new Medicare card.";
 	}
 
 	public enum EmployeeLogType

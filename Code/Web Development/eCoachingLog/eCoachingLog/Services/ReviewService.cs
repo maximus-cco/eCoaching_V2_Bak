@@ -97,7 +97,7 @@ namespace eCoachingLog.Services
 		{
 			var log = review.LogDetail;
 
-			if (user.EmployeeId == log.ManagerEmpId 
+			if (user.EmployeeId == log.ManagerEmpId
 				|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId)
 				|| user.EmployeeId == log.ReassignedToEmpId)
 			{
@@ -185,6 +185,13 @@ namespace eCoachingLog.Services
 				return Constants.REVIEW_HNC_ICC;
 			}
 
+			// PBH comes in as Pending Supervisor Review;
+			// It goes to Pending Employee Review after;
+			// Display for both Supervisors and CSRs
+			if (log.IsPbh)
+			{
+				return Constants.REVIEW_OMR_PBH;
+			}
 
 			return string.Empty;
 		}

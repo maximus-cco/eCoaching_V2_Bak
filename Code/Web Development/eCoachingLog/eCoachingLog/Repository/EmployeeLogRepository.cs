@@ -115,6 +115,7 @@ namespace eCoachingLog.Repository
 						logDetail.IsOmrException = Convert.ToInt16(dataReader["OMR / Exceptions"]) == 0 ? false : true;
 						logDetail.IsBrl = Convert.ToInt16(dataReader["OMR / BRL"]) == 0 ? false : true;
 						logDetail.IsBrn = Convert.ToInt16(dataReader["OMR / BRN"]) == 0 ? false : true;
+						logDetail.IsPbh = Convert.ToInt16(dataReader["OMR / PBH"]) == 0 ? false : true;
 
 						logDetail.IsCurrentCoachingInitiative = Convert.ToInt16(dataReader["Current Coaching Initiative"]) == 0 ? false : true;
 						logDetail.IsLowCsat = Convert.ToInt16(dataReader["LCS"]) == 0 ? false : true;

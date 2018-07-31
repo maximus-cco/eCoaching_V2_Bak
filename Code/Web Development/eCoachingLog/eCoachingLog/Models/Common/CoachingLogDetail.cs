@@ -44,6 +44,7 @@ namespace eCoachingLog.Models.Common
 		public bool IsBrn { get; set; }
 		public bool IsBrl { get; set; } // break time exceeded
 		public bool IsDtt { get; set; } // New Attendance Discrepancy feed
+		public bool IsPbh { get; set; }
 
 		public bool HasEmpAcknowledged { get; set; }
 		public bool HasSupAcknowledged { get; set; }
