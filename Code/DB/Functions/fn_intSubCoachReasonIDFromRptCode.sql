@@ -1,8 +1,10 @@
 /*
-fn_intSubCoachReasonIDFromRptCode(04).sql
-Last Modified Date: 8/31/2017
+fn_intSubCoachReasonIDFromRptCode(05).sql
+Last Modified Date: 7/31/2018
 Last Modified By: Susmitha Palacherla
 
+
+Version 05: New PBH feed - TFS 11451 - 7/31/2018
 
 Version 04: New DTT feed - TFS 7646 - 8/31/2017
 
@@ -35,6 +37,8 @@ GO
 
 
 
+
+
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
@@ -50,6 +54,8 @@ GO
 -- TFS 5309 - To add NPN - 02/01/2017
 -- TFS 6145 - To add BRL, BRN and MSR - 04/12/2017
 -- TFS 7646 - To add DTT - 08/31/2017
+-- TFS 11451 - To add PBH - 07/31/2018
+
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -95,6 +101,7 @@ BEGIN
             WHEN N'BRL' THEN 239
             WHEN N'MSR' THEN 42
 			WHEN N'DTT' THEN 242
+			WHEN N'PBH' THEN 245
         ELSE -1
       END
     ELSE
@@ -104,14 +111,6 @@ RETURN @intSubCoachReasonID
 
 END  -- fn_intSubCoachReasonIDFromRptCode()
 
-
-
-
-
-
 GO
-
-
-
 
 

@@ -1,9 +1,10 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(09).sql
+sp_SelectReviewFrom_Coaching_Log(10).sql
 
-Last Modified Date: 04/30/2018
+Last Modified Date: 07/30/2018
 Last Modified By: Susmitha Palacherla
 
+Version 10: New PBH Feed - TFS 11451 - 7/30/2018
 Version 09 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
 Version 08: Modified to support additional Modules per TFS 8793 - 11/16/2017
 Version 07: Modified to use LEFT Join on Submitter table for unknown Submitters - TFS 7541 - 09/19/2017
@@ -26,11 +27,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -59,6 +55,7 @@ GO
 -- 18. Modified to support additional Modules per TFS 8793 - 11/16/2017
 -- 19. Encryption/decryption - emp name, emp lanid, email - TFS 7856 - 010/10/2018
 -- 20. Modified during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
+-- 21. Modified to incorporate PBH feed - TFS 11451 - 07/31/2018
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -169,6 +166,7 @@ SET @nvcSQL2 = '
   CASE WHEN (cc.ETSICC IS NOT NULL AND cl.strReportCode LIKE ''ICC%'') THEN 1 ELSE 0 END "ETS / ICC",
   CASE WHEN (cc.OMRBRN IS NOT NULL AND cl.strReportCode LIKE ''BRN%'') THEN 1 ELSE 0 END "OMR / BRN",
   CASE WHEN (cc.OMRBRL IS NOT NULL AND cl.strReportCode LIKE ''BRL%'') THEN 1 ELSE 0 END "OMR / BRL",
+  CASE WHEN (cc.OMRPBH IS NOT NULL AND cl.strReportCode LIKE ''PBH%'') THEN 1 ELSE 0 END "OMR / PBH",
   CASE WHEN (cc.OMRIAE IS NOT NULL AND cl.strReportCode LIKE ''IAE2%'') THEN 1 ELSE 0 END "OMR / IAE",
   CASE WHEN (cc.OMRIAE IS NOT NULL AND cl.strReportCode LIKE ''IAEF%'') THEN 1 ELSE 0 END "OMR / IAEF",
   CASE WHEN (cc.OMRIAT IS NOT NULL AND cl.strReportCode LIKE ''IAT%'') THEN 1 ELSE 0 END "OMR / IAT",
@@ -217,6 +215,7 @@ JOIN
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 231 THEN [clr].[Value] ELSE NULL END) OMRIAT,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 238 THEN [clr].[Value] ELSE NULL END) OMRBRN,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 239 THEN [clr].[Value] ELSE NULL END) OMRBRL,
+	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 245 THEN [clr].[Value] ELSE NULL END) OMRPBH,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END) LCS,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END) OMRISQ,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END) SDR,
@@ -249,17 +248,11 @@ ORDER BY [cl].[FormName]';
 SET @nvcSQL =  @nvcSQL1 +  @nvcSQL2 +  @nvcSQL3;
 EXEC (@nvcSQL)
 
+--PRINT @nvcSQL
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
-
-
-
-
-
-
 GO
-
 
 
