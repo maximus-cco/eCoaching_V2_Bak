@@ -44,7 +44,7 @@
 					@Html.Raw(Model.LogDetail.Behavior)
 				</ div >
 
-				<div class="mt-2 bg-success @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")">
+				<div class="mt-2 bg-success @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")" style="padding: 5px;">
 					@Html.Raw(Model.InstructionText)
 				</div>
 
