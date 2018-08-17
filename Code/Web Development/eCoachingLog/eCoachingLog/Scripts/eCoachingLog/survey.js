@@ -1,5 +1,5 @@
 ﻿$(function () {
-	$('body').on('submit', '#survey-form', function (e) {
+	$('body').one('submit', '#survey-form', function (e) {
 		// Just in case to prevent multiple submits
 		$('#btn-submit').prop('disabled', true);
 		$('#survey-form').data('serialize', $('#survey-form').serialize());
