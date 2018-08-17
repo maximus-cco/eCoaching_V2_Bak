@@ -16,6 +16,11 @@ namespace eCoachingLog.Controllers
         {
             logger.Debug("Entered HomeController.Index");
 
+			if (ShowMaintenancePage())
+			{
+				return new FilePathResult(System.Web.Hosting.HostingEnvironment.MapPath(Constants.MAINTENANCE_PAGE), "text/html");
+			}
+
 			string userLanId = User.Identity.Name;
 			userLanId = userLanId.Replace(@"AD\", "");
 			User user = this.userService.GetUserByLanId(userLanId);
@@ -41,8 +46,9 @@ namespace eCoachingLog.Controllers
 				return RedirectToAction("Index", "NewSubmission");
 			}
 
-			// redirect to unAuthorized page
+			// Redirect to unAuthorized page
 			return RedirectToAction("Index", "Unauthorized");
+
 		}
 
         public JsonResult KeepSessionAlive()
@@ -53,8 +59,9 @@ namespace eCoachingLog.Controllers
 
         public ActionResult SessionExpired()
         {
+			Session.Clear();
             Session.Abandon();
-            return View();
+			return View();
         }
     }
 }
