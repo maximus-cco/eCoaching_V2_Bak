@@ -6,6 +6,7 @@ using eCoachingLog.ViewModels;
 using log4net;
 using System;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
@@ -27,6 +28,11 @@ namespace eCoachingLog.Controllers
 		// GET: Suvey
 		public ActionResult Index()
         {
+			if (ShowMaintenancePage())
+			{
+				return new FilePathResult(System.Web.Hosting.HostingEnvironment.MapPath(Constants.MAINTENANCE_PAGE), "text/html");
+			}
+
 			string userLanId = User.Identity.Name;
 			userLanId = userLanId.Replace(@"AD\", "");
 			User user = this.userService.GetUserByLanId(userLanId);
@@ -87,8 +93,18 @@ namespace eCoachingLog.Controllers
 			}
 			catch (Exception ex)
 			{
-				logger.Warn("Failed to save survey[" + survey.Id + "]");
-				logger.Warn(ex.StackTrace);
+				// Something is wrong, log the exception
+				User user = GetUserFromSession();
+				var userId = user == null ? "usernull" : user.EmployeeId;
+				StringBuilder msg = new StringBuilder("Failed to save survey");
+				msg.Append("[").Append(userId).Append("]")
+					.Append("|SurveyId").Append("[").Append(survey.Id).Append("]")
+					.Append("|retCode").Append("[").Append(retCode).Append("]")
+					.Append("|retMsg").Append("[").Append(retMsg).Append("]: ")
+					.Append(ex.Message)
+					.Append(Environment.NewLine)
+					.Append(ex.StackTrace);
+				logger.Warn(msg);
 			}
 
 			if (retCode != 0)

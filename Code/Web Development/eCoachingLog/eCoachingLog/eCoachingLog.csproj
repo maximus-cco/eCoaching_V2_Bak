@@ -16,7 +16,8 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>
+    </IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -255,6 +256,7 @@
     <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\bootstrap-multiselect.css" />
+    <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrapValidator.css" />
     <Content Include="Content\dataTables.bootstrap.css" />
     <Content Include="Content\dataTables.responsive.css" />
@@ -379,6 +381,7 @@
     <Content Include="Views\MyDashboard\_MySubmissionSearch.cshtml" />
     <Content Include="Views\NewSubmission\_NewSubmissionCoachingReason.cshtml" />
     <Content Include="Views\Review\_Error.cshtml" />
+    <Content Include="maintenance.html" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

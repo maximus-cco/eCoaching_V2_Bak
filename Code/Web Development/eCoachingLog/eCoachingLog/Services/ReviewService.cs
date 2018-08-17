@@ -298,7 +298,7 @@ namespace eCoachingLog.Services
 			// Email CSR's comments to supervisor and manager 
 			if (success && review.LogDetail.ModuleId == Constants.MODULE_CSR && nextStatus == "Completed")
 			{
-				if(this.emailService.SendComments(review.LogDetail, review.EmployeeComments, emailTempFileName, logoFileName))
+				if(!this.emailService.SendComments(review.LogDetail, review.EmployeeComments, emailTempFileName, logoFileName))
 				{
 					var userId = user == null ? "usernull" : user.EmployeeId;
 					var logId = review.LogDetail == null ? "logidnull" : review.LogDetail.LogId.ToString();

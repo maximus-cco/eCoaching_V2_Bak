@@ -252,7 +252,7 @@ namespace eCoachingLog.Repository
                 }
                 catch (Exception ex)
                 {
-                    logger.Warn("Failed to save warning log: " + ex.Message);
+                    logger.Warn("[" + user.EmployeeId + "] Failed to save warning log: " + ex.Message);
 					throw new Exception(ex.Message);
 				}
             } // end Using 
