@@ -598,7 +598,8 @@ namespace eCoachingLog.Repository
 			return logValues;
 		}
 
-		public DataTable GetLogDataTable(LogFilter logFilter, string userId)
+		// Historical Dashboard - export to excel
+		public DataTable GetLogDataTableToExport(LogFilter logFilter, string userId)
 		{
 			DataTable dt = new DataTable();
 			using (SqlConnection connection = new SqlConnection(conn))
@@ -627,8 +628,44 @@ namespace eCoachingLog.Repository
 			return dt;	
 		}
 
+		// Historical Dashboard - export to excel - records count
+		public int GetLogCountToExport(LogFilter logFilter, string userId)
+		{
+			int count = -1;
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Historical_Export_Count]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+				command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
+				command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
+				command.Parameters.AddWithValueSafe("@nvcEmpIdin", logFilter.EmployeeId);
+				command.Parameters.AddWithValueSafe("@nvcSupIdin", logFilter.SupervisorId);
+				command.Parameters.AddWithValueSafe("@nvcMgrIdin", logFilter.ManagerId);
+				command.Parameters.AddWithValueSafe("@nvcSubmitterIdin", logFilter.SubmitterId);
+				command.Parameters.AddWithValueSafe("@strSDatein", logFilter.SubmitDateFrom);
+				command.Parameters.AddWithValueSafe("@strEDatein", logFilter.SubmitDateTo);
+				command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
+				command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
+				command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
+
+				try
+				{
+					connection.Open();
+					count = (int)(command.ExecuteScalar());
+				}
+				catch (Exception ex)
+				{
+					logger.Error("Failed to get log total: " + ex.Message);
+					throw new Exception(ex.Message);
+				}
+			}
+			return count;
+		}
+
 		// Get logs for director that the director is in charge of, for the specified site, status, start/end dates
-		public DataTable GetLogDataTable(int siteId, string status, string start, string end, string userId)
+		public DataTable GetLogDataTableToExport(int siteId, string status, string start, string end, string userId)
 		{
 			DataTable dt = new DataTable();
 			using (SqlConnection connection = new SqlConnection(conn))
@@ -648,6 +685,35 @@ namespace eCoachingLog.Repository
 				}
 			}
 			return dt;
+		}
+
+		// My Dashboard - director - export to excel - records count
+		public int GetLogCountToExport(int siteId, string status, string start, string end, string userId)
+		{
+			int count = -1;
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Director_Site_Export_Count]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+				command.Parameters.AddWithValueSafe("@intSiteIdin", siteId);
+				command.Parameters.AddWithValueSafe("@nvcStatus", status);
+				command.Parameters.AddWithValueSafe("@strSDatein", start);
+				command.Parameters.AddWithValueSafe("@strEDatein", end);
+
+				try
+				{
+					connection.Open();
+					count = (int)command.ExecuteScalar();
+				}
+				catch (Exception ex)
+				{
+					logger.Error("Failed to get log total: " + ex.Message);
+					throw new Exception(ex.Message);
+				}
+			}
+			return count;
 		}
 
 		public IList<LogState> GetWarningStatuses(User user)

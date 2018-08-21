@@ -245,17 +245,21 @@
 					$('#btn-export-excel').prop('disabled', false);
 					$(".please-wait").slideUp(500);
 
-					if (data.result === 'ok') {
+					if (data.result === 'success') {
 						window.location = downloadExcelUrl;
 					}
-					else if (data.result === 'oversized') {
-						alert('You have reached the maximum number of records (6k) that can be exported at a time. Please refine your filters and try again.');
+					else if (data.result === 'overLimit') {
+						$('#modal-container .modal-content').html(
+							'<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Export to Excel</h4></div>' +
+							'<div class="modal-body"><p>The maximum number of records that can be exported at a time is 20,000. You are trying to export ' + data.total + ' records. Please refine your filters and try again.</p></div>' +
+							'<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>');
+						$('#modal-container').modal();
 					}
 						// fail
 					else {
 						$('#modal-container .modal-content').html(
-							'<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>Export to Excel</div>' +
-							'<div class="modal-body"><p>Something went wrong while trying to export logs to excel file. Please refine your filters and try again.</p></div>' +
+							'<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Export to Excel</h4></div>' +
+							'<div class="modal-body"><p>Something went wrong while trying to export logs to excel file. Please try again.</p></div>' +
 							'<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>');
 						$('#modal-container').modal();
 					}

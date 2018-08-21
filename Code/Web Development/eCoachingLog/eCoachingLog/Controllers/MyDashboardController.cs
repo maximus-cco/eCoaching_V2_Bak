@@ -528,7 +528,7 @@ namespace eCoachingLog.Controllers
 			try
 			{
 				MemoryStream ms = this.GenerateExcelFile(
-										empLogService.GetLogDataTable(
+										empLogService.GetLogDataTableToExport(
 											vm.Search.SiteId,
 											vm.Search.LogType,
 											vm.Search.SubmitDateFrom,

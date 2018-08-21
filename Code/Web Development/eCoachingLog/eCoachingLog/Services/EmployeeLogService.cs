@@ -151,14 +151,24 @@ namespace eCoachingLog.Services
 			return this.employeeLogRepository.GetAllLogValues();
 		}
 
-		public DataTable GetLogDataTable(LogFilter logFilter, string userId)
+		public DataTable GetLogDataTableToExport(LogFilter logFilter, string userId)
 		{
-			return this.employeeLogRepository.GetLogDataTable(logFilter, userId);
+			return this.employeeLogRepository.GetLogDataTableToExport(logFilter, userId);
 		}
 
-		public DataTable GetLogDataTable(int siteId, string status, string start, string end, string userId)
+		public int GetLogCountToExport(LogFilter logFilter, string userId)
 		{
-			return this.employeeLogRepository.GetLogDataTable(siteId, status, start, end, userId);
+			return this.employeeLogRepository.GetLogCountToExport(logFilter, userId);
+		}
+
+		public DataTable GetLogDataTableToExport(int siteId, string status, string start, string end, string userId)
+		{
+			return this.employeeLogRepository.GetLogDataTableToExport(siteId, status, start, end, userId);
+		}
+
+		public int GetLogCountToExport(int siteId, string status, string start, string end, string userId)
+		{
+			return this.GetLogCountToExport(siteId, status, start, end, userId);
 		}
 
 		public IList<LogState> GetWarningStatuses(User user)

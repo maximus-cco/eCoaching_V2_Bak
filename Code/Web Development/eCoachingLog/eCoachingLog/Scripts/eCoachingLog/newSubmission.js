@@ -1,11 +1,9 @@
 ﻿$(function () {
-	var cancelled = false;
-
 	// Check unsaved data
     $('#new-submission-form').data('serialize', $('#new-submission-form').serialize());
     $(window).on('beforeunload', function (e) {
-    	if ((errorOccured === false && sessionExpired === false && loggingOut === false && cancelled === false && $('#new-submission-form').serialize() != $('#new-submission-form').data('serialize'))
-			|| validationError === 'True') {
+    	if ((errorOccured === false && sessionExpired === false && loggingOut === false && $('#new-submission-form').serialize() != $('#new-submission-form').data('serialize'))
+			|| validationError === 'True' && checkPageDataChanged === true) {
             return 'Your submission has NOT been saved yet. If you choose "Leave this page", you will loose all your entries.';
         }
         else {
@@ -294,11 +292,11 @@
     $('body').on('click', '#btn-cancel', function (e) {
         if (confirm("Are you sure you want to cancel this submission?")) {
         	$(".please-wait").slideDown(500);
-            cancelled = true;
+			// Don't check if page data has changed, just cancel the form
+        	checkPageDataChanged = false;
             window.location.href = redirectToIndex;
         }
         else {
-            cancelled = false;
             return false;
         }
     });

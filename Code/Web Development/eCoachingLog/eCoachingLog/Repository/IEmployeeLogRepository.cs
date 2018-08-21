@@ -28,8 +28,12 @@ namespace eCoachingLog.Repository
 		IList<LogSource> GetAllLogSources(string userEmpId);
 		IList<LogValue> GetAllLogValues();
 
-		DataTable GetLogDataTable(LogFilter logFilter, string userId);
-		DataTable GetLogDataTable(int siteId, string status, string start, string end, string userId);
+		// Historical Dashboard - export to excel
+		DataTable GetLogDataTableToExport(LogFilter logFilter, string userId);
+		int GetLogCountToExport(LogFilter filter, string userId);
+		// My Dashboard - director - export to excel
+		DataTable GetLogDataTableToExport(int siteId, string status, string start, string end, string userId);
+		int GetLogCountToExport(int siteId, string status, string start, string end, string userId);
 
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFilter, string userId, string search);

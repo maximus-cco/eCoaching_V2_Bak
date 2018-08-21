@@ -99,10 +99,19 @@ namespace eCoachingLog.Controllers
 		{
 			try
 			{
-				MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTable(vm.Search, GetUserFromSession().EmployeeId));
+				string userId = GetUserFromSession().EmployeeId;
+				// Check if total number of records exceeds the limit
+				// If over limit, don't export, display a message instead to the user
+				int count = this.empLogService.GetLogCountToExport(vm.Search, userId);
+				if (count > Constants.MAX_RECORDS_TO_EXPORT)
+				{
+					return Json(new { result = "overLimit", total = count }, JsonRequestBehavior.AllowGet);
+				}
+
+				MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTableToExport(vm.Search, userId));
 				Session["fileName"] = "eCoachingLog_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
 				Session["fileStream"] = ms;
-				return Json(new { result = "ok" }, JsonRequestBehavior.AllowGet);
+				return Json(new { result = "success" }, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)
 			{
