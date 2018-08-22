@@ -9,7 +9,7 @@ namespace eCoachingLog.Utils
 		public const string MAINTENANCE_PAGE = "~/index.html";
 
 		public const int SQL_COMMAND_TIMEOUT = 300; // 5 minutes
-		public const int MAX_RECORDS_TO_EXPORT = 100; //200000;
+		public const int MAX_RECORDS_TO_EXPORT = 20000;
 
 		public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
 		public const string SITE_EMAIL_SUBJECT = "eCoaching Log";
