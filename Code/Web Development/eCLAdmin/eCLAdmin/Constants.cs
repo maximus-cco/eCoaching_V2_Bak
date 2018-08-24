@@ -4,7 +4,9 @@ namespace eCLAdmin
 {
     public static class Constants
     {
-        public const int MODULE_UNKNOWN = -1;
+		public const string MAINTENANCE_PAGE = "~/index.html";
+
+		public const int MODULE_UNKNOWN = -1;
         public const int MODULE_CSR = 1;
         public const int MODULE_SUPERVISOR = 2;
         public const int MODULE_QUALITY = 3;

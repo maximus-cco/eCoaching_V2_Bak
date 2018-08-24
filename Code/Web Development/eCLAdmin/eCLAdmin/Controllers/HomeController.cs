@@ -18,19 +18,9 @@ namespace eCLAdmin.Controllers
         {
             logger.Debug("Entered HomeController.Index");
 
-			// Check if under maintenance, index.html is the maintenance page
-			var indexPage = System.Web.Hosting.HostingEnvironment.MapPath("~/index.html");
-			logger.Debug("##########maintenancePage= " + indexPage);
-			if (System.IO.File.Exists(indexPage))
+			if (ShowMaintenancePage())
 			{
-				string ipAddress = Request.UserHostAddress;
-				logger.Debug("######ip=" + ipAddress);
-				string[] addresses = Convert.ToString(ConfigurationManager.AppSettings["Prod.VnV.IPs"]).Split(',');
-				// Send users to Maintenance page if not designated users doing Post Prod V&V
-				if (!addresses.Where(a => a.Trim().Equals(ipAddress, StringComparison.InvariantCultureIgnoreCase)).Any())
-				{
-					return new FilePathResult(indexPage, "text/html");
-				}
+				return new FilePathResult(System.Web.Hosting.HostingEnvironment.MapPath(Constants.MAINTENANCE_PAGE), "text/html");
 			}
 
 			string userLanId = User.Identity.Name;

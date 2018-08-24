@@ -1,6 +1,9 @@
 ﻿using eCLAdmin.Models.User;
 using eCLAdmin.Services;
 using log4net;
+using System;
+using System.Configuration;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
@@ -8,6 +11,26 @@ namespace eCLAdmin.Controllers
     public class BaseController : Controller
     {
         readonly ILog logger = LogManager.GetLogger(typeof(BaseController));
+
+		protected bool ShowMaintenancePage()
+		{
+			// Check if under maintenance
+			var maintenancePage = System.Web.Hosting.HostingEnvironment.MapPath(Constants.MAINTENANCE_PAGE);
+			logger.Debug("##########maintenancePage= " + maintenancePage);
+			if (System.IO.File.Exists(maintenancePage))
+			{
+				string ipAddress = Request.UserHostAddress;
+				logger.Debug("######ip=" + ipAddress);
+				string[] addresses = Convert.ToString(ConfigurationManager.AppSettings["Prod.VnV.IPs"]).Split(',');
+				// Send users to Maintenance page if not designated users doing Post Prod V&V
+				if (!addresses.Where(a => a.Trim().Equals(ipAddress, StringComparison.InvariantCultureIgnoreCase)).Any())
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
 
 		protected User GetUserFromSession()
         {

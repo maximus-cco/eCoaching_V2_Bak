@@ -259,6 +259,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="maintenance.html" />
     <Content Include="Reports\ReportTemplate.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
