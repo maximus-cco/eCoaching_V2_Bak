@@ -1,205 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ToolsVersion="2.0">
-  <State>$base64$PFNvdXJjZUNvbnRyb2xJbmZvIHhtbG5zOnhzZD0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zOmRkbDI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yIiB4bWxuczpkZGwyXzI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yLzIiIHhtbG5zOmRkbDEwMF8xMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDA4L2VuZ2luZS8xMDAvMTAwIiB4bWxuczpkZGwyMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAiIHhtbG5zOmRkbDIwMF8yMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAvMjAwIiB4bWxuczpkZGwzMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAiIHhtbG5zOmRkbDMwMF8zMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAvMzAwIiB4bWxuczpkZGw0MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAiIHhtbG5zOmRkbDQwMF80MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAvNDAwIiB4bWxuczpkZGw1MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAiIHhtbG5zOmRkbDUwMF81MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAvNTAwIiB4bWxuczpkd2Q9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vRGF0YVdhcmVob3VzZS9EZXNpZ25lci8xLjAiPg0KICA8RW5hYmxlZD5mYWxzZTwvRW5hYmxlZD4NCiAgPFByb2plY3ROYW1lPjwvUHJvamVjdE5hbWU+DQogIDxBdXhQYXRoPjwvQXV4UGF0aD4NCiAgPExvY2FsUGF0aD48L0xvY2FsUGF0aD4NCiAgPFByb3ZpZGVyPjwvUHJvdmlkZXI+DQo8L1NvdXJjZUNvbnRyb2xJbmZvPg==</State>
-  <DataSources>
-    <ProjectItem>
-      <Name>eCoaching.rds</Name>
-      <FullPath>eCoaching.rds</FullPath>
-    </ProjectItem>
-  </DataSources>
-  <DataSets>
-    <ProjectItem>
-      <Name>AdminActionList.rsd</Name>
-      <FullPath>AdminActionList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>AdminFormList.rsd</Name>
-      <FullPath>AdminFormList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>AdminLogTypeList.rsd</Name>
-      <FullPath>AdminLogTypeList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>CoachingEmployeeList.rsd</Name>
-      <FullPath>CoachingEmployeeList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>CoachingReasonList.rsd</Name>
-      <FullPath>CoachingReasonList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>CoachingSiteList.rsd</Name>
-      <FullPath>CoachingSiteList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>CoachingStatusList.rsd</Name>
-      <FullPath>CoachingStatusList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>CoachingSubReasonList.rsd</Name>
-      <FullPath>CoachingSubReasonList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>HierarchyEmployeeList.rsd</Name>
-      <FullPath>HierarchyEmployeeList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>HierarchySiteList.rsd</Name>
-      <FullPath>HierarchySiteList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>ModuleList.rsd</Name>
-      <FullPath>ModuleList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>WarningActiveList.rsd</Name>
-      <FullPath>WarningActiveList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>WarningEmployeeList.rsd</Name>
-      <FullPath>WarningEmployeeList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>WarningReasonList.rsd</Name>
-      <FullPath>WarningReasonList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>WarningSiteList.rsd</Name>
-      <FullPath>WarningSiteList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>WarningStatusList.rsd</Name>
-      <FullPath>WarningStatusList.rsd</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>WarningSubReasonList.rsd</Name>
-      <FullPath>WarningSubReasonList.rsd</FullPath>
-    </ProjectItem>
-  </DataSets>
-  <Reports>
-    <ProjectItem>
-      <Name>AdminActivitySummary.rdl</Name>
-      <FullPath>AdminActivitySummary.rdl</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>CoachingSummary.rdl</Name>
-      <FullPath>CoachingSummary.rdl</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>HierarchySummary.rdl</Name>
-      <FullPath>HierarchySummary.rdl</FullPath>
-    </ProjectItem>
-    <ProjectItem>
-      <Name>WarningSummary.rdl</Name>
-      <FullPath>WarningSummary.rdl</FullPath>
-    </ProjectItem>
-  </Reports>
-  <Configurations>
-    <Configuration>
-      <Name>Debug</Name>
-      <Platform>Win32</Platform>
-      <Options>
-        <OutputPath>bin\Debug</OutputPath>
-        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://vrivfssdbt02.vangent.local/ReportServer_SCORD01</TargetServerURL>
-        <TargetFolder>/eCoaching/Development/Reports</TargetFolder>
-        <TargetDataSourceFolder>/eCoaching/Development/DataSources</TargetDataSourceFolder>
-        <TargetDatasetFolder>/eCoaching/Development/Datasets</TargetDatasetFolder>
-        <OverwriteDatasets>true</OverwriteDatasets>
-        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
-      </Options>
-    </Configuration>
-    <Configuration>
-      <Name>DebugLocal</Name>
-      <Platform>Win32</Platform>
-      <Options>
-        <OutputPath>bin\DebugLocal</OutputPath>
-        <TargetServerVersion>SSRS2016</TargetServerVersion>
-        <TargetServerURL>http://localhost/reportserver</TargetServerURL>
-        <TargetFolder>eCoachingAdhocReports</TargetFolder>
-        <TargetDataSourceFolder>Data Sources</TargetDataSourceFolder>
-        <TargetDatasetFolder>Datasets</TargetDatasetFolder>
-        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
-      </Options>
-    </Configuration>
-    <Configuration>
-      <Name>Release</Name>
-      <Platform>Win32</Platform>
-      <Options>
-        <OutputPath>bin\Release</OutputPath>
-        <TargetServerVersion>SSRS2016</TargetServerVersion>
-        <TargetServerURL>http://localhost/reportserver</TargetServerURL>
-        <TargetFolder>eCoachingAdhocReports</TargetFolder>
-        <TargetDataSourceFolder>Data Sources</TargetDataSourceFolder>
-        <TargetDatasetFolder>Datasets</TargetDatasetFolder>
-        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
-      </Options>
-    </Configuration>
-    <Configuration>
-      <Name>LoadTest</Name>
-      <Options>
-        <OutputPath>bin\Debug</OutputPath>
-        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://f3420-ecldbp01.vangent.local/ReportServer</TargetServerURL>
-        <TargetFolder>/eCoaching/LoadTest/Reports</TargetFolder>
-        <TargetDataSourceFolder>/eCoaching/LoadTest/DataSources</TargetDataSourceFolder>
-        <TargetDatasetFolder>/eCoaching/LoadTest/Datasets</TargetDatasetFolder>
-        <OverwriteDatasets>true</OverwriteDatasets>
-        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
-      </Options>
-    </Configuration>
-    <Configuration>
-      <Name>SysTest</Name>
-      <Options>
-        <OutputPath>bin\Debug</OutputPath>
-        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://f3420-ecldbt01.vangent.local/ReportServer</TargetServerURL>
-        <TargetFolder>/eCoaching/Reports</TargetFolder>
-        <TargetDataSourceFolder>/eCoaching/DataSources</TargetDataSourceFolder>
-        <TargetDatasetFolder>/eCoaching/Datasets</TargetDatasetFolder>
-        <OverwriteDatasets>true</OverwriteDatasets>
-        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
-      </Options>
-    </Configuration>
-    <Configuration>
-      <Name>Production</Name>
-      <Options>
-        <OutputPath>bin\Debug</OutputPath>
-        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://f3420-ecldbp01.vangent.local/ReportServer</TargetServerURL>
-        <TargetFolder>/eCoaching/Production/Reports</TargetFolder>
-        <TargetDataSourceFolder>/eCoaching/Production/DataSources</TargetDataSourceFolder>
-        <TargetDatasetFolder>/eCoaching/Production/Datasets</TargetDatasetFolder>
-        <OverwriteDatasets>true</OverwriteDatasets>
-        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
-      </Options>
-    </Configuration>
-    <Configuration>
-      <Name>Dev</Name>
-      <Options>
-        <OutputPath>bin\Debug</OutputPath>
-        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://f3420-ecldbd01.vangent.local/ReportServer</TargetServerURL>
-        <TargetFolder>/eCoaching/Reports</TargetFolder>
-        <TargetDataSourceFolder>/eCoaching/DataSources</TargetDataSourceFolder>
-        <TargetDatasetFolder>/eCoaching/Datasets</TargetDatasetFolder>
-        <OverwriteDatasets>true</OverwriteDatasets>
-        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
-      </Options>
-    </Configuration>
-    <Configuration>
-      <Name>Prod</Name>
-      <Options>
-        <OutputPath>bin\Debug</OutputPath>
-        <TargetServerVersion>SSRS2008R2</TargetServerVersion>
-        <TargetServerURL>http://f3420-ecldbp01.vangent.local/ReportServer</TargetServerURL>
-        <TargetFolder>/eCoaching/Production/Reports</TargetFolder>
-        <TargetDataSourceFolder>/eCoaching/Production/DataSources</TargetDataSourceFolder>
-        <TargetDatasetFolder>/eCoaching/Production/Datasets</TargetDatasetFolder>
-        <OverwriteDatasets>true</OverwriteDatasets>
-        <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
-      </Options>
-    </Configuration>
-  </Configurations>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <FullPath>Debug</FullPath>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorLevel>2</ErrorLevel>
+    <OverwriteDatasets>True</OverwriteDatasets>
+    <OverwriteDataSources>False</OverwriteDataSources>
+    <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+    <Platform>Win32</Platform>
+    <TargetReportFolder>/eCoaching/Reports</TargetReportFolder>
+    <TargetDatasetFolder>/eCoaching/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>/eCoaching/DataSources</TargetDatasourceFolder>
+    <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+    <TargetServerURL>http://f3420-ecldbd01.sharedservices.local/ReportServer</TargetServerURL>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'DebugLocal' ">
+    <FullPath>DebugLocal</FullPath>
+    <OutputPath>bin\DebugLocal</OutputPath>
+    <ErrorLevel>2</ErrorLevel>
+    <OverwriteDatasets>False</OverwriteDatasets>
+    <OverwriteDataSources>False</OverwriteDataSources>
+    <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+    <Platform>Win32</Platform>
+    <TargetReportFolder>Reports</TargetReportFolder>
+    <TargetDatasetFolder>Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>DataSources</TargetDatasourceFolder>
+    <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+    <TargetServerURL>http://localhost/reportserver</TargetServerURL>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <FullPath>Release</FullPath>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorLevel>2</ErrorLevel>
+    <OverwriteDatasets>False</OverwriteDatasets>
+    <OverwriteDataSources>False</OverwriteDataSources>
+    <TargetServerVersion>SSRS2016</TargetServerVersion>
+    <Platform>Win32</Platform>
+    <TargetReportFolder>eCoachingAdhocReports</TargetReportFolder>
+    <TargetDatasetFolder>Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>Data Sources</TargetDatasourceFolder>
+    <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+    <TargetServerURL>http://localhost/reportserver</TargetServerURL>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'LoadTest' ">
+    <FullPath>LoadTest</FullPath>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorLevel>2</ErrorLevel>
+    <OverwriteDatasets>True</OverwriteDatasets>
+    <OverwriteDataSources>False</OverwriteDataSources>
+    <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+    <Platform />
+    <TargetReportFolder>/eCoaching/LoadTest/Reports</TargetReportFolder>
+    <TargetDatasetFolder>/eCoaching/LoadTest/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>/eCoaching/LoadTest/DataSources</TargetDatasourceFolder>
+    <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+    <TargetServerURL>http://f3420-ecldbp01.sharedservices.local/ReportServer</TargetServerURL>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'SysTest' ">
+    <FullPath>SysTest</FullPath>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorLevel>2</ErrorLevel>
+    <OverwriteDatasets>True</OverwriteDatasets>
+    <OverwriteDataSources>True</OverwriteDataSources>
+    <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+    <Platform />
+    <TargetReportFolder>/eCoaching/Reports</TargetReportFolder>
+    <TargetDatasetFolder>/eCoaching/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>/eCoaching/DataSources</TargetDatasourceFolder>
+    <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+    <TargetServerURL>http://f3420-ecldbt01.sharedservices.local/ReportServer</TargetServerURL>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Production' ">
+    <FullPath>Production</FullPath>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorLevel>2</ErrorLevel>
+    <OverwriteDatasets>True</OverwriteDatasets>
+    <OverwriteDataSources>False</OverwriteDataSources>
+    <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+    <Platform />
+    <TargetReportFolder>/eCoaching/Production/Reports</TargetReportFolder>
+    <TargetDatasetFolder>/eCoaching/Production/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>/eCoaching/Production/DataSources</TargetDatasourceFolder>
+    <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+    <TargetServerURL>http://f3420-ecldbp01.sharedservices.local/ReportServer</TargetServerURL>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Dev' ">
+    <FullPath>Dev</FullPath>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorLevel>2</ErrorLevel>
+    <OverwriteDatasets>True</OverwriteDatasets>
+    <OverwriteDataSources>False</OverwriteDataSources>
+    <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+    <Platform />
+    <TargetReportFolder>/eCoaching/Reports</TargetReportFolder>
+    <TargetDatasetFolder>/eCoaching/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>/eCoaching/DataSources</TargetDatasourceFolder>
+    <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+    <TargetServerURL>http://f3420-ecldbd01.sharedservices.local/ReportServer</TargetServerURL>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Prod' ">
+    <FullPath>Prod</FullPath>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorLevel>2</ErrorLevel>
+    <OverwriteDatasets>True</OverwriteDatasets>
+    <OverwriteDataSources>False</OverwriteDataSources>
+    <TargetServerVersion>SSRS2008R2</TargetServerVersion>
+    <Platform />
+    <TargetReportFolder>/eCoaching/Production/Reports</TargetReportFolder>
+    <TargetDatasetFolder>/eCoaching/Production/Datasets</TargetDatasetFolder>
+    <TargetDatasourceFolder>/eCoaching/Production/DataSources</TargetDatasourceFolder>
+    <TargetReportPartFolder>Report Parts</TargetReportPartFolder>
+    <TargetServerURL>http://f3420-ecldbp01.sharedservices.local/ReportServer</TargetServerURL>
+  </PropertyGroup>
+  <PropertyGroup>
+    <State>$base64$PFNvdXJjZUNvbnRyb2xJbmZvIHhtbG5zOnhzZD0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zOmRkbDI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yIiB4bWxuczpkZGwyXzI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yLzIiIHhtbG5zOmRkbDEwMF8xMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDA4L2VuZ2luZS8xMDAvMTAwIiB4bWxuczpkZGwyMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAiIHhtbG5zOmRkbDIwMF8yMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAvMjAwIiB4bWxuczpkZGwzMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAiIHhtbG5zOmRkbDMwMF8zMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAvMzAwIiB4bWxuczpkZGw0MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAiIHhtbG5zOmRkbDQwMF80MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAvNDAwIiB4bWxuczpkZGw1MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAiIHhtbG5zOmRkbDUwMF81MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAvNTAwIiB4bWxuczpkd2Q9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vRGF0YVdhcmVob3VzZS9EZXNpZ25lci8xLjAiPg0KICA8RW5hYmxlZD5mYWxzZTwvRW5hYmxlZD4NCiAgPFByb2plY3ROYW1lPjwvUHJvamVjdE5hbWU+DQogIDxBdXhQYXRoPjwvQXV4UGF0aD4NCiAgPExvY2FsUGF0aD48L0xvY2FsUGF0aD4NCiAgPFByb3ZpZGVyPjwvUHJvdmlkZXI+DQo8L1NvdXJjZUNvbnRyb2xJbmZvPg==</State>
+    <DataSources>@(DataSource)</DataSources>
+    <DataSets>@(DataSet)</DataSets>
+    <Reports>@(Report)</Reports>
+  </PropertyGroup>
+  <ItemGroup>
+    <DataSet Include="AdminActionList.rsd" />
+    <DataSet Include="AdminFormList.rsd" />
+    <DataSet Include="AdminLogTypeList.rsd" />
+    <DataSet Include="CoachingEmployeeList.rsd" />
+    <DataSet Include="CoachingReasonList.rsd" />
+    <DataSet Include="CoachingSiteList.rsd" />
+    <DataSet Include="CoachingStatusList.rsd" />
+    <DataSet Include="CoachingSubReasonList.rsd" />
+    <DataSet Include="HierarchyEmployeeList.rsd" />
+    <DataSet Include="HierarchySiteList.rsd" />
+    <DataSet Include="ModuleList.rsd" />
+    <DataSet Include="WarningActiveList.rsd" />
+    <DataSet Include="WarningEmployeeList.rsd" />
+    <DataSet Include="WarningReasonList.rsd" />
+    <DataSet Include="WarningSiteList.rsd" />
+    <DataSet Include="WarningStatusList.rsd" />
+    <DataSet Include="WarningSubReasonList.rsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <DataSource Include="eCoaching.rds" />
+  </ItemGroup>
+  <ItemGroup>
+    <Report Include="AdminActivitySummary.rdl" />
+    <Report Include="CoachingSummary.rdl" />
+    <Report Include="HierarchySummary.rdl" />
+    <Report Include="WarningSummary.rdl" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />
 </Project>

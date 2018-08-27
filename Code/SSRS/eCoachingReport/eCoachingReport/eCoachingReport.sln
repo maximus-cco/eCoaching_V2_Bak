@@ -8,7 +8,6 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any PC = Debug|Any PC
-		DebugLocal|Any PC = DebugLocal|Any PC
 		Dev|Any PC = Dev|Any PC
 		LoadTest|Any PC = LoadTest|Any PC
 		Prod|Any PC = Prod|Any PC
@@ -17,8 +16,6 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.ActiveCfg = Debug
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.Build.0 = Debug
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.DebugLocal|Any PC.ActiveCfg = DebugLocal
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.DebugLocal|Any PC.Build.0 = DebugLocal
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.ActiveCfg = Dev
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.Build.0 = Dev
 		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.Deploy.0 = Dev
