@@ -134,5 +134,13 @@ ul.navbar-nav {
     text-align : center;
 }
 
-
+.fixed-bottom {
+  position: fixed;
+  float: right !important;
+  bottom: 10px;
+  right: 50px;
+  font-weight: bolder;
+  color: #79a6d2;
+  z-index: 1030;
+}
  
