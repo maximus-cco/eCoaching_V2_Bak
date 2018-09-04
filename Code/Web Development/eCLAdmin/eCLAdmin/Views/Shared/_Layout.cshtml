@@ -106,12 +106,20 @@
                     </li>
                     }
 
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"
+						   role="button" aria-expanded="false">Help<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li>@Html.ActionLink("Report an eCL System Issue ...", "ReportIssue", new { controller = "Help" }, new { target = "_blank" })</li>
+						</ul>
+					</li>
+
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (Session["AuthenticatedUser"] != null)
 					{
 						<li><a href="#"><span class="glyphicon glyphicon-user"></span>&nbsp@(((User)Session["AuthenticatedUser"]).Name)</a></li>
-                        @*<li class="navbar-text">@(((User)Session["AuthenticatedUser"]).Name)</li>*@
                     }
                 </ul>
             </div>
@@ -120,9 +128,6 @@
     
     <div class="container body-content">
         @RenderBody()
-		<div class="fixed-bottom">
-			To report an issue with the eCoaching Log System, click <a href="https://cco.gdit.com/Resources/eCoaching/QSS/SitePages/Issue%20Tracker.aspx" target="_blank">here.</a>
-		</div>
     </div>
 
     <div id="modal-container" class="modal fade in" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">

@@ -6,6 +6,8 @@ namespace eCLAdmin
     {
 		public const string MAINTENANCE_PAGE = "~/index.html";
 
+		public const string REPORT_ISSUE_URL = "https://cco.gdit.com/Resources/eCoaching/QSS/SitePages/Issue%20Tracker.aspx";
+
 		public const int MODULE_UNKNOWN = -1;
         public const int MODULE_CSR = 1;
         public const int MODULE_SUPERVISOR = 2;
