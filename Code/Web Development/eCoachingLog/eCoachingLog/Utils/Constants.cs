@@ -8,6 +8,8 @@ namespace eCoachingLog.Utils
 	{
 		public const string MAINTENANCE_PAGE = "~/index.html";
 
+		public const string REPORT_ISSUE_URL = "https://cco.gdit.com/Resources/eCoaching/QSS/SitePages/Issue%20Tracker.aspx";
+
 		public const int SQL_COMMAND_TIMEOUT = 300; // 5 minutes
 		public const int MAX_RECORDS_TO_EXPORT = 20000;
 
