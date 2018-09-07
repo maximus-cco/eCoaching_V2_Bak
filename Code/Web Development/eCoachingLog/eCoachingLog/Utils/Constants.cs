@@ -13,7 +13,6 @@ namespace eCoachingLog.Utils
 		public const int SQL_COMMAND_TIMEOUT = 300; // 5 minutes
 		public const int MAX_RECORDS_TO_EXPORT = 20000;
 
-		public const string SITE_ADMIN_EMAIL = "CCO Quality<CCOQuality@gdit.com>";
 		public const string SITE_EMAIL_SUBJECT = "eCoaching Log";
 
 		public const string USER_ROLE_CSR = "CSR";
