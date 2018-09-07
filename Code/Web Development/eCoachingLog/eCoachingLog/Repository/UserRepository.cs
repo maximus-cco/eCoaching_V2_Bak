@@ -37,7 +37,7 @@ namespace eCoachingLog.Repository
                     {
                         user = new User();
 						user.LanId = lanId;
-						user.EmployeeId = dataReader["Emp_ID"].ToString();
+						user.EmployeeId = dataReader["Emp_ID"].ToString().Trim().ToUpper();
                         user.Name = dataReader["Emp_Name"].ToString();
 						user.JobCode = dataReader["Emp_Job_Code"].ToString();
 						user.Role = dataReader["Role"].ToString();

@@ -31,7 +31,7 @@ namespace eCoachingLog.Repository
                     while (dataReader.Read())
                     {
                         Employee emp = new Employee();
-                        emp.Id = dataReader["Emp_ID"].ToString();
+                        emp.Id = dataReader["Emp_ID"].ToString().Trim().ToUpper();
                         emp.Name = dataReader["Emp_Name"].ToString();
 
                         employees.Add(emp);
@@ -56,15 +56,15 @@ namespace eCoachingLog.Repository
                 {
                     while (dataReader.Read())
                     {
-                        employee.Id = dataReader["Emp_ID"].ToString();
+                        employee.Id = dataReader["Emp_ID"].ToString().Trim().ToUpper();
                         employee.Name = dataReader["Emp_Name"].ToString();
                         employee.Email = dataReader["Emp_Email"].ToString();
 						employee.LanId = dataReader["Emp_LanID"].ToString();
                         employee.SupervisorName = dataReader["Sup_Name"].ToString();
-						employee.SupervisorId = dataReader["Sup_ID"].ToString();
+						employee.SupervisorId = dataReader["Sup_ID"].ToString().Trim().ToUpper();
                         employee.SupervisorEmail = dataReader["Sup_Email"].ToString();
                         employee.ManagerName = dataReader["Mgr_Name"].ToString();
-						employee.ManagerId = dataReader["Mgr_ID"].ToString();
+						employee.ManagerId = dataReader["Mgr_ID"].ToString().Trim().ToUpper();
                         employee.ManagerEmail = dataReader["Mgr_Email"].ToString();
 
                         break;
@@ -90,7 +90,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee manager = new Employee();
-						manager.Id = dataReader["ManagerId"].ToString();
+						manager.Id = dataReader["ManagerId"].ToString().Trim().ToUpper();
 						manager.Name = dataReader["Manager"].ToString();
 						managers.Add(manager);
 					}
@@ -115,7 +115,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee supervisor = new Employee();
-						supervisor.Id = dataReader["SupervisorId"].ToString();
+						supervisor.Id = dataReader["SupervisorId"].ToString().Trim().ToUpper();
 						supervisor.Name = dataReader["Supervisor"].ToString();
 						supervisors.Add(supervisor);
 					}
@@ -143,7 +143,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["EmployeeId"].ToString();
+						employee.Id = dataReader["EmployeeId"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["Employee"].ToString();
 						employees.Add(employee);
 					}
@@ -167,7 +167,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["SubmitterID"].ToString();
+						employee.Id = dataReader["SubmitterID"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["Submitter"].ToString();
 						employees.Add(employee);
 					}
@@ -191,7 +191,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["SUPValue"].ToString();
+						employee.Id = dataReader["SUPValue"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["SUPText"].ToString();
 						employees.Add(employee);
 					}
@@ -215,7 +215,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Id = dataReader["EmpValue"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
@@ -239,7 +239,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Id = dataReader["EmpValue"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
@@ -263,7 +263,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["SUPValue"].ToString();
+						employee.Id = dataReader["SUPValue"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["SUPText"].ToString();
 						employees.Add(employee);
 					}
@@ -287,7 +287,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Id = dataReader["EmpValue"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
@@ -311,7 +311,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["MgrValue"].ToString();
+						employee.Id = dataReader["MgrValue"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["MgrText"].ToString();
 						employees.Add(employee);
 					}
@@ -335,7 +335,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Id = dataReader["EmpValue"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
@@ -359,7 +359,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["SUPValue"].ToString();
+						employee.Id = dataReader["SUPValue"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["SUPText"].ToString();
 						employees.Add(employee);
 					}
@@ -383,7 +383,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee employee = new Employee();
-						employee.Id = dataReader["EmpValue"].ToString();
+						employee.Id = dataReader["EmpValue"].ToString().Trim().ToUpper();
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
@@ -408,7 +408,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Employee emp = new Employee();
-						emp.Id = dataReader["ID"].ToString();
+						emp.Id = dataReader["ID"].ToString().Trim().ToUpper();
 						emp.Name = dataReader["Name"].ToString();
 						filters.Add(emp);
 					}

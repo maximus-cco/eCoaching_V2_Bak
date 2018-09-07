@@ -31,7 +31,7 @@ namespace eCoachingLog.Repository
 					{
 						survey.Id = surveyId;
 						survey.LogId = (long) dataReader["CoachingID"];
-						survey.EmployeeId = dataReader["EmpID"].ToString();
+						survey.EmployeeId = dataReader["EmpID"].ToString().Trim().ToUpper();
 						survey.LogName = dataReader["FormName"].ToString();
 						survey.Status = dataReader["Status"].ToString();
 						bool hasHotTopic = false;

@@ -74,9 +74,9 @@ namespace eCoachingLog.Repository
                         logDetail.CoachingDate = eCoachingLogUtil.AppendPdt(dataReader["CoachingDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
-						logDetail.SubmitterEmpId = dataReader["strSubmitterID"].ToString();
+						logDetail.SubmitterEmpId = dataReader["strSubmitterID"].ToString().Trim().ToUpper();
                         logDetail.EmployeeName = dataReader["strEmpName"].ToString();
-						logDetail.EmployeeId = dataReader["strEmpID"].ToString();
+						logDetail.EmployeeId = dataReader["strEmpID"].ToString().Trim().ToUpper();
                         logDetail.EmployeeSite = dataReader["strEmpSite"].ToString();
 						logDetail.IsVerintMonitor = dataReader["isVerintMonitor"] == DBNull.Value ? false : (bool) dataReader["isVerintMonitor"];
                         logDetail.VerintId = dataReader["strVerintID"].ToString();
@@ -89,12 +89,12 @@ namespace eCoachingLog.Repository
                         logDetail.IsUcId = dataReader["isUCID"] == DBNull.Value ? false : (bool)dataReader["isUCID"];
                         logDetail.UcId = dataReader["strUCID"].ToString();
                         logDetail.SupervisorName = dataReader["strEmpSupName"].ToString();
-						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString();
+						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString().Trim().ToUpper();
                         logDetail.ReassignedSupervisorName = dataReader["strReassignedSupName"].ToString();
-						logDetail.ReassignedToEmpId = dataReader["ReassignedToID"] == DBNull.Value ? null : dataReader["ReassignedToID"].ToString();
+						logDetail.ReassignedToEmpId = dataReader["ReassignedToID"] == DBNull.Value ? null : dataReader["ReassignedToID"].ToString().Trim().ToUpper();
 						logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
-						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString();
-						logDetail.LogManagerEmpId = dataReader["strCLMgrID"].ToString();
+						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString().Trim().ToUpper();
+						logDetail.LogManagerEmpId = dataReader["strCLMgrID"].ToString().Trim().ToUpper();
                         logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
                         logDetail.CoachingNotes = dataReader["txtCoachingNotes"].ToString();
 						logDetail.Behavior = dataReader["txtDescription"].ToString();
@@ -212,14 +212,14 @@ namespace eCoachingLog.Repository
                         logDetail.CreatedDate = eCoachingLogUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
-						logDetail.SubmitterEmpId = dataReader["strSubmitterID"].ToString();
+						logDetail.SubmitterEmpId = dataReader["strSubmitterID"].ToString().Trim().ToUpper();
 						logDetail.EmployeeName = dataReader["strEmpName"].ToString();
-						logDetail.EmployeeId = dataReader["strEmpID"].ToString();
+						logDetail.EmployeeId = dataReader["strEmpID"].ToString().Trim().ToUpper();
                         logDetail.EmployeeSite = dataReader["strEmpSite"].ToString();
                         logDetail.SupervisorName = dataReader["strEmpSupName"].ToString();
-						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString();
+						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString().Trim().ToUpper();
                         logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
-						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString();
+						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString().Trim().ToUpper();
                         break;
                     }
                 }
