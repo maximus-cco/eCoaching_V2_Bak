@@ -1,9 +1,9 @@
 /*
-fn_strSiteNameFromSiteLocation(01).sql
-Last Modified Date: 1/18/2017
+fn_strSiteNameFromSiteLocation(02).sql
+Last Modified Date: 0/12/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Added mapping for new Phoenix office - TFS 12063 - 09/11/2018
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -21,12 +21,12 @@ IF EXISTS (
 GO
 
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 -- =============================================
@@ -36,7 +36,7 @@ GO
 -- Last modified by: Susmitha Palacherla   
 -- Last modified date:  08/21/2014
 -- Updated mapping for Arlington during Modular design development.
-
+-- Added mapping for new Phoenix office - TFS 12063 - 09/11/2018
 -- =============================================
 CREATE FUNCTION [EC].[fn_strSiteNameFromSiteLocation] (
   @strSiteLocation NVARCHAR(50)
@@ -50,6 +50,7 @@ BEGIN
     SET @strSiteName =
       CASE @strSiteLocation 
         WHEN N'AZ-Phoenix-8900 N 22nd Avenue'       THEN N'Phoenix'
+		WHEN N'AZ-Phoenix-2411 West Peoria Av'       THEN N'Phoenix'
         WHEN N'FL-Lynn Haven-1002 Arthur Dr'     THEN N'Lynn Haven'
         WHEN N'FL-Riverview-3020 US Hwy 301 S'       THEN N'Riverview'
         WHEN N'IA-Coralville-2400 Oakdale Blv'        THEN N'Coralville'
@@ -71,12 +72,11 @@ BEGIN
     ELSE
       SET @strSiteName = N'Unknown'
       
-   --IF @strSiteName like '%HOME%'
-   -- SET @strSiteName = 'Other'
     
   RETURN @strSiteName  
 END  -- fn_strSiteNameFromSiteLocation()
 
 
 GO
+
 
