@@ -100,7 +100,7 @@
     $('body').on('change', '#select-program', function () {
     	// Set hidden field ProgramName
     	$("#ProgramName").val($(this).find("option:selected").text());
-        if ($('#select-employee').val() > 0) {
+        if ($('#select-employee').val() !== "-2") {
             $('#div-new-submission-middle').removeClass('hide');
             $('#div-new-submission-middle').addClass('show');
             resetIsCoachingByYou();
@@ -118,11 +118,10 @@
     });
 
     function resetIsCoachingByYou() {
-        //var employeeId = $('#select-employee').val();
         $.ajax({
             type: 'POST',
             url: resetIsCoachingByYouUrl,
-            data: {}, //{ employeeId: employeeId },
+            data: {},
             success: function (result) {
                 $('#div-new-submission-middle').html(result);
             }
