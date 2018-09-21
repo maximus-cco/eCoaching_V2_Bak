@@ -110,7 +110,7 @@
     $('body').on('change', '#select-behavior', function () {
     	// Set hidden field BehaviorName
     	$("#BehaviorName").val($(this).find("option:selected").text());
-        if ($('#select-employee').val() > 0) {
+        if ($('#select-employee').val() != "-2") {
             $('#div-new-submission-middle').removeClass('hide');
             $('#div-new-submission-middle').addClass('show');
             resetIsCoachingByYou();
