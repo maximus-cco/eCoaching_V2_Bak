@@ -78,13 +78,14 @@ namespace eCoachingLog.Controllers
 		[HttpPost]
 		public ActionResult Save(Survey survey)
 		{
-			if (!ModelState.IsValid)
+			// Try to avoid multiple submits
+			if (Session["IsSubmitted"] != null) // Already submitted this survey
 			{
-				var vm = new SurveyViewModel(survey);
-				// Form not ready to save, redisplay the form
-				return View("Index", vm);
+				ViewBag.Message = "You have already submitted this survey [" + survey.Id + "].";
+				return View("_Result");
 			}
 
+			Session["IsSubmitted"] = true;
 			int retCode = -1;
 			string retMsg = string.Empty;
 			try
@@ -115,7 +116,6 @@ namespace eCoachingLog.Controllers
 			{
 				ViewBag.Message = "Thank you for your time. You have successfully completed this survey.";
 			}
-
 			return View("_Result");
 		} 
     }
