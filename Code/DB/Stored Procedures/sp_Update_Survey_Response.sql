@@ -1,9 +1,9 @@
 /*
-sp_Update_Survey_Response(01).sql
-Last Modified Date: 1/18/2017
+sp_Update_Survey_Response(02).sql
+Last Modified Date:09/26/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: surveys submissions receiving duplicate key error- TFS 12089 - 09/26/2018
 
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -26,9 +26,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
 ---------------------------------------------------------------------------------------------------------
 -- MULTIPLE ASTERISKS (***) DESIGNATE SECTIONS OF THE STORED PROCEDURE TEMPLATE THAT SHOULD BE CUSTOMIZED
 ---------------------------------------------------------------------------------------------------------
@@ -40,7 +37,7 @@ GO
 -- go
 CREATE PROCEDURE [EC].[sp_Update_Survey_Response] (
       @intSurveyID INT,
-       @tableSR ResponsesTableType READONLY,
+      @tableSR ResponsesTableType READONLY,
       @nvcUserComments Nvarchar(max),
 -------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
@@ -54,7 +51,7 @@ as
    set @returnCode = 0
    set @returnMessage = 'ok'
    -- If already in transaction, don't start another
-   if @@trancount > 0
+      if @@trancount > 0
    begin
       save transaction currentTransaction
    end
@@ -85,10 +82,18 @@ SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 SET NOCOUNT ON;
 
 
-DECLARE @dtmDate datetime;
+DECLARE @bitSurveyCompleted bit,
+        @dtmDate datetime;
+SET @dtmDate  = GETDATE()       
 
-SET @dtmDate  = GETDATE()                          
+SELECT @bitSurveyCompleted = (SELECT CASE WHEN [Status]= 'Completed' THEN 1 ELSE 0 END 
+FROM [EC].[Survey_Response_Header]
+WHERE  [SurveyID]= @intSurveyID)
+							              
+IF  @bitSurveyCompleted = 0
 
+
+BEGIN 
 INSERT INTO [EC].[Survey_Response_Detail]
             ([SurveyID],[QuestionID],[ResponseID],[UserComments])
             SELECT @intSurveyID,QuestionID, ResponseID, Comments
@@ -104,7 +109,7 @@ WAITFOR DELAY '00:00:00:02'  -- Wait for 5 ms
            ,[CompletedDate]= @dtmDate
            WHERE [SurveyID]= @intSurveyID
        
-
+END
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------
@@ -120,26 +125,25 @@ WAITFOR DELAY '00:00:00:02'  -- Wait for 5 ms
    --  Therefore safely commit this transaction
    if @transactionCount = 0
    begin
-      if @returnCode >= 0
+      if @returnCode = 0
       begin
          commit transaction
       end
       else -- custom code set the return code as negative, causing rollback
       begin
-         rollback transaction currentTransaction
+	      rollback transaction currentTransaction
       end
    end
    -- if return message was not changed from default, do so now
-   if @returnMessage = 'ok'
-   begin
-      set @returnMessage = @storedProcedureName + ' completed successfully'
-   end
-return 0
+	   if @returnMessage = 'ok'
+	   begin
+	      set @returnMessage = @storedProcedureName + ' completed successfully'
+	   end
+	return 0
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 
 
 
-
-
 GO
+
 
