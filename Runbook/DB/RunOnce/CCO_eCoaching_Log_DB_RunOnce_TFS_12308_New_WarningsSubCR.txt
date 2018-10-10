@@ -1,0 +1,85 @@
+/*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+
+Summary
+
+
+TFS 12308/12333 - new coaching sub-reason for Warnings
+
+1.Add record(s) to TABLE [EC].[DIM_Sub_Coaching_Reason]
+2.Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+
+
+--Test
+SELECT *
+  FROM [EC].[DIM_Sub_Coaching_Reason]
+  where [SubCoachingReason] in 
+  ('Adherence',
+  'Quality/Performance – Failed Calls',
+  'Quality/Performance – Critical Fails')
+GO
+
+SELECT *
+  FROM [EC].[Coaching_Reason_Selection]
+  where [CoachingReasonID] in (28,29,30)
+  order by [SubCoachingReason]
+GO
+
+*/
+
+
+--******************* DETAILS*************************
+--****************************************************
+
+--TFS 12308/12333 - new coaching sub-reason for Warnings
+
+--****************************************************
+
+
+
+-- step1: add subcoaching reasons
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+            ('Adherence'),
+  ('Quality/Performance – Failed Calls'),
+  ('Quality/Performance – Critical Fails')
+GO
+
+
+
+
+
+--step2: add into coaching reason selection
+
+   INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+(28, 'Verbal Warning',246,'Adherence',1,1,0,1,0,1,1,1,1,1,1,1),
+(28, 'Verbal Warning',247,'Quality/Performance – Failed Calls',1,1,0,1,0,1,1,1,1,1,1,1),
+(28, 'Verbal Warning',248,'Quality/Performance – Critical Fails',1,1,0,1,0,1,1,1,1,1,1,1),
+(29, 'Written Warning',246,'Adherence',1,1,0,1,0,1,1,1,1,1,1,1),
+(29, 'Written Warning',247,'Quality/Performance – Failed Calls',1,1,0,1,0,1,1,1,1,1,1,1),
+(29, 'Written Warning',248,'Quality/Performance – Critical Fails',1,1,0,1,0,1,1,1,1,1,1,1),
+(30, 'Final Written Warning',246,'Adherence',1,1,0,1,0,1,1,1,1,1,1,1),
+(30, 'Final Written Warning',247,'Quality/Performance – Failed Calls',1,1,0,1,0,1,1,1,1,1,1,1),
+(30, 'Final Written Warning',248,'Quality/Performance – Critical Fails',1,1,0,1,0,1,1,1,1,1,1,1)
+GO
+
+
