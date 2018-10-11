@@ -1,0 +1,71 @@
+/*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+
+Summary
+
+
+TFS 12320/12384 - new coaching sub-reason for Warnings
+
+1.Add record(s) to TABLE [EC].[DIM_Sub_Coaching_Reason]
+2.Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+
+
+--Test
+SELECT *
+  FROM [EC].[DIM_Sub_Coaching_Reason]
+  where [SubCoachingReason]= 'Coach the Coach'
+GO
+
+
+
+Select * from [EC].[Coaching_Reason_Selection]
+where coachingReason = 'Professional Development'
+and [SubCoachingReasonID] = 249
+GO
+
+*/
+
+
+--******************* DETAILS*************************
+--****************************************************
+
+--TFS 12320/12384 - new coaching sub-reason for Warnings
+
+--****************************************************
+
+
+
+-- step1: add subcoaching reasons
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+    ('Coach the Coach')
+GO
+
+
+
+--step2: add into coaching reason selection
+
+   INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+(25, 'Professional Development',249,'Coach the Coach',1,1,1,1,1,0,0,1,0,0,0,0)
+
+GO
+
