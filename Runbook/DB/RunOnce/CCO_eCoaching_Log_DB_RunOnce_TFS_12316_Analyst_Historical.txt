@@ -1,0 +1,64 @@
+/*
+
+TFS 12316 – Add logic for Analyst Role and grant Historical Dashboard
+
+
+
+Open in an ssms window pointing to eCoaching DB in target environment.
+Run one step at a time.
+
+
+
+Database instances and databases
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+
+
+
+*/
+
+
+--1.
+
+
+INSERT INTO [EC].[UI_User_Role]
+           ([RoleName],[RoleDescription])
+     VALUES
+    ('Analyst','WPPM% and ECL Role in ACL')
+ 
+GO
+
+
+--2.
+
+
+
+INSERT INTO [EC].[UI_Role_Page_Access]
+           ([RoleID]
+           ,[RoleName]
+           ,[NewSubmission]
+           ,[MyDashboard]
+           ,[HistoricalDashboard])
+     VALUES
+           (110,'Analyst', 1, 0, 1)
+        
+GO
+
+--3.
+
+INSERT INTO [EC].[UI_Dashboard_Summary_Display]
+      ([RoleId]
+      ,[RoleName]
+      ,[MyPending]
+      ,[MyCompleted]
+      ,[MyTeamPending]
+      ,[MyTeamcompleted]
+      ,[MyTeamWarning]
+      ,[MySubmission])
+     VALUES
+     (110,'Analyst',0,0,0,0,0,1)
+GO

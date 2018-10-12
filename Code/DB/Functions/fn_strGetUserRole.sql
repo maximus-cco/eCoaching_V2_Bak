@@ -1,10 +1,10 @@
 /*
-fn_strGetUserRole(01).sql
-Last Modified Date: 05/18/2018
+fn_strGetUserRole(02).sql
+Last Modified Date: 10/12/2018
 Last Modified By: Susmitha Palacherla
 
-
-Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
+Revision 02: Added logic for Analyst Role . TFS 12316 - 10/11/2018
+Initial Revision:  Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
 
 */
 
@@ -25,13 +25,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
-
-
-
 -- =============================================
 -- Author:		Susmitha Palacherla
 -- Create date:  5/16/2018
@@ -39,6 +32,7 @@ GO
 -- Last Modified By:
 -- Revision History:
 -- Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
+-- Added logic for Analyst Role . TFS 12316 - 10/11/2018
 -- =============================================
 
 CREATE FUNCTION [EC].[fn_strGetUserRole] 
@@ -60,8 +54,9 @@ WHERE Emp_ID = @strEmpID)
  WHEN (@strEmpJobCode LIKE 'WACS0%' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 0) THEN 'CSR'
  WHEN (@strEmpJobCode LIKE 'WACS0%' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 1) THEN 'ARC'
  WHEN (@strEmpJobCode LIKE 'WACQ0%' OR @strEmpJobCode LIKE 'WACQ12' OR @strEmpJobCode LIKE 'WIHD0%'
- OR  @strEmpJobCode LIKE 'WTTR1%' OR  @strEmpJobCode LIKE 'WTID%'  ) THEN 'Employee'
-  WHEN (@strEmpJobCode LIKE '%40' OR @strEmpJobCode LIKE 'WTTI%' OR @strEmpJobCode LIKE 'WACQ13') THEN 'Supervisor'
+ OR  @strEmpJobCode LIKE 'WTTR1%' OR  @strEmpJobCode LIKE 'WTID%') THEN 'Employee'
+ WHEN @strEmpJobCode LIKE 'WH%' THEN 'HR'
+ WHEN (@strEmpJobCode LIKE '%40' OR @strEmpJobCode LIKE 'WTTI%' OR @strEmpJobCode LIKE 'WACQ13') THEN 'Supervisor'
  WHEN ((@strEmpJobCode LIKE '%50' OR @strEmpJobCode LIKE 'WEEX%' OR @strEmpJobCode LIKE 'WISO%'
  OR @strEmpJobCode LIKE 'WISY%' OR  @strEmpJobCode = 'WPWL51' OR @strEmpJobCode LIKE 'WSTE%'
  OR @strEmpJobCode LIKE '%60'  OR @strEmpJobCode LIKE '%70') 
@@ -69,12 +64,11 @@ WHERE Emp_ID = @strEmpID)
  THEN 'Manager'
  WHEN  [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'SRM') = 1 THEN 'SrManager'
  WHEN  [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1 THEN 'Director'
- WHEN @strEmpJobCode LIKE 'WH%' THEN 'HR'
+ WHEN  (@strEmpJobCode LIKE 'WPPM%' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ECL') = 1 ) THEN 'Analyst'
  ELSE 'Restricted' END)
 
  RETURN   @strUserRole
   
 END --fn_strGetUserRole
 GO
-
 
