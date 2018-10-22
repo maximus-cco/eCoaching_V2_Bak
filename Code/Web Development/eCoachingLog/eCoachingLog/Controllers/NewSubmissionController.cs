@@ -80,7 +80,7 @@ namespace eCoachingLog.Controllers
 					{
 						throw new Exception("Failed to save submission.");
 					}
-					FlashMessage.Confirmation(string.Format("Your sumbmission {0} was saved successfully.", logNameSaved));
+					FlashMessage.Confirmation(string.Format("Your submission {0} was saved successfully.", logNameSaved));
 					// Only send email for coaching logs
 					if (vm.IsWarning == null || !vm.IsWarning.Value)
 					{

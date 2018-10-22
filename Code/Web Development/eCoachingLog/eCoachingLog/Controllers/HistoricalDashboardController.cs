@@ -29,6 +29,10 @@ namespace eCoachingLog.Controllers
 		public ActionResult Index()
         {
 			Session["currentPage"] = Constants.PAGE_HISTORICAL_DASHBOARD;
+
+			// TODO: To show loading spinner on page initial display, don't load data from database first to 
+			// populate dropdowns; instead, display the page first, display loading spinner, then 
+			// send an ajax call to load those dropdowns; hide the spinner upon ajax call completes 
 			var vm = InitHistDashboardViewModel();
 			return View(vm);
         }
