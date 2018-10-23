@@ -1,0 +1,42 @@
+/*
+
+TFS 12455– Requesting access for WEEXDV to all modules
+
+
+
+Open in an ssms window pointing to eCoaching DB in target environment.
+Run one step at a time.
+
+
+
+Database instances and databases
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+
+
+
+*/
+
+
+--1.
+
+
+INSERT INTO [EC].[Module_Submission]
+           ([Job_Code]
+           ,[Job_Code_Description]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+           ,[Training])
+     VALUES
+           ('WEEXDV', 'Division Vice President', 1,1,1,1,1)
+
+GO
+
+
+
