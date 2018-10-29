@@ -1,0 +1,60 @@
+/* 
+
+TFS 12473 - Access to mark Hackmans new job code to the admin tool(WPSM14)
+
+Run one statement at a time
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+*/
+
+
+
+
+--1. Update user record to Active
+
+--select * from EC.AT_User
+--where UserId = '343549'
+
+update EC.AT_User
+set Active = 1,
+EmpJobCode = 'WPSM14'
+where UserId = '343549'
+
+
+--*********************
+
+--2. Insert records into User_Role link table
+
+--select * from [EC].[AT_User_Role_Link]
+--where UserId = '343549'
+
+
+INSERT INTO [EC].[AT_User_Role_Link]
+            ([UserId] ,
+			[RoleId])  
+VALUES
+('343549',101),
+('343549',103),
+('343549',106),
+('343549',107)
+
+
+--*********************
+
+
+--3. Update records into Role access table
+
+--select * from [EC].[AT_Role_Access]
+--where JobCode = 'WPSM13'
+
+Update [EC].[AT_Role_Access]
+set jobcode = 'WPSM14'
+,JobCodeDescription = 'Principal Analyst, Functional'
+where JobCode = 'WPSM13'
+
+
+--*********************
