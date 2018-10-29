@@ -1,0 +1,37 @@
+/* 
+TFS 12467 - Assign Manager Role to WPPM job codes 
+
+Run with nothing selected.
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+SELECT [RoleId]
+      ,[RoleName]
+      ,[RoleDescription]
+  FROM [EC].[UI_User_Role]
+GO
+
+*/
+
+
+
+
+--1. Update Description for Analyst Role
+
+Update [EC].[UI_User_Role]
+set RoleDescription = 'None'
+where Roleid = 110
+GO
+
+--*********************
+
+--2. Update Description for Manager Role
+
+Update [EC].[UI_User_Role]
+set RoleDescription = '%50 or %60 or %70 or WEEX% or WISO% or WISY% or WPWL% or WSTE% or WPPM%'
+where Roleid = 104
+GO
+--*********************
