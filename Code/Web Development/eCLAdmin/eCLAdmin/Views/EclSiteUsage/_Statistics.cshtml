@@ -1,0 +1,60 @@
+﻿@model eCLAdmin.ViewModels.EclSiteUsageViewModel
+
+<div class="col-md-12">
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<p class="panel-title" id="activity-title">@Model.HeaderText</p>
+		</div>
+		<div class="panel-body">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th rowspan="2" width="10%;" id="statistics-by">@Model.TimeSpanText</th>
+						<th colspan="2">New Submission</th>
+						<th colspan="2">My Dashboard</th>
+						<th colspan="2">Historical Dashboard</th>
+						<th colspan="2">Review</th>
+					</tr>
+					<tr>
+						<th>Hits</th>
+						<th>Users</th>
+						<th>Hits</th>
+						<th>Users</th>
+						<th>Hits</th>
+						<th>Users</th>
+						<th>Hits</th>
+						<th>Users</th>
+					</tr>
+				</thead>
+				<tbody>
+				@foreach (var s in Model.Statistics)
+				{
+					<tr>
+						<td>@s.TimeSpan</td>
+						<td>@s.TotalHitsNewSubmission</td>
+						<td>@s.TotalUsersNewSubmission</td>
+						<td>@s.TotalHitsMyDashboard</td>
+						<td>@s.TotalUsersMyDashboard</td>
+						<td>@s.TotalHitsHistorical</td>
+						<td>@s.TotalUsersHistorical</td>
+						<td>@s.TotalHitsReview</td>
+						<td>@s.TotalUsersReview</td>
+					</tr>
+				}
+					<!-- Totals -->
+					<tr>
+						<td><strong>Total</strong></td>
+						<td><strong>@Model.TotalHitsNewSubmission</strong></td>
+						<td><strong>@Model.TotalUsersNewSubmission</strong></td>
+						<td><strong>@Model.TotalHitsMyDashboard</strong></td>
+						<td><strong>@Model.TotalUsersMyDashboard</strong></td>
+						<td><strong>@Model.TotalHitsHistorical</strong></td>
+						<td><strong>@Model.TotalUsersHistorical</strong></td>
+						<td><strong>@Model.TotalHitsReview</strong></td>
+						<td><strong>@Model.TotalUsersReview</strong></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

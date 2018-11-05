@@ -159,6 +159,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
+    <Compile Include="Controllers\EclSiteUsageController.cs" />
     <Compile Include="Controllers\EmployeeLogBaseController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="Models\Dashboard\ChartCoachingCompleted.cs" />
     <Compile Include="Models\Dashboard\ChartCoachingPending.cs" />
     <Compile Include="Models\Dashboard\ChartWarningActive.cs" />
+    <Compile Include="Models\EclSiteUsage\Statistic.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\EmployeeLog\CoachingLogDetail.cs" />
     <Compile Include="Models\EmployeeLog\LogDetailBase.cs" />
@@ -208,14 +210,18 @@
       <DependentUpon>ReportTemplate.aspx</DependentUpon>
     </Compile>
     <Compile Include="Repository\DashboardRepository.cs" />
+    <Compile Include="Repository\EclSiteUsageRepository.cs" />
     <Compile Include="Repository\IDashboardRepository.cs" />
+    <Compile Include="Repository\IEclSiteUsageRepository.cs" />
     <Compile Include="Repository\ISiteRepository.cs" />
     <Compile Include="Repository\IUserRepository.cs" />
     <Compile Include="Repository\SiteRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Services\DashboardService.cs" />
+    <Compile Include="Services\EclSiteUsageService.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\IDashboardService.cs" />
+    <Compile Include="Services\IEclSiteUsageService.cs" />
     <Compile Include="Services\IEmailService.cs" />
     <Compile Include="Services\ISiteService.cs" />
     <Compile Include="Services\IUserService.cs" />
@@ -226,6 +232,7 @@
     <Compile Include="Utilities\FileUtil.cs" />
     <Compile Include="ViewModels\DashboardGraphViewModel.cs" />
     <Compile Include="ViewModels\DashboardIndexViewModel.cs" />
+    <Compile Include="ViewModels\EclSiteUsageViewModel.cs" />
     <Compile Include="ViewModels\eCoachingAccessControlAddViewModel.cs" />
     <Compile Include="ViewModels\eCoachingAccessControlViewModel.cs" />
     <Compile Include="ViewModels\EmployeeLogSelectEditorViewModel.cs" />
@@ -243,6 +250,7 @@
     <Compile Include="ViewModels\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-datetimepicker.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrapValidator.css" />
     <Content Include="Content\dataTables.bootstrap.css" />
@@ -263,6 +271,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="maintenance.html" />
     <Content Include="Reports\ReportTemplate.aspx" />
+    <Content Include="Scripts\bootstrap-datetimepicker.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -274,6 +283,8 @@
     <Content Include="Scripts\eCLAdmin\dashboardList.js" />
     <Content Include="Scripts\eCLAdmin\dashboardIndex.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
+    <Content Include="Scripts\eCLAdmin\dateTimePicker.js" />
+    <Content Include="Scripts\eCLAdmin\eclSiteUsage.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlAdd.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlDelete.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlList.js" />
@@ -291,6 +302,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\morris.js" />
     <Content Include="Scripts\raphael.js" />
     <Content Include="Scripts\respond.js" />
@@ -341,6 +353,12 @@
     <Content Include="Views\User\_AddEcoachingAccessControl.cshtml" />
     <Content Include="Views\User\_DeleteEcoachingAccessControl.cshtml" />
     <Content Include="Views\User\_EditEcoachingAccessControl.cshtml" />
+    <Content Include="Views\EclSiteUsage\Index.cshtml" />
+    <Content Include="Views\EclSiteUsage\_DateRangeByDay.cshtml" />
+    <Content Include="Views\EclSiteUsage\_DateRangeByHour.cshtml" />
+    <Content Include="Views\EclSiteUsage\_DateRangeByMonth.cshtml" />
+    <Content Include="Views\EclSiteUsage\_DateRangeByWeek.cshtml" />
+    <Content Include="Views\EclSiteUsage\_Statistics.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

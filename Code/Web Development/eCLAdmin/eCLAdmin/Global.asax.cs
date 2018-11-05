@@ -1,5 +1,4 @@
-﻿using eCLAdmin.Controllers;
-using eCLAdmin.Repository;
+﻿using eCLAdmin.Repository;
 using eCLAdmin.Services;
 using log4net;
 using SimpleInjector;
@@ -7,14 +6,13 @@ using SimpleInjector.Integration.Web;
 using SimpleInjector.Integration.Web.Mvc;
 using System;
 using System.IO;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
 namespace eCLAdmin
 {
-    public class MvcApplication : System.Web.HttpApplication
+	public class MvcApplication : System.Web.HttpApplication
     {
         readonly ILog logger = LogManager.GetLogger(typeof(MvcApplication));
 
@@ -45,9 +43,11 @@ namespace eCLAdmin
             container.Register<IDashboardRepository, DashboardRepository>(Lifestyle.Scoped);
             container.Register<IUserService, UserService>(Lifestyle.Scoped);
             container.Register<ISiteService, SiteService>(Lifestyle.Scoped);
+			container.Register<IEclSiteUsageService, EclSiteUsageService>(Lifestyle.Scoped);
+			container.Register<IEclSiteUsageRepository, EclSiteUsageRepository>(Lifestyle.Scoped);
 
-            // 3. Optionally verify the container's configuration
-            container.Verify();
+			// 3. Optionally verify the container's configuration
+			container.Verify();
 
             // 4. Store the container for use by the application
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));

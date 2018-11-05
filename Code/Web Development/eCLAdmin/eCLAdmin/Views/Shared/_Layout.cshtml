@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - eCL Admin</title>
-    @Styles.Render("~/Content/css")
+	@Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/scripts")
 </head>
 <body>
@@ -86,6 +86,8 @@
                                     <li role="presentation" class="divider"></li>
                                     <li>@Html.ActionLink("Admin Activity Summary", "RunAdminActivitySummary", "Report")</li>
                                 }
+								<li role="presentation" class="divider"></li>
+								<li>@Html.ActionLink("eCoaching Log Site Usage", "Index", "EclSiteUsage")</li>
                             </ul>
                         </li>
                     }

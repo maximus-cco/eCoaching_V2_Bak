@@ -19,8 +19,10 @@ namespace eCLAdmin
                         "~/Scripts/jquery.validate.unobtrusive.js",
                         "~/Scripts/jquery.unobtrusive-ajax.js",
                         "~/Scripts/jquery.dataTables.js",
-                        "~/Scripts/bootstrap.js",
-                        "~/Scripts/dataTables.bootstrap.js",
+						"~/Scripts/moment.js",
+						"~/Scripts/bootstrap.js",
+						"~/Scripts/bootstrap-datetimepicker.js",
+						"~/Scripts/dataTables.bootstrap.js",
                         "~/Scripts/respond.js",
                         "~/Scripts/raphael.js",
                         "~/Scripts/eCLAdmin/layout.js");
@@ -97,9 +99,17 @@ namespace eCLAdmin
                         "~/Scripts/eCLAdmin/eCoachingAccessControlAdd.js");
             bundles.Add(eCoachingAccessControlAddScriptBundle);
 
-            // css across web app
-            bundles.Add(new StyleBundle("~/Content/css").Include(
-                       "~/Content/*.css"));
-        }
+			// javascript bundle for ecl site usage
+			var eclSiteUsageScirptBundle = new ScriptBundle("~/bundles/scripts/eclSiteUsage");
+			eclSiteUsageScirptBundle.Orderer = new EclBundleOrderer();
+			eclSiteUsageScirptBundle.Include(
+						"~/Scripts/eCLAdmin/eclSiteUsage.js",
+						"~/Scripts/eCLAdmin/dateTimePicker.js");
+			bundles.Add(eclSiteUsageScirptBundle);
+
+			// css across web app
+			bundles.Add(new StyleBundle("~/Content/css").Include(
+					   "~/Content/*.css"));
+		}
     }
 }
