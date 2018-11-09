@@ -45,6 +45,7 @@ namespace eCLAdmin.Repository
 						{
 							var s = new Statistic();
 							s.TimeSpan = dataReader["TimeSpan"].ToString();
+							s.TimeSpanXLabel = s.TimeSpan;
 							// Hits
 							s.TotalHitsHistorical = dataReader["HistoricalDashboardHits"].ToString() == ""? 0 : Convert.ToInt32(dataReader["HistoricalDashboardHits"].ToString());
 							s.TotalHitsMyDashboard = dataReader["MyDashboardHits"].ToString() == "" ? 0 : Convert.ToInt32(dataReader["MyDashboardHits"].ToString());

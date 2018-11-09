@@ -10,6 +10,7 @@
 	$("#datePickerStart").on("dp.change", function (e) {
 		$('#datePickerEnd').data("DateTimePicker").minDate(e.date);
 	});
+
 	$("#datePickerEnd").on("dp.change", function (e) {
 		$('#datePickerStart').data("DateTimePicker").maxDate(e.date);
 	});
@@ -58,4 +59,4 @@
 		e.preventDefault();
 		return false;
 	});
-})
+});

@@ -67,6 +67,7 @@ namespace eCLAdmin
 		public const string BY_WEEK = "W";
 		public const string BY_MONTH = "M";
 		public const string MMDDYYYY = "MM/dd/yyyy";
+		public const string MMDD = "MM/dd";
 		public const string MMYYYY = "MM/yyyy";
 
 		// For eCoaching Access Control

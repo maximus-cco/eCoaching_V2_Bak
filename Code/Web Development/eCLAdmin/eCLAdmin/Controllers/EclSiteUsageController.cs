@@ -37,13 +37,13 @@ namespace eCLAdmin.Controllers
 				vm.TotalHitsMyDashboard += s.TotalHitsMyDashboard;
 				vm.TotalUsersMyDashboard += s.TotalUsersMyDashboard;
 				vm.TotalHitsHistorical += s.TotalHitsHistorical;
-				vm.TotalUsersHistorical += s.TotalHitsHistorical;
+				vm.TotalUsersHistorical += s.TotalUsersHistorical;
 				vm.TotalHitsReview += s.TotalHitsReview;
 				vm.TotalUsersReview += s.TotalUsersReview;
 			}
 
 			vm.HeaderText = GetHeader(byWhat, startDate, endDate);
-			vm.TimeSpanText = GetTimeSpanText(byWhat);
+			vm.TimeSpanColumnHeader = GetTimeSpanText(byWhat);
 			return PartialView("_Statistics", vm);
 		}
 

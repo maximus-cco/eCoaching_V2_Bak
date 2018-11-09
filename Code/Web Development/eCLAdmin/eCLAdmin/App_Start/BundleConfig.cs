@@ -33,7 +33,7 @@ namespace eCLAdmin
             dashboardIndexScriptBundle.Orderer = new EclBundleOrderer();
             dashboardIndexScriptBundle.Include(
                         "~/Scripts/morris.js",
-                        "~/Scripts/eCLAdmin/dashboardIndex.js");
+						"~/Scripts/eCLAdmin/dashboardIndex.js");
             bundles.Add(dashboardIndexScriptBundle);
 
             // javascript bundle for dashboard chart
@@ -100,12 +100,19 @@ namespace eCLAdmin
             bundles.Add(eCoachingAccessControlAddScriptBundle);
 
 			// javascript bundle for ecl site usage
-			var eclSiteUsageScirptBundle = new ScriptBundle("~/bundles/scripts/eclSiteUsage");
-			eclSiteUsageScirptBundle.Orderer = new EclBundleOrderer();
-			eclSiteUsageScirptBundle.Include(
+			var eclSiteUsageScriptBundle = new ScriptBundle("~/bundles/scripts/eclSiteUsage");
+			eclSiteUsageScriptBundle.Orderer = new EclBundleOrderer();
+			eclSiteUsageScriptBundle.Include(
 						"~/Scripts/eCLAdmin/eclSiteUsage.js",
 						"~/Scripts/eCLAdmin/dateTimePicker.js");
-			bundles.Add(eclSiteUsageScirptBundle);
+			bundles.Add(eclSiteUsageScriptBundle);
+			// javascript bundle for ecl site usage chart
+			var eclSiteUsageChartScriptBundle = new ScriptBundle("~/bundles/scripts/eclSiteUsageChart");
+			eclSiteUsageChartScriptBundle.Orderer = new EclBundleOrderer();
+			eclSiteUsageChartScriptBundle.Include(
+						"~/Scripts/morris.js",
+						"~/Scripts/eCLAdmin/eclSiteUsageChart.js");
+			bundles.Add(eclSiteUsageChartScriptBundle);
 
 			// css across web app
 			bundles.Add(new StyleBundle("~/Content/css").Include(

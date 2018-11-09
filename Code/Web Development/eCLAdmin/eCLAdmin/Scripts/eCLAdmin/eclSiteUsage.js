@@ -115,8 +115,17 @@
 				else {
 					$('#endDate').css('border-color', '');
 				}
-
 				isValid = $('#startDate').val() && $('#endDate').val();
+				// Further check date range selected
+				if (isValid)
+				{
+					var start = moment($('#startDate').val(), 'MM/DD/YYYY');
+					var end = moment($('#endDate').val(), 'MM/DD/YYYY');
+					if (end.diff(start, 'days') > 31) {
+						alert('The maximum date range is 31 days. Please change the dates and try again.');
+						isValid = false;
+					};
+				}
 				break;
 			case 'W':
 				// check start week
@@ -133,8 +142,16 @@
 				else {
 					$('#endWeek').css('border-color', '');
 				}
-
 				isValid = $('#startWeek').val() && $('#endWeek').val();
+				// Further check date range selected
+				if (isValid) {
+					var start = moment($('#startWeek').val(), 'MM/DD/YYYY');
+					var end = moment($('#endWeek').val(), 'MM/DD/YYYY');
+					if (end.diff(start, 'weeks') > 24) {
+						alert('The maximum date range is 24 weeks. Please change the dates and try again.');
+						isValid = false;
+					};
+				}
 				break;
 			case 'M':
 				// check start month

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace eCLAdmin.Models.EclSiteUsage
+﻿namespace eCLAdmin.Models.EclSiteUsage
 {
 	public class Statistic
 	{
@@ -13,10 +11,12 @@ namespace eCLAdmin.Models.EclSiteUsage
 		public int TotalUsersHistorical { get; set; }
 		public int TotalHitsReview { get; set; }
 		public int TotalUsersReview { get; set; }
+		public string TimeSpanXLabel { get; set; }
 
 		public Statistic()
 		{
 			this.TimeSpan = string.Empty;
+			this.TimeSpanXLabel = string.Empty;
 			this.TotalHitsNewSubmission = 0;
 			this.TotalUsersNewSubmission = 0;
 			this.TotalHitsMyDashboard = 0;

@@ -1,7 +1,8 @@
 ﻿@model eCLAdmin.ViewModels.EclSiteUsageViewModel
-
+<div id="ecl-site-usage-chart" class="show"></div>
+<br />
 <div class="col-md-12">
-	<div class="panel panel-info">
+	<div class="panel panel-default">
 		<div class="panel-heading">
 			<p class="panel-title" id="activity-title">@Model.HeaderText</p>
 		</div>
@@ -9,7 +10,7 @@
 			<table class="table table-bordered">
 				<thead>
 					<tr>
-						<th rowspan="2" width="10%;" id="statistics-by">@Model.TimeSpanText</th>
+						<th rowspan="2" width="10%;" id="statistics-by">@Model.TimeSpanColumnHeader</th>
 						<th colspan="2">New Submission</th>
 						<th colspan="2">My Dashboard</th>
 						<th colspan="2">Historical Dashboard</th>
@@ -58,3 +59,9 @@
 		</div>
 	</div>
 </div>
+
+<script>
+    var model = @Html.Raw(Json.Encode(Model));
+</script>
+
+@Scripts.Render("~/bundles/scripts/eclSiteUsageChart")

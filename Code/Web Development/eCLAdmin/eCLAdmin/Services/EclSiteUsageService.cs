@@ -54,6 +54,18 @@ namespace eCLAdmin.Services
 							            select pc).SingleOrDefault()
 						       select pc ?? s;
 
+			// By Week: reformat TimeSpanXLabel (otherwise too long to display)
+			// MM/dd/yyyy - MM/dd/yyyy --> MM/dd - MM/dd
+			if (byWhat == Constants.BY_WEEK)
+			{
+				foreach (var c in combined)
+				{
+					string[] temp = c.TimeSpan.Split('-');
+					c.TimeSpanXLabel = Convert.ToDateTime(temp[0]).ToString(Constants.MMDD) + 
+						" - " + Convert.ToDateTime(temp[1]).ToString(Constants.MMDD);
+				}
+			}
+
 			return combined.ToList();
 		}
 
@@ -82,9 +94,10 @@ namespace eCLAdmin.Services
 				else
 				{
 					from = i.ToString() + ":00";
-					to = (i + 1) + ":00";
+					to = i < 23 ? (i + 1) + ":00" : "00:00";
 				}
 				s.TimeSpan = from + " - " + to;
+				s.TimeSpanXLabel = s.TimeSpan;
 				statistics.Add(s);
 			}
 
@@ -98,6 +111,7 @@ namespace eCLAdmin.Services
 			{
 				var s = new Statistic();
 				s.TimeSpan = date.ToString(Constants.MMDDYYYY);
+				s.TimeSpanXLabel = s.TimeSpan;
 				statistics.Add(s);
 			}
 			return statistics;
@@ -111,6 +125,8 @@ namespace eCLAdmin.Services
 				var s = new Statistic();
 				var currentSaturday = date.AddDays(6);
 				s.TimeSpan = date.ToString(Constants.MMDDYYYY) + " - " + currentSaturday.ToString(Constants.MMDDYYYY);
+				// TimeSpan too long to display as X Labels, remove YYYY
+				s.TimeSpanXLabel = date.ToString(Constants.MMDD) + " - " + currentSaturday.ToString(Constants.MMDD);
 				statistics.Add(s);
 			}
 			return statistics;
@@ -123,6 +139,7 @@ namespace eCLAdmin.Services
 			{
 				var s = new Statistic();
 				s.TimeSpan = date.ToString(Constants.MMYYYY);
+				s.TimeSpanXLabel = s.TimeSpan;
 				statistics.Add(s);
 			}
 			return statistics;

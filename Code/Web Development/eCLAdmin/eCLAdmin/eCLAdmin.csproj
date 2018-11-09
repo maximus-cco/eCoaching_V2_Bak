@@ -285,6 +285,7 @@
     <Content Include="Scripts\dataTables.bootstrap.js" />
     <Content Include="Scripts\eCLAdmin\dateTimePicker.js" />
     <Content Include="Scripts\eCLAdmin\eclSiteUsage.js" />
+    <Content Include="Scripts\eCLAdmin\eclSiteUsageChart.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlAdd.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlDelete.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlList.js" />
