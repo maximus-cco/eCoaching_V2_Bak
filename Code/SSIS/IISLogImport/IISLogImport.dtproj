@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">F3360-DP2QJC2-L</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAgIzLHrzxvUSz5rZbBsKfKgAAAAACAAAAAAADZgAAwAAAABAAAAAI8tXvoadvlZOt/HapXqHDAAAAAASAAACgAAAAEAAAALO258Wdh8RbFQQWvlUqpW2IAAAAuh9a452crL+cBsEOWa5L1OpXITrEjKQg07tlip6rIKx31Zl585d+OTfnQfCV9aM2tDmnZC8fN6WaNA3AR2KYbjywjmyyLUthw+4o/xNIXfsq7uflZznMb74SfhiAJHbeKeQs7DOr8DZ+1kM7t9ceofQwA9CJCCKx11Bzq7+iRxqZczf+vGcLoxQAAABuii6SXjBy4x3VQHa+sqG/QgE0Pg==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAgIzLHrzxvUSz5rZbBsKfKgAAAAACAAAAAAADZgAAwAAAABAAAAAolU/C1c6SwLYKmoe/8f1RAAAAAASAAACgAAAAEAAAAKD8MVo/ANjwadhdKsElZoyIAAAARq+VUHhnszUQjAXXsxCBpVuOmK3O9ON13dXHVdfxmw1GFETXRxRq09xCfq/lL4DPg+GAD6FOXz6aP36a5l7ca0duq41Nr6N7hXzcYIbaYwyHbt83sOxoHUO1YoMlLXmz0JYMPmV/kRk1ugGrFwak9VPkerSX1Zc7OghNvUCbAx8wxtxZkUtTPBQAAAAMD5a1L1wYicQhNC8RLj7Qvu/mpg==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -42,17 +42,17 @@
                 <SSIS:Property SSIS:Name="Name">IISLogImport</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">129</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">141</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{B2BBF360-6625-4B04-B41E-3053BCC62E5A}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{9D117D22-F873-4DFC-A0F2-7681E0640ECC}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">6</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
                 <SSIS:Property SSIS:Name="ProtectionLevel">1</SSIS:Property>
               </SSIS:Properties>
               <SSIS:Parameters>
-                <SSIS:Parameter SSIS:Name="CM.F3420-ECLDBD01.eCoachingDev.InitialCatalog">
+                <SSIS:Parameter SSIS:Name="CM.DB Connection Manager.InitialCatalog">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -63,11 +63,11 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">eCoachingDev</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">eCoachingTest</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.F3420-ECLDBD01.eCoachingDev.Password">
+                <SSIS:Parameter SSIS:Name="CM.DB Connection Manager.Password">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -81,7 +81,7 @@
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.F3420-ECLDBD01.eCoachingDev.RetainSameConnection">
+                <SSIS:Parameter SSIS:Name="CM.DB Connection Manager.RetainSameConnection">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -96,7 +96,7 @@
                     <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.F3420-ECLDBD01.eCoachingDev.ServerName">
+                <SSIS:Parameter SSIS:Name="CM.DB Connection Manager.ServerName">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>
@@ -107,11 +107,11 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">F3420-ECLDBD01</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">F3420-ECLDBT01</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
-                <SSIS:Parameter SSIS:Name="CM.F3420-ECLDBD01.eCoachingDev.UserName">
+                <SSIS:Parameter SSIS:Name="CM.DB Connection Manager.UserName">
                   <SSIS:Properties>
                     <SSIS:Property SSIS:Name="ID">
                     </SSIS:Property>

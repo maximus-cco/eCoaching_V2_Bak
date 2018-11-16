@@ -11,22 +11,22 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="IISLogImport"
   DTS:PackageType="5"
-  DTS:VersionBuild="130"
-  DTS:VersionGUID="{ED840C82-4CCE-4CC5-AE76-32B83EDDDBB7}">
+  DTS:VersionBuild="148"
+  DTS:VersionGUID="{B8C2E679-16E3-4C54-835B-968418587326}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
-      DTS:refId="Package.ConnectionManagers[F3420-ECLDBD01.eCoachingDev]"
+      DTS:refId="Package.ConnectionManagers[DB Connection Manager]"
       DTS:CreationName="OLEDB"
       DTS:DTSID="{7F872272-2C41-4DE8-9F78-91F42466706B}"
-      DTS:ObjectName="F3420-ECLDBD01.eCoachingDev">
+      DTS:ObjectName="DB Connection Manager">
       <DTS:PropertyExpression
         DTS:Name="ConnectionString">@[User::vDBConnStr]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11;Integrated Security=SSPI;" />
+          DTS:ConnectionString="Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Integrated Security=SSPI;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -100,15 +100,6 @@
   <DTS:Variables>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{B34CACE4-AF6A-496C-AA57-5B8350005684}"
-      DTS:IncludeInDebugDump="2345"
-      DTS:Namespace="User"
-      DTS:ObjectName="vArchiveFolder">
-      <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\Data\Coaching\IISLogImport\Archive</DTS:VariableValue>
-    </DTS:Variable>
-    <DTS:Variable
-      DTS:CreationName=""
       DTS:DTSID="{69A44F86-AED0-47B3-B459-E6018E2808E5}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
@@ -128,22 +119,24 @@
     <DTS:Variable
       DTS:CreationName=""
       DTS:DTSID="{58691DE7-FC54-4783-ADAE-517438885B83}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="( @[User::vEnv] ) == &quot;PROD&quot; ? &quot;\\\\f3420-ecldbp01\\Data\\Coaching\\IISLogImport&quot; : &#xA; ( @[User::vEnv] ) == &quot;TEST&quot; ? &quot; \\\\f3420-ecldbt01\\Data\\Coaching\\IISLogImport&quot; :&#xA; &quot;\\\\f3420-ecldbd01\\Data\\Coaching\\IISLogImport&quot;"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="vCurrentFolder">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\Data\Coaching\IISLogImport\Current</DTS:VariableValue>
+        DTS:DataType="8"> \\f3420-ecldbt01\Data\Coaching\IISLogImport</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
       DTS:DTSID="{47873A72-AB55-4065-9BF7-AC3C9BF9F660}"
       DTS:EvaluateAsExpression="True"
-      DTS:Expression="( @[User::vEnv] ) == &quot;PROD&quot; ? &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Integrated Security=SSPI;&quot; : &#xA;( @[User::vEnv] ) == &quot;UAT&quot; ? &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Integrated Security=SSPI;&quot; :&#xA;( @[User::vEnv] ) == &quot;TEST&quot; ? &quot;Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingDev;Integrated Security=SSPI;&quot; :&#xA; &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11;Integrated Security=SSPI;&quot;"
+      DTS:Expression="( @[User::vEnv] ) == &quot;PROD&quot; ? &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Integrated Security=SSPI;&quot; : &#xA;( @[User::vEnv] ) == &quot;UAT&quot; ? &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Integrated Security=SSPI;&quot; :&#xA;( @[User::vEnv] ) == &quot;TEST&quot; ? &quot;Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Integrated Security=SSPI;&quot; :&#xA; &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11;Integrated Security=SSPI;&quot;"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="vDBConnStr">
       <DTS:VariableValue
-        DTS:DataType="8">Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11;Integrated Security=SSPI;</DTS:VariableValue>
+        DTS:DataType="8">Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Integrated Security=SSPI;</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -152,7 +145,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="vEnv">
       <DTS:VariableValue
-        DTS:DataType="8">DEV</DTS:VariableValue>
+        DTS:DataType="8">TEST</DTS:VariableValue>
     </DTS:Variable>
   </DTS:Variables>
   <DTS:Executables>
@@ -175,7 +168,7 @@
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\Data\Coaching\IISLogImport\Current" />
+              Folder=" \\f3420-ecldbt01\Data\Coaching\IISLogImport" />
             <FEFEProperty
               FileSpec="*.csv" />
             <FEFEProperty
@@ -550,8 +543,8 @@
                   <connections>
                     <connection
                       refId="Package\Foreach Loop Container\Load file to IISLog table\OLE DB Destination.Connections[OleDbConnection]"
-                      connectionManagerID="Package.ConnectionManagers[F3420-ECLDBD01.eCoachingDev]"
-                      connectionManagerRefId="Package.ConnectionManagers[F3420-ECLDBD01.eCoachingDev]"
+                      connectionManagerID="Package.ConnectionManagers[DB Connection Manager]"
+                      connectionManagerRefId="Package.ConnectionManagers[DB Connection Manager]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
@@ -1003,7 +996,7 @@
     design-time-name="Package\Foreach Loop Container\Load file to IISLog table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="172,41.6"
           Id="Package\Foreach Loop Container\Load file to IISLog table\OLE DB Destination"
@@ -1043,7 +1036,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
