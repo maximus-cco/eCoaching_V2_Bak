@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="IISLogImport"
   DTS:PackageType="5"
-  DTS:VersionBuild="148"
-  DTS:VersionGUID="{B8C2E679-16E3-4C54-835B-968418587326}">
+  DTS:VersionBuild="159"
+  DTS:VersionGUID="{2754E0B6-7806-4E13-A23A-02ECE36A98EF}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -26,7 +26,7 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Integrated Security=SSPI;" />
+          DTS:ConnectionString="Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Provider=SQLNCLI11;Integrated Security=SSPI;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -131,12 +131,12 @@
       DTS:CreationName=""
       DTS:DTSID="{47873A72-AB55-4065-9BF7-AC3C9BF9F660}"
       DTS:EvaluateAsExpression="True"
-      DTS:Expression="( @[User::vEnv] ) == &quot;PROD&quot; ? &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Integrated Security=SSPI;&quot; : &#xA;( @[User::vEnv] ) == &quot;UAT&quot; ? &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Integrated Security=SSPI;&quot; :&#xA;( @[User::vEnv] ) == &quot;TEST&quot; ? &quot;Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Integrated Security=SSPI;&quot; :&#xA; &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11;Integrated Security=SSPI;&quot;"
+      DTS:Expression="( @[User::vEnv] ) == &quot;PROD&quot; ? &quot;Data Source=F3420-ECLDBP01;Initial Catalog=eCoaching;Provider=SQLNCLI11;Integrated Security=SSPI;&quot; : &#xA;( @[User::vEnv] ) == &quot;UAT&quot; ? &quot;Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingUat;Provider=SQLNCLI11;Integrated Security=SSPI;&quot; :&#xA;( @[User::vEnv] ) == &quot;TEST&quot; ? &quot;Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Provider=SQLNCLI11;Integrated Security=SSPI;&quot; :&#xA; &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11;Integrated Security=SSPI;&quot;"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="vDBConnStr">
       <DTS:VariableValue
-        DTS:DataType="8">Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Integrated Security=SSPI;</DTS:VariableValue>
+        DTS:DataType="8">Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Provider=SQLNCLI11;Integrated Security=SSPI;</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -996,7 +996,7 @@
     design-time-name="Package\Foreach Loop Container\Load file to IISLog table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="172,41.6"
           Id="Package\Foreach Loop Container\Load file to IISLog table\OLE DB Destination"
@@ -1007,38 +1007,36 @@
           TopLeft="233.142861113256,20.8000002917122" />
         <EdgeLayout
           Id="Package\Foreach Loop Container\Load file to IISLog table.Paths[Flat File Source Output]"
-          TopLeft="309.142861113256,65.6000002917121">
+          TopLeft="309.142861113256,65.6000002917122">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="71.1428581841138,90.400001896129"
+              EndConnector="71.142858184114,90.4000018961288"
               Start="0,0"
-              End="71.1428581841138,82.900001896129">
+              End="71.142858184114,82.9000018961288">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,41.2000009480645" />
+                    End="0,41.2000009480644" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,41.2000009480645"
-                    Point2="0,45.2000009480645"
-                    Point3="4,45.2000009480645" />
+                    Point1="0,41.2000009480644"
+                    Point2="0,45.2000009480644"
+                    Point3="4,45.2000009480644" />
                   <mssgle:LineSegment
-                    End="67.1428581841138,45.2000009480645" />
+                    End="67.142858184114,45.2000009480644" />
                   <mssgle:CubicBezierSegment
-                    Point1="67.1428581841138,45.2000009480645"
-                    Point2="71.1428581841138,45.2000009480645"
-                    Point3="71.1428581841138,49.2000009480645" />
+                    Point1="67.142858184114,45.2000009480644"
+                    Point2="71.142858184114,45.2000009480644"
+                    Point3="71.142858184114,49.2000009480644" />
                   <mssgle:LineSegment
-                    End="71.1428581841138,82.900001896129" />
+                    End="71.142858184114,82.9000018961288" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
