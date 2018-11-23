@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="IISLogImport"
   DTS:PackageType="5"
-  DTS:VersionBuild="159"
-  DTS:VersionGUID="{2754E0B6-7806-4E13-A23A-02ECE36A98EF}">
+  DTS:VersionBuild="164"
+  DTS:VersionGUID="{978C43A7-67A6-4870-BD39-798C0C8FF112}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -120,12 +120,12 @@
       DTS:CreationName=""
       DTS:DTSID="{58691DE7-FC54-4783-ADAE-517438885B83}"
       DTS:EvaluateAsExpression="True"
-      DTS:Expression="( @[User::vEnv] ) == &quot;PROD&quot; ? &quot;\\\\f3420-ecldbp01\\Data\\Coaching\\IISLogImport&quot; : &#xA; ( @[User::vEnv] ) == &quot;TEST&quot; ? &quot; \\\\f3420-ecldbt01\\Data\\Coaching\\IISLogImport&quot; :&#xA; &quot;\\\\f3420-ecldbd01\\Data\\Coaching\\IISLogImport&quot;"
+      DTS:Expression="( @[User::vEnv] ) == &quot;PROD&quot; ? &quot;\\\\f3420-ecldbp01\\Data\\Coaching\\IISLogImport&quot; : &#xA; ( @[User::vEnv] ) == &quot;TEST&quot; ? &quot;\\\\f3420-ecldbt01\\Data\\Coaching\\IISLogImport&quot; :&#xA; &quot;\\\\f3420-ecldbd01\\Data\\Coaching\\IISLogImport&quot;"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="vCurrentFolder">
       <DTS:VariableValue
-        DTS:DataType="8"> \\f3420-ecldbt01\Data\Coaching\IISLogImport</DTS:VariableValue>
+        DTS:DataType="8">\\f3420-ecldbt01\Data\Coaching\IISLogImport</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -168,7 +168,7 @@
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder=" \\f3420-ecldbt01\Data\Coaching\IISLogImport" />
+              Folder="\\f3420-ecldbt01\Data\Coaching\IISLogImport" />
             <FEFEProperty
               FileSpec="*.csv" />
             <FEFEProperty
@@ -996,7 +996,7 @@
     design-time-name="Package\Foreach Loop Container\Load file to IISLog table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="172,41.6"
           Id="Package\Foreach Loop Container\Load file to IISLog table\OLE DB Destination"
@@ -1036,7 +1036,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
