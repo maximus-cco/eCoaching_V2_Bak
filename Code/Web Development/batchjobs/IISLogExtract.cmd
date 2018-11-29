@@ -6,18 +6,22 @@ ECHO Start: %DATE% %TIME%
 
 REM Set IIS Log files location (input)
 SET IIS_LOG_DIR=c:\inetpub\logs\LogFiles\W3SVC2\
+IIS_LOG_DIR=D:\Apps\logs\
 
 REM Set Target (URL) to parse
-SET WEB_ROOT=/eCoachingLog_st/
-REM SET WEB_ROOT=/eCoachingLog/
+REM SET WEB_ROOT=/eCoachingLog_st/
+SET WEB_ROOT=/eCoachingLog/
 
 REM Set Parsed CSV files location (web server)
-REM SET IIS_LOG_DIR=D:\Apps\logs\
 SET CURRENT_DIR=%~dp0out\
 
-REM Set CSV files processing location (db server) 
+REM Set CSV files processing location (db server)
+REM Dev 
 REM SET COPY_CSV_TO_DIR=\\f3420-ecldbd01\Data\Coaching\IISLogImport
-SET COPY_CSV_TO_DIR=\\f3420-ecldbt01\Data\Coaching\IISLogImport
+REM ST
+REM SET COPY_CSV_TO_DIR=\\f3420-ecldbt01\Data\Coaching\IISLogImport
+REM Prod
+SET COPY_CSV_TO_DIR=\\f3420-ecldbp01\Data\Coaching\IISLogImport
 
 REM Get previous day iis log file name
 FOR /F %%A IN ('cscript //nologo yesterdayDate.vbs') DO SET yesterday=%%A
@@ -46,7 +50,7 @@ REM Extract ecl user web activities to cvs file
    AND StatusCode = 200" -i:IIS -o:CSV 
 
 XCOPY /D /Y %csvFileNameFullPath% %COPY_CSV_TO_DIR%
-rem DEL %csvFileNameFullPath% 
+DEL %csvFileNameFullPath% 
 
 FOR /F "TOKENS=1-4 DELIMS=/ " %%A IN ('DATE/T') DO SET DATE=%%D-%%B-%%C
 FOR /F "TOKENS=1-4 DELIMS=:. " %%A IN ('echo %TIME%') DO SET TIME=%%A:%%B:%%C
