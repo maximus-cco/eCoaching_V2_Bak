@@ -56,6 +56,8 @@ BEGIN
 		RETURN -1;
 	END;
 	
+	OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+	
 	WITH 
 	HitCount_CTE (YearMonth, Hits, PageName)
 	AS
@@ -74,7 +76,7 @@ BEGIN
 	(
 		SELECT 
 			FORMAT(IISLogDateTime, 'MM/yyyy'),
-			COUNT(distinct(EmployeeID)), 
+			COUNT(distinct(DecryptByKey(UserID))), 
 			iis.PageName + 'Users'
 		FROM ec.iislog iis
 		WHERE IISLogDateTime BETWEEN @startDay AND @endDay
@@ -117,6 +119,8 @@ BEGIN
 	FROM HitCount_Pivot hcp
 	JOIN UserCount_Pivot ucp ON hcp.YearMonth = ucp.YearMonth
 	ORDER BY hcp.YearMonth;
+	
+	CLOSE SYMMETRIC KEY [CoachingKey];
 	
 	SET @returnCode = @@ERROR;
 	IF @returnCode <> 0

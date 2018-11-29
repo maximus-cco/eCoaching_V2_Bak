@@ -28,7 +28,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_IISLog_From_Stage]
+ALTER PROCEDURE [EC].[sp_InsertInto_IISLog_From_Stage]
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -36,13 +36,12 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	OPEN SYMMETRIC KEY [CoachingKey]  
-	DECRYPTION BY CERTIFICATE [CoachingCert] 
+	OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
-	INSERT INTO EC.IISLog (EmployeeID, IISLogDateTime, [Target], PageName, StatusCode)
-	SELECT [EC].[fn_nvcGetEmpIdFromLanId](username, getdate()), IISLogDateTime, [Target], PageName, StatusCode
+	INSERT INTO EC.IISLog (UserID, IISLogDateTime, [Target], PageName, StatusCode)
+	SELECT EncryptByKey(Key_GUID('CoachingKey'), UserName) , IISLogDateTime, [Target], PageName, StatusCode
 	FROM EC.IISLog_Stage
 
-	CLOSE SYMMETRIC KEY [CoachingKey] 
+	CLOSE SYMMETRIC KEY [CoachingKey]; 
 END
 GO

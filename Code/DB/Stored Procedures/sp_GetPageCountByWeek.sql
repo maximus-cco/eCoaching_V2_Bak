@@ -55,6 +55,8 @@ BEGIN
 		SET @returnMessage = @storedProcedureName + ': invalid date(s) passed in.';
 		RETURN -1;
 	END;
+	
+	OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
 	SET DATEFIRST 7;
 	SET @endDay = DATEADD(DAY, 6, @endDay);
@@ -77,7 +79,7 @@ BEGIN
 	(
 		SELECT 
 			FORMAT(DATEADD(Week, DATEDIFF(week, 0, IISLogDateTime), -1), 'MM/dd/yyyy'), 
-			COUNT(distinct(EmployeeID)), 
+			COUNT(distinct(DecryptByKey(UserID))), 
 			iis.PageName + 'Users'
 		FROM ec.iislog iis
 		WHERE CONVERT(date, IISLogDateTime) BETWEEN @startDay AND @endDay
@@ -120,6 +122,8 @@ BEGIN
 	FROM HitCount_Pivot hcp
 	JOIN UserCount_Pivot ucp ON hcp.[week] = ucp.[week]
 	ORDER BY hcp.[week];
+	
+	CLOSE SYMMETRIC KEY [CoachingKey];
 
 	SET @returnCode = @@ERROR;
 	IF @returnCode <> 0

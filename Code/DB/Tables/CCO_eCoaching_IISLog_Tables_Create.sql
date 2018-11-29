@@ -44,7 +44,7 @@ GO
 CREATE TABLE EC.IISLog
 (
     IISLogID INT IDENTITY PRIMARY KEY NOT NULL,
-	EmployeeID nvarchar(16),
+	UserID varbinary(128),
 	IISLogDateTime datetime,
 	[Target] nvarchar(100),
 	PageName nvarchar(50),

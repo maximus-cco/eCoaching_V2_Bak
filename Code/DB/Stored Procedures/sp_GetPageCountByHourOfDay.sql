@@ -54,6 +54,8 @@ BEGIN
 		SET @returnMessage = @storedProcedureName + ': invalid date [@whichDay=' + @whichDay + ']';
 		RETURN -1;
 	END;
+	
+	OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
 	WITH 
 	HitCount_CTE (StartHour, EndHour, Hits, PageName)
@@ -75,7 +77,7 @@ BEGIN
 		SELECT 
 			FORMAT(dateadd(hour, datediff(hour, 0, IISLogDateTime), 0), 'HH:mm'),
 			FORMAT(dateadd(hh, 1, dateadd(hour, datediff(hour, 0, IISLogDateTime), 0)), 'HH:mm'),
-			COUNT(distinct(EmployeeID)), 
+			COUNT(distinct(DecryptByKey(UserID))), 
 			iis.PageName + 'Users'
 		FROM ec.iislog iis
 		WHERE CONVERT(date, IISLogDateTime) = @whichDay
@@ -118,6 +120,8 @@ BEGIN
 	FROM HitCount_Pivot hcp
 	JOIN UserCount_Pivot ucp ON hcp.StartHour = ucp.StartHour
 	ORDER BY hcp.StartHour;
+	
+	CLOSE SYMMETRIC KEY [CoachingKey];
 
 	SET @returnCode = @@ERROR;
 	IF @returnCode <> 0
