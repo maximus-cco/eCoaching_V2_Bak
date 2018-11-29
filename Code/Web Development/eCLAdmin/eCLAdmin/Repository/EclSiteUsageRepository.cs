@@ -21,7 +21,8 @@ namespace eCLAdmin.Repository
 				using (SqlConnection connection = new SqlConnection(conn))
 				using (SqlCommand command = new SqlCommand(spName, connection))
 				{
-					command.CommandType = System.Data.CommandType.StoredProcedure;
+					command.CommandType = CommandType.StoredProcedure;
+					command.CommandTimeout = 300;
 					if (byWhat == Constants.BY_HOUR)
 					{
 						command.Parameters.AddWithValue("@whichDay", startDate);

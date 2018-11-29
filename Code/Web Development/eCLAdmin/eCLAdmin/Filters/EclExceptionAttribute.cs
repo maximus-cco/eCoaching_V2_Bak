@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Text;
+using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace eCLAdmin.Filters
@@ -9,7 +11,12 @@ namespace eCLAdmin.Filters
 
         public void OnException(ExceptionContext filterContext)
         {
-			logger.Error("Exception: " + filterContext.Exception.StackTrace);
+			StringBuilder error = new StringBuilder();
+			error.Append("Exception: ")
+				.Append(filterContext.Exception.Message)
+				.Append(Environment.NewLine)
+				.Append(filterContext.Exception.StackTrace);
+			logger.Error(error.ToString());
 
 			filterContext.Result = new RedirectToRouteResult(
 				new RouteValueDictionary
