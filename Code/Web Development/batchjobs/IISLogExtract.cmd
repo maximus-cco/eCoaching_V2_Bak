@@ -6,7 +6,7 @@ ECHO Start: %DATE% %TIME%
 
 REM Set IIS Log files location (input)
 SET IIS_LOG_DIR=c:\inetpub\logs\LogFiles\W3SVC2\
-IIS_LOG_DIR=D:\Apps\logs\
+REM SET IIS_LOG_DIR=D:\Apps\logs\
 
 REM Set Target (URL) to parse
 REM SET WEB_ROOT=/eCoachingLog_st/
