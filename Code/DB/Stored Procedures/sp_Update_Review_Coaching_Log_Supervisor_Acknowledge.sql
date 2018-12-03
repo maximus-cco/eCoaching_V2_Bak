@@ -31,10 +31,12 @@ GO
 --    Updated per SCR 13891 to capture review sup id.
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
 --    TFS 7137 move my dashboard to new architecture - 06/12/2018
+--    TFS 12591 Modified to support OTA Report - 11/26/2018
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Acknowledge]
 (
   @nvcFormID BIGINT,
+  @nvcCoachingNotes Nvarchar(4000),
   @nvcFormStatus Nvarchar(30),
   @nvcReviewSupID Nvarchar(10),
   @dtmSUPReviewAutoDate datetime
@@ -57,6 +59,7 @@ BEGIN TRY
 UPDATE [EC].[Coaching_Log]
 SET 
   StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
+  CoachingNotes = @nvcCoachingNotes,
   Review_SupID = @nvcReviewSupID,
   SUPReviewedAutoDate = @dtmSUPReviewAutoDate
 WHERE CoachingID = @nvcFormID

@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Other(04).sql
-Last Modified Date: 10/23/2017
+sp_InsertInto_Coaching_Log_Quality_Other(05).sql
+Last Modified Date: 11/29/2018
 Last Modified By: Susmitha Palacherla
+
+Version 05: Modified to support Quality OTA feed - TFS 12591 - 11/26/2018
 
 Version 04: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
@@ -16,6 +18,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 IF EXISTS (
   SELECT * 
+
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
      AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Quality_Other' 
@@ -30,6 +33,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
@@ -40,6 +46,7 @@ GO
 -- Update: NPN Load. TFS 5309 - 02/01/2017
 -- Update: Get NPN Description from table. TFS 5649 - 02/17/2017
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
+-- Modified to support OTA Report. TFS 12591 - 11/26/2018
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 @Count INT OUTPUT
@@ -127,8 +134,8 @@ select  Distinct LOWER(cs.EMP_ID)	[FormName],
 		 0                          [EmailSent],
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 CASE WHEN cs.Report_Code LIKE 'CTC%'
-		 THEN 2	
+		 CASE WHEN cs.Report_Code LIKE 'CTC%' THEN 2	
+		 WHEN cs.Report_Code LIKE 'OTA%' THEN 3
 		 ELSE 1 END						[ModuleID],
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
 		 ISNULL(csr.[Mgr_ID],'999999') [MgrID]
@@ -161,7 +168,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[Value])
     SELECT cf.[CoachingID],
            CASE WHEN cf.strReportCode like 'CTC%' THEN 21 
-           WHEN cf.strReportCode like 'HFC%' THEN 10 
+           WHEN (cf.strReportCode like 'HFC%' OR cf.strReportCode like 'OTA%') THEN 10 
            WHEN cf.strReportCode like 'KUD%' THEN 11
            WHEN cf.strReportCode like 'NPN%' THEN 5
            ELSE 14 END,
@@ -214,6 +221,9 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality_Other
+
+
+
 GO
 
 

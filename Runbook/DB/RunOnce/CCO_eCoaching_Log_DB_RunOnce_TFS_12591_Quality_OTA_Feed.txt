@@ -1,0 +1,52 @@
+/* 
+
+CCO_eCoaching_Log_DB_RunOnce_TFS_12591_Quality_OTA_Feed.txt
+
+Run one statement at a time
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+*/
+
+
+-- Run with nothing selected.
+
+
+INSERT INTO [EC].[DIM_Source]
+           ([SourceID]
+           ,[CoachingSource]
+           ,[SubCoachingSource]
+           ,[isActive]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+           ,[Training])
+     VALUES
+           (134, 'Direct', 'Quality Alignment', 0,0,0,0,0,0),
+		   (234, 'Indirect', 'Quality Alignment', 1,0,0,0,0,0)
+
+GO
+
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+	('Quality', 'Quality', 'Indirect', 'Quality Alignment', 0, 'Pending Quality Lead Review', 'Supervisor', 'eCL: Pending Quality Lead Review', 
+	'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime </strong>   that requires your action. Please click on the link below to review the eCoaching log.',
+	 0, 'NA')
+    
+GO

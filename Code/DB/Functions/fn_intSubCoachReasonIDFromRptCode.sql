@@ -1,8 +1,9 @@
 /*
-fn_intSubCoachReasonIDFromRptCode(05).sql
-Last Modified Date: 7/31/2018
+fn_intSubCoachReasonIDFromRptCode(06).sql
+Last Modified Date: 11/29/2018
 Last Modified By: Susmitha Palacherla
 
+Version 06: New OTA feed - TFS 12591 - 11/29/2018
 
 Version 05: New PBH feed - TFS 11451 - 7/31/2018
 
@@ -26,18 +27,11 @@ IF EXISTS (
    DROP FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
 
 -- =============================================
 -- Author:              Susmitha Palacherla
@@ -55,7 +49,7 @@ GO
 -- TFS 6145 - To add BRL, BRN and MSR - 04/12/2017
 -- TFS 7646 - To add DTT - 08/31/2017
 -- TFS 11451 - To add PBH - 07/31/2018
-
+-- TFS 12591 - To add OTA- 11/26/2018
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -102,6 +96,7 @@ BEGIN
             WHEN N'MSR' THEN 42
 			WHEN N'DTT' THEN 242
 			WHEN N'PBH' THEN 245
+			WHEN N'OTA' THEN 42
         ELSE -1
       END
     ELSE
@@ -112,5 +107,8 @@ RETURN @intSubCoachReasonID
 END  -- fn_intSubCoachReasonIDFromRptCode()
 
 GO
+
+
+
 
 

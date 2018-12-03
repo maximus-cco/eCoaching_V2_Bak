@@ -1,9 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(10).sql
-
-Last Modified Date: 07/30/2018
+sp_SelectReviewFrom_Coaching_Log(11).sql
+Last Modified Date: 11/26/2018
 Last Modified By: Susmitha Palacherla
 
+Version 11: Modified to support OTA Report. TFS 12591 - 11/26/2018
 Version 10: New PBH Feed - TFS 11451 - 7/30/2018
 Version 09 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
 Version 08: Modified to support additional Modules per TFS 8793 - 11/16/2017
@@ -27,6 +27,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -56,6 +57,7 @@ GO
 -- 19. Encryption/decryption - emp name, emp lanid, email - TFS 7856 - 010/10/2018
 -- 20. Modified during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
 -- 21. Modified to incorporate PBH feed - TFS 11451 - 07/31/2018
+-- 22. Modified to support OTA Report. TFS 12591 - 11/26/2018
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -177,6 +179,7 @@ SET @nvcSQL2 = '
   CASE WHEN (cc.CTC IS NOT NULL AND cl.strReportCode LIKE ''CTC%'') THEN 1 ELSE 0 END "Quality / CTC",
   CASE WHEN (cc.HFC IS NOT NULL AND cl.strReportCode LIKE ''HFC%'') THEN 1 ELSE 0 END "Quality / HFC",
   CASE WHEN (cc.KUD IS NOT NULL AND cl.strReportCode LIKE ''KUD%'') THEN 1 ELSE 0 END "Quality / KUD",
+  CASE WHEN (cc.OTA IS NOT NULL AND cl.strReportCode LIKE ''OTA%'') THEN 1 ELSE 0 END "Quality / OTA",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''NPN%'') THEN 1 ELSE 0 END "Quality / NPN",
   CASE WHEN (cc.SEA IS NOT NULL AND cl.strReportCode LIKE ''SEA%'') THEN 1 ELSE 0 END "OTH / SEA",
   CASE WHEN (cc.DTT IS NOT NULL AND cl.strReportCode LIKE ''DTT%'') THEN 1 ELSE 0 END "OTH / DTT",
@@ -223,6 +226,7 @@ JOIN
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END) CTC,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 12 THEN [clr].[Value] ELSE NULL END) HFC,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END) KUD,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END) OTA,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 242) THEN [clr].[Value] ELSE NULL END) DTT,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC
@@ -253,6 +257,8 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
 GO
+
 
 
