@@ -99,7 +99,7 @@ namespace eCoachingLog.Repository
                         logDetail.CoachingNotes = dataReader["txtCoachingNotes"].ToString();
 						logDetail.Behavior = dataReader["txtDescription"].ToString();
 						logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
-                        logDetail.EmployeeComments = dataReader["txtCSRComments"].ToString();
+                        logDetail.Comment = dataReader["txtCSRComments"].ToString();
                         logDetail.EmployeeReviewDate = eCoachingLogUtil.AppendPdt(dataReader["CSRReviewAutoDate"].ToString());
                         logDetail.SupReviewedAutoDate = eCoachingLogUtil.AppendPdt(dataReader["SupReviewedAutoDate"].ToString());
                         logDetail.MgrReviewAutoDate = eCoachingLogUtil.AppendPdt(dataReader["MgrReviewAutoDate"].ToString());
@@ -135,6 +135,7 @@ namespace eCoachingLog.Repository
 						logDetail.IsCtc = Convert.ToInt16(dataReader["Quality / CTC"]) == 0 ? false : true;
 						logDetail.IsHigh5Club = Convert.ToInt16(dataReader["Quality / HFC"]) == 0 ? false : true;
 						logDetail.IsKudo = Convert.ToInt16(dataReader["Quality / KUD"]) == 0 ? false : true;
+						logDetail.IsOta = Convert.ToInt16(dataReader["Quality / OTA"]) == 0 ? false : true;
 
 						logDetail.IsAttendance = Convert.ToInt16(dataReader["OTH / SEA"]) == 0 ? false : true;
 						logDetail.IsDtt = Convert.ToInt16(dataReader["OTH / DTT"]) == 0 ? false : true;

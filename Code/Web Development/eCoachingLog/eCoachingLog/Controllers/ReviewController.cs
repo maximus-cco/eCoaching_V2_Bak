@@ -126,10 +126,18 @@ namespace eCoachingLog.Controllers
 
 			if (IsAcknowledgeForm(vm)) // Load Acknowledge partial
 			{
+				vm.CommentTextBoxLabel = Constants.ACK_COMMENT_TEXTBOX_LABEL;
 				vm.IsAcknowledgeForm = true;
 				vm.IsReinforceLog = IsReinforceLog(vm);
 				vm.IsReviewForm = false;
 				vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
+				// OverTurned Appeal log
+				vm.IsAckOverTurnedAppeal = IsAckOverTurnAppeal(vm);
+				if (vm.IsAckOverTurnedAppeal)
+				{
+					vm.ShowCommentTextBox = true;
+					vm.CommentTextBoxLabel = Constants.ACK_OTA_COMMENT_TEXTBOX_LABEL;
+				}
 
 				if (user.EmployeeId == vm.LogDetail.EmployeeId)
 				{
@@ -190,6 +198,8 @@ namespace eCoachingLog.Controllers
 		[HttpPost]
 		public ActionResult Save(ReviewViewModel vm)
 		{
+			logger.Debug("!!!!!!!!!!Entered Save");
+
 			bool success = false;
 			User user = GetUserFromSession();
 			if (ModelState.IsValid)
@@ -423,6 +433,13 @@ namespace eCoachingLog.Controllers
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
+			// Quality Lead: Acknowledge an OverTurned Appeal log
+			if (vm.LogDetail.IsOta)
+			{
+				return (userEmployeeId == vm.LogDetail.SupervisorEmpId && 
+					vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW);
+			}
+
 			// User is the employee
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
@@ -511,6 +528,14 @@ namespace eCoachingLog.Controllers
 			}
 
 			return false;
+		}
+
+		private bool IsAckOverTurnAppeal(ReviewViewModel vm)
+		{
+			var userEmployeeId = GetUserFromSession().EmployeeId;
+			return (vm.LogDetail.IsOta && 
+				userEmployeeId == vm.LogDetail.SupervisorEmpId &&
+				vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW);
 		}
 
 		private bool IsReinforceLog(ReviewViewModel vm)

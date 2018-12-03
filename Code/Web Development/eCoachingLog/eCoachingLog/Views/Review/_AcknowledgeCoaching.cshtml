@@ -15,6 +15,7 @@
 {
 	@Html.HiddenFor(m => m.IsAcknowledgeForm)
 	@Html.HiddenFor(m => m.IsReinforceLog)
+	@Html.HiddenFor(m => m.IsAckOverTurnedAppeal)
 	@Html.HiddenFor(m => m.LogDetail.LogId)
 	@Html.HiddenFor(m => m.LogDetail.EmployeeId)
 	@Html.HiddenFor(m => m.LogDetail.ModuleId)
@@ -32,7 +33,14 @@
 		</label>
 		@Html.ValidationMessageFor(m => m.Acknowledge)
 	</div>
-	
+
+	<div class='form-group mt-2 @(@Model.IsAckOverTurnedAppeal ? "show" : "hide")'>
+		<label for="AcknowledgeCheckBox" class="required">Check the box below to acknowledge the monitor:</label><br />
+		<label class="checkbox-inline">
+			@Html.CheckBoxFor(m => m.Acknowledge)By checking this box, I indicate that I have reviewed this appeal and have taken the appropriate actions.
+		</label>
+		@Html.ValidationMessageFor(m => m.Acknowledge)
+	</div>
 
 	<div class='form-group mt-2 @(@Model.IsAckOpportunityLog ? "show" : "hide")'>
 		<label for="AcknowledgeCheckBox" class="required">Check the box below to acknowledge the coaching opportunity:</label><br />
@@ -43,19 +51,19 @@
 	</div>
 
 	<div class='form-group mt-2 @(@Model.ShowCommentTextBox ? "show" : "hide")'>
-		<label for="EmployeeCommentsTextBox">Provide any comments or feedback below:</label>
-		@Html.TextAreaFor(m => m.EmployeeComments, new { @class = "form-control", @rows = "5", id = "textarea-employee-comments", maxlength = 3000 })
+		<label for="EmployeeCommentsTextBox" class="required">@Model.CommentTextBoxLabel</label>
+		@Html.TextAreaFor(m => m.Comment, new { @class = "form-control", @rows = "5", id = "textarea-employee-comments", maxlength = 3000 })
 		<div class="help-block">
 			Provide as much detail as possible.
 			<span id="employee-comments" class="pull-right">3000 remaining</span>
 		</div>
-		@Html.ValidationMessageFor(m => m.EmployeeComments)
+		@Html.ValidationMessageFor(m => m.Comment)
 	</div>
 
 	<div class='form-group mt-2 @(@Model.ShowCommentDdl ? "show" : "hide")'>
 		<label for="EmployeeCommentsDdl" class="required">Please select one of the comments below for the log:</label>
-		@Html.DropDownListFor(m => m.EmployeeComments, Model.EmployeeCommentsDdlList, new { @class = "form-control", style = "width: 350px;" })
-		@Html.ValidationMessageFor(m => m.EmployeeComments)
+		@Html.DropDownListFor(m => m.Comment, Model.EmployeeCommentsDdlList, new { @class = "form-control", style = "width: 350px;" })
+		@Html.ValidationMessageFor(m => m.Comment)
 	</div>
 }
 

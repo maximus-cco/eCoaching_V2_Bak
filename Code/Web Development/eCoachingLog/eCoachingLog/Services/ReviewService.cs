@@ -228,7 +228,7 @@ namespace eCoachingLog.Services
 		{
 			// Strip potential harmful characters entered by the user
 			review.DetailsCoached = eCoachingLogUtil.CleanInput(review.DetailsCoached);
-			review.EmployeeComments = eCoachingLogUtil.CleanInput(review.EmployeeComments);
+			review.Comment = eCoachingLogUtil.CleanInput(review.Comment);
 			review.DetailReasonCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonCoachable);
 			review.DetailReasonNotCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonNotCoachable);
 
@@ -275,6 +275,12 @@ namespace eCoachingLog.Services
 			bool success = false;
 			string nextStatus = string.Empty;
 
+			if (review.IsAckOverTurnedAppeal)
+			{
+				nextStatus = "Completed";
+				return reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, user);
+			}
+
 			// Opportunity
 			if (!review.IsReinforceLog)
 			{
@@ -291,14 +297,14 @@ namespace eCoachingLog.Services
 				}
 				else
 				{
-					success = reviewRepository.CompleteSupAckReinforceReview(review.LogDetail.LogId, nextStatus, user);
+					success = reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, user);
 				}
 			}
 
 			// Email CSR's comments to supervisor and manager 
 			if (success && review.LogDetail.ModuleId == Constants.MODULE_CSR && nextStatus == "Completed")
 			{
-				if(!this.emailService.SendComments(review.LogDetail, review.EmployeeComments, emailTempFileName, logoFileName))
+				if(!this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName, logoFileName))
 				{
 					var userId = user == null ? "usernull" : user.EmployeeId;
 					var logId = review.LogDetail == null ? "logidnull" : review.LogDetail.LogId.ToString();

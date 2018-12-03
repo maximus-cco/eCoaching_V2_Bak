@@ -37,7 +37,7 @@ namespace eCoachingLog.ViewModels
 		[AllowHtml]
 		public string ReasonNotCse { get; set; }
 		[AllowHtml]
-		public string EmployeeComments { get; set; }
+		public string Comment { get; set; }
 
 		public IEnumerable<SelectListItem> MainReasonNotCoachableList { get; set; }
 		public IEnumerable<SelectListItem> EmployeeCommentsDdlList { get; set; }
@@ -54,6 +54,7 @@ namespace eCoachingLog.ViewModels
 		public bool IsCsePendingForm { get; set; }
 		public bool IsAcknowledgeForm { get; set; }
 		public bool IsReinforceLog { get; set; }
+		public bool IsAckOverTurnedAppeal { get; set; }
 
 		// To control display on Historical/Review
 		public bool ShowViewCseText { get; set; }
@@ -64,6 +65,8 @@ namespace eCoachingLog.ViewModels
 		public bool IsAckOpportunityLog { get; set; }
 		public bool ShowCommentTextBox { get; set; }
 		public bool ShowCommentDdl { get; set; }
+
+		public string CommentTextBoxLabel { get; set; }
 
 		public IEnumerable<SelectListItem> CommentSelectList { get; set; }
 
@@ -174,6 +177,12 @@ namespace eCoachingLog.ViewModels
 					var ack = new[] { "Acknowledge" };
 					yield return new ValidationResult("You must select the checkbox to complete this review.", ack);
 				}
+
+				if (this.IsAckOverTurnedAppeal && string.IsNullOrEmpty(this.Comment))
+				{
+					var ack = new[] { "Comment" };
+					yield return new ValidationResult("Provide comment.", ack);
+				}
 			}
 		} // end Validate 
 
@@ -190,11 +199,12 @@ namespace eCoachingLog.ViewModels
 				IsCse = vm.IsCse,
 				DateReviewed = vm.DateReviewed,
 				ReasonNotCse = vm.ReasonNotCse,
-				EmployeeComments = vm.EmployeeComments,
+				Comment = vm.Comment,
 				IsRegularPendingForm = vm.IsRegularPendingForm,
 				IsResearchPendingForm = vm.IsResearchPendingForm,
 				IsCsePendingForm = vm.IsCsePendingForm,
 				IsAckOpportunityLog = vm.IsAckOpportunityLog,
+				IsAckOverTurnedAppeal = vm.IsAckOverTurnedAppeal,
 				IsReviewForm = vm.IsReviewForm,
 				IsAcknowledgeForm = vm.IsAcknowledgeForm,
 				LogDetail = vm.LogDetail,

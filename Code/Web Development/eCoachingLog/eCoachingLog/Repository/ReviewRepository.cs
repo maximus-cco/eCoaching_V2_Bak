@@ -89,7 +89,7 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus); // next status;
 				command.Parameters.AddWithValueSafe("@bitisCSRAcknowledged", review.Acknowledge);
 				command.Parameters.AddWithValueSafe("@dtmCSRReviewAutoDate", DateTime.Now);
-				command.Parameters.AddWithValueSafe("@nvcCSRComments", review.EmployeeComments);
+				command.Parameters.AddWithValueSafe("@nvcCSRComments", review.Comment);
 
 				try
 				{
@@ -111,9 +111,9 @@ namespace eCoachingLog.Repository
 			return success;
 		}
 
-		public bool CompleteSupAckReinforceReview(long logId, string nextStatus, User user)
+		public bool CompleteSupAckReview(long logId, string nextStatus, User user)
 		{
-			logger.Debug("Entered CompleteSupAckReinforceReview ...");
+			logger.Debug("Entered CompleteSupAckReview ...");
 
 			bool success = false;
 
@@ -162,7 +162,7 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus); // next status;
 				command.Parameters.AddWithValueSafe("@bitisCSRAcknowledged", review.Acknowledge);
 				command.Parameters.AddWithValueSafe("@dtmCSRReviewAutoDate", DateTime.Now);
-				command.Parameters.AddWithValueSafe("@nvcCSRComments", review.EmployeeComments);
+				command.Parameters.AddWithValueSafe("@nvcCSRComments", review.Comment);
 
 				try
 				{

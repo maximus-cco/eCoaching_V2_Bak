@@ -45,6 +45,7 @@ namespace eCoachingLog.Models.Common
 		public bool IsBrl { get; set; } // break time exceeded
 		public bool IsDtt { get; set; } // New Attendance Discrepancy feed
 		public bool IsPbh { get; set; }
+		public bool IsOta { get; set; } // OverTurned Appeal
 
 		public bool HasEmpAcknowledged { get; set; }
 		public bool HasSupAcknowledged { get; set; }
@@ -71,7 +72,7 @@ namespace eCoachingLog.Models.Common
 		// For all others: Reviewed and acknowledged Coaching on
 		public string EmployeeReviewLabel { get; set; }
 		public string EmployeeReviewDate { get; set; }
-        public string EmployeeComments { get; set; }
+        public string Comment { get; set; }
 
 		public string LogDescription { get; set; }
 

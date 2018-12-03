@@ -225,6 +225,9 @@ namespace eCoachingLog.Utils
 			"- If the address is incorrect, you must refer the beneficiary to the Social Security Administration (SSA) using information in Agent Partner Search." +
 			"<br /><br />" +
 			"When reviewing this type of message, always take the appropriate steps as directed, regardless of the reason for the call. Failing to do so in these cases will result in the beneficiary not receiving his/her new Medicare card.";
+
+		public const string ACK_COMMENT_TEXTBOX_LABEL = "Provide any comments or feedback below:";
+		public const string ACK_OTA_COMMENT_TEXTBOX_LABEL = "Provide the details from the coaching session including action plans developed:";
 	}
 
 	public enum EmployeeLogType

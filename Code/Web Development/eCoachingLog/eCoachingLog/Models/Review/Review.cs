@@ -25,7 +25,7 @@ namespace eCoachingLog.Models.Review
 		public bool? IsCse { get; set; }
 		public DateTime? DateReviewed { get; set; }
 		public string ReasonNotCse { get; set; }
-		public string EmployeeComments { get; set; }
+		public string Comment { get; set; }
 
 		public bool IsRegularPendingForm { get; set; }
 		public bool IsResearchPendingForm { get; set; }
@@ -34,6 +34,7 @@ namespace eCoachingLog.Models.Review
 
 		public bool IsAckOpportunityLog { get; set; }
 		public bool IsReinforceLog { get; set; }
+		public bool IsAckOverTurnedAppeal { get; set; }
 
 		public bool IsReviewForm { get; set; }
 
