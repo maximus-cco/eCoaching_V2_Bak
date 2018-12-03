@@ -278,7 +278,7 @@ namespace eCoachingLog.Services
 			if (review.IsAckOverTurnedAppeal)
 			{
 				nextStatus = "Completed";
-				return reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, user);
+				return reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, review.Comment, user);
 			}
 
 			// Opportunity
@@ -297,7 +297,7 @@ namespace eCoachingLog.Services
 				}
 				else
 				{
-					success = reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, user);
+					success = reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, review.Comment, user);
 				}
 			}
 

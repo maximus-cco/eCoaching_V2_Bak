@@ -111,7 +111,7 @@ namespace eCoachingLog.Repository
 			return success;
 		}
 
-		public bool CompleteSupAckReview(long logId, string nextStatus, User user)
+		public bool CompleteSupAckReview(long logId, string nextStatus, string comment, User user)
 		{
 			logger.Debug("Entered CompleteSupAckReview ...");
 
@@ -125,6 +125,7 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@nvcFormID", logId);
 				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
+				command.Parameters.AddWithValueSafe("@nvcCoachingNotes", comment);
 				command.Parameters.AddWithValueSafe("@dtmSUPReviewAutoDate", DateTime.Now);
 
 				try
