@@ -278,7 +278,7 @@ namespace eCoachingLog.Services
 			if (review.IsAckOverTurnedAppeal)
 			{
 				nextStatus = "Completed";
-				return reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, review.Comment, user);
+				return reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, FormatCoachingNotes(review, user), user);
 			}
 
 			// Opportunity
@@ -297,7 +297,8 @@ namespace eCoachingLog.Services
 				}
 				else
 				{
-					success = reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, review.Comment, user);
+					// No coaching notes for reinforcement
+					success = reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, null, user);
 				}
 			}
 
@@ -357,9 +358,15 @@ namespace eCoachingLog.Services
 			{
 				notes += " " + review.DetailReasonCoachable;
 			}
-			else
+			else if (!string.IsNullOrEmpty(review.DetailsCoached))
 			{
 				notes += " " + review.DetailsCoached;
+			}
+
+			// OTA log: notes captured as Comment
+			if (review.IsAckOverTurnedAppeal)
+			{
+				notes += review.Comment;
 			}
 
 			if (string.IsNullOrEmpty(review.LogDetail.CoachingNotes))
