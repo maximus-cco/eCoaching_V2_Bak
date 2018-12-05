@@ -1,9 +1,9 @@
 /*
-sp_Update_Coaching_Log_Quality(02).sql
-Last Modified Date: 03/26/2018
+sp_Update_Coaching_Log_Quality(03).sql
+Last Modified Date: 12/03/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 03: Modified to add delay between update statements. TFS 12841 - 12/03/2018
 
 Version 02: Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
 
@@ -27,13 +27,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
-
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      04/23/2014
@@ -42,7 +35,8 @@ GO
 -- Last Updated By: Susmitha Palacherla
 -- Modified per TFS 283 to force CRLF in Description value when viewed in UI - 08/31/2015
 -- Modified per TFS 3757 to update isCoachingMonitor - 11/10/2016
--- Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
+-- Modified to handle inactive evaluations. TFS 9204 - 02/08/2018
+-- Modified to add delay between update statements. TFS 12841 - 12/03/2018
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality]
   
@@ -80,6 +74,8 @@ AND S.EvalStatus = 'Inactive'
 
 OPTION (MAXDOP 1)
 END
+
+WAITFOR DELAY '00:00:00:02'  -- Wait for 2 ms
 
       
 -- Update txtDescription for existing records
@@ -144,6 +140,8 @@ END -- sp_Update_Coaching_Log_Quality
 
 
 
+
 GO
+
 
 
