@@ -305,14 +305,19 @@ namespace eCoachingLog.Services
 			// Email CSR's comments to supervisor and manager 
 			if (success && review.LogDetail.ModuleId == Constants.MODULE_CSR && nextStatus == "Completed")
 			{
-				if(!this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName, logoFileName))
+				try
+				{
+					this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName, logoFileName);
+				}
+				catch (Exception ex)
 				{
 					var userId = user == null ? "usernull" : user.EmployeeId;
 					var logId = review.LogDetail == null ? "logidnull" : review.LogDetail.LogId.ToString();
 					StringBuilder info = new StringBuilder("Failed to send comments email: ");
 					info.Append("[").Append(userId).Append("]")
-						.Append("|logid[").Append(logId).Append("].");
-	
+						.Append("|logid[").Append(logId).Append("]. ")
+						.Append(ex.Message);
+
 					logger.Warn(info);
 				}
 			}

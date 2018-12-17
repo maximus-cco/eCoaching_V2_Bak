@@ -26,7 +26,7 @@ namespace eCoachingLog.Services
             this.newSubmissionRepository = newSubmissionRepository;
         }
 
-		public bool SendComments(CoachingLogDetail log, string comments, string emailTempFileName, string logoFileName)
+		public void SendComments(CoachingLogDetail log, string comments, string emailTempFileName, string logoFileName)
 		{
 			string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
 			string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
@@ -39,7 +39,7 @@ namespace eCoachingLog.Services
 			msg.From = new MailAddress(fromAddress, fromDisplayName);
 			msg.Subject = "eCoaching Log Completed (" + log.EmployeeName + ")";
 
-			return Send(msg, logoFileName);
+			Send(msg, logoFileName);
 		}
 
         public bool Send(NewSubmission submission, string templateFileName, string logoFileName, string logName)
