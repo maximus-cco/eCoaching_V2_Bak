@@ -63,24 +63,24 @@ BEGIN
 	AS
 	(
 		SELECT 
-			FORMAT(IISLogDateTime, 'MM/yyyy'),
+			CONVERT(varchar(7), IISLogDateTime, 126),
 			COUNT(*) Hits, 
 			iis.PageName + 'Hits'
 		FROM ec.iislog iis
 		WHERE IISLogDateTime BETWEEN @startDay AND @endDay
-		GROUP BY FORMAT(IISLogDateTime, 'MM/yyyy'), iis.PageName 
+		GROUP BY CONVERT(varchar(7), IISLogDateTime, 126), iis.PageName 
 	),
 
 	UserCount_CTE (YearMonth, Users, PageName)
 	AS 
 	(
 		SELECT 
-			FORMAT(IISLogDateTime, 'MM/yyyy'),
+			CONVERT(varchar(7), IISLogDateTime, 126),
 			COUNT(distinct(DecryptByKey(UserID))), 
 			iis.PageName + 'Users'
 		FROM ec.iislog iis
 		WHERE IISLogDateTime BETWEEN @startDay AND @endDay
-		GROUP BY FORMAT(IISLogDateTime, 'MM/yyyy'), iis.PageName
+		GROUP BY CONVERT(varchar(7), IISLogDateTime, 126), iis.PageName
 	),
 
 	HitCount_Pivot 
@@ -107,7 +107,7 @@ BEGIN
 		) ucp
 	)
 
-	SELECT hcp.YearMonth AS [TimeSpan]
+	SELECT SUBSTRING(hcp.YearMonth, 6, 20) + '/' + SUBSTRING(hcp.YearMonth, 1, 4) AS TimeSpan
 	  ,hcp.HistoricalDashboardHits
 	  ,hcp.MyDashboardHits
 	  ,hcp.NewSubmissionHits
@@ -133,5 +133,7 @@ BEGIN
 	    RETURN 0;
     END
 END;
+
+
 
 GO

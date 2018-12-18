@@ -32,27 +32,27 @@
 				{
 					<tr>
 						<td>@s.TimeSpan</td>
-						<td>@s.TotalHitsNewSubmission</td>
-						<td>@s.TotalUsersNewSubmission</td>
-						<td>@s.TotalHitsMyDashboard</td>
-						<td>@s.TotalUsersMyDashboard</td>
-						<td>@s.TotalHitsHistorical</td>
-						<td>@s.TotalUsersHistorical</td>
-						<td>@s.TotalHitsReview</td>
-						<td>@s.TotalUsersReview</td>
+						<td align="right">@Html.DisplayFor(item => s.TotalHitsNewSubmission)</td>
+						<td align="right">@Html.DisplayFor(item => s.TotalUsersNewSubmission)</td>
+						<td align="right">@Html.DisplayFor(item => s.TotalHitsMyDashboard)</td>
+						<td align="right">@Html.DisplayFor(item => s.TotalUsersMyDashboard)</td>
+						<td align="right">@Html.DisplayFor(item => s.TotalHitsHistorical)</td>
+						<td align="right">@Html.DisplayFor(item => s.TotalUsersHistorical)</td>
+						<td align="right">@Html.DisplayFor(item => s.TotalHitsReview)</td>
+						<td align="right">@Html.DisplayFor(item => s.TotalUsersReview)</td>
 					</tr>
 				}
 					<!-- Totals -->
 					<tr>
 						<td><strong>Total</strong></td>
-						<td><strong>@Model.TotalHitsNewSubmission</strong></td>
-						<td><strong>@Model.TotalUsersNewSubmission</strong></td>
-						<td><strong>@Model.TotalHitsMyDashboard</strong></td>
-						<td><strong>@Model.TotalUsersMyDashboard</strong></td>
-						<td><strong>@Model.TotalHitsHistorical</strong></td>
-						<td><strong>@Model.TotalUsersHistorical</strong></td>
-						<td><strong>@Model.TotalHitsReview</strong></td>
-						<td><strong>@Model.TotalUsersReview</strong></td>
+						<td align="right"><strong>@Html.DisplayFor(m => m.TotalHitsNewSubmission)</strong></td>
+						<td align="right"><strong>@Html.DisplayFor(item => Model.TotalUsersNewSubmission)</strong></td>
+						<td align="right"><strong>@Html.DisplayFor(item => Model.TotalHitsMyDashboard)</strong></tdalign="right">
+						<td align="right"><strong>@Html.DisplayFor(item => Model.TotalUsersMyDashboard)</strong></td>
+						<td align="right"><strong>@Html.DisplayFor(item => Model.TotalHitsHistorical)</strong></td>
+						<td align="right"><strong>@Html.DisplayFor(item => Model.TotalUsersHistorical)</strong></td>
+						<td align="right"><strong>@Html.DisplayFor(item => Model.TotalHitsReview)</strong></td>
+						<td align="right"><strong>@Html.DisplayFor(item => Model.TotalUsersReview)</strong></td>
 					</tr>
 				</tbody>
 			</table>

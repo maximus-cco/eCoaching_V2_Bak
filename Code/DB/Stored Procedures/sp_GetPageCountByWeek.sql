@@ -66,11 +66,11 @@ BEGIN
 	AS 
 	(
 		SELECT 
-			FORMAT(DATEADD(Week, DATEDIFF(week, 0, IISLogDateTime), -1), 'MM/dd/yyyy'), 
+			CONVERT(date, DATEADD(Week, DATEDIFF(week, 0, IISLogDateTime), -1)), 
 			COUNT(*), 
 			iis.PageName + 'Hits'
 		FROM ec.iislog iis
-		WHERE CONVERT(date, IISLogDateTime) BETWEEN @startDay AND @endDay
+		WHERE IISLogDateTime BETWEEN @startDay AND @endDay
 		GROUP BY DATEADD(Week, DATEDIFF(week, 0, IISLogDateTime), -1), iis.PageName 
 	),
 
@@ -78,11 +78,11 @@ BEGIN
 	AS 
 	(
 		SELECT 
-			FORMAT(DATEADD(Week, DATEDIFF(week, 0, IISLogDateTime), -1), 'MM/dd/yyyy'), 
+			CONVERT(date, DATEADD(Week, DATEDIFF(week, 0, IISLogDateTime), -1)), 
 			COUNT(distinct(DecryptByKey(UserID))), 
 			iis.PageName + 'Users'
 		FROM ec.iislog iis
-		WHERE CONVERT(date, IISLogDateTime) BETWEEN @startDay AND @endDay
+		WHERE IISLogDateTime BETWEEN @startDay AND @endDay
 		GROUP BY DATEADD(Week, DATEDIFF(week, 0, IISLogDateTime), -1), iis.PageName
 	),
 
@@ -110,7 +110,7 @@ BEGIN
 		) ucp
 	)
 
-	SELECT hcp.[Week] + ' - ' + FORMAT(DATEADD(Day, DATEDIFF(Day, 0, hcp.[Week]), 6), 'MM/dd/yyyy') AS [TimeSpan]
+	SELECT FORMAT(hcp.[Week], 'MM/dd/yyyy') + ' - ' + FORMAT(DATEADD(Day, DATEDIFF(Day, 0, hcp.[Week]), 6), 'MM/dd/yyyy') AS [TimeSpan]
 	  ,hcp.HistoricalDashboardHits
 	  ,hcp.MyDashboardHits
 	  ,hcp.NewSubmissionHits
@@ -136,5 +136,7 @@ BEGIN
 	    RETURN 0;
     END
 END;
+
+
 
 GO

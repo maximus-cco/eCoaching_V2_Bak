@@ -1,6 +1,7 @@
 ﻿using eCLAdmin.Models.EclSiteUsage;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace eCLAdmin.ViewModels
 {
@@ -11,13 +12,21 @@ namespace eCLAdmin.ViewModels
 		public string ByWhat { get; set; }
 		public string HeaderText { get; set; }
 		public string TimeSpanColumnHeader { get; set; }
+		[DisplayFormat(DataFormatString = "{0: #,##0}")]
 		public int TotalHitsNewSubmission { get; set; }
+		[DisplayFormat(DataFormatString = "{0: #,##0}")]
 		public int TotalUsersNewSubmission { get; set; }
+		[DisplayFormat(DataFormatString = "{0: #,##0}")]
 		public int TotalHitsMyDashboard { get; set; }
+		[DisplayFormat(DataFormatString = "{0: #,##0}")]
 		public int TotalUsersMyDashboard { get; set; }
+		[DisplayFormat(DataFormatString = "{0: #,##0}")]
 		public int TotalHitsHistorical { get; set; }
+		[DisplayFormat(DataFormatString = "{0: #,##0}")]
 		public int TotalUsersHistorical { get; set; }
+		[DisplayFormat(DataFormatString = "{0: #,##0}")]
 		public int TotalHitsReview { get; set; }
+		[DisplayFormat(DataFormatString = "{0: #,##0}")]
 		public int TotalUsersReview { get; set; }
 		public IList<Statistic> Statistics { get; set; }
 
