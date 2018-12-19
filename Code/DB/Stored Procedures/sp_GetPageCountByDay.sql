@@ -67,7 +67,7 @@ BEGIN
 			COUNT(*), 
 			iis.PageName + 'Hits'
 		FROM ec.iislog iis
-		WHERE IISLogDateTime BETWEEN @startDay AND @endDay
+		WHERE CONVERT(date, IISLogDateTime) BETWEEN @startDay AND @endDay
 		GROUP BY CONVERT(date, IISLogDateTime), iis.PageName 
 	),
 
@@ -79,7 +79,7 @@ BEGIN
 			COUNT(distinct(DecryptByKey(UserID))), 
 			iis.PageName + 'Users'
 		FROM ec.iislog iis
-		WHERE IISLogDateTime BETWEEN @startDay AND @endDay
+		WHERE CONVERT(date, IISLogDateTime) BETWEEN @startDay AND @endDay
 		GROUP BY CONVERT(date, IISLogDateTime), iis.PageName
 	),
 
