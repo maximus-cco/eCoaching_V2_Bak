@@ -1,7 +1,10 @@
 /*
-sp_Populate_Employee_Hierarchy(05).sql
-Last Modified Date: 11/17/2017
+sp_Populate_Employee_Hierarchy(06).sql
+Last Modified Date: 12/21/2018
 Last Modified By: Susmitha Palacherla
+
+
+Version 06:  Cross check employees on Leave against Aspect data - TFS 13074 - 12/21/2018
 
 Version 05:  Updated to support Encryption of sensitive data - TFS 7856 - 11/17/2017
 
@@ -44,6 +47,7 @@ GO
 -- Updated to populate preferred name and Hire date attributes. TFS 8228 - 09/21/2017
 -- Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/17/2017
+-- Updated to cross check employees on Leave against Aspect data - TFS 13074 - 12/21/2018
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
@@ -207,6 +211,21 @@ BEGIN
 OPTION (MAXDOP 1)
 END
 
+-- Update Employee Status from Aspect
+BEGIN
+	UPDATE [EC].[Employee_Hierarchy]
+	   SET [Active] = 'A'
+	    FROM [EC].[Employee_Hierarchy]H JOIN [EC].[EmpID_To_SupID_Stage]S
+	 ON H.[Emp_ID] = S.[EMP_ID]
+	 WHERE H.[Active] in ('L','P')
+	  AND H.End_Date = 99991231
+	 AND S.[Emp_Status] IN ('RFT','RPT', 'TPT', 'TFT')
+OPTION (MAXDOP 1)
+END
+
+WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];	 
 
@@ -228,5 +247,6 @@ END --sp_Populate_Employee_Hierarchy
 
 
 GO
+
 
 
