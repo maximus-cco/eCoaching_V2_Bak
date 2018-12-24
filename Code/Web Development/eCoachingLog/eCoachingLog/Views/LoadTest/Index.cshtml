@@ -1,0 +1,49 @@
+﻿@{
+	Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Load Test Login - eCoaching Log</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	@Styles.Render("~/Content/css")
+	<script> window.history.forward(); </script>
+</head>
+<body>
+	<div class="container-fluid" id="banner">
+		<div class="row  ecl-logo">
+			<img alt="CCO logo" src="~/Content/Images/cco-logo.jpg">
+			<span style="float: right;"><img alt="eCL logo" src="~/Content/Images/eCL-logo.png"></span>
+		</div>
+	</div>
+	<hr />
+	<div class="body-content">
+		<div class="row">
+			<div class="col-sm-12">
+				<p><font size="8">Load Test</font></p>
+			</div>
+		</div>
+		<br />
+	@using (Html.BeginForm("Login", "LoadTest", FormMethod.Post,
+				new { id = "loadtest-login-form", @class = "form-horizontal" }))
+	{ 
+		<div class="row">
+			<div class="col-sm-2">
+				<h3>Log in as another user:</h3>
+				@Html.DropDownList("userLanId", ViewData["userList"] as List<SelectListItem>, new { @class = "form-control" })
+			</div>
+		</div>
+		<br />
+
+		<div class="row">
+			<div class="col-sm-2">
+				<button class="btn btn-info" type="submit" id="btn-login">Login</button>
+			</div>
+		</div>
+	}
+	</div>
+</body>
+</html>
+

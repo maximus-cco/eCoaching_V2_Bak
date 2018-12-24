@@ -145,11 +145,14 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Help\" />
+    <Folder Include="Views\Login\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\EclBundleOrderer.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HistoricalDashboardController.cs" />
+    <Compile Include="Controllers\LoadTestController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
@@ -383,6 +386,7 @@
     <Content Include="Views\NewSubmission\_NewSubmissionCoachingReason.cshtml" />
     <Content Include="Views\Review\_Error.cshtml" />
     <Content Include="maintenance.html" />
+    <Content Include="Views\LoadTest\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
