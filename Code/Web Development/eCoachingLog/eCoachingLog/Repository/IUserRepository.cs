@@ -5,7 +5,7 @@ namespace eCoachingLog.Repository
 {
     public interface IUserRepository
     {
-        List<User> GetAllUsers();
         User GetUserByLanId(string lanId);
+		IList<User> GetLoadTestUsers();
     }
 }

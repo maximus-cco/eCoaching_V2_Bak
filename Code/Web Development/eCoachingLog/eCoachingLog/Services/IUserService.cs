@@ -5,7 +5,6 @@ namespace eCoachingLog.Services
 {
     public interface IUserService
     {
-        List<User> GetAllUsers();
         User GetUserByLanId(string lanId);
 		User Authenticate(string lanId);
 		string DetermineLandingPage(User user);

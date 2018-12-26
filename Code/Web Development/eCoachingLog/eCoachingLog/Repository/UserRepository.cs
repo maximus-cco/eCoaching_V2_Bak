@@ -14,13 +14,6 @@ namespace eCoachingLog.Repository
 
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
-        public List<User> GetAllUsers()
-        {
-            List<User> users = new List<User>();
-
-            return users;
-        }
-
         public User GetUserByLanId(string lanId)
         {
             User user = null;
@@ -51,5 +44,34 @@ namespace eCoachingLog.Repository
             }
 			return user;
         }
-    }
+
+		public IList<User> GetLoadTestUsers()
+		{
+			IList<User> users = new List<User>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_LoadTestGetUsers]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				// Output parameter
+				SqlParameter retCodeParam = command.Parameters.Add("@returnCode", SqlDbType.Int);
+				retCodeParam.Direction = ParameterDirection.Output;
+				SqlParameter retMsgParam = command.Parameters.Add("@returnMessage", SqlDbType.VarChar, 100);
+				retMsgParam.Direction = ParameterDirection.Output;
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						User user = new User();
+						user.LanId = dataReader["UserLanID"].ToString().Trim().ToUpper();
+						user.Name = dataReader["UserName"].ToString();
+						user.Role = dataReader["Role"].ToString();
+						users.Add(user);
+					}
+				}
+			}
+			return users;
+		}
+	}
 }
