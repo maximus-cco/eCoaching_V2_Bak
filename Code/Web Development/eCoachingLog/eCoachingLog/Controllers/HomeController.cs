@@ -1,6 +1,4 @@
-﻿using eCoachingLog.Models.User;
-using eCoachingLog.Services;
-using eCoachingLog.Utils;
+﻿using eCoachingLog.Utils;
 using log4net;
 using System.Web.Mvc;
 
@@ -10,9 +8,7 @@ namespace eCoachingLog.Controllers
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private IUserService userService = new UserService();
-
-        public ActionResult Index()
+		public ActionResult Index()
         {
             logger.Debug("Entered HomeController.Index");
 
@@ -21,34 +17,7 @@ namespace eCoachingLog.Controllers
 				return new FilePathResult(System.Web.Hosting.HostingEnvironment.MapPath(Constants.MAINTENANCE_PAGE), "text/html");
 			}
 
-			string userLanId = User.Identity.Name;
-			userLanId = userLanId.Replace(@"AD\", "");
-			User user = this.userService.GetUserByLanId(userLanId);
-			if (user == null)
-			{
-				return RedirectToAction("Index", "Unauthorized");
-			}
-			Session["AuthenticatedUser"] = user;
-
-			// Landing page
-			if (user.IsAccessMyDashboard)
-			{
-				return RedirectToAction("Index", "MyDashboard");
-			}
-
-			if (user.IsAccessHistoricalDashboard)
-			{
-				return RedirectToAction("Index", "HistoricalDashboard");
-			}
-
-			if (user.IsAccessNewSubmission)
-			{
-				return RedirectToAction("Index", "NewSubmission");
-			}
-
-			// Redirect to unAuthorized page
-			return RedirectToAction("Index", "Unauthorized");
-
+			return RedirectToAction("Index", "Login");
 		}
 
         public JsonResult KeepSessionAlive()
