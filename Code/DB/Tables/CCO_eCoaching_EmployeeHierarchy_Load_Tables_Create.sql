@@ -1,7 +1,9 @@
 /*
-File: eCoaching_EmployeeHierarchy_Load_Tables_Create(05).sql 
-Last Modified Date: 04/02/2018
+File: eCoaching_EmployeeHierarchy_Load_Tables_Create(06).sql 
+Last Modified Date: 01/08/2019
 Last Modified By: Susmitha Palacherla
+
+Version 06:  Updated to increase size of dept_id cols - TFS 13168 - 01/08/2019
 
 version 05: Updated to document changes for data encrryption TFS 7856.
 
@@ -91,7 +93,7 @@ CREATE TABLE [EC].[Employee_Hierarchy_Stage](
 	[Emp_ID_Prefix] [nvarchar](10) NULL,
 	[Hire_Date] [datetime] NULL,
 	[Emp_Pri_Name] [nvarchar](70) NULL,
-	[Dept_ID] [nvarchar](10) NULL DEFAULT ('NA'),
+	[Dept_ID] [nvarchar](30) NULL DEFAULT ('NA'),
 	[Dept_Description] [nvarchar](60) NULL DEFAULT ('NA'),
 	[Reg_Temp] [nvarchar](3) NULL DEFAULT ('NA'),
 	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA'),
@@ -139,7 +141,7 @@ SCREATE TABLE [EC].[Employee_Hierarchy](
 	[SrMgrLvl3_ID] [nvarchar](10) NULL,
 	[Emp_ID_Prefix] [nvarchar](10) NULL,
 	[Hire_Date] [nvarchar](10) NULL,
-	[Dept_ID] [nvarchar](10) NULL DEFAULT ('NA'),
+	[Dept_ID] [nvarchar](30) NULL DEFAULT ('NA'),
 	[Dept_Description] [nvarchar](60) NULL DEFAULT ('NA'),
 	[Reg_Temp] [nvarchar](3) NULL DEFAULT ('NA'),
 	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA'),

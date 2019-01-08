@@ -1,7 +1,9 @@
 /*
-fn_strSiteNameFromSiteLocation(02).sql
-Last Modified Date: 0/12/2018
+fn_strSiteNameFromSiteLocation(03).sql
+Last Modified Date: 01/08/2019
 Last Modified By: Susmitha Palacherla
+
+Version 03:  Updated to add wildcards to accommodate new maximus location values- TFS 13168 - 01/08/2019
 
 Version 02: Added mapping for new Phoenix office - TFS 12063 - 09/11/2018
 
@@ -28,7 +30,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         07/25/2013
@@ -37,6 +38,7 @@ GO
 -- Last modified date:  08/21/2014
 -- Updated mapping for Arlington during Modular design development.
 -- Added mapping for new Phoenix office - TFS 12063 - 09/11/2018
+-- Updated to add wildcards to accommodate new maximus location values- TFS 13168 - 01/08/2019
 -- =============================================
 CREATE FUNCTION [EC].[fn_strSiteNameFromSiteLocation] (
   @strSiteLocation NVARCHAR(50)
@@ -48,35 +50,35 @@ BEGIN
   
   IF @strSiteLocation IS NOT NULL
     SET @strSiteName =
-      CASE @strSiteLocation 
-        WHEN N'AZ-Phoenix-8900 N 22nd Avenue'       THEN N'Phoenix'
-		WHEN N'AZ-Phoenix-2411 West Peoria Av'       THEN N'Phoenix'
-        WHEN N'FL-Lynn Haven-1002 Arthur Dr'     THEN N'Lynn Haven'
-        WHEN N'FL-Riverview-3020 US Hwy 301 S'       THEN N'Riverview'
-        WHEN N'IA-Coralville-2400 Oakdale Blv'        THEN N'Coralville'
-        WHEN N'IA-Coralville-2450 Oakdale Blv'        THEN N'Coralville'
-        WHEN N'KS-Lawrence-3833 Greenway Dr'      THEN N'Lawrence'
-        WHEN N'KY-Corbin-14892 N USHighway25E'      THEN N'Corbin'
-        WHEN N'KY-London-4550 Old Whitley Rd'     THEN N'London'
-        WHEN N'KY-Winchester-1025 Bypass Rd'     THEN N'Winchester'
-        WHEN N'LA-Bogalusa-411 IndustrialPkwy'     THEN N'Bogalusa'
-        WHEN N'MS-Hattiesburg-5912 Highway 49'     THEN N'Hattiesburg'
-        WHEN N'TX-Houston-5959 Corporate Dr'     THEN N'Houston'
-        WHEN N'TX-Waco-1205 N Loop 340'        THEN N'Waco'
-        WHEN N'UT-Layton-2195 N Univ Pk Blvd' THEN 'Layton'
-        WHEN N'UT-Sandy-8475 S Sandy Parkway'       THEN N'Sandy'
-        WHEN N'VA-Chester-701 Liberty Way'      THEN N'Chester'
-        WHEN N'VA-Falls Church-5201 Leesburg'     THEN N'Arlington'
-        ELSE 'OTHER'
-      END
-    ELSE
-      SET @strSiteName = N'Unknown'
-      
-    
+    (SELECT CASE 
+	        WHEN (@strSiteLocation lIKE N'%Bogalusa%')    THEN N'Bogalusa'
+		    WHEN (@strSiteLocation lIKE N'%Chester%' and @strSiteLocation NOT lIKE N'%Winchester%')      THEN N'Chester'
+	        WHEN (@strSiteLocation lIKE N'%Coralville%')       THEN N'Coralville'
+            WHEN (@strSiteLocation lIKE N'%Corbin%')      THEN N'Corbin'
+		    WHEN (@strSiteLocation lIKE N'%Hattiesburg%')    THEN N'Hattiesburg'
+			WHEN (@strSiteLocation lIKE N'%Houston%')     THEN N'Houston'
+			WHEN (@strSiteLocation lIKE N'%Las Cruces%')     THEN N'Las Cruces'
+		    WHEN (@strSiteLocation lIKE N'%Lawrence%')     THEN N'Lawrence'
+			WHEN (@strSiteLocation lIKE N'%Layton%') THEN 'Layton'
+			WHEN (@strSiteLocation lIKE N'%London%')    THEN N'London'
+			WHEN (@strSiteLocation lIKE N'%Lynn Haven%')     THEN N'Lynn Haven'
+		    WHEN (@strSiteLocation lIKE N'%Phoenix%') THEN N'Phoenix'
+		    WHEN (@strSiteLocation lIKE N'%Sandy%')      THEN N'Sandy'
+            WHEN (@strSiteLocation lIKE N'%Riverview%')      THEN N'Riverview'    
+		    WHEN (@strSiteLocation lIKE N'%Waco%')       THEN N'Waco'  
+            WHEN (@strSiteLocation lIKE N'%Winchester%')   THEN N'Winchester'
+       ELSE 'OTHER' END)
+  
+     
+   
   RETURN @strSiteName  
 END  -- fn_strSiteNameFromSiteLocation()
 
 
+
 GO
+
+
+
 
 
