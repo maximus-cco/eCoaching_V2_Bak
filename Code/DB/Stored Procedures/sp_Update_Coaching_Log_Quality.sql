@@ -39,7 +39,7 @@ GO
 -- Modified to add delay between update statements. TFS 12841 - 12/03/2018
 -- Modified to decrease coaching_log table locking time TFS 13282 - 1/15/2019 LH
 --    ===========================================================================================
-ALTER PROCEDURE [EC].[sp_Update_Coaching_Log_Quality] AS
+CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality] AS
 BEGIN
 
 BEGIN TRY

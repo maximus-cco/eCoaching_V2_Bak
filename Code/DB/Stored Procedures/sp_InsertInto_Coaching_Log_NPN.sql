@@ -37,7 +37,7 @@ GO
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 -- Modified to decrease coaching_log table locking time TFS 13282- 1/15/2019
 --    ====================================================================================
-ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_NPN]
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_NPN]
 AS
 BEGIN
   DECLARE @maxnumID INT

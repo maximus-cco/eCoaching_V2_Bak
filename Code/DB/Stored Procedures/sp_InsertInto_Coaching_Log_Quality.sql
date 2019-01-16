@@ -44,7 +44,7 @@ GO
 -- Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
 -- Modified to decrease coaching_log table locking time TFS 13282 - 1/15/2019 LH
 --    =======================================================================================
-ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
+CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
 AS
 BEGIN
