@@ -31,8 +31,7 @@ GO
 
 
 
-
---    ====================================================================
+--    ========================================================================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      02/23/2014
 -- Description:     This procedure inserts the Quality scorecards into the Coaching_Log table. 
@@ -43,156 +42,175 @@ GO
 -- Updated to Incorporate ATA Scorecards - TFS 7541 - 09/19/2017
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 -- Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
---    =====================================================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
+-- Modified to decrease coaching_log table locking time TFS 13282 - 1/15/2019 LH
+--    =======================================================================================
+ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
-  
 AS
 BEGIN
+  
+  DECLARE @maxnumID INT, @strSourceType NVARCHAR(20);
+  -- Fetches the maximum CoachingID before the insert.
+  SET @maxnumID = (SELECT IsNUll(MAX(CoachingID), 0) FROM EC.Coaching_Log);    
+  SET @strSourceType = 'Indirect'; 
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-BEGIN TRANSACTION
-BEGIN TRY
-      
-      DECLARE @maxnumID INT,
-      @strSourceType NVARCHAR(20)
-       -- Fetches the maximum CoachingID before the insert.
-      SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])    
-      SET @strSourceType = 'Indirect'
-      
-      -- Inserts records from the Quality_Coaching_Stage table to the Coaching_Log Table
+  CREATE TABLE #Temp_Logs_To_Insert (
+    FormName nvarchar(50),
+	ProgramName nvarchar(50),
+	SourceID int,
+	StatusID int,
+	SiteID int,
+	EmpID nvarchar(10),
+	SubmitterID nvarchar(10),
+	EventDate datetime,
+	isAvokeID bit,
+	isNGDActivityID bit,
+	isUCID bit,
+	isVerintID bit,
+	VerintID nvarchar(40),
+	VerintEvalID nvarchar(20),
+	[Description] nvarchar(max),
+	SubmittedDate datetime,
+	StartDate datetime,
+	isCSE bit,
+	isCSRAcknowledged bit,
+	VerintFormName nvarchar(50),
+	ModuleID int,
+	SupID nvarchar(20),
+	MgrID nvarchar(20),
+	isMonitor bit
+  );
 
-         INSERT INTO [EC].[Coaching_Log]
-           ([FormName]
-           ,[ProgramName]
-           ,[SourceID]
-           ,[StatusID]
-           ,[SiteID]
-           ,[EmpID]
-           ,[SubmitterID]
-           ,[EventDate]
-           ,[isAvokeID]
-		   ,[isNGDActivityID]
-           ,[isUCID]
-           ,[isVerintID]
-           ,[VerintID]
-           ,[VerintEvalID]
-           ,[Description]
-	       ,[SubmittedDate]
-           ,[StartDate]
-           ,[isCSE]
-           ,[isCSRAcknowledged]
-           ,[VerintFormName]
-           ,[ModuleID]
-           ,[SupID]
-           ,[MgrID]
-           ,[isCoachingMonitor])
+  CREATE TABLE #Temp_Coaching_Reason_To_Insert (
+    CoachingID bigint,
+    CoachingReasonID int,
+    SubCoachingReasonID int,
+    Value nvarchar(30) 
+  );
 
-            SELECT DISTINCT
-            User_EMPID	[FormName],
-            CASE qs.Program  
-            WHEN NULL THEN csr.Emp_Program
-            WHEN '' THEN csr.Emp_Program
-            ELSE qs.Program  END       [ProgramName],
-            [EC].[fn_intSourceIDFromSource](@strSourceType, qs.Source)[SourceID],
-            [EC].[fn_strStatusIDFromIQSEvalID](qs.CSE, qs.Oppor_Rein )[StatusID],
-            [EC].[fn_intSiteIDFromEmpID](LTRIM(qs.User_EMPID))[SiteID],
-            qs.User_EMPID [EmpID],
-            qs.Evaluator_ID	 [SubmitterID],       
-            qs.Call_Date [EventDate],
-            0			[isAvokeID],
-		    0			[isNGDActivityID],
-            0			[isUCID],
-            1 [isVerintID],
-            qs.Journal_ID	[VerintID],
-            qs.Eval_ID [VerintEvalID],
-            --EC.fn_nvcHtmlEncode(qs.Summary_CallerIssues)[Description],	
-            REPLACE(EC.fn_nvcHtmlEncode(qs.[Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />')[Description],
-            GetDate()  [SubmittedDate], 
-		    qs.Eval_Date	[StartDate],
-		    CASE WHEN qs.CSE = '' THEN 0
-	            	ELSE 1 END	[isCSE],			
-		    0 [isCSRAcknowledged],
-		    qs.VerintFormname [verintFormName],
-		    qs.Module [ModuleID],
-		    ISNULL(csr.[Sup_ID],'999999') [SupID],
-		    ISNULL(csr.[Mgr_ID],'999999')[MgrID],
-		    qs.isCoachingMonitor [isCoachingMonitor]
-		    
-FROM [EC].[Quality_Coaching_Stage] qs 
-join EC.Employee_Hierarchy csr on qs.User_EMPID = csr.Emp_ID
-left outer join EC.Coaching_Log cf on qs.Eval_ID = cf.VerintEvalID
-where cf.VerintEvalID is null
-and qs.EvalStatus = 'Active'
+  BEGIN TRY
+    
+	INSERT INTO #Temp_Logs_To_Insert
+    SELECT DISTINCT 
+       User_EMPID
+      ,CASE qcs.Program
+         WHEN NULL THEN eh.Emp_Program
+	     WHEN '' THEN eh.Emp_Program
+	     ELSE qcs.Program
+	   END ProgramName
+      ,EC.fn_intSourceIDFromSource(@strSourceType, qcs.Source) -- SourceID
+	  ,EC.fn_strStatusIDFromIQSEvalID(qcs.CSE, qcs.Oppor_Rein) -- StatusID
+	  ,EC.fn_intSiteIDFromEmpID(LTRIM(RTRIM(qcs.User_EMPID)))  -- SiteID
+	  ,qcs.User_EMPID    -- EmpID
+	  ,qcs.Evaluator_ID  -- SubmitterID
+	  ,qcs.Call_Date     -- EventDate
+	  ,0                 -- isAvokeID
+	  ,0                 -- isNGDActivityID
+	  ,0                 -- isUCID
+	  ,1                 -- isVerintID
+	  ,qcs.Journal_ID    -- VerintID
+	  ,qcs.Eval_ID       -- VerintEvalID
+	  ,REPLACE(EC.fn_nvcHtmlEncode(qcs.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />') -- Description
+	  ,GetDate()         -- SubmittedDate
+	  ,qcs.Eval_Date     -- StartDate
+	  ,CASE              -- isCSE
+	     WHEN qcs.CSE = '' THEN 0
+	     ELSE 1
+	   END isCSE        
+      ,0                  -- isCSRAcknowledged
+	  ,qcs.VerintFormName -- VerintFormName
+	  ,qcs.Module         -- ModuleID
+	  ,ISNULL(qcs.Sup_ID, '999999')  -- SupID
+	  ,ISNULL(qcs.Mgr_ID, '999999')  -- MgrID
+	  ,qcs.isCoachingMonitor         -- isCoaachingMonitor
+    FROM EC.Quality_Coaching_Stage qcs 
+    JOIN EC.Employee_Hierarchy eh WITH (NOLOCK) ON qcs.User_EMPID = eh.Emp_ID
+    LEFT JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.Eval_ID = cl.VerintEvalID
+    WHERE cl.VerintEvalID IS NULL AND qcs.EvalStatus = 'Active'
 
-OPTION (MAXDOP 1)
+	-- Populate temp table
+    INSERT INTO #Temp_Coaching_Reason_To_Insert 
+    SELECT 
+	   cl.CoachingID
+      ,CASE 
+         WHEN (cl.ModuleID = 3) THEN 15 
+         ELSE 10
+       END
+      ,42
+      ,qcs.Oppor_Rein
+    FROM EC.Quality_Coaching_Stage qcs 
+	JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.Eval_ID = cl.VerintEvalID 
+    LEFT JOIN EC.Coaching_Log_Reason clr WITH (NOLOCK) ON cl.CoachingID = clr.CoachingID  
+    WHERE clr.CoachingID IS NULL 
 
-SELECT @Count =@@ROWCOUNT
+	BEGIN TRANSACTION
+      -- Insert into coaching log table
+	  INSERT INTO EC.Coaching_Log  (
+	     FormName
+        ,ProgramName
+        ,SourceID
+        ,StatusID
+        ,SiteID
+        ,EmpID
+        ,SubmitterID
+        ,EventDate
+        ,isAvokeID
+        ,isNGDActivityID
+        ,isUCID
+        ,isVerintID
+        ,VerintID
+        ,VerintEvalID
+        ,[Description]
+        ,SubmittedDate
+        ,StartDate
+        ,isCSE
+        ,isCSRAcknowledged
+        ,VerintFormName
+        ,ModuleID
+        ,SupID
+        ,MgrID
+		,isCoachingMonitor)
+	  SELECT * 
+	  FROM #Temp_Logs_To_Insert;
 
-WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+      SELECT @Count =@@ROWCOUNT
 
-UPDATE [EC].[Coaching_Log]
-SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
-where [FormName] not like 'eCL%'    
-OPTION (MAXDOP 1)
+      -- Update formname for the inserted logs
+	  UPDATE EC.Coaching_Log
+      SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
+      WHERE FormName NOT LIKE 'eCL%';    
 
-WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
-
- -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
-
-INSERT INTO [EC].[Coaching_Log_Reason]
-           ([CoachingID]
-           ,[CoachingReasonID]
-           ,[SubCoachingReasonID]
-           ,[Value])
-    SELECT cf.[CoachingID],
-			CASE 
-			WHEN (cf.ModuleID = 3) THEN 15 ELSE 10
-			END,
-        42,
-        qs.[Oppor_Rein]
-    FROM [EC].[Quality_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
-    ON qs.[Eval_ID] = cf.[VerintEvalID] 
-    LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
-    ON cf.[CoachingID] = cr.[CoachingID]  
-    WHERE cr.[CoachingID] IS NULL 
- OPTION (MAXDOP 1)   
+      -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
+      INSERT INTO EC.Coaching_Log_Reason
+      SELECT cl.CoachingID,
+         CASE 
+           WHEN (cl.ModuleID = 3) THEN 15 
+		   ELSE 10
+		 END
+        ,42
+        ,qcs.Oppor_Rein
+      FROM EC.Quality_Coaching_Stage qcs 
+	  JOIN EC.Coaching_Log cl ON qcs.Eval_ID = cl.VerintEvalID 
+      LEFT JOIN EC.Coaching_Log_Reason clr ON cl.CoachingID = clr.CoachingID  
+      WHERE clr.CoachingID IS NULL;
  
- WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
- --Truncate Staging Table
- Truncate Table [EC].[Quality_Coaching_Stage]
-
-COMMIT TRANSACTION
-END TRY
-
+     --Truncate Staging Table
+     Truncate Table EC.Quality_Coaching_Stage
+	
+	COMMIT TRANSACTION
+  END TRY
+  BEGIN CATCH
+    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+	
+    DECLARE @ErrorMessage nvarchar(4000), @ErrorSeverity int, @ErrorState int;
+    SELECT @ErrorMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE();
+    RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
       
-      BEGIN CATCH
-      IF @@TRANCOUNT > 0
-      ROLLBACK TRANSACTION
-
-
-    DECLARE @ErrorMessage NVARCHAR(4000)
-    DECLARE @ErrorSeverity INT
-    DECLARE @ErrorState INT
-
-    SELECT @ErrorMessage = ERROR_MESSAGE(),
-           @ErrorSeverity = ERROR_SEVERITY(),
-           @ErrorState = ERROR_STATE()
-
-    RAISERROR (@ErrorMessage, -- Message text.
-               @ErrorSeverity, -- Severity.
-               @ErrorState -- State.
-               )
-      
-    IF ERROR_NUMBER() IS NULL
-      RETURN 1
-    ELSE IF ERROR_NUMBER() <> 0 
-      RETURN ERROR_NUMBER()
-    ELSE
-      RETURN 1
-  END CATCH  
+    IF ERROR_NUMBER() IS NULL RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 RETURN ERROR_NUMBER() 
+    ELSE RETURN 1
+  END CATCH
 END -- sp_InsertInto_Coaching_Log_Quality
-
 
 GO
 

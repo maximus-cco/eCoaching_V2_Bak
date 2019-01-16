@@ -27,7 +27,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
---    ====================================================================
+--    ===========================================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      04/23/2014
 --    Description:     This procedure updates the Quality scorecards into the Coaching_Log table. 
@@ -37,108 +37,102 @@ GO
 -- Modified per TFS 3757 to update isCoachingMonitor - 11/10/2016
 -- Modified to handle inactive evaluations. TFS 9204 - 02/08/2018
 -- Modified to add delay between update statements. TFS 12841 - 12/03/2018
---    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality]
-  
-AS
+-- Modified to decrease coaching_log table locking time TFS 13282 - 1/15/2019 LH
+--    ===========================================================================================
+ALTER PROCEDURE [EC].[sp_Update_Coaching_Log_Quality] AS
 BEGIN
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-BEGIN TRANSACTION
 BEGIN TRY
+  CREATE TABLE #Temp_Logs_To_Inactivate (
+    CoachingLogID bigint
+  );
 
+  CREATE TABLE #Temp_Logs_To_Inactivate_Archive (
+    CoachingLogID bigint,
+	FormName nvarchar(50),
+	LastKnownStatus int
+  );
 
---Inactivate Logs for Inactive Evaluations
-BEGIN
+  CREATE TABLE #Temp_Logs_To_Update_Description (
+    CoachingLogID bigint,
+	CallerIssues nvarchar(max)
+  );
 
-	  INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
-           ([CoachingID],[FormName],[LastKnownStatus],[Action]
-           ,[ActionTimestamp] ,[RequesterID] ,[Reason],[RequesterComments])
-      SELECT F.[CoachingID], F.[Formname], F.[StatusID],  'Inactivate',
-      Getdate(), '999998','Evaluation Inactive', 'Quality Load Process' 
-   FROM [EC].[Quality_Coaching_Stage]S INNER JOIN [EC].[Coaching_Log]F
-   ON S.[Eval_ID] = F.[VerintEvalID]
-   WHERE F.StatusID <> 2
-   AND S.EvalStatus = 'Inactive'
-   AND F.FormName NOT IN 
-   (SELECT FormName FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
-    WHERE [Reason] = 'Evaluation Inactive' AND [RequesterComments] = 'Quality Load Process'
-	AND FormName IS NOT NULL)
+  CREATE TABLE #Temp_Logs_To_Update_Opportunity_Reinforce (
+    CoachingLogID bigint,
+	OpportunityReinforceText nvarchar(30) 
+  );
 
-UPDATE [EC].[Coaching_Log]
-SET StatusID = 2
-FROM [EC].[Coaching_Log] F JOIN [EC].[Quality_Coaching_Stage]S 
-ON S.[Eval_ID] = F.[VerintEvalID]
-WHERE F.StatusID <> 2
-AND S.EvalStatus = 'Inactive'
+  -- Populates #Temp_Logs_To_Inactive
+  INSERT INTO #Temp_Logs_To_Inactivate 
+  SELECT cl.CoachingID
+  FROM EC.Quality_Coaching_Stage qcs 
+  JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.Eval_ID = cl.VerintEvalID  
+  WHERE cl.StatusID <> 2 AND qcs.EvalStatus = 'Inactive';
 
-OPTION (MAXDOP 1)
-END
+  -- Populates #Temp_Logs_To_Inactivate_Archive
+  INSERT INTO #Temp_Logs_To_Inactivate_Archive 
+  SELECT cl.CoachingID, cl.Formname, cl.StatusID
+  FROM EC.Quality_Coaching_Stage qcs 
+  JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.Eval_ID = cl.VerintEvalID
+  WHERE cl.StatusID <> 2
+  AND qcs.EvalStatus = 'Inactive'
+  AND cl.FormName NOT IN 
+  (SELECT FormName FROM EC.AT_Coaching_Inactivate_Reactivate_Audit 
+    WHERE Reason = 'Evaluation Inactive' AND RequesterComments = 'Quality Load Process' 
+	AND FormName IS NOT NULL
+  );
 
-WAITFOR DELAY '00:00:00:02'  -- Wait for 2 ms
+  -- Populates #Temp_Logs_To_Update_Description
+  INSERT INTO #Temp_Logs_To_Update_Description
+  SELECT cl.CoachingID, replace(EC.fn_nvcHtmlEncode(qcs.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />')
+  FROM EC.Quality_Coaching_Stage qcs
+  JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.Eval_ID = cl.VerintEvalID and qcs.Journal_ID = cl.VerintID
+  WHERE cl.VerintEvalID IS NOT NULL;
 
-      
--- Update txtDescription for existing records
+  -- Populates #Temp_Logs_To_Update_Opportunity_Reinforce 
+  INSERT INTO #Temp_Logs_To_Update_Opportunity_Reinforce 
+  SELECT cl.CoachingID, qcs.Oppor_Rein
+  FROM EC.Quality_Coaching_Stage qcs 
+  JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.Eval_ID = cl.VerintEvalID  
+  JOIN EC.Coaching_Log_Reason clr WITH (NOLOCK) ON cl.CoachingID = clr.CoachingID  
+  WHERE qcs.Oppor_Rein <> clr.Value
 
- UPDATE [EC].[Coaching_Log]
- SET [Description] = REPLACE(EC.fn_nvcHtmlEncode(S.[Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />'),
- isCoachingMonitor = S.isCoachingMonitor
- FROM [EC].[Quality_Coaching_Stage]S INNER JOIN [EC].[Coaching_Log]F
- ON S.[Eval_ID] = F.[VerintEvalID]
- AND S.[Journal_ID] = F.[VerintID]
- WHERE F.[VerintEvalID] is NOT NULL
- OPTION (MAXDOP 1)       
-           
+  BEGIN TRANSACTION
+    -- Inactivates Logs for Inactive Evaluations
+	-- Step 1: Archives logs to be inactivated that are not already in the archive table
+	INSERT INTO EC.AT_Coaching_Inactivate_Reactivate_Audit 
+    SELECT *, 'Inactivate',  Getdate(), '999998', 'Evaluation Inactive', 'Quality Load Process' 
+	FROM #Temp_Logs_To_Inactivate_Archive;
+	-- Step 2: Inactivates all logs with 'Inactive' status in the stage table
+	UPDATE EC.Coaching_Log SET StatusID = 2
+    FROM #Temp_Logs_To_Inactivate temp 
+	JOIN EC.Coaching_Log cl ON temp.CoachingLogID = cl.CoachingID;
+	
+	-- Updates Description for existing records
+	UPDATE EC.Coaching_Log SET [Description] = temp.CallerIssues
+	FROM #Temp_Logs_To_Update_Description temp 
+	JOIN EC.Coaching_Log cl ON temp.CoachingLogID = cl.CoachingID;
 
-WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
-
-
- -- Update Oppor/Re-In value in Coaching_Log_reason table for each record updated in Coaching_log table.
-
- UPDATE [EC].[Coaching_Log_reason]
- SET  [Value]= S.[Oppor_Rein]        
- FROM [EC].[Quality_Coaching_Stage] S JOIN  [EC].[Coaching_Log] F 
-    ON S.[Eval_ID] = F.[VerintEvalID]  JOIN  [EC].[Coaching_Log_Reason] R
-    ON F.[CoachingID] = R.[CoachingID]  
-    WHERE S.[Oppor_Rein] <> [Value]
- OPTION (MAXDOP 1)   
- 
-                  
-COMMIT TRANSACTION
+	-- Updates Oppor/Re-In value in Coaching_Log_reason table for each record updated in Coaching_log table.
+	UPDATE EC.Coaching_Log_reason SET Value= temp.OpportunityReinforceText
+	FROM #Temp_Logs_To_Update_Opportunity_Reinforce temp
+	JOIN EC.Coaching_Log_reason clr ON clr.CoachingID = temp.CoachingLogID;
+  COMMIT TRANSACTION
 END TRY
-
+BEGIN CATCH
+  IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+	
+  DECLARE @ErrorMessage nvarchar(4000), @ErrorSeverity int, @ErrorState int;
+  SELECT @ErrorMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE();
+  RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
       
-      BEGIN CATCH
-      IF @@TRANCOUNT > 0
-      ROLLBACK TRANSACTION
+  IF ERROR_NUMBER() IS NULL RETURN 1
+  ELSE IF ERROR_NUMBER() <> 0 RETURN ERROR_NUMBER() 
+  ELSE RETURN 1
+END CATCH 
 
-
-    DECLARE @ErrorMessage NVARCHAR(4000)
-    DECLARE @ErrorSeverity INT
-    DECLARE @ErrorState INT
-
-    SELECT @ErrorMessage = ERROR_MESSAGE(),
-           @ErrorSeverity = ERROR_SEVERITY(),
-           @ErrorState = ERROR_STATE()
-
-    RAISERROR (@ErrorMessage, -- Message text.
-               @ErrorSeverity, -- Severity.
-               @ErrorState -- State.
-               )
-      
-    IF ERROR_NUMBER() IS NULL
-      RETURN 1
-    ELSE IF ERROR_NUMBER() <> 0 
-      RETURN ERROR_NUMBER()
-    ELSE
-      RETURN 1
-  END CATCH  
-END -- sp_Update_Coaching_Log_Quality
-
-
-
-
-
+END -- [EC].[sp_Update_Coaching_Log_Quality]
 
 
 GO
