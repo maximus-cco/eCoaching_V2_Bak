@@ -1,16 +1,13 @@
 /*
-sp_InsertInto_Coaching_Log_Quality(04).sql
-Last Modified Date: 03/26/2018
-Last Modified By: Susmitha Palacherla
+sp_InsertInto_Coaching_Log_Quality(05).sql
+Last Modified Date: 1/15/2019
+Last Modified By: Lili Huang
 
+Version 05: Modified to decrease coaching_log table locking time TFS 13282 - 1/15/2019
 Version 04: Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
-
 Version 03: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
 Version 02: Updated to Incorporate ATA Scorecards - TFS 7541 - 09/19/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
 */
 
 

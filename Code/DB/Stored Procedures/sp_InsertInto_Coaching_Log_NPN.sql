@@ -1,14 +1,12 @@
 /*
-sp_InsertInto_Coaching_Log_NPN(03).sql
-Last Modified Date: 10/23/2017
+sp_InsertInto_Coaching_Log_NPN(04).sql
+Last Modified Date: 1/15/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: Modified to decrease coaching_log table locking time TFS 13282 - 1/15/2019
 Version 03: Modified to support Encryption of sensitive data. Removed LanID - TFS 7856 - 10/23/2017
-
 Version 02: Additional update from V&V feedback - TFS 5653 - 03/02/2017
-
 Version 01: Document Initial Revision - TFS 5653 - 2/28/2017
-
 */
 
 
