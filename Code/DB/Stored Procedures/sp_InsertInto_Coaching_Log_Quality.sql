@@ -45,6 +45,9 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
 AS
 BEGIN
+
+  SET NOCOUNT ON;
+  SET XACT_ABORT ON;
   
   DECLARE @maxnumID INT, @strSourceType NVARCHAR(20);
   -- Fetches the maximum CoachingID before the insert.
@@ -75,7 +78,7 @@ BEGIN
 	ModuleID int,
 	SupID nvarchar(20),
 	MgrID nvarchar(20),
-	isMonitor bit
+	isMonitor nvarchar(3)
   );
 
   CREATE TABLE #Temp_Coaching_Reason_To_Insert (

@@ -38,6 +38,10 @@ GO
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_NPN]
 AS
 BEGIN
+
+  SET NOCOUNT ON;
+  SET XACT_ABORT ON;
+
   DECLARE @maxnumID INT
   -- Fetches the maximum CoachingID before the insert.
   SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])    

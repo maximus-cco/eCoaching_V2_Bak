@@ -40,6 +40,9 @@ GO
 CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality] AS
 BEGIN
 
+SET NOCOUNT ON;
+SET XACT_ABORT ON;
+
 BEGIN TRY
   CREATE TABLE #Temp_Logs_To_Inactivate (
     CoachingLogID bigint
@@ -99,7 +102,8 @@ BEGIN TRY
   BEGIN TRANSACTION
     -- Inactivates Logs for Inactive Evaluations
 	-- Step 1: Archives logs to be inactivated that are not already in the archive table
-	INSERT INTO EC.AT_Coaching_Inactivate_Reactivate_Audit 
+	INSERT INTO EC.AT_Coaching_Inactivate_Reactivate_Audit
+      ([CoachingID], [FormName], [LastKnownStatus], [Action], [ActionTimestamp], [RequesterID], [Reason], [RequesterComments])
     SELECT *, 'Inactivate',  Getdate(), '999998', 'Evaluation Inactive', 'Quality Load Process' 
 	FROM #Temp_Logs_To_Inactivate_Archive;
 	-- Step 2: Inactivates all logs with 'Inactive' status in the stage table
