@@ -182,17 +182,8 @@ BEGIN
 
       -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
       INSERT INTO EC.Coaching_Log_Reason
-      SELECT cl.CoachingID,
-         CASE 
-           WHEN (cl.ModuleID = 3) THEN 15 
-		   ELSE 10
-		 END
-        ,42
-        ,qcs.Oppor_Rein
-      FROM EC.Quality_Coaching_Stage qcs 
-	  JOIN EC.Coaching_Log cl ON qcs.Eval_ID = cl.VerintEvalID 
-      LEFT JOIN EC.Coaching_Log_Reason clr ON cl.CoachingID = clr.CoachingID  
-      WHERE clr.CoachingID IS NULL;
+      SELECT *
+	  FROM #Temp_Coaching_Reason_To_Insert;
  
      --Truncate Staging Table
      Truncate Table EC.Quality_Coaching_Stage
