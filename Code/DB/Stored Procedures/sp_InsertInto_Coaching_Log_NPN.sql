@@ -42,9 +42,11 @@ BEGIN
   SET NOCOUNT ON;
   SET XACT_ABORT ON;
 
-  DECLARE @maxnumID INT
+  DECLARE @maxnumID INT;
+  DECLARE @logsInserted TABLE ( CoachingLogID bigint );
+
   -- Fetches the maximum CoachingID before the insert.
-  SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])    
+  SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log]);
 
   CREATE TABLE #Temp_Logs_To_Insert (
     FormName nvarchar(50),
@@ -69,13 +71,6 @@ BEGIN
 	SupID nvarchar(20),
 	MgrID nvarchar(20),
 	strRptCode nvarchar(30)
-  );
-
-  CREATE TABLE #Temp_Coaching_Reason_To_Insert (
-    CoachingID bigint,
-    CoachingReasonID int,
-    SubCoachingReasonID int,
-    Value nvarchar(30) 
   );
 
   BEGIN TRY
@@ -116,18 +111,6 @@ BEGIN
 	  AND cl.EmpID IS NULL 
 	  AND cl.EventDate IS NULL;
 
-	-- Populate temp table
-    INSERT INTO #Temp_Coaching_Reason_To_Insert 
-    SELECT 
-	   cl.CoachingID
-      ,5             -- CoachingReasonID
-      ,42            -- SubCoachingReasonID
-      ,'Opportunity' -- Value
-    FROM (SELECT CoachingID FROM EC.Coaching_Log WITH (NOLOCK)
-    WHERE SourceID = 218 AND strReportCode LIKE 'NPN%') cl     
-    LEFT JOIN EC.Coaching_Log_Reason clr ON cl.CoachingID = clr.CoachingID  
-    WHERE clr.CoachingID IS NULL  
-
 	BEGIN TRANSACTION
       -- Insert into coaching log table
 	  INSERT INTO EC.Coaching_Log  (
@@ -153,21 +136,27 @@ BEGIN
         ,SupID
         ,MgrID
 		,strReportCode)
+      OUTPUT INSERTED.[CoachingID] INTO @logsInserted
 	  SELECT * 
 	  FROM #Temp_Logs_To_Insert;
 
       -- Update formname for the inserted logs
-	  UPDATE EC.Coaching_Log
-      SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
-      WHERE FormName NOT LIKE 'eCL%';    
+	  UPDATE EC.Coaching_Log 
+	  SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
+	  FROM @logsInserted 
+	  WHERE CoachingID IN (SELECT * FROM @logsInserted);
 
       -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
-      INSERT INTO EC.Coaching_Log_Reason
-      SELECT *
-	  FROM #Temp_Coaching_Reason_To_Insert;
+	  INSERT INTO EC.Coaching_Log_Reason
+	  SELECT
+	     CoachingLogID
+		,5              -- CoachingReasonID
+		,42             -- SubCoachingReasonID
+		,'Opportunity'  -- Value
+	  FROM @logsInserted;
  
      -- Truncate Staging Table
-     Truncate Table EC.Quality_Coaching_Stage
+      Truncate Table EC.Quality_Coaching_Stage
 	
 	COMMIT TRANSACTION
   END TRY

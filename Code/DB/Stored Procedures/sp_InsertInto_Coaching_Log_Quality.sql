@@ -50,6 +50,12 @@ BEGIN
   SET XACT_ABORT ON;
   
   DECLARE @maxnumID INT, @strSourceType NVARCHAR(20);
+  DECLARE @logsInserted TABLE ( 
+    CoachingLogID bigint,
+	ModuleID int,
+	VerintEvalID nvarchar(20) 
+  );
+
   -- Fetches the maximum CoachingID before the insert.
   SET @maxnumID = (SELECT IsNUll(MAX(CoachingID), 0) FROM EC.Coaching_Log);    
   SET @strSourceType = 'Indirect'; 
@@ -79,13 +85,6 @@ BEGIN
 	SupID nvarchar(20),
 	MgrID nvarchar(20),
 	isMonitor nvarchar(3)
-  );
-
-  CREATE TABLE #Temp_Coaching_Reason_To_Insert (
-    CoachingID bigint,
-    CoachingReasonID int,
-    SubCoachingReasonID int,
-    Value nvarchar(30) 
   );
 
   BEGIN TRY
@@ -126,22 +125,7 @@ BEGIN
     FROM EC.Quality_Coaching_Stage qcs 
     JOIN EC.Employee_Hierarchy eh WITH (NOLOCK) ON qcs.User_EMPID = eh.Emp_ID
     LEFT JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.Eval_ID = cl.VerintEvalID
-    WHERE cl.VerintEvalID IS NULL AND qcs.EvalStatus = 'Active'
-
-	-- Populate temp table
-    INSERT INTO #Temp_Coaching_Reason_To_Insert 
-    SELECT 
-	   cl.CoachingID
-      ,CASE 
-         WHEN (cl.ModuleID = 3) THEN 15 
-         ELSE 10
-       END
-      ,42
-      ,qcs.Oppor_Rein
-    FROM EC.Quality_Coaching_Stage qcs 
-	JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.Eval_ID = cl.VerintEvalID 
-    LEFT JOIN EC.Coaching_Log_Reason clr WITH (NOLOCK) ON cl.CoachingID = clr.CoachingID  
-    WHERE clr.CoachingID IS NULL 
+    WHERE cl.VerintEvalID IS NULL AND qcs.EvalStatus = 'Active';
 
 	BEGIN TRANSACTION
       -- Insert into coaching log table
@@ -170,20 +154,30 @@ BEGIN
         ,SupID
         ,MgrID
 		,isCoachingMonitor)
+	  OUTPUT INSERTED.[CoachingID], INSERTED.[VerintEvalID] INTO @logsInserted
 	  SELECT * 
 	  FROM #Temp_Logs_To_Insert;
 
-      SELECT @Count =@@ROWCOUNT
+      SELECT @Count =@@ROWCOUNT;
 
       -- Update formname for the inserted logs
-	  UPDATE EC.Coaching_Log
-      SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
-      WHERE FormName NOT LIKE 'eCL%';    
+	  UPDATE EC.Coaching_Log 
+	  SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
+	  FROM @logsInserted 
+	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted);  
 
       -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
       INSERT INTO EC.Coaching_Log_Reason
-      SELECT *
-	  FROM #Temp_Coaching_Reason_To_Insert;
+      SELECT 
+	    CoachingLogID
+       ,CASE 
+          WHEN (ModuleID = 3) THEN 15 
+          ELSE 10
+        END
+       ,42
+       ,qcs.Oppor_Rein
+      FROM EC.Quality_Coaching_Stage qcs 
+	  JOIN @logsInserted inserted ON qcs.Eval_ID = inserted.VerintEvalID 
  
      --Truncate Staging Table
      Truncate Table EC.Quality_Coaching_Stage
@@ -202,6 +196,7 @@ BEGIN
     ELSE RETURN 1
   END CATCH
 END -- sp_InsertInto_Coaching_Log_Quality
+
 
 GO
 
