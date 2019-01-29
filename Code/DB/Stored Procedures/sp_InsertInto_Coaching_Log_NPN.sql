@@ -94,7 +94,7 @@ BEGIN
 	  ,0                  -- isUCID
 	  ,1                  -- isVerintID
 	  ,qcs.Journal_ID     -- VerintID
-	  ,REPLACE(EC.fn_nvcHtmlEncode([EC].[fn_strNPNDescriptionFromCode](qs.[Summary_CallerIssues])), CHAR(13) + CHAR(10), '<br />') + qs.Journal_ID [Description] -- Description
+	  ,REPLACE(EC.fn_nvcHtmlEncode([EC].[fn_strNPNDescriptionFromCode](qcs.[Summary_CallerIssues])), CHAR(13) + CHAR(10), '<br />') + qcs.Journal_ID [Description] -- Description
 	  ,GetDate()          -- SubmittedDate
 	  ,qcs.Call_Date      -- StartDate
 	  ,0                  -- isCSE
