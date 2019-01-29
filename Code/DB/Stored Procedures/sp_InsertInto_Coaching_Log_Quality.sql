@@ -154,7 +154,7 @@ BEGIN
         ,SupID
         ,MgrID
 		,isCoachingMonitor)
-	  OUTPUT INSERTED.[CoachingID], INSERTED.[VerintEvalID] INTO @logsInserted
+	  OUTPUT INSERTED.[CoachingID], INSERTED.[ModuleID], INSERTED.[VerintEvalID] INTO @logsInserted
 	  SELECT * 
 	  FROM #Temp_Logs_To_Insert;
 
