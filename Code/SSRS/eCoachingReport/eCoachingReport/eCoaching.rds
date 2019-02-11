@@ -2,7 +2,7 @@
 <RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="eCoaching">
   <ConnectionProperties>
     <Extension>SQL</Extension>
-    <ConnectString>Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest</ConnectString>
+    <ConnectString>Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev</ConnectString>
     <IntegratedSecurity>true</IntegratedSecurity>
   </ConnectionProperties>
   <DataSourceID>725ae293-72af-4889-a1d1-3b88f21a7a4c</DataSourceID>
