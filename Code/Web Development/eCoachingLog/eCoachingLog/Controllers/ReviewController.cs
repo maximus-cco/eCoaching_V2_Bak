@@ -194,9 +194,15 @@ namespace eCoachingLog.Controllers
 				} // end if (!vm.IsResearchPendingForm)
 			} // end if (ShowAckPartial(vm))
 
-			// TODO: 
+			if (vm.IsReadOnly)
+			{
+				vm.ReviewPageName = isCoaching ? "_ViewCoachingLog" : "_ViewWarningLog";
+			}
+			else
+			{
+				vm.ReviewPageName = isCoaching ? "_ReviewCoachingHome" : "_ReviewWarningHome";
+			}
 
-			vm.ReviewPageName = isCoaching ? "_ReviewCoachingHome" : "_ReviewWarningHome";
 			return vm;
 		}
 
