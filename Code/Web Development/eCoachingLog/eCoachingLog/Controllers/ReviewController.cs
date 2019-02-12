@@ -77,6 +77,9 @@ namespace eCoachingLog.Controllers
 
 		private ReviewViewModel Init(User user, int currentPage, BaseLogDetail logDetail, bool isCoaching)
 		{
+			// TODO: check if QualityNOW (multiple scorecards per eCL log)
+
+			
 			// Review - Read Only 
 			// User clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning
 			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage
@@ -181,7 +184,7 @@ namespace eCoachingLog.Controllers
 					}
 				}
 				else // Research
-				{
+				{ 
 					vm.IsReviewByManager = string.CompareOrdinal(Constants.USER_ROLE_MANAGER, user.Role) == 0;
 					vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
 														  // Uncoachable reason Dropdown
@@ -190,6 +193,8 @@ namespace eCoachingLog.Controllers
 					vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
 				} // end if (!vm.IsResearchPendingForm)
 			} // end if (ShowAckPartial(vm))
+
+			// TODO: 
 
 			vm.ReviewPageName = isCoaching ? "_ReviewCoachingHome" : "_ReviewWarningHome";
 			return vm;
@@ -256,9 +261,19 @@ namespace eCoachingLog.Controllers
 			bool readOnly = false;
 			if (vm.IsRegularPendingForm)
 			{
-				// Only Supervisor or reassigned to can enter data on review page
-				if (user.EmployeeId != vm.LogDetail.SupervisorEmpId 
-					&& user.EmployeeId != vm.LogDetail.ReassignedToEmpId)
+				// if Pending Supervisor Review - Only Supervisor or reassigned to can enter data on review page
+				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
+				{
+					readOnly = user.EmployeeId != vm.LogDetail.SupervisorEmpId
+						&& user.EmployeeId != vm.LogDetail.ReassignedToEmpId;
+				}
+				// if Pending Employee Review - Only Employee can enter data on review page
+				else if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
+				{
+					readOnly = user.EmployeeId != vm.LogDetail.EmployeeId;
+				}
+				// All other statuses - managers and above VIEW ONLY - they don't enter data for Regular Pending form
+				else
 				{
 					readOnly = true;
 				}
@@ -286,7 +301,7 @@ namespace eCoachingLog.Controllers
 
 			if (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
 			{
-				if (vm.LogStatusLevel == 2)
+				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
 				{
 					if (log.IsEtsOae || log.IsEtsOas || log.IsOmrIat || log.IsOmrIae || log.IsOmrIaef || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrn || log.IsBrl)
 					{
@@ -299,7 +314,7 @@ namespace eCoachingLog.Controllers
 					|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId) // Log is low csat and user was supervisor when log submitted
 					|| (user.EmployeeId == log.ReassignedToEmpId)) // Log got reassigned to user
 			{
-				if (vm.LogStatusLevel == 3)
+				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
 				{
 					if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat)
 					{
@@ -320,13 +335,13 @@ namespace eCoachingLog.Controllers
 				|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId)
 				|| (user.EmployeeId == log.ReassignedToEmpId))
 			{
-				if (vm.LogStatusLevel == 3)
+				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
 				{
 					if (!log.IsCurrentCoachingInitiative && !log.IsOmrException && !log.IsLowCsat)
 					{
 						retVal = true;
 					}
-				} // end if (vm.LogStatusLevel == 3)
+				} // end if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
 			}
 
 			return retVal;
@@ -441,6 +456,7 @@ namespace eCoachingLog.Controllers
 			}
 
 			// User is the employee
+			// TODO: QualityNOW - CSR reviewing
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
 				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1 ||
