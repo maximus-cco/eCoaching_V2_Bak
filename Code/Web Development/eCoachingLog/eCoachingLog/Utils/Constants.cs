@@ -193,11 +193,11 @@ namespace eCoachingLog.Utils
 
 		//Performance Scorecard MSR and MSRS static text
 		public const string REVIEW_SCORECARD_MSR = "To review your full details, please visit the " +
-			"<a href='https://f3420-mwbp11.vangent.local/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
+			"<a href='https://f3420-mwbp11/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
 			"If you have any questions, please see your supervisor.";
 
 		public const string REVIEW_SCORECARD_MSRS = "To review your full details, please visit the " +
-			"<a href='https://f3420-mwbp11.vangent.local/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
+			"<a href='https://f3420-mwbp11/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
 			"If you have any questions, please " +
 			"<a href='https://cco.gdit.com/Reports/Performance_Scorecard/Lists/Scorecard_Escalated_Issues_Log/NewIssue.aspx' target='_blank'>submit an escalation</a> via the " +
 			"<a href='https://cco.gdit.com/Reports/Performance_Scorecard/default.aspx' target='_blank'>CCO Performance Scorecard Information Station</a> " +
