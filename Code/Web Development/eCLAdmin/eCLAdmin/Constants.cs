@@ -43,10 +43,10 @@ namespace eCLAdmin
 		public const string ENTITLEMENT_REACTIVATE_COACHING_LOGS = "ReactivateCoachingLogs";
 		public const string ENTITLEMENT_REACTIVATE_WARNING_LOGS = "ReactivateWarningLogs";
 
-		public const string WEB_SERVER_NAME_PROD = "f3420-mwbp11.vangent.local";
-		public const string WEB_SERVER_NAME_ST = "f3420-mpmd01.vangent.local";
-		public const string ECOACHING_URL_PROD = "https://f3420-mwbp11.vangent.local/eCoachingLog";
-		public const string ECOACHING_URL_ST = "https://f3420-mpmd01.vangent.local/eCoachingLog_st";
+		public const string WEB_SERVER_NAME_PROD = "f3420-mwbp11";
+		public const string WEB_SERVER_NAME_ST = "f3420-mpmd01";
+		public const string ECOACHING_URL_PROD = "https://f3420-mwbp11/eCoachingLog";
+		public const string ECOACHING_URL_ST = "https://f3420-mpmd01/eCoachingLog_st";
 
 		// Reports
 		public const int REPORT_WIDTH = 100;
