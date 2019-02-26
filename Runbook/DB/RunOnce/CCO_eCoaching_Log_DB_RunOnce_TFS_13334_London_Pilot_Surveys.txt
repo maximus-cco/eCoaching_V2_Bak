@@ -1,0 +1,49 @@
+/* 
+
+CCO_eCoaching_Log_DB_RunOnce_TFS_13334_London_Pilot_Surveys.txt
+
+Run one statement at a time
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+*/
+
+
+-- Run with nothing selected.
+--1.Enable London as a Pilot Site
+
+
+Update [EC].[Survey_Sites]
+set isPilot = 1
+where [City] = 'London'
+GO
+
+--*****************
+
+--2.Add new sources for Quality Now
+
+INSERT INTO [EC].[DIM_Source]
+           ([SourceID]
+           ,[CoachingSource]
+           ,[SubCoachingSource]
+           ,[isActive]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+           ,[Training])
+     VALUES
+           (135, 'Direct','Verint-CCO', 1,0,0,0,0,0),
+           (136, 'Direct','Verint-CCO Supervisor', 1,0,0,0,0,0),
+           (235, 'Indirect','Verint-CCO', 1,0,0,0,0,0),
+           (236, 'Indirect','Verint-CCO Supervisor', 1,0,0,0,0,0)
+GO
+
+
+
+
+
+--*****************

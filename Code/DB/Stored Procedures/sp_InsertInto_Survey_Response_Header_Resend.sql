@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Survey_Response_Header_Resend(03).sql
-Last Modified Date: 01/23/2018
+sp_InsertInto_Survey_Response_Header_Resend(04).sql
+Last Modified Date: 02/25/2018
 Last Modified By: Susmitha Palacherla
+
+Version 04: Modified to increase surveys for London. TFS 13334 - 02/20/2019
 
 Version 03: Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 
@@ -28,6 +30,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        8/21/2015
@@ -40,12 +46,15 @@ GO
 -- Created  per TFS 549 to setup CSR survey.
 -- Modified during Encryption of sensitive data. Used Emp LanID from Emp table. TFS 7856 - 10/23/2017
 -- Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
+-- Modified to increase surveys for London. TFS 13334 - 02/20/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header_Resend]
 AS
 BEGIN
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+SET NOCOUNT ON;
+SET XACT_ABORT ON;
+
 BEGIN TRANSACTION
 BEGIN TRY
 
@@ -62,9 +71,6 @@ BEGIN TRY
       DECLARE @Modules_Table table (idx INT Primary Key IDENTITY(1,1), ModuleID INT)
       DECLARE @numjrows INT
     
-
-
-
   SET @EndOfPeriod  = DATEADD(day, DATEDIFF(DD, 0, GetDate()),0) 
   -- For Start of Current Month
   --SET @StartOfMonth = DATEADD(month, DATEDIFF(month, 0, GetDate()),0) 
@@ -72,7 +78,8 @@ BEGIN TRY
   --SET @StartOfMonth = DATEADD(year, DATEDIFF(year, 0, GetDate()),0) 
   -- For n months in the past GetDate())-n
     --SET @StartOfMonth = DATEADD(month, DATEDIFF(month, 0, GetDate())-4,0) 
-  SET @StartOfPeriod = DATEADD(day, DATEDIFF(DD, 0, GetDate())-7,0) 
+  -- For n days in the past GetDate())-n
+  SET @StartOfPeriod = DATEADD(day, DATEDIFF(DD, 0, GetDate())-7,0) -- 7 days for Production code
  
  --PRINT @StartOfPeriod
  --PRINT @EndOfPeriod 
@@ -123,29 +130,10 @@ BEGIN
  -- Records for each employee are ordered by a new randomly generated ID.
  -- First row from the randomly ordered records is selected for each Employee.
  
- /*
- BEGIN 
-  ;WITH SurveyPool AS
-  (SELECT x.EmpID, x.CoachingID FROM
-  (SELECT  CL.EMPID EmpID, CL.CoachingID CoachingID,ROW_NUMBER() OVER( PARTITION BY CL.EMPID
-   ORDER BY NewID()) AS Rn 
-  FROM [EC].[Coaching_Log] CL WITH (NOLOCK) JOIN [EC].[Employee_Hierarchy]EH
-  ON CL.EmpID = EH.Emp_ID
-  WHERE Statusid = 1 -- Completed
-  AND ModuleID = @ModuleID -- Each Module 
-   AND SourceID <> 224 -- Verint-TQC
-  AND isCSRAcknowledged = 1
-  AND CSRReviewAutoDate BETWEEN @StartOfPeriod and @EndOfPeriod
-  AND EH.Active = 'A'
- )x
- WHERE x.Rn=1)
-*/
-
-
-
  BEGIN 
   ;WITH Selected AS
-  (SELECT DISTINCT @SurveyTypeID SurveyTypeID, 
+  (
+  SELECT DISTINCT @SurveyTypeID SurveyTypeID, 
                    CL.CoachingID,
                    CL.Formname, 
                    CL.EmpID,
@@ -164,42 +152,8 @@ BEGIN
   ON CL.EmpID = EH.Emp_ID
   WHERE Statusid = 1 -- Completed
   AND ModuleID = @ModuleID -- Each Module 
-    AND SiteID NOT IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) -- Exclude sites with Pilot Survey here
-   AND SourceID <> 224 -- Verint-TQC
-  AND isCSRAcknowledged = 1
-  AND SurveySent = 0
-  AND CSRReviewAutoDate BETWEEN @StartOfPeriod and @EndOfPeriod
-  AND EH.Active = 'A'
- )x
- WHERE x.Rn=1)SP
- ON CL.CoachingID = SP.CoachingID
- AND CL.EmpID = SP.EmpID
- 
-  UNION
- 
- 
- SELECT DISTINCT @SurveyTypeID SurveyTypeID, 
-                   CL.CoachingID,
-                   CL.Formname, 
-                   CL.EmpID,
-                   CL.SiteID, 
-                   CL.SourceID, 
-                   CL.ModuleID,
-                   CL.Submitteddate, 
-                   DD.MonthOfYear, 
-                   DD.CalendarYear 
-  FROM [EC].[Coaching_Log] CL WITH (NOLOCK) JOIN EC.DIM_Date DD
-  ON DATEADD(dd, DATEDIFF(dd, 0, CL.CSRReviewAutoDate),0) = DD.Fulldate JOIN 
- (SELECT x.EmpID, x.CoachingID FROM
-  (SELECT  CL.EMPID EmpID, CL.CoachingID CoachingID,ROW_NUMBER() OVER( PARTITION BY CL.EMPID
-   ORDER BY NewID()) AS Rn 
-  FROM [EC].[Coaching_Log] CL WITH (NOLOCK) JOIN [EC].[Coaching_Log_Reason] CLR WITH (NOLOCK)
-  ON CLR.CoachingID  = CL.CoachingID  JOIN [EC].[Employee_Hierarchy]EH
-  ON CL.EmpID = EH.Emp_ID
-  WHERE Statusid = 1 -- Completed
-  AND ModuleID = @ModuleID -- Each Module 
-  AND SiteID IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) -- Include sites with Pilot Survey here
-  AND CLR.CoachingReasonID in (4, 5, 8, 10, 11, 13, 55)
+  AND ((SiteID IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) AND SourceID NOT IN (123, 130, 135,136, 223, 224,230, 235, 236 )) -- Exclude all Quality for Pilot site(s)
+  OR (SiteID NOT IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) AND SourceID <> 224)) -- Exclude Verint-TQC for Non Pilot site(s)
   AND isCSRAcknowledged = 1
   AND SurveySent = 0
   AND CSRReviewAutoDate BETWEEN @StartOfPeriod and @EndOfPeriod
@@ -208,7 +162,7 @@ BEGIN
  WHERE x.Rn=1)SP
  ON CL.CoachingID = SP.CoachingID
  AND CL.EmpID = SP.EmpID 
-  )
+)
  
  
 --SELECT * FROM Selected
@@ -250,7 +204,6 @@ SELECT  SCL.SurveyTypeID [SurveyTypeID],
         'Open'         [Status]
  FROM Selected SCL JOIN [EC].[Employee_Hierarchy] EH
  ON SCL.EmpID = EH.Emp_ID JOIN 
- --[EC].[Survey_Response_Header] SRH 
  (SELECT [SurveyTypeID],[CalendarYear],[MonthOfYear],[ModuleID],[EmpID], COUNT(*)SCount
 FROM [EC].[Survey_Response_Header]
 WHERE MonthOfYear = @DMonth
@@ -319,13 +272,7 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Survey_Response_Header_Resend
 
-
-
-
-
-
-
-
 GO
+
 
 
