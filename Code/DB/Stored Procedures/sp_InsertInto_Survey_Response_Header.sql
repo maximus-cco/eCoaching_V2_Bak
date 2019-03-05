@@ -31,6 +31,8 @@ GO
 
 
 
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        8/21/2015
@@ -83,11 +85,18 @@ BEGIN TRY
 
   -- Set Pilot dates for London increased surveys
 
-  SET @StartOfPilotDate1 = '2019-04-01 00:00:00.000'
-  SET @EndOfPilotDate1 = '2019-04-30 00:00:00.000'
-  SET @StartOfPilotDate2 = '2019-05-01 00:00:00.000'
-  SET @EndOfPilotDate2 = '2019-07-31 00:00:00.000'
+  --SET @StartOfPilotDate1 = '2019-04-01 00:00:00.000'
+  --SET @EndOfPilotDate1 = '2019-04-30 00:00:00.000'
+  --SET @StartOfPilotDate2 = '2019-05-01 00:00:00.000'
+  --SET @EndOfPilotDate2 = '2019-07-31 00:00:00.000'
  
+ 
+  SET @StartOfPilotDate1 = (SELECT [StartOfPilotDate1] FROM [EC].[Survey_Pilot_Date])
+  SET @EndOfPilotDate1 = (SELECT [EndOfPilotDate1] FROM [EC].[Survey_Pilot_Date])
+  SET @StartOfPilotDate2 = (SELECT [StartOfPilotDate2] FROM [EC].[Survey_Pilot_Date])
+  SET @EndOfPilotDate2 = (SELECT [EndOfPilotDate2 ] FROM [EC].[Survey_Pilot_Date])
+
+
  --PRINT @StartOfPeriod
  --PRINT @EndOfPeriod   
  
@@ -375,7 +384,8 @@ END -- sp_InsertInto_Survey_Response_Header
 
 
 
-GO
 
+
+GO
 
 

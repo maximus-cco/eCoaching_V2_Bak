@@ -47,3 +47,47 @@ GO
 
 
 --*****************
+
+-- 3a. Create table Survey_Pilot_Date
+  
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:     08/21/2015
+--    Description:     Table to hold the start and stop dates for Pilot survey
+--   Created to support increased surveys for London. TFS 13334 - 03/04/2019
+--    =====================================================================
+CREATE TABLE [EC].[Survey_Pilot_Date](
+	[StartOfPilotDate1] [datetime],
+	[EndOfPilotDate1]  [datetime],
+	[StartOfPilotDate2][datetime],
+	[EndOfPilotDate2][datetime])
+
+
+GO
+
+
+--*****************
+
+--3b.
+
+INSERT INTO [EC].[Survey_Pilot_Date]
+           ([StartOfPilotDate1]
+           ,[EndOfPilotDate1]
+           ,[StartOfPilotDate2]
+           ,[EndOfPilotDate2])
+     VALUES
+           ('2019-04-01 00:00:00.000'
+           ,'2019-04-30 00:00:00.000'
+           ,'2019-05-01 00:00:00.000'
+           ,'2019-07-31 00:00:00.000')
+GO
+
+
+--******************************
+

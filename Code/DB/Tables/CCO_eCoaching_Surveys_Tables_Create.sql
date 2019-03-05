@@ -1,8 +1,10 @@
 /*
-CCO_eCoaching_Surveys_Tables_Create(02).sql
+CCO_eCoaching_Surveys_Tables_Create(03).sql
 
-Last Modified Date: 05/4/2018
+Last Modified Date: 03/04/2019
 Last Modified By: Susmitha Palacherla
+
+Version 03: Modified to increase surveys for London. TFS 13334 - 02/20/2019
 
 Version 02: Updated to add missed changes for Pilot Survey during TFS 10890 - 05/4/2018
 
@@ -24,6 +26,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 6. CREATE TABLE Survey_Response_Detail
 7. CREATE TYPE ResponsesTableType
 8. CREATE TABLE Survey_Sites
+9. CREATE TABLE Survey_Pilot_Date
 
 **************************************************************
 
@@ -510,3 +513,52 @@ GO
 
 --*****************************************
 
+-- 9. Create table Survey_Pilot_Date
+--a.
+
+/*
+IF  EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[EC].[Survey_Pilot_Date]') AND type in (N'U'))
+DROP Table [EC].[Survey_Pilot_Date]
+*/
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+--    ====================================================================
+--    Author:           Susmitha Palacherla
+--    Create Date:     08/21/2015
+--    Description:     Table to hold the start and stop dates for Pilot survey
+--   Created to support increased surveys for London. TFS 13334 - 03/04/2019
+--    =====================================================================
+CREATE TABLE [EC].[Survey_Pilot_Date](
+	[StartOfPilotDate1] [datetime],
+	[EndOfPilotDate1]  [datetime],
+	[StartOfPilotDate2][datetime],
+	[EndOfPilotDate2][datetime])
+
+
+GO
+
+
+
+
+--b.
+
+INSERT INTO [EC].[Survey_Pilot_Date]
+           ([StartOfPilotDate1]
+           ,[EndOfPilotDate1]
+           ,[StartOfPilotDate2]
+           ,[EndOfPilotDate2])
+     VALUES
+           ('2019-04-01 00:00:00.000'
+           ,'2019-04-30 00:00:00.000'
+           ,'2019-05-01 00:00:00.000'
+           ,'2019-07-31 00:00:00.000')
+GO
+
+
+--******************************
