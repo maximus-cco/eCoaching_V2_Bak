@@ -1,0 +1,56 @@
+/*
+
+TFS 13643 - add Dual as program. Change Sort order
+
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+Summary
+1. Add a Row for Dual
+2. Add column for Sort Order
+3. Populate SortOrder
+
+*/
+
+
+--Run one statement at a time
+
+
+
+--1. Add a Row for Dual
+
+INSERT INTO [EC].[DIM_Program]
+           ([Program]
+           ,[isActive]
+           )
+     VALUES
+           ('Dual',1)
+         
+GO
+
+--****************************
+
+--2. Add column for Sort Order
+
+ALTER TABLE [EC].[DIM_Program]
+ADD [SortOrder] int;
+GO
+
+--****************************
+
+--3. Populate SortOrder
+
+UPDATE [EC].[DIM_Program]
+SET [SortOrder] = 
+CASE 
+WHEN ProgramID = 4 THEN  1
+WHEN ProgramID = 1 THEN  2
+WHEN ProgramID = 2 THEN  3
+WHEN ProgramID = 3 THEN  4
+ELSE -1 END
+GO
+
+--****************************

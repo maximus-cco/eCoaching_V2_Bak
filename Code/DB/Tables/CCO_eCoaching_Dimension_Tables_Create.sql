@@ -1,9 +1,9 @@
 /*
-CCO_eCoaching_Dimension_Tables_Create(02).sql
-Last Modified Date: 07/02/2018
+CCO_eCoaching_Dimension_Tables_Create(03).sql
+Last Modified Date: 03/07/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 03: Modified to add Sort Order to DIM_Program - TFS 13643 - 03/07/2019
 Version 02: UI Move to new architecture  - TFS 7136/7137/7138 - 6/13/2018
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -304,6 +304,7 @@ CREATE TABLE [EC].[DIM_Program](
 	[ProgramID] [int] IDENTITY(1,1) NOT NULL,
 	[Program] [nvarchar](30) NOT NULL,
 	[isActive] [bit] NULL,
+        [SortOrder] [int] NULL,
  CONSTRAINT [ProgramID_ID] PRIMARY KEY CLUSTERED 
 (
 	[ProgramID] ASC
