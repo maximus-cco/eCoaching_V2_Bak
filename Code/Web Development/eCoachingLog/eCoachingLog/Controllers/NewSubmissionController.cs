@@ -564,7 +564,7 @@ namespace eCoachingLog.Controllers
             NewSubmissionViewModel vm = new NewSubmissionViewModel(user.EmployeeId, user.LanId);
             // Module Dropdown
             List<Module> moduleList = this.empLogService.GetModules(user);
-            moduleList.Insert(0, new Module { Id = -2, Name = "-- Select a Module --" });
+            moduleList.Insert(0, new Module { Id = -2, Name = "-- Select Level of Employee --" });
             IEnumerable<SelectListItem> moduleSelectList = new SelectList(moduleList, "Id", "Name");
             vm.ModuleSelectList = moduleSelectList;
 
