@@ -34,7 +34,7 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label col-sm-2" for="module">Module:</label>
+        <label class="control-label col-sm-2" for="module">Level of Employee:</label>
         <div class="col-sm-3">
             @Html.DropDownList(
                 "module",
@@ -227,7 +227,7 @@
             // Remove all in Employee dropdown except for the first default item "Please select an employee"
             $('#employee').find('option:gt(0)').remove()
             // Reset Module dropdown.
-            // Remove all in Module dropdown except for the first default item "Please select a module"
+            // Remove all in Module dropdown except for the first default item "Please select a Level of Employee"
             resetModuleDropdown();
         }
 
@@ -240,7 +240,7 @@
             }
             if ($('#module').val() == -1) {
                 $('#module').addClass("input-validation-error");
-                $('#module-error-msg').html('Please select a module');
+                $('#module-error-msg').html('Please select a Level of Employee');
                 isFormValid = false;
             }
             if ($('#employee').val() == -1) {
