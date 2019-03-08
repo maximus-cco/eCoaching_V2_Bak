@@ -323,10 +323,10 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.375in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.25833in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -423,7 +423,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Module ID</Value>
+                                  <Value>Employee Level ID</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -475,7 +475,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Module Name</Value>
+                                  <Value>Employee Level</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -3399,7 +3399,7 @@
             <DataSetName>WarningSummary</DataSetName>
             <Top>0.04167in</Top>
             <Height>0.5in</Height>
-            <Width>32in</Width>
+            <Width>32.63333in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3410,7 +3410,7 @@
         <Height>1.27167in</Height>
         <Style />
       </Body>
-      <Width>32in</Width>
+      <Width>32.63333in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
@@ -3446,7 +3446,7 @@
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Prompt>Module</Prompt>
+      <Prompt>Employee Level</Prompt>
       <ValidValues>
         <DataSetReference>
           <DataSetName>ModuleRef</DataSetName>

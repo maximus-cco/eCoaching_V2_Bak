@@ -153,10 +153,10 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.5in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.46667in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2in</Width>
@@ -202,7 +202,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Module Id</Value>
+                                  <Value>Employee Level ID</Value>
                                   <Style>
                                     <FontFamily />
                                     <FontSize>11pt</FontSize>
@@ -260,7 +260,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Module Name</Value>
+                                  <Value>Employee Level</Value>
                                   <Style>
                                     <FontFamily />
                                     <FontSize>11pt</FontSize>
@@ -414,7 +414,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1540,14 +1539,14 @@
             </TablixRowHierarchy>
             <DataSetName>AdminActivitySummary</DataSetName>
             <Height>0.43in</Height>
-            <Width>14in</Width>
+            <Width>14.96667in</Width>
             <Style />
           </Tablix>
         </ReportItems>
         <Height>0.43in</Height>
         <Style />
       </Body>
-      <Width>14in</Width>
+      <Width>14.96667in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
