@@ -250,7 +250,7 @@ namespace eCLAdmin.Controllers
 
             User user = GetUserFromSession();
             List<Module> moduleList = employeeLogService.GetModules(user.LanId, logTypeId);
-            moduleList.Insert(0, new Module { Id = -1, Name = "Please select a Level of Employee" });
+            moduleList.Insert(0, new Module { Id = -1, Name = "Please select Employee Level" });
             IEnumerable<SelectListItem> modules = new SelectList(moduleList, "Id", "Name");
 
             return modules;
@@ -389,7 +389,7 @@ namespace eCLAdmin.Controllers
         private IEnumerable<SelectListItem> GetEmptyModuleList()
         {
             List<Module> moduleList = new List<Module>();
-            moduleList.Insert(0, new Module { Id = -1, Name = "Please select a Level of Employee" });
+            moduleList.Insert(0, new Module { Id = -1, Name = "Please select Employee Level" });
             IEnumerable<SelectListItem> emptyModuleList = new SelectList(moduleList, "Id", "Name");
 
             return emptyModuleList;

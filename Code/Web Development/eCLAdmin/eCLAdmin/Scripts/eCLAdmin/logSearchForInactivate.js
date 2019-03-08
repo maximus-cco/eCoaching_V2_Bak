@@ -137,7 +137,7 @@ function initPage() {
     resetEmployeeDropdown();
 
     // Reset Module dropdown.
-    // Remove all in Module dropdown except for the first default item "Please select a Level of Employee"
+	// Remove all in Module dropdown except for the first default item "Please select Employee Level"
     resetModuleDropdown();
 }
 
@@ -150,7 +150,7 @@ function validateForm() {
     }
     if ($('#module').val() == -1) {
         $('#module').addClass("input-validation-error");
-        $('#module-error-msg').html('Please select a Level of Employee');
+        $('#module-error-msg').html('Please select Employee Level');
         isFormValid = false;
     }
     if ($('#employee').val() == -1) {

@@ -19,7 +19,7 @@
                     ))
 {    
     <div class="form-group">
-        <label class="control-label col-sm-2" for="module">Level of Employee:</label>
+        <label class="control-label col-sm-2" for="module">Employee Level:</label>
         <div class="col-sm-3">
             @Html.DropDownList(
                 "module",
@@ -282,7 +282,7 @@
             var isFormValid = true;
             if ($('#module').val() == -1) {
                 $('#module').addClass("input-validation-error");
-                $('#module-error-msg').html('Please select a Level of Employee');
+                $('#module-error-msg').html('Please select Employee Level');
                 isFormValid = false;
             }
             if ($('#employeeLogStatus').val() == -1) {
