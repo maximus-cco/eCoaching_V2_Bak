@@ -601,7 +601,7 @@ namespace eCoachingLog.Controllers
             }
             else
             {
-                return vm.ModuleId > 0 && vm.ModuleId != Constants.MODULE_TRAINING;
+                return vm.ModuleId > 0 && vm.ModuleId != Constants.MODULE_TRAINING && vm.ModuleId != Constants.MODULE_LSA;
             }
         }
 

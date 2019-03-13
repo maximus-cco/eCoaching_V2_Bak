@@ -1,4 +1,5 @@
-﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+﻿@using eCoachingLog.Utils
+@model eCoachingLog.ViewModels.NewSubmissionViewModel
 @{
     ViewBag.Title = "New Submission";
 }
@@ -21,6 +22,8 @@
 <!-- end of Html.Beginform-->
 
 <script>
+	const MODULE_LSA = @Constants.MODULE_LSA;
+
 	var clientValidateCoachingReasons = '@Html.Raw(ViewBag.ClientValidateCoachingReasons)';
 	var checkPageDataChanged = true;
 	var validationError = '@Html.Raw(ViewBag.ValidationError)';
@@ -37,7 +40,7 @@
     var redirectToIndex = '@Url.Action("Index", "NewSubmission")';
 
     var getMgtInfo = '@Url.Action("GetMgtInfo", "NewSubmission")';
-    var handleSiteChangedUrl = '@Url.Action("HandleSiteChanged", "NewSubmission")';
+	var handleSiteChangedUrl = '@Url.Action("HandleSiteChanged", "NewSubmission")';
 </script>
 
 @Scripts.Render("~/bundles/scripts/newSubmission")

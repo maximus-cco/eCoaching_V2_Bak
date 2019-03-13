@@ -58,6 +58,11 @@ namespace eCoachingLog.Repository
                 command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcEmpID", submission.Employee.Id);
+				// Should be no program for LSA module
+				if (submission.ModuleId == Constants.MODULE_LSA)
+				{
+					submission.ProgramName = "NA";
+				}
                 command.Parameters.AddWithValueSafe("@nvcProgramName", submission.ProgramName);
                 command.Parameters.AddWithValueSafe("@Behaviour", submission.BehaviorName); 
                 command.Parameters.AddWithValueSafe("@intSourceID", submission.SourceId); // How was the coaching identifed?

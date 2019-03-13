@@ -1,14 +1,17 @@
 ﻿$(function () {
+	var cancelBtnClicked = false;
 	// Check unsaved data
     $('#new-submission-form').data('serialize', $('#new-submission-form').serialize());
     $(window).on('beforeunload', function (e) {
-    	if ((errorOccured === false && sessionExpired === false && loggingOut === false && $('#new-submission-form').serialize() != $('#new-submission-form').data('serialize'))
-			|| validationError === 'True' && checkPageDataChanged === true) {
-            return 'Your submission has NOT been saved yet. If you choose "Leave this page", you will loose all your entries.';
-        }
-        else {
-            e = null;
-        }
+    	if (!cancelBtnClicked) { // Going to a different page
+    		if ((errorOccured === false && sessionExpired === false && loggingOut === false && $('#new-submission-form').serialize() != $('#new-submission-form').data('serialize'))
+				|| validationError === 'True' && checkPageDataChanged === true) {
+    			return 'Your submission has NOT been saved yet. If you choose "Leave this page", you will loose all your entries.';
+    		}
+    	}
+    	else {
+    		e = null;
+    	}
     });
 
     const textAreaMaxLength = 3000;
@@ -73,7 +76,9 @@
         // Display Supervisor and Manger names
         DisplayMgtInfo($(this).val());
 
-        if ($('#select-program').val() > 0 || $('#select-behavior').val() > 0) {
+        if ($('#select-program').val() > 0 || $('#select-behavior').val() > 0
+				// moduleId 4 (LSA): no program dropdown
+				|| ($("#select-log-module").val() == MODULE_LSA && $('#select-employee').val() > 0)) {
             // Reset IsCoachingByYou div
             resetIsCoachingByYou();
             $('#div-new-submission-middle').removeClass('hide');
@@ -287,7 +292,8 @@
     });
 
     $('body').on('click', '#btn-cancel', function (e) {
-        if (confirm("Are you sure you want to cancel this submission?")) {
+    	if (confirm("Are you sure you want to cancel this submission?\nIf you select OK, you will loose all your entries.")) {
+    		cancelBtnClicked = true;
         	$(".please-wait").slideDown(500);
 			// Don't check if page data has changed, just cancel the form
         	checkPageDataChanged = false;
