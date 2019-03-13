@@ -103,7 +103,6 @@
         if ($('#select-employee').val() !== "-2") {
             $('#div-new-submission-middle').removeClass('hide');
             $('#div-new-submission-middle').addClass('show');
-            resetIsCoachingByYou();
         }
     });
 
@@ -113,7 +112,6 @@
         if ($('#select-employee').val() != "-2") {
             $('#div-new-submission-middle').removeClass('hide');
             $('#div-new-submission-middle').addClass('show');
-            resetIsCoachingByYou();
         }
     });
 
