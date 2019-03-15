@@ -113,7 +113,7 @@ ul.navbar-nav {
     overflow-y: auto;
 }
 #modal-container .modal-content {
-	width: 70vw;
+	width: 80vw;
 	margin: auto;
 }
 #modal-container .modal-body textarea.form-control {
@@ -190,6 +190,19 @@ ul.navbar-nav {
   border-color: #337ab7;
 }
 
+.panel-maximus-color > .panel-heading-thin {
+  padding-top: 6px;
+  padding-left: 3px;
+  border-bottom: 1px solid transparent;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  color: #333;
+  background-color: rgb(32, 87, 148);
+  text-decoration-color: white;
+  border-color: #ddd;
+  cursor: pointer;
+}
+
 .panel-heading-no-padding {
   padding: 10px 15px 10px 0px;
   border-bottom: 0px solid transparent;
@@ -203,6 +216,14 @@ ul.navbar-nav {
   border-top: 1px solid #dddddd;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
+}
+
+.panel-title-small {
+  margin-top: 0;
+  margin-bottom: 3px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
 }
 
 .filterable {

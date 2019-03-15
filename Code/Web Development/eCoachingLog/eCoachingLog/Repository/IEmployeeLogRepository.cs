@@ -2,7 +2,6 @@
 using eCoachingLog.Models.Common;
 using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.MyDashboard;
-using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using System;
 using System.Collections.Generic;
@@ -29,10 +28,10 @@ namespace eCoachingLog.Repository
 		IList<LogValue> GetAllLogValues();
 
 		// Historical Dashboard - export to excel
-		DataTable GetLogDataTableToExport(LogFilter logFilter, string userId);
+		DataSet GetLogDataTableToExport(LogFilter logFilter, string userId);
 		int GetLogCountToExport(LogFilter filter, string userId);
 		// My Dashboard - director - export to excel
-		DataTable GetLogDataTableToExport(int siteId, string status, string start, string end, string userId);
+		DataSet GetLogDataTableToExport(int siteId, string status, string start, string end, string userId);
 		int GetLogCountToExport(int siteId, string status, string start, string end, string userId);
 
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search);
@@ -45,5 +44,7 @@ namespace eCoachingLog.Repository
 
 		IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end);
 		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end);
+
+		IList<Scorecard> GetScorecards(long logId);
 	}
 }

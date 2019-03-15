@@ -8,12 +8,5 @@ namespace eCoachingLog.Models.Common
         public string Description { get; set; }
 		public List<string> SubReasons { get; set; }
 		public string Value { get; set; }
-
-		//public Reason()
-		//{
-		//	this.Id = -1;
-		//	this.Description = string.Empty;
-		//	this.SubReasons = new List<SubReason>();
-		//}
     }
 }

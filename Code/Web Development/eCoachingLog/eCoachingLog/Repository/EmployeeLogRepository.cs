@@ -146,6 +146,10 @@ namespace eCoachingLog.Repository
 						logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
 						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
 
+						logDetail.IsQualityNowLog = Convert.ToInt16(dataReader["isIQSQN"]) == 0 ? false : true;
+						logDetail.BatchId = dataReader["strQNBatchId"].ToString();
+						logDetail.StrengthOpportunity = dataReader["strQNStrengthsOpportunities"].ToString();
+
 						break;
                     } // End while
                 } // End using SqlDataReader
@@ -600,9 +604,9 @@ namespace eCoachingLog.Repository
 		}
 
 		// Historical Dashboard - export to excel
-		public DataTable GetLogDataTableToExport(LogFilter logFilter, string userId)
+		public DataSet GetLogDataTableToExport(LogFilter logFilter, string userId)
 		{
-			DataTable dt = new DataTable();
+			DataSet dataSet = new DataSet();
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Historical_Export]", connection))
 			{
@@ -623,10 +627,10 @@ namespace eCoachingLog.Repository
 
 				using (SqlDataAdapter sda = new SqlDataAdapter(command))
 				{
-					sda.Fill(dt);
+					sda.Fill(dataSet);
 				}
 			}
-			return dt;	
+			return dataSet;	
 		}
 
 		// Historical Dashboard - export to excel - records count
@@ -666,9 +670,9 @@ namespace eCoachingLog.Repository
 		}
 
 		// Get logs for director that the director is in charge of, for the specified site, status, start/end dates
-		public DataTable GetLogDataTableToExport(int siteId, string status, string start, string end, string userId)
+		public DataSet GetLogDataTableToExport(int siteId, string status, string start, string end, string userId)
 		{
-			DataTable dt = new DataTable();
+			DataSet dt = new DataSet();
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Director_Site_Export]", connection))
 			{
@@ -842,6 +846,44 @@ namespace eCoachingLog.Repository
 				}
 			}
 			return logCountByStatusForSites;
+		}
+
+		public IList<Scorecard> GetScorecards(long logId)
+		{
+			var scList = new List<Scorecard>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intLogId", logId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						Scorecard sc = new Scorecard();
+						sc.EvalName = dataReader["Evaluation"].ToString();
+						sc.ScorecardName = dataReader["Form Name"].ToString();
+						sc.VerintId = dataReader["Call ID"].ToString();
+						sc.CoachingMonitor = dataReader["Coaching Monitor"].ToString();
+						sc.DateOfEvent = dataReader["Date Of Event"].ToString();
+						sc.SubmitterName = dataReader["Submitter"].ToString();
+						sc.BusinessProcess = dataReader["Business Process"].ToString();
+						sc.InfoAccuracy = dataReader["Info Accuracy"].ToString();
+						sc.PrivacyDisclaimers = dataReader["Privacy Disclaimers"].ToString();
+						sc.IssueResolution = dataReader["Issue Resolution"].ToString();
+						sc.CallEfficiency = dataReader["Call Efficiency"].ToString();
+						sc.ActiveListening = dataReader["Active Listening"].ToString();
+						sc.PersonalityFlexing = dataReader["Personality Flexing"].ToString();
+						sc.StartTemperature = dataReader["Start Temperature"].ToString();
+						sc.EndTemperature = dataReader["End Temperature"].ToString();
+
+						scList.Add(sc);
+					}
+				}
+			}
+			return scList;
 		}
 	}
 }

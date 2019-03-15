@@ -20,19 +20,22 @@ namespace eCoachingLog.Models.Common
 		public string ManagerEmail { get; set; }
         public string SubmitterName { get; set; }
 		public string SubmitterEmpId { get; set; }
-        public string CreatedDate { get; set; } // SubmittedDate
-        public string EventDate { get; set; } // Date happened
+        public string CreatedDate { get; set; }     // SubmittedDate
+        public string EventDate { get; set; }       // Date happened
 
 		public string SupervisorEmpId { get; set; }
 		public string ManagerEmpId { get; set; }
-		public string LogManagerEmpId { get; set; } // manager when the log was submitted
+		public string LogManagerEmpId { get; set; } // Manager when the log was submitted
 
-        public List<LogReason> Reasons { get; set; }
-        //public string Reasons { get; set; }
-        //public string SubReasons { get; set; }
-        //public string Value { get; set; }
+        public IList<LogReason> Reasons { get; set; }
 
-        public bool IsTypeDirect
+		// Quality Now
+		public bool IsQualityNowLog { get; set; }
+		public string BatchId { get; set; }
+		public IList<Scorecard> Scorecards { get; set; }
+		public string StrengthOpportunity { get; set; }
+
+		public bool IsTypeDirect
         {
             get
             {
@@ -44,8 +47,8 @@ namespace eCoachingLog.Models.Common
 		{
 			this.LogId = -1;
 			this.FormName = String.Empty;
-			// ...
 			this.Reasons = new List<LogReason>();
+			this.Scorecards = new List<Scorecard>();
 		}
     }
 }

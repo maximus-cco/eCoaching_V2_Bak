@@ -535,6 +535,7 @@ namespace eCoachingLog.Controllers
 											vm.Search.SubmitDateTo,
 											GetUserFromSession().EmployeeId
 										)
+									  , Constants.EXCEL_SHEET_NAMES
 									);
 
 				Session["fileName"] = CreateExcelName(vm);

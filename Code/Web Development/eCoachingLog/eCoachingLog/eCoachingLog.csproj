@@ -16,7 +16,8 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44374</IISExpressSSLPort>
+    <IISExpressSSLPort>
+    </IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -162,6 +163,7 @@
     <Compile Include="Models\Common\LogState.cs" />
     <Compile Include="Models\Common\LogCountByStatusForSite.cs" />
     <Compile Include="Models\Common\LogValue.cs" />
+    <Compile Include="Models\Common\Scorecard.cs" />
     <Compile Include="Models\MyDashboard\ChartData.cs" />
     <Compile Include="Models\MyDashboard\ChartDataset.cs" />
     <Compile Include="Models\Review\Review.cs" />
@@ -387,6 +389,7 @@
     <Content Include="Views\Review\_Error.cshtml" />
     <Content Include="maintenance.html" />
     <Content Include="Views\LoadTest\Index.cshtml" />
+    <Content Include="Views\Review\_Scorecards.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

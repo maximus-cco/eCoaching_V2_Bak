@@ -4,7 +4,6 @@ using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.MyDashboard;
 using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
-using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -36,6 +35,10 @@ namespace eCoachingLog.Services
             if (isCoaching)
             {
                 logDetail = employeeLogRepository.GetCoachingDetail(logId);
+				if (logDetail.IsQualityNowLog)
+				{
+					logDetail.Scorecards = employeeLogRepository.GetScorecards(logId);
+				}
             }
             else
             {
@@ -151,7 +154,7 @@ namespace eCoachingLog.Services
 			return this.employeeLogRepository.GetAllLogValues();
 		}
 
-		public DataTable GetLogDataTableToExport(LogFilter logFilter, string userId)
+		public DataSet GetLogDataTableToExport(LogFilter logFilter, string userId)
 		{
 			return this.employeeLogRepository.GetLogDataTableToExport(logFilter, userId);
 		}
@@ -161,7 +164,7 @@ namespace eCoachingLog.Services
 			return this.employeeLogRepository.GetLogCountToExport(logFilter, userId);
 		}
 
-		public DataTable GetLogDataTableToExport(int siteId, string status, string start, string end, string userId)
+		public DataSet GetLogDataTableToExport(int siteId, string status, string start, string end, string userId)
 		{
 			return this.employeeLogRepository.GetLogDataTableToExport(siteId, status, start, end, userId);
 		}

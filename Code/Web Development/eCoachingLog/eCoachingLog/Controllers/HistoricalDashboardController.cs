@@ -112,7 +112,7 @@ namespace eCoachingLog.Controllers
 					return Json(new { result = "overLimit", total = count }, JsonRequestBehavior.AllowGet);
 				}
 
-				MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTableToExport(vm.Search, userId));
+				MemoryStream ms = this.GenerateExcelFile(empLogService.GetLogDataTableToExport(vm.Search, userId), Constants.EXCEL_SHEET_NAMES);
 				Session["fileName"] = "eCoachingLog_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
 				Session["fileStream"] = ms;
 				return Json(new { result = "success" }, JsonRequestBehavior.AllowGet);

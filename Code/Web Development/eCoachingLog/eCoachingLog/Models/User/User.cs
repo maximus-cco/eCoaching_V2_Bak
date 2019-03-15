@@ -1,4 +1,7 @@
-﻿namespace eCoachingLog.Models.User
+﻿using eCoachingLog.Utils;
+using System;
+
+namespace eCoachingLog.Models.User
 {
     public class User
     {
@@ -18,7 +21,23 @@
 		// Whether the user is allowed to export data to excel on Historical Dashboard page
 		public bool IsExportExcel { get; set; }
 
-        public User()
+		public bool IsCsr
+		{
+			get
+			{
+				return string.Equals(this.Role, Constants.USER_ROLE_CSR, StringComparison.OrdinalIgnoreCase);
+			}
+		}
+
+		public bool IsSupervisor
+		{
+			get
+			{
+				return string.Equals(this.Role, Constants.USER_ROLE_SUPERVISOR, StringComparison.OrdinalIgnoreCase);
+			}
+		}
+
+		public User()
         {
             this.EmployeeId = "-1";
 			this.LanId = string.Empty;

@@ -1,0 +1,57 @@
+﻿@using eCoachingLog.Models.User
+@using eCoachingLog.Models.Common
+@{
+	var user = ((User)Session["AuthenticatedUser"]);
+}
+<br />
+@foreach (Scorecard s in Model.LogDetail.Scorecards)
+{
+	<div class="panel-group" id="accordion-@s.VerintId">
+		<div class="panel panel-maximus-color">
+			<div class="panel-heading-thin panel-heading-collapse" data-toggle="collapse" data-parent="#accordion-@s.VerintId" data-target="#@s.VerintId">
+				<p class="panel-title-small accordion-toggle">
+					&nbsp; @s.EvalName
+					<span class="glyphicon glyphicon-plus pull-right">&nbsp;</span>
+				</p>
+			</div>
+			<div id="@s.VerintId" class="panel-collapse collapse">
+				<div class="panel-body">
+					<p><strong>Scorecard Name:</strong> @s.ScorecardName</p>
+					<p><strong>Verint ID:</strong> @s.VerintId</p>
+					<p><strong>Coaching Monitor:</strong> @s.CoachingMonitor</p>
+					<p><strong>Date Of Event:</strong> @s.DateOfEvent</p>
+					<p><strong>Submitter:</strong> @s.SubmitterName</p>
+					@if (!user.IsCsr)
+					{
+						<p><strong>Business Process:</strong> @Html.Raw(s.BusinessProcess)</p>
+						<p><strong>Info Accuracy:</strong> @Html.Raw(s.InfoAccuracy)</p>
+						<p><strong>PrivacyDisclaimers:</strong> @Html.Raw(s.PrivacyDisclaimers)</p>
+						<p><strong>Issue Resolution:</strong> @Html.Raw(s.IssueResolution)</p>
+						<p><strong>Call Efficiency:</strong> @Html.Raw(s.CallEfficiency)</p>
+						<p><strong>Active Listening:</strong> @Html.Raw(s.ActiveListening)</p>
+						<p><strong>Personality Flexing:</strong> @Html.Raw(s.PersonalityFlexing)</p>
+						<p><strong>Start Temperature:</strong> @Html.Raw(s.StartTemperature)</p>
+						<p><strong>End Temperature:</strong> @Html.Raw(s.EndTemperature)</p>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+<div class='mt-2'>
+	<strong>Strengths and Opportunities:</strong> 
+	<p>@Model.LogDetail.StrengthOpportunity</p>
+</div>
+
+<script>
+	$(function () {
+		$('body').on('shown.bs.collapse', '.collapse', function () {
+			$(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+		});
+
+		$('body').on('hidden.bs.collapse', '.collapse', function () {
+			$(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+		});
+	});
+</script>

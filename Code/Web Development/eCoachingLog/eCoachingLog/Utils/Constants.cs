@@ -98,6 +98,9 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_LEVEL_3 = 3;
 		public const int LOG_STATUS_LEVEL_4 = 4;
 
+		public static readonly List<string> EXCEL_SHEET_NAMES =
+			new List<string>() { "None QN Logs", "QN Logs" };
+
 		public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
 		{
 			{ "My Pending", "_MyPending" },
