@@ -868,6 +868,7 @@ namespace eCoachingLog.Repository
 						sc.VerintId = dataReader["Call ID"].ToString();
 						sc.CoachingMonitor = dataReader["Coaching Monitor"].ToString();
 						sc.DateOfEvent = dataReader["Date Of Event"].ToString();
+						sc.Program = dataReader["strProgram"].ToString();
 						sc.SubmitterName = dataReader["Submitter"].ToString();
 						sc.BusinessProcess = dataReader["Business Process"].ToString();
 						sc.InfoAccuracy = dataReader["Info Accuracy"].ToString();

@@ -6,8 +6,8 @@
 {
 	<b>Date of Coaching:</b> @Model.LogDetail.CoachingDate<br />
 }
-else
-{
+else if (!Model.LogDetail.IsQualityNowLog)
+{ 
 	<b>Date Of Event:</b> @Model.LogDetail.EventDate<br />
 }
 <b>Source:</b> @Model.LogDetail.Source<br />

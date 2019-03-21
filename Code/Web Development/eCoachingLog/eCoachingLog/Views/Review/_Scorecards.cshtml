@@ -16,16 +16,17 @@
 			</div>
 			<div id="@s.VerintId" class="panel-collapse collapse">
 				<div class="panel-body">
-					<p><strong>Scorecard Name:</strong> @s.ScorecardName</p>
-					<p><strong>Verint ID:</strong> @s.VerintId</p>
+					<p><strong>Form Name:</strong> @s.ScorecardName</p>
+					<p><strong>Verint:</strong> @s.VerintId</p>
 					<p><strong>Coaching Monitor:</strong> @s.CoachingMonitor</p>
+					<p><strong>Program:</strong> @s.Program</p>
 					<p><strong>Date Of Event:</strong> @s.DateOfEvent</p>
 					<p><strong>Submitter:</strong> @s.SubmitterName</p>
 					@if (!user.IsCsr)
 					{
 						<p><strong>Business Process:</strong> @Html.Raw(s.BusinessProcess)</p>
-						<p><strong>Info Accuracy:</strong> @Html.Raw(s.InfoAccuracy)</p>
-						<p><strong>PrivacyDisclaimers:</strong> @Html.Raw(s.PrivacyDisclaimers)</p>
+						<p><strong>Information Accuracy:</strong> @Html.Raw(s.InfoAccuracy)</p>
+						<p><strong>Privacy Disclaimers:</strong> @Html.Raw(s.PrivacyDisclaimers)</p>
 						<p><strong>Issue Resolution:</strong> @Html.Raw(s.IssueResolution)</p>
 						<p><strong>Call Efficiency:</strong> @Html.Raw(s.CallEfficiency)</p>
 						<p><strong>Active Listening:</strong> @Html.Raw(s.ActiveListening)</p>
