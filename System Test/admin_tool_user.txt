@@ -4,21 +4,31 @@ eCoaching Log test scripts to change access to admin tool
 
 */
 
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
 -- see if i'm there
-select * from EC.AT_User
+select UserId,
+EmpJobCode,
+Active,
+CONVERT(nvarchar(100),DecryptByKey(UserLanID)) AS [Decrypted UserLanID],
+CONVERT(nvarchar(100),DecryptByKey(UserName)) AS [Decrypted UserName]
+from EC.AT_User
 where UserId = '380017'
 
 -- put me there
 insert into EC.AT_User
 (UserId, UserLanID, UserName, EmpJobCode, Active)
-values ('380017','Doug.Stearns','Stearns, Douglas R', 'WACS60', 1)
+values ('380017',EncryptByKey(Key_GUID('CoachingKey'), 'Doug.Stearns'),
+        EncryptByKey(Key_GUID('CoachingKey'), 'Stearns, Douglas R'), 'WACS60', 1)
 
 -- change me there
 update EC.AT_User
 set 
 EmpJobCode = 'WACS01'
 --Active = 1 -- 1=active/0=inactive
---UserLanID = 'DougR.Stearns'
+--UserLanID = EncryptByKey(Key_GUID('CoachingKey'), 'DougR.Stearns')
 where UserId = '380017'
 
 
@@ -44,7 +54,7 @@ where UserId = '380017'
 -- 115 ReportWarningLSAUser
 -- 116 ReportCoachingTrainUser
 -- 117 ReportWarningTrainUser
--- 118 SuperUser
+-- 118 SuperUser - deleting logs
 -- 119 ACLAdmin
 insert into EC.AT_User_Role_Link
  (UserId, RoleId)
@@ -58,8 +68,7 @@ and RoleId in (106)
 
 -- what i can do
 select u.UserId, 
-       u.UserLanID,
-       u.EmpJobCode,
+       CONVERT(nvarchar(100),DecryptByKey(u.UserLanID)) AS [Decrypted UserLanID],
 --       ma.Module,
        rel.RoleId, 
        r.RoleDescription, 
@@ -87,3 +96,6 @@ join EC.AT_Entitlement e on e.EntitlementId = rel.EntitlementId
 --where r.RoleId in ()
 --order by r.RoleId, e.EntitlementId
 order by e.EntitlementId, r.RoleId
+
+
+CLOSE SYMMETRIC KEY CoachingKey

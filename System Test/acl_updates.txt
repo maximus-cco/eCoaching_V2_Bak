@@ -4,26 +4,45 @@ ecoaching historical dashboard access control list
 
 */
 
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];
 
 -- entry in acl table
-select * from EC.Historical_Dashboard_ACL
+select Row_ID,
+[Role],
+End_Date,
+IsAdmin,
+CONVERT(nvarchar(100),DecryptByKey(User_LanID)) AS [Decrypted User_LanID],
+CONVERT(nvarchar(100),DecryptByKey(User_Name)) AS [Decrypted User_Name],
+CONVERT(nvarchar(100),DecryptByKey(Updated_By)) AS [Decrypted Updated_By]
+from EC.Historical_Dashboard_ACL
 where row_id = 188 -- (dev = 175, test = 188, prod = 342)
+
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];
 
 -- change role in acl
 update EC.Historical_Dashboard_ACL
 set [Role] = 'ARC' 
 --set [Role] = 'ECL'
---set [Role] = 'SrMgr'  -- no longer used
+--set [Role] = 'SRM'
+--set [Role] = 'DIR'
+--set [User_LanID]= EncryptByKey(Key_GUID('CoachingKey'), N'dougr.stearns')
+set [User_LanID]= EncryptByKey(Key_GUID('CoachingKey'), N'doug.stearns')
 where row_id = 188
 
--- change lanid in acl
-update EC.Historical_Dashboard_ACL
-set User_LanID = 'dougr.stearns'
---set User_LanID = 'doug.stearns'
-where row_id = 188
+CLOSE SYMMETRIC KEY CoachingKey
+
 
 -- change admin in acl
 update EC.Historical_Dashboard_ACL
-set IsAdmin = 'Y'
---set IsAdmin = 'N'
+set 
+IsAdmin = 'Y',
+-- IsAdmin = 'N',
+--End_Date = '20180101'
+End_Date = '99991231'
 where row_id = 188

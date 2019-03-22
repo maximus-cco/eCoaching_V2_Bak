@@ -1,0 +1,27 @@
+-- archive
+
+select count(*) from EC.Coaching_Log
+where StatusID = 2
+and SubmittedDate < dateadd(year,-1, getdate())
+
+select count(*) from EC.Coaching_Log_Archive
+
+select count(*)
+from EC.Coaching_Log cl
+join EC.Coaching_Log_Reason clr ON clr.CoachingID = cl.CoachingID
+where cl.StatusID = 2
+and cl.SubmittedDate < dateadd(year,-1, getdate())
+
+select count(*) from EC.Coaching_Log_Reason_Archive
+
+
+begin
+
+declare @return_value int
+set @return_value = 0
+
+EXEC @return_value = [EC].[sp_Insert_Into_Coaching_Log_Archive] @strArchivedBy = N'Manual'
+
+select @return_value
+
+end

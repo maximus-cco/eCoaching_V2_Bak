@@ -3,122 +3,84 @@
 eCoaching Log test scripts to change hierarchy job codes,
 email addresses for notifications and supervisor/manager
 
-job codes
-select * from EC.Module_Submission
-
-csrs
-    receivers
-'WACS01' -- Assoc Specialist, Cust Svc
-'WACS02' -- Specialist, Customer Service
-'WACS03' -- Sr Specialist, Customer Svc
-    submitters
-'WACS40' -- Supervisor, Customer Service
-'WACS50' -- Manager, Customer Service
-    all job codes can submit to csrs
-
-supervisors
-    receivers
-'WACS40' -- Supervisor, Customer Service
-'WACQ13' -- Sr Specialist, Quality (CS) (lead) 
-    submitters
-'WACS40' -- Supervisor, Customer Service
-'WACS50' -- Manager, Customer Service
-'WACS60' -- Sr Manager, Customer Service
-
-quality
-'WACQ02' -- Monitor, Quality (CS)
-'WACQ03' -- Sr Monitor, Quality (CS) (lead)
-'WACQ12' -- Specialist, Quality (CS)
-'WACQ13' -- Sr Specialist, Quality (CS) (lead) 
-'WACQ40' -- Supervisor, Quality (CS)
-'WSQA50' -- Manager, Quality Assurance (deputy pgm mgr)
-
-lsa
-'WIHD01' -- Assoc Technician, Help Desk
-'WIHD02' -- Technician, Help Desk or Sr Engineer, Software
-'WIHD03' -- Sr Technician, Help Desk
-'WIHD04' -- Lead Technician, Help Desk or Sr Engineer, Software
-'WMPR40' -- Supervisor, Production
-'WMPR50' -- Manager, Production
-'WPPM60' -- Sr Manager, Program
-'WISA12' -- Administrator, Systems
-'WABA11' -- Assoc Administrator, Business
-'WIHD40' -- Supervisor, Help Desk
-'WIHD50' -- Manager, Help Desk
-
-training
-    receivers
-'WTTI02' -- Instructor
-'WTTR12' -- Specialist, Training
-'WTTR13' -- Sr Specialist, Training
-'WTID13' -- Sr Developer, Instructional
-    submitters
-'WTTR12' -- Specialist, Training (to WTTI02 only)
-'WTTR13' -- Sr Specialist, Training (to WTTI02 only)
-'WTID13' -- Sr Developer, Instructional (to WTTI02 only)
-'WTTR40' -- Supervisor, Training
-'WTTR50' -- Manager, Training
-    no access
-'WTID11' -- Assoc Developer, Instructional
-'WTID12' -- Developer, Instructional
-'WTID14' -- Princ Developer, Instructional
-
-test
-'WSTE13' -- Sr Engineer, Test
-
-hr 
-(from people soft as WH*)
-select * from EC.HR_Access
-'WHER12' -- Analyst, HR Compliance
-'WHER13' -- Sr Analyst, HR Compliance
-'WHER14' -- Princ Analyst, HR Compliance
-'WHHR02' -- Assistant, HR
-'WHHR12' -- Business Partner, HR
-'WHHR13' -- Sr Business Partner, HR
-'WHHR14' -- Principal Business Partner, HR
-'WHHR50' -- Manager, HR
-'WHHR60' -- Sr Manager, HR
-'WHHR70' -- Director, HR
-
-old
-'WHER13' -- Sr Analyst, HR Compliance
-'WHER50' -- Manager, Employee Relations
-'WHHR12' -- Generalist, HR
-'WHHR13' -- Sr Generalist, HR
-'WHHR14' -- Principal Generalist, HR
-'WHHR50' -- Manager, HR
-'WHHR60' -- Sr Manager, HR
-'WHHR80' -- Sr Director, HR
-'WHHR11' -- Associate Generalist, HR
-'WHRC11' -- Associate Recruiter
-'WHRC12' -- Recruiter
-'WHRC13' -- Sr Recruiter
+test subjects 
+emp id jobcod module	      name                   lan id
+368329 WACS01 1 CSR   	    Kalkman, Christopher E Christopher.Kalkman
+379750 WACS40 2 Supervisor	Stein, Lisa D          lisa.stein
+365663 WACQ02 3 Quality   	Leferink, William J    William.Leferink
+310812 WIHD01 4 LSA       	Treinen, Lola R        Lola.Treinen
+346638 WTTI02 5 Training  	Hinman, David L        David.Hinman
+380017 WACS50             	Stearns, Douglas R     Doug.Stearns 
 
 */
 
 -- find engineering team in employee table 
-select * from EC.Employee_Hierarchy
+-- Open the symmetric key with which to encrypt the data.  
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+select 
+Emp_ID,
+CONVERT(nvarchar(100),DecryptByKey(Emp_LanID)) AS [Decrypted Emp_LanID],
+Emp_Job_Code,
+Emp_Job_Description,
+CONVERT(nvarchar(100),DecryptByKey(Emp_Name)) AS [Decrypted Emp_Name],
+Sup_ID,
+CONVERT(nvarchar(100),DecryptByKey(Sup_LanID)) AS [Decrypted Sup_LanID],
+Sup_Job_Code,
+Sup_Job_Description,
+CONVERT(nvarchar(100),DecryptByKey(Sup_Name)) AS [Decrypted Sup_Name],
+Mgr_ID,
+CONVERT(nvarchar(100),DecryptByKey(Mgr_LanID)) AS [Decrypted Mgr_LanID],
+Mgr_Job_Code,
+Mgr_Job_Description,
+CONVERT(nvarchar(100),DecryptByKey(Mgr_Name)) AS [Decrypted Mgr_Name],
+CONVERT(nvarchar(100),DecryptByKey(Emp_Email)) AS [Decrypted Emp_Email],
+CONVERT(nvarchar(100),DecryptByKey(Sup_Email)) AS [Decrypted Sup_Email],
+CONVERT(nvarchar(100),DecryptByKey(Mgr_Email)) AS [Decrypted Mgr_Email],
+Emp_Site,
+Emp_Program,
+CONVERT(nvarchar(100),DecryptByKey(Emp_Pri_Name)) AS [Decrypted Emp_Pri_Name],
+Start_Date,
+End_Date,
+Active,
+SrMgrLvl1_ID,
+SrMgrLvl2_ID,
+SrMgrLvl3_ID,
+Emp_ID_Prefix,
+Hire_Date,
+Dept_ID,
+Dept_Description,
+Reg_Temp,
+Full_Part_Time,
+Term_Date,
+FLSA_Status
+from EC.Employee_Hierarchy
 where Emp_ID in (
  '380017'  -- 'Doug.Stearns'         'Stearns, Douglas R'      'WSTE13'
 ,'365663'  -- 'William.Leferink'     'Leferink, William J'     'WPSM14'
 ,'368329'  -- 'Christopher.Kalkman'  'Kalkman, Christopher E'  'WISO14'
-,'91299'   -- 'Timothy.Queen'        'Queen, Timothy K'        'WPPT60'
-,'310812'  -- 'Lola.Treinen'         'Treinen, Lola R'         'WISO14'
-,'345712'  -- 'Susmitha.Palacherla'  'Palacherla, Susmitha C'  'WISO13'
 ,'346638'  -- 'David.Hinman'         'Hinman, David L'         'WISO14'
-,'368771'  -- 'Leslie.Keune'         'Keune, Leslie A'         'WPPT50'
 ,'379750'  -- 'lisa.stein'           'Stein, Lisa D'           'WSTE12'
-,'92489'   -- 'Jourdain.Augustin'    'Augustin, Jourdain M'    'WISO13'
-,'324577'  -- 'Michael.Ingram'       'Ingram, Michael T'       'WPPM60'
-,'365226'  -- 'Lili.Huang'           'Huang, Lili'             'WISO12'
-,'324692'  -- 'Timothy.Leonard'      'Leonard, Timothy M'      'WISO15'
-,'92895'   -- 'brian.coughlin'       'Coughlin, Brian E'       'WSTE14'
-,'91885'   -- 'Jacqueline.Haltmeyer' 'Haltmeyer, Jacqueline K' 'WISA70'
-,'92749'   -- 'Keith.Luegering'      'Luegering, Keith J'      'WPPT60'
-,'500306'  -- 'JohnEric.Tiongson'    'Tiongson, John Eric Z'   'WISY13'
-,'343549'  -- 'Mark.Hackman'         'Hackman, Mark G'         'WPSM13'
-,'408246'  -- 'Scott.Potter'         'Potter, Scott E'         'WACQ13'
+,'310812'  -- 'Lola.Treinen'         'Treinen, Lola R'         'WISO14'
+--,'91299'   -- 'Timothy.Queen'        'Queen, Timothy K'        'WPPT60'
+--,'368771'  -- 'Leslie.Keune'         'Keune, Leslie A'         'WPPT50'
+--,'345712'  -- 'Susmitha.Palacherla'  'Palacherla, Susmitha C'  'WISO13'
+--,'92489'   -- 'Jourdain.Augustin'    'Augustin, Jourdain M'    'WISO13'
+--,'324577'  -- 'Michael.Ingram'       'Ingram, Michael T'       'WPPM60'
+--,'365226'  -- 'Lili.Huang'           'Huang, Lili'             'WISO12'
+--,'324692'  -- 'Timothy.Leonard'      'Leonard, Timothy M'      'WISO15'
+--,'92895'   -- 'brian.coughlin'       'Coughlin, Brian E'       'WSTE14'
+--,'91885'   -- 'Jacqueline.Haltmeyer' 'Haltmeyer, Jacqueline K' 'WISA70'
+--,'92749'   -- 'Keith.Luegering'      'Luegering, Keith J'      'WPPT60'
+--,'500306'  -- 'JohnEric.Tiongson'    'Tiongson, John Eric Z'   'WISY13'
+--,'343549'  -- 'Mark.Hackman'         'Hackman, Mark G'         'WPSM13'
+--,'408246'  -- 'Scott.Potter'         'Potter, Scott E'         'WPSM12'
+--,'333386'  -- 'shelly.encke'         'Encke, Shelly J'         'WPPM11'
+--,'397938'  -- 'Sara.Stonecipher'     'Stonecipher, Sara'       'WPPM11'
 )
+
+CLOSE SYMMETRIC KEY CoachingKey
 
 
 /* ***********************************************
@@ -127,23 +89,7 @@ where Emp_ID in (
 -- change job code
 update EC.employee_Hierarchy
 set emp_job_code = ''
-where Emp_ID = '380017'  -- doug
-
--- check email distro
-select * from EC.Employee_Hierarchy
-where Emp_Email not in ('DL-eCL_T''est_Employee@GDIT.com')
-or sup_email not in ('DL-eCL_T''est_Supervisor@GDIT.com')
-or mgr_email not in ('DL-eCL_T''est_Manager@GDIT.com')
-
--- set email addresses - distro
-update EC.employee_Hierarchy
-set emp_email = 'DL-eCL_T''est_Employee@GDIT.com',
-sup_email = 'DL-eCL_T''est_Supervisor@GDIT.com',
-mgr_email = 'DL-eCL_T''est_Manager@GDIT.com'
-where Emp_ID in ('')
-
--- 'DL-eCL_Test_Reviewer@GDIT.com'
--- 'DL-eCL_Test_SeniorMgr@GDIT.com'
+where Emp_ID = '380017' 
 
 -- activate a termed record
 update EC.employee_Hierarchy
@@ -154,41 +100,89 @@ where Emp_ID in ('')
     updates to employee table
    *********************************************** */
 
-
 /* ***********************************************
     change job codes and emp ids as needed
    *********************************************** */
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
 -- set doug as supervisor 
 update EC.employee_Hierarchy
 set sup_id = '380017',
-sup_name = 'Stearns, Douglas R',
-sup_lanid = 'Doug.Stearns',
+[sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Stearns, Douglas R'),
+[sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Doug.Stearns'),
 sup_job_code = 'WACS40'
-where Emp_ID in ('')
-
--- set tim as manager
-update EC.employee_Hierarchy
-set mgr_id = '91299',
-mgr_name = 'Queen, Timothy K',
-mgr_lanid = 'Timothy.Queen',
-mgr_job_code = 'WPPT60'
-where Emp_ID in ('')
-
--- set tim as supervisor
-update EC.employee_Hierarchy
-set sup_id = '91299',
-sup_name = 'Queen, Timothy K',
-sup_lanid = 'Timothy.Queen',
-sup_job_code = 'WPPT60'
 where Emp_ID in ('')
 
 -- set doug as manager
 update EC.employee_Hierarchy
 set mgr_id = '380017',
-mgr_name = 'Stearns, Douglas R',
-mgr_lanid = 'Doug.Stearns',
+[mgr_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Stearns, Douglas R'),
+[mgr_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Doug.Stearns'),
 mgr_job_code = 'WACS50'
 where Emp_ID in ('')
+
+-- set leslie as supervisor
+update EC.employee_Hierarchy
+set sup_id = '368771',
+[sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Keune, Leslie A'),
+[sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Leslie.Keune'),
+sup_job_code = 'WPPT60'
+where Emp_ID in ('')
+
+-- set tim as manager
+update EC.employee_Hierarchy
+set mgr_id = '91299',
+[mgr_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Queen, Timothy K'),
+[mgr_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Timothy.Queen'),
+mgr_job_code = 'WPPT60'
+where Emp_ID in ('')
+
+CLOSE SYMMETRIC KEY CoachingKey
 /* ***********************************************
     change job codes and emp ids as needed
+   *********************************************** */
+
+/* ***********************************************
+    change email address 
+   *********************************************** */
+-- check email distro
+OPEN SYMMETRIC KEY [CoachingKey] 
+DECRYPTION BY CERTIFICATE [CoachingCert]  
+GO
+
+select * from EC.Employee_Hierarchy
+where CONVERT(nvarchar(100),DecryptByKey(Emp_Email)) not in ('DLeCLTestEmployee@maximus.com')
+or CONVERT(nvarchar(100),DecryptByKey(Sup_Email)) not in ('DLeCLTestSupervisor@maximus.com')
+or CONVERT(nvarchar(100),DecryptByKey(Mgr_Email)) not in ('DLeCLTestManager@maximus.com')
+--or CONVERT(nvarchar(100),DecryptByKey(Sup_Email)) not in ('DLeCLTestReviewer@maximus.com')
+--or CONVERT(nvarchar(100),DecryptByKey(Mgr_Email)) not in ('DLeCLTestSeniorMgr@maximus.com')
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+-- set email addresses - distro
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
+GO
+
+Declare @empemail nvarchar(50),
+@supemail nvarchar(50),
+@mgremail nvarchar(50)
+--@reveremail nvarchar(50),
+--@srmgremail nvarchar(50)
+
+set @empemail = 'DLeCLTestEmployee@maximus.com'  -- "DL-eCL_Test_Employee"
+set @supemail = 'DLeCLTestSupervisor@maximus.com'  -- "DL-eCL_Test_Supervisor"
+set @mgremail = 'DLeCLTestManager@maximus.com'  -- "DL-eCL_Test_Manager"
+--@reveremail = 'DLeCLTestReviewer@maximus.com'  -- "DL-eCL_Test_Reviewer"
+--@srmgremail = 'DLeCLTestSeniorMgr@maximus.com'  -- "DL-eCL_Test_SeniorMgr"
+
+update [EC].[Employee_Hierarchy]
+set [Emp_Email]= EncryptByKey(Key_GUID('CoachingKey'), @empemail),
+[Sup_Email]= EncryptByKey(Key_GUID('CoachingKey'), @supemail),
+[Mgr_Email]= EncryptByKey(Key_GUID('CoachingKey'), @mgremail)
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+/* ***********************************************
+    change email address 
    *********************************************** */

@@ -1,0 +1,28 @@
+select * from EC.Employee_Hierarchy
+where Emp_ID = '380017A'
+
+update EC.Employee_Hierarchy
+set Emp_ID = '380017'
+where Emp_ID = '380017A'
+
+select * from Coaching_Log
+where CoachingID = 715953
+
+update EC.Coaching_Log
+set EmpID = '380017A'
+where CoachingID = 715953
+
+select * from EC.EmployeeID_To_LanID
+where EmpID = '380017A'
+
+update EC.EmployeeID_To_LanID
+set EmpID = '380017A'
+where ID = '42556'
+
+select * from EC.Survey_Response_Header
+where SurveyID = 23
+
+update EC.Survey_Response_Header
+set EmpID = '380017'
+where SurveyID = 23
+

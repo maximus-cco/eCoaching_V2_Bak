@@ -1,0 +1,110 @@
+/*************************************************
+     email for surveys
+*************************************************/
+-- stored procedure to show surveys that need emails sent
+exec EC.sp_SelectSurvey4Contact 
+
+
+-- update logs to set email as sent
+update EC.Survey_Response_Header
+set EmailSent = 1
+where EmailSent = 0 
+
+-- update logs to set email as not sent
+update EC.Survey_Response_Header
+set EmailSent = 0
+where SurveyID in ()
+and CoachingID in ()
+
+-- see the generated surveys
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+select SurveyID,
+SurveyTypeID,
+CoachingID,
+FormName,
+EmpID,
+CONVERT(nvarchar(100),DecryptByKey(EmpLanID)) AS [Decrypted EmpLanID],
+SiteID,
+SourceID,
+ModuleID,
+CreatedDate,
+MonthOfYear,
+CalendarYear,
+CSRComments,
+EmailSent,
+CompletedDate,
+Status,
+InactivationDate,
+InactivationReason,
+NotificationDate
+from EC.Survey_Response_Header
+where SurveyID in ()
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+
+-- to send initial email
+update EC.Survey_Response_Header
+set EmailSent = 0
+where SurveyID in ()
+
+-- to regenerate for month for csr
+update EC.Coaching_Log
+set SurveySent = 0
+where CoachingID in (695416)
+
+/*************************************************
+     email reminders for surveys
+*************************************************/
+-- stored procedure to show surveys that need emails reminders sent
+exec EC.sp_SelectSurvey4Reminder 
+
+
+-- set the initial email notification date
+update EC.Survey_Response_Header
+set NotificationDate = '2016-02-22 13:14:27'
+where SurveyID in ()
+
+-- update notification date in past - first reminder - iqs=48; omr=72
+update EC.Survey_Response_Header
+--set NotificationDate = DATEADD(day, -3, NotificationDate)
+set NotificationDate = dateadd(hour,-49,NotificationDate)
+where SurveyID in ()
+
+-- update reminder date in past - second plus reminder - iqs=48; omr=72
+update EC.Survey_Response_Header
+set ReminderDate = dateadd(hour,-73,ReminderDate)
+where SurveyID in ()
+
+-- update mgr review auto date in past - omr sup reminder - omr=72
+update EC.Survey_Response_Header
+set ReminderDate = dateadd(hour,-73,ReminderDate)
+where SurveyID in ()
+
+-- reset reminder fields 
+update EC.Survey_Response_Header
+set ReminderSent = 0, 
+    ReminderDate = null, 
+    ReminderCount = null
+where SurveyID in ()
+
+-- show date difference
+select CoachingID, FormName, 
+DATEDIFF(hh, NotificationDate, getdate()) as [note date],
+DATEDIFF(hh, MgrReviewAutoDate, getdate()) as [rev date],
+DATEDIFF(hh, ReminderDate, getdate()) as [remind date]
+from EC.Survey_Response_Header
+where SurveyID in ()
+
+
+
+--?????
+select * from EC.Coaching_Log
+WHERE Statusid = 1 -- Completed
+  AND ModuleID = 1 -- Each Module 
+   AND SourceID <> 224 -- Verint-TQC
+  AND isCSRAcknowledged = 1
+  AND SurveySent = 0
+  AND CSRReviewAutoDate BETWEEN getdate()-7 and getdate()

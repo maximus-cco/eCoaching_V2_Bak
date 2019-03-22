@@ -1,0 +1,13 @@
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+select * from EC.View_Employee_Hierarchy
+
+
+select * from EC.View_EmployeeID_To_LanID
+
+
+select * from EC.View_Historical_Dashboard_ACL
+
+CLOSE SYMMETRIC KEY CoachingKey
+

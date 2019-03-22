@@ -1,0 +1,138 @@
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+SELECT ewfm.Emp_ID,
+ewfm.Emp_ID,
+ewfm.Emp_Site_Code,
+ewfm.Sup_ID,
+ewfm.Emp_Program,
+CONVERT(nvarchar(100),DecryptByKey(ewfm.Emp_Name)) AS [Decrypted Emp_Name],
+CONVERT(nvarchar(100),DecryptByKey(ewfm.Emp_LanID)) AS [Decrypted Emp_LanID]
+  FROM [EC].[EmpID_To_SupID_Stage] ewfm  left outer join [EC].[Employee_Ids_With_Prefixes] pre
+  on ewfm.emp_id = pre.emp_id join [EC].[Employee_Hierarchy] eh 
+  on [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(ewfm.emp_id)),' ','')) = eh.emp_id
+  where ltrim(ewfm.Emp_ID) like 'W%'
+  and eh.Active = 'A'
+  and pre.emp_id is null
+  order by ltrim(ewfm.Emp_ID) 
+GO
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+select Emp_ID, 
+Start_Date, 
+Inserted_Date, 
+CONVERT(nvarchar(100),DecryptByKey(Emp_Name)) AS [Decrypted Emp_Name],
+CONVERT(nvarchar(100),DecryptByKey(Emp_LanID)) AS [Decrypted Emp_LanID]
+from EC.Employee_Ids_With_Prefixes
+order by Inserted_Date, Emp_ID
+
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+
+SELECT *
+  FROM EC.Employee_Hierarchy
+    where Emp_ID like '%304181'
+or Emp_ID like '%305779'
+or Emp_ID like '%305720'
+or Emp_ID like '%305614'
+or Emp_ID like '%310055'
+or Emp_ID like '%310236'
+or Emp_ID like '%305789'
+order by Emp_ID
+GO
+
+SELECT *
+  FROM [EC].[Employee_Ids_With_Prefixes]
+    where Emp_ID like '%304181'
+or Emp_ID like '%305779'
+or Emp_ID like '%305720'
+or Emp_ID like '%305614'
+or Emp_ID like '%310055'
+or Emp_ID like '%310236'
+or Emp_ID like '%305789'
+order by Emp_ID
+GO
+
+SELECT *
+  FROM [EC].[EmployeeID_To_LanID]
+    where EmpID like '%304181'
+or EmpID like '%305779'
+or EmpID like '%305720'
+or EmpID like '%305614'
+or EmpID like '%310055'
+or EmpID like '%310236'
+or EmpID like '%305789'
+order by EmpID
+GO
+
+SELECT *
+  FROM [EC].[CSR_Hierarchy]
+    where EmpID like '%304181'
+or EmpID like '%305779'
+or EmpID like '%305720'
+or EmpID like '%305614'
+or EmpID like '%310055'
+or EmpID like '%310236'
+or EmpID like '%305789'
+order by EmpID
+GO
+
+SELECT *
+  FROM [EC].[Coaching_Log]
+    where EmpID like '%304181'
+or EmpID like '%305779'
+or EmpID like '%305720'
+or EmpID like '%305614'
+or EmpID like '%310055'
+or EmpID like '%310236'
+or EmpID like '%305789'
+order by EmpID
+GO
+
+SELECT *
+  FROM [EC].[Warning_Log]
+    where EmpID like '%304181'
+or EmpID like '%305779'
+or EmpID like '%305720'
+or EmpID like '%305614'
+or EmpID like '%310055'
+or EmpID like '%310236'
+or EmpID like '%305789'
+order by EmpID
+GO
+
+SELECT *
+  FROM [EC].[Survey_Response_Header]
+    where EmpID like '%304181'
+or EmpID like '%305779'
+or EmpID like '%305720'
+or EmpID like '%305614'
+or EmpID like '%310055'
+or EmpID like '%310236'
+or EmpID like '%305789'
+order by EmpID
+GO
+
+
+
+
+select * from EC.Employee_Hierarchy
+where Emp_ID like '%310055'
+
+
+
+select * from EC.Employee_Hierarchy
+where Sup_ID like '%305630'
+or Sup_ID like '%305779'
+
+
+select * from EC.Employee_Hierarchy
+where Mgr_ID like '%305630'
+or Mgr_ID like '%305779'

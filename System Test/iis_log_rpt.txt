@@ -1,0 +1,46 @@
+
+-- quick queries
+select count(*) from EC.IISLog
+select min(IISLogDateTime) from EC.IISLog 
+select max(IISLogDateTime) from EC.IISLog 
+
+-- iis records
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+select IISLogID, 
+       CONVERT(nvarchar(30),DecryptByKey(UserID)), 
+       IISLogDateTime, 
+       [Target], 
+       PageName, 
+       StatusCode
+from EC.IISLog
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+-- iis files loaded
+select * from EC.IISLog_FileImport
+
+-- iis stage table - normally 0
+select count(*) from EC.IISLog_Stage 
+
+-- number of hits 
+select * from EC.IISLog
+where PageName like 'MyDashboard'
+and (IISLogDateTime >= '2018-11-27 15:00:00.000'
+and IISLogDateTime < '2018-11-27 16:00:00.000')
+
+-- number of users
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+select distinct CONVERT(nvarchar(30),DecryptByKey(UserID))
+from EC.IISLog
+where PageName like 'MyDashboard'
+and (IISLogDateTime >= '2018-11-27 15:00:00.000'
+and IISLogDateTime < '2018-11-27 16:00:00.000')
+group by CONVERT(nvarchar(30),DecryptByKey(UserID)) 
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+

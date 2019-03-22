@@ -1,0 +1,8 @@
+
+-- reactivate logs
+update EC.Coaching_Log
+set EC.Coaching_Log.StatusID = EC.AT_Coaching_Inactivate_Reactivate_Audit.LastKnownStatus
+from EC.AT_Coaching_Inactivate_Reactivate_Audit 
+where EC.Coaching_Log.CoachingID = EC.AT_Coaching_Inactivate_Reactivate_Audit.CoachingID
+and EC.AT_Coaching_Inactivate_Reactivate_Audit.ActionTimestamp > '2016-12-01 00:00:00.000'
+and EC.AT_Coaching_Inactivate_Reactivate_Audit.FormName like '%368329%'

@@ -1,0 +1,65 @@
+
+/*
+sp_AT_Select_Employees_Inactivation_Reactivation
+  calls following proc when working on coachings 
+sp_AT_Select_Employees_Coaching_Inactivation_Reactivation
+  returns list of emps with coaching logs for selected module
+  to inactivate: from coaching log and employee hierarchy 
+                 log StatusID <> 1,2 
+                 log EmpID <> '999999'
+                 employee Active = 'A'
+                 if not admin then manager's site
+
+  to reactivate: from coaching audit, coaching log, and employee hierarchy
+                 audit last status <> 2
+                 log EmpID <> '999999'
+                 employee Active = 'A'
+sp_AT_Select_Logs_Inactivation_Reactivation
+  returns list of logs for selected employee
+  from coaching log when coaching and inactivate (log status <> 1,2)
+  from coaching audit when coaching and reactivate (last status <> 2 and log status = 2)
+*/
+-- audit fields for coaching inactivate/reactivate
+select * from EC.AT_Coaching_Inactivate_Reactivate_Audit
+order by SeqNum
+
+
+/*
+sp_AT_Select_ReassignFrom_Users
+  returns list of employees with pending logs assigned to them
+  
+sp_AT_Select_ReassignTo_Users
+  returns list of employees which can receive logs
+
+sp_AT_Select_Logs_Reassign
+  returns list of logs for selected status and reviewer
+
+*/
+-- audit fields for coaching reassignment
+select * from EC.AT_Coaching_Reassign_Audit
+order by SeqNum
+
+
+
+/*
+sp_AT_Select_Employees_Inactivation_Reactivation
+  calls following proc when working on warnings
+sp_AT_Select_Employees_Warning_Inactivation_Reactivation
+  returns list of emps with warnings for selected module
+  to inactivate: from warning log and employee hierarchy 
+                 log StatusID = 1
+                 log EmpID <> '999999'
+                 employee Active = 'A'
+
+  to reactivate: from warning audit, warning log, and employee hierarchy
+                 log StatusID = 2
+                 log EmpID <> '999999'
+                 employee Active = 'A'
+sp_AT_Select_Logs_Inactivation_Reactivation
+  returns list of logs for selected employee
+  from warning log when warning and inactivate (log status <> 2)
+  from warning audit when warning and reactivate (last status <> 2 and log status = 2)
+*/
+-- audit fields for warning inactivate/reactivate
+select * from EC.AT_Warning_Inactivate_Reactivate_Audit
+order by SeqNum

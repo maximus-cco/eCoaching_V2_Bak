@@ -13,14 +13,12 @@ where CoachingID in (681883, 681888)
 
 -- change ecl to doug
 update EC.Coaching_Log
-set emplanid = 'doug.stearns',
-empid = '380017'
+set empid = '380017'
 where CoachingID in (681883, 681888)
 
 -- change ecl back
 update EC.Coaching_Log
-set emplanid = 'christopher.kalkman',
-empid = '368329'
+set empid = ''
 where CoachingID in (681883, 681888)
 
 -- find related reasons/sub-reasons
@@ -75,14 +73,12 @@ where WarningID in (681883, 681888)
 
 -- change ecl to doug
 update EC.Warning_Log
-set emplanid = 'doug.stearns',
-empid = '380017'
+set empid = '380017'
 where WarningID in (681883, 681888)
 
 -- change ecl back
 update EC.Warning_Log
-set emplanid = 'David.Hinman',
-empid = '346638'
+set empid = ''
 where WarningID in (681883, 681888)
 
 -- find related reasons/sub-reasons

@@ -1,0 +1,139 @@
+
+
+/* ***********************************************
+    surveys 
+*/ ***********************************************
+
+-- for coaching logs
+-- CSRReviewAutoDate needs to be between these two dates
+select DATEADD(day, DATEDIFF(DD, 0, GetDate()),0) -- end of period
+select DATEADD(day, DATEDIFF(DD, 0, GetDate())-7,0) -- start of period
+
+where cl.CSRReviewAutoDate 
+between DATEADD(day, DATEDIFF(DD, 0, GetDate())-7,0) 
+    and DATEADD(day, DATEDIFF(DD, 0, GetDate()),0)
+
+
+-- for pilots
+select * from ec.Survey_Pilot_Date
+
+update ec.Survey_Pilot_Date
+set StartOfPilotDate1 = '2019-02-01 00:00:00.000' -- '2019-04-01 00:00:00.000'
+set StartOfPilotDate2 = '2019-02-01 00:00:00.000' -- '2019-05-01 00:00:00.000'
+
+
+-- no survey records for emp in current month
+update EC.Coaching_Log
+set SurveySent = 0,
+SiteID = 10, -- larwence 
+SubmittedDate = '2018-05-02 09:30:00.000',
+SupReviewedAutoDate = '2018-05-02 09:31:00.000', 
+CSRReviewAutoDate = '2018-05-02 09:32:00.000'
+where CoachingID = 715954
+
+-- info tables
+select * from Survey_Sites
+select * from EC.Survey_DIM_Type
+select * from EC.Survey_DIM_Question
+select * from EC.Survey_DIM_QAnswer
+select * from EC.Survey_DIM_Response
+
+select sda.QuestionNumber, sdq.[Description], sda.ResponseValue, sda.ResponseType
+from EC.Survey_DIM_QAnswer sda
+join EC.Survey_DIM_Question sdq on sda.QuestionID = sdq.QuestionID 
+join EC.Survey_DIM_Response sdr on sda.ResponseID = sdr.ResponseID
+order by sda.QuestionNumber, sda.ResponseID
+
+-- which logs ready for survey
+exec EC.sp_SelectSurvey4Contact
+
+-- email reminder to complete survey
+exec EC.sp_SelectSurvey4Reminder
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+CLOSE SYMMETRIC KEY CoachingKey
+  
+-- following need encryption key opened
+  
+-- find open survey records
+select CONVERT(nvarchar(100),DecryptByKey(EmpLanID)), * 
+from EC.Survey_Response_Header
+where Status = 'Open'
+
+SELECT * FROM [EC].[Survey_Response_Header]
+WHERE [SurveyID] = 23
+
+-- to see responses to survey
+select * from EC.Survey_Response_Detail
+where SurveyID = 23
+
+-- another way
+select srh.SurveyID, srd.QuestionID, sdq.[Description], sdr.[Value], srd.UserComments, srh.CSRComments 
+from EC.Survey_Response_Header srh
+join EC.Survey_Response_Detail srd on srh.SurveyID = srd.SurveyID
+join EC.Survey_DIM_Question sdq on srd.QuestionID = sdq.QuestionID
+join EC.Survey_DIM_Response sdr on srd.ResponseID = sdr.ResponseID
+where srh.CreatedDate > '2018-02-21 00:00:00.000'
+order by srd.SurveyID, srd.QuestionID, srd.ResponseID
+
+-- to take over the survey record
+Update Ec.Survey_Response_Header
+Set Empid = '380017',
+[Emplanid]= EncryptByKey(Key_GUID('CoachingKey'), N'doug.stearns'),
+SiteID = 10 -- lawence
+Where Surveyid = 20
+
+-- to set it back
+update EC.Survey_Response_Header
+set EmpID = '368329', 
+[Emplanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Christopher.Kalkman'),
+SiteID = 5 -- coralville 
+where SurveyID = 20
+
+
+-- to complete
+update EC.Survey_Response_Header
+set Status = 'Inactive', 
+InactivationDate = getdate(), 
+InactivationReason = 'Survey Expired'
+where SurveyID = 27
+
+-- to re-open
+select * from EC.Survey_Response_Header
+where SurveyID = 23
+
+update EC.Survey_Response_Header
+set Status = 'Open', 
+CompletedDate = null,
+CSRComments = null
+where SurveyID = 23
+
+select * from EC.Survey_Response_Detail
+where SurveyID = 23
+
+delete from EC.Survey_Response_Detail
+where SurveyID = 23
+
+
+-- to expire
+update EC.Survey_Response_Header
+set Status = 'Inactive', 
+InactivationDate = getdate(), 
+InactivationReason = 'Survey Expired'
+where SurveyID = 27
+
+-- to unexpire
+update EC.Survey_Response_Header
+set Status = 'Open', 
+InactivationDate = null, 
+InactivationReason = null
+where SurveyID = 27
+
+
+-- to access web page
+https://f3420-mpmd01/eCoachingLog_st/Survey?id=27
+/* ***********************************************
+    surveys 
+*/ ***********************************************

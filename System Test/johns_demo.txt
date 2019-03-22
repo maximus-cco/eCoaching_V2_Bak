@@ -1,0 +1,105 @@
+-- john's demo
+-- set 'em up
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];
+
+update EC.employee_Hierarchy
+set sup_id = '500306',
+[sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Tiongson, John Eric Z'),
+[sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'JohnEric.Tiongson')
+where Sup_ID = '423768'
+and Emp_ID not in ('343549','408246')
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+update EC.Coaching_Log
+set SubmitterID = '500306'
+where SubmitterID = '423768'
+
+update EC.Coaching_Log
+set EmpID = '500306'
+where EmpID = '423768'
+
+-- set 'em back
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];
+
+update EC.employee_Hierarchy
+set sup_id = '423768',
+[sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Dunn, Kent'),
+[sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Kent.Dunn')
+where Sup_ID = '500306'
+and Emp_ID not in ('343549','408246')
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+update EC.Coaching_Log
+set SubmitterID = '423768'
+where SubmitterID = '500306'
+
+update EC.Coaching_Log
+set EmpID = '423768'
+where EmpID = '500306'
+
+
+-- quality now demo
+
+update EC.employee_Hierarchy
+set emp_job_code = 'WACS01'
+where Emp_ID = '397938' 
+
+update EC.employee_Hierarchy
+set emp_job_code = 'WACS40'
+where Emp_ID = '500306' 
+
+update EC.employee_Hierarchy
+set emp_job_code = 'WACS50'
+where Emp_ID = '343549' 
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+update EC.employee_Hierarchy
+set sup_id = '500306',
+[sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Tiongson, John Eric Z'),
+[sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'JohnEric.Tiongson'),
+sup_job_code = 'WACS40'
+where Emp_ID in ('397938')
+
+update EC.employee_Hierarchy
+set mgr_id = '343549',
+[mgr_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Hackman, Mark G'),
+[mgr_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Mark.Hackman'),
+mgr_job_code = 'WACS50'
+where Emp_ID in ('397938')
+
+update EC.employee_Hierarchy
+set sup_id = '343549',
+[sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Hackman, Mark G'),
+[sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Mark.Hackman'),
+sup_job_code = 'WACS50'
+where Emp_ID in ('500306')
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+
+--6388071
+--6374090
+
+update EC.Coaching_Log
+set FormName = 'eCL-397938-6388071',
+empid = '397938',
+submitterid = '343549',
+supid = '500306',
+mgrid = '343549'
+where CoachingID = 6388071
+
+update EC.Coaching_Log
+set FormName = 'eCL-397938-6374090',
+empid = '397938',
+submitterid = '343549',
+supid = '500306',
+mgrid = '343549',
+review_supid = '500306',
+coachingnotes = 'Tiongson, John Eric Z (12/30/2018 07:03:47 AM PDT) - 12/30/2018 supervisor review coaching notes'
+where CoachingID = 6374090

@@ -1,0 +1,160 @@
+/*
+
+eCoaching Log test scripts to change hierarchy job codes,
+email addresses for notifications and supervisor/manager
+
+*/
+
+job codes
+select * from EC.Module_Submission
+
+modules 
+1-CSR
+2-Supervisor
+3-Quality
+4-LSA
+5-Training
+
+csrs
+    receivers
+'WACS01' -- Assoc Specialist, Cust Svc
+'WACS02' -- Specialist, Customer Service
+'WACS03' -- Sr Specialist, Customer Svc
+    submitters
+'WACS40' -- Supervisor, Customer Service
+'WACS50' -- Manager, Customer Service
+    all job codes can submit to csrs
+
+supervisors
+    receivers
+'WACS40' -- Supervisor, Customer Service
+    submitters
+'WACS40' -- Supervisor, Customer Service
+'WACS50' -- Manager, Customer Service
+'WACS60' -- Sr Manager, Customer Service
+'WTTI02' -- Instructor
+'WTTR12' -- Specialist, Training
+'WTTR40' -- Supervisor, Training
+'WTTR50' -- Manager, Training
+'WACQ13' -- Sr Specialist, Quality (CS) (lead) 
+'WBCO50' -- Manager, Communications
+'WBCO70' -- Director, Communications
+'WFFA40' -- Supervisor, Finance
+'WFFA50' -- Manager, Finance
+'WMPR40' -- Supervisor, Production
+'WMPR50' -- Manager, Production
+'WPOP11' -- Associate Analyst, Operations
+'WPOP50' -- Manager, Operations
+'WPOP60' -- Sr Manager, Operations
+'WPOP70' -- Director, Operations
+'WPPM11' -- Associate Analyst, Program
+'WPPM12' -- Analyst, Program
+'WPPM50' -- Manager, Program
+'WPPM60' -- Sr Manager, Program
+'WPPM70' -- Director, Program
+'WPPM80' -- Sr Director, Program
+'WPPT40' -- Supervisor, Project/Task
+'WPPT50' -- Manager, Project/Task
+'WPPT60' -- Sr Manager, Project/Task
+'WPSM11' -- Associate Analyst, Functional
+'WPSM12' -- Analyst, Functional
+'WPSM13' -- Sr Analyst, Functional
+'WPSM14' -- Principal Analyst, Functional
+'WPSM15' -- Sr Princ Analyst, Functional
+'WEEX90' -- Section Vice President
+'WEEX91' -- Program Vice President
+'WPWL51' -- Manager, Regional
+Others:	
+Program Staff Systems Analyst 
+Employees designated by Program Manager
+Software Engineer
+Testing Engineer
+
+quality
+    receivers
+'WACQ02' -- Monitor, Quality (CS)
+'WACQ03' -- Sr Monitor, Quality (CS) (lead)
+'WACQ12' -- Specialist, Quality (CS)
+    submitters
+'WACQ02' -- Monitor, Quality (CS)
+'WACQ03' -- Sr Monitor, Quality (CS) (lead)
+'WACQ12' -- Specialist, Quality (CS)
+'WACQ13' -- Sr Specialist, Quality (CS) (lead) 
+'WACQ40' -- Supervisor, Quality (CS)
+'WSQA50' -- Manager, Quality Assurance
+'WSQA70' -- Director, Quality Assurance
+'WPPM12' -- Analyst, Program
+'WPPM13' -- Sr Analyst, Program
+'WEEX90' -- Section Vice President
+'WEEX91' -- Program Vice President
+'WPOP70' -- Director, Operations
+Others:	
+Program Staff Systems Analyst
+Employees designated by Program Manager 
+Software Engineer
+Testing Engineer
+
+lsa
+    receivers
+'WIHD01' -- Assoc Technician, Help Desk
+'WIHD02' -- Technician, Help Desk or Sr Engineer, Software
+'WIHD03' -- Sr Technician, Help Desk
+'WIHD04' -- Lead Technician, Help Desk or Sr Engineer, Software
+'WABA11' -- Assoc Administrator, Business - new
+'WISA03' -- Sr Technician, Systems - new
+    submitters
+'WIHD01' -- Assoc Technician, Help Desk
+'WIHD02' -- Technician, Help Desk or Sr Engineer, Software
+'WIHD03' -- Sr Technician, Help Desk
+'WIHD04' -- Lead Technician, Help Desk or Sr Engineer, Software
+'WIHD40' -- Supervisor, Help Desk
+'WIHD50' -- Manager, Help Desk
+'WMPR40' -- Supervisor, Production
+'WMPR50' -- Manager, Production
+'WPOP70' -- Director, Operations 
+'WPPM60' -- Sr Manager, Program
+'WPPT40' -- Supervisor, Project/Task
+'WPPT50' -- Manager, Project/Task
+'WPPT60' -- Sr Manager, Project/Task
+'WISA12' -- Administrator, Systems
+'WABA11' -- Assoc Administrator, Business
+Others:
+Program Staff Systems Analyst
+Employees designated by Program Manager
+Software Engineer
+Testing Engineer
+
+training
+    receivers
+'WTTR02' -- Coordinator, Training - new
+'WTTI02' -- Instructor
+'WTTR12' -- Specialist, Training
+'WTTR13' -- Sr Specialist, Training
+'WTID13' -- Sr Developer, Instructional.
+    submitters
+'WTTR12' -- Specialist, Training (to WTTI02 only)
+'WTTR13' -- Sr Specialist, Training (to WTTI02 only)
+'WTID13' -- Sr Developer, Instructional (to WTTI02 only)
+'WTTR40' -- Supervisor, Training
+'WTTR50' -- Manager, Training
+'WPOP70' -- Director, Operations
+Others:
+Program Staff Systems Analyst 
+Employees designated by Program Manager
+
+test
+'WSTE13' -- Sr Engineer, Test
+
+hr 
+(from people soft as WH*)
+select * from EC.HR_Access
+'WHER12' -- Analyst, HR Compliance
+'WHER13' -- Sr Analyst, HR Compliance
+'WHER14' -- Princ Analyst, HR Compliance
+'WHHR02' -- Assistant, HR
+'WHHR12' -- Business Partner, HR
+'WHHR13' -- Sr Business Partner, HR
+'WHHR14' -- Principal Business Partner, HR
+'WHHR50' -- Manager, HR
+'WHHR60' -- Sr Manager, HR
+'WHHR70' -- Director, HR

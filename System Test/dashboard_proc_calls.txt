@@ -5,41 +5,58 @@ ecoaching dashboard procedure calls
 */
 
 -- csr my dashboard
-exec ec.sp_SelectFrom_Coaching_Log_CSRPending 'Christopher.Kalkman'
-exec ec.sp_SelectFrom_Coaching_Log_CSRCompleted 'Christopher.Kalkman'
+exec ec.sp_SelectFrom_Coaching_Log_CSRPending '<csr lanid>'
+exec ec.sp_SelectFrom_Coaching_Log_CSRCompleted '<csr lanid>'
 
 -- supervisor dashboard
-exec ec.sp_SelectFrom_Coaching_Log_SUPPending 'doug.stearns'
-exec ec.sp_SelectFrom_Coaching_Log_SUPCSRPending 'doug.stearns', '%', '%'
-exec ec.sp_SelectFrom_Coaching_Log_SUPCSRCompleted '%', 'doug.stearns', '%', '%', '2017-05-01', '2017-05-31'
-exec ec.sp_SelectFrom_Warning_Log_SUPCSRCompleted 'doug.stearns', '2017-05-01', '2017-05-31', '0'
-exec ec.sp_SelectFrom_Coaching_Log_MGRPending 'Calvin.Jones', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_SUPPending '<sup lanid>'
+exec ec.sp_SelectFrom_Coaching_Log_SUPCSRPending '<sup lanid>', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_SUPCSRCompleted '%', '<sup lanid>', '%', '%', '2018-01-01', '2018-02-28'
+exec ec.sp_SelectFrom_Coaching_Log_CSRCompleted '<sup lanid>'
+exec ec.sp_SelectFrom_Warning_Log_SUPCSRCompleted '<sup lanid>', '2018-01-01', '2018-02-28', '%'
 
 -- manager dashboard
-exec ec.sp_SelectFrom_Coaching_Log_MGRCSRPending 'Timothy.Queen', '%', '%', '%'
-exec ec.sp_SelectFrom_Coaching_Log_MGRCSRCompleted '%', 'Timothy.Queen', '%', '%', '2017-05-01', '2017-05-31'
-exec ec.sp_SelectFrom_Warning_Log_MGRCSRCompleted 'Timothy.Queen', '2017-05-01', '2017-05-31', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MGRPending '<mgr lanid>', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MGRCSRPending '<mgr lanid>', '%', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MGRCSRCompleted '%', '<mgr lanid>', '%', '%', '2018-01-01', '2018-02-28'
+exec ec.sp_SelectFrom_Coaching_Log_CSRCompleted '<mgr lanid>'
+exec ec.sp_SelectFrom_Warning_Log_MGRCSRCompleted '<mgr lanid>', '2018-01-01', '2018-02-28', '%'
 
 -- staff submitted
-exec ec.sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff 'doug.stearns', '%', '%', '%'
-exec ec.sp_SelectFrom_Coaching_Log_MyPenSubmitted_DashboardStaff 'doug.stearns', '%', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff '<submit lanid>', '%', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MyPenSubmitted_DashboardStaff '<submit lanid>', '%', '%', '%'
 
 -- my submitted
-exec ec.sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard 'doug.stearns'
-exec ec.sp_SelectFrom_Coaching_Log_MySubmitted_DashboardMGR 'doug.stearns', '%', '%', '%', '%'
-exec ec.sp_SelectFrom_Coaching_Log_MySubmitted_DashboardSUP 'doug.stearns', '%', '%', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard '<submit lanid>'
+exec ec.sp_SelectFrom_Coaching_Log_MySubmitted_DashboardMGR '<submit lanid>', '%', '%', '%', '%'
+exec ec.sp_SelectFrom_Coaching_Log_MySubmitted_DashboardSUP '<submit lanid>', '%', '%', '%', '%'
 
 -- historical dashboard
-exec EC.sp_SelectFrom_Coaching_Log_HistoricalSUP 'doug.stearns', '%', '%', '%', '%', '%', '%', '2013-10-30', '2015-05-01', '%', 'WSTE13', '%', 20000, 1, 'SubmittedDate', 'n'
-exec EC.sp_SelectFrom_Coaching_Log_HistoricalSUP_Count 'doug.stearns', '%', '%', '%', '%', '%', '%', '2013-10-30', '2015-05-01', '%', 'WSTE13', '%'
+exec EC.sp_SelectFrom_Coaching_Log_HistoricalSUP '<lanid>', '%', '%', '%', '%', '%', '%', '2018-01-01', '2018-02-28', '%', 'WSTE13', '%', 20000, 1, 'SubmittedDate', 'n'
+exec EC.sp_SelectFrom_Coaching_Log_HistoricalSUP_Count '<lanid>', '%', '%', '%', '%', '%', '%', '2018-01-01', '2018-02-28', '%', 'WSTE13', '%'
 
 -- historical export
-exec EC.sp_SelectFrom_Coaching_Log_HistoricalSUP 'doug.stearns', '%', '%', '%', '%', '%', '%', '2015-01-01', '2015-07-10', '%', 'WSTE13', '%', '500', '1', 'strFormID', 'y'
-exec EC.sp_SelectFrom_Coaching_Log_Historical_Export '%', '%', '%', '%', '%', '%', '2015-01-01', '2015-07-10', '%', '%' 
+exec EC.sp_SelectFrom_Coaching_Log_HistoricalSUP '<lanid>', '%', '%', '%', '%', '%', '%', '2018-01-01', '2018-02-28', '%', 'WSTE13', '%', '500', '1', 'strFormID', 'y'
+exec EC.sp_SelectFrom_Coaching_Log_Historical_Export '%', '%', '%', '%', '%', '%', '2018-01-01', '2018-02-28', '%', '%' 
 
 -- review page
-exec EC.sp_SelectReviewFrom_Coaching_Log 'eCL-william.leferink-698866'
-exec EC.sp_SelectReviewFrom_Coaching_Log_Reasons 'eCL-william.leferink-698866'
+exec EC.sp_SelectReviewFrom_Coaching_Log '<coaching formname>'
+exec EC.sp_SelectReviewFrom_Coaching_Log_Reasons '<coaching formname>'
 
-exec EC.sp_SelectReviewFrom_Warning_Log 'eCL-Christopher.Kalkman-193'
-exec EC.sp_SelectReviewFrom_Warning_Log_Reasons 'eCL-Christopher.Kalkman-193'
+exec EC.sp_SelectReviewFrom_Warning_Log '<warning formname>'
+exec EC.sp_SelectReviewFrom_Warning_Log_Reasons '<warning formname>'
+
+-- senior manager dashboard
+exec ec.sp_selectfrom_srmgr_count '<sr mgr lanid>', 1, 'Pending', '2018-01-01', '2018-02-28', 0
+exec sp_SelectFrom_SRMGR_Detail_Count '<sr mgr lanid>', 1, 'Pending', '2018-01-01', '2018-02-28', 0, ''
+exec sp_SelectFrom_SRMGR_Details '<sr mgr lanid>', 1, 'Pending', '2018-01-01', '2018-02-28', 100, 0, 'strFormStatus', 1, ''
+--exec sp_SelectFrom_SRMGR_EmployeeCoaching 
+--exec sp_SelectFrom_SRMGR_EmployeeWarning
+
+exec ec.sp_SelectFrom_SRMGR_Completed_CoachingByWeek '<sr mgr lanid>', '2018-01-01', '2018-02-28'
+exec ec.sp_SelectFrom_SRMGR_Pending_CoachingByWeek '<sr mgr lanid>', '2018-01-01', '2018-02-28'
+exec ec.sp_SelectFrom_SRMGR_Active_WarningByWeek '<sr mgr lanid>', '2018-01-01', '2018-02-28'
+
+exec EC.sp_SelectFrom_SRMGR_Review <id>
+exec EC.sp_SelectFrom_SRMGR_EmployeeCoaching_Review <coachingid>
+exec EC.sp_SelectFrom_SRMGR_EmployeeWarning_Review <warningid>

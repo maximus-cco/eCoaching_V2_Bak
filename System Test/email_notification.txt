@@ -44,7 +44,8 @@ where CoachingID in ()
 
 -- update mgr review auto date in past - omr sup reminder - omr=72
 update EC.Coaching_Log
-set MgrReviewAutoDate = dateadd(hour,-73,MgrReviewAutoDate)
+set SupReviewedAutoDate = dateadd(hour,-73,SupReviewedAutoDate)
+--set MgrReviewAutoDate = dateadd(hour,-73,MgrReviewAutoDate)
 where CoachingID in ()
 
 -- reset reminder fields 

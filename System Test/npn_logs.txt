@@ -1,0 +1,72 @@
+
+-- find logs with npnffm
+select cl.CoachingID,
+       cl.FormName,
+       cl.ProgramName,
+       cl.EmpID,
+       cl.SubmitterID,
+       cl.EventDate,
+       cl.StartDate,
+       cl.SubmittedDate,
+       cl.VerintID,
+       cl.VerintEvalID
+from EC.Coaching_Log cl
+join EC.Employee_Hierarchy eh on eh.Emp_ID = cl.EmpID
+where cl.[Description] like '%NPNFFM%'
+and cl.SubmittedDate > '2017-01-01 00:00:00.000'
+and cl.SourceID = 223
+and cl.StatusID not in (2)
+and eh.Active = 'A'
+order by cl.SubmittedDate
+
+-- also
+SELECT * FROM EC.fn_NPNQualityRecs(20190120,20190126)
+
+
+-- change submitted date back a week
+update EC.Coaching_Log
+set SubmittedDate = dateadd(day, -7, SubmittedDate)
+where CoachingID in (
+)
+
+-- look for those logs in the previous week and matching criteria
+select cl.CoachingID,
+       cl.FormName,
+       cl.ProgramName,
+       cl.EmpID,
+       cl.SubmitterID,
+       cl.EventDate,
+       cl.StartDate,
+       cl.SubmittedDate,
+       cl.VerintID,
+       cl.VerintEvalID,
+       cl.VerintFormName
+from EC.Coaching_Log cl
+join EC.Employee_Hierarchy eh on eh.Emp_ID = cl.EmpID
+where (cl.[Description] like '%NPNFFM1%'
+or cl.[Description] like '%NPNFFM2%'
+or cl.[Description] like '%NPNFFM3%'
+or cl.[Description] like '%NPNFFM4%'
+or cl.[Description] like '%NPNFFM5%')
+and cl.SubmittedDate between '2018-01-14 00:00:00.000' and '2018-01-20 23:59:59.000'
+and cl.SourceID = 223
+and cl.StatusID not in (2)
+and eh.Active = 'A'
+and (cl.VerintFormName not like '%PPoM%'
+and  cl.VerintFormName not like '%IQA%'
+and  cl.VerintFormName not like '%ATA%')
+and cl.CoachingID not in (
+select CoachingID from EC.Coaching_Log 
+where SubmittedDate > '2018-01-13 00:00:00.000'
+and strReportCode like 'NPN%')
+
+-- see what was created
+select * from EC.Coaching_Log
+where SourceID = 218
+and ([Description] like '%NPNFFM1%'
+or [Description] like '%NPNFFM2%'
+or [Description] like '%NPNFFM3%'
+or [Description] like '%NPNFFM4%'
+or [Description] like '%NPNFFM5%')
+and SubmittedDate > '2017-03-02 00:00:00.000'
+

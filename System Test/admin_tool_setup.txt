@@ -1,0 +1,79 @@
+
+-- functionality within admin tool
+--201 EmployeeLog-SearchForInactivate
+--202 EmployeeLog-SearchForReassign
+--203 EmployeeLog-SearchForReactivate
+--204 ManageCoachingLogs
+--205 ManageWarningLogs
+--206 ReactivateCoachingLogs
+--207 ReactivateWarningLogs
+--208 SeniorManagerDashboard
+--209 Reports
+--210 Report-RunCoachingSummary
+--211 Report-RunWarningSummary
+--212 Report-RunHierarchySummary
+--213 Report-RunAdminActivitySummary
+--214 EmployeeLog-SearchForDelete
+select * from EC.AT_Entitlement
+
+-- module access by job code
+select * from EC.AT_Module_Access
+
+-- user roles for admin tool
+--101 CoachingAdmin
+--102 CoachingUser
+--103 WarningAdmin
+--104 WarningUser
+--105 SeniorManager
+--106 ReportCoachingAdmin
+--107 ReportWarningAdmin
+--108 ReportCoachingCSRUser
+--109 ReportWarningCSRUser
+--110 ReportCoachingSupUser
+--111 ReportWarningSupUser
+--112 ReportCoachingQualUser
+--113 ReportWarningQualUser
+--114 ReportCoachingLSAUser
+--115 ReportWarningLSAUser
+--116 ReportCoachingTrainUser
+--117 ReportWarningTrainUser
+--118 SuperUser
+select * from EC.AT_Role
+
+-- role by job code
+select * from EC.AT_Role_Access
+
+-- role id and entitlement id combo
+Select * From Ec.At_Role_Entitlement_Link
+
+-- roles and entitlements
+select r.RoleId, 
+       r.RoleDescription, 
+       r.IsSysAdmin, 
+       e.EntitlementId, 
+       e.EntitlementDescription 
+from EC.AT_Role_Entitlement_Link rel
+join EC.AT_Role r on r.RoleId = rel.RoleId
+join EC.AT_Entitlement e on e.EntitlementId = rel.EntitlementId
+--where r.RoleId in ()
+--order by r.RoleId, e.EntitlementId
+order by e.EntitlementId, r.RoleId
+
+-- admin tool user table
+select UserId,
+EmpJobCode,
+Active,
+CONVERT(nvarchar(100),DecryptByKey(UserLanID)) AS [Decrypted UserLanID],
+CONVERT(nvarchar(100),DecryptByKey(UserName)) AS [Decrypted UserName]
+from EC.AT_User
+
+-- user id role id combo
+select * from EC.AT_User_Role_Link
+
+
+
+-- reasons for inactivation/reactivation/reassignment
+select * from EC.AT_Action_Reasons
+
+-- status by module for reassignments 
+select * from EC.AT_Reassign_Status_For_Module

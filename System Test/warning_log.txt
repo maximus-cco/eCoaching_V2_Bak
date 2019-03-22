@@ -1,0 +1,45 @@
+/* ***********************************************
+    Warning logs - join other tables
+*********************************************** */
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];     
+   
+-- select columns 
+SELECT wl.WarningID,
+       wl.FormName,
+       wl.ProgramName,
+       wl.Behavior,
+       dsrc.CoachingSource,
+       dsrc.SubCoachingSource,
+       dstat.Status,
+       wl.Active,
+       dsite.City,
+       CONVERT(nvarchar(100),DecryptByKey(eh.Emp_LanID)) AS [Decrypted Emp_LanID],
+       wl.EmpID,
+       wl.SupID,
+       wl.MgrID,
+       wl.SubmitterID,
+       wl.WarningGivenDate,
+       wl.SubmittedDate,
+       dm.Module,
+       dcr.CoachingReason,
+       dscr.SubCoachingReason,
+       wlr.[Value]
+  FROM EC.Warning_Log wl
+  join EC.Employee_Hierarchy eh on wl.EmpID = eh.Emp_ID
+  left join EC.Warning_Log_Reason wlr on wl.WarningID = wlr.WarningID
+  left join EC.DIM_Coaching_Reason dcr on wlr.CoachingReasonID = dcr.CoachingReasonID
+  left join EC.DIM_Sub_Coaching_Reason dscr on wlr.SubCoachingReasonID = dscr.SubCoachingReasonID
+  left join EC.DIM_Source dsrc on wl.SourceID = dsrc.SourceID
+  left join EC.DIM_Status dstat on wl.StatusID = dstat.StatusID
+  left join EC.DIM_Site dsite on wl.SiteID = dsite.SiteID
+  left join EC.DIM_Module dm on wl.ModuleID = dm.ModuleID
+
+  where wl.FormName LIKE 'eCL-346638-199'
+  
+       
+CLOSE SYMMETRIC KEY CoachingKey
+
+/* ***********************************************
+    ecoaching logs - join other tables
+*********************************************** */

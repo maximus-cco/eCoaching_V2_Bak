@@ -1,0 +1,19 @@
+
+select cl.EmpID, count(*)
+from EC.Coaching_Log cl
+join EC.Employee_Hierarchy eh on cl.EmpID = eh.Emp_ID
+where cl.StatusID in (4)
+and eh.Active = 'A'
+group by cl.EmpID
+order by count(*)
+
+
+select eh.mgr_ID, count(*)
+from EC.Coaching_Log cl
+join EC.Employee_Hierarchy eh on cl.EmpID = eh.Emp_ID
+where cl.StatusID not in (1,2)
+--and eh.sup_ID in ('292321', '252012', '286602')
+and eh.mgr_ID in ('230367', '228543', '231860')
+and eh.Active = 'A'
+group by eh.mgr_ID
+order by count(*)

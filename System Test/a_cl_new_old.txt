@@ -1,0 +1,153 @@
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];     
+   
+-- select columns 
+SELECT 'Old'  AS [DB],
+       ocl.CoachingID AS [Old CoachingID],
+       ocl.FormName,
+       ocl.ProgramName,
+       odsrc.CoachingSource,
+       odsrc.SubCoachingSource,
+       odstat.Status,
+       odsite.City,
+       CONVERT(nvarchar(100),DecryptByKey(oeh.Emp_LanID)) AS [Decrypted Emp_LanID],
+       ocl.EmpID,
+       ocl.SubmitterID,
+       ocl.EventDate,
+       ocl.CoachingDate,
+       ocl.isAvokeID,
+       ocl.AvokeID,
+       ocl.isNGDActivityID,
+       ocl.NGDActivityID,
+       ocl.isUCID,
+       ocl.UCID,
+       ocl.isVerintID,
+       ocl.VerintID,
+       ocl.VerintEvalID,
+       ocl.Description,
+       ocl.CoachingNotes,
+       ocl.isVerified,
+       ocl.SubmittedDate,
+       ocl.StartDate,
+       ocl.SupID,
+       ocl.Review_SupID,
+       ocl.SupReviewedAutoDate,
+       ocl.isCSE,
+       ocl.MgrID,
+       ocl.Review_MgrID,
+       ocl.MgrReviewManualDate,
+       ocl.MgrReviewAutoDate,
+       ocl.MgrNotes,
+       ocl.isCSRAcknowledged,
+       ocl.CSRReviewAutoDate,
+       ocl.CSRComments,
+       ocl.EmailSent,
+       ocl.numReportID,
+       ocl.strReportCode,
+       ocl.isCoachingRequired,
+       ocl.strReasonNotCoachable,
+       ocl.txtReasonNotCoachable,
+       ocl.VerintFormName,
+       odm.Module,
+       ocl.Behavior,
+       ocl.SurveySent,
+       ocl.NotificationDate,
+       ocl.ReminderSent,
+       ocl.ReminderDate,
+       ocl.ReminderCount,
+       ocl.ReassignDate,
+       ocl.ReassignCount,
+       ocl.ReassignedToID,
+       ocl.isCoachingMonitor,
+       odcr.CoachingReason,
+       odscr.SubCoachingReason,
+       oclr.[Value]
+  FROM eCoachingTest_Old.EC.Coaching_Log ocl
+  join eCoachingTest_Old.EC.Employee_Hierarchy oeh on ocl.EmpID = oeh.Emp_ID
+  join eCoachingTest_Old.EC.Coaching_Log_Reason oclr on ocl.CoachingID = oclr.CoachingID
+  join eCoachingTest_Old.EC.DIM_Coaching_Reason odcr on oclr.CoachingReasonID = odcr.CoachingReasonID
+  join eCoachingTest_Old.EC.DIM_Sub_Coaching_Reason odscr on oclr.SubCoachingReasonID = odscr.SubCoachingReasonID
+  join eCoachingTest_Old.EC.DIM_Source odsrc on ocl.SourceID = odsrc.SourceID
+  join eCoachingTest_Old.EC.DIM_Status odstat on ocl.StatusID = odstat.StatusID
+  join eCoachingTest_Old.EC.DIM_Site odsite on ocl.SiteID = odsite.SiteID
+  join eCoachingTest_Old.EC.DIM_Module odm on ocl.ModuleID = odm.ModuleID
+  where ocl.CoachingID in (726395)
+
+union 
+
+SELECT 'New'  AS [DB],
+       cl.CoachingID,
+       cl.FormName,
+       cl.ProgramName,
+       dsrc.CoachingSource,
+       dsrc.SubCoachingSource,
+       dstat.Status,
+       dsite.City,
+       CONVERT(nvarchar(100),DecryptByKey(eh.Emp_LanID)) AS [Decrypted Emp_LanID],
+       cl.EmpID,
+       cl.SubmitterID,
+       cl.EventDate,
+       cl.CoachingDate,
+       cl.isAvokeID,
+       cl.AvokeID,
+       cl.isNGDActivityID,
+       cl.NGDActivityID,
+       cl.isUCID,
+       cl.UCID,
+       cl.isVerintID,
+       cl.VerintID,
+       cl.VerintEvalID,
+       cl.Description,
+       cl.CoachingNotes,
+       cl.isVerified,
+       cl.SubmittedDate,
+       cl.StartDate,
+       cl.SupID,
+       cl.Review_SupID,
+       cl.SupReviewedAutoDate,
+       cl.isCSE,
+       cl.MgrID,
+       cl.Review_MgrID,
+       cl.MgrReviewManualDate,
+       cl.MgrReviewAutoDate,
+       cl.MgrNotes,
+       cl.isCSRAcknowledged,
+       cl.CSRReviewAutoDate,
+       cl.CSRComments,
+       cl.EmailSent,
+       cl.numReportID,
+       cl.strReportCode,
+       cl.isCoachingRequired,
+       cl.strReasonNotCoachable,
+       cl.txtReasonNotCoachable,
+       cl.VerintFormName,
+       dm.Module,
+       cl.Behavior,
+       cl.SurveySent,
+       cl.NotificationDate,
+       cl.ReminderSent,
+       cl.ReminderDate,
+       cl.ReminderCount,
+       cl.ReassignDate,
+       cl.ReassignCount,
+       cl.ReassignedToID,
+       cl.isCoachingMonitor,
+       dcr.CoachingReason,
+       dscr.SubCoachingReason,
+       clr.[Value]
+  FROM eCoachingTest.EC.Coaching_Log cl
+  join eCoachingTest.EC.Employee_Hierarchy eh on cl.EmpID = eh.Emp_ID
+  join eCoachingTest.EC.Coaching_Log_Reason clr on cl.CoachingID = clr.CoachingID
+  join eCoachingTest.EC.DIM_Coaching_Reason dcr on clr.CoachingReasonID = dcr.CoachingReasonID
+  join eCoachingTest.EC.DIM_Sub_Coaching_Reason dscr on clr.SubCoachingReasonID = dscr.SubCoachingReasonID
+  join eCoachingTest.EC.DIM_Source dsrc on cl.SourceID = dsrc.SourceID
+  join eCoachingTest.EC.DIM_Status dstat on cl.StatusID = dstat.StatusID
+  join eCoachingTest.EC.DIM_Site dsite on cl.SiteID = dsite.SiteID
+  join eCoachingTest.EC.DIM_Module dm on cl.ModuleID = dm.ModuleID
+  where cl.CoachingID in (726395)
+
+  order by cl.CoachingID
+  
+CLOSE SYMMETRIC KEY CoachingKey
+
