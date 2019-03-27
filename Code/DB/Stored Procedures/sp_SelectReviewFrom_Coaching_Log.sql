@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(11).sql
-Last Modified Date: 11/26/2018
+sp_SelectReviewFrom_Coaching_Log(12).sql
+Last Modified Date: 03/19/2019
 Last Modified By: Susmitha Palacherla
 
+Version 12: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 11: Modified to support OTA Report. TFS 12591 - 11/26/2018
 Version 10: New PBH Feed - TFS 11451 - 7/30/2018
 Version 09 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
@@ -22,12 +23,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
 GO
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -58,6 +59,7 @@ GO
 -- 20. Modified during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
 -- 21. Modified to incorporate PBH feed - TFS 11451 - 07/31/2018
 -- 22. Modified to support OTA Report. TFS 12591 - 11/26/2018
+-- 23. Modified to support Quality Now TFS 13332 -  03/01/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -88,7 +90,7 @@ SELECT cl.CoachingID numID,
   sc.CoachingSource	strFormType,
   cl.StatusId strStatusID,
   s.Status strFormStatus,
-  cl.EventDate EventDate,
+   cl.EventDate EventDate,
   cl.CoachingDate CoachingDate,
   cl.SubmitterID strSubmitterID,
   cl.SupID strCLSupID,
@@ -145,6 +147,12 @@ SET @nvcSQL2 = '
     WHEN sc.SubCoachingSource in (''Verint-GDIT'', ''Verint-TQC'', ''LimeSurvey'', ''IQS'', ''Verint-GDIT Supervisor'') THEN 1 
 	ELSE 0 
   END isIQS,
+   CASE 
+    WHEN sc.SubCoachingSource in (''Verint-CCO'', ''Verint-CCO Supervisor'') THEN 1 
+	ELSE 0 
+  END isIQSQN,
+  cl.QNBatchID strQNBatchID,
+  cl.QNStrengthsOpportunities  strQNStrengthsOpportunities,
   CASE 
     WHEN sc.SubCoachingSource = ''Coach the coach'' THEN 1 
 	ELSE 0 
@@ -257,7 +265,6 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
-
 GO
 
 

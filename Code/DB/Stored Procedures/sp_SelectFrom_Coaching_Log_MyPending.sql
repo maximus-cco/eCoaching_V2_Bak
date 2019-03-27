@@ -1,9 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_MyPending(01).sql
-Last Modified Date: 05/20/2018
+sp_SelectFrom_Coaching_Log_MyPending(02).sql
+Last Modified Date: 03/19/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
 
 */
@@ -24,13 +24,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
 --	Description: *	This procedure returns the Pending logs for logged in user.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
+--  Modified to support Quality Now TFS 13332 -  03/01/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending] 
 @nvcUserIdin nvarchar(10),
@@ -169,7 +168,8 @@ SELECT strLogID,
   ,strSubmitterName
   ,[EC].[fn_strCoachingReasonFromCoachingID](T.strLogID) strCoachingReason
   ,[EC].[fn_strSubCoachingReasonFromCoachingID](T.strLogID) strSubCoachingReason
-  ,[EC].[fn_strValueFromCoachingID](T.strLogID) strValue
+  ,CASE WHEN strSource in (''Verint-CCO'', ''Verint-CCO Supervisor'') THEN ''''
+ ELSE [EC].[fn_strValueFromCoachingID](T.strLogID) END strValue
   ,RowNumber                 
 FROM TempMain T
 WHERE RowNumber >= ''' + CONVERT(VARCHAR, @LowerBand) + '''  AND RowNumber < ''' + CONVERT(VARCHAR, @UpperBand) + '''
@@ -184,9 +184,7 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending
-
-
-
 GO
+
 
 

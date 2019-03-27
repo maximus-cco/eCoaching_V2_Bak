@@ -1,9 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical(01).sql
-Last Modified Date: 04/30/2018
+sp_SelectFrom_Coaching_Log_Historical(02).sql
+Last Modified Date: 03/19/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 01: Document Initial Revision created during hist dashboard redesign.  TFS 7138 - 04/30/2018
 
 */
@@ -26,11 +26,14 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/24/2018
 --	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
 --  Created during Hist dashboard move to new architecture - TFS 7138 - 04/24/2018
+--  Modified to support Quality Now TFS 13332 -  03/01/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
 
@@ -307,7 +310,9 @@ SELECT strLogID,
   ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strSubCoachingReasonFromCoachingID](T.strLogID)
 	 ELSE [EC].[fn_strSubCoachingReasonFromWarningID](T.strLogID) 
    END strSubCoachingReason
-  ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strValueFromCoachingID](T.strLogID)
+ ,CASE WHEN T.orderkey = ''ok1'' 
+ THEN CASE WHEN strSource in (''Verint-CCO'', ''Verint-CCO Supervisor'') THEN ''''
+ ELSE [EC].[fn_strValueFromCoachingID](T.strLogID) END 
 	 ELSE [EC].[fn_strValueFromWarningID](T.strLogID)
    END strValue
   ,RowNumber                 
@@ -329,8 +334,8 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- SelectFrom_Coaching_Log_Historical
 
+
+
 GO
-
-
 
 

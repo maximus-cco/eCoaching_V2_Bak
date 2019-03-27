@@ -1,3 +1,12 @@
+/*
+Last Modified Date: 03/19/2019
+Last Modified By: Susmitha Palacherla
+
+Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
+*/
+
+
+
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
   WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_SelectCoaching4Contact' 
@@ -11,8 +20,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 --	====================================================================
 --	Author:		       Jourdain Augustin
 --	Create Date:	   6/10/2013
@@ -24,10 +31,11 @@ GO
 --  Modified per TFS 2268 to add Source 231 for CTC Quality Other feed - 6/15/2016
 --  Modified per TFS 3179 & 3186 to add Source 218 for HFC & KUD Quality Other feeds - 7/15/2016
 --  Modified to make allow more ad-hoc loads by adding more values to the file. TFS 4916 -12/9/2016
---  Modified to add condition for IQS(Quality logs)per TFS 5085 - 12/29/2016
+--  Modified to add condition for IQS(Quality logs) per TFS 5085 - 12/29/2016
 --  Modified to add support for QS Lead Email for OMR Breaks feeds per TFS 6377 - 04/24/2017
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
 --  TFS 7137 Move dashboards to new architecture. Replaced Module with ModuleID - 06/22/2018
+--  TFS 13332 Modified to add condition for Quality Now -  03/01/2019
 -- --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -76,7 +84,7 @@ JOIN [EC].[DIM_Status] s ON s.StatusID = cl.StatusID
 JOIN [EC].[DIM_Source] so ON so.SourceID = cl.SourceID 
 JOIN [EC].[DIM_Module] mo ON mo.ModuleID = cl.ModuleID 
 WHERE S.Status NOT IN (''Completed'',''Inactive'')
-  AND (cl.strReportCode IS NOT NULL OR cl.SourceID IN (211, 222, 223, 224, 230))
+  AND (cl.strReportCode IS NOT NULL OR cl.SourceID IN (211, 222, 223, 224, 230,235,236))
   AND cl.EmailSent = ''False''
   AND (
         (s.status =''Pending Acknowledgement'' AND veh.Emp_Email IS NOT NULL AND veh.Sup_Email IS NOT NULL AND veh.Sup_Email <> ''Unknown'')
@@ -96,8 +104,7 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 PRINT @nvcsql	    
 	    
 END --sp_SelectCoaching4Contact
-
-
 GO
+
 
 

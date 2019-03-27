@@ -1,11 +1,10 @@
 /*
-sp_Insert_Into_Coaching_Log_Archive(02).sql
-Last Modified Date: 10/23/2017
+sp_Insert_Into_Coaching_Log_Archive(03).sql
+Last Modified Date: 03/19/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -23,10 +22,9 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -36,6 +34,7 @@ GO
 -- Revision History:
 -- Intial Revision: Created per TFS 3932 - 10/10/2016
 --  Modified to support Encryption of sensitive data - Removed EmpLanID. TFS 7856 - 10/23/2017
+--  Modified to incorporate Quality Now. TFS 13332 - 03/01/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive]@strArchivedBy nvarchar(50)= 'Automated Process'
 
@@ -107,8 +106,12 @@ INSERT INTO [EC].[Coaching_Log_Archive]
            ,[ReassignCount]
            ,[ReassignedToID]
            ,[isCoachingMonitor] 
+	       ,[QNBatchID]
+		   ,[QNBatchStatus]
+		   ,[QNStrengthsOpportunities]
            ,[ArchivedBy]
-           ,[ArchivedDate])
+           ,[ArchivedDate]
+		)
      SELECT [CoachingID]
       ,[FormName]
       ,[ProgramName]
@@ -163,6 +166,9 @@ INSERT INTO [EC].[Coaching_Log_Archive]
       ,[ReassignCount]
       ,[ReassignedToID]
       ,[isCoachingMonitor] 
+	  ,[QNBatchID]
+	  ,[QNBatchStatus]
+	  ,[QNStrengthsOpportunities]
       ,@strArchivedBy
       ,GetDate()
   FROM [EC].[Coaching_Log] CL
@@ -238,7 +244,7 @@ END TRY
   END CATCH
 
 END  -- [EC].[sp_Insert_Into_Coaching_Log_Archive]
-
-
-
 GO
+
+
+
