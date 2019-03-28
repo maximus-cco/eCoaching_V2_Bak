@@ -1,9 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log_Quality_Now(01).sql
+sp_SelectReviewFrom_Coaching_Log_Quality_Now(02).sql
 Last Modified Date: 03/19/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Additional Changes - TFS 13332 - 03/28/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
 */
 
@@ -22,7 +22,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 -- Author:           Susmitha Palacherla
@@ -49,9 +48,9 @@ qne.[VerintFormName] [Form Name]
 	  ,qne.[Program] strProgram
 	  ,qne.[Call_Date] [Date of Event]
 	  ,CONVERT(nvarchar(70),DecryptByKey(sub.Emp_Name)) [Submitter]
-	  ,qne.[Business_Process]  + ''<br />'' + qne.[Business_Process_Comment] [Business Process]
-	  ,qne.[Info_Accuracy]  + ''<br />'' + qne.[Info_Accuracy_Comment] [Info Accuracy]
-	  ,qne.[Privacy_Disclaimers]  + ''<br />'' + qne.[Privacy_Disclaimers_Comment] [Privacy Disclaimers]
+	  ,qne.[Business_Process] + ''<br />'' + qne.[Business_Process_Reason] + ''<br />'' + qne.[Business_Process_Comment] [Business Process]
+	  ,qne.[Info_Accuracy]  + ''<br />'' + qne.[Info_Accuracy_Reason] + ''<br />'' + qne.[Info_Accuracy_Comment] [Info Accuracy]
+	  ,qne.[Privacy_Disclaimers] + ''<br />'' + qne.[Privacy_Disclaimers_Reason] + ''<br />'' + qne.[Privacy_Disclaimers_Comment] [Privacy Disclaimers]
 	  ,qne.[Issue_Resolution]  + ''<br />'' + qne.[Issue_Resolution_Comment] [Issue Resolution]
 	  ,qne.[Call_Efficiency]  + ''<br />'' + qne.[Call_Efficiency] [Call Efficiency]
 	  ,qne.[Active_Listening]  + ''<br />'' + qne.[Active_Listening_Comment] [Active Listening]
@@ -73,7 +72,7 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log_Quality_Now
-
 GO
+
 
 
