@@ -7,14 +7,14 @@ GO
 -------------------------------------------------------------------
 
 -- IMPLEMENTER: Set environment here
-DECLARE @environment nvarchar(5) = 'DEV'  -- DEV, TEST, or PROD
+DECLARE @environment nvarchar(5) = N'PROD'  -- DEV, TEST, or PROD
 
 --=================================================================
 -- Do not modify below this section
 --=================================================================
 IF ((@@SERVERNAME = 'F3420-ECLDBD01' AND @environment <> 'DEV')
-        OR (@@SERVERNAME = 'F3420-ECLDBT01' AND @environment <> 'TEST')
-	OR (@@SERVERNAME = 'F3420-ECLDBT01' AND @environment <> 'PROD')
+        OR (@@SERVERNAME = 'f3420-ecldbt01' AND @environment <> 'TEST')
+	OR (@@SERVERNAME = 'F3420-ECLDBP01' AND @environment <> 'PROD')
     )
 BEGIN
 	DECLARE @error nvarchar(1000) = CONCAT('Unknown environment [', @environment, '] for current server.');
@@ -77,7 +77,7 @@ SET @mainJobId = @jobId
 DECLARE @proxyName nvarchar(50) = N'ECLProxy'
 DECLARE @packagePath nvarchar(1000) = 
 			(SELECT CASE @environment WHEN 'PROD' THEN N'\\F3420-ECLDBP01\SSIS\Coaching\Packages\'
-									  WHEN 'TEST' THEN N'\F3420-ECLDBT01\SSIS\Coaching\Packages\Quality_Now_Coaching\'
+									  WHEN 'TEST' THEN N'\\F3420-ECLDBT01\SSIS\Coaching\Packages\Quality_Now_Coaching\'
 									  ELSE N'\\F3420-ECLDBD01\SSIS\Coaching\Packages\Quality_Now_Coaching\' END) -- Assume dev
 
 DECLARE @configfilePath nvarchar(1000) = 
