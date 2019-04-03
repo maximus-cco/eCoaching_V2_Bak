@@ -1,24 +1,20 @@
 /*
-sp_rptCoachingSummaryForModule(03).sql
+sp_rptQNCoachingSummary(01).sql
 Last Modified Date: 04/02/2019
 Last Modified By: Susmitha Palacherla
 
-
-Version 03:  Modified to support Quality Now. TFS 13333 - 04/02/2019
-Version 02:  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
-Version 01: Document Initial Revision - TFS 6066 - 10/06/2017
-
+Version 01: Document Initial Revision - TFS 13333 - 04/02/2019
 */
+
 
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_rptCoachingSummaryForModule' 
+     AND SPECIFIC_NAME = N'sp_rptQNCoachingSummary' 
 )
-   DROP PROCEDURE [EC].[sp_rptCoachingSummaryForModule]
+   DROP PROCEDURE [EC].[sp_rptQNCoachingSummary]
 GO
-
 
 SET ANSI_NULLS ON
 GO
@@ -30,26 +26,30 @@ GO
 
 
 
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
--- Create date:       10/5/2017
--- Description:	
---  Given a Module and Begin and End Dates 
---  Selects list of Coaching Log Attributes for Coaching Summary Report.
--- Revision History
--- Initial Revision. Created during summary report scheduling. TFS 6066 - 10/05/2017
--- Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
--- Modified to support Quality Now. TFS 13333 - 04/02/2019
+--	Create Date:	3/27/2019
+--	Description: Selects list of Quality Now Coaching Log Attributes for Coaching Summary Report.
+--  Revision History:
+--  Initial Revision: Quality Now Initiative TFS 13333 -  03/27/2019
+
  *******************************************************************************/
-CREATE PROCEDURE [EC].[sp_rptCoachingSummaryForModule] 
+
+CREATE PROCEDURE [EC].[sp_rptQNCoachingSummary] 
 (
 @intModulein int = -1,
-@intBeginDate int = NULL,  -- YYYYMMDD
-@intEndDate int = NULL,     -- YYYYMMDD
+@intStatusin int = -1, 
+@intSitein int = -1,
+@strEmpin nvarchar(10)= '-1',
+@intCoachReasonin int = -1,
+@intSubCoachReasonin int = -1,
+@strSDatein datetime,
+@strEDatein datetime,
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
-   @returnCode int = NULL OUTPUT ,
-   @returnMessage varchar(80) = NULL OUTPUT
+   @returnCode int OUTPUT,
+   @returnMessage varchar(80) OUTPUT
 )
 AS
    DECLARE @storedProcedureName varchar(80)
@@ -72,21 +72,27 @@ AS
 
 SET NOCOUNT ON
 
--- Uncomment below lines for Testing 
---SET @intBeginDate = 20170901  -- YYYYMMDD
---SET @intEndDate = 20170930     -- YYYYMMDD
+DECLARE	
+@strSDate nvarchar(10),
+@strEDate nvarchar(10)
+
+
+SET @strSDate = convert(varchar(8),@strSDatein,112)
+SET @strEDate = convert(varchar(8),@strEDatein,112)
 
 -- Open Symmetric Key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
 
-  SELECT DISTINCT p.ModuleID AS [Module ID]
-              ,c.Module AS [Module Name]
+ SELECT DISTINCT p.ModuleID AS [Employee Level ID]
+                          ,c.Module AS [Employee Level Name]
               ,p.CoachingID AS [Coaching ID]
 			  ,p.FormName AS [Form Name]
-			  ,c.Status
+			   ,p.QNBatchID [Quality Now Batch ID]
+               ,p.QNBatchStatus [Quality Now Batch Status]
+ 			  ,c.Status
 			  ,p.EmpID AS [Employee ID]
     	      ,CONVERT(nvarchar(50),DecryptByKey(c.EmpName)) AS [Employee Name]
-    	      ,c.Site
+    	      ,c.Site 
     	      ,ISNULL(c.LogSupID,'-') AS [Supervisor Employee ID]
 			  ,CASE WHEN c.LogSupID IS NULL THEN '-'
 			    ELSE CONVERT(nvarchar(50),DecryptByKey(c.LogSupName)) END AS [Supervisor Name]
@@ -105,33 +111,50 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		      ,CASE 
 		       WHEN c.ReviewMgrID IS NULL  THEN '-'
 		         ELSE CONVERT(nvarchar(50),DecryptByKey(c.ReviewMgrName)) END AS [Review Manager Name]
-		       ,LTRIM(RTRIM(REPLACE(lEFT(p.Description,4000), '<br />', ''))) AS [Description]
-              ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
-              ,ISNULL(CONVERT(varchar,p.EventDate,121),'-') AS [Event Date]
+		      ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
               ,ISNULL(CONVERT(varchar,p.CoachingDate,121),'-') AS [Coaching Date]
               ,ISNULL(CONVERT(varchar,p.SubmittedDate,121),'-') AS [Submitted Date]
-			    --,p.EventDate AS [Event Date]
-       --       ,p.CoachingDate AS [Coaching Date]
-       --       ,p.SubmittedDate AS [Submitted Date]
 		      ,c.Source AS [Coaching Source]
-		      ,c.SubSource AS [Sub Coaching Source]
-		      ,[EC].[fn_strCoachingReasonFromCoachingID](c.CoachingID) AS [Coaching Reason]
-	          ,[EC].[fn_strSubCoachingReasonFromCoachingID](c.CoachingID)AS [SubCoaching Reason]
-	          ,[EC].[fn_strValueFromCoachingID](c.CoachingID)AS [Value]
-		      ,c.SubmitterID AS [Submitter ID]
-		        ,CONVERT(nvarchar(50),DecryptByKey(c.SubmitterName)) AS [Submitter Name]
-		     ,ISNULL(CONVERT(varchar,p.SupReviewedAutoDate,121),'-') AS [Supervisor Reviewed Date]
+		      ,c.SubSource AS [Sub Coaching Source]  
+		      ,ISNULL(CONVERT(varchar,p.SupReviewedAutoDate,121),'-') AS [Supervisor Reviewed Date]
               ,ISNULL(CONVERT(varchar,p.MgrReviewManualDate,121),'-') AS [Manager Reviewed Manual Date]
 			  ,ISNULL(CONVERT(varchar,p.MgrReviewAutoDate,121),'-') AS [Manager Reviewed Auto Date]
               ,COALESCE(p.MgrNotes,'-') AS [Manager Notes]
               ,ISNULL(CONVERT(varchar,p.CSRReviewAutoDate,121),'-') AS [Employee Reviewed Date]
               ,COALESCE(p.CSRComments,'-') AS [Employee Comments]
-              ,ISNULL(p.ProgramName ,'-') AS [ProgramName]
-              ,ISNULL(p.Behavior,'-')AS [Behavior]
-              ,ISNULL(p.strReportCode,'-') AS [Report Code]
-              ,ISNULL(p.VerintID,'-') AS [Verint ID]
-              ,ISNULL(p.VerintFormName,'-') AS [Verint Form Name]
-              ,ISNULL(p.isCoachingMonitor,'-') AS [Coaching Monitor]
+			  ,ISNULL(CONVERT(varchar,q.Call_Date,121),'-') AS [Event Date]
+			  ,q.[Summary_CallerIssues] AS Description
+		      ,[EC].[fn_strCoachingReasonFromCoachingID](c.CoachingID) AS [Coaching Reason]
+	          ,[EC].[fn_strSubCoachingReasonFromCoachingID](c.CoachingID)AS [SubCoaching Reason]
+			  ,'NA' AS [Value]
+			   ,q.Evaluator_ID AS [Submitter ID]
+		        ,CONVERT(nvarchar(50),DecryptByKey(qs.Emp_Name)) AS [Submitter Name]
+				,q.Program AS [Program]
+			  ,ISNULL(q.Journal_ID,'-') AS [Verint ID]
+              ,ISNULL(q.VerintFormName,'-') AS [Verint Form Name]
+              ,ISNULL(q.isCoachingMonitor,'-') AS [Coaching Monitor]
+			  ,ISNULL(q.EvalStatus,'-') AS [Evaluation Status]
+			  ,q.Business_Process AS [Business Process]
+			,q.Business_Process_Reason AS [Business Process Reason]
+			,q.Business_Process_Comment AS [Business Process Comment]
+			,q.Info_Accuracy AS [Info Accuracy]
+			,q.Info_Accuracy_Reason AS [Info Accuracy Reason]
+			,q.Info_Accuracy_Comment AS [Info Accuracy Comment]
+			,q.Privacy_Disclaimers AS [Privacy Disclaimers]
+			,q.Privacy_Disclaimers_Reason AS [Privacy Disclaimers Reason]
+			,q.Privacy_Disclaimers_Comment AS [Privacy Disclaimers Comment]
+			,q.Issue_Resolution AS [Issue Resolution]
+			,q.Issue_Resolution_Comment AS [Issue Resolution Comment]
+			,q.Call_Efficiency AS [Call Efficiency]
+			,q.Call_Efficiency_Comment AS [Call Efficiency Comment]
+			,q.Active_Listening AS [Active Listening]
+			,q.Active_Listening_Comment AS [Active Listening Comment]
+			,q.Personality_Flexing AS [Personality Flexing]
+			,q.Personality_Flexing_Comment AS [Personality Flexing Comment]
+			,q.Customer_Temp_Start AS [Customer Temp Start]
+			,q.Customer_Temp_Start_Comment AS [Customer Temp Start Comment]
+			,q.Customer_Temp_End AS [Customer Temp End]
+			,q.Customer_Temp_End_Comment AS [Customer Temp End Comment]
       FROM [EC].[Coaching_Log] p WITH(NOLOCK)
       JOIN  (SELECT distinct [cl].[ModuleID] ModuleID
               ,[mo].[Module]Module
@@ -155,11 +178,9 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		      ,[rmgrh].[Emp_Name]	ReviewMgrName
 		      ,[so].[CoachingSource] Source
 		      ,[so].[SubCoachingSource]	SubSource
-		      ,[dcr].[CoachingReason]CoachingReason
-		      ,[dscr].[SubCoachingReason]SubCoachingReason
-		      ,[clr].[Value]Value
-		      ,[cl].[SubmitterID]	SubmitterID
-		      ,[sh].[Emp_Name]	SubmitterName
+		      ,[dcr].[CoachingReason] CoachingReason
+		      ,[dscr].[SubCoachingReason] SubCoachingReason
+		      ,[clr].[Value] Value
 		FROM [EC].[Coaching_Log] cl WITH(NOLOCK)JOIN [EC].[DIM_Status] s 
 		ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
 		ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Module] mo
@@ -168,23 +189,31 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr 
 		ON dcr.CoachingReasonID = clr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
 		ON dscr.SubCoachingReasonID = clr.SubCoachingReasonID JOIN [EC].[Employee_Hierarchy] eh 
-		ON cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] sh
-		ON cl.SubmitterID = sh.EMP_ID LEFT JOIN [EC].[Employee_Hierarchy] suph
+		ON cl.EmpID = eh.Emp_ID  LEFT JOIN [EC].[Employee_Hierarchy] suph
 		ON cl.SupID = suph.EMP_ID LEFT JOIN [EC].[Employee_Hierarchy] mgrh 
 		ON cl.MgrID = mgrh.EMP_ID  LEFT JOIN [EC].[Employee_Hierarchy] rsuph
 		ON cl.Review_SupID = rsuph.EMP_ID  LEFT JOIN [EC].[Employee_Hierarchy] rmgrh
 		ON cl.Review_MgrID = rmgrh.EMP_ID 
-		WHERE [EC].[fn_intDatetime_to_YYYYMMDD]([cl].[SubmittedDate]) between @intBeginDate and @intEndDate
+		WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= @strSDate
+	    AND convert(varchar(8),[cl].[SubmittedDate],112) <= @strEDate
 		AND [cl].[StatusID] <> 2
-		AND [cl].[SourceID] NOT IN (235,236)
-  	    AND  ([cl].[ModuleID] =(@intModulein) or @intModulein = -1) 
-     GROUP BY [cl].[ModuleID],[mo].[Module],[cl].[CoachingID],[cl].[FormName],[s].[Status]	
+		AND [cl].[SourceID] IN (235,236)
+	   AND [cl].[QNBatchStatus] = 'Active'
+  	    AND  (([cl].[ModuleID] =(@intModulein) or @intModulein = -1) 
+		AND  ([cl].[StatusID] =(@intStatusin) or @intStatusin = -1) 
+		AND  ([cl].[SiteID] =(@intSitein) or @intSitein = -1) 
+        AND  ([clr].[CoachingReasonID] = (@intCoachReasonin) or @intCoachReasonin = -1) 
+        AND  ([clr].[SubCoachingReasonID] = (@intSubCoachReasonin)or @intSubCoachReasonin = -1)
+        AND ([cl].[EmpID]= (@strEmpin)or @strEmpin = '-1'))
+            GROUP BY [cl].[ModuleID],[mo].[Module],[cl].[CoachingID],[cl].[FormName],[s].[Status]	
 			  ,[cl].[EmpID],[eh].[Emp_Name],[si].[City],[cl].[SupID],[suph].[Emp_Name],[cl].[MgrID]	
 			  ,[mgrh].[Emp_Name],[eh].[Sup_ID],[eh].[Sup_Name] ,[eh].[Mgr_ID],[eh].[Mgr_Name]	
 		      ,[cl].[Review_SupID],[rsuph].[Emp_Name],[cl].[Review_MgrID],[rmgrh].[Emp_Name]	
 		      ,[so].[CoachingSource],[so].[SubCoachingSource],[dcr].[CoachingReason]
-		      ,[dscr].[SubCoachingReason],[clr].[Value],[cl].[SubmitterID],[sh].[Emp_Name])c
-		ON p.CoachingID = c.CoachingID
+		      ,[dscr].[SubCoachingReason],[clr].[Value])c
+		ON p.CoachingID = c.CoachingID JOIN [EC].[Coaching_Log_Quality_Now_Evaluations]q WITH (NOLOCK) 
+		ON p.CoachingID = q.CoachingID LEFT JOIN [EC].[Employee_Hierarchy] qs
+		ON q.Evaluator_ID = qs.EMP_ID 
         ORDER BY [Submitted Date] DESC
 
   -- Clode Symmetric Key
@@ -215,7 +244,6 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
-
 
 
 

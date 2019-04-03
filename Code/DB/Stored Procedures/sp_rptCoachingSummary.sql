@@ -1,7 +1,10 @@
 /*
-sp_rptCoachingSummary(06).sql
-Last Modified Date: 11/28/2017
+sp_rptCoachingSummary(07).sql
+Last Modified Date: 04/02/2019
 Last Modified By: Susmitha Palacherla
+
+
+Version 07:  Modified to support Quality Now. TFS 13333 - 04/02/2019
 
 Version 06:  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 
@@ -34,8 +37,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/14/2017
@@ -46,6 +47,7 @@ GO
 --  Initial Revision - TFS 5621 -  03/14/2017 (Modified 04/19/2017)
 --  Updated during 2012 upgrade to add distinct clause - TFS 7106 - 08/16/2017
 --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
+--  Modified to support Quality Now. TFS 13333 - 04/02/2019
  *******************************************************************************/
 
 CREATE PROCEDURE [EC].[sp_rptCoachingSummary] 
@@ -189,6 +191,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		WHERE convert(varchar(8),[cl].[SubmittedDate],112) >= @strSDate
 	    AND convert(varchar(8),[cl].[SubmittedDate],112) <= @strEDate
 		AND [cl].[StatusID] <> 2
+		AND [cl].[SourceID] NOT IN (235,236)
   	    AND  (([cl].[ModuleID] =(@intModulein) or @intModulein = -1) 
 		AND  ([cl].[StatusID] =(@intStatusin) or @intStatusin = -1) 
 		AND  ([cl].[SiteID] =(@intSitein) or @intSitein = -1) 
@@ -233,6 +236,8 @@ RETURN @returnCode
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
 
+
 GO
+
 
 
