@@ -143,6 +143,7 @@
   <ItemGroup>
     <Report Include="AdminActivitySummary.rdl" />
     <Report Include="CoachingSummary.rdl" />
+    <Report Include="CoachingSummaryQN.rdl" />
     <Report Include="HierarchySummary.rdl" />
     <Report Include="WarningSummary.rdl" />
   </ItemGroup>
