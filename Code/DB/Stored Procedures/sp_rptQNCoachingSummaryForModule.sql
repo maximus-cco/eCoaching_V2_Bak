@@ -192,6 +192,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		ON p.CoachingID = c.CoachingID JOIN [EC].[Coaching_Log_Quality_Now_Evaluations]q WITH (NOLOCK) 
 		ON p.CoachingID = q.CoachingID LEFT JOIN [EC].[Employee_Hierarchy] qs
 		ON q.Evaluator_ID = qs.EMP_ID 
+        WHERE q.EvalStatus = 'Active'
         ORDER BY [Submitted Date] DESC
 
   -- Clode Symmetric Key
