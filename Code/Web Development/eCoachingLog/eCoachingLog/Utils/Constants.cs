@@ -99,7 +99,7 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_LEVEL_4 = 4;
 
 		public static readonly List<string> EXCEL_SHEET_NAMES =
-			new List<string>() { "None QN Logs", "QN Logs" };
+			new List<string>() { "eCoachingLog", "Quality Now eCoachingLog" };
 
 		public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
 		{
