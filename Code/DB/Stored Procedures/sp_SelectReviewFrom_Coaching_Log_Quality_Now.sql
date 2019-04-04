@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log_Quality_Now(02).sql
-Last Modified Date: 03/19/2019
+sp_SelectReviewFrom_Coaching_Log_Quality_Now(03).sql
+Last Modified Date: 04/04/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Additional Changes from V&V - TFS 13332 - 04/04/2019
 Version 02: Additional Changes - TFS 13332 - 03/28/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
 */
@@ -52,7 +53,7 @@ qne.[VerintFormName] [Form Name]
 	  ,qne.[Info_Accuracy]  + ''<br />'' + qne.[Info_Accuracy_Reason] + ''<br />'' + qne.[Info_Accuracy_Comment] [Info Accuracy]
 	  ,qne.[Privacy_Disclaimers] + ''<br />'' + qne.[Privacy_Disclaimers_Reason] + ''<br />'' + qne.[Privacy_Disclaimers_Comment] [Privacy Disclaimers]
 	  ,qne.[Issue_Resolution]  + ''<br />'' + qne.[Issue_Resolution_Comment] [Issue Resolution]
-	  ,qne.[Call_Efficiency]  + ''<br />'' + qne.[Call_Efficiency] [Call Efficiency]
+	  ,qne.[Call_Efficiency]  + ''<br />'' + qne.[Call_Efficiency_Comment] [Call Efficiency]
 	  ,qne.[Active_Listening]  + ''<br />'' + qne.[Active_Listening_Comment] [Active Listening]
 	  ,qne.[Personality_Flexing]  + ''<br />'' + qne.[Personality_Flexing_Comment] [Personality Flexing]
 	  ,CONVERT(NVARCHAR(1),qne.[Customer_Temp_Start])   + ''<br />'' + qne.[Customer_Temp_Start_Comment] [Start Temperature]
@@ -61,6 +62,7 @@ qne.[VerintFormName] [Form Name]
  ON qne.CoachingID = cl.CoachingID JOIN EC.Employee_Hierarchy sub 
  ON qne.Evaluator_ID = sub.Emp_ID
  Where qne.CoachingID = '''+CONVERT(NVARCHAR(20),@intLogId) + '''
+ AND qne.EvalStatus = ''Active''
  ORDER BY qne.[Eval_Date]'
 
 		
@@ -73,6 +75,7 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log_Quality_Now
 GO
+
 
 
 

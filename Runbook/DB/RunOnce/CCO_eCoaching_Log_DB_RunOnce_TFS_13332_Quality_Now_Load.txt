@@ -19,7 +19,7 @@ Summary
 
 
 
---1. Add Rows to Table EC.DIM_Coaching_Reason
+--1a. Add Rows to Table EC.DIM_Coaching_Reason
 
 
 INSERT INTO [EC].[DIM_Coaching_Reason]
@@ -27,6 +27,30 @@ INSERT INTO [EC].[DIM_Coaching_Reason]
      VALUES
              ('Quality Now'),
    ('ATA Alignment Now')
+GO
+
+
+
+--1b. Add rows to Email Notification table
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+           ('CSR', 'IQSQN','Indirect','Verint-CCO',0,'Pending Acknowledgement','Employee','eCL: Pending Acknowledgement','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.',0,'NA'),
+		   ('CSR', 'IQSQN','Indirect','Verint-CCO',0,'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong>  on <strong> strDateTime </strong> that requires your action. Please click on the link below to review the eCoaching log.',0,'NA'),
+		   ('CSR', 'IQSQN','Indirect','Verint-CCO Supervisor',0,'Pending Acknowledgement','Employee','eCL: Pending Acknowledgement','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.',0,'NA'),
+		   ('CSR', 'IQSQN','Indirect','Verint-CCO Supervisor',0,'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong> strPerson </strong>  on <strong> strDateTime </strong> that requires your action. Please click on the link below to review the eCoaching log.',0,'NA')
+
 GO
 
 

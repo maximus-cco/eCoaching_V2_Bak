@@ -1,9 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Now(01).sql
-Last Modified Date: 03/19/2019
+sp_InsertInto_Coaching_Log_Quality_Now(02).sql
+Last Modified Date: 04/04/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Additional Changes from V&V - TFS 13332 - 04/04/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
 */
 
@@ -202,7 +202,7 @@ BEGIN
 	  JOIN @logsInserted inserted ON qcs.QN_Batch_ID = inserted.QNBatchID; 
  
      --Truncate Staging Table
-     --Truncate Table EC.Quality_Coaching_Stage
+     Truncate Table EC.Quality_Now_Coaching_Stage
 	
 	COMMIT TRANSACTION
   END TRY
