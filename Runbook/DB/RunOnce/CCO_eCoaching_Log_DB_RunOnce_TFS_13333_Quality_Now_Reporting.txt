@@ -1,0 +1,50 @@
+/*
+
+CCO_eCoaching_Log_DB_RunOnce_TFS_13333_Quality_Now_Reporting.txt
+
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+Summary
+1. Add Rows to Table [EC].[AT_Entitlement]
+2. Add rows to table [EC].[AT_Role_Entitlement_Link]
+
+
+--RUN WITH NOTHING SELECTED
+
+*/
+
+
+
+--1. Add Rows to Table [EC].[AT_Entitlement]
+
+
+INSERT INTO [EC].[AT_Entitlement]
+            ([EntitlementDescription])
+		     
+VALUES
+('Report-RunCoachingSummaryQN')
+GO
+
+
+--************
+
+--2. Add rows to table [EC].[AT_Role_Entitlement_Link]
+
+INSERT INTO [EC].[AT_Role_Entitlement_Link]
+(RoleId,EntitlementId)
+VALUES
+(106,217),
+(108,217),
+(110,217),
+(112,217),
+(114,217),
+(116,217)
+GO
+
+
+
+--************
