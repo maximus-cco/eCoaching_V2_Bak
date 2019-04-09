@@ -22,7 +22,6 @@ namespace eCLAdmin.Reports
                     string reportFolder = System.Configuration.ConfigurationManager.AppSettings["SSRSReportsFolder"].ToString();
                     reportName = Request["ReportName"].ToString();
 
-                    rvSiteMapping.Height = Unit.Pixel(Convert.ToInt32(Request["Height"]) - 58);
                     rvSiteMapping.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Remote;
 
                     rvSiteMapping.ServerReport.ReportServerUrl = new Uri(System.Configuration.ConfigurationManager.AppSettings["ECL.Properties.Reports.BaseSsrsUrl"]);

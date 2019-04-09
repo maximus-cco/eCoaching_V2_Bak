@@ -49,11 +49,11 @@ namespace eCLAdmin
 		public const string ECOACHING_URL_ST = "https://f3420-mpmd01/eCoachingLog_st";
 
 		// Reports
-		public const int REPORT_WIDTH = 100;
-		public const int REPORT_HEIGHT = 650;
 		public const string REPORT_TEMPLATE = "ReportTemplate";
 		public const string COACHING_SUMMARY_REPORT_NAME = "CoachingSummary";
 		public const string COACHING_SUMMARY_REPORT_DESCRIPTION = "Coaching Log Summary";
+		public const string COACHING_QUALITY_NOW_SUMMARY_REPORT_NAME = "CoachingSummaryQN";
+		public const string COACHING_QUALITY_NOW_SUMMARY_REPORT_DESCRIPTION = "Quality Now Coaching Log Summary";
 		public const string WARNING_SUMMARY_REPORT_NAME = "WarningSummary";
 		public const string WARNING_SUMMARY_REPORT_DESCRIPTION = "Warning Log Summary";
 		public const string HIERARCHY_SUMMARY_REPORT_NAME = "HierarchySummary";
