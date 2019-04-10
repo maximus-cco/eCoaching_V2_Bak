@@ -32,7 +32,7 @@ namespace eCLAdmin
 
 		public const string EMAIL_SUBJECT_REACTIVATION = "eCoaching Log(s) Reactivated";
 		public const string EMAIL_SUBJECT_REASSIGNMENT = "eCoaching Log(s) Reassigned";
-		public const string EMAIL_FROM = "ecl.admin@gdit.com";
+		public const string EMAIL_FROM = "ecl.admin@maximus.com";
 		public const string SMTP_CLIENT = "smtpout.gdit.com";
 
 		public const int USER_ROLE_ADMIN = 101;
