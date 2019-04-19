@@ -66,7 +66,7 @@ namespace eCoachingLog.Repository
 						// Element 0 is the question label; element 1 is the question textbox label
 						string[] temp = combinedLabel.Split('|');
 						q.Label = temp[0];
-						q.TextBoxLabel = temp[1];
+						q.TextBoxLabel = temp.Length >=2 ? temp[1] : string.Empty;
 
 						questions.Add(q);
 					}
