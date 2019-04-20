@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical_Export(05).sql
-Last Modified Date: 03/19/2019
+sp_SelectFrom_Coaching_Log_Historical_Export(06).sql
+Last Modified Date: 04/20/2019
 Last Modified By: Susmitha Palacherla
 
+Version 06: Additional Changes from V&V - TFS 13332 - 04/20/2019
 Version 05: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 04 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
 Version 03: Encrypt/decrypt - TFS 7856  - 12/1/2017
@@ -23,7 +24,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -256,7 +256,8 @@ ON cl.SiteID = si.SiteID JOIN [EC].[Employee_Hierarchy] eh
 ON cl.EmpID = eh.Emp_ID  JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
 ON eh.[EMP_ID] = veh.[EMP_ID] JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
 ON qne.Evaluator_ID = vehs.EMP_ID ' +
-+ @NewLineChar + @where + ' ' + '
++ @NewLineChar + @where + ' ' +
+'AND qne.[EvalStatus] = ''Active''
 ORDER BY [cl].[CoachingID];'
 
 SET NOCOUNT ON;  
@@ -270,6 +271,5 @@ EXEC (@nvcSQL2)
 CLOSE SYMMETRIC KEY [CoachingKey] 		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
 GO
-
 
 

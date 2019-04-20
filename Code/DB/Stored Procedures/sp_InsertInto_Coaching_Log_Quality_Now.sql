@@ -1,9 +1,10 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Now(02).sql
-Last Modified Date: 04/04/2019
+sp_InsertInto_Coaching_Log_Quality_Now(03).sql
+Last Modified Date: 04/20/2019
 Last Modified By: Susmitha Palacherla
 
-Version 02: Additional Changes from V&V - TFS 13332 - 04/04/2019
+Version 03: Additional Changes from V&V - TFS 13332 - 04/20/2019
+Version 02: Updates from Unit and System testing - TFS 13332 - 04/04/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
 */
 
@@ -22,7 +23,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 --    ========================================================================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      03/01/2019
@@ -34,6 +34,7 @@ GO
 -- Initial revision. TFS 13332 -  03/01/2019
 
 --    =======================================================================================
+
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
 @Count INT OUTPUT
 AS
@@ -52,7 +53,7 @@ BEGIN
 
   SET @strSourceType = 'Indirect'; 
 
-  --DROP TABLE #Temp_Logs_To_Insert
+  --Create table #Temp_Logs_To_Insert
 
   CREATE TABLE #Temp_Logs_To_Insert (
     FormName nvarchar(50),
@@ -74,12 +75,13 @@ BEGIN
 	isCSRAcknowledged bit,
 	ModuleID int,
 	SupID nvarchar(20),
-	MgrID nvarchar(20),
-	QNStrengthsOpportunities nvarchar(2000)  
-  );
+	MgrID nvarchar(20)
+	);
  
 
   BEGIN TRY
+
+  -- Select logs for Insert into Temp Table
     
 	INSERT INTO #Temp_Logs_To_Insert
     SELECT DISTINCT 
@@ -103,15 +105,16 @@ BEGIN
 	  ,qcs.Module         -- ModuleID
 	  ,ISNULL(qcs.SUP_EMPID, '999999')  -- SupID
 	  ,ISNULL(qcs.Mgr_EMPID, '999999')  -- MgrID
-	  ,qcs.QN_Strengths_Opportunities        -- iQNStrengthsOpportunities
-    FROM EC.Quality_Now_Coaching_Stage qcs 
+	FROM EC.Quality_Now_Coaching_Stage qcs 
     JOIN EC.Employee_Hierarchy eh WITH (NOLOCK) ON qcs.User_EMPID = eh.Emp_ID
     LEFT JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.QN_Batch_ID = cl.QNBatchID
     WHERE (cl.QNBatchID IS NULL AND qcs.QN_Batch_Status = 'Active')
 	OR (cl.QNBatchID IS NOT NULL AND cl.QNBatchStatus = 'Inactive' AND qcs.QN_Batch_Status = 'Active');
 
 	BEGIN TRANSACTION
-      -- Insert into coaching log table
+
+-- Insert into coaching log table
+
 	  INSERT INTO EC.Coaching_Log  (
 	     FormName
 	    ,QNBatchID
@@ -133,18 +136,32 @@ BEGIN
         ,ModuleID
         ,SupID
         ,MgrID
-		,QNStrengthsOpportunities)
+		)
 	  OUTPUT INSERTED.[CoachingID], INSERTED.[ModuleID], INSERTED.[QNBatchID] INTO @logsInserted
-	  SELECT * 	  FROM #Temp_Logs_To_Insert;
+	  SELECT * FROM #Temp_Logs_To_Insert;
 
       --SELECT @Count = @@ROWCOUNT;
 
-      -- Update formname for the inserted logs
+    -- Update formname for the inserted logs
+
 	  UPDATE EC.Coaching_Log 
 	  SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
 	  FROM @logsInserted 
 	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted);  
 
+	-- Populate Strengths/Opportunities for the inserted logs
+
+	  UPDATE EC.Coaching_Log 
+	  SET QNStrengthsOpportunities = qcs.QN_Strengths_Opportunities 
+	  FROM (SELECT * FROM EC.Quality_Now_Coaching_Stage
+	  WHERE QN_Strengths_Opportunities is NOT NULL 
+	  AND QN_Strengths_Opportunities <> ''
+	  AND QN_Batch_Status = 'Active')qcs JOIN EC.Coaching_Log cl
+	  ON qcs.QN_Batch_ID = cl.QNBatchID
+	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted);
+
+
+	  -- Insert Evaluation details for each batch into Evaluations table
 
 	  INSERT INTO [EC].[Coaching_Log_Quality_Now_Evaluations]
         SELECT 
@@ -156,7 +173,7 @@ BEGIN
       ,[Call_Date]
       ,[Journal_ID]
       ,[EvalStatus]
-      ,[Summary_CallerIssues]
+       ,REPLACE(EC.fn_nvcHtmlEncode([Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />') 
       ,[Program]
       ,[VerintFormName]
       ,[isCoachingMonitor]
@@ -189,6 +206,7 @@ BEGIN
 	 SELECT @Count = @@ROWCOUNT;
 
       -- Inserts records into Coaching_Log_reason table for each record inserted into Coaching_log table.
+
       INSERT INTO EC.Coaching_Log_Reason
       SELECT DISTINCT
 	    CoachingLogID
@@ -202,7 +220,7 @@ BEGIN
 	  JOIN @logsInserted inserted ON qcs.QN_Batch_ID = inserted.QNBatchID; 
  
      --Truncate Staging Table
-     Truncate Table EC.Quality_Now_Coaching_Stage
+     Truncate Table EC.Quality_Now_Coaching_Stage;
 	
 	COMMIT TRANSACTION
   END TRY
@@ -218,6 +236,11 @@ BEGIN
     ELSE RETURN 1
   END CATCH
 END -- sp_InsertInto_Coaching_Log_Quality_Now
+
+
+
+
+
 GO
 
 

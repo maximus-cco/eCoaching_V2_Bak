@@ -1,9 +1,9 @@
 /*
-sp_Update_Coaching_Log_Quality_Now(01).sql
-Last Modified Date: 03/19/2019
+sp_Update_Coaching_Log_Quality_Now(02).sql
+Last Modified Date: 04/20/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updates from Unit and System testing - TFS 13332 - 04/20/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
 */
 
@@ -22,6 +22,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --    ===========================================================================================
 -- Author:           Susmitha Palacherla
@@ -83,15 +84,17 @@ BEGIN TRY
 
 
   -- Populates #Temp_Coaching_Logs_To_Inactive
+
   INSERT INTO #Temp_Coaching_Logs_To_Inactivate 
-  SELECT cl.CoachingID
+  SELECT DISTINCT cl.CoachingID
   FROM EC.Quality_Now_Coaching_Stage qcs 
   JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.[QN_Batch_ID] = cl.[QNBatchID]
   WHERE cl.StatusID <> 2 AND qcs.[QN_Batch_Status] = N'Inactive';
 
   -- Populates #Temp_Coaching_Logs_To_Inactivate_Audit
+
   INSERT INTO #Temp_Coaching_Logs_To_Inactivate_Audit
-  SELECT cl.CoachingID, cl.Formname, cl.StatusID
+  SELECT DISTINCT cl.CoachingID, cl.Formname, cl.StatusID
   FROM EC.Quality_Now_Coaching_Stage qcs 
   JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.[QN_Batch_ID] = cl.[QNBatchID]
   WHERE cl.StatusID <> 2
@@ -105,9 +108,12 @@ BEGIN TRY
      -- Populates #Temp_Coaching_Logs_To_Update
   INSERT INTO #Temp_Coaching_Logs_To_Update
   SELECT cl.CoachingID, cl.QNBatchID, qcs.[QN_Strengths_Opportunities]
-    FROM EC.Quality_Now_Coaching_Stage qcs
-  JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.[QN_Batch_ID] = cl.[QNBatchID]
-  WHERE cl.QNStrengthsOpportunities <> qcs.[QN_Strengths_Opportunities];
+   FROM (SELECT * FROM EC.Quality_Now_Coaching_Stage
+	  WHERE QN_Strengths_Opportunities is NOT NULL 
+	  AND QN_Strengths_Opportunities <> ''
+	  AND QN_Batch_Status = 'Active')qcs JOIN EC.Coaching_Log cl
+	  ON qcs.QN_Batch_ID = cl.QNBatchID
+	  WHERE qcs.[QN_Strengths_Opportunities] <> cl.QNStrengthsOpportunities;
 
   -- Populates #Temp_Quality_Now_Evaluations_To_Update
   INSERT INTO #Temp_Quality_Now_Evaluations_To_Update
@@ -140,6 +146,7 @@ BEGIN TRY
   FROM EC.Quality_Now_Coaching_Stage qcs
   JOIN EC.Coaching_Log_Quality_Now_Evaluations cqe WITH (NOLOCK) ON 
   qcs.[Eval_ID] = cqe.[Eval_ID]
+  AND qcs.QN_Batch_ID = cqe.QNBatchID
     WHERE CHECKSUM(
   CONCAT(qcs.[EvalStatus] , '|'
       ,replace(EC.fn_nvcHtmlEncode(qcs.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />') , '|'
@@ -166,7 +173,7 @@ BEGIN TRY
       ,qcs.[Customer_Temp_End_Comment])) <>
 CHECKSUM(
 CONCAT(cqe.[EvalStatus] , '|'
-      ,replace(EC.fn_nvcHtmlEncode(cqe.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />') , '|'
+      ,cqe.[Summary_CallerIssues] , '|'
       ,cqe.[Business_Process] , '|'
       ,cqe.[Business_Process_Reason] , '|'
       ,cqe.[Business_Process_Comment] , '|'
@@ -187,7 +194,7 @@ CONCAT(cqe.[EvalStatus] , '|'
       ,cqe.[Customer_Temp_Start], '|'
       ,cqe.[Customer_Temp_Start_Comment], '|'
       ,cqe.[Customer_Temp_End], '|'
-      ,cqe.[Customer_Temp_End_Comment]))
+      ,cqe.[Customer_Temp_End_Comment]));
 
 -- Update from here
 
@@ -195,26 +202,30 @@ CONCAT(cqe.[EvalStatus] , '|'
     -- Inactivates Logs for Inactive Batches
 
 	-- Step 1: Audit entry for all logs being Inactivated due to 'Inactive' Batch status in the stage table
+
 	INSERT INTO EC.AT_Coaching_Inactivate_Reactivate_Audit
       ([CoachingID], [FormName], [LastKnownStatus], [Action], [ActionTimestamp], [RequesterID], [Reason], [RequesterComments])
     SELECT *, N'Inactivate',  Getdate(), N'999998', N'Batch Inactive', N'Quality Now Load Process' 
 	FROM #Temp_Coaching_Logs_To_Inactivate_Audit;
 
 	-- Step 2: Inactivates all logs with 'Inactive' Batch status in the stage table
+
 	UPDATE EC.Coaching_Log SET StatusID = 2,
 	QNBatchStatus = 'Inactive'
     FROM #Temp_Coaching_Logs_To_Inactivate temp 
 	JOIN EC.Coaching_Log cl ON temp.CoachingID = cl.CoachingID;
 	
 	-- Updates QNStrengthsOpportunities for existing Coaching log records
-UPDATE EC.Coaching_Log 
-SET [QNStrengthsOpportunities] = temp.QNStrengthsOpportunities
-	FROM #Temp_Coaching_Logs_To_Update temp 
-	JOIN EC.Coaching_Log cl ON temp.CoachingID = cl.CoachingID;
+
+     UPDATE EC.Coaching_Log 
+     SET [QNStrengthsOpportunities] = temp.QNStrengthsOpportunities
+	 FROM #Temp_Coaching_Logs_To_Update temp 
+	 JOIN EC.Coaching_Log cl ON temp.CoachingID = cl.CoachingID;
 
 	-- Updates changed evaluations in Quality Now Evaluations table 
-UPDATE EC.Coaching_Log_Quality_Now_Evaluations
-    SET [EvalStatus] = temp.[EvalStatus] 
+
+       UPDATE EC.Coaching_Log_Quality_Now_Evaluations
+       SET [EvalStatus] = temp.[EvalStatus] 
       ,[Summary_CallerIssues] = temp.[SummaryCallerIssues]
       ,[Business_Process] = temp.[BusinessProcess] 
       ,[Business_Process_Reason] = temp.[BusinessProcessReason] 
@@ -260,5 +271,7 @@ END CATCH
 END -- [EC].[sp_Update_Coaching_Log_Quality_Now]
 
 GO
+
+
 
 

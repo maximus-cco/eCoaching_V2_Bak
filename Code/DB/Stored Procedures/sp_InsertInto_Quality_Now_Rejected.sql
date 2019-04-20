@@ -1,9 +1,9 @@
 /*
-sp_InsertInto_Quality_Now_Rejected(01).sql
-Last Modified Date: 03/19/2019
+sp_InsertInto_Quality_Now_Rejected(02).sql
+Last Modified Date: 04/20/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updates from Unit and System testing - TFS 13332 - 04/20/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
 */
 
@@ -23,7 +23,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      03/01/2019
@@ -40,21 +39,41 @@ BEGIN
 
 BEGIN TRY
 
--- Create table to hold logs with non distinct parent attributres for rejection
+-- Create table to hold logs with non distinct Strengths/Opportunities for rejection
 
-  CREATE TABLE #Temp_Non_DISTINCT_QNLogs_To_Reject (
-    QN_Batch_ID nvarchar(20)
-    ,CountLogs int
+  CREATE TABLE #Temp_Non_DISTINCT_QNLogs_To_Reject1 (
+  QN_Batch_ID nvarchar(20)
+  ,CountLogs int
   );
 
--- Insert logs with non distinct values for parent record to temp table for rejection
+    -- Insert logs with > 1 Non-Empty Strengths/Opportunities per batch to temp table for rejection
 
-INSERT INTO #Temp_Non_DISTINCT_QNLogs_To_Reject
-SELECT d.QN_Batch_ID, COUNT(*) as Log_Count FROM
- (SELECT DISTINCT [QN_Batch_ID],[QN_Batch_Status],[SUP_EMPID],[MGR_EMPID],[QN_Source] ,[QN_Strengths_Opportunities]
-from [EC].[Quality_Now_Coaching_Stage])d
-GROUP BY d.QN_Batch_ID
-HAVING COUNT(*) > 1;
+	INSERT INTO #Temp_Non_DISTINCT_QNLogs_To_Reject1
+	SELECT d.QN_Batch_ID, COUNT(*) as Log_Count FROM
+	 (SELECT DISTINCT [QN_Batch_ID],[QN_Strengths_Opportunities]
+	FROM  [EC].[Quality_Now_Coaching_Stage]
+	WHERE [QN_Strengths_Opportunities] is NOT NULL 
+	  AND [QN_Strengths_Opportunities] <> '')d
+	GROUP BY d.QN_Batch_ID
+	HAVING COUNT(*) > 1;
+
+
+  -- Create table to hold logs with non distinct parent attributres for rejection
+
+  CREATE TABLE #Temp_Non_DISTINCT_QNLogs_To_Reject2 (
+  QN_Batch_ID nvarchar(20)
+  ,CountLogs int
+  );
+
+  
+-- Insert logs with Other non distinct values per batch to temp table for rejection
+
+	INSERT INTO #Temp_Non_DISTINCT_QNLogs_To_Reject2
+	SELECT d.QN_Batch_ID, COUNT(*) as Log_Count FROM
+	(SELECT DISTINCT [QN_Batch_ID],[QN_Batch_Status],[User_EMPID],[SUP_EMPID],[MGR_EMPID],[QN_Source] 
+	FROM [EC].[Quality_Now_Coaching_Stage])d
+	GROUP BY d.QN_Batch_ID
+	HAVING COUNT(*) > 1;
 
 
  BEGIN TRANSACTION
@@ -74,12 +93,22 @@ FROM [EC].[Quality_Now_Coaching_Stage] STAGE JOIN [EC].[Employee_Hierarchy]EMP
 ON LTRIM(STAGE.User_EMPID) = LTRIM(EMP.Emp_ID);
 
 
--- Reject logs with non distinct parent attributres
+-- Reject logs with non distinct Strengths/Opportunities
+
+UPDATE [EC].[Quality_Now_Coaching_Stage]
+SET [Reject_Reason]= N'Log does not have distinct Strengths/Opportunities'
+FROM [EC].[Quality_Now_Coaching_Stage] s JOIN #Temp_Non_DISTINCT_QNLogs_To_Reject1 t
+ON s.[QN_Batch_ID]= t.[QN_Batch_ID]
+WHERE [Reject_Reason]is NULL;
+
+
+-- Reject logs with non distinct other parent attributres
 
 UPDATE [EC].[Quality_Now_Coaching_Stage]
 SET [Reject_Reason]= N'Log does not have distinct parent record values'
-FROM [EC].[Quality_Now_Coaching_Stage] s JOIN #Temp_Non_DISTINCT_QNLogs_To_Reject t
-ON s.[QN_Batch_ID]= t.[QN_Batch_ID];
+FROM [EC].[Quality_Now_Coaching_Stage] s JOIN #Temp_Non_DISTINCT_QNLogs_To_Reject2 t
+ON s.[QN_Batch_ID]= t.[QN_Batch_ID]
+WHERE [Reject_Reason]is NULL;
 
 
 -- Reject Logs where Active Employee record does not exist
@@ -149,7 +178,9 @@ INSERT INTO [EC].[Quality_Now_Coaching_Rejected]
 DELETE FROM [EC].[Quality_Now_Coaching_Stage]
 WHERE [Reject_Reason]is not NULL
 AND [Reject_Reason] <> '';
+
 SELECT @Count = @@ROWCOUNT;
+
 
 COMMIT TRANSACTION
 END TRY
@@ -166,8 +197,10 @@ BEGIN CATCH
   ELSE RETURN 1
 END CATCH 
 
-END  -- [EC].[sp_InsertInto_IQS_QN_Rejected]
+END  -- [EC].[sp_InsertInto_Quality_Now_Rejected]
+
 
 GO
+
 
 
