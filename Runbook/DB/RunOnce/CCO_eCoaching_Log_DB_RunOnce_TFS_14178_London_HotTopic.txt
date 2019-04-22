@@ -1,0 +1,106 @@
+/*
+
+CCO_eCoaching_Log_DB_RunOnce_TFS_14178_London_HotTopic_Survey.txt
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+Summary
+
+1. Modify question 6 attributes for requested scenario in Survey_DIM_Question
+2. Add Response values in DIM_Response
+3. Remove/Add responses for question 6 in Survey_DIM_QAnswer
+
+
+
+SELECT * FROM [EC].[Survey_DIM_Question]
+SELECT * FROM [EC].[Survey_DIM_Response]
+SELECT * FROM [EC].[Survey_DIM_QAnswer]
+
+--RUN WITH NOTHING SELECTED
+
+*/
+
+
+--1a.Inactivate question 7
+
+update [EC].[Survey_DIM_Question]
+set isActive = 0
+,isPilot = 0
+,LastUpdateDate = Getdate()
+where questionid = 7
+
+GO
+
+
+
+--1b. Modify question 6 attributes for requested scenario in Survey_DIM_Question
+
+
+update [EC].[Survey_DIM_Question]
+set Description = 'Quality Now has improved my experience working on the CCO. | Please explain below.'
+,DisplayOrder = 98
+,StartDate = 20190501
+,Enddate = 20190731
+,isActive = 1
+,isPilot = 1
+,LastUpdateDate = Getdate()
+where questionid = 6
+GO
+
+
+--****************************
+
+
+--2. Add Response values in DIM_Response
+
+INSERT INTO [EC].[Survey_DIM_Response]
+           ([Value]
+           ,[isActive]
+           ,[LastUpdateDate])
+     VALUES
+           ('1 - Strongly Disagree', 1, '2019-05-01 00:00:00.000'),
+	   ('2 - Disagree', 1, '2019-05-01 00:00:00.000'),
+	   ('3 - Somewhat Disagree', 1, '2019-05-01 00:00:00.000'),
+	   ('4 - Neutral', 1, '2019-05-01 00:00:00.000'),
+	   ('5 - Somewhat Agree', 1, '2019-05-01 00:00:00.000'),
+	   ('6 - Agree', 1, '2019-05-01 00:00:00.000'),
+	   ('7 - Strongly Agree', 1, '2019-05-01 00:00:00.000')
+
+GO
+
+
+
+--****************************
+
+--3. Remove/Add responses for question 6 in Survey_DIM_QAnswer
+
+
+
+INSERT INTO [EC].[Survey_DIM_QAnswer]
+           ([SurveyTypeID]
+           ,[QuestionID]
+           ,[QuestionNumber]
+           ,[ResponseID]
+           ,[ResponseValue]
+           ,[ResponseType]
+           ,[isHotTopic]
+           ,[StartDate]
+           ,[EndDate]
+           ,[isActive]
+           ,[LastUpdateDate]
+           ,[isPilot]
+		   ,[ResponseOrder])
+     VALUES
+	   (1, 6, 6, 18, '1 - Strongly Disagree', 'Radio Button',1, 20190501, 20190731, 1, '2019-05-01 00:00:00.000', 1,1),
+       (1, 6, 6, 19, '2 - Disagree', 'Radio Button',1, 20190501, 20190731, 1, '2019-05-01 00:00:00.000', 1,2),
+	   (1, 6, 6, 20, '3 - Somewhat Disagree', 'Radio Button',1, 20190501, 20190731, 1, '2019-05-01 00:00:00.000', 1,3),
+	   (1, 6, 6, 21, '4 - Neutral', 'Radio Button',1, 20190501, 20190731, 1, '2019-05-01 00:00:00.000', 1,4),
+       (1, 6, 6, 22, '5 - Somewhat Agree', 'Radio Button',1, 20190501, 20190731, 1, '2019-05-01 00:00:00.000', 1,5),
+	   (1, 6, 6, 23, '6 - Agree', 'Radio Button',1, 20190501, 20190731, 1, '2019-05-01 00:00:00.000', 1,6),
+	   (1, 6, 6, 24, '7 - Strongly Agree', 'Radio Button',1, 20190501, 20190731, 1, '2019-05-01 00:00:00.000', 1,7)
+GO
+
+
