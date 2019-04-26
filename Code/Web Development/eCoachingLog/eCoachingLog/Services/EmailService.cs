@@ -26,12 +26,13 @@ namespace eCoachingLog.Services
             this.newSubmissionRepository = newSubmissionRepository;
         }
 
-		public void SendComments(CoachingLogDetail log, string comments, string emailTempFileName, string logoFileName)
+		public void SendComments(CoachingLogDetail log, string comments, string emailTempFileName)
 		{
 			string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
 			string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
 			string bodyText = FileUtil.ReadFile(emailTempFileName);
 			MailMessage msg =new MailMessage();
+			msg.IsBodyHtml = true;
 			msg.Body = bodyText.Replace("{formName}", log.FormName);
 			msg.Body = msg.Body.Replace("{comments}", comments);
 			msg.To.Add(log.SupervisorEmail);
@@ -39,22 +40,27 @@ namespace eCoachingLog.Services
 			msg.From = new MailAddress(fromAddress, fromDisplayName);
 			msg.Subject = "eCoaching Log Completed (" + log.EmployeeName + ")";
 
-			Send(msg, logoFileName);
+			Send(msg);
 		}
 
-        public bool Send(NewSubmission submission, string templateFileName, string logoFileName, string logName)
+        public bool Send(NewSubmission submission, string templateFileName, string logName)
         {
-			//string env = System.Configuration.ConfigurationManager.AppSettings["Environment"];
+			return Send(CreateMailMessage(submission, templateFileName, logName));
+        }
+
+		private MailMessage CreateMailMessage(NewSubmission submission, string templateFileName, string logName)
+		{
+			string subject = "eCL: ";
 			string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
 			string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
-			string subject = "eCL: ";
 			string eCoachingUrl = System.Configuration.ConfigurationManager.AppSettings["App.Url"];
 
 			MailMessage msg = new MailMessage();
+			msg.IsBodyHtml = true;
 			Tuple<string, string, string, string> recipientsAndText = GetRecipientsAndBodyTextFromDb(submission);
 			string status = recipientsAndText.Item4;
-			msg.Subject = subject + status + string.Format(" ({0})", submission.Employee.Name);
-			msg.To.Add(recipientsAndText.Item1); //recipientsAndText.Item1;
+			msg.Subject = subject + status + string.Format(" ({0})", submission.Employee.Name.Trim());
+			msg.To.Add(recipientsAndText.Item1);
 			if (!string.IsNullOrEmpty(recipientsAndText.Item2))
 			{
 				msg.Bcc.Add(new MailAddress(recipientsAndText.Item2));
@@ -70,10 +76,10 @@ namespace eCoachingLog.Services
 				.Replace("{textFromDb}", txtFromDb)
 				.Replace("{formName}", logName);
 
-			return Send(msg, logoFileName);
-        }
+			return msg;
+		}
 
-		private bool Send(MailMessage msg, string logo)
+		private bool Send(MailMessage msg)
 		{
 			bool success = false;
 			try
@@ -81,15 +87,6 @@ namespace eCoachingLog.Services
 				// https://msdn.microsoft.com/en-us/library/k1c4h6e2(v=vs.110).aspx
 				// Initializes a new instance of the SmtpClient class by using configuration file settings.
 				var smtpClient = new SmtpClient();
-				msg.IsBodyHtml = true;
-
-				// Embed logo
-				var inline = new Attachment(logo);
-				inline.ContentId = Guid.NewGuid().ToString();
-				inline.ContentDisposition.Inline = true;
-				inline.ContentDisposition.DispositionType = DispositionTypeNames.Inline;
-				msg.Body = msg.Body.Replace("{eCoachingLogo}", string.Format(@"<img src='cid:{0}'/>", inline.ContentId));
-				msg.Attachments.Add(inline);
 
 				logger.Debug("Sending email...");
 				smtpClient.Send(msg);
@@ -111,7 +108,7 @@ namespace eCoachingLog.Services
 			return success;
 		}
 
-        private Tuple<string, string, string, string> GetRecipientsAndBodyTextFromDb(NewSubmission submission)
+		private Tuple<string, string, string, string> GetRecipientsAndBodyTextFromDb(NewSubmission submission)
         {
             // Default recipient to the employee 
             string to = submission.Employee.Email;

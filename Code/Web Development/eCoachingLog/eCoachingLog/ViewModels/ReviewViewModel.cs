@@ -31,8 +31,8 @@ namespace eCoachingLog.ViewModels
 		[AllowHtml]
 		public string DetailReasonCoachable { get; set; }
 		// CSE related
-		public bool? IsCse { get; set; } // Confirmed cse
-		public bool IsCseUnconfirmed { get; set; }
+		public bool? IsConfirmedCse { get; set; } // Confirmed cse
+		public bool? IsSubmittedAsCse { get; set; }
 		public DateTime? DateReviewed { get; set; }
 		[AllowHtml]
 		public string ReasonNotCse { get; set; }
@@ -57,7 +57,8 @@ namespace eCoachingLog.ViewModels
 		public bool IsAckOverTurnedAppeal { get; set; }
 
 		// To control display on Historical/Review
-		public bool ShowViewCseText { get; set; }
+		public bool ShowConfirmedCseText { get; set; }
+		public bool ShowConfirmedNonCseText { get; set; }
 		public bool ShowViewMgtNotes { get; set; }
 		public bool ShowViewSupReviewInfo { get; set; }
 
@@ -78,8 +79,6 @@ namespace eCoachingLog.ViewModels
 			this.EmployeeCommentsDdlList = new List<SelectListItem>();
 			// Default to true
 			this.IsCoachingRequired = true;
-			// Defaul to nothing
-			this.IsCse = null;
 		}
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -140,7 +139,7 @@ namespace eCoachingLog.ViewModels
 			// CSE
 			if (this.IsCsePendingForm)
 			{
-				if (this.IsCse.HasValue && this.IsCse.Value) // Confirmed cse
+				if (this.IsConfirmedCse.HasValue && this.IsConfirmedCse.Value) // Confirmed cse
 				{
 					if (!this.DateCoached.HasValue)
 					{
@@ -196,7 +195,7 @@ namespace eCoachingLog.ViewModels
 				MainReasonNotCoachable = vm.MainReasonNotCoachable,
 				DetailReasonNotCoachable = vm.DetailReasonNotCoachable,
 				DetailReasonCoachable = vm.DetailReasonCoachable,
-				IsCse = vm.IsCse,
+				IsConfirmedCse = vm.IsConfirmedCse,
 				DateReviewed = vm.DateReviewed,
 				ReasonNotCse = vm.ReasonNotCse,
 				Comment = vm.Comment,

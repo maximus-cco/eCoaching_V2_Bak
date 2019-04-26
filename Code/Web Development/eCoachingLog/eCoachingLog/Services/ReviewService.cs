@@ -307,7 +307,7 @@ namespace eCoachingLog.Services
 			{
 				try
 				{
-					this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName, logoFileName);
+					this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName);
 				}
 				catch (Exception ex)
 				{

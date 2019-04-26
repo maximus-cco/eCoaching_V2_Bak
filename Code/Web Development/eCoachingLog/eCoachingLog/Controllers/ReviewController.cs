@@ -100,8 +100,9 @@ namespace eCoachingLog.Controllers
 					reviewVM.WarningLogDetail = (WarningLogDetail)logDetail;
 				}
 
-				reviewVM.ShowViewCseText = reviewVM.IsCseUnconfirmed && (reviewVM.IsCse.HasValue && reviewVM.IsCse.Value);
-				reviewVM.ShowViewMgtNotes = reviewVM.ShowViewCseText && !string.IsNullOrEmpty(reviewVM.LogDetail.MgrNotes);
+				reviewVM.ShowConfirmedCseText = ShowConfirmedCseText(reviewVM.LogDetail);
+				reviewVM.ShowConfirmedNonCseText = ShowConfirmedNonCseText(reviewVM.LogDetail);
+				reviewVM.ShowViewMgtNotes = reviewVM.ShowConfirmedCseText && !string.IsNullOrEmpty(reviewVM.LogDetail.MgrNotes);
 
 				if (reviewVM.LogDetail.IsIqs && reviewVM.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 				{
@@ -374,25 +375,6 @@ namespace eCoachingLog.Controllers
 					vm.ShowManagerNotes = true;
 				}
 
-				//if ((vm.LogDetail.IsCoachingRequired || vm.LogDetail.IsCse)&& !string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
-				//{
-				//	vm.ShowManagerNotes = true;
-				//}
-
-				//if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
-				//{
-				//	vm.ShowCoachingNotes = vm.LogDetail.IsIqs ||
-				//		vm.LogDetail.IsCtc ||
-				//		vm.LogDetail.IsHigh5Club ||
-				//		vm.LogDetail.IsKudo ||
-				//		vm.LogDetail.IsAttendance ||
-				//		vm.LogDetail.IsScorecardMsr ||
-				//		vm.LogDetail.IsScorecardMsrs;
-				//}
-				//else
-				//{
-				//	vm.ShowCoachingNotes = true;
-				//}
 
 				return;
 			}
@@ -642,9 +624,18 @@ namespace eCoachingLog.Controllers
 			return false;
 		}
 
-		private bool ShowViewCseText(ReviewViewModel vm)
+		private bool ShowConfirmedCseText(CoachingLogDetail logDetail)
 		{
-			return vm.IsCseUnconfirmed && (vm.IsCse.HasValue && vm.IsCse.Value);
+			return logDetail.IsSubmittedAsCse.HasValue 
+				&& logDetail.IsConfirmedCse.HasValue
+				&& logDetail.IsConfirmedCse.Value;
+		}
+
+		private bool ShowConfirmedNonCseText(CoachingLogDetail logDetail)
+		{
+			return logDetail.IsSubmittedAsCse.HasValue 
+				&& logDetail.IsConfirmedCse.HasValue
+				&& !logDetail.IsConfirmedCse.Value;
 		}
 	}
 }

@@ -4,7 +4,7 @@
 		$('#div-review-modal-footer').addClass("hide");
 	}
 
-	$('body').on('click', 'input[name="IsCse"]', function (e) {
+	$('body').on('click', 'input[name="IsConfirmedCse"]', function (e) {
 		var isCse = $(this).val();
 		if (isCse === 'true')
 		{

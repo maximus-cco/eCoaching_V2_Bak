@@ -22,7 +22,7 @@ namespace eCoachingLog.Models.Review
 		public string DetailReasonCoachable { get; set; }
 	
 		// CSE related
-		public bool? IsCse { get; set; }
+		public bool? IsConfirmedCse { get; set; }
 		public DateTime? DateReviewed { get; set; }
 		public string ReasonNotCse { get; set; }
 		public string Comment { get; set; }

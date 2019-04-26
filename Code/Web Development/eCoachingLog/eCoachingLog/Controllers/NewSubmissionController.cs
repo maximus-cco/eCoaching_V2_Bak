@@ -128,9 +128,8 @@ namespace eCoachingLog.Controllers
         private bool SendEmail(string logName)
         {
             var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
-			var logo = Server.MapPath("~/Content/Images/ecl-logo-small.png");
             var template = Server.MapPath("~/EmailTemplates/NewSubmission.html");
-            return this.emailService.Send(vm, template, logo, logName);
+            return this.emailService.Send(vm, template, logName);
         }
 
         private ActionResult StayOnThisPage(NewSubmissionViewModel vm)

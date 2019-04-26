@@ -1,23 +1,37 @@
 ﻿<html>
-<body style="font-family: Tahoma, sans-serif; font-size: 10pt;">
-	** This is an automated email. Do not reply to this email. **
-	<br />
-	<br />
-	The following eCoaching Log has been completed. Please see the employee's comments below:
-	<br />
-	<br />
-	Form ID: <strong>{formName}</strong>
-	<br />
-	Comments: <strong>{comments}</strong>
-	<br />
-	<br />
-	(Please do not respond to this automated notification)
-	<br />
-	<br />
-	Thank you
-	<br />
-	eCoaching Log Team
-	<br />
-	{eCoachingLogo}
+<head>
+<style>
+	body {
+		font-family: Tahoma, sans-serif;
+		font-size: 10pt;
+	}
+	.signature {
+		color: rgb(32, 87, 148);
+		font-weight: bold;
+		font-size: 11pt;
+	}
+	.donotreply {
+		font-style: italic;
+		font-size: 8pt;
+		font-weight: bold;
+	}
+</style>
+</head>
+
+<body>
+	<p class="donotreply">
+		** This is an automated email. Do not reply to this email. **
+	</p>
+	<p>
+		The following eCoaching Log has been completed. Please see the employee's comments below:
+	</p>
+	<p>
+		Form ID: <strong>{formName}</strong><br />
+		Comments: <strong>{comments}</strong>
+	</p>
+	    Thank you,<br />
+	<div class="signature">
+		eCoaching Log Team
+	</div>
 </body>
 </html>

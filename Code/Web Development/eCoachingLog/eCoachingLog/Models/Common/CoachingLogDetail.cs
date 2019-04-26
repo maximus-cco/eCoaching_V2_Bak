@@ -19,8 +19,8 @@ namespace eCoachingLog.Models.Common
         public bool IsVerintMonitor { get; set; }
         public bool IsBehaviorAnalyticsMonitor { get; set; }
         public bool IsNgdActivityId { get; set; }
-        public bool IsCse { get; set; }
-		public bool IsCseUnconfirmed { get; set; }
+        public bool? IsConfirmedCse { get; set; }
+		public bool? IsSubmittedAsCse { get; set; }
 
 		public bool IsCtc { get; set; }
 		public bool IsHigh5Club { get; set; }

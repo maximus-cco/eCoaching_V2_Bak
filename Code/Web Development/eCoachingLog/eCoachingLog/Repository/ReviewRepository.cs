@@ -244,13 +244,13 @@ namespace eCoachingLog.Repository
 				// coaching_log.MgrReviewManualDate
 				var manualDate = review.DateReviewed;
 				var notes = review.ReasonNotCse;
-				if (review.IsCse.HasValue && review.IsCse.Value)
+				if (review.IsConfirmedCse.HasValue && review.IsConfirmedCse.Value)
 				{
 					manualDate = review.DateCoached;
 					notes = review.DetailsCoached;
 				}
 				command.Parameters.AddWithValueSafe("@dtmMgrReviewManualDate", manualDate);
-				command.Parameters.AddWithValueSafe("@bitisCSE", review.IsCse);
+				command.Parameters.AddWithValueSafe("@ConfirmedCSE", review.IsConfirmedCse);
 				command.Parameters.AddWithValueSafe("@nvcMgrNotes", notes);
 
 				try

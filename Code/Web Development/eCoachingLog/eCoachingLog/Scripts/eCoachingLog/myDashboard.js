@@ -27,7 +27,7 @@
 	}
 
 	// onclick "Is the coaching opportunity a confirmed Customer Service Escalation (CSE)?"
-	$('body').on('change', '#IsCse', function () {
+	$('body').on('change', '#IsConfirmedCse', function () {
 		toggleCse($(this).val());
 	});
 
@@ -219,7 +219,7 @@
     				container.removeClass("field-validation-valid").addClass("field-validation-error");
     				container.html(value);
 
-    				$('#' + key).addClass('errorClass');
+    				$('[name="' + key + '"]').addClass('errorClass');
     			});
     		}
     		else

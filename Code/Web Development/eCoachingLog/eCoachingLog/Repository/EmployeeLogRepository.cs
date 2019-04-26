@@ -73,9 +73,9 @@ namespace eCoachingLog.Repository
                         logDetail.CreatedDate = eCoachingLogUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
                         logDetail.CoachingDate = eCoachingLogUtil.AppendPdt(dataReader["CoachingDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
-                        logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
+                        logDetail.SubmitterName = dataReader["strSubmitterName"].ToString().Trim();
 						logDetail.SubmitterEmpId = dataReader["strSubmitterID"].ToString().Trim().ToUpper();
-                        logDetail.EmployeeName = dataReader["strEmpName"].ToString();
+                        logDetail.EmployeeName = dataReader["strEmpName"].ToString().Trim();
 						logDetail.EmployeeId = dataReader["strEmpID"].ToString().Trim().ToUpper();
                         logDetail.EmployeeSite = dataReader["strEmpSite"].ToString();
 						logDetail.IsVerintMonitor = dataReader["isVerintMonitor"] == DBNull.Value ? false : (bool) dataReader["isVerintMonitor"];
@@ -105,8 +105,8 @@ namespace eCoachingLog.Repository
                         logDetail.MgrReviewAutoDate = eCoachingLogUtil.AppendPdt(dataReader["MgrReviewAutoDate"].ToString());
 						logDetail.ReviewedSupervisorName = dataReader["strReviewSupervisor"].ToString();
 						logDetail.ReviewedManagerName = dataReader["strReviewManager"].ToString();
-						logDetail.IsCse = dataReader["isCse"] == DBNull.Value ? false : (bool) dataReader["isCse"];
-						logDetail.IsCseUnconfirmed = Convert.ToInt16(dataReader["Customer Service Escalation"]) == 0 ? false : true;
+						logDetail.IsConfirmedCse = Convert.IsDBNull(dataReader["ConfirmedCSE"]) ? null : (bool?)dataReader["ConfirmedCSE"];
+						logDetail.IsSubmittedAsCse = Convert.IsDBNull(dataReader["SubmittedCSE"]) ? null : (bool?)dataReader["SubmittedCSE"];
 
 						logDetail.IsOmrShortCall = Convert.ToInt16(dataReader["OMR / ISQ"]) == 0 ? false : true;
 						logDetail.IsOmrIae = Convert.ToInt16(dataReader["OMR / IAE"]) == 0 ? false : true;
@@ -218,7 +218,7 @@ namespace eCoachingLog.Repository
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
 						logDetail.SubmitterEmpId = dataReader["strSubmitterID"].ToString().Trim().ToUpper();
-						logDetail.EmployeeName = dataReader["strEmpName"].ToString();
+						logDetail.EmployeeName = dataReader["strEmpName"].ToString().Trim();
 						logDetail.EmployeeId = dataReader["strEmpID"].ToString().Trim().ToUpper();
                         logDetail.EmployeeSite = dataReader["strEmpSite"].ToString();
                         logDetail.SupervisorName = dataReader["strEmpSupName"].ToString();
@@ -477,7 +477,7 @@ namespace eCoachingLog.Repository
 						//log.RowNumber = (long)dataReader["RowNumber"];
 						log.ID = (long)dataReader["strLogID"];
 						log.FormName = dataReader["strFormID"].ToString();
-						log.EmployeeName = dataReader["strEmpName"].ToString();
+						log.EmployeeName = dataReader["strEmpName"].ToString().Trim();
 						log.SupervisorName = dataReader["strEmpSupName"].ToString();
 						log.ManagerName = dataReader["strEmpMgrName"].ToString();
 						log.Status = dataReader["strFormStatus"].ToString();
