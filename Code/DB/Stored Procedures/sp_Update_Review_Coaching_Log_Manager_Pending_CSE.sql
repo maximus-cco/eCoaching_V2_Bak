@@ -1,3 +1,10 @@
+/*
+Last Modified Date: 04/26/2019
+Last Modified By: Susmitha Palacherla
+Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
+*/
+
+
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
   WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update3Review_Coaching_Log' 
@@ -19,9 +26,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:     11/16/12
@@ -30,15 +34,16 @@ GO
 --    Updated per TFS 1709 Admin tool setup to reset reassign count to 0 - 5/2/2016
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
 --    TFS 7137 move my dashboard to new architecture - 06/12/2018
+--    Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
 --    =====================================================================
-CREATE  PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_CSE]
+CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_CSE]
 (
   @nvcFormID BIGINT,
   @nvcFormStatus Nvarchar(30),
   @nvcReviewMgrID Nvarchar(10),
   @dtmMgrReviewAutoDate datetime,
   @dtmMgrReviewManualDate datetime,
-  @bitisCSE bit,
+  @ConfirmedCSE bit,
   @nvcMgrNotes Nvarchar(max)
 )
 AS
@@ -60,7 +65,7 @@ UPDATE [EC].[Coaching_Log]
 SET 
   StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
   Review_MgrID = @nvcReviewMgrID,
-  isCSE = @bitisCSE,
+  ConfirmedCSE = @ConfirmedCSE,
   MgrReviewAutoDate = @dtmMgrReviewAutoDate,
   MgrReviewManualDate = @dtmMgrReviewManualDate,
   MgrNotes = @nvcMgrNotes,
@@ -112,9 +117,7 @@ BEGIN CATCH
 END CATCH;
 
 END --sp_Update_Review_Coaching_Log_Manager_Pending_CSE
-
-
-
 GO
+
 
 

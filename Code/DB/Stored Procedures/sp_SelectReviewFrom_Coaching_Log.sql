@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(12).sql
-Last Modified Date: 03/19/2019
+sp_SelectReviewFrom_Coaching_Log(13).sql
+Last Modified Date: 04/26/2019
 Last Modified By: Susmitha Palacherla
 
+Version 13: Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
 Version 12: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 11: Modified to support OTA Report. TFS 12591 - 11/26/2018
 Version 10: New PBH Feed - TFS 11451 - 7/30/2018
@@ -29,6 +30,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -60,6 +62,7 @@ GO
 -- 21. Modified to incorporate PBH feed - TFS 11451 - 07/31/2018
 -- 22. Modified to support OTA Report. TFS 12591 - 11/26/2018
 -- 23. Modified to support Quality Now TFS 13332 -  03/01/2019
+-- 24. Modified to add ConformedCSE. TFS 14049 - 04/26/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -199,7 +202,8 @@ SET @nvcSQL2 = '
   cl.SubmittedDate,
   cl.StartDate,
   cl.SupReviewedAutoDate,
-  cl.isCSE,
+  cl.isCSE SubmittedCSE,
+  cl.ConfirmedCSE ConfirmedCSE,
   cl.MgrReviewManualDate,
   cl.MgrReviewAutoDate,
   cl.MgrNotes txtMgrNotes,
@@ -265,6 +269,8 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
 GO
 
 

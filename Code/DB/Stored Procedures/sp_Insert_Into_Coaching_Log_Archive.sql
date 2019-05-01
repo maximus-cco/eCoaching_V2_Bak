@@ -1,8 +1,9 @@
 /*
-sp_Insert_Into_Coaching_Log_Archive(03).sql
-Last Modified Date: 03/19/2019
+sp_Insert_Into_Coaching_Log_Archive(04).sql
+Last Modified Date: 04/26/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
 Version 03: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -26,6 +27,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date:   10/10/2016
@@ -35,6 +37,7 @@ GO
 -- Intial Revision: Created per TFS 3932 - 10/10/2016
 --  Modified to support Encryption of sensitive data - Removed EmpLanID. TFS 7856 - 10/23/2017
 --  Modified to incorporate Quality Now. TFS 13332 - 03/01/2019
+--  Modified to incorporate new column ConfirmedCSE. TFS 14049 - 04/18/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive]@strArchivedBy nvarchar(50)= 'Automated Process'
 
@@ -109,6 +112,7 @@ INSERT INTO [EC].[Coaching_Log_Archive]
 	       ,[QNBatchID]
 		   ,[QNBatchStatus]
 		   ,[QNStrengthsOpportunities]
+		   ,[ConfirmedCSE]
            ,[ArchivedBy]
            ,[ArchivedDate]
 		)
@@ -169,6 +173,7 @@ INSERT INTO [EC].[Coaching_Log_Archive]
 	  ,[QNBatchID]
 	  ,[QNBatchStatus]
 	  ,[QNStrengthsOpportunities]
+	  ,[ConfirmedCSE]
       ,@strArchivedBy
       ,GetDate()
   FROM [EC].[Coaching_Log] CL
@@ -244,6 +249,7 @@ END TRY
   END CATCH
 
 END  -- [EC].[sp_Insert_Into_Coaching_Log_Archive]
+
 GO
 
 

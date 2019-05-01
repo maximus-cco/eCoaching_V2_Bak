@@ -1,0 +1,32 @@
+/*
+
+CCO_eCoaching_Log_DB_RunOnce_TFS_14178_London_HotTopic_Survey.txt
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+Summary
+
+1. Add column ConfirmedCSE to EC.Coaching_Log and EC.Coaching_Log_Archive
+
+--RUN WITH NOTHING SELECTED
+
+*/
+
+
+--1. Add column ConfirmedCSE to EC.Coaching_Log and EC.Coaching_Log_Archive
+
+ALTER TABLE EC.Coaching_Log
+ADD ConfirmedCSE bit
+GO
+
+
+ALTER TABLE EC.Coaching_Log_Archive
+ADD ConfirmedCSE bit 
+GO
+
+
+
+--*****************

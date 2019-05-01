@@ -1,9 +1,9 @@
 /*
-CCO_eCoaching_Maintenance_Tables_Create.(03).sql
-
-Last Modified Date: 03/19/2019
+CCO_eCoaching_Maintenance_Tables_Create.(04).sql
+Last Modified Date: 04/26/2019
 Last Modified By: Susmitha Palacherla
 
+version 04: Added ConfirmedCSE to Coaching Log Archive Table - TFS 14049 - 04/26/2019
 version 03: Updated to incorporate Quality Now - TFS 13332 - 03/19/2019
 Version 02: Updated to increase column size for
 strReasonNotCoachable in Coaching_Log_Archive to 100 - TFS 6881 - 06/01/2017
@@ -119,6 +119,7 @@ CREATE TABLE [EC].[Coaching_Log_Archive](
 	[QNBatchID] [nvarchar](20) NULL,
 	[QNBatchStatus] [nvarchar](10) NULL,
 	[QNStrengthsOpportunities] [nvarchar](2000) NULL,
+        [ConfirmedCSE][bit] NULL,
  CONSTRAINT [PK_Coaching_Log_Archive] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC
