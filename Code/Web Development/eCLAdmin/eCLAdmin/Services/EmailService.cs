@@ -3,7 +3,6 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Net.Mail;
-using System.Net.Mime;
 using System.Text;
 
 namespace eCLAdmin.Services
@@ -54,37 +53,41 @@ namespace eCLAdmin.Services
                 return;
             }
 
-            var smtpClient = new SmtpClient(Constants.SMTP_CLIENT);
-            MailMessage mailMessage = new MailMessage();
-            mailMessage.Subject = email.Subject;
-            mailMessage.From = new MailAddress(email.From, "eCoaching Log Admin");
+			try
+			{
+				var smtpClient = new SmtpClient(Constants.SMTP_CLIENT);
+				MailMessage mailMessage = new MailMessage();
+				mailMessage.Subject = email.Subject;
+				mailMessage.From = new MailAddress(email.From, "eCoaching Log Admin");
 
-            foreach (string to in email.To)
-            {
-                mailMessage.To.Add(new MailAddress(to));
-            }
+				foreach (string to in email.To)
+				{
+					mailMessage.To.Add(new MailAddress(to));
+				}
 
-            if (email.CC != null)
-            {
-                foreach (string cc in email.CC)
-                {
-                    mailMessage.CC.Add(new MailAddress(cc));
-                }
-            }
+				if (email.CC != null)
+				{
+					foreach (string cc in email.CC)
+					{
+						mailMessage.CC.Add(new MailAddress(cc));
+					}
+				}
 
-            mailMessage.Body = email.Body;
-            mailMessage.IsBodyHtml = true;
+				mailMessage.Body = email.Body;
+				mailMessage.IsBodyHtml = true;
 
-            // Embed logo
-            var inline = new Attachment(email.Logo);
-            inline.ContentId = Guid.NewGuid().ToString();
-            inline.ContentDisposition.Inline = true;
-            inline.ContentDisposition.DispositionType = DispositionTypeNames.Inline;
-            mailMessage.Body = mailMessage.Body.Replace("{eCoachingLogo}", string.Format(@"<img src='cid:{0}'/>", inline.ContentId));
-            mailMessage.Attachments.Add(inline);
+				smtpClient.Send(mailMessage);
+			}
+			catch (Exception ex)
+			{
+				StringBuilder info = new StringBuilder();
+				info.Append("Failed to send email: ")
+					.Append(ex.Message)
+					.Append(Environment.NewLine)
+					.Append(ex.StackTrace);
 
-            smtpClient.Send(mailMessage);
-
+				logger.Warn(info);
+			}
         }
     }
 }

@@ -380,7 +380,6 @@ namespace eCLAdmin.Controllers
             email.CC = cc;
             email.From = Constants.EMAIL_FROM;
             email.Subject = EmailUtil.GetSubject(emailType);
-            email.Logo = Server.MapPath("~/Content/Images/ecl-logo-small.png");
             email.Body = FileUtil.ReadFile(Server.MapPath("~/EmailTemplates/") + EmailUtil.GetTemplateFileName(emailType));
 
             emailService.Send(email, logNames, Request.ServerVariables["SERVER_NAME"].ToLower());

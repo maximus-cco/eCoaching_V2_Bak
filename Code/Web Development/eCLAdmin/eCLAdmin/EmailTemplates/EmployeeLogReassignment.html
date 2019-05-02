@@ -1,20 +1,39 @@
 ﻿<html>
-<body style="font-family: Tahoma, sans-serif; font-size: 10pt;">
-    ** This is an automated email. Do not reply to this email. **
-    <br />
-    <br />
-    The following logs have been reassigned to you and require your attention. Please review and discuss with the employee.
-    <br />
-    <br />
-    Please click <a href="{eCoachingUrl}">here</a> to open the coaching application to view the below form ID(s) for details on My Dashboard page.
-    <br />
-    {LogNameList}
-    <br />
-    <br />
-    Thank you
-    <br />
-    eCoaching Log Team
-    <br />
-    {eCoachingLogo}
+<head>
+	<style>
+		body {
+			font-family: Tahoma, sans-serif;
+			font-size: 10pt;
+		}
+
+		.signature {
+			color: rgb(32, 87, 148);
+			font-weight: bold;
+			font-size: 11pt;
+		}
+
+		.donotreply {
+			font-style: italic;
+			font-size: 8pt;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+	<p class="donotreply">
+		** This is an automated email. Do not reply to this email. **
+	</p>
+	<p>
+		The following logs have been reassigned to you and require your attention. Please review and discuss with the employee.
+	</p>
+	<p>
+		Please click <a href="{eCoachingUrl}">here</a> to open the coaching application to view the below form ID(s) for details on My Dashboard page.<br />
+		{LogNameList}
+	</p>
+
+		Thank you,<br />
+	<div class="signature">
+		eCoaching Log Team
+	</div>
 </body>
 </html>
