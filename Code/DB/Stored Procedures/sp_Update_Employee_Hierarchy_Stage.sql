@@ -3,8 +3,8 @@ sp_Update_Employee_Hierarchy_Stage(05).sql
 Last Modified Date: 04/29/2019
 Last Modified By: Susmitha Palacherla
 
-Version 05:Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
-Version 04:Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
+Version 05: Modified to relax Deletes for missing Hierarchy - TFS 14249 - 04/29/2019
+Version 04: Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 Version 03: Updated to revise logic for supporting reused numeric part of Employee ID per TFS 8228 - 9/22/2017
 Version 02: Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -26,10 +26,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -236,9 +232,12 @@ WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 -- This will ensure that all users with missing sup id and mgr id will not be in the Employee_Hierarchy table.
 BEGIN
 
-SELECT * FROM [EC].[Employee_Hierarchy_Stage]
+
+DELETE FROM [EC].[Employee_Hierarchy_Stage]
 WHERE EMP_JOB_CODE IN (SELECT DISTINCT JOB_CODE FROM EC.Employee_Selection)
 AND ([Sup_Emp_ID] = ' ' OR [Sup_Emp_ID] is NULL OR [Mgr_Emp_ID] = ' ' OR  [Mgr_Emp_ID] is NULL)
+
+
 
 OPTION (MAXDOP 1)
 END
@@ -330,7 +329,6 @@ END TRY
 
 END  -- [EC].[sp_Update_Employee_Hierarchy_Stage]
 GO
-
 
 
 
