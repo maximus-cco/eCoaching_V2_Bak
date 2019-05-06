@@ -11,7 +11,7 @@ Summary
 
 1. Add column ConfirmedCSE to EC.Coaching_Log and EC.Coaching_Log_Archive
 
---RUN WITH NOTHING SELECTED
+--RUN ONE STEP AT A TIME
 
 */
 
@@ -20,13 +20,59 @@ Summary
 
 ALTER TABLE EC.Coaching_Log
 ADD ConfirmedCSE bit
-GO
+GO;
 
 
 ALTER TABLE EC.Coaching_Log_Archive
 ADD ConfirmedCSE bit 
-GO
+GO;
 
 
 
 --*****************
+
+-- Historical Updates
+
+-- 2a. Confirmed CSE - set ConfirmedCSE to 1
+
+UPDATE CL
+SET ConfirmedCSE = 1
+  FROM [EC].[Coaching_Log]CL JOIN [EC].[Coaching_Log_Reason]CLR
+  ON CL.CoachingID = CLR.CoachingID
+  WHERE   clr.CoachingReasonID = 6
+  AND MgrReviewAutoDate is not null
+  AND MgrNotes is not null
+  AND cl.isCSE = 1
+  AND ConfirmedCSE IS NULL
+GO;
+
+
+
+--2b. Confirmed NOT CSE - set ConfirmedCSE to 0
+
+
+UPDATE CL
+SET ConfirmedCSE = 0
+  FROM [EC].[Coaching_Log]CL JOIN [EC].[Coaching_Log_Reason]CLR
+  ON CL.CoachingID = CLR.CoachingID
+  WHERE   clr.CoachingReasonID = 6
+  AND MgrReviewAutoDate is not null
+  AND MgrNotes is not null
+  AND cl.isCSE = 0
+  AND ConfirmedCSE IS NULL
+GO;
+
+
+--2c.ASSUME Confirmed NOT CSE - set ConfirmedCSE to 0
+
+UPDATE CL
+SET ConfirmedCSE = 0
+  FROM [EC].[Coaching_Log]CL JOIN [EC].[Coaching_Log_Reason]CLR
+  ON CL.CoachingID = CLR.CoachingID
+  WHERE   clr.CoachingReasonID = 6
+  AND MgrReviewAutoDate is null
+  AND MgrNotes is null
+  AND cl.isCSE = 1
+  AND StatusID <> 5
+  AND ConfirmedCSE IS NULL
+GO;
