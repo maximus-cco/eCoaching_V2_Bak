@@ -77,9 +77,18 @@ namespace eCoachingLog.Controllers
 
 		private ReviewViewModel Init(User user, int currentPage, BaseLogDetail logDetail, bool isCoaching)
 		{
-			// TODO: check if QualityNOW (multiple scorecards per eCL log)
+			var vm = new ReviewViewModel();
+			if (isCoaching)
+			{
+				vm.LogDetail = (CoachingLogDetail)logDetail;
+				vm.ShowConfirmedCseText = ShowConfirmedCseText(vm.LogDetail);
+				vm.ShowConfirmedNonCseText = ShowConfirmedNonCseText(vm.LogDetail);
+			}
+			else
+			{
+				vm.WarningLogDetail = (WarningLogDetail)logDetail;
+			}
 
-			
 			// Review - Read Only 
 			// User clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning
 			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage
@@ -90,39 +99,24 @@ namespace eCoachingLog.Controllers
 				// Completed
 				|| logDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 			{
-				var reviewVM = new ReviewViewModel();
-				if (isCoaching)
+				vm.ShowViewMgtNotes = vm.ShowConfirmedCseText && !string.IsNullOrEmpty(vm.LogDetail.MgrNotes);
+
+				if (vm.LogDetail.IsIqs && vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 				{
-					reviewVM.LogDetail = (CoachingLogDetail)logDetail;
+					vm.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Quality Monitor on ";
+					vm.ShowViewSupReviewInfo = true;
 				}
 				else
 				{
-					reviewVM.WarningLogDetail = (WarningLogDetail)logDetail;
+					vm.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Coaching on ";
 				}
 
-				reviewVM.ShowConfirmedCseText = ShowConfirmedCseText(reviewVM.LogDetail);
-				reviewVM.ShowConfirmedNonCseText = ShowConfirmedNonCseText(reviewVM.LogDetail);
-				reviewVM.ShowViewMgtNotes = reviewVM.ShowConfirmedCseText && !string.IsNullOrEmpty(reviewVM.LogDetail.MgrNotes);
-
-				if (reviewVM.LogDetail.IsIqs && reviewVM.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
-				{
-					reviewVM.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Quality Monitor on ";
-					reviewVM.ShowViewSupReviewInfo = true;
-				}
-				else
-				{
-					reviewVM.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Coaching on ";
-				}
-
-				reviewVM.ReviewPageName = isCoaching ? "_ViewCoachingLog" : "_ViewWarningLog";
-				return reviewVM;
+				vm.ReviewPageName = isCoaching ? "_ViewCoachingLog" : "_ViewWarningLog";
+				return vm;
 			}
 
 			// Review - Editable
-			var vm = new ReviewViewModel();
-			vm.LogDetail = (CoachingLogDetail)logDetail;
 			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
-
 			// Determine to show/hide Managers Notes and Coaching Notes
 			DetermineMgrSupNotesVisibility(vm);
 			// Static text (instruction text)
