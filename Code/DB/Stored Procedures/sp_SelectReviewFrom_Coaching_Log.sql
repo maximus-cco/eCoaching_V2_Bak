@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(13).sql
-Last Modified Date: 04/26/2019
+sp_SelectReviewFrom_Coaching_Log(14).sql
+Last Modified Date: 05/14/2019
 Last Modified By: Susmitha Palacherla
 
+Version 14: Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 Version 13: Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
 Version 12: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 11: Modified to support OTA Report. TFS 12591 - 11/26/2018
@@ -30,6 +31,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 --	====================================================================
@@ -62,7 +65,8 @@ GO
 -- 21. Modified to incorporate PBH feed - TFS 11451 - 07/31/2018
 -- 22. Modified to support OTA Report. TFS 12591 - 11/26/2018
 -- 23. Modified to support Quality Now TFS 13332 -  03/01/2019
--- 24. Modified to add ConformedCSE. TFS 14049 - 04/26/2019
+-- 24. Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
+-- 25. Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -145,6 +149,7 @@ SET @nvcSQL2 = '
     CASE WHEN cl.[Review_MgrID] IS NOT NULL THEN vehMgr.Emp_Name
     ELSE cl.[Review_MgrID] END strReviewManager,
   cl.ReassignedToID,
+  cl.sourceid,
   sc.SubCoachingSource strSource,
   CASE 
     WHEN sc.SubCoachingSource in (''Verint-GDIT'', ''Verint-TQC'', ''LimeSurvey'', ''IQS'', ''Verint-GDIT Supervisor'') THEN 1 
@@ -271,7 +276,10 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 END --sp_SelectReviewFrom_Coaching_Log
 
 
+
+
 GO
+
 
 
 

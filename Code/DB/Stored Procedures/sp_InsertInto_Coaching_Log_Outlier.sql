@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Outlier(06).sql
-Last Modified Date: 11/23/2017
+sp_InsertInto_Coaching_Log_Outlier(07).sql
+Last Modified Date: 05/14/2019
 Last Modified By: Susmitha Palacherla
+
+Version 07: Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 
 Version 06: Modified to support Encryption of sensitive data. Opened Key and Removed LanID - TFS 7856 - 11/23/2017
 
@@ -34,6 +36,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
@@ -47,6 +51,7 @@ GO
 -- Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
 -- Updated to support additional Modules - TFS 8793 - 11/16/2017
 -- Modified to support Encryption of sensitive data. Opened Key and Removed LanID. TFS 7856 - 11/23/2017
+-- Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 @Count INT OUTPUT
@@ -110,7 +115,7 @@ select  Distinct LOWER(cs.CSR_EMPID)	[FormName],
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
         CASE WHEN cs.Report_Code LIKE 'MSR%'
-        THEN 232 ELSE 212 END	[SourceID],                        
+        THEN  [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])ELSE 212 END [SourceID],                        
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
         cs.CSR_EMPID                    [EmpID],
@@ -217,6 +222,8 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Outlier
+
+
 GO
 
 
