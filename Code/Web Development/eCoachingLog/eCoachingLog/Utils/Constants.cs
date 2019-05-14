@@ -81,7 +81,7 @@ namespace eCoachingLog.Utils
 		public const int MODULE_ANALYTICS_REPORTING = 7;
 		public const int MODULE_PRODUCTION_PLANNING = 8;
 		public const int MODULE_PROGRAM_ANALYST = 9;
-
+		// ec.dim_status table
 		public const int LOG_STATUS_UNKNOWN = 99999;
 		public const int LOG_STATUS_COMPLETED = 1;
 		public const int LOG_STATUS_INACTIVE = 2;
@@ -97,6 +97,9 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_LEVEL_2 = 2;
 		public const int LOG_STATUS_LEVEL_3 = 3;
 		public const int LOG_STATUS_LEVEL_4 = 4;
+
+		// ec.dim_source table
+		public const int SOURCE_INTERNAL_CCO_REPORTING = 218;
 
 		public static readonly List<string> EXCEL_SHEET_NAMES =
 			new List<string>() { "eCoachingLog", "Quality Now eCoachingLog" };
@@ -194,17 +197,19 @@ namespace eCoachingLog.Utils
 			"Please review the <b><a href='https://cco.gdit.com/bi/ReportsCatalog/AvayaBreakPolicyReporting/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a>, " +
 			"the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below.";
 
-		//Performance Scorecard MSR and MSRS static text
-		public const string REVIEW_SCORECARD_MSR = "To review your full details, please visit the " +
+		// Performance Scorecard MSR and MSRS static text
+		public const string REVIEW_MSR_PSCORECARD = "To review your full details, please visit the " +
 			"<a href='https://f3420-mwbp11/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
 			"If you have any questions, please see your supervisor.";
-
 		public const string REVIEW_SCORECARD_MSRS = "To review your full details, please visit the " +
 			"<a href='https://f3420-mwbp11/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
 			"If you have any questions, please " +
 			"<a href='https://cco.gdit.com/Reports/Performance_Scorecard/Lists/Scorecard_Escalated_Issues_Log/NewIssue.aspx' target='_blank'>submit an escalation</a> via the " +
 			"<a href='https://cco.gdit.com/Reports/Performance_Scorecard/default.aspx' target='_blank'>CCO Performance Scorecard Information Station</a> " +
 			"SharePoint site.";
+		
+		// Internal CCO Reporting MSR static text
+		public const string REVIEW_MSR_INTERNAL_CCO_REPORTING = "To view in full detail, your Supervisor will review your Performance Dashboard with you during your next coaching session. An overview of your scores is also contained within the eCL.";
 
 		// ETS/HNC ETS/ICC
 		// Currently this is only for CSRs. Data feeds loaded as Pending Supervisor Review.

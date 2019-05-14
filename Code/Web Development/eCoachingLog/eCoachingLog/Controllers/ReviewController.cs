@@ -512,8 +512,8 @@ namespace eCoachingLog.Controllers
 						!vm.LogDetail.IsHigh5Club &&
 						!vm.LogDetail.IsKudo &&
 						!vm.LogDetail.IsAttendance &&
-						!vm.LogDetail.IsScorecardMsr &&
-						!vm.LogDetail.IsScorecardMsrs) &&
+						!vm.LogDetail.IsMsr &&
+						!vm.LogDetail.IsMsrs) &&
 					(vm.LogDetail.IsEtsOae ||
 						vm.LogDetail.IsEtsOas ||
 						vm.LogDetail.IsOmrIae ||
@@ -582,8 +582,8 @@ namespace eCoachingLog.Controllers
 							!vm.LogDetail.IsHigh5Club &&
 							!vm.LogDetail.IsKudo &&
 							!vm.LogDetail.IsAttendance &&
-							!vm.LogDetail.IsScorecardMsr &&
-							!vm.LogDetail.IsScorecardMsrs);
+							!vm.LogDetail.IsMsr &&
+							!vm.LogDetail.IsMsrs);
 				}
 			}
 

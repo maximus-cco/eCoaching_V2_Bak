@@ -67,6 +67,7 @@ namespace eCoachingLog.Repository
 						logDetail.ModuleName = dataReader["Module"].ToString();
 						logDetail.ModuleId = (int)dataReader["ModuleId"];
 						logDetail.Source = dataReader["strSource"].ToString();
+						logDetail.SourceId = (int)dataReader["sourceid"];
                         logDetail.Status = dataReader["strFormStatus"].ToString();
 						logDetail.StatusId = Convert.ToInt16(dataReader["strStatusID"].ToString());
 						logDetail.Type = dataReader["strFormType"].ToString();
@@ -140,8 +141,8 @@ namespace eCoachingLog.Repository
 						logDetail.IsAttendance = Convert.ToInt16(dataReader["OTH / SEA"]) == 0 ? false : true;
 						logDetail.IsDtt = Convert.ToInt16(dataReader["OTH / DTT"]) == 0 ? false : true;
 
-						logDetail.IsScorecardMsr = Convert.ToInt16(dataReader["PSC / MSR"]) == 0 ? false : true;
-						logDetail.IsScorecardMsrs = Convert.ToInt16(dataReader["PSC / MSRS"]) == 0 ? false : true;
+						logDetail.IsMsr = Convert.ToInt16(dataReader["PSC / MSR"]) == 0 ? false : true;
+						logDetail.IsMsrs = Convert.ToInt16(dataReader["PSC / MSRS"]) == 0 ? false : true;
 
 						logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
 						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();

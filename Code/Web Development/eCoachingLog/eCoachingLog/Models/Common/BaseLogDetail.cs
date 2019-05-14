@@ -8,6 +8,7 @@ namespace eCoachingLog.Models.Common
         public long LogId { get; set; }
         public string FormName { get; set; }
         public string Source { get; set; }
+		public int SourceId { get; set; }
 		public int StatusId { get; set; }
         public string Status { get; set; }
         public string Type { get; set; }

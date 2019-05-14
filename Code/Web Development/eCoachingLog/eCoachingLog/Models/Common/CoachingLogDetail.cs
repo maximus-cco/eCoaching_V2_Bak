@@ -26,8 +26,8 @@ namespace eCoachingLog.Models.Common
 		public bool IsHigh5Club { get; set; }
 		public bool IsKudo { get; set; }
 		public bool IsAttendance { get; set; }
-		public bool IsScorecardMsr { get; set; }
-		public bool IsScorecardMsrs { get; set; }
+		public bool IsMsr { get; set; }
+		public bool IsMsrs { get; set; }
 		public bool IsLowCsat { get; set; }
 		public bool IsCurrentCoachingInitiative { get; set; }
 		public bool IsOmrException { get; set; }

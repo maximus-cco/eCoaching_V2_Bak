@@ -170,12 +170,16 @@ namespace eCoachingLog.Services
 				return Constants.REVIEW_QUALITY_KUDO_SUPERVISOR;
 			}
 
-			if (log.IsScorecardMsr)
+			if (log.IsMsr)
 			{
-				return Constants.REVIEW_SCORECARD_MSR;
+				if (Constants.SOURCE_INTERNAL_CCO_REPORTING == log.SourceId)
+				{
+					return Constants.REVIEW_MSR_INTERNAL_CCO_REPORTING;
+				}
+				return Constants.REVIEW_MSR_PSCORECARD;
 			}
 
-			if (log.IsScorecardMsrs)
+			if (log.IsMsrs)
 			{
 				return Constants.REVIEW_SCORECARD_MSRS;
 			}
