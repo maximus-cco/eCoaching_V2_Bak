@@ -1,0 +1,344 @@
+Application  Name       : CMS Marketplace Medicaid
+SISID                   : CM025824
+Appl Id                 : 0025824
+Netcap Id               : 0025824
+Platform/Bill Type      : NGSN/Networx ECR
+CorpID                  : 91366434
+EntryPt/Lterm           : 000/04119 [ARU=239] for Networx
+                          001/04120
+
+                     ECR for Options 1, 2 and 3
+                   ***** APPLICATION PROFILE *****
+
+======================================================================
+GENERAL INFORMATION REQUIRED FOR ALL APPLICATION PROFILES
+======================================================================
+
+ECR CALLFLOW LOGIC
+---------------------
+APPLICATION DEFAULTS:
+- This application is a "Networx ECR billing" application
+- This application MUST ONLY HAVE TNT and ANNOUNCE CONNECT BILLABLE ECR FEATURES ENABLED!!
+- This application MUST NOT exit with RLT, EXCEPT if/when extending
+  call as a "Type3" (8xx), and the DAP then returns Jump AppID/EP info.
+  These calls will be re-initiated as a "Type1" (DDD) extension,
+  allowing for RLT!!!
+- Callplan Header Requirements:
+  Entry Code MUST BE set to "46"
+  Billing Type MUST BE set to "3(ICDR,Networx)"
+- Ringtimer = 36 seconds (approx. 6 rings)
+- Timeout = 5 seconds
+- Caller hears call progress tones
+- All Call extensions to be set Type 1 (DDD) with RLT
+- If BNAR or jump failure: Play Message 6; End call
+
+===============================================================================================================
+
+Caller dials 855-879-2683       (Medicaid)
+
+
+INITIALIZE CCR AND VARIABLES    CCR_String = DNIS(sys.MSP.DNIS.number) 
+                                + Charge Party ANI(sys.MSP.CN.number)
+                                + Calling Party ANI(sys.MSP.CgPN.number) 
+                                + Entry Point(sys.application_suffix)
+                                + OLI (sys.MSP.orig_line_info) 
+                                 NOTE: fields are separated by commas
+                                Set CallStartDateTime = Current Date / Time 
+                                 (Eastern Time YYMMDDHHMMSS)
+                                Set SKILLCODE = "FFM_ET1".                               ***ADD 06/14/16***
+                                Set SKILLCODE_CCR = "FFM_ET1".                           ***ADD 06/14/16***
+                                Go to CHECK ENTRY POINT.
+
+
+CHECK ENTRY POINT               Check Entry Point (EP).
+ If EP=000 (Business Hours)     Play message 0001.
+                                Go to COLLECT ID NUMBER.
+
+ If EP=001 (Holiday)            Play message 0002 (uninterruptible). 
+                                End Call.
+
+ If EP=other                    Play 0.22.705, 0.22.684 & 0.22.312.  
+                                End call.
+
+
+COLLECT ID NUMBER               Play message 0003.
+                                Collect 10 digit number
+                                (# is an optional delimiter)
+
+  If 10 digits rec'd            Save 10 digits as ID_NUMBER
+                                Go to ID NUMBER LOOKUP
+
+  If Timeout
+    1st time                    Play message 0004.
+                                Go to COLLECT ID NUMBER
+    2nd time                    Play message 0006.
+                                Write "TO" to ID_NUMBER field of CCRs.
+                                End call.
+
+  If Invalid (input contains * or #)
+    1st time                    Play message 0005.
+                                Go to COLLECT ID NUMBER.
+    2nd time                    Play message 0006.
+                                Write "INV" to ID_NUMBER field of CCRs.
+                                End call.
+
+
+ID NUMBER LOOKUP                Using variable length ID_NUMBER as key,
+                                search CM020680_HIM_Medicaid_NDB
+                                table from CM020680/AppID 0020680 using
+                                procedure "CM020680_HIM_Medicaid_query".
+
+   If found                     Write "Found" to LOOKUP field of CCRs
+                                Go to GENERATE CALL COUNTER
+
+   If not found                 Write "Not found" to LOOKUP field of CCRs
+                                Extend call to 800-318-2596 (use type 1 call extn)
+                                RLT the call.
+
+   If NDB unavailable/fails     Using variable length ID_NUMBER as key,
+                                search DB18 table from CM020680/AppID 0020680.
+
+       If found                 Write "Found" to LOOKUP field of CCRs
+                                Go to GENERATE CALL COUNTER
+
+       If not found             Write "Not found" to LOOKUP field of CCRs
+                                Extend call to 800-318-2596 (use type 1 call extn)
+                                RLT the call.
+
+
+GENERATE CALL COUNTER           Use NDB procedure to generate a 4-digit counter.
+                                Begin counter at 0001 and increment by 1 each
+                                time NDB is accessed
+                                (counter resets or rolls over to 0001 when it 
+                                 reaches 9999).
+
+ If successful                  Set COUNTER = 4-digit counter,
+                                Go to CREATE CALL ID.
+
+ If procedure fails or
+ is unavailable                 Set COUNTER = '0000',
+                                Go to CREATE CALL ID.
+
+
+CREATE CALL ID                  Create a 26-digit JP_Call_ID for Jump Parameter 
+                                & a 31-character CCR_Call_ID for CCR_String:
+                                Set JP_Call_ID = CallStartDateTime + 
+                                 sys.MSP.ANI.number + COUNTER
+                                 (Example: YYMMDDHHMMSS71959912340001)
+                                Set CCR_Call_ID = '0100x' + JP_Call_ID
+                                 (Example: 0100xYYMMDDHHMMSS71959912340001)
+                                Go to SKILL MENU                                         ***CHG 06/14/16***
+
+
+SKILL MENU                      Play message 0008.                                       ***ADD 06/14/16***                                
+If caller presses
+  1 - Tech Assistance           Set SKILLCODE = "FFM_Spare1".
+      (Hidden)                  Set SKILLCODE_CCR = "FFM_Spare1".
+                                Go to FINALIZE CCR STRING
+
+  2 - SEP Help                  Set SKILLCODE = "FFM_ET2".
+                                Set SKILLCODE_CCR = "FFM_ET2".
+                                Go to FINALIZE CCR STRING
+
+  3 - Other Questions           Set SKILLCODE = "FFM_ET1".
+                                Set SKILLCODE_CCR = "FFM_ET1".
+                                Go to FINALIZE CCR STRING
+
+If Invalid
+  1st/2nd Time                  Play message 0005
+                                Go to SKILL MENU
+
+  3rd Time                      Play message 0006
+                                Write "INV" to SKILLCODE_CCR field of CCRs.
+                                End call.
+
+If No Response
+  1st/2nd Time                  Play message 0009
+                                Go to SKILL MENU
+
+  3rd Time                      Play message 0006
+                                Write "TO" to SKILLCODE_CCR field of CCRs.
+                                End call.
+
+
+FINALIZE CCR STRING             Set SKILLCODE = "FFM_ET1"                                ***DEL 06/14/16***
+                                Append CCR_String with ID_NUMBER, LOOKUP, 
+                                 SKILLCODE_CCR and CCR_Call_ID
+                                 NOTE: CCR fields are separated by commas
+                                Go to JUMP TO MESSAGING APP.
+
+
+JUMP TO MESSAGING APP           Play message 0007.
+                                Jump to appID 019911, EP_000.
+                                - Pass 26-digit JP_Call_ID in jump parameter 0.
+                                - Pass SKILLCODE in jump parameter 10.                   ***CHG 06/14/16***
+                                - Pass CCR_String in jump parameter 11.
+                                - Pass "FFM25824" in jump parameter 15.
+
+
+
+>>>>>>>>>><<<<<<<<<<
+
+Audio script
+-------------
+Talent: Gabriella/Walsh
+Tone:   Maintain Marketplace Persona
+
+0001
+Thank you for calling the Health Insurance Marketplace direct line.
+
+0002
+Thank you for calling the Health Insurance Marketplace direct line.  Our
+offices are closed in observance of the holiday. If you need to speak to a
+representative, please call back during our next business day. You also can
+go to Healthcare dot gov or follow us on twitter at Healthcaregov for
+Marketplace updates and information. Thank you for calling. Goodbye.
+
+0003
+Please enter your ten-digit ID number.
+
+0004
+You did not enter enough digits. Please try again.
+
+0005
+Your entry is invalid. Please try again.
+
+0006
+We cannot continue processing your call.
+Please hang up and call the Marketplace main number (800) 318-2596.
+
+0007
+This call may be monitored or recorded for quality and training purposes.
+
+0008                                                                                     ***ADD 06/14/16***
+If you need help with a special enrollment period, Press 2.
+If you have any other questions, Press 3.
+
+0008a (For Future Use)                                                                   ***ADD 06/14/16***
+For technical assistance, like password resets, Press 1.
+If you need help with a special enrollment period, Press 2.
+If you have any other questions, Press 3.
+
+0009                                                                                     ***ADD 06/14/16***
+Again...
+
+
+System messages
+---------------
+0.22.705  We're sorry.
+0.22.684  We cannot continue processing your call.
+0.22.312  Goodbye.
+
+
+END AUDIO
+
+----------------------------------------------------------------------
+ - REPORTS
+----------------------------------------------------------------------
+
+Subject Line for Standard Reports: CMS Marketplace Medicaid
+
+
+Standard Report Distribution Lists:
+-----------------------------------
+D1H, D7E, W1D, M1D, M7E
+vcshelpdesk@vcshelpdesk.com
+
+CCR/Survey Distribution Lists:
+------------------------------
+FTP Site: ipcc_Cms
+
+======================================================================
+EVS DEPARTMENT TECHNICAL SPECIFICATIONS
+======================================================================
+
+----------------------------------------------------------------------
+ - CCR's REQUIRED - NGSN PLATFORM
+----------------------------------------------------------------------
+
+  Data String Size     Items to Capture/Description
+  ----------------     ----------------------------
+        10             Pub Number/DNIS  * See note below
+        10             Charge Party ANI
+        10             Calling Party ANI
+         3             Entry Point
+         2             OLI (ii digits)
+        10             ID_NUMBER
+     Variable          LOOKUP
+     Variable          SKILLCODE_CCR
+        31             CCR_Call_ID  (example: 0100x08041714003071959912340001)
+
+  Example: '8886476701,7195997304,7195997304,000,62,5551231234,Found,FFM_ET1,
+            0100x08073009350071959973040004,1000wParked,PDurw0'
+
+  ** CCRs may contain Speech Callback Records. See Speech FRD for details.
+  Example: '8558684678,7195997304,7195997304,000,0,3122258659,Found,FFM_ET1,
+            0100x15021315122371959973040972,0050h__DS201,9110hSD007195997304,
+            9120hSS00evening'
+
+               * Capture the incoming DNIS value into a unique variable name,
+                 rather than using the system DNIS variable,
+                 to preserve the original DNIS value presented in the CCR,
+                 for scenarios when the DNIS gets overwritten prior to
+                 extending the caller to another ECR application.
+
+----------------------------------------------------------------------
+ - BILLING
+----------------------------------------------------------------------
+
+Entry Code            : 046
+
+Billable Databases    : n/a per Networx Billing CLINs
+  List DB numbers
+
+Billable Audio Messages
+
+ Menu                 : n/a per Networx Billing CLINs
+ Message Announcement : n/a per Networx Billing CLINs
+ Announced Connect    :
+ RAU                  : n/a per Networx Billing CLINs
+
+----------------------------------------------------------------------
+ - IE ASSIGNED
+----------------------------------------------------------------------
+
+   Implementation Engineer  : Jeff Ricks
+   Vnet                     : v622-6051
+
+======================================================================
+NOTES/COMMENTS
+======================================================================
+
+08/07/2013 JDR New application. (EATS-Chg0000)
+               Billing: EFH50638  
+                **Create Lterms for EP 000 & 001 on ARU 239
+
+10/05/2013 JDR AUDIO (EATS-Chg0001)
+               - Load new message 0001 which was edited with .5 seconds of 
+                 silence at the beginning to help with audio clipping.  
+               - Message is saved to Audio LAN at:
+                 F:\ALL\NGSN\AUDIO\C\CM025824
+               Billing: NA  
+
+06/14/2016 JDR  LOGIC/AUDIO  (SAMS-Chg0002) (CR102718 Marketplace Assister (Medicaid) Line change)
+                 INITIALIZE CCR AND VARIABLES:
+                  a. Set SKILLCODE = "FFM_ET1".
+                  b. Set SKILLCODE_CCR = "FFM_ET1".
+                 CREATE CALL ID:
+                  a. Change to go to new SKILL MENU 
+                 SKILL MENU:
+                  a. New skill selection menu.
+                 FINALIZE CCR STRING:
+                  a. Delete Set SKILLCODE = "FFM_ET1"
+                 JUMP TO MESSAGING APP:
+                  a. Change to pass variable SKILLCODE in jump parameter 10.
+                  
+                AUDIO: 
+                 a. Add and load message 0008 & 0009
+                 b. Record altername message 0008 for future use.
+
+                ///Billing #: Billed through Networx Universal Customer Center Portal
+
+NetCap ID: 0025824
+End document
+
