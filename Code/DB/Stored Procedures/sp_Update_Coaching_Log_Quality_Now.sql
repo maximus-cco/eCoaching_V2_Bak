@@ -1,8 +1,8 @@
 /*
-sp_Update_Coaching_Log_Quality_Now(02).sql
-Last Modified Date: 04/20/2019
+sp_Update_Coaching_Log_Quality_Now(03).sql
+Last Modified Date: 06/03/2019
 Last Modified By: Susmitha Palacherla
-
+Version 03: Fix bug with updates to QNStrengthsOpportunities  - TFS 14555 - 06/03/2019
 Version 02: Updates from Unit and System testing - TFS 13332 - 04/20/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
 */
@@ -29,6 +29,7 @@ GO
 -- Create Date:      03/01/2019
 -- Description:     This procedure updates the Quality Now scorecards in the Coaching_Log and QN_Evaluations tables. 
 -- Initial revision. TFS 13332 -  03/01/2019
+-- Fix bug with updates to QNStrengthsOpportunities  - TFS 14555 - 06/03/2019
 --    ===========================================================================================
 CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality_Now] AS
 BEGIN
@@ -113,7 +114,7 @@ BEGIN TRY
 	  AND QN_Strengths_Opportunities <> ''
 	  AND QN_Batch_Status = 'Active')qcs JOIN EC.Coaching_Log cl
 	  ON qcs.QN_Batch_ID = cl.QNBatchID
-	  WHERE qcs.[QN_Strengths_Opportunities] <> cl.QNStrengthsOpportunities;
+	    WHERE qcs.[QN_Strengths_Opportunities] <> ISNULL(cl.QNStrengthsOpportunities,'');
 
   -- Populates #Temp_Quality_Now_Evaluations_To_Update
   INSERT INTO #Temp_Quality_Now_Evaluations_To_Update
