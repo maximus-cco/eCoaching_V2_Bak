@@ -1,7 +1,9 @@
 /*
-sp_Update_ETS_Coaching_Stage(04).sql
-Last Modified Date: 11/27/2017
+sp_Update_ETS_Coaching_Stage(05).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
+
+Version 05: Updated to support Maximus IDs - TFS 13777 - 05/29/2019
 
 Version 04: Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 
@@ -46,6 +48,7 @@ GO
 -- Updated to support reused numeric part of Employee ID per TFS 6011 - 03/21/2017
 -- Modified to incorporate HNC and ICC Reports - TFS 7174 - 07/21/2017
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
+-- Updated to support Maximus IDs - TFS 13777 - 05/29/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_ETS_Coaching_Stage] 
 @Count INT OUTPUT
@@ -55,17 +58,6 @@ BEGIN
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
-BEGIN
-UPDATE [EC].[ETS_Coaching_Stage]
-SET [Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Emp_ID])),' ',''))
-WHERE [Emp_ID] NOT IN
- (SELECT DISTINCT [Emp_ID]FROM [EC].[Employee_Ids_With_Prefixes])
-OPTION (MAXDOP 1)
-END  
-    
-    
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
-    
 -- Populate Attributes from Employee Table
 BEGIN
 UPDATE [EC].[ETS_Coaching_Stage]
@@ -75,7 +67,7 @@ SET [Emp_LanID] = CONVERT(nvarchar(30),DecryptByKey(EMP.[Emp_LanID]))
     ,[Emp_SupID]= EMP.[Sup_ID]
     ,[Emp_MgrID]= EMP.[Mgr_ID]
     ,[Emp_Role]= 
-    CASE WHEN EMP.[Emp_Job_Code]in ('WACS01', 'WACS02','WACS03') THEN 'C'
+    CASE WHEN EMP.[Emp_Job_Code] LIKE 'WACS0%' THEN 'C'
     WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
     ELSE 'O' END
     ,[TextDescription] = 

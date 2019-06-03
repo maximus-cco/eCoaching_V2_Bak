@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Generic(03).sql
-Last Modified Date: 10/23/2017
+sp_InsertInto_Coaching_Log_Generic(04).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
+
+Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 
 Version 03: Modified to support Encryption of sensitive data. Open Key and Removed LanID- TFS 7856 - 10/23/2017
 
@@ -40,6 +42,7 @@ GO
 -- Modified to support ad-hoc loads by adding more values to the file. TFS 4916 - 12/9/2016
 -- Modified to support DTT feed. TFS 7646 - 8/31/2017
 -- Modified to support Encryption of sensitive data. Open Key and Removed LanID. TFS 7856 - 10/23/2017
+-- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
 @Count INT OUTPUT
@@ -51,12 +54,8 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
 
-      DECLARE @maxnumID INT,
-              @dtmDate DATETIME
-                        
-      -- Fetches the maximum CoachingID before the insert.
-      SET @maxnumID = (SELECT IsNULL(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
-      -- Fetches the Date of the Insert
+      DECLARE @dtmDate DATETIME
+	  -- Fetches the Date of the Insert
       SET @dtmDate  = GETDATE()   
   
 OPEN SYMMETRIC KEY [CoachingKey]  
@@ -177,7 +176,7 @@ SELECT @Count =@@ROWCOUNT
 WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
 UPDATE [EC].[Coaching_Log]
-SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+SET [FormName] = 'eCL-M-'+[FormName] +'-'+ convert(varchar,CoachingID)
 where [FormName] not like 'eCL%'    
 OPTION (MAXDOP 1)
 

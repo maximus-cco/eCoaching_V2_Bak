@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Outlier(07).sql
-Last Modified Date: 05/14/2019
+sp_InsertInto_Coaching_Log_Outlier(08).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
+
+Version 08: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 
 Version 07: Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 
@@ -52,6 +54,7 @@ GO
 -- Updated to support additional Modules - TFS 8793 - 11/16/2017
 -- Modified to support Encryption of sensitive data. Opened Key and Removed LanID. TFS 7856 - 11/23/2017
 -- Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
+-- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 @Count INT OUTPUT
@@ -63,7 +66,7 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
 
-      DECLARE @maxnumID INT,
+      DECLARE 
               @dtmDate DATETIME,
               @strLCSPretext nvarchar(200),
               @strIAEPretext nvarchar(200),
@@ -73,8 +76,7 @@ BEGIN TRY
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert] 
 
-      -- Fetches the maximum CoachingID before the insert.
-      SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
+ 
       -- Fetches the Date of the Insert
       SET @dtmDate  = GETDATE()   
       SET @strLCSPretext = 'The call associated with this Low CSAT is Verint ID: '
@@ -156,7 +158,7 @@ SELECT @Count =@@ROWCOUNT
 WAITFOR DELAY '00:00:00:02'  -- Wait for 2 ms
 
 UPDATE [EC].[Coaching_Log]
-SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+SET [FormName] = 'eCL-M-'+[FormName] +'-'+ convert(varchar,CoachingID)
 where [FormName] not like 'eCL%'    
 OPTION (MAXDOP 1)
 

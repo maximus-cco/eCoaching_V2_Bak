@@ -1,9 +1,9 @@
 /*
-sp_Update_Generic_Coaching_Stage(02).sql
-Last Modified Date:  11/27/2017
+sp_Update_Generic_Coaching_Stage(03).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 03: Updated to support Maximus IDs - TFS 13777 - 05/29/2019
 Version 02:Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 Version 01: Document Initial Revision - Added support for DTT generic feed. - TFS 7646 - 9/1/2017
 */
@@ -41,6 +41,7 @@ GO
 -- Revision History
 -- Initial Revision. DTT Feed - TFS 7646 - 08/31/2017
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
+-- Updated to support Maximus IDs - TFS 13777 - 05/29/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Generic_Coaching_Stage] 
 @Count INT OUTPUT
@@ -69,7 +70,7 @@ SET [CSR_LANID] = [EC].[fn_strEmpLanIDFromEmpID]([CSR_EMPID])
     ,[CSR_Site]= EMP.[Emp_Site]
     ,[Program]= EMP.[Emp_Program]
     ,[Emp_Role]= 
-    CASE WHEN EMP.[Emp_Job_Code]in ('WACS01', 'WACS02','WACS03') THEN 'C'
+    CASE WHEN EMP.[Emp_Job_Code] like 'WACS0%' THEN 'C'
     WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
 	WHEN EMP.[Emp_Job_Code] IN ('WACQ02','WACQ03','WACQ12') THEN 'Q'
     WHEN EMP.[Emp_Job_Code] IN ('WIHD01','WIHD02','WIHD03','WIHD04') THEN 'L'

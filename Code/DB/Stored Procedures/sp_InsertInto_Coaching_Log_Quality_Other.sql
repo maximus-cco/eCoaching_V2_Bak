@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Other(05).sql
-Last Modified Date: 11/29/2018
+sp_InsertInto_Coaching_Log_Quality_Other(06).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
+
+Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 
 Version 05: Modified to support Quality OTA feed - TFS 12591 - 11/26/2018
 
@@ -47,6 +49,7 @@ GO
 -- Update: Get NPN Description from table. TFS 5649 - 02/17/2017
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 -- Modified to support OTA Report. TFS 12591 - 11/26/2018
+-- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 @Count INT OUTPUT
@@ -58,13 +61,10 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
 
-      DECLARE @maxnumID INT,
-              @dtmDate DATETIME
+       DECLARE @dtmDate DATETIME
                         
-      -- Fetches the maximum CoachingID before the insert.
-      SET @maxnumID = (SELECT IsNULL(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
       -- Fetches the Date of the Insert
-      SET @dtmDate  = GETDATE()   
+      SET @dtmDate  = GETDATE()     
 
 -- Open the symmetric key with which to encrypt the data.  
 OPEN SYMMETRIC KEY [CoachingKey]  
@@ -152,7 +152,7 @@ WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
 
 UPDATE [EC].[Coaching_Log]
-SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+SET [FormName] = 'eCL-M-'+[FormName] +'-'+ convert(varchar,CoachingID)
 where [FormName] not like 'eCL%'    
 OPTION (MAXDOP 1)
 

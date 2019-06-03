@@ -1,8 +1,9 @@
 /*
-sp_Update_Outlier_Coaching_Stage(05.sql
-Last Modified Date: 11/27/2017
+sp_Update_Outlier_Coaching_Stage(06).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
 
+Version 06: Updated to support Maximus IDs - TFS 13777 - 05/29/2019
 
 Version 05: Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 
@@ -43,6 +44,7 @@ GO
 -- Updated to fix typo in Missing Site and Comments - TFS 6147 - 06/02/2017
 -- Added Additional Job codes and Roles - TFS 8793 - 11/16/2017
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
+-- Updated to support Maximus IDs - TFS 13777 - 05/29/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage] 
 @Count INT OUTPUT
@@ -67,21 +69,6 @@ WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 -- (All Other OMR Files)
 
 -- For Files where EmpID sent in strCSR. Copy it to EmpID
--- Prior to copying remove prefix in Value if Emp ID in Employee Hierarchy table does not have prefix
-
-BEGIN
-UPDATE [EC].[Outlier_Coaching_Stage]
-SET [CSR_LANID]= [eh].[Emp_ID]
-FROM [EC].[Outlier_Coaching_Stage] os JOIN [EC].[Employee_Hierarchy] eh 
-ON os.[CSR_LANID] = eh.[Emp_ID_Prefix]
-WHERE NOT ISNULL([CSR_LANID],' ') like '%.%'
-AND [CSR_EMPID] IS NULL
-AND [CSR_LANID] NOT IN
- (SELECT DISTINCT [Emp_ID]FROM [EC].[Employee_Ids_With_Prefixes])
-OPTION (MAXDOP 1)
-END 
- 
-WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 BEGIN
 UPDATE [EC].[Outlier_Coaching_Stage]
@@ -91,7 +78,6 @@ OPTION (MAXDOP 1)
 END 
  
 WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms  
-
   
 
 -- Replace above copied EmpIds with LANIds
@@ -156,7 +142,7 @@ WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 BEGIN
 UPDATE [EC].[Outlier_Coaching_Stage]
 SET [Emp_Role]= 
-    CASE WHEN EMP.[Emp_Job_Code]in ('WACS01', 'WACS02','WACS03') THEN 'C'
+    CASE WHEN EMP.[Emp_Job_Code] like 'WACS0%' THEN 'C'
     WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
     WHEN  EMP.[Emp_Job_Code]in ('WACQ02', 'WACQ03','WACQ12') THEN 'Q'
     WHEN  EMP.[Emp_Job_Code]in ('WIHD01','WIHD02','WIHD03','WIHD04', 'WABA11', 'WISA03') THEN 'L'
@@ -203,6 +189,8 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 
 END  -- [EC].[sp_Update_Outlier_Coaching_Stage]
 
+
 GO
+
 
 

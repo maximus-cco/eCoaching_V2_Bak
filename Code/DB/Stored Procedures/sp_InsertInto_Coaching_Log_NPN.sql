@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_NPN(04).sql
-Last Modified Date: 1/15/2019
+sp_InsertInto_Coaching_Log_NPN(05).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
 
+Version 05: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 Version 04: Modified to decrease coaching_log table locking time TFS 13282 - 1/15/2019
 Version 03: Modified to support Encryption of sensitive data. Removed LanID - TFS 7856 - 10/23/2017
 Version 02: Additional update from V&V feedback - TFS 5653 - 03/02/2017
@@ -34,6 +35,7 @@ GO
 -- Initial Revision - Created as part of  TFS 5653 - 02/28/2017
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 -- Modified to decrease coaching_log table locking time TFS 13282- 1/15/2019
+-- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 --    ====================================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_NPN]
 AS
@@ -142,7 +144,7 @@ BEGIN
 
       -- Update formname for the inserted logs
 	  UPDATE EC.Coaching_Log 
-	  SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
+	  SET FormName = 'eCL-M-' + FormName + '-' + convert(varchar,CoachingID)
 	  FROM @logsInserted 
 	  WHERE CoachingID IN (SELECT * FROM @logsInserted);
 

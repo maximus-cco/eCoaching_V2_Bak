@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Now(03).sql
-Last Modified Date: 04/20/2019
+sp_InsertInto_Coaching_Log_Quality_Now(04).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 Version 03: Additional Changes from V&V - TFS 13332 - 04/20/2019
 Version 02: Updates from Unit and System testing - TFS 13332 - 04/04/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
@@ -32,7 +33,7 @@ GO
 -- Individual Evaluation details are written to the Coaching_Log_QN_Evaluations table       
 -- The Coaching Reasons are written to the Coaching_Reasons Table.
 -- Initial revision. TFS 13332 -  03/01/2019
-
+-- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 --    =======================================================================================
 
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
@@ -145,7 +146,7 @@ BEGIN
     -- Update formname for the inserted logs
 
 	  UPDATE EC.Coaching_Log 
-	  SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
+	  SET FormName = 'eCL-M-' + FormName + '-' + convert(varchar,CoachingID)
 	  FROM @logsInserted 
 	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted);  
 

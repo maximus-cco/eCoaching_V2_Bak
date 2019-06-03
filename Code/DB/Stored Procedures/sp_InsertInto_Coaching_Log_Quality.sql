@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality(05).sql
-Last Modified Date: 1/15/2019
-Last Modified By: Lili Huang
+sp_InsertInto_Coaching_Log_Quality(06).sql
+Last Modified Date: 05/29/2019
+Last Modified By: Susmitha Palacherla
 
+Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 Version 05: Modified to decrease coaching_log table locking time TFS 13282 - 1/15/2019
 Version 04: Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
 Version 03: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
@@ -40,6 +41,7 @@ GO
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 -- Modified to handle inactive evaluations. TFS 9204 - 03/26/2018
 -- Modified to decrease coaching_log table locking time TFS 13282 - 1/15/2019 LH
+-- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 --    =======================================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality]
 @Count INT OUTPUT
@@ -49,15 +51,14 @@ BEGIN
   SET NOCOUNT ON;
   SET XACT_ABORT ON;
   
-  DECLARE @maxnumID INT, @strSourceType NVARCHAR(20);
+  DECLARE @strSourceType NVARCHAR(20);
   DECLARE @logsInserted TABLE ( 
-    CoachingLogID bigint,
-	ModuleID int,
-	VerintEvalID nvarchar(20) 
+          CoachingLogID bigint,
+	  ModuleID int,
+	  VerintEvalID nvarchar(20) 
   );
+ 
 
-  -- Fetches the maximum CoachingID before the insert.
-  SET @maxnumID = (SELECT IsNUll(MAX(CoachingID), 0) FROM EC.Coaching_Log);    
   SET @strSourceType = 'Indirect'; 
 
   CREATE TABLE #Temp_Logs_To_Insert (
@@ -162,7 +163,7 @@ BEGIN
 
       -- Update formname for the inserted logs
 	  UPDATE EC.Coaching_Log 
-	  SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
+	  SET FormName = 'eCL-M-' + FormName + '-' + convert(varchar,CoachingID)
 	  FROM @logsInserted 
 	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted);  
 

@@ -1,7 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Training(02).sql
-Last Modified Date: 10/23/2017
+sp_InsertInto_Coaching_Log_Training(03).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
+
+Version 03: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
 
@@ -30,6 +32,7 @@ GO
 -- Create date:        3/22/2016
 --  Created per TFS 2283 to load the Training feed(s) SDR and ODT
 -- Modified to support Encryption of sensitive data. Opened Key and Removed LanID. TFS 7856 - 10/23/2017
+-- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Training]
 @Count INT OUTPUT
@@ -45,13 +48,9 @@ BEGIN TRY
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert];  
 
-      DECLARE @maxnumID INT,
-              @dtmDate DATETIME
-                        
-      -- Fetches the maximum CoachingID before the insert.
-      SET @maxnumID = (SELECT IsNULL(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])  
+      DECLARE @dtmDate DATETIME
       -- Fetches the Date of the Insert
-      SET @dtmDate  = GETDATE()   
+      SET @dtmDate  = GETDATE()  
       
 -- Inserts records from the Training_Coaching_Stage table to the Coaching_Log Table
 
@@ -119,7 +118,7 @@ SELECT @Count =@@ROWCOUNT
 WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
 UPDATE [EC].[Coaching_Log]
-SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+SET [FormName] = 'eCL-M-'+[FormName] +'-'+ convert(varchar,CoachingID)
 where [FormName] not like 'eCL%'    
 OPTION (MAXDOP 1)
 

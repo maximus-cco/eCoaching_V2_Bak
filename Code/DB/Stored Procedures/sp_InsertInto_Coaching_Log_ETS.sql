@@ -1,11 +1,10 @@
 /*
-sp_InsertInto_Coaching_Log_ETS(02).sql
-Last Modified Date: 10/23/2017
+sp_InsertInto_Coaching_Log_ETS(03).sql
+Last Modified Date: 05/29/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 Version 02: Modified to support Encryption of sensitive data. Removed LanID - TFS 7856 - 10/23/2017
-
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -25,12 +24,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      11/07/2014
@@ -40,7 +33,7 @@ GO
 -- Revision History: 
 -- Changes for incorporating Compliance Reports per SCR 14031- 01/06/2015
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
-
+-- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_ETS]
 @Count INT OUTPUT
@@ -52,9 +45,7 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
       
-      DECLARE @maxnumID INT
-       -- Fetches the maximum CoachingID before the insert.
-      SET @maxnumID = (SELECT IsNUll(MAX([CoachingID]), 0) FROM [EC].[Coaching_Log])    
+ 
       
       
       -- Inserts records from the Quality_Coaching_Stage table to the Coaching_Log Table
@@ -90,7 +81,7 @@ BEGIN TRY
             221             [SourceID],
             CASE es.emp_role when 'C' THEN 6 
             WHEN 'S' THEN 5 ELSE -1 END[StatusID],
-            [EC].[fn_intSiteIDFromEmpID](LTRIM(es.EMP_ID))[SiteID],
+            ISNULL([EC].[fn_intSiteIDFromEmpID](LTRIM(es.EMP_ID)), -1)[SiteID],
             es.EMP_ID [EmpID],
             '999999'	 [SubmitterID],       
             es.Event_Date [EventDate],
@@ -121,7 +112,7 @@ SELECT @Count =@@ROWCOUNT
 WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
 UPDATE [EC].[Coaching_Log]
-SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,CoachingID)
+SET [FormName] = 'eCL-M-'+[FormName] +'-'+ convert(varchar,CoachingID)
 where [FormName] not like 'eCL%'    
 OPTION (MAXDOP 1)
 
