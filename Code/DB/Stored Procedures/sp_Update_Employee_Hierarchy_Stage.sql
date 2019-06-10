@@ -1,8 +1,9 @@
 /*
-sp_Update_Employee_Hierarchy_Stage(05).sql
-Last Modified Date: 04/29/2019
+sp_Update_Employee_Hierarchy_Stage(06).sql
+Last Modified Date: 05/22/2019
 Last Modified By: Susmitha Palacherla
 
+Version 06: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 Version 05: Modified to relax Deletes for missing Hierarchy - TFS 14249 - 04/29/2019
 Version 04: Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 Version 03: Updated to revise logic for supporting reused numeric part of Employee ID per TFS 8228 - 9/22/2017
@@ -27,6 +28,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/2/2013
@@ -50,6 +53,7 @@ GO
 -- Updated to revise logic for supporting reused numeric part of Employee ID per TFS 8228 - 9/22/2017
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- Modified to relax Deletes for missing Hierarchy - TFS 14249 - 04/29/2019
+-- Modified to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage] 
 AS
@@ -84,7 +88,7 @@ WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
 
 
--- Set Unecctypted name and Lan ID to NULL in Emp ID TO Sup ID Aspect data Staging table
+-- Set Unencrypted name and Lan ID to NULL in Emp ID TO Sup ID Aspect data Staging table
 
 BEGIN
 
@@ -94,15 +98,6 @@ SET [Emp_Name_Drop] = NULL
  
 OPTION (MAXDOP 1)
 END  
-WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
-
-
--- Delete records where Employee ID is a missing or a blank.
-BEGIN
-DELETE FROM [EC].[Employee_Hierarchy_Stage]
-WHERE EMP_ID = ' ' or  EMP_ID is NULL
-OPTION (MAXDOP 1)
-END
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
 -- Populate Emp_Name with Primary Name where No preferred Name populated.
@@ -115,83 +110,6 @@ WHERE LTRIM(RTRIM(Emp_Name)) = ','
 OPTION (MAXDOP 1)
 END  
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
-
-
--- Removes Alpha characters from first 2 positions of Sup_EMP_ID, Mgr_Emp_ID
--- and removes all leading and trailing spaces.
--- Removes # from LanID and Email address of inactive employees
-BEGIN
-UPDATE [EC].[Employee_Hierarchy_Stage]
-SET [Sup_EMP_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Sup_EMP_ID])),' ','')),
-    [Mgr_Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Mgr_Emp_ID])),' ','')),
-    [Emp_LanID]= REPLACE([Emp_LanID], '#',''),
-    [Emp_Email]= REPLACE([Emp_Email], '#','')
- 
-OPTION (MAXDOP 1)
-END  
- WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
-
--- Updates Hierarchy table to populate Hire_date with Start_Date and Employee ID with prefix if
--- record available in Staging table
-BEGIN
-UPDATE eh
-SET  [Emp_ID_Prefix] = hs.[Emp_ID]
-,[Hire_Date]= CONVERT(nvarchar(8),hs.[Hire_Date],112)
-From [EC].[Employee_hierarchy] eh Join [EC].[Employee_Hierarchy_Stage]hs
-ON REPLACE(LTRIM(RTRIM(eh.[Emp_ID])),' ','') = [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(HS.[Emp_ID])),' ',''))
-AND ([EC].[fn_strEmpFirstNameFromEmpName] (hs.Emp_Pri_Name) = [EC].[fn_strEmpFirstNameFromEmpName] (CONVERT(nvarchar(50),DecryptByKey(eh.Emp_Pri_Name)))
- OR [EC].[fn_strEmpLastNameFromEmpName] (hs.Emp_Pri_Name) =[EC].[fn_strEmpLastNameFromEmpName] (CONVERT(nvarchar(50),DecryptByKey(eh.emp_Pri_Name))))
- Where eh.Emp_ID_Prefix like 'WX%'
- 
-OPTION (MAXDOP 1)
-END  
- WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
-
-
- -- Inserts Employee Ids sharing the numeric part of an existing Employee IDs
- -- into a tracking table
-
-BEGIN
-INSERT INTO [EC].[Employee_Ids_With_Prefixes]
-	([Emp_ID],[Emp_Name],[Emp_LanID],[Start_Date],[Inserted_Date])
-
-     SELECT S.[Emp_ID],
-	   S.[Emp_Name],
-	   S.[Emp_LanID],
-	   S.[Start_Date],
-	   GETDATE()[Inserted_Date]
- FROM 
- (SELECT HS.[Emp_ID],
-		EncryptByKey(Key_GUID('CoachingKey'), HS.[Emp_Name])[Emp_Name],
-		EncryptByKey(Key_GUID('CoachingKey'), HS.[Emp_LanID])[Emp_LanID],
-		HS.[Start_Date]
-  FROM [EC].[Employee_Hierarchy_Stage]HS LEFT OUTER JOIN[EC].[Employee_Hierarchy]H
-  ON [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM(HS.[Emp_ID])),' ',''))= H.[Emp_ID]
-	  WHERE CONVERT(nvarchar(8),HS.[Hire_Date],112) <> H.Hire_Date
-	  AND REPLACE(LTRIM(RTRIM(HS.[Emp_ID_Prefix])),' ','') <> REPLACE(LTRIM(RTRIM(H.[Emp_ID_Prefix])),' ','')
-	  AND HS.[Emp_ID] NOT IN 
- (SELECT DISTINCT EMPID FROM [EC].[EmployeeID_To_LanID])
- )S LEFT OUTER JOIN [EC].[Employee_Ids_With_Prefixes]PE
- ON S.Emp_ID = PE.Emp_ID
- WHERE PE.Emp_ID IS NULL
- 
-OPTION (MAXDOP 1)
-END 
-WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
-
--- Removes Alpha characters from first 2 positions of Emp_ID
--- and removes all leading and trailing spaces for those Employees
--- that do not need the prefix retained for uniqueness.
-
-BEGIN
-UPDATE [EC].[Employee_Hierarchy_Stage]
-SET [Emp_ID]= [EC].[RemoveAlphaCharacters](REPLACE(LTRIM(RTRIM([Emp_ID])),' ',''))
-WHERE [Emp_ID] NOT IN
- (SELECT DISTINCT [Emp_ID]FROM [EC].[Employee_Ids_With_Prefixes])
- 
-OPTION (MAXDOP 1)
-END  
- WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
 -- Remove leading and trailing spaces from Emp and Sup Ids from EWFM.
 BEGIN
@@ -211,12 +129,10 @@ CASE WHEN WFMSUP.[Emp_Program]like 'FFM%'
 THEN 'Marketplace' ELSE 'Medicare' END
 FROM [EC].[EmpID_To_SupID_Stage] WFMSUP JOIN [EC].[Employee_Hierarchy_Stage]HS
 ON WFMSUP.Emp_ID = HS.Emp_ID
-WHERE HS.[Emp_Job_Code]in ('WACS01','WACS02','WACS03')
+WHERE HS.[Emp_Job_Code] like 'WACS0%'
 OPTION (MAXDOP 1)
 END
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
-
-
 
 
 -- Update Mgr_Emp_ID to be Supervisor's supervisor
@@ -232,12 +148,9 @@ WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 -- This will ensure that all users with missing sup id and mgr id will not be in the Employee_Hierarchy table.
 BEGIN
 
-
 DELETE FROM [EC].[Employee_Hierarchy_Stage]
 WHERE EMP_JOB_CODE IN (SELECT DISTINCT JOB_CODE FROM EC.Employee_Selection)
 AND ([Sup_Emp_ID] = ' ' OR [Sup_Emp_ID] is NULL OR [Mgr_Emp_ID] = ' ' OR  [Mgr_Emp_ID] is NULL)
-
-
 
 OPTION (MAXDOP 1)
 END
@@ -328,8 +241,8 @@ END TRY
   END CATCH  
 
 END  -- [EC].[sp_Update_Employee_Hierarchy_Stage]
+
+
 GO
-
-
 
 

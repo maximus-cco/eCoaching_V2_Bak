@@ -1,12 +1,11 @@
 /*
-sp_Merge_HR_Employee_Hierarchy_Stage(03).sql
-Last Modified Date: 11/15/2017
+sp_Merge_HR_Employee_Hierarchy_Stage(04).sql
+Last Modified Date: 05/22/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 Version 03: Updated to populate 'Exempt' in FLSA status - TFS 8974  - 11/15/2017
-
 Version 02:  Updated to populate Emp ID With Prefix and Hire date - TFS 8228 - 09/21/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -20,12 +19,13 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 04/6/2016
@@ -37,6 +37,7 @@ GO
 -- Initial Revision - TFS 2332 - 4/6/2016
 -- Updated to populate Emp ID With Prefix and Hire date - TFS 8228 - 09/21/2017
 -- Updated to populate 'Exempt' in FLSA status - TFS 8974  - 11/10/2017
+-- Modified to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
 AS
@@ -87,7 +88,7 @@ BEGIN
            ,[Mgr_Emp_ID]
            ,[Start_Date]
            ,[Active]
-		   ,[Emp_ID_Prefix]
+		   ,[Legacy_Emp_ID]
 	       ,[Hire_Date]
 		   ,[Emp_Pri_Name]
            ,[Dept_ID]
@@ -95,7 +96,7 @@ BEGIN
            ,[Reg_Temp]
            ,[Full_Part_Time]
 		   ,[FLSA_Status])
-							 SELECT S.[Emp_ID_Prefix]
+							 SELECT S.[Emp_ID]
 									  ,S.[Emp_Name]
 									  ,S.[Emp_Email]
 									  ,S.[Emp_Site]
@@ -107,7 +108,7 @@ BEGIN
 									  ,'999999'
 									  ,ISNULL(S.[Start_Date], GETDATE())
 									  ,'A'
-									  ,S.[Emp_ID_Prefix]
+									  ,S.[Legacy_Emp_ID]
 	                                  ,S.[Hire_Date]
 									  ,S.[Emp_Name]
 									  ,'NA'
@@ -125,4 +126,7 @@ END
 
 END --sp_Merge_HR_Employee_Hierarchy_Stage
 
+
 GO
+
+

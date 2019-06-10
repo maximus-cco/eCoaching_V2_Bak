@@ -1,8 +1,9 @@
 /*
-sp_InactivateCoachingLogsForTerms(02).sql
-Last Modified Date: 10/23/2017
+sp_InactivateCoachingLogsForTerms(03).sql
+Last Modified Date: 05/22/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 Version 02: Modified to support Encryption of sensitive data -Removed joins on LanID - TFS 7856 - 10/23/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -20,12 +21,9 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
 
 
 -- =============================================
@@ -39,6 +37,7 @@ GO
 -- Admin tool setup per TFS 1709-  To log Inactivations in audit tables - 4/27/12016
 -- Updated to not Inactivate Warning logs for termed Employees per TFS 3441 - 09/08/2016
 --  Modified to support Encryption of sensitive data. Removed joins on LanID. TFS 7856 - 10/23/2017
+-- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
 AS
@@ -188,6 +187,7 @@ AND C.[StatusID] not in (1,2)
 OPTION (MAXDOP 1)
 END
 
+
 WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 -- Log records being inactivated to Audit table and 
@@ -236,58 +236,6 @@ AND C.[StatusID] not in (1,2)
 OPTION (MAXDOP 1)
 END
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
-
--- Log records being inactivated to Audit table and 
--- Inactivate Coaching logs for CSRs and Sup Module eCLs for Employees not arriving in eWFM feed.
-
-
-SET @EWFMSiteCount = (SELECT count(DISTINCT Emp_Site_Code) FROM [EC].[EmpID_To_SupID_Stage])
-IF @EWFMSiteCount >= 14
-
-
-
-BEGIN
-INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
-           ([CoachingID]
-           ,[FormName]
-           ,[LastKnownStatus]
-           ,[Action]
-           ,[ActionTimestamp]
-           ,[RequesterID]
-           ,[Reason]
-           ,[RequesterComments]
-          )
-   SELECT C.CoachingID
-		 ,C.FormName
-		 ,C.StatusID
-		 ,'Inactivate'
-		 ,GetDate()
-		 ,'999998'
-		 ,'Employee not in feed'
-		 ,'Employee Hierarchy Load Process'
-FROM [EC].[Coaching_Log] C LEFT OUTER JOIN [EC].[EmpID_To_SupID_Stage] S
-ON C.EMPID = LTRIM(S.EMP_ID)
-WHERE C.[StatusID] not in (1,2)
-AND C.[ModuleID]  in (1,2)
-AND S.EMP_ID IS NULL
-OPTION (MAXDOP 1)
-END
-		 
-
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
-
-BEGIN
-UPDATE [EC].[Coaching_Log]
-SET [StatusID] = 2
-FROM [EC].[Coaching_Log] C LEFT OUTER JOIN [EC].[EmpID_To_SupID_Stage] S
-ON C.EMPID = LTRIM(S.EMP_ID)
-WHERE C.[StatusID] not in (1,2)
-AND C.[ModuleID]  in (1,2)
-AND S.EMP_ID IS NULL
-OPTION (MAXDOP 1)
-END
-
 
 COMMIT TRANSACTION
 END TRY
@@ -297,6 +245,7 @@ END TRY
   END CATCH
 
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
-
-
 GO
+
+
+

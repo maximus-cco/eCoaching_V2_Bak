@@ -1,19 +1,14 @@
 /*
-sp_Populate_Employee_Hierarchy(06).sql
-Last Modified Date: 12/21/2018
+sp_Populate_Employee_Hierarchy(07).sql
+Last Modified Date: 05/22/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 07: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 Version 06:  Cross check employees on Leave against Aspect data - TFS 13074 - 12/21/2018
-
 Version 05:  Updated to support Encryption of sensitive data - TFS 7856 - 11/17/2017
-
 Version 04:  Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
-
 Version 03: Updated to populate preferred name and Hire date attributes. TFS 8228 - 09/21/2017
-
 Version 02: Change how email addresses with apostrophes are stored - TFS 6614 - 5/17/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -27,13 +22,11 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Populate_Employee_Hierarchy]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 
 -- =============================================
@@ -48,6 +41,7 @@ GO
 -- Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/17/2017
 -- Updated to cross check employees on Leave against Aspect data - TFS 13074 - 12/21/2018
+-- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
@@ -149,6 +143,9 @@ BEGIN
 			   ,[Emp_Job_Code]
 			   ,[Emp_Job_Description]
 			   ,[Emp_program]
+			   ,[Active]
+			   ,[Hire_Date]
+			   ,[Start_Date]
 			   ,[Sup_ID]
 			   ,[Sup_Name]
 			   ,[Sup_Email]
@@ -161,17 +158,16 @@ BEGIN
 			   ,[Mgr_LanID]
 			   ,[Mgr_Job_Code]
 			   ,[Mgr_Job_Description]
-			   ,[Start_Date]
-			   ,[Active]
-			   ,[Emp_ID_Prefix]
-			   ,[Hire_Date]
-			   ,[Emp_Pri_Name]
-		       ,[Dept_ID]
+			   ,[Dept_ID]
 		       ,[Dept_Description]
 		       ,[Reg_Temp]
 			   ,[Full_Part_Time]
 			   ,[Term_Date]
 			   ,[FLSA_Status]
+			   ,[Legacy_Emp_ID]
+			   ,[PS_Emp_ID_Prefix]
+			   ,[Emp_Pri_Name]
+		   
 			  )
 							 SELECT S.[Emp_ID]
 						      ,EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Emp_Name],'''', ''))
@@ -181,6 +177,9 @@ BEGIN
 							  ,S.[Emp_Job_Code]
 							  ,S.[Emp_Job_Description]
 							  ,S.[Emp_Program]
+							  ,S.[Active]
+							  ,CONVERT(nvarchar(8),S.[Hire_Date],112)
+							  ,CONVERT(nvarchar(8),S.[Start_Date],112)
 							  ,S.[Sup_Emp_ID]
 							  ,EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Sup_Name],'''', ''))
 							  ,EncryptByKey(Key_GUID('CoachingKey'), S.[Sup_Email])
@@ -193,20 +192,21 @@ BEGIN
 							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Mgr_LanID)
 							  ,S.[Mgr_Job_Code]
 							  ,S.[Mgr_Job_Description]
-							  ,CONVERT(nvarchar(8),S.[Start_Date],112)
-							  ,S.[Active]
-							  ,S.[Emp_ID_Prefix]
-							  ,CONVERT(nvarchar(8),S.[Hire_Date],112)
-							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Emp_Pri_Name)
-							  ,S.[Dept_ID]
+							 ,S.[Dept_ID]
 							  ,S.[Dept_Description]
 							  ,S.[Reg_Temp]
 							  ,S.[Full_Part_Time]
 							  ,CONVERT(nvarchar(8),S.[Term_Date],112)
 			                  ,S.[FLSA_Status]
+							  ,S.[Legacy_Emp_ID]
+							  ,N'NA'
+							 ,EncryptByKey(Key_GUID('CoachingKey'), S.Emp_Pri_Name)
+							 
 						  FROM [EC].[Employee_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy]H
 						  ON S.Emp_ID = H.Emp_ID
 						  WHERE (H.EMP_ID IS NULL and S.Emp_ID <> '')
+						  AND S.Active NOT IN ('T', 'D')
+					
 
 OPTION (MAXDOP 1)
 END
@@ -245,8 +245,9 @@ BEGIN
 END --sp_Populate_Employee_Hierarchy
 
 
-
 GO
+
+
 
 
 

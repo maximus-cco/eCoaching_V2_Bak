@@ -1,7 +1,12 @@
 /*
-File: eCoaching_EmployeeHierarchy_Load_Tables_Create(06).sql 
-Last Modified Date: 01/08/2019
+File: eCoaching_EmployeeHierarchy_Load_Tables_Create(07).sql 
+Last Modified Date: 05/22/2019
 Last Modified By: Susmitha Palacherla
+
+Version 07: Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
+1. [EC].[Employee_Hierarchy_Stage] -- Added Legacy_Emp_ID Renamed Emp_ID_Prefix to PS_Emp_ID_Prefix 
+2. [EC].[Employee_Hierarchy]--Renamed Emp_ID_Prefix to Legacy_Emp_ID
+3. [EC].[HR_Hierarchy_Stage]-- Renamed Emp_ID_Prefix to Legacy_Emp_ID
 
 Version 06:  Updated to increase size of dept_id cols - TFS 13168 - 01/08/2019
 
@@ -55,12 +60,11 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 -- Author: Susmitha Palacherla
 -- Create Date: 12/02/2013
 -- Description: Used to stage Automated Employee File from Peoplesoft.
--- Last Modified Date:09/22/2017
--- Last Modified By: Susmitha Palacherla - TFS 8228
+-- Last Modified Date:05/22/2019
+-- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 
 -- =============================================
 
-/****** Object:  Table [EC].[Employee_Hierarchy_Stage]    Script Date: 03/12/2014 17:50:34 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -90,7 +94,7 @@ CREATE TABLE [EC].[Employee_Hierarchy_Stage](
 	[Mgr_LanID] [nvarchar](30) NULL,
 	[Start_Date] [datetime] NULL,
 	[Active] [nvarchar](1) NULL,
-	[Emp_ID_Prefix] [nvarchar](10) NULL,
+	[Legacy_Emp_ID] [nvarchar](10) NULL,
 	[Hire_Date] [datetime] NULL,
 	[Emp_Pri_Name] [nvarchar](70) NULL,
 	[Dept_ID] [nvarchar](30) NULL DEFAULT ('NA'),
@@ -110,53 +114,58 @@ CREATE TABLE [EC].[Employee_Hierarchy_Stage](
 -- Author: Susmitha Palacherla
 -- Create Date: 12/02/2013
 -- Description: Used to store the Employee Information to be used by the Coaching application.
--- Last Modified Date:Susmitha Palacherla - TFS 8228
--- Last Modified By: 09/22/2017
-
+-- Last Modified Date:05/22/2019
+-- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- =============================================
 
 
-/****** Object:  Table [EC].[Employee_Hierarchy]    Script Date: 03/12/2014 17:51:50 ******/
+
 SET ANSI_NULLS ON
 GO
 
-SCREATE TABLE [EC].[Employee_Hierarchy](
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [EC].[Employee_Hierarchy](
 	[Emp_ID] [nvarchar](10) NOT NULL,
-	
+	[Emp_Name] [varbinary](256) NULL,
+	[Emp_LanID] [varbinary](128) NULL,
+	[Emp_Email] [varbinary](256) NULL,
 	[Emp_Site] [nvarchar](50) NULL,
 	[Emp_Job_Code] [nvarchar](50) NULL,
 	[Emp_Job_Description] [nvarchar](50) NULL,
 	[Emp_Program] [nvarchar](20) NULL,
+	[Active] [nvarchar](1) NULL,
+	[Hire_Date] [nvarchar](10) NULL,
+	[Start_Date] [nvarchar](10) NULL,
+	[End_Date] [nvarchar](10) NULL,
 	[Sup_ID] [nvarchar](10) NULL,
+	[Sup_Name] [varbinary](256) NULL,
+	[Sup_LanID] [varbinary](128) NULL,
+	[Sup_Email] [varbinary](256) NULL,
 	[Sup_Job_Code] [nvarchar](50) NULL,
 	[Sup_Job_Description] [nvarchar](50) NULL,
 	[Mgr_ID] [nvarchar](10) NULL,
+	[Mgr_Name] [varbinary](256) NULL,
+	[Mgr_LanID] [varbinary](128) NULL,
+	[Mgr_Email] [varbinary](256) NULL,
 	[Mgr_Job_Code] [nvarchar](50) NULL,
 	[Mgr_Job_Description] [nvarchar](50) NULL,
-	[Start_Date] [nvarchar](10) NULL,
-	[End_Date] [nvarchar](10) NULL CONSTRAINT [DF__Employee___End_D__03317E3D]  DEFAULT ((99991231)),
-	[Active] [nvarchar](1) NULL,
 	[SrMgrLvl1_ID] [nvarchar](10) NULL,
 	[SrMgrLvl2_ID] [nvarchar](10) NULL,
 	[SrMgrLvl3_ID] [nvarchar](10) NULL,
-	[Emp_ID_Prefix] [nvarchar](10) NULL,
-	[Hire_Date] [nvarchar](10) NULL,
-	[Dept_ID] [nvarchar](30) NULL DEFAULT ('NA'),
-	[Dept_Description] [nvarchar](60) NULL DEFAULT ('NA'),
-	[Reg_Temp] [nvarchar](3) NULL DEFAULT ('NA'),
-	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA'),
-        [Term_Date] [nvarchar](10) NULL,
-        [FLSA_Status] [nvarchar](20) NULL,
-        [Emp_Name] [varbinary](256) NULL,
-	[Emp_Email] [varbinary](256) NULL,
-	[Emp_LanID] [varbinary](128) NULL,
-        [Sup_Name] [varbinary](256) NULL,
-	[Sup_Email] [varbinary](256) NULL,
-	[Sup_LanID] [varbinary](128) NULL,
-        [Mgr_Name] [varbinary](256) NULL,
-	[Mgr_Email] [varbinary](256) NULL,
-	[Mgr_LanID] [varbinary](128) NULL,
-        [Emp_Pri_Name] [varbinary](256) NULL,
+	[Dept_ID] [nvarchar](30) NULL,
+	[Dept_Description] [nvarchar](60) NULL,
+	[Reg_Temp] [nvarchar](3) NULL,
+	[Full_Part_Time] [nvarchar](3) NULL,
+	[Term_Date] [nvarchar](10) NULL,
+	[FLSA_Status] [nvarchar](20) NULL,
+	[Legacy_Emp_ID] [nvarchar](10) NULL,
+	[PS_Emp_ID_Prefix] [nvarchar](10) NULL,
+	[Emp_Pri_Name] [varbinary](256) NULL,
  CONSTRAINT [PK_Emp_ID] PRIMARY KEY CLUSTERED 
 (
 	[Emp_ID] ASC
@@ -305,9 +314,8 @@ GO
 -- Author: Susmitha Palacherla
 -- Create Date: 04/12/2016
 -- Description: Used to stage HR employee records
--- Last Modified Date:09/22/2017
--- Last Modified By: Susmitha Palacherla - TFS 8228
-
+-- Last Modified Date:05/22/2019
+-- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- =============================================
 
 
@@ -340,7 +348,7 @@ CREATE TABLE [EC].[HR_Hierarchy_Stage](
 	[Mgr_LanID] [nvarchar](30) NULL,
 	[Start_Date] [datetime] NULL,
 	[Active] [nvarchar](1) NULL,
-	[Emp_ID_Prefix] [nvarchar](10) NULL,
+	[Legacy_Emp_ID] [nvarchar](10) NULL,
 	[Hire_Date] [datetime] NULL
 ) ON [PRIMARY]
 GO
