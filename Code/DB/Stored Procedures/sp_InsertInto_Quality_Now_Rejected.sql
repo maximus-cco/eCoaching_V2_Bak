@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Quality_Now_Rejected(02).sql
-Last Modified Date: 04/20/2019
+sp_InsertInto_Quality_Now_Rejected(03).sql
+Last Modified Date: 06/11/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 Version 02: Updates from Unit and System testing - TFS 13332 - 04/20/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
 */
@@ -28,7 +29,7 @@ GO
 -- Create Date:      03/01/2019
 -- Description:     Determines rejection reason and rejects  logs.
 -- Initial revision. TFS 13332 -  03/01/2019
-
+-- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Quality_Now_Rejected] 
 @Count INT OUTPUT
@@ -39,28 +40,34 @@ BEGIN
 
 BEGIN TRY
 
--- Create table to hold logs with non distinct Strengths/Opportunities for rejection
+  -- Create table to hold latest QN_Strengths_Opportunities per batch
 
-  CREATE TABLE #Temp_Non_DISTINCT_QNLogs_To_Reject1 (
+  CREATE TABLE #Temp_Latest_QN_Strengths_Opportunities (
   QN_Batch_ID nvarchar(20)
-  ,CountLogs int
+  ,QN_Strengths_Opportunities nvarchar(2000)
   );
 
-    -- Insert logs with > 1 Non-Empty Strengths/Opportunities per batch to temp table for rejection
 
-	INSERT INTO #Temp_Non_DISTINCT_QNLogs_To_Reject1
-	SELECT d.QN_Batch_ID, COUNT(*) as Log_Count FROM
-	 (SELECT DISTINCT [QN_Batch_ID],[QN_Strengths_Opportunities]
-	FROM  [EC].[Quality_Now_Coaching_Stage]
-	WHERE [QN_Strengths_Opportunities] is NOT NULL 
-	  AND [QN_Strengths_Opportunities] <> '')d
-	GROUP BY d.QN_Batch_ID
-	HAVING COUNT(*) > 1;
+  --Insert latest value of QN_Strengths_Opportunities per batch to temp table
+
+  INSERT INTO #Temp_Latest_QN_Strengths_Opportunities
+   SELECT s.QN_Batch_ID, 
+  ISNULL([QN_Strengths_Opportunities], '') AS [QN_Strengths_Opportunities]
+  FROM [EC].[Quality_Now_Coaching_Stage] s JOIN
+  (SELECT QN_Batch_ID, MAX(Eval_Date) AS Max_Eval_Date
+  FROM [EC].[Quality_Now_Coaching_Stage]
+ WHERE [QN_Strengths_Opportunities] is NOT NULL 
+ AND [QN_Strengths_Opportunities] <> '' 
+ GROUP BY QN_Batch_ID) l
+  ON s.QN_Batch_ID = l.QN_Batch_ID
+  AND s.Eval_Date = l.Max_Eval_Date;
+
+ -- Select * From #Temp_Latest_QN_Strengths_Opportunities
 
 
   -- Create table to hold logs with non distinct parent attributres for rejection
 
-  CREATE TABLE #Temp_Non_DISTINCT_QNLogs_To_Reject2 (
+  CREATE TABLE #Temp_Non_DISTINCT_QNLogs_To_Reject (
   QN_Batch_ID nvarchar(20)
   ,CountLogs int
   );
@@ -68,7 +75,7 @@ BEGIN TRY
   
 -- Insert logs with Other non distinct values per batch to temp table for rejection
 
-	INSERT INTO #Temp_Non_DISTINCT_QNLogs_To_Reject2
+	INSERT INTO #Temp_Non_DISTINCT_QNLogs_To_Reject
 	SELECT d.QN_Batch_ID, COUNT(*) as Log_Count FROM
 	(SELECT DISTINCT [QN_Batch_ID],[QN_Batch_Status],[User_EMPID],[SUP_EMPID],[MGR_EMPID],[QN_Source] 
 	FROM [EC].[Quality_Now_Coaching_Stage])d
@@ -93,20 +100,20 @@ FROM [EC].[Quality_Now_Coaching_Stage] STAGE JOIN [EC].[Employee_Hierarchy]EMP
 ON LTRIM(STAGE.User_EMPID) = LTRIM(EMP.Emp_ID);
 
 
--- Reject logs with non distinct Strengths/Opportunities
 
-UPDATE [EC].[Quality_Now_Coaching_Stage]
-SET [Reject_Reason]= N'Log does not have distinct Strengths/Opportunities'
-FROM [EC].[Quality_Now_Coaching_Stage] s JOIN #Temp_Non_DISTINCT_QNLogs_To_Reject1 t
-ON s.[QN_Batch_ID]= t.[QN_Batch_ID]
-WHERE [Reject_Reason]is NULL;
+	-- Updates QN_Strengths_Opportunities in staging table with latest value for batch
+
+     UPDATE EC.Quality_Now_Coaching_Stage
+     SET [QN_Strengths_Opportunities] = temp.QN_Strengths_Opportunities
+	 FROM #Temp_Latest_QN_Strengths_Opportunities temp 
+	 JOIN EC.Quality_Now_Coaching_Stage s ON temp.QN_Batch_ID = s.QN_Batch_ID;
 
 
 -- Reject logs with non distinct other parent attributres
 
 UPDATE [EC].[Quality_Now_Coaching_Stage]
 SET [Reject_Reason]= N'Log does not have distinct parent record values'
-FROM [EC].[Quality_Now_Coaching_Stage] s JOIN #Temp_Non_DISTINCT_QNLogs_To_Reject2 t
+FROM [EC].[Quality_Now_Coaching_Stage] s JOIN #Temp_Non_DISTINCT_QNLogs_To_Reject t
 ON s.[QN_Batch_ID]= t.[QN_Batch_ID]
 WHERE [Reject_Reason]is NULL;
 

@@ -1,7 +1,9 @@
 /*
-sp_Update_Coaching_Log_Quality_Now(03).sql
-Last Modified Date: 06/03/2019
+sp_Update_Coaching_Log_Quality_Now(04).sql
+Last Modified Date: 06/11/2019
 Last Modified By: Susmitha Palacherla
+
+Version 04: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 Version 03: Fix bug with updates to QNStrengthsOpportunities  - TFS 14555 - 06/03/2019
 Version 02: Updates from Unit and System testing - TFS 13332 - 04/20/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
@@ -30,6 +32,7 @@ GO
 -- Description:     This procedure updates the Quality Now scorecards in the Coaching_Log and QN_Evaluations tables. 
 -- Initial revision. TFS 13332 -  03/01/2019
 -- Fix bug with updates to QNStrengthsOpportunities  - TFS 14555 - 06/03/2019
+-- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 --    ===========================================================================================
 CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality_Now] AS
 BEGIN
@@ -106,10 +109,10 @@ BEGIN TRY
    );
 
 
-     -- Populates #Temp_Coaching_Logs_To_Update
+     -- Populates #Temp_Coaching_Logs_To_Update where QN_Strengths_Opportunities changed
   INSERT INTO #Temp_Coaching_Logs_To_Update
-  SELECT cl.CoachingID, cl.QNBatchID, qcs.[QN_Strengths_Opportunities]
-   FROM (SELECT * FROM EC.Quality_Now_Coaching_Stage
+  SELECT DISTINCT cl.CoachingID, cl.QNBatchID, qcs.[QN_Strengths_Opportunities]
+   FROM (SELECT DISTINCT QN_BATCH_ID, QN_Strengths_Opportunities FROM EC.Quality_Now_Coaching_Stage
 	  WHERE QN_Strengths_Opportunities is NOT NULL 
 	  AND QN_Strengths_Opportunities <> ''
 	  AND QN_Batch_Status = 'Active')qcs JOIN EC.Coaching_Log cl
@@ -272,6 +275,9 @@ END CATCH
 END -- [EC].[sp_Update_Coaching_Log_Quality_Now]
 
 GO
+
+
+
 
 
 

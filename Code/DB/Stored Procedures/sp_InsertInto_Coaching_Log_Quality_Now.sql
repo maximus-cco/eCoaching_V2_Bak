@@ -1,8 +1,10 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Now(04).sql
-Last Modified Date: 05/29/2019
+sp_InsertInto_Coaching_Log_Quality_Now(05).sql
+Last Modified Date: 06/11/2019
 Last Modified By: Susmitha Palacherla
 
+Version 05: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
+	reverted change from Version 04
 Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 Version 03: Additional Changes from V&V - TFS 13332 - 04/20/2019
 Version 02: Updates from Unit and System testing - TFS 13332 - 04/04/2019
@@ -34,6 +36,7 @@ GO
 -- The Coaching Reasons are written to the Coaching_Reasons Table.
 -- Initial revision. TFS 13332 -  03/01/2019
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
+-- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 --    =======================================================================================
 
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
@@ -76,7 +79,8 @@ BEGIN
 	isCSRAcknowledged bit,
 	ModuleID int,
 	SupID nvarchar(20),
-	MgrID nvarchar(20)
+	MgrID nvarchar(20),
+	QnStrengthsOpportunities nvarchar(2000)
 	);
  
 
@@ -106,6 +110,7 @@ BEGIN
 	  ,qcs.Module         -- ModuleID
 	  ,ISNULL(qcs.SUP_EMPID, '999999')  -- SupID
 	  ,ISNULL(qcs.Mgr_EMPID, '999999')  -- MgrID
+	  ,QN_Strengths_Opportunities
 	FROM EC.Quality_Now_Coaching_Stage qcs 
     JOIN EC.Employee_Hierarchy eh WITH (NOLOCK) ON qcs.User_EMPID = eh.Emp_ID
     LEFT JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.QN_Batch_ID = cl.QNBatchID
@@ -137,6 +142,7 @@ BEGIN
         ,ModuleID
         ,SupID
         ,MgrID
+		,QNStrengthsOpportunities
 		)
 	  OUTPUT INSERTED.[CoachingID], INSERTED.[ModuleID], INSERTED.[QNBatchID] INTO @logsInserted
 	  SELECT * FROM #Temp_Logs_To_Insert;
@@ -146,22 +152,11 @@ BEGIN
     -- Update formname for the inserted logs
 
 	  UPDATE EC.Coaching_Log 
-	  SET FormName = 'eCL-M-' + FormName + '-' + convert(varchar,CoachingID)
+	  SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
 	  FROM @logsInserted 
 	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted);  
 
-	-- Populate Strengths/Opportunities for the inserted logs
-
-	  UPDATE EC.Coaching_Log 
-	  SET QNStrengthsOpportunities = qcs.QN_Strengths_Opportunities 
-	  FROM (SELECT * FROM EC.Quality_Now_Coaching_Stage
-	  WHERE QN_Strengths_Opportunities is NOT NULL 
-	  AND QN_Strengths_Opportunities <> ''
-	  AND QN_Batch_Status = 'Active')qcs JOIN EC.Coaching_Log cl
-	  ON qcs.QN_Batch_ID = cl.QNBatchID
-	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted);
-
-
+	
 	  -- Insert Evaluation details for each batch into Evaluations table
 
 	  INSERT INTO [EC].[Coaching_Log_Quality_Now_Evaluations]
@@ -238,10 +233,12 @@ BEGIN
   END CATCH
 END -- sp_InsertInto_Coaching_Log_Quality_Now
 
-
-
-
-
 GO
+
+
+
+
+
+
 
 
