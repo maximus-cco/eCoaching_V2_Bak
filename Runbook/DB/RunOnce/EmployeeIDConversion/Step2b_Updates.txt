@@ -1,0 +1,117 @@
+/*
+
+Summary
+MAKE UPDATES
+0. [EC].[sp_IDC_Populate_ID_XRef]
+1. [EC].[Employee_Hierarchy]
+2. [EC].[CSR_Hierarchy]
+3. [EC].[EmployeeID_To_LanID] / [EC].[Survey_Response_Header]  / [EC].[LoadTest_User]
+4. [EC].[Coaching_Log]
+5. [EC].[Coaching_Log_Archive]
+6. [EC].[Warning_Log]
+7. [EC].[AT_User_Role_Link] /  [EC].[AT_User] / [EC].[AT_Coaching_Inactivate_Reactivate_Audit] / [EC].[AT_Warning_Inactivate_Reactivate_Audit] / [EC].[AT_Coaching_Reassign_Audit] 
+
+*/
+
+--******************************************
+
+
+   --****EXECUTE ONE AT A TIME ******--
+
+
+--*******************************************
+
+USE [eCoachingTest]
+GO
+
+
+--0. [EC].[sp_IDC_Populate_ID_XRef]
+
+DECLARE	@return_value int
+
+EXEC	@return_value = [EC].[sp_IDC_Populate_ID_XRef]
+
+SELECT	'Return Value' = @return_value
+
+GO 
+
+
+
+
+--1.[EC].[Employee_Hierarchy_Temp]
+
+DECLARE	@return_value int
+
+EXEC	@return_value = [EC].[sp_IDC_Update_Employee_Hierarchy]
+
+SELECT	'Return Value' = @return_value
+
+GO
+
+
+--2.[EC].[CSR_Hierarchy_Temp]
+
+DECLARE	@return_value int
+
+EXEC	@return_value = [EC].[sp_IDC_Update_CSR_Hierarchy]
+
+SELECT	'Return Value' = @return_value
+
+GO
+
+
+--3.[EC].[sp_IDC_Update_Other_Tables]* Multiple Tables
+
+DECLARE	@return_value int
+
+EXEC	@return_value = [EC].[sp_IDC_Update_Other_Tables] 
+
+SELECT	'Return Value' = @return_value
+
+GO
+
+
+--4.[EC].[Coaching_Log]
+
+DECLARE	@return_value int
+
+EXEC	@return_value = [EC].[sp_IDC_Update_Coaching_Log] 
+
+SELECT	'Return Value' = @return_value
+
+GO
+
+
+--5.[EC].[Coaching_Log_Archive]
+
+DECLARE	@return_value int
+
+EXEC	@return_value = [EC].[sp_IDC_Update_Coaching_Log_Archive] 
+
+SELECT	'Return Value' = @return_value
+
+GO
+
+
+--6.[EC].[Warning_Log]
+
+DECLARE	@return_value int
+
+EXEC	@return_value = [EC].[sp_IDC_Update_Warning_Log] 
+
+SELECT	'Return Value' = @return_value
+
+GO
+
+
+
+
+--7.[EC].[sp_IDC_Update_Admin_Tool_Tables] * Multiple tables
+
+DECLARE	@return_value int
+
+EXEC	@return_value = [EC].[sp_IDC_Update_Admin_Tool_Tables] 
+
+SELECT	'Return Value' = @return_value
+
+GO

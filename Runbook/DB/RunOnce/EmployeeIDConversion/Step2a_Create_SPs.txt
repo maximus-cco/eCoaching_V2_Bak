@@ -1,0 +1,873 @@
+
+
+-- CREATE SP [EC].[sp_IDC_Populate_ID_XRef] 
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_IDC_Populate_ID_XRef' 
+)
+   DROP PROCEDURE [EC].[sp_IDC_Populate_ID_XRef]
+GO
+
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author: Susmitha Palacherla
+-- Create Date: 05/23/2019
+-- TFS 13777: Maximus ID Conversion
+-- =============================================
+CREATE PROCEDURE [EC].[sp_IDC_Populate_ID_XRef] 
+AS
+BEGIN
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+
+-- Truncate Table [EC].[IDC_ID_XREF]
+TRUNCATE TABLE [EC].[IDC_ID_XRef];
+
+ --Insert PS Values
+ 
+
+
+-- Inserts employee records
+
+	INSERT INTO [EC].[IDC_ID_XRef]
+			  ([PS_EmpID],
+	           [PS_EmpID_Prefix],
+	           [PS_EmpLanID],
+	           [PS_EmpName],
+			   [PS_EmpJobCode],
+	           [PS_Active],
+			   [PS_StartDate],
+               [PS_HireDate],
+               [PS_EndDate])
+							 SELECT [Emp_ID]
+							  ,[Emp_ID_Prefix]
+						      ,CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Emp_LanID]
+							  ,CONVERT(nvarchar(70),DecryptByKey(Emp_Name)) AS [Emp_Name]
+							  ,[EMP_JOB_CODE]
+							  ,[Active]		
+							  ,[Start_Date]
+							  ,[Hire_Date]
+							  ,[End_Date]				  							 
+						       FROM [EC].[Employee_Hierarchy_Temp];
+
+--Step 0:
+-- Populate Maximus ID for Unknown record EmpID 999999
+
+UPDATE [EC].[IDC_ID_XRef]
+SET    [Max_EmpID] = '999999'
+,[Max_EmpID_Upd_Note]= N'Hardcoded'
+WHERE PS_EmpID  = '999999';
+
+--Step 1:
+-- Populate Maximus values from IQS for those records that match on EmpID with prefix
+
+UPDATE [EC].[IDC_ID_XRef]
+SET    [Max_EmpID] = [Mx_Employee ID MMS]
+      ,[Max_EmpLanID] = [Mx_lanid_MMS]
+      ,[Max_EmpName] = [Mx_Employee Name]
+      ,[Aspect_EmpID] = [EmpID]
+	  ,[Aspect_EndDate] = convert(datetime,[EndDate])
+	  ,[Max_EmpID_Upd_Note]= N'IQS match on PS_Emplid'
+FROM [EC].[IDC_ID_XRef] EX JOIN [EC].[IDC_IQS_Users] EI 
+ON EX.[PS_EmpID_Prefix] = EI.[PS_emplid]
+WHERE [Max_EmpID_Upd_Note] IS NULL
+AND NOT ([Mx_Employee ID MMS] = 'NULL' OR [Mx_Employee ID MMS] = '');
+
+
+--Step 2:
+-- Populate Maximus ID (X + GDIT Employee ID) for pre 11172018 terms from Aspect
+
+UPDATE [EC].[IDC_ID_XRef]
+SET    [Max_EmpID] = ISNULL([IDX],'')
+      ,[Aspect_EmpID] = [ID]
+	  ,[Aspect_EndDate] = [TERM_NOM_DATE]
+	  ,[Max_EmpID_Upd_Note]= N'Aspect pre 11172018 terms'
+FROM [EC].[IDC_ID_XRef]EX JOIN [EC].[IDC_ASPECT_XUsers]ASP
+ON EX.PS_EmpID = ASP.ID
+WHERE EX.PS_Active in ('T','D')
+AND [Max_EmpID_Upd_Note] IS NULL;
+
+
+
+
+--Step 3:
+-- Populate max ID for Inactive Employees (x plus empid)
+
+UPDATE [EC].[IDC_ID_XRef]
+SET [Max_EmpID] = 'x' + [Emp_ID]
+,[Max_EmpID_Upd_Note]= N'eCL Emp Active in ''T'' or ''D'''
+FROM [EC].[IDC_ID_XRef] EX JOIN [EC].[Employee_Hierarchy_Temp] EH
+ON EX.[PS_EmpID] = EH.[EMP_ID]
+WHERE EX.[Max_EmpID_Upd_Note] IS NULL
+AND EH.[Active] IN ('T', 'D');
+
+--Step 4:
+-- Populate max ID for All remaining
+
+UPDATE [EC].[IDC_ID_XRef]
+SET [Max_EmpID] = 'x' + [PS_EmpID]
+,[Max_EmpID_Upd_Note]= N'All remaining'
+WHERE [Max_EmpID_Upd_Note] IS NULL;
+
+-- Close Symmetric key
+
+
+
+CLOSE SYMMETRIC KEY [CoachingKey];	 
+
+
+END --sp_IDC_Populate_ID_XRef
+
+GO
+
+
+
+
+
+
+
+
+
+
+--***************
+
+
+
+/****** Object:  StoredProcedure [EC].[sp_IDC_Update_Admin_Tool_Tables]    Script Date: 5/25/2019 2:02:54 PM ******/
+
+-- 5 tables
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_IDC_Update_Admin_Tool_Tables' 
+)
+   DROP PROCEDURE [EC].[sp_IDC_Update_Admin_Tool_Tables]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author: Susmitha Palacherla
+-- Create Date: 05/23/2019
+-- TFS 13777: Maximus ID Conversion
+-- =============================================
+CREATE PROCEDURE [EC].[sp_IDC_Update_Admin_Tool_Tables] 
+AS
+BEGIN
+
+-- Open Symmetric key
+--OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+
+
+ALTER TABLE [EC].[AT_User_Role_Link] NOCHECK CONSTRAINT [fkUserId];
+
+
+ --Update UserID in AT_User_Role_Link
+
+UPDATE [EC].[AT_User_Role_Link] 
+SET UserID = X.[Max_EmpID]
+FROM [EC].[AT_User_Role_Link] U JOIN [EC].[Employee_Hierarchy_Temp] X
+ON U.UserID = X.Emp_ID;
+
+
+ --Update UserID in AT_User
+
+ UPDATE [EC].[AT_User] 
+SET UserID = X.[Max_EmpID]
+FROM [EC].[AT_User] U JOIN [EC].[Employee_Hierarchy_Temp] X
+ON U.UserID = X.Emp_ID;
+
+ALTER TABLE [EC].[AT_User_Role_Link] CHECK CONSTRAINT [fkUserId];
+
+ --Update RequesterID in AT_Coaching_Inactivate_Reactivate_Audit
+
+ UPDATE [EC].[AT_Coaching_Inactivate_Reactivate_Audit] 
+SET RequesterID = X.[Max_EmpID]
+FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit] IA JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  IA.RequesterID= X.Emp_ID;
+
+ --Update RequesterID in AT_Warning_Inactivate_Reactivate_Audit
+
+ UPDATE [EC].[AT_Warning_Inactivate_Reactivate_Audit] 
+SET RequesterID = X.[Max_EmpID]
+FROM [EC].[AT_Warning_Inactivate_Reactivate_Audit] IA JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  IA.RequesterID= X.Emp_ID;
+
+
+ --Update RequesterID in AT_Coaching_Reassign_Audit
+
+ UPDATE [EC].[AT_Coaching_Reassign_Audit] 
+SET RequesterID = X.[Max_EmpID]
+FROM [EC].[AT_Coaching_Reassign_Audit] IA JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  IA.RequesterID= X.Emp_ID;
+
+ --Update AssignedToID in AT_Coaching_Reassign_Audit
+
+ UPDATE [EC].[AT_Coaching_Reassign_Audit] 
+SET AssignedToID = X.[Max_EmpID]
+FROM [EC].[AT_Coaching_Reassign_Audit] IA JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  IA.AssignedToID= X.Emp_ID;
+
+
+--CLOSE SYMMETRIC KEY [CoachingKey];	
+
+END --sp_IDC_Update_Admin_Tool_Tables
+
+
+GO
+
+
+
+--******************************
+
+
+/****** Object:  StoredProcedure [EC].[sp_IDC_Update_Coaching_Log]    Script Date: 5/25/2019 2:02:54 PM ******/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_IDC_Update_Coaching_Log' 
+)
+   DROP PROCEDURE [EC].[sp_IDC_Update_Coaching_Log]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author: Susmitha Palacherla
+-- Create Date: 05/23/2019
+-- TFS 13777: Maximus ID Conversion
+-- =============================================
+CREATE PROCEDURE [EC].[sp_IDC_Update_Coaching_Log] 
+AS
+BEGIN
+
+-- Open Symmetric key
+--OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+
+
+ --Update EmpID
+
+ UPDATE [EC].[Coaching_Log] 
+SET EmpID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.EmpID = X.Emp_ID;
+
+ --Update SubmitterID
+
+ UPDATE [EC].[Coaching_Log] 
+SET SubmitterID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.SubmitterID= X.Emp_ID;
+
+
+ --Update SupID
+
+ UPDATE [EC].[Coaching_Log] 
+SET SupID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.SupID = X.Emp_ID;
+
+
+ --Update MgrID
+
+ UPDATE [EC].[Coaching_Log] 
+SET MgrID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.MgrID = X.Emp_ID;
+
+ --Update ReviewSupID
+
+ UPDATE [EC].[Coaching_Log] 
+SET Review_SupID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.Review_SupID = X.Emp_ID;
+
+
+ --Update ReviewMgrID
+
+ UPDATE [EC].[Coaching_Log] 
+SET Review_MgrID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.Review_MgrID= X.Emp_ID;
+
+
+ --Update ReassignedToID
+
+ UPDATE [EC].[Coaching_Log] 
+SET ReassignedToID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.ReassignedToID = X.Emp_ID;
+
+
+
+ 
+--CLOSE SYMMETRIC KEY [CoachingKey];	
+
+END --sp_IDC_Update_Coaching_Log
+
+
+GO
+
+
+
+--******************************
+
+
+
+
+/****** Object:  StoredProcedure [EC].[sp_IDC_Update_Coaching_Log_Archive]    Script Date: 5/25/2019 2:02:54 PM ******/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_IDC_Update_Coaching_Log_Archive' 
+)
+   DROP PROCEDURE [EC].[sp_IDC_Update_Coaching_Log_Archive]
+GO
+
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author: Susmitha Palacherla
+-- Create Date: 05/23/2019
+-- TFS 13777: Maximus ID Conversion
+-- =============================================
+CREATE PROCEDURE [EC].[sp_IDC_Update_Coaching_Log_Archive] 
+AS
+BEGIN
+
+-- Open Symmetric key
+--OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+
+
+ --Update EmpID
+
+ UPDATE [EC].[Coaching_Log_Archive] 
+SET EmpID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log_Archive] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.EmpID = X.Emp_ID;
+
+ --Update SubmitterID
+
+ UPDATE [EC].[Coaching_Log_Archive] 
+SET SubmitterID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log_Archive] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.SubmitterID= X.Emp_ID;
+
+
+ --Update SupID
+
+ UPDATE [EC].[Coaching_Log_Archive] 
+SET SupID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log_Archive] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.SupID = X.Emp_ID;
+
+
+ --Update MgrID
+
+ UPDATE [EC].[Coaching_Log_Archive] 
+SET MgrID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log_Archive] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.MgrID = X.Emp_ID;
+
+ --Update ReviewSupID
+
+ UPDATE [EC].[Coaching_Log_Archive] 
+SET Review_SupID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log_Archive] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.Review_SupID = X.Emp_ID;
+
+
+ --Update ReviewMgrID
+
+ UPDATE [EC].[Coaching_Log_Archive] 
+SET Review_MgrID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log_Archive] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.Review_MgrID= X.Emp_ID;
+
+
+ --Update ReassignedToID
+
+ UPDATE [EC].[Coaching_Log_Archive] 
+SET ReassignedToID = X.[Max_EmpID]
+FROM [EC].[Coaching_Log_Archive] CL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  CL.ReassignedToID = X.Emp_ID;
+
+
+
+ 
+--CLOSE SYMMETRIC KEY [CoachingKey];	
+
+END --sp_IDC_Update_Coaching_Log_Archive
+
+
+GO
+
+
+--******************************
+
+
+/****** Object:  StoredProcedure [EC].[sp_IDC_Update_CSR_Hierarchy]    Script Date: 5/25/2019 2:02:54 PM ******/
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_IDC_Update_CSR_Hierarchy' 
+)
+   DROP PROCEDURE [EC].[sp_IDC_Update_CSR_Hierarchy]
+GO
+
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author: Susmitha Palacherla
+-- Create Date: 05/23/2019
+-- TFS 13777: Maximus ID Conversion
+-- =============================================
+CREATE PROCEDURE [EC].[sp_IDC_Update_CSR_Hierarchy] 
+AS
+BEGIN
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+
+
+ --Populate Max Emp ID in CSR_Hierarchy_Temp table
+
+ UPDATE [EC].[CSR_Hierarchy_Temp] 
+SET EmpID = X.[Max_EmpID]
+FROM [EC].[CSR_Hierarchy_Temp] S JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  S.EmpID = X.Emp_ID;
+
+/*
+select s.empid, x.max_empid, s.supid, s.mgrid
+FROM [EC].[CSR_Hierarchy_Temp] S JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  S.EmpID = X.Emp_ID
+where s.empid = '236464';
+*/
+
+ --Populate Max Sup ID in CSR_Hierarchy_Temp table
+
+UPDATE [EC].[CSR_Hierarchy_Temp] 
+SET SupID = X.[Max_EmpID]
+FROM [EC].[CSR_Hierarchy_Temp] S JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  S.SupID = X.Emp_ID;
+
+
+ --Populate Max Mgr ID in CSR_Hierarchy_Temp table
+
+UPDATE [EC].[CSR_Hierarchy_Temp] 
+SET MgrID = X.[Max_EmpID]
+FROM [EC].[CSR_Hierarchy_Temp] S JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  S.MgrID = X.Emp_ID;
+
+-- Populate CSR_Hierarchy table
+
+INSERT INTO [EC].[CSR_Hierarchy]
+           ([EmpID]
+           ,[SupID]
+           ,[MgrID]
+           ,[StartDate]
+           ,[EndDate])
+Select * from [EC].[CSR_Hierarchy_Temp];
+
+ 
+CLOSE SYMMETRIC KEY [CoachingKey];	
+
+END --sp_IDC_Update_CSR_Hierarchy
+
+GO
+
+
+--******************************
+
+
+/****** Object:  StoredProcedure [EC].[sp_IDC_Update_Employee_Hierarchy]    Script Date: 5/25/2019 2:02:54 PM ******/
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_IDC_Update_Employee_Hierarchy' 
+)
+   DROP PROCEDURE [EC].[sp_IDC_Update_Employee_Hierarchy]
+GO
+
+
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+-- =============================================
+-- Author: Susmitha Palacherla
+-- Create Date: 05/23/2019
+-- TFS 13777: Maximus ID Conversion
+-- =============================================
+CREATE PROCEDURE [EC].[sp_IDC_Update_Employee_Hierarchy] 
+AS
+BEGIN
+
+BEGIN TRY
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+BEGIN TRANSACTION
+
+ --Populate Max  Emp ID in Employee_Hierarchy_Temp table
+
+ UPDATE [EC].[Employee_Hierarchy_Temp] 
+SET Max_EmpID = X.[Max_EmpID]
+,Max_EmpID_Upd_Note = X.[Max_EmpID_Upd_Note]
+FROM [EC].[Employee_Hierarchy_Temp] S JOIN [EC].[IDC_ID_XRef] X
+ON  S.Emp_ID = X.PS_EmpID
+AND S.Emp_ID_Prefix = X.PS_EmpID_Prefix;
+
+
+INSERT INTO [EC].[Employee_Hierarchy]
+           ([Emp_ID]
+           ,[Emp_Name]
+           ,[Emp_LanID]
+           ,[Emp_Email]
+           ,[Emp_Site]
+           ,[Emp_Job_Code]
+           ,[Emp_Job_Description]
+           ,[Emp_Program]
+           ,[Active]
+           ,[Hire_Date]
+           ,[Start_Date]
+           ,[End_Date]
+           ,[Sup_ID]
+           ,[Sup_Name]
+           ,[Sup_LanID]
+           ,[Sup_Email]
+           ,[Sup_Job_Code]
+           ,[Sup_Job_Description]
+           ,[Mgr_ID]
+           ,[Mgr_Name]
+           ,[Mgr_LanID]
+           ,[Mgr_Email]
+           ,[Mgr_Job_Code]
+           ,[Mgr_Job_Description]
+           ,[SrMgrLvl1_ID]
+           ,[SrMgrLvl2_ID]
+           ,[SrMgrLvl3_ID]
+           ,[Dept_ID]
+           ,[Dept_Description]
+           ,[Reg_Temp]
+           ,[Full_Part_Time]
+           ,[Term_Date]
+           ,[FLSA_Status]
+           ,[Legacy_Emp_ID]
+           ,[PS_Emp_ID_Prefix]
+           ,[Emp_Pri_Name])
+    SELECT DISTINCT [Max_EmpID]
+	    ,[Emp_Name]
+      ,[Emp_LanID]
+      ,[Emp_Email]
+      ,[Emp_Site]
+      ,[Emp_Job_Code]
+      ,[Emp_Job_Description]
+      ,[Emp_Program]
+	  ,[Active]
+      ,[Hire_Date]
+	  ,[Start_Date]
+      ,[End_Date]
+      ,[Sup_ID]
+	  ,[Sup_Name]
+      ,[Sup_LanID]
+      ,[Sup_Email]
+      ,[Sup_Job_Code]
+      ,[Sup_Job_Description]
+      ,[Mgr_ID]
+	  ,[Mgr_Name]
+      ,[Mgr_LanID]
+      ,[Mgr_Email]
+      ,[Mgr_Job_Code]
+      ,[Mgr_Job_Description]
+	  ,[SrMgrLvl1_ID]
+      ,[SrMgrLvl2_ID]
+      ,[SrMgrLvl3_ID]
+	  ,[Dept_ID]
+      ,[Dept_Description]
+	  ,[Reg_Temp]
+      ,[Full_Part_Time]
+      ,[Term_Date]
+      ,[FLSA_Status]
+      ,[Emp_ID]
+      ,[Emp_ID_Prefix]
+      ,[Emp_Pri_Name]
+ FROM [EC].[Employee_Hierarchy_Temp];
+
+  --Update Sup_ID
+
+UPDATE [EC].[Employee_Hierarchy] 
+SET Sup_ID =  S.[Max_EmpID]
+FROM [EC].[Employee_Hierarchy] E JOIN [EC].[Employee_Hierarchy_Temp] S
+ON  E.Sup_ID = S.Emp_ID;
+
+
+  --Update Mgr_ID
+
+UPDATE [EC].[Employee_Hierarchy] 
+SET Mgr_ID =  M.[Max_EmpID]
+FROM [EC].[Employee_Hierarchy] E JOIN [EC].[Employee_Hierarchy_Temp] M
+ON  E.Mgr_ID = M.Emp_ID;
+
+
+  --Update SrMgrLvl1_ID
+
+UPDATE [EC].[Employee_Hierarchy] 
+SET SrMgrLvl1_ID =  M.[Max_EmpID]
+FROM [EC].[Employee_Hierarchy] E JOIN [EC].[Employee_Hierarchy_Temp] M
+ON  E.SrMgrLvl1_ID = M.Emp_ID;
+
+  --Update SrMgrLvl2_ID
+
+UPDATE [EC].[Employee_Hierarchy] 
+SET SrMgrLvl2_ID =  M.[Max_EmpID]
+FROM [EC].[Employee_Hierarchy] E JOIN [EC].[Employee_Hierarchy_Temp] M
+ON  E.SrMgrLvl2_ID = M.Emp_ID;
+
+  --Update SrMgrLvl3_ID
+
+UPDATE [EC].[Employee_Hierarchy] 
+SET SrMgrLvl3_ID =  M.[Max_EmpID]
+FROM [EC].[Employee_Hierarchy] E JOIN [EC].[Employee_Hierarchy_Temp] M
+ON  E.SrMgrLvl3_ID = M.Emp_ID;
+
+COMMIT TRANSACTION
+END TRY
+
+
+  BEGIN CATCH
+    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+	
+    DECLARE @ErrorMessage nvarchar(4000), @ErrorSeverity int, @ErrorState int;
+    SELECT @ErrorMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE();
+    RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+      
+    IF ERROR_NUMBER() IS NULL RETURN 1
+    ELSE IF ERROR_NUMBER() <> 0 RETURN ERROR_NUMBER() 
+    ELSE RETURN 1
+  END CATCH
+
+END --sp_IDC_Update_Employee_Hierarchy
+
+GO
+
+
+
+
+
+--******************************
+
+
+
+/****** Object:  StoredProcedure [EC].[sp_IDC_Update_Other_Tables]    Script Date: 5/25/2019 2:02:54 PM ******/
+
+--3 Tables
+
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_IDC_Update_Other_Tables' 
+)
+   DROP PROCEDURE [EC].[sp_IDC_Update_Other_Tables]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author: Susmitha Palacherla
+-- Create Date: 05/23/2019
+-- TFS 13777: Maximus ID Conversion
+-- =============================================
+CREATE PROCEDURE [EC].[sp_IDC_Update_Other_Tables] 
+AS
+BEGIN
+
+-- Open Symmetric key
+--OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+
+
+ --Update EmpID in EmployeeID_To_LanID
+
+Update [EC].[EmployeeID_To_LanID]
+Set [EmpID] =  X.[Max_EmpID]
+FROM [EC].[EmployeeID_To_LanID] S JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  S.EmpID = X.Emp_ID;
+
+
+ --Update EmpID in Survey_Response_Header
+
+ UPDATE [EC].[Survey_Response_Header] 
+SET EmpID = X.[Max_EmpID]
+FROM [EC].[Survey_Response_Header] S JOIN [EC].[Employee_Hierarchy_Temp] X
+ON S.EmpID = X.Emp_ID;
+
+
+ --Update EmpID in LoadTest_User
+
+ UPDATE [EC].[LoadTest_User] 
+SET EmpID = X.[Max_EmpID]
+FROM [EC].[LoadTest_User] L JOIN [EC].[Employee_Hierarchy_Temp] X
+ON L.EmpID = X.Emp_ID;
+
+
+
+--CLOSE SYMMETRIC KEY [CoachingKey];	
+
+END --sp_IDC_Update_Other_Tables
+
+
+GO
+
+
+
+--******************************
+
+
+
+/****** Object:  StoredProcedure [EC].[sp_IDC_Update_Warning_Log]    Script Date: 5/25/2019 2:02:54 PM ******/
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_IDC_Update_Warning_Log' 
+)
+   DROP PROCEDURE [EC].[sp_IDC_Update_Warning_Log]
+GO
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- =============================================
+-- Author: Susmitha Palacherla
+-- Create Date: 05/23/2019
+-- TFS 13777: Maximus ID Conversion
+-- =============================================
+CREATE PROCEDURE [EC].[sp_IDC_Update_Warning_Log] 
+AS
+BEGIN
+
+-- Open Symmetric key
+--OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+
+
+ --Update EmpID
+
+ UPDATE [EC].[Warning_Log] 
+SET EmpID = X.[Max_EmpID]
+FROM [EC].[Warning_Log] WL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  WL.EmpID = X.Emp_ID;
+
+ --Update SubmitterID
+
+ UPDATE [EC].[Warning_Log] 
+SET SubmitterID = X.[Max_EmpID]
+FROM [EC].[Warning_Log] WL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  WL.SubmitterID= X.Emp_ID;
+
+
+ --Update SupID
+
+ UPDATE [EC].[Warning_Log] 
+SET SupID = X.[Max_EmpID]
+FROM [EC].[Warning_Log] WL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  WL.SupID = X.Emp_ID;
+
+
+ --Update MgrID
+
+ UPDATE [EC].[Warning_Log] 
+SET MgrID = X.[Max_EmpID]
+FROM [EC].[Warning_Log] WL JOIN [EC].[Employee_Hierarchy_Temp] X
+ON  WL.MgrID = X.Emp_ID;
+
+
+--CLOSE SYMMETRIC KEY [CoachingKey];	
+
+END --sp_IDC_Update_Warning_Log
+
+
+GO
+
+
+--******************************
+
+
+

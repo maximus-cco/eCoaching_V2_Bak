@@ -1,0 +1,10 @@
+0. Rename pS_Emp_ID_Prefix to Legacy_Emp_ID in [EC].[Employee_Hierarchy_Stage] and [EC].[HR_Hierarchy_Stage]
+--1.
+EXEC sp_rename 'EC.Employee_Hierarchy_Stage.Emp_ID_Prefix', 'Legacy_Emp_ID', 'COLUMN';  
+GO  
+
+--2.
+
+EXEC sp_rename 'EC.HR_Hierarchy_Stage.Emp_ID_Prefix', 'Legacy_Emp_ID', 'COLUMN';  
+GO  
+

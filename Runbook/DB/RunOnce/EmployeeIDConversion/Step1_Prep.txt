@@ -1,0 +1,401 @@
+/*
+
+Summary of Steps
+
+
+SECTION 1 - TAKE BACKUPS
+
+SECTION 2 - PREPARE LOOKUP TABLES 
+1a. Run query in QualityDB
+1b. Copy results with headers and paste in Excel and save as IDC_IQS_Users.csv
+1c. Import Into [eCoaching] DB into Table [EC].[IDC_IQS_Users]
+
+2a. Run query in Aspect DB
+2b. Copy results with headers and paste in Excel and save as IDC_ASPECT_XUsers.csv
+2c. Import Into [eCoaching] DB into Table [EC].[IDC_ASPECT_XUsers]
+
+3. Create table [EC].[IDC_ID_XREF]
+
+
+SECTION 3 - PREAPRE TABLES FOR UPDATES
+1. For tables having EMPID as or part of primary Key get data into Temp Tables
+2. Rename above 2  original tables and Drop primary key constraints
+3. Create 2 new tables for above two tables with original names.
+
+
+*/
+
+
+--***************************************************************--
+
+
+	             RUN ONE STATEMENT AT A TIME
+
+
+--***************************************************************--
+
+--***************************************************************--
+
+		SECTION 1 - TAKE BACKUPS
+
+--***************************************************************--
+
+
+
+--1.
+SELECT * INTO [EC].[Bak_Employee_Hierarchy]
+FROM [EC].[Employee_Hierarchy]
+GO
+
+--2.
+SELECT * INTO [EC].[Bak_CSR_Hierarchy]
+FROM [EC].[CSR_Hierarchy]
+GO
+
+--3.
+SELECT * INTO [EC].[Bak_EmployeeID_To_LanID]
+FROM [EC].[EmployeeID_To_LanID]
+GO
+
+--4.
+SELECT * INTO [EC].[Bak_Coaching_Log]
+FROM [EC].[Coaching_Log]
+GO
+--5.
+SELECT * INTO [EC].[Bak_Coaching_Log_Archive]
+FROM [EC].[Coaching_Log_Archive]
+GO
+--6.
+SELECT * INTO [EC].[Bak_Warning_Log]
+FROM [EC].[Warning_Log]
+GO
+--7.
+SELECT * INTO [EC].[Bak_AT_User]
+FROM [EC].[AT_User]
+GO
+--8.
+SELECT * INTO [EC].[Bak_AT_User_Role_Link]
+FROM [EC].[AT_User_Role_Link]
+GO
+--9.
+SELECT * INTO [EC].[Bak_AT_Coaching_Inactivate_Reactivate_Audit]
+FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+GO
+--10.
+SELECT * INTO [EC].[Bak_AT_Warning_Inactivate_Reactivate_Audit]
+FROM [EC].[AT_Warning_Inactivate_Reactivate_Audit]
+GO
+--11.
+SELECT * INTO [EC].[Bak_AT_Coaching_Reassign_Audit]
+FROM [EC].[AT_Coaching_Reassign_Audit]
+GO
+--12.
+SELECT * INTO [EC].[Bak_Survey_Response_Header]
+FROM [EC].[Survey_Response_Header]
+GO
+--13.
+SELECT * INTO [EC].[Bak_LoadTest_User]
+FROM [EC].[LoadTest_User]
+GO
+
+
+--***************
+
+
+
+
+--***************************************************************--
+
+		SECTION 2 - PREPARE LOOKUP TABLES
+
+--***************************************************************--
+
+1a. Run this query in QualityDB
+
+USE [qualityDB]
+GO
+SELECT [lanid]
+      ,[FirstName]
+      ,[LastName]
+      ,[Role]
+      ,[EmpID] -- Aspect
+      ,[EndDate] -- Aspect
+      ,[Role_Code]
+      ,[Status]
+      ,[SupervisorID]
+      ,[Site]
+      ,[SiteDescr]
+      ,[PS_lanid]
+      ,[PS_emplid] --PeopleSoft
+      ,[PS_first_name]
+      ,[PS_middle_name]
+      ,[PS_last_name]
+      ,[PS_empl_status]
+      ,[Mx_Employee ID MMS]--Maximus
+      ,[Mx_Employee ID GDIT]--PeopleSoft from maximus perspective
+	  ,[Mx_Employee Name]
+	  ,[Mx_lanid_MMS]
+       FROM [dbo].[tbl_IQS_Users]
+
+
+GO
+
+
+--1b. Copy results with headers and paste in Excel and save as IDC_IQS_Users.csv
+
+--1c. Import Into [eCoaching] DB AS Table [EC].[IDC_IQS_Users]
+
+--**********************
+
+--2a. Run this query in WFM DB in Aspect
+
+SELECT LTRIM([ID]) IDX
+      , REPLACE (LTRIM([ID]), 'X', '') ID
+      ,[LAST_NAME]
+      ,[FIRST_NAME]
+      ,DATEADD(DAY, -2, CONVERT( DATETIME, EMP.TERM_NOM_DATE ))TERM_NOM_DATE
+      ,[ACTIVE_FLAG]
+      ,[SHORT_NAME]
+	  ,[EMAIL_ADR]
+ FROM [dbo].[EMP]
+ WHERE LTRIM([ID]) LIKE 'X%'
+ ORDER BY DATEADD(DAY, -2, CONVERT( DATETIME, EMP.TERM_NOM_DATE ))
+GO
+
+
+
+--2b. Copy results with headers and paste in Excel and save as IDC_ASPECT_XUsers.csv
+
+
+
+--2c.Import Into [eCoaching] DB AS Table [EC].[IDC_ASPECT_XUsers]
+(Change term-nom_date to  date format (5/14/2004) in file and import type datetime in import wizard)
+
+--***************
+
+ 
+
+
+--***************
+
+
+
+
+--***************
+
+--3. Create table [EC].[IDC_ID_XREF]
+
+--Drop table [EC].[IDC_ID_XREF]
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [EC].[IDC_ID_XRef](
+	[PS_EmpID] [nvarchar](10) NOT NULL,
+	[PS_EmpID_Prefix] [nvarchar](10) NULL,
+	[PS_EmpLanID] [nvarchar](30) NULL,
+	[PS_EmpName] [nvarchar](50) NULL,
+	[PS_EmpJobCode] [nvarchar](50) NULL,
+	[PS_Active] [nvarchar](1) NULL,
+	[PS_StartDate] [nvarchar](10)  NULL,
+	[PS_HireDate] [nvarchar](10) NULL,
+	[PS_EndDate] [nvarchar](10)  NULL,
+	[Max_EmpID] [nvarchar](10) NULL,
+	[Max_EmpLanID] [nvarchar](30) NULL,
+	[Max_EmpName] [nvarchar](50) NULL,
+	[Aspect_EmpID] [nvarchar](10) NULL,
+	[Aspect_EndDate] [datetime] NULL,
+        [Max_EmpID_Upd_Note] nvarchar(100) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[PS_EmpID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+--***************
+
+
+
+
+--***************************************************************--
+
+		SECTION 3 - PREAPRE TABLES FOR UPDATES
+
+--***************************************************************--
+
+--1. For tables having EMPID as or part of primary Key Create Temp Tables
+--[EC].[Employee_Hierarchy]
+--[EC].[CSR_Hierarchy]
+
+SELECT * INTO [EC].[Employee_Hierarchy_Temp]
+FROM [EC].[Employee_Hierarchy]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy_Temp]
+ADD Max_EmpID nvarchar(20) NULL
+,Max_EmpID_Upd_Note nvarchar(100)  
+GO
+
+
+SELECT * INTO [EC].[CSR_Hierarchy_Temp]
+FROM [EC].[CSR_Hierarchy]
+GO
+
+
+
+--***************
+
+--2. Rename original above 2 tables
+
+EXEC sp_rename 'EC.Employee_Hierarchy', 'GDIT_Employee_Hierarchy'
+
+
+ALTER TABLE [EC].[GDIT_Employee_Hierarchy]
+DROP CONSTRAINT PK_Emp_ID
+GO
+
+EXEC sp_rename 'EC.CSR_Hierarchy', 'GDIT_CSR_Hierarchy'; 
+GO
+
+ALTER TABLE [EC].[GDIT_CSR_Hierarchy]
+DROP CONSTRAINT PK_CSR_ID
+GO
+
+--***************
+
+--3a. Create 2 new tables
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [EC].[Employee_Hierarchy](
+	[Emp_ID] [nvarchar](10) NOT NULL,
+        [Emp_Name] [varbinary](256) NULL,
+	[Emp_LanID] [varbinary](128) NULL,
+	[Emp_Email] [varbinary](256) NULL,
+	[Emp_Site] [nvarchar](50) NULL,
+	[Emp_Job_Code] [nvarchar](50) NULL,
+	[Emp_Job_Description] [nvarchar](50) NULL,
+	[Emp_Program] [nvarchar](20) NULL,
+	[Active] [nvarchar](1) NULL,
+	[Hire_Date] [nvarchar](10) NULL,
+	[Start_Date] [nvarchar](10) NULL,
+	[End_Date] [nvarchar](10) NULL,
+	[Sup_ID] [nvarchar](10) NULL,
+        [Sup_Name] [varbinary](256) NULL,
+	[Sup_LanID] [varbinary](128) NULL,
+	[Sup_Email] [varbinary](256) NULL,
+	[Sup_Job_Code] [nvarchar](50) NULL,
+	[Sup_Job_Description] [nvarchar](50) NULL,
+	[Mgr_ID] [nvarchar](10) NULL,
+        [Mgr_Name] [varbinary](256) NULL,
+	[Mgr_LanID] [varbinary](128) NULL,
+	[Mgr_Email] [varbinary](256) NULL,
+	[Mgr_Job_Code] [nvarchar](50) NULL,
+	[Mgr_Job_Description] [nvarchar](50) NULL,
+	[SrMgrLvl1_ID] [nvarchar](10) NULL,
+	[SrMgrLvl2_ID] [nvarchar](10) NULL,
+	[SrMgrLvl3_ID] [nvarchar](10) NULL,
+	[Dept_ID] [nvarchar](30) NULL,
+	[Dept_Description] [nvarchar](60) NULL,
+	[Reg_Temp] [nvarchar](3) NULL,
+	[Full_Part_Time] [nvarchar](3) NULL,
+	[Term_Date] [nvarchar](10) NULL,
+	[FLSA_Status] [nvarchar](20) NULL,
+        [Legacy_Emp_ID] [nvarchar](10) NULL,
+	[PS_Emp_ID_Prefix] [nvarchar](10) NULL,
+	[Emp_Pri_Name] [varbinary](256) NULL,
+	
+	
+ CONSTRAINT [PK_Emp_ID] PRIMARY KEY CLUSTERED 
+(
+	[Emp_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+
+
+
+--***************
+
+--3b.
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ((99991231)) FOR [End_Date]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ('NA') FOR [Dept_ID]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ('NA') FOR [Dept_Description]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ('NA') FOR [Reg_Temp]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ('NA') FOR [Full_Part_Time]
+GO
+
+
+
+
+
+--***************
+--3c.
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[CSR_Hierarchy](
+	[EmpID] [nvarchar](10) NOT NULL,
+	[SupID] [nvarchar](10) NULL,
+	[MgrID] [nvarchar](10) NULL,
+	[StartDate] [datetime] NOT NULL,
+	[EndDate] [datetime] NULL,
+ CONSTRAINT [PK_CSR_ID] PRIMARY KEY CLUSTERED 
+(
+	[EmpID] ASC,
+	[StartDate] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+--***************
+
+
+
+
+
+
+
+
+
+
