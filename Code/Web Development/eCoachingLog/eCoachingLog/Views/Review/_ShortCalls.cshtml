@@ -43,7 +43,7 @@
 						@Html.ValidationMessageFor(m => m.ShortCallList[index].IsManagerAgreed)
 				</div>
 				<div class="hide">
-					@Html.TextAreaFor(m => m.ShortCallList[index].Comments, new { @class = "form-control not-agreed-comments", placeholder = "Enter Comments ...", maxlength = 10 })
+					@Html.TextAreaFor(m => m.ShortCallList[index].Comments, new { @class = "form-control not-agreed-comments", placeholder = "Enter Comments ...", maxlength = 3000 })
 				</div>
 			}
 			else

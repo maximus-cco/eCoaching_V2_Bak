@@ -33,7 +33,7 @@
 					@Html.HiddenFor(m => m.ShortCallList[i].Action)
 				</td>
 				<td>
-					@Html.TextAreaFor(m => m.ShortCallList[i].CoachingNotes, new { @class = "form-control", placeholder = "Enter coaching notes ...", maxlength = 10 })
+					@Html.TextAreaFor(m => m.ShortCallList[i].CoachingNotes, new { @class = "form-control", placeholder = "Enter coaching notes ...", maxlength = 3000 })
 					@Html.ValidationMessageFor(m => m.ShortCallList[i].CoachingNotes)
 				</td>
 				<td class="text-center">@Html.CheckBoxFor(m => m.ShortCallList[i].IsLsaInformed, new { @class = "largeCheckBox" })</td>
