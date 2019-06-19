@@ -109,11 +109,11 @@ ul.navbar-nav {
 }
 
 #modal-container .modal-body {
-    max-height: 65vh;
+    max-height: 70vh;
     overflow-y: auto;
 }
 #modal-container .modal-content {
-	width: 80vw;
+	width: 90vw;
 	margin: auto;
 }
 #modal-container .modal-body textarea.form-control {
@@ -303,7 +303,11 @@ hr {
 }
 
 .mt-2 {
-  margin-top: 25px !important;
+	margin-top: 10px !important;
+}
+
+.mt-3 {
+	margin-top: 15px !important;
 }
 
 .row-eq-height {
@@ -643,3 +647,12 @@ div.dataTables_processing {
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
 }
+
+#tbl-short-call > tbody > tr > td {
+  vertical-align: middle;
+}
+
+input[type=radio].errorClass {
+    outline: 1px solid red
+}
+

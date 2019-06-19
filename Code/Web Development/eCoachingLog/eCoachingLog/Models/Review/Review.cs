@@ -1,5 +1,6 @@
 ﻿using eCoachingLog.Models.Common;
 using System;
+using System.Collections.Generic;
 
 namespace eCoachingLog.Models.Review
 {
@@ -31,6 +32,8 @@ namespace eCoachingLog.Models.Review
 		public bool IsResearchPendingForm { get; set; }
 		public bool IsCsePendingForm { get; set; }
 		public bool IsAcknowledgeForm { get; set; }
+		public bool IsShortCallPendingSupervisorForm { get; set; }
+		public bool IsShortCallPendingManagerForm { get; set; }
 
 		public bool IsAckOpportunityLog { get; set; }
 		public bool IsReinforceLog { get; set; }
@@ -39,5 +42,7 @@ namespace eCoachingLog.Models.Review
 		public bool IsReviewForm { get; set; }
 
 		public bool Acknowledge { get; set; }
+
+		public IList<ShortCall> ShortCallList { get; set; }
 	}
 }

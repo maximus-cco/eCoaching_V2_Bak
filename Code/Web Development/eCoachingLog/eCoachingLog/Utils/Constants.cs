@@ -57,6 +57,10 @@ namespace eCoachingLog.Utils
 		public const string DIRECT = "Direct";
 		public const string INDIRECT = "Indirect";
 
+		public const string PENDING = "Pending";
+		public const string COMPLETED = "Completed";
+		public const string WARNING = "Warning";
+
 		public const string CALL_TYPE_VERINT = "Verint";
 		public const string CALL_TYPE_AVOKE = "Avoke";
 		public const string CALL_TYPE_UCID = "UCID";
@@ -82,6 +86,7 @@ namespace eCoachingLog.Utils
 		public const int MODULE_PRODUCTION_PLANNING = 8;
 		public const int MODULE_PROGRAM_ANALYST = 9;
 		// ec.dim_status table
+		// Status IDs
 		public const int LOG_STATUS_UNKNOWN = 99999;
 		public const int LOG_STATUS_COMPLETED = 1;
 		public const int LOG_STATUS_INACTIVE = 2;
@@ -92,6 +97,18 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_PENDING_SRMANAGER_REVIEW = 7;
 		public const int LOG_STATUS_PENDING_QUALITYLEAD_REVIEW = 8;
 		public const int LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW = 9;
+		// Status Description
+		public const string LOG_STATUS_UNKNOWN_TEXT = "Unknown";
+		public const string LOG_STATUS_COMPLETED_TEXT = "Completed";
+		public const string LOG_STATUS_INACTIVE_TEXT = "Inactive";
+		public const string LOG_STATUS_PENDING_ACKNOWLEDGEMENT_TEXT = "Pending Acknowledgement";
+		public const string LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT = "Pending Employee Review";
+		public const string LOG_STATUS_PENDING_MANAGER_REVIEW_TEXT = "Pending Manager Review";
+		public const string LOG_STATUS_PENDING_SUPERVISOR_REVIEW_TEXT = "Pending Supervisor Review";
+		public const string LOG_STATUS_PENDING_SRMANAGER_REVIEW_TEXT = "Pending Sr. Manager Review";
+		public const string LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT = "Pending Quality Lead Review";
+		public const string LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW_TEXT = "Pending Deputy Program Manager Review";
+
 
 		public const int LOG_STATUS_LEVEL_1 = 1;
 		public const int LOG_STATUS_LEVEL_2 = 2;
@@ -166,9 +183,7 @@ namespace eCoachingLog.Utils
 		};
 
 		// TODO: move to resource file
-		public const string REVIEW_OMR_SHORT_CALL_TEXT = "You are receiving this eCL because you have been assigned to listen to and provide feedback on calls that have been identified as having a short duration. Details of each call can be found within the Performance Report Catalog by clicking " +
-			"<a href='https://cco.gdit.com/bi/ReportsCatalog/TQC_ShortCall/Forms/AllItems.aspx' target='_blank'>here</a>. " +
-			"Please review the calls and provide specific details on opportunities that requiring coaching.";
+		public const string REVIEW_OMR_SHORT_CALL_TEXT = "The CSR has multiple short calls that exceed the threshold. Please coach the behavior so the CSR has fewer short calls.";
 
 		public const string REVIEW_LCSAT = "You are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction. Please " +
 			"review the call from a PPoM perspective and provide details on the specific opportunities requiring coaching in the record below.";
@@ -242,6 +257,14 @@ namespace eCoachingLog.Utils
 
 		public const string ACK_COMMENT_TEXTBOX_LABEL = "Provide any comments or feedback below:";
 		public const string ACK_OTA_COMMENT_TEXTBOX_LABEL = "Provide the details from the coaching session including action plans developed:";
+		public const string ACK_CHECKBOX_TITLE_GENERAL = "Check the box below to acknowledge the eCoaching Log:";
+		public const string ACK_CHECKBOX_TITLE_REINFORCE = "Check the box below to acknowledge the monitor:";
+		public const string ACK_CHECKBOX_TITLE_OVERTURNED_APPEAL = "Check the box below to acknowledge the monitor:";
+		public const string ACK_CHECKBOX_TITLE_OPPORTUNITY = "Check the box below to acknowledge the coaching opportunity:";
+		public const string ACK_CHECKBOX_TEXT_GENERAL = "I have read and understand all the information provided on this eCoaching Log.";
+		public const string ACK_CHECKBOX_TEXT_REINFORCE = "I have read and understand all the information provided on this eCoaching Log.";
+		public const string ACK_CHECKBOX_TEXT_OVERTURNED_APPEAL = "By checking this box, I indicate that I have reviewed this appeal and have taken the appropriate actions.";
+		public const string ACK_CHECKBOX_TEXT_OPPORTUNITY = "I have read and understand all the information provided on this eCoaching Log.";
 	}
 
 	public enum EmployeeLogType

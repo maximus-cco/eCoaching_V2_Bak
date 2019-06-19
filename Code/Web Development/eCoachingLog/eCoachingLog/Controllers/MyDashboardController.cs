@@ -555,15 +555,15 @@ namespace eCoachingLog.Controllers
 			string status = string.Empty;
 			if (vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING)
 			{
-				status = "Pending";
+				status = Constants.PENDING;
 			}
 			else if (vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_SITE_COMPLETED)
 			{
-				status = "Completed";
+				status = Constants.COMPLETED;
 			}
 			else if (vm.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_SITE_WARNING)
 			{
-				status = "Warning";
+				status = Constants.WARNING;
 			}
 
 			return string.Format("eCoachingLog_{0}_{1}_{2}{3}", DateTime.Now.ToString("yyyyMMddHHmmssffff"), vm.Search.SiteName, status, ".xlsx");

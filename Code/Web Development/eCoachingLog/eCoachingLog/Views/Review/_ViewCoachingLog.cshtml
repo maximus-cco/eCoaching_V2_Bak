@@ -1,4 +1,5 @@
 ﻿@using eCoachingLog.Utils
+@model eCoachingLog.ViewModels.ReviewViewModel
 <div class="container-fluid" style="height: 100%;">
 	<div class="row row-eq-height">
 		<div class="col-xs-3 blue-bar">
@@ -15,25 +16,7 @@
 			</div>
 
 			<div class="modal-body" style="font-size: small;">
-				<strong>Coaching Reason(s):</strong>
-				<div class="table-responsive">
-					<table class="table table-hover">
-						@foreach (var reason in Model.LogDetail.Reasons)
-						{
-							<tr>
-								<td>@reason.Description</td>
-								<td>
-									@foreach (var sub in reason.SubReasons)
-									{
-										@sub <br />
-									}
-								</td>
-								<td>@reason.Value</td>
-							</tr>
-						}
-					</table>
-				</div>
-
+				@{ Html.RenderPartial("_Reasons", Model.LogDetail.Reasons); }
 				@if (!Model.LogDetail.IsQualityNowLog)
 				{
 					<div class="mt-2">
@@ -44,9 +27,13 @@
 				else
 				{
 					<!-- Quality NOW -->
-					{ Html.RenderPartial("_Scorecards"); }
+					Html.RenderPartial("_Scorecards");
 				}
-				
+
+				@if (Model.LogDetail.IsOmrShortCall)
+				{
+					Html.RenderPartial("_ShortCalls");
+				}
 				
 				<div class='mt-2 @(Model.ShowConfirmedCseText ? "show" : "hide")'>
 					<strong><mark>Coaching Opportunity was a confirmed Customer Service Escalation.</mark></strong><br />
@@ -54,51 +41,17 @@
 				<div class='mt-2 @(Model.ShowConfirmedNonCseText ? "show" : "hide")'>
 					<strong><mark>Coaching Opportunity was not a confirmed Customer Service Escalation.</mark></strong><br />
 				</div>
-				<div class='mt-2 @(string.IsNullOrEmpty(Model.LogDetail.MgrNotes) ? "hide" : "show")'>
-					<strong>Manager Notes:</strong><br />
-					@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.MgrNotes))
-				</div>
-				<div class="mt-2">
-					<strong>Coaching Notes:</strong><br />
-					@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
-				</div>
+				@{ Html.RenderPartial("_ReviewInfo"); }
 
-				<div class='mt-2 @(string.IsNullOrEmpty(Model.LogDetail.MgrReviewAutoDate) ? "hide" : "show")'>
-					<strong>Manager Review Information:</strong><br />
-					<div>
-						@Model.LogDetail.ReviewedManagerName<br />
-						Reviewed and acknowledged Quality Monitor on @Model.LogDetail.MgrReviewAutoDate
-					</div>
-				</div>
-
-				<div class="mt-2">
-					<strong>Supervisor Review Information:</strong><br />
-					<div class='@(string.IsNullOrEmpty(Model.LogDetail.SupReviewedAutoDate) ? "hide" : "show")'>
-						@Model.LogDetail.ReviewedSupervisorName<br />
-						@Model.LogDetail.EmployeeReviewLabel on @Model.LogDetail.SupReviewedAutoDate
-					</div>
-				</div>
-
-				<div class="mt-2">
-					<strong>Employee Review Information:</strong><br />
-					<div class='@(string.IsNullOrEmpty(Model.LogDetail.EmployeeReviewDate) ? "hide" : "show")'>
-						@Model.LogDetail.EmployeeName<br />
-						@Model.LogDetail.EmployeeReviewLabel @Model.LogDetail.EmployeeReviewDate
-					</div>
-				</div>
-
-				<div class="mt-2" style="padding-bottom: 15px;">
-					<strong>Employee Comments/Feedback:</strong><br />
-					@Model.LogDetail.Comment
-				</div>
-				<!-- /.modal-body -->
-				<div class="modal-footer">
+				<div class="modal-footer mt-1">
 					<div class="form-group">
 						<button class="btn btn-default float-right" id="btn-close" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
-			<!--/.col-xs-9 -->
+			<!--/.modal-body -->
 		</div>
+	    <!--/.col-xs-9 -->
+    </div>
 	<!--/.row -->
 </div>

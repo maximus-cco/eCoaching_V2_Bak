@@ -103,13 +103,10 @@ namespace eCoachingLog.Services
 			{
 				if (review.LogStatusLevel == 3)
 				{
-					if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat)
+					// Don't display instruct text for manager since now the workflow is changed to 
+					// Pending Supervisor Review --> Pending Manager Review
+					if ((log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat) && !log.IsOmrShortCall)
 					{
-						// Short Call
-						if (log.IsOmrShortCall)
-						{
-							return Constants.REVIEW_OMR_SHORT_CALL_TEXT;
-						}
 						// Low Csat
 						if (log.IsLowCsat)
 						{
@@ -124,6 +121,11 @@ namespace eCoachingLog.Services
 			if ((user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
 				&& review.LogStatusLevel == 2)
 			{
+				if (log.IsOmrShortCall)
+				{
+					return Constants.REVIEW_OMR_SHORT_CALL_TEXT;
+				}
+
 				if (log.IsOmrIae || log.IsOmrIaef || log.IsOmrIat)
 				{
 					return Constants.REVIEW_OMR;
@@ -228,6 +230,31 @@ namespace eCoachingLog.Services
 			return reviewRepository.GetReasonsToSelect(reportCode);
 		}
 
+		public IList<Behavior> GetShortCallBehaviorList(bool isValid)
+		{
+			return this.reviewRepository.GetShortCallBehaviorList(isValid);
+		}
+
+		public string GetShortCallAction(long logId, string employeeId, bool isValidBehavior, int behaviorId)
+		{
+			if (!isValidBehavior)
+			{
+				return this.reviewRepository.GetShortCallAction(logId, employeeId, behaviorId);
+			}
+			// No Action for Valid Behavior
+			return String.Empty;
+		}
+
+		public IList<ShortCall> GetShortCallList(long logId)
+		{
+			return this.reviewRepository.GetShortCallList(logId);
+		}
+
+		public IList<ShortCall> GetShortCallEvalList(long logId)
+		{
+			return this.reviewRepository.GetShortCallEvalList(logId);
+		}
+
 		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName, int logIdInSession)
 		{
 			// Strip potential harmful characters entered by the user
@@ -235,6 +262,19 @@ namespace eCoachingLog.Services
 			review.Comment = eCoachingLogUtil.CleanInput(review.Comment);
 			review.DetailReasonCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonCoachable);
 			review.DetailReasonNotCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonNotCoachable);
+
+			// TODO: remove
+			//review.IsShortCallPendingSupervisorForm = true;
+			if (review.IsShortCallPendingSupervisorForm)
+			{
+				string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
+				return reviewRepository.CompleteShortCallsReview(review, nextStatus, user);
+			}
+
+			if (review.IsShortCallPendingManagerForm)
+			{
+				return reviewRepository.CompleteShortCallsConfirm(review, Constants.LOG_STATUS_COMPLETED_TEXT, user);
+			}
 
 			if (review.IsRegularPendingForm)
 			{
@@ -257,7 +297,7 @@ namespace eCoachingLog.Services
 			}
 
 			// unexpected pending form, should never reach here
-			StringBuilder sb = new StringBuilder("Unexpceted review form: ");
+			StringBuilder sb = new StringBuilder("Unexpected review form: ");
 			var userId = user == null ? "usernull" : user.EmployeeId;
 			sb.Append("[").Append(userId).Append("]")
 				.Append("|LogId[").Append(logIdInSession).Append("]");
@@ -268,7 +308,7 @@ namespace eCoachingLog.Services
 		private bool CompleteRegularPendingReview(Review review, User user, string emailTempFileName, string logoFileName)
 		{
 			bool success = false;
-			string nextStatus = "Pending Employee Review";
+			string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 			review.DetailsCoached = FormatCoachingNotes(review, user);
 			success = reviewRepository.CompleteRegularPendingReview(review, nextStatus, user);
 			return success;
@@ -281,14 +321,14 @@ namespace eCoachingLog.Services
 
 			if (review.IsAckOverTurnedAppeal)
 			{
-				nextStatus = "Completed";
+				nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
 				return reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, FormatCoachingNotes(review, user), user);
 			}
 
 			// Opportunity
 			if (!review.IsReinforceLog)
 			{
-				nextStatus = "Completed";
+				nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
 				success = reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
 			}
 			// Reinforcement
@@ -307,7 +347,7 @@ namespace eCoachingLog.Services
 			}
 
 			// Email CSR's comments to supervisor and manager 
-			if (success && review.LogDetail.ModuleId == Constants.MODULE_CSR && nextStatus == "Completed")
+			if (success && review.LogDetail.ModuleId == Constants.MODULE_CSR && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT)
 			{
 				try
 				{
@@ -388,7 +428,7 @@ namespace eCoachingLog.Services
 
 		private string GetNextStatus(Review review, User user)
 		{
-			string nextStatus = "Unknown";
+			string nextStatus = Constants.LOG_STATUS_UNKNOWN_TEXT;
 			int moduleId = review.LogDetail.ModuleId;
 			// Positive (reinforced, met goal) Ack form
 			if (review.IsAcknowledgeForm && review.IsReinforceLog)
@@ -397,21 +437,21 @@ namespace eCoachingLog.Services
 				{
 					if (review.LogDetail.HasSupAcknowledged)
 					{
-						nextStatus = "Completed";
+						nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
 					}
 					else
 					{
 						if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
 						{
-							nextStatus = "Pending Supervisor Review";
+							nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW_TEXT;
 						}
 						else if (moduleId == Constants.MODULE_SUPERVISOR)
 						{
-							nextStatus = "Pending Manager Review";
+							nextStatus = Constants.LOG_STATUS_PENDING_MANAGER_REVIEW_TEXT;
 						}
 						else if (moduleId == Constants.MODULE_QUALITY)
 						{
-							nextStatus = "Pending Quality Lead Review";
+							nextStatus = Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT;
 						}
 					}
 				}
@@ -419,11 +459,11 @@ namespace eCoachingLog.Services
 				{
 					if(review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_ACKNOWLEDGEMENT)
 					{
-						nextStatus = "Pending Employee Review";
+						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 					}
 					else
 					{
-						nextStatus = "Completed";
+						nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
 					}
 				}
 
@@ -436,7 +476,7 @@ namespace eCoachingLog.Services
 				// Coaching not required
 				if (!review.IsCoachingRequired)
 				{
-					return "Inactive";
+					return Constants.LOG_STATUS_INACTIVE_TEXT;
 				}
 
 				// Coaching is required
@@ -445,43 +485,43 @@ namespace eCoachingLog.Services
 				{
 					if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat)
 					{
-						nextStatus = "Pending Supervisor Review";
+						nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW_TEXT;
 					}
 					else if (log.IsOmrIae || log.IsOmrIaef || log.IsOmrIat || log.IsEtsOae || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrl || log.IsBrn)
 					{
-						nextStatus = "Pending Employee Review";
+						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 					}
 
 					if (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
 					{
-						nextStatus = "Pending Employee Review";
+						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 					}
 				}
 				else if (moduleId == Constants.MODULE_SUPERVISOR)
 				{
 					if (log.IsCurrentCoachingInitiative || log.IsOmrException)
 					{
-						nextStatus = "Pending Manager Review";
+						nextStatus = Constants.LOG_STATUS_PENDING_MANAGER_REVIEW_TEXT;
 					}
 					else
 					{
-						nextStatus = "Pending Employee Review";
+						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 					}
 				}
 				else if (moduleId == Constants.MODULE_QUALITY)
 				{
 					if (log.IsCurrentCoachingInitiative || log.IsOmrException)
 					{
-						nextStatus = "Pending Quality Lead Review";
+						nextStatus = Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT;
 					}
 					else
 					{
-						nextStatus = "Pending Employee Review";
+						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 					}
 				}
 				else // LSA, Program Analyst, Administration, Analytics Reporting, Production Planning
 				{
-					nextStatus = "Pending Employee Review";
+					nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 				}
 
 				return nextStatus;
@@ -492,15 +532,15 @@ namespace eCoachingLog.Services
 			{
 				if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
 				{
-					nextStatus = "Pending Supervisor Review";
+					nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW_TEXT;
 				}
 				else if (moduleId == Constants.MODULE_SUPERVISOR)
 				{
-					nextStatus = "Pending Manager Review";
+					nextStatus = Constants.LOG_STATUS_PENDING_MANAGER_REVIEW_TEXT;
 				}
 				else if (moduleId == Constants.MODULE_QUALITY)
 				{
-					nextStatus = "Pending Quality Lead Review";
+					nextStatus = Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT;
 				}
 			}
 

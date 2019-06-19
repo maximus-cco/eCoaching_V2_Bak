@@ -1,4 +1,5 @@
-﻿<div class="container-fluid" style="height: 100%;">
+﻿@model eCoachingLog.ViewModels.ReviewViewModel
+<div class="container-fluid" style="height: 100%;">
 	<div class="row row-eq-height" >
 		<div class="col-xs-3 blue-bar" >
 			@{Html.RenderPartial("_WarningLogInfo"); }
@@ -10,24 +11,7 @@
 			</div>
 
 			<div class="modal-body" style="font-size: small;">
-				<strong>Coaching Reason(s):</strong>
-				<div class="table-responsive">
-					<table class="table table-hover">
-						@foreach (var reason in Model.WarningLogDetail.Reasons)
-						{
-							<tr>
-								<td>@reason.Description</td>
-								<td>
-									@foreach (var sub in reason.SubReasons)
-									{
-										@sub <br />
-									}
-								</td>
-								<td>@reason.Value</td>
-							</tr>
-						}
-					</table>
-				</div>
+				@{ Html.RenderPartial("_Reasons", Model.WarningLogDetail.Reasons); }
 			</div>
 			<!-- /.modal-body -->
 			<div class="modal-footer">

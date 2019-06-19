@@ -10,6 +10,10 @@ namespace eCoachingLog.Services
 		bool IsAccessAllowed(int currentPage, BaseLogDetail logDetail, bool isCoaching, User user);
 		string GetInstructionText(Review vm, User user);
 		IList<string> GetReasonsToSelect(CoachingLogDetail log);
+		IList<ShortCall> GetShortCallList(long logId);
+		IList<ShortCall> GetShortCallEvalList(long logId);
+		IList<Behavior> GetShortCallBehaviorList(bool isValid);
+		string GetShortCallAction(long logId, string employeeId, bool isValidBehavior, int behaviorId);
 		bool CompleteReview(Review vm, User user, string emailTempFileName, string logoFileName, int logIdInSession);
 	}
 }

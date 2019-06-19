@@ -1,4 +1,6 @@
-﻿using System;
+﻿using eCoachingLog.Models.Common;
+using eCoachingLog.Models.Survey;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -24,6 +26,63 @@ namespace eCoachingLog.Extensions
 			SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
 			sqlParameter.SqlDbType = SqlDbType.Structured;
 			sqlParameter.TypeName = "EC.IdsTableType";
+
+			return sqlParameter;
+		}
+
+		public static SqlParameter AddSurveyResponseTableType(this SqlParameterCollection target, string name, Survey survey)
+		{
+			DataTable dataTable = new DataTable();
+			dataTable.Columns.Add("QuestionID", typeof(int));
+			dataTable.Columns.Add("ResponseID", typeof(int));
+			dataTable.Columns.Add("Comments", typeof(string));
+
+			foreach (Question q in survey.Questions)
+			{
+				dataTable.Rows.Add(q.Id, q.SingleChoiceSelected, q.MultiLineText);
+			}
+
+			SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
+			sqlParameter.SqlDbType = SqlDbType.Structured;
+			sqlParameter.TypeName = "EC.ResponsesTableType";
+
+			return sqlParameter;
+		}
+
+		public static SqlParameter AddShortCallReviewTableType(this SqlParameterCollection target, string name, IList<ShortCall> shortCallList)
+		{
+			DataTable dataTable = new DataTable();
+			dataTable.Columns.Add("VerintID", typeof(string));
+			dataTable.Columns.Add("BehaviorID", typeof(int));
+			dataTable.Columns.Add("Action", typeof(string)); // TODO: Check if needed to pass back, since this is data entered by user
+			dataTable.Columns.Add("CoachingNotes", typeof(string));
+			dataTable.Columns.Add("LsaInformed", typeof(bool));
+
+			foreach (ShortCall sc in shortCallList)
+			{
+				dataTable.Rows.Add(sc.VerintId, sc.SelectedBehaviorId, sc.Action, sc.CoachingNotes, sc.IsLsaInformed);
+			}
+			SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
+			sqlParameter.SqlDbType = SqlDbType.Structured;
+			sqlParameter.TypeName = "EC.ShorCallReviewTableType"; // User Defined Type name in DB
+
+			return sqlParameter;
+		}
+
+		public static SqlParameter AddShortCallConfirmTableType(this SqlParameterCollection target, string name, IList<ShortCall> shortCallList)
+		{
+			DataTable dataTable = new DataTable();
+			dataTable.Columns.Add("VerintID", typeof(string));
+			dataTable.Columns.Add("Agree", typeof(bool));
+			dataTable.Columns.Add("Comments", typeof(string));
+
+			foreach (ShortCall sc in shortCallList)
+			{
+				dataTable.Rows.Add(sc.VerintId, sc.IsManagerAgreed, sc.Comments);
+			}
+			SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
+			sqlParameter.SqlDbType = SqlDbType.Structured;
+			sqlParameter.TypeName = "EC.ShorCallConfirmTableType"; // User Defined Type name in DB
 
 			return sqlParameter;
 		}

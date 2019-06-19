@@ -123,8 +123,8 @@
 			};
 			$.ajax({
 				type: 'POST',
-					url: searchUrl,
-					data: $('#form-search-mydashboard').serialize() + '&' + $.param(pageSizeSelected),
+				url: searchUrl,
+				data: $('#form-search-mydashboard').serialize() + '&' + $.param(pageSizeSelected),
 				success: function (data) {
 					// hide please-wait inside DataTables initComplete callback.
 					// Warning logs not allowed to export
@@ -163,11 +163,11 @@
 						// download the generated excel file
 						window.location = downloadExcelUrl;
 					}
-					// too much data
+						// too much data
 					else if (data.result === 'oversized') {
 						alert('You have reached the maximum number of records (100,000) that can be exported at a time. Please refine your filters and try again.');
 					}
-					// fail
+						// fail
 					else {
 						$('#modal-container .modal-content').html(
 							'<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button>Export to Excel</div>' +
@@ -180,11 +180,77 @@
 		}
 	});
 
-    $('body').on('click', '#btn-submit', function (e) {
-    	e.preventDefault();
-    	$(this).prop('disabled', true);
-    	submitReview(saveUrl, myTable);
-    });
+	$('body').on('click', '#btn-submit', function (e) {
+		e.preventDefault();
+		$(this).prop('disabled', true);
+		submitReview(saveUrl, myTable);
+	});
+
+	// Short Call - reload behavior list when valid check box is clicked
+	$('body').on('click', 'input[name*="IsValidBehavior"]', function (e) {
+		var isValid = $(this).is(':checked');
+		var $behaviorDropdown = $(this).parent().next('td').find('select');
+		var $actionDiv = $(this).parent().next('td').next('td').find('div');
+
+		$behaviorDropdown.addClass('loadinggif');
+		$.getJSON(getShortCallBehaviorList, {
+			isValid: isValid
+		})
+		.done(function (behaviors) {
+			var options = [];
+			$.each(behaviors, function (i, behavior) {
+				options.push('<option value="', behavior.Value, '">' + behavior.Text + '</option>');
+			});
+			$behaviorDropdown.html(options.join(''));
+			// Reset Action text to blank
+			$actionDiv.html('');
+		})
+		.fail(function () {
+			$behaviorDropdown.html('<option value="">error ...&nbsp;&nbsp;</option>');
+		})
+		.complete(function () {
+			$behaviorDropdown.removeClass('loadinggif')
+		});
+	});
+
+	// Short Call: Update Action column based on Behavior selected
+	$('body').on('change', 'select[name*="SelectedBehaviorId"]', function (e) {
+		// Action cell
+		var $actionDiv = $(this).parent().next('td').find('div');
+		var $actionHidden = $(this).parent().next('td').find('input');
+		// Valid Checkbox cell
+		var $validBehaviorTd = $(this).parent().prev('td').find('input');
+
+		$.getJSON(getActionByBehaviorId, {
+			logId: logId,
+			employeeId: employeeId,
+			behaviorId: $(this).val(),
+			isValidBehavior: $validBehaviorTd.is(':checked')
+		})
+		.done(function (action) {
+			$actionDiv.html(action);
+			$actionHidden.val(action);
+		})
+		.fail(function () {
+		})
+		.complete(function () {
+		});
+	});
+
+	// Short Call - toggle comments textbox display based on which 'agree' radio button is selected
+	$('body').on('click', 'input[name*="IsManagerAgreed"]', function (e) {
+		$('div:hidden :input').prop("disabled", false);
+
+		if ($(this).val() === 'true') {
+			$(this).parent().next().removeClass('show');
+			$(this).parent().next().addClass('hide');
+		}
+
+		if ($(this).val() === 'false') {
+			$(this).parent().next().removeClass('hide');
+			$(this).parent().next().addClass('show');
+		}
+	});
 
     function submitReview(url, tableToRefresh) {
     	// Do not send input fields in hidden div (display:none) to server
@@ -209,7 +275,7 @@
 
 				// Reset all error msgs
     			$.each(data.allfields, function (i, field) {
-    				$('#' + field).removeClass('errorClass');
+    				$('[name="' + field + '"]').removeClass('errorClass');
     				container = $('span[data-valmsg-for="' + field + '"]').html('');
     			});
 

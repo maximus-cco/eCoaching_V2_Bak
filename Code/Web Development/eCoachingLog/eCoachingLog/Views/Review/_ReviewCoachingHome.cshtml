@@ -1,4 +1,5 @@
-﻿<div class="container-fluid" style="height: 100%;">
+﻿@model eCoachingLog.ViewModels.ReviewViewModel
+<div class="container-fluid" style="height: 100%;">
 	<div class="row row-eq-height">
 		<div class="col-xs-3 blue-bar">
 			@{Html.RenderPartial("_CoachingLogInfo"); }
@@ -19,24 +20,7 @@
 			</div>
 
 			<div class="modal-body" style="font-size: small;">
-				<strong>Coaching Reason(s):</strong>
-				<div class="table-responsive">
-					<table class="table table-hover">
-						@foreach (var reason in Model.LogDetail.Reasons)
-						{
-							<tr>
-								<td>@reason.Description</td>
-								<td>
-									@foreach (var sub in reason.SubReasons)
-									{
-										@sub <br />
-									}
-								</td>
-								<td>@reason.Value</td>
-							</tr>
-						}
-					</table>
-				</div>
+				@{ Html.RenderPartial("_Reasons", Model.LogDetail.Reasons); }
 
                 @if (!Model.LogDetail.IsQualityNowLog)
 				{
@@ -55,11 +39,11 @@
 				}
 				else
 				{
-					<!-- Quality NOW log -->
-					{ Html.RenderPartial("_Scorecards"); }
+					<!-- Display Quality NOW log -->
+					Html.RenderPartial("_Scorecards");
 				}
 
-				<div class="mt-2 bg-success @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")" style="padding: 5px;">
+				<div class="mt-2 bg-info @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")" style="padding: 5px;">
 					@Html.Raw(Model.InstructionText)
 				</div>
 

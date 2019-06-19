@@ -89,18 +89,24 @@ namespace eCoachingLog.Controllers
 				vm.WarningLogDetail = (WarningLogDetail)logDetail;
 			}
 
-			// Review - Read Only 
+			// Load short call list
+			if (vm.LogDetail.IsOmrShortCall)
+			{
+				vm.ShortCallList = this.reviewService.GetShortCallEvalList(vm.LogDetail.LogId);
+				// TODO: Remove, this will come from database
+				vm.LogDetail.Behavior = "CSR exceeded the Inbound Short Call target for the most recent week by having 14 short calls and has " +
+					"exceeded the target 4 other weeks out of the last 6 weeks. Please note that any CSR with 10 or more short calls in a week is considered an outlier.";
+			}
+
 			// User clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning
 			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage
 				|| Constants.PAGE_SURVEY == currentPage
 				|| Constants.PAGE_MY_SUBMISSION == currentPage
-				// Warning
-				|| !isCoaching
-				// Completed
-				|| logDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
+				|| !isCoaching // Warning
+				|| logDetail.StatusId == Constants.LOG_STATUS_COMPLETED) // Completed
 			{
-				vm.ShowViewMgtNotes = vm.ShowConfirmedCseText && !string.IsNullOrEmpty(vm.LogDetail.MgrNotes);
-
+				vm.IsReadOnly = true;
+				vm.ShowViewMgtNotes = !string.IsNullOrEmpty(vm.LogDetail.MgrNotes);
 				if (vm.LogDetail.IsIqs && vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 				{
 					vm.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Quality Monitor on ";
@@ -111,100 +117,189 @@ namespace eCoachingLog.Controllers
 					vm.LogDetail.EmployeeReviewLabel = "Reviewed and acknowledged Coaching on ";
 				}
 
-				vm.ReviewPageName = isCoaching ? "_ViewCoachingLog" : "_ViewWarningLog";
+				vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
 				return vm;
 			}
 
-			// Review - Editable
 			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
-			// Determine to show/hide Managers Notes and Coaching Notes
 			DetermineMgrSupNotesVisibility(vm);
-			// Static text (instruction text)
 			vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
 
-			if (IsAcknowledgeForm(vm)) // Load Acknowledge partial
+			// Init Acknowledge partial
+			if (IsAcknowledgeForm(vm))
 			{
-				vm.CommentTextBoxLabel = Constants.ACK_COMMENT_TEXTBOX_LABEL;
 				vm.IsAcknowledgeForm = true;
-				vm.IsReinforceLog = IsReinforceLog(vm);
-				vm.IsReviewForm = false;
-				vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-				// OverTurned Appeal log
-				vm.IsAckOverTurnedAppeal = IsAckOverTurnAppeal(vm);
+				return InitAckForm(vm, user, isCoaching);
+			}
+
+			// If it reaches here, it must be Review Form
+			return InitReviewForm(vm, user, isCoaching);
+		}
+
+		private ReviewViewModel InitAckForm(ReviewViewModel vm, User user, bool isCoaching)
+		{
+			vm.IsAcknowledgeForm = true;
+			vm.IsReviewForm = false;
+
+			vm.IsReadOnly = IsReadOnly(vm, user);
+			vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
+			// Not editable, send user to Read Only page
+			if (vm.IsReadOnly)
+			{
+				return vm;
+			}
+
+			// Default
+			vm.IsAckOverTurnedAppeal = false;
+			vm.IsAckOpportunityLog = false;
+			vm.IsReinforceLog = false;
+			vm.ShowCommentTextBox = false;
+			vm.ShowCommentDdl = false;
+
+			// Editable Form, send user to Ack (editable Review) page
+			// Acknowledge Checkbox setup
+			if (IsAckOverTurnAppeal(vm))
+			{
+				vm.IsAckOverTurnedAppeal = true;
+				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_OVERTURNED_APPEAL;
+				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_OVERTURNED_APPEAL;
+			}
+			else if (IsAckOpportunityLog(vm))
+			{
+				vm.IsAckOpportunityLog = true;
+				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_OPPORTUNITY;
+				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_OPPORTUNITY;
+			}
+			else if (IsAckReinforceLog(vm))
+			{
+				vm.IsReinforceLog = true;
+				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_REINFORCE;
+				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_REINFORCE;
+			}
+			else
+			{
+				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_GENERAL;
+				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_GENERAL;
+			}
+
+			// Comment Textbox or Dropdown setup
+			if (vm.IsAckOverTurnedAppeal || user.EmployeeId == vm.LogDetail.EmployeeId)
+			{
+				// Default
+				vm.ShowCommentTextBox = true;
+				vm.CommentTextboxLabel = Constants.ACK_COMMENT_TEXTBOX_LABEL;
+
+				// Quality Lead Ack OTA (OverTurned Appeals) log
 				if (vm.IsAckOverTurnedAppeal)
 				{
-					vm.ShowCommentTextBox = true;
-					vm.CommentTextBoxLabel = Constants.ACK_OTA_COMMENT_TEXTBOX_LABEL;
+					vm.CommentTextboxLabel = Constants.ACK_OTA_COMMENT_TEXTBOX_LABEL;
 				}
-
-				if (user.EmployeeId == vm.LogDetail.EmployeeId)
+				// Employee Ack log
+				else
 				{
-					vm.IsAckOpportunityLog = IsAckOpportunityLog(vm);
-					vm.ShowCommentTextBox = ShowCommentTextBox(vm);
-					vm.ShowCommentDdl = ShowCommentDdl(vm);
-					if (vm.ShowCommentDdl)
+					// DTT (Discrepancy Time Tracking) log - Show dropdown instead of textbox
+					// DTT logs are Opportunity, not Reinforcement
+					if (vm.LogDetail.IsDtt)
 					{
+						vm.ShowCommentTextBox = false;
+						vm.ShowCommentDdl = true;
 						// Load dtt comment dropdown
 						IList<string> dttReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
 						IEnumerable<SelectListItem> dttReasonSelectList = new SelectList(dttReasons);
 						vm.EmployeeCommentsDdlList = dttReasonSelectList;
-					}
-				}
-			}
-			// Load Review partial
-			else
-			{
-				// Not completed, display review instead of final.
-				vm.IsReviewForm = true;
-
-				// There are 3 types of review forms.
-				// Default all to false.
-				vm.IsResearchPendingForm = false;   // Research Form - determine if research is required
-				vm.IsCsePendingForm = false;        // CSE Form - determine if it is CSE
-				vm.IsRegularPendingForm = false;    // Regular Pending Form - neither research nor CSE needed
-
-				vm.IsResearchPendingForm = IsResearchPendingForm(vm, user);
-				if (!vm.IsResearchPendingForm) // Not Research Form
-				{
-					vm.IsCsePendingForm = IsCsePendingForm(vm, user);
-					if (!vm.IsCsePendingForm)   // Not Research Form, not CSE Form, so this is regular pending review form
-					{
-						vm.IsRegularPendingForm = true;    // Regular Pending Form.
-						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-					} // end if (!vm.IsCsePendingForm)
-					else // CSE Form
-					{
-						vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-						vm.InstructionText = Constants.REVIEW_CSE;
-					}
-				}
-				else // Research
-				{ 
-					vm.IsReviewByManager = string.CompareOrdinal(Constants.USER_ROLE_MANAGER, user.Role) == 0;
-					vm.IsReadOnly = IsReadOnly(vm, user); // Higher management view only;
-														  // Uncoachable reason Dropdown
-					IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
-					IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);
-					vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
-				} // end if (!vm.IsResearchPendingForm)
-			} // end if (ShowAckPartial(vm))
-
-			if (vm.IsReadOnly)
-			{
-				vm.ReviewPageName = isCoaching ? "_ViewCoachingLog" : "_ViewWarningLog";
-			}
-			else
-			{
-				vm.ReviewPageName = isCoaching ? "_ReviewCoachingHome" : "_ReviewWarningHome";
-			}
+					} // end if (vm.LogDetail.IsDtt && vm.IsAckOpportunityLog)
+				} // end if (vm.IsAckOverTurnedAppeal)
+			} // end if (vm.IsAckOverTurnedAppeal || user.EmployeeId == vm.LogDetail.EmployeeId)
 
 			return vm;
+		}
+
+		private ReviewViewModel InitReviewForm(ReviewViewModel vm, User user, bool isCoaching )
+		{
+			vm.IsReviewForm = true;
+			vm.IsAcknowledgeForm = false;
+
+			vm.IsResearchPendingForm = false;            // Research Form        - determine if research is required
+			vm.IsCsePendingForm = false;                 // CSE Form             - determine if it is CSE
+			vm.IsRegularPendingForm = false;             // Regular Pending Form - neither research nor CSE needed
+			vm.IsShortCallPendingSupervisorForm = false; // Short Call Form      - Supervisor reviewing
+			vm.IsShortCallPendingManagerForm = false;	 // Short Call Form      - Manager reviewing
+
+			// Short Call - Pending Manager Review Form
+			if (IsShortCallPendingManager(vm, user))
+			{
+				vm.IsShortCallPendingManagerForm = true;
+				vm.IsReadOnly = IsReadOnly(vm, user);
+				vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
+				return vm;
+			}
+
+			// Short Call - Pending Supervisor Review Form
+			if (IsShortCallPendingSupervisor(vm, user))
+			{
+				vm.IsShortCallPendingSupervisorForm = true;
+				vm.IsReadOnly = IsReadOnly(vm, user);
+				vm.ShortCallList = this.reviewService.GetShortCallList(vm.LogDetail.LogId);
+				// Load Behavior dropdown for each short call
+				foreach (ShortCall sc in vm.ShortCallList)
+				{
+					sc.SelectListBehaviors = new SelectList(sc.Behaviors, "Id", "Text");
+				}
+
+				vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
+				return vm;
+			}
+
+			// Research Form
+			if (IsResearchPendingForm(vm, user))
+			{
+				vm.IsResearchPendingForm = true;
+				vm.IsReviewByManager = string.CompareOrdinal(Constants.USER_ROLE_MANAGER, user.Role) == 0;
+				vm.IsReadOnly = IsReadOnly(vm, user);
+				IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
+				IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);
+				vm.MainReasonNotCoachableList = uncoachableReasonSelectList;
+
+				vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
+				return vm;
+			}
+
+			// CSE Form
+			if (IsCsePendingForm(vm, user))
+			{
+				vm.IsCsePendingForm = true;
+				vm.InstructionText = Constants.REVIEW_CSE;
+				vm.IsReadOnly = IsReadOnly(vm, user);
+
+				vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
+				return vm;
+			}
+			
+			// Regular Pending Form.
+			vm.IsRegularPendingForm = true;
+			vm.IsReadOnly = IsReadOnly(vm, user);
+
+			vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
+			return vm;
+		}
+
+		private string GetReviewPageName(bool isReadOnly, bool isCoaching)
+		{
+			if (isReadOnly)
+			{
+				return isCoaching ? "_ViewCoachingLog" : "_ViewWarningLog";
+			}
+
+			return isCoaching ? "_ReviewCoachingHome" : "_ReviewWarningHome";
 		}
 
 		[HttpPost]
 		public ActionResult Save(ReviewViewModel vm)
 		{
 			logger.Debug("!!!!!!!!!!Entered Save");
+
+			// TODO: remove
+			LogFormData(vm);
 
 			bool success = false;
 			User user = GetUserFromSession();
@@ -243,18 +338,36 @@ namespace eCoachingLog.Controllers
 			// ModelState not valid
 			// Display validation message
 			return Json(new
-			{
-				success = false,
-				valid = false,
-				errors = ModelState
-				.Where(x => x.Value.Errors.Count > 0)
-				.ToDictionary(
-					kvp => kvp.Key,
-					kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
-				),
-				allfields = ModelState.Keys
-			}
+				{
+					success = false,
+					valid = false,
+					errors = ModelState
+						.Where(x => x.Value.Errors.Count > 0)
+						.ToDictionary(
+							kvp => kvp.Key,
+							kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
+						),
+						allfields = ModelState.Keys
+				}
 			);
+		}
+
+		// TODO: Remove
+		private void LogFormData(ReviewViewModel vm)
+		{
+			int logIdInSession = (int)Session["reviewLogId"];
+			logger.Debug("LogID:" + logIdInSession);
+			logger.Debug("Short Call List:");
+
+			foreach (var sc in vm.ShortCallList)
+			{
+				logger.Debug("VerintID: " + sc.VerintId);
+				logger.Debug("IsValidBehavior: " + sc.IsValidBehavior);
+				logger.Debug("BehaviorID: " + sc.SelectedBehaviorId);
+				logger.Debug("CoachingNotes: " + sc.CoachingNotes);
+				logger.Debug("IsLsaInformed: " + sc.IsLsaInformed);
+				logger.Debug("IsManagerAgreed: " + sc.IsManagerAgreed);
+			}
 		}
 
 		private bool IsReadOnly(ReviewViewModel vm, User user)
@@ -273,10 +386,17 @@ namespace eCoachingLog.Controllers
 				{
 					readOnly = user.EmployeeId != vm.LogDetail.EmployeeId;
 				}
-				// All other statuses - managers and above VIEW ONLY - they don't enter data for Regular Pending form
-				else
+				// All other statuses - managers and above VIEW ONLY - they don't enter data for Regular Pending form except for short call pending mgr review
+				else if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
 				{
-					readOnly = true;
+					if (vm.LogDetail.IsOmrShortCall && user.EmployeeId == vm.LogDetail.ManagerEmpId)
+					{
+						readOnly = false;
+					}
+					else
+					{
+						readOnly = true;
+					}
 				}
 			}
 			else if (vm.IsAcknowledgeForm)
@@ -317,7 +437,9 @@ namespace eCoachingLog.Controllers
 			{
 				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
 				{
-					if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat)
+					if (log.IsCurrentCoachingInitiative 
+						|| (log.IsOmrException && !log.IsOmrShortCall)
+						|| log.IsLowCsat)
 					{
 						retVal = true;
 					}
@@ -348,13 +470,33 @@ namespace eCoachingLog.Controllers
 			return retVal;
 		}
 
+		private bool IsShortCallPendingManager(ReviewViewModel vm, User user)
+		{
+			// TODO: check sub coaching reason id (OR vm.IsOmrShortCall???) AND status "Pending Manager Review"
+			// AND user is the MANAGER
+			return true;
+		}
+
+		private bool IsShortCallPendingSupervisor(ReviewViewModel vm, User user)
+		{
+			// TODO: check sub coaching reason id (OR vm.IsOmrShortCall???) AND status "Pending Supervisor Review"
+			// AND user is the SUPERVISOR
+			return false;
+		}
+
 		private void DetermineMgrSupNotesVisibility(ReviewViewModel vm)
 		{
-			var userEmployeeId = GetUserFromSession().EmployeeId;
+			var user = GetUserFromSession();
+			var userEmployeeId = user.EmployeeId;
 
 			// Initialize both to false
 			vm.ShowManagerNotes = false;
 			vm.ShowCoachingNotes = false;
+
+			if (IsShortCallPendingSupervisor(vm, GetUserFromSession()))
+			{
+				return;
+			}
 
 			// Case 1:
 			// User is the current supervisor of the employee, OR
@@ -368,22 +510,20 @@ namespace eCoachingLog.Controllers
 				{
 					vm.ShowManagerNotes = true;
 				}
-
-
 				return;
 			}
 
 			// Case 2:
+			// It's not short call pending Manager review, AND either one of the below:
 			// User is the current manager of the employee, OR
 			// User was the manager of the employee when the log was submitted and the log is low csat, OR
 			// User is the person to whom this log was reassgined
-			if (userEmployeeId == vm.LogDetail.ManagerEmpId ||
+			if (!IsShortCallPendingManager(vm, user) && (userEmployeeId == vm.LogDetail.ManagerEmpId ||
 				(userEmployeeId == vm.LogDetail.LogManagerEmpId && vm.LogDetail.IsLowCsat) ||
-				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
+				userEmployeeId == vm.LogDetail.ReassignedToEmpId))
 			{
 				// Display coaching notes always
 				vm.ShowCoachingNotes = true;
-
 				if (vm.LogStatusLevel != Constants.LOG_STATUS_LEVEL_3)
 				{
 					vm.ShowManagerNotes = true;
@@ -397,7 +537,6 @@ namespace eCoachingLog.Controllers
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
 				// Display Coaching Notes
-				// Display Manager Notes if not empty
 				vm.ShowCoachingNotes = true;
 				if (!string.IsNullOrEmpty(vm.LogDetail.MgrNotes))
 				{
@@ -433,30 +572,29 @@ namespace eCoachingLog.Controllers
 			// Quality Lead: Acknowledge an OverTurned Appeal log
 			if (vm.LogDetail.IsOta)
 			{
-				return (userEmployeeId == vm.LogDetail.SupervisorEmpId && 
+				return (userEmployeeId == vm.LogDetail.SupervisorEmpId &&
 					vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW);
 			}
 
 			// User is the employee
-			// TODO: QualityNOW - CSR reviewing
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
-				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1 ||
-					vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;
+				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1 || // LOG_STATUS_PENDING_EMPLOYEE_REVIEW
+					vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;      // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
 			}
 
 			// Higher management 
 			if (userEmployeeId == vm.LogDetail.ManagerEmpId)
 			{
-				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;
+				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;   // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
 			}
 
 			// User is the Supervisor of the employee
 			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
 				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
 			{
-				return ((vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged) ||
-					vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4);
+				return ((vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged) || // LOG_STATUS_PENDING_SUPERVISOR_REVIEW
+					vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4);                                           // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
 			}
 
 			return false;
@@ -536,7 +674,7 @@ namespace eCoachingLog.Controllers
 				vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW);
 		}
 
-		private bool IsReinforceLog(ReviewViewModel vm)
+		private bool IsAckReinforceLog(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
@@ -590,37 +728,10 @@ namespace eCoachingLog.Controllers
 			return false;
 		}
 
-		private bool ShowCommentTextBox(ReviewViewModel vm)
-		{
-			var userEmployeeId = GetUserFromSession().EmployeeId;
-
-			// User is the employee of the log
-			if (userEmployeeId == vm.LogDetail.EmployeeId)
-			{
-				return (!vm.LogDetail.IsDtt 
-					&& (IsAckOpportunityLog(vm) || IsReinforceLog(vm))
-				);
-			}
-
-			return false;
-		}
-
-		private bool ShowCommentDdl(ReviewViewModel vm)
-		{
-			var userEmployeeId = GetUserFromSession().EmployeeId;
-
-			// User is the employee of the log
-			if (userEmployeeId == vm.LogDetail.EmployeeId)
-			{
-				return (IsAckOpportunityLog(vm) && vm.LogDetail.IsDtt);
-			}
-
-			return false;
-		}
-
 		private bool ShowConfirmedCseText(CoachingLogDetail logDetail)
 		{
 			return logDetail.IsSubmittedAsCse.HasValue 
+				&& logDetail.IsSubmittedAsCse.Value
 				&& logDetail.IsConfirmedCse.HasValue
 				&& logDetail.IsConfirmedCse.Value;
 		}
@@ -628,8 +739,54 @@ namespace eCoachingLog.Controllers
 		private bool ShowConfirmedNonCseText(CoachingLogDetail logDetail)
 		{
 			return logDetail.IsSubmittedAsCse.HasValue 
+				&& logDetail.IsSubmittedAsCse.Value
 				&& logDetail.IsConfirmedCse.HasValue
 				&& !logDetail.IsConfirmedCse.Value;
+		}
+
+		// TODO: cleanup when db piece is ready
+		public JsonResult GetShortCallBehaviorList(bool isValid)
+		{
+			IList<Behavior> behaviorList = new List<Behavior>();
+			if (isValid)
+			{
+				if (Session["validBehaviorList"] == null)
+				{
+					behaviorList = this.reviewService.GetShortCallBehaviorList(isValid);
+					Session["validBehaviorList"] = behaviorList;
+				}
+				else
+				{
+					behaviorList = (IList<Behavior>)Session["validBehaviorList"];
+				}
+			}
+			else
+			{
+				if (Session["invalidBehaviorList"] == null)
+				{
+					behaviorList = this.reviewService.GetShortCallBehaviorList(isValid);
+					Session["invalidBehaviorList"] = behaviorList;
+				}
+				else
+				{
+					behaviorList = (IList<Behavior>)Session["invalidBehaviorList"];
+				}
+			}
+
+			IEnumerable<SelectListItem> behaviors = new SelectList(behaviorList, "Id", "Text");
+			JsonResult result = Json(behaviors);
+			result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+			return result;
+		}
+
+		// TODO: I can pass in logId or employeeId so that db logic can return the correct ACTION text
+		public JsonResult GetActionByBehaviorId(long logId, string employeeId, bool isValidBehavior, int behaviorId)
+		{
+			string action = this.reviewService.GetShortCallAction(logId, employeeId, isValidBehavior, behaviorId);
+
+			JsonResult result = Json(action);
+			result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+			return result;
 		}
 	}
 }

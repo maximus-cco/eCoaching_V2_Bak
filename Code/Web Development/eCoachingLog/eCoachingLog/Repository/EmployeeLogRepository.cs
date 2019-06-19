@@ -147,7 +147,7 @@ namespace eCoachingLog.Repository
 						logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
 						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
 
-						logDetail.IsQualityNowLog = Convert.ToInt16(dataReader["isIQSQN"]) == 0 ? false : true;
+						logDetail.IsQualityNowLog = Convert.ToInt16(dataReader["isIQSQN"]) == 1 ? true : false;
 						logDetail.BatchId = dataReader["strQNBatchId"].ToString();
 						logDetail.StrengthOpportunity = dataReader["strQNStrengthsOpportunities"].ToString();
 

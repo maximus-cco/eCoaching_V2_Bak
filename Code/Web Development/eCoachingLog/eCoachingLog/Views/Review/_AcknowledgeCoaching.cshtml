@@ -26,32 +26,17 @@
 	@Html.HiddenFor(m => m.LogDetail.ManagerEmail)
 	@Html.HiddenFor(m => m.LogDetail.FormName)
 	@Html.HiddenFor(m => m.LogDetail.EmployeeName)
-	<div class='form-group mt-2 @(@Model.IsReinforceLog ? "show" : "hide")'>
-		<label for="AcknowledgeCheckBox" class="required">Check the box below to acknowledge the monitor:</label><br />
+
+	<div class='form-group mt-2'>
+		<label for="AcknowledgeCheckBox" class="required">@Model.AckCheckboxTitle</label><br />
 		<label class="checkbox-inline">
-			@Html.CheckBoxFor(m => m.Acknowledge)I have read and understand all the information provided on this eCoaching Log.
+			@Html.CheckBoxFor(m => m.Acknowledge)@Model.AckCheckboxText
 		</label>
 		@Html.ValidationMessageFor(m => m.Acknowledge)
 	</div>
 
-	<div class='form-group mt-2 @(@Model.IsAckOverTurnedAppeal ? "show" : "hide")'>
-		<label for="AcknowledgeCheckBox" class="required">Check the box below to acknowledge the monitor:</label><br />
-		<label class="checkbox-inline">
-			@Html.CheckBoxFor(m => m.Acknowledge)By checking this box, I indicate that I have reviewed this appeal and have taken the appropriate actions.
-		</label>
-		@Html.ValidationMessageFor(m => m.Acknowledge)
-	</div>
-
-	<div class='form-group mt-2 @(@Model.IsAckOpportunityLog ? "show" : "hide")'>
-		<label for="AcknowledgeCheckBox" class="required">Check the box below to acknowledge the coaching opportunity:</label><br />
-		<label class="checkbox-inline">
-			@Html.CheckBoxFor(m => m.Acknowledge)I have read and understand all the information provided on this eCoaching Log.
-		</label>
-		@Html.ValidationMessageFor(m => m.Acknowledge)
-	</div>
-
-	<div class='form-group mt-2 @(@Model.ShowCommentTextBox ? "show" : "hide")'>
-		<label for="EmployeeCommentsTextBox" class="required">@Model.CommentTextBoxLabel</label>
+	<div class='form-group mt-2 @(Model.ShowCommentTextBox ? "show" : "hide")'>
+		<label for="EmployeeCommentsTextBox" class="required">@Model.CommentTextboxLabel</label>
 		@Html.TextAreaFor(m => m.Comment, new { @class = "form-control", @rows = "5", id = "textarea-employee-comments", maxlength = 3000 })
 		<div class="help-block">
 			Provide as much detail as possible.
@@ -60,9 +45,9 @@
 		@Html.ValidationMessageFor(m => m.Comment)
 	</div>
 
-	<div class='form-group mt-2 @(@Model.ShowCommentDdl ? "show" : "hide")'>
+	<div class='form-group mt-2 @(Model.ShowCommentDdl ? "show" : "hide")' style="margin-bottom:50px;">
 		<label for="EmployeeCommentsDdl" class="required">Please select one of the comments below for the log:</label>
-		@Html.DropDownListFor(m => m.Comment, Model.EmployeeCommentsDdlList, new { @class = "form-control", style = "width: 350px;" })
+		@Html.DropDownListFor(m => m.Comment, Model.EmployeeCommentsDdlList, new { @class = "form-control test", style = "width: 350px;" })
 		@Html.ValidationMessageFor(m => m.Comment)
 	</div>
 }

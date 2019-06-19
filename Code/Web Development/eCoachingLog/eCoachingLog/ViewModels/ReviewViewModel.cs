@@ -22,6 +22,10 @@ namespace eCoachingLog.ViewModels
 		[AllowHtml]
 		public string DetailsCoached { get; set; }
 
+		// Short Call - Confirm view by Manager - Comments
+		public string Comments { get; set; }
+		public DateTime? DateConfirmed { get; set; }
+
 		// Research related
 		public bool IsCoachingRequired { get; set; }
 		// result from dropdown list
@@ -52,6 +56,8 @@ namespace eCoachingLog.ViewModels
 		public bool IsRegularPendingForm { get; set; }
 		public bool IsResearchPendingForm { get; set; }
 		public bool IsCsePendingForm { get; set; }
+		public bool IsShortCallPendingSupervisorForm { get; set; }
+		public bool IsShortCallPendingManagerForm { get; set; }
 		public bool IsAcknowledgeForm { get; set; }
 		public bool IsReinforceLog { get; set; }
 		public bool IsAckOverTurnedAppeal { get; set; }
@@ -64,12 +70,19 @@ namespace eCoachingLog.ViewModels
 
 		public bool Acknowledge { get; set; }
 		public bool IsAckOpportunityLog { get; set; }
+		public bool ShowAckCheckbox { get; set; }
+		public string AckCheckboxTitle { get; set; }
+		public string AckCheckboxText { get; set; }
 		public bool ShowCommentTextBox { get; set; }
 		public bool ShowCommentDdl { get; set; }
 
-		public string CommentTextBoxLabel { get; set; }
+		public string CommentTextboxLabel { get; set; }
 
 		public IEnumerable<SelectListItem> CommentSelectList { get; set; }
+
+		// TODO: short call list
+		public IList<ShortCall> ShortCallList { get; set; }
+		public string ShortCallBehaviorActionList { get; set; }
 
 		public ReviewViewModel()
 		{
@@ -79,6 +92,7 @@ namespace eCoachingLog.ViewModels
 			this.EmployeeCommentsDdlList = new List<SelectListItem>();
 			// Default to true
 			this.IsCoachingRequired = true;
+			this.ShortCallList = new List<ShortCall>();
 		}
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -183,6 +197,60 @@ namespace eCoachingLog.ViewModels
 					yield return new ValidationResult("Provide comment.", ack);
 				}
 			}
+
+			// Short Calls: check coaching notes for each call
+			if (this.IsShortCallPendingSupervisorForm)
+			{
+				//this.ShortCallList[0].CoachingNotes
+				for (int i = 0; i < this.ShortCallList.Count; i++)
+				{
+					if (this.ShortCallList[i].SelectedBehaviorId == -1)
+					{
+						var selectedBehaviorId = new[] { "ShortCallList[" + i + "].SelectedBehaviorId" };
+						yield return new ValidationResult("", selectedBehaviorId);
+					}
+
+					if (string.IsNullOrEmpty(this.ShortCallList[i].CoachingNotes))
+					{
+						var coachingNotes = new[] { "ShortCallList[" + i + "].CoachingNotes" };
+						yield return new ValidationResult("", coachingNotes);
+					}
+				}
+			}
+
+			// Short Calls: check "Agree" radio button for each call
+			if (this.IsShortCallPendingManagerForm)
+			{
+				for (int i = 0; i < this.ShortCallList.Count; i++)
+				{
+					var shortCall = this.ShortCallList[i];
+					if (!shortCall.IsManagerAgreed.HasValue)
+					{
+						var isManagerAgreed = new[] { "ShortCallList[" + i + "].IsManagerAgreed" };
+						yield return new ValidationResult("", isManagerAgreed);
+					}
+					// "No" was selected (Don't agree) but didn't enter comments
+					else if (!shortCall.IsManagerAgreed.Value && string.IsNullOrEmpty(shortCall.Comments)) 
+					{
+						// Comments for each short call with "No" selected (Don't agree)
+						var comments = new[] { "ShortCallList[" + i + "].Comments" };
+						yield return new ValidationResult("Please enter comments.", comments);
+					}
+				}
+
+				// Summary comments for this log
+				if (string.IsNullOrEmpty(this.Comments))
+				{
+					var comments = new[] { "Comments" };
+					yield return new ValidationResult("", comments);
+				}
+
+				if (!this.DateConfirmed.HasValue)
+				{
+					var dateConfirmed = new[] { "DateConfirmed" };
+					yield return new ValidationResult("", dateConfirmed);
+				}
+			}
 		} // end Validate 
 
 		public static implicit operator Review(ReviewViewModel vm)
@@ -206,11 +274,14 @@ namespace eCoachingLog.ViewModels
 				IsAckOverTurnedAppeal = vm.IsAckOverTurnedAppeal,
 				IsReviewForm = vm.IsReviewForm,
 				IsAcknowledgeForm = vm.IsAcknowledgeForm,
+				IsShortCallPendingManagerForm = vm.IsShortCallPendingManagerForm,
+				IsShortCallPendingSupervisorForm = vm.IsShortCallPendingSupervisorForm,
 				LogDetail = vm.LogDetail,
 				WarningLogDetail = vm.WarningLogDetail,
 				LogStatusLevel = vm.LogStatusLevel,
 				IsReinforceLog = vm.IsReinforceLog,
-				Acknowledge = vm.Acknowledge
+				Acknowledge = vm.Acknowledge,
+				ShortCallList = vm.ShortCallList
 			};
 		}
 

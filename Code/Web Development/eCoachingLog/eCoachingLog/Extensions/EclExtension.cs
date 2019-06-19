@@ -55,24 +55,5 @@ namespace eCoachingLog.Extensions
                               Value = site.Id.ToString()
                           });
         }
-
-		public static SqlParameter AddSurveyResponseTableType(this SqlParameterCollection target, string name, Survey survey)
-		{
-			DataTable dataTable = new DataTable();
-			dataTable.Columns.Add("QuestionID", typeof(int));
-			dataTable.Columns.Add("ResponseID", typeof(int));
-			dataTable.Columns.Add("Comments", typeof(string));
-
-			foreach (Question q in survey.Questions)
-			{
-				dataTable.Rows.Add(q.Id, q.SingleChoiceSelected, q.MultiLineText);
-			}
-
-			SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
-			sqlParameter.SqlDbType = SqlDbType.Structured;
-			sqlParameter.TypeName = "EC.ResponsesTableType";
-
-			return sqlParameter;
-		}
 	}
 }

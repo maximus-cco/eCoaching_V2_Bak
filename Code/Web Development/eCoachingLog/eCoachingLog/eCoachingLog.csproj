@@ -157,6 +157,7 @@
     <Compile Include="Controllers\LogoutController.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
+    <Compile Include="Models\Common\Behavior.cs" />
     <Compile Include="Models\Common\LogBase.cs" />
     <Compile Include="Models\Common\LogCount.cs" />
     <Compile Include="Models\Common\LogCountForSite.cs" />
@@ -164,6 +165,7 @@
     <Compile Include="Models\Common\LogCountByStatusForSite.cs" />
     <Compile Include="Models\Common\LogValue.cs" />
     <Compile Include="Models\Common\Scorecard.cs" />
+    <Compile Include="Models\Common\ShortCall.cs" />
     <Compile Include="Models\MyDashboard\ChartData.cs" />
     <Compile Include="Models\MyDashboard\ChartDataset.cs" />
     <Compile Include="Models\Review\Review.cs" />
@@ -200,7 +202,6 @@
     <Compile Include="Filters\EclExceptionAttribute.cs" />
     <Compile Include="Filters\NoCacheAttribute.cs" />
     <Compile Include="Filters\SessionCheckAttribute.cs" />
-    <Compile Include="Models\NewSubmission\Behavior.cs" />
     <Compile Include="Models\Common\CoachingReason.cs" />
     <Compile Include="Models\Common\CoachingSubReason.cs" />
     <Compile Include="Models\Common\CoachingLogDetail.cs" />
@@ -390,6 +391,14 @@
     <Content Include="maintenance.html" />
     <Content Include="Views\LoadTest\Index.cshtml" />
     <Content Include="Views\Review\_Scorecards.cshtml" />
+    <Content Include="Views\Review\_ReviewShortCalls.cshtml" />
+    <Content Include="Views\Review\_ShortCalls.cshtml" />
+    <Content Include="Views\Review\_ReviewInfo.cshtml" />
+    <Content Include="Views\Review\_Reasons.cshtml" />
+    <Content Include="Views\Review\_EmployeeReviewInfo.cshtml" />
+    <Content Include="Views\Review\_ManagerReviewInfo.cshtml" />
+    <Content Include="Views\Review\_SupervisorReviewInfo.cshtml" />
+    <Content Include="Views\Review\_ConfirmReviewShortCalls.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
