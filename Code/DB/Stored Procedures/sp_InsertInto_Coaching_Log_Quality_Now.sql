@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Now(05).sql
-Last Modified Date: 06/11/2019
+sp_InsertInto_Coaching_Log_Quality_Now(06).sql
+Last Modified Date: 06/20/2019
 Last Modified By: Susmitha Palacherla
 
+Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
 Version 05: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 	reverted change from Version 04
 Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
@@ -152,7 +153,7 @@ BEGIN
     -- Update formname for the inserted logs
 
 	  UPDATE EC.Coaching_Log 
-	  SET FormName = 'eCL-' + FormName + '-' + convert(varchar,CoachingID)
+	  SET FormName = 'eCL-M-' + FormName + '-' + convert(varchar,CoachingID)
 	  FROM @logsInserted 
 	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted);  
 

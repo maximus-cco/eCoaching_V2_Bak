@@ -1,12 +1,11 @@
 /*
-sp_InsertInto_Warning_Log(03).sql
-Last Modified Date: 04/10/2018
+sp_InsertInto_Warning_Log(04).sql
+Last Modified Date: 06/20/2018
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
 Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
-
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -38,6 +37,7 @@ GO
 --  Modified  to add Behavior to the insert to support warnings for Training Module - per TFS 861 - 10/21/2015 
  -- Modified to support Encryption of sensitive data. Open key and removed LanID. TFS 7856 - 10/23/2017
  -- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018.
+ -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
 (     @nvcEmpID Nvarchar(10),
@@ -140,7 +140,7 @@ IF @intWarnIDExists IS NULL
             @SubReasonRowID INT
     
 UPDATE [EC].[Warning_Log]
-SET [FormName] = 'eCL-'+[FormName] +'-'+ convert(varchar,WarningID)
+SET [FormName] = 'eCL-M-'+[FormName] +'-'+ convert(varchar,WarningID)
 where [WarningID] = @I  AND [FormName] not like 'eCL%'    
 OPTION (MAXDOP 1)
 

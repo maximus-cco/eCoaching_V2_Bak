@@ -1,9 +1,10 @@
 /*
-sp_Update_Employee_Hierarchy_Stage(06).sql
-Last Modified Date: 05/22/2019
+sp_Update_Employee_Hierarchy_Stage(07).sql
+Last Modified Date: 06/20/2019
 Last Modified By: Susmitha Palacherla
 
-Version 06: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
+Version 07: Updated to support Legacy Ids to Maximus Ids. latest version - TFS 13777 - 06/20/2019
+Version 06: Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 Version 05: Modified to relax Deletes for missing Hierarchy - TFS 14249 - 04/29/2019
 Version 04: Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 Version 03: Updated to revise logic for supporting reused numeric part of Employee ID per TFS 8228 - 9/22/2017
@@ -110,6 +111,18 @@ WHERE LTRIM(RTRIM(Emp_Name)) = ','
 OPTION (MAXDOP 1)
 END  
 WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
+
+-- Removes # from LanID and Email address of inactive employees
+BEGIN
+UPDATE [EC].[Employee_Hierarchy_Stage]
+SET [Emp_LanID]= REPLACE([Emp_LanID], '#',''),
+    [Emp_Email]= REPLACE([Emp_Email], '#','')
+ 
+OPTION (MAXDOP 1)
+END  
+ WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+
 
 -- Remove leading and trailing spaces from Emp and Sup Ids from EWFM.
 BEGIN
