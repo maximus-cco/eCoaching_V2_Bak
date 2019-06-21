@@ -59,7 +59,7 @@ namespace eCoachingLog.ViewModels
 		public bool IsShortCallPendingSupervisorForm { get; set; }
 		public bool IsShortCallPendingManagerForm { get; set; }
 		public bool IsAcknowledgeForm { get; set; }
-		public bool IsReinforceLog { get; set; }
+		public bool IsReinforce { get; set; }
 		public bool IsAckOverTurnedAppeal { get; set; }
 
 		// To control display on Historical/Review
@@ -69,7 +69,7 @@ namespace eCoachingLog.ViewModels
 		public bool ShowViewSupReviewInfo { get; set; }
 
 		public bool Acknowledge { get; set; }
-		public bool IsAckOpportunityLog { get; set; }
+		public bool IsAckOpportunity { get; set; }
 		public bool ShowAckCheckbox { get; set; }
 		public string AckCheckboxTitle { get; set; }
 		public string AckCheckboxText { get; set; }
@@ -83,6 +83,7 @@ namespace eCoachingLog.ViewModels
 		// TODO: short call list
 		public IList<ShortCall> ShortCallList { get; set; }
 		public string ShortCallBehaviorActionList { get; set; }
+		public bool ShowEmployeeReviewInfo { get; set; }
 
 		public ReviewViewModel()
 		{
@@ -270,7 +271,7 @@ namespace eCoachingLog.ViewModels
 				IsRegularPendingForm = vm.IsRegularPendingForm,
 				IsResearchPendingForm = vm.IsResearchPendingForm,
 				IsCsePendingForm = vm.IsCsePendingForm,
-				IsAckOpportunityLog = vm.IsAckOpportunityLog,
+				IsAckOpportunity = vm.IsAckOpportunity,
 				IsAckOverTurnedAppeal = vm.IsAckOverTurnedAppeal,
 				IsReviewForm = vm.IsReviewForm,
 				IsAcknowledgeForm = vm.IsAcknowledgeForm,
@@ -279,9 +280,11 @@ namespace eCoachingLog.ViewModels
 				LogDetail = vm.LogDetail,
 				WarningLogDetail = vm.WarningLogDetail,
 				LogStatusLevel = vm.LogStatusLevel,
-				IsReinforceLog = vm.IsReinforceLog,
+				IsReinforce = vm.IsReinforce,
 				Acknowledge = vm.Acknowledge,
-				ShortCallList = vm.ShortCallList
+				ShortCallList = vm.ShortCallList,
+				Comments = vm.Comments,
+				DateConfirmed = vm.DateConfirmed
 			};
 		}
 

@@ -326,7 +326,7 @@ namespace eCoachingLog.Services
 			}
 
 			// Opportunity
-			if (!review.IsReinforceLog)
+			if (!review.IsReinforce)
 			{
 				nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
 				success = reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
@@ -431,7 +431,7 @@ namespace eCoachingLog.Services
 			string nextStatus = Constants.LOG_STATUS_UNKNOWN_TEXT;
 			int moduleId = review.LogDetail.ModuleId;
 			// Positive (reinforced, met goal) Ack form
-			if (review.IsAcknowledgeForm && review.IsReinforceLog)
+			if (review.IsAcknowledgeForm && review.IsReinforce)
 			{
 				if (review.LogDetail.EmployeeId == user.EmployeeId)
 				{
@@ -483,23 +483,26 @@ namespace eCoachingLog.Services
 				var log = review.LogDetail;
 				if(moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
 				{
-					if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat)
+					//if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat) // current Pending Manager Review to determine if coaching is required
+					if (log.StatusId == Constants.LOG_STATUS_PENDING_MANAGER_REVIEW)
 					{
 						nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW_TEXT;
 					}
-					else if (log.IsOmrIae || log.IsOmrIaef || log.IsOmrIat || log.IsEtsOae || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrl || log.IsBrn)
+					// current Pending Supervisor Review to determine if coaching is required
+					//else if (log.IsOmrIae || log.IsOmrIaef || log.IsOmrIat || log.IsEtsOae || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrl || log.IsBrn)
+					else //if (log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
 					{
 						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 					}
-
-					if (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
-					{
-						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
-					}
+					//if (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
+					//{
+					//	nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
+					//}
 				}
 				else if (moduleId == Constants.MODULE_SUPERVISOR)
 				{
-					if (log.IsCurrentCoachingInitiative || log.IsOmrException)
+					//if (log.IsCurrentCoachingInitiative || log.IsOmrException)
+					if (log.StatusId == Constants.LOG_STATUS_PENDING_SRMANAGER_REVIEW)
 					{
 						nextStatus = Constants.LOG_STATUS_PENDING_MANAGER_REVIEW_TEXT;
 					}
@@ -510,7 +513,8 @@ namespace eCoachingLog.Services
 				}
 				else if (moduleId == Constants.MODULE_QUALITY)
 				{
-					if (log.IsCurrentCoachingInitiative || log.IsOmrException)
+					//if (log.IsCurrentCoachingInitiative || log.IsOmrException)
+					if (log.StatusId == Constants.LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW)
 					{
 						nextStatus = Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT;
 					}

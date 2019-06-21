@@ -35,8 +35,8 @@ namespace eCoachingLog.Models.Review
 		public bool IsShortCallPendingSupervisorForm { get; set; }
 		public bool IsShortCallPendingManagerForm { get; set; }
 
-		public bool IsAckOpportunityLog { get; set; }
-		public bool IsReinforceLog { get; set; }
+		public bool IsAckOpportunity { get; set; }
+		public bool IsReinforce { get; set; }
 		public bool IsAckOverTurnedAppeal { get; set; }
 
 		public bool IsReviewForm { get; set; }
@@ -44,5 +44,7 @@ namespace eCoachingLog.Models.Review
 		public bool Acknowledge { get; set; }
 
 		public IList<ShortCall> ShortCallList { get; set; }
+		public string Comments { get; set; }
+		public DateTime? DateConfirmed { get; set; }
 	}
 }

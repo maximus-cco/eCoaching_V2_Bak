@@ -8,4 +8,7 @@
 </div>
 @{ Html.RenderPartial("_ManagerReviewInfo"); }
 @{ Html.RenderPartial("_SupervisorReviewInfo"); }
-@{ Html.RenderPartial("_EmployeeReviewInfo"); }
+@if (Model.ShowEmployeeReviewInfo)
+{
+	Html.RenderPartial("_EmployeeReviewInfo");
+}

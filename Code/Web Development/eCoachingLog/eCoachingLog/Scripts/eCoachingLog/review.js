@@ -44,4 +44,9 @@
 		var remaining = maxLength - $(this).val().length;
 		$('#non-cse-remaining').text(remaining + ' remaining');
 	});
+	// Comments
+	$('body').on('keyup', '#Comments', function (e) {
+		var remaining = maxLength - $(this).val().length;
+		$('#comments-remaining').text(remaining + ' remaining');
+	});
 })

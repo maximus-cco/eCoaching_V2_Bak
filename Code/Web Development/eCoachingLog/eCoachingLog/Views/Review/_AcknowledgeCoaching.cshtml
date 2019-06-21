@@ -14,7 +14,7 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
 {
 	@Html.HiddenFor(m => m.IsAcknowledgeForm)
-	@Html.HiddenFor(m => m.IsReinforceLog)
+	@Html.HiddenFor(m => m.IsReinforce)
 	@Html.HiddenFor(m => m.IsAckOverTurnedAppeal)
 	@Html.HiddenFor(m => m.LogDetail.LogId)
 	@Html.HiddenFor(m => m.LogDetail.EmployeeId)

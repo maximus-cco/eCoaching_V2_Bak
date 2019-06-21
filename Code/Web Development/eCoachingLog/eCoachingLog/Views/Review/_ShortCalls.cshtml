@@ -1,7 +1,7 @@
 ﻿@using eCoachingLog.Models.Common
 @model eCoachingLog.ViewModels.ReviewViewModel
 
-<table class="table mt-3 table-condensed" id="tbl-short-call">
+<table class="table mt-3 table-condensed"  id="tbl-confirm-short-call">
 	<thead>
 		<tr>
 			<th class="text-center" width="7%">Verint Call Id</th>
@@ -38,9 +38,9 @@
 			@if (!Model.IsReadOnly)
 			{
 				<div>
-						@Html.RadioButtonFor(m => m.ShortCallList[index].IsManagerAgreed, "true") Yes&nbsp;&nbsp;
-						@Html.RadioButtonFor(m => m.ShortCallList[index].IsManagerAgreed, "false") No
-						@Html.ValidationMessageFor(m => m.ShortCallList[index].IsManagerAgreed)
+					@Html.RadioButtonFor(m => m.ShortCallList[index].IsManagerAgreed, "true") Yes&nbsp;&nbsp;
+					@Html.RadioButtonFor(m => m.ShortCallList[index].IsManagerAgreed, "false") No
+					@Html.ValidationMessageFor(m => m.ShortCallList[index].IsManagerAgreed)
 				</div>
 				<div class="hide">
 					@Html.TextAreaFor(m => m.ShortCallList[index].Comments, new { @class = "form-control not-agreed-comments", placeholder = "Enter Comments ...", maxlength = 3000 })
