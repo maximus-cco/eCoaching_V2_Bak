@@ -257,14 +257,11 @@ namespace eCoachingLog.Utils
 
 		public const string ACK_COMMENT_TEXTBOX_LABEL = "Provide any comments or feedback below:";
 		public const string ACK_OTA_COMMENT_TEXTBOX_LABEL = "Provide the details from the coaching session including action plans developed:";
-		public const string ACK_CHECKBOX_TITLE_GENERAL = "Check the box below to acknowledge the eCoaching Log:";
-		public const string ACK_CHECKBOX_TITLE_REINFORCE = "Check the box below to acknowledge the monitor:";
+		public const string ACK_CHECKBOX_TITLE_GENERAL = "Check the box below to acknowledge the coaching opportunity:";
+		public const string ACK_CHECKBOX_TITLE_MONITOR = "Check the box below to acknowledge the monitor:";
 		public const string ACK_CHECKBOX_TITLE_OVERTURNED_APPEAL = "Check the box below to acknowledge the monitor:";
-		public const string ACK_CHECKBOX_TITLE_OPPORTUNITY = "Check the box below to acknowledge the coaching opportunity:";
 		public const string ACK_CHECKBOX_TEXT_GENERAL = "I have read and understand all the information provided on this eCoaching Log.";
-		public const string ACK_CHECKBOX_TEXT_REINFORCE = "I have read and understand all the information provided on this eCoaching Log.";
 		public const string ACK_CHECKBOX_TEXT_OVERTURNED_APPEAL = "By checking this box, I indicate that I have reviewed this appeal and have taken the appropriate actions.";
-		public const string ACK_CHECKBOX_TEXT_OPPORTUNITY = "I have read and understand all the information provided on this eCoaching Log.";
 	}
 
 	public enum EmployeeLogType

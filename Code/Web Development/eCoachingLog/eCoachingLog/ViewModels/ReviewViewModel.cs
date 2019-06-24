@@ -69,7 +69,6 @@ namespace eCoachingLog.ViewModels
 		public bool ShowViewSupReviewInfo { get; set; }
 
 		public bool Acknowledge { get; set; }
-		public bool IsAckOpportunity { get; set; }
 		public bool ShowAckCheckbox { get; set; }
 		public string AckCheckboxTitle { get; set; }
 		public string AckCheckboxText { get; set; }
@@ -271,7 +270,6 @@ namespace eCoachingLog.ViewModels
 				IsRegularPendingForm = vm.IsRegularPendingForm,
 				IsResearchPendingForm = vm.IsResearchPendingForm,
 				IsCsePendingForm = vm.IsCsePendingForm,
-				IsAckOpportunity = vm.IsAckOpportunity,
 				IsAckOverTurnedAppeal = vm.IsAckOverTurnedAppeal,
 				IsReviewForm = vm.IsReviewForm,
 				IsAcknowledgeForm = vm.IsAcknowledgeForm,

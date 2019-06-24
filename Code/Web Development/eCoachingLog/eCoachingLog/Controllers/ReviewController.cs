@@ -257,35 +257,38 @@ namespace eCoachingLog.Controllers
 
 			// Default
 			vm.IsAckOverTurnedAppeal = false;
-			vm.IsAckOpportunity = false;
 			vm.IsReinforce = false;
 			vm.ShowCommentTextBox = false;
 			vm.ShowCommentDdl = false;
+
+			vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_GENERAL;
+			vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_GENERAL;
 
 			// Editable Form, send user to Ack (editable Review) page
 			// Acknowledge Checkbox setup
 			if (IsAckOverTurnAppeal(vm))
 			{
 				vm.IsAckOverTurnedAppeal = true;
+			}
+			else if (IsReinforceLog(vm))
+			{
+				vm.IsReinforce = true;
+			}
+
+			// Checkbox display text
+			if (vm.IsAckOverTurnedAppeal)
+			{
 				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_OVERTURNED_APPEAL;
 				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_OVERTURNED_APPEAL;
 			}
-			else if (IsAckOpportunity(vm))
-			{
-				vm.IsAckOpportunity = true;
-				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_OPPORTUNITY;
-				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_OPPORTUNITY;
-			}
-			else if (IsAckReinforce(vm))
-			{
-				vm.IsReinforce = true;
-				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_REINFORCE;
-				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_REINFORCE;
-			}
 			else
 			{
-				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_GENERAL;
-				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_GENERAL;
+				if (user.EmployeeId == vm.LogDetail.SupervisorEmpId 
+					|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId
+					|| vm.IsReinforce)
+				{
+					vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_MONITOR;
+				}
 			}
 
 			// Comment Textbox or Dropdown setup
@@ -392,33 +395,33 @@ namespace eCoachingLog.Controllers
 		private bool IsAcknowledgeForm(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
+			var userReassignedTo = userEmployeeId == vm.LogDetail.ReassignedToEmpId;
 
-			// Quality Lead: Acknowledge an OverTurned Appeal log
+			// Quality Lead (or reassigned to): Acknowledge an OverTurned Appeal log
 			if (vm.LogDetail.IsOta)
 			{
-				return (userEmployeeId == vm.LogDetail.SupervisorEmpId &&
-					vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW);
+				return (userEmployeeId == vm.LogDetail.SupervisorEmpId || userReassignedTo)
+					&& vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW;
 			}
 
 			// User is the employee
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
-				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1 || // LOG_STATUS_PENDING_EMPLOYEE_REVIEW
-					vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;      // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
+				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1    // LOG_STATUS_PENDING_EMPLOYEE_REVIEW
+					|| vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;   // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
 			}
 
-			// Higher management 
-			if (userEmployeeId == vm.LogDetail.ManagerEmpId)
+			// User is the Supervisor or reassigned to
+			if (userEmployeeId == vm.LogDetail.SupervisorEmpId || userReassignedTo)
+			{
+				return (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged)  // LOG_STATUS_PENDING_SUPERVISOR_REVIEW
+					|| vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;                                      // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
+			}
+
+			// User is the Manager or reassigned to
+			if (userEmployeeId == vm.LogDetail.ManagerEmpId || userReassignedTo)
 			{
 				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;   // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
-			}
-
-			// User is the Supervisor of the employee
-			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
-				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
-			{
-				return ((vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged) || // LOG_STATUS_PENDING_SUPERVISOR_REVIEW
-					vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4);                                           // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
 			}
 
 			return false;
@@ -432,58 +435,22 @@ namespace eCoachingLog.Controllers
 				vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW);
 		}
 
-		private bool IsAckReinforce(ReviewViewModel vm)
+		private bool IsReinforceLog(ReviewViewModel vm)
 		{
-			var userEmployeeId = GetUserFromSession().EmployeeId;
+			bool retVal = true;
+			var reasons = vm.LogDetail.Reasons;
 
-			// User is the current supervisor of the employee, OR
-			// User is the person to whom this log was reassigned
-			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
-				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
+			foreach (var reason in reasons)
 			{
-				return (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged) ||
-					(vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4);
-			}
-
-			// User is the employee of the log
-			if (userEmployeeId == vm.LogDetail.EmployeeId)
-			{
-				// Pending Acknowledgement
-				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4) 
+				if (reason.Value.IndexOf("opportunity", StringComparison.OrdinalIgnoreCase) >= 0 
+					|| reason.Value.IndexOf("did not meet goal", StringComparison.OrdinalIgnoreCase) >= 0
+					|| reason.Value.IndexOf("research required", StringComparison.OrdinalIgnoreCase) >= 0
+					|| reason.Value.IndexOf("n/a", StringComparison.OrdinalIgnoreCase) >= 0)
 				{
-					return true;
-				}
-				// Pending Employee Review
-				else if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
-				{
-					return !IsAckOpportunity(vm);
+					retVal = false;
 				}
 			}
-
-			return false;
-		}
-
-		private bool IsAckOpportunity(ReviewViewModel vm)
-		{
-			var userEmployeeId = GetUserFromSession().EmployeeId;
-
-			// User is the employee of the log
-			if (userEmployeeId == vm.LogDetail.EmployeeId)
-			{
-				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
-				{
-					return (string.IsNullOrEmpty(vm.LogDetail.SupReviewedAutoDate)) ||
-						(!vm.LogDetail.IsIqs &&
-							!vm.LogDetail.IsCtc &&
-							!vm.LogDetail.IsHigh5Club &&
-							!vm.LogDetail.IsKudo &&
-							!vm.LogDetail.IsAttendance &&
-							!vm.LogDetail.IsMsr &&
-							!vm.LogDetail.IsMsrs);
-				}
-			}
-
-			return false;
+			return retVal;
 		}
 
 		private bool IsShortCallPendingManager(ReviewViewModel vm)
@@ -515,36 +482,6 @@ namespace eCoachingLog.Controllers
 			}
 
 			return retVal;
-
-			//var user = GetUserFromSession();
-
-			//if (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
-			//{
-			//	if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
-			//	{
-			//		if (log.IsEtsOae || log.IsEtsOas || log.IsOmrIat || log.IsOmrIae || log.IsOmrIaef || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrn || log.IsBrl)
-			//		{
-			//			return true;
-			//		}
-			//	}
-			//}
-
-			//if (user.EmployeeId == log.ManagerEmpId // User is current manager
-			//		|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId) // Log is low csat and user was supervisor when log submitted
-			//		|| (user.EmployeeId == log.ReassignedToEmpId)) // Log got reassigned to user
-			//{
-			//	if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
-			//	{
-			//		if (log.IsCurrentCoachingInitiative
-			//			|| (log.IsOmrException && !log.IsOmrShortCall)
-			//			|| log.IsLowCsat)
-			//		{
-			//			retVal = true;
-			//		}
-			//	}
-			//}
-
-			//return retVal;
 		}
 
 		private bool IsCsePendingForm(ReviewViewModel vm)
@@ -563,22 +500,6 @@ namespace eCoachingLog.Controllers
 			}
 
 			return retVal;
-
-			//var user = GetUserFromSession();
-			//if (user.EmployeeId == log.ManagerEmpId
-			//	|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId)
-			//	|| (user.EmployeeId == log.ReassignedToEmpId))
-			//{
-			//	if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
-			//	{
-			//		if (!log.IsCurrentCoachingInitiative && !log.IsOmrException && !log.IsLowCsat)
-			//		{
-			//			retVal = true;
-			//		}
-			//	} // end if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
-			//}
-
-			//return retVal;
 		}
 
 		private bool IsReadOnly(ReviewViewModel vm, User user)
