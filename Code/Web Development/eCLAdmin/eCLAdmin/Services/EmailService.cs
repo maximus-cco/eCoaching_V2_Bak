@@ -23,12 +23,18 @@ namespace eCLAdmin.Services
         public void Send(Email email, List<string> logNames, string webServerName)
         {
             // Replace {eCoachingUrl} based on environment
-            string eCoachingUrl = null;
-            eCoachingUrl = Constants.ECOACHING_URL_PROD;
-            if (Constants.WEB_SERVER_NAME_ST == webServerName)
+            string eCoachingUrl = Constants.ECOACHING_URL_DEV;
+			string env = System.Configuration.ConfigurationManager.AppSettings["Environment"];
+
+			if (string.CompareOrdinal(env, "test") == 0)
             {
                 eCoachingUrl = Constants.ECOACHING_URL_ST;
             }
+			else if (string.CompareOrdinal(env, "prod") == 0 )
+			{
+				eCoachingUrl = Constants.ECOACHING_URL_PROD;
+			}
+
             email.Body = email.Body.Replace("{eCoachingUrl}", eCoachingUrl);
 
             // Replace {LogNameList} with the passed in values
@@ -55,7 +61,9 @@ namespace eCLAdmin.Services
 
 			try
 			{
-				var smtpClient = new SmtpClient(Constants.SMTP_CLIENT);
+				// https://msdn.microsoft.com/en-us/library/k1c4h6e2(v=vs.110).aspx
+				// Initializes a new instance of the SmtpClient class by using configuration file settings.
+				var smtpClient = new SmtpClient();
 				MailMessage mailMessage = new MailMessage();
 				mailMessage.Subject = email.Subject;
 				mailMessage.From = new MailAddress(email.From, "eCoaching Log Admin");

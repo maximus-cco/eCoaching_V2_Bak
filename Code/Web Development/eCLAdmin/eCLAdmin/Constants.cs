@@ -33,7 +33,6 @@ namespace eCLAdmin
 		public const string EMAIL_SUBJECT_REACTIVATION = "eCoaching Log(s) Reactivated";
 		public const string EMAIL_SUBJECT_REASSIGNMENT = "eCoaching Log(s) Reassigned";
 		public const string EMAIL_FROM = "ecl.admin@maximus.com";
-		public const string SMTP_CLIENT = "smtpout.gdit.com";
 
 		public const int USER_ROLE_ADMIN = 101;
 		public const int USER_ROLE_MANAGER = 102;
@@ -43,10 +42,9 @@ namespace eCLAdmin
 		public const string ENTITLEMENT_REACTIVATE_COACHING_LOGS = "ReactivateCoachingLogs";
 		public const string ENTITLEMENT_REACTIVATE_WARNING_LOGS = "ReactivateWarningLogs";
 
-		public const string WEB_SERVER_NAME_PROD = "f3420-mwbp11";
-		public const string WEB_SERVER_NAME_ST = "f3420-mpmd01";
 		public const string ECOACHING_URL_PROD = "https://f3420-mwbp11/eCoachingLog";
 		public const string ECOACHING_URL_ST = "https://f3420-mpmd01/eCoachingLog_st";
+		public const string ECOACHING_URL_DEV = "https://f3420-mpmd01/eCoachingLog_dev";
 
 		// Reports
 		public const string REPORT_TEMPLATE = "ReportTemplate";
