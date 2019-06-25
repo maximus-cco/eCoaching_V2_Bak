@@ -26,11 +26,15 @@ namespace eCLAdmin.Services
             string eCoachingUrl = Constants.ECOACHING_URL_DEV;
 			string env = System.Configuration.ConfigurationManager.AppSettings["Environment"];
 
-			if (string.CompareOrdinal(env, "test") == 0)
+			if ("test".Equals(env, StringComparison.OrdinalIgnoreCase))
             {
                 eCoachingUrl = Constants.ECOACHING_URL_ST;
             }
-			else if (string.CompareOrdinal(env, "prod") == 0 )
+			else if ("uat".Equals(env, StringComparison.OrdinalIgnoreCase))
+			{
+				eCoachingUrl = Constants.ECOACHING_URL_UAT;
+			}
+			else if ("prod".Equals(env, StringComparison.OrdinalIgnoreCase))
 			{
 				eCoachingUrl = Constants.ECOACHING_URL_PROD;
 			}

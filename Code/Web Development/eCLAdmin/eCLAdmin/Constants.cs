@@ -43,6 +43,7 @@ namespace eCLAdmin
 		public const string ENTITLEMENT_REACTIVATE_WARNING_LOGS = "ReactivateWarningLogs";
 
 		public const string ECOACHING_URL_PROD = "https://f3420-mwbp11/eCoachingLog";
+		public const string ECOACHING_URL_UAT = "https://f3420-mpmd01/eCoachingLog_uat";
 		public const string ECOACHING_URL_ST = "https://f3420-mpmd01/eCoachingLog_st";
 		public const string ECOACHING_URL_DEV = "https://f3420-mpmd01/eCoachingLog_dev";
 
