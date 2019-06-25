@@ -1,9 +1,9 @@
 /*
-sp_Update_Training_Coaching_Stage(01).sql
-Last Modified Date: 11/27/2017
+sp_Update_Training_Coaching_Stage(02).sql
+Last Modified Date: 06/24/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02:  Modified to translate Legacy Ids to Maximus ids. TFS 14790 - 06/24/2019
 Version 01:  Initial Revision - Created during encryption of secure data. TFF 7856 - 11/27/2017
 
 */
@@ -33,6 +33,7 @@ GO
 -- Revision History
 -- Last Modified By - Susmitha Palacherla
 -- Initial Revision - Created during encryption of secure data. TFF 7856 - 11/27/2017
+-- Modified to translate Legacy Ids to Maximus ids. TFS 14790 - 06/24/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Training_Coaching_Stage] 
 @Count INT OUTPUT
@@ -42,6 +43,19 @@ BEGIN
 -- Open the symmetric key with which to encrypt the data.  
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+ --Lookup Maximus ID 
+BEGIN
+UPDATE [EC].[Training_Coaching_Stage]
+SET [CSR_EMPID] = EH.[Emp_ID]
+FROM [EC].[Training_Coaching_Stage] TS JOIN [EC].[Employee_Hierarchy] EH
+ON TS.[CSR_EMPID]= EH.Legacy_Emp_ID
+WHERE ([Report_Code] like 'SDR%' OR [Report_Code] like 'ODT%')
+
+OPTION (MAXDOP 1)
+END  
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 -- Populate Lan ID
 
@@ -68,6 +82,25 @@ END
 WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 
 -- Determine and populate Reject Reasons
+-- No Maximus ID found for the Legacy ID.
+
+BEGIN
+UPDATE [EC].[Training_Coaching_Stage]
+SET [Reject_Reason]= N'No Maximus ID found for the Legacy ID.'
+WHERE CSR_EMPID IN
+(SELECT TS.CSR_EMPID
+ FROM [EC].[Training_Coaching_Stage] TS
+ WHERE NOT EXISTS
+	(SELECT NULL
+     FROM [EC].[Employee_Hierarchy] EH
+     WHERE TS.[CSR_EMPID]= EH.Emp_ID))
+	 AND ([Report_Code] like 'SDR%' OR [Report_Code] like 'ODT%')
+AND [Reject_Reason]is NULL
+
+	
+OPTION (MAXDOP 1)
+END
+
 
 -- Employee not an Actice CSR
 
@@ -138,6 +171,8 @@ END
 
 END  -- [EC].[sp_Update_Training_Coaching_Stage]
 
+
 GO
+
 
 
