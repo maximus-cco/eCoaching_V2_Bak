@@ -52,19 +52,25 @@ namespace eCoachingLog.Extensions
 		public static SqlParameter AddShortCallReviewTableType(this SqlParameterCollection target, string name, IList<ShortCall> shortCallList)
 		{
 			DataTable dataTable = new DataTable();
-			dataTable.Columns.Add("VerintID", typeof(string));
-			dataTable.Columns.Add("BehaviorID", typeof(int));
-			dataTable.Columns.Add("Action", typeof(string)); // TODO: Check if needed to pass back, since this is data entered by user
+			dataTable.Columns.Add("VerintCallID", typeof(string));
+			dataTable.Columns.Add("Valid", typeof(bool));
+			dataTable.Columns.Add("BehaviorId", typeof(int));
+			dataTable.Columns.Add("Action", typeof(string)); 
 			dataTable.Columns.Add("CoachingNotes", typeof(string));
-			dataTable.Columns.Add("LsaInformed", typeof(bool));
+			dataTable.Columns.Add("LSAInformed", typeof(bool));
 
 			foreach (ShortCall sc in shortCallList)
 			{
-				dataTable.Rows.Add(sc.VerintId, sc.SelectedBehaviorId, sc.Action, sc.CoachingNotes, sc.IsLsaInformed);
+				dataTable.Rows.Add(sc.VerintId, 
+					sc.IsValidBehavior,
+					sc.SelectedBehaviorId, 
+					sc.Action, 
+					sc.CoachingNotes, 
+					sc.IsLsaInformed);
 			}
 			SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
 			sqlParameter.SqlDbType = SqlDbType.Structured;
-			sqlParameter.TypeName = "EC.ShorCallReviewTableType"; // User Defined Type name in DB
+			sqlParameter.TypeName = "EC.SCSupReviewTableType"; // User Defined Type name in DB
 
 			return sqlParameter;
 		}
@@ -72,9 +78,9 @@ namespace eCoachingLog.Extensions
 		public static SqlParameter AddShortCallConfirmTableType(this SqlParameterCollection target, string name, IList<ShortCall> shortCallList)
 		{
 			DataTable dataTable = new DataTable();
-			dataTable.Columns.Add("VerintID", typeof(string));
-			dataTable.Columns.Add("Agree", typeof(bool));
-			dataTable.Columns.Add("Comments", typeof(string));
+			dataTable.Columns.Add("VerintCallID", typeof(string));
+			dataTable.Columns.Add("MgrAgreed", typeof(bool));
+			dataTable.Columns.Add("MgrComments", typeof(string));
 
 			foreach (ShortCall sc in shortCallList)
 			{
@@ -82,7 +88,7 @@ namespace eCoachingLog.Extensions
 			}
 			SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
 			sqlParameter.SqlDbType = SqlDbType.Structured;
-			sqlParameter.TypeName = "EC.ShorCallConfirmTableType"; // User Defined Type name in DB
+			sqlParameter.TypeName = "EC.SCMgrReviewTableType"; // User Defined Type name in DB
 
 			return sqlParameter;
 		}

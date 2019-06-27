@@ -75,8 +75,16 @@ namespace eCoachingLog.Controllers
 			}
         }
 
-		// TODO: cleanup when db piece is ready
 		public JsonResult GetShortCallBehaviorList(bool isValid)
+		{
+			IList<Behavior> behaviorList = GetShortCallBehaviorListFromSessionOrDB(isValid);
+			IEnumerable<SelectListItem> behaviors = new SelectList(behaviorList, "Id", "Text");
+			JsonResult result = Json(behaviors);
+			result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+			return result;
+		}
+
+		private IList<Behavior> GetShortCallBehaviorListFromSessionOrDB(bool isValid)
 		{
 			IList<Behavior> behaviorList = new List<Behavior>();
 			if (isValid)
@@ -84,6 +92,7 @@ namespace eCoachingLog.Controllers
 				if (Session["validBehaviorList"] == null)
 				{
 					behaviorList = this.reviewService.GetShortCallBehaviorList(isValid);
+					behaviorList.Insert(0, new Behavior { Id = -2, Text = "Select a behavior" });
 					Session["validBehaviorList"] = behaviorList;
 				}
 				else
@@ -96,6 +105,7 @@ namespace eCoachingLog.Controllers
 				if (Session["invalidBehaviorList"] == null)
 				{
 					behaviorList = this.reviewService.GetShortCallBehaviorList(isValid);
+					behaviorList.Insert(0, new Behavior { Id = -2, Text = "Select a behavior" });
 					Session["invalidBehaviorList"] = behaviorList;
 				}
 				else
@@ -104,14 +114,10 @@ namespace eCoachingLog.Controllers
 				}
 			}
 
-			IEnumerable<SelectListItem> behaviors = new SelectList(behaviorList, "Id", "Text");
-			JsonResult result = Json(behaviors);
-			result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-			return result;
+			return behaviorList;
 		}
 
-		// TODO: I can pass in logId or employeeId so that db logic can return the correct ACTION text
-		public JsonResult GetActionByBehaviorId(long logId, string employeeId, bool isValidBehavior, int behaviorId)
+		public JsonResult GetAction(long logId, string employeeId, bool isValidBehavior, int behaviorId)
 		{
 			string action = this.reviewService.GetShortCallAction(logId, employeeId, isValidBehavior, behaviorId);
 
@@ -124,9 +130,6 @@ namespace eCoachingLog.Controllers
 		public ActionResult Save(ReviewViewModel vm)
 		{
 			logger.Debug("!!!!!!!!!!Entered Save");
-
-			// TODO: remove
-			LogFormData(vm);
 
 			bool success = false;
 			User user = GetUserFromSession();
@@ -349,9 +352,12 @@ namespace eCoachingLog.Controllers
 				vm.IsShortCallPendingSupervisorForm = true;
 				vm.IsReadOnly = IsReadOnly(vm, user);
 				vm.ShortCallList = this.reviewService.GetShortCallList(vm.LogDetail.LogId);
+
+				var behaviorList = GetShortCallBehaviorListFromSessionOrDB(false); // default to invalid
 				// Load Behavior dropdown for each short call
 				foreach (ShortCall sc in vm.ShortCallList)
 				{
+					sc.Behaviors = (List<Behavior>) behaviorList;
 					sc.SelectListBehaviors = new SelectList(sc.Behaviors, "Id", "Text");
 				}
 
@@ -583,14 +589,6 @@ namespace eCoachingLog.Controllers
 						readOnly = false;
 					}
 				}
-				// All other statuses - managers and above VIEW ONLY - they don't enter data for Regular Pending form EXCEPT for short call pending mgr review
-				else if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
-				{
-					if (vm.LogDetail.IsOmrShortCall && user.EmployeeId == vm.LogDetail.ManagerEmpId)
-					{
-						readOnly = false;
-					}
-				}
 				return readOnly;
 			}
 
@@ -777,25 +775,6 @@ namespace eCoachingLog.Controllers
 				&& logDetail.IsSubmittedAsCse.Value
 				&& logDetail.IsConfirmedCse.HasValue
 				&& !logDetail.IsConfirmedCse.Value;
-		}
-
-		// TODO: Remove
-		private void LogFormData(ReviewViewModel vm)
-		{
-			int logIdInSession = (int)Session["reviewLogId"];
-			logger.Debug("LogID:" + logIdInSession);
-			logger.Debug("Short Call List:");
-
-			foreach (var sc in vm.ShortCallList)
-			{
-				logger.Debug("VerintID: " + sc.VerintId);
-				logger.Debug("IsValidBehavior: " + sc.IsValidBehavior);
-				logger.Debug("BehaviorID: " + sc.SelectedBehaviorId);
-				logger.Debug("CoachingNotes: " + sc.CoachingNotes);
-				logger.Debug("IsLsaInformed: " + sc.IsLsaInformed);
-				logger.Debug("IsManagerAgreed: " + sc.IsManagerAgreed);
-				logger.Debug("Comments: " + sc.Comments);
-			}
 		}
 	}
 

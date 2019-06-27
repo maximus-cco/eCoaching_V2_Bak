@@ -221,7 +221,7 @@
 		// Valid Checkbox cell
 		var $validBehaviorTd = $(this).parent().prev('td').find('input');
 
-		$.getJSON(getActionByBehaviorId, {
+		$.getJSON(getAction, {
 			logId: logId,
 			employeeId: employeeId,
 			behaviorId: $(this).val(),
