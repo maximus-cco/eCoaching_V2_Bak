@@ -648,9 +648,9 @@ div.dataTables_processing {
   border-left: 4px solid transparent;
 }
 
-/*#tbl-review-short-call > tbody > tr > td {
+#tbl-review-short-call > tbody > tr > td {
   vertical-align: middle;
-}*/
+}
 
 input[type=radio].errorClass {
     outline: 1px solid red

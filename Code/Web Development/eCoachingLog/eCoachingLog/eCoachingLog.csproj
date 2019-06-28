@@ -168,6 +168,7 @@
     <Compile Include="Models\Common\ShortCall.cs" />
     <Compile Include="Models\MyDashboard\ChartData.cs" />
     <Compile Include="Models\MyDashboard\ChartDataset.cs" />
+    <Compile Include="Models\Review\EclAction.cs" />
     <Compile Include="Models\Review\Review.cs" />
     <Compile Include="Models\Survey\Question.cs" />
     <Compile Include="Models\Survey\SingleChoice.cs" />

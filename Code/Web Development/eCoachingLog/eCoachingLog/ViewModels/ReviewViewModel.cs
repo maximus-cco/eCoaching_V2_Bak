@@ -204,10 +204,16 @@ namespace eCoachingLog.ViewModels
 				//this.ShortCallList[0].CoachingNotes
 				for (int i = 0; i < this.ShortCallList.Count; i++)
 				{
-					if (this.ShortCallList[i].SelectedBehaviorId == -1)
+					if (this.ShortCallList[i].SelectedBehaviorId < 0)
 					{
 						var selectedBehaviorId = new[] { "ShortCallList[" + i + "].SelectedBehaviorId" };
 						yield return new ValidationResult("", selectedBehaviorId);
+					}
+
+					if (!this.ShortCallList[i].IsValidBehavior && this.ShortCallList[i].SelectedEclActionId < 0)
+					{
+						var selectedEclActionId = new[] { "ShortCallList[" + i + "].SelectedEclActionId" };
+						yield return new ValidationResult("", selectedEclActionId);
 					}
 
 					if (string.IsNullOrEmpty(this.ShortCallList[i].CoachingNotes))

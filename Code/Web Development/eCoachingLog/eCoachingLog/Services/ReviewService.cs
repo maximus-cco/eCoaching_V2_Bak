@@ -235,6 +235,11 @@ namespace eCoachingLog.Services
 			return this.reviewRepository.GetShortCallBehaviorList(isValid);
 		}
 
+		public IList<EclAction> GetShortCallActionList(int behaviorId)
+		{
+			return this.reviewRepository.GetShortCallActionList(behaviorId);
+		}
+
 		public string GetShortCallAction(long logId, string employeeId, bool isValidBehavior, int behaviorId)
 		{
 			if (!isValidBehavior)
@@ -263,8 +268,6 @@ namespace eCoachingLog.Services
 			review.DetailReasonCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonCoachable);
 			review.DetailReasonNotCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonNotCoachable);
 
-			// TODO: remove
-			//review.IsShortCallPendingSupervisorForm = true;
 			if (review.IsShortCallPendingSupervisorForm)
 			{
 				string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;

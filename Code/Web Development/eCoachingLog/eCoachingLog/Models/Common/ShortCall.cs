@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Utils;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using eCoachingLog.Models.Review;
 
 namespace eCoachingLog.Models.Common
 {
@@ -8,15 +9,16 @@ namespace eCoachingLog.Models.Common
 	{
 		public string VerintId { get; set; }
 		public bool IsValidBehavior { get; set; }
-		public string IsValidBehaviorText { get; set; }
 		public List<Behavior> Behaviors { get; set; }
 		public IEnumerable<SelectListItem> SelectListBehaviors { get; set; }
 		public int SelectedBehaviorId { get; set; }
 		public string SelectedBehaviorText { get; set; }
-		public string Action { get; set; }
+		public List<EclAction> EclActions { get; set; }
+		public IEnumerable<SelectListItem> SelectListEclActions { get; set; }
+		public int? SelectedEclActionId { get; set; }
+		public string SelectedEclActionText { get; set; }
 		public string CoachingNotes { get; set; }
 		public bool IsLsaInformed { get; set; }
-		public string IsLsaInformedText { get; set; }
 		public bool? IsManagerAgreed { get; set; }
 		public string Comments { get; set; }
 
@@ -38,10 +40,35 @@ namespace eCoachingLog.Models.Common
 			}
 		}
 
+		public string IsValidBehaviorText
+		{
+			get
+			{
+				if (IsValidBehavior)
+					return "Yes";
+				else
+					return "No";
+			}
+		}
+
+		public string IsLsaInformedText
+		{
+			get
+			{
+				if (IsLsaInformed)
+					return "Yes";
+				else
+					return "No";
+			}
+		}
+
 		public ShortCall()
 		{
 			this.VerintId = Constants.LOG_STATUS_UNKNOWN_TEXT;
 			this.Behaviors = new List<Behavior>();
+			this.EclActions = new List<EclAction>();
+			this.SelectedBehaviorId = -2;
+			this.SelectedEclActionId = -2;
 		}
 	}
 }
