@@ -207,7 +207,7 @@ namespace eCoachingLog.Utils
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Reports/Performance_Scorecard/Lists/Scorecard_Escalated_Issues_Log/NewIssue.aspx' target='_blank'>submit an escalation</a> via the " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Reports/Performance_Scorecard/default.aspx' target='_blank'>CCO Performance Scorecard Information Station</a> " +
 			"SharePoint site.";
-		
+
 		// Internal CCO Reporting MSR static text
 		public const string REVIEW_MSR_INTERNAL_CCO_REPORTING = "To view in full detail, your Supervisor will review your Performance Dashboard with you during your next coaching session. An overview of your scores is also contained within the eCL.";
 
