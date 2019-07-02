@@ -222,9 +222,6 @@ namespace eCoachingLog.Controllers
 			{
 				vm.ShowEmployeeReviewInfo = false;
 				vm.ShortCallList = this.reviewService.GetShortCallEvalList(vm.LogDetail.LogId);
-				// TODO: Remove, this will come from database
-				vm.LogDetail.Behavior = "CSR exceeded the Inbound Short Call target for the most recent week by having 14 short calls and has " +
-					"exceeded the target 4 other weeks out of the last 6 weeks. Please note that any CSR with 10 or more short calls in a week is considered an outlier.";
 			}
 
 			// User clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning

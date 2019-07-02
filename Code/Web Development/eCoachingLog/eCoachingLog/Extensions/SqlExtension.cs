@@ -55,7 +55,7 @@ namespace eCoachingLog.Extensions
 			dataTable.Columns.Add("VerintCallID", typeof(string));
 			dataTable.Columns.Add("Valid", typeof(bool));
 			dataTable.Columns.Add("BehaviorId", typeof(int));
-			dataTable.Columns.Add("Action", typeof(string)); // TODO: change to ActionId, typeof(int)
+			dataTable.Columns.Add("ActionId", typeof(int));
 			dataTable.Columns.Add("CoachingNotes", typeof(string));
 			dataTable.Columns.Add("LSAInformed", typeof(bool));
 
