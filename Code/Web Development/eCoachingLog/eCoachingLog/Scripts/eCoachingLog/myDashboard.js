@@ -190,33 +190,20 @@
 	$('body').on('click', 'input[name*="IsValidBehavior"]', function (e) {
 		var isValid = $(this).is(':checked');
 		var $behaviorDropdown = $(this).parent().next('td').find('select');
-		var $actionDropdown = $(this).parent().next('td').next('td').find('select');
+		var $actionDiv = $(this).parent().next('td').next('td').find('div');
 
 		$behaviorDropdown.addClass('loadinggif');
-		if (isValid) {
-			$actionDropdown.removeClass('show');
-			$actionDropdown.addClass('hide');
-		} else {
-			$actionDropdown.removeClass('hide');
-			$actionDropdown.addClass('show');
-		}
-
-		$.getJSON(initShortCallBehaviorsAndActions, {
-				isValid: isValid
-})
-		.done(function (data) {
-			// Reload behaviors
+		$.getJSON(initShortCallBehaviors, {
+			isValid: isValid
+		})
+		.done(function (behaviors) {
 			var options = [];
-			$.each(data.behaviors, function (i, behavior) {
+			$.each(behaviors, function (i, behavior) {
 				options.push('<option value="', behavior.Value, '">' + behavior.Text + '</option>');
 			});
 			$behaviorDropdown.html(options.join(''));
-			// Reload actions
-			options = [];
-			$.each(data.actions, function (i, action) {
-				options.push('<option value="', action.Value, '">' + action.Text + '</option>');
-			});
-			$actionDropdown.html(options.join(''));
+			// Reset Action text to blank
+			$actionDiv.html('');
 		})
 		.fail(function () {
 			$behaviorDropdown.html('<option value="">error ...&nbsp;&nbsp;</option>');
@@ -226,21 +213,23 @@
 		});
 	});
 
-	// Short Call: Update Action dropdown based on Behavior selected
+	// Short Call: Update Action column based on Behavior selected
 	$('body').on('change', 'select[name*="SelectedBehaviorId"]', function (e) {
+		// Action cell
+		var $actionDiv = $(this).parent().next('td').find('div');
+		var $actionHidden = $(this).parent().next('td').find('input');
 		// Valid Checkbox cell
 		var $validBehaviorTd = $(this).parent().prev('td').find('input');
-		var $actionDropdown = $(this).parent().next('td').find('select');
 
 		$.getJSON(getEclAction, {
-			behaviorId: $(this).val()
+			logId: logId,
+			employeeId: employeeId,
+			behaviorId: $(this).val(),
+			isValidBehavior: $validBehaviorTd.is(':checked')
 		})
-		.done(function (actions) {
-			var options = [];
-			$.each(actions, function (i, action) {
-				options.push('<option value="', action.Value, '">' + action.Text + '</option>');
-			});
-			$actionDropdown.html(options.join(''));
+		.done(function (data) {
+			$actionDiv.html(data.eclActionToDisplay);
+			$actionHidden.val(data.eclAction);
 		})
 		.fail(function () {
 		})

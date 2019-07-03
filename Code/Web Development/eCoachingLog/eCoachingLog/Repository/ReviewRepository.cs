@@ -38,29 +38,29 @@ namespace eCoachingLog.Repository
 			return reasons;
 		}
 
-		public string GetShortCallAction(long logId, string employeeId, int behaviorId)
+		public IList<string> GetShortCallActions(string employeeId, int behaviorId)
 		{
 
-			var action = String.Empty;
+			var actions = new List<string>();
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_ShortCalls_Get_Actions]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-				//command.Parameters.AddWithValueSafe("@logId", logId);
 				command.Parameters.AddWithValueSafe("@EmpId", employeeId);
 				command.Parameters.AddWithValueSafe("@intBehaviorId", behaviorId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
-					if (dataReader.Read())
+					while (dataReader.Read())
 					{
-						action = dataReader["ActionText"].ToString().Trim();
+						var action = dataReader["ActionText"].ToString().Trim();
+						actions.Add(action);
 					}
 				} // end using SqlDataReader
 			} // end using SqlCommand
 
-			return action;
+			return actions;
 		}
 
 		public IList<ShortCall> GetShortCallEvalList(long logId)
@@ -81,7 +81,7 @@ namespace eCoachingLog.Repository
 						shortCall.VerintId = dataReader["VerintCallID"].ToString();
 						shortCall.IsValidBehavior = (dataReader["valid"] != DBNull.Value && Convert.ToInt16(dataReader["valid"]) == 1) ? true : false;
 						shortCall.SelectedBehaviorText = dataReader["Behavior"].ToString();
-						shortCall.SelectedEclActionText = dataReader["Action"].ToString();
+						shortCall.ActionsString = dataReader["Action"].ToString();
 						shortCall.CoachingNotes = dataReader["CoachingNotes"].ToString();
 						shortCall.IsLsaInformed = (dataReader["LSAInformed"] != DBNull.Value && Convert.ToInt16(dataReader["LSAInformed"]) == 1) ? true : false;
 						shortCallList.Add(shortCall);
@@ -138,28 +138,26 @@ namespace eCoachingLog.Repository
 			return behaviorList;
 		}
 
-		public IList<EclAction> GetShortCallActionList(int behaviorId)
+		public string GetShortCallAction(string employeeId, int behaviorId)
 		{
-			var actionList = new List<EclAction>();
+			var action = string.Empty;
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_ShortCalls_Get_Actions]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@intBehaviorId", behaviorId);
+				command.Parameters.AddWithValueSafe("@EmpId", employeeId);
 				connection.Open();
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
 					while (dataReader.Read())
 					{
-						var action = new EclAction();
-						action.Id = Convert.ToInt16(dataReader["ActionId"]);
-						action.Text = dataReader["ActionText"].ToString();
-						actionList.Add(action);
+						action = string.IsNullOrEmpty(action) ? dataReader["ActionText"].ToString().Trim() : "; " + dataReader["ActionText"].ToString().Trim();
 					}
 				}
 			}
-			return actionList;
+			return action;
 		}
 
 		public bool CompleteRegularPendingReview(Review review, string nextStatus, User user)

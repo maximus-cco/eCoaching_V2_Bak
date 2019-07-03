@@ -198,22 +198,15 @@ namespace eCoachingLog.ViewModels
 				}
 			}
 
-			// Short Calls: check coaching notes for each call
+			// Short Calls: check behavior and coaching notes for each call
 			if (this.IsShortCallPendingSupervisorForm)
 			{
-				//this.ShortCallList[0].CoachingNotes
 				for (int i = 0; i < this.ShortCallList.Count; i++)
 				{
 					if (this.ShortCallList[i].SelectedBehaviorId < 0)
 					{
 						var selectedBehaviorId = new[] { "ShortCallList[" + i + "].SelectedBehaviorId" };
 						yield return new ValidationResult("", selectedBehaviorId);
-					}
-
-					if (!this.ShortCallList[i].IsValidBehavior && this.ShortCallList[i].SelectedEclActionId < 0)
-					{
-						var selectedEclActionId = new[] { "ShortCallList[" + i + "].SelectedEclActionId" };
-						yield return new ValidationResult("", selectedEclActionId);
 					}
 
 					if (string.IsNullOrEmpty(this.ShortCallList[i].CoachingNotes))

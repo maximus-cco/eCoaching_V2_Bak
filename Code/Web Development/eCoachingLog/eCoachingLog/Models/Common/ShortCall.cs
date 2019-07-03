@@ -13,10 +13,7 @@ namespace eCoachingLog.Models.Common
 		public IEnumerable<SelectListItem> SelectListBehaviors { get; set; }
 		public int SelectedBehaviorId { get; set; }
 		public string SelectedBehaviorText { get; set; }
-		public List<EclAction> EclActions { get; set; }
-		public IEnumerable<SelectListItem> SelectListEclActions { get; set; }
-		public int? SelectedEclActionId { get; set; }
-		public string SelectedEclActionText { get; set; }
+		public List<string> Actions { get; set; }
 		public string CoachingNotes { get; set; }
 		public bool IsLsaInformed { get; set; }
 		public bool? IsManagerAgreed { get; set; }
@@ -51,6 +48,8 @@ namespace eCoachingLog.Models.Common
 			}
 		}
 
+		public string ActionsString { get; set; }
+
 		public string IsLsaInformedText
 		{
 			get
@@ -66,9 +65,7 @@ namespace eCoachingLog.Models.Common
 		{
 			this.VerintId = Constants.LOG_STATUS_UNKNOWN_TEXT;
 			this.Behaviors = new List<Behavior>();
-			this.EclActions = new List<EclAction>();
-			this.SelectedBehaviorId = -2;
-			this.SelectedEclActionId = -2;
+			this.Actions = new List<string>();
 		}
 	}
 }

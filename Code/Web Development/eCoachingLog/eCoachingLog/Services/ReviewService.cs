@@ -235,19 +235,9 @@ namespace eCoachingLog.Services
 			return this.reviewRepository.GetShortCallBehaviorList(isValid);
 		}
 
-		public IList<EclAction> GetShortCallActionList(int behaviorId)
+		public IList<string> GetShortCallActions(string employeeId, int behaviorId)
 		{
-			return this.reviewRepository.GetShortCallActionList(behaviorId);
-		}
-
-		public string GetShortCallAction(long logId, string employeeId, bool isValidBehavior, int behaviorId)
-		{
-			if (!isValidBehavior)
-			{
-				return this.reviewRepository.GetShortCallAction(logId, employeeId, behaviorId);
-			}
-			// No Action for Valid Behavior
-			return String.Empty;
+			return this.reviewRepository.GetShortCallActions(employeeId, behaviorId);
 		}
 
 		public IList<ShortCall> GetShortCallList(long logId)

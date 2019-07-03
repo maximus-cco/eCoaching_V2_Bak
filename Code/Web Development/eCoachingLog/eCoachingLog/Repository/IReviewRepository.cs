@@ -11,8 +11,7 @@ namespace eCoachingLog.Repository
 		IList<ShortCall> GetShortCallList(long logId);
 		IList<ShortCall> GetShortCallEvalList(long longId);
 		IList<Behavior> GetShortCallBehaviorList(bool isValid);
-		IList<EclAction> GetShortCallActionList(int behaviorId);
-		string GetShortCallAction(long logId, string employeeId, int behaviorId);
+		IList<string> GetShortCallActions(string employeeId, int behaviorId);
 		bool CompleteRegularPendingReview(Review review, string nextStatus, User user);
 		bool CompleteAckRegularReview(Review review, string nextStatus, User user);
 		bool CompleteEmpAckReinforceReview(Review review, string nextStatus, User user);

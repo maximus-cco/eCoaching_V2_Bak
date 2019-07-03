@@ -29,8 +29,8 @@
 					@Html.ValidationMessageFor(m => m.ShortCallList[i].SelectedBehaviorId)
 				</td>
 				<td>
-					@Html.DropDownListFor(m => m.ShortCallList[i].SelectedEclActionId, Model.ShortCallList[i].SelectListEclActions, new { @class = "form-control" })
-					@Html.ValidationMessageFor(m => m.ShortCallList[i].SelectedEclActionId)
+					<div>@Html.Raw(Model.ShortCallList[i].ActionsString)</div>
+					@Html.HiddenFor(m => m.ShortCallList[i].ActionsString)
 				</td>
 				<td>
 					@Html.TextAreaFor(m => m.ShortCallList[i].CoachingNotes, new { @class = "form-control", placeholder = "Enter coaching notes ...", maxlength = 3000 })
@@ -43,7 +43,8 @@
 }
 
 <script>
-	var initShortCallBehaviorsAndActions = '@Url.Action("InitShortCallBehaviorsAndActions", "Review")';
+	var initShortCallBehaviors = '@Url.Action("InitShortCallBehaviors", "Review")';
 	var getEclAction = '@Url.Action("GetEclAction", "Review")';
 	var logId = '@Model.LogDetail.LogId';
+	var employeeId = '@Model.LogDetail.EmployeeId';
 </script>

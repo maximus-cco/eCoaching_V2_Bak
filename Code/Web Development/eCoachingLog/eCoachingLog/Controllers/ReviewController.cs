@@ -1,6 +1,5 @@
 ﻿using eCoachingLog.Filters;
 using eCoachingLog.Models.Common;
-using eCoachingLog.Models.Review;
 using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using eCoachingLog.Utils;
@@ -76,19 +75,13 @@ namespace eCoachingLog.Controllers
 			}
         }
 
-		public JsonResult InitShortCallBehaviorsAndActions(bool isValid)
+		public JsonResult InitShortCallBehaviors(bool isValid)
 		{
 			IList<Behavior> behaviorList = GetShortCallBehaviorListFromSessionOrDB(isValid);
 			IEnumerable<SelectListItem> behaviors = new SelectList(behaviorList, "Id", "Text");
-
-			IList<EclAction> actionList = GetShortCallActionListByBehaviorId(-2);
-			IEnumerable<SelectListItem> actions = new SelectList(actionList, "Id", "Text");
-
-			return Json(new
-						{
-							behaviors = behaviors,
-							actions = actions
-						}, JsonRequestBehavior.AllowGet);
+			JsonResult result = Json(behaviors);
+			result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+			return result;
 		}
 
 		private IList<Behavior> GetShortCallBehaviorListFromSessionOrDB(bool isValid)
@@ -124,26 +117,24 @@ namespace eCoachingLog.Controllers
 			return behaviorList;
 		}
 
-		public JsonResult GetEclAction(int behaviorId)
+		public JsonResult GetEclAction(long logId, string employeeId, int behaviorId, bool isValidBehavior)
 		{
-			IList<EclAction> actionList = GetShortCallActionListByBehaviorId(behaviorId);
-			IEnumerable<SelectListItem> actions = new SelectList(actionList, "Id", "Text");
-
-			JsonResult result = Json(actions);
-			result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
-			return result;
-		}
-
-		private IList<EclAction> GetShortCallActionListByBehaviorId(int behaviorId)
-		{
-			IList<EclAction> actionList = new List<EclAction>();
-			if (behaviorId >= 0)
+			var user = GetUserFromSession();
+			var actions = this.reviewService.GetShortCallActions(user.EmployeeId, behaviorId);
+			var eclAction = string.Empty;
+			var eclActionToDisplay = string.Empty;
+			foreach (string action in actions)
 			{
-				actionList = this.reviewService.GetShortCallActionList(behaviorId);
+				eclAction += string.IsNullOrEmpty(eclAction) ? action : "; " + action;
+				eclActionToDisplay += string.IsNullOrEmpty(eclActionToDisplay) ? action : "<br />" + action;
 			}
-			actionList.Insert(0, new EclAction { Id = -2, Text = "Select an action" });
 
-			return actionList;
+			return Json(new
+						{
+							eclActionToDisplay = eclActionToDisplay,
+							eclAction = eclAction
+						}, JsonRequestBehavior.AllowGet
+					);
 		}
 
 		[HttpPost]
@@ -371,15 +362,11 @@ namespace eCoachingLog.Controllers
 				vm.ShortCallList = this.reviewService.GetShortCallList(vm.LogDetail.LogId);
 
 				var behaviorList = GetShortCallBehaviorListFromSessionOrDB(false); // default to invalid
-				var actionList = GetShortCallActionListByBehaviorId(-2); 
-				// Load Behavior dropdown and Action dropdown for each short call
+				// Load Behavior dropdown for each short call
 				foreach (ShortCall sc in vm.ShortCallList)
 				{
 					sc.Behaviors = (List<Behavior>) behaviorList;
 					sc.SelectListBehaviors = new SelectList(sc.Behaviors, "Id", "Text");
-
-					sc.EclActions = (List<EclAction>)actionList;
-					sc.SelectListEclActions = new SelectList(sc.EclActions, "Id", "Text");
 				}
 
 				vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
