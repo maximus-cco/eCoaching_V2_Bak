@@ -250,6 +250,11 @@ namespace eCoachingLog.Services
 			return this.reviewRepository.GetShortCallEvalList(logId);
 		}
 
+		public IList<ShortCall> GetShortCallCompletedEvalList(long logId)
+		{
+			return this.reviewRepository.GetShortCallCompletedEvalList(logId);
+		}
+
 		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName, int logIdInSession)
 		{
 			// Strip potential harmful characters entered by the user

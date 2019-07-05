@@ -126,7 +126,7 @@ namespace eCoachingLog.Controllers
 			foreach (string action in actions)
 			{
 				eclAction += string.IsNullOrEmpty(eclAction) ? action : "; " + action;
-				eclActionToDisplay += string.IsNullOrEmpty(eclActionToDisplay) ? action : "<br />" + action;
+				eclActionToDisplay += string.IsNullOrEmpty(eclActionToDisplay) ? action : ";<br />" + action;
 			}
 
 			return Json(new
@@ -212,7 +212,21 @@ namespace eCoachingLog.Controllers
 			if (vm.LogDetail.IsOmrShortCall)
 			{
 				vm.ShowEmployeeReviewInfo = false;
-				vm.ShortCallList = this.reviewService.GetShortCallEvalList(vm.LogDetail.LogId);
+				// TODO: check if status is completed
+				if (vm.LogDetail.StatusId != Constants.LOG_STATUS_COMPLETED)
+				{
+					vm.ShortCallList = this.reviewService.GetShortCallEvalList(vm.LogDetail.LogId);
+				}
+				else
+				{
+					vm.ShortCallList = this.reviewService.GetShortCallCompletedEvalList(vm.LogDetail.LogId);
+				}
+
+				// format actions for each short call
+				foreach (var sc in vm.ShortCallList)
+				{
+					sc.ActionsString = sc.ActionsString.Replace(";", ";<br />");
+				}
 			}
 
 			// User clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning

@@ -91,6 +91,39 @@ namespace eCoachingLog.Repository
 			return shortCallList;
 		}
 
+		// TODO: need a seperate sp to return completed shortcall list detail (including mgr review info: agree/disagree/comments...)
+		public IList<ShortCall> GetShortCallCompletedEvalList(long logId)
+		{
+			var shortCallList = new List<ShortCall>();
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_ShortCalls_Get_SupReviewDetails]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@intLogId", logId);
+				connection.Open();
+				using (SqlDataReader dataReader = command.ExecuteReader())
+				{
+					while (dataReader.Read())
+					{
+						ShortCall shortCall = new ShortCall();
+						shortCall.VerintId = dataReader["VerintCallID"].ToString();
+						shortCall.IsValidBehavior = (dataReader["valid"] != DBNull.Value && Convert.ToInt16(dataReader["valid"]) == 1) ? true : false;
+						shortCall.SelectedBehaviorText = dataReader["Behavior"].ToString();
+						shortCall.ActionsString = dataReader["Action"].ToString();
+						shortCall.CoachingNotes = dataReader["CoachingNotes"].ToString();
+						shortCall.IsLsaInformed = (dataReader["LSAInformed"] != DBNull.Value && Convert.ToInt16(dataReader["LSAInformed"]) == 1) ? true : false;
+
+						shortCall.IsManagerAgreed = false;
+						shortCall.Comments = "abc asdfdsfad";
+
+						shortCallList.Add(shortCall);
+					}
+				}
+			}
+			return shortCallList;
+		}
+
 		public IList<ShortCall> GetShortCallList(long logId)
 		{
 			var shortCallList = new List<ShortCall>();

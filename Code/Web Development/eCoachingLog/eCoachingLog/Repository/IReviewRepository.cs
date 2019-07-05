@@ -10,6 +10,7 @@ namespace eCoachingLog.Repository
 		IList<string> GetReasonsToSelect(string reportCode);
 		IList<ShortCall> GetShortCallList(long logId);
 		IList<ShortCall> GetShortCallEvalList(long longId);
+		IList<ShortCall> GetShortCallCompletedEvalList(long longId);
 		IList<Behavior> GetShortCallBehaviorList(bool isValid);
 		IList<string> GetShortCallActions(string employeeId, int behaviorId);
 		bool CompleteRegularPendingReview(Review review, string nextStatus, User user);
