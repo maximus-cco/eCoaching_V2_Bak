@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical_Export(06).sql
-Last Modified Date: 04/20/2019
+sp_SelectFrom_Coaching_Log_Historical_Export(07).sql
+Last Modified Date: 07/05/2019
 Last Modified By: Susmitha Palacherla
 
+Version 07: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
 Version 06: Additional Changes from V&V - TFS 13332 - 04/20/2019
 Version 05: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 04 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
@@ -24,7 +25,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/14/2015
@@ -35,7 +35,7 @@ GO
 -- TFS 7856 encrypt/decrypt - names
 -- Created during Hist dashboard move to new architecture - TFS 7138 - 04/24/2018
 -- Modified to incorporate QualityNow Logs. TFS 13332 -  03/15/2019
-
+-- Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
 
@@ -61,6 +61,7 @@ BEGIN
 DECLARE	
 @nvcSQL1 nvarchar(max),
 @nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
 @nvcSubSource nvarchar(100),
 @strSDate nvarchar(8),
 @strEDate nvarchar(8),
@@ -139,6 +140,7 @@ AS
     AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + '''
     AND [StatusID] <> 2
 	AND [SourceID] NOT IN (235,236)
+	AND SUBSTRING(strReportCode, 1, 3) <> ''ISQ'' 
 )
 SELECT [cl].[CoachingID] CoachingID
   ,[cl].[FormName] FormName
@@ -260,6 +262,60 @@ ON qne.Evaluator_ID = vehs.EMP_ID ' +
 'AND qne.[EvalStatus] = ''Active''
 ORDER BY [cl].[CoachingID];'
 
+
+SET @nvcSQL3 = ';WITH CL 
+AS 
+(
+  SELECT * From [EC].[Coaching_Log] WITH (NOLOCK)
+  WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
+    AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + '''
+    AND [StatusID] <> 2
+	AND [SourceID] = 212
+	AND SUBSTRING(strReportCode, 1, 3) = ''ISQ'' 
+)
+
+SELECT [cl].[CoachingID] CoachingID
+  ,[cl].[FormName] FormName
+  ,[cl].[ProgramName] ProgramName
+  ,[cl].[EmpID]	EmpID
+  ,[veh].[Emp_Name]	EmpName
+  ,[veh].[Sup_Name]	EmpSupName
+  ,[veh].[Mgr_Name]	EmpMgrName
+  ,[si].[City] FormSite
+  ,[so].[CoachingSource] FormSource
+  ,[so].[SubCoachingSource]	FormSubSource
+  ,[dcr].[CoachingReason] CoachingReason
+  ,[dscr].[SubCoachingReason] SubCoachingReason
+  ,[clr].[Value] Value
+  ,[s].[Status] FormStatus
+  ,[vehs].[Emp_Name] SubmitterName
+  ,[sce].[EventDate]	EventDate
+  ,[cl].[CoachingDate] CoachingDate
+  ,[sce].[VerintCallID] VerintID
+  ,[cl].[Description] Description
+  ,[sce].[CoachingNotes]	CoachingNotes
+  ,[cl].[SubmittedDate]	SubmittedDate
+  ,[cl].[SupReviewedAutoDate] SupReviewedAutoDate
+  ,[cl].[MgrReviewManualDate] MgrReviewManualDate
+  ,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
+  ,[sce].[MgrAgreed]
+  ,[sce].[MgrComments]
+  ,[cl].[MgrNotes] MgrNotes
+FROM cl JOIN [EC].[ShortCalls_Evaluations] sce WITH (NOLOCK) 
+ON cl.CoachingID = sce.CoachingID JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) 
+ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr
+ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID  JOIN [EC].[DIM_Status] s 
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si 
+ON cl.SiteID = si.SiteID JOIN [EC].[Employee_Hierarchy] eh
+ON cl.EmpID = eh.Emp_ID  JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+ON eh.[EMP_ID] = veh.[EMP_ID] JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
+ON cl.SubmitterId = vehs.EMP_ID ' +
++ @NewLineChar + @where + ' ' +
+'ORDER BY [cl].[CoachingID];'
+
+
 SET NOCOUNT ON;  
 EXEC (@nvcSQL1)	
 --PRINT @nvcSQL1
@@ -267,9 +323,10 @@ EXEC (@nvcSQL1)
 EXEC (@nvcSQL2)	
 --PRINT @nvcSQL2
 
+EXEC (@nvcSQL3)	
+--PRINT @nvcSQL3
+
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey] 		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
 GO
-
-

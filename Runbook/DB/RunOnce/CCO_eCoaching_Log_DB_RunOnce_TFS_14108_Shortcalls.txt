@@ -1,0 +1,269 @@
+/*
+
+CCO_eCoaching_Log_DB_RunOnce_TFS_14108_ShortCalls.txt
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+Summary
+1. Add column to Outliers Staging Table
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+
+--1. Add column to Outliers Staging Table
+
+--1. Add a column to staging table
+ALTER TABLE [EC].[Outlier_Coaching_Stage]
+ADD Verint_ID nvarchar(30); 
+
+
+--*****************
+
+
+
+--2a. Create Table [EC].[ShortCalls_Behavior]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ShortCalls_Behavior](
+	[ID] [int] IDENTITY(101,1) NOT NULL,
+	[Description] [nvarchar](100) NOT NULL,
+	[Valid] [bit] NOT NULL,
+	[Active] [bit] NOT NULL,
+ CONSTRAINT [SC_Behavior_ID] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+--2b. Insert records to [EC].[ShortCalls_Behavior]
+
+INSERT INTO [EC].[ShortCalls_Behavior]
+           ([Description]
+           ,[Valid]
+           ,[Active])
+     VALUES
+           ('Calling Kudos Line',0,1),
+		   ('Good Call',1,1),
+		   ('Incorrect blind transfer',0,1),
+		   ('Incorrect phone status (calls still coming in)',0,1),
+		   ('Intentionally disconnecting calls',0,1),
+		   ('Not following call flow (not opening a call)',0,1),
+		 --  ('Not following call flow in CDB (not opening a call)',0,1),
+		   ('Not following procedure for disconnect by caller (ghost calls, greeting 3x''s, template)',0,1),
+		   ('Spanish Transfer',1,1),
+		   ('SSA Transfer',1,1),
+		   ('Technical Issue (CSR Error & Technical Error)',0,1),
+		 --  ('Technical Issue CDB',0,1),
+		   ('Valid Password Reset',1,1)
+		
+GO
+
+
+--*****************
+
+
+
+
+--3a. Create Table [EC].[ShortCalls_Prescriptive_Actions]
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ShortCalls_Prescriptive_Actions](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Action] [nvarchar](1000) NOT NULL,
+	[Active] [bit] NOT NULL,
+ CONSTRAINT [SC_Action_ID] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+--3b. Insert records to [EC].[ShortCalls_Prescriptive_Actions]
+
+
+INSERT INTO [EC].[ShortCalls_Prescriptive_Actions]
+           ([Action]
+           ,[Active])
+     VALUES
+ ('Coach the CSR to Immediately notify Supervisor/LSA of Technical Issues',1),
+ ('Coach to the behavior (Progressive disciplinary course details in coaching comments)',1),
+ ('Inform IT or Telecom - Ticket Submitted',1),
+ ('Inform LSA - Ticket Submitted',1),
+ ('Issue verbal warning',1),
+ ('Issue written warning  ',1),
+ ('Start termination process',1)
+
+GO
+
+
+
+--*****************
+
+
+--4a. Create Table  [EC].[ShortCalls_Behavior_Action_Link]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ShortCalls_Behavior_Action_Link](
+	[BehaviorId] [int] NOT NULL,
+	[ActionId] [int] NOT NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[Active] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[BehaviorId] ASC,
+	[ActionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [EC].[ShortCalls_Behavior_Action_Link]  WITH NOCHECK ADD  CONSTRAINT [fkActionId] FOREIGN KEY([ActionId])
+REFERENCES [EC].[ShortCalls_Prescriptive_Actions] ([ID])
+GO
+
+ALTER TABLE [EC].[ShortCalls_Behavior_Action_Link] CHECK CONSTRAINT [fkActionId]
+GO
+
+ALTER TABLE [EC].[ShortCalls_Behavior_Action_Link]  WITH NOCHECK ADD  CONSTRAINT [fkBehaviorId] FOREIGN KEY([BehaviorId])
+REFERENCES [EC].[ShortCalls_Behavior] ([ID])
+GO
+
+ALTER TABLE [EC].[ShortCalls_Behavior_Action_Link] CHECK CONSTRAINT [fkBehaviorId]
+GO
+
+
+
+
+
+--4b. Insert records to  [EC].[ShortCalls_Behavior_Action_Link]
+
+
+INSERT INTO [EC].[ShortCalls_Behavior_Action_Link]
+           ([BehaviorId]
+           ,[ActionId]
+           ,[DisplayOrder]
+           ,[Active])
+VALUES
+(101,2,1,1),
+(101,5,2,1),
+(101,6,3,1),
+(101,7,4,1),
+(103,6,1,1),
+(103,7,2,1),
+(104,2,1,1),
+(104,5,2,1),
+(104,6,3,1),
+(104,7,4,1),
+(105,6,1,1),
+(105,7,2,1),
+(106,2,1,1),
+(106,5,2,1),
+(106,6,3,1),
+(106,7,4,1),
+(107,2,1,1),
+(107,5,2,1),
+(107,6,3,1),
+(107,7,4,1),
+(110,1,1,1),
+(110,4,2,1),
+(110,3,3,1)
+      
+GO
+
+
+
+--*****************
+
+
+--5. Create Table  [EC].[ShortCalls_Evaluations]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ShortCalls_Evaluations](
+	[CoachingID] [bigint] NOT NULL,
+	[VerintCallID] [nvarchar](20) NOT NULL,
+	[EventDate] [datetime] NOT NULL,
+	[StartDate] [datetime] NULL,
+	[Valid] [nvarchar](3) NULL,
+	[BehaviorID] [int] NULL,
+	[Action] [nvarchar](1000) NULL,
+	[CoachingNotes] [nvarchar](4000) NULL,
+	[LSAInformed] [nvarchar](3) NULL,
+	[MgrAgreed] [nvarchar](3) NULL,
+	[MgrComments] [nvarchar](2000) NULL,
+ CONSTRAINT [PK_CoachID_CallID] PRIMARY KEY CLUSTERED 
+(
+	[CoachingID] ASC,
+	[VerintCallID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+--*****************
+
+--6. Create Table Type [EC].[SCSupReviewTableType]
+
+CREATE TYPE [EC].[SCSupReviewTableType] AS TABLE(
+	[VerintCallID] [nvarchar](30) NOT NULL,
+	[Valid] [nvarchar](3) NULL,
+	[BehaviorId] [int] NULL,
+	[Action] [nvarchar](1000) NULL,
+	[CoachingNotes] [nvarchar](4000) NULL,
+	[LSAInformed] [nvarchar](3) NULL
+)
+GO
+
+
+
+--*****************
+
+--7. Create Table Type [EC].[SCMgrReviewTableType]
+
+CREATE TYPE [EC].[SCMgrReviewTableType] AS TABLE(
+	[VerintCallID] [nvarchar](30) NOT NULL,
+	[MgrAgreed] [nvarchar](3) NULL,
+	[MgrComments] [nvarchar](2000) NULL
+)
+GO
+
+
+
+--*****************
+
+
+
+
