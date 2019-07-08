@@ -120,7 +120,7 @@ namespace eCoachingLog.Controllers
 		public JsonResult GetEclAction(long logId, string employeeId, int behaviorId, bool isValidBehavior)
 		{
 			var user = GetUserFromSession();
-			var actions = this.reviewService.GetShortCallActions(user.EmployeeId, behaviorId);
+			var actions = this.reviewService.GetShortCallActions(employeeId, behaviorId);
 			var eclAction = string.Empty;
 			var eclActionToDisplay = string.Empty;
 			foreach (string action in actions)
@@ -212,14 +212,14 @@ namespace eCoachingLog.Controllers
 			if (vm.LogDetail.IsOmrShortCall)
 			{
 				vm.ShowEmployeeReviewInfo = false;
-				// TODO: check if status is completed
+				// check if status is completed
 				if (vm.LogDetail.StatusId != Constants.LOG_STATUS_COMPLETED)
 				{
 					vm.ShortCallList = this.reviewService.GetShortCallEvalList(vm.LogDetail.LogId);
 				}
 				else
 				{
-					vm.ShortCallList = this.reviewService.GetShortCallCompletedEvalList(vm.LogDetail.LogId);
+					vm.ShortCallList = this.reviewService.GetShortCallCompletedEvalList(vm.LogDetail.LogId); // with mgr review info
 				}
 
 				// format actions for each short call

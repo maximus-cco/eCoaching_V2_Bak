@@ -119,7 +119,7 @@ namespace eCoachingLog.Utils
 		public const int SOURCE_INTERNAL_CCO_REPORTING = 218;
 
 		public static readonly List<string> EXCEL_SHEET_NAMES =
-			new List<string>() { "eCoachingLog", "Quality Now eCoachingLog" };
+			new List<string>() { "eCL", "Quality Now eCL", "Short Call eCL" };
 
 		public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
 		{

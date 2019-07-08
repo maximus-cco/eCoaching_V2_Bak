@@ -42,9 +42,17 @@ namespace eCoachingLog.Models.Common
 			get
 			{
 				if (IsValidBehavior)
+				{
 					return "Yes";
+				}
 				else
+				{
+					if (string.IsNullOrEmpty(SelectedBehaviorText))
+					{
+						return string.Empty;
+					}
 					return "No";
+				}
 			}
 		}
 
@@ -55,9 +63,17 @@ namespace eCoachingLog.Models.Common
 			get
 			{
 				if (IsLsaInformed)
+				{
 					return "Yes";
+				}
 				else
+				{
+					if (string.IsNullOrEmpty(SelectedBehaviorText))
+					{
+						return string.Empty;
+					}
 					return "No";
+				}
 			}
 		}
 

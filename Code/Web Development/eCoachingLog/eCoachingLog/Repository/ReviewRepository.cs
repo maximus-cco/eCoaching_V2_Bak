@@ -91,12 +91,11 @@ namespace eCoachingLog.Repository
 			return shortCallList;
 		}
 
-		// TODO: need a seperate sp to return completed shortcall list detail (including mgr review info: agree/disagree/comments...)
 		public IList<ShortCall> GetShortCallCompletedEvalList(long logId)
 		{
 			var shortCallList = new List<ShortCall>();
 			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_ShortCalls_Get_SupReviewDetails]", connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_ShortCalls_Get_MgrReviewDetails]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
@@ -114,8 +113,8 @@ namespace eCoachingLog.Repository
 						shortCall.CoachingNotes = dataReader["CoachingNotes"].ToString();
 						shortCall.IsLsaInformed = (dataReader["LSAInformed"] != DBNull.Value && Convert.ToInt16(dataReader["LSAInformed"]) == 1) ? true : false;
 
-						shortCall.IsManagerAgreed = false;
-						shortCall.Comments = "abc asdfdsfad";
+						shortCall.IsManagerAgreed = (dataReader["MgrAgreed"] != DBNull.Value && Convert.ToInt16(dataReader["MgrAgreed"]) == 1) ? true : false;
+						shortCall.Comments = dataReader["MgrComments"].ToString();
 
 						shortCallList.Add(shortCall);
 					}

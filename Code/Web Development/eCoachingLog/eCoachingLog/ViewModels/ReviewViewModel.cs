@@ -79,7 +79,7 @@ namespace eCoachingLog.ViewModels
 
 		public IEnumerable<SelectListItem> CommentSelectList { get; set; }
 
-		// TODO: short call list
+		// short call list
 		public IList<ShortCall> ShortCallList { get; set; }
 		public string ShortCallBehaviorActionList { get; set; }
 		public bool ShowEmployeeReviewInfo { get; set; }
