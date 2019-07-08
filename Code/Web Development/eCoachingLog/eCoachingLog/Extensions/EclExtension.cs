@@ -7,8 +7,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
-using System.Data.SqlClient;
-using eCoachingLog.Models.Survey;
 
 namespace eCoachingLog.Extensions
 {
@@ -28,11 +26,11 @@ namespace eCoachingLog.Extensions
 					var sheetName = i < sheetNames.Count ? sheetNames[i] : "Sheet" + i;
 					var ws = excelPackage.Workbook.Worksheets.Add(sheetName);
 					ws.Cells["A1"].LoadFromDataTable(dataSet.Tables[i], true);
-
+					var dataTable = dataSet.Tables[i];
 					// Set date columns format				
-					for (var j = 0; j < dataSet.Tables[0].Columns.Count; j++)
+					for (var j = 0; j < dataTable.Columns.Count; j++)
 					{
-						if (dataSet.Tables[0].Columns[j].DataType.Name.Equals("DateTime"))
+						if (dataTable.Columns[j].DataType.Name.Equals("DateTime"))
 						{
 							ws.Column(j + 1).Style.Numberformat.Format = "yyyy-mm-dd hh:mm";
 						} // end if
