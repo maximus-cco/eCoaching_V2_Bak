@@ -1,8 +1,10 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical_Export(07).sql
-Last Modified Date: 07/05/2019
+sp_SelectFrom_Coaching_Log_Historical_Export(07a).sql
+Last Modified Date: 07/08/2019
 Last Modified By: Susmitha Palacherla
 
+Version 07: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 07/08/2019
+Added additional columns
 Version 07: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
 Version 06: Additional Changes from V&V - TFS 13332 - 04/20/2019
 Version 05: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
@@ -25,6 +27,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/14/2015
@@ -292,16 +295,21 @@ SELECT [cl].[CoachingID] CoachingID
   ,[sce].[EventDate]	EventDate
   ,[cl].[CoachingDate] CoachingDate
   ,[sce].[VerintCallID] VerintID
+  ,[b].[Description] Behavior
+  ,CASE WHEN [sce].[Valid] = 1 THEN ''Yes'' ELSE ''No'' END ValidBehavior
+  ,[sce].[Action] Action
   ,[cl].[Description] Description
   ,[sce].[CoachingNotes]	CoachingNotes
+  ,CASE WHEN [sce].[LSAInformed] = 1 THEN ''Yes'' ELSE ''No'' END LSAInformed
   ,[cl].[SubmittedDate]	SubmittedDate
   ,[cl].[SupReviewedAutoDate] SupReviewedAutoDate
   ,[cl].[MgrReviewManualDate] MgrReviewManualDate
   ,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
-  ,[sce].[MgrAgreed]
+  ,CASE WHEN [sce].[MgrAgreed] = 1 THEN ''Yes'' ELSE ''No'' END MgrAgreed
   ,[sce].[MgrComments]
   ,[cl].[MgrNotes] MgrNotes
-FROM cl JOIN [EC].[ShortCalls_Evaluations] sce WITH (NOLOCK) 
+FROM [EC].[ShortCalls_Evaluations] sce WITH (NOLOCK)  LEFT JOIN [EC].[ShortCalls_Behavior] b
+ON b.ID = sce.BehaviorID JOIN cl
 ON cl.CoachingID = sce.CoachingID JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) 
 ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr
 ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
@@ -329,4 +337,7 @@ EXEC (@nvcSQL3)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey] 		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
+
 GO
+
+

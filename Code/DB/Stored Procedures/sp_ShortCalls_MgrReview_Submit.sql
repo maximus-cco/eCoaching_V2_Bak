@@ -1,10 +1,11 @@
 /*
-sp_ShortCalls_MgrReview_Submit(01).sql
-Last Modified Date:  07/05/2019
+sp_ShortCalls_MgrReview_Submit(01a).sql
+Last Modified Date:  07/08/2019
 Last Modified By: Susmitha Palacherla
 
 
-
+Version 01a: New logic for handling Short calls. - TFS 14108 - 07/08/2019
+Fixed lanid param typo
 Version 01: Document Initial Revision. New logic for handling Short calls - TFS 14108 - 07/05/2019
 
 */
@@ -24,6 +25,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 ---------------------------------------------------------------------------------------------------------
 -- MULTIPLE ASTERISKS (***) DESIGNATE SECTIONS OF THE STORED PROCEDURE TEMPLATE THAT SHOULD BE CUSTOMIZED
 ---------------------------------------------------------------------------------------------------------
@@ -34,7 +38,7 @@ GO
 -- drop procedure [EC].[sp_ShortCalls_SupReview_Submit]
 -- go
 CREATE PROCEDURE [EC].[sp_ShortCalls_MgrReview_Submit] (
-  @strUserLanId NVARCHAR(50),
+  @strUserLanId NVARCHAR(70),
   @intLogId BIGINT,
   @dtConfirmed datetime,
   @strMgrNotes nvarchar(3000),
@@ -93,7 +97,7 @@ OPEN SYMMETRIC KEY [CoachingKey]
 DECRYPTION BY CERTIFICATE [CoachingCert];
 
 SET @dtmDate  = GETDATE()   
-SET @strUserID = EC.fn_nvcGetEmpIdFromLanID(@strUserID,@dtmDate)
+SET @strUserID = EC.fn_nvcGetEmpIdFromLanID(@strUserLanId,@dtmDate)
      
   UPDATE [EC].[ShortCalls_Evaluations]
   SET
@@ -107,7 +111,8 @@ SET @strUserID = EC.fn_nvcGetEmpIdFromLanID(@strUserID,@dtmDate)
 SET 
   StatusID = 1,
   Review_MgrID =  @strUserID,
-  MgrReviewAutoDate =  @dtConfirmed,
+  MgrReviewAutoDate =  @dtmDate ,
+  MgrReviewManualDate = @dtConfirmed,
   MgrNotes =  @strMgrNotes,
   ReassignCount = 0
 WHERE CoachingID = @intLogId;    
@@ -149,5 +154,8 @@ CLOSE SYMMETRIC KEY [CoachingKey]
    end
 return 0
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
+
 GO
+
+
 
