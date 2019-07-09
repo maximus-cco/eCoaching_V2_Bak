@@ -1,8 +1,9 @@
 /*
-sp_Dashboard_Director_Site_Export(02).sql
-Last Modified Date: 03/19/2019
+sp_Dashboard_Director_Site_Export(03).sql
+Last Modified Date: 07/09/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Modified to support new handling for Short Calls. TFS 14108 - 07/09/2019
 Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 01: Document Initial Revision created during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
 */
@@ -17,11 +18,13 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Dashboard_Director_Site_Export]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -32,6 +35,7 @@ GO
 --	Description: *	This procedure is used for Export of Coaching data from Director Dashboard.
 --  Created during My dashboard move to new architecture - TFS 7137 - 07/12/2018
 --  Modified to incorporate QualityNow Logs. TFS 13332 -  03/15/2019
+--  Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 07/09/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Director_Site_Export] 
 @nvcUserIdin nvarchar(10),
@@ -52,6 +56,7 @@ DECLARE
 @strEDate nvarchar(10),
 @nvcSQL1 nvarchar(max),
 @nvcSQL2 nvarchar(max),
+@nvcSQL3 nvarchar(max),
 @where nvarchar(1000)
 
 
@@ -113,7 +118,8 @@ JOIN [EC].[DIM_Coaching_Reason]dcr ON clr.CoachingReasonID = dcr.CoachingReasonI
 JOIN [EC].[DIM_Sub_Coaching_Reason]dscr ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID 
 WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
 AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + ''' 
-AND [cl].[SourceID] NOT IN (235,236) ' +
+AND [cl].[SourceID] NOT IN (235,236)
+AND SUBSTRING([cl].[strReportCode], 1, 3) <> ''ISQ'' ' +
 @where + ' ' + '
 AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
 AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
@@ -193,6 +199,60 @@ AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
 AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
 ORDER BY [cl].[CoachingID]'
 
+
+SET @nvcSQL3 = 
+'SELECT [cl].[CoachingID] CoachingID
+  ,[cl].[FormName] FormName
+  ,[cl].[ProgramName] ProgramName
+  ,[cl].[EmpID]	EmpID
+  ,[veh].[Emp_Name]	EmpName
+  ,[veh].[Sup_Name]	EmpSupName
+  ,[veh].[Mgr_Name]	EmpMgrName
+  ,[si].[City] FormSite
+  ,[so].[CoachingSource] FormSource
+  ,[so].[SubCoachingSource]	FormSubSource
+  ,[dcr].[CoachingReason] CoachingReason
+  ,[dscr].[SubCoachingReason] SubCoachingReason
+  ,[clr].[Value] Value
+  ,[s].[Status] FormStatus
+  ,[vehs].[Emp_Name] SubmitterName
+  ,[sce].[EventDate]	EventDate
+  ,[cl].[CoachingDate] CoachingDate
+  ,[sce].[VerintCallID] VerintID
+  ,[b].[Description] Behavior
+  ,CASE WHEN [sce].[Valid] = 1 THEN ''Yes'' ELSE ''No'' END ValidBehavior
+  ,[sce].[Action] Action
+  ,[cl].[Description] Description
+  ,[sce].[CoachingNotes]	CoachingNotes
+  ,CASE WHEN [sce].[LSAInformed] = 1 THEN ''Yes'' ELSE ''No'' END LSAInformed
+  ,[cl].[SubmittedDate]	SubmittedDate
+  ,[cl].[SupReviewedAutoDate] SupReviewedAutoDate
+  ,[cl].[MgrReviewManualDate] MgrReviewManualDate
+  ,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
+  ,CASE WHEN [sce].[MgrAgreed] = 1 THEN ''Yes'' ELSE ''No'' END MgrAgreed
+  ,[sce].[MgrComments]
+  ,[cl].[MgrNotes] MgrNotes
+FROM [EC].[ShortCalls_Evaluations] sce WITH (NOLOCK)  LEFT JOIN [EC].[ShortCalls_Behavior] b
+ON b.ID = sce.BehaviorID JOIN  [EC].[Coaching_Log] cl WITH (NOLOCK)
+ON cl.CoachingID = sce.CoachingID JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) 
+ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr
+ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID  JOIN [EC].[DIM_Status] s 
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si 
+ON cl.SiteID = si.SiteID JOIN [EC].[Employee_Hierarchy] eh
+ON cl.EmpID = eh.Emp_ID  JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+ON eh.[EMP_ID] = veh.[EMP_ID] JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
+ON cl.SubmitterId = vehs.EMP_ID 
+WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
+AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + ''' 
+AND [cl].[SourceID] = 212
+AND SUBSTRING([cl].[strReportCode], 1, 3) = ''ISQ'' ' +
+@where + ' ' + '
+AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
+AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+ORDER BY [cl].[CoachingID]'
+
 SET NOCOUNT ON;  
 EXEC (@nvcSQL1)	
 --PRINT @nvcSQL1
@@ -200,14 +260,14 @@ EXEC (@nvcSQL1)
 EXEC (@nvcSQL2)	
 --PRINT @nvcSQL2
 
+EXEC (@nvcSQL3)	
+--PRINT @nvcSQL3
+
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_Dashboard_Director_Site_Coaching_Export
 
-
-
 GO
-
 
 

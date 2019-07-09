@@ -212,7 +212,7 @@ GO
 
 CREATE TABLE [EC].[ShortCalls_Evaluations](
 	[CoachingID] [bigint] NOT NULL,
-	[VerintCallID] [nvarchar](20) NOT NULL,
+	[VerintCallID] [nvarchar](30) NOT NULL,
 	[EventDate] [datetime] NOT NULL,
 	[StartDate] [datetime] NULL,
 	[Valid] [nvarchar](3) NULL,
