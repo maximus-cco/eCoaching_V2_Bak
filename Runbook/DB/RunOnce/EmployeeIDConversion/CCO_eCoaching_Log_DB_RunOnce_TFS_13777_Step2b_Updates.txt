@@ -17,12 +17,12 @@ MAKE UPDATES
 
 
    --****EXECUTE ONE AT A TIME ******--
-
+OPEN SPS AND RUN EACH STEP AT A TIME
+DO NOT NOT RUN [EC].[sp_IDC_Update_Coaching_Log] 
+Kick off the 7 individual jobs
 
 --*******************************************
 
-USE [eCoachingTest]
-GO
 
 
 --0. [EC].[sp_IDC_Populate_ID_XRef]
@@ -72,14 +72,46 @@ GO
 
 
 --4.[EC].[Coaching_Log]
+/*
 
-DECLARE	@return_value int
+RUN SQL AGENT JOBS
+--1. empID
+IDC_Coaching_Log_Update_EmpID
+--SQLCMD -Q"EXEC eCoaching.EC.sp_IDC_Coaching_Log_Update_EmpID" -E -S F3420-ECLDBP01
 
-EXEC	@return_value = [EC].[sp_IDC_Update_Coaching_Log] 
 
-SELECT	'Return Value' = @return_value
+--2.SubmitterID
 
-GO
+IDC_Coaching_Log_Update_SubmitterID
+--SQLCMD -Q"EXEC eCoaching.EC.sp_IDC_Coaching_Log_Update_SubmitterID" -E -S F3420-ECLDBP01
+
+
+
+--3.supID
+IDC_Coaching_Log_Update_SupID
+---SQLCMD -Q"EXEC eCoaching.EC.sp_IDC_Coaching_Log_Update_SupID" -E -S F3420-ECLDBP01
+
+
+--4.MgrID
+IDC_Coaching_Log_Update_MgrID
+--SQLCMD -Q"EXEC eCoaching.EC.sp_IDC_Coaching_Log_Update_MgrID" -E -S F3420-ECLDBP01
+
+
+--5.ReviewSupID
+IDC_Coaching_Log_Update_ReviewSupID
+--SQLCMD -Q"EXEC eCoaching.EC.sp_IDC_Coaching_Log_Update_ReviewSupID" -E -S F3420-ECLDBP01
+
+--6.ReviewMgrID
+IDC_Coaching_Log_Update_ReviewMgrID
+--SQLCMD -Q"EXEC eCoaching.EC.sp_IDC_Coaching_Log_Update_ReviewMgrID" -E -S F3420-ECLDBP01
+
+
+--7.ReassignedToID
+IDC_Coaching_Log_Update_ReassignedToID
+--SQLCMD -Q"EXEC eCoaching.EC.sp_IDC_Coaching_Log_Update_ReassignedToID" -E -S F3420-ECLDBP01
+
+
+*/
 
 
 --5.[EC].[Coaching_Log_Archive]
