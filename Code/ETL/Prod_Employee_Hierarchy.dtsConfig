@@ -3,7 +3,7 @@
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoaching</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[ServerName]" ValueType="String"><ConfiguredValue>F3420-ECLDBP01</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpout.gdit.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>ironport.maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::CcEmail].Properties[Value]" ValueType="String"><ConfiguredValue>LiliHuang@maximus.com;DavidLHinman@maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\F3420-ECLDBP01\data\coaching\HRInfo\Decrypt_In\</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\F3420-ECLDBP01\data\coaching\HRInfo\Decrypt_Out\</ConfiguredValue></Configuration>

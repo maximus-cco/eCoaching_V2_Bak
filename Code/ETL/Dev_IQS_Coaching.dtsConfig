@@ -4,7 +4,7 @@
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingDev</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>f3420-ecldbd01</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpout.gdit.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>ironport.maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::AdhocNPN].Properties[Value]" ValueType="Boolean"><ConfiguredValue>0</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::BeginDate].Properties[Value]" ValueType="Int32"><ConfiguredValue>0</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::CCEmail].Properties[Value]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>

@@ -10,7 +10,7 @@ Const imgPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\BCC-eCL-LOG
 
 'Begin - Non-Environment Related
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
-Const smtpServer = "smtpout.gdit.com" 
+Const smtpServer = "ironport.maximus.com" 
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1

@@ -4,7 +4,7 @@
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingDev</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>F3420-ECLDBD01</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpout.gdit.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>ironport.maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FailMessage].Properties[Value]" ValueType="String"><ConfiguredValue>Quality Other Coaching Load failed in Dev</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbd01\data\coaching\Quality\Decrypt_out\</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbd01\data\coaching\Quality\Decrypt_in\</ConfiguredValue></Configuration>
