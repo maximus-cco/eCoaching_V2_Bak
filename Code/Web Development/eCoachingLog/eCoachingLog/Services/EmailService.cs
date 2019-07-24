@@ -26,21 +26,34 @@ namespace eCoachingLog.Services
             this.newSubmissionRepository = newSubmissionRepository;
         }
 
-		public void SendComments(CoachingLogDetail log, string comments, string emailTempFileName)
+		public bool SendComments(CoachingLogDetail log, string comments, string emailTempFileName)
 		{
+			MailMessage msg = new MailMessage();
+			if (!string.IsNullOrEmpty(log.SupervisorEmail))
+			{
+				msg.To.Add(log.SupervisorEmail);
+			}
+			if (!string.IsNullOrEmpty(log.ManagerEmail))
+			{
+				msg.To.Add(log.ManagerEmail);
+			}
+
+			if (msg.To.Count < 1)
+			{
+				logger.Warn("Failed to send employee comments[" + log.LogId + "]: Both supervisor and manager emails are not available.");
+				return false;
+			}
+
 			string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
 			string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
 			string bodyText = FileUtil.ReadFile(emailTempFileName);
-			MailMessage msg =new MailMessage();
 			msg.IsBodyHtml = true;
 			msg.Body = bodyText.Replace("{formName}", log.FormName);
 			msg.Body = msg.Body.Replace("{comments}", comments);
-			msg.To.Add(log.SupervisorEmail);
-			msg.To.Add(log.ManagerEmail);
 			msg.From = new MailAddress(fromAddress, fromDisplayName);
 			msg.Subject = "eCoaching Log Completed (" + log.EmployeeName + ")";
 
-			Send(msg);
+			return Send(msg);
 		}
 
         public bool Send(NewSubmission submission, string templateFileName, string logName)
@@ -82,6 +95,7 @@ namespace eCoachingLog.Services
 		private bool Send(MailMessage msg)
 		{
 			bool success = false;
+
 			try
 			{
 				// https://msdn.microsoft.com/en-us/library/k1c4h6e2(v=vs.110).aspx
@@ -102,8 +116,17 @@ namespace eCoachingLog.Services
 					.Append(Environment.NewLine)
 					.Append(ex.StackTrace);
 
+				StringBuilder to = new StringBuilder();
+				foreach (var temp in msg.To)
+				{
+					to.Append(temp)
+					  .Append(";");
+				}
+
 				logger.Warn(info);
-				//logger.Warn(msg.Body);
+				logger.Warn("Subject: " + msg.Subject);
+				logger.Warn("To: " + to.ToString());
+				logger.Warn(msg.Body);
 			}
 			return success;
 		}

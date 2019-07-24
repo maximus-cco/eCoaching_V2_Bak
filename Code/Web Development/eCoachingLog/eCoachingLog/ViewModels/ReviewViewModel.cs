@@ -23,6 +23,7 @@ namespace eCoachingLog.ViewModels
 		public string DetailsCoached { get; set; }
 
 		// Short Call - Confirm view by Manager - Comments
+		[AllowHtml]
 		public string Comments { get; set; }
 		public DateTime? DateConfirmed { get; set; }
 

@@ -344,23 +344,12 @@ namespace eCoachingLog.Services
 				}
 			}
 
-			// Email CSR's comments to supervisor and manager 
+			// Email CSR's comments to supervisor and/or manager 
 			if (success && review.LogDetail.ModuleId == Constants.MODULE_CSR && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT)
 			{
-				try
+				if(!this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName))
 				{
-					this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName);
-				}
-				catch (Exception ex)
-				{
-					var userId = user == null ? "usernull" : user.EmployeeId;
-					var logId = review.LogDetail == null ? "logidnull" : review.LogDetail.LogId.ToString();
-					StringBuilder info = new StringBuilder("Failed to send comments email: ");
-					info.Append("[").Append(userId).Append("]")
-						.Append("|logid[").Append(logId).Append("]. ")
-						.Append(ex.Message);
-
-					logger.Warn(info);
+					logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
 				}
 			}
 			return success;
