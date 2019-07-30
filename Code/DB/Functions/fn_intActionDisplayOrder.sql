@@ -1,9 +1,9 @@
 /*
-fn_intActionDisplayOrder(01).sql
-Last Modified Date: 07/05/2019
+fn_intActionDisplayOrder(01A).sql
+Last Modified Date: 07/30/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 01A: Updated from V&V feedback.TFS 14108 - 07/30/2019
 Version 01: Document Initial Revision. New process for short calls. - TFS 14108 - 06/25/2019
 
 */
@@ -23,6 +23,9 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 
 -- =============================================
 -- Author:              Susmitha Palacherla
@@ -45,7 +48,7 @@ DECLARE	@ResetDays int,
 SET @ResetDays = 42
    
 ;WITH All_Actions AS (
-  SELECT sce.*, ROW_NUMBER() OVER (PARTITION BY SCE.CoachingID, Action ORDER BY SCE.EventDate DESC) AS rn
+  SELECT sce.*, ROW_NUMBER() OVER (PARTITION BY CL.EMPID, SCE.BEHAVIORID ORDER BY SCE.EventDate DESC) AS rn
   FROM [EC].[ShortCalls_Evaluations] SCE JOIN [EC].[Coaching_Log] CL WITH (NOLOCK) 
 ON SCE.CoachingId = CL.CoachingId
 WHERE CL.EmpID = @EmpId
@@ -63,7 +66,7 @@ WHERE rn = 1)
 
 ,Next_Action AS (
 SELECT BehaviorID, ActionID, DisplayOrder,
-LEAD(DisplayOrder) OVER (ORDER BY BehaviorID, ActionID, DisplayOrder) AS NextDisplayOrder
+LEAD(DisplayOrder) OVER (ORDER BY BehaviorID, DisplayOrder, ActionID) AS NextDisplayOrder
 FROM [EC].[ShortCalls_Behavior_Action_Link] BAL
 )
 --SELECT * FROM Next_Action
@@ -77,7 +80,10 @@ AND LA.ID = NA.ActionID
 RETURN @NewDisplayOrder
   
 END  -- fn_intActionDisplayOrder()
+
 GO
+
+
 
 
 
