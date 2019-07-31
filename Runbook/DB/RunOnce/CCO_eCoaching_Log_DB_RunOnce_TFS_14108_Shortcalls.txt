@@ -61,13 +61,12 @@ INSERT INTO [EC].[ShortCalls_Behavior]
 		   ('Incorrect phone status (calls still coming in)',0,1),
 		   ('Intentionally disconnecting calls',0,1),
 		   ('Not following call flow (not opening a call)',0,1),
-		 --  ('Not following call flow in CDB (not opening a call)',0,1),
 		   ('Not following procedure for disconnect by caller (ghost calls, greeting 3x''s, template)',0,1),
 		   ('Spanish Transfer',1,1),
 		   ('SSA Transfer',1,1),
 		   ('Technical Issue (CSR Error & Technical Error)',0,1),
-		 --  ('Technical Issue CDB',0,1),
-		   ('Valid Password Reset',1,1)
+		   ('Valid Password Reset',1,1),
+		   ('Technical Issue',1,1),
 		
 GO
 

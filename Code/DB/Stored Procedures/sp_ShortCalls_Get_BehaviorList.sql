@@ -1,10 +1,10 @@
 /*
-sp_ShortCalls_Get_BehaviorList(01).sql
-Last Modified Date:  07/05/2019
+sp_ShortCalls_Get_BehaviorList(01A).sql
+Last Modified Date:  07/31/2019
 Last Modified By: Susmitha Palacherla
 
 
-
+Version 01A: Updated from UAT Feedback - TFS 14108 - 07/31/2019
 Version 01: Document Initial Revision. New logic for handling Short calls - TFS 14108 - 07/05/2019
 
 */
@@ -43,7 +43,7 @@ SET @nvcSQL = 'Select [ID] AS BehaviorId, [Description] AS BehaviorText
 FROM [EC].[ShortCalls_Behavior] 
 Where Valid = '''+ CONVERT(NVARCHAR,@isValid) + '''
 and Active = 1
-Order by CASE WHEN [Description]= ''Other'' THEN 1 ELSE 0 END'
+Order by [Description]'
 
 
 --Print @nvcSQL
