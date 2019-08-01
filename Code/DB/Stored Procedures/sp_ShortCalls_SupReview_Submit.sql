@@ -1,9 +1,9 @@
 /*
-sp_ShortCalls_SupReview_Submit(01a).sql
-Last Modified Date:  07/08/2019
+sp_ShortCalls_SupReview_Submit(01b).sql
+Last Modified Date: 08/01/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 01b: Updated from UAT Feedback - TFS 14108 - 08/01/2019
 Version 01a: New logic for handling Short calls. - TFS 14108 - 07/08/2019
 Fixed lanid param typo
 Version 01: Document Initial Revision. New logic for handling Short calls - TFS 14108 - 07/05/2019
@@ -39,6 +39,8 @@ GO
 CREATE PROCEDURE [EC].[sp_ShortCalls_SupReview_Submit] (
   @strUserLanId NVARCHAR(70),
   @intLogId BIGINT,
+  @nvcCoachingNotes Nvarchar(max),
+  @dtmCoachingDate datetime, 
   @tableSCSupReview SCSupReviewTableType READONLY,
 
      
@@ -110,6 +112,8 @@ SET @strUserID = EC.fn_nvcGetEmpIdFromLanID(@strUserLanId,@dtmDate)
  UPDATE [EC].[Coaching_Log]
 SET 
   StatusID = 5,
+  CoachingDate = @dtmCoachingDate,
+  CoachingNotes = @nvcCoachingNotes,
   Review_SupID = @strUserID,
   SupReviewedAutoDate = @dtmDate,
   ReassignCount = 0
@@ -152,9 +156,6 @@ CLOSE SYMMETRIC KEY [CoachingKey]
    end
 return 0
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
-
-
-
 GO
 
 

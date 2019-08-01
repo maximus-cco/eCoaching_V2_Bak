@@ -1,9 +1,10 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical_Export(07a).sql
-Last Modified Date: 07/08/2019
+sp_SelectFrom_Coaching_Log_Historical_Export(07b).sql
+Last Modified Date: 08/01/2019
 Last Modified By: Susmitha Palacherla
 
-Version 07: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 07/08/2019
+Version 07b: Updated from UAT Feedback - TFS 14108 - 08/01/2019
+Version 07a: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 07/08/2019
 Added additional columns
 Version 07: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
 Version 06: Additional Changes from V&V - TFS 13332 - 04/20/2019
@@ -27,6 +28,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -294,12 +297,13 @@ SELECT [cl].[CoachingID] CoachingID
   ,[vehs].[Emp_Name] SubmitterName
   ,[sce].[EventDate]	EventDate
   ,[cl].[CoachingDate] CoachingDate
+  ,[cl].[CoachingNotes]	CoachingNotes
   ,[sce].[VerintCallID] VerintID
   ,[b].[Description] Behavior
   ,CASE WHEN [sce].[Valid] = 1 THEN ''Yes'' ELSE ''No'' END ValidBehavior
   ,[sce].[Action] Action
   ,[cl].[Description] Description
-  ,[sce].[CoachingNotes]	CoachingNotes
+  ,[sce].[CoachingNotes] ShortCallCoachingNotes
   ,CASE WHEN [sce].[LSAInformed] = 1 THEN ''Yes'' ELSE ''No'' END LSAInformed
   ,[cl].[SubmittedDate]	SubmittedDate
   ,[cl].[SupReviewedAutoDate] SupReviewedAutoDate
@@ -338,6 +342,10 @@ EXEC (@nvcSQL3)
 CLOSE SYMMETRIC KEY [CoachingKey] 		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
 
+
+
 GO
+
+
 
 

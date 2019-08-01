@@ -1,8 +1,10 @@
 /*
-sp_Dashboard_Director_Site_Export(03).sql
-Last Modified Date: 07/09/2019
+sp_Dashboard_Director_Site_Export(03A).sql
+Last Modified Date: 08/01/2019
 Last Modified By: Susmitha Palacherla
 
+
+Version 03A: Updated from UAT Feedback - TFS 14108 - 08/01/2019
 Version 03: Modified to support new handling for Short Calls. TFS 14108 - 07/09/2019
 Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 01: Document Initial Revision created during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
@@ -18,14 +20,11 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Dashboard_Director_Site_Export]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 
 
@@ -35,7 +34,7 @@ GO
 --	Description: *	This procedure is used for Export of Coaching data from Director Dashboard.
 --  Created during My dashboard move to new architecture - TFS 7137 - 07/12/2018
 --  Modified to incorporate QualityNow Logs. TFS 13332 -  03/15/2019
---  Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 07/09/2019
+--  Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Director_Site_Export] 
 @nvcUserIdin nvarchar(10),
@@ -216,14 +215,15 @@ SET @nvcSQL3 =
   ,[clr].[Value] Value
   ,[s].[Status] FormStatus
   ,[vehs].[Emp_Name] SubmitterName
-  ,[sce].[EventDate]	EventDate
+  ,[sce].[EventDate] EventDate
   ,[cl].[CoachingDate] CoachingDate
+  ,[cl].[CoachingNotes]	CoachingNotes
   ,[sce].[VerintCallID] VerintID
   ,[b].[Description] Behavior
   ,CASE WHEN [sce].[Valid] = 1 THEN ''Yes'' ELSE ''No'' END ValidBehavior
   ,[sce].[Action] Action
   ,[cl].[Description] Description
-  ,[sce].[CoachingNotes]	CoachingNotes
+  ,[sce].[CoachingNotes] ShortCallCoachingNotes
   ,CASE WHEN [sce].[LSAInformed] = 1 THEN ''Yes'' ELSE ''No'' END LSAInformed
   ,[cl].[SubmittedDate]	SubmittedDate
   ,[cl].[SupReviewedAutoDate] SupReviewedAutoDate
@@ -267,6 +267,7 @@ EXEC (@nvcSQL3)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_Dashboard_Director_Site_Coaching_Export
+
 
 GO
 
