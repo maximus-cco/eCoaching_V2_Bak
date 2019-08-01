@@ -266,6 +266,7 @@ namespace eCoachingLog.Services
 			if (review.IsShortCallPendingSupervisorForm)
 			{
 				string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
+				review.DetailsCoached = FormatCoachingNotes(review, user);
 				return reviewRepository.CompleteShortCallsReview(review, nextStatus, user);
 			}
 

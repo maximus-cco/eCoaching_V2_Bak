@@ -40,6 +40,27 @@
 			</tr>
 		}
 	</table>
+
+	<div class='form-group mt-2' id='div-date-coached'>
+		<label for="DateCoached" id="label-date-coached" class="required">Enter the date of coaching:</label>
+		<div class="col-xs-4 input-group date">
+			@Html.TextBoxFor(m => m.DateCoached, new { @class = "form-control" })
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DateCoached)
+	</div>
+
+	<div class='form-group mt-2' id='div-coaching-detail'>
+		<label for="DetailsCoached" class="required">Provide the details from the coaching session including action plans developed:</label>
+		@Html.TextAreaFor(m => m.DetailsCoached, new { @class = "form-control", @rows = "5", maxlength = 3000 })
+		<div class="help-block">
+			Provide as much detail as possible.
+			<span id="detail-remaining" class="pull-right">3000 remaining</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DetailsCoached)
+	</div>
 }
 
 <script>

@@ -441,6 +441,8 @@ namespace eCoachingLog.Repository
 
 				command.Parameters.AddWithValue("@strUserLanId", user.LanId);
 				command.Parameters.AddWithValue("@intLogId", review.LogDetail.LogId);
+				command.Parameters.AddWithValue("@dtmCoachingDate", review.DateCoached);
+				command.Parameters.AddWithValue("@nvcCoachingNotes  ", review.DetailsCoached);
 				// User Defined Type
 				command.Parameters.AddShortCallReviewTableType("@tableSCSupReview", review.ShortCallList);
 				// Output parameter

@@ -216,6 +216,18 @@ namespace eCoachingLog.ViewModels
 						yield return new ValidationResult("", coachingNotes);
 					}
 				}
+
+				if (!this.DateCoached.HasValue)
+				{
+					var dateCoached = new[] { "DateCoached" };
+					yield return new ValidationResult("", dateCoached);
+				}
+
+				if (string.IsNullOrEmpty(this.DetailsCoached))
+				{
+					var detailsCoached = new[] { "DetailsCoached" };
+					yield return new ValidationResult("", detailsCoached);
+				}
 			}
 
 			// Short Calls: check "Agree" radio button for each call
