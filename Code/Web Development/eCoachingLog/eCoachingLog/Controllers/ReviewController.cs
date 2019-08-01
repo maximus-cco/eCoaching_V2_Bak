@@ -672,7 +672,7 @@ namespace eCoachingLog.Controllers
 			// User is the current manager of the employee, OR
 			// User was the manager of the employee when the log was submitted and the log is low csat, OR
 			// User is the person to whom this log was reassgined
-			if (!IsShortCallPendingManager(vm) && (userEmployeeId == vm.LogDetail.ManagerEmpId ||
+			if (IsShortCallPendingManager(vm) && (userEmployeeId == vm.LogDetail.ManagerEmpId ||
 				(userEmployeeId == vm.LogDetail.LogManagerEmpId && vm.LogDetail.IsLowCsat) ||
 				userEmployeeId == vm.LogDetail.ReassignedToEmpId))
 			{
