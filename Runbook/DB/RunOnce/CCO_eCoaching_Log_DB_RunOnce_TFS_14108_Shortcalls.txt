@@ -220,7 +220,7 @@ CREATE TABLE [EC].[ShortCalls_Evaluations](
 	[CoachingNotes] [nvarchar](4000) NULL,
 	[LSAInformed] [nvarchar](3) NULL,
 	[MgrAgreed] [nvarchar](3) NULL,
-	[MgrComments] [nvarchar](2000) NULL,
+	[MgrComments] [nvarchar](3000) NULL,
  CONSTRAINT [PK_CoachID_CallID] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC,
@@ -255,7 +255,7 @@ GO
 CREATE TYPE [EC].[SCMgrReviewTableType] AS TABLE(
 	[VerintCallID] [nvarchar](30) NOT NULL,
 	[MgrAgreed] [nvarchar](3) NULL,
-	[MgrComments] [nvarchar](2000) NULL
+	[MgrComments] [nvarchar](3000) NULL
 )
 GO
 
