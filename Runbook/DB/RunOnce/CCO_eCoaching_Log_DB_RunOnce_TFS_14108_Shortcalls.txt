@@ -264,5 +264,30 @@ GO
 --*****************
 
 
+Please make this change after installing the script file
 
+Connect to db using ecljobowner
+Under sql agent
+CoachingOutliersLoad
+
+Right click to bring up properties
+Steps
+New step name - short call Notifications
+Type - Operating system (CmdExce)
+Run as - EclProxy
+
+Command - start /w wscript.exe "\\f3420-ecldbp01\ssis\Coaching\Notifications\Notifications_ShortCalls_Prod.vbs"
+ok
+
+Then adjust order of steps 
+Make this new step as second step to run after Outliers Load
+
+So it should be 
+1. outliers Load
+2. short call Notifications
+3. Notifications
+
+Go to advanced properties of each step and ensure they are setup correctly
+on success go to new step or quit the job reporting success if last step 
+on failure quit the job reporting failure 
 
