@@ -31,6 +31,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/14/2015
@@ -145,8 +146,8 @@ AS
   WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
     AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + '''
     AND [StatusID] <> 2
-	AND [SourceID] NOT IN (235,236)
-	AND SUBSTRING(strReportCode, 1, 3) <> ''ISQ'' 
+	AND ([SourceID] NOT IN (235,236)
+	OR SUBSTRING(strReportCode, 1, 3) <> ''ISQ'')
 )
 SELECT [cl].[CoachingID] CoachingID
   ,[cl].[FormName] FormName
@@ -344,8 +345,8 @@ END -- sp_SelectFrom_Coaching_Log_Historical_Export
 
 
 
-GO
 
+GO
 
 
 
