@@ -1,8 +1,10 @@
 /*
-sp_SelectReviewFrom_Coaching_Log_Quality_Now(03).sql
-Last Modified Date: 04/04/2019
+sp_SelectReviewFrom_Coaching_Log_Quality_Now(04).sql
+Last Modified Date: 08/07/2019
 Last Modified By: Susmitha Palacherla
 
+
+Version 04: Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 Version 03: Additional Changes from V&V - TFS 13332 - 04/04/2019
 Version 02: Additional Changes - TFS 13332 - 03/28/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
@@ -29,6 +31,7 @@ GO
 -- Create Date:      03/01/2019
 --	Description: 	This procedure displays the Quality Now Evluations for a Coaching Log
 -- Initial revision. TFS 13332 -  03/01/2019
+-- Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now] @intLogId BIGINT
 AS
@@ -56,8 +59,8 @@ qne.[VerintFormName] [Form Name]
 	  ,qne.[Call_Efficiency]  + ''<br />'' + qne.[Call_Efficiency_Comment] [Call Efficiency]
 	  ,qne.[Active_Listening]  + ''<br />'' + qne.[Active_Listening_Comment] [Active Listening]
 	  ,qne.[Personality_Flexing]  + ''<br />'' + qne.[Personality_Flexing_Comment] [Personality Flexing]
-	  ,CONVERT(NVARCHAR(1),qne.[Customer_Temp_Start])   + ''<br />'' + qne.[Customer_Temp_Start_Comment] [Start Temperature]
-	  ,CONVERT(NVARCHAR(1),qne.[Customer_Temp_End]) + ''<br />'' + qne.[Customer_Temp_End_Comment] [End Temperature]
+	  ,qne.[Customer_Temp_Start]   + ''<br />'' + qne.[Customer_Temp_Start_Comment] [Start Temperature]
+	  ,qne.[Customer_Temp_End] + ''<br />'' + qne.[Customer_Temp_End_Comment] [End Temperature]
  FROM [EC].[Coaching_Log_Quality_Now_Evaluations] qne JOIN [EC].[Coaching_Log] cl
  ON qne.CoachingID = cl.CoachingID JOIN EC.Employee_Hierarchy sub 
  ON qne.Evaluator_ID = sub.Emp_ID
@@ -75,6 +78,10 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log_Quality_Now
 GO
+
+
+
+
 
 
 

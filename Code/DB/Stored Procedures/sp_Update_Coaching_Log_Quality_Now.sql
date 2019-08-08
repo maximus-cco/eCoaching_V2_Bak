@@ -1,8 +1,10 @@
 /*
-sp_Update_Coaching_Log_Quality_Now(04).sql
-Last Modified Date: 06/11/2019
+sp_Update_Coaching_Log_Quality_Now(05).sql
+Last Modified Date: 08/07/2019
 Last Modified By: Susmitha Palacherla
 
+
+Version 05: Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 Version 04: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 Version 03: Fix bug with updates to QNStrengthsOpportunities  - TFS 14555 - 06/03/2019
 Version 02: Updates from Unit and System testing - TFS 13332 - 04/20/2019
@@ -33,6 +35,7 @@ GO
 -- Initial revision. TFS 13332 -  03/01/2019
 -- Fix bug with updates to QNStrengthsOpportunities  - TFS 14555 - 06/03/2019
 -- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
+-- Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 --    ===========================================================================================
 CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality_Now] AS
 BEGIN
@@ -80,9 +83,9 @@ BEGIN TRY
 	ActiveListeningComment [nvarchar](2000),
 	PersonalityFlexing [nvarchar](50),
 	PersonalityFlexingComment [nvarchar](2000),
-	CustomerTempStart [int],
+	CustomerTempStart [nvarchar](30),
 	CustomerTempStartComment [nvarchar](2000),
-	CustomerTempEnd [int],
+	CustomerTempEnd [nvarchar](30),
 	CustomerTempEndComment [nvarchar](2000),
   );
 
@@ -275,6 +278,13 @@ END CATCH
 END -- [EC].[sp_Update_Coaching_Log_Quality_Now]
 
 GO
+
+
+
+
+
+
+
 
 
 

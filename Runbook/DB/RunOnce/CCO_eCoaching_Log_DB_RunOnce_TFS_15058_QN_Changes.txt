@@ -1,0 +1,34 @@
+/*
+
+TFS 15058 – Changes to QN Evaluations for September 1st
+Updated to change data type for Customer Temp Start and End to nvarchar(30)
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+steps sumary
+
+1. Update data type on Customer_Temp_Start and Customer_Temp_End fields
+	[EC].[Quality_Now_Coaching_Stage]
+	[EC].[Coaching_Log_Quality_Now_Evaluations]
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+
+--1.Update data type on Customer_Temp_Start and Customer_Temp_End fields
+
+
+ALTER TABLE [EC].[Quality_Now_Coaching_Stage]
+ALTER COLUMN Customer_Temp_Start nvarchar(30); 
+
+ALTER TABLE [EC].[Quality_Now_Coaching_Stage]
+ALTER COLUMN Customer_Temp_End nvarchar(30); 
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations]
+ALTER COLUMN Customer_Temp_Start nvarchar(30); 
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations]
+ALTER COLUMN Customer_Temp_End nvarchar(30); 

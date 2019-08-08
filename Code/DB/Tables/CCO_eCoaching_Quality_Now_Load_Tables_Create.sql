@@ -1,11 +1,11 @@
 /*
-CCO_eCoaching_Quality_Now_Load_Tables_Create(01).sql
+CCO_eCoaching_Quality_Now_Load_Tables_Create(02).sql
 
-Last Modified Date: 03/19/2019
+Last Modified Date: 08/07/2019
 Last Modified By: Susmitha Palacherla
 
 
-
+Version 02:Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
 
 
@@ -71,9 +71,9 @@ CREATE TABLE [EC].[Quality_Now_Coaching_Stage](
 	[Active_Listening_Comment] [nvarchar](2000) NULL,
 	[Personality_Flexing] [nvarchar](50) NULL,
 	[Personality_Flexing_Comment] [nvarchar](2000) NULL,
-	[Customer_Temp_Start] [int] NULL,
+	[Customer_Temp_Start] [nvarchar](30) NULL,
 	[Customer_Temp_Start_Comment] [nvarchar](2000) NULL,
-	[Customer_Temp_End] [int] NULL,
+	[Customer_Temp_End] [nvarchar](30) NULL,
 	[Customer_Temp_End_Comment] [nvarchar](2000) NULL,
 	[Emp_Role] [nvarchar](3) NULL,
 	[Module] [int] NULL,
@@ -158,9 +158,9 @@ CREATE TABLE [EC].[Coaching_Log_Quality_Now_Evaluations](
 	[Active_Listening_Comment] [nvarchar](2000) NULL,
 	[Personality_Flexing] [nvarchar](50) NULL,
 	[Personality_Flexing_Comment] [nvarchar](2000) NULL,
-	[Customer_Temp_Start] [int] NULL,
+	[Customer_Temp_Start] [nvarchar](30) NULL,
 	[Customer_Temp_Start_Comment] [nvarchar](2000) NULL,
-	[Customer_Temp_End] [int] NULL,
+	[Customer_Temp_End] [nvarchar](30)NULL,
 	[Customer_Temp_End_Comment] [nvarchar](2000) NULL,
 	[Inserted_Date] [datetime] NULL,
 	[Last_Updated_Date] [datetime] NULL,
