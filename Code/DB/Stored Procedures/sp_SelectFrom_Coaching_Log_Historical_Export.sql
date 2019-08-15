@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical_Export(07b).sql
-Last Modified Date: 08/01/2019
+sp_SelectFrom_Coaching_Log_Historical_Export(8).sql
+Last Modified Date: 08/13/2019
 Last Modified By: Susmitha Palacherla
 
+Version 08: Modified to add left join for submitter during changes for TFS 15058 - 08/13/2019
 Version 07b: Updated from UAT Feedback - TFS 14108 - 08/01/2019
 Version 07a: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 07/08/2019
 Added additional columns
@@ -29,9 +30,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/14/2015
@@ -43,6 +41,7 @@ GO
 -- Created during Hist dashboard move to new architecture - TFS 7138 - 04/24/2018
 -- Modified to incorporate QualityNow Logs. TFS 13332 -  03/15/2019
 -- Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
+-- Modified to add left join for submitter during changes for TFS 15058 - 08/13/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
 
@@ -146,9 +145,8 @@ AS
   WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
     AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + '''
     AND [StatusID] <> 2
-	AND ([SourceID] NOT IN (235,236)
-	OR SUBSTRING(strReportCode, 1, 3) <> ''ISQ'')
-)
+	AND [SourceID] NOT IN (235,236)
+	)
 SELECT [cl].[CoachingID] CoachingID
   ,[cl].[FormName] FormName
   ,[cl].[ProgramName] ProgramName
@@ -179,7 +177,7 @@ SELECT [cl].[CoachingID] CoachingID
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
 JOIN [EC].[Employee_Hierarchy] eh WITH (NOLOCK) ON eh.[EMP_ID] = veh.[EMP_ID]
 JOIN cl ON cl.EmpID = eh.Emp_ID 
-JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
+LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
 JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
 JOIN [EC].[DIM_Site] si ON cl.SiteID = si.SiteID 
@@ -263,7 +261,7 @@ ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
 ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si 
 ON cl.SiteID = si.SiteID JOIN [EC].[Employee_Hierarchy] eh
 ON cl.EmpID = eh.Emp_ID  JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
-ON eh.[EMP_ID] = veh.[EMP_ID] JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
+ON eh.[EMP_ID] = veh.[EMP_ID] LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
 ON qne.Evaluator_ID = vehs.EMP_ID ' +
 + @NewLineChar + @where + ' ' +
 'AND qne.[EvalStatus] = ''Active''
@@ -323,7 +321,7 @@ ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so
 ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si 
 ON cl.SiteID = si.SiteID JOIN [EC].[Employee_Hierarchy] eh
 ON cl.EmpID = eh.Emp_ID  JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
-ON eh.[EMP_ID] = veh.[EMP_ID] JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
+ON eh.[EMP_ID] = veh.[EMP_ID] LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
 ON cl.SubmitterId = vehs.EMP_ID ' +
 + @NewLineChar + @where + ' ' +
 'ORDER BY [cl].[CoachingID];'
@@ -342,11 +340,8 @@ EXEC (@nvcSQL3)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey] 		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
-
-
-
-
 GO
+
 
 
 
