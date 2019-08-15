@@ -1,18 +1,14 @@
 /*
-fn_intSubCoachReasonIDFromRptCode(06).sql
-Last Modified Date: 11/29/2018
+fn_intSubCoachReasonIDFromRptCode(07).sql
+Last Modified Date: 08/15/2018
 Last Modified By: Susmitha Palacherla
 
+Version 07: Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 06: New OTA feed - TFS 12591 - 11/29/2018
-
 Version 05: New PBH feed - TFS 11451 - 7/31/2018
-
 Version 04: New DTT feed - TFS 7646 - 8/31/2017
-
 Version 03: New Breaks BRN and BRL AND MSR feeds - TFS 6145 - 4/13/2017
-
 Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -50,6 +46,7 @@ GO
 -- TFS 7646 - To add DTT - 08/31/2017
 -- TFS 11451 - To add PBH - 07/31/2018
 -- TFS 12591 - To add OTA- 11/26/2018
+-- TFS 15063 - To add BQN - 08/12/2019
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -97,16 +94,19 @@ BEGIN
 			WHEN N'DTT' THEN 242
 			WHEN N'PBH' THEN 245
 			WHEN N'OTA' THEN 42
+			WHEN N'BQN' THEN 250
         ELSE -1
       END
     ELSE
-    SET @intSubCoachReasonID = -1
+    SET @intSubCoachReasonID = 42
         
 RETURN @intSubCoachReasonID  
 
 END  -- fn_intSubCoachReasonIDFromRptCode()
 
 GO
+
+
 
 
 

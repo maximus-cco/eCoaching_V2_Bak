@@ -1,14 +1,13 @@
 /*
-CCO_eCoaching_Quality_Other_Load_Tables_Create(03).sql
+CCO_eCoaching_Quality_Other_Load_Tables_Create(04).sql
 
-Last Modified Date: 04/02/2018
+Last Modified Date: 08/15/2018
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 version 03: Updated to document changes for feed encryption TFS 7854.
 Marked fact table as obsolete
-
 Version 02: Add table [EC].[NPN_Description] to Get NPN Description from table. TFS 5649 - 02/20/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 
@@ -23,6 +22,8 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 3.[EC].[Quality_Other_Coaching_Fact]-- Obsolete with TFS 7854
 4.[EC].[Quality_Other_FileList]
 5.[EC].[NPN_Description]
+6.[EC].[Coaching_Log_Quality_Now_Bingo]
+7.[EC].[Quality_Now_Bingo_Images]
 
 **************************************************************
 
@@ -56,7 +57,10 @@ CREATE TABLE [EC].[Quality_Other_Coaching_Stage](
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](4000) NULL,
-	[FileName] [nvarchar](260) NULL
+	[FileName] [nvarchar](260) NULL,
+        [Reject_reason] [nvarchar](200) NULL,
+	[Competency] [nvarchar](30) NULL,
+	[Note] [nvarchar](30) NULL
 ) ON [PRIMARY]
 
 GO
@@ -217,3 +221,64 @@ On this call the application was updated using Reporting a Life Change. There wa
 
 
 --**********************************************************************************
+
+
+--6.[EC].[Coaching_Log_Quality_Now_Bingo]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_Quality_Now_Bingo](
+	[CoachingID] [bigint] NOT NULL,
+	[Competency] [nvarchar](30) NULL,
+	[Note] [nvarchar](30) NULL,
+	[Description] [nvarchar](4000) NULL,
+	[CompImage] [nvarchar](100) NULL
+) ON [PRIMARY]
+
+GO
+
+
+--**********************************************************************************
+
+
+--7.[EC].[Quality_Now_Bingo_Images]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Quality_Now_Bingo_Images](
+	[ImageID] [int] IDENTITY(1,1) NOT NULL,
+	[ImageDesc] [nvarchar](100) NOT NULL,
+	[Competency] [nvarchar](30) NOT NULL
+) ON [PRIMARY]
+
+GO
+
+
+INSERT INTO [EC].[Quality_Now_Bingo_Images]
+           ([ImageDesc]
+           ,[Competency])
+     VALUES
+           ('<img border="20" src="cid:aa.png">','Accurate Arrow'),
+		   ('<img border="20" src="cid:al.png">','Active Listener'),
+           ('<img border="20" src="cid:cc.png">','Compassionate Communicator'),
+		   (' <img border="20" src="cid:nn.png">','Nimble Navigator'),
+		   ('<img border="20" src="cid:pp.png">','Privacy Protector'),
+		   ('<img border="20" src="cid:pr.png">','Process Pro'),
+		   ('<img border="20" src="cid:so.png">','Smooth Operator')
+		  
+GO
+
+
+
+
+
+--**********************************************************************************
+

@@ -1,18 +1,14 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Other(06).sql
-Last Modified Date: 05/29/2019
+sp_InsertInto_Coaching_Log_Quality_Other(07).sql
+Last Modified Date: 08/15/2018
 Last Modified By: Susmitha Palacherla
 
+Version 07: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
-
 Version 05: Modified to support Quality OTA feed - TFS 12591 - 11/26/2018
-
 Version 04: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
 Version 03: Add table [EC].[NPN_Description] to Get NPN Description from table. TFS 5649 - 02/20/2017
-
 Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -34,10 +30,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
@@ -50,6 +42,7 @@ GO
 -- Modified to support Encryption of sensitive data. Removed LanID. TFS 7856 - 10/23/2017
 -- Modified to support OTA Report. TFS 12591 - 11/26/2018
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
+-- Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 @Count INT OUTPUT
@@ -126,23 +119,26 @@ select  Distinct LOWER(cs.EMP_ID)	[FormName],
 		 THEN  REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br />')
 		 WHEN cs.Report_Code LIKE 'NPN%' 
 		 THEN  REPLACE(EC.fn_nvcHtmlEncode([EC].[fn_strNPNDescriptionFromCode](cs.TextDescription)), CHAR(13) + CHAR(10) ,'<br />')
+		 WHEN cs.Report_Code LIKE 'BQN%' 
+		 THEN  REPLACE(EC.fn_nvcHtmlEncode([EC].[fn_strQNBDescriptionFromCompDesc](cs.EMP_ID)), CHAR(13) + CHAR(10) ,'<br />' + '<br />')
 		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
 		 cs.Submitted_Date			SubmittedDate,
 		 ISNULL(cs.start_Date,cs.Event_Date)				[StartDate],
 		 0        				    [isCSRAcknowledged],
 		 0                          [isCSE],
 		 0                          [EmailSent],
-		 cs.Report_ID				[numReportID],
+		 CASE WHEN (cs.Report_Code LIKE 'BQN%') THEN 1
+		 ELSE cs.Report_ID	 END		[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 CASE WHEN cs.Report_Code LIKE 'CTC%' THEN 2	
+		 CASE WHEN (cs.Report_Code LIKE 'CTC%' OR cs.Report_Code LIKE 'BQNS%') THEN 2	
 		 WHEN cs.Report_Code LIKE 'OTA%' THEN 3
 		 ELSE 1 END						[ModuleID],
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
 		 ISNULL(csr.[Mgr_ID],'999999') [MgrID]
 	                   
 from [EC].[Quality_Other_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.[EMP_ID] = csr.Emp_ID
-left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
-where cf.numReportID is Null and cf.strReportCode is null
+left outer join EC.Coaching_Log cf on cs.EMP_ID = cf.EmpID and cs.Report_Code = cf.strReportCode
+where cf.EmpID is Null and cf.strReportCode is null
 
 SELECT @Count = @@ROWCOUNT
 
@@ -166,26 +162,56 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[CoachingReasonID]
            ,[SubCoachingReasonID]
            ,[Value])
-    SELECT cf.[CoachingID],
+    SELECT DISTINCT cf.[CoachingID],
            CASE WHEN cf.strReportCode like 'CTC%' THEN 21 
-           WHEN (cf.strReportCode like 'HFC%' OR cf.strReportCode like 'OTA%') THEN 10 
+           WHEN (cf.strReportCode like 'HFC%' OR cf.strReportCode like 'OTA%' OR cf.strReportCode like 'BQN%') THEN 10 
            WHEN cf.strReportCode like 'KUD%' THEN 11
            WHEN cf.strReportCode like 'NPN%' THEN 5
-           ELSE 14 END,
+		   ELSE 14 END,
            [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
            qs.[CoachReason_Current_Coaching_Initiatives]
     FROM [EC].[Quality_Other_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
-    ON qs.[Report_ID] = cf.[numReportID] AND  qs.[Report_Code] = cf.[strReportCode]
+    ON qs.[EMP_ID] = cf.[EmpID] AND  qs.[Report_Code] = cf.[strReportCode]
     LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
     ON cf.[CoachingID] = cr.[CoachingID]  
     WHERE cr.[CoachingID] IS NULL 
  OPTION (MAXDOP 1)   
+
+  WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+
+  -- Insert  detail records into [EC].[Coaching_Log_Quality_Now_Bingo] Table
+
+INSERT INTO [EC].[Coaching_Log_Quality_Now_Bingo]
+           ([CoachingID]
+           ,[Competency]
+           ,[Note]
+           ,[Description])
+    SELECT cf.[CoachingID],
+           qs.[Competency],
+		   qs.[Note],
+           qs.[TextDescription]
+    FROM [EC].[Quality_Other_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
+    ON qs.[EMP_ID] = cf.[EmpID] AND  qs.[Report_Code] = cf.[strReportCode]
+    LEFT OUTER JOIN  [EC].[Coaching_Log_Quality_Now_Bingo]cb
+    ON cf.[CoachingID] = cb.[CoachingID]  
+    WHERE qs.Report_Code LIKE 'BQN%'
+	AND cb.[CoachingID] IS NULL 
+ OPTION (MAXDOP 1)   
+
+   WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
+
+    -- Populate Image value in [EC].[Coaching_Log_Quality_Now_Bingo] Table
+
+ Update [EC].[Coaching_Log_Quality_Now_Bingo]
+Set CompImage = I.ImageDesc
+FROM [EC].[Coaching_Log_Quality_Now_Bingo] B JOIN [EC].[Quality_Now_Bingo_Images]I
+ON B.Competency = I.Competency
+Where B.CompImage is NULL
  
 -- Close the symmetric key with which to encrypt the data.  
 CLOSE SYMMETRIC KEY [CoachingKey]  
 
-
- WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
 -- Truncate Staging Table
 Truncate Table [EC].[Quality_Other_Coaching_Stage]
@@ -221,9 +247,4 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality_Other
-
-
-
 GO
-
-

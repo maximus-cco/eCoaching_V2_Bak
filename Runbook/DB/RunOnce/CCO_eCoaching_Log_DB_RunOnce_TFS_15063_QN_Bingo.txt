@@ -1,0 +1,129 @@
+/*
+
+TFS 15063 – Quality Now Rewards and Recognition (Bingo)
+Updated to change data type for Customer Temp Start and End to nvarchar(30)
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps sumary
+
+1. Added columns to staging table [EC].[Quality_Other_Coaching_Stage]
+2. Inserted record to [EC].[DIM_Sub_Coaching_Reason]
+3. Created table [EC].[Coaching_Log_Quality_Now_Bingo]
+4. Created table [EC].[Quality_Now_Bingo_Images] and inserted records
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+
+
+--a. add columns to staging table
+
+
+ALTER TABLE [EC].[Quality_Other_Coaching_Stage]
+ADD [Competency] nvarchar(30),
+    [Note] nvarchar(30)
+GO
+
+--******************************************
+
+--b. INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+     ('Quality Now')
+GO
+
+--  250
+
+--******************************************
+
+--c. Create table [EC].[Coaching_Log_Quality_Now_Bingo]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_Quality_Now_Bingo](
+	[CoachingID] [bigint] NOT NULL,
+	[Competency] [nvarchar](30) NULL,
+	[Note] [nvarchar](30) NULL,
+	[Description] [nvarchar](4000) NULL,
+	[CompImage] nvarchar(100),
+	) ON [PRIMARY] 
+
+GO
+
+
+--******************************************
+
+
+
+--d.  CREATE TABLE [EC].[Quality_Now_Bingo_Images]
+
+
+CREATE TABLE [EC].[Quality_Now_Bingo_Images](
+	[ImageID] int IDENTITY(1,1),  
+	[ImageDesc] [nvarchar](100) NOT NULL,
+	[Competency] [nvarchar](30) NOT NULL,
+	) ON [PRIMARY] 
+
+GO
+
+
+
+
+--e. Insert into CREATE TABLE [EC].[Quality_Now_Bingo_Images]
+
+INSERT INTO [EC].[Quality_Now_Bingo_Images]
+           ([ImageDesc]
+           ,[Competency])
+     VALUES
+           ('<img border="20" src="cid:aa.png">','Accurate Arrow'),
+		   ('<img border="20" src="cid:al.png">','Active Listener'),
+           ('<img border="20" src="cid:cc.png">','Compassionate Communicator'),
+		   (' <img border="20" src="cid:nn.png">','Nimble Navigator'),
+		   ('<img border="20" src="cid:pp.png">','Privacy Protector'),
+		   ('<img border="20" src="cid:pr.png">','Process Pro'),
+		   ('<img border="20" src="cid:so.png">','Smooth Operator')
+		  
+GO
+
+
+
+
+--******************************************
+
+--5.Modify sql agent job
+
+
+
+Please make this change after installing the script file and images
+
+Connect to db using ecljobowner
+Under sql agent
+CoachingQualityOtherLoad
+
+Right click to bring up properties
+Steps
+New step name - QN Bingo Notifications
+Type - Operating system (CmdExce)
+Run as - EclProxy
+
+Command - start /w wscript.exe "\\f3420-ecldbp01\ssis\Coaching\Notifications\Notifications_QNBingo_Prod.vbs"
+ok
+
+
+So steps would be
+1. Quality Other Load
+2. Notifications
+3. QN Bingo Notifications
+
+Go to advanced properties of each step and ensure they are setup correctly
+on success go to new step or quit the job reporting success if last step 
+on failure quit the job reporting failure 

@@ -1,9 +1,9 @@
 /*
-sp_Update_Quality_Other_Coaching_Stage(02).sql
-Last Modified Date: 11/26/2018
+sp_Update_Quality_Other_Coaching_Stage(03).sql
+Last Modified Date: 08/15/2018
 Last Modified By: Susmitha Palacherla
 
-
+Version 03:  Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 02:  Modified to support OTA Report. TFS 12591 - 11/26/2018
 Version 01:  Initial Revision - Created during encryption of secure data. TFF 7856 - 11/27/2017
 
@@ -25,9 +25,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/14/2017
@@ -38,6 +35,7 @@ GO
 -- Rejects records and deletes rejected records per business rules.
 -- Initial revision. Created during encryption of sensitive data - TFS 7856 - 04/24/2017
 -- Modified to support OTA Report. TFS 12591 - 11/26/2018
+-- Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
 @Count INT OUTPUT
@@ -108,6 +106,25 @@ WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 -- Determine and populate Reject Reasons
 
+-- Employee not an Active Supervisor (CTC and QNBS)
+
+BEGIN
+UPDATE [EC].[Quality_Other_Coaching_Stage]
+SET [Reject_Reason]= N'Record does not belong to an active Supervisor.'
+WHERE (EMP_ID = '' OR
+EMP_ID NOT IN 
+(SELECT DISTINCT EMP_ID FROM [EC].[Employee_Hierarchy]
+ WHERE Emp_Job_Code = 'WACS40'
+ AND Active NOT IN ('T','D','P','L') 
+ ))
+AND (Report_Code lIKE 'CTC%' OR Report_Code LIKE 'BQNS%')
+AND [Reject_Reason]is NULL
+	
+OPTION (MAXDOP 1)
+END  
+
+WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
 -- Employee not an Active CSR (HFC and KUD)
 
 BEGIN
@@ -119,7 +136,7 @@ EMP_ID NOT IN
  WHERE Emp_Job_Code IN ('WACS01', 'WACS02', 'WACS03')
  AND Active NOT IN ('T','D','P','L') 
  ))
- AND (Report_Code lIKE 'HFC%' OR Report_Code LIKE 'KUD%')
+ AND (Report_Code lIKE 'HFC%' OR Report_Code LIKE 'KUD%' OR Report_Code LIKE 'BQN2%')
 AND [Reject_Reason]is NULL
 	
 OPTION (MAXDOP 1)
@@ -127,27 +144,6 @@ END
 
 
 WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
-
-
--- Employee not an Active Supervisor (CTC)
-
-BEGIN
-UPDATE [EC].[Quality_Other_Coaching_Stage]
-SET [Reject_Reason]= N'Record does not belong to an active Supervisor.'
-WHERE (EMP_ID = '' OR
-EMP_ID NOT IN 
-(SELECT DISTINCT EMP_ID FROM [EC].[Employee_Hierarchy]
- WHERE Emp_Job_Code = 'WACS40'
- AND Active NOT IN ('T','D','P','L') 
- ))
-AND Report_Code lIKE 'CTC%' 
-AND [Reject_Reason]is NULL
-	
-OPTION (MAXDOP 1)
-END  
-
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
-
 
 -- Employee not an Active Quality Lead Specialist (OTA)
 
@@ -215,6 +211,8 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 
 END  -- [EC].[sp_Update_Quality_Other_Coaching_Stage]
 GO
+
+
 
 
 

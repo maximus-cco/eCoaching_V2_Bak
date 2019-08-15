@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(14).sql
-Last Modified Date: 05/14/2019
+sp_SelectReviewFrom_Coaching_Log(15).sql
+Last Modified Date: 08/15/2018
 Last Modified By: Susmitha Palacherla
 
+Version 15: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/5/2019
 Version 14: Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 Version 13: Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
 Version 12: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
@@ -31,42 +32,18 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 --  SQL split into 3 parts to overcome sql string size restriction.
-
 --  Last Updated By: Susmitha Palacherla
---  1. TFS 1877 to support OMR Low CSAT logs should be viewable by hierarchy manger - 2/17/2016
---  2. TFS 1914 to support  OMR Short Calls feed with Manager Review - 2/17/2016
---  3. TFS 1732 to support SDR Training feed - 3/2/2016
---  4. TFS 2283 to support ODT Training feed - 3/22/2016
---  5. TFS 1709 to support Reassigned sups and Mgrs - 5/6/2016
---  6. TFS 2268 to support CTC Quality Other feed - 6/23/2016
---  7. TFS 3179 & 3186 to add support HFC & KUD Quality Other feeds - 7/15/2016
---  8. TFS 3677 to update Quality\KUD Flag - 8/18/2016
---  9. TFS 3972 to ADD SEA flag - 9/15/2016
--- 10. TFS 3758 Shared coaching sub-reasons may cause unexpected display issue in user interface - 10/14/2016
--- 11. TFS 3757 Include Yes/No value to coaching monitor question - 10/27/2016
--- 12. TFS 5309 NPN Load.  - 02/01/2017
--- 13. TFS 6145 BRN and BRL Feeds - 4/12/2017
--- 14. TFS 6147 Updated to support MSR and MSRS Feeds - 06/02/2017
--- 15. Modified to incorporate HNC and ICC Feed - TFS 7174 - 07/21/2017
--- 16. Modified to incorporate DTT feed - TFS 7646 - 09/01/2017
--- 17. Modified to use LEFT Join on Submitter table for unknown Submitters - TFS 7541 - 09/19/2017
--- 18. Modified to support additional Modules per TFS 8793 - 11/16/2017
--- 19. Encryption/decryption - emp name, emp lanid, email - TFS 7856 - 010/10/2018
--- 20. Modified during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
--- 21. Modified to incorporate PBH feed - TFS 11451 - 07/31/2018
+-- Last 5 Modifications
 -- 22. Modified to support OTA Report. TFS 12591 - 11/26/2018
 -- 23. Modified to support Quality Now TFS 13332 -  03/01/2019
 -- 24. Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
 -- 25. Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
+-- 26. Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -201,6 +178,8 @@ SET @nvcSQL2 = '
   CASE WHEN (cc.DTT IS NOT NULL AND cl.strReportCode LIKE ''DTT%'') THEN 1 ELSE 0 END "OTH / DTT",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSR2%'') THEN 1 ELSE 0 END "PSC / MSR",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSRS%'') THEN 1 ELSE 0 END "PSC / MSRS",
+  CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQN2%'') THEN 1 ELSE 0 END "Quality / BQN",
+  CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQNS%'') THEN 1 ELSE 0 END "Quality / BQNS",
   cl.Description txtDescription,
   cl.CoachingNotes txtCoachingNotes,
   cl.isVerified,
@@ -244,6 +223,7 @@ JOIN
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 12 THEN [clr].[Value] ELSE NULL END) HFC,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END) KUD,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END) OTA,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 250) THEN [clr].[Value] ELSE NULL END) QNB,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 242) THEN [clr].[Value] ELSE NULL END) DTT,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC
@@ -274,11 +254,10 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
-
-
-
-
 GO
+
+
+
 
 
 
