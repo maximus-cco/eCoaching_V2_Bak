@@ -616,12 +616,24 @@ namespace eCoachingLog.Controllers
 
 			if (vm.IsAcknowledgeForm)
 			{
-				// Only Supervisor or reassigned to or employee can enter data on review page
-				if (user.EmployeeId == vm.LogDetail.SupervisorEmpId
-					|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId
-					|| user.EmployeeId == vm.LogDetail.EmployeeId)
+				// Employee
+				if (user.EmployeeId == vm.LogDetail.EmployeeId)
 				{
-					readOnly = false;
+					return false;
+				}
+				
+				// Supervisor	
+				if (user.EmployeeId == vm.LogDetail.SupervisorEmpId || user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+				{
+					// Supervisor module and bingo: manager can view only - TFS 15063
+					if (vm.LogDetail.ModuleId == Constants.MODULE_SUPERVISOR && vm.LogDetail.IsBqns)
+					{
+						readOnly = true;
+					}
+					else
+					{
+						readOnly = false;
+					}
 				}
 			}
 
@@ -732,52 +744,6 @@ namespace eCoachingLog.Controllers
 				{
 					return true;
 				}
-			}
-
-			return false;
-		}
-
-		private bool ShowIsCoachingRequiredQuestion(ReviewViewModel vm)
-		{
-			var userEmployeeId = GetUserFromSession().EmployeeId;
-
-			// Case 1:
-			// User is the current manager of the employee, OR
-			// User was the manager of the employee when the log was submitted and the log is low csat, OR
-			// User is the person to whom this log was reassgined
-			if (userEmployeeId == vm.LogDetail.ManagerEmpId ||
-				(userEmployeeId == vm.LogDetail.LogManagerEmpId && vm.LogDetail.IsLowCsat) ||
-				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
-			{
-				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3 &&
-					(vm.LogDetail.IsCurrentCoachingInitiative ||
-						vm.LogDetail.IsOmrException ||
-						vm.LogDetail.IsLowCsat);
-			}
-
-			// Case 2:
-			// User is the current supervisor of the employee, OR
-			// User is the person to whom this log was reassigned
-			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
-				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
-			{
-				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 &&
-					(!vm.LogDetail.IsIqs &&
-						!vm.LogDetail.IsCtc &&
-						!vm.LogDetail.IsHigh5Club &&
-						!vm.LogDetail.IsKudo &&
-						!vm.LogDetail.IsAttendance &&
-						!vm.LogDetail.IsMsr &&
-						!vm.LogDetail.IsMsrs) &&
-					(vm.LogDetail.IsEtsOae ||
-						vm.LogDetail.IsEtsOas ||
-						vm.LogDetail.IsOmrIae ||
-						vm.LogDetail.IsOmrIaef ||
-						vm.LogDetail.IsOmrIat ||
-						vm.LogDetail.IsTrainingShortDuration ||
-						vm.LogDetail.IsTrainingOverdue ||
-						vm.LogDetail.IsBrn ||
-						vm.LogDetail.IsBrl);
 			}
 
 			return false;

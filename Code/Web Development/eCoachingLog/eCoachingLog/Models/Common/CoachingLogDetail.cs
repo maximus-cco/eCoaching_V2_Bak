@@ -46,6 +46,7 @@ namespace eCoachingLog.Models.Common
 		public bool IsDtt { get; set; } // New Attendance Discrepancy feed
 		public bool IsPbh { get; set; }
 		public bool IsOta { get; set; } // OverTurned Appeal
+		public bool IsBqns { get; set; } // Quality BINGO "Quality / BQNS"
 
 		public bool HasEmpAcknowledged { get; set; }
 		public bool HasSupAcknowledged { get; set; }
