@@ -30,6 +30,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
@@ -197,6 +202,8 @@ INSERT INTO [EC].[Coaching_Log_Quality_Now_Bingo]
     ON cf.[CoachingID] = cb.[CoachingID]  
     WHERE qs.Report_Code LIKE 'BQN%'
 	AND cb.[CoachingID] IS NULL 
+	ORDER BY [CoachingID]
+           ,[Competency]
  OPTION (MAXDOP 1)   
 
    WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
@@ -214,7 +221,7 @@ CLOSE SYMMETRIC KEY [CoachingKey]
 
 
 -- Truncate Staging Table
-Truncate Table [EC].[Quality_Other_Coaching_Stage]
+--Truncate Table [EC].[Quality_Other_Coaching_Stage]
 
                   
 COMMIT TRANSACTION
@@ -247,4 +254,15 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality_Other
+
+
+
+
+
+
+
+
+
 GO
+
+

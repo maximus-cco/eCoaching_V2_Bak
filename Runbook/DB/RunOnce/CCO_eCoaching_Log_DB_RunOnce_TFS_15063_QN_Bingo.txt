@@ -29,19 +29,25 @@ ADD [Competency] nvarchar(30),
     [Note] nvarchar(30)
 GO
 
+
 --******************************************
 
---b. INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+--b. 
+
+   INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
            ([SubCoachingReason])
      VALUES
      ('Quality Now')
 GO
+
+
 
 --  250
 
 --******************************************
 
 --c. Create table [EC].[Coaching_Log_Quality_Now_Bingo]
+
 
 SET ANSI_NULLS ON
 GO
