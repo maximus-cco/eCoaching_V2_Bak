@@ -658,6 +658,6 @@ input[type=radio].errorClass {
 
 .instruction-text {
 	color: #FF5733;
-	font-weight: bold;
+	/*font-weight: bold;*/
 }
 

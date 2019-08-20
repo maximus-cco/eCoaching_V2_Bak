@@ -254,6 +254,7 @@ namespace eCoachingLog.Controllers
 
 			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
 			DetermineMgrSupNotesVisibility(vm);
+			// TODO: att log - Constants.REVIEW_ATT_PERFECTHOUR_TEXT
 			vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
 
 			// Init Acknowledge partial
@@ -465,21 +466,83 @@ namespace eCoachingLog.Controllers
 
 		private bool IsReinforceLog(ReviewViewModel vm)
 		{
-			bool retVal = true;
-			var reasons = vm.LogDetail.Reasons;
+			var userEmployeeId = GetUserFromSession().EmployeeId;
 
-			foreach (var reason in reasons)
+			// TODO: Quality Bingo - Reinforcement
+			if (vm.LogDetail.IsBqns)
 			{
-				if (reason.Value.IndexOf("opportunity", StringComparison.OrdinalIgnoreCase) >= 0 
-					|| reason.Value.IndexOf("did not meet goal", StringComparison.OrdinalIgnoreCase) >= 0
-					|| reason.Value.IndexOf("research required", StringComparison.OrdinalIgnoreCase) >= 0
-					|| reason.Value.IndexOf("n/a", StringComparison.OrdinalIgnoreCase) >= 0)
+				// log comes in as Pending Ack
+				// return true so that both sup and csr has an a chance to review
+				return true;
+			}
+
+			// User is the current supervisor of the employee, OR
+			// User is the person to whom this log was reassigned
+			if (userEmployeeId == vm.LogDetail.SupervisorEmpId ||
+				userEmployeeId == vm.LogDetail.ReassignedToEmpId)
+			{
+				return (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged) ||
+					(vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4);
+			}
+
+			// User is the employee of the log
+			if (userEmployeeId == vm.LogDetail.EmployeeId)
+			{
+				// Pending Acknowledgement
+				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4)
 				{
-					retVal = false;
+					return true;
+				}
+				// Pending Employee Review
+				else if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
+				{
+					return !IsAckOpportunityLog(vm);
 				}
 			}
-			return retVal;
+
+			return false;
 		}
+
+		private bool IsAckOpportunityLog(ReviewViewModel vm)
+		{
+			var userEmployeeId = GetUserFromSession().EmployeeId;
+
+			// User is the employee of the log
+			if (userEmployeeId == vm.LogDetail.EmployeeId)
+			{
+				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
+				{
+					return (string.IsNullOrEmpty(vm.LogDetail.SupReviewedAutoDate)) ||
+						(!vm.LogDetail.IsIqs &&
+							!vm.LogDetail.IsCtc &&
+							!vm.LogDetail.IsHigh5Club &&
+							!vm.LogDetail.IsKudo &&
+							!vm.LogDetail.IsAttendance &&
+							!vm.LogDetail.IsMsr &&
+							!vm.LogDetail.IsMsrs);
+				}
+			}
+
+			return false;
+		}
+
+		//private bool IsReinforceLog(ReviewViewModel vm)
+		//{
+		//	bool retVal = true;
+		//	var reasons = vm.LogDetail.Reasons;
+
+		//	foreach (var reason in reasons)
+		//	{
+		//		if (reason.Value.IndexOf("opportunity", StringComparison.OrdinalIgnoreCase) >= 0 
+		//			|| reason.Value.IndexOf("did not meet goal", StringComparison.OrdinalIgnoreCase) >= 0
+		//			|| reason.Value.IndexOf("research required", StringComparison.OrdinalIgnoreCase) >= 0
+		//			|| reason.Value.IndexOf("n/a", StringComparison.OrdinalIgnoreCase) >= 0)
+		//		{
+		//			retVal = false;
+		//		}
+		//	}
+		//	return retVal;
+		//}
 
 		private bool IsShortCallPendingManager(ReviewViewModel vm)
 		{

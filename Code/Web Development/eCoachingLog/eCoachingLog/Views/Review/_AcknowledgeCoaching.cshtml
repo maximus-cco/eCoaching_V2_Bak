@@ -37,7 +37,7 @@
 	</div>
 
 	<div class='form-group mt-2 @(Model.ShowCommentTextBox ? "show" : "hide")'>
-		<label for="EmployeeCommentsTextBox" class="required">@Model.CommentTextboxLabel</label>
+		<label for="EmployeeCommentsTextBox" class='@Model.IsAckOverTurnedAppeal ? "required" : ""'>@Model.CommentTextboxLabel</label>
 		@Html.TextAreaFor(m => m.Comment, new { @class = "form-control", @rows = "5", id = "textarea-employee-comments", maxlength = 3000 })
 		<div class="help-block">
 			Provide as much detail as possible.

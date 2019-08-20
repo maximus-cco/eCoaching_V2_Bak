@@ -346,7 +346,10 @@ namespace eCoachingLog.Services
 			}
 
 			// Email CSR's comments to supervisor and/or manager 
-			if (success && review.LogDetail.ModuleId == Constants.MODULE_CSR && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT)
+			if (success 
+					&& review.LogDetail.ModuleId == Constants.MODULE_CSR 
+					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
+					&& review.LogDetail.EmployeeId == user.EmployeeId)
 			{
 				if(!this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName))
 				{
