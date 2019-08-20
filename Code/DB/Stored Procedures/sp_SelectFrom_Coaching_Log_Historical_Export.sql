@@ -30,6 +30,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/14/2015
@@ -165,7 +166,7 @@ SELECT [cl].[CoachingID] CoachingID
   ,[cl].[EventDate]	EventDate
   ,[cl].[CoachingDate] CoachingDate
   ,[cl].[VerintID] VerintID
-  ,[cl].[Description] Description
+  ,REPLACE(EC.fn_nvcHtmlDecode(cl.Description), ''<br />'', ''|'') Description
   ,[cl].[CoachingNotes]	CoachingNotes
   ,[cl].[SubmittedDate]	SubmittedDate
   ,[cl].[SupReviewedAutoDate] SupReviewedAutoDate
@@ -230,7 +231,7 @@ SELECT [cl].[CoachingID] CoachingID
   ,[qne].[EvalStatus] EvaluationStatus
   ,[dcr].[CoachingReason] CoachingReason
   ,[dscr].[SubCoachingReason] SubCoachingReason
-  ,[cl].[Description] Description
+  ,REPLACE(EC.fn_nvcHtmlDecode(cl.Description), ''<br />'', ''|'') Description
 ,[qne].[Business_Process] BusinessProcess
 ,[qne].[Business_Process_Reason] BusinessProcessReason
 ,[qne].[Business_Process_Comment] BusinessProcessComment
@@ -301,7 +302,7 @@ SELECT [cl].[CoachingID] CoachingID
   ,[b].[Description] Behavior
   ,CASE WHEN [sce].[Valid] = 1 THEN ''Yes'' ELSE ''No'' END ValidBehavior
   ,[sce].[Action] Action
-  ,[cl].[Description] Description
+  ,REPLACE(EC.fn_nvcHtmlDecode(cl.Description), ''<br />'', ''|'') Description
   ,[sce].[CoachingNotes] ShortCallCoachingNotes
   ,CASE WHEN [sce].[LSAInformed] = 1 THEN ''Yes'' ELSE ''No'' END LSAInformed
   ,[cl].[SubmittedDate]	SubmittedDate
@@ -340,8 +341,9 @@ EXEC (@nvcSQL3)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey] 		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
-GO
 
+
+GO
 
 
 
