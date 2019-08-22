@@ -1,0 +1,120 @@
+/*
+TFS 15144 – Add Deltek as Coaching and Sub Coaching reason
+Updated to change data type for Customer Temp Start and End to nvarchar(30)
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps sumary
+
+Add/Modify records in the folowing tables
+[EC].[DIM_Coaching_Reason]
+[EC].[DIM_sub_Coaching_Reason]
+[EC].[Coaching_Reason_Selection]
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+-----------------******************************--------------------
+
+
+--1.Add record in [EC].[DIM_Coaching_Reason]
+
+ INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReason])
+     VALUES
+           ('Deltek')
+GO
+
+
+--59
+
+
+-----------------******************************--------------------
+
+
+--2.Add record in [EC].[DIM_Sub_Coaching_Reason]
+
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+           ('Deltek')
+GO
+
+
+--251
+
+-----------------******************************--------------------
+
+
+
+--3. Drop ETS as a Coaching Reason
+
+Delete from [EC].[Coaching_Reason_Selection]
+where [CoachingReason] = 'ETS';
+
+
+
+
+-----------------******************************--------------------
+
+--4. Drop ETS as a subCoaching Reason under Attendance
+
+
+Delete from [EC].[Coaching_Reason_Selection]
+where [CoachingReason] = 'Attendance'
+and [SubCoachingReason] = 'ETS';
+
+
+
+
+
+-----------------******************************--------------------
+
+
+--5. Replace ETS as subcoachingReason with Deltek
+
+Update [EC].[Coaching_Reason_Selection]
+set SubCoachingReasonID = 251,
+SubCoachingReason = 'Deltek'
+where SubCoachingReasonID = 48
+and SubCoachingReason = 'ETS';
+
+
+
+
+
+-----------------******************************--------------------
+
+
+
+--6. Insert row into [EC].[Coaching_Reason_Selection]
+
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+	 (59, 'Deltek', 42, 'Other: Specify reason under coaching details.', 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1)
+
+
+-----------------******************************--------------------
+
