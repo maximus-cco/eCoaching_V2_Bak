@@ -157,7 +157,24 @@ namespace eCoachingLog.Services
 				}
 			}
 
-			if (log.IsHigh5Club)
+			// OTH/APS and OTH/APW logs come in as Pending Acknowledgement
+			// Display Review Static Text for Supervisors
+			// Note: if csr acks first, status will become "Pending Supervisor Review"
+			if ((user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
+					&& (review.LogStatusLevel == 4 || review.LogStatusLevel == 2))
+			{
+				if (log.IsOthAps)
+				{
+					return Constants.REVIEW_OTH_APS_TEXT;
+				}
+
+				if (log.IsOthApw)
+				{
+					return Constants.REVIEW_OTH_APW_TEXT;
+				}
+			}
+
+				if (log.IsHigh5Club)
 			{
 				return Constants.REVIEW_QUALITY_HIGH5_CLUB;
 			}

@@ -468,7 +468,7 @@ namespace eCoachingLog.Controllers
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
-			// TODO: Quality Bingo - Reinforcement
+			// Quality Bingo - Reinforcement
 			if (vm.LogDetail.IsBqns)
 			{
 				// log comes in as Pending Ack

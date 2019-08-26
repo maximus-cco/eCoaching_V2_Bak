@@ -141,6 +141,8 @@ namespace eCoachingLog.Repository
 
 						logDetail.IsAttendance = Convert.ToInt16(dataReader["OTH / SEA"]) == 0 ? false : true;
 						logDetail.IsDtt = Convert.ToInt16(dataReader["OTH / DTT"]) == 0 ? false : true;
+						logDetail.IsOthAps = Convert.ToInt16(dataReader["OTH / APS"]) == 0 ? false : true;
+						logDetail.IsOthApw = Convert.ToInt16(dataReader["OTH / APW"]) == 0 ? false : true;
 
 						logDetail.IsMsr = Convert.ToInt16(dataReader["PSC / MSR"]) == 0 ? false : true;
 						logDetail.IsMsrs = Convert.ToInt16(dataReader["PSC / MSRS"]) == 0 ? false : true;
