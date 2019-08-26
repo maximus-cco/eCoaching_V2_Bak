@@ -1,0 +1,29 @@
+/*
+TFS 15095 – ATT - Create feed to eCL for Attendance Policy Earnback
+
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+-----------------******************************--------------------
+
+
+--1.Add record in [EC].[DIM_Sub_Coaching_Reason]
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+           ('Attendance Hours Earned Back')
+GO
+
+
+--252
+
+
+-----------------******************************--------------------

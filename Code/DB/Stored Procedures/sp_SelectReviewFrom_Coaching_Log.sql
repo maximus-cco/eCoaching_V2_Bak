@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(15).sql
-Last Modified Date: 08/15/2018
+sp_SelectReviewFrom_Coaching_Log(16).sql
+Last Modified Date: 08/26/2018
 Last Modified By: Susmitha Palacherla
 
+Version 16: Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
 Version 15: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/5/2019
 Version 14: Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 Version 13: Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
@@ -32,6 +33,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -44,6 +47,7 @@ GO
 -- 24. Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
 -- 25. Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 -- 26. Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
+-- 27. Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -176,6 +180,8 @@ SET @nvcSQL2 = '
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''NPN%'') THEN 1 ELSE 0 END "Quality / NPN",
   CASE WHEN (cc.SEA IS NOT NULL AND cl.strReportCode LIKE ''SEA%'') THEN 1 ELSE 0 END "OTH / SEA",
   CASE WHEN (cc.DTT IS NOT NULL AND cl.strReportCode LIKE ''DTT%'') THEN 1 ELSE 0 END "OTH / DTT",
+  CASE WHEN (cc.ATTAP IS NOT NULL AND cl.strReportCode LIKE ''APW%'') THEN 1 ELSE 0 END "OTH / APW",
+  CASE WHEN (cc.ATTAP IS NOT NULL AND cl.strReportCode LIKE ''APS%'') THEN 1 ELSE 0 END "OTH / APS",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSR2%'') THEN 1 ELSE 0 END "PSC / MSR",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSRS%'') THEN 1 ELSE 0 END "PSC / MSRS",
   CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQN2%'') THEN 1 ELSE 0 END "Quality / BQN",
@@ -226,6 +232,7 @@ JOIN
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 250) THEN [clr].[Value] ELSE NULL END) QNB,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 242) THEN [clr].[Value] ELSE NULL END) DTT,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 252) THEN [clr].[Value] ELSE NULL END) ATTAP,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC
   FROM [EC].[Coaching_Log_Reason] clr,
     [EC].[DIM_Coaching_Reason] cr,
@@ -254,9 +261,9 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
+
+
 GO
-
-
 
 
 

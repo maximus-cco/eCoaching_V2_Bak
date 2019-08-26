@@ -1,14 +1,12 @@
 /*
-sp_InsertInto_Coaching_Log_Generic(04).sql
-Last Modified Date: 05/29/2019
+sp_InsertInto_Coaching_Log_Generic(05).sql
+Last Modified Date: 08/27/2019
 Last Modified By: Susmitha Palacherla
 
+Version 05: Modified to support ATT AP% feeds. TFS 15095  - 08/27/2019
 Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
-
 Version 03: Modified to support Encryption of sensitive data. Open Key and Removed LanID- TFS 7856 - 10/23/2017
-
 Version 02: Updated to support DTT feed - TFS 7646 -  9/1/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -30,10 +28,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/11/2016
@@ -43,6 +37,7 @@ GO
 -- Modified to support DTT feed. TFS 7646 - 8/31/2017
 -- Modified to support Encryption of sensitive data. Open Key and Removed LanID. TFS 7856 - 10/23/2017
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
+-- Modified to support ATT AP% feeds. TFS 15095  - 8/27/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
 @Count INT OUTPUT
@@ -97,67 +92,69 @@ CASE cs.Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  
  END [ProgramName],
- 
- CASE 
-		WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
-        THEN [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])
-        ELSE cs.Source_ID 
+
+   CASE 
+		WHEN cs.[Report_Code] like 'OTH%' 
+        THEN cs.Source_ID 
+        ELSE [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])
   END  [SourceID],
   
-  CASE
-        WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
-        THEN [EC].[fn_strStatusIDFromStatus](cs.Form_Status)
-        ELSE cs.Status_ID 
-  END   [StatusID],
+   CASE 
+		WHEN cs.[Report_Code] like 'OTH%' 
+        THEN cs.Status_ID
+        ELSE [EC].[fn_strStatusIDFromStatus](cs.Form_Status)
+    END  [StatusID],
   
-               [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
+        [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
         cs.CSR_EMPID                    [EmpID],
-        
-  CASE
-        WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
-        THEN [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)
-        ELSE cs.Submitter_ID
-  END   [SubmitterID],
+    
+    CASE 
+		WHEN cs.[Report_Code] like 'OTH%' 
+        THEN cs.Submitter_ID
+        ELSE [EC].[fn_nvcGetEmpIdFromLanId](LOWER(cs.Submitter_LANID),@dtmDate)
+    END   [SubmitterID],
   
 		cs.Event_Date			            [EventDate],
 		 0			[isAvokeID],
 		 0			[isNGDActivityID],
          0			[isUCID],
          0          [isVerintID],
-		-- EC.fn_nvcHtmlEncode(cs.TextDescription)		[Description],
   CASE 
 		 WHEN cs.[Report_Code] like 'SEA%' 
 		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br /> <br />')
-		 WHEN  cs.[Report_Code] like 'OTH%'
+		 WHEN  (cs.[Report_Code] like 'OTH%' OR cs.[Report_Code] like 'AP%')
 		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br />')
-		 ELSE REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '      '  ,'<br />') 
-  END [Description],	-- CHAR(13) + CHAR(10)
-  
+		 WHEN  cs.[Report_Code] like 'DTT%'
+		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '      '  ,'<br />') 
+		 ELSE cs.TextDescription   
+  END								[Description],	
          1                          [isVerified],
 		 cs.Submitted_Date			[SubmittedDate],
 		 cs.Start_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
-CASE 
-		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
-		 THEN 0
-		 ELSE cs.isCSE
-  END                          [isCSE],
+
+
+     CASE 
+		WHEN cs.[Report_Code] like 'OTH%' 
+        THEN cs.isCSE
+        ELSE 0
+    END   [isCSE],
 		 
-  CASE 
-		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
-		 THEN 0
-		 ELSE cs.EmailSent
-  END	[EmailSent],
-  
+   CASE 
+		WHEN cs.[Report_Code] like 'OTH%' 
+        THEN cs.EmailSent
+        ELSE 0
+    END   [EmailSent],
+
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
 		 
 CASE 
-		 WHEN cs.[Report_Code] like 'SEA%'
-		 THEN 1
-		  WHEN cs.[Report_Code] like 'DTT%'
+		 WHEN cs.[Report_Code] like 'OTH%' 
+		 THEN cs.Module_ID
+		 WHEN cs.[Report_Code] like 'DTT%'
 		 THEN 2
-		 ELSE  cs.Module_ID
+		 ELSE  1
  END		                      [ModuleID],
   
   
@@ -192,22 +189,22 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[Value])
     SELECT cf.[CoachingID],
     
- CASE 
-		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')
-		 THEN 3
-		 ELSE cs.CoachingReason_ID	
+  CASE 
+		 WHEN cs.[Report_Code] like 'OTH%' 
+		 THEN cs.CoachingReason_ID	
+		 ELSE 3	
  END [CoachingReasonID],
  
- CASE 
-		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')			
-         THEN [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3))
-         ELSE cs.SubCoachingReason_ID	
+  CASE 
+		 WHEN cs.[Report_Code] like 'OTH%' 		
+         THEN cs.SubCoachingReason_ID	
+		 ELSE [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3))
  END [SubCoachingReasonID],
  
-  CASE 
-		 WHEN (cs.[Report_Code] like 'SEA%' OR cs.[Report_Code] like 'DTT%')		
-         THEN  cs.[CoachReason_Current_Coaching_Initiatives]
-         ELSE cs.Value 
+   CASE 
+		 WHEN cs.[Report_Code] like 'OTH%' 		
+         THEN cs.Value 
+		ELSE cs.[CoachReason_Current_Coaching_Initiatives]
  END [Value]
  
     FROM [EC].[Generic_Coaching_Stage] cs JOIN  [EC].[Coaching_Log] cf      
@@ -254,8 +251,6 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Generic
-
-
 GO
 
 

@@ -1,8 +1,9 @@
 /*
-fn_intSubCoachReasonIDFromRptCode(07).sql
-Last Modified Date: 08/15/2018
+fn_intSubCoachReasonIDFromRptCode(08).sql
+Last Modified Date: 08/27/2019
 Last Modified By: Susmitha Palacherla
 
+Version 08: Modified to support ATT AP% feeds. TFS 15095  - 08/27/2019
 Version 07: Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 06: New OTA feed - TFS 12591 - 11/29/2018
 Version 05: New PBH feed - TFS 11451 - 7/31/2018
@@ -29,6 +30,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
@@ -47,6 +49,7 @@ GO
 -- TFS 11451 - To add PBH - 07/31/2018
 -- TFS 12591 - To add OTA- 11/26/2018
 -- TFS 15063 - To add BQN - 08/12/2019
+-- TFS 15063 - To add ATT APS and APW Reports - 08/27/2019
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -95,6 +98,8 @@ BEGIN
 			WHEN N'PBH' THEN 245
 			WHEN N'OTA' THEN 42
 			WHEN N'BQN' THEN 250
+			WHEN N'APS' THEN 252
+			WHEN N'APW' THEN 252
         ELSE -1
       END
     ELSE
@@ -104,11 +109,8 @@ RETURN @intSubCoachReasonID
 
 END  -- fn_intSubCoachReasonIDFromRptCode()
 
+
 GO
-
-
-
-
 
 
 
