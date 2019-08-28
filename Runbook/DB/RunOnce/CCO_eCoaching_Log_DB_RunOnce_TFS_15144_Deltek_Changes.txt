@@ -42,11 +42,12 @@ GO
 INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
            ([SubCoachingReason])
      VALUES
+           ('Quality Now'),
            ('Deltek')
 GO
 
 
---251
+--250/251
 
 -----------------******************************--------------------
 
