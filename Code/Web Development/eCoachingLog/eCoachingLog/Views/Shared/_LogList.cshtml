@@ -22,6 +22,7 @@
                         <th>Sub-coaching Reason</th>
                         <th>Value</th>
                         <th>Created Date (PDT)</th>
+						<th>Follow-up Date (PDT)</th>
                     </tr>
                 </thead>
             </table>
@@ -37,6 +38,7 @@
 	var supId = '@Html.Raw(Model.SupervisorId)';
 	var loadDataUrl = '@Url.Action("LoadData")';
 	var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';
+	var showFollowupDateColumn = '@Html.Raw(Model.ShowFollowupDateColumn)';
 </script>
 
 @Scripts.Render("~/bundles/scripts/logList")

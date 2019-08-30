@@ -10,12 +10,20 @@
 	<br />
 	@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
 </div>
+@*<div>Show followup Info: @Model.ShowFollowupInfo</div>
+<div>Is followup pending csr: @Model.IsFollowupPendingCsrForm </div>*@
+@if (Model.ShowFollowupInfo)
+{
+	{ Html.RenderPartial("_FollowupInfo"); }
+}
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
 {
 	@Html.HiddenFor(m => m.IsAcknowledgeForm)
 	@Html.HiddenFor(m => m.IsReinforce)
 	@Html.HiddenFor(m => m.IsAckOverTurnedAppeal)
+	@Html.HiddenFor(m => m.IsFollowupPendingCsrForm)
+	@Html.HiddenFor(m => m.LogDetail.IsFollowupRequired)
 	@Html.HiddenFor(m => m.LogDetail.LogId)
 	@Html.HiddenFor(m => m.LogDetail.EmployeeId)
 	@Html.HiddenFor(m => m.LogDetail.ModuleId)

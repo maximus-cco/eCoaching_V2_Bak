@@ -1,0 +1,14 @@
+﻿<div class="mt-2">
+	<strong>Follow-up required on: @Model.LogDetail.FollowupDueDate</strong>
+</div>
+@if (Model.IsFollowupCompleted)
+{
+	<div class="mt-2">
+		<strong>Follow-up occurred on:</strong><br />
+		@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.FollowupActualDate))
+	</div>
+	<div class="mt-2">
+		<strong>Follow-up Coaching Notes:</strong><br />
+		@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.FollowupDetails))
+	</div>
+}

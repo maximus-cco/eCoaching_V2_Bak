@@ -83,5 +83,11 @@ namespace eCoachingLog.Models.Common
 
 		public int ModuleId { get; set; }
 		public string ModuleName { get; set; }
+
+		// Follow-up
+		public bool IsFollowupRequired { get; set; }
+		public string FollowupDueDate { get; set; }    // Date when followup is due
+		public string FollowupActualDate { get; set; } // Date when followup happens
+		public string FollowupDetails { get; set; }    // entered on the review page by supervisor
     }
 }

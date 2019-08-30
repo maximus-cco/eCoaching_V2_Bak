@@ -207,6 +207,19 @@
         }
     });
 
+    $('body').on('change', '#IsFollowupRequired', function () {
+    	var yes = $(this).val();
+    	if (yes === 'True') {
+    		// reset followup date
+    		$('#followup-date').val('');
+    		$('#div-is-followup-required').removeClass('hide');
+    		$('#div-is-followup-required').addClass('show');
+    	}
+    	else {
+    		$('#div-is-followup-required').removeClass('show');
+    		$('#div-is-followup-required').addClass('hide');
+    	}
+    });
     // Behavior detail textarea remaining characters display
     $('body').on('keyup', '#textarea-behavior-detail', function (e) {
         var remaining = textAreaMaxLength - $(this).val().length;

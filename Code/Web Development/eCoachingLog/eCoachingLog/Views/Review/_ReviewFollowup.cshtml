@@ -1,0 +1,59 @@
+﻿@model eCoachingLog.ViewModels.ReviewViewModel
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
+{
+	@Html.HiddenFor(m => m.LogDetail.LogId)
+	@Html.HiddenFor(m => m.IsFollowupPendingSupervisorForm)
+	<div class="mt-2">
+		<strong>Follow-up required on:</strong>&nbsp;@Model.LogDetail.FollowupDueDate
+	</div>
+
+	if (!Model.IsFollowupDue)
+	{
+		<div class="mt-2 text-danger">
+			You will be able to enter follow-up notes/date on the follow-up day or after.
+		</div>
+	}
+
+	<div class='form-group mt-2' id='div-date-followup'>
+		<label for="ActualFollowupDate" id="label-date-followup" class="required">Enter the date of follow-up coaching:</label>
+		<div class="col-xs-4 input-group date">
+		@if (Model.IsFollowupDue)
+		{
+			@Html.TextBoxFor(m => m.ActualFollowupDate, new { @class = "form-control" })
+		}
+		else
+		{
+			@Html.TextBoxFor(m => m.ActualFollowupDate, new { @class = "form-control", @readonly = "readonly" })
+		}
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.ActualFollowupDate)
+	</div>
+
+	<div class='form-group mt-2' id='div-followup-detail'>
+		<label for="FollowupDetails" class="required">Provide the details from the follow-up coaching session including action plans developed:</label>
+		@if (Model.IsFollowupDue)
+		{
+			@Html.TextAreaFor(m => m.FollowupDetails, new { @class = "form-control",  @rows = "5", maxlength = 3000 })
+		}
+		else
+		{
+			@Html.TextAreaFor(m => m.FollowupDetails, new { @class = "form-control", @readonly = "readonly", @rows = "5", maxlength = 3000 })
+		}
+
+		<div class="help-block">
+			Provide as much detail as possible.
+			<span class="pull-right">
+				<span id="detail-followup-remaining">3000</span>&nbsp;remaining
+			</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.FollowupDetails)
+	</div>
+}
+
+@Scripts.Render("~/bundles/scripts/review")
+<script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>
+

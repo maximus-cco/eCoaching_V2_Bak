@@ -518,5 +518,75 @@ namespace eCoachingLog.Repository
 			}
 			return success;
 		}
+
+		public bool CompleteSupervisorFollowup(Review review, string nextStatus, User user)
+		{
+			bool success = false;
+
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_NEWXXXXXXXXXXX]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
+				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
+				command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", DateTime.Now);
+				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsCoached);
+
+				try
+				{
+					connection.Open();
+					int rowsUpdated = command.ExecuteNonQuery();
+
+					if (rowsUpdated == 0)
+					{
+						throw new Exception("Couldn't update log [" + review.LogDetail.LogId + "].");
+					}
+
+					success = true;
+				}
+				catch (Exception ex)
+				{
+					logger.Error("Failed to update log [" + review.LogDetail.LogId + "]: " + ex.Message);
+				}
+			} // end Using 
+			return success;
+		}
+
+		public bool CompleteEmployeeAckFollowup(Review review, string nextStatus, User user)
+		{
+			bool success = false;
+
+			using (SqlConnection connection = new SqlConnection(conn))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_NEWXXXXXXXXXXX]", connection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
+				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
+				command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", DateTime.Now);
+				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsCoached);
+
+				try
+				{
+					connection.Open();
+					int rowsUpdated = command.ExecuteNonQuery();
+
+					if (rowsUpdated == 0)
+					{
+						throw new Exception("Couldn't update log [" + review.LogDetail.LogId + "].");
+					}
+
+					success = true;
+				}
+				catch (Exception ex)
+				{
+					logger.Error("Failed to update log [" + review.LogDetail.LogId + "]: " + ex.Message);
+				}
+			} // end Using 
+			return success;
+		}
 	}
 }

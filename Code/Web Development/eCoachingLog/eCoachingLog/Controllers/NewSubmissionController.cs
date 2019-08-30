@@ -46,7 +46,7 @@ namespace eCoachingLog.Controllers
             var sessionId = Session == null ? null : Session.SessionID;
             logger.Debug("?????????SessionID=" + sessionId);
 
-            Session["newSubmissionVM"] = InitNewSubmissionViewModel();
+			Session["newSubmissionVM"] = InitNewSubmissionViewModel(Constants.MODULE_UNKNOWN);
 			ViewBag.ValidationError = false;
 			return View((NewSubmissionViewModel)Session["newSubmissionVM"]);
         }
@@ -160,6 +160,7 @@ namespace eCoachingLog.Controllers
             vm.ShowSiteDropdown = ShowSiteDropdown(vm);
             vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm);
             vm.ShowProgramDropdown = ShowProgramDropdown(vm);
+			vm.ShowMgtInfo = true;
             vm.ShowBehaviorDropdown = ShowBehaviorDropdown(vm);
             vm.ShowIsCoachingByYou = vmInSession.ShowIsCoachingByYou;
             vm.ShowWarningChoice = vmInSession.ShowWarningChoice;
@@ -168,6 +169,7 @@ namespace eCoachingLog.Controllers
             vm.ShowCoachWarningDiv = vmInSession.ShowCoachWarningDiv;
             vm.ShowWarningQuestions = vmInSession.ShowWarningQuestions;
 			vm.ShowCallTypeChoice = vmInSession.ShowCallTypeChoice;
+			vm.ShowFollowup = vmInSession.ShowFollowup;
 
 			return View("Index", vm);
         }
@@ -179,7 +181,7 @@ namespace eCoachingLog.Controllers
 			vmInSession.SiteId = siteIdSelected;
             GetEmployeesByModuleToSession(vmInSession.ModuleId, siteIdSelected);
 			// Since user has selected a different site, reset partial page, 
-			var vm = InitNewSubmissionViewModel();
+			var vm = InitNewSubmissionViewModel(vmInSession.ModuleId);
 			vm.ModuleSelectList = vmInSession.ModuleSelectList;
 			vm.ModuleId = vmInSession.ModuleId;
 			vm.SiteSelectList = vmInSession.SiteSelectList;
@@ -231,6 +233,7 @@ namespace eCoachingLog.Controllers
             vm.IsCoachingByYou = isCoachingByYou;
             vm.IsCse = isCse;
             vm.IsWarning = isWarning;
+			vm.ShowIsCoachingByYou = true;
             vm.ShowCoachWarningDiv = true;
             vm.ShowWarningChoice = ShowWarningChoice(vm);
             vm.ShowIsCseChoice = ShowIsCseChoice(vm);
@@ -336,8 +339,7 @@ namespace eCoachingLog.Controllers
         [HttpPost]
         public ActionResult ResetPage(int moduleId)
         {
-            NewSubmissionViewModel vm = InitNewSubmissionViewModel();
-            vm.ModuleId = moduleId;
+            NewSubmissionViewModel vm = InitNewSubmissionViewModel(moduleId);
 
             if (moduleId == -2) // No module selected
             {
@@ -557,10 +559,13 @@ namespace eCoachingLog.Controllers
             return reasonsInSession;
         }
 
-        private NewSubmissionViewModel InitNewSubmissionViewModel()
+        private NewSubmissionViewModel InitNewSubmissionViewModel(int moduleId)
         {
             User user = GetUserFromSession();
             NewSubmissionViewModel vm = new NewSubmissionViewModel(user.EmployeeId, user.LanId);
+			vm.ModuleId = moduleId;
+			vm.ShowFollowup = moduleId == Constants.MODULE_CSR;
+
             // Module Dropdown
             List<Module> moduleList = this.empLogService.GetModules(user);
             moduleList.Insert(0, new Module { Id = -2, Name = "-- Select Employee Level --" });

@@ -49,4 +49,8 @@
 		var remaining = maxLength - $(this).val().length;
 		$('#comments-remaining').text(remaining + ' remaining');
 	});
+	// Followup
+	$('body').on('keyup', '#FollowupDetails', function (e) {
+		$('#detail-followup-remaining').text(maxLength - $(this).val().length);
+	});
 })

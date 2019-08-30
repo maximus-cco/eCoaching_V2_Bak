@@ -97,6 +97,8 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_PENDING_SRMANAGER_REVIEW = 7;
 		public const int LOG_STATUS_PENDING_QUALITYLEAD_REVIEW = 8;
 		public const int LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW = 9;
+		public const int LOG_STATUS_PENDING_FOLLOWUP = 10;
+		public const int LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP = 11;
 		// Status Description
 		public const string LOG_STATUS_UNKNOWN_TEXT = "Unknown";
 		public const string LOG_STATUS_COMPLETED_TEXT = "Completed";
@@ -108,7 +110,8 @@ namespace eCoachingLog.Utils
 		public const string LOG_STATUS_PENDING_SRMANAGER_REVIEW_TEXT = "Pending Sr. Manager Review";
 		public const string LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT = "Pending Quality Lead Review";
 		public const string LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW_TEXT = "Pending Deputy Program Manager Review";
-
+		public const string LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT = "Pending Follow-up";
+		public const string LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP_TEXT = "Pending Employee Acknowledge Follow-up";
 
 		public const int LOG_STATUS_LEVEL_1 = 1;
 		public const int LOG_STATUS_LEVEL_2 = 2;
@@ -140,7 +143,8 @@ namespace eCoachingLog.Utils
 			{ 5, "#4E8975" },
 			{ 6, "#B93B8F" },
 			{ 7, "#7BFF33" },
-			{ 8, "#FF0000" }
+			{ 8, "#FF0000" },
+			{ 9, "#1B3BA6" }
 		};
 
 		public static readonly Dictionary<Tuple<int, int>, int> LogStatusLevel = new Dictionary<Tuple<int, int>, int>
@@ -150,6 +154,8 @@ namespace eCoachingLog.Utils
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_SUPERVISOR_REVIEW), LOG_STATUS_LEVEL_2 },
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_MANAGER_REVIEW), LOG_STATUS_LEVEL_3 },
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_ACKNOWLEDGEMENT), LOG_STATUS_LEVEL_4 },
+			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_FOLLOWUP), LOG_STATUS_LEVEL_2 },
+			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP), LOG_STATUS_LEVEL_1},
 			// Supervisor
 			{ new Tuple<int, int>(MODULE_SUPERVISOR, LOG_STATUS_PENDING_EMPLOYEE_REVIEW), LOG_STATUS_LEVEL_1 },
 			{ new Tuple<int, int>(MODULE_SUPERVISOR, LOG_STATUS_PENDING_MANAGER_REVIEW), LOG_STATUS_LEVEL_2 },
@@ -263,8 +269,10 @@ namespace eCoachingLog.Utils
 		public const string ACK_CHECKBOX_TITLE_GENERAL = "Check the box below to acknowledge the coaching opportunity:";
 		public const string ACK_CHECKBOX_TITLE_MONITOR = "Check the box below to acknowledge the monitor:";
 		public const string ACK_CHECKBOX_TITLE_OVERTURNED_APPEAL = "Check the box below to acknowledge the monitor:";
+		public const string ACK_CHECKBOX_TITLE_FOLLOWUP = "Check the box below to acknowledge the followup:";
 		public const string ACK_CHECKBOX_TEXT_GENERAL = "I have read and understand all the information provided on this eCoaching Log.";
 		public const string ACK_CHECKBOX_TEXT_OVERTURNED_APPEAL = "By checking this box, I indicate that I have reviewed this appeal and have taken the appropriate actions.";
+		public const string ACK_CHECKBOS_TEXT_FOLLOWUP = "I have read and understand all the information provided on this eCoaching Log.";
 
 	}
 

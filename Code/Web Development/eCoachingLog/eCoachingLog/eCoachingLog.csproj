@@ -399,6 +399,8 @@
     <Content Include="Views\Review\_ManagerReviewInfo.cshtml" />
     <Content Include="Views\Review\_SupervisorReviewInfo.cshtml" />
     <Content Include="Views\Review\_ConfirmReviewShortCalls.cshtml" />
+    <Content Include="Views\Review\_FollowupInfo.cshtml" />
+    <Content Include="Views\Review\_ReviewFollowup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

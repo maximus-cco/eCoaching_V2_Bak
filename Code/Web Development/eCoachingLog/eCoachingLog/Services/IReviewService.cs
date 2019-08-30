@@ -15,6 +15,6 @@ namespace eCoachingLog.Services
 		IList<ShortCall> GetShortCallCompletedEvalList(long logId);
 		IList<Behavior> GetShortCallBehaviorList(bool isValid);
 		IList<string> GetShortCallActions(string employeeId, int behaviorId);
-		bool CompleteReview(Review vm, User user, string emailTempFileName, string logoFileName, int logIdInSession);
+		bool CompleteReview(Review vm, User user, string emailTempFileName, int logIdInSession);
 	}
 }

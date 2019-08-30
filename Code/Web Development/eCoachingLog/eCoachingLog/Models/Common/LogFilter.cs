@@ -29,6 +29,7 @@ namespace eCoachingLog.Models.Common
 
 		// Datatables column show/hide
 		public bool ShowSupNameColumn { get; set; }
+		public bool ShowFollowupDateColumn { get; set; }
 
 		public int PageSize { get; set; }
 
@@ -47,6 +48,9 @@ namespace eCoachingLog.Models.Common
 			this.ValueId = "-1";
 			this.ActiveEmployee = 1;
 			this.ShowSupNameColumn = true;
+			// Display followup date column always even though only CSR logs need followup
+			// since under a supervisor pending list, there might be CSR logs and the supervisor's own logs;
+			this.ShowFollowupDateColumn = true;
 			this.PageSize = 25;
 		}
 	}

@@ -21,5 +21,7 @@ namespace eCoachingLog.Repository
 		bool CompleteCsePendingReview(Review review, string nextStatus, User user);
 		bool CompleteShortCallsReview(Review review, string nextStatus, User user);
 		bool CompleteShortCallsConfirm(Review review, string nextstatus, User user);
+		bool CompleteSupervisorFollowup(Review review, string nextStatus, User user);
+		bool CompleteEmployeeAckFollowup(Review review, string nextStatus, User user);
 	}
 }

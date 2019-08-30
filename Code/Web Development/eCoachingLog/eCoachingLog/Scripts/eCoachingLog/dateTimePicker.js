@@ -1,4 +1,6 @@
 ﻿$(function () {
+	var minDate = moment().add(1, 'days').millisecond(0).second(0).minute(0).hour(0);
+	var maxDate = moment().add(30, 'days').millisecond(0).second(0).minute(0).hour(0);
 	// no calendar icon
 	$('.date-no-manual-input').datetimepicker({
 		format: 'MM/DD/YYYY',
@@ -13,6 +15,21 @@
 	});
 
 	$('body').on('keydown', '.date-no-manual-input', function (e) {
+		e.preventDefault();
+		return false;
+	});
+
+	$('#followup-date').datetimepicker({
+		format: 'MM/DD/YYYY',
+		minDate: minDate,
+		maxDate: maxDate
+	});
+
+	if ($('#followup-date').length && typeof followupDueDate !== "undefined") {
+		$('#followup-date').val(followupDueDate);
+	}
+
+	$('body').on('keydown', '#followup-date', function (e) {
 		e.preventDefault();
 		return false;
 	});

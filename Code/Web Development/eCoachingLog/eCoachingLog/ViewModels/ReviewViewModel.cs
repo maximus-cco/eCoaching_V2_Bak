@@ -60,6 +60,8 @@ namespace eCoachingLog.ViewModels
 		public bool IsShortCallPendingSupervisorForm { get; set; }
 		public bool IsShortCallPendingManagerForm { get; set; }
 		public bool IsAcknowledgeForm { get; set; }
+		public bool IsFollowupPendingSupervisorForm { get; set; }
+		public bool IsFollowupPendingCsrForm { get; set; }
 		public bool IsReinforce { get; set; }
 		public bool IsAckOverTurnedAppeal { get; set; }
 
@@ -78,6 +80,13 @@ namespace eCoachingLog.ViewModels
 
 		public string CommentTextboxLabel { get; set; }
 
+		// Followup related
+		public bool ShowFollowupInfo { get; set; }
+		public bool IsFollowupCompleted { get; set; }
+		public bool IsFollowupDue { get; set; }
+		public DateTime? ActualFollowupDate { get; set; }
+		[AllowHtml]
+		public string FollowupDetails { get; set; } // Input textarea
 		public IEnumerable<SelectListItem> CommentSelectList { get; set; }
 
 		// short call list
@@ -192,7 +201,7 @@ namespace eCoachingLog.ViewModels
 					yield return new ValidationResult("You must select the checkbox to complete this review.", ack);
 				}
 
-				if (this.IsAckOverTurnedAppeal && string.IsNullOrEmpty(this.Comment))
+				if ((this.IsAckOverTurnedAppeal || this.IsFollowupPendingCsrForm) && string.IsNullOrEmpty(this.Comment))
 				{
 					var ack = new[] { "Comment" };
 					yield return new ValidationResult("Provide comment.", ack);
@@ -263,6 +272,22 @@ namespace eCoachingLog.ViewModels
 					yield return new ValidationResult("", dateConfirmed);
 				}
 			}
+
+			// Followup
+			if (this.IsFollowupPendingSupervisorForm)
+			{
+				if (!this.ActualFollowupDate.HasValue)
+				{
+					var followupDate = new[] { "ActualFollowupDate" };
+					yield return new ValidationResult("Provide follow-up date.", followupDate);
+				}
+
+				if (string.IsNullOrEmpty(this.FollowupDetails))
+				{
+					var details = new[] { "FollowupDetails" };
+					yield return new ValidationResult("Provide follow-up details.", details);
+				}
+			}
 		} // end Validate 
 
 		public static implicit operator Review(ReviewViewModel vm)
@@ -282,6 +307,8 @@ namespace eCoachingLog.ViewModels
 				IsRegularPendingForm = vm.IsRegularPendingForm,
 				IsResearchPendingForm = vm.IsResearchPendingForm,
 				IsCsePendingForm = vm.IsCsePendingForm,
+				IsFollowupPendingSupervisorForm = vm.IsFollowupPendingSupervisorForm,
+				IsFollowupPendingCsrForm = vm.IsFollowupPendingCsrForm,
 				IsAckOverTurnedAppeal = vm.IsAckOverTurnedAppeal,
 				IsReviewForm = vm.IsReviewForm,
 				IsAcknowledgeForm = vm.IsAcknowledgeForm,
@@ -294,7 +321,9 @@ namespace eCoachingLog.ViewModels
 				Acknowledge = vm.Acknowledge,
 				ShortCallList = vm.ShortCallList,
 				Comments = vm.Comments,
-				DateConfirmed = vm.DateConfirmed
+				DateConfirmed = vm.DateConfirmed,
+				DateFollowup = vm.ActualFollowupDate,
+				DetailsFollowup = vm.FollowupDetails
 			};
 		}
 

@@ -29,6 +29,8 @@ namespace eCoachingLog.ViewModels
         public bool IsCallAssociated { get; set; }
         public string CallTypeName { get; set; }
         public string CallId { get; set; }
+		public bool? IsFollowupRequired { get; set; }
+		public DateTime? FollowupDueDate { get; set; }
         public IEnumerable<SelectListItem> ModuleSelectList { get; set; }
         public IEnumerable<SelectListItem> ProgramSelectList { get; set; }
         public IEnumerable<SelectListItem> BehaviorSelectList { get; set; }
@@ -56,6 +58,8 @@ namespace eCoachingLog.ViewModels
         public bool ShowProgramDropdown { get; set; }
         public bool ShowBehaviorDropdown { get; set; }
         public bool ShowIsCoachingByYou { get; set; }
+		public bool ShowMgtInfo { get; set; }
+		public bool ShowFollowup { get; set; }
 
         public NewSubmissionViewModel() : base()
         {
@@ -196,6 +200,22 @@ namespace eCoachingLog.ViewModels
                     }
                 }
             }
+			// Validate follow-up entries
+			if (this.IsFollowupRequired.HasValue)
+			{
+				// followup Date
+				if (!this.FollowupDueDate.HasValue)
+				{
+					var followupDueDate = new[] { "FollowupDueDate" };
+					yield return new ValidationResult("Please select a follow-up date.", followupDueDate);
+				}
+			}
+			else
+			{
+				// followup radio button
+				var isFollowupRequired = new[] { "IsFollowupRequired" };
+				yield return new ValidationResult("Please make a selction.", isFollowupRequired);
+			}
 		}
 
         public static implicit operator NewSubmission(NewSubmissionViewModel vm)
@@ -222,6 +242,8 @@ namespace eCoachingLog.ViewModels
                 CallId = vm.CallId,
                 SourceId = vm.SourceId,
                 StatusId = vm.StatusId,
+				FollowupDueDate = vm.FollowupDueDate,
+				IsFollowupRequired = vm.IsFollowupRequired,
 
                 WarningTypeId = vm.WarningTypeId,
                 WarningReasonId = vm.WarningReasonId

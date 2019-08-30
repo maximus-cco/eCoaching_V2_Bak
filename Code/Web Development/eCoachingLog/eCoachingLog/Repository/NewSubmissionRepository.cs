@@ -165,6 +165,8 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@nvcCSRComments", null);
                 command.Parameters.AddWithValueSafe("@bitEmailSent", "True");
                 command.Parameters.AddWithValueSafe("@ModuleID", submission.ModuleId);
+				command.Parameters.AddWithValueSafe("@bitisFollowupRequired", submission.IsFollowupRequired);
+				command.Parameters.AddWithValueSafe("@dtmFollowupDueDate", submission.FollowupDueDate);
 
                 // Output parameter
                 SqlParameter newFormNameParam = command.Parameters.Add("@nvcNewFormName", SqlDbType.VarChar, 30);

@@ -149,11 +149,10 @@ namespace eCoachingLog.Controllers
 				try
 				{
 					// Update database
-					string logoFileName = Server.MapPath("~/Content/Images/ecl-logo-small.png");
 					string emailTempFileName = Server.MapPath("~/EmailTemplates/LogCompleted.html");
 					int logIdInSession = (int)Session["reviewLogId"];
 					// Pass logIdInSession to log error if for some reason web form not posted back.
-					success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logoFileName, logIdInSession);
+					success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logIdInSession);
 				}
 				catch (Exception ex)
 				{
@@ -207,6 +206,9 @@ namespace eCoachingLog.Controllers
 			}
 
 			vm.ShowEmployeeReviewInfo = true;
+			vm.ShowFollowupInfo = ShowFollowupInfo(vm);
+			vm.IsFollowupCompleted = vm.LogDetail.IsFollowupRequired && vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED;
+			vm.IsFollowupDue = vm.LogDetail.IsFollowupRequired && DateTime.Compare(DateTime.Now, DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace("PDT", ""))) >= 0 ;
 
 			// Load short call list
 			if (vm.LogDetail.IsOmrShortCall)
@@ -254,7 +256,6 @@ namespace eCoachingLog.Controllers
 
 			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
 			DetermineMgrSupNotesVisibility(vm);
-			// TODO: att log - Constants.REVIEW_ATT_PERFECTHOUR_TEXT
 			vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
 
 			// Init Acknowledge partial
@@ -301,11 +302,22 @@ namespace eCoachingLog.Controllers
 				vm.IsReinforce = true;
 			}
 
+			if (IsFollowupPendingCsr(vm))
+			{
+				vm.IsFollowupPendingCsrForm = true;
+				vm.IsAckOverTurnedAppeal = false;
+				vm.IsReinforce = false;
+			}
 			// Checkbox display text
 			if (vm.IsAckOverTurnedAppeal)
 			{
 				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_OVERTURNED_APPEAL;
 				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_OVERTURNED_APPEAL;
+			}
+			else if (vm.IsFollowupPendingCsrForm)
+			{
+				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_FOLLOWUP;
+				vm.AckCheckboxText = Constants.ACK_CHECKBOS_TEXT_FOLLOWUP;
 			}
 			else
 			{
@@ -359,6 +371,16 @@ namespace eCoachingLog.Controllers
 			vm.IsRegularPendingForm = false;             // Regular Pending Form - neither research nor CSE needed
 			vm.IsShortCallPendingSupervisorForm = false; // Short Call Form      - Supervisor reviewing
 			vm.IsShortCallPendingManagerForm = false;	 // Short Call Form      - Manager reviewing
+			vm.IsFollowupPendingSupervisorForm = false;
+
+			// Followup - Pending Supervisor Followup
+			if (IsFollowupPendingSupervisor(vm))
+			{
+				vm.IsFollowupPendingSupervisorForm = true;
+				vm.IsReadOnly = IsReadOnly(vm, user);
+				vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
+				return vm;
+			}
 
 			// Short Call - Pending Manager Review Form
 			if (IsShortCallPendingManager(vm))
@@ -424,31 +446,34 @@ namespace eCoachingLog.Controllers
 		private bool IsAcknowledgeForm(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
-			var userReassignedTo = userEmployeeId == vm.LogDetail.ReassignedToEmpId;
+			var isUserReassignedTo = userEmployeeId == vm.LogDetail.ReassignedToEmpId;
 
 			// Quality Lead (or reassigned to): Acknowledge an OverTurned Appeal log
 			if (vm.LogDetail.IsOta)
 			{
-				return (userEmployeeId == vm.LogDetail.SupervisorEmpId || userReassignedTo)
+				return (userEmployeeId == vm.LogDetail.SupervisorEmpId || isUserReassignedTo)
 					&& vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW;
 			}
 
 			// User is the employee
 			if (userEmployeeId == vm.LogDetail.EmployeeId)
 			{
-				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1    // LOG_STATUS_PENDING_EMPLOYEE_REVIEW
+				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1    // LOG_STATUS_PENDING_EMPLOYEE_REVIEW OR LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP
 					|| vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;   // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
 			}
 
 			// User is the Supervisor or reassigned to
-			if (userEmployeeId == vm.LogDetail.SupervisorEmpId || userReassignedTo)
+			if (userEmployeeId == vm.LogDetail.SupervisorEmpId || isUserReassignedTo)
 			{
-				return (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged)  // LOG_STATUS_PENDING_SUPERVISOR_REVIEW
-					|| vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;                                      // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
+				return
+					// LOG_STATUS_PENDING_SUPERVISOR_REVIEW and Employee has acknowledged and followup not required
+					(vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2 && vm.LogDetail.HasEmpAcknowledged && !vm.LogDetail.IsFollowupRequired)
+					// LOG_STATUS_PENDING_ACKNOWLEDGEMENT	
+					|| vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;
 			}
 
 			// User is the Manager or reassigned to
-			if (userEmployeeId == vm.LogDetail.ManagerEmpId || userReassignedTo)
+			if (userEmployeeId == vm.LogDetail.ManagerEmpId || isUserReassignedTo)
 			{
 				return vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4;   // LOG_STATUS_PENDING_ACKNOWLEDGEMENT
 			}
@@ -544,6 +569,17 @@ namespace eCoachingLog.Controllers
 		//	return retVal;
 		//}
 
+		private bool IsFollowupPendingCsr(ReviewViewModel vm)
+		{
+			var userEmployeeId = GetUserFromSession().EmployeeId;
+			return (userEmployeeId == vm.LogDetail.EmployeeId
+				&& vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP); 
+		}
+
+		private bool IsFollowupPendingSupervisor(ReviewViewModel vm)
+		{
+			return vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP;
+		}
 		private bool IsShortCallPendingManager(ReviewViewModel vm)
 		{
 			return vm.LogDetail.IsOmrShortCall && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_MANAGER_REVIEW;
@@ -597,6 +633,15 @@ namespace eCoachingLog.Controllers
 		{
 			bool readOnly = true;
 
+			if (vm.IsFollowupPendingSupervisorForm)
+			{
+				if (user.EmployeeId == vm.LogDetail.SupervisorEmpId
+					|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+				{
+					readOnly = false;
+				}
+				return readOnly;
+			}
 			if (vm.IsShortCallPendingManagerForm)
 			{
 				if (user.EmployeeId == vm.LogDetail.ManagerEmpId
@@ -826,6 +871,23 @@ namespace eCoachingLog.Controllers
 				&& logDetail.IsSubmittedAsCse.Value
 				&& logDetail.IsConfirmedCse.HasValue
 				&& !logDetail.IsConfirmedCse.Value;
+		}
+
+		private bool ShowFollowupInfo(ReviewViewModel vm)
+		{
+			bool show = false;
+			var user = GetUserFromSession();
+
+			if (user.EmployeeId == vm.LogDetail.EmployeeId)
+			{
+				show = vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP;
+			}
+			else if (user.EmployeeId == vm.LogDetail.SupervisorEmpId || user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+			{
+				show = vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP;
+			}
+
+			return show;
 		}
 	}
 

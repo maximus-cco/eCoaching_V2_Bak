@@ -1,9 +1,9 @@
 ﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
 @{
-	var dateLabel = "Enter/Select the date of event:";
+	var dateLabel = "Select the date of event:";
 	if (Model.IsCoachingByYou.HasValue && Model.IsCoachingByYou.Value)
 	{
-		dateLabel = "Enter/Select the date of coaching:";
+		dateLabel = "Select the date of coaching:";
 	}
 }
 <div class="form-group">
@@ -71,6 +71,31 @@
     </div>
 </div>
 
+<div class='form-group @(@Model.ShowFollowup ? "show" : "hide")'>
+	<label class="col-sm-3 control-label required">Is follow-up required?</label>
+	<div class="col-sm-4">
+		<div class="radio">
+			<div class="col-sm-2">
+				@Html.RadioButtonFor(m => m.IsFollowupRequired, true) Yes
+			</div>
+			<div class="col-sm-2">
+				@Html.RadioButtonFor(m => m.IsFollowupRequired, false) No
+			</div>
+		</div>
+		@Html.ValidationMessageFor(m => m.IsFollowupRequired)
+	</div>
+</div>
+
+<div class='form-group @(Model.IsFollowupRequired.HasValue && Model.IsFollowupRequired.Value ? "show" : "hide")' id="div-is-followup-required">
+	<label for="followup-date" class="col-sm-3 control-label required" id="label-followup-date">Select the date of follow-up:</label>
+	<div class="col-sm-2">
+		<div class="input-group">
+			@Html.TextBoxFor(m => m.FollowupDueDate, new { @class = "form-control date-no-manual-input-followup-date", @id = "followup-date", @placeholder = "MM/DD/YYYY" })
+		</div>
+		@Html.ValidationMessageFor(m => m.FollowupDueDate)
+	</div>
+</div>
+
 <div id="div-source" class="form-group">
     <label for="SourceId" class="col-sm-3 control-label required">How was the coaching opportunity identified?</label>
     <div class="col-sm-3">
@@ -103,6 +128,5 @@
         @Html.ValidationMessageFor(model => model.CallId)
     </div>
 </div>
-<!-- end of div-coach-detail -->
 
 <script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>

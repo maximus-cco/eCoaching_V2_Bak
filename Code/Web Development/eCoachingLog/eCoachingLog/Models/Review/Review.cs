@@ -15,6 +15,9 @@ namespace eCoachingLog.Models.Review
 		public DateTime? DateCoached { get; set; }
 		public string DetailsCoached { get; set; }
 
+		// Followup
+		public DateTime? DateFollowup { get; set; }
+		public string DetailsFollowup { get; set; }
 		// Research related
 		public bool IsCoachingRequired { get; set; }
 		// result from dropdown list
@@ -34,6 +37,8 @@ namespace eCoachingLog.Models.Review
 		public bool IsAcknowledgeForm { get; set; }
 		public bool IsShortCallPendingSupervisorForm { get; set; }
 		public bool IsShortCallPendingManagerForm { get; set; }
+		public bool IsFollowupPendingSupervisorForm { get; set; }
+		public bool IsFollowupPendingCsrForm { get; set; }
 
 		public bool IsAckOpportunity { get; set; }
 		public bool IsReinforce { get; set; }

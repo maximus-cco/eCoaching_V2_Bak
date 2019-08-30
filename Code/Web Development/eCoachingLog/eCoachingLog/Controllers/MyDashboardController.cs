@@ -171,6 +171,11 @@ namespace eCoachingLog.Controllers
 			// Set to MySubmission if "My Submission" link is clicked, used to control review page to be read only or editable
 			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
 
+			// TODO: need to check with FS when to show this column
+			//if (user.IsCsr)
+			//{
+			//	vm.Search.ShowFollowupDateColumn = false;
+			//}
 			// Load dropdowns for search
 			switch (whatLog)
 			{

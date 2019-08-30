@@ -272,7 +272,7 @@ namespace eCoachingLog.Services
 			return this.reviewRepository.GetShortCallCompletedEvalList(logId);
 		}
 
-		public bool CompleteReview(Review review, User user, string emailTempFileName, string logoFileName, int logIdInSession)
+		public bool CompleteReview(Review review, User user, string emailTempFileName,int logIdInSession)
 		{
 			// Strip potential harmful characters entered by the user
 			review.DetailsCoached = eCoachingLogUtil.CleanInput(review.DetailsCoached);
@@ -294,12 +294,18 @@ namespace eCoachingLog.Services
 
 			if (review.IsRegularPendingForm)
 			{
-				return CompleteRegularPendingReview(review, user, emailTempFileName, logoFileName);
+				return CompleteRegularPendingReview(review, user, emailTempFileName);
 			}
 
 			if (review.IsAcknowledgeForm)
 			{
-				return CompleteAckReview(review, user, emailTempFileName, logoFileName);
+				if (review.IsFollowupPendingCsrForm)
+				{
+					string nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
+					return reviewRepository.CompleteEmployeeAckFollowup(review, nextStatus, user);
+				}
+
+				return CompleteAckReview(review, user, emailTempFileName);
 			}
 
 			if (review.IsResearchPendingForm)
@@ -312,6 +318,13 @@ namespace eCoachingLog.Services
 				return reviewRepository.CompleteCsePendingReview(review, GetNextStatus(review, user), user);
 			}
 
+			if (review.IsFollowupPendingSupervisorForm)
+			{
+				string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP_TEXT;
+
+				return true;
+				//return reviewRepository.CompleteSupervisorFollowup(review, nextStatus, user);
+			}
 			// unexpected pending form, should never reach here
 			StringBuilder sb = new StringBuilder("Unexpected review form: ");
 			var userId = user == null ? "usernull" : user.EmployeeId;
@@ -321,7 +334,7 @@ namespace eCoachingLog.Services
 			return false;
 		}
 
-		private bool CompleteRegularPendingReview(Review review, User user, string emailTempFileName, string logoFileName)
+		private bool CompleteRegularPendingReview(Review review, User user, string emailTempFileName)
 		{
 			bool success = false;
 			string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
@@ -330,7 +343,7 @@ namespace eCoachingLog.Services
 			return success;
 		}
 
-		private bool CompleteAckReview(Review review, User user, string emailTempFileName, string logoFileName)
+		private bool CompleteAckReview(Review review, User user, string emailTempFileName)
 		{
 			bool success = false;
 			string nextStatus = string.Empty;
@@ -341,6 +354,26 @@ namespace eCoachingLog.Services
 				return reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, FormatCoachingNotes(review, user), user);
 			}
 
+			// Followup required
+			if (review.LogDetail.IsFollowupRequired)
+			{
+				// CSR completes review, set status to Pending Supervisor Followup
+				if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
+				{
+					nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT;
+				}
+				else if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP)
+				{
+					nextStatus = Constants.COMPLETED;
+				}
+				else
+				{
+					// should never get to here
+					// because when supervisor reviews the followup log, it is not ack form, it is review form
+					nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP_TEXT;
+				}
+				return reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
+			}
 			// Opportunity
 			if (!review.IsReinforce)
 			{

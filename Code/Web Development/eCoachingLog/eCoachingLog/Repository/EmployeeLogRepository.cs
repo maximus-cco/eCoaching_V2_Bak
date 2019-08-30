@@ -154,6 +154,18 @@ namespace eCoachingLog.Repository
 						logDetail.BatchId = dataReader["strQNBatchId"].ToString();
 						logDetail.StrengthOpportunity = dataReader["strQNStrengthsOpportunities"].ToString();
 
+						if (string.IsNullOrEmpty(dataReader["IsFollowupRequired"].ToString()))
+						{
+							logDetail.IsFollowupRequired = false;
+						}
+						else  
+						{
+							logDetail.IsFollowupRequired = Convert.ToInt16(dataReader["IsFollowupRequired"]) == 1 ? true : false;
+						}
+
+						logDetail.FollowupDueDate = eCoachingLogUtil.AppendPdt(dataReader["FollowupDueDate"].ToString());
+						logDetail.FollowupActualDate = eCoachingLogUtil.AppendPdt(dataReader["FollowupActualDate"].ToString());
+						logDetail.FollowupDetails = dataReader["SupFollowupCoachingNotes"].ToString();
 						break;
                     } // End while
                 } // End using SqlDataReader
@@ -492,6 +504,8 @@ namespace eCoachingLog.Repository
 						log.Value = dataReader["strValue"].ToString();
 						log.CreatedDate = dataReader["SubmittedDate"].ToString();
 						log.IsCoaching = !string.IsNullOrEmpty(log.Source) && log.Source != "Warning" ? true : false;
+						log.IsFollowupRequired = dataReader["SubmittedDate"].ToString().ToLower().Equals("yes") ? true : false;
+						log.FollowupDueDate = dataReader["FollowupDueDate"].ToString();
 
 						logs.Add(log);
 					}
@@ -822,6 +836,12 @@ namespace eCoachingLog.Repository
 					}
 				}
 			}
+
+			// TODO: followup - remove
+			//ChartDataset temp = new ChartDataset();
+			//temp.label = "Pending Followup";
+			//temp.data.Add(100);
+			//chartDatasets.Add(temp);
 			return chartDatasets;
 		}
 

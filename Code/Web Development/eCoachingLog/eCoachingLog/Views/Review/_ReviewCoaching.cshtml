@@ -29,6 +29,10 @@ else if (Model.IsShortCallPendingManagerForm)
 {
 	Html.RenderPartial("_ConfirmReviewShortCalls");
 }
+else if (Model.IsFollowupPendingSupervisorForm)
+{
+	{ Html.RenderPartial("_ReviewFollowup"); }
+}
 
 @Scripts.Render("~/bundles/scripts/review")
 <script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>

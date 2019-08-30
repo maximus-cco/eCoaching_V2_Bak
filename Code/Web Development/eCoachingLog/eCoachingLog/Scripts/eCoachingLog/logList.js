@@ -44,6 +44,7 @@ $(document).ready(function () {
             { data: "SubReasons", name: "strSubCoachingReason", orderable: false },
             { data: "Value", name: "strValue", orderable: false },
             { data: "CreatedDate", name: "SubmittedDate" },
+			{ data: "FollowupDueDate", name: "FollowupDueDate", visible: true }
         ],
 
         initComplete: function (settings, json) {
@@ -60,8 +61,11 @@ $(document).ready(function () {
 	});
 
 	// Dynamically hide column(s)
-    if (showSupervisorColumn === 'False')
-    {
+    if (showSupervisorColumn === 'False') {
     	myTable.column('strEmpSupName:name').visible(false);
+    }
+
+    if (showFollowupDateColumn === 'True') {
+    	myTable.column('FollowupDueDate:name').visible(true);
     }
 });

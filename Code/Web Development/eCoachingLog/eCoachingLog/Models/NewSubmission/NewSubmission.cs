@@ -28,6 +28,9 @@ namespace eCoachingLog.Models
         public string CallTypeName { get; set; }
         public string CallId { get; set; }
 
+		public bool? IsFollowupRequired { get; set; }
+		public DateTime? FollowupDueDate { get; set; }
+
         public int? WarningTypeId { get; set; }
         public int? WarningReasonId { get; set; }
 

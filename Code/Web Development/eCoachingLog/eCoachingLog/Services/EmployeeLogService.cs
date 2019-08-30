@@ -117,6 +117,25 @@ namespace eCoachingLog.Services
 					{
 						log.LogNewText = string.Empty;
 					}
+
+
+					if (!string.IsNullOrEmpty(log.FollowupDueDate))
+					{
+						var today = DateTime.Now;
+						var followupDueDate = DateTime.Parse(log.FollowupDueDate.Replace("PDT", ""));
+						if (today.Date == followupDueDate.Date)
+						{
+							log.LogNewText += "&nbsp;<span class='glyphicon glyphicon-bell'></span> Due";
+						}
+						else if (today.Date > followupDueDate.Date)
+						{
+							log.LogNewText += "&nbsp;<span class='glyphicon glyphicon-bell'></span> Overdue";
+						}
+						else
+						{
+							log.LogNewText += "&nbsp;<span class='glyphicon glyphicon-bell'></span>";
+						}
+					}
 				}
 				catch (Exception ex)
 				{

@@ -43,6 +43,10 @@
 				</div>
 				@{ Html.RenderPartial("_ReviewInfo"); }
 
+				@if (Model.IsFollowupCompleted)
+				{
+					Html.RenderPartial("_FollowupInfo");
+				}
 				<div class="modal-footer mt-2">
 					<div class="form-group">
 						<button class="btn btn-default float-right" id="btn-close" data-dismiss="modal">Close</button>
