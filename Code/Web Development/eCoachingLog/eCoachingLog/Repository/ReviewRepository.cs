@@ -229,9 +229,9 @@ namespace eCoachingLog.Repository
 			return success;
 		}
 
-		public bool CompleteEmpAckReinforceReview(Review review, string nextStatus, User user)
+		public bool CompleteEmpAcknowlegement(Review review, string nextStatus, User user)
 		{
-			logger.Debug("Entered CompleteEmpAckReinforceReview ...");
+			logger.Debug("Entered CompleteEmpAcknowlegement ...");
 
 			bool success = false;
 
@@ -305,7 +305,7 @@ namespace eCoachingLog.Repository
 
 		public bool CompleteAckRegularReview(Review review, string nextStatus, User user)
 		{
-			logger.Debug("Entered CompleteEmpAckReinforceReview ...");
+			logger.Debug("Entered CompleteAckRegularReview ...");
 
 			bool success = false;
 

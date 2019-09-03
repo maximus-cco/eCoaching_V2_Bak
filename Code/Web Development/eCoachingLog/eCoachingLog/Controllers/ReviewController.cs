@@ -284,7 +284,7 @@ namespace eCoachingLog.Controllers
 
 			// Default
 			vm.IsAckOverTurnedAppeal = false;
-			vm.IsReinforce = false;
+			vm.IsMoreReviewRequired = false;
 			vm.ShowCommentTextBox = false;
 			vm.ShowCommentDdl = false;
 
@@ -297,16 +297,16 @@ namespace eCoachingLog.Controllers
 			{
 				vm.IsAckOverTurnedAppeal = true;
 			}
-			else if (IsReinforceLog(vm))
+			else if (IsMoreReviewRequired(vm))
 			{
-				vm.IsReinforce = true;
+				vm.IsMoreReviewRequired = true;
 			}
 
 			if (IsFollowupPendingCsr(vm))
 			{
 				vm.IsFollowupPendingCsrForm = true;
 				vm.IsAckOverTurnedAppeal = false;
-				vm.IsReinforce = false;
+				vm.IsMoreReviewRequired = false;
 			}
 			// Checkbox display text
 			if (vm.IsAckOverTurnedAppeal)
@@ -323,7 +323,7 @@ namespace eCoachingLog.Controllers
 			{
 				if (user.EmployeeId == vm.LogDetail.SupervisorEmpId 
 					|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId
-					|| vm.IsReinforce)
+					|| vm.IsMoreReviewRequired)
 				{
 					vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_MONITOR;
 				}
@@ -489,7 +489,7 @@ namespace eCoachingLog.Controllers
 				vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW);
 		}
 
-		private bool IsReinforceLog(ReviewViewModel vm)
+		private bool IsMoreReviewRequired(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
@@ -521,35 +521,46 @@ namespace eCoachingLog.Controllers
 				// Pending Employee Review
 				else if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
 				{
-					return !IsAckOpportunityLog(vm);
+					//return !IsAckOpportunityLog(vm);
+					if (!string.IsNullOrEmpty(vm.LogDetail.SupReviewedAutoDate)
+							&& (vm.LogDetail.IsIqs
+									|| vm.LogDetail.IsCtc
+									|| vm.LogDetail.IsHigh5Club 
+									|| vm.LogDetail.IsKudo 
+									|| vm.LogDetail.IsAttendance 
+									|| vm.LogDetail.IsMsr 
+									|| vm.LogDetail.IsMsrs))
+					{
+						return true;
+					}
 				}
 			}
 
 			return false;
 		}
 
-		private bool IsAckOpportunityLog(ReviewViewModel vm)
-		{
-			var userEmployeeId = GetUserFromSession().EmployeeId;
+		//private bool IsAckOpportunityLog(ReviewViewModel vm)
+		//{
+		//	var userEmployeeId = GetUserFromSession().EmployeeId;
 
-			// User is the employee of the log
-			if (userEmployeeId == vm.LogDetail.EmployeeId)
-			{
-				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
-				{
-					return (string.IsNullOrEmpty(vm.LogDetail.SupReviewedAutoDate)) ||
-						(!vm.LogDetail.IsIqs &&
-							!vm.LogDetail.IsCtc &&
-							!vm.LogDetail.IsHigh5Club &&
-							!vm.LogDetail.IsKudo &&
-							!vm.LogDetail.IsAttendance &&
-							!vm.LogDetail.IsMsr &&
-							!vm.LogDetail.IsMsrs);
-				}
-			}
+		//	// User is the employee of the log
+		//	if (userEmployeeId == vm.LogDetail.EmployeeId)
+		//	{
+		//		if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
+		//		{
+		//			return (string.IsNullOrEmpty(vm.LogDetail.SupReviewedAutoDate)) ||
+		//				(!vm.LogDetail.IsIqs &&
+		//					!vm.LogDetail.IsCtc &&
+		//					!vm.LogDetail.IsHigh5Club &&
+		//					!vm.LogDetail.IsKudo &&
+		//					!vm.LogDetail.IsAttendance &&
+		//					!vm.LogDetail.IsMsr &&
+		//					!vm.LogDetail.IsMsrs);
+		//		}
+		//	}
 
-			return false;
-		}
+		//	return false;
+		//}
 
 		//private bool IsReinforceLog(ReviewViewModel vm)
 		//{

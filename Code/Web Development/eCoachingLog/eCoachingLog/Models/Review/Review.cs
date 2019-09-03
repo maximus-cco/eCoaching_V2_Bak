@@ -41,7 +41,7 @@ namespace eCoachingLog.Models.Review
 		public bool IsFollowupPendingCsrForm { get; set; }
 
 		public bool IsAckOpportunity { get; set; }
-		public bool IsReinforce { get; set; }
+		public bool IsMoreReviewRequired { get; set; }
 		public bool IsAckOverTurnedAppeal { get; set; }
 
 		public bool IsReviewForm { get; set; }

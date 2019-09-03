@@ -374,19 +374,20 @@ namespace eCoachingLog.Services
 				}
 				return reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
 			}
-			// Opportunity
-			if (!review.IsReinforce)
+
+			// Go to Completed
+			if (!review.IsMoreReviewRequired)
 			{
 				nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
 				success = reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
 			}
-			// Reinforcement
+			// Might need more reviews
 			else
 			{
 				nextStatus = GetNextStatus(review, user);
 				if (review.LogDetail.EmployeeId == user.EmployeeId)
 				{
-					success = reviewRepository.CompleteEmpAckReinforceReview(review, nextStatus, user);
+					success = reviewRepository.CompleteEmpAcknowlegement(review, nextStatus, user);
 				}
 				else
 				{
@@ -472,7 +473,7 @@ namespace eCoachingLog.Services
 			string nextStatus = Constants.LOG_STATUS_UNKNOWN_TEXT;
 			int moduleId = review.LogDetail.ModuleId;
 			// Positive (reinforced, met goal) Ack form
-			if (review.IsAcknowledgeForm && review.IsReinforce)
+			if (review.IsAcknowledgeForm && review.IsMoreReviewRequired)
 			{
 				if (review.LogDetail.EmployeeId == user.EmployeeId)
 				{

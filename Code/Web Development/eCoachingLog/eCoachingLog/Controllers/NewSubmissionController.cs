@@ -75,6 +75,12 @@ namespace eCoachingLog.Controllers
 				string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
 				try
 				{
+					// For some reason, when a log is NOT required follow-up, a follow-up is still passed back from page (even though not entered)
+					if (vm.IsFollowupRequired.HasValue && !vm.IsFollowupRequired.Value )
+					{
+						vm.FollowupDueDate = null;
+					}
+
 					logNameSaved = this.newSubmissionService.Save(vm, GetUserFromSession(), out isDuplicate);
 					if (string.IsNullOrEmpty(logNameSaved))
 					{

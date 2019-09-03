@@ -119,7 +119,7 @@ namespace eCoachingLog.Services
 					}
 
 
-					if (!string.IsNullOrEmpty(log.FollowupDueDate))
+					if (log.IsFollowupRequired)
 					{
 						var today = DateTime.Now;
 						var followupDueDate = DateTime.Parse(log.FollowupDueDate.Replace("PDT", ""));
@@ -135,6 +135,11 @@ namespace eCoachingLog.Services
 						{
 							log.LogNewText += "&nbsp;<span class='glyphicon glyphicon-bell'></span>";
 						}
+					}
+					// To be safe, clean follow up date if followup is not required, in case there is inconsistant data
+					else
+					{
+						log.FollowupDueDate = null;
 					}
 				}
 				catch (Exception ex)

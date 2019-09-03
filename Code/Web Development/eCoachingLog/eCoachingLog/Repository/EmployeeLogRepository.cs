@@ -504,7 +504,7 @@ namespace eCoachingLog.Repository
 						log.Value = dataReader["strValue"].ToString();
 						log.CreatedDate = dataReader["SubmittedDate"].ToString();
 						log.IsCoaching = !string.IsNullOrEmpty(log.Source) && log.Source != "Warning" ? true : false;
-						log.IsFollowupRequired = dataReader["SubmittedDate"].ToString().ToLower().Equals("yes") ? true : false;
+						log.IsFollowupRequired = dataReader["IsFollowupRequired"].ToString().ToLower().Equals("yes") ? true : false;
 						log.FollowupDueDate = dataReader["FollowupDueDate"].ToString();
 
 						logs.Add(log);

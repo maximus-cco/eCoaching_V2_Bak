@@ -62,7 +62,7 @@ namespace eCoachingLog.ViewModels
 		public bool IsAcknowledgeForm { get; set; }
 		public bool IsFollowupPendingSupervisorForm { get; set; }
 		public bool IsFollowupPendingCsrForm { get; set; }
-		public bool IsReinforce { get; set; }
+		public bool IsMoreReviewRequired { get; set; }
 		public bool IsAckOverTurnedAppeal { get; set; }
 
 		// To control display on Historical/Review
@@ -317,7 +317,7 @@ namespace eCoachingLog.ViewModels
 				LogDetail = vm.LogDetail,
 				WarningLogDetail = vm.WarningLogDetail,
 				LogStatusLevel = vm.LogStatusLevel,
-				IsReinforce = vm.IsReinforce,
+				IsMoreReviewRequired = vm.IsMoreReviewRequired,
 				Acknowledge = vm.Acknowledge,
 				ShortCallList = vm.ShortCallList,
 				Comments = vm.Comments,
