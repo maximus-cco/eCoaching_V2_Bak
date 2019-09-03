@@ -98,7 +98,6 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_PENDING_QUALITYLEAD_REVIEW = 8;
 		public const int LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW = 9;
 		public const int LOG_STATUS_PENDING_FOLLOWUP = 10;
-		public const int LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP = 11;
 		// Status Description
 		public const string LOG_STATUS_UNKNOWN_TEXT = "Unknown";
 		public const string LOG_STATUS_COMPLETED_TEXT = "Completed";
@@ -111,7 +110,6 @@ namespace eCoachingLog.Utils
 		public const string LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT = "Pending Quality Lead Review";
 		public const string LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW_TEXT = "Pending Deputy Program Manager Review";
 		public const string LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT = "Pending Follow-up";
-		public const string LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP_TEXT = "Pending Employee Acknowledge Follow-up";
 
 		public const int LOG_STATUS_LEVEL_1 = 1;
 		public const int LOG_STATUS_LEVEL_2 = 2;
@@ -155,7 +153,6 @@ namespace eCoachingLog.Utils
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_MANAGER_REVIEW), LOG_STATUS_LEVEL_3 },
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_ACKNOWLEDGEMENT), LOG_STATUS_LEVEL_4 },
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_FOLLOWUP), LOG_STATUS_LEVEL_2 },
-			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP), LOG_STATUS_LEVEL_1},
 			// Supervisor
 			{ new Tuple<int, int>(MODULE_SUPERVISOR, LOG_STATUS_PENDING_EMPLOYEE_REVIEW), LOG_STATUS_LEVEL_1 },
 			{ new Tuple<int, int>(MODULE_SUPERVISOR, LOG_STATUS_PENDING_MANAGER_REVIEW), LOG_STATUS_LEVEL_2 },

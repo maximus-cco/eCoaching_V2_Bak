@@ -320,10 +320,9 @@ namespace eCoachingLog.Services
 
 			if (review.IsFollowupPendingSupervisorForm)
 			{
-				string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP_TEXT;
+				string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 
-				return true;
-				//return reviewRepository.CompleteSupervisorFollowup(review, nextStatus, user);
+				return reviewRepository.CompleteSupervisorFollowup(review, nextStatus, user);
 			}
 			// unexpected pending form, should never reach here
 			StringBuilder sb = new StringBuilder("Unexpected review form: ");
@@ -362,7 +361,7 @@ namespace eCoachingLog.Services
 				{
 					nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT;
 				}
-				else if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP)
+				else if (review.IsFollowupPendingCsrForm)
 				{
 					nextStatus = Constants.COMPLETED;
 				}
@@ -370,7 +369,6 @@ namespace eCoachingLog.Services
 				{
 					// should never get to here
 					// because when supervisor reviews the followup log, it is not ack form, it is review form
-					nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP_TEXT;
 				}
 				return reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
 			}

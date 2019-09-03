@@ -584,7 +584,8 @@ namespace eCoachingLog.Controllers
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 			return (userEmployeeId == vm.LogDetail.EmployeeId
-				&& vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP); 
+				&& vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW
+				&& !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate)); 
 		}
 
 		private bool IsFollowupPendingSupervisor(ReviewViewModel vm)
@@ -891,7 +892,11 @@ namespace eCoachingLog.Controllers
 
 			if (user.EmployeeId == vm.LogDetail.EmployeeId)
 			{
-				show = vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_ACK_FOLLOWUP;
+				if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW
+						&& !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate))
+				{
+					show = true;
+				}
 			}
 			else if (user.EmployeeId == vm.LogDetail.SupervisorEmpId || user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
 			{

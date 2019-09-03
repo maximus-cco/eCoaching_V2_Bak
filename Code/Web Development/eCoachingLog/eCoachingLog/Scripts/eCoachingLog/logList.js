@@ -68,4 +68,8 @@ $(document).ready(function () {
     if (showFollowupDateColumn === 'True') {
     	myTable.column('FollowupDueDate:name').visible(true);
     }
+	else
+	{
+		myTable.column('FollowupDueDate:name').visible(false);
+	}
 });

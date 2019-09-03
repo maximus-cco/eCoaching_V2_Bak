@@ -524,7 +524,7 @@ namespace eCoachingLog.Repository
 			bool success = false;
 
 			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_NEWXXXXXXXXXXX]", connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending_Followup]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
@@ -532,7 +532,8 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
 				command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", DateTime.Now);
-				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsCoached);
+				command.Parameters.AddWithValueSafe("@dtmSupFollowupDate", DateTime.Now);
+				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsFollowup);
 
 				try
 				{
@@ -559,15 +560,15 @@ namespace eCoachingLog.Repository
 			bool success = false;
 
 			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_NEWXXXXXXXXXXX]", connection))
+			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Employee_Pending_Followup]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
-				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
-				command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", DateTime.Now);
-				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsCoached);
+				command.Parameters.AddWithValueSafe("@bitisCSRAcknowledged", review.Acknowledge);
+				command.Parameters.AddWithValueSafe("@dtmCSRReviewAutoDate", DateTime.Now);
+				command.Parameters.AddWithValueSafe("@nvcCSRComments", review.Comment);
 
 				try
 				{
