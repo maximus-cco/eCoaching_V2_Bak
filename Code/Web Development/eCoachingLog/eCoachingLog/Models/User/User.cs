@@ -20,6 +20,8 @@ namespace eCoachingLog.Models.User
 		public bool IsAccessHistoricalDashboard { get; set; }
 		// Whether the user is allowed to export data to excel on Historical Dashboard page
 		public bool IsExportExcel { get; set; }
+		// Whether to display follow up information on dashboards
+		public bool ShowFollowup { get; set; }
 
 		public bool IsCsr
 		{
@@ -49,6 +51,7 @@ namespace eCoachingLog.Models.User
 			this.IsAccessMyDashboard = false;
 			this.IsAccessHistoricalDashboard = false;
 			this.IsExportExcel = false;
+			this.ShowFollowup = false;
         }
     }
 }

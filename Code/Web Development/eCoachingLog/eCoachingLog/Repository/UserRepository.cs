@@ -39,6 +39,7 @@ namespace eCoachingLog.Repository
 						user.IsAccessMyDashboard = (dataReader["MyDashboard"] == DBNull.Value) ? false : (bool)dataReader["MyDashboard"];
 						user.IsAccessHistoricalDashboard = (dataReader["HistoricalDashboard"] == DBNull.Value) ? false : (bool)dataReader["HistoricalDashboard"];
 						user.IsExportExcel = (dataReader["ExcelExport"] == DBNull.Value) ? false : (bool)dataReader["ExcelExport"];
+						user.ShowFollowup = (dataReader["FollowupDisplay"] == DBNull.Value) ? false : (bool)dataReader["FollowupDisplay"];
 					}
                 }
             }

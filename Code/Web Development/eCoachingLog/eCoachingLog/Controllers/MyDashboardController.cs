@@ -171,11 +171,10 @@ namespace eCoachingLog.Controllers
 			// Set to MySubmission if "My Submission" link is clicked, used to control review page to be read only or editable
 			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
 
-			// TODO: need to check with FS when to show this column
-			//if (user.IsCsr)
-			//{
-			//	vm.Search.ShowFollowupDateColumn = false;
-			//}
+			if (user.ShowFollowup)
+			{
+				vm.Search.ShowFollowupDateColumn = true;
+			}
 			// Load dropdowns for search
 			switch (whatLog)
 			{
@@ -202,6 +201,7 @@ namespace eCoachingLog.Controllers
 				// My Completed section on My Dashboard
 				case "_MyCompleted":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_COMPLETED;
+					vm.Search.ShowFollowupDateColumn = false;
 					// Default to all
 					vm.Search.SupervisorId = "-1";
 					vm.Search.ManagerId = "-1";
@@ -227,6 +227,7 @@ namespace eCoachingLog.Controllers
 				// My Team Completed on My Dashboard
 				case "_MyTeamCompleted":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_COMPLETED;
+					vm.Search.ShowFollowupDateColumn = false;
 
 					if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 					{
@@ -251,12 +252,14 @@ namespace eCoachingLog.Controllers
 				case "_MyTeamWarning":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING;
 					Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
+					vm.Search.ShowFollowupDateColumn = false;
 					// Warning status dropdown
 					vm.WarningStatusSelectList = GetWarningStatuses(user);
 					break;
 				case "_MySubmission":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SUBMITTED;
 					Session["currentPage"] = Constants.PAGE_MY_SUBMISSION;
+					vm.Search.ShowFollowupDateColumn = false;
 					// Manager dropdown
 					vm.ManagerSelectList = GetMgrsForMySubmission(user);
 					// Supervisor dropdown
@@ -269,6 +272,7 @@ namespace eCoachingLog.Controllers
 				case "_MySiteLogs":
 					// Default to pending
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING;
+					vm.Search.ShowFollowupDateColumn = false;
 					// Warning status dropdown
 					// vm.WarningStatusSelectList = GetWarningStatuses(user);
 					DateTime selectedMonth = DateTime.Parse(month);

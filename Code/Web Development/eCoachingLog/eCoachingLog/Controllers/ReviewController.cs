@@ -239,6 +239,7 @@ namespace eCoachingLog.Controllers
 				|| logDetail.StatusId == Constants.LOG_STATUS_COMPLETED) // Completed
 			{
 				vm.IsReadOnly = true;
+				vm.ShowFollowupInfo = ShowFollowupInfo(vm);
 				vm.ShowViewMgtNotes = !string.IsNullOrEmpty(vm.LogDetail.MgrNotes);
 				if (vm.LogDetail.IsIqs && vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 				{
@@ -889,6 +890,11 @@ namespace eCoachingLog.Controllers
 		{
 			bool show = false;
 			var user = GetUserFromSession();
+
+			if (!vm.LogDetail.IsFollowupRequired)
+			{
+				return false;
+			}
 
 			if (user.EmployeeId == vm.LogDetail.EmployeeId)
 			{
