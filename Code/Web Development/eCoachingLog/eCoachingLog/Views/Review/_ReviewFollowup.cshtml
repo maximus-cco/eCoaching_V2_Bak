@@ -5,7 +5,7 @@
 	@Html.HiddenFor(m => m.LogDetail.LogId)
 	@Html.HiddenFor(m => m.IsFollowupPendingSupervisorForm)
 	<div class="mt-2">
-		<strong>Follow-up required on:</strong>&nbsp;@Model.LogDetail.FollowupDueDate
+		<strong>Follow-up required on:</strong>&nbsp;@Model.FollowupDueDateNoTime
 	</div>
 
 	if (!Model.IsFollowupDue)

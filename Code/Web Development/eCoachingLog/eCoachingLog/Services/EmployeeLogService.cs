@@ -4,6 +4,7 @@ using eCoachingLog.Models.EmployeeLog;
 using eCoachingLog.Models.MyDashboard;
 using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
+using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -121,19 +122,21 @@ namespace eCoachingLog.Services
 
 					if (log.IsFollowupRequired)
 					{
+						log.LogNewText += "&nbsp;<span class='glyphicon glyphicon-bell'></span>";
+
 						var today = DateTime.Now;
 						var followupDueDate = DateTime.Parse(log.FollowupDueDate.Replace("PDT", ""));
-						if (today.Date == followupDueDate.Date)
+						// Log not completed yet
+						if (!string.Equals(log.Status, Constants.LOG_STATUS_COMPLETED_TEXT, StringComparison.OrdinalIgnoreCase))
 						{
-							log.LogNewText += "&nbsp;<span class='glyphicon glyphicon-bell'></span> Due";
-						}
-						else if (today.Date > followupDueDate.Date)
-						{
-							log.LogNewText += "&nbsp;<span class='glyphicon glyphicon-bell'></span> Overdue";
-						}
-						else
-						{
-							log.LogNewText += "&nbsp;<span class='glyphicon glyphicon-bell'></span>";
+							if (today.Date == followupDueDate.Date)
+							{
+								log.LogNewText += " Due";
+							}
+							else if (today.Date > followupDueDate.Date)
+							{
+								log.LogNewText += " Overdue";
+							}
 						}
 					}
 					// To be safe, clean follow up date if followup is not required, in case there is inconsistant data

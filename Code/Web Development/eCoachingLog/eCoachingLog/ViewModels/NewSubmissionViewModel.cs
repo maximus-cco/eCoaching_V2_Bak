@@ -1,5 +1,6 @@
 ﻿using eCoachingLog.Models;
 using eCoachingLog.Models.Common;
+using eCoachingLog.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -200,21 +201,26 @@ namespace eCoachingLog.ViewModels
                     }
                 }
             }
-			// Validate follow-up entries
-			if (this.IsFollowupRequired.HasValue)
-			{
-				// followup Date
-				if (!this.FollowupDueDate.HasValue)
-				{
-					var followupDueDate = new[] { "FollowupDueDate" };
-					yield return new ValidationResult("Please select a follow-up date.", followupDueDate);
-				}
-			}
-			else
+
+			// Validate follow-up entries for CSR logs only
+			if (this.ModuleId == Constants.MODULE_CSR)
 			{
 				// followup radio button
-				var isFollowupRequired = new[] { "IsFollowupRequired" };
-				yield return new ValidationResult("Please make a selction.", isFollowupRequired);
+				if (!this.IsFollowupRequired.HasValue)
+				{
+					var isFollowupRequired = new[] { "IsFollowupRequired" };
+					yield return new ValidationResult("Please make a selction.", isFollowupRequired);
+				}
+
+				// followup Date
+				if (this.IsFollowupRequired.HasValue && this.IsFollowupRequired.Value)
+				{
+					if (!this.FollowupDueDate.HasValue)
+					{
+						var followupDueDate = new[] { "FollowupDueDate" };
+						yield return new ValidationResult("Please select a follow-up date.", followupDueDate);
+					}
+				}
 			}
 		}
 

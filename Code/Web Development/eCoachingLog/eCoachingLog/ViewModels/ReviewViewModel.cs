@@ -84,6 +84,19 @@ namespace eCoachingLog.ViewModels
 		public bool ShowFollowupInfo { get; set; }
 		public bool IsFollowupCompleted { get; set; }
 		public bool IsFollowupDue { get; set; }
+		public string FollowupDueDateNoTime
+		{
+			get
+			{
+				if (!string.IsNullOrEmpty(this.LogDetail.FollowupDueDate))
+				{
+					return DateTime.Parse(this.LogDetail.FollowupDueDate.Replace("PDT", "")).ToString("MM/dd/yyyy");
+				}
+
+				return string.Empty;
+			}
+		}
+
 		public DateTime? ActualFollowupDate { get; set; }
 		[AllowHtml]
 		public string FollowupDetails { get; set; } // Input textarea

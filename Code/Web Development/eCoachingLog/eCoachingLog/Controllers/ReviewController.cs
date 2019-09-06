@@ -207,7 +207,7 @@ namespace eCoachingLog.Controllers
 
 			vm.ShowEmployeeReviewInfo = true;
 			vm.ShowFollowupInfo = ShowFollowupInfo(vm);
-			vm.IsFollowupCompleted = vm.LogDetail.IsFollowupRequired && vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED;
+			vm.IsFollowupCompleted = vm.LogDetail.IsFollowupRequired && !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate);
 			vm.IsFollowupDue = vm.LogDetail.IsFollowupRequired && DateTime.Compare(DateTime.Now, DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace("PDT", ""))) >= 0 ;
 
 			// Load short call list
@@ -891,22 +891,28 @@ namespace eCoachingLog.Controllers
 			bool show = false;
 			var user = GetUserFromSession();
 
-			if (!vm.LogDetail.IsFollowupRequired)
+			if (vm.LogDetail.ModuleId != Constants.MODULE_CSR || !vm.LogDetail.IsFollowupRequired)
 			{
 				return false;
 			}
 
 			if (user.EmployeeId == vm.LogDetail.EmployeeId)
 			{
-				if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW
-						&& !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate))
-				{
-					show = true;
-				}
+				show = true;
+
+				//if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
+				//		//&& !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate))
+				//{
+				//	show = true;
+				//}
 			}
-			else if (user.EmployeeId == vm.LogDetail.SupervisorEmpId || user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+			else if (user.EmployeeId == vm.LogDetail.SupervisorEmpId 
+						|| user.EmployeeId == vm.LogDetail.ManagerEmpId
+						|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
 			{
-				show = vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP;
+				show = true;
+
+				//show = vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP;
 			}
 
 			return show;

@@ -43,7 +43,7 @@
 				</div>
 				@{ Html.RenderPartial("_ReviewInfo"); }
 
-				@if (Model.IsFollowupCompleted)
+				@if (Model.ShowFollowupInfo)
 				{
 					Html.RenderPartial("_FollowupInfo");
 				}
