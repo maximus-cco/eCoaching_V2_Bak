@@ -1,10 +1,10 @@
 /*
-sp_AT_Coaching_Inactivation_Reactivation(02).sql
-Last Modified Date: 10/23/2017
+sp_AT_Coaching_Inactivation_Reactivation(03).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 02: Modified to support Encryption of sensitive data - Open key -  TFS 7856 - 10/23/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -17,10 +17,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_AT_Coaching_Inactivation_Reactivation]
 GO
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -104,6 +106,20 @@ IF @strReason = 'Other'
 BEGIN
 SET @strReason = 'Other - ' + @strReasonOther
 END
+
+CREATE TABLE #Temp_Logs (
+    ID bigint,
+	LKS int,
+	InactiveDays int);
+
+INSERT INTO #Temp_Logs
+(ID, LKS, InactiveDays)
+SELECT ID, 
+[EC].[fn_intLastKnownStatusForCoachingID](ID),
+[EC].[fn_intLogInactiveDays](ID)
+FROM @tableIds ID;
+
+
              
   INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
            ([CoachingID],[FormName],[LastKnownStatus],[Action]
@@ -111,11 +127,11 @@ END
       SELECT [CoachingID], [Formname], [StatusID],  @strAction,
       Getdate(), @strRequestrID, @strReason, @strComments 
       FROM  [EC].[Coaching_Log]CL JOIN @tableIds ID ON
-      CL.CoachingID = ID.ID 
+      CL.CoachingID = ID.ID; 
 
           
              
-WAITFOR DELAY '00:00:00:02'  -- Wait for 2 ms
+WAITFOR DELAY '00:00:00:02'; -- Wait for 2 ms
     --PRINT 'STEP1'
 
 
@@ -123,7 +139,19 @@ UPDATE [EC].[Coaching_Log]
 SET StatusID = (SELECT  CASE @strAction
 						WHEN 'Inactivate' THEN 2 ELSE [EC].[fn_intLastKnownStatusForCoachingID](CL.CoachingID) END)
 FROM [EC].[Coaching_Log]CL JOIN @tableIds ID ON
-CL.CoachingID = ID.ID						
+CL.CoachingID = ID.ID;	
+
+WAITFOR DELAY '00:00:00:02';
+
+UPDATE [EC].[Coaching_Log]
+SET [FollowupDueDate] = (SELECT  CASE @strAction
+						WHEN 'Reactivate' THEN DATEADD(DAY, T.InactiveDays, CL.FollowupDueDate) ELSE CL.FollowupDueDate  END)
+FROM [EC].[Coaching_Log]CL JOIN #Temp_Logs T ON
+CL.CoachingID = T.ID
+WHERE T.LKS = 10 AND CL.[FollowupDueDate] IS NOT NULL AND CL.[FollowupActualDate] IS NULL
+;	
+
+			
 						
 CLOSE SYMMETRIC KEY [CoachingKey]           
 
@@ -158,8 +186,8 @@ CLOSE SYMMETRIC KEY [CoachingKey]
    end
 return 0
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
-
-
-
-
 GO
+
+
+
+

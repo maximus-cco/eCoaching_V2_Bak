@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical(02).sql
-Last Modified Date: 03/19/2019
+sp_SelectFrom_Coaching_Log_Historical(03).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 01: Document Initial Revision created during hist dashboard redesign.  TFS 7138 - 04/30/2018
 
@@ -20,12 +21,8 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 
 --	====================================================================
@@ -34,6 +31,7 @@ GO
 --	Description: *	This procedure selects the CSR e-Coaching completed records to display on SUP historical page
 --  Created during Hist dashboard move to new architecture - TFS 7138 - 04/24/2018
 --  Modified to support Quality Now TFS 13332 -  03/01/2019
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
 
@@ -179,6 +177,8 @@ AS
 				,x.strSource
 				,x.SubmittedDate
 				,x.strSubmitterName
+				,x.IsFollowupRequired
+				,x.FollowupDueDate
 				,x.orderkey
   ,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
   FROM 
@@ -192,6 +192,8 @@ AS
 	  ,[so].[SubCoachingSource]	strSource
 	  ,[cl].[SubmittedDate]	SubmittedDate
 	  ,[vehs].[Emp_Name] strSubmitterName
+	  ,CASE WHEN [cl].[IsFollowupRequired] = 1 THEN ''Yes'' ELSE ''No'' END IsFollowupRequired
+      ,[cl].[FollowupDueDate] FollowupDueDate
 	  ,''ok1'' orderkey
     FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 	JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
@@ -201,7 +203,8 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
 	JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK) ON cl.CoachingID = clr.CoachingID' +  @NewLineChar +
 	@where + ' ' + '
-	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name]'
+	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name]
+	, [cl].[IsFollowupRequired], [cl].[FollowupDueDate]'
 
 SET @where = 
 ' WHERE convert(varchar(8),[wl].[SubmittedDate],112) >= ''' + @strSDate + '''' +  @NewLineChar +
@@ -280,6 +283,8 @@ UNION
 	,[so].[SubCoachingSource]	strSource
 	,[wl].[SubmittedDate]	SubmittedDate
 	,[vehs].[Emp_Name]	strSubmitterName
+	,''NA'' IsFollowupRequired
+    ,''-'' FollowupDueDate
 	,''ok2'' orderkey
   FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
   JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
@@ -304,6 +309,8 @@ SELECT strLogID,
   ,strSource
   ,SubmittedDate
   ,strSubmitterName
+  ,IsFollowupRequired
+  ,FollowupDueDate
   ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strCoachingReasonFromCoachingID](T.strLogID)
 	 ELSE [EC].[fn_strCoachingReasonFromWarningID](T.strLogID) 
    END strCoachingReason
@@ -333,9 +340,4 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- SelectFrom_Coaching_Log_Historical
-
-
-
 GO
-
-

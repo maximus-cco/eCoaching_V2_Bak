@@ -1,9 +1,9 @@
 /*
-sp_Dashboard_Summary_Count_ByStatus(01).sql
-Last Modified Date: 05/20/2018
+sp_Dashboard_Summary_Count_ByStatus(02).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
 
 */
@@ -20,15 +20,8 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -36,6 +29,7 @@ GO
 --  Description: Retrieves Count of Logs by Status to be displayed
 --  on the My Dashboard.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Summary_Count_ByStatus] 
 @nvcEmpID nvarchar(10)
@@ -63,6 +57,7 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID)
 --7 - Pending Sr. Manager Review
 --8 - Pending Quality Lead Review
 --9 - Pending Deputy Program Manager Review
+--10 - Pending Follow-up
 
 
 IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
@@ -86,15 +81,15 @@ SET @nvcSQL = ' ;WITH SelectedStatus AS
 IF @nvcEmpRole = 'Supervisor'
 
 SET @nvcSQL = ';WITH SelectedStatus AS
-				(SELECT StatusID, Status FROM EC.DIM_Status WHERE StatusID in (3,4,6,8)),
+				(SELECT StatusID, Status FROM EC.DIM_Status WHERE StatusID in (3,4,6,8,10)),
 
                 SelectedLogs AS
 			   (SELECT [cl].[StatusID], Count(CoachingID) LogCount
                FROM [EC].[Coaching_Log] cl WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh 
 			   ON eh.[EMP_ID] = cl.[EmpID] 
 			   WHERE ((cl.[EmpID] = ''' + @nvcEmpID + '''  AND cl.[StatusID] in (3,4))
-		       OR ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcEmpID + ''' AND cl.[StatusID] in (3,6,8)))
-		       OR (cl.[ReassignedToId] = ''' + @nvcEmpID + '''  AND [ReassignCount] <> 0 AND cl.[StatusID]in (3,6,8)))
+		       OR ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcEmpID + ''' AND cl.[StatusID] in (3,6,8,10)))
+		       OR (cl.[ReassignedToId] = ''' + @nvcEmpID + '''  AND [ReassignCount] <> 0 AND cl.[StatusID]in (3,6,8,10)))
 		       AND cl.[EmpID]  <> ''999999''
 			   GROUP BY [cl].[StatusID])
 			   
@@ -148,13 +143,6 @@ ErrorHandler:
     Return(@@ERROR);
 	    
 END --sp_Dashboard_Summary_Count_ByStatus
-
-
-
-
-
-
 GO
-
 
 

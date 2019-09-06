@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical_Export(8).sql
-Last Modified Date: 08/13/2019
+sp_SelectFrom_Coaching_Log_Historical_Export(09).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
+Version 09: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 08: Modified to add left join for submitter during changes for TFS 15058 - 08/13/2019
 Version 07b: Updated from UAT Feedback - TFS 14108 - 08/01/2019
 Version 07a: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 07/08/2019
@@ -26,11 +27,8 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/14/2015
@@ -43,6 +41,7 @@ GO
 -- Modified to incorporate QualityNow Logs. TFS 13332 -  03/15/2019
 -- Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
 -- Modified to add left join for submitter during changes for TFS 15058 - 08/13/2019
+-- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
 
@@ -175,6 +174,13 @@ SELECT [cl].[CoachingID] CoachingID
   ,[cl].[MgrNotes] MgrNotes
   ,[cl].[CSRReviewAutoDate]	EmpReviewAutoDate
   ,[cl].[CSRComments] EmpComments
+ ,CASE WHEN [cl].[IsFollowupRequired] = 1 THEN ''Yes'' ELSE ''No'' END FollowupRequired
+,[cl].[FollowupDueDate] FollowupDate
+,[cl].[FollowupActualDate]FollowupCoachingDate
+,[cl].[SupFollowupAutoDate] SupervisorFollowupAutoDate
+,[cl].[SupFollowupCoachingNotes] FollowupCoachingNotes
+,[cl].[EmpAckFollowupAutoDate] CSRFollowupAutoDate
+,[cl].[EmpAckFollowupComments] CSRFollowupComments
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
 JOIN [EC].[Employee_Hierarchy] eh WITH (NOLOCK) ON eh.[EMP_ID] = veh.[EMP_ID]
 JOIN cl ON cl.EmpID = eh.Emp_ID 
@@ -341,9 +347,5 @@ EXEC (@nvcSQL3)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey] 		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
-
-
 GO
-
-
 

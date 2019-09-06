@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_MyPending_Count(02).sql
-Last Modified Date: 08/15/2018
+sp_SelectFrom_Coaching_Log_MyPending_Count(03).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 02: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
 
@@ -20,9 +21,9 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -30,6 +31,7 @@ GO
 --	Description: *	This procedure returns the count of Pending logs for logged in user.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_Count] 
 @nvcUserIdin nvarchar(10),
@@ -78,8 +80,8 @@ END
 IF @nvcEmpRole = 'Supervisor'
 BEGIN
 SET @where = @where + ' AND ((cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (3,4))' +  @NewLineChar +
-		       ' OR ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] in (3,6,8)))' +  @NewLineChar +
-		       ' OR (cl.[ReassignedToId] = ''' + @nvcUserIdin + '''  AND [ReassignCount] <> 0 AND cl.[StatusID] in (3,6,8)))'
+		       ' OR ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] in (3,6,8,10)))' +  @NewLineChar +
+		       ' OR (cl.[ReassignedToId] = ''' + @nvcUserIdin + '''  AND [ReassignCount] <> 0 AND cl.[StatusID] in (3,6,8,10)))'
 END
 
 IF @nvcEmpRole in ( 'Manager', 'SrManager')
@@ -122,7 +124,8 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending_Count
-GO
 
+
+GO
 
 

@@ -1,8 +1,9 @@
 /*
-sp_Select_Employee_Details(02).sql
-Last Modified Date: 05/16/2018
+sp_Select_Employee_Details(03).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 02; Updated during MySubmission move to new architecture - TFS 7137 - 05/16/2018 
 Version 01: Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
 
@@ -21,12 +22,8 @@ GO
 		
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -34,6 +31,7 @@ GO
 --	Description: *	This procedure takes an Employee Lan ID and returns the Employee details.
 --  Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
 --  Updated during My Dashboard move to new architecture - TFS 7137 - 05/16/2018 
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Employee_Details] 
 @nvcEmpLanin nvarchar(30)
@@ -70,6 +68,7 @@ SELECT EH.[Emp_ID]
 				,RA.[HistoricalDashboard]
 				,[EC].[fn_strCheckIf_ExcelExport](EH.[Emp_ID],UR.[Role]) ExcelExport
 				,[EC].[fn_strCheckIf_ACLRole](EH.[Emp_ID], ''ECL'') ECLUser
+				,CASE WHEN EH.[Emp_Job_Code] LIKE ''WACS%'' THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END FollowupDisplay
  FROM [EC].[View_Employee_Hierarchy] VEH  WITH (NOLOCK)  JOIN  [EC].[Employee_Hierarchy]EH WITH (NOLOCK) 
  ON VEH.[Emp_ID]= EH.[Emp_ID] JOIN UserRole UR
  ON EH.[Emp_ID] = UR.[Emp_ID] JOIN [EC].[UI_Role_Page_Access] RA
@@ -80,10 +79,5 @@ SELECT EH.[Emp_ID]
 
 EXEC (@nvcSQL)	
 END -- sp_Select_Employee_Details
-
-
-
 GO
-
-
 

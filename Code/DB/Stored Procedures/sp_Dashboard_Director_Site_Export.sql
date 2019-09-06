@@ -1,9 +1,9 @@
 /*
-sp_Dashboard_Director_Site_Export(03A).sql
-Last Modified Date: 08/01/2019
+sp_Dashboard_Director_Site_Export(04).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 04: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 03A: Updated from UAT Feedback - TFS 14108 - 08/01/2019
 Version 03: Modified to support new handling for Short Calls. TFS 14108 - 07/09/2019
 Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
@@ -22,11 +22,8 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -35,6 +32,7 @@ GO
 --  Created during My dashboard move to new architecture - TFS 7137 - 07/12/2018
 --  Modified to incorporate QualityNow Logs. TFS 13332 -  03/15/2019
 --  Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Director_Site_Export] 
 @nvcUserIdin nvarchar(10),
@@ -105,6 +103,13 @@ SET @nvcSQL1 = 'SELECT [cl].[CoachingID] strLogID
   ,[cl].[MgrNotes] MgrNotes
   ,[cl].[CSRReviewAutoDate]	EmpReviewAutoDate
   ,[cl].[CSRComments] EmpComments
+ ,CASE WHEN [cl].[IsFollowupRequired] = 1 THEN ''Yes'' ELSE ''No'' END FollowupRequired
+,[cl].[FollowupDueDate] FollowupDate
+,[cl].[FollowupActualDate]FollowupCoachingDate
+,[cl].[SupFollowupAutoDate] SupervisorFollowupAutoDate
+,[cl].[SupFollowupCoachingNotes] FollowupCoachingNotes
+,[cl].[EmpAckFollowupAutoDate] CSRFollowupAutoDate
+,[cl].[EmpAckFollowupComments] CSRFollowupComments
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
 JOIN [EC].[Employee_Hierarchy] eh WITH (NOLOCK) ON eh.[EMP_ID] = veh.[EMP_ID]
 JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)  ON cl.EmpID = eh.Emp_ID 
@@ -117,8 +122,7 @@ JOIN [EC].[DIM_Coaching_Reason]dcr ON clr.CoachingReasonID = dcr.CoachingReasonI
 JOIN [EC].[DIM_Sub_Coaching_Reason]dscr ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID 
 WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
 AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + ''' 
-AND [cl].[SourceID] NOT IN (235,236)
-AND SUBSTRING([cl].[strReportCode], 1, 3) <> ''ISQ'' ' +
+AND [cl].[SourceID] NOT IN (235,236) ' +
 @where + ' ' + '
 AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
 AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
@@ -266,9 +270,12 @@ EXEC (@nvcSQL3)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
-END -- sp_Dashboard_Director_Site_Coaching_Export
-
-
+END -- sp_Dashboard_Director_Site_Export
 GO
+
+
+
+
+
 
 

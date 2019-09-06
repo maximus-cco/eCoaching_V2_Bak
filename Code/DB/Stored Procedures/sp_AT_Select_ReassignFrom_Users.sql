@@ -1,12 +1,11 @@
 /*
-sp_AT_Select_ReassignFrom_Users(03).sql
-Last Modified Date: 12/01/2017
+sp_AT_Select_ReassignFrom_Users(04).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 03: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 12/01/2017
-
 Version 02: Modified to support additional Modules - TFS 8793 - 11/16/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -19,10 +18,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users]
 GO
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -39,6 +40,7 @@ GO
 -- removed Active check for reassigned and review managers per TFS 3441 - 09/07/2016
 -- Modified to support additional Modules per TFS 8793 - 11/16/2017
 -- Modified to support Encryption of sensitive data - Open key and use employee View for emp attributes. TFS 7856 - 12/01/2017
+-- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users] 
 @strRequesterin nvarchar(30), @intModuleIdin INT, @intStatusIdin INT
@@ -64,7 +66,7 @@ SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate)
 SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@nvcRequesterID)
 SET @strATAdminUser = EC.fn_strCheckIfATSysAdmin(@nvcRequesterID) 
 
-IF ((@intStatusIdin IN (6,8) AND @intModuleIdin NOT in (-1,2))
+IF ((@intStatusIdin IN (6,8,10) AND @intModuleIdin NOT in (-1,2))
 OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
 
 BEGIN
@@ -151,9 +153,5 @@ EXEC (@nvcSQL)
 
 
 End --sp_AT_Select_ReassignFrom_Users
-
-
-
-
-
 GO
+

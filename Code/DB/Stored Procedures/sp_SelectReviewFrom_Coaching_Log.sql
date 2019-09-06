@@ -1,8 +1,10 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(16).sql
-Last Modified Date: 08/26/2018
+sp_SelectReviewFrom_Coaching_Log(17).sql
+
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
+Version 17: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 16: Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
 Version 15: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/5/2019
 Version 14: Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
@@ -30,7 +32,6 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -48,6 +49,7 @@ GO
 -- 25. Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 -- 26. Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 -- 27. Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
+-- 28. Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -198,11 +200,21 @@ SET @nvcSQL2 = '
   cl.MgrReviewAutoDate,
   cl.MgrNotes txtMgrNotes,
   cl.isCSRAcknowledged,
+--  CASE WHEN (cl.[IsFollowupRequired]= 1 AND ISNULL(cl.[FollowupActualDate],'''') IS NOT NULL AND cl.[StatusId] = 4)
+--THEN 1 ELSE 0 END IscsrFollowupAck,
   CASE WHEN (cl.[Review_SupID] IS NOT NULL AND cl.[Review_SupID] <> '''') THEN 1
     ELSE 0 END isSupAcknowledged,
   cl.isCoachingRequired,
   cl.CSRReviewAutoDate,
-  cl.CSRComments txtCSRComments
+  cl.CSRComments txtCSRComments,
+  cl.IsFollowupRequired,
+  cl.FollowupDueDate,
+  cl.FollowupActualDate,
+  cl.SupFollowupAutoDate,
+  cl.SupFollowupCoachingNotes,
+  cl.IsEmpFollowupAcknowledged,
+  cl.EmpAckFollowupAutoDate,
+  cl.EmpAckFollowupComments
 FROM [EC].[Coaching_Log] cl ';
 	    
 SET @nvcSQL3 = '
@@ -261,11 +273,5 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
-
-
 GO
-
-
-
-
 

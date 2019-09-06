@@ -1,11 +1,10 @@
 /*
-sp_AT_Select_Logs_Reassign(02).sql
-Last Modified Date:  10/23/2017
+sp_AT_Select_Logs_Reassign(03).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -18,13 +17,11 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_AT_Select_Logs_Reassign]
 GO
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -36,6 +33,7 @@ GO
 --  Initial Revision. Admin tool setup, TFS 1709- 4/27/12016
 --  Updated to add Employees in Leave status for Reassignment per TFS 3441 - 09/07/2016
 --  Modified to support Encryption of sensitive data (Open key and use employee View for emp attributes. TFS 7856 - 10/23/2017
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Reassign] 
 @istrOwnerin nvarchar(10), @intStatusIdin INT, @intModuleIdin INT
@@ -50,7 +48,7 @@ OPEN SYMMETRIC KEY [CoachingKey]
 DECRYPTION BY CERTIFICATE [CoachingCert]
 
 
-IF ((@intStatusIdin IN (6,8) AND @intModuleIdin IN (1,3,4,5))
+IF ((@intStatusIdin IN (6,8,10) AND @intModuleIdin IN (1,3,4,5))
 OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
 
 BEGIN
@@ -127,7 +125,5 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 EXEC (@nvcSQL)	
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Logs_Reassign
-
-
-
 GO
+

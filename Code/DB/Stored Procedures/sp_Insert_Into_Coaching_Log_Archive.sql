@@ -1,8 +1,9 @@
 /*
-sp_Insert_Into_Coaching_Log_Archive(04).sql
-Last Modified Date: 04/26/2019
+sp_Insert_Into_Coaching_Log_Archive(05).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
+Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 04: Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
 Version 03: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
@@ -23,9 +24,10 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 -- =============================================
@@ -38,6 +40,7 @@ GO
 --  Modified to support Encryption of sensitive data - Removed EmpLanID. TFS 7856 - 10/23/2017
 --  Modified to incorporate Quality Now. TFS 13332 - 03/01/2019
 --  Modified to incorporate new column ConfirmedCSE. TFS 14049 - 04/18/2019
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive]@strArchivedBy nvarchar(50)= 'Automated Process'
 
@@ -113,6 +116,15 @@ INSERT INTO [EC].[Coaching_Log_Archive]
 		   ,[QNBatchStatus]
 		   ,[QNStrengthsOpportunities]
 		   ,[ConfirmedCSE]
+		   ,[IsFollowupRequired]
+           ,[FollowupDueDate]
+           ,[FollowupActualDate]
+           ,[SupFollowupAutoDate]
+           ,[SupFollowupCoachingNotes]
+           ,[IsEmpFollowupAcknowledged]
+           ,[EmpAckFollowupAutoDate]
+           ,[EmpAckFollowupComments]
+		   ,[FollowupSupID]
            ,[ArchivedBy]
            ,[ArchivedDate]
 		)
@@ -174,6 +186,15 @@ INSERT INTO [EC].[Coaching_Log_Archive]
 	  ,[QNBatchStatus]
 	  ,[QNStrengthsOpportunities]
 	  ,[ConfirmedCSE]
+	  ,[IsFollowupRequired]
+      ,[FollowupDueDate]
+      ,[FollowupActualDate]
+      ,[SupFollowupAutoDate]
+      ,[SupFollowupCoachingNotes]
+      ,[IsEmpFollowupAcknowledged]
+      ,[EmpAckFollowupAutoDate]
+      ,[EmpAckFollowupComments]
+	  ,[FollowupSupID]
       ,@strArchivedBy
       ,GetDate()
   FROM [EC].[Coaching_Log] CL
@@ -249,7 +270,6 @@ END TRY
   END CATCH
 
 END  -- [EC].[sp_Insert_Into_Coaching_Log_Archive]
-
 GO
 
 

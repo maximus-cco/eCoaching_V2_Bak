@@ -1,9 +1,9 @@
 /*
-sp_Dashboard_Summary_Count(01).sql
-Last Modified Date: 05/20/2018
+sp_Dashboard_Summary_Count(02).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
 
 */
@@ -20,14 +20,8 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -35,6 +29,7 @@ GO
 --  Description: Retrieves Count of Logs based on user Job Role.
 --  on the MyDashboard Page.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
@@ -98,8 +93,8 @@ SET @intMyPending = (SELECT COUNT(cl.CoachingID)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON cl.EmpID = eh.Emp_ID
                  WHERE ((cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
-				 OR (cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID in (3,6,8)) 
-				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID in (3,6,8))))
+				 OR (cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID in (3,6,8,10)) 
+				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID in (3,6,8,10))))
 			
 END
 
@@ -235,11 +230,4 @@ EXEC (@nvcSQL)
 -- Close Symmetric key
 END -- sp_Dashboard_Summary_Count
 
-
-
-
-
-
 GO
-
-

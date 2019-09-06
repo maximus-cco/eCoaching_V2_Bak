@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log(04).sql
-Last Modified Date: 05/29/2019
+sp_InsertInto_Coaching_Log(05).sql
+Last Modified Date: 09/03/2019
 Last Modified By: Susmitha Palacherla
 
+Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
@@ -22,9 +23,9 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 --    ====================================================================
@@ -39,6 +40,7 @@ GO
 -- Modified to support Encryption of sensitive data. Open key and removed LanID. TFS 7856 - 10/23/2017
 -- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018.
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
+-- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
 (     @nvcEmpID Nvarchar(10),
@@ -48,10 +50,10 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
       @nvcSubmitterID Nvarchar(10),
       @dtmEventDate datetime,
       @dtmCoachingDate datetime,
-      @bitisAvokeID bit  ,
-      @nvcAvokeID Nvarchar(40) ,
+      @bitisAvokeID bit,
+      @nvcAvokeID Nvarchar(40),
       @bitisNGDActivityID bit,
-      @nvcNGDActivityID Nvarchar(40) ,
+      @nvcNGDActivityID Nvarchar(40),
       @bitisUCID bit,
       @nvcUCID Nvarchar(40),
       @bitisVerintID bit,
@@ -59,13 +61,13 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
       @intCoachReasonID1 INT,
       @nvcSubCoachReasonID1 Nvarchar(255),
       @nvcValue1 Nvarchar(30),
-      @intCoachReasonID2 INT ,
+      @intCoachReasonID2 INT,
       @nvcSubCoachReasonID2 Nvarchar(255),
       @nvcValue2 Nvarchar(30),
-      @intCoachReasonID3 INT ,
+      @intCoachReasonID3 INT,
       @nvcSubCoachReasonID3 Nvarchar(255),
       @nvcValue3 Nvarchar(30),
-      @intCoachReasonID4 INT ,
+      @intCoachReasonID4 INT,
       @nvcSubCoachReasonID4 Nvarchar(255) ,
       @nvcValue4 Nvarchar(30),
       @intCoachReasonID5 INT,
@@ -93,21 +95,23 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
       @nvcSubCoachReasonID12 Nvarchar(255),
       @nvcValue12 Nvarchar(30),
       @nvcDescription Nvarchar(3000) ,
-      @nvcCoachingNotes Nvarchar(3000) ,
-      @bitisVerified bit  ,
-      @dtmSubmittedDate datetime ,
-      @dtmStartDate datetime ,
-      @dtmSupReviewedAutoDate datetime ,
-      @bitisCSE bit  ,
-      @dtmMgrReviewManualDate datetime ,
-      @dtmMgrReviewAutoDate datetime ,
-      @nvcMgrNotes Nvarchar(3000) ,
-      @bitisCSRAcknowledged bit  ,
-      @dtmCSRReviewAutoDate datetime ,
+      @nvcCoachingNotes Nvarchar(3000),
+      @bitisVerified bit ,
+      @dtmSubmittedDate datetime,
+      @dtmStartDate datetime,
+      @dtmSupReviewedAutoDate datetime,
+      @bitisCSE bit,
+      @dtmMgrReviewManualDate datetime,
+      @dtmMgrReviewAutoDate datetime,
+      @nvcMgrNotes Nvarchar(3000),
+      @bitisCSRAcknowledged bit,
+      @dtmCSRReviewAutoDate datetime,
       @nvcCSRComments Nvarchar(3000),
-      @bitEmailSent bit ,
+      @bitEmailSent bit,
       @ModuleID INT,
       @Behaviour Nvarchar(30),
+	  @bitisFollowupRequired bit,
+	  @dtmFollowupDueDate datetime,
       @nvcNewFormName Nvarchar(50)OUTPUT
       )
    
@@ -175,7 +179,9 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
            ,[ModuleID]
            ,[SupID]
            ,[MgrID]
-           ,[Behavior])
+           ,[Behavior]
+		   ,[IsFollowupRequired]
+		   ,[FollowupDueDate])
      VALUES
            (@nvcEmpID 
            ,@nvcProgramName 
@@ -211,7 +217,9 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
 		   ,@ModuleID
 		   ,ISNULL(@nvcSupID,'999999')
 		   ,ISNULL(@nvcMgrID,'999999')
-		   ,@Behaviour)
+		   ,@Behaviour
+		   ,@bitisFollowupRequired
+		   ,@dtmFollowupDueDate)
             
  CLOSE SYMMETRIC KEY [CoachingKey] 
             
@@ -568,11 +576,7 @@ END TRY
   END CATCH  
 
   END -- sp_InsertInto_Coaching_Log
+  GO
 
-
-
-
-
-GO
 
 
