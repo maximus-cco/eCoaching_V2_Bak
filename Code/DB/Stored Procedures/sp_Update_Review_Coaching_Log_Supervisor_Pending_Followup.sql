@@ -1,10 +1,10 @@
 /*
 sp_Update_Review_Coaching_Log_Supervisor_Pending_Followup(01).sql
-Last Modified Date: 09/03/2019
+Last Modified Date: 09/09/2019
 Last Modified By: Susmitha Palacherla
 
 
-Version 01:  Initial Revision. Follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
+Version 01:  Initial Revision. Follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
 
 */
 
@@ -19,11 +19,9 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 
 --    ====================================================================
@@ -62,7 +60,8 @@ SET
   [FollowupSupID] = @nvcReviewSupID,
   [SupFollowupAutoDate] = @dtmSupReviewedAutoDate,
   [FollowupActualDate]= @dtmSupFollowupDate,
-  [SupFollowupCoachingNotes]= @nvctxtCoachingNotes
+  [SupFollowupCoachingNotes]= @nvctxtCoachingNotes,
+  [ReassignCount] = 0
 WHERE CoachingID = @nvcFormID
 OPTION (MAXDOP 1);
 	
@@ -112,4 +111,6 @@ END CATCH;
 END --sp_Update_Review_Coaching_Log_Supervisor_Pending_Followup
 
 GO
+
+
 

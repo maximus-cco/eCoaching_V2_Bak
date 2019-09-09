@@ -1,10 +1,10 @@
 /*
 sp_SelectReviewFrom_Coaching_Log(17).sql
 
-Last Modified Date: 09/03/2019
+Last Modified Date: 09/09/2019
 Last Modified By: Susmitha Palacherla
 
-Version 17: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
+Version 17: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
 Version 16: Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
 Version 15: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/5/2019
 Version 14: Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
@@ -32,8 +32,13 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
 
 
 --	====================================================================
@@ -98,12 +103,14 @@ SELECT cl.CoachingID numID,
   veh.Sup_Name strEmpSupName,
   veh.Sup_Email strEmpSupEmail,
   CASE 
-    WHEN (cl.[statusId] IN (6, 8) AND cl.[ModuleID] NOT IN (-1, 2) AND cl.[ReassignedToID] IS NOT NULL AND [ReassignCount] <> 0)
+    WHEN (cl.[statusId] IN (6, 8, 10) AND cl.[ModuleID] NOT IN (-1, 2) AND cl.[ReassignedToID] IS NOT NULL AND [ReassignCount] <> 0)
       THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
     WHEN (cl.[statusId] = 5 AND cl.[ModuleID] = 2 AND cl.[ReassignedToID] IS NOT NULL AND [ReassignCount] <> 0)
       THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
-    WHEN (cl.[Review_SupID] IS NOT NULL AND cl.[Review_SupID] = cl.[ReassignedToID] AND [ReassignCount]= 0)
+    WHEN (cl.[Review_SupID] IS NOT NULL AND cl.[Review_SupID] = cl.[ReassignedToID] AND cl.[FollowupSupID] IS NULL AND [ReassignCount]= 0)
       THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_SupID])
+	     WHEN (cl.[FollowupSupID] IS NOT NULL AND cl.[FollowupSupID] = cl.[ReassignedToID] AND [ReassignCount]= 0)
+      THEN [EC].[fn_strEmpNameFromEmpID](cl.[FollowupSupID])
     ELSE ''NA''
   END strReassignedSupName,	
   eh.Mgr_ID strEmpMgrID,
@@ -200,8 +207,6 @@ SET @nvcSQL2 = '
   cl.MgrReviewAutoDate,
   cl.MgrNotes txtMgrNotes,
   cl.isCSRAcknowledged,
---  CASE WHEN (cl.[IsFollowupRequired]= 1 AND ISNULL(cl.[FollowupActualDate],'''') IS NOT NULL AND cl.[StatusId] = 4)
---THEN 1 ELSE 0 END IscsrFollowupAck,
   CASE WHEN (cl.[Review_SupID] IS NOT NULL AND cl.[Review_SupID] <> '''') THEN 1
     ELSE 0 END isSupAcknowledged,
   cl.isCoachingRequired,
@@ -212,6 +217,8 @@ SET @nvcSQL2 = '
   cl.FollowupActualDate,
   cl.SupFollowupAutoDate,
   cl.SupFollowupCoachingNotes,
+   CASE WHEN cl.[FollowupSupID] IS NOT NULL THEN [EC].[fn_strEmpNameFromEmpID](cl.[FollowupSupID])
+    ELSE cl.[FollowupSupID] END strFollowupSupervisor,
   cl.IsEmpFollowupAcknowledged,
   cl.EmpAckFollowupAutoDate,
   cl.EmpAckFollowupComments
@@ -274,4 +281,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
+
 

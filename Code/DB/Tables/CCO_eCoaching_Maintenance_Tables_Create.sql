@@ -1,8 +1,10 @@
 /*
-CCO_eCoaching_Maintenance_Tables_Create.(04).sql
-Last Modified Date: 04/26/2019
+CCO_eCoaching_Maintenance_Tables_Create.(05).sql
+Last Modified Date: 09/09/2019
 Last Modified By: Susmitha Palacherla
 
+
+Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
 version 04: Added ConfirmedCSE to Coaching Log Archive Table - TFS 14049 - 04/26/2019
 version 03: Updated to incorporate Quality Now - TFS 13332 - 03/19/2019
 Version 02: Updated to increase column size for
@@ -120,6 +122,15 @@ CREATE TABLE [EC].[Coaching_Log_Archive](
 	[QNBatchStatus] [nvarchar](10) NULL,
 	[QNStrengthsOpportunities] [nvarchar](2000) NULL,
         [ConfirmedCSE][bit] NULL,
+        [IsFollowupRequired] bit NULL,
+	[FollowupDueDate][datetime] NULL,
+	[FollowupActualDate][datetime] NULL,
+	[SupFollowupAutoDate][datetime] NULL,
+	[SupFollowupCoachingNotes][nvarchar](4000) NULL,
+	[IsEmpFollowupAcknowledged] bit NULL,
+	[EmpAckFollowupAutoDate][datetime] NULL,
+	[EmpAckFollowupComments][nvarchar](3000) NULL,
+	[FollowupSupID] nvarchar(20) NULL,
  CONSTRAINT [PK_Coaching_Log_Archive] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC

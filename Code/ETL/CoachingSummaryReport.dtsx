@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="CoachingSummaryReport"
   DTS:PackageType="5"
-  DTS:VersionBuild="80"
-  DTS:VersionGUID="{260AF79D-AF2B-4A80-86BE-1FCAA1D9ED14}">
+  DTS:VersionBuild="81"
+  DTS:VersionGUID="{5B78D36F-4685-4E3C-95AB-5F03C8A66F97}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -3983,6 +3983,18 @@ General Dynamics Information Technology</DTS:VariableValue>
                       cachedLength="2000"
                       cachedName="Business Process Comment"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Business Process Comment]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Inputs[Data Conversion Input].Columns[Customer Temp Start]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="Customer Temp Start"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp Start]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Inputs[Data Conversion Input].Columns[Customer Temp End]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="Customer Temp End"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp End]" />
                   </inputColumns>
                   <externalMetadataColumns />
                 </input>
@@ -5296,6 +5308,48 @@ General Dynamics Information Technology</DTS:VariableValue>
                           name="FastParse">false</property>
                       </properties>
                     </outputColumn>
+                    <outputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Customer Temp Start]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="30"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Customer Temp Start]"
+                      name="Copy of Customer Temp Start"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp Start]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Customer Temp End]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="30"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Customer Temp End]"
+                      name="Copy of Customer Temp End"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp End]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
                   </outputColumns>
                   <externalMetadataColumns />
                 </output>
@@ -5853,24 +5907,12 @@ General Dynamics Information Technology</DTS:VariableValue>
                       externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Personality Flexing Comment]"
                       lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Personality Flexing Comment]" />
                     <inputColumn
-                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Customer Temp Start]"
-                      cachedDataType="i4"
-                      cachedName="Customer Temp Start"
-                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Customer Temp Start]"
-                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp Start]" />
-                    <inputColumn
                       refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of Customer Temp Start Comment]"
                       cachedDataType="wstr"
                       cachedLength="2000"
                       cachedName="Copy of Customer Temp Start Comment"
                       externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Customer Temp Start Comment]"
                       lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Customer Temp Start Comment]" />
-                    <inputColumn
-                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Customer Temp End]"
-                      cachedDataType="i4"
-                      cachedName="Customer Temp End"
-                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Customer Temp End]"
-                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp End]" />
                     <inputColumn
                       refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of Customer Temp End Comment]"
                       cachedDataType="wstr"
@@ -5891,6 +5933,20 @@ General Dynamics Information Technology</DTS:VariableValue>
                       cachedName="Copy of Business Process Comment"
                       externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Business Process Comment]"
                       lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Business Process Comment]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of Customer Temp End]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="Copy of Customer Temp End"
+                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Customer Temp End]"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Customer Temp End]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of Customer Temp Start]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="Copy of Customer Temp Start"
+                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Customer Temp Start]"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Customer Temp Start]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -6978,10 +7034,11 @@ General Dynamics Information Technology</DTS:VariableValue>
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp Start]"
-                      dataType="i4"
+                      dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Customer Temp Start]"
+                      length="30"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp Start]"
                       name="Customer Temp Start"
                       truncationRowDisposition="FailComponent" />
@@ -6997,10 +7054,11 @@ General Dynamics Information Technology</DTS:VariableValue>
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp End]"
-                      dataType="i4"
+                      dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Customer Temp End]"
+                      length="30"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Customer Temp End]"
                       name="Customer Temp End"
                       truncationRowDisposition="FailComponent" />
@@ -7339,7 +7397,8 @@ General Dynamics Information Technology</DTS:VariableValue>
                       name="Personality Flexing Comment" />
                     <externalMetadataColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Customer Temp Start]"
-                      dataType="i4"
+                      dataType="wstr"
+                      length="30"
                       name="Customer Temp Start" />
                     <externalMetadataColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Customer Temp Start Comment]"
@@ -7348,7 +7407,8 @@ General Dynamics Information Technology</DTS:VariableValue>
                       name="Customer Temp Start Comment" />
                     <externalMetadataColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Customer Temp End]"
-                      dataType="i4"
+                      dataType="wstr"
+                      length="30"
                       name="Customer Temp End" />
                     <externalMetadataColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Customer Temp End Comment]"
@@ -7746,7 +7806,8 @@ General Dynamics Information Technology</DTS:VariableValue>
                       name="Personality Flexing Comment" />
                     <outputColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Customer Temp Start]"
-                      dataType="i4"
+                      dataType="wstr"
+                      length="30"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Customer Temp Start]"
                       name="Customer Temp Start" />
                     <outputColumn
@@ -7757,7 +7818,8 @@ General Dynamics Information Technology</DTS:VariableValue>
                       name="Customer Temp Start Comment" />
                     <outputColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Customer Temp End]"
-                      dataType="i4"
+                      dataType="wstr"
+                      length="30"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Customer Temp End]"
                       name="Customer Temp End" />
                     <outputColumn
@@ -16836,14 +16898,35 @@ General Dynamics Information Technology</DTS:VariableValue>
           VSTAMinorVersion="0"
           Language="CSharp">
           <ProjectItem
-            Name="Properties\Settings.settings"
-            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_ac1240f7c371412e9d663af9c57b62fc")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_ac1240f7c371412e9d663af9c57b62fc")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -17214,35 +17297,14 @@ namespace ST_ac1240f7c371412e9d663af9c57b62fc.Properties {
     }
 }]]></ProjectItem>
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_ac1240f7c371412e9d663af9c57b62fc")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_ac1240f7c371412e9d663af9c57b62fc")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.Designer.cs"
             Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
