@@ -89,5 +89,9 @@ namespace eCoachingLog.Models.Common
 		public string FollowupDueDate { get; set; }    // Date when followup is due
 		public string FollowupActualDate { get; set; } // Date when followup happens
 		public string FollowupDetails { get; set; }    // entered on the review page by supervisor
+		public string FollowupSupAutoDate { get; set; }
+		public string FollowupSupName { get; set; }
+		public string FollowupEmpAutoDate { get; set; }
+		public string FollowupEmpComments { get; set; }
     }
 }

@@ -83,7 +83,9 @@ namespace eCoachingLog.ViewModels
 		// Followup related
 		public bool ShowFollowupInfo { get; set; }
 		public bool IsFollowupCompleted { get; set; }
+		public bool IsFollowupAcknowledged { get; set; }
 		public bool IsFollowupDue { get; set; }
+		public bool IsFollowupOverDue { get; set; }
 		public string FollowupDueDateNoTime
 		{
 			get

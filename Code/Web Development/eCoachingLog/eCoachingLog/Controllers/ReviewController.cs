@@ -206,9 +206,17 @@ namespace eCoachingLog.Controllers
 			}
 
 			vm.ShowEmployeeReviewInfo = true;
-			vm.ShowFollowupInfo = ShowFollowupInfo(vm);
-			vm.IsFollowupCompleted = vm.LogDetail.IsFollowupRequired && !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate);
-			vm.IsFollowupDue = vm.LogDetail.IsFollowupRequired && DateTime.Compare(DateTime.Now, DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace("PDT", ""))) >= 0 ;
+
+			if (vm.LogDetail.IsFollowupRequired)
+			{
+				vm.ShowFollowupInfo = ShowFollowupInfo(vm);
+				// Completed by Supervisor
+				vm.IsFollowupCompleted = vm.LogDetail.IsFollowupRequired && !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate);
+				// After completed by supervisor, CSR has acknowledged
+				vm.IsFollowupAcknowledged = vm.LogDetail.IsFollowupRequired && !string.IsNullOrEmpty(vm.LogDetail.FollowupEmpAutoDate);
+				vm.IsFollowupDue = IsFollowupDue(vm);
+				vm.IsFollowupOverDue = IsFollowupOverDue(vm);
+			}
 
 			// Load short call list
 			if (vm.LogDetail.IsOmrShortCall)
@@ -899,23 +907,38 @@ namespace eCoachingLog.Controllers
 			if (user.EmployeeId == vm.LogDetail.EmployeeId)
 			{
 				show = true;
-
-				//if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
-				//		//&& !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate))
-				//{
-				//	show = true;
-				//}
 			}
 			else if (user.EmployeeId == vm.LogDetail.SupervisorEmpId 
 						|| user.EmployeeId == vm.LogDetail.ManagerEmpId
 						|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
 			{
 				show = true;
+			}
+			return show;
+		}
 
-				//show = vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP;
+		private bool IsFollowupDue (ReviewViewModel vm)
+		{
+			if (!string.Equals(vm.LogDetail.Status.Trim(), Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT, StringComparison.OrdinalIgnoreCase))
+			{
+				return false;
 			}
 
-			return show;
+			var today = DateTime.Now;
+			var followupDueDate = DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace("PDT", ""));
+			return today.Date == followupDueDate.Date ;
+		}
+
+		private bool IsFollowupOverDue (ReviewViewModel vm)
+		{
+			if (!string.Equals(vm.LogDetail.Status.Trim(), Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT, StringComparison.OrdinalIgnoreCase))
+			{
+				return false;
+			}
+
+			var today = DateTime.Now;
+			var followupDueDate = DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace("PDT", ""));
+			return today.Date > followupDueDate.Date;
 		}
 	}
 

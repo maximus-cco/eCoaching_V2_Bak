@@ -163,9 +163,18 @@ namespace eCoachingLog.Repository
 							logDetail.IsFollowupRequired = Convert.ToInt16(dataReader["IsFollowupRequired"]) == 1 ? true : false;
 						}
 
-						logDetail.FollowupDueDate = eCoachingLogUtil.AppendPdt(dataReader["FollowupDueDate"].ToString());
-						logDetail.FollowupActualDate = eCoachingLogUtil.AppendPdt(dataReader["FollowupActualDate"].ToString());
-						logDetail.FollowupDetails = dataReader["SupFollowupCoachingNotes"].ToString();
+						if (logDetail.IsFollowupRequired)
+						{
+							logDetail.FollowupSupName = dataReader["strFollowupSupervisor"].ToString();
+							logDetail.FollowupSupAutoDate = eCoachingLogUtil.AppendPdt(dataReader["SupFollowupAutoDate"].ToString());
+							logDetail.FollowupDueDate = eCoachingLogUtil.AppendPdt(dataReader["FollowupDueDate"].ToString());
+							logDetail.FollowupActualDate = eCoachingLogUtil.AppendPdt(dataReader["FollowupActualDate"].ToString());
+							logDetail.FollowupDetails = dataReader["SupFollowupCoachingNotes"].ToString();
+
+							logDetail.FollowupEmpAutoDate = eCoachingLogUtil.AppendPdt(dataReader["EmpAckFollowupAutoDate"].ToString());
+							logDetail.FollowupEmpComments = dataReader["EmpAckFollowupComments"].ToString();
+						}
+
 						break;
                     } // End while
                 } // End using SqlDataReader

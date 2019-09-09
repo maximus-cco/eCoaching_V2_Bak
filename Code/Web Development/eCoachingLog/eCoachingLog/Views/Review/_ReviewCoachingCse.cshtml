@@ -34,6 +34,12 @@
 		</div>
 		@Html.ValidationMessageFor(m => m.DetailsCoached)
 	</div>
+
+	@if (Model.ShowFollowupInfo)
+	{
+		{ Html.RenderPartial("_FollowupInfo"); }
+	}
+
 </div>
 
 <div id="div-cse-no" class="hide">

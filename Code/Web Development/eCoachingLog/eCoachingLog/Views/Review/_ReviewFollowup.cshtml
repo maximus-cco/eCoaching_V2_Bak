@@ -5,10 +5,19 @@
 	@Html.HiddenFor(m => m.LogDetail.LogId)
 	@Html.HiddenFor(m => m.IsFollowupPendingSupervisorForm)
 	<div class="mt-2">
-		<strong>Follow-up required on:</strong>&nbsp;@Model.FollowupDueDateNoTime
+		<strong>Follow-up required on </strong>&nbsp;@Model.FollowupDueDateNoTime
+		<font color="red"><span class='glyphicon glyphicon-bell'></span></font>
+		@if (Model.IsFollowupDue)
+		{
+			<strong><font color="red"> Due</font></strong>
+		}
+		@if (Model.IsFollowupOverDue)
+		{
+			<strong><font color="red"> OverDue</font></strong>
+		}
 	</div>
 
-	if (!Model.IsFollowupDue)
+	if (!Model.IsFollowupDue && !Model.IsFollowupOverDue)
 	{
 		<div class="mt-2 text-danger">
 			You will be able to enter follow-up notes/date on the follow-up day or after.
@@ -18,7 +27,7 @@
 	<div class='form-group mt-2' id='div-date-followup'>
 		<label for="ActualFollowupDate" id="label-date-followup" class="required">Enter the date of follow-up coaching:</label>
 		<div class="col-xs-4 input-group date">
-		@if (Model.IsFollowupDue)
+		@if (Model.IsFollowupDue || Model.IsFollowupOverDue)
 		{
 			@Html.TextBoxFor(m => m.ActualFollowupDate, new { @class = "form-control" })
 		}
@@ -35,7 +44,7 @@
 
 	<div class='form-group mt-2' id='div-followup-detail'>
 		<label for="FollowupDetails" class="required">Provide the details from the follow-up coaching session including action plans developed:</label>
-		@if (Model.IsFollowupDue)
+		@if (Model.IsFollowupDue || Model.IsFollowupOverDue)
 		{
 			@Html.TextAreaFor(m => m.FollowupDetails, new { @class = "form-control",  @rows = "5", maxlength = 3000 })
 		}

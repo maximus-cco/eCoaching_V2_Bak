@@ -1,17 +1,47 @@
 ﻿@if (!Model.IsFollowupCompleted)
 {
 	<div class="mt-2">
-		<strong>Follow-up will occur on: @Model.FollowupDueDateNoTime</strong>
+		<strong>Follow-up will occur on @Model.FollowupDueDateNoTime</strong>
+		<font color="red"><span class='glyphicon glyphicon-bell'></span></font>
+		@if (Model.IsFollowupDue)
+		{
+			<strong><font color="red"> Due</font></strong>
+		}
+		@if (Model.IsFollowupOverDue)
+		{
+			<strong><font color="red"> OverDue</font></strong>
+		}
 	</div>
 }
+
 @if (Model.IsFollowupCompleted)
 {
 	<div class="mt-2">
-		<strong>Follow-up occurred on:</strong><br />
+		<strong>Follow-up occurred on </strong>
 		@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.FollowupActualDate))
+		<font color="red"><span class='glyphicon glyphicon-bell'></span></font>
+</div>
+	<div class="mt-2">
+		<strong>Follow-up notes:</strong><br />
+		@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.FollowupDetails))
 	</div>
 	<div class="mt-2">
-		<strong>Follow-up Coaching Notes:</strong><br />
-		@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.FollowupDetails))
+		<strong>Supervisor follow-up review information:</strong><br />
+		@Model.LogDetail.FollowupSupName<br />
+		@Model.LogDetail.FollowupSupAutoDate<br />
+	</div>
+}
+
+@if (Model.IsFollowupAcknowledged)
+{
+	<div class="mt-2">
+		<strong>Employee follow-up review information:</strong><br />
+		@Model.LogDetail.EmployeeName<br />
+		@Model.LogDetail.FollowupEmpAutoDate <br />
+	</div>
+	<div class="mt-2">
+		<strong>Employee followup-up feedback:</strong><br />
+		@Model.LogDetail.FollowupEmpComments
+
 	</div>
 }
