@@ -1,5 +1,10 @@
 ﻿@model eCoachingLog.ViewModels.ReviewViewModel
 
+@if (Model.ShowFollowupInfo)
+{
+	{ Html.RenderPartial("_FollowupInfo"); }
+}
+
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending"}))
 {
 	@Html.HiddenFor(m => m.LogDetail.LogId)
