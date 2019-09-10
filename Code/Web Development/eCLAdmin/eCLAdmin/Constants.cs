@@ -24,7 +24,8 @@ namespace eCLAdmin
 		public const int LOG_STATUS_PENDING_SUPERVISOR_REVIEW = 6;
 		public const int LOG_STATUS_PENDING_SRMANAGER_REVIEW = 7;
 		public const int LOG_STATUS_PENDING_QUALITYLEAD_REVIEW = 8;
-		public const int LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW = 9;
+		public const int LOG_STATUS_PENDING_DEPUTYPROGRAMMANAGER_REVIEW = 9;
+		public const int LOG_STATUS_PENDING_FOLLOW_UP = 10;
 
 		public const string LOG_ACTION_INACTIVATE = "Inactivate";
 		public const string LOG_ACTION_REASSIGN = "Reassign";

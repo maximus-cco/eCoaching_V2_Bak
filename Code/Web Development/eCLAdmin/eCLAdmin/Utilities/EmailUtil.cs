@@ -75,11 +75,14 @@ namespace eCLAdmin.Utilities
                 case Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW:
                     emailTo = employee.SupervisorEmail;
                     break;
-                // This status is not being used in eCoaching Log.
-                //case Constants.LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW:
-                //    emailTo = employee.ManagerEmail;
-                //    break;
-                default:
+				case Constants.LOG_STATUS_PENDING_FOLLOW_UP:
+					emailTo = employee.SupervisorEmail;
+					break;
+				// This status is not being used in eCoaching Log.
+				//case Constants.LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW:
+				//    emailTo = employee.ManagerEmail;
+				//    break;
+				default:
                     break;
             }
 
