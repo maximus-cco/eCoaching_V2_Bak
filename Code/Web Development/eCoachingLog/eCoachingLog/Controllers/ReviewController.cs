@@ -209,7 +209,7 @@ namespace eCoachingLog.Controllers
 
 			if (vm.LogDetail.IsFollowupRequired)
 			{
-				vm.ShowFollowupInfo = ShowFollowupInfo(vm);
+				vm.ShowFollowupInfo = ShowFollowupInfo(vm, currentPage);
 				// Completed by Supervisor
 				vm.IsFollowupCompleted = vm.LogDetail.IsFollowupRequired && !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate);
 				// After completed by supervisor, CSR has acknowledged
@@ -247,7 +247,6 @@ namespace eCoachingLog.Controllers
 				|| logDetail.StatusId == Constants.LOG_STATUS_COMPLETED) // Completed
 			{
 				vm.IsReadOnly = true;
-				vm.ShowFollowupInfo = ShowFollowupInfo(vm);
 				vm.ShowViewMgtNotes = !string.IsNullOrEmpty(vm.LogDetail.MgrNotes);
 				if (vm.LogDetail.IsIqs && vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
 				{
@@ -894,7 +893,7 @@ namespace eCoachingLog.Controllers
 				&& !logDetail.IsConfirmedCse.Value;
 		}
 
-		private bool ShowFollowupInfo(ReviewViewModel vm)
+		private bool ShowFollowupInfo(ReviewViewModel vm, int currentPage)
 		{
 			bool show = false;
 			var user = GetUserFromSession();
@@ -902,6 +901,11 @@ namespace eCoachingLog.Controllers
 			if (vm.LogDetail.ModuleId != Constants.MODULE_CSR || !vm.LogDetail.IsFollowupRequired)
 			{
 				return false;
+			}
+
+			if (currentPage == Constants.PAGE_HISTORICAL_DASHBOARD)
+			{
+				return true;
 			}
 
 			if (user.EmployeeId == vm.LogDetail.EmployeeId)
