@@ -895,7 +895,6 @@ namespace eCoachingLog.Controllers
 
 		private bool ShowFollowupInfo(ReviewViewModel vm, int currentPage)
 		{
-			bool show = false;
 			var user = GetUserFromSession();
 
 			if (vm.LogDetail.ModuleId != Constants.MODULE_CSR || !vm.LogDetail.IsFollowupRequired)
@@ -908,17 +907,20 @@ namespace eCoachingLog.Controllers
 				return true;
 			}
 
-			if (user.EmployeeId == vm.LogDetail.EmployeeId)
+			if (user.Role != null && string.Equals(user.Role.Trim(), Constants.USER_ROLE_DIRECTOR, StringComparison.OrdinalIgnoreCase))
 			{
-				show = true;
+				return true;
 			}
-			else if (user.EmployeeId == vm.LogDetail.SupervisorEmpId 
-						|| user.EmployeeId == vm.LogDetail.ManagerEmpId
-						|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+
+			if (user.EmployeeId == vm.LogDetail.EmployeeId
+				|| user.EmployeeId == vm.LogDetail.SupervisorEmpId
+				|| user.EmployeeId == vm.LogDetail.ManagerEmpId
+				|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
 			{
-				show = true;
+				return true;
 			}
-			return show;
+
+			return false;
 		}
 
 		private bool IsFollowupDue (ReviewViewModel vm)
