@@ -1,7 +1,7 @@
 ﻿@if (!Model.IsFollowupCompleted)
 {
 	<div class="mt-2">
-		<strong>Follow-up will occur on @Model.FollowupDueDateNoTime</strong>
+		<strong>Follow-up required on @Model.FollowupDueDateNoTime</strong>
 		<font color="red"><span class='glyphicon glyphicon-bell'></span></font>
 		@if (Model.IsFollowupDue)
 		{
