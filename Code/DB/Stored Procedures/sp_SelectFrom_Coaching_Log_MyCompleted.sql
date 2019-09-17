@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_MyCompleted(03).sql
-Last Modified Date: 09/03/2019
+sp_SelectFrom_Coaching_Log_MyCompleted(04).sql
+Last Modified Date: 09/17/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
@@ -25,6 +26,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -32,8 +36,9 @@ GO
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Modified to support Quality Now  TFS 13332 -  03/01/2019
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+--  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted] 
+ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted] 
 @nvcUserIdin nvarchar(10),
 @strSDatein datetime,
 @strEDatein datetime,
@@ -92,6 +97,7 @@ AS
 				,x.strSubmitterName
 				,x.IsFollowupRequired
 				,x.FollowupDueDate
+				,x.IsFollowupCompleted
 				,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
   FROM 
   (
@@ -106,6 +112,7 @@ AS
 	  ,[vehs].[Emp_Name] strSubmitterName
 	  ,CASE WHEN [cl].[IsFollowupRequired] = 1 THEN ''Yes'' ELSE ''No'' END IsFollowupRequired
      ,[cl].[FollowupDueDate] FollowupDueDate
+	 ,CASE WHEN [cl].[IsFollowupRequired] = 1 AND [cl].[FollowupActualDate] IS NOT NULL THEN ''Yes'' ELSE ''No'' END IsFollowupCompleted
     FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 	JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
 	JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON cl.EmpID = eh.Emp_ID 
@@ -118,7 +125,8 @@ AS
 	AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
 	AND [cl].[EmpID] <> ''999999''
 	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate]
-	, [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate]
+	, [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate]
+
   ) x 
 )
 
@@ -133,6 +141,7 @@ SELECT strLogID,
   ,strSubmitterName
    ,IsFollowupRequired
   ,FollowupDueDate
+  ,IsFollowupCompleted
   ,[EC].[fn_strCoachingReasonFromCoachingID](T.strLogID) strCoachingReason
   ,[EC].[fn_strSubCoachingReasonFromCoachingID](T.strLogID) strSubCoachingReason
   ,CASE WHEN strSource in (''Verint-CCO'', ''Verint-CCO Supervisor'') THEN ''''
@@ -151,8 +160,10 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_SelectFrom_Coaching_Log_MyCompleted
+
+
+
+
 GO
-
-
 
 

@@ -1,9 +1,9 @@
 /*
-sp_Search_For_Dashboards_Count(01).sql
-Last Modified Date: 05/08/2018
+sp_Search_For_Dashboards_Count(02).sql
+Last Modified Date: 09/17/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 01: Document Initial Revision created during hist dashboard redesign.  TFS 7138 - 05/08/2018
 
 */
@@ -25,16 +25,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/24/2018
 --	Description: *	This procedure returns the total count of records that will be returned
 --  for the selected criteria for the requested dashboard page.
 --  Created during Hist dashboard move to new architecture - TFS 7138 - 04/24/2018
+-- Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Search_For_Dashboards_Count] 
 
@@ -67,6 +64,12 @@ IF @nvcWhichDashboard = N'MyPending'
 BEGIN 
 EXEC [EC].[sp_SelectFrom_Coaching_Log_MyPending_Count] @nvcUserIdin, @nvcEmpIdin, @nvcSupIdin
 END
+
+IF @nvcWhichDashboard = N'MyFollowup'
+BEGIN 
+EXEC [EC].[sp_SelectFrom_Coaching_Log_MyFollowup_Count] @nvcUserIdin
+END
+
 
 IF @nvcWhichDashboard = N'MyCompleted'
 BEGIN 
@@ -110,13 +113,7 @@ BEGIN
 EXEC [EC].[sp_Dashboard_Director_Site_Warning_Count] @intSiteIdin, @nvcUserIdin, @strSDatein, @strEDatein
 END
 
-
-
 END --sp_Search_For_Dashboards_Count
-
-
-
-
 GO
 
 

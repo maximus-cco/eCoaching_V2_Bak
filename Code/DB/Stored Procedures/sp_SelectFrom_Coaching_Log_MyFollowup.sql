@@ -1,12 +1,10 @@
 /*
-sp_SelectFrom_Coaching_Log_MyTeamCompleted(04).sql
+sp_SelectFrom_Coaching_Log_MyFollowup(01).sql
 Last Modified Date: 09/17/2019
 Last Modified By: Susmitha Palacherla
 
-Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
-Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
+
+Version 01: Initial Revision. Display MyFollowup for CSRs. TFS 15621 - 09/17/2019 
 
 */
 
@@ -15,9 +13,9 @@ IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
    WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyTeamCompleted' 
+     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyFollowup' 
 )
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamCompleted]
+   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyFollowup]
 GO
 
 SET ANSI_NULLS ON
@@ -26,22 +24,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	05/22/2018
---	Description: *	This procedure returns the Completed logs for logged in user.
---  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
---  Modified to support Quality Now  TFS 13332 -  03/01/2019
---  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
---  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
+--	Create Date:	09/17/2019
+--	Description: *	This procedure returns the CSRs logs that are pending follow-up by the supervisor 
+--  Initial Revision. Display MyFollowup for CSRs. TFS 15621 - 09/17/2019 
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamCompleted] 
+CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyFollowup] 
 @nvcUserIdin nvarchar(10),
-@intSourceIdin int,
-@nvcEmpIdin nvarchar(10),
-@nvcSupIdin nvarchar(10),
-@strSDatein datetime,
-@strEDatein datetime,
 @PageSize int,
 @startRowIndex int, 
 @sortBy nvarchar(100),
@@ -55,18 +48,19 @@ BEGIN
 SET NOCOUNT ON
 
 DECLARE	
-@nvcSubSource nvarchar(100),
-@NewLineChar nvarchar(2),
-@strSDate nvarchar(10),
-@strEDate nvarchar(10),
-@where nvarchar(max),
 @nvcSQL nvarchar(max),
+@nvcEmpRole nvarchar(40),
 @UpperBand int,
 @LowerBand int,
 @SortExpression nvarchar(100),
 @SortOrder nvarchar(10) ,
-@OrderKey nvarchar(10)
-  
+@OrderKey nvarchar(10),
+@NewLineChar nvarchar(2),
+@where nvarchar(max);        
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+
 
 SET @LowerBand  = @startRowIndex 
 SET @UpperBand  = @startRowIndex + @PageSize 
@@ -82,33 +76,24 @@ SET  @SortExpression = @sortBy +  @SortOrder
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @strSDate = convert(varchar(8), @strSDatein,112)
-Set @strEDate = convert(varchar(8), @strEDatein,112)
-
-SET @where = ' WHERE convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''' +  @NewLineChar +
-			 ' AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''' + @NewLineChar +
-			 ' AND [cl].[StatusID] = 1 '
+SET @where = ''
 
 
-IF @intSourceIdin  <> -1
+
+IF @nvcEmpRole NOT IN ('CSR', 'ARC')
+RETURN 1
+
+IF @nvcEmpRole in ('CSR', 'ARC')
 BEGIN
-    SET @nvcSubSource = (SELECT SubCoachingSource FROM DIM_Source WHERE SourceID = @intSourceIdin)
-	SET @where = @where + @NewLineChar + 'AND [so].[SubCoachingSource] =  ''' + @nvcSubSource + ''''
+SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] = 10)'
 END
 
 
-IF @nvcSupIdin  <> '-1'
-BEGIN
-	SET @where = @where + @NewLineChar + ' AND [eh].[Sup_ID] = ''' + @nvcSupIdin  + '''' 
-END
 
-IF @nvcEmpIdin  <> '-1'
-BEGIN
-	SET @where = @where + @NewLineChar + ' AND [cl].[EmpID] = ''' + @nvcEmpIdin  + '''' 
-END	
 
 SET @nvcSQL = 'WITH TempMain 
 AS 
@@ -125,7 +110,7 @@ AS
 				,x.IsFollowupRequired
 				,x.FollowupDueDate
 				,x.IsFollowupCompleted
-				,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
+			    ,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
   FROM 
   (
     SELECT DISTINCT [cl].[FormName] strFormID
@@ -147,10 +132,8 @@ AS
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
 	@where + ' ' + '
-	AND (eh.Sup_ID = ''' + @nvcUserIdin + ''' OR eh.Mgr_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''')
-   	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource]
-	, [cl].[SubmittedDate], [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate]
-
+	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status],
+	 [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate]
   ) x 
 )
 
@@ -183,8 +166,7 @@ EXEC (@nvcSQL)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
-END -- sp_SelectFrom_Coaching_Log_MyTeamCompleted
-
+END -- sp_SelectFrom_Coaching_Log_MyFollowup
 GO
 
 

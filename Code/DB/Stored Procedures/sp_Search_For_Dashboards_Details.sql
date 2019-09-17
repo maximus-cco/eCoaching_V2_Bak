@@ -1,9 +1,9 @@
 /*
-sp_Search_For_Dashboards_Details(01).sql
-Last Modified Date: 05/08/2018
+sp_Search_For_Dashboards_Details(02).sql
+Last Modified Date: 09/17/2019
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 01: Document Initial Revision created during hist dashboard redesign.  TFS 7138 - 05/08/2018
 
 */
@@ -27,12 +27,15 @@ GO
 
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/24/2018
 --	Description: *	This procedure returns the Coaching or Warning records that will be returned
 --  for the selected criteria for the requested dashboard page.
 --  Created during Hist dashboard move to new architecture - TFS 7138 - 04/24/2018
+-- Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Search_For_Dashboards_Details] 
 
@@ -72,10 +75,19 @@ EXEC [EC].[sp_SelectFrom_Coaching_Log_MyPending] @nvcUserIdin, @nvcEmpIdin, @nvc
  @PageSize, @startRowIndex, @sortBy, @sortASC
 END
 
+
+IF @nvcWhichDashboard = N'MyFollowup'
+BEGIN 
+EXEC [EC].[sp_SelectFrom_Coaching_Log_MyFollowup] @nvcUserIdin, 
+ @PageSize, @startRowIndex, @sortBy, @sortASC
+END
+
+
 IF @nvcWhichDashboard = N'MyCompleted'
 BEGIN 
 EXEC [EC].[sp_SelectFrom_Coaching_Log_MyCompleted] @nvcUserIdin, @strSDatein, @strEDatein, @PageSize,@startRowIndex, @sortBy, @sortASC
 END
+
 
 IF @nvcWhichDashboard = N'MySubmitted'
 BEGIN 
@@ -114,10 +126,11 @@ EXEC [EC].[sp_Dashboard_Director_Site_Warning] @intSiteIdin, @nvcUserIdin, @strS
 END
 
 
-
-
 END --sp_Search_For_Dashboards_Details
 
+
+
 GO
+
 
 
