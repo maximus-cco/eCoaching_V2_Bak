@@ -1,8 +1,9 @@
 /*
-sp_Dashboard_Summary_Count(02).sql
-Last Modified Date: 09/03/2019
+sp_Dashboard_Summary_Count(03).sql
+Last Modified Date: 09/17/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 02: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
 
@@ -20,8 +21,11 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -30,6 +34,7 @@ GO
 --  on the MyDashboard Page.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+--  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
@@ -40,12 +45,14 @@ BEGIN
 DECLARE	
 @nvcEmpRole nvarchar(40),
 @bitMyPending bit,
+@bitMyFollowup bit,
 @bitMyCompleted bit,
 @bitMyTeamPending bit,
 @bitMyTeamCompleted bit,
 @bitMyTeamWarning bit,
 @bitMySubmission bit,
 @intMyPending int,
+@intMyFollowup int,
 @intMyCompleted int,
 @intMyTeamPending int,
 @intMyTeamCompleted int,
@@ -63,6 +70,7 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID)
 
 
 SET @bitMyPending = (SELECT [MyPending] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
+SET @bitMyFollowup = (SELECT [MyFollowup] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
 SET @bitMyCompleted = (SELECT [MyCompleted] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
 SET @bitMyTeamPending = (SELECT [MyTeamPending] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
 SET @bitMyTeamCompleted = (SELECT [MyTeamcompleted] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
@@ -114,6 +122,18 @@ END
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPending)+ ''' AS LogCount'
 END
+
+
+IF @bitMyFollowup = 1
+
+BEGIN
+SET @intMyFollowup = (SELECT COUNT(CoachingID) FROM EC.Coaching_Log WITH (NOLOCK)
+                       WHERE EmpID = @nvcEmpID  AND StatusID = 10 AND EmpID <> '999999')
+
+SET @SelectList = @SelectList + ' UNION
+SELECT ''My Follow-up'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyFollowup)+ ''' AS LogCount '
+END
+
 
 
 
@@ -202,19 +222,22 @@ SELECT CountType, SortOrder FROM
 (SELECT CASE WHEN [MyPending] = 1 THEN ''My Pending'' ELSE NULL END CountType, 01 SortOrder
 FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = '''+ @nvcEmpRole+ '''
 UNION
- SELECT	CASE WHEN [MyCompleted] = 1 THEN ''My Completed'' ELSE NULL END CountType, 04 SortOrder
+SELECT CASE WHEN [MyFollowup] = 1 THEN ''My Follow-up'' ELSE NULL END CountType, 02 SortOrder
 FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = '''+ @nvcEmpRole+ '''
 UNION
-SELECT	CASE WHEN [MyTeamPending] = 1 THEN ''My Team''''s Pending'' ELSE NULL END CountType, 02 SortOrder
+ SELECT	CASE WHEN [MyCompleted] = 1 THEN ''My Completed'' ELSE NULL END CountType, 05 SortOrder
 FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = '''+ @nvcEmpRole+ '''
 UNION
-SELECT	CASE WHEN [MyTeamcompleted] = 1 THEN ''My Team''''s Completed'' ELSE NULL END CountType, 03 SortOrder
+SELECT	CASE WHEN [MyTeamPending] = 1 THEN ''My Team''''s Pending'' ELSE NULL END CountType, 03 SortOrder
 FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = '''+ @nvcEmpRole+ '''
 UNION
-SELECT	CASE WHEN [MyTeamWarning] = 1 THEN ''My Team''''s Warnings'' ELSE NULL END CountType, 05 SortOrder
+SELECT	CASE WHEN [MyTeamcompleted] = 1 THEN ''My Team''''s Completed'' ELSE NULL END CountType, 04 SortOrder
 FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = '''+ @nvcEmpRole+ '''
 UNION
-SELECT	CASE WHEN [MySubmission]= 1 THEN ''My Submissions'' ELSE NULL END CountType, 06 SortOrder
+SELECT	CASE WHEN [MyTeamWarning] = 1 THEN ''My Team''''s Warnings'' ELSE NULL END CountType, 06 SortOrder
+FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = '''+ @nvcEmpRole+ '''
+UNION
+SELECT	CASE WHEN [MySubmission]= 1 THEN ''My Submissions'' ELSE NULL END CountType, 07 SortOrder
 FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = '''+ @nvcEmpRole+ ''') Display 
 WHERE CountType IS NOT NULL
  )
@@ -231,3 +254,7 @@ EXEC (@nvcSQL)
 END -- sp_Dashboard_Summary_Count
 
 GO
+
+
+
+
