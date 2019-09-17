@@ -401,6 +401,7 @@
     <Content Include="Views\Review\_ConfirmReviewShortCalls.cshtml" />
     <Content Include="Views\Review\_FollowupInfo.cshtml" />
     <Content Include="Views\Review\_ReviewFollowup.cshtml" />
+    <Content Include="Views\MyDashboard\_MyFollowup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

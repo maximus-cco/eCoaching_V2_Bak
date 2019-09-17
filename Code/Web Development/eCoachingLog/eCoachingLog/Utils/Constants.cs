@@ -39,6 +39,7 @@ namespace eCoachingLog.Utils
 		public const string LOG_SEARCH_TYPE_HISTORICAL = "Historical";
 		public const string LOG_SEARCH_TYPE_MY_SUBMITTED = "MySubmitted";
 		public const string LOG_SEARCH_TYPE_MY_PENDING = "MyPending";
+		public const string LOG_SEARCH_TYPE_MY_FOLLOWUP = "MyFollowup";
 		public const string LOG_SEARCH_TYPE_MY_COMPLETED = "MyCompleted";
 		public const string LOG_SEARCH_TYPE_MY_TEAM_PENDING = "MyTeamPending";
 		public const string LOG_SEARCH_TYPE_MY_TEAM_COMPLETED = "MyTeamCompleted";
@@ -125,6 +126,7 @@ namespace eCoachingLog.Utils
 		public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
 		{
 			{ "My Pending", "_MyPending" },
+			{ "My Follow-up", "_MyFollowup" },
 			{ "My Completed", "_MyCompleted" },
 			{ "My Submissions", "_MySubmission" },
 			{ "My Team's Completed", "_MyTeamCompleted" },

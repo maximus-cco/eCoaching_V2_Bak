@@ -518,6 +518,7 @@ namespace eCoachingLog.Repository
 						{
 							log.IsFollowupRequired = dataReader["IsFollowupRequired"].ToString().ToLower().Equals("yes") ? true : false;
 							log.FollowupDueDate = dataReader["FollowupDueDate"].ToString();
+							log.HasFollowupHappened = dataReader["IsFollowupCompleted"].ToString().ToLower().Equals("yes") ? true : false;
 						}
 
 						logs.Add(log);

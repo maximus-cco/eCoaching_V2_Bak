@@ -937,7 +937,9 @@ namespace eCoachingLog.Controllers
 
 		private bool IsFollowupOverDue (ReviewViewModel vm)
 		{
-			if (!string.Equals(vm.LogDetail.Status.Trim(), Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT, StringComparison.OrdinalIgnoreCase))
+			if (string.Equals(vm.LogDetail.Status.Trim(), Constants.LOG_STATUS_COMPLETED_TEXT, StringComparison.OrdinalIgnoreCase)
+					// Followup has happened
+					|| !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate))
 			{
 				return false;
 			}

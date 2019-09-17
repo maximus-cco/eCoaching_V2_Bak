@@ -126,8 +126,9 @@ namespace eCoachingLog.Services
 
 						var today = DateTime.Now;
 						var followupDueDate = DateTime.Parse(log.FollowupDueDate.Replace("PDT", ""));
-						// Log Pending Follow-up
-						if (string.Equals(log.Status.Trim(), Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT, StringComparison.OrdinalIgnoreCase))
+						// Log NOT Completed && Follow-up has not happened yet
+						if (!string.Equals(log.Status.Trim(), Constants.LOG_STATUS_COMPLETED_TEXT, StringComparison.OrdinalIgnoreCase)
+								&& !log.HasFollowupHappened)
 						{
 							if (today.Date == followupDueDate.Date)
 							{

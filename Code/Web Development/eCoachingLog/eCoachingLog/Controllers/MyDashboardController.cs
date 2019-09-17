@@ -198,6 +198,12 @@ namespace eCoachingLog.Controllers
 						}
 					}
 					break;
+				// My Follow-up seciton on My Dashboard
+				// This is for CSR only
+				case "_MyFollowup":
+					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_FOLLOWUP;
+					vm.Search.ShowFollowupDateColumn = true;
+					break;
 				// My Completed section on My Dashboard
 				case "_MyCompleted":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_COMPLETED;

@@ -15,6 +15,7 @@
 		public string CreatedDate { get; set; }
 		public bool IsFollowupRequired { get; set; }
 		public string FollowupDueDate { get; set; }
+		public bool HasFollowupHappened { get; set; }
 		public string Reasons { get; set; }
 		public string SubReasons { get; set; }
 		public string Value { get; set; }
