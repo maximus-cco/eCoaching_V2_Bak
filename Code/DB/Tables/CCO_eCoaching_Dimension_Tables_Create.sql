@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Dimension_Tables_Create(03).sql
-Last Modified Date: 03/07/2019
+CCO_eCoaching_Dimension_Tables_Create(04).sql
+Last Modified Date: 09/17/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 03: Modified to add Sort Order to DIM_Program - TFS 13643 - 03/07/2019
 Version 02: UI Move to new architecture  - TFS 7136/7137/7138 - 6/13/2018
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -485,8 +486,8 @@ CREATE TABLE [EC].[UI_Dashboard_Summary_Display](
 	[MyTeamPending] bit NOT NULL,
 	[MyTeamcompleted] bit NOT NULL,
 	[MyTeamWarning] bit NOT NULL,
-	[MySubmission] bit NOT NULL
-	
+	[MySubmission] bit NOT NULL,
+	[MyFollowup] bit NOT NULL
 PRIMARY KEY CLUSTERED 
 (
 	[RoleId] ASC

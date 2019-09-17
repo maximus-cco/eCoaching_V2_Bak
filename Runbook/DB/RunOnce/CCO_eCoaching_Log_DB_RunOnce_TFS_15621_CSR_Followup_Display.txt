@@ -1,0 +1,43 @@
+/*
+
+
+TFS 15621 - Display lMyFollowup for CSRs
+
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps sumary
+
+1. Add column to table [EC].[UI_Dashboard_Summary_Display]
+2. Update values for new column
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+-- Details
+
+--1. Add column to table [EC].[UI_Dashboard_Summary_Display]
+
+ALTER Table [EC].[UI_Dashboard_Summary_Display]
+ADD [MyFollowup] bit NOT NULL DEFAULT 0
+GO
+
+
+
+--******************************************
+
+--2.  Update values for new column
+
+
+UPDATE [EC].[UI_Dashboard_Summary_Display]
+SET [MyFollowup]= 1
+WHERE [RoleName] IN ('CSR', 'ARC')
+GO
+
+
+
+--******************************************
