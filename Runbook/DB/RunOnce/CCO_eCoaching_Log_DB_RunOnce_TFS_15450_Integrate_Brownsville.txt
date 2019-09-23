@@ -1,0 +1,55 @@
+/*
+
+
+15450 - Integrate Brownsville into eCL
+
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps sumary
+
+1. Activate Brownsville
+2. Inactivate Corbin and Waco
+3. Update Riverview to Tampa
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+-- Details
+
+--1. Activate Brownsville
+
+Update [EC].[DIM_Site]
+set [isActive] = 1
+where [City]= 'Brownsville'
+GO
+
+--******************************************
+
+
+--2. Inactivate Corbin and Waco
+
+Update [EC].[DIM_Site]
+set [isActive] = 0
+where [City]in ( 'Corbin', 'Waco')
+GO
+
+
+--******************************************
+
+--3. Update Riverview to Tampa
+
+Update [EC].[DIM_Site]
+Set [City] = 'Tampa'
+,[StateCity] = 'FL - Tampa'
+Where SiteID = 15
+GO
+
+
+--******************************************
+
+-

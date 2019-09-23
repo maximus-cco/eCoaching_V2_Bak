@@ -1,12 +1,11 @@
 /*
-fn_strSiteNameFromSiteLocation(03).sql
-Last Modified Date: 01/08/2019
+fn_strSiteNameFromSiteLocation(04).sql
+Last Modified Date: 09/23/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04:  Updated to support QM Bingo eCoaching logs. TFS 15450 - 09/23/2019
 Version 03:  Updated to add wildcards to accommodate new maximus location values- TFS 13168 - 01/08/2019
-
 Version 02: Added mapping for new Phoenix office - TFS 12063 - 09/11/2018
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 
@@ -28,8 +27,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         07/25/2013
@@ -39,6 +36,7 @@ GO
 -- Updated mapping for Arlington during Modular design development.
 -- Added mapping for new Phoenix office - TFS 12063 - 09/11/2018
 -- Updated to add wildcards to accommodate new maximus location values- TFS 13168 - 01/08/2019
+-- Integrate Brownsville into eCL. TFS 15450 - 09/23/2019
 -- =============================================
 CREATE FUNCTION [EC].[fn_strSiteNameFromSiteLocation] (
   @strSiteLocation NVARCHAR(50)
@@ -64,8 +62,9 @@ BEGIN
 			WHEN (@strSiteLocation lIKE N'%Lynn Haven%')     THEN N'Lynn Haven'
 		    WHEN (@strSiteLocation lIKE N'%Phoenix%') THEN N'Phoenix'
 		    WHEN (@strSiteLocation lIKE N'%Sandy%')      THEN N'Sandy'
-            WHEN (@strSiteLocation lIKE N'%Riverview%')      THEN N'Riverview'    
+            WHEN (@strSiteLocation lIKE N'%Riverview%')      THEN N'Tampa'    
 		    WHEN (@strSiteLocation lIKE N'%Waco%')       THEN N'Waco'  
+			WHEN (@strSiteLocation lIKE N'%Brownsville%')       THEN N'Brownsville' 
             WHEN (@strSiteLocation lIKE N'%Winchester%')   THEN N'Winchester'
        ELSE 'OTHER' END)
   
@@ -73,12 +72,6 @@ BEGIN
    
   RETURN @strSiteName  
 END  -- fn_strSiteNameFromSiteLocation()
-
-
-
 GO
-
-
-
 
 
