@@ -489,7 +489,8 @@ namespace eCoachingLog.Services
 						else if (moduleId == Constants.MODULE_SUPERVISOR)
 						{
 							// TFS 15063 - Quality BINGO (Supervisor Module) goes to COMPLETED
-							nextStatus = review.LogDetail.IsBqns ? 
+							// TFS 15600 - London Alternate Channel Bingo
+							nextStatus = (review.LogDetail.IsBqns || review.LogDetail.IsBqm || review.LogDetail.IsBqms) ? 
 								Constants.LOG_STATUS_COMPLETED_TEXT : Constants.LOG_STATUS_PENDING_MANAGER_REVIEW_TEXT;
 						}
 						else if (moduleId == Constants.MODULE_QUALITY)

@@ -47,6 +47,8 @@ namespace eCoachingLog.Models.Common
 		public bool IsPbh { get; set; }
 		public bool IsOta { get; set; } // OverTurned Appeal
 		public bool IsBqns { get; set; } // Quality BINGO "Quality / BQNS"
+		public bool IsBqm { get; set; }  // Quality Bingo "Quality / BQM"
+		public bool IsBqms { get; set; } // Quality Bingo "Quality / BQMS"
 		public bool IsOthAps { get; set; } // Attendance Policy Earback
 		public bool IsOthApw { get; set; } // Attendance Policy Earback
 

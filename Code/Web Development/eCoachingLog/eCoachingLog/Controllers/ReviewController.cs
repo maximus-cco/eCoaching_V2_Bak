@@ -502,7 +502,7 @@ namespace eCoachingLog.Controllers
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 
 			// Quality Bingo - Reinforcement
-			if (vm.LogDetail.IsBqns)
+			if (vm.LogDetail.IsBqns || vm.LogDetail.IsBqm || vm.LogDetail.IsBqms)
 			{
 				// log comes in as Pending Ack
 				// return true so that both sup and csr has an a chance to review
@@ -753,8 +753,9 @@ namespace eCoachingLog.Controllers
 				// Supervisor	
 				if (user.EmployeeId == vm.LogDetail.SupervisorEmpId || user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
 				{
-					// Supervisor module and bingo: manager can view only - TFS 15063
-					if (vm.LogDetail.ModuleId == Constants.MODULE_SUPERVISOR && vm.LogDetail.IsBqns)
+					// Supervisor module and bingo: manager (supervisor's supervisor) can view only - TFS 15063, 15600
+					if (vm.LogDetail.ModuleId == Constants.MODULE_SUPERVISOR 
+							&& (vm.LogDetail.IsBqns || vm.LogDetail.IsBqm || vm.LogDetail.IsBqms))
 					{
 						readOnly = true;
 					}

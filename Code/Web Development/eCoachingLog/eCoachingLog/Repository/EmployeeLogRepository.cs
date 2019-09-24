@@ -138,6 +138,8 @@ namespace eCoachingLog.Repository
 						logDetail.IsKudo = Convert.ToInt16(dataReader["Quality / KUD"]) == 0 ? false : true;
 						logDetail.IsOta = Convert.ToInt16(dataReader["Quality / OTA"]) == 0 ? false : true;
 						logDetail.IsBqns = Convert.ToInt16(dataReader["Quality / BQNS"]) == 0 ? false : true;
+						logDetail.IsBqm = Convert.ToInt16(dataReader["Quality / BQM"]) == 0 ? false : true;
+						logDetail.IsBqms = Convert.ToInt16(dataReader["Quality / BQMS"]) == 0 ? false : true;
 
 						logDetail.IsAttendance = Convert.ToInt16(dataReader["OTH / SEA"]) == 0 ? false : true;
 						logDetail.IsDtt = Convert.ToInt16(dataReader["OTH / DTT"]) == 0 ? false : true;

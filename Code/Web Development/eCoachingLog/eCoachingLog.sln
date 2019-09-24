@@ -21,7 +21,7 @@ Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 2
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://f3420-tfsasp01:8080/tfs/cco%20program
+		SccTeamFoundationServer = https://tfs.omnicloud.local/cco%20program
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = eCoachingLog\\eCoachingLog.csproj
 		SccProjectName1 = eCoachingLog
