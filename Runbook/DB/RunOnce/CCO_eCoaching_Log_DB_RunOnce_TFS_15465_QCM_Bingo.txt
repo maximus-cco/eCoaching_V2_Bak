@@ -1,0 +1,126 @@
+/*
+
+TFS 15063 – Quality Now Rewards and Recognition (Bingo)
+Updated to change data type for Customer Temp Start and End to nvarchar(30)
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps sumary
+1. Added column to staging table [EC].[Quality_Other_Coaching_Stage]
+2. Rename Table [EC].[Coaching_Log_Quality_Now_Bingo], ADD Column  [BingoType] and Populate it for QN
+3. Rename Table [EC].[Quality_Now_Bingo_Images] , ADD Column  [BingoType] and Populate it for QN and insert records for QM
+
+
+*/
+
+
+--******************************************
+
+
+--RUN ONE STEP AT A TIME
+
+
+
+--******************************************
+
+--1. add columns to staging table
+
+
+ALTER TABLE [EC].[Quality_Other_Coaching_Stage]
+ADD [BingoType] nvarchar(30)
+GO
+
+
+
+--******************************************
+
+--2. 
+
+--2a. Rename table EC.Coaching_Log_Quality_Now_Bingo
+
+     	 EXEC sp_rename 'EC.Coaching_Log_Quality_Now_Bingo', 'Coaching_Log_Bingo' 
+
+
+--2b. Add col to [EC].[Coaching_Log_Bingo]
+
+	ALTER TABLE [EC].[Coaching_Log_Bingo]
+	ADD  [BingoType] nvarchar(30)
+	GO
+
+
+--2c. Set [BingoType] for historical records
+
+	Update [EC].[Coaching_Log_Bingo]
+	set [BingoType] = 'QN'
+	GO
+
+
+--******************************************
+
+
+--3.
+
+--3a. Rename table EC.Quality_Now_Bingo_Images
+
+	EXEC sp_rename 'EC.Quality_Now_Bingo_Images', 'Bingo_Images' 
+
+
+--3b. Add col for BingoType
+
+  	ALTER TABLE [EC].[Bingo_Images]
+        ADD  [BingoType] nvarchar(30)
+	GO
+
+--3c. Set [BingoType] for historical records
+
+	Update [EC].[Bingo_Images]
+	set [BingoType] = 'QN'
+	GO
+
+
+--3d. Insert into CREATE TABLE [EC].[Bingo_Images]
+
+    INSERT INTO [EC].[Bingo_Images]
+           ([ImageDesc]
+           ,[Competency]
+	   ,[BingoType])
+     VALUES
+           ('<img border="20" src="cid:aa_qm.png">','Accurate Arrow','QM'),
+	   ('<img border="20" src="cid:cc_qm.png">','Compassionate Communicator','QM'),	
+	   ('<img border="20" src="cid:mm_qm.png">','Message Master','QM'),
+           ('<img border="20" src="cid:pp_qm.png">','Privacy Protector','QM'),
+	   ('<img border="20" src="cid:pr_qm.png">','Process Pro','QM'),
+   	   ('<img border="20" src="cid:rr_qm.png">','Resolution Rock Star','QM'),
+	   ('<img border="20" src="cid:so_qm.png">','Smooth Operator','QM')
+		  
+GO
+
+
+
+--******************************************
+
+--4.Modify sql agent job
+
+
+
+Please make this change after installing the script file and images
+
+Connect to db using ecljobowner
+Under sql agent
+CoachingQualityOtherLoad
+
+Right click to bring up properties
+Steps
+Edit Step QN Bingo Notifications
+
+Change the Command to 
+
+Command - start /w wscript.exe "\\f3420-ecldbp01\ssis\Coaching\Notifications\Notifications_Bingo_Prod.vbs"
+
+OK and exit
+
+
+--******************************************

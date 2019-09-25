@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_MyPending_Count(03).sql
-Last Modified Date: 09/03/2019
+sp_SelectFrom_Coaching_Log_MyPending_Count(04).sql
+Last Modified Date: 09/23/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 02: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
@@ -21,8 +22,12 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 
 
 --	====================================================================
@@ -32,6 +37,7 @@ GO
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+--  Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_Count] 
 @nvcUserIdin nvarchar(10),
@@ -87,7 +93,7 @@ END
 IF @nvcEmpRole in ( 'Manager', 'SrManager')
 BEGIN
 SET @where = @where + ' AND ((cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (3,4)) ' +  @NewLineChar +
-			  ' OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND ISNULL([cl].[strReportCode], '' '') NOT LIKE ''BQNS%''  AND cl.ReassignCount= 0 AND eh.Sup_ID = ''' + @nvcUserIdin + ''' AND  cl.[StatusID] in (3,5,6,8)  ' +  @NewLineChar +
+			  ' OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND ISNULL([cl].[strReportCode], '' '') NOT LIKE ''BQ%''  AND cl.ReassignCount= 0 AND eh.Sup_ID = ''' + @nvcUserIdin + ''' AND  cl.[StatusID] in (3,5,6,8)  ' +  @NewLineChar +
 			  ' OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND  eh.Mgr_ID = '''+ @nvcUserIdin + ''' AND cl.[StatusID] in (5,7,9)) ' +  @NewLineChar +
 			  ' OR ([cl].[strReportCode] LIKE ''LCS%'' AND [ReassignCount] = 0 AND cl.[MgrID] = ''' + @nvcUserIdin + ''' AND [cl].[StatusID]= 5) )' +  @NewLineChar +
 			  ' OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = ''' + @nvcUserIdin + ''' AND  cl.[StatusID] in (5,7,9)) ) '
@@ -124,8 +130,7 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending_Count
-
-
 GO
+
 
 

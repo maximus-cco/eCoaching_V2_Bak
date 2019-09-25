@@ -2,18 +2,29 @@
 
 ' Begin - Environment Related
 
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=F3420-ECLDBT01"
-Const eCoachingUrl = "https://f3420-mpmd01/eCoachingLog_st/"
-Const fromAddress = "eCoachingTest@maximus.com"
-Const imgPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-Const imgaaPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\aa.png"
-Const imgalPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\al.png"
-Const imgccPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\cc.png"
-Const imgnnPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\nn.png"
-Const imgppPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\pp.png"
-Const imgprPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\pr.png"
-Const imgsoPath = "\\f3420-ecldbt01\ssis\coaching\Notifications\images\so.png"
-Const strLogFile = "\\f3420-ecldbt01\ssis\Coaching\Notifications\Logs\QNBingoNotification.log"
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoaching;Data Source=F3420-ECLDBP01"
+Const eCoachingUrl = "https://f3420-mwbp11/eCoachingLog/"
+Const fromAddress = "eCoachingNotification@maximus.com"
+Const imgPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+
+Const imgaaPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\aa.png"
+Const imgalPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\al.png"
+Const imgccPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\cc.png"
+Const imgnnPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\nn.png"
+Const imgppPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\pp.png"
+Const imgprPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\pr.png"
+Const imgsoPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\so.png"
+
+
+Const imgaa_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\aa_qm.png"
+Const imgcc_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\cc_qm.png"
+Const imgmm_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\mm_qm.png"
+Const imgpp_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\pp_qm.png"
+Const imgpr_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\pr_qm.png"
+Const imgrr_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\rr_qm.png"
+Const imgso_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\so_qm.png"
+
+Const strLogFile = "\\f3420-ecldbp01\ssis\Coaching\Notifications\Logs\QNBingoNotification.log"
 
 ' End - Environment Related
 
@@ -26,6 +37,7 @@ Const cdoSendUsingPort = 2
 Const adStateOpen = 1
 
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
+
 Const imgaaName = "aa.png"
 Const imgalName = "al.png"
 Const imgccName = "cc.png"
@@ -34,13 +46,22 @@ Const imgppName = "pp.png"
 Const imgprName = "pr.png"
 Const imgsoName = "so.png"
 
+Const imgaa_qmName = "aa_qm.png"
+Const imgcc_qmName = "cc_qm.png"
+Const imgmm_qmName = "mm_qm.png"
+Const imgpp_qmName = "pp_qm.png"
+Const imgpr_qmName = "pr_qm.png"
+Const imgrr_qmName = "rr_qm.png"
+Const imgso_qmName = "so_qm.png"
+
+
 ' End - Non-Environment Related
 
 'Specify log file
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 Set objLogFile = objFSO.OpenTextFile(strLogFile, ForAppending, True)
 objLogFile.WriteBlankLines(2) 
-objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting QN Bingo Notifications!"
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Bingo Notifications!"
 
 
 'variables for database connection and recordset
@@ -54,6 +75,7 @@ Dim strFormStatus
 Dim strEmpEmail 
 Dim strEmpName
 Dim strCCEmail
+Dim strBingoType 
 Dim strSubject 
 Dim strCtrMessage
 Dim strAchievements
@@ -62,7 +84,7 @@ Dim arrResultSet
 Dim totalPendingEmail
 
 
-dim spGetEmailToSend : spGetEmailToSend = "EC.sp_SelectCoaching4QNBingo"
+dim spGetEmailToSend : spGetEmailToSend = "EC.sp_SelectCoaching4Bingo"
 
 On Error Resume Next
 
@@ -103,7 +125,7 @@ For j = 0 to totalPendingEmail
 	strEmpEmail = arrResultSet(3,j) 
 	strEmpName = arrResultSet(4,j) 
         strCCEmail = arrResultSet(5,j) 
-	strSubject = arrResultSet(6,j) 
+	strBingoType = arrResultSet(6,j) 
 	strAchievements = arrResultSet(7,j) 
 	strSubject = "eCL: " & strFormStatus & " (" & strEmpName & ")"
 
@@ -128,11 +150,16 @@ Dim spUpdateEmailSent
 On Error Resume Next
 
 
+    Select Case (strBingoType)
+        Case "QN"
+            strCtrMessage = "Congratulations on earning the following Quality Now Bingo achievements for the month! For each achievement, you will receive a raffle entry in the upcoming prize drawing, as well as a sticker for your QN Bingo card. Keep up the great work!"
+        Case "QM"
+            strCtrMessage = "Congratulations on earning the following Quality Call Monitoring Bingo achievements for the month! For each achievement, you will receive a raffle entry in the upcoming prize drawing as well as a sticker for your QCM Bingo card.  Keep up the great work!"
+    End Select
 
-            
-'strCtrMessage = "Congratulations on earning the following Quality Now Bingo achievements for the month! For each achievement, you will receive a raffle entry in the upcoming prize drawing, 'as well as a sticker for your QN Bingo card. Keep up the great work!"
 
-strCtrMessage = "<strong>Congratulations on earning the following Quality Now Bingo achievements for the month! For each achievement, you will receive a raffle entry in the upcoming prize drawing, as well as a sticker for your QN Bingo card. Keep up the great work!</strong>"
+ 
+'strCtrMessage = "<strong>Congratulations on earning the following Quality Now Bingo achievements for the month! For each achievement, you will receive a raffle entry in the upcoming prize drawing, as well as a sticker for your QN Bingo card. Keep up the great work!</strong>"
 
 strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
 & "  <a href=""" & eCoachingUrl & """ target=""_blank"">Please click here to open the eCoaching application and view the form details from the &#39;My Pending&#39; section on My Dashboard page.</a>"
@@ -182,6 +209,7 @@ set objConfiguration = CreateObject("CDO.Configuration")
 
 
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgPath, imgName, CdoReferenceTypeName)
+
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgaaPath, imgaaName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgalPath, imgalName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgccPath, imgccName, CdoReferenceTypeName)
@@ -190,7 +218,17 @@ Set objBodyPart  = objMsg.AddRelatedBodyPart(imgppPath, imgppName, CdoReferenceT
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgprPath, imgprName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgsoPath, imgsoName, CdoReferenceTypeName)
 
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgaa_qmPath, imgaa_qmName, CdoReferenceTypeName)
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgcc_qmPath, imgcc_qmName, CdoReferenceTypeName)
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgmm_qmPath, imgmm_qmName, CdoReferenceTypeName)
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgpp_qmPath, imgpp_qmName, CdoReferenceTypeName)
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgpr_qmPath, imgpr_qmName, CdoReferenceTypeName)
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgrr_qmPath, imgrr_qmName, CdoReferenceTypeName)
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgso_qmPath, imgso_qmName, CdoReferenceTypeName)
+
+
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgName & ">"""
+
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgaaName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgalName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgccName & ">"""
@@ -198,6 +236,16 @@ objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgnnName
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgppName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgprName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgsoName & ">"""
+
+
+
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgaa_qmName & ">"""
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgcc_qmName & ">"""
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgmmName & ">"""
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgpp_qmName & ">"""
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgpr_qmName & ">"""
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgrr_qmName & ">"""
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgso_qmName & ">"""
 
 objBodyPart.Fields.Update
 Set objFields= objConfiguration.Fields
@@ -282,6 +330,6 @@ Sub SafeQuit (rs, dbConn)
 	
 	Wscript.Quit
 End Sub
-objLogfile.WriteLine "  " + "End QN Bingo Notifications"
+objLogfile.WriteLine "  " + "End Bingo Notifications"
 objLogfile.close
 

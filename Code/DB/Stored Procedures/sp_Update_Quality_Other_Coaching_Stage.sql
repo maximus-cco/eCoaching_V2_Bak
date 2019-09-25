@@ -1,8 +1,9 @@
 /*
-sp_Update_Quality_Other_Coaching_Stage(03).sql
-Last Modified Date: 08/15/2018
+sp_Update_Quality_Other_Coaching_Stage(04).sql
+Last Modified Date: 09/23/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 03:  Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 02:  Modified to support OTA Report. TFS 12591 - 11/26/2018
 Version 01:  Initial Revision - Created during encryption of secure data. TFF 7856 - 11/27/2017
@@ -25,6 +26,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/14/2017
@@ -36,6 +39,7 @@ GO
 -- Initial revision. Created during encryption of sensitive data - TFS 7856 - 04/24/2017
 -- Modified to support OTA Report. TFS 12591 - 11/26/2018
 -- Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
+-- Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
 @Count INT OUTPUT
@@ -117,7 +121,7 @@ EMP_ID NOT IN
  WHERE Emp_Job_Code = 'WACS40'
  AND Active NOT IN ('T','D','P','L') 
  ))
-AND (Report_Code lIKE 'CTC%' OR Report_Code LIKE 'BQNS%')
+AND (Report_Code lIKE 'CTC%' OR Report_Code LIKE 'BQNS%' OR Report_Code LIKE 'BQMS%')
 AND [Reject_Reason]is NULL
 	
 OPTION (MAXDOP 1)
@@ -136,7 +140,7 @@ EMP_ID NOT IN
  WHERE Emp_Job_Code IN ('WACS01', 'WACS02', 'WACS03')
  AND Active NOT IN ('T','D','P','L') 
  ))
- AND (Report_Code lIKE 'HFC%' OR Report_Code LIKE 'KUD%' OR Report_Code LIKE 'BQN2%')
+ AND (Report_Code lIKE 'HFC%' OR Report_Code LIKE 'KUD%' OR Report_Code LIKE 'BQN2%' OR Report_Code LIKE 'BQM2%')
 AND [Reject_Reason]is NULL
 	
 OPTION (MAXDOP 1)
@@ -210,9 +214,8 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 
 
 END  -- [EC].[sp_Update_Quality_Other_Coaching_Stage]
+
 GO
-
-
 
 
 

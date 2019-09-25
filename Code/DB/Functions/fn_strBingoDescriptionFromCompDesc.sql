@@ -1,8 +1,9 @@
 /*
-fn_strQNBDescriptionFromCompDesc(01).sql
-Last Modified Date: 08/15/2018
+fn_strBingoDescriptionFromCompDesc(02).sql
+Last Modified Date: 09/23/2019
 Last Modified By: Susmitha Palacherla
 
+Version 02: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 01: Created to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 
 */
@@ -23,20 +24,22 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         08/12/2019
 -- Description:	        Consolidates individual Descriptions for each competency to a single value for each Employee.
--- Quality Now Rewards and Recognition (Bingo). TFS 15063 - 08/12/2019
+--  Initial Revision. TFS 15465 - 09/23/2019
 -- =============================================
-CREATE FUNCTION [EC].[fn_strQNBDescriptionFromCompDesc] (
+CREATE FUNCTION [EC].[fn_strBingoDescriptionFromCompDesc] (
   @strEmpID NVARCHAR(10)
 )
 RETURNS NVARCHAR(MAX)
 AS
 BEGIN
   DECLARE @strDescription NVARCHAR(MAX)
-  
+
+
 SET @strDescription = (SELECT STUFF((SELECT  CHAR(13) + CHAR(10) + [TextDescription] AS [text()]
             FROM [EC].[Quality_Other_Coaching_Stage]
          WHERE [EMP_ID] = @strEmpID
@@ -50,13 +53,8 @@ SET @strDescription = (SELECT STUFF((SELECT  CHAR(13) + CHAR(10) + [TextDescript
         
 RETURN @strDescription
 
-END  -- fn_strQNBDescriptionFromCompDesc
+END  -- fn_strBingoDescriptionFromCompDesc
 GO
-
-
-
-
-
 
 
 

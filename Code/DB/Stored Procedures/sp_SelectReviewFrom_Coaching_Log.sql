@@ -1,9 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(17).sql
-
-Last Modified Date: 09/09/2019
+sp_SelectReviewFrom_Coaching_Log(18).sql
+Last Modified Date: 09/23/2019
 Last Modified By: Susmitha Palacherla
 
+Version 18: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 17: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
 Version 16: Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
 Version 15: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/5/2019
@@ -36,11 +36,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -55,6 +50,7 @@ GO
 -- 26. Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 -- 27. Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
 -- 28. Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+-- 29. Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -195,6 +191,8 @@ SET @nvcSQL2 = '
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSRS%'') THEN 1 ELSE 0 END "PSC / MSRS",
   CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQN2%'') THEN 1 ELSE 0 END "Quality / BQN",
   CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQNS%'') THEN 1 ELSE 0 END "Quality / BQNS",
+   CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQM2%'') THEN 1 ELSE 0 END "Quality / BQM",
+  CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQMS%'') THEN 1 ELSE 0 END "Quality / BQMS",
   cl.Description txtDescription,
   cl.CoachingNotes txtCoachingNotes,
   cl.isVerified,
@@ -249,6 +247,7 @@ JOIN
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 11 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END) KUD,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END) OTA,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 250) THEN [clr].[Value] ELSE NULL END) QNB,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END) QMB,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 242) THEN [clr].[Value] ELSE NULL END) DTT,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 252) THEN [clr].[Value] ELSE NULL END) ATTAP,
@@ -281,5 +280,6 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
+
 
 

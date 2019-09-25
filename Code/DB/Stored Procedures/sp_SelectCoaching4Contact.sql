@@ -1,8 +1,9 @@
 /*
 Last Modified Date: 08/15/2018
+Last Modified Date: 09/23/2019
 Last Modified By: Susmitha Palacherla
 
-Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
+Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 */
 
 
@@ -19,6 +20,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:		       Jourdain Augustin
@@ -37,6 +39,7 @@ GO
 --  TFS 7137 Move dashboards to new architecture. Replaced Module with ModuleID - 06/22/2018
 --  TFS 13332 Modified to add condition for Quality Now -  03/01/2019
 --  Updated to exclude BQN logs to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
+--  Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 -- --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Contact]
 AS
@@ -86,7 +89,7 @@ JOIN [EC].[DIM_Source] so ON so.SourceID = cl.SourceID
 JOIN [EC].[DIM_Module] mo ON mo.ModuleID = cl.ModuleID 
 WHERE S.Status NOT IN (''Completed'',''Inactive'')
   AND (cl.strReportCode IS NOT NULL OR cl.SourceID IN (211, 222, 223, 224, 230,235,236))
-  AND ISNULL(cl.strReportCode, '''') NOT LIKE ''BQN%''
+  AND ISNULL(cl.strReportCode, '''') NOT LIKE ''BQ%''
   AND cl.EmailSent = ''False''
   AND (
         (s.status =''Pending Acknowledgement'' AND veh.Emp_Email IS NOT NULL AND veh.Sup_Email IS NOT NULL AND veh.Sup_Email <> ''Unknown'')
@@ -107,6 +110,5 @@ PRINT @nvcsql
 	    
 END --sp_SelectCoaching4Contact
 GO
-
 
 

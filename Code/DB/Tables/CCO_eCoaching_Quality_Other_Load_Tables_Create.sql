@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Quality_Other_Load_Tables_Create(04).sql
+CCO_eCoaching_Quality_Other_Load_Tables_Create(05).sql
 
-Last Modified Date: 08/15/2018
+Last Modified Date: 09/23/2019
 Last Modified By: Susmitha Palacherla
 
+Version 05: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 04: Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 version 03: Updated to document changes for feed encryption TFS 7854.
 Marked fact table as obsolete
@@ -22,8 +23,8 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 3.[EC].[Quality_Other_Coaching_Fact]-- Obsolete with TFS 7854
 4.[EC].[Quality_Other_FileList]
 5.[EC].[NPN_Description]
-6.[EC].[Coaching_Log_Quality_Now_Bingo]
-7.[EC].[Quality_Now_Bingo_Images]
+6.[EC].[Coaching_Log_Bingo]
+7.[EC].[Bingo_Images]
 
 **************************************************************
 
@@ -60,7 +61,8 @@ CREATE TABLE [EC].[Quality_Other_Coaching_Stage](
 	[FileName] [nvarchar](260) NULL,
         [Reject_reason] [nvarchar](200) NULL,
 	[Competency] [nvarchar](30) NULL,
-	[Note] [nvarchar](30) NULL
+	[Note] [nvarchar](30) NULL,
+	[BingoType][nvarchar](30) NULL
 ) ON [PRIMARY]
 
 GO
@@ -223,7 +225,7 @@ On this call the application was updated using Reporting a Life Change. There wa
 --**********************************************************************************
 
 
---6.[EC].[Coaching_Log_Quality_Now_Bingo]
+--6.[EC].[Coaching_Log_Bingo]
 
 SET ANSI_NULLS ON
 GO
@@ -231,12 +233,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE TABLE [EC].[Coaching_Log_Quality_Now_Bingo](
+CREATE TABLE [EC].[Coaching_Log_Bingo](
 	[CoachingID] [bigint] NOT NULL,
 	[Competency] [nvarchar](30) NULL,
 	[Note] [nvarchar](30) NULL,
 	[Description] [nvarchar](4000) NULL,
-	[CompImage] [nvarchar](100) NULL
+	[CompImage] [nvarchar](100) NULL,
+	[BingoType][nvarchar](30) NULL
 ) ON [PRIMARY]
 
 GO
@@ -245,7 +248,7 @@ GO
 --**********************************************************************************
 
 
---7.[EC].[Quality_Now_Bingo_Images]
+--7.[EC].[Bingo_Images]
 
 SET ANSI_NULLS ON
 GO
@@ -253,26 +256,34 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE TABLE [EC].[Quality_Now_Bingo_Images](
+CREATE TABLE [EC].[Bingo_Images](
 	[ImageID] [int] IDENTITY(1,1) NOT NULL,
 	[ImageDesc] [nvarchar](100) NOT NULL,
-	[Competency] [nvarchar](30) NOT NULL
+	[Competency] [nvarchar](30) NOT NULL,
+	[BingoType][nvarchar](30) NULL
 ) ON [PRIMARY]
 
 GO
 
 
-INSERT INTO [EC].[Quality_Now_Bingo_Images]
+INSERT INTO [EC].[Bingo_Images]
            ([ImageDesc]
            ,[Competency])
      VALUES
-           ('<img border="20" src="cid:aa.png">','Accurate Arrow'),
-		   ('<img border="20" src="cid:al.png">','Active Listener'),
-           ('<img border="20" src="cid:cc.png">','Compassionate Communicator'),
-		   (' <img border="20" src="cid:nn.png">','Nimble Navigator'),
-		   ('<img border="20" src="cid:pp.png">','Privacy Protector'),
-		   ('<img border="20" src="cid:pr.png">','Process Pro'),
-		   ('<img border="20" src="cid:so.png">','Smooth Operator')
+           	   ('<img border="20" src="cid:aa.png">','Accurate Arrow','QN'),
+		   ('<img border="20" src="cid:al.png">','Active Listener','QN'),
+           	   ('<img border="20" src="cid:cc.png">','Compassionate Communicator','QN'),
+		   ('<img border="20" src="cid:nn.png">','Nimble Navigator','QN'),
+		   ('<img border="20" src="cid:pp.png">','Privacy Protector','QN'),
+		   ('<img border="20" src="cid:pr.png">','Process Pro','QN'),
+		   ('<img border="20" src="cid:so.png">','Smooth Operator','QN'),
+		   ('<img border="20" src="cid:aa_qm.png">','Accurate Arrow','QM'),
+	   	   ('<img border="20" src="cid:cc_qm.png">','Compassionate Communicator','QM'),	
+	   	   ('<img border="20" src="cid:mm_qm.png">','Message Master','QM'),
+           	   ('<img border="20" src="cid:pp_qm.png">','Privacy Protector','QM'),
+	   	   ('<img border="20" src="cid:pr_qm.png">','Process Pro','QM'),
+   	   	   ('<img border="20" src="cid:rr_qm.png">','Resolution Rock Star','QM'),
+	   	   ('<img border="20" src="cid:so_qm.png">','Smooth Operator','QM')
 		  
 GO
 

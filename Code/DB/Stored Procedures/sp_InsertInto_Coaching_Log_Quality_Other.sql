@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Other(07).sql
-Last Modified Date: 08/15/2018
+sp_InsertInto_Coaching_Log_Quality_Other(08).sql
+Last Modified Date: 09/23/2019
 Last Modified By: Susmitha Palacherla
 
+Version 08: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 07: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 Version 05: Modified to support Quality OTA feed - TFS 12591 - 11/26/2018
@@ -31,10 +32,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
@@ -48,6 +45,7 @@ GO
 -- Modified to support OTA Report. TFS 12591 - 11/26/2018
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
+-- Updated to support QM Bingo eCoaching logs. TFS 154653 - 09/23/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 @Count INT OUTPUT
@@ -124,18 +122,18 @@ select  Distinct LOWER(cs.EMP_ID)	[FormName],
 		 THEN  REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br />')
 		 WHEN cs.Report_Code LIKE 'NPN%' 
 		 THEN  REPLACE(EC.fn_nvcHtmlEncode([EC].[fn_strNPNDescriptionFromCode](cs.TextDescription)), CHAR(13) + CHAR(10) ,'<br />')
-		 WHEN cs.Report_Code LIKE 'BQN%' 
-		 THEN  REPLACE(EC.fn_nvcHtmlEncode([EC].[fn_strQNBDescriptionFromCompDesc](cs.EMP_ID)), CHAR(13) + CHAR(10) ,'<br />' + '<br />')
+		 WHEN cs.Report_Code LIKE 'BQ%' 
+		 THEN  REPLACE(EC.fn_nvcHtmlEncode([EC].[fn_strBingoDescriptionFromCompDesc](cs.EMP_ID)), CHAR(13) + CHAR(10) ,'<br />' + '<br />')
 		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
 		 cs.Submitted_Date			SubmittedDate,
 		 ISNULL(cs.start_Date,cs.Event_Date)				[StartDate],
 		 0        				    [isCSRAcknowledged],
 		 0                          [isCSE],
 		 0                          [EmailSent],
-		 CASE WHEN (cs.Report_Code LIKE 'BQN%') THEN 1
+		 CASE WHEN (cs.Report_Code LIKE 'BQ%') THEN 1
 		 ELSE cs.Report_ID	 END		[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 CASE WHEN (cs.Report_Code LIKE 'CTC%' OR cs.Report_Code LIKE 'BQNS%') THEN 2	
+		 CASE WHEN (cs.Report_Code LIKE 'CTC%' OR cs.Report_Code LIKE 'BQ%S%') THEN 2	
 		 WHEN cs.Report_Code LIKE 'OTA%' THEN 3
 		 ELSE 1 END						[ModuleID],
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
@@ -169,7 +167,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[Value])
     SELECT DISTINCT cf.[CoachingID],
            CASE WHEN cf.strReportCode like 'CTC%' THEN 21 
-           WHEN (cf.strReportCode like 'HFC%' OR cf.strReportCode like 'OTA%' OR cf.strReportCode like 'BQN%') THEN 10 
+           WHEN (cf.strReportCode like 'HFC%' OR cf.strReportCode like 'OTA%' OR cf.strReportCode like 'BQ%') THEN 10 
            WHEN cf.strReportCode like 'KUD%' THEN 11
            WHEN cf.strReportCode like 'NPN%' THEN 5
 		   ELSE 14 END,
@@ -187,20 +185,22 @@ INSERT INTO [EC].[Coaching_Log_Reason]
 
   -- Insert  detail records into [EC].[Coaching_Log_Quality_Now_Bingo] Table
 
-INSERT INTO [EC].[Coaching_Log_Quality_Now_Bingo]
+INSERT INTO [EC].[Coaching_Log_Bingo]
            ([CoachingID]
            ,[Competency]
            ,[Note]
-           ,[Description])
+           ,[Description]
+		   ,[BingoType])
     SELECT cf.[CoachingID],
            qs.[Competency],
 		   qs.[Note],
-           qs.[TextDescription]
+           qs.[TextDescription],
+		   qs.[BingoType]
     FROM [EC].[Quality_Other_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
     ON qs.[EMP_ID] = cf.[EmpID] AND  qs.[Report_Code] = cf.[strReportCode]
-    LEFT OUTER JOIN  [EC].[Coaching_Log_Quality_Now_Bingo]cb
+    LEFT OUTER JOIN  [EC].[Coaching_Log_Bingo]cb
     ON cf.[CoachingID] = cb.[CoachingID]  
-    WHERE qs.Report_Code LIKE 'BQN%'
+    WHERE qs.Report_Code LIKE 'BQ%'
 	AND cb.[CoachingID] IS NULL 
 	ORDER BY [CoachingID]
            ,[Competency]
@@ -210,10 +210,11 @@ INSERT INTO [EC].[Coaching_Log_Quality_Now_Bingo]
 
     -- Populate Image value in [EC].[Coaching_Log_Quality_Now_Bingo] Table
 
- Update [EC].[Coaching_Log_Quality_Now_Bingo]
+ Update [EC].[Coaching_Log_Bingo]
 Set CompImage = I.ImageDesc
-FROM [EC].[Coaching_Log_Quality_Now_Bingo] B JOIN [EC].[Quality_Now_Bingo_Images]I
+FROM [EC].[Coaching_Log_Bingo] B JOIN [EC].[Bingo_Images]I
 ON B.Competency = I.Competency
+AND B.[BingoType]= I.[BingoType]
 Where B.CompImage is NULL
  
 -- Close the symmetric key with which to encrypt the data.  
@@ -254,15 +255,7 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality_Other
-
-
-
-
-
-
-
-
-
 GO
+
 
 
