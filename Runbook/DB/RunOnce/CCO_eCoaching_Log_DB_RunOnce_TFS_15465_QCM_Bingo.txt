@@ -94,7 +94,9 @@ GO
            ('<img border="20" src="cid:pp_qm.png">','Privacy Protector','QM'),
 	   ('<img border="20" src="cid:pr_qm.png">','Process Pro','QM'),
    	   ('<img border="20" src="cid:rr_qm.png">','Resolution Rock Star','QM'),
-	   ('<img border="20" src="cid:so_qm.png">','Smooth Operator','QM')
+	   ('<img border="20" src="cid:so_qm.png">','Smooth Operator','QM'),
+	   ('<img border="20" src="cid:wc.png">','Wild Card','QN'),
+	   ('<img border="20" src="cid:wc_qm.png">','Wild Card','QM')
 		  
 GO
 

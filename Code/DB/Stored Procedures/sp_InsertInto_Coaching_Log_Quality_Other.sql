@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Other(08).sql
-Last Modified Date: 09/23/2019
+sp_InsertInto_Coaching_Log_Quality_Other(09).sql
+Last Modified Date: 09/30/2019
 Last Modified By: Susmitha Palacherla
 
+Version 09: Updated to support wild card bingo images. TFS 15465 - 09/30/2019
 Version 08: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 07: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
@@ -32,6 +33,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
@@ -46,6 +48,7 @@ GO
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 -- Updated to support QM Bingo eCoaching logs. TFS 154653 - 09/23/2019
+-- Updated to support wild card images. TFS 154653 - 09/30/2019
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 @Count INT OUTPUT
@@ -208,21 +211,18 @@ INSERT INTO [EC].[Coaching_Log_Bingo]
 
    WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
-    -- Populate Image value in [EC].[Coaching_Log_Quality_Now_Bingo] Table
 
- Update [EC].[Coaching_Log_Bingo]
-Set CompImage = I.ImageDesc
-FROM [EC].[Coaching_Log_Bingo] B JOIN [EC].[Bingo_Images]I
-ON B.Competency = I.Competency
-AND B.[BingoType]= I.[BingoType]
-Where B.CompImage is NULL
- 
+    -- Populate Image value in [EC].[Coaching_Log_Quality_Now_Bingo] Table
+Update [EC].[Coaching_Log_Bingo]
+Set CompImage =  [EC].[fn_strImageForCompetency]([Competency],[BingoType])
+Where [CompImage] is NULL
+
 -- Close the symmetric key with which to encrypt the data.  
 CLOSE SYMMETRIC KEY [CoachingKey]  
 
 
 -- Truncate Staging Table
---Truncate Table [EC].[Quality_Other_Coaching_Stage]
+Truncate Table [EC].[Quality_Other_Coaching_Stage]
 
                   
 COMMIT TRANSACTION
@@ -256,6 +256,3 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality_Other
 GO
-
-
-

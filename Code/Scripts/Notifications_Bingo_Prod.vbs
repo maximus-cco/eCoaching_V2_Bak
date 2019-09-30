@@ -14,6 +14,7 @@ Const imgnnPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\nn.png"
 Const imgppPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\pp.png"
 Const imgprPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\pr.png"
 Const imgsoPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\so.png"
+Const imgwcPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\wc.png"
 
 
 Const imgaa_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\aa_qm.png"
@@ -23,8 +24,9 @@ Const imgpp_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\pp_qm.
 Const imgpr_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\pr_qm.png"
 Const imgrr_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\rr_qm.png"
 Const imgso_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\so_qm.png"
+Const imgwc_qmPath = "\\f3420-ecldbp01\ssis\coaching\Notifications\images\wc_qm.png"
 
-Const strLogFile = "\\f3420-ecldbp01\ssis\Coaching\Notifications\Logs\QNBingoNotification.log"
+Const strLogFile = "\\f3420-ecldbp01\ssis\Coaching\Notifications\Logs\BingoNotification.log"
 
 ' End - Environment Related
 
@@ -45,6 +47,8 @@ Const imgnnName = "nn.png"
 Const imgppName = "pp.png"
 Const imgprName = "pr.png"
 Const imgsoName = "so.png"
+Const imgwcName = "wc.png"
+
 
 Const imgaa_qmName = "aa_qm.png"
 Const imgcc_qmName = "cc_qm.png"
@@ -53,6 +57,7 @@ Const imgpp_qmName = "pp_qm.png"
 Const imgpr_qmName = "pr_qm.png"
 Const imgrr_qmName = "rr_qm.png"
 Const imgso_qmName = "so_qm.png"
+Const imgwc_qmName = "wc_qm.png"
 
 
 ' End - Non-Environment Related
@@ -217,6 +222,7 @@ Set objBodyPart  = objMsg.AddRelatedBodyPart(imgnnPath, imgnnName, CdoReferenceT
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgppPath, imgppName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgprPath, imgprName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgsoPath, imgsoName, CdoReferenceTypeName)
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgwcPath, imgwcName, CdoReferenceTypeName)
 
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgaa_qmPath, imgaa_qmName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgcc_qmPath, imgcc_qmName, CdoReferenceTypeName)
@@ -225,7 +231,7 @@ Set objBodyPart  = objMsg.AddRelatedBodyPart(imgpp_qmPath, imgpp_qmName, CdoRefe
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgpr_qmPath, imgpr_qmName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgrr_qmPath, imgrr_qmName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgso_qmPath, imgso_qmName, CdoReferenceTypeName)
-
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgwc_qmPath, imgwc_qmName, CdoReferenceTypeName)
 
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgName & ">"""
 
@@ -236,7 +242,7 @@ objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgnnName
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgppName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgprName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgsoName & ">"""
-
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgwcName & ">"""
 
 
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgaa_qmName & ">"""
@@ -246,6 +252,7 @@ objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgpp_qmN
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgpr_qmName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgrr_qmName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgso_qmName & ">"""
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgwc_qmName & ">"""
 
 objBodyPart.Fields.Update
 Set objFields= objConfiguration.Fields
