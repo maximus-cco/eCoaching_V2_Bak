@@ -13,7 +13,7 @@ steps sumary
 
 1. Activate Brownsville
 2. Inactivate Corbin and Waco
-3. Update Riverview to Tampa
+
 
 --RUN ONE STEP AT A TIME
 
@@ -41,13 +41,6 @@ GO
 
 --******************************************
 
---3. Update Riverview to Tampa
-
-Update [EC].[DIM_Site]
-Set [City] = 'Tampa'
-,[StateCity] = 'FL - Tampa'
-Where SiteID = 15
-GO
 
 
 --******************************************

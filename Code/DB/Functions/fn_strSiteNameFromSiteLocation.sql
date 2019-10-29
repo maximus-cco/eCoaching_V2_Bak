@@ -1,9 +1,10 @@
 /*
-fn_strSiteNameFromSiteLocation(04).sql
-Last Modified Date: 09/23/2019
+fn_strSiteNameFromSiteLocation(05).sql
+Last Modified Date: 10/29/2019
 Last Modified By: Susmitha Palacherla
 
-Version 04:  Updated to support QM Bingo eCoaching logs. TFS 15450 - 09/23/2019
+Version 05:  Updated to map Riverview back to Riverview. TFS 15450 - 10/29/2019
+Version 04:  Updated to Integrate Brownsville and map Riverview to Tampa. TFS 15450 - 09/23/2019
 Version 03:  Updated to add wildcards to accommodate new maximus location values- TFS 13168 - 01/08/2019
 Version 02: Added mapping for new Phoenix office - TFS 12063 - 09/11/2018
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -62,7 +63,7 @@ BEGIN
 			WHEN (@strSiteLocation lIKE N'%Lynn Haven%')     THEN N'Lynn Haven'
 		    WHEN (@strSiteLocation lIKE N'%Phoenix%') THEN N'Phoenix'
 		    WHEN (@strSiteLocation lIKE N'%Sandy%')      THEN N'Sandy'
-            WHEN (@strSiteLocation lIKE N'%Riverview%')      THEN N'Tampa'    
+            WHEN (@strSiteLocation lIKE N'%Riverview%')      THEN N'Riverview'    
 		    WHEN (@strSiteLocation lIKE N'%Waco%')       THEN N'Waco'  
 			WHEN (@strSiteLocation lIKE N'%Brownsville%')       THEN N'Brownsville' 
             WHEN (@strSiteLocation lIKE N'%Winchester%')   THEN N'Winchester'
