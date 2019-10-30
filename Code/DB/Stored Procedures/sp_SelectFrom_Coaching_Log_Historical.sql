@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical(04).sql
-Last Modified Date: 09/17/2019
+sp_SelectFrom_Coaching_Log_Historical(05).sql
+Last Modified Date: 10/30/2019
 Last Modified By: Susmitha Palacherla
 
+Version 05: TFS 15974 - Fix HC users receiving error on Historical Dashboard
 Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
@@ -26,11 +27,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/24/2018
@@ -39,6 +35,7 @@ GO
 --  Modified to support Quality Now TFS 13332 -  03/01/2019
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
+--  Update to fix HC users receiving error on Historical Dashboard - TFS 15974
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
 
@@ -99,7 +96,7 @@ SET @UpperBand  = @startRowIndex + @PageSize
 SET @nvcDisplayWarnings = (SELECT ISNULL (EC.fn_strCheckIf_HRUser(@nvcUserIdin), 'NO')) 
 SET @where = ' WHERE convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''' +  @NewLineChar +
 			 ' AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''' + @NewLineChar +
-			 ' AND [cl].[StatusID] <> 2'
+			 ' AND [cl].[StatusID] <> 2 ' 
 
 -- 1 for Active 2 for Inactive 3 for All
 
@@ -114,7 +111,7 @@ END
 			 
 IF @intSourceIdin  <> -1
 BEGIN
-    SET @nvcSubSource = (SELECT SubCoachingSource FROM DIM_Source WHERE SourceID = @intSourceIdin)
+    SET @nvcSubSource = (SELECT SubCoachingSource FROM ec.DIM_Source WHERE SourceID = @intSourceIdin)
 	SET @where = @where + @NewLineChar + 'AND [so].[SubCoachingSource] =  ''' + @nvcSubSource + ''''
 END
 
@@ -233,7 +230,7 @@ END
 			 
 IF @intSourceIdin  <> -1
 BEGIN
-    SET @nvcSubSource = (SELECT SubCoachingSource FROM DIM_Source WHERE SourceID = @intSourceIdin)
+    SET @nvcSubSource = (SELECT SubCoachingSource FROM ec.DIM_Source WHERE SourceID = @intSourceIdin)
 	SET @where = @where + @NewLineChar + 'AND [so].[SubCoachingSource] =  ''' + @nvcSubSource + ''''
 END
 
@@ -294,7 +291,7 @@ UNION
 	,[wl].[SubmittedDate]	SubmittedDate
 	,[vehs].[Emp_Name]	strSubmitterName
 	,''NA'' IsFollowupRequired
-    ,''-'' FollowupDueDate
+    ,'''' FollowupDueDate
 	,''NA'' IsFollowupcompleted
 	,''ok2'' orderkey
   FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
@@ -352,8 +349,9 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- SelectFrom_Coaching_Log_Historical
-GO
 
+
+GO
 
 
 
