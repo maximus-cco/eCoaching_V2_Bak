@@ -1,0 +1,54 @@
+/*
+
+
+TFS 15894- eCL Supervisor Forms change Batch Numbering
+
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps sumary
+1. Update batch names in Coaching_Log_Quality_Now_Evaluations table
+2. Update batch names in Coaching_log table
+
+
+
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+-- Details
+
+--1. Update batch names in Coaching_Log_Quality_Now_Evaluations table
+
+update qne
+set qnbatchid = REPLACE (qne.QNBatchID, 'QN', 'QNS')
+from ec.coaching_log cl join ec.Coaching_Log_Quality_Now_Evaluations qne
+on cl.coachingid = qne.CoachingID
+and cl.QNBatchID = qne.QNBatchID
+where cl.sourceid = 236
+and  qne.qnbatchid not like 'QNS%';
+
+--******************************************
+
+
+--2. Update batch names in Coaching_log table
+
+update ec.coaching_log
+set qnbatchid = REPLACE (qnbatchid, 'QN', 'QNS')
+where qnbatchid is not null
+and sourceid = 236
+and  qnbatchid not like 'QNS%';
+
+
+
+--******************************************
+
+
+
+--******************************************
+
+-
