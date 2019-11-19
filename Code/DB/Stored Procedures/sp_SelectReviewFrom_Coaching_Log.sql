@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(18).sql
-Last Modified Date: 09/23/2019
+sp_SelectReviewFrom_Coaching_Log(19).sql
+Last Modified Date: 11/18/2019
 Last Modified By: Susmitha Palacherla
 
+Version 19: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 18: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 17: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
 Version 16: Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
@@ -35,7 +36,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -51,6 +51,7 @@ GO
 -- 27. Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
 -- 28. Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- 29. Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
+-- 30. Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -219,7 +220,8 @@ SET @nvcSQL2 = '
     ELSE cl.[FollowupSupID] END strFollowupSupervisor,
   cl.IsEmpFollowupAcknowledged,
   cl.EmpAckFollowupAutoDate,
-  cl.EmpAckFollowupComments
+  cl.EmpAckFollowupComments,
+  ''Coaching'' strLogType
 FROM [EC].[Coaching_Log] cl ';
 	    
 SET @nvcSQL3 = '
@@ -274,12 +276,13 @@ ORDER BY [cl].[FormName]';
 SET @nvcSQL =  @nvcSQL1 +  @nvcSQL2 +  @nvcSQL3;
 EXEC (@nvcSQL)
 
---PRINT @nvcSQL
+PRINT @nvcSQL
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
+
 
 
 

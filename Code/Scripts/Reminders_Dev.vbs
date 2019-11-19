@@ -27,6 +27,7 @@ Dim strCCEmail
 Dim strSubject 
 Dim strCtrMessage
 Dim strsubCoachingSource
+Dim numLogType
 
 
 Dim arrResultSet
@@ -71,7 +72,7 @@ For j = 0 to totalPendingEmail
 	strToEmail = arrResultSet(5,j) 
         strCCEmail = arrResultSet(6,j) 
 	strsubCoachingSource = arrResultSet(3,j) 'Empower for DTT Feeds
-
+        numLogType = arrResultSet(12,j)
 
 	'configure the subject line
 	strSubject = "Alert! eCoaching Log Past Due Follow-up:  "  '& " (" & strFormName & ")"
@@ -103,9 +104,14 @@ dim spUpdateReminderMailSent
 On Error Resume Next
 
 
+  Select Case (strsubCoachingSource)
+        Case "Warning"
+        strSubject = "Alert! Warning Log Past Due Follow-up:  "  &  strFormName 
+        Case Else
+        strSubject = "Alert! eCoaching Log Past Due Follow-up:  "  &  strFormName 
+  End Select
 
 
-  strSubject = "Alert! eCoaching Log Past Due Follow-up:  "  &  strFormName 
   mailbody =  strFormName & " requires your attention.  Please review and discuss with the employee."
 
   Select Case (strsubCoachingSource)
@@ -220,7 +226,10 @@ End With
 ' use numbers because the actual string values aren't recognized without adovbs.inc - http://www.af-chicago.org/app/adovbs.inc
 
 
-spUpdateReminderMailSent = "EXEC EC.sp_UpdateReminderMailSent @nvcNumID ='" & numID & "'"
+
+spUpdateReminderMailSent = "EXEC EC.sp_UpdateReminderMailSent @intNumID ='" & numID & "',@intLogType ='" & numLogType & "'"
+
+'spUpdateReminderMailSent = "EXEC EC.sp_UpdateReminderMailSent @nvcNumID ='" & numID & "'"
 
 dbConn.execute(spUpdateReminderMailSent), , 129
  SafeCloseDbConn dbConn

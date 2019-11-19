@@ -1,3 +1,12 @@
+/*
+Last Modified Date: 11/18/2019
+Last Modified By: Susmitha Palacherla
+
+Version 01: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+
+*/
+
+
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
   WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update4Review_Coaching_Log' 
@@ -18,10 +27,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:     11/16/12
@@ -31,9 +36,11 @@ GO
 --    Last Update:    03/17/2014 - Modified for eCoachingDev DB
 --    Last Update:    03/25/2014 - Modified Update query
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
+--    Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Pending]
 (
+  @nvcLogType nvarchar(20),
   @nvcFormID BIGINT,
   @nvcFormStatus Nvarchar(30),
   @bitisCSRAcknowledged bit,
@@ -53,6 +60,9 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 BEGIN TRANSACTION;
 
 BEGIN TRY
+
+IF  @nvcLogType = N'Coaching'
+BEGIN
 UPDATE [EC].[Coaching_Log]
 SET 
   StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
@@ -61,6 +71,19 @@ SET
   CSRComments = @nvcCSRComments
 WHERE CoachingID = @nvcFormID
 OPTION (MAXDOP 1);	
+END
+
+ELSE
+BEGIN
+UPDATE [EC].[Warning_Log]
+SET 
+  StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
+  isCSRAcknowledged = @bitisCSRAcknowledged,
+  CSRReviewAutoDate = @dtmCSRReviewAutoDate,
+  CSRComments = @nvcCSRComments
+WHERE WarningID = @nvcFormID
+OPTION (MAXDOP 1);	
+END
 	
 COMMIT TRANSACTION;
 END TRY
@@ -106,9 +129,8 @@ BEGIN CATCH
 END CATCH;
 
 END --sp_Update_Review_Coaching_Log_Employee_Pending
-
-
-
 GO
+
+
 
 

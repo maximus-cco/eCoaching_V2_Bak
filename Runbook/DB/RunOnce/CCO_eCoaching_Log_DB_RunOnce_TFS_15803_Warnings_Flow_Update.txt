@@ -1,0 +1,209 @@
+/*
+
+
+
+TFS 15803 - changes for warnings workflow in the eCoaching Log application 
+
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps sumary
+
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+-- Details
+
+--1. INSERT records to [EC].[DIM_Coaching_Reason]
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReason])
+     VALUES ('Formal Coaching');
+
+
+
+--******************************************
+
+
+--2. INSERT records to  [EC].[DIM_Sub_Coaching_Reason]
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES ('Attendance – Hours'),
+           ('Attendance – Trends'),
+		   ('Attendance – NCNS'),
+		   ('Break Time'),
+		   ('Call Avoidance'),
+		   ('Misconduct'),
+  ('Adherence to schedule'),
+('Falsification'),
+('Harassment'),
+('Other Policy Violation (non-Security/Privacy)'),
+('Performance'),
+('Quality'),
+('Timesheet Violation');
+		 
+
+
+
+
+--******************************************
+
+--3.Update  [EC].[Coaching_Reason_Selection]
+
+   Update [EC].[Coaching_Reason_Selection]
+  set isActive = 0
+  where coachingreasonid in (28,29,30)
+  and SubCoachingReasonID in (92, 93, 94, 96, 246, 247, 248, 251);
+
+
+--******************************************
+
+
+--4. INSERT records to [EC].[Coaching_Reason_Selection]
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+                   (28, 'Verbal Warning',155, 'Dress Code', 1,1,0,1,0,1,1,1,1,1,1,1),
+                   (28, 'Verbal Warning',178, 'Insubordination', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',253, 'Attendance – Hours', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',254, 'Attendance – Trends', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',256, 'Break Time', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',257, 'Call Avoidance', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',258, 'Misconduct', 1,1,0,1,0,1,1,1,1,1,1,1),
+                   (28, 'Verbal Warning',259, 'Adherence to schedule', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',260, 'Falsification', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',261, 'Harassment', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',262, 'Other Policy Violation (non-Security/Privacy)', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',263, 'Performance', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',264, 'Quality', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (28, 'Verbal Warning',265, 'Timesheet Violation', 1,1,0,1,0,1,1,1,1,1,1,1),
+         
+                    (29, 'Written Warning',155, 'Dress Code', 1,1,0,1,0,1,1,1,1,1,1,1),
+                    (29, 'Written Warning',178, 'Insubordination', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',253, 'Attendance – Hours', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',254, 'Attendance – Trends', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',256, 'Break Time', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',257, 'Call Avoidance', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',258, 'Misconduct', 1,1,0,1,0,1,1,1,1,1,1,1),
+                    (29, 'Written Warning',259, 'Adherence to schedule', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',260, 'Falsification', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',261, 'Harassment', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',262, 'Other Policy Violation (non-Security/Privacy)', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',263, 'Performance', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',264, 'Quality', 1,1,0,1,0,1,1,1,1,1,1,1),
+		    (29, 'Written Warning',265, 'Timesheet Violation', 1,1,0,1,0,1,1,1,1,1,1,1),
+
+		   (30, 'Final Written Warning',155, 'Dress Code', 1,1,0,1,0,1,1,1,1,1,1,1),
+                   (30, 'Final Written Warning',178, 'Insubordination', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',253, 'Attendance – Hours', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',254, 'Attendance – Trends', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',256, 'Break Time', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',257, 'Call Avoidance', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',258, 'Misconduct', 1,1,0,1,0,1,1,1,1,1,1,1),
+                   (30, 'Final Written Warning',259, 'Adherence to schedule', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',260, 'Falsification', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',261, 'Harassment', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',262, 'Other Policy Violation (non-Security/Privacy)', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',263, 'Performance', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',264, 'Quality', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (30, 'Final Written Warning',265, 'Timesheet Violation', 1,1,0,1,0,1,1,1,1,1,1,1),
+
+	           (60, 'Formal Coaching',95, 'Security or Privacy Issue', 1,1,0,1,0,1,1,1,1,1,1,1),
+                   (60, 'Formal Coaching',155, 'Dress Code', 1,1,0,1,0,1,1,1,1,1,1,1),
+                   (60, 'Formal Coaching',178, 'Insubordination', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',253, 'Attendance – Hours', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',254, 'Attendance – Trends', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',256, 'Break Time', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',257, 'Call Avoidance', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',258, 'Misconduct', 1,1,0,1,0,1,1,1,1,1,1,1),
+                   (60, 'Formal Coaching',259, 'Adherence to schedule', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',260, 'Falsification', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',261, 'Harassment', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',262, 'Other Policy Violation (non-Security/Privacy)', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',263, 'Performance', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',264, 'Quality', 1,1,0,1,0,1,1,1,1,1,1,1),
+		   (60, 'Formal Coaching',265, 'Timesheet Violation', 1,1,0,1,0,1,1,1,1,1,1,1);
+		 
+
+
+
+
+--******************************************
+
+--5. Add columns to  [EC].[Warning_Log]
+
+ALTER TABLE [EC].[Warning_Log]
+ADD isCSRAcknowledged bit NULL,
+CSRReviewAutoDate datetime NULL,
+CSRComments nvarchar(3000) NULL,
+EmailSent bit NOT NULL DEFAULT (0),
+ReminderSent bit NOT NULL DEFAULT (0)
+    ,ReminderDate datetime NULL
+	,ReminderCount int NOT NULL DEFAULT (0);
+
+
+
+--******************************************
+
+--6. INSERT records to [EC].[Email_Notifications]
+
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+	 ('Training', 'UI','Direct','Warning',0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new Warning Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.',0,'NA'),
+	 ('LSA', 'UI','Direct','Warning',0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new Warning Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.',0,'NA'),
+	 ('CSR', 'UI','Direct','Warning',0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new Warning Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.',0,'NA'),
+	 ('Quality', 'UI','Direct','Warning',0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new Warning Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.',0,'NA'),
+	 ('Supervisor', 'UI','Direct','Warning',0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new Warning Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.',0,'NA');
+
+
+
+--******************************************
+
+--7. Stage updated Reminders script
+
+Stage file \Code\Scripts\Reminders_Prod.vbs 
+to
+\\f3420-ecldbp01\ssis\Coaching\Notifications\
+
+overwrite existing
+
+--******************************************
+

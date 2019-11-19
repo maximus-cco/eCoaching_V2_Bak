@@ -1,3 +1,10 @@
+/*
+Last Modified Date: 11/18/2019
+Last Modified By: Susmitha Palacherla
+
+Version 01: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+
+*/
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
   WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_SelectCoaching4Reminder' 
@@ -10,7 +17,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 --	====================================================================
 --	Author:		       Susmitha Palacherla
 --	Create Date:	   02/09/2016
@@ -23,6 +29,7 @@ GO
 --  Modified per TFS 7646 to add reminders for DTT logs - 09/14/2017
 --  Modified per TFS 8597 to modify DTT reminders to use Notification date - 10/12/2017
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
+--  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Reminder]
 AS
@@ -66,6 +73,7 @@ AS
     ,x.ReassignDate   
     ,x.ReassignCount
     ,x.ReassignToID
+	,x.LogType
 FROM 
 -- Verint-GDIT Logs
   (  
@@ -92,7 +100,8 @@ FROM
          WHEN (ReminderSent = ''False'' AND DATEDIFF(HH, ISNULL([ReassignDate], [NotificationDate]), GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''' ) THEN ''Mgr''
          WHEN (ReminderSent = ''True'' AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate], [ReminderDate]), GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''' ) THEN ''Mgr/SrMgr''
          ELSE ''NA'' 
-       END RemindCC
+       END RemindCC,
+	   1 LogType
     FROM [EC].[Coaching_Log] cl WITH (NOLOCK)
     JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK) ON cl.coachingid = clr.coachingid 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
@@ -137,7 +146,8 @@ SET @nvcSQL2 = '
          WHEN (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate],[MgrReviewAutoDate]), GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''') THEN ''Mgr''
          WHEN (ReminderSent = ''True'' AND cl.Statusid = 6 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate], [ReminderDate]), GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''') THEN ''Mgr/SrMgr''
          ELSE ''NA'' 
-       END RemindCC
+       END RemindCC,
+	   1 LogType
     FROM  [EC].[Coaching_Log] cl WITH (NOLOCK)
     JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK) ON cl.coachingid = clr.coachingid 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
@@ -181,7 +191,8 @@ SET @nvcSQL3 = '
          WHEN (ReminderSent = ''False'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.NotificationDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''') THEN ''Sup''
          WHEN (ReminderSent = ''True'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.ReminderDate,GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''') THEN ''Sup/Mgr''
          ELSE ''NA'' 
-       END RemindCC
+       END RemindCC,
+	  1 LogType
     FROM  [EC].[Coaching_Log] cl WITH (NOLOCK)
     JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK) ON cl.coachingid = clr.coachingid 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
@@ -194,6 +205,43 @@ SET @nvcSQL3 = '
 	        (ReminderSent = ''False'' AND DATEDIFF(HH, cl.NotificationDate,GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''')
 			OR (ReminderSent = ''True'' AND [ReminderCount] < 2 AND DATEDIFF(HH, cl.ReminderDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''')
       )
+	  -- Warning Logs
+	  UNION 
+SELECT wl.WarningID numID	
+      ,wl.FormName strFormID
+      ,wl.EmpID strEmpID
+      ,s.Status strStatus
+      ,so.SubCoachingSource strSubCoachingSource
+      ,wlr.value strValue
+      ,ISNULL(wl.MgrID,''999999'') strMgr
+      ,wl.SubmittedDate NotificationDate
+      ,wl.ReminderSent ReminderSent
+      ,wl.ReminderDate ReminderDate
+      ,wl.ReminderCount ReminderCount
+      ,NULL ReassignDate 
+      ,0 ReassignCount
+      ,NULL ReassignToID
+      ,CASE
+         WHEN (wl.ReminderSent = ''False'' AND wl.Statusid = 4 AND DATEDIFF(HH, wl.SubmittedDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''') THEN ''Emp''
+         WHEN (wl.ReminderSent = ''True'' AND wl.Statusid = 4 AND DATEDIFF(HH, wl.ReminderDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''') THEN ''Emp''
+         ELSE ''NA'' 
+       END Remind
+      ,CASE
+         WHEN (wl.ReminderSent = ''False'' AND wl.Statusid = 4 AND DATEDIFF(HH, wl.SubmittedDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''') THEN ''Sup/Mgr''
+         WHEN (ReminderSent = ''True'' AND wl.Statusid = 4 AND DATEDIFF(HH, wl.ReminderDate,GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''') THEN ''Sup/Mgr''
+         ELSE ''NA'' 
+       END RemindCC,
+	  2 LogType
+    FROM  [EC].[Warning_Log] wl WITH (NOLOCK)
+    JOIN [EC].[Warning_Log_Reason] wlr WITH (NOLOCK) ON wl.WarningID = wlr.WarningID 
+    JOIN [EC].[DIM_Status] s ON wl.StatusID = s.StatusID 
+    JOIN [EC].[DIM_Source] so ON wl.SourceID = so.SourceID
+    WHERE wl.Statusid = 4 
+     AND (
+	        (ReminderSent = ''False'' AND DATEDIFF(HH, wl.SubmittedDate,GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''')
+		OR (ReminderSent = ''True'' AND [ReminderCount] < 2 AND DATEDIFF(HH, wl.ReminderDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs1) + ''')
+        )
+	  
 ';
 
 SET @nvcSQL4 = '
@@ -232,6 +280,7 @@ SET @nvcSQL4 = '
     ,ReminderDate	
     ,ReminderCount   
     ,ReassignDate
+	,LogType
   FROM TempMain T
   JOIN [EC].[Employee_Hierarchy] eh ON T.strEmpID = eh.Emp_ID
   JOIN [EC].[View_Employee_Hierarchy] veh ON eh.Emp_ID = veh.Emp_ID
@@ -246,9 +295,13 @@ SET @nvcSQL4 = '
         
 SET @nvcSQL = @nvcSQL1 + @nvcSQL2 + @nvcSQL3 + @nvcSQL4
 EXEC (@nvcSQL)	
-
+PRINT @nvcSQL
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];	 
 	    
 END --sp_SelectCoaching4Reminder
 GO
+
+
+
+

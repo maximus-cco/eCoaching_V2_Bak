@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Warning_Log(04).sql
-Last Modified Date: 06/20/2018
+sp_InsertInto_Warning_Log(05).sql
+Last Modified Date: 11/18/2019
 Last Modified By: Susmitha Palacherla
 
+Version 05: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
 Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
@@ -25,8 +26,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      10/03/2014
@@ -38,6 +37,8 @@ GO
  -- Modified to support Encryption of sensitive data. Open key and removed LanID. TFS 7856 - 10/23/2017
  -- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018.
  -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
+ -- Initial Revision. Created during changes to Warnings workflow. TFS 15803 - 10/17/2019
+ -- Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
 (     @nvcEmpID Nvarchar(10),
@@ -117,7 +118,7 @@ IF @intWarnIDExists IS NULL
            (@nvcEmpID 
            ,@nvcProgramName 
            ,120
-           ,1
+           ,4
            ,ISNULL(@SiteID,@nvcNotPassedSiteID)
            ,@nvcEmpID 
            ,@nvcSubmitterID
@@ -228,7 +229,8 @@ END TRY
   END CATCH  
 
   END -- sp_InsertInto_Warning_Log
-GO
+  GO
+
 
 
 

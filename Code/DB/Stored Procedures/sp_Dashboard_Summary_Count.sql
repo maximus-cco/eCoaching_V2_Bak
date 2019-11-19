@@ -1,8 +1,9 @@
 /*
-sp_Dashboard_Summary_Count(03).sql
-Last Modified Date: 09/17/2019
+sp_Dashboard_Summary_Count(04).sql
+Last Modified Date: 11/18/2019
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 03: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 02: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
@@ -24,9 +25,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -35,6 +33,7 @@ GO
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
+--  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
@@ -51,6 +50,8 @@ DECLARE
 @bitMyTeamCompleted bit,
 @bitMyTeamWarning bit,
 @bitMySubmission bit,
+@intMyPendingCoaching int,
+@intMyPendingWarning int,
 @intMyPending int,
 @intMyFollowup int,
 @intMyCompleted int,
@@ -86,23 +87,37 @@ BEGIN
 
 IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
 BEGIN
-SET @intMyPending = (SELECT COUNT(cl.CoachingID)
+SET @intMyPendingCoaching = (SELECT COALESCE(COUNT(cl.CoachingID),0)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON cl.EmpID = eh.Emp_ID
-                 WHERE cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
+                 WHERE cl.EmpID = @nvcEmpID  AND StatusID in (3,4));
 
+
+SET @intMyPendingWarning = (SELECT COALESCE(COUNT(wl.WarningID),0)
+                 FROM EC.Warning_Log wl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
+				 ON wl.EmpID = eh.Emp_ID
+                 WHERE wl.EmpID = @nvcEmpID  AND StatusID = 4);
+
+SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning
 
 END
 
 
 IF @nvcEmpRole  = 'Supervisor'
 BEGIN
-SET @intMyPending = (SELECT COUNT(cl.CoachingID)
+SET @intMyPendingCoaching = (SELECT COUNT(cl.CoachingID)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON cl.EmpID = eh.Emp_ID
                  WHERE ((cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
 				 OR (cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID in (3,6,8,10)) 
 				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID in (3,6,8,10))))
+
+SET @intMyPendingWarning = (SELECT COALESCE(COUNT(wl.WarningID),0)
+                 FROM EC.Warning_Log wl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
+				 ON wl.EmpID = eh.Emp_ID
+                 WHERE wl.EmpID = @nvcEmpID  AND StatusID = 4);
+
+SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning
 			
 END
 
@@ -184,7 +199,7 @@ BEGIN
 SET @intMyTeamWarning = (SELECT COUNT(wl.WarningID)
 					 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH (NOLOCK)
 					 ON wl.EmpID = eh.Emp_ID 
-					 WHERE wl.StatusID = 1
+					 WHERE wl.StatusID <> 2
 			         AND wl.siteID <> -1
 					 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID)) 
 
@@ -252,8 +267,11 @@ EXEC (@nvcSQL)
 	
 -- Close Symmetric key
 END -- sp_Dashboard_Summary_Count
-
 GO
+
+
+
+
 
 
 
