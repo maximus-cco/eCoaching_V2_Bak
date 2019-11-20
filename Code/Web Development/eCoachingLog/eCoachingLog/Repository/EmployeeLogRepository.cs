@@ -240,6 +240,7 @@ namespace eCoachingLog.Repository
                         logDetail.FormName = dataReader["strFormID"].ToString();
                         logDetail.Source = dataReader["strSource"].ToString();
                         logDetail.Status = dataReader["strFormStatus"].ToString();
+						logDetail.StatusId = (int)dataReader["StatusId"];
                         logDetail.Type = dataReader["strFormType"].ToString();
                         logDetail.CreatedDate = eCoachingLogUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
@@ -252,6 +253,9 @@ namespace eCoachingLog.Repository
 						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString().Trim().ToUpper();
                         logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
 						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString().Trim().ToUpper();
+
+						logDetail.IsFormalAttendanceHours = dataReader["FC/ ATTH"].ToString() == "0" ? false : true;
+						logDetail.IsFormalAttendanceTrends = dataReader["FC / ATTT"].ToString() == "0" ? false : true;
                         break;
                     }
                 }
@@ -515,8 +519,12 @@ namespace eCoachingLog.Repository
 						log.Value = dataReader["strValue"].ToString();
 						log.CreatedDate = dataReader["SubmittedDate"].ToString();
 						log.IsCoaching = !string.IsNullOrEmpty(log.Source) && log.Source != "Warning" ? true : false;
-						// the sp to return my team's warning is not returning these 2 fields
-						if (logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING)
+						// the sp to return my team's warning is not returning these 3 fields
+						// the sp to return log list for Director Dashboard is not returing these 3 fields
+						if (logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING
+							&& logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING
+							&& logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_SITE_WARNING
+							&& logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_SITE_COMPLETED)
 						{
 							log.IsFollowupRequired = dataReader["IsFollowupRequired"].ToString().ToLower().Equals("yes") ? true : false;
 							log.FollowupDueDate = dataReader["FollowupDueDate"].ToString();
@@ -853,11 +861,6 @@ namespace eCoachingLog.Repository
 				}
 			}
 
-			// TODO: followup - remove
-			//ChartDataset temp = new ChartDataset();
-			//temp.label = "Pending Followup";
-			//temp.data.Add(100);
-			//chartDatasets.Add(temp);
 			return chartDatasets;
 		}
 

@@ -1,0 +1,55 @@
+﻿@model eCoachingLog.ViewModels.ReviewViewModel
+<div class="container-fluid" style="height: 100%;">
+	<div class="row row-eq-height">
+		<div class="col-xs-3 blue-bar">
+			@{Html.RenderPartial("_WarningLogInfo"); }
+		</div>
+		<!--/.col-xs-3 -->
+		<div class="col-xs-9">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Review</h4>
+				@if (!Model.IsReadOnly)
+				{
+					<div class="danger pull-right">Please do NOT include PII or PHI in the log entry.</div>
+					<br />
+					<div class="text-muted pull-right"><small>Please note that all fields are required. Double-check your work to ensure accuracy.</small></div>
+				}
+
+				<div id="div-error-prompt" class="danger"></div>
+			</div>
+
+			<div class="modal-body" style="font-size: small;">
+				@{ Html.RenderPartial("_Reasons", Model.WarningLogDetail.Reasons); }
+			</div>
+
+			<div class="mt-2 instruction-text @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")">
+				@Html.Raw(Model.InstructionText)
+			</div>
+
+			@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
+			{
+				@Html.HiddenFor(m => m.IsWarning)
+				@Html.HiddenFor(m => m.WarningLogDetail.LogId)
+
+				<div class='form-group mt-2'>
+					<label for="AcknowledgeCheckBox" class="required">Check the box below to acknowledge the warning opportunity:</label><br />
+					<label class="checkbox-inline">
+						@Html.CheckBoxFor(m => m.Acknowledge)I have read and understand all the information provided on this warning Log.
+					</label>
+					@Html.ValidationMessageFor(m => m.Acknowledge)
+				</div>
+			}
+
+			<!-- /.modal-body -->
+			<div class="modal-footer mt-2">
+				<div class="form-group">
+					<button class="btn btn-primary float-right" type="submit" id="btn-submit">Submit</button>
+				</div>
+			</div>
+		</div>
+		<!--/.col-xs-9 -->
+	</div>
+	<!--/.row -->
+</div>
+

@@ -36,6 +36,9 @@ namespace eCoachingLog.Models.Common
 		public IList<Scorecard> Scorecards { get; set; }
 		public string StrengthOpportunity { get; set; }
 
+		// Coaching or Warning?
+		public bool IsCoachingLog { get; set; }
+
 		public bool IsTypeDirect
         {
             get

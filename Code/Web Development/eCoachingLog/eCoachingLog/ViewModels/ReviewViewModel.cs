@@ -109,6 +109,8 @@ namespace eCoachingLog.ViewModels
 		public string ShortCallBehaviorActionList { get; set; }
 		public bool ShowEmployeeReviewInfo { get; set; }
 
+		public bool IsWarning { get; set; }
+
 		public ReviewViewModel()
 		{
 			this.LogDetail = new CoachingLogDetail();
@@ -122,6 +124,16 @@ namespace eCoachingLog.ViewModels
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{
+			// Warning
+			if (this.IsWarning)
+			{
+				if (!this.Acknowledge)
+				{
+					var ack = new[] { "Acknowledge" };
+					yield return new ValidationResult("You must select the checkbox to complete this review.", ack);
+				}
+			}
+
 			// Regular Pending
 			if (this.IsRegularPendingForm)
 			{
@@ -338,7 +350,8 @@ namespace eCoachingLog.ViewModels
 				Comments = vm.Comments,
 				DateConfirmed = vm.DateConfirmed,
 				DateFollowup = vm.ActualFollowupDate,
-				DetailsFollowup = vm.FollowupDetails
+				DetailsFollowup = vm.FollowupDetails,
+				IsCoaching = !vm.IsWarning
 			};
 		}
 

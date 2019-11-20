@@ -6,6 +6,7 @@ namespace eCoachingLog.Models.Review
 {
 	public class Review
 	{
+		public bool IsCoaching { get; set; }
 		public CoachingLogDetail LogDetail { get; set; }
 		public WarningLogDetail WarningLogDetail { get; set; }
 

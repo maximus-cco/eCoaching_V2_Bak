@@ -314,7 +314,8 @@ namespace eCoachingLog.Repository
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
+				command.Parameters.AddWithValueSafe("@nvcLogType", review.IsCoaching ? "Coaching" : "Warning");
+				command.Parameters.AddWithValueSafe("@nvcFormID", review.IsCoaching ? review.LogDetail.LogId : review.WarningLogDetail.LogId);
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus); // next status;
 				command.Parameters.AddWithValueSafe("@bitisCSRAcknowledged", review.Acknowledge);
 				command.Parameters.AddWithValueSafe("@dtmCSRReviewAutoDate", DateTime.Now);

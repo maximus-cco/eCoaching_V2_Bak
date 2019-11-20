@@ -40,6 +40,7 @@ namespace eCoachingLog.Controllers
 
 			int currentPage = (int)Session["currentPage"];
 			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
+
 			// Get coaching reasons for this log
 			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching);
 
@@ -142,10 +143,21 @@ namespace eCoachingLog.Controllers
 		{
 			logger.Debug("!!!!!!!!!!Entered Save");
 
-			bool success = false;
-			User user = GetUserFromSession();
 			if (ModelState.IsValid)
 			{
+				bool success = false;
+				User user = GetUserFromSession();
+				string logId = null;
+
+				if (vm.IsWarning)
+				{
+					logId = vm.WarningLogDetail == null ? "logidnull" : vm.WarningLogDetail.LogId.ToString();
+				}
+				else
+				{
+					logId = vm.LogDetail == null ? "logidnull" : vm.LogDetail.LogId.ToString();
+				}
+
 				try
 				{
 					// Update database
@@ -157,7 +169,6 @@ namespace eCoachingLog.Controllers
 				catch (Exception ex)
 				{
 					var userId = user == null ? "usernull" : user.EmployeeId;
-					var logId = vm.LogDetail == null ? "logidnull" : vm.LogDetail.LogId.ToString();
 					StringBuilder msg = new StringBuilder("Exception: ");
 					msg.Append("[").Append(userId).Append("]")
 						.Append("|Failed to update log [").Append(logId).Append("]: ")
@@ -170,8 +181,8 @@ namespace eCoachingLog.Controllers
 				return Json(new
 				{
 					success = success,
-					successMsg = "The log [" + vm.LogDetail.LogId + "] has been successfully updated.",
-					errorMsg = "Failed to update the log [" + vm.LogDetail.LogId + "]."
+					successMsg = "The log [" + logId + "] has been successfully updated.",
+					errorMsg = "Failed to update the log [" + logId + "]."
 				});
 			}
 
@@ -203,6 +214,16 @@ namespace eCoachingLog.Controllers
 			else
 			{
 				vm.WarningLogDetail = (WarningLogDetail)logDetail;
+				// User reviews warning log
+				if (user.EmployeeId == logDetail.EmployeeId && logDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
+				{
+					vm.IsReadOnly = false;
+					vm.IsWarning = true;
+					vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
+					vm.ReviewPageName = "_ReviewWarningHome";
+
+					return vm;
+				}
 			}
 
 			vm.ShowEmployeeReviewInfo = true;
@@ -243,7 +264,8 @@ namespace eCoachingLog.Controllers
 			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage
 				|| Constants.PAGE_SURVEY == currentPage
 				|| Constants.PAGE_MY_SUBMISSION == currentPage
-				|| !isCoaching // Warning
+				// Warning
+				|| (!isCoaching)
 				|| logDetail.StatusId == Constants.LOG_STATUS_COMPLETED) // Completed
 			{
 				vm.IsReadOnly = true;

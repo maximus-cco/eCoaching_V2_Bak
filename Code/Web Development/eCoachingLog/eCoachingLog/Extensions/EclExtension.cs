@@ -53,5 +53,15 @@ namespace eCoachingLog.Extensions
                               Value = site.Id.ToString()
                           });
         }
+
+		public static IDictionary<string, string> GetErrors(this ModelStateDictionary msDictionary)
+		{
+			return msDictionary
+					.Where(x => x.Value.Errors.Count > 0)
+					.ToDictionary(
+						kvp => kvp.Key,
+						kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
+					);
+		}
 	}
 }

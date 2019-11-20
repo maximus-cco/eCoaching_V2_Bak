@@ -95,6 +95,19 @@ namespace eCoachingLog.Services
 
 		public string GetInstructionText(Review review, User user)
 		{
+			if (!review.IsCoaching)
+			{
+				if (review.WarningLogDetail.IsFormalAttendanceHours)
+				{
+					return Constants.REVIEW_WARNING_ATTENDANCE_HOURS;
+				}
+
+				if (review.WarningLogDetail.IsFormalAttendanceTrends)
+				{
+					return Constants.REVIEW_WARNING_ATTENDANCE_TRENDS;
+				}
+			}
+
 			var log = review.LogDetail;
 
 			if (user.EmployeeId == log.ManagerEmpId
@@ -274,6 +287,13 @@ namespace eCoachingLog.Services
 
 		public bool CompleteReview(Review review, User user, string emailTempFileName,int logIdInSession)
 		{
+			// Warning
+			if (!review.IsCoaching)
+			{
+				string nextStatus = "Completed";
+				return reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
+			}
+
 			// Strip potential harmful characters entered by the user
 			review.DetailsCoached = eCoachingLogUtil.CleanInput(review.DetailsCoached);
 			review.Comment = eCoachingLogUtil.CleanInput(review.Comment);
