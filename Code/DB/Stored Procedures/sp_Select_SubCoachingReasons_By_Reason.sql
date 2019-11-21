@@ -1,8 +1,9 @@
 /*
-sp_Select_SubCoachingReasons_By_Reason(05).sql
-Last Modified Date: 08/21/2019
+sp_Select_SubCoachingReasons_By_Reason(06).sql
+Last Modified Date: 11/21/2019
 Last Modified By: Susmitha Palacherla
 
+Version 06: Updated to support changes to warnings workflow. TFS 15803 - 11/21/2019
 Version 05: Modified to support updated requirements to replace ETS with Deltek - TFS 15144 - 08/21/2019
 Version 04: Submissions move to new architecture. Additional changes from V&V feedback - TFS 7136 - 04/30/2018
 Version 03 : Modified to open Encryption key. TFS 10760 - 04/24/2018
@@ -38,6 +39,7 @@ GO
 -- Last Modified By: Susmitha Palacherla
 -- Modified during Submissions move to new architecture - TFS 7136 - 04/30/2018
 -- Modified to support updated requirements to replace ETS with Deltek - TFS 15144 - 08/21/2019
+-- Updated to support changes to warnings workflow. TFS 15803 - 11/21/2019
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_SubCoachingReasons_By_Reason] 
 @intReasonIDin INT, @intModuleIDin INT, @strSourcein nvarchar(30), @nvcEmpIDin nvarchar(10)
@@ -56,7 +58,7 @@ Where ' + @strModule +' = 1
 and [CoachingReasonID] = '''+ CONVERT(NVARCHAR,@intReasonIDin) + '''
 and [IsActive] = 1 
 AND ' + @strSourcein +' = 1
-Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other Policy (non-Security/Privacy)'', ''Other: Specify'') Then 1 Else 0 END, [SubCoachingReason]'
+Order by CASE WHEN [SubCoachingReason] in (''Other: Specify reason under coaching details.'', ''Other Policy (non-Security/Privacy)'', ''Other: Specify'', ''Other Policy Violation (non-Security/Privacy)'') Then 1 Else 0 END, [SubCoachingReason]'
 
 
 --Print @nvcSQL
@@ -65,8 +67,6 @@ EXEC (@nvcSQL)
 END -- sp_Select_SubCoachingReasons_By_Reason
 
 GO
-
-
 
 
 
