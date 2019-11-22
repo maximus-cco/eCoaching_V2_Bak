@@ -95,7 +95,7 @@ namespace eCoachingLog.Services
 
 		public string GetInstructionText(Review review, User user)
 		{
-			if (!review.IsCoaching)
+			if (!review.IsCoaching && review.WarningLogDetail.ModuleId == Constants.MODULE_CSR)
 			{
 				if (review.WarningLogDetail.IsFormalAttendanceHours)
 				{
@@ -106,6 +106,8 @@ namespace eCoachingLog.Services
 				{
 					return Constants.REVIEW_WARNING_ATTENDANCE_TRENDS;
 				}
+
+				return string.Empty;
 			}
 
 			var log = review.LogDetail;
@@ -290,8 +292,7 @@ namespace eCoachingLog.Services
 			// Warning
 			if (!review.IsCoaching)
 			{
-				string nextStatus = "Completed";
-				return reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
+				return CompleteWarning(review, user, emailTempFileName);
 			}
 
 			// Strip potential harmful characters entered by the user
@@ -351,6 +352,26 @@ namespace eCoachingLog.Services
 				.Append("|LogId[").Append(logIdInSession).Append("]");
 			logger.Warn(sb);
 			return false;
+		}
+
+		private bool CompleteWarning(Review review, User user, string emailTempFileName)
+		{
+			string nextStatus = "Completed";
+			bool success = reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
+			string subject = "Warning Log Completed";
+
+			// Email supervisor and/or manager upon CSR acknowledges the warning log
+			if (success
+					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
+					&& review.WarningLogDetail.EmployeeId == user.EmployeeId)
+			{
+				if (!this.emailService.SendComments(review.WarningLogDetail, "", emailTempFileName, subject))
+				{
+					logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
+				}
+			}
+
+			return success;
 		}
 
 		private bool CompleteRegularPendingReview(Review review, User user, string emailTempFileName)
@@ -420,7 +441,7 @@ namespace eCoachingLog.Services
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.LogDetail.EmployeeId == user.EmployeeId)
 			{
-				if(!this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName))
+				if(!this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName, "eCoaching Log Completed"))
 				{
 					logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
 				}

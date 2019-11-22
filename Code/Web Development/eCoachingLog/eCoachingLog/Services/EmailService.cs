@@ -5,7 +5,6 @@ using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Net.Mail;
-using System.Net.Mime;
 using System.Text;
 
 namespace eCoachingLog.Services
@@ -26,7 +25,7 @@ namespace eCoachingLog.Services
             this.newSubmissionRepository = newSubmissionRepository;
         }
 
-		public bool SendComments(CoachingLogDetail log, string comments, string emailTempFileName)
+		public bool SendComments(BaseLogDetail log, string comments, string emailTempFileName, string subject)
 		{
 			MailMessage msg = new MailMessage();
 			if (!string.IsNullOrEmpty(log.SupervisorEmail))
@@ -51,7 +50,7 @@ namespace eCoachingLog.Services
 			msg.Body = bodyText.Replace("{formName}", log.FormName);
 			msg.Body = msg.Body.Replace("{comments}", comments);
 			msg.From = new MailAddress(fromAddress, fromDisplayName);
-			msg.Subject = "eCoaching Log Completed (" + log.EmployeeName + ")";
+			msg.Subject = subject + " (" + log.EmployeeName + ")";
 
 			return Send(msg);
 		}
@@ -63,7 +62,7 @@ namespace eCoachingLog.Services
 
 		private MailMessage CreateMailMessage(NewSubmission submission, string templateFileName, string logName)
 		{
-			string subject = "eCL: ";
+			string subject = (submission.IsWarning == null || !submission.IsWarning.Value) ? "eCL: " : "Warning Log: ";
 			string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
 			string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
 			string eCoachingUrl = System.Configuration.ConfigurationManager.AppSettings["App.Url"];
@@ -138,7 +137,8 @@ namespace eCoachingLog.Services
             string cc = null;
             // Get email recipients titles
             bool isCse = submission.IsCse.HasValue ? submission.IsCse.Value : false;
-            Tuple<string, string, bool, string, string> recipientsTitlesAndText = this.newSubmissionRepository.GetEmailRecipientsTitlesAndBodyText(submission.ModuleId, submission.SourceId, isCse);
+			int sourceId = submission.IsWarning != null && submission.IsWarning.Value ? Constants.WARNING_SOURCE_ID : submission.SourceId;
+            Tuple<string, string, bool, string, string> recipientsTitlesAndText = this.newSubmissionRepository.GetEmailRecipientsTitlesAndBodyText(submission.ModuleId, sourceId, isCse);
             string toRecipientTitle = recipientsTitlesAndText.Item1;
             string ccRecipientTitle = recipientsTitlesAndText.Item2;
             bool isCc = recipientsTitlesAndText.Item3;

@@ -148,20 +148,22 @@ namespace eCoachingLog.Controllers
 				bool success = false;
 				User user = GetUserFromSession();
 				string logId = null;
+				string emailTempFileName = "";
 
 				if (vm.IsWarning)
 				{
 					logId = vm.WarningLogDetail == null ? "logidnull" : vm.WarningLogDetail.LogId.ToString();
+					emailTempFileName = Server.MapPath("~/EmailTemplates/WarningLogCompleted.html");
 				}
 				else
 				{
 					logId = vm.LogDetail == null ? "logidnull" : vm.LogDetail.LogId.ToString();
+					emailTempFileName = Server.MapPath("~/EmailTemplates/CoachingLogCompleted.html");
 				}
 
 				try
 				{
 					// Update database
-					string emailTempFileName = Server.MapPath("~/EmailTemplates/LogCompleted.html");
 					int logIdInSession = (int)Session["reviewLogId"];
 					// Pass logIdInSession to log error if for some reason web form not posted back.
 					success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logIdInSession);
@@ -214,12 +216,12 @@ namespace eCoachingLog.Controllers
 			else
 			{
 				vm.WarningLogDetail = (WarningLogDetail)logDetail;
+				vm.IsWarning = true;
+				vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
 				// User reviews warning log
 				if (user.EmployeeId == logDetail.EmployeeId && logDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
 				{
 					vm.IsReadOnly = false;
-					vm.IsWarning = true;
-					vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
 					vm.ReviewPageName = "_ReviewWarningHome";
 
 					return vm;

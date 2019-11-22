@@ -279,8 +279,10 @@
     <Content Include="Content\Images\sort_desc.png" />
     <Content Include="Content\Images\sort_desc_disabled.png" />
     <Content Include="Content\sb-admin-2.css" />
-    <Content Include="EmailTemplates\LogCompleted.html" />
-    <Content Include="EmailTemplates\NewSubmission.html" />
+    <Content Include="EmailTemplates\CoachingLogCompleted.html" />
+    <Content Include="EmailTemplates\NewSubmissionCoaching.html" />
+    <Content Include="EmailTemplates\NewSubmissionWarning.html" />
+    <Content Include="EmailTemplates\WarningLogCompleted.html" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />

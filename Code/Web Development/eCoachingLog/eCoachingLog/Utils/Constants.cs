@@ -75,6 +75,8 @@ namespace eCoachingLog.Utils
 
 		public const int MAX_NUMBER_OF_COACHING_REASONS = 12;
 
+		public const int WARNING_SOURCE_ID = 120;
+
 		// ec.dim_module table
 		public const int MODULE_UNKNOWN = 99999;
 		public const int MODULE_CSR = 1;
@@ -276,7 +278,7 @@ namespace eCoachingLog.Utils
 
 		public const string REVIEW_WARNING_ATTENDANCE_TRENDS = "<p>Trends are patterns of behavior and include documented unexcused/unapproved instances of being out of compliance from their assigned work schedule for a minimum of 1 consecutive hour. Trend examples include; late arrival or early departure to/from work, missing a portion or all of 3 scheduled weekend days, a portion or all of 3 scheduled pay days, a portion or all of 3 scheduled Mondays or a portion or all of 3 scheduled Fridays*. You have accumulated three or more unexcused/unapproved patterned absences, and as a result you are receiving a Formal Coaching. Your supervisor will provide a detailed attendance report of your patterned absences.</p>" +
 			"<p>You completed Attendance Policy training and signed an acknowledgement form stating you understood the policies.</p>" +
-			"<p>Reliable and punctual attendance is a requirement of the position you hold.Your current pattern of unexcused/unapproved absences is unacceptable per the HC Attendance Policy.It is an expectation that you immediately:" +
+			"<p>Reliable and punctual attendance is a requirement of the position you hold. Your current pattern of unexcused/unapproved absences is unacceptable per the HC Attendance Policy.It is an expectation that you immediately:" +
 			"<ol>" +
 			"<li>Correct your behavior of repeated unexcused/unapproved absences." +
 			"<li>Work your shift as scheduled." +
@@ -287,9 +289,9 @@ namespace eCoachingLog.Utils
 			"<p>If you accrue 3 or more patterned absences in a 60 day rolling period over 13 weeks for limited service employees or 12 months for regular service employees you will be subject to additional progressive discipline up to and including termination.</p>" +
 			"<table>" +
 			"<tr><th>Pattern Occurrences</th><th>&nbsp;&nbsp;&nbsp;Level of Disciplinary Action</th></tr>" +
-			"<tr><td>3 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Fromal Coaching</td></tr>" +
-			"<tr><td>6 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Verbal Coaching</td><tr>" +
-			"<tr><td>9 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Written Coaching</td><tr>" +
+			"<tr><td>3 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Formal Warning</td></tr>" +
+			"<tr><td>6 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Verbal Warning</td><tr>" +
+			"<tr><td>9 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Written Warning</td><tr>" +
 			"<tr><td>12 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Termination</td>" +
 			"</table>" +
 			"<br />" +

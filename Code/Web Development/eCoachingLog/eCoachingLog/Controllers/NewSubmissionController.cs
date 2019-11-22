@@ -87,23 +87,21 @@ namespace eCoachingLog.Controllers
 						throw new Exception("Failed to save submission.");
 					}
 					FlashMessage.Confirmation(string.Format("Your submission {0} was saved successfully.", logNameSaved));
-					// Only send email for coaching logs
-					if (vm.IsWarning == null || !vm.IsWarning.Value)
+					
+					// send email
+					var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+					vmInSession.SourceId = vm.SourceId;
+					vmInSession.IsCse = vm.IsCse;
+					if (!SendEmail(logNameSaved)) // Failed to send email
 					{
-						var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
-						vmInSession.SourceId = vm.SourceId;
-						vmInSession.IsCse = vm.IsCse;
-						if (!SendEmail(logNameSaved)) // Failed to send email
-						{
-							var user = GetUserFromSession();
-							var userId = user == null ? "usernull" : user.EmployeeId;
-							StringBuilder msg = new StringBuilder("Failed to send email: ");
-							msg.Append("[").Append(userId).Append("]")
-								.Append("|logname[").Append(logNameSaved).Append("]");
+						var user = GetUserFromSession();
+						var userId = user == null ? "usernull" : user.EmployeeId;
+						StringBuilder msg = new StringBuilder("Failed to send email: ");
+						msg.Append("[").Append(userId).Append("]")
+							.Append("|logname[").Append(logNameSaved).Append("]");
 
-							logger.Warn(msg);
-						};
-					}
+						logger.Warn(msg);
+					};
 				}
 				catch (Exception ex)
 				{
@@ -134,7 +132,8 @@ namespace eCoachingLog.Controllers
         private bool SendEmail(string logName)
         {
             var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
-            var template = Server.MapPath("~/EmailTemplates/NewSubmission.html");
+            var template = (vm.IsWarning == null || !vm.IsWarning.Value) ? 
+					Server.MapPath("~/EmailTemplates/NewSubmissionCoaching.html") : Server.MapPath("~/EmailTemplates/NewSubmissionWarning.html");
             return this.emailService.Send(vm, template, logName);
         }
 

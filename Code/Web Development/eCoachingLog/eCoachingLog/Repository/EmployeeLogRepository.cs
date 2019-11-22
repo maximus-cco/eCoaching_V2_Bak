@@ -253,6 +253,9 @@ namespace eCoachingLog.Repository
 						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString().Trim().ToUpper();
                         logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
 						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString().Trim().ToUpper();
+						logDetail.ModuleId = (int)dataReader["ModuleID"];
+						logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
+						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
 
 						logDetail.IsFormalAttendanceHours = dataReader["FC/ ATTH"].ToString() == "0" ? false : true;
 						logDetail.IsFormalAttendanceTrends = dataReader["FC / ATTT"].ToString() == "0" ? false : true;
