@@ -289,7 +289,7 @@ namespace eCoachingLog.Utils
 			"<p>If you accrue 3 or more patterned absences in a 60 day rolling period over 13 weeks for limited service employees or 12 months for regular service employees you will be subject to additional progressive discipline up to and including termination.</p>" +
 			"<table>" +
 			"<tr><th>Pattern Occurrences</th><th>&nbsp;&nbsp;&nbsp;Level of Disciplinary Action</th></tr>" +
-			"<tr><td>3 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Formal Warning</td></tr>" +
+			"<tr><td>3 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Formal Coaching</td></tr>" +
 			"<tr><td>6 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Verbal Warning</td><tr>" +
 			"<tr><td>9 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Written Warning</td><tr>" +
 			"<tr><td>12 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Termination</td>" +
