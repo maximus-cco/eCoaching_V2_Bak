@@ -114,13 +114,15 @@ On Error Resume Next
         strSubject = "Alert! eCoaching Log Past Due Follow-up:  "  &  strFormName 
   End Select
 
- 
-  mailbody =  strFormName & " requires your attention.  Please review and discuss with the employee."
+
+  mailbody =  strFormName & " requires your attention. Please review and discuss with the employee."
 
   Select Case (strsubCoachingSource)
   Case "Empower"
-  mailBody = strFormName & " requires your attention.  Please review the log and take appropriate action."
-  End Select
+        mailBody = strFormName & " requires your attention. Please review the log and take appropriate action."
+  Case "Warning"
+        mailBody = strFormName & " requires your attention. Please review and acknowledge the log."
+End Select
 
   strCtrMessage = (mailBody)
            
