@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Warning_Log(03).sql
-Last Modified Date: 11/18/2019
+sp_SelectReviewFrom_Warning_Log(04).sql
+Last Modified Date: 12/3/2019
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to Incorporate static text from database. TFS 15803 - 12/3/2019
 Version 03: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 02 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
 
@@ -22,6 +23,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/08/2014
@@ -31,7 +34,7 @@ GO
 --  Updated per SCR 14966 to add Hierarchy IDs to the select list.
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
 --  Modified during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
---  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+--  Updated to support changes to warnings workflow. TFS 15803 - 12/3/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log] @intLogId BIGINT
@@ -77,7 +80,8 @@ SELECT wl.WarningID numID,
   wl.SubmittedDate,
   ''Warning'' strLogType,
  CASE WHEN ww.FC_ATTT IS NOT NULL THEN 1 ELSE 0 END "FC / ATTT",
- CASE WHEN ww.FC_ATTH IS NOT NULL THEN 1 ELSE 0 END "FC/ ATTH"
+ CASE WHEN ww.FC_ATTH IS NOT NULL THEN 1 ELSE 0 END "FC/ ATTH",
+ ww.strStaticText
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 JOIN [EC].[Employee_Hierarchy] eh ON veh.Emp_ID = eh.Emp_ID
 JOIN [EC].[Warning_Log] wl ON [wl].[EMPID] = [eh].[Emp_ID]
@@ -88,11 +92,12 @@ JOIN [EC].[DIM_Status] sta ON [wl].[StatusID] = [sta].[StatusID]
 JOIN (
   SELECT wwl.FormName,
     MAX(CASE WHEN [wlr].[CoachingReasonID] = 60 AND  [wlr].[SubCoachingReasonID] = 254 THEN [wlr].[Value] ELSE NULL END) FC_ATTT,
-	MAX(CASE WHEN [wlr].[CoachingReasonID] = 60 AND  [wlr].[SubCoachingReasonID] = 253 THEN [wlr].[Value] ELSE NULL END) FC_ATTH
+	MAX(CASE WHEN [wlr].[CoachingReasonID] = 60 AND  [wlr].[SubCoachingReasonID] = 253 THEN [wlr].[Value] ELSE NULL END) FC_ATTH,
+	[EC].[fn_strWarningLogStatictext]([wwl].[WarningID]) strStaticText
      FROM [EC].[Warning_Log_Reason] wlr JOIN [EC].[Warning_Log] wwl 
      ON wwl.WarningID = wlr.WarningID
      WHERE [wwl].[WarningID] = ''' + CONVERT(NVARCHAR, @intLogId) + '''
-  GROUP BY wwl.FormName 
+  GROUP BY wwl.FormName, wwl.WarningID 
 ) ww ON [wl].[FormName] = [ww].[FormName]
 WHERE [wl].[warningId] = ''' + CONVERT(NVARCHAR, @intLogId ) + '''
 ORDER BY [wl].[FormName]';
@@ -104,8 +109,9 @@ Print (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Warning_Log
-GO
 
+
+GO
 
 
 

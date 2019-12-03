@@ -241,8 +241,8 @@ INSERT INTO [EC].[Warning_Log_StaticText]
            ,[StartDate]
            ,[EndDate])
      VALUES
-       (101, 'P', 1,60,253,1,1,1,1,1,20200101, 99991231),
-	   (102, 'P', 1,60,254,1,1,1,1,1,20200101, 99991231);
+       (101, 'P', 1,60,253,1,1,1,1,1, 20191101, 99991231),
+	   (102, 'P', 1,60,254,1,1,1,1,1,20191101, 99991231);
 
 --******************************************
 
@@ -259,7 +259,7 @@ set [TextDescription]=
 <li>Provide management as much notice as possible prior to requesting an absence. Certain types of absences may be considered approved and will not count as missed time. In these circumstances the approval process for such time off must be followed.
 </ol>
 <p>You may improve your attendance record by using the “Earn Back” process, approved PTO, or other forms of time off as designated by your project.</p>'
-Where TextID = 101;
+Where TextID = 101 and [TextDescription] = 'P';
 
 
 
@@ -292,7 +292,7 @@ set [TextDescription]=
 <br />
 <p>For the purposes of this policy the level of progressive discipline will roll off after 13 weeks for limited service or 12 months regular service.</p>
 <p>This Formal Coaching may not impact your ability to be considered for in-staff transfers or promotional opportunities.</p>'
-Where TextID = 102;
+Where TextID = 102 and [TextDescription] = 'P';
 
 --******************************************
 
