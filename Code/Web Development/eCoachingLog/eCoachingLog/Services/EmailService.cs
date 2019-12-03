@@ -146,11 +146,11 @@ namespace eCoachingLog.Services
             string status = recipientsTitlesAndText.Item5;
 
             // Get "to" address
-            if (string.CompareOrdinal("Manager", toRecipientTitle) == 0)
+            if (String.Equals("Manager", toRecipientTitle, StringComparison.OrdinalIgnoreCase))
             {
                 to = submission.Employee.ManagerEmail;
             }
-            else if (string.CompareOrdinal("Supervisor", toRecipientTitle) == 0)
+            else if (String.Equals("Supervisor", toRecipientTitle, StringComparison.OrdinalIgnoreCase))
             {
                 to = submission.Employee.SupervisorEmail;
             }
@@ -158,11 +158,11 @@ namespace eCoachingLog.Services
             if (isCc)
             {
                 // Get "cc" address
-                if (string.CompareOrdinal("Manager", ccRecipientTitle) == 0)
+                if (String.Equals("Manager", ccRecipientTitle, StringComparison.OrdinalIgnoreCase))
                 {
                     cc = submission.Employee.ManagerEmail;
                 }
-                else if (string.CompareOrdinal("Supervisor", toRecipientTitle) == 0)
+                else if (String.Equals("Supervisor", toRecipientTitle, StringComparison.OrdinalIgnoreCase))
                 {
                     cc = submission.Employee.SupervisorEmail;
                 }

@@ -259,7 +259,9 @@ namespace eCoachingLog.Repository
 
 						logDetail.IsFormalAttendanceHours = dataReader["FC/ ATTH"].ToString() == "0" ? false : true;
 						logDetail.IsFormalAttendanceTrends = dataReader["FC / ATTT"].ToString() == "0" ? false : true;
-                        break;
+						logDetail.InstructionText = dataReader["strStaticText"].ToString();
+
+						break;
                     }
                 }
             }

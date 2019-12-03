@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Models.User;
 using eCoachingLog.Services;
 using log4net;
+using System;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
@@ -22,7 +23,7 @@ namespace eCoachingLog.Controllers
         {
 			string env = System.Configuration.ConfigurationManager.AppSettings["Environment"];
 			// Load Test, display pseudo log in page
-			if (string.CompareOrdinal(env, "loadTest") == 0)
+			if (String.Equals(env, "loadTest", StringComparison.OrdinalIgnoreCase))
 			{
 				return RedirectToAction("Index", "LoadTest");
 			}

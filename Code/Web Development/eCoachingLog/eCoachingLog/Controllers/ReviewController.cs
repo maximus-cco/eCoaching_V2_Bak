@@ -217,7 +217,7 @@ namespace eCoachingLog.Controllers
 			{
 				vm.WarningLogDetail = (WarningLogDetail)logDetail;
 				vm.IsWarning = true;
-				vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
+				vm.InstructionText = logDetail.InstructionText;
 				// User reviews warning log
 				if (user.EmployeeId == logDetail.EmployeeId && logDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
 				{
@@ -446,7 +446,7 @@ namespace eCoachingLog.Controllers
 			if (IsResearchPendingForm(vm))
 			{
 				vm.IsResearchPendingForm = true;
-				vm.IsReviewByManager = string.CompareOrdinal(Constants.USER_ROLE_MANAGER, user.Role) == 0;
+				vm.IsReviewByManager = String.Equals(Constants.USER_ROLE_MANAGER, user.Role, StringComparison.OrdinalIgnoreCase);
 				vm.IsReadOnly = IsReadOnly(vm, user);
 				IList<string> uncoachableReasons = this.reviewService.GetReasonsToSelect(vm.LogDetail);
 				IEnumerable<SelectListItem> uncoachableReasonSelectList = new SelectList(uncoachableReasons);

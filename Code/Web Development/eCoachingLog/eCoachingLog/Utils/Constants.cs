@@ -265,39 +265,6 @@ namespace eCoachingLog.Utils
 			"<br /><br />" +
 			"When reviewing this type of message, always take the appropriate steps as directed, regardless of the reason for the call. Failing to do so in these cases will result in the beneficiary not receiving his/her new Medicare card.";
 
-		// Warning log related
-		public const string REVIEW_WARNING_ATTENDANCE_HOURS = "<p>The Attendance Policy states employees that reach or exceed 16 hours of unexcused/unapproved absences in a rolling 12 month period will receive a Formal Coaching.  You have exceeded 16 hours of unexcused / unapproved hours, and as a result you are receiving a Formal Coaching. Your supervisor will provide a detailed attendance report of hours missed.</p>" +
-			"<p>You completed Attendance Policy training and signed an acknowledgement form stating you understood the policies.</p>" +
-			"<p>Reliable and punctual attendance is a requirement of the position you hold. You must improve your attendance immediately. It is an expectation that you:</p>" +
-			"<ol>" +
-			"<li>Report to work as scheduled to maintain regular and predictable attendance." + 
-			"<li>If you are unable to come to work due to unexpected illness or other emergency, you must comply with notification guidelines outlined in the above attendance policy." + 
-			"<li>Provide management as much notice as possible prior to requesting an absence. Certain types of absences may be considered approved and will not count as missed time. In these circumstances the approval process for such time off must be followed." +
-			"</ol>" +
-			"<p>You may improve your attendance record by using the “Earn Back” process, approved PTO, or other forms of time off as designated by your project.</p>";
-
-		public const string REVIEW_WARNING_ATTENDANCE_TRENDS = "<p>Trends are patterns of behavior and include documented unexcused/unapproved instances of being out of compliance from their assigned work schedule for a minimum of 1 consecutive hour. Trend examples include; late arrival or early departure to/from work, missing a portion or all of 3 scheduled weekend days, a portion or all of 3 scheduled pay days, a portion or all of 3 scheduled Mondays or a portion or all of 3 scheduled Fridays*. You have accumulated three or more unexcused/unapproved patterned absences, and as a result you are receiving a Formal Coaching. Your supervisor will provide a detailed attendance report of your patterned absences.</p>" +
-			"<p>You completed Attendance Policy training and signed an acknowledgement form stating you understood the policies.</p>" +
-			"<p>Reliable and punctual attendance is a requirement of the position you hold. Your current pattern of unexcused/unapproved absences is unacceptable per the HC Attendance Policy.It is an expectation that you immediately:" +
-			"<ol>" +
-			"<li>Correct your behavior of repeated unexcused/unapproved absences." +
-			"<li>Work your shift as scheduled." +
-			"</ol>" +
-			"</p>" +
-			"<p>You may improve your attendance record by enrolling or using the “Earn Back” process, PTO, or other forms of time off as designated by your project.</p>" +
-			"<p>You must demonstrate immediate and sustained improvement in the areas noted above.</p>" +
-			"<p>If you accrue 3 or more patterned absences in a 60 day rolling period over 13 weeks for limited service employees or 12 months for regular service employees you will be subject to additional progressive discipline up to and including termination.</p>" +
-			"<table>" +
-			"<tr><th>Pattern Occurrences</th><th>&nbsp;&nbsp;&nbsp;Level of Disciplinary Action</th></tr>" +
-			"<tr><td>3 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Formal Coaching</td></tr>" +
-			"<tr><td>6 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Verbal Warning</td><tr>" +
-			"<tr><td>9 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Written Warning</td><tr>" +
-			"<tr><td>12 Occurrences</td><td>&nbsp;&nbsp;&nbsp;Termination</td>" +
-			"</table>" +
-			"<br />" +
-			"<p>For the purposes of this policy the level of progressive discipline will roll off after 13 weeks for limited service or 12 months regular service.</p>" +
-			"<p>This Formal Coaching may not impact your ability to be considered for in-staff transfers or promotional opportunities.</p>";
-
 		public const string ACK_COMMENT_TEXTBOX_LABEL = "Provide any comments or feedback below:";
 		public const string ACK_OTA_COMMENT_TEXTBOX_LABEL = "Provide the details from the coaching session including action plans developed:";
 		public const string ACK_CHECKBOX_TITLE_GENERAL = "Check the box below to acknowledge the coaching opportunity:";

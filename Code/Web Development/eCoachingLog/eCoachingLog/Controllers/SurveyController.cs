@@ -51,12 +51,12 @@ namespace eCoachingLog.Controllers
 				isSurveyValid = false;
 				ViewBag.Message = "You are not authorized for this survey.";
 			}
-			else if (String.CompareOrdinal(Constants.LOG_STATUS_COMPLETED_TEXT, survey.Status) == 0)
+			else if (String.Equals(Constants.LOG_STATUS_COMPLETED_TEXT, survey.Status, StringComparison.OrdinalIgnoreCase))
 			{
 				isSurveyValid = false;
 				ViewBag.Message = "You have already completed this survey.";
 			}
-			else if (String.CompareOrdinal(Constants.LOG_STATUS_INACTIVE_TEXT, survey.Status) == 0)
+			else if (String.Equals(Constants.LOG_STATUS_INACTIVE_TEXT, survey.Status, StringComparison.OrdinalIgnoreCase))
 			{
 				isSurveyValid = false;
 				ViewBag.Message = "This survey has expired.";

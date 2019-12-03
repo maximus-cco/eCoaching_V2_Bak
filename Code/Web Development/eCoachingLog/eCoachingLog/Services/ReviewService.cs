@@ -95,21 +95,6 @@ namespace eCoachingLog.Services
 
 		public string GetInstructionText(Review review, User user)
 		{
-			if (!review.IsCoaching && review.WarningLogDetail.ModuleId == Constants.MODULE_CSR)
-			{
-				if (review.WarningLogDetail.IsFormalAttendanceHours)
-				{
-					return Constants.REVIEW_WARNING_ATTENDANCE_HOURS;
-				}
-
-				if (review.WarningLogDetail.IsFormalAttendanceTrends)
-				{
-					return Constants.REVIEW_WARNING_ATTENDANCE_TRENDS;
-				}
-
-				return string.Empty;
-			}
-
 			var log = review.LogDetail;
 
 			if (user.EmployeeId == log.ManagerEmpId
