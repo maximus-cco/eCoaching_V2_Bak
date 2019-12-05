@@ -1,9 +1,10 @@
 /*
-sp_SelectReviewFrom_Warning_Log(04).sql
-Last Modified Date: 12/3/2019
+sp_SelectReviewFrom_Warning_Log(05).sql
+Last Modified Date: 12/4/2019
 Last Modified By: Susmitha Palacherla
 
-Version 03: Updated to Incorporate static text from database. TFS 15803 - 12/3/2019
+Version 05: Updated to add CSRReviewAutoDate to return. TFS 15803 - 12/4/2019
+Version 04: Updated to Incorporate static text from database. TFS 15803 - 12/3/2019
 Version 03: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 02 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
 

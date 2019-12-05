@@ -297,7 +297,18 @@ Where TextID = 102 and [TextDescription] = 'P';
 --******************************************
 
 
---11. Stage updated Reminders script
+--11. Delete from Email Notification table for Completed Status
+
+
+ DELETE FROM [EC].[Email_Notifications]
+  where SubSource = 'Warning'
+  and Status = 'Completed';
+
+
+
+--******************************************
+
+--12. Stage updated Reminders script
 
 Stage file \Code\Scripts\Reminders_Prod.vbs 
 to

@@ -23,6 +23,9 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -64,8 +67,8 @@ AS
 	LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON wl.SubmitterID = vehs.EMP_ID 
 	JOIN [EC].[DIM_Status] s ON wl.StatusID = s.StatusID 
 	JOIN [EC].[DIM_Source] so ON wl.SourceID = so.SourceID 
-	WHERE wl.Active = 1
-	AND (wl.Statusid = '''+CONVERT(VARCHAR,@intStatusIdin)+''' OR   '''+CONVERT(VARCHAR,@intStatusIdin)+''' = ''-1'')
+     WHERE wl.statusid <> 2
+	AND (CONVERT(VARCHAR, wl.Active) = '''+CONVERT(VARCHAR,@intStatusIdin)+''' OR  '''+CONVERT(VARCHAR,@intStatusIdin)+''' = ''-1'')
 	AND wl.siteID <> -1
 	AND (eh.Sup_ID = ''' + @nvcUserIdin + ''' OR eh.Mgr_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''')
 	AND convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
@@ -74,7 +77,7 @@ AS
 ) SELECT count(strFormID) FROM TempMain';
 		
 EXEC (@nvcSQL)	
---PRINT @nvcSQL	    
+PRINT @nvcSQL	    
 
 If @@ERROR <> 0 GoTo ErrorHandler;
 
@@ -87,7 +90,6 @@ Return(@@ERROR);
 	    
 END --sp_SelectFrom_Warning_Log_MyTeamWarning_Count
 GO
-
 
 
 

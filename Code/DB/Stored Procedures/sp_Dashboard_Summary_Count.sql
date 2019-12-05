@@ -1,8 +1,9 @@
 /*
-sp_Dashboard_Summary_Count(04).sql
-Last Modified Date: 11/18/2019
+sp_Dashboard_Summary_Count(05).sql
+Last Modified Date: 12/4/2019
 Last Modified By: Susmitha Palacherla
 
+Version 05: Additional updates from V&V feedback to support changes to warnings workflow. TFS 15803 - 12/4/2019
 Version 04: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 03: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 02: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
@@ -25,6 +26,9 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -200,7 +204,7 @@ SET @intMyTeamWarning = (SELECT COUNT(wl.WarningID)
 					 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH (NOLOCK)
 					 ON wl.EmpID = eh.Emp_ID 
 					 WHERE wl.StatusID <> 2
-			         AND wl.siteID <> -1
+					 AND wl.siteID <> -1
 					 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID)) 
 
 
@@ -267,12 +271,8 @@ EXEC (@nvcSQL)
 	
 -- Close Symmetric key
 END -- sp_Dashboard_Summary_Count
+
 GO
-
-
-
-
-
 
 
 
