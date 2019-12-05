@@ -1,0 +1,11 @@
+﻿<div class="mt-2">
+	<strong>Employee Review Information:</strong><br />
+	<div class='@(string.IsNullOrEmpty(Model.WarningLogDetail.EmployeeReviewDate) ? "hide" : "show")'>
+		@Model.WarningLogDetail.EmployeeName<br />
+		Reviewed and acknowledged Warning on @Model.WarningLogDetail.EmployeeReviewDate
+	</div>
+</div>
+
+
+
+

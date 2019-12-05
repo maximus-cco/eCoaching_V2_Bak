@@ -260,6 +260,7 @@ namespace eCoachingLog.Repository
 						logDetail.IsFormalAttendanceHours = dataReader["FC/ ATTH"].ToString() == "0" ? false : true;
 						logDetail.IsFormalAttendanceTrends = dataReader["FC / ATTT"].ToString() == "0" ? false : true;
 						logDetail.InstructionText = dataReader["strStaticText"].ToString();
+						logDetail.EmployeeReviewDate = eCoachingLogUtil.AppendPdt(dataReader["CSRReviewAutoDate"].ToString());
 
 						break;
                     }

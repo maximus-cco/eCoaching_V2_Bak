@@ -405,6 +405,7 @@
     <Content Include="Views\Review\_ReviewFollowup.cshtml" />
     <Content Include="Views\MyDashboard\_MyFollowup.cshtml" />
     <Content Include="Views\Review\_ReviewWarningHome.cshtml" />
+    <Content Include="Views\Review\_EmployeeWarningReviewInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

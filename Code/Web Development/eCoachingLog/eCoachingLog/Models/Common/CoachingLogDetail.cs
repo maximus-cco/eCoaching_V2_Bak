@@ -76,7 +76,8 @@ namespace eCoachingLog.Models.Common
 		// For completed IQS log: Reviewed and acknowledged Quality Monitor on
 		// For all others: Reviewed and acknowledged Coaching on
 		public string EmployeeReviewLabel { get; set; }
-		public string EmployeeReviewDate { get; set; }
+		// Moved to BaseLogDetail
+		// public string EmployeeReviewDate { get; set; }
         public string Comment { get; set; }
 
 		public string LogDescription { get; set; }

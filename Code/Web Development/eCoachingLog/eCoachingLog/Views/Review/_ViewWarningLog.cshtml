@@ -17,6 +17,8 @@
 			<div class="mt-2 instruction-text @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")">
 				@Html.Raw(Model.InstructionText)
 			</div>
+
+			@{ Html.RenderPartial("_EmployeeWarningReviewInfo"); }
 			
 			<!-- /.modal-body -->
 			<div class="modal-footer mt-2">

@@ -31,6 +31,7 @@ namespace eCoachingLog.Models.Common
         public IList<LogReason> Reasons { get; set; }
 
 		public string InstructionText { get; set; }
+		public string EmployeeReviewDate { get; set; }
 
 		// Quality Now
 		public bool IsQualityNowLog { get; set; }
