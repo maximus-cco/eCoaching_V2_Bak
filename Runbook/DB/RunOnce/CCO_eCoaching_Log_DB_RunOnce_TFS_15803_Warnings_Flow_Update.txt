@@ -207,7 +207,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [EC].[Warning_Log_StaticText](
-	[TextID] [nvarchar](50) NOT NULL,
+	[TextID] [int] NOT NULL,
 	[TextDescription] [nvarchar](4000) NOT NULL,
 	[Active] [bit] NOT NULL ,
     [CoachingReasonID] [int] NOT NULL,
