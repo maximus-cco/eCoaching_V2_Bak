@@ -1,7 +1,8 @@
 /*
 sp_SelectReviewFrom_Warning_Log(05).sql
-Last Modified Date: 12/4/2019
+Last Modified Date: 12/10/2019
 Last Modified By: Susmitha Palacherla
+
 
 Version 05: Updated to add CSRReviewAutoDate to return. TFS 15803 - 12/4/2019
 Version 04: Updated to Incorporate static text from database. TFS 15803 - 12/3/2019
@@ -26,6 +27,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/08/2014
@@ -35,7 +38,7 @@ GO
 --  Updated per SCR 14966 to add Hierarchy IDs to the select list.
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
 --  Modified during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
---  Updated to support changes to warnings workflow. TFS 15803 - 12/3/2019
+--  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log] @intLogId BIGINT
@@ -79,6 +82,7 @@ SELECT wl.WarningID numID,
   veh.Mgr_Email strEmpMgrEmail,
   ''Warning'' strSource,
   wl.SubmittedDate,
+  wl.CSRReviewAutoDate,
   ''Warning'' strLogType,
  CASE WHEN ww.FC_ATTT IS NOT NULL THEN 1 ELSE 0 END "FC / ATTT",
  CASE WHEN ww.FC_ATTH IS NOT NULL THEN 1 ELSE 0 END "FC/ ATTH",
@@ -110,7 +114,6 @@ Print (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Warning_Log
-
 
 GO
 
