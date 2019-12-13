@@ -1,0 +1,25 @@
+/*
+
+TFS 16261 - Provide access to employees in analysts role
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+*/
+
+--******************************************
+
+--1. Update Description for Role in [EC].[UI_User_Role] table
+
+Update [EC].[UI_User_Role]
+set RoleDescription = 'WACS0% and ARC Role in ACL'
+Where RoleId = 102;
+
+Update [EC].[UI_User_Role]
+set RoleDescription = 'WPOP12'
+Where RoleId = 110;
+
+--******************************************
+
