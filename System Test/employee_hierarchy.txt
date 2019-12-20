@@ -4,13 +4,14 @@ eCoaching Log test scripts to change hierarchy job codes,
 email addresses for notifications and supervisor/manager
 
 test subjects 
-emp id jobcod module	      name                   lan id
-368329 WACS01 1 CSR   	    Kalkman, Christopher E Christopher.Kalkman
-379750 WACS40 2 Supervisor	Stein, Lisa D          lisa.stein
-365663 WACQ02 3 Quality   	Leferink, William J    William.Leferink
-310812 WIHD01 4 LSA       	Treinen, Lola R        Lola.Treinen
-346638 WTTI02 5 Training  	Hinman, David L        David.Hinman
-380017 WACS50             	Stearns, Douglas R     Doug.Stearns 
+emp id  jobcod module	      name                   lan id
+x368329 WACS01 1 CSR   	    Kalkman, Christopher E Christopher.Kalkman	368329
+236687  WACS40 2 Supervisor	Stein, Lisa D          lisa.stein	379750
+x365663 WACQ02 3 Quality   	Leferink, William J    William.Leferink	365663
+236281  WIHD01 4 LSA       	Treinen, Lola R        Lola.Treinen	310812
+236472  WTTI02 5 Training  	Hinman, David L        David.Hinman	346638
+236691  WACS50             	Stearns, Douglas R     Doug.Stearns	380017
+hr			WHHR14
 
 */
 
@@ -25,6 +26,7 @@ CONVERT(nvarchar(100),DecryptByKey(Emp_LanID)) AS [Decrypted Emp_LanID],
 Emp_Job_Code,
 Emp_Job_Description,
 CONVERT(nvarchar(100),DecryptByKey(Emp_Name)) AS [Decrypted Emp_Name],
+Emp_Site,
 Sup_ID,
 CONVERT(nvarchar(100),DecryptByKey(Sup_LanID)) AS [Decrypted Sup_LanID],
 Sup_Job_Code,
@@ -38,7 +40,6 @@ CONVERT(nvarchar(100),DecryptByKey(Mgr_Name)) AS [Decrypted Mgr_Name],
 CONVERT(nvarchar(100),DecryptByKey(Emp_Email)) AS [Decrypted Emp_Email],
 CONVERT(nvarchar(100),DecryptByKey(Sup_Email)) AS [Decrypted Sup_Email],
 CONVERT(nvarchar(100),DecryptByKey(Mgr_Email)) AS [Decrypted Mgr_Email],
-Emp_Site,
 Emp_Program,
 CONVERT(nvarchar(100),DecryptByKey(Emp_Pri_Name)) AS [Decrypted Emp_Pri_Name],
 Start_Date,
@@ -47,41 +48,43 @@ Active,
 SrMgrLvl1_ID,
 SrMgrLvl2_ID,
 SrMgrLvl3_ID,
-Emp_ID_Prefix,
 Hire_Date,
 Dept_ID,
 Dept_Description,
 Reg_Temp,
 Full_Part_Time,
 Term_Date,
-FLSA_Status
+FLSA_Status,
+Legacy_Emp_ID,
+PS_Emp_ID_Prefix
 from EC.Employee_Hierarchy
 where Emp_ID in (
- '380017'  -- 'Doug.Stearns'         'Stearns, Douglas R'      'WSTE13'
-,'365663'  -- 'William.Leferink'     'Leferink, William J'     'WPSM14'
-,'368329'  -- 'Christopher.Kalkman'  'Kalkman, Christopher E'  'WISO14'
-,'346638'  -- 'David.Hinman'         'Hinman, David L'         'WISO14'
-,'379750'  -- 'lisa.stein'           'Stein, Lisa D'           'WSTE12'
-,'310812'  -- 'Lola.Treinen'         'Treinen, Lola R'         'WISO14'
---,'91299'   -- 'Timothy.Queen'        'Queen, Timothy K'        'WPPT60'
---,'368771'  -- 'Leslie.Keune'         'Keune, Leslie A'         'WPPT50'
---,'345712'  -- 'Susmitha.Palacherla'  'Palacherla, Susmitha C'  'WISO13'
---,'92489'   -- 'Jourdain.Augustin'    'Augustin, Jourdain M'    'WISO13'
---,'324577'  -- 'Michael.Ingram'       'Ingram, Michael T'       'WPPM60'
---,'365226'  -- 'Lili.Huang'           'Huang, Lili'             'WISO12'
---,'324692'  -- 'Timothy.Leonard'      'Leonard, Timothy M'      'WISO15'
---,'92895'   -- 'brian.coughlin'       'Coughlin, Brian E'       'WSTE14'
---,'91885'   -- 'Jacqueline.Haltmeyer' 'Haltmeyer, Jacqueline K' 'WISA70'
---,'92749'   -- 'Keith.Luegering'      'Luegering, Keith J'      'WPPT60'
---,'500306'  -- 'JohnEric.Tiongson'    'Tiongson, John Eric Z'   'WISY13'
---,'343549'  -- 'Mark.Hackman'         'Hackman, Mark G'         'WPSM13'
---,'408246'  -- 'Scott.Potter'         'Potter, Scott E'         'WPSM12'
---,'333386'  -- 'shelly.encke'         'Encke, Shelly J'         'WPPM11'
---,'397938'  -- 'Sara.Stonecipher'     'Stonecipher, Sara'       'WPPM11'
+ '236691'   -- 'Doug.Stearns'         'Stearns, Douglas R'      'WSTE13'
+,'x365663'  -- 'William.Leferink'     'Leferink, William J'     'WPSM14'
+,'x368329'  -- 'Christopher.Kalkman'  'Kalkman, Christopher E'  'WISO14'
+,'236472'   -- 'David.Hinman'         'Hinman, David L'         'WISO14'
+,'236687'   -- 'lisa.stein'           'Stein, Lisa D'           'WSTE12'
+,'236281'   -- 'Lola.Treinen'         'Treinen, Lola R'         'WISO14'
+,'237863'   -- 'brian.coughlin'       'Coughlin, Brian E'       'WSTE14'
+,'x368771'  -- 'Leslie.Keune'         'Keune, Leslie A'         'WPPT50'
+--,'237840'   -- 'Timothy.Queen'        'Queen, Timothy K'        'WPPT60'
+--,'236464'   -- 'Susmitha.Palacherla'  'Palacherla, Susmitha C'  'WISO13'
+--,'237857'   -- 'Jourdain.Augustin'    'Augustin, Jourdain M'    'WISO13'
+--,'236332'   -- 'Michael.Ingram'       'Ingram, Michael T'       'WPPM60'
+--,'236583'   -- 'Lili.Huang'           'Huang, Lili'             'WISO12'
+--,'236333'   -- 'Timothy.Leonard'      'Leonard, Timothy M'      'WISO15'
+--,'237849'   -- 'Jacqueline.Haltmeyer' 'Haltmeyer, Jacqueline K' 'WISA70'
+--,'237860'   -- 'Keith.Luegering'      'Luegering, Keith J'      'WPPT60'
+--,'237832'   -- 'JohnEric.Tiongson'    'Tiongson, John Eric Z'   'WISY13'
+--,'236440'   -- 'Mark.Hackman'         'Hackman, Mark G'         'WPSM13'
+--,'237355'   -- 'Scott.Potter'         'Potter, Scott E'         'WPSM12'
+-- '236365'   -- 'shelly.encke'         'Encke, Shelly J'           'WPPM11'
+--,'236941'   -- 'Sara.Stonecipher'     'Stonecipher, Sara'         'WPPM11'
+--,'236328'   -- 'DEANNA.MORRIS'        'Morris-Stringer, Deanna L' 'WPPM11'
+--,'236732'   -- 'KIRSTINA.PRAHL'       'Prahl, Kirstina M'         'WPPM11'
 )
 
 CLOSE SYMMETRIC KEY CoachingKey
-
 
 /* ***********************************************
     updates to employee table
@@ -89,7 +92,7 @@ CLOSE SYMMETRIC KEY CoachingKey
 -- change job code
 update EC.employee_Hierarchy
 set emp_job_code = ''
-where Emp_ID = '380017' 
+where Emp_ID = '236691' 
 
 -- activate a termed record
 update EC.employee_Hierarchy
@@ -108,7 +111,7 @@ DECRYPTION BY CERTIFICATE [CoachingCert];
 
 -- set doug as supervisor 
 update EC.employee_Hierarchy
-set sup_id = '380017',
+set sup_id = '236691',
 [sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Stearns, Douglas R'),
 [sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Doug.Stearns'),
 sup_job_code = 'WACS40'
@@ -116,7 +119,7 @@ where Emp_ID in ('')
 
 -- set doug as manager
 update EC.employee_Hierarchy
-set mgr_id = '380017',
+set mgr_id = '236691',
 [mgr_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Stearns, Douglas R'),
 [mgr_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Doug.Stearns'),
 mgr_job_code = 'WACS50'
@@ -124,7 +127,7 @@ where Emp_ID in ('')
 
 -- set leslie as supervisor
 update EC.employee_Hierarchy
-set sup_id = '368771',
+set sup_id = 'x368771',
 [sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Keune, Leslie A'),
 [sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Leslie.Keune'),
 sup_job_code = 'WPPT60'
@@ -132,13 +135,45 @@ where Emp_ID in ('')
 
 -- set tim as manager
 update EC.employee_Hierarchy
-set mgr_id = '91299',
+set mgr_id = '237840',
 [mgr_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Queen, Timothy K'),
 [mgr_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Timothy.Queen'),
 mgr_job_code = 'WPPT60'
 where Emp_ID in ('')
 
 CLOSE SYMMETRIC KEY CoachingKey
+
+/*  hierarchy for chris, lisa, doug  */
+
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+-- set doug as supervisor of supervisor
+update EC.employee_Hierarchy
+set sup_id = '236691',
+[sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Stearns, Douglas R'),
+[sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Doug.Stearns'),
+sup_job_code = 'WACS50'
+where Emp_ID in ('236687')
+
+-- set doug as manager
+update EC.employee_Hierarchy
+set mgr_id = '236691',
+[mgr_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Stearns, Douglas R'),
+[mgr_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Doug.Stearns'),
+mgr_job_code = 'WACS50'
+where Emp_ID in ('x368329')
+
+-- set lisa as chris's supervisor
+update EC.employee_Hierarchy
+set sup_id = '236687',
+[sup_name]= EncryptByKey(Key_GUID('CoachingKey'), N'Stein, Lisa D'),
+[sup_lanid]= EncryptByKey(Key_GUID('CoachingKey'), N'lisa.stein'),
+sup_job_code = 'WACS40'
+where Emp_ID in ('x368329')
+
+CLOSE SYMMETRIC KEY CoachingKey
+
 /* ***********************************************
     change job codes and emp ids as needed
    *********************************************** */

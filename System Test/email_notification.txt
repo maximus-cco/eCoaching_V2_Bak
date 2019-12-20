@@ -63,3 +63,23 @@ DATEDIFF(hh, ReminderDate, getdate()) as [remind date]
 from EC.Coaching_Log
 where CoachingID in ()
 
+
+/*************************************************
+     email for follow-up logs 
+*************************************************/
+-- stored procedure to show logs that need emails sent
+-- note - current date must equal follow-up due date
+exec ec.sp_SelectCoaching4FollowUp
+
+select * from EC.Coaching_Log
+where StatusID = 10
+
+update EC.Coaching_Log
+set FollowupDueDate = '2019-09-09 00:00:00.000'
+where CoachingID in (766284,766285)
+
+
+/*************************************************
+     email for quality now bingo logs 
+*************************************************/
+exec sp_SelectCoaching4QNBingo

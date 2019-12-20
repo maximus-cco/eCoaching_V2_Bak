@@ -20,8 +20,18 @@ SELECT wl.WarningID,
        wl.MgrID,
        wl.SubmitterID,
        wl.WarningGivenDate,
+       CONVERT(nvarchar(100),DecryptByKey(wl.Description)) AS [Decrypted Description],
+       CONVERT(nvarchar(100),DecryptByKey(wl.CoachingNotes)) AS [Decrypted CoachingNotes],
        wl.SubmittedDate,
        dm.Module,
+       wl.isCSRAcknowledged,
+       wl.CSRReviewAutoDate,
+       wl.CSRComments,
+       wl.EmailSent,
+       wl.ReminderSent,
+       wl.ReminderDate,
+       wl.ReminderCount,
+       wls.TextDescription,
        dcr.CoachingReason,
        dscr.SubCoachingReason,
        wlr.[Value]
@@ -34,12 +44,39 @@ SELECT wl.WarningID,
   left join EC.DIM_Status dstat on wl.StatusID = dstat.StatusID
   left join EC.DIM_Site dsite on wl.SiteID = dsite.SiteID
   left join EC.DIM_Module dm on wl.ModuleID = dm.ModuleID
-
-  where wl.FormName LIKE 'eCL-346638-199'
+  left join EC.Warning_Log_StaticText wls on 
+       (wls.CoachingReasonID = wlr.CoachingReasonID and
+        wls.SubCoachingReasonID = wlr.SubCoachingReasonID)
+ 
+where wl.WarningID = (292)
+--  where wl.FormName LIKE 'eCL-346638-199'
   
-       
 CLOSE SYMMETRIC KEY CoachingKey
+/* ***********************************************
+    warning logs - join other tables
+*********************************************** */
+
 
 /* ***********************************************
-    ecoaching logs - join other tables
+    warning logs - static text
+*********************************************** */
+
+select wls.TextID,
+       wls.TextDescription,
+       dcr.CoachingReason,
+       dscr.SubCoachingReason,
+       wls.CSR,
+       wls.Supervisor,
+       wls.Quality,
+       wls.LSA,
+       wls.Training,
+       wls.Active,
+       wls.StartDate,
+       wls.EndDate
+from EC.Warning_Log_StaticText wls
+join EC.DIM_Coaching_Reason dcr on dcr.CoachingReasonID = wls.CoachingReasonID
+join EC.DIM_Sub_Coaching_Reason dscr on dscr.SubCoachingReasonID = wls.SubCoachingReasonID
+
+/* ***********************************************
+    warning logs - static text
 *********************************************** */

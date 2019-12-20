@@ -1,0 +1,30 @@
+
+-- what job codes can submit in in which modules
+select ms.Job_Code,
+       ms.Job_Code_Description,
+       ms.CSR,
+       ms.Supervisor,
+       ms.Quality,
+       ms.LSA,
+       ms.Training
+from EC.Module_Submission ms
+order by ms.Job_Code
+
+
+-- associates job code with role and page, summary section 
+select ur.RoleName, 
+       ur.RoleDescription, 
+       rpa.NewSubmission, 
+       rpa.MyDashboard, 
+       rpa.HistoricalDashboard,
+       dsd.MyPending, 
+       dsd.MyCompleted, 
+       dsd.MyTeamPending, 
+       dsd.MyTeamcompleted, 
+       dsd.MyTeamWarning, 
+       dsd.MySubmission, 
+       dsd.MyFollowup
+from EC.UI_User_Role ur
+join EC.UI_Role_Page_Access rpa on ur.RoleId = rpa.RoleID
+join EC.UI_Dashboard_Summary_Display dsd on ur.RoleId = dsd.RoleId
+

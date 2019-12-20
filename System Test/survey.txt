@@ -80,14 +80,14 @@ order by srd.SurveyID, srd.QuestionID, srd.ResponseID
 
 -- to take over the survey record
 Update Ec.Survey_Response_Header
-Set Empid = '380017',
+Set Empid = '236691',
 [Emplanid]= EncryptByKey(Key_GUID('CoachingKey'), N'doug.stearns'),
 SiteID = 10 -- lawence
 Where Surveyid = 20
 
 -- to set it back
 update EC.Survey_Response_Header
-set EmpID = '368329', 
+set EmpID = 'x368329', 
 [Emplanid]= EncryptByKey(Key_GUID('CoachingKey'), N'Christopher.Kalkman'),
 SiteID = 5 -- coralville 
 where SurveyID = 20

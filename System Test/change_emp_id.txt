@@ -2,7 +2,7 @@ select * from EC.Employee_Hierarchy
 where Emp_ID = '380017A'
 
 update EC.Employee_Hierarchy
-set Emp_ID = '380017'
+set Emp_ID = '236691'
 where Emp_ID = '380017A'
 
 select * from Coaching_Log
@@ -23,6 +23,6 @@ select * from EC.Survey_Response_Header
 where SurveyID = 23
 
 update EC.Survey_Response_Header
-set EmpID = '380017'
+set EmpID = '236691'
 where SurveyID = 23
 

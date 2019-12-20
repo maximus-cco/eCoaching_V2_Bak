@@ -1,12 +1,13 @@
 -- files processed
-select * from EC.Quality_Now_FileList
+select * from EC.Quality_Other_FileList
 order by File_SeqNum desc
 -- should be empty after processing
-select * from EC.Quality_Now_Coaching_Stage
+select * from EC.Quality_Other_Coaching_Stage
 -- rejected records
-select * from EC.Quality_Now_Coaching_Rejected
+select * from EC.Quality_Other_Coaching_Rejected
 where Date_Rejected > '2019-03-01 00:00:00.000'
-
+-- bingo images
+select * from Quality_Bingo_Images
 
 /* ***********************************************
     ecoaching logs - join other tables
@@ -17,8 +18,6 @@ DECRYPTION BY CERTIFICATE [CoachingCert];
 -- select columns 
 SELECT cl.CoachingID,
        cl.FormName,
-       cl.QNBatchID,
-       cl.QNBatchStatus,
        dsrc.CoachingSource,
        dsrc.SubCoachingSource,
        dstat.Status,
@@ -26,7 +25,6 @@ SELECT cl.CoachingID,
        CONVERT(nvarchar(100),DecryptByKey(eh.Emp_LanID)) AS [Decrypted Emp_LanID],
        cl.EmpID,
        cl.Description,
-       cl.QNStrengthsOpportunities,
        cl.CoachingDate,
        cl.CoachingNotes,
        cl.isVerified,
@@ -67,54 +65,27 @@ SELECT cl.CoachingID,
        dcr.CoachingReason,
        dscr.SubCoachingReason,
        clr.[Value],
-       clqn.Eval_ID,
-       clqn.Eval_Date,
-       clqn.Evaluator_ID,
-       clqn.Call_Date,
-       clqn.Journal_ID,
-       clqn.EvalStatus,
-       clqn.Summary_CallerIssues,
-       clqn.Program,
-       clqn.VerintFormName,
-       clqn.isCoachingMonitor,
-       clqn.Business_Process,
-       clqn.Business_Process_Reason,
-       clqn.Business_Process_Comment,
-       clqn.Info_Accuracy,
-       clqn.Info_Accuracy_Reason,
-       clqn.Info_Accuracy_Comment,
-       clqn.Privacy_Disclaimers,
-       clqn.Privacy_Disclaimers_Reason,
-       clqn.Privacy_Disclaimers_Comment,
-       clqn.Issue_Resolution,
-       clqn.Issue_Resolution_Comment,
-       clqn.Call_Efficiency,
-       clqn.Call_Efficiency_Comment,
-       clqn.Active_Listening,
-       clqn.Active_Listening_Comment,
-       clqn.Personality_Flexing,
-       clqn.Personality_Flexing_Comment,
-       clqn.Customer_Temp_Start,
-       clqn.Customer_Temp_Start_Comment,
-       clqn.Customer_Temp_End,
-       clqn.Customer_Temp_End_Comment
+       clb.Competency,
+       clb.Note,
+       clb.Description
+--       clqnb.CompImage
   FROM EC.Coaching_Log cl
   join EC.Employee_Hierarchy eh on cl.EmpID = eh.Emp_ID
   join EC.Coaching_Log_Reason clr on cl.CoachingID = clr.CoachingID
   join EC.DIM_Coaching_Reason dcr on clr.CoachingReasonID = dcr.CoachingReasonID
   join EC.DIM_Sub_Coaching_Reason dscr on clr.SubCoachingReasonID = dscr.SubCoachingReasonID
-  join EC.Coaching_Log_Quality_Now_Evaluations clqn on cl.CoachingID = clqn.CoachingID
+  join EC.Coaching_Log_Bingo clb on cl.CoachingID = clb.CoachingID
   join EC.DIM_Source dsrc on cl.SourceID = dsrc.SourceID
   join EC.DIM_Status dstat on cl.StatusID = dstat.StatusID
   join EC.DIM_Site dsite on cl.SiteID = dsite.SiteID
   join EC.DIM_Module dm on cl.ModuleID = dm.ModuleID
-  where cl.SourceID in () 
-  --and cl.CoachingID in () 
+  where cl.SourceID in (218) 
+  --and cl.CoachingID in (765629)
+  and cl.strReportCode like 'BQ%'
   order by cl.CoachingID
+
   
 CLOSE SYMMETRIC KEY CoachingKey
 /* ***********************************************
     ecoaching logs - join other tables
    *********************************************** */
-  
-  

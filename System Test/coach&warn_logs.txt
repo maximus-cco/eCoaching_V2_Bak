@@ -3,7 +3,7 @@
 */ ***********************************************
 -- find submitted ones
 select * from EC.Coaching_Log
-where SubmitterID = '380017'
+where SubmitterID = '236691'
 and SubmittedDate > '2017-05-12 00:00:00.000'
 order by SubmittedDate
 
@@ -13,7 +13,7 @@ where CoachingID in (681883, 681888)
 
 -- change ecl to doug
 update EC.Coaching_Log
-set empid = '380017'
+set empid = '236691'
 where CoachingID in (681883, 681888)
 
 -- change ecl back
@@ -38,8 +38,9 @@ update EC.Coaching_Log
 set StatusID = 5,
 CoachingDate = null,   -- need to comment out for direct logs 
 CoachingNotes = null,   -- need to comment out for direct logs
+EventDate = null,
+StartDate
 SupReviewedAutoDate = null,
-isCSE = 0,   -- 0=no 1=yes
 MgrReviewManualDate = null,
 MgrReviewAutoDate = null,
 MgrNotes = null,
@@ -63,7 +64,7 @@ where CoachingID in (689340)
 */ ***********************************************
 -- find submitted ones
 select * from EC.Warning_Log
-where SubmitterID = '380017'
+where SubmitterID = '236691'
 and SubmittedDate > '2017-05-12 00:00:00.000'
 order by SubmittedDate
 
@@ -73,7 +74,7 @@ where WarningID in (681883, 681888)
 
 -- change ecl to doug
 update EC.Warning_Log
-set empid = '380017'
+set empid = '236691'
 where WarningID in (681883, 681888)
 
 -- change ecl back

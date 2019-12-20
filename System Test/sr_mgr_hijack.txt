@@ -44,18 +44,18 @@ where (SrMgrLvl1_ID = '412776'
     verify no hierarchy 
 ***************************************************************/
 select * from EC.Employee_Hierarchy
-where Sup_ID = '380017'
-or Mgr_ID = '380017'
+where Sup_ID = '236691'
+or Mgr_ID = '236691'
 
 select * from EC.Coaching_Log
-where (MgrID = '380017'
-or ReassignedToID = '380017')
+where (MgrID = '236691'
+or ReassignedToID = '236691')
 and StatusID not in (2,1)
 
 select * from EC.Employee_Hierarchy
-where (SrMgrLvl1_ID = '380017'
- or  SrMgrLvl2_ID = '380017'
- or  SrMgrLvl3_ID = '380017')
+where (SrMgrLvl1_ID = '236691'
+ or  SrMgrLvl2_ID = '236691'
+ or  SrMgrLvl3_ID = '236691')
 /***************************************************************
     verify no hierarchy 
 ***************************************************************/
@@ -65,37 +65,37 @@ where (SrMgrLvl1_ID = '380017'
 ***************************************************************/
 update EC.Employee_Hierarchy
 set Emp_Job_Code = 'WACS60' 
-where Emp_ID = '380017'
+where Emp_ID = '236691'
 
 update EC.AT_User
 set EmpJobCode = 'WACS60'
-where UserId = '380017'
+where UserId = '236691'
 
 update EC.Employee_Hierarchy
-set Sup_ID = '380017'
+set Sup_ID = '236691'
 where Sup_ID = '412776'
 
 update EC.Employee_Hierarchy
-set Mgr_ID = '380017'
+set Mgr_ID = '236691'
 where Mgr_ID = '412776'
 
 update EC.Employee_Hierarchy
-set SrMgrLvl1_ID = '380017'
+set SrMgrLvl1_ID = '236691'
 where SrMgrLvl1_ID = '412776'
 
 update EC.Employee_Hierarchy
-set SrMgrLvl2_ID = '380017'
+set SrMgrLvl2_ID = '236691'
 where SrMgrLvl2_ID = '412776'
 
 update EC.Employee_Hierarchy
-set SrMgrLvl3_ID = '380017'
+set SrMgrLvl3_ID = '236691'
 where SrMgrLvl3_ID = '412776'
 
 update EC.Employee_Hierarchy
-set SrMgrLvl1_ID = '380017', 
+set SrMgrLvl1_ID = '236691', 
 SrMgrLvl2_ID = '999999', 
 SrMgrLvl3_ID = '999999'
-where Emp_ID in ('365663','368329','346638','379750','310812')
+where Emp_ID in ('x365663','x368329','236472','236687','236281')
 
 /***************************************************************
     change to srmgr
@@ -106,38 +106,38 @@ where Emp_ID in ('365663','368329','346638','379750','310812')
 ***************************************************************/
 update EC.Employee_Hierarchy
 set Emp_Job_Code = 'WSTE13'
-where Emp_ID = '380017'
+where Emp_ID = '236691'
 
 update EC.AT_User
 set EmpJobCode = 'WSTE13'
-where UserId = '380017'
+where UserId = '236691'
 
 update EC.Employee_Hierarchy
 set Sup_ID = '412776'
-where Sup_ID = '380017'
+where Sup_ID = '236691'
 
 update EC.Employee_Hierarchy
 set Mgr_ID = '412776'
-where Mgr_ID = '380017'
+where Mgr_ID = '236691'
 
 update EC.Employee_Hierarchy
 set SrMgrLvl1_ID = '412776'
-where SrMgrLvl1_ID = '380017'
+where SrMgrLvl1_ID = '236691'
 
 update EC.Employee_Hierarchy
 set SrMgrLvl2_ID = '412776'
-where SrMgrLvl2_ID = '380017'
+where SrMgrLvl2_ID = '236691'
 
 update EC.Employee_Hierarchy
 set SrMgrLvl3_ID = '412776'
-where SrMgrLvl3_ID = '380017'
+where SrMgrLvl3_ID = '236691'
 
 
 update EC.Employee_Hierarchy
-set SrMgrLvl1_ID = '398185', 
+set SrMgrLvl1_ID = '236952', 
 SrMgrLvl2_ID = '999999', 
 SrMgrLvl3_ID = '999999'
-where Emp_ID in ('365663','368329','346638','379750','310812')
+where Emp_ID in ('x365663','x368329','236472','236687','236281')
 
 
 /***************************************************************
@@ -173,11 +173,11 @@ from EC.Coaching_Log cl
 join EC.Employee_Hierarchy eh on cl.EmpID = eh.Emp_ID
 where cl.ModuleID in (1,2)
 and cl.StatusID not in (2)
-and (eh.SrMgrLvl1_ID = '380017'
-  or eh.SrMgrLvl2_ID = '380017'
-  or eh.SrMgrLvl3_ID = '380017')
---  or eh.Sup_ID = '380017' 
---  or eh.Mgr_ID = '380017')
+and (eh.SrMgrLvl1_ID = '236691'
+  or eh.SrMgrLvl2_ID = '236691'
+  or eh.SrMgrLvl3_ID = '236691')
+--  or eh.Sup_ID = '236691' 
+--  or eh.Mgr_ID = '236691')
 --and (cl.CSRReviewAutoDate >= '2016-07-01 00:00:00.000' 
 --and cl.CSRReviewAutoDate < '2016-08-01 00:00:00.000')
 --order by cl.CSRReviewAutoDate, cl.StatusID
@@ -213,11 +213,11 @@ from EC.Warning_Log wl
 join EC.Employee_Hierarchy eh on wl.EmpID = eh.Emp_ID
 where wl.ModuleID in (1,2)
 and wl.Active = 1
-and (eh.SrMgrLvl1_ID = '380017'
-  or eh.SrMgrLvl2_ID = '380017'
-  or eh.SrMgrLvl3_ID = '380017')
---  or eh.Sup_ID = '380017' 
---  or eh.Mgr_ID = '380017')
+and (eh.SrMgrLvl1_ID = '236691'
+  or eh.SrMgrLvl2_ID = '236691'
+  or eh.SrMgrLvl3_ID = '236691')
+--  or eh.Sup_ID = '236691' 
+--  or eh.Mgr_ID = '236691')
 and (wl.SubmittedDate >= '2016-11-01 00:00:00.000' 
 and wl.SubmittedDate < '2016-12-01 00:00:00.000')
 order by wl.SubmittedDate 

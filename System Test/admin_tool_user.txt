@@ -15,12 +15,12 @@ Active,
 CONVERT(nvarchar(100),DecryptByKey(UserLanID)) AS [Decrypted UserLanID],
 CONVERT(nvarchar(100),DecryptByKey(UserName)) AS [Decrypted UserName]
 from EC.AT_User
-where UserId = '380017'
+where UserId = '236691'
 
 -- put me there
 insert into EC.AT_User
 (UserId, UserLanID, UserName, EmpJobCode, Active)
-values ('380017',EncryptByKey(Key_GUID('CoachingKey'), 'Doug.Stearns'),
+values ('236691',EncryptByKey(Key_GUID('CoachingKey'), 'Doug.Stearns'),
         EncryptByKey(Key_GUID('CoachingKey'), 'Stearns, Douglas R'), 'WACS60', 1)
 
 -- change me there
@@ -29,12 +29,12 @@ set
 EmpJobCode = 'WACS01'
 --Active = 1 -- 1=active/0=inactive
 --UserLanID = EncryptByKey(Key_GUID('CoachingKey'), 'DougR.Stearns')
-where UserId = '380017'
+where UserId = '236691'
 
 
 -- see if i'm there
 select * from EC.AT_User_Role_Link
-where UserId = '380017'
+where UserId = '236691'
 
 -- put me there
 -- 101 CoachingAdmin
@@ -58,12 +58,12 @@ where UserId = '380017'
 -- 119 ACLAdmin
 insert into EC.AT_User_Role_Link
  (UserId, RoleId)
- values ('380017',101)
+ values ('236691',101)
 
 -- due to foreign key constraints - can't change me there
 -- so have to delete me there
 delete from EC.AT_User_Role_Link
-where UserId = '380017'
+where UserId = '236691'
 and RoleId in (106)
 
 -- what i can do
@@ -81,7 +81,7 @@ join EC.AT_User_Role_Link url on u.UserId = url.UserId
 join EC.AT_Role_Entitlement_Link rel on url.RoleId = rel.RoleId
 join EC.AT_Role r on rel.RoleId = r.RoleId
 join EC.AT_Entitlement e on e.EntitlementId = rel.EntitlementId
-where u.UserId in ('380017')
+where u.UserId in ('236691')
 order by u.UserId, /*ma.Module,*/ rel.RoleId, rel.EntitlementId
 
 -- who can do what
