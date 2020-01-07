@@ -240,7 +240,6 @@ namespace eCoachingLog.Repository
                         logDetail.FormName = dataReader["strFormID"].ToString();
                         logDetail.Source = dataReader["strSource"].ToString();
                         logDetail.Status = dataReader["strFormStatus"].ToString();
-						logDetail.StatusId = (int)dataReader["StatusId"];
                         logDetail.Type = dataReader["strFormType"].ToString();
                         logDetail.CreatedDate = eCoachingLogUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
@@ -253,16 +252,7 @@ namespace eCoachingLog.Repository
 						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString().Trim().ToUpper();
                         logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
 						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString().Trim().ToUpper();
-						logDetail.ModuleId = (int)dataReader["ModuleID"];
-						logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
-						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
-
-						logDetail.IsFormalAttendanceHours = dataReader["FC/ ATTH"].ToString() == "0" ? false : true;
-						logDetail.IsFormalAttendanceTrends = dataReader["FC / ATTT"].ToString() == "0" ? false : true;
-						logDetail.InstructionText = dataReader["strStaticText"].ToString();
-						logDetail.EmployeeReviewDate = eCoachingLogUtil.AppendPdt(dataReader["CSRReviewAutoDate"].ToString());
-
-						break;
+                        break;
                     }
                 }
             }
@@ -525,6 +515,7 @@ namespace eCoachingLog.Repository
 						log.Value = dataReader["strValue"].ToString();
 						log.CreatedDate = dataReader["SubmittedDate"].ToString();
 						log.IsCoaching = !string.IsNullOrEmpty(log.Source) && log.Source != "Warning" ? true : false;
+
 						// the sp to return my team's warning is not returning these 3 fields
 						// the sp to return log list for Director Dashboard is not returing these 3 fields
 						if (logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING
