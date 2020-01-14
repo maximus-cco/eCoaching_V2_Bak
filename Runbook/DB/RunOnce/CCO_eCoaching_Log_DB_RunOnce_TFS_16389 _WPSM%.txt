@@ -1,0 +1,21 @@
+/*
+
+TFS 16389  - Provide access to employees in WPSM% job codes
+
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+*/
+
+--******************************************
+
+--1. Update Description for Manager Role in [EC].[UI_User_Role] table
+
+update [EC].[UI_User_Role]
+set [RoleDescription] = '%50 or %60 or %70 or WEEX% or WISO% or WISY% or WPWL% or WSTE% or WPPM% or WPSM%'
+where RoleId = 104;
+
+--******************************************
+

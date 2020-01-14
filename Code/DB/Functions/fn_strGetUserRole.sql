@@ -1,8 +1,9 @@
 /*
-fn_strGetUserRole(05).sql
-Last Modified Date: 12/12/2019
+fn_strGetUserRole(06).sql
+Last Modified Date: 1/14/2020
 Last Modified By: Susmitha Palacherla
 
+Revision 06: Added WPSM% to Mgr Role - TFS 16389 - 1/14/2020
 Revision 05: Added WPOP12 to Analyst Role - TFS 16261 - 12/12/2019
 Revision 04: Added WPOP12 to ARC Role - TFS 15859 - 10/28/2019
 Revision 03: Added logic for Manager role for WPPM job codes - TFS 12467 - 10/29/2018
@@ -37,6 +38,7 @@ GO
 -- Added logic for Manager role for WPPM job codes - TFS 12467 - 10/29/2018
 -- Added WPOP12 to ARC Role. TFS 15859 - 10/28/2019
 -- Moved WPOP12 to Analyst Role. TFS 16261 - 12/11/2019 
+-- Added WPSM% to Mgr Role - TFS 16389 - 01/13/2020
 -- =============================================
 
 CREATE FUNCTION [EC].[fn_strGetUserRole] 
@@ -61,7 +63,7 @@ WHERE Emp_ID = @strEmpID);
  OR  @strEmpJobCode LIKE 'WTTR1%' OR  @strEmpJobCode LIKE 'WTID%'  ) THEN 'Employee'
  WHEN @strEmpJobCode LIKE 'WH%' THEN 'HR'
  WHEN (@strEmpJobCode LIKE '%40' OR @strEmpJobCode LIKE 'WTTI%' OR @strEmpJobCode LIKE 'WACQ13') THEN 'Supervisor'
- WHEN ((@strEmpJobCode LIKE 'WPPM%' OR @strEmpJobCode LIKE 'WEEX%' OR @strEmpJobCode LIKE 'WISO%'
+ WHEN ((@strEmpJobCode LIKE 'WPPM%' OR @strEmpJobCode LIKE 'WPSM%' OR @strEmpJobCode LIKE 'WEEX%' OR @strEmpJobCode LIKE 'WISO%'
  OR @strEmpJobCode LIKE 'WISY%' OR  @strEmpJobCode = 'WPWL51' OR @strEmpJobCode LIKE 'WSTE%'
  OR @strEmpJobCode LIKE '%50' OR @strEmpJobCode LIKE '%60'  OR @strEmpJobCode LIKE '%70') 
  AND NOT([EC].[fn_strCheckIf_ACLRole](@strEmpID, 'SRM') = 1 OR [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1)) 
@@ -75,6 +77,8 @@ WHERE Emp_ID = @strEmpID);
   
 END --fn_strGetUserRole
 
+
 GO
+
 
 
