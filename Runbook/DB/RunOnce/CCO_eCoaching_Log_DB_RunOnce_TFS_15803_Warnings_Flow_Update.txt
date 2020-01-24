@@ -32,23 +32,29 @@ INSERT INTO [EC].[DIM_Coaching_Reason]
 
 --2. INSERT records to  [EC].[DIM_Sub_Coaching_Reason]
 
+SET IDENTITY_INSERT [EC].[DIM_Sub_Coaching_Reason] ON; 
+GO
+
+
 INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
-           ([SubCoachingReason])
-     VALUES ('Attendance – Hours'),
-           ('Attendance – Trends'),
-		   ('Attendance – NCNS'),
-		   ('Break Time'),
-		   ('Call Avoidance'),
-		   ('Misconduct'),
-  ('Adherence to schedule'),
-('Falsification'),
-('Harassment'),
-('Other Policy Violation (non-Security/Privacy)'),
-('Performance'),
-('Quality'),
-('Timesheet Violation');
+           ([SubCoachingReasonID],[SubCoachingReason])
+     VALUES (253,'Attendance – Hours'),
+           (254,'Attendance – Trends'),
+		  -- (255,'Attendance – NCNS'),
+		   (256,'Break Time'),
+		   (257,'Call Avoidance'),
+		   (258,'Misconduct'),
+  (259,'Adherence to schedule'),
+(260,'Falsification'),
+(261,'Harassment'),
+(262,'Other Policy Violation (non-Security/Privacy)'),
+(263,'Performance'),
+(264,'Quality'),
+(265,'Timesheet Violation');
 		 
 
+SET IDENTITY_INSERT [EC].[DIM_Sub_Coaching_Reason] OFF; 
+GO
 
 
 
@@ -89,7 +95,7 @@ INSERT INTO [EC].[Coaching_Reason_Selection]
                    (28, 'Verbal Warning',178, 'Insubordination', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (28, 'Verbal Warning',253, 'Attendance – Hours', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (28, 'Verbal Warning',254, 'Attendance – Trends', 1,1,0,1,0,1,1,1,1,1,1,1),
-		   (28, 'Verbal Warning',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
+		 --  (28, 'Verbal Warning',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (28, 'Verbal Warning',256, 'Break Time', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (28, 'Verbal Warning',257, 'Call Avoidance', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (28, 'Verbal Warning',258, 'Misconduct', 1,1,0,1,0,1,1,1,1,1,1,1),
@@ -105,7 +111,7 @@ INSERT INTO [EC].[Coaching_Reason_Selection]
                     (29, 'Written Warning',178, 'Insubordination', 1,1,0,1,0,1,1,1,1,1,1,1),
 		    (29, 'Written Warning',253, 'Attendance – Hours', 1,1,0,1,0,1,1,1,1,1,1,1),
 		    (29, 'Written Warning',254, 'Attendance – Trends', 1,1,0,1,0,1,1,1,1,1,1,1),
-		    (29, 'Written Warning',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
+		  --  (29, 'Written Warning',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
 		    (29, 'Written Warning',256, 'Break Time', 1,1,0,1,0,1,1,1,1,1,1,1),
 		    (29, 'Written Warning',257, 'Call Avoidance', 1,1,0,1,0,1,1,1,1,1,1,1),
 		    (29, 'Written Warning',258, 'Misconduct', 1,1,0,1,0,1,1,1,1,1,1,1),
@@ -121,7 +127,7 @@ INSERT INTO [EC].[Coaching_Reason_Selection]
                    (30, 'Final Written Warning',178, 'Insubordination', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (30, 'Final Written Warning',253, 'Attendance – Hours', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (30, 'Final Written Warning',254, 'Attendance – Trends', 1,1,0,1,0,1,1,1,1,1,1,1),
-		   (30, 'Final Written Warning',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
+		 --  (30, 'Final Written Warning',255, 'Attendance – NCNS', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (30, 'Final Written Warning',256, 'Break Time', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (30, 'Final Written Warning',257, 'Call Avoidance', 1,1,0,1,0,1,1,1,1,1,1,1),
 		   (30, 'Final Written Warning',258, 'Misconduct', 1,1,0,1,0,1,1,1,1,1,1,1),
