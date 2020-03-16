@@ -240,7 +240,8 @@ namespace eCoachingLog.Repository
                         logDetail.FormName = dataReader["strFormID"].ToString();
                         logDetail.Source = dataReader["strSource"].ToString();
                         logDetail.Status = dataReader["strFormStatus"].ToString();
-                        logDetail.Type = dataReader["strFormType"].ToString();
+						logDetail.StatusId = (int)dataReader["StatusId"];
+						logDetail.Type = dataReader["strFormType"].ToString();
                         logDetail.CreatedDate = eCoachingLogUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
                         logDetail.EventDate = eCoachingLogUtil.AppendPdt(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
@@ -252,7 +253,17 @@ namespace eCoachingLog.Repository
 						logDetail.SupervisorEmpId = dataReader["strEmpSupID"].ToString().Trim().ToUpper();
                         logDetail.ManagerName = dataReader["strEmpMgrName"].ToString();
 						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString().Trim().ToUpper();
-                        break;
+
+						logDetail.ModuleId = (int)dataReader["ModuleID"];
+						logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
+						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
+
+						logDetail.IsFormalAttendanceHours = dataReader["FC/ ATTH"].ToString() == "0" ? false : true;
+						logDetail.IsFormalAttendanceTrends = dataReader["FC / ATTT"].ToString() == "0" ? false : true;
+						logDetail.InstructionText = dataReader["strStaticText"].ToString();
+						logDetail.EmployeeReviewDate = eCoachingLogUtil.AppendPdt(dataReader["CSRReviewAutoDate"].ToString());
+
+						break;
                     }
                 }
             }
