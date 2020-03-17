@@ -1,8 +1,9 @@
 /*
-fn_nvcGetEmpIdFromLanId(02).sql
-Last Modified Date: 11/01/2017
+fn_nvcGetEmpIdFromLanId(03).sql
+Last Modified Date: 03/13/2020
 Last Modified By: Susmitha Palacherla
 
+Version 03: Modified to support Maxcorp ids - TFS 16529 - 03/13/2020
 Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
@@ -17,7 +18,6 @@ IF EXISTS (
 )
    DROP FUNCTION [EC].[fn_nvcGetEmpIdFromLanId]
 GO
-
 
 
 SET ANSI_NULLS ON
@@ -38,10 +38,11 @@ GO
 -- Last Modified By: Susmitha Palacherla
 -- Modified to fix the logic for looking up the Employee ID - SCR 12983 - 07/25/2014
 -- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
+-- Modified to support Maxcorp ids - TFS 16529 - 03/13/2020
 --	=============================================
 CREATE FUNCTION [EC].[fn_nvcGetEmpIdFromLanId] 
 (
-  @nvcLanID Nvarchar(20),
+  @nvcLanID Nvarchar(30),
   @dtmDate Datetime
 )
 RETURNS nvarchar(10)
@@ -53,24 +54,24 @@ BEGIN
 --DECRYPTION BY CERTIFICATE [CoachingCert]
 
 
-	 DECLARE @nvcEmpID Nvarchar(10),
-	         @intDate Int,
+DECLARE      @nvcLanIDX Nvarchar(30) = (REPLACE(REPLACE(@nvcLanID, 'Maxcorp\', ''),'AD\','')),
+	         @nvcEmpID Nvarchar(10),
+	         @intDate Int = EC.fn_intDatetime_to_YYYYMMDD (@dtmDate),
 	         @intlanempid Int,
 	         @intehempid Int
 	
-	SET @intDate = EC.fn_intDatetime_to_YYYYMMDD (@dtmDate)
-	
+
 	-- Get count of Employee IDs for given lan ID in the Employe ID To lan ID Table
 	
-		SET @intlanempid = (
-	SELECT COUNT(EmpID)
-	FROM EC.View_EmployeeID_To_LanID
-	WHERE 
-	LanID = @nvclanID AND
-	@intDate BETWEEN StartDate AND EndDate
-	)
+SET @intlanempid = (
+			SELECT COUNT(EmpID)
+			FROM EC.View_EmployeeID_To_LanID
+			WHERE 
+			LanID = @nvcLanIDX AND
+			@intDate BETWEEN StartDate AND EndDate
+			)
 	
-	-- IF at least one Employee ID is found
+	-- IF at least one Employee ID is found in Lan ID table
 	
 IF  @intlanempid > 0
 
@@ -83,9 +84,9 @@ IF  @intlanempid = 1
 	   SELECT DISTINCT EmpID
 	   FROM EC.View_EmployeeID_To_LanID
 	    WHERE 
-	    LanID = @nvclanID AND
+	    LanID = @nvcLanIDX AND
 	    @intDate BETWEEN StartDate AND EndDate)
-	END
+	END --@intlanempid = 1
 	  
 ELSE 	
 
@@ -98,21 +99,23 @@ ELSE
 		  JOIN (SELECT LanID, MAX(StartDate)StartDate FROM [EC].[View_EmployeeID_To_LanID] GROUP BY LanID)MLAN
 		  ON LAN.LanID = MLAN.lanID 
 		  AND LAN.StartDate = MLAN.StartDate) AS LATEST
-		  WHERE LATEST.LanID =  @nvclanID AND 
+		  WHERE LATEST.LanID =  @nvcLanIDX AND 
 		  @intDate BETWEEN LATEST.StartDate AND LATEST.EndDate
 		  )
-     END
-	END     
+     END -- --@intlanempid > 1
+ END -- @intlanempid > 0   
+   
 ELSE
 
 -- If No Employee Ids are found in the Employee ID To lan ID Table
 -- Get count of Employee IDs for given Lan ID in the Employe Hierarchy Table
 
  BEGIN
+  
 	SET @intehempid = (
 	SELECT COUNT(Emp_ID)
 	FROM EC.Employee_Hierarchy
-	WHERE CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @nvclanID AND
+	WHERE CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @nvcLanIDX AND
 	@intDate BETWEEN Start_Date AND End_Date
 	)
 -- If exactly one Employee ID is found return it
@@ -123,13 +126,14 @@ IF  @intehempid = 1
 	      SET @nvcEmpID = 
 		  (SELECT DISTINCT Emp_ID
 		  FROM EC.Employee_Hierarchy
-		  WHERE CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @nvclanID
+		  WHERE CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @nvcLanIDX
 		  AND @intDate BETWEEN Start_Date AND End_Date
 		  )
      END
  -- If more than one Employee ID is found, return the one with the latest start date    
  
-  ELSE   
+ IF  @intehempid > 1
+
        BEGIN
 	  	 SET @nvcEmpID = (
 		  SELECT DISTINCT LATEST.Emp_ID FROM
@@ -138,10 +142,22 @@ IF  @intehempid = 1
 		  FROM EC.Employee_Hierarchy GROUP BY CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) )MEH
 		  ON CONVERT(nvarchar(30),DecryptByKey(EH.Emp_LanID))  = MEH.Emp_LanID 
 		  AND EH.Start_Date = MEH.Start_Date) AS LATEST
-		  WHERE LATEST.Emp_LanID =  @nvclanID AND 
+		  WHERE LATEST.Emp_LanID = @nvcLanIDX AND 
 		  @intDate BETWEEN LATEST.Start_Date AND LATEST.End_Date
 		  )
      END
+
+IF  @intehempid = 0	
+
+	 BEGIN
+	      SET @nvcEmpID = 
+		  (SELECT DISTINCT Emp_ID
+		  FROM EC.Employee_Hierarchy
+		  WHERE Emp_ID = @nvcLanIDX
+		  AND @intDate BETWEEN Start_Date AND End_Date
+		  )
+     END
+
  END	
  
  -- If no Employee ID found for given Lan ID in the Employee ID to Lan ID table
@@ -152,6 +168,8 @@ SET @nvcEmpID = '999999'
 RETURN 	@nvcEmpID
 
 END --fn_nvcGetEmpIdFromLanId
+
+
 
 
 GO
