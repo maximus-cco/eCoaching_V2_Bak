@@ -32,6 +32,7 @@ namespace eCoachingLog.Models.Common
 
 		public string InstructionText { get; set; }
 		public string EmployeeReviewDate { get; set; }
+		public string Comment { get; set; }
 
 		// Quality Now
 		public bool IsQualityNowLog { get; set; }

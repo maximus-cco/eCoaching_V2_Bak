@@ -45,6 +45,16 @@
 					</label>
 					@Html.ValidationMessageFor(m => m.Acknowledge)
 				</div>
+
+				<div class='form-group mt-2'>
+					<label for="textarea-employee-comments">Provide any comments or feedback below:</label>
+					@Html.TextAreaFor(m => m.Comment, new { @class = "form-control", @rows = "5", id = "textarea-employee-comments", maxlength = 3000 })
+					<div class="help-block">
+						Provide as much detail as possible.
+						<span id="employee-comments" class="pull-right">3000 remaining</span>
+					</div>
+					@Html.ValidationMessageFor(m => m.Comment)
+				</div>
 			}
 
 			<!-- /.modal-body -->
@@ -58,4 +68,6 @@
 	</div>
 	<!--/.row -->
 </div>
+
+@Scripts.Render("~/bundles/scripts/review")
 

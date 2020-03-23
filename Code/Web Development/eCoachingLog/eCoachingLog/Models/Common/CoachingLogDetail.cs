@@ -78,7 +78,7 @@ namespace eCoachingLog.Models.Common
 		public string EmployeeReviewLabel { get; set; }
 		// Moved to BaseLogDetail
 		// public string EmployeeReviewDate { get; set; }
-        public string Comment { get; set; }
+        // public string Comment { get; set; }
 
 		public string LogDescription { get; set; }
 
