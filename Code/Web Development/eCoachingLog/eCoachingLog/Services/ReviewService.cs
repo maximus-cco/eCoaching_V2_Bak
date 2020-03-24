@@ -350,7 +350,7 @@ namespace eCoachingLog.Services
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.WarningLogDetail.EmployeeId == user.EmployeeId)
 			{
-				if (!this.emailService.SendComments(review.WarningLogDetail, "", emailTempFileName, subject))
+				if (!this.emailService.SendComments(review.WarningLogDetail, review.Comment, emailTempFileName, subject))
 				{
 					logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
 				}
