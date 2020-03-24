@@ -347,7 +347,7 @@ namespace eCoachingLog.Services
 
 			// Email supervisor and/or manager upon CSR acknowledges the warning log
 			if (success
-					&& review.LogDetail.ModuleId == Constants.MODULE_CSR
+					&& review.WarningLogDetail.ModuleId == Constants.MODULE_CSR
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.WarningLogDetail.EmployeeId == user.EmployeeId)
 			{
