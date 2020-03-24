@@ -1,14 +1,12 @@
 /*
-sp_rptWarningSummary(04).sql
-Last Modified Date: 11/28/2017
+sp_rptWarningSummary(05).sql
+Last Modified Date: 03/24/2020
 Last Modified By: Susmitha Palacherla
 
-Version 04: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
-
+Version 05: Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
+Version 04: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/20174
 Version 03: Updated Joins to use left join - Suzy -  TFS 5621 - 04/19/2017
-
 Version 02: Added State - TFS 5621 - 04/10/2017
-
 Version 01: Document Initial Revision - Suzy Palacherla -  TFS 5621 - 03/27/2017
 
 */
@@ -30,6 +28,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2017
@@ -39,6 +39,7 @@ GO
 --  Revision History:
 --  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/19/2017)
 --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
+--  Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
  *******************************************************************************/
 
 CREATE PROCEDURE [EC].[sp_rptWarningSummary] 
@@ -111,6 +112,8 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 			  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.HierarchyMgrName)),'-')  AS [Current Manager Name]
 		      ,ISNULL(CONVERT(varchar,w.WarningGivenDate,121),'-') AS [Warning given Date]
               ,ISNULL(CONVERT(varchar,w.SubmittedDate,121),'-') AS [Submitted Date]
+			  ,p.CSRReviewAutoDate AS [CSR Review Date]
+			  ,CONVERT(nvarchar(3000), DecryptByKey(p.CSRComments)) AS [CSR Comments]
               ,ISNULL(CONVERT(varchar,w.WarningExpiryDate,121),'-') AS [Expiration Date]
 		      ,w.Source AS [Warning Source]
 		      ,w.SubSource AS [Sub Warning Source]
@@ -141,7 +144,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 			  ,[eh].[Mgr_Name]	HierarchyMgrName
 		      ,[wl].[WarningGivenDate]	WarningGivenDate
 		      ,[wl].[SubmittedDate]	SubmittedDate
-		      ,DATEADD(D,91,[wl].[WarningGivenDate])	WarningExpiryDate
+			  ,DATEADD(D,91,[wl].[WarningGivenDate])	WarningExpiryDate
 		      ,[so].[CoachingSource] Source
 		      ,[so].[SubCoachingSource]	SubSource
 		      ,[dcr].[CoachingReason]WarningReason
