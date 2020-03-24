@@ -1,9 +1,9 @@
 /*
-sp_SelectReviewFrom_Warning_Log(05).sql
-Last Modified Date: 12/10/2019
+sp_SelectReviewFrom_Warning_Log(06).sql
+Last Modified Date: 03/23/2020
 Last Modified By: Susmitha Palacherla
 
-
+Version 06: Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
 Version 05: Updated to add CSRReviewAutoDate to return. TFS 15803 - 12/4/2019
 Version 04: Updated to Incorporate static text from database. TFS 15803 - 12/3/2019
 Version 03: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
@@ -39,6 +39,7 @@ GO
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
 --  Modified during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+--  Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log] @intLogId BIGINT
@@ -83,6 +84,7 @@ SELECT wl.WarningID numID,
   ''Warning'' strSource,
   wl.SubmittedDate,
   wl.CSRReviewAutoDate,
+  CONVERT(nvarchar(3000), DecryptByKey(CSRComments)) AS [CSRComments],
   ''Warning'' strLogType,
  CASE WHEN ww.FC_ATTT IS NOT NULL THEN 1 ELSE 0 END "FC / ATTT",
  CASE WHEN ww.FC_ATTH IS NOT NULL THEN 1 ELSE 0 END "FC/ ATTH",
@@ -107,8 +109,9 @@ JOIN (
 WHERE [wl].[warningId] = ''' + CONVERT(NVARCHAR, @intLogId ) + '''
 ORDER BY [wl].[FormName]';
 
+--Print (@nvcSQL)
 EXEC (@nvcSQL)
-Print (@nvcSQL)
+
 
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];

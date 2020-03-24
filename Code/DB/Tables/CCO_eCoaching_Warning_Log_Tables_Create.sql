@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Warning_Log_Tables_Create(03).sql
-Last Modified Date: 11/18/2019
+CCO_eCoaching_Warning_Log_Tables_Create(04).sql
+Last Modified Date: 03/24/2020
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to capture csr comments and store them encrypted in database. TFS 16855 - 03/24/2020
 Version 03: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 version 02: Updated to document changes for data encrryption TFS 7856.
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -63,11 +64,11 @@ CREATE TABLE [EC].[Warning_Log](
         [Behavior] [nvarchar](30) NULL,
         [isCSRAcknowledged] [bit] NULL,
 	[CSRReviewAutoDate] [datetime] NULL,
-	[CSRComments] [nvarchar](3000) NULL,
 	[EmailSent] [bit] NOT NULL,
 	[ReminderSent] [bit] NOT NULL DEFAULT (0),
 	[ReminderDate] [datetime] NULL,
 	[ReminderCount] [int] NOT NULL DEFAULT (0),
+        [CSRComments] [varbinary](max) NULL,
  CONSTRAINT [PK_Warning_Log] PRIMARY KEY CLUSTERED 
 (
 	[WarningID] ASC

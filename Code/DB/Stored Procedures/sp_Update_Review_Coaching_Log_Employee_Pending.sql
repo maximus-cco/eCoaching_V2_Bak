@@ -1,7 +1,8 @@
 /*
-Last Modified Date: 11/18/2019
+Last Modified Date: 03/23/2020
 Last Modified By: Susmitha Palacherla
 
+Version 02: Updated to capture CSRComments. TFS 16855- 03/23/2020
 Version 01: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 
 */
@@ -37,6 +38,7 @@ GO
 --    Last Update:    03/25/2014 - Modified Update query
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
 --    Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+--    Updated to capture CSRComments. TFS 16855- 03/23/2020
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Pending]
 (
@@ -50,6 +52,8 @@ CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Pending]
 AS
 
 BEGIN
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
 DECLARE @RetryCounter INT;
 SET @RetryCounter = 1;
@@ -80,10 +84,14 @@ SET
   StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
   isCSRAcknowledged = @bitisCSRAcknowledged,
   CSRReviewAutoDate = @dtmCSRReviewAutoDate,
-  CSRComments = @nvcCSRComments
+  CSRComments = EncryptByKey(Key_GUID('CoachingKey'), @nvcCSRComments)
 WHERE WarningID = @nvcFormID
 OPTION (MAXDOP 1);	
 END
+
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey];
+	
 	
 COMMIT TRANSACTION;
 END TRY

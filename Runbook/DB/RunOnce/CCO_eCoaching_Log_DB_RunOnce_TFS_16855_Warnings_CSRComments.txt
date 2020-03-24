@@ -1,0 +1,9 @@
+ALTER TABLE EC.Warning_Log
+DROP COLUMN CSRComments
+GO
+
+ALTER TABLE EC.Warning_Log
+ADD CSRComments [varbinary](max) NULL
+GO 
+
+
