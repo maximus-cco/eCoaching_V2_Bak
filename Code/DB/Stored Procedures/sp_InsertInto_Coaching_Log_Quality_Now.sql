@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Now(06).sql
-Last Modified Date: 06/20/2019
+sp_InsertInto_Coaching_Log_Quality_Now(07).sql
+Last Modified Date: 04/07/2020
 Last Modified By: Susmitha Palacherla
 
+Version 07: Added distinct clause to Evaluation Insert - TFS 16924 - 04/07/2020
 Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
 Version 05: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 	reverted change from Version 04
@@ -38,6 +39,7 @@ GO
 -- Initial revision. TFS 13332 -  03/01/2019
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
+-- Updated to handle blank evaluator in quality now logs from iqs . TFS 16924 - 4/7/2020
 --    =======================================================================================
 
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
@@ -161,7 +163,7 @@ BEGIN
 	  -- Insert Evaluation details for each batch into Evaluations table
 
 	  INSERT INTO [EC].[Coaching_Log_Quality_Now_Evaluations]
-        SELECT 
+        SELECT DISTINCT
 	    [QNBatchID]
 	   ,[CoachingLogID]
 	   ,[Eval_ID]
