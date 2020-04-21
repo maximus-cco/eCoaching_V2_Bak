@@ -1,8 +1,9 @@
 /*
 sp_SelectReviewFrom_Coaching_Log_Quality_Now(05).sql
-Last Modified Date: 4/7/2020
+Last Modified Date: 4/20/2020
 Last Modified By: Susmitha Palacherla
 
+Version 06: Add EvalID to the return. TFS 17030 - 04/20/2020
 Version 05: Handle blank evaluator in quality now logs from iqs . TFS 16924 - 4/7/2020
 Version 04: Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 Version 03: Additional Changes from V&V - TFS 13332 - 04/04/2019
@@ -30,7 +31,7 @@ GO
 -- Author:           Susmitha Palacherla
 -- Create Date:      03/01/2019
 -- Description:      This procedure displays the Quality Now Evluations for a Coaching Log
--- Last Update:      Handle blank evaluator in quality now logs from iqs . TFS 16924 - 4/7/2020
+-- Last Update:      Add EvalID to the return. TFS 17030 - 04/20/2020
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now] @intLogId BIGINT
 AS
@@ -46,6 +47,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
 SET @nvcSQL = 'SELECT  ''Evaluation '' + CONVERT(NVARCHAR(1),ROW_NUMBER() OVER(ORDER BY qne.[Eval_Date] ASC)) [Evaluation],
 qne.[VerintFormName] [Form Name] 
+      ,qne.Eval_ID [Evaluation ID]
       ,qne.[Journal_ID] [Call ID]
 	  ,qne.[isCoachingMonitor] [Coaching Monitor]
 	  ,qne.[Program] strProgram
