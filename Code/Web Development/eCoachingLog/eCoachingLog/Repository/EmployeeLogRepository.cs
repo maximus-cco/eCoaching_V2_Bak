@@ -915,6 +915,7 @@ namespace eCoachingLog.Repository
 					while (dataReader.Read())
 					{
 						Scorecard sc = new Scorecard();
+						sc.EvalId = dataReader["Evaluation ID"].ToString();
 						sc.EvalName = dataReader["Evaluation"].ToString();
 						sc.ScorecardName = dataReader["Form Name"].ToString();
 						sc.VerintId = dataReader["Call ID"].ToString();

@@ -4,6 +4,7 @@ namespace eCoachingLog.Models.Common
 {
 	public class Scorecard
 	{
+		public string EvalId { get; set; }
 		public string EvalName { get; set; }
 		public string ScorecardName { get; set; }
 		public string VerintId { get; set; }
