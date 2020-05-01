@@ -1,10 +1,10 @@
 /*
-sp_AT_Select_Employees_Warning_Inactivation_Reactivation(02).sql
-Last Modified Date: 10/23/2017
+sp_AT_Select_Employees_Warning_Inactivation_Reactivation(03).sql
+Last Modified Date: 05/01/2020
 Last Modified By: Susmitha Palacherla
 
+Version 03: Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
 Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -23,9 +23,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -37,6 +34,8 @@ GO
 --  Initial Revision. Admin tool setup, TFS 1709- 4/20/12016
 --  Updated to add Employees in Leave status for Inactivation, TFS 3441 - 09/07/2016
 --  Modified to support Encryption of sensitive data (Open key and use employee View for emp attributes. TFS 7856 - 10/23/2017
+--  Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
+ 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_AT_Select_Employees_Warning_Inactivation_Reactivation] 
 
@@ -67,7 +66,7 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,VEH.Emp_Name
  FROM [EC].[Employee_Hierarchy] Emp JOIN [EC].[View_Employee_Hierarchy] VEH 
  ON VEH.Emp_ID = Emp.Emp_ID JOIN [EC].[Warning_Log] Fact WITH(NOLOCK)
  ON Emp.Emp_ID = Fact.EmpID  
- WHERE Fact.StatusID = 1
+ WHERE Fact.StatusID <> 2
  AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
  AND Fact.EmpID <> ''999999''
  AND Emp.Active NOT IN  (''T'',''D'')
@@ -96,5 +95,7 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Employees_Warning_Inactivation_Reactivation
 
-
 GO
+
+
+

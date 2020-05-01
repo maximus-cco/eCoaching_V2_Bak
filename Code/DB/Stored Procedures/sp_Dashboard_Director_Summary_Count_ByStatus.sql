@@ -1,9 +1,9 @@
 /*
-sp_Dashboard_Director_Summary_Count_ByStatus(01).sql
-Last Modified Date: 05/20/2018
+sp_Dashboard_Director_Summary_Count_ByStatus(02).sql
+Last Modified Date: 05/01/2020
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
 
 */
@@ -24,20 +24,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
 --  Description: Retrieves Count of Logs by Status to be displayed
 --  on the Director Dashboard.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+--  Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Director_Summary_Count_ByStatus] 
 @nvcEmpID nvarchar(10),
@@ -92,7 +86,7 @@ SET @nvcSQL = ';WITH IncludeStatus AS
 				 WHERE convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 			     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
                  AND (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + '''OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')
-				 AND wl.StatusID = 1
+				 AND wl.StatusID <> 2
 				 AND wl.siteID <> -1 
 				 AND wl.Active = 1
 				 GROUP BY si.City, st.Status)
@@ -126,6 +120,7 @@ ErrorHandler:
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_Dashboard_Director_Summary_Count_ByStatus
+
 
 GO
 
