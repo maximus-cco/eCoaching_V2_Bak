@@ -1,0 +1,121 @@
+/*
+TFS 17066 Security & Privacy coaching reason and sub-reasons 
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps summary
+1. Delete CCO Processes and Procedures/Security and Privacy Incident
+2. Delete OMR / Exceptions/OMR: CCO Security and Privacy Incident Coaching
+3. Insert Coaching Reason Security & Privacy
+4. Insert new Sub Coaching Reasons
+5. Insert records to Coaching Reason Selection table
+
+
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+--********************
+--1. Delete CCO Processes and Procedures/Security and Privacy Incident
+--********************
+
+
+DELETE FROM [EC].[Coaching_Reason_Selection]
+WHERE  [CoachingReason] = 'CCO Processes and Procedures'
+AND [SubCoachingReason] = 'Security and Privacy Incident';
+
+
+--********************
+--2. Delete OMR / Exceptions/OMR: CCO Security and Privacy Incident Coaching
+--********************
+
+
+DELETE FROM [EC].[Coaching_Reason_Selection]
+WHERE  [CoachingReason] = 'OMR / Exceptions'
+AND [SubCoachingReason] = 'OMR: CCO Security and Privacy Incident Coaching';
+
+
+--********************
+--3. Insert Coaching Reason Security & Privacy
+--********************
+
+
+SET IDENTITY_INSERT [EC].[DIM_Coaching_Reason] ON; 
+GO
+
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReasonID],[CoachingReason])
+     VALUES (61,'Security & Privacy');
+
+
+ SET IDENTITY_INSERT [EC].[DIM_Coaching_Reason] OFF; 
+GO
+
+
+--********************
+--4. Insert new Sub Coaching Reasons
+--********************
+SET IDENTITY_INSERT [EC].[DIM_Sub_Coaching_Reason] ON; 
+GO
+
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReasonID],[SubCoachingReason])
+     VALUES  (266,'Disclosure - Enters authorization that could result in an unauthorized individual'),
+	         (267,'Disclosure - Following disclosure rules when receiving a transferred call'),
+			 (268,'Disclosure - Refuses to release PHI or PII to beneficiary, consumer or authorized individual'),
+			 (269,'Disclosure - Releases PHI or PII to unauthorized individual'),
+			 (270,'Disclosure - Releases PHI or PII without passing disclosure'),
+			 (271,'Disclosure - Takes action on behalf of consumer or beneficiary for unauthorized individual'),
+			 (272,'Disclosure - Other Disclosure'),
+			 (273,'Personal Electronic Device'),
+			 (274,'PI in Written format'),
+			 (275,'Unlocked workstation'),
+			 (276,'Other Security & Privacy');
+
+
+ SET IDENTITY_INSERT [EC].[DIM_Sub_Coaching_Reason] OFF; 
+GO
+
+
+
+--********************
+--5. Insert records to Coaching Reason Selection table
+--********************
+
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+	         (61, 'Security & Privacy',266,'Disclosure - Enters authorization that could result in an unauthorized individual',1,1,1,1,1,1,1,1,0,0,1,1),
+	         (61, 'Security & Privacy',267,'Disclosure - Following disclosure rules when receiving a transferred call',1,1,1,1,1,1,1,1,0,0,1,1),
+			 (61, 'Security & Privacy',268,'Disclosure - Refuses to release PHI or PII to beneficiary, consumer or authorized individual',1,1,1,1,1,1,1,1,0,0,1,1),
+			 (61, 'Security & Privacy',269,'Disclosure - Releases PHI or PII to unauthorized individual',1,1,1,1,1,1,1,1,0,0,1,1),
+			 (61, 'Security & Privacy',270,'Disclosure - Releases PHI or PII without passing disclosure',1,1,1,1,1,1,1,1,0,0,1,1),
+			 (61, 'Security & Privacy',271,'Disclosure - Takes action on behalf of consumer or beneficiary for unauthorized individual',1,1,1,1,1,1,1,1,0,0,1,1),
+			 (61, 'Security & Privacy',272,'Disclosure - Other Disclosure',1,1,1,1,1,1,1,1,0,0,1,1),
+			 (61, 'Security & Privacy',273,'Personal Electronic Device',1,1,1,1,1,1,1,1,0,0,1,1),
+			 (61, 'Security & Privacy',274,'PI in Written format',1,1,1,1,1,1,1,1,0,0,1,1),
+			 (61, 'Security & Privacy',275,'Unlocked workstation',1,1,1,1,1,1,1,1,0,0,1,1),
+			 (61, 'Security & Privacy',276,'Other Security & Privacy',1,1,1,1,1,1,1,1,0,0,1,1);
+
+GO
+
