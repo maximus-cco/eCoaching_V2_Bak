@@ -1,0 +1,65 @@
+/*
+TFS 17263 Work at Homecoaching reason and sub-reasons 
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps summary
+1. Insert Coaching Reason Work at Home
+2. Insert record to Coaching Reason Selection table
+
+
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+--********************
+--1. Insert Coaching Reason Work at Home
+--********************
+
+
+SET IDENTITY_INSERT [EC].[DIM_Coaching_Reason] ON; 
+GO
+
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReasonID],[CoachingReason])
+     VALUES (62,'Work at Home');
+
+
+ SET IDENTITY_INSERT [EC].[DIM_Coaching_Reason] OFF; 
+GO
+
+
+
+
+
+--********************
+--2. Insert record to Coaching Reason Selection table
+--********************
+
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+	         (62, 'Work at Home',42,'Other: Specify reason under coaching details.',1,1,1,1,1,1,1,1,0,0,0,0)
+	     
+
+GO
+
