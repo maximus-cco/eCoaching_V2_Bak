@@ -200,18 +200,7 @@ GO
 
 --*********************************************************************
 
-select count(*) from ec.Coaching_Log where statusid = 2;
 
---0
-
-
-select count(*) from ec.Coaching_Log_Archive 
-where ArchivedDate > '2020-07-13 00:55:24.123'
-
---0
-
-
---*********************************************************************
 
 -- Execute Procedure [EC].[sp_Insert_Into_Coaching_Log_Archive]
 -- Begin Archiving

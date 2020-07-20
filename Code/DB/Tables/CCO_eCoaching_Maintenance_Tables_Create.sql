@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Maintenance_Tables_Create.(05).sql
-Last Modified Date: 09/09/2019
+CCO_eCoaching_Maintenance_Tables_Create.(06).sql
+Last Modified Date: 07/20/2020
 Last Modified By: Susmitha Palacherla
 
 
+Version 06: Updated to add additional archive tables for Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
 Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
 version 04: Added ConfirmedCSE to Coaching Log Archive Table - TFS 14049 - 04/26/2019
 version 03: Updated to incorporate Quality Now - TFS 13332 - 03/19/2019
@@ -22,8 +23,9 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 1. Create Table [EC].[Inactivations_Stage]
 2. Create Table [EC].[Coaching_Log_Archive]
 3. Create Table [EC].[Coaching_Log_Reason_Archive]
-
-
+4. Create Table [EC].[Coaching_Log_Quality_Now_Evaluations_Archive]
+5. Create Table [EC].[ShortCalls_Evaluations_Archive]
+6. Create Table [EC].[Coaching_Log_Bingo_Archive]
 **************************************************************
 
 --Table creates
@@ -183,10 +185,117 @@ GO
 
 --**************************************************************
 
+--4. Create Table [EC].[Coaching_Log_Quality_Now_Evaluations_Archive]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_Quality_Now_Evaluations_Archive](
+	[QNBatchID] [nvarchar](20) NOT NULL,
+	[CoachingID] [bigint] NOT NULL,
+	[Eval_ID] [nvarchar](20) NOT NULL,
+	[Eval_Date] [datetime] NULL,
+	[Evaluator_ID] [nvarchar](20) NULL,
+	[Call_Date] [datetime] NULL,
+	[Journal_ID] [nvarchar](30) NULL,
+	[EvalStatus] [nvarchar](10) NULL,
+	[Summary_CallerIssues] [nvarchar](max) NULL,
+	[Program] [nvarchar](20) NULL,
+	[VerintFormName] [nvarchar](50) NULL,
+	[isCoachingMonitor] [nvarchar](3) NULL,
+	[Business_Process] [nvarchar](20) NULL,
+	[Business_Process_Reason] [nvarchar](200) NULL,
+	[Business_Process_Comment] [nvarchar](2000) NULL,
+	[Info_Accuracy] [nvarchar](20) NULL,
+	[Info_Accuracy_Reason] [nvarchar](200) NULL,
+	[Info_Accuracy_Comment] [nvarchar](2000) NULL,
+	[Privacy_Disclaimers] [nvarchar](20) NULL,
+	[Privacy_Disclaimers_Reason] [nvarchar](200) NULL,
+	[Privacy_Disclaimers_Comment] [nvarchar](2000) NULL,
+	[Issue_Resolution] [nvarchar](50) NULL,
+	[Issue_Resolution_Comment] [nvarchar](2000) NULL,
+	[Call_Efficiency] [nvarchar](50) NULL,
+	[Call_Efficiency_Comment] [nvarchar](2000) NULL,
+	[Active_Listening] [nvarchar](50) NULL,
+	[Active_Listening_Comment] [nvarchar](2000) NULL,
+	[Personality_Flexing] [nvarchar](50) NULL,
+	[Personality_Flexing_Comment] [nvarchar](2000) NULL,
+	[Customer_Temp_Start] [nvarchar](30) NULL,
+	[Customer_Temp_Start_Comment] [nvarchar](2000) NULL,
+	[Customer_Temp_End] [nvarchar](30) NULL,
+	[Customer_Temp_End_Comment] [nvarchar](2000) NULL,
+	[Inserted_Date] [datetime] NULL,
+	[Last_Updated_Date] [datetime] NULL,
+	[ArchivedBy] [nvarchar](50) NOT NULL,
+	[ArchivedDate] [datetime] NOT NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations_Archive] ADD  DEFAULT ('Manual') FOR [ArchivedBy]
+GO
+
+
+
+--**************************************************************
+--5. Create Table [EC].[ShortCalls_Evaluations_Archive]
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ShortCalls_Evaluations_Archive](
+	[CoachingID] [bigint] NOT NULL,
+	[VerintCallID] [nvarchar](20) NOT NULL,
+	[EventDate] [datetime] NOT NULL,
+	[StartDate] [datetime] NULL,
+	[Valid] [nvarchar](3) NULL,
+	[BehaviorID] [int] NULL,
+	[Action] [nvarchar](1000) NULL,
+	[CoachingNotes] [nvarchar](4000) NULL,
+	[LSAInformed] [nvarchar](3) NULL,
+	[MgrAgreed] [nvarchar](3) NULL,
+	[MgrComments] [nvarchar](3000) NULL,
+	[ArchivedBy] [nvarchar](50) NOT NULL,
+	[ArchivedDate] [datetime] NOT NULL
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[ShortCalls_Evaluations_Archive] ADD  DEFAULT ('Manual') FOR [ArchivedBy]
+GO
 
 
 
 
+--**************************************************************
+
+--6. Create Table [EC].[Coaching_Log_Bingo_Archive]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_Bingo_Archive](
+	[CoachingID] [bigint] NOT NULL,
+	[Competency] [nvarchar](30) NULL,
+	[Note] [nvarchar](30) NULL,
+	[Description] [nvarchar](4000) NULL,
+	[CompImage] [nvarchar](100) NULL,
+	[BingoType] [nvarchar](30) NULL,
+	[ArchivedBy] [nvarchar](50) NOT NULL,
+	[ArchivedDate] [datetime] NOT NULL
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Bingo_Archive] ADD  DEFAULT ('Manual') FOR [ArchivedBy]
+GO
 
 
-
+--**************************************************************
