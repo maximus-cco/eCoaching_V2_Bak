@@ -28,35 +28,6 @@ namespace eCLAdmin
                         "~/Scripts/eCLAdmin/layout.js");
             bundles.Add(scriptBundle);
 
-            // javascript bundle for dashboard index 
-            var dashboardIndexScriptBundle = new ScriptBundle("~/bundles/scripts/dashboardIndex");
-            dashboardIndexScriptBundle.Orderer = new EclBundleOrderer();
-            dashboardIndexScriptBundle.Include(
-                        "~/Scripts/morris.js",
-						"~/Scripts/eCLAdmin/dashboardIndex.js");
-            bundles.Add(dashboardIndexScriptBundle);
-
-            // javascript bundle for dashboard chart
-            var dashboardChartScriptBundle = new ScriptBundle("~/bundles/scripts/dashboardChart");
-            dashboardChartScriptBundle.Orderer = new EclBundleOrderer();
-            dashboardChartScriptBundle.Include(
-                        "~/Scripts/eCLAdmin/dashboardChart.js");
-            bundles.Add(dashboardChartScriptBundle);
-
-            // javascript bundle for dashboard
-            var dashboardScriptBundle = new ScriptBundle("~/bundles/scripts/dashboard");
-            dashboardScriptBundle.Orderer = new EclBundleOrderer();
-            dashboardScriptBundle.Include(
-                        "~/Scripts/eCLAdmin/dashboard.js");
-            bundles.Add(dashboardScriptBundle);
-
-            // javascript bundle for dashboard list
-            var dashboardListScriptBundle = new ScriptBundle("~/bundles/scripts/dashboardList");
-            dashboardListScriptBundle.Orderer = new EclBundleOrderer();
-            dashboardListScriptBundle.Include(
-                        "~/Scripts/eCLAdmin/dashboardList.js");
-            bundles.Add(dashboardListScriptBundle);
-
             // javascript bundle for 'log search for delete'
             var logSearchForDeleteScriptBundle = new ScriptBundle("~/bundles/scripts/logSearchForDelete");
             logSearchForDeleteScriptBundle.Orderer = new EclBundleOrderer();

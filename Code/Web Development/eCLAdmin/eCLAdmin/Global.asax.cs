@@ -39,8 +39,6 @@ namespace eCLAdmin
             container.Register<IEmployeeLogService, EmployeeLogService>(Lifestyle.Scoped);
             container.Register<IEmployeeLogRepository, EmployeeLogRepository>(Lifestyle.Scoped);
             container.Register<IEmailService, EmailService>(Lifestyle.Scoped);
-            container.Register<IDashboardService, DashboardService>(Lifestyle.Scoped);
-            container.Register<IDashboardRepository, DashboardRepository>(Lifestyle.Scoped);
             container.Register<IUserService, UserService>(Lifestyle.Scoped);
             container.Register<ISiteService, SiteService>(Lifestyle.Scoped);
 			container.Register<IEclSiteUsageService, EclSiteUsageService>(Lifestyle.Scoped);

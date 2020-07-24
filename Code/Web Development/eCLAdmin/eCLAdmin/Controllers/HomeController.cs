@@ -1,9 +1,6 @@
 ﻿using eCLAdmin.Models.User;
 using eCLAdmin.Services;
 using log4net;
-using System;
-using System.Configuration;
-using System.Linq;
 using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
@@ -34,11 +31,6 @@ namespace eCLAdmin.Controllers
             Session["AuthenticatedUser"] = user;
 
             logger.Debug("Leaving HomeController.Index");
-
-            if (userService.UserIsEntitled(user, "SeniorManagerDashboard"))
-            {
-                return RedirectToAction("Index", "Dashboard");
-            }
 
             return View();
         }

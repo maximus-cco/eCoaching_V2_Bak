@@ -28,11 +28,6 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    @if (ViewContext.Controller.IsEntitled("SeniorManagerDashboard"))
-                    {
-                        <li>@Html.ActionLink("Dashboard", "Index", "Dashboard")</li>
-                    }
-
                     @if (ViewContext.Controller.IsEntitled("ManageCoachingLogs") ||
                             ViewContext.Controller.IsEntitled("ManageWarningLogs"))
                     {

@@ -158,7 +158,6 @@
     <Compile Include="App_Start\EclBundleOrderer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\EclSiteUsageController.cs" />
     <Compile Include="Controllers\EmployeeLogBaseController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -171,10 +170,6 @@
     <Compile Include="Filters\EclAuthorizeAttribute.cs" />
     <Compile Include="Filters\EclExceptionAttribute.cs" />
     <Compile Include="Filters\SessionCheckAttribute.cs" />
-    <Compile Include="Models\Dashboard\ChartBase.cs" />
-    <Compile Include="Models\Dashboard\ChartCoachingCompleted.cs" />
-    <Compile Include="Models\Dashboard\ChartCoachingPending.cs" />
-    <Compile Include="Models\Dashboard\ChartWarningActive.cs" />
     <Compile Include="Models\EclSiteUsage\Statistic.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\EmployeeLog\CoachingLogDetail.cs" />
@@ -209,18 +204,14 @@
     <Compile Include="Reports\ReportTemplate.aspx.designer.cs">
       <DependentUpon>ReportTemplate.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Repository\DashboardRepository.cs" />
     <Compile Include="Repository\EclSiteUsageRepository.cs" />
-    <Compile Include="Repository\IDashboardRepository.cs" />
     <Compile Include="Repository\IEclSiteUsageRepository.cs" />
     <Compile Include="Repository\ISiteRepository.cs" />
     <Compile Include="Repository\IUserRepository.cs" />
     <Compile Include="Repository\SiteRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
-    <Compile Include="Services\DashboardService.cs" />
     <Compile Include="Services\EclSiteUsageService.cs" />
     <Compile Include="Services\EmailService.cs" />
-    <Compile Include="Services\IDashboardService.cs" />
     <Compile Include="Services\IEclSiteUsageService.cs" />
     <Compile Include="Services\IEmailService.cs" />
     <Compile Include="Services\ISiteService.cs" />
@@ -230,8 +221,6 @@
     <Compile Include="Utilities\EclAdminUtil.cs" />
     <Compile Include="Utilities\EmailUtil.cs" />
     <Compile Include="Utilities\FileUtil.cs" />
-    <Compile Include="ViewModels\DashboardGraphViewModel.cs" />
-    <Compile Include="ViewModels\DashboardIndexViewModel.cs" />
     <Compile Include="ViewModels\EclSiteUsageViewModel.cs" />
     <Compile Include="ViewModels\eCoachingAccessControlAddViewModel.cs" />
     <Compile Include="ViewModels\eCoachingAccessControlViewModel.cs" />
@@ -278,10 +267,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\Test.pubxml" />
-    <Content Include="Scripts\eCLAdmin\dashboard.js" />
-    <Content Include="Scripts\eCLAdmin\dashboardChart.js" />
-    <Content Include="Scripts\eCLAdmin\dashboardList.js" />
-    <Content Include="Scripts\eCLAdmin\dashboardIndex.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
     <Content Include="Scripts\eCLAdmin\dateTimePicker.js" />
     <Content Include="Scripts\eCLAdmin\eclSiteUsage.js" />
@@ -338,11 +323,7 @@
     <Content Include="Views\Unauthorized\Index.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Shared\SessionExpire.cshtml" />
-    <Content Include="Views\Dashboard\Index.cshtml" />
-    <Content Include="Views\Dashboard\_Chart.cshtml" />
-    <Content Include="Views\Dashboard\_List.cshtml" />
     <Content Include="Views\Shared\_CoachingDetail.cshtml" />
-    <Content Include="Views\Dashboard\_Dashboard.cshtml" />
     <Content Include="Views\Shared\_WarningDetail.cshtml" />
     <Content Include="Views\Shared\Index.cshtml" />
     <Content Include="Views\Report\ReportTemplate.cshtml" />
