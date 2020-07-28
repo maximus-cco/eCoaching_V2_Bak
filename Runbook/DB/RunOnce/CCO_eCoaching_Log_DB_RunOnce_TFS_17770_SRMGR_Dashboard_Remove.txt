@@ -1,0 +1,71 @@
+/*
+TFS 17770 - Code Cleanup for SRMGR Dashboard Removal
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps summary
+
+1. Clean up Stored procedures
+
+--RUN WITH NOTHING SELECTED
+
+*/
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Count];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_Detail_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Detail_Count];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_Details', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Details];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_EmployeeCoaching', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_EmployeeCoaching];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_EmployeeWarning', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_EmployeeWarning];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_Review', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Review];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_EmployeeCoaching_Review', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_EmployeeCoaching_Review];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_EmployeeWarning_Review', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_EmployeeWarning_Review];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_Completed_CoachingByWeek', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Completed_CoachingByWeek];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_Pending_CoachingByWeek', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Pending_CoachingByWeek];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_SRMGR_Active_WarningByWeek', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_SRMGR_Active_WarningByWeek];
+GO
+
+
