@@ -1,0 +1,838 @@
+/*
+TFS 17284 - Code Cleanup
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps summary
+1. Clean up tables
+2. Clean up Stored procedures
+
+
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+/****************************************************************************
+****					Start Here!!!									
+****																	
+****					1.Tables											
+*****************************************************************************/
+PRINT ('  Starting Table Cleanup...');
+
+IF OBJECT_ID('dbo.SiteDim', 'U') IS NOT NULL 
+DROP TABLE [dbo].[SiteDim];
+GO
+
+IF OBJECT_ID('dbo.MedEngInd', 'U') IS NOT NULL 
+DROP TABLE [dbo].[MedEngInd];
+GO
+
+IF OBJECT_ID('dbo.testcalls', 'U') IS NOT NULL 
+DROP TABLE [dbo].[testcalls];
+GO
+
+IF OBJECT_ID('ec.Bak_AT_Coaching_Inactivate_Reactivate_Audit', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_AT_Coaching_Inactivate_Reactivate_Audit];
+GO
+
+IF OBJECT_ID('ec.Bak_AT_Coaching_Reassign_Audit', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_AT_Coaching_Reassign_Audit];
+GO
+
+
+IF OBJECT_ID('ec.Bak_AT_User', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_AT_User];
+GO
+
+IF OBJECT_ID('ec.Bak_AT_User_Role_Link', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_AT_User_Role_Link];
+GO
+
+IF OBJECT_ID('ec.Bak_AT_Warning_Inactivate_Reactivate_Audit', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_AT_Warning_Inactivate_Reactivate_Audit];
+GO
+
+IF OBJECT_ID('ec.Bak_Coaching_Log', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_Coaching_Log];
+GO
+
+IF OBJECT_ID('ec.Bak_Coaching_Log_Archive', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_Coaching_Log_Archive];
+GO
+
+IF OBJECT_ID('ec.Bak_Coaching_Log_Quality_Now_Evaluations', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_Coaching_Log_Quality_Now_Evaluations];
+GO
+
+IF OBJECT_ID('ec.Bak_CSR_Hierarchy', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_CSR_Hierarchy];
+GO
+
+IF OBJECT_ID('ec.Bak_Employee_Hierarchy', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_Employee_Hierarchy];
+GO
+
+IF OBJECT_ID('ec.Bak_EmployeeID_To_LanID', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_EmployeeID_To_LanID];
+GO
+
+IF OBJECT_ID('ec.Bak_LoadTest_User', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_LoadTest_User];
+GO
+
+IF OBJECT_ID('ec.Bak_Survey_Response_Header', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_Survey_Response_Header];
+GO
+
+
+IF OBJECT_ID('ec.Bak_Warning_Log', 'U') IS NOT NULL 
+DROP TABLE [EC].[Bak_Warning_Log];
+GO
+
+IF OBJECT_ID('ec.Coaching_Log_Quality_Now_Bingo1', 'U') IS NOT NULL 
+DROP TABLE [EC].[Coaching_Log_Quality_Now_Bingo1];
+GO
+
+IF OBJECT_ID('ec.CSR_Hierarchy_preMaximus', 'U') IS NOT NULL 
+DROP TABLE [EC].[CSR_Hierarchy_preMaximus];
+GO
+
+IF OBJECT_ID('ec.CSR_Hierarchy_preMaximusAutomation', 'U') IS NOT NULL 
+DROP TABLE [EC].[CSR_Hierarchy_preMaximusAutomation];
+GO
+
+
+IF OBJECT_ID('ec.CSR_Hierarchy_Temp', 'U') IS NOT NULL 
+DROP TABLE [EC].[CSR_Hierarchy_Temp];
+GO
+
+IF OBJECT_ID('ec.CSR_Hierarchy_12242018', 'U') IS NOT NULL 
+DROP TABLE [EC].[CSR_Hierarchy_12242018];
+GO
+
+IF OBJECT_ID('ec.CSR_Hierarchy_bak', 'U') IS NOT NULL 
+DROP TABLE [EC].[CSR_Hierarchy_bak];
+GO
+
+IF OBJECT_ID('ec.Dashboard_Summary_Display', 'U') IS NOT NULL 
+DROP TABLE [EC].[Dashboard_Summary_Display];
+GO
+
+IF OBJECT_ID('ec.Dashboard_Summary_Page_Display', 'U') IS NOT NULL 
+DROP TABLE [EC].[Dashboard_Summary_Page_Display];
+GO
+
+IF OBJECT_ID('ec.Email', 'U') IS NOT NULL 
+DROP TABLE [EC].[Email];
+GO
+
+IF OBJECT_ID('ec.Email_Reminders', 'U') IS NOT NULL 
+DROP TABLE [EC].[Email_Reminders];
+GO
+
+IF OBJECT_ID('ec.Employee_Hierarchy_pre_jobcodechanges', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Hierarchy_pre_jobcodechanges];
+GO
+
+IF OBJECT_ID('ec.Employee_Hierarchy_preMaximus', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Hierarchy_preMaximus];
+GO
+
+IF OBJECT_ID('ec.Employee_Hierarchy_preMaximusAutomation', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Hierarchy_preMaximusAutomation];
+GO
+
+
+IF OBJECT_ID('ec.Employee_Hierarchy_Temp', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Hierarchy_Temp];
+GO
+
+IF OBJECT_ID('ec.Employee_Hierarchy_bak', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Hierarchy_bak];
+GO
+
+IF OBJECT_ID('ec.employee_hierarchy_12242018', 'U') IS NOT NULL 
+DROP TABLE [EC].[employee_hierarchy_12242018];
+GO
+
+IF OBJECT_ID('ec.employee_hierarchy_test', 'U') IS NOT NULL 
+DROP TABLE [EC].[employee_hierarchy_test];
+GO
+
+
+IF OBJECT_ID('ec.Employee_Ids_With_Prefixes', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Ids_With_Prefixes];
+GO
+
+IF OBJECT_ID('ec.Employee_Ids_With_12242018', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Ids_With_12242018];
+GO
+
+IF OBJECT_ID('ec.Employee_Ids_With_Prefixes_bak', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Ids_With_Prefixes_bak];
+GO
+
+IF OBJECT_ID('ec.Employee_Ids_With_Prefixes_preAutomated', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Ids_With_Prefixes_preAutomated];
+GO
+
+
+IF OBJECT_ID('ec.Employee_Ids_With_Prefixes_preMaximus', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Ids_With_Prefixes_preMaximus];
+GO
+
+IF OBJECT_ID('ec.Employee_Ids_With_Prefixes_preMaximusAutomation', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Ids_With_Prefixes_preMaximusAutomation];
+GO
+
+IF OBJECT_ID('ec.Employee_Ids_With_Prefixes_preMaximus2', 'U') IS NOT NULL 
+DROP TABLE [EC].[Employee_Ids_With_Prefixes_preMaximus2];
+GO
+
+IF OBJECT_ID('ec.EmployeeID_To_LanID_preMaximus', 'U') IS NOT NULL 
+DROP TABLE [EC].[EmployeeID_To_LanID_preMaximus];
+GO
+
+IF OBJECT_ID('ec.EmployeeID_To_LanID_preMaximusAutomation', 'U') IS NOT NULL 
+DROP TABLE [EC].[EmployeeID_To_LanID_preMaximusAutomation];
+GO
+
+IF OBJECT_ID('ec.EmployeeID_To_LanID_12242018', 'U') IS NOT NULL 
+DROP TABLE [EC].[EmployeeID_To_LanID_12242018];
+GO
+
+IF OBJECT_ID('ec.EmployeeID_To_LanID_bak', 'U') IS NOT NULL 
+DROP TABLE [EC].[EmployeeID_To_LanID_bak];
+GO
+
+IF OBJECT_ID('ec.ETS_FileList_Back', 'U') IS NOT NULL 
+DROP TABLE [EC].[ETS_FileList_Back];
+GO
+
+IF OBJECT_ID('ec.GDIT_CSR_Hierarchy', 'U') IS NOT NULL 
+DROP TABLE [EC].[GDIT_CSR_Hierarchy];
+GO
+
+IF OBJECT_ID('ec.GDIT_Employee_Hierarchy', 'U') IS NOT NULL 
+DROP TABLE [EC].[GDIT_Employee_Hierarchy];
+GO
+
+IF OBJECT_ID('ec.IDC_ASPECT_XUsers', 'U') IS NOT NULL 
+DROP TABLE [EC].[IDC_ASPECT_XUsers];
+GO
+
+IF OBJECT_ID('ec.IDC_ID_XRef', 'U') IS NOT NULL 
+DROP TABLE [EC].[IDC_ID_XRef];
+GO
+
+IF OBJECT_ID('ec.IDC_IQS_Users', 'U') IS NOT NULL 
+DROP TABLE [EC].[IDC_IQS_Users];
+GO
+
+IF OBJECT_ID('ec.Lynn_Relocate', 'U') IS NOT NULL 
+DROP TABLE [EC].[Lynn_Relocate];
+GO
+
+IF OBJECT_ID('ec.Quality_Now_Coaching_Stage_1', 'U') IS NOT NULL 
+DROP TABLE [EC].[Quality_Now_Coaching_Stage_1];
+GO
+
+IF OBJECT_ID('ec.Quality_Now_Coaching_Stage_2', 'U') IS NOT NULL 
+DROP TABLE [EC].[Quality_Now_Coaching_Stage_2];
+GO
+
+IF OBJECT_ID('ec.Quality_Now_Coaching_Stage_bak', 'U') IS NOT NULL 
+DROP TABLE [EC].[Quality_Now_Coaching_Stage_bak];
+GO
+
+IF OBJECT_ID('ec.SubscriptionConfigurations', 'U') IS NOT NULL 
+DROP TABLE [EC].[SubscriptionConfigurations];
+GO
+
+IF OBJECT_ID('ec.testemp', 'U') IS NOT NULL 
+DROP TABLE [EC].[testemp];
+GO
+
+IF OBJECT_ID('ec.testtable', 'U') IS NOT NULL 
+DROP TABLE [EC].[testtable];
+GO
+
+IF OBJECT_ID('ec.Warning_Log_EncryptTest', 'U') IS NOT NULL 
+DROP TABLE [EC].[Warning_Log_EncryptTest];
+GO
+
+IF OBJECT_ID('ec.Warning_Log_Reason_EncryptTest', 'U') IS NOT NULL 
+DROP TABLE [EC].[Warning_Log_Reason_EncryptTest];
+GO
+
+PRINT ('  Table Cleanup Complete...');
+
+/****************************************************************************
+****					Start Here!!!									
+****																	
+****					2.Stored Procedures											
+*****************************************************************************/
+PRINT ('  Starting Stored Procedures Cleanup...');
+
+
+IF OBJECT_ID('ec.sp_Check_AgentRole', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Check_AgentRole];
+GO
+
+
+IF OBJECT_ID('ec.sp_Check_AppRole', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Check_AppRole];
+GO
+
+IF OBJECT_ID('ec.sp_CheckIf_HRUser', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_CheckIf_HRUser];
+GO
+
+
+IF OBJECT_ID('ec.sp_Dashboard_Director_Site_Coaching_Export', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Dashboard_Director_Site_Coaching_Export];
+GO
+
+IF OBJECT_ID('ec.sp_Dashboard_Director_Site_Warning_Export', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Dashboard_Director_Site_Warning_Export];
+GO
+
+IF OBJECT_ID('ec.sp_Dashboard_Director_Site_Coaching_Export_bak', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Dashboard_Director_Site_Coaching_Export_bak];
+GO
+
+
+IF OBJECT_ID('ec.sp_Dashboard_Summary_Count_Old', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Dashboard_Summary_Count_Old];
+GO
+
+IF OBJECT_ID('ec.sp_Dashboard_Summary_Count_W', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Dashboard_Summary_Count_W];
+GO
+
+IF OBJECT_ID('ec.sp_Flag_ForLoad_By_Day', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Flag_ForLoad_By_Day];
+GO
+
+IF OBJECT_ID('ec.sp_GetFileName', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_GetFileName];
+GO
+
+IF OBJECT_ID('ec.sp_Handle_Admin_Request', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Handle_Admin_Request];
+GO
+
+
+IF OBJECT_ID('ec.sp_IDC_Coaching_Log_Update_EmpID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Coaching_Log_Update_EmpID];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Coaching_Log_Update_MgrID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Coaching_Log_Update_MgrID];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Coaching_Log_Update_ReassignedToID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Coaching_Log_Update_ReassignedToID];
+GO
+
+
+IF OBJECT_ID('ec.sp_IDC_Coaching_Log_Update_ReviewMgrID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Coaching_Log_Update_ReviewMgrID];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Coaching_Log_Update_ReviewSupID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Coaching_Log_Update_ReviewSupID];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Coaching_Log_Update_SubmitterID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Coaching_Log_Update_SubmitterID];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Coaching_Log_Update_SupID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Coaching_Log_Update_SupID];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Populate_ID_XRef', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Populate_ID_XRef];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Update_Admin_Tool_Tables', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Update_Admin_Tool_Tables];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Update_Coaching_Log', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Update_Coaching_Log];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Update_Coaching_Log_Archive', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Update_Coaching_Log_Archive];
+GO
+
+
+IF OBJECT_ID('ec.sp_IDC_Update_CSR_Hierarchy', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Update_CSR_Hierarchy];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Update_Employee_Hierarchy', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Update_Employee_Hierarchy];
+GO
+
+IF OBJECT_ID('ec.sp_IDC_Update_Other_Tables', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Update_Other_Tables];
+GO
+
+IF OBJECT_ID('ec.sp_InsertInto_Historical_Dashboard_ACL', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_InsertInto_Historical_Dashboard_ACL]
+GO
+
+IF OBJECT_ID('ec.sp_UpdateHistorical_Dashboard_ACL', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_UpdateHistorical_Dashboard_ACL]
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Historical_Dashboard_ACL', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Historical_Dashboard_ACL]
+GO
+
+IF OBJECT_ID('ec.sp_DeleteFromHistoricalDashboardACL', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_DeleteFromHistoricalDashboardACL]
+GO
+
+
+IF OBJECT_ID('ec.sp_IDC_Update_Warning_Log', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_IDC_Update_Warning_Log]
+GO
+
+
+IF OBJECT_ID('ec.sp_Insert_Summary_Count_BySiteandStatus', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Insert_Summary_Count_BySiteandStatus];
+GO
+
+
+IF OBJECT_ID('ec.sp_InsertInto_Coaching_Log_Generic_bak', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic_bak];
+GO
+
+IF OBJECT_ID('ec.sp_InsertInto_Warning_Log_EncryptTest', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_InsertInto_Warning_Log_EncryptTest]
+GO
+
+
+IF OBJECT_ID('ec.sp_InsertInto_Warning_History', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_InsertInto_Warning_History];
+GO
+
+IF OBJECT_ID('ec.sp_InsertInto_Warning_History_Rejected', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_InsertInto_Warning_History_Rejected];
+GO
+
+
+IF OBJECT_ID('ec.sp_Modules_By_Role', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Modules_By_Role];
+GO
+
+IF OBJECT_ID('ec.sp_rptGetModules', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_rptGetModules]
+GO
+
+IF OBJECT_ID('ec.sp_rptCoachingSummary_Lili', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_rptCoachingSummary_Lili];
+GO
+
+IF OBJECT_ID('ec.sp_Search_For_Dashboards', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Search_For_Dashboards];
+GO
+
+IF OBJECT_ID('ec.sp_Select_Modules_ForSubmission_By_EmpID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Select_Modules_ForSubmission_By_EmpID];
+GO
+
+IF OBJECT_ID('ec.sp_SelectCoaching4ContactOMRShortCalls', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectCoaching4ContactOMRShortCalls];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectCoaching4Reminder_try', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectCoaching4Reminder_try];
+GO
+
+
+IF OBJECT_ID('ec.sp_Select_FormName_For_SurveyID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Select_FormName_For_SurveyID];
+GO
+
+IF OBJECT_ID('ec.sp_ShortCalls_Get_Actions_NotUsed', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_ShortCalls_Get_Actions_NotUsed];
+GO
+
+IF OBJECT_ID('ec.sp_Select_Status_By_SurveyID', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Select_Status_By_SurveyID];
+GO
+
+IF OBJECT_ID('ec.sp_ShortCalls_Get_Actions_Old', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_ShortCalls_Get_Actions_Old];
+GO
+
+IF OBJECT_ID('ec.sp_ShortCalls_Get_Actions_Try', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_ShortCalls_Get_Actions_Try];
+GO
+
+IF OBJECT_ID('ec.sp_Update_Coaching_Log_Quality_Now_Try', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Update_Coaching_Log_Quality_Now_Try];
+GO
+
+IF OBJECT_ID('ec.sp_Update_Migrated_User_Logs', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Update_Migrated_User_Logs];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_UpdateReminderMailSent_Bak', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_UpdateReminderMailSent_Bak];
+GO
+
+
+IF OBJECT_ID('ec.usp_UpdateTestTable', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[usp_UpdateTestTable];
+GO
+
+IF OBJECT_ID('ec.usp_UpdateTestTable_Working', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[usp_UpdateTestTable_Working];
+GO
+
+
+IF OBJECT_ID('ec.usp_UpdateTestTable2', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[usp_UpdateTestTable2];
+GO
+
+IF OBJECT_ID('ec.usp_UpdateTestTable3', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[usp_UpdateTestTable3];
+GO
+
+IF OBJECT_ID('ec.sp_Dashboard_Director_Site_Export_Driver_NotUsed', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Dashboard_Director_Site_Export_Driver_NotUsed];
+GO
+
+IF OBJECT_ID('ec.sp_Update_Warning_History_Stage', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Update_Warning_History_Stage];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_Update2Review_Coaching_Log', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Update2Review_Coaching_Log];
+GO
+
+IF OBJECT_ID('ec.sp_Update8Review_Coaching_Log', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Update8Review_Coaching_Log];
+GO
+
+
+IF OBJECT_ID('ec.sp_Select_Reinforcements_For_Dashboard', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Select_Reinforcements_For_Dashboard];
+GO
+
+IF OBJECT_ID('ec.sp_Select_Opportunities_For_Dashboard', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Select_Opportunities_For_Dashboard];
+GO
+
+
+
+--**********************************************
+
+IF OBJECT_ID('ec.sp_SelectCSRsbyLocation', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectCSRsbyLocation];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_CSRCompleted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRCompleted];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_CSRCompleted_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRCompleted_Count];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_CSRPending', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRPending];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_CSRPending_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_CSRPending_Count];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_HistoricalSUP', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_HistoricalSUP_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_HistoricalSUP_Count];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MGRCSRCompleted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRCompleted];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MGRCSRCompleted_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRCompleted_Count];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MGRCSRPending', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MGRCSRPending_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRCSRPending_Count];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MGRPending', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MGRPending_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MGRPending_Count];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompSubmitted_DashboardStaff_Count];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MyPending_W', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_W];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MyPending_Count_W', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_Count_W];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MyPenSubmitted_DashboardStaff', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPenSubmitted_DashboardStaff];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MyPenSubmitted_DashboardStaff_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPenSubmitted_DashboardStaff_Count];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard_Count];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard_SupMgr', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard_SupMgr];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard_SupMgr_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_Dashboard_SupMgr_Count];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MySubmitted_DashboardMGR', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_DashboardMGR];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_MySubmitted_DashboardSUP', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_DashboardSUP];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SRMGREmployeeCoachingCompleted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoachingCompleted];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SRMGREmployeeCoachingCompleted_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoachingCompleted_Count];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SRMGREmployeeCoachingPending', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoachingPending];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SRMGREmployeeCoachingPending_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeCoachingPending_Count];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning];
+GO
+
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SRMGREmployeeWarning_Count];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SUPCSRCompleted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRCompleted];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SUPCSRCompleted_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRCompleted_Count];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SUPPending', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPPending];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SUPPending_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPPending_Count];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SUPCSRPending', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRPending];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_Log_SUPCSRPending_Count', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_SUPCSRPending_Count];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted_All]
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctCSRCompleted_Site];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogDistinctMgrCompleted_All', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMgrCompleted_All];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogDistinctMgrCompleted_Site', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctMgrCompleted_Site];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogDistinctSupCompleted_All', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSupCompleted_All];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogDistinctSupCompleted_Site', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSupCompleted_Site];
+GO
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogDistinctSubmitterCompleted2]
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctCSRTeam];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogSrMgrDistinctMgrTeam', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctMgrTeam];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogSrMgrDistinctSupTeam', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogSrMgrDistinctSupTeam];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogStaffDistinctCompletedCSRSubmitted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctCompletedCSRSubmitted];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogStaffDistinctCompletedMgrSubmitted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctCompletedMgrSubmitted];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Coaching_LogStaffDistinctCompletedSupSubmitted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_LogStaffDistinctCompletedSupSubmitted];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Survey_EmpPending', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Survey_EmpPending];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Warning_Log_CSRCompleted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Warning_Log_CSRCompleted];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Warning_Log_MGRCSRCompleted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Warning_Log_MGRCSRCompleted];
+GO
+
+
+IF OBJECT_ID('ec.sp_SelectFrom_Warning_Log_SUPCSRCompleted', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_SelectFrom_Warning_Log_SUPCSRCompleted];
+GO
+
+IF OBJECT_ID('ec.sp_Whoami', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Whoami];
+GO
+
+IF OBJECT_ID('ec.sp_Whoisthis', 'P') IS NOT NULL
+DROP PROCEDURE [EC].[sp_Whoisthis];
+GO
+
+PRINT ('  Stored ProceduresCleanup Complete...');
+/****************************************************************************
+****					Start Here!!!									
+****																	
+****					3.Functions											
+*****************************************************************************/
+PRINT ('  Starting Functions Cleanup...');
+
+IF OBJECT_ID('ec.fn_intSourceIDFromOldSource', 'FN') IS NOT NULL
+DROP FUNCTION [EC].[fn_intSourceIDFromOldSource];
+GO
+
+
+IF OBJECT_ID('ec.fnNPNQualityRecs', 'TF') IS NOT NULL
+DROP FUNCTION [EC].[fnNPNQualityRecs];
+GO
+
+IF OBJECT_ID('ec.fnSplit', 'TF') IS NOT NULL
+DROP FUNCTION [EC].[fnSplit];
+GO
+PRINT ('  Functionss Cleanup Complete...')
+/*-----------------------------       All Done!     ----------------------------------------*/
+PRINT ('  RunOnce Script has completed...');
