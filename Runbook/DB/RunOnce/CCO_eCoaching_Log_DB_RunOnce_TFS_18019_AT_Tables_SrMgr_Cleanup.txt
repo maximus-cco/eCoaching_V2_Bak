@@ -1,0 +1,97 @@
+/*
+TFS 18019 - Remove Sr manager references in AT_tables
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps summary
+1. Clean up tables
+
+
+-- Testing
+
+
+SELECT [RoleId]
+      ,[RoleDescription]
+      ,[IsSysAdmin]
+  FROM [EC].[AT_Role]
+GO
+
+
+SELECT [EntitlementId]
+      ,[EntitlementDescription]
+  FROM [EC].[AT_Entitlement]
+GO
+
+
+SELECT [RoleId]
+      ,[EntitlementId]
+  FROM [EC].[AT_Role_Entitlement_Link]
+    where Roleid = 105
+GO
+
+
+SELECT [UserId]
+      ,[RoleId]
+  FROM [EC].[AT_User_Role_Link]
+  where Roleid = 105
+GO
+
+SELECT [JobCode]
+      ,[JobCodeDescription]
+      ,[RoleId]
+      ,[RoleDescription]
+      ,[AddToUser]
+      ,[isActive]
+  FROM [EC].[AT_Role_Access]
+  --where roleid = 105
+  where jobcode = 'wacs60'
+GO
+
+DECLARE	@return_value int
+
+EXEC	@return_value = [EC].[sp_AT_Check_Entitlements]
+		@nvcEmpLanIDin = N'CASEY.LYONS'
+
+SELECT	'Return Value' = @return_value
+
+GO
+
+
+		  	SELECT URA.UserId, URA.RoleId FROM 
+		    (SELECT U.[UserId],RA.[RoleId]
+			FROM [EC].[AT_User]U JOIN [EC].[AT_Role_Access] RA
+			ON U.[EmpJobCode] = RA.[JobCode]
+			WHERE RA.[AddToUser]=1
+			AND U.Active = 1
+			AND RA.jobcode = 'wacs60')URA LEFT OUTER JOIN [EC].[AT_User_Role_Link]URL
+			ON URA.UserId = URL.UserId
+			AND URA.RoleId = URL.RoleId
+
+
+				  SELECT EH.[Emp_ID]
+				  		      ,EH.[Emp_LanID]
+				  		      ,EH.[Emp_Name]
+				  		      ,EH.[Emp_Job_Code]
+							  ,1
+						  FROM [EC].[Employee_Hierarchy]EH Left outer Join [EC].[AT_User]U
+						  ON EH.Emp_ID = U.UserId
+						  --WHERE (U.UserId IS NULL and EH.Emp_ID <> '')
+						  WHERE EH.Active = 'A'
+						  AND EH.Emp_Job_Code = 'wacs60'
+						  AND EH.Emp_Job_Code IN 
+						 (SELECT DISTINCT JobCode FROM [EC].[AT_Role_Access]
+						  WHERE [AddToUser] =1);
+
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+
+DELETE FROM [EC].[AT_User_Role_Link] Where RoleID = 105;
+DELETE FROM [EC].[AT_Role_Access] Where RoleID = 105;
+DELETE FROM [EC].[AT_Role_Entitlement_Link] Where RoleID = 105;
+DELETE FROM [EC].[AT_Role] Where RoleID = 105;
+DELETE FROM [EC].[AT_Entitlement] Where EntitlementId = 208;
+
