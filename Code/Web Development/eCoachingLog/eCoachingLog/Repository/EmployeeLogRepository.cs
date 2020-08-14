@@ -177,6 +177,11 @@ namespace eCoachingLog.Repository
 							logDetail.FollowupEmpComments = dataReader["EmpAckFollowupComments"].ToString();
 						}
 
+						// Sr. manager
+						logDetail.SrMgrLevelOneEmpId = dataReader["strEmpSrMgrLvl1ID"].ToString().Trim().ToUpper();
+						logDetail.SrMgrLevelTwoEmpId = dataReader["strEmpSrMgrLvl2ID"].ToString().Trim().ToUpper();
+						logDetail.SrMgrLevelThreeEmpId = dataReader["strEmpSrMgrLvl3ID"].ToString().Trim().ToUpper();
+
 						break;
                     } // End while
                 } // End using SqlDataReader

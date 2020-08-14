@@ -28,7 +28,11 @@ namespace eCoachingLog.Models.Common
 		public string ManagerEmpId { get; set; }
 		public string LogManagerEmpId { get; set; } // Manager when the log was submitted
 
-        public IList<LogReason> Reasons { get; set; }
+		public string SrMgrLevelOneEmpId { get; set; }
+		public string SrMgrLevelTwoEmpId { get; set; }
+		public string SrMgrLevelThreeEmpId { get; set; }
+
+		public IList<LogReason> Reasons { get; set; }
 
 		public string InstructionText { get; set; }
 		public string EmployeeReviewDate { get; set; }

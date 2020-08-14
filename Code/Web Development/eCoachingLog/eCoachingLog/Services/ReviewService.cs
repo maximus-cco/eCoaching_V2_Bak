@@ -64,6 +64,9 @@ namespace eCoachingLog.Services
 						|| user.EmployeeId == logDetail.EmployeeId
 						|| user.EmployeeId == logDetail.SupervisorEmpId
 						|| user.EmployeeId == logDetail.ManagerEmpId
+						|| user.EmployeeId == logDetail.SrMgrLevelOneEmpId
+						|| user.EmployeeId == logDetail.SrMgrLevelTwoEmpId
+						|| user.EmployeeId == logDetail.SrMgrLevelThreeEmpId
 						|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedToEmpId
 						|| (isCoaching && ((CoachingLogDetail)logDetail).IsLowCsat && user.EmployeeId == logDetail.LogManagerEmpId)
 					);
