@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(19).sql
-Last Modified Date: 11/18/2019
+sp_SelectReviewFrom_Coaching_Log(20).sql
+Last Modified Date: 08/13/2020
 Last Modified By: Susmitha Palacherla
 
+Version 20: Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
 Version 19: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 18: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 17: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
@@ -36,6 +37,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -52,6 +54,7 @@ GO
 -- 28. Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- 29. Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 -- 30. Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+-- 31. Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -128,7 +131,17 @@ SELECT cl.CoachingID numID,
     WHEN (cl.[Review_MgrID] IS NOT NULL AND cl.[Review_MgrID] = cl.[ReassignedToID] AND [ReassignCount] = 0)
       THEN [EC].[fn_strEmpNameFromEmpID](cl.[Review_MgrID])
     ELSE ''NA''
-  END strReassignedMgrName,';
+  END strReassignedMgrName,
+  veh.SrMgrLvl1_ID strEmpSrMgrLvl1ID,
+  veh.SrMgrLvl1_Name strEmpSrMgrLvl1Name,
+  veh.SrMgrLvl1_LanID strEmpSrMgrLvl1LanID,
+  veh.SrMgrLvl2_ID strEmpSrMgrLvl2ID,
+  veh.SrMgrLvl2_Name strEmpSrMgrLvl2Name,
+  veh.SrMgrLvl2_LanID strEmpSrMgrLvl2LanID,
+  veh.SrMgrLvl3_ID strEmpSrMgrLvl3ID,
+  veh.SrMgrLvl3_Name strEmpSrMgrLvl3Name,
+  veh.SrMgrLvl3_LanID strEmpSrMgrLvl3LanID,
+  ';
 	
 SET @nvcSQL2 = '
   CASE WHEN cl.[Review_SupID] IS NOT NULL THEN vehSup.Emp_Name
@@ -282,7 +295,6 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
-
 
 
 

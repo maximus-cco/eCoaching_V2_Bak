@@ -13,6 +13,7 @@ GO
 
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	11/16/11
@@ -25,6 +26,7 @@ GO
 --    3. Lan ID association by date.
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
 --  My Dashboard move to new architecture. TFS 7137 - 06/01/2018
+--  Allow senior managers to review logs. TFS 18062- 08/14/2020
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_LogMgrDistinctSUPTeam] 
 @strCSRMGRIDin nvarchar(10)
@@ -50,7 +52,7 @@ FROM
 	ON cl.EmpID = eh.Emp_ID JOIN [EC].[View_Employee_Hierarchy] sveh WITH (NOLOCK)
 	ON eh.Sup_ID = sveh.Emp_ID JOIN [EC].[DIM_Status] s
 	ON cl.StatusID = s.StatusID
-    WHERE eh.Mgr_ID = '''+ @strCSRMGRIDin +'''
+    WHERE (eh.[Mgr_ID] = '''+ @strCSRMGRIDin +''' OR eh.[SrMgrLvl1_ID] = '''+ @strCSRMGRIDin +''' OR eh.[SrMgrLvl2_ID] = '''+ @strCSRMGRIDin +''' OR eh.[SrMgrLvl3_ID] = '''+ @strCSRMGRIDin +''')
       AND S.Status like ''Pending%''
       AND sveh.Emp_Name is NOT NULL
       AND eh.Mgr_ID <> ''999999''
@@ -66,7 +68,5 @@ End --sp_SelectFrom_Coaching_LogMgrDistinctSUPTeam
 
 
 GO
-
-
 
 
