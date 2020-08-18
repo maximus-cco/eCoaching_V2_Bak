@@ -40,18 +40,23 @@ namespace eCoachingLog.Services
 					|| user.EmployeeId == logDetail.SupervisorEmpId
 					|| user.EmployeeId == logDetail.ManagerEmpId
 					|| (user.IsEcl && isCoaching)
-					|| user.Role == Constants.USER_ROLE_SR_MANAGER
 					|| userJobCode.StartsWith("WHHR")
 					|| userJobCode.StartsWith("WHER")
 					|| userJobCode.StartsWith("WHRC")
+					|| user.Role == Constants.USER_ROLE_DIRECTOR
+					// 8/18/2020 - directors and senior managers
+					|| user.EmployeeId == logDetail.SrMgrLevelOneEmpId
+					|| user.EmployeeId == logDetail.SrMgrLevelTwoEmpId
+					|| user.EmployeeId == logDetail.SrMgrLevelThreeEmpId
 				);
 			}
 
 			if (Constants.PAGE_MY_DASHBOARD == currentPage)
 			{
-				// Director, Sr. Manager - allow to view any logs in their list
-				if (user.Role == Constants.USER_ROLE_DIRECTOR
-					|| user.Role == Constants.USER_ROLE_SR_MANAGER)
+				// 8/18/2020 - directors and senior managers
+				if (user.EmployeeId == logDetail.SrMgrLevelOneEmpId
+					|| user.EmployeeId == logDetail.SrMgrLevelTwoEmpId
+					|| user.EmployeeId == logDetail.SrMgrLevelThreeEmpId)
 				{
 					return true;
 				}
@@ -64,9 +69,6 @@ namespace eCoachingLog.Services
 						|| user.EmployeeId == logDetail.EmployeeId
 						|| user.EmployeeId == logDetail.SupervisorEmpId
 						|| user.EmployeeId == logDetail.ManagerEmpId
-						|| user.EmployeeId == logDetail.SrMgrLevelOneEmpId
-						|| user.EmployeeId == logDetail.SrMgrLevelTwoEmpId
-						|| user.EmployeeId == logDetail.SrMgrLevelThreeEmpId
 						|| user.EmployeeId == ((CoachingLogDetail)logDetail).ReassignedToEmpId
 						|| (isCoaching && ((CoachingLogDetail)logDetail).IsLowCsat && user.EmployeeId == logDetail.LogManagerEmpId)
 					);
@@ -79,7 +81,6 @@ namespace eCoachingLog.Services
 						|| user.EmployeeId == logDetail.EmployeeId
 						|| user.EmployeeId == logDetail.SupervisorEmpId
 						|| user.EmployeeId == logDetail.ManagerEmpId
-						|| user.Role == Constants.USER_ROLE_SR_MANAGER
 					);
 				}
 			}

@@ -26,7 +26,8 @@ namespace eCoachingLog.Utils
 		public const string USER_ROLE_RESTRICTED = "Restricted";
 		public const string USER_ROLE_SUPERVISOR = "Supervisor";
 		public const string USER_ROLE_MANAGER = "Manager";
-		public const string USER_ROLE_SR_MANAGER = "SrManager";
+		// We don't have sr manager role
+		// public const string USER_ROLE_SR_MANAGER = "SrManager";
 		public const string USER_ROLE_DIRECTOR = "Director";
 		public const string USER_ROLE_OTHER = "Other";
 		public const string USER_ROLE_HR = "HR";
