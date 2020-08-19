@@ -1,0 +1,22 @@
+/*
+TFS 18062 - Remove Sr manager references in tables
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+steps summary
+1. Clean up tables
+
+--RUN ONE STEP AT A TIME
+
+*/
+
+
+delete from [EC].[UI_Dashboard_Summary_Display]
+where RoleID = 105;
+
+delete from [EC].[UI_Role_Page_Access]
+where RoleID = 105;
+
+delete from [EC].[UI_User_Role]
+where RoleID = 105;
