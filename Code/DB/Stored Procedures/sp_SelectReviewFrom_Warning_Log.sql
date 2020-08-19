@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Warning_Log(06).sql
-Last Modified Date: 03/23/2020
+sp_SelectReviewFrom_Warning_Log(07).sql
+Last Modified Date: 08/18/2020
 Last Modified By: Susmitha Palacherla
 
+Version 07: Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 Version 06: Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
 Version 05: Updated to add CSRReviewAutoDate to return. TFS 15803 - 12/4/2019
 Version 04: Updated to Incorporate static text from database. TFS 15803 - 12/3/2019
@@ -26,9 +27,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	10/08/2014
@@ -40,6 +38,7 @@ GO
 --  Modified during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --  Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
+--  Updated to add SrMgr details to return. TFS 18062 - 08/18/2020
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Warning_Log] @intLogId BIGINT
@@ -81,6 +80,15 @@ SELECT wl.WarningID numID,
   veh.Mgr_LanID strEmpMgr,
   veh.Mgr_Name strEmpMgrName,
   veh.Mgr_Email strEmpMgrEmail,
+  veh.SrMgrLvl1_ID strEmpSrMgrLvl1ID,
+  veh.SrMgrLvl1_Name strEmpSrMgrLvl1Name,
+  veh.SrMgrLvl1_LanID strEmpSrMgrLvl1LanID,
+  veh.SrMgrLvl2_ID strEmpSrMgrLvl2ID,
+  veh.SrMgrLvl2_Name strEmpSrMgrLvl2Name,
+  veh.SrMgrLvl2_LanID strEmpSrMgrLvl2LanID,
+  veh.SrMgrLvl3_ID strEmpSrMgrLvl3ID,
+  veh.SrMgrLvl3_Name strEmpSrMgrLvl3Name,
+  veh.SrMgrLvl3_LanID strEmpSrMgrLvl3LanID,
   ''Warning'' strSource,
   wl.SubmittedDate,
   wl.CSRReviewAutoDate,
@@ -119,6 +127,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 END --sp_SelectReviewFrom_Warning_Log
 
 GO
-
 
 

@@ -1,8 +1,9 @@
 /*
-sp_Dashboard_Summary_Count_ByStatus(02).sql
-Last Modified Date: 09/03/2019
+sp_Dashboard_Summary_Count_ByStatus(03).sql
+Last Modified Date: 08/18/2020
 Last Modified By: Susmitha Palacherla
 
+Version 03: Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 Version 02: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
 
@@ -22,7 +23,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -30,6 +30,7 @@ GO
 --  on the My Dashboard.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+--  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Summary_Count_ByStatus] 
 @nvcEmpID nvarchar(10)
@@ -59,7 +60,7 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID)
 --9 - Pending Deputy Program Manager Review
 --10 - Pending Follow-up
 
-
+--CASE WHEN StatusID = 10 Then ''My Follow-up'' ELSE Status END Status FROM EC.DIM_Status WHERE StatusID in (3,4,10)),
 IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
 
 SET @nvcSQL = ' ;WITH SelectedStatus AS
@@ -100,7 +101,7 @@ SET @nvcSQL = ';WITH SelectedStatus AS
 
 
 
-IF @nvcEmpRole in ( 'Manager', 'SrManager')
+IF @nvcEmpRole = 'Manager'
 
 
 SET @nvcSQL = ';WITH SelectedStatus AS
@@ -121,11 +122,7 @@ SET @nvcSQL = ';WITH SelectedStatus AS
 			   SELECT s.Status, COALESCE(cl.LogCount,0) AS LogCount
 			   FROM SelectedStatus s left join SelectedLogs cl
 			   ON s.statusid = cl.StatusID '
-
-
-
-
-		     
+	     
 
 	
 EXEC (@nvcSQL);
@@ -144,5 +141,6 @@ ErrorHandler:
 	    
 END --sp_Dashboard_Summary_Count_ByStatus
 GO
+
 
 

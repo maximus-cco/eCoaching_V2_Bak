@@ -1,8 +1,9 @@
 /*
-fn_strGetUserRole(06).sql
-Last Modified Date: 1/14/2020
+fn_strGetUserRole(07).sql
+Last Modified Date: 8/18/2020
 Last Modified By: Susmitha Palacherla
 
+Revision 07: Removed references to SrMgr. TFS 18062 - 08/18/2020
 Revision 06: Added WPSM% to Mgr Role - TFS 16389 - 1/14/2020
 Revision 05: Added WPOP12 to Analyst Role - TFS 16261 - 12/12/2019
 Revision 04: Added WPOP12 to ARC Role - TFS 15859 - 10/28/2019
@@ -38,7 +39,8 @@ GO
 -- Added logic for Manager role for WPPM job codes - TFS 12467 - 10/29/2018
 -- Added WPOP12 to ARC Role. TFS 15859 - 10/28/2019
 -- Moved WPOP12 to Analyst Role. TFS 16261 - 12/11/2019 
--- Added WPSM% to Mgr Role - TFS 16389 - 01/13/2020
+-- Added logic for Manager role for WPSM job codes - TFS 16389 - 01/13/2020
+-- Removed references to SrMgr. TFS 18062 - 08/18/2020
 -- =============================================
 
 CREATE FUNCTION [EC].[fn_strGetUserRole] 
@@ -66,9 +68,8 @@ WHERE Emp_ID = @strEmpID);
  WHEN ((@strEmpJobCode LIKE 'WPPM%' OR @strEmpJobCode LIKE 'WPSM%' OR @strEmpJobCode LIKE 'WEEX%' OR @strEmpJobCode LIKE 'WISO%'
  OR @strEmpJobCode LIKE 'WISY%' OR  @strEmpJobCode = 'WPWL51' OR @strEmpJobCode LIKE 'WSTE%'
  OR @strEmpJobCode LIKE '%50' OR @strEmpJobCode LIKE '%60'  OR @strEmpJobCode LIKE '%70') 
- AND NOT([EC].[fn_strCheckIf_ACLRole](@strEmpID, 'SRM') = 1 OR [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1)) 
+ AND NOT([EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1)) 
  THEN 'Manager'
- WHEN  [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'SRM') = 1 THEN 'SrManager'
  WHEN  [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1 THEN 'Director'
  WHEN  @strEmpJobCode LIKE 'WPOP12' THEN 'Analyst'
  ELSE 'Restricted' END);
@@ -77,8 +78,8 @@ WHERE Emp_ID = @strEmpID);
   
 END --fn_strGetUserRole
 
-
 GO
+
 
 
 

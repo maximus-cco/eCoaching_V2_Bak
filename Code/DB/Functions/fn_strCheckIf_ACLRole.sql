@@ -1,9 +1,9 @@
 /*
-fn_strCheckIf_ACLRole(01).sql
-Last Modified Date: 05/15/2018
+fn_strCheckIf_ACLRole(02).sql
+Last Modified Date: 8/18/2020
 Last Modified By: Susmitha Palacherla
 
-
+Revision 02: Removed references to SrMgr. TFS 18062 - 08/18/2020
 Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
 
 */
@@ -33,6 +33,7 @@ GO
 -- Last Modified By:
 -- Revision History:
 -- Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/15/2018 
+-- Removed references to SrMgr. TFS 18062 - 08/18/2020
 --	=============================================
 CREATE FUNCTION [EC].[fn_strCheckIf_ACLRole] 
 (
@@ -63,12 +64,6 @@ IF @RoleCheck = 'ECL'
 						  AND [Role] = 'ECL'
 						  AND [End_Date] = 99991231)
 
-	IF @RoleCheck = 'SRM'
-	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
-						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
-						  AND [Role] = 'SRM'
-						  AND [End_Date] = 99991231)
-
 	IF @RoleCheck = 'DIR'
 	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
 						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
@@ -86,5 +81,6 @@ RETURN 	@nvcACLRole
 END --fn_strCheckIf_ACLRole
 
 GO
+
 
 

@@ -1,8 +1,9 @@
 /*
-sp_Dashboard_Summary_Count(05).sql
-Last Modified Date: 03/13/2020 -- checking in previous version for warnings changes.
+sp_Dashboard_Summary_Count(06).sql
+Last Modified Date: 08/18/2020
 Last Modified By: Susmitha Palacherla
 
+Version 06: Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 Version 05: Additional updates from V&V feedback to support changes to warnings workflow. TFS 15803 - 12/4/2019
 Version 04: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 03: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
@@ -27,9 +28,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -39,6 +37,7 @@ GO
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+--  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
@@ -126,7 +125,7 @@ SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning
 			
 END
 
-IF @nvcEmpRole in ( 'Manager', 'SrManager')
+IF @nvcEmpRole = 'Manager'
 BEGIN
 SET @intMyPending = (SELECT COUNT(cl.CoachingID)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)

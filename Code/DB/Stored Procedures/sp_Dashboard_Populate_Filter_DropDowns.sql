@@ -1,9 +1,9 @@
 /*
-sp_Dashboard_Populate_Filter_DropDowns(01).sql
-Last Modified Date: 06/12/2018
+sp_Dashboard_Populate_Filter_DropDowns(02).sql
+Last Modified Date: 08/18/2020
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/28/2018
 
 */
@@ -24,13 +24,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	6/12/2018
 --	Description: *	This procedure calls the appropriate sps 
 --  to populate the filter drop downs given the logged in user ID and type of drop down.
 --  Created during Myt dashboard move to new architecture - TFS 7137 - 6/12/2018
+--  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Populate_Filter_DropDowns] 
 @nvcUserIdin nvarchar(10),
@@ -70,7 +70,7 @@ BEGIN
 
 END
 
-IF @nvcEmpRole in ('Manager', 'SrManager' )
+IF @nvcEmpRole = 'Manager'
 BEGIN
 
 		IF @nvcWhichDropDown = N'Manager'
@@ -90,7 +90,7 @@ BEGIN
 
 END
 
-IF @nvcEmpRole NOT IN ('Supervisor', 'Manager', 'SrManager')
+IF @nvcEmpRole NOT IN ('Supervisor', 'Manager')
 BEGIN
 
 		IF @nvcWhichDropDown = N'Manager'

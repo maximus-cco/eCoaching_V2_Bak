@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_MyPending_Count(05).sql
-Last Modified Date: 11/18/2019
+sp_SelectFrom_Coaching_Log_MyPending_Count(06).sql
+Last Modified Date: 08/18/2020
 Last Modified By: Susmitha Palacherla
 
+Version 06: Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 Version 05: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 04: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
@@ -35,6 +36,7 @@ GO
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+--  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_Count] 
 @nvcUserIdin nvarchar(10),
@@ -73,7 +75,7 @@ BEGIN
 END	
 
 
-IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'Employee','Supervisor', 'Manager', 'SrManager' )
+IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'Employee','Supervisor', 'Manager' )
 RETURN 1
 
 IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
@@ -90,7 +92,7 @@ SET @where = @where + ' AND ((cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[Sta
 		       ' OR (cl.[ReassignedToId] = ''' + @nvcUserIdin + '''  AND [ReassignCount] <> 0 AND cl.[StatusID] in (3,6,8,10)))'
 END
 
-IF @nvcEmpRole in ( 'Manager', 'SrManager')
+IF @nvcEmpRole ='Manager'
 BEGIN
 SET @where = @where + ' AND ((cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (3,4)) ' +  @NewLineChar +
 			  ' OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND ISNULL([cl].[strReportCode], '' '') NOT LIKE ''BQ%''  AND cl.ReassignCount= 0 AND eh.Sup_ID = ''' + @nvcUserIdin + ''' AND  cl.[StatusID] in (3,5,6,8)  ' +  @NewLineChar +
@@ -142,7 +144,6 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending_Count
 GO
-
 
 
 
