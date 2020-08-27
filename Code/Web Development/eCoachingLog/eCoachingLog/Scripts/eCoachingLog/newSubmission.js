@@ -63,47 +63,30 @@
 		// show HR text instead editable textarea (behavior)
         if (workAtHomeChecked)
         {
-        	$('#div-wah-behavior').removeClass('hide');
-        	$('#div-wah-behavior').addClass('show');
-        	$('#div-none-wah-behavior').removeClass('show');
-        	$('#div-none-wah-behavior').addClass('hide');
+        	showBehaviorForWahReturnToSite();
         }
 		// show regular editable textarea (behavior)
         else 
         {
-         	$('#div-wah-behavior').removeClass('show');
-        	$('#div-wah-behavior').addClass('hide');
-        	$('#div-none-wah-behavior').removeClass('hide');
-        	$('#div-none-wah-behavior').addClass('show');
+        	showBehaviorEditable();
         }
     });
 
-    $('body').on('change', '.sub-wah', function () {
-    	var selected = $(this).val();
-    	if (selected && (selected.indexOf('277') > -1 || selected.indexOf('278') > -1 || selected.indexOf('279') > -1 || selected.indexOf('280') > -1))
-		{
-    		showWorkAtHomeBehaviorDiv = true;
-    	}
-    	else
-    	{
-    		showWorkAtHomeBehaviorDiv = false;
-    	}
+    function showBehaviorForWahReturnToSite()
+    {
+    	$('#div-wah-behavior').removeClass('hide');
+    	$('#div-wah-behavior').addClass('show');
+    	$('#div-none-wah-behavior').removeClass('show');
+    	$('#div-none-wah-behavior').addClass('hide');
+    }
 
-    	$('#IsWorkAtHomeReturnSite').val(showWorkAtHomeBehaviorDiv);
-
-    	if (showWorkAtHomeBehaviorDiv)
-    	{
-    		$('#div-wah-behavior').removeClass('hide');
-    		$('#div-none-wah-behavior').removeClass('show');
-    		$('#div-none-wah-behavior').addClass('hide');
-    	}
-    	else 
-    	{
-    		$('#div-wah-behavior').addClass('hide');
-    		$('#div-none-wah-behavior').removeClass('hide');
-    	}
-
-    });
+    function showBehaviorEditable()
+    {
+        $('#div-wah-behavior').removeClass('show');
+        $('#div-wah-behavior').addClass('hide');
+        $('#div-none-wah-behavior').removeClass('hide');
+        $('#div-none-wah-behavior').addClass('show');
+    }
 
     $('body').on('change', '#ReturnToSite', function () {
     	var returnSite = $('#ReturnToSite').val();
@@ -285,6 +268,9 @@
     });
 
     $('body').on('change', "#IsCse", function () {
+    	// reset behavior to editable textarea
+    	showBehaviorEditable();
+		// reset coaching reasons
         refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
     });
 
