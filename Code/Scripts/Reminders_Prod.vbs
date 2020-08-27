@@ -121,6 +121,8 @@ On Error Resume Next
   Select Case (strsubCoachingSource)
   Case "Empower"
         mailBody = strFormName & " requires your attention. Please review the log and take appropriate action."
+  Case "WAH-RTS"
+            mailBody = strFormName & " requires your attention. Please review the log and take appropriate action."
   Case "Warning"
         mailBody = strFormName & " requires your attention. Please review and acknowledge the log."
   End Select

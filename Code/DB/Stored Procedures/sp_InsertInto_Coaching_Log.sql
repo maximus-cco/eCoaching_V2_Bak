@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log(05).sql
-Last Modified Date: 09/03/2019
+sp_InsertInto_Coaching_Log(06).sql
+Last Modified Date: 08/27/2020
 Last Modified By: Susmitha Palacherla
 
+Version 06: Updated to support special handling for WAH- Return to Site - TFS 18255 - 08/27/2020
 Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
@@ -23,8 +24,10 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -41,6 +44,7 @@ GO
 -- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018.
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+-- Updated to support special handling for WAH- Return to Site - TFS 18255 - 08/27/2020
 --    =====================================================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
 (     @nvcEmpID Nvarchar(10),
@@ -133,7 +137,9 @@ BEGIN TRY
 
 	        @nvcSupID Nvarchar(10),
 	        @nvcMgrID Nvarchar(10),
-	        @nvcNotPassedSiteID INT
+	        @nvcNotPassedSiteID INT,
+			@isWAHReturnToSite bit,
+			@SubCoachingSource nvarchar(100)
 	       
 	        
 OPEN SYMMETRIC KEY [CoachingKey]  
@@ -143,6 +149,10 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
     SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
     SET @nvcSupID = (SELECT [Sup_ID] FROM [EC].[Employee_Hierarchy]WHERE [Emp_ID]= @nvcEmpID)
     SET @nvcMgrID = (SELECT [Mgr_ID] FROM [EC].[Employee_Hierarchy]WHERE [Emp_ID]= @nvcEmpID)
+	SET @SubCoachingSource = (SELECT SubCoachingSource from EC.DIM_Source WHERE SourceID = @intSourceID) 
+	SET @isWAHReturnToSite = (CASE WHEN (@intCoachReasonID1 = 63 OR @intCoachReasonID2= 63 OR @intCoachReasonID3 = 63 OR @intCoachReasonID4= 63
+	OR @intCoachReasonID5= 63 OR @intCoachReasonID6 = 63 OR @intCoachReasonID7= 63 OR @intCoachReasonID8= 63 OR @intCoachReasonID9 = 63 OR @intCoachReasonID10= 63
+	OR @intCoachReasonID11= 63 OR @intCoachReasonID12 = 63) THEN 1 ELSE 0 END); 
   
          INSERT INTO [EC].[Coaching_Log]
            ([FormName]
@@ -185,9 +195,9 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
      VALUES
            (@nvcEmpID 
            ,@nvcProgramName 
-           ,@intSourceID 
-           ,[EC].[fn_intStatusIDFromInsertParams](@ModuleID,  @intSourceID, @bitisCSE)
-           ,ISNULL(@SiteID,@nvcNotPassedSiteID)
+           ,CASE WHEN @isWAHReturnToSite = 1 THEN [EC].[fn_intSourceIDFromSource]('Direct', @SubCoachingSource) ELSE @intSourceID END
+           ,CASE WHEN @isWAHReturnToSite = 1 THEN 4 ELSE [EC].[fn_intStatusIDFromInsertParams](@ModuleID,  @intSourceID, @bitisCSE)END
+		   ,ISNULL(@SiteID,@nvcNotPassedSiteID)
            ,@nvcEmpID 
            ,@nvcSubmitterID
            ,@dtmEventDate 
@@ -576,7 +586,6 @@ END TRY
   END CATCH  
 
   END -- sp_InsertInto_Coaching_Log
-  GO
-
+GO
 
 

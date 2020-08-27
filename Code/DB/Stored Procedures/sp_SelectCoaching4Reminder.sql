@@ -1,7 +1,8 @@
 /*
-Last Modified Date: 11/18/2019
+Last Modified Date: 08/08/2020
 Last Modified By: Susmitha Palacherla
 
+Version 02: Updated to support WAH return to Site - TFS 18255 - 08/26/2020
 Version 01: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 
 */
@@ -17,6 +18,10 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
 --	====================================================================
 --	Author:		       Susmitha Palacherla
 --	Create Date:	   02/09/2016
@@ -30,6 +35,7 @@ GO
 --  Modified per TFS 8597 to modify DTT reminders to use Notification date - 10/12/2017
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+-- Updated to support WAH return to Site - TFS 18255 - 08/26/2020
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Reminder]
 AS
@@ -162,6 +168,44 @@ SET @nvcSQL2 = '
 	        (ReminderSent = ''False'' AND cl.Statusid = 5 AND DATEDIFF(HH, ISNULL([ReassignDate], [NotificationDate]), GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''')
 			OR (ReminderSent = ''True'' AND [ReminderCount] < 2 AND DATEDIFF(HH, [EC].[fnGetMaxDateTime]([ReassignDate], [ReminderDate]), GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''')
 			OR (ReminderSent = ''False'' AND cl.Statusid = 6 AND DATEDIFF(HH, ISNULL([ReassignDate], [MgrReviewAutoDate]), GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''')
+          )
+  UNION
+  -- WAH Return To Site Logs
+      SELECT cl.CoachingID numID	
+      ,cl.FormName strFormID
+      ,cl.EmpID strEmpID
+      ,s.Status strStatus
+      ,''WAH-RTS'' strSubCoachingSource /* Adjusted to address Employee in mailbody */
+      ,clr.value strValue
+      ,ISNULL(cl.MgrID, ''999999'') strMgr
+      ,cl.NotificationDate NotificationDate
+      ,cl.ReminderSent ReminderSent
+      ,cl.ReminderDate ReminderDate
+      ,cl.ReminderCount ReminderCount
+      ,cl.ReassignDate ReassignDate 
+      ,cl.ReassignCount ReassignCount
+      ,cl.ReassignedToID ReassignToID
+      ,CASE
+         WHEN (ReminderSent = ''False'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.SubmittedDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''') THEN ''Emp''
+         WHEN (ReminderSent = ''True'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.ReminderDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''') THEN ''Emp''
+         ELSE ''NA'' 
+       END Remind
+      ,CASE
+          WHEN (ReminderSent = ''False'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.SubmittedDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''') THEN ''Sup''
+         WHEN (ReminderSent = ''True'' AND cl.Statusid = 4 AND DATEDIFF(HH, cl.ReminderDate,GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''') THEN ''Sup/Mgr''
+         ELSE ''NA'' 
+       END RemindCC,
+	   1 LogType
+    FROM  [EC].[Coaching_Log] cl WITH (NOLOCK)
+    JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK) ON cl.coachingid = clr.coachingid 
+	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
+	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID
+       WHERE clr.CoachingReasonID = 63 AND clr.SubCoachingreasonID IN (277, 278, 279, 280)
+      AND cl.StatusID = 4
+      AND cl.EmailSent = ''True''
+      AND (
+	 	   (ReminderSent = ''False'' AND DATEDIFF(HH, cl.SubmittedDate,GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''')
+			OR (ReminderSent = ''True'' AND [ReminderCount] < 2 AND DATEDIFF(HH, cl.ReminderDate, GetDate()) > ''' + CONVERT(VARCHAR, @intHrs2) + ''')
           )
 ';
 
@@ -301,7 +345,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectCoaching4Reminder
 GO
-
-
 
 

@@ -1,0 +1,66 @@
+/*Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+
+Summary
+
+
+TFS 18255 - new coaching sub-reason for WAH - Return To Site
+1.Add record(s) to TABLE [EC].[DIM_Coaching_Reason]
+2.Add record(s) to TABLE [EC].[DIM_Sub_Coaching_Reason]
+3.Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+-- step1: add coaching reason
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReason])
+     VALUES
+          ('Work at Home (Return to Site Only)');
+GO
+
+
+-- step2: add subcoaching reasons
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+('Discretionary Approved by Ops'),
+('Employee Accepted an On-Site Position'),
+('Employee Did not Meet Equipment Requirements'),
+('Employee Requested to Return to the Site');
+GO
+
+
+
+--step3: add into coaching reason selection
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+	         (63, 'Work at Home (Return to Site Only)',277,'Discretionary Approved by Ops',1,1,1,1,1,1,0,0,0,0,0,0),
+			 (63, 'Work at Home (Return to Site Only)',278,'Employee Accepted an On-Site Position',1,1,1,1,1,1,0,0,0,0,0,0),
+			 (63, 'Work at Home (Return to Site Only)',279,'Employee Did not Meet Equipment Requirements',1,1,1,1,1,1,0,0,0,0,0,0),
+			 (63, 'Work at Home (Return to Site Only)',280,'Employee Requested to Return to the Site',1,1,1,1,1,1,0,0,0,0,0,0);
+	     
+
+GO
