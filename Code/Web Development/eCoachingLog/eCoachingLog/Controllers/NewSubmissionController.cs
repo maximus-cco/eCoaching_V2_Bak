@@ -159,6 +159,7 @@ namespace eCoachingLog.Controllers
 			var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
 			vm.ModuleSelectList = vmInSession.ModuleSelectList;
             vm.SiteSelectList = vmInSession.SiteSelectList;
+			vm.SiteNameSelectList = vmInSession.SiteNameSelectList;
             vm.EmployeeSelectList = vmInSession.EmployeeSelectList;
             vm.ProgramSelectList = vmInSession.ProgramSelectList;
             vm.BehaviorSelectList = vmInSession.BehaviorSelectList;
@@ -382,9 +383,9 @@ namespace eCoachingLog.Controllers
                 {
                     IList<Site> siteList = this.siteService.GetSites();
                     siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });
-                    IEnumerable<SelectListItem> siteSelectList = new SelectList(siteList, "Id", "Name");
-                    vm.SiteSelectList = siteSelectList;
-                }
+                    vm.SiteSelectList = new SelectList(siteList, "Id", "Name");
+					vm.SiteNameSelectList = new SelectList(siteList, "Name", "Name");
+				}
             }
             // Load Employee dropdown for others
             else 

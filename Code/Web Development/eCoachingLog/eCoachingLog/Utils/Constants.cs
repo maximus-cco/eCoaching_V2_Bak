@@ -282,7 +282,7 @@ namespace eCoachingLog.Utils
 		public const string RETURN_TO_SITE_2_1 = " you will be required to report to work at the ";
 		public const string RETURN_TO_SITE_2_2 = " site. ";
 		public const string RETURN_TO_SITE_2_3 = "You will be reporting to ";
-		public const string RETURN_TO_SITE_2_4 = ".";
+		public const string RETURN_TO_SITE_2_4 = ". ";
 		public const string RETURN_TO_SITE_2_5 = "Any wages adjustments that were completed based on your remote status and the county you live in will be adjusted to reflect the location you are working and your position.</p>";
 		public const string RETURN_TO_SITE_3 = "<p>Any equipment you have received for the Work at Home assignment should be returned to your supervisor on your first day of reporting to the site.</p>";
 		public const string RETURN_TO_SITE_4 = "<p>MAXUMUS anticipates that a mutually beneficial employment relationship will continue as you work at the ";

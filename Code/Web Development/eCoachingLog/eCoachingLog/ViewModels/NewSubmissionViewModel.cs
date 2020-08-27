@@ -103,13 +103,13 @@ namespace eCoachingLog.ViewModels
 				if (String.IsNullOrWhiteSpace(this.ReturnToSiteDate))
 				{
 					var date = new[] { "ReturnToSiteDate" };
-					yield return new ValidationResult("Please enter effective date.", date);
+					yield return new ValidationResult("Please enter an effective date.", date);
 				}
 
-				if (String.IsNullOrWhiteSpace(this.ReturnToSite))
+				if (String.IsNullOrWhiteSpace(this.ReturnToSite) || this.ReturnToSite.Contains("Select"))
 				{
 					var site = new[] { "ReturnToSite" };
-					yield return new ValidationResult("Please enter site.", site);
+					yield return new ValidationResult("Please enter a site.", site);
 				}
 
 				if (String.IsNullOrWhiteSpace(this.ReturnToSupervisor))
@@ -162,7 +162,7 @@ namespace eCoachingLog.ViewModels
             if (!this.CoachingDate.HasValue)
             {
                 var coachDate = new[] { "CoachingDate" };
-                yield return new ValidationResult("Please enter a coaching date.", coachDate);
+                yield return new ValidationResult("Please enter a date.", coachDate);
             }
             // Provide details of the behavior to be coached.
             if (!IsWorkAtHomeReturnSite && String.IsNullOrWhiteSpace(this.BehaviorDetail))

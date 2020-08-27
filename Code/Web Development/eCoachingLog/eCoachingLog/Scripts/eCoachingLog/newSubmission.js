@@ -31,7 +31,12 @@
         validateCoachingReasons();
     }
 
-    $('#input-return-site-readonly').val($('#ReturnToSite').val());
+    if ($('#ReturnToSite').val() && $('#ReturnToSite').val().indexOf('Select') > -1) {
+    	$('#input-return-site-readonly').val('');
+    }
+    else {
+    	$('#input-return-site-readonly').val($('#ReturnToSite').val());
+    }
 
     $('body').on('change', '.reason-checkbox', function () {
         var reasonId = $(this).closest('.coaching-reason').find('input:hidden.reason-id').val();
@@ -101,6 +106,24 @@
     });
 
     $('body').on('change', '#ReturnToSite', function () {
+    	var returnSite = $('#ReturnToSite').val();
+    	if (returnSite.indexOf('Select') > -1) // -- Select a Site --
+    	{
+    		$('#input-return-site-readonly').val('');
+    		return;
+    	}
+
+    	var employeeSite = $('#SiteName').val();
+    	if (employeeSite && employeeSite !== returnSite)
+    	{
+    		if (!confirm("You are selecting a return site that is different from the employee site. Would you like to proceed?"))
+    		{
+    			$('#ReturnToSite').val("-- Select a Site --");
+    			$('#input-return-site-readonly').val('');
+    			return;
+    		}
+    	}
+
     	$('#input-return-site-readonly').val($('#ReturnToSite').val());
     })
 
@@ -123,6 +146,8 @@
     $('body').on('change', '#select-site', function () {
 		// Show spinner
     	$(".please-wait").slideDown(500);
+
+    	$("#SiteName").val($("#select-site option:selected").text());
 
         $('#flash-message').empty();
 

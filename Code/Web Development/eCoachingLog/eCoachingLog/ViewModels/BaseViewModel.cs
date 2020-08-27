@@ -7,7 +7,9 @@ namespace eCoachingLog.ViewModels
 	public class BaseViewModel
 	{
 		public int? SiteId { get; set; }
+		public string SiteName { get; set; }
 		public IEnumerable<SelectListItem> SiteSelectList { get; set; }
+		public IEnumerable<SelectListItem> SiteNameSelectList { get; set; }
 
 		public Employee Manager { get; set; }
 		public IEnumerable<SelectListItem> ManagerSelectList { get; set; }
@@ -43,6 +45,7 @@ namespace eCoachingLog.ViewModels
 		{
 			this.SiteId = -2;
 			this.SiteSelectList = new List<SelectListItem>();
+			this.SiteNameSelectList = new List<SelectListItem>();
 			this.Manager = new Employee();
 			this.ManagerSelectList = new List<SelectListItem>();
 			this.Supervisor = new Employee();
