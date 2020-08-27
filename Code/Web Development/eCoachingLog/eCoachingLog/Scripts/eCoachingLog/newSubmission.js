@@ -231,6 +231,8 @@
     }
 
     $('body').on('change', '#IsWarning', function () {
+    	$('#IsWorkAtHomeReturnSite').val(false);
+
         var isCoachingByYou = $("input[name='IsCoachingByYou']:checked").val()
         if ($(this).val() === 'true') {
             resetPageBottom(isCoachingByYou, false, true);
