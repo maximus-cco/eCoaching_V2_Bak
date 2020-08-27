@@ -269,6 +269,8 @@
 
     $('body').on('change', "#IsCse", function () {
     	// reset behavior to editable textarea
+    	workAtHomeChecked = false;
+    	showWorkAtHomeBehaviorDiv = false;
     	showBehaviorEditable();
 		// reset coaching reasons
         refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
