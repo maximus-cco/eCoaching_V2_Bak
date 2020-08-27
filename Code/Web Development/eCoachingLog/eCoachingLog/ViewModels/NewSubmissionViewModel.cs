@@ -279,10 +279,9 @@ namespace eCoachingLog.ViewModels
                 StatusId = vm.StatusId,
 				FollowupDueDate = vm.FollowupDueDate,
 				IsFollowupRequired = vm.IsFollowupRequired,
-
                 WarningTypeId = vm.WarningTypeId,
                 WarningReasonId = vm.WarningReasonId
-            };
+			};
         }
     }
 }

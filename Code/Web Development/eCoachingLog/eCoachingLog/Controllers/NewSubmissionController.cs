@@ -106,6 +106,11 @@ namespace eCoachingLog.Controllers
 					FlashMessage.Confirmation(string.Format("Your submission {0} was saved successfully.", logNameSaved));
 					
 					// send email
+					// work around to get correct email attributes
+					if (vm.IsWorkAtHomeReturnSite && vm.SourceId > 100)
+					{
+						vm.SourceId -= 100;
+					}
 					vmInSession.SourceId = vm.SourceId;
 					vmInSession.IsCse = vm.IsCse;
 					if (!SendEmail(logNameSaved)) // Failed to send email

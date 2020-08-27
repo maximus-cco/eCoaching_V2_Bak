@@ -138,7 +138,7 @@ namespace eCoachingLog.Services
             // Get email recipients titles
             bool isCse = submission.IsCse.HasValue ? submission.IsCse.Value : false;
 			int sourceId = submission.IsWarning != null && submission.IsWarning.Value ? Constants.WARNING_SOURCE_ID : submission.SourceId;
-            Tuple<string, string, bool, string, string> recipientsTitlesAndText = this.newSubmissionRepository.GetEmailRecipientsTitlesAndBodyText(submission.ModuleId, sourceId, isCse);
+			Tuple<string, string, bool, string, string> recipientsTitlesAndText = this.newSubmissionRepository.GetEmailRecipientsTitlesAndBodyText(submission.ModuleId, sourceId, isCse);
             string toRecipientTitle = recipientsTitlesAndText.Item1;
             string ccRecipientTitle = recipientsTitlesAndText.Item2;
             bool isCc = recipientsTitlesAndText.Item3;

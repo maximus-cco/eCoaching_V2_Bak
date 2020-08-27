@@ -35,5 +35,5 @@ namespace eCoachingLog.Models
         public int? WarningReasonId { get; set; }
 
         public int StatusId { get; set; }
-    }
+	}
 }
