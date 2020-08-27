@@ -104,13 +104,13 @@
     	$('#input-return-site-readonly').val($('#ReturnToSite').val());
     })
 
-    $('body').on('change', '#input-return-site-date', function () {
-    	var thisDate = moment($(this).val(), "M/D/YYYY", true);
-    	// Reset if invalid or before min date or after max date
-    	if (!thisDate.isValid()) {
-    		$(this).val("");
-    	}
-    })
+    //$('body').on('change', '#ReturnToSiteDate', function () {
+    //	var thisDate = moment($(this).val(), "M/D/YYYY", true);
+    //	// Reset if invalid or before min date or after max date
+    //	if (!thisDate.isValid()) {
+    //		$(this).val("");
+    //	}
+    //})
 
     // Reset page 
     $('body').on('change', '#select-log-module', function () {

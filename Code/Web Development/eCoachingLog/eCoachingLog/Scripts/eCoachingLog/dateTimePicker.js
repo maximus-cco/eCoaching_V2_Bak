@@ -16,7 +16,7 @@
 		maxDate: 'now'
 	});
 
-	$('body').on('keydown', '.date-no-manual-input', function (e) {
+	$('body').on('keydown', '.date-no-manual-input, #ReturnToSiteDate', function (e) {
 		e.preventDefault();
 		return false;
 	});
@@ -31,7 +31,7 @@
 	$('#ReturnToSiteDate').datetimepicker({
 		format: 'MM/DD/YYYY',
 		minDate: minDate,
-		maxDate: maxDate,
+		//maxDate: maxDate,
 		useCurrent: false
 	});
 

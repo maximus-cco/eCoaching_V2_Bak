@@ -53,7 +53,7 @@
 	<label for="BehaviorDetail" class="col-sm-3 control-label required">Provide details of the behavior to be coached:</label>
 	<div class="col-sm-8">
 		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_1))
-		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2)) <label class="required"></label>@Html.TextBoxFor(m => m.ReturnToSiteDate, new { @class = "date-no-manual-input-followup-date", @placeholder = "MM/DD/YYYY" }) 
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2)) <label class="required"></label>@Html.TextBoxFor(m => m.ReturnToSiteDate, new { @placeholder = "MM/DD/YYYY" }) 
 		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2_1)) <label class="required"></label>@Html.TextBoxFor(m => m.ReturnToSite, new { @placeholder = "site" }) 
 		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2_2))
 		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2_3)) <label class="required"></label>@Html.TextBoxFor(m => m.ReturnToSupervisor, new { @placeholder = "supervisor" })
