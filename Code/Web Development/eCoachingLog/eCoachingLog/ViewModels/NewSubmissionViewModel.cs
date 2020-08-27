@@ -62,6 +62,12 @@ namespace eCoachingLog.ViewModels
 		public bool ShowMgtInfo { get; set; }
 		public bool ShowFollowup { get; set; }
 
+		public string ReturnToSiteDate { get; set; }
+		public string ReturnToSite { get; set; }
+		public string ReturnToSupervisor { get; set; }
+
+		public bool IsWorkAtHomeReturnSite { get; set; }
+
         public NewSubmissionViewModel() : base()
         {
             this.ModuleId = -1;
@@ -91,8 +97,31 @@ namespace eCoachingLog.ViewModels
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            // Confirm box, this is common to both Warning and Coaching
-            if (this.IsWarning.HasValue && !this.IsWarning.Value && !this.VerifiedCheckbox)
+			// validate Work At Home - Return to Site entries
+			if (IsWorkAtHomeReturnSite)
+			{
+				if (String.IsNullOrWhiteSpace(this.ReturnToSiteDate))
+				{
+					var date = new[] { "ReturnToSiteDate" };
+					yield return new ValidationResult("Please enter effective date.", date);
+				}
+
+				if (String.IsNullOrWhiteSpace(this.ReturnToSite))
+				{
+					var site = new[] { "ReturnToSite" };
+					yield return new ValidationResult("Please enter site.", site);
+				}
+
+				if (String.IsNullOrWhiteSpace(this.ReturnToSupervisor))
+				{
+					var supervisor = new[] { "ReturnToSupervisor" };
+					yield return new ValidationResult("Please enter supervisor name.", supervisor);
+				}
+			}
+
+
+			// Confirm box, this is common to both Warning and Coaching
+			if (this.IsWarning.HasValue && !this.IsWarning.Value && !this.VerifiedCheckbox)
             {
                 var verifiedCheckbox = new[] { "VerifiedCheckbox" };
                 yield return new ValidationResult("You must select the verification checkbox to submit this form.", verifiedCheckbox);
@@ -136,7 +165,7 @@ namespace eCoachingLog.ViewModels
                 yield return new ValidationResult("Please enter a coaching date.", coachDate);
             }
             // Provide details of the behavior to be coached.
-            if (String.IsNullOrWhiteSpace(this.BehaviorDetail))
+            if (!IsWorkAtHomeReturnSite && String.IsNullOrWhiteSpace(this.BehaviorDetail))
             {
                 var behaviorDetail = new[] { "BehaviorDetail" };
                 yield return new ValidationResult("Please provide details of the behavior to be coached.", behaviorDetail);
@@ -221,7 +250,7 @@ namespace eCoachingLog.ViewModels
 						yield return new ValidationResult("Please select a follow-up date.", followupDueDate);
 					}
 				}
-			}
+			} // end if (this.ModuleId == Constants.MODULE_CSR)
 		}
 
         public static implicit operator NewSubmission(NewSubmissionViewModel vm)

@@ -5,6 +5,7 @@
 	var reasonId = "CoachingReasons[" + rIndex + "].IsChecked";
 	var valueId = "CoachingReasons[" + rIndex + "].IsOpportunity";
 	var subReasonIds = "CoachingReasons[" + rIndex + "].SubReasonIds";
+	var subWah = Model.ID == 63 ? "sub-wah" : "";
 }
 @Html.CheckBoxFor(m => m.IsChecked, new { @class = "reason-checkbox", @Name = reasonId, id = @rIndex})
 <input type="hidden" name="reasonIndex" class="reasonIndex" value="@rIndex"/>
@@ -34,10 +35,10 @@
 	</div>
 
 	<!-- sub reasons -->
-	<div class="col-sm-12 fixed-width wrap-items coaching-subreasons">
+	<div class='col-sm-12 fixed-width wrap-items coaching-subreasons'>
 		@Html.ListBoxFor(m => m.SubReasonIds,
-						 new MultiSelectList(Model.SubReasons, "ID", "Text", Model.SubReasonIds),
-						 new { @class = "listbox", @Name = subReasonIds, id = subReasonIds })
+								new MultiSelectList(Model.SubReasons, "ID", "Text", Model.SubReasonIds),
+								new { @class = "listbox " + @subWah, @Name = subReasonIds, id = subReasonIds })
 		@Html.ValidationMessageFor(m => m.SubReasonIds)
 	</div>
 }

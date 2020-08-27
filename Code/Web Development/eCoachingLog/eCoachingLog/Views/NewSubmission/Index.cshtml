@@ -12,7 +12,7 @@
         <div id="validation-summary" class="text-danger" hidden="hidden">
             <ul></ul>
         </div>
-
+		@Html.HiddenFor(m => m.IsWorkAtHomeReturnSite)
         <div id="div-new-submission-main">
             @{Html.RenderPartial("_NewSubmission");}
         </div>

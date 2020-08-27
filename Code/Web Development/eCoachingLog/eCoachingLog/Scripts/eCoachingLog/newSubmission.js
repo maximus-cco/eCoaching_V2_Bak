@@ -1,5 +1,7 @@
 ﻿$(function () {
 	var cancelBtnClicked = false;
+	var workAtHomeChecked = false;
+	var showWorkAtHomeBehaviorDiv = false;
 	// Check unsaved data
     $('#new-submission-form').data('serialize', $('#new-submission-form').serialize());
     $(window).on('beforeunload', function (e) {
@@ -29,6 +31,8 @@
         validateCoachingReasons();
     }
 
+    $('#input-return-site-readonly').val($('#ReturnToSite').val());
+
     $('body').on('change', '.reason-checkbox', function () {
         var reasonId = $(this).closest('.coaching-reason').find('input:hidden.reason-id').val();
         var isChecked = $(this).is(':checked');
@@ -42,7 +46,71 @@
         		$('#' + reasonDivId).html(result);
         	}
         });
+
+		// Work At Home (Return to Site Only)
+        if (reasonId == 63)
+        {
+        	workAtHomeChecked = isChecked;
+        }
+
+        $('#IsWorkAtHomeReturnSite').val(workAtHomeChecked);
+
+		// show HR text instead editable textarea (behavior)
+        if (workAtHomeChecked)
+        {
+        	$('#div-wah-behavior').removeClass('hide');
+        	$('#div-wah-behavior').addClass('show');
+        	$('#div-none-wah-behavior').removeClass('show');
+        	$('#div-none-wah-behavior').addClass('hide');
+        }
+		// show regular editable textarea (behavior)
+        else 
+        {
+         	$('#div-wah-behavior').removeClass('show');
+        	$('#div-wah-behavior').addClass('hide');
+        	$('#div-none-wah-behavior').removeClass('hide');
+        	$('#div-none-wah-behavior').addClass('show');
+        }
     });
+
+    $('body').on('change', '.sub-wah', function () {
+    	var selected = $(this).val();
+    	if (selected && (selected.indexOf('277') > -1 || selected.indexOf('278') > -1 || selected.indexOf('279') > -1 || selected.indexOf('280') > -1))
+		{
+    		showWorkAtHomeBehaviorDiv = true;
+    	}
+    	else
+    	{
+    		showWorkAtHomeBehaviorDiv = false;
+    	}
+
+    	$('#IsWorkAtHomeReturnSite').val(showWorkAtHomeBehaviorDiv);
+
+    	if (showWorkAtHomeBehaviorDiv)
+    	{
+    		$('#div-wah-behavior').removeClass('hide');
+    		$('#div-none-wah-behavior').removeClass('show');
+    		$('#div-none-wah-behavior').addClass('hide');
+    	}
+    	else 
+    	{
+    		$('#div-wah-behavior').addClass('hide');
+    		$('#div-none-wah-behavior').removeClass('hide');
+    	}
+
+    });
+
+    $('body').on('change', '#ReturnToSite', function () {
+    	$('#input-return-site-readonly').val($('#ReturnToSite').val());
+    })
+
+    $('body').on('change', '#input-return-site-date', function () {
+    	var thisDate = moment($(this).val(), "M/D/YYYY", true);
+    	// Reset if invalid or before min date or after max date
+    	if (!thisDate.isValid()) {
+    		$(this).val("");
+    	}
+    })
 
     // Reset page 
     $('body').on('change', '#select-log-module', function () {

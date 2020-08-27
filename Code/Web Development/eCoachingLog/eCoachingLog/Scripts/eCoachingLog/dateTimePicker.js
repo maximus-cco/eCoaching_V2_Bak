@@ -28,6 +28,13 @@
 		useCurrent: false
 	});
 
+	$('#ReturnToSiteDate').datetimepicker({
+		format: 'MM/DD/YYYY',
+		minDate: minDate,
+		maxDate: maxDate,
+		useCurrent: false
+	});
+
 	$('body').on('keydown', '#followup-date', function (e) {
 		e.preventDefault();
 		return false;

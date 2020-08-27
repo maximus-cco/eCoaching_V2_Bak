@@ -66,19 +66,36 @@ namespace eCoachingLog.Controllers
         public ActionResult Save(NewSubmissionViewModel vm)
         {
 			logger.Debug("Entered Save ...");
+
 			if (ModelState.IsValid)
             {
                 bool isDuplicate = false;
 				string logNameSaved = null;
-
+				
 				string failMsg = "Failed to save your submission. Please ensure you have entered all required fields.";
 				string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
 				try
 				{
+					var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
 					// For some reason, when a log is NOT required follow-up, a follow-up is still passed back from page (even though not entered)
 					if (vm.IsFollowupRequired.HasValue && !vm.IsFollowupRequired.Value )
 					{
 						vm.FollowupDueDate = null;
+					}
+
+					if (vm.IsWorkAtHomeReturnSite)
+					{
+						vm.BehaviorDetail = String.Format(Constants.RETURN_TO_SITE_1 +
+						Constants.RETURN_TO_SITE_2 + "{0}" + 
+						Constants.RETURN_TO_SITE_2_1 + "{1}" +
+						Constants.RETURN_TO_SITE_2_2 + 
+						Constants.RETURN_TO_SITE_2_3 + "{2}" +
+						Constants.RETURN_TO_SITE_2_4 +
+						Constants.RETURN_TO_SITE_2_5 +
+						Constants.RETURN_TO_SITE_3 +
+						Constants.RETURN_TO_SITE_4 + "{3}" +
+						Constants.RETURN_TO_SITE_4_1,
+						vm.ReturnToSiteDate, vm.ReturnToSite, vm.ReturnToSupervisor, vm.ReturnToSite);
 					}
 
 					logNameSaved = this.newSubmissionService.Save(vm, GetUserFromSession(), out isDuplicate);
@@ -89,7 +106,6 @@ namespace eCoachingLog.Controllers
 					FlashMessage.Confirmation(string.Format("Your submission {0} was saved successfully.", logNameSaved));
 					
 					// send email
-					var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
 					vmInSession.SourceId = vm.SourceId;
 					vmInSession.IsCse = vm.IsCse;
 					if (!SendEmail(logNameSaved)) // Failed to send email

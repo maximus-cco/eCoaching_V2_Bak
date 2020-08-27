@@ -276,6 +276,17 @@ namespace eCoachingLog.Utils
 		public const string ACK_CHECKBOX_TEXT_OVERTURNED_APPEAL = "By checking this box, I indicate that I have reviewed this appeal and have taken the appropriate actions.";
 		public const string ACK_CHECKBOS_TEXT_FOLLOWUP = "I have read and understand all the information provided on this eCoaching Log.";
 
+		// Work At Home (Return to Site Only) HR text
+		public const string RETURN_TO_SITE_1 = "<p>CCO employees who participate in the CCO Work at Home are obligated to comply with all MAXIMUS policies and procedures. The purpose of this eCL is to notify you that your CCO Remote Work Agreement is being rescinded.</p>";
+		public const string RETURN_TO_SITE_2 = "<p>Effective ";
+		public const string RETURN_TO_SITE_2_1 = " you will be required to report to work at the ";
+		public const string RETURN_TO_SITE_2_2 = " site. ";
+		public const string RETURN_TO_SITE_2_3 = "You will be reporting to ";
+		public const string RETURN_TO_SITE_2_4 = ".";
+		public const string RETURN_TO_SITE_2_5 = "Any wages adjustments that were completed based on your remote status and the county you live in will be adjusted to reflect the location you are working and your position.</p>";
+		public const string RETURN_TO_SITE_3 = "<p>Any equipment you have received for the Work at Home assignment should be returned to your supervisor on your first day of reporting to the site.</p>";
+		public const string RETURN_TO_SITE_4 = "<p>MAXUMUS anticipates that a mutually beneficial employment relationship will continue as you work at the ";
+		public const string RETURN_TO_SITE_4_1 = " site.</p>";
 	}
 
 	public enum EmployeeLogType

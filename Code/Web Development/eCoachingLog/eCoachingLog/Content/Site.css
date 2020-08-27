@@ -661,3 +661,9 @@ input[type=radio].errorClass {
 	/*font-weight: bold;*/
 }
 
+input {
+  outline: 0;
+  border-width: 0 0 2px;
+  border-color: lightgray;
+}
+
