@@ -106,8 +106,10 @@ namespace eCoachingLog.Controllers
 					FlashMessage.Confirmation(string.Format("Your submission {0} was saved successfully.", logNameSaved));
 					
 					// send email
-					// work around to get correct email attributes
-					if (vm.IsWorkAtHomeReturnSite && vm.SourceId > 100)
+					// work around to get email attributes for direct
+					// direct [101, 200);
+					// indirect [201, 300); 
+					if (vm.IsWorkAtHomeReturnSite && vm.SourceId > 200)
 					{
 						vm.SourceId -= 100;
 					}
