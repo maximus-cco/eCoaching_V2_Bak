@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log(06).sql
-Last Modified Date: 08/27/2020
+sp_InsertInto_Coaching_Log(06a).sql
+Last Modified Date: 08/28/2020
 Last Modified By: Susmitha Palacherla
 
+Version 06a: Updated to support special handling for WAH- Return to Site - TFS 18255 - 08/27/2020
 Version 06: Updated to support special handling for WAH- Return to Site - TFS 18255 - 08/27/2020
 Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
@@ -27,6 +28,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 
@@ -200,8 +203,8 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
 		   ,ISNULL(@SiteID,@nvcNotPassedSiteID)
            ,@nvcEmpID 
            ,@nvcSubmitterID
-           ,@dtmEventDate 
-           ,@dtmCoachingDate 
+           ,CASE WHEN @isWAHReturnToSite = 1 THEN NULL ELSE @dtmEventDate END 
+           ,CASE WHEN @isWAHReturnToSite = 1 THEN COALESCE(@dtmEventDate, @dtmCoachingDate) ELSE @dtmCoachingDate END
 		   ,@bitisAvokeID 
            ,@nvcAvokeID 
            ,@bitisNGDActivityID 
