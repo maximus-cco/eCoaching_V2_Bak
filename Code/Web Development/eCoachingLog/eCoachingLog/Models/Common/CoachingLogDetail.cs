@@ -51,6 +51,7 @@ namespace eCoachingLog.Models.Common
 		public bool IsBqms { get; set; } // Quality Bingo "Quality / BQMS"
 		public bool IsOthAps { get; set; } // Attendance Policy Earback
 		public bool IsOthApw { get; set; } // Attendance Policy Earback
+		public bool IsIdd { get; set; } // incentives data feed
 
 		public bool HasEmpAcknowledged { get; set; }
 		public bool HasSupAcknowledged { get; set; }

@@ -220,6 +220,12 @@ namespace eCoachingLog.Services
 				return Constants.REVIEW_OMR_PBH;
 			}
 
+			// Incentives data feed: comes in as Pending Employee Review --> Complete
+			if (log.IsIdd)
+			{
+				return Constants.REVIEW_OMR_IDD;
+			}
+
 			return string.Empty;
 		}
 
