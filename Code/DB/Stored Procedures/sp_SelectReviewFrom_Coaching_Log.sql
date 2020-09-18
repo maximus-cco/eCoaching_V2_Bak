@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(20).sql
-Last Modified Date: 08/13/2020
+sp_SelectReviewFrom_Coaching_Log(21).sql
+Last Modified Date: 09/15/2020
 Last Modified By: Susmitha Palacherla
 
+Version 21: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 Version 20: Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
 Version 19: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 Version 18: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
@@ -44,17 +45,12 @@ GO
 --	Description: 	This procedure displays the Coaching Log attributes for given Form Name.
 --  SQL split into 3 parts to overcome sql string size restriction.
 --  Last Updated By: Susmitha Palacherla
--- Last 5 Modifications
--- 22. Modified to support OTA Report. TFS 12591 - 11/26/2018
--- 23. Modified to support Quality Now TFS 13332 -  03/01/2019
--- 24. Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
--- 25. Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
--- 26. Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
--- 27. Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
--- 28. Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
--- 29. Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
--- 30. Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
--- 31. Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
+--  Last 5 Change Descriptions shown.
+--  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+--  Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
+--  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+--  Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
+--  Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -64,20 +60,20 @@ BEGIN
 
 DECLARE	
 
-  @nvcSQL nvarchar(max),
-  @nvcSQL1 nvarchar(max),
-  @nvcSQL2 nvarchar(max),
-  @nvcSQL3 nvarchar(max),
+  @nvcSQL nvarchar(max)= '',
+  @nvcSQL1 nvarchar(max)= '',
+  @nvcSQL2 nvarchar(max)= '',
+  @nvcSQL3 nvarchar(max)= '',
   @nvcEmpID nvarchar(10),
   @nvcMgrID nvarchar(10);
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
-SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [CoachingID] = @intLogId)	 
-SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] = @nvcEmpID)
+SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [CoachingID] = @intLogId);	 
+SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] = @nvcEmpID);
 
-SET @nvcSQL1 = '
+SET @nvcSQL1 = @nvcSQL1 +  N'
 SELECT cl.CoachingID numID,
   cl.FormName strFormID,
   cl.ModuleID,
@@ -85,8 +81,10 @@ SELECT cl.CoachingID numID,
   sc.CoachingSource	strFormType,
   cl.StatusId strStatusID,
   s.Status strFormStatus,
-   cl.EventDate EventDate,
-  cl.CoachingDate CoachingDate,
+  --CASE WHEN cc.WAH_RTS IS NOT NULL THEN NULL ELSE cl.EventDate END EventDate,
+  --CASE WHEN cc.WAH_RTS IS NOT NULL THEN COALESCE(cl.EventDate, cl.CoachingDate)  ELSE  cl.CoachingDate END CoachingDate,
+  cl.EventDate,
+  cl.CoachingDate,
   cl.SubmitterID strSubmitterID,
   cl.SupID strCLSupID,
   cl.MgrID strCLMgrID,
@@ -143,7 +141,7 @@ SELECT cl.CoachingID numID,
   veh.SrMgrLvl3_LanID strEmpSrMgrLvl3LanID,
   ';
 	
-SET @nvcSQL2 = '
+SET @nvcSQL2 = @nvcSQL2 + N'
   CASE WHEN cl.[Review_SupID] IS NOT NULL THEN vehSup.Emp_Name
     ELSE cl.[Review_SupID] END strReviewSupervisor,
     CASE WHEN cl.[Review_MgrID] IS NOT NULL THEN vehMgr.Emp_Name
@@ -189,7 +187,8 @@ SET @nvcSQL2 = '
   CASE WHEN (cc.OMRIAE IS NOT NULL AND cl.strReportCode LIKE ''IAEF%'') THEN 1 ELSE 0 END "OMR / IAEF",
   CASE WHEN (cc.OMRIAT IS NOT NULL AND cl.strReportCode LIKE ''IAT%'') THEN 1 ELSE 0 END "OMR / IAT",
   CASE WHEN (cc.OMRISQ IS NOT NULL AND cl.strReportCode LIKE ''ISQ%'') THEN 1 ELSE 0 END "OMR / ISQ",
-  CASE WHEN (cc.LCS IS NOT NULL AND cl.strReportCode LIKE ''LCS%'') THEN 1 ELSE 0 END "LCS",
+   CASE WHEN (cc.OMRIDD IS NOT NULL AND cl.strReportCode LIKE ''IDD%'') THEN 1 ELSE 0 END "OMR / IDD",
+   CASE WHEN (cc.LCS IS NOT NULL AND cl.strReportCode LIKE ''LCS%'') THEN 1 ELSE 0 END "LCS",
   CASE WHEN (cc.SDR IS NOT NULL AND cl.strReportCode LIKE ''SDR%'') THEN 1 ELSE 0 END "Training / SDR",
   CASE WHEN (cc.ODT IS NOT NULL AND cl.strReportCode LIKE ''ODT%'') THEN 1 ELSE 0 END "Training / ODT",
   CASE WHEN (cc.CTC IS NOT NULL AND cl.strReportCode LIKE ''CTC%'') THEN 1 ELSE 0 END "Quality / CTC",
@@ -207,6 +206,7 @@ SET @nvcSQL2 = '
   CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQNS%'') THEN 1 ELSE 0 END "Quality / BQNS",
    CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQM2%'') THEN 1 ELSE 0 END "Quality / BQM",
   CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQMS%'') THEN 1 ELSE 0 END "Quality / BQMS",
+  cc.WAH_RTS, 
   cl.Description txtDescription,
   cl.CoachingNotes txtCoachingNotes,
   cl.isVerified,
@@ -237,8 +237,7 @@ SET @nvcSQL2 = '
   ''Coaching'' strLogType
 FROM [EC].[Coaching_Log] cl ';
 	    
-SET @nvcSQL3 = '
-JOIN 
+SET @nvcSQL3 = @nvcSQL3 + N' JOIN 
 (
   SELECT ccl.FormName,
     MAX(CASE WHEN [cr].[CoachingReason] = ''Customer Service Escalation'' THEN [clr].[Value] ELSE NULL END)	CSE,
@@ -254,8 +253,9 @@ JOIN
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 239 THEN [clr].[Value] ELSE NULL END) OMRBRL,
 	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 245 THEN [clr].[Value] ELSE NULL END) OMRPBH,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END) LCS,
-    MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END) OMRISQ,
-    MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END) SDR,
+	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END) OMRISQ,
+	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 281 THEN [clr].[Value] ELSE NULL END) OMRIDD,
+	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END) SDR,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END) ODT,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END) CTC,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 12 THEN [clr].[Value] ELSE NULL END) HFC,
@@ -266,7 +266,8 @@ JOIN
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 242) THEN [clr].[Value] ELSE NULL END) DTT,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 252) THEN [clr].[Value] ELSE NULL END) ATTAP,
-    MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC
+    MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 63) THEN [clr].[Value] ELSE NULL END)	WAH_RTS
   FROM [EC].[Coaching_Log_Reason] clr,
     [EC].[DIM_Coaching_Reason] cr,
 	[EC].[Coaching_Log] ccl 
@@ -286,15 +287,14 @@ JOIN [EC].[DIM_Site] st ON [cl].[SiteID] = [st].[SiteID]
 JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
 ORDER BY [cl].[FormName]';
 		
-SET @nvcSQL =  @nvcSQL1 +  @nvcSQL2 +  @nvcSQL3;
-EXEC (@nvcSQL)
+SET @nvcSQL =  @nvcSQL + @nvcSQL1 +  @nvcSQL2 +  @nvcSQL3;
+EXEC (@nvcSQL);
 
-PRINT @nvcSQL
+--PRINT (@nvcSQL);
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
-
 
 

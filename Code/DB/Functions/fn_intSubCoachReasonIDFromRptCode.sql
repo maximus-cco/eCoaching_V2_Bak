@@ -1,9 +1,10 @@
 /*
-fn_intSubCoachReasonIDFromRptCode(09).sql
+fn_intSubCoachReasonIDFromRptCode(10).sql
 
-Last Modified Date: 09/23/2019
+Last Modified Date: 09/15/2020
 Last Modified By: Susmitha Palacherla
 
+Version 10: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 Version 09: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 08: Modified to support ATT AP% feeds. TFS 15095  - 08/27/2019
 Version 07: Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
@@ -32,9 +33,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
@@ -55,8 +53,8 @@ GO
 -- TFS 15063 - To add BQN - 08/12/2019
 -- TFS 15095 - To add ATT APS and APW Reports - 08/27/2019
 -- TFS 15465 - To add BQM - 09/23/2019
+-- TFS 18154 - To add IDD - 09/15/2020
 -- =============================================
-
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
 )
@@ -107,14 +105,14 @@ BEGIN
 			WHEN N'BQM' THEN 42
 			WHEN N'APS' THEN 252
 			WHEN N'APW' THEN 252
+			WHEN N'IDD' THEN 281
         ELSE -1
-      END
+      END;
     ELSE
-    SET @intSubCoachReasonID = 42
+    SET @intSubCoachReasonID = 42;
         
 RETURN @intSubCoachReasonID  
 
 END  -- fn_intSubCoachReasonIDFromRptCode()
 GO
-
 
