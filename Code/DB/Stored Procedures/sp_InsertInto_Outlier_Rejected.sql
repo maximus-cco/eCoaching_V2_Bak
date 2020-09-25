@@ -29,6 +29,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/24/2017
@@ -72,6 +74,8 @@ CASE
 WHEN [Emp_Role] = 'O' THEN 'Invalid Role for Log generation'
 WHEN LEFT(Report_Code,LEN(Report_Code)-8) = 'MSRS'  AND [Emp_Role] <> 'S'
 THEN 'Employee not a Supervisor'
+WHEN LEFT(Report_Code,LEN(Report_Code)-8) = 'IDD'  AND [Emp_Role] NOT IN ('S', 'QS', 'LS', 'TS')
+THEN 'Employee not a Supervisor or Lead'
 WHEN LEFT(Report_Code,LEN(Report_Code)-8) NOT IN ('BRL', 'BRN', 'MSRS', 'IDD')  AND [Emp_Role] <> 'C'
 THEN 'Employee not a CSR' 
 ELSE NULL END
@@ -112,8 +116,9 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
    FROM [EC].[Outlier_Coaching_Stage]S left outer join [EC].[Outlier_Coaching_Rejected] R 
   ON S.Report_ID = R.Report_ID and S.Report_Code = R.Report_Code 
   WHERE R.Report_ID is NULL and R.Report_Code is NULL 
-  AND S.[Reject_Reason] is not NULL;               
+  AND S.[Reject_Reason] is not NULL ;               
 
 END -- sp_InsertInto_Outlier_Rejected
 GO
+
 

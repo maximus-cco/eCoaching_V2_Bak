@@ -7,13 +7,13 @@
   DTS:CreatorName="VNGT\palasu"
   DTS:DTSID="{5935C644-1A96-420A-9122-46D5AD971041}"
   DTS:ExecutableType="SSIS.Package.3"
-  DTS:LastModifiedProductVersion="14.0.3026.27"
+  DTS:LastModifiedProductVersion="15.0.2000.68"
   DTS:LocaleID="1033"
   DTS:ObjectName="Outlier_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="325"
-  DTS:VersionGUID="{17C3FDB8-DABC-4D05-B8DC-C833D305F75D}">
+  DTS:VersionBuild="326"
+  DTS:VersionGUID="{3AAACDA0-6B04-40CC-98F8-5D82B8F84158}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -1079,14 +1079,35 @@
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_beffbe422c244276a2daecbda870e1c4")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_beffbe422c244276a2daecbda870e1c4")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -1375,35 +1396,14 @@ namespace ST_beffbe422c244276a2daecbda870e1c4.Properties {
     }
 }]]></ProjectItem>
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_beffbe422c244276a2daecbda870e1c4")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_beffbe422c244276a2daecbda870e1c4")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -1961,7 +1961,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          length="30"
+                          length="60"
                           lineageId="Package\Foreach IAE_IAT OMR File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of strSubmitterName]"
                           name="Copy of strSubmitterName"
                           truncationRowDisposition="FailComponent">
@@ -2895,7 +2895,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <inputColumn
                           refId="Package\Foreach IAE_IAT OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of strSubmitterName]"
                           cachedDataType="wstr"
-                          cachedLength="30"
+                          cachedLength="60"
                           cachedName="Copy of strSubmitterName"
                           externalMetadataColumnId="Package\Foreach IAE_IAT OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Name]"
                           lineageId="Package\Foreach IAE_IAT OMR File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of strSubmitterName]" />
@@ -3009,7 +3009,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <externalMetadataColumn
                           refId="Package\Foreach IAE_IAT OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Name]"
                           dataType="wstr"
-                          length="30"
+                          length="60"
                           name="Submitter_Name" />
                         <externalMetadataColumn
                           refId="Package\Foreach IAE_IAT OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Email]"
@@ -3698,7 +3698,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          length="30"
+                          length="60"
                           lineageId="Package\Foreach ISQ OMR File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterName]"
                           name="strSubmitterName"
                           truncationRowDisposition="FailComponent">
@@ -4583,7 +4583,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <inputColumn
                           refId="Package\Foreach ISQ OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strSubmitterName]"
                           cachedDataType="wstr"
-                          cachedLength="30"
+                          cachedLength="60"
                           cachedName="strSubmitterName"
                           externalMetadataColumnId="Package\Foreach ISQ OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Name]"
                           lineageId="Package\Foreach ISQ OMR File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterName]" />
@@ -4690,7 +4690,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <externalMetadataColumn
                           refId="Package\Foreach ISQ OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Name]"
                           dataType="wstr"
-                          length="30"
+                          length="60"
                           name="Submitter_Name" />
                         <externalMetadataColumn
                           refId="Package\Foreach ISQ OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Email]"
@@ -6793,14 +6793,35 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -7090,35 +7111,14 @@ namespace ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties {
     }
 }]]></ProjectItem>
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -7670,7 +7670,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          length="30"
+                          length="60"
                           lineageId="Package\Foreach OTHER OMR File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterName]"
                           name="strSubmitterName"
                           truncationRowDisposition="FailComponent">
@@ -7989,7 +7989,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <inputColumn
                           refId="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strSubmitterName]"
                           cachedDataType="wstr"
-                          cachedLength="30"
+                          cachedLength="60"
                           cachedName="strSubmitterName"
                           externalMetadataColumnId="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Name]"
                           lineageId="Package\Foreach OTHER OMR File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterName]" />
@@ -8089,7 +8089,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <externalMetadataColumn
                           refId="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Name]"
                           dataType="wstr"
-                          length="30"
+                          length="60"
                           name="Submitter_Name" />
                         <externalMetadataColumn
                           refId="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Email]"
@@ -9097,38 +9097,40 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <ContainerLayout
           HeaderHeight="43.2"
           IsExpanded="False"
           PanelSize="194.4,204"
-          Size="194.4,43.2"
+          Size="194,43"
           Id="Package\Encrypt Failed Files"
           TopLeft="1666.28574266239,79.5294128800759" />
         <NodeLayout
-          Size="164.8,44"
+          Size="165,44"
           Id="Package\Foreach IAE_IAT OMR File\File System Task"
           TopLeft="34.3000000000001,507.9" />
         <NodeLayout
-          Size="143.2,35.2"
+          Size="143,35"
           Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table"
           TopLeft="45.1,109.5" />
         <NodeLayout
-          Size="150.4,44"
+          Size="150,44"
           Id="Package\Foreach IAE_IAT OMR File\Load Coaching_Log"
           TopLeft="41.5,299.9" />
         <NodeLayout
-          Size="154.4,44"
+          Size="154,44"
           Id="Package\Foreach IAE_IAT OMR File\Load File List table"
           TopLeft="39.5000000000001,403.9" />
         <NodeLayout
-          Size="168.8,44"
+          Size="169,44"
           Id="Package\Foreach IAE_IAT OMR File\Truncate Staging Table"
           TopLeft="32.3,5.5" />
         <NodeLayout
-          Size="222.4,35.2"
+          Size="222,35"
           Id="Package\Foreach IAE_IAT OMR File\Update staging table and reject logs"
           TopLeft="5.50000000000003,204.7" />
         <EdgeLayout
@@ -9246,12 +9248,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43.924528301886795"
           IsExpanded="False"
-          PanelSize="233.6,607.2"
-          Size="233.6,44"
+          PanelSize="234,607"
+          Size="234,44"
           Id="Package\Foreach IAE_IAT OMR File"
-          TopLeft="597.14286731214,97.0823543139395" />
+          TopLeft="598.14286731214,97.0823543139395" />
         <NodeLayout
-          Size="164.8,44"
+          Size="165,44"
           Id="Package\Foreach ISQ OMR File\File System Task"
           TopLeft="34.3000000000001,499.1" />
         <NodeLayout
@@ -9259,19 +9261,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Id="Package\Foreach ISQ OMR File\Load  Staging Table"
           TopLeft="40.7,109.5" />
         <NodeLayout
-          Size="144.8,35.2"
+          Size="145,35"
           Id="Package\Foreach ISQ OMR File\Load Coaching_Log"
           TopLeft="44.3,308.7" />
         <NodeLayout
-          Size="134.4,35.2"
+          Size="134,35"
           Id="Package\Foreach ISQ OMR File\Load File List table"
           TopLeft="49.5000000000001,403.9" />
         <NodeLayout
-          Size="189.6,41.6"
+          Size="190,42"
           Id="Package\Foreach ISQ OMR File\Truncate Staging Table"
           TopLeft="32.3,5.5" />
         <NodeLayout
-          Size="222.4,35.2"
+          Size="222,35"
           Id="Package\Foreach ISQ OMR File\Update staging table and reject logs"
           TopLeft="5.50000000000003,213.5" />
         <EdgeLayout
@@ -9401,10 +9403,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43.924528301886795"
           IsExpanded="False"
-          PanelSize="233.6,598.4"
-          Size="233.6,44"
+          PanelSize="234,598"
+          Size="234,44"
           Id="Package\Foreach ISQ OMR File"
-          TopLeft="961.428587801603,97.0823543139395" />
+          TopLeft="962.428587801603,96.0823543139395" />
         <NodeLayout
           Size="127.2,35.2"
           Id="Package\Foreach LCS OMR File\File System Task"
@@ -9448,7 +9450,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -9494,7 +9498,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -9516,7 +9522,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -9538,14 +9546,16 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <ContainerLayout
           HeaderHeight="43.924528301886795"
           IsExpanded="False"
           PanelSize="233.6,572"
-          Size="233.6,44"
+          Size="234,44"
           Id="Package\Foreach LCS OMR File"
           TopLeft="294.28571929737,97.0823543139395" />
         <NodeLayout
@@ -9579,7 +9589,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -9601,18 +9613,20 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="False"
           PanelSize="216,305.6"
-          Size="216,43.2"
+          Size="216,43"
           Id="Package\Foreach Loop Container"
           TopLeft="22.3,97.8823543139395" />
         <NodeLayout
-          Size="164.8,44"
+          Size="165,44"
           Id="Package\Foreach OTHER OMR File\File System Task"
           TopLeft="34.3000000000001,499.1" />
         <NodeLayout
@@ -9620,19 +9634,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Id="Package\Foreach OTHER OMR File\Load  Staging Table"
           TopLeft="40.7,109.5" />
         <NodeLayout
-          Size="144.8,35.2"
+          Size="145,35"
           Id="Package\Foreach OTHER OMR File\Load Coaching_Log"
           TopLeft="44.3,308.7" />
         <NodeLayout
-          Size="134.4,35.2"
+          Size="134,35"
           Id="Package\Foreach OTHER OMR File\Load File List table"
           TopLeft="49.5000000000001,403.9" />
         <NodeLayout
-          Size="168.8,44"
+          Size="169,44"
           Id="Package\Foreach OTHER OMR File\Truncate Staging Table"
           TopLeft="32.3,5.5" />
         <NodeLayout
-          Size="222.4,35.2"
+          Size="222,35"
           Id="Package\Foreach OTHER OMR File\Update staging table and reject logs"
           TopLeft="5.50000000000003,213.5" />
         <EdgeLayout
@@ -9750,10 +9764,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43.924528301886795"
           IsExpanded="False"
-          PanelSize="233.6,598.4"
-          Size="233.6,44"
+          PanelSize="234,598"
+          Size="234,44"
           Id="Package\Foreach OTHER OMR File"
-          TopLeft="1314.28573666787,97.0823543139395" />
+          TopLeft="1315.28573666787,96.0823543139395" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
           TopLeft="238.3,119.28235431394">
@@ -9778,109 +9792,109 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="527.88571929737,119.08235431394">
+          TopLeft="528.28571929737,119.08235431394">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="69.25714801477,0"
+              EndConnector="69.85714801477,0"
               Start="0,0"
-              End="61.75714801477,0">
+              End="62.35714801477,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="61.75714801477,0" />
+                    End="62.35714801477,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="5.574120882385,5,50.60890625,11.609375"
+              BoundingBox="5.87412088238501,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="830.74286731214,119.08235431394">
+          TopLeft="832.14286731214,118.58235431394">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="130.685720489463,0"
+              EndConnector="130.285720489463,0"
               Start="0,0"
-              End="123.185720489463,0">
+              End="122.785720489463,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="123.185720489463,0" />
+                    End="122.785720489463,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="36.2884071197315,5,50.60890625,11.609375"
+              BoundingBox="36.0884071197315,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="1195.0285878016,119.08235431394">
+          TopLeft="1196.4285878016,118.08235431394">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="119.257148866267,0"
+              EndConnector="118.857148866267,0"
               Start="0,0"
-              End="111.757148866267,0">
+              End="111.357148866267,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="111.757148866267,0" />
+                    End="111.357148866267,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="30.5741213081335,5,50.60890625,11.609375"
+              BoundingBox="30.3741213081335,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="1547.88573666787,119.08235431394">
+          TopLeft="1549.28573666787,118.08235431394">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="118.40000599452,-17.9529414338636"
+              EndConnector="117.00000599452,-17.0529414338636"
               Start="0,0"
-              End="110.90000599452,-17.9529414338636">
+              End="109.50000599452,-17.0529414338636">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="55.2000029972601,0" />
+                    End="54.50000299726,0" />
                   <mssgle:CubicBezierSegment
-                    Point1="55.2000029972601,0"
-                    Point2="59.2000029972601,0"
-                    Point3="59.2000029972601,-4" />
+                    Point1="54.50000299726,0"
+                    Point2="58.50000299726,0"
+                    Point3="58.50000299726,-4" />
                   <mssgle:LineSegment
-                    End="59.2000029972601,-13.9529414338636" />
+                    End="58.50000299726,-13.0529414338636" />
                   <mssgle:CubicBezierSegment
-                    Point1="59.2000029972601,-13.9529414338636"
-                    Point2="59.2000029972601,-17.9529414338636"
-                    Point3="63.2000029972601,-17.9529414338636" />
+                    Point1="58.50000299726,-13.0529414338636"
+                    Point2="58.50000299726,-17.0529414338636"
+                    Point3="62.50000299726,-17.0529414338636" />
                   <mssgle:LineSegment
-                    End="110.90000599452,-17.9529414338636" />
+                    End="109.50000599452,-17.0529414338636" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="33.8955498722601,1,50.60890625,11.609375"
+              BoundingBox="33.19554987226,1,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -9903,21 +9917,21 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Foreach IAE_IAT OMR File\Load  Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="152,41.6"
+          Size="152,42"
           Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table\Flat File Source"
           TopLeft="15.5,5.49999999999995" />
         <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table\OLE DB Destination"
           TopLeft="5.50000000000003,310.3" />
         <NodeLayout
-          Size="156.8,41.6"
+          Size="157,42"
           Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table\Data Conversion"
           TopLeft="13.1,107.1" />
         <NodeLayout
-          Size="131.2,41.6"
+          Size="131,42"
           Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table\Row Count"
           TopLeft="25.9,208.7" />
         <EdgeLayout
@@ -9939,9 +9953,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -9963,9 +9975,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -9987,9 +9997,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -10012,21 +10020,21 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Foreach ISQ OMR File\Load  Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="131.2,41.6"
+          Size="131,42"
           Id="Package\Foreach ISQ OMR File\Load  Staging Table\Row Count"
           TopLeft="25.9,208.7" />
         <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Foreach ISQ OMR File\Load  Staging Table\OLE DB Destination"
           TopLeft="5.50000000000003,310.3" />
         <NodeLayout
-          Size="119.2,41.6"
+          Size="119,42"
           Id="Package\Foreach ISQ OMR File\Load  Staging Table\ISQ_File"
           TopLeft="24.7,5.49999999999995" />
         <NodeLayout
-          Size="156.8,41.6"
+          Size="157,42"
           Id="Package\Foreach ISQ OMR File\Load  Staging Table\Data Conversion"
           TopLeft="13.1,107.1" />
         <EdgeLayout
@@ -10048,9 +10056,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -10072,9 +10078,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -10096,9 +10100,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -10230,21 +10232,21 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Foreach OTHER OMR File\Load  Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination"
           TopLeft="5.50000000000003,310.3" />
         <NodeLayout
-          Size="131.2,41.6"
+          Size="131,42"
           Id="Package\Foreach OTHER OMR File\Load  Staging Table\Row Count"
           TopLeft="25.9,208.7" />
         <NodeLayout
-          Size="156.8,41.6"
+          Size="157,42"
           Id="Package\Foreach OTHER OMR File\Load  Staging Table\Data Conversion"
           TopLeft="13.1,107.1" />
         <NodeLayout
-          Size="133.6,41.6"
+          Size="134,42"
           Id="Package\Foreach OTHER OMR File\Load  Staging Table\Outlier_File"
           TopLeft="24.7,5.49999999999995" />
         <EdgeLayout
@@ -10266,9 +10268,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -10290,9 +10290,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -10314,9 +10312,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>

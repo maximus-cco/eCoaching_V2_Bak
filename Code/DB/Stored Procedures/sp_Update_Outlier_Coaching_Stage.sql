@@ -29,6 +29,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 04/24/2017
@@ -113,9 +115,12 @@ UPDATE [EC].[Outlier_Coaching_Stage]
 SET [Emp_Role]= 
     CASE WHEN EMP.[Emp_Job_Code] like 'WACS0%' THEN 'C'
     WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
-    WHEN  EMP.[Emp_Job_Code]in ('WACQ02', 'WACQ03','WACQ12', 'WACQ13') THEN 'Q'
-    WHEN  EMP.[Emp_Job_Code]in ('WIHD01','WIHD02','WIHD03','WIHD04','WABA11','WISA03','WIHD40','WPPT40') THEN 'L'
-	WHEN  EMP.[Emp_Job_Code]in ('WTTR02','WTTI02','WTTR12','WTTR13','WTID13','WTTR40','WTTR50') THEN 'T'
+    WHEN  EMP.[Emp_Job_Code]in ('WACQ02', 'WACQ03','WACQ12') THEN 'Q'
+	WHEN  EMP.[Emp_Job_Code]in ('WACQ13') THEN 'QS' -- Quality Supervisor
+    WHEN  EMP.[Emp_Job_Code]in ('WIHD01','WIHD02','WIHD03','WIHD04','WABA11','WISA03') THEN 'L'
+	WHEN  EMP.[Emp_Job_Code]in ('WIHD40','WPPT40') THEN 'LS'-- LSA Supervisor
+	WHEN  EMP.[Emp_Job_Code]in ('WTTR02','WTTI02','WTTR12','WTTR13','WTID13') THEN 'T'
+	WHEN  EMP.[Emp_Job_Code]in ('WTTR40','WTTR50') THEN 'TS'-- Training Supervisor
 	WHEN  EMP.[Emp_Job_Code]in ('WABA01','WABA02','WABA03') THEN 'AD'
 	WHEN  EMP.[Emp_Job_Code]in ('WPSM11') THEN 'AR'
 	WHEN  EMP.[Emp_Job_Code]in ('WMPL02','WMPL03') THEN 'PP'

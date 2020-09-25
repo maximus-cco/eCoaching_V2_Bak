@@ -66,5 +66,14 @@ GO
 		  
 GO
 
+--*****************
 
+ALTER TABLE EC.Outlier_Coaching_Stage
+    ALTER COLUMN Submitter_Name nvarchar(60);
+GO
 
+--*****************
+
+ALTER TABLE EC.Outlier_Coaching_Rejected
+    ALTER COLUMN Submitter_Name nvarchar(60);
+GO
