@@ -7,14 +7,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head runat="server">
         <title></title>
+		<style>
+			html, body, form, #div-reportviewer {
+				height: 100%; 
+			}
+		</style>
         <script src="../Scripts/jquery-2.2.0.js"></script>
     </head>
     <body style="margin: 0px; padding: 0px;">
         <form id="form1" runat="server">
-            <div>
+            <div id="div-reportviewer">
                 <asp:ScriptManager ID="scriptManagerReport" AsyncPostBackTimeOut="0" runat="server">
                 </asp:ScriptManager>
-                <rsweb:ReportViewer  id="rvSiteMapping" runat ="server" AsyncRendering="false" KeepSessionAlive="true" ShowPrintButton="false"  ZoomMode="Percent" Width="100%" SizeToReportContent="false" > 
+                <rsweb:ReportViewer  id="rvSiteMapping" runat ="server" AsyncRendering="false" KeepSessionAlive="true" ShowPrintButton="false"  ZoomMode="Percent" Width="100%" Height="100%" SizeToReportContent="false" > 
                 </rsweb:ReportViewer> 
             </div>
         </form>
