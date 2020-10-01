@@ -51,7 +51,7 @@ WHERE Emp_ID = @strEmpID)
 
 SET @intModuleID = (CASE
  WHEN (@strEmpJobCode IN ('WACS01', 'WACS02', 'WACS03')) THEN 1
- WHEN (@strEmpJobCode IN ('WACS40')) THEN 2
+ WHEN (@strEmpJobCode IN ('WACS40', 'WACS50')) THEN 2
  WHEN (@strEmpJobCode IN ('WACQ02','WACQ03','WACQ12', 'WACQ13')) THEN 3
  WHEN (@strEmpJobCode IN ('WIHD01','WIHD02','WIHD03','WIHD04', 'WABA11', 'WISA03','WIHD40', 'WPPT40')) THEN 4
  WHEN (@strEmpJobCode IN ('WTTR02','WTTI02','WTTR12','WTTR13','WTID13', 'WTTR40', 'WTTR50')) THEN 5
@@ -63,11 +63,9 @@ SET @intModuleID = (CASE
  END);
 
  
-RETURN  @intModuleID
+  RETURN  @intModuleID
   
 END --fn_intModuleIDFromempID
 GO
-
-
 
 

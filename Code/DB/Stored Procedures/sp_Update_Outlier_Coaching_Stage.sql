@@ -115,6 +115,7 @@ UPDATE [EC].[Outlier_Coaching_Stage]
 SET [Emp_Role]= 
     CASE WHEN EMP.[Emp_Job_Code] like 'WACS0%' THEN 'C'
     WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
+	WHEN EMP.[Emp_Job_Code] = 'WACS50' THEN 'M'
     WHEN  EMP.[Emp_Job_Code]in ('WACQ02', 'WACQ03','WACQ12') THEN 'Q'
 	WHEN  EMP.[Emp_Job_Code]in ('WACQ13') THEN 'QS' -- Quality Supervisor
     WHEN  EMP.[Emp_Job_Code]in ('WIHD01','WIHD02','WIHD03','WIHD04','WABA11','WISA03') THEN 'L'

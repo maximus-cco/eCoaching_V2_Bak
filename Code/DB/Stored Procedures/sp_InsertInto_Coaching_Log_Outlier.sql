@@ -121,7 +121,7 @@ SELECT DISTINCT LOWER(cs.CSR_EMPID)	[FormName],
 		 CASE WHEN cs.Report_Code LIKE 'LCS%' 
 		 THEN @strLCSPretext + EC.fn_nvcHtmlEncode(cs.TextDescription)
 		 WHEN cs.Report_Code LIKE 'IDD%' 
-		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription),'|' ,'<br />')	
+		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), CHAR(10), '<br />')	-- Line Feed LF
 		 WHEN cs.Report_Code LIKE 'IAE%' 
 		 THEN @strIAEPretext + '<br />' + EC.fn_nvcHtmlEncode(cs.TextDescription) + '<br />' + cs.CD1 + '<br />' + cs.CD2
 		 WHEN cs.Report_Code LIKE 'IAT%' 
