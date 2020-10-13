@@ -1,12 +1,11 @@
 /*
-CCO_eCoaching_Training_Load_Tables_Create(02).sql
-
-Last Modified Date: 04/02/2018
+CCO_eCoaching_Training_Load_Tables_Create(03).sql
+Last Modified Date: 10/9/2020
 Last Modified By: Susmitha Palacherla
 
+Version 03: TFS 18833 -  Expand the site field size in feeds - 10/9/2020
 version 02: Updated to document changes for feed encryption TFS 7854.
 Marked fact table as obsolete
-
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 
@@ -36,7 +35,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 CREATE TABLE [EC].[Training_Coaching_Stage](
 	[Report_ID] [int] NULL,
 	[Report_Code] [nvarchar](20) NULL,
@@ -51,15 +49,15 @@ CREATE TABLE [EC].[Training_Coaching_Stage](
 	[Submitter_Email] [nvarchar](50) NULL,
 	[CSR_LANID] [nvarchar](30) NULL,
 	[CSR_EMPID] [nvarchar](20) NULL,
-	[CSR_Site] [nvarchar](20) NULL,
+	[CSR_Site] [nvarchar](60) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
-	[FileName] [nvarchar](260) NULL
-            
+	[FileName] [nvarchar](260) NULL,
+	[Reject_Reason] [nvarchar](200) NULL
 ) ON [PRIMARY]
-
 GO
+
 
 
 
@@ -112,7 +110,7 @@ CREATE TABLE [EC].[Training_Coaching_Rejected](
 	[Submitter_Name] [nvarchar](30) NULL,
 	[Submitter_Email] [nvarchar](50) NULL,
 	[CSR_LANID] [nvarchar](30) NULL,
-	[CSR_Site] [nvarchar](20) NULL,
+	[CSR_Site] [nvarchar](60) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,

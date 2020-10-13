@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Outliers_Load_Tables_Create(03).sql
-Last Modified Date: 07/08/2019
+CCO_eCoaching_Outliers_Load_Tables_Create(05).sql
+Last Modified Date: 10/9/2020
 Last Modified By: Susmitha Palacherla
 
+Version 05: TFS 18833 -  Expand the site field size in feeds - 10/9/2020
 Version 04: New process for short calls. TFS 14108 - 07/08/2019
 Added new tables to support Short Calls handling
 Added new column verint_id to staging table
@@ -68,7 +69,7 @@ CREATE TABLE [EC].[Outlier_Coaching_Stage](
 	[Submitter_Email] [nvarchar](50) NULL,
 	[CSR_LANID] [nvarchar](30) NULL,
 	[CSR_EMPID] [nvarchar](20) NULL,
-	[CSR_Site] [nvarchar](30) NULL,
+	[CSR_Site] [nvarchar](60) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,
@@ -134,7 +135,7 @@ CREATE TABLE [EC].[Outlier_Coaching_Rejected](
 	[Submitter_Name] [nvarchar](30) NULL,
 	[Submitter_Email] [nvarchar](50) NULL,
 	[CSR_LANID] [nvarchar](30) NULL,
-	[CSR_Site] [nvarchar](30) NULL,
+	[CSR_Site] [nvarchar](60) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](3000) NULL,

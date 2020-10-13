@@ -1,9 +1,9 @@
 /*
-CCO_eCoaching_Quality_Other_Load_Tables_Create(05).sql
-
-Last Modified Date: 09/23/2019
+CCO_eCoaching_Quality_Other_Load_Tables_Create(06).sql
+Last Modified Date: 10/9/2020
 Last Modified By: Susmitha Palacherla
 
+Version 06: TFS 18833 -  Expand the site field size in feeds - 10/9/2020
 Version 05: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 04: Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 version 03: Updated to document changes for feed encryption TFS 7854.
@@ -54,18 +54,18 @@ CREATE TABLE [EC].[Quality_Other_Coaching_Stage](
 	[Submitter_Email] [nvarchar](50) NULL,
 	[EMP_ID] [nvarchar](10) NULL,
 	[EMP_LANID] [nvarchar](30) NULL,
-	[EMP_Site] [nvarchar](30) NULL,
+	[EMP_Site] [nvarchar](60) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](4000) NULL,
 	[FileName] [nvarchar](260) NULL,
-        [Reject_reason] [nvarchar](200) NULL,
+	[Reject_Reason] [nvarchar](200) NULL,
 	[Competency] [nvarchar](30) NULL,
 	[Note] [nvarchar](30) NULL,
-	[BingoType][nvarchar](30) NULL
+	[BingoType] [nvarchar](30) NULL
 ) ON [PRIMARY]
-
 GO
+
 
 
 
@@ -95,7 +95,7 @@ CREATE TABLE [EC].[Quality_Other_Coaching_Rejected](
 	[Submitter_Email] [nvarchar](50) NULL,
 	[EMP_ID] [nvarchar](10) NULL,
 	[EMP_LANID] [nvarchar](30) NULL,
-	[EMP_Site] [nvarchar](30) NULL,
+	[EMP_Site] [nvarchar](60) NULL,
 	[Program] [nvarchar](30) NULL,
 	[CoachReason_Current_Coaching_Initiatives] [nvarchar](20) NULL,
 	[TextDescription] [nvarchar](4000) NULL,

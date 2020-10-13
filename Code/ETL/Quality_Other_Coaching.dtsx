@@ -7,13 +7,13 @@
   DTS:CreatorName="VNGT\palasu"
   DTS:DTSID="{5935C644-1A96-420A-9122-46D5AD971041}"
   DTS:ExecutableType="SSIS.Package.3"
-  DTS:LastModifiedProductVersion="14.0.3026.27"
+  DTS:LastModifiedProductVersion="15.0.2000.68"
   DTS:LocaleID="1033"
   DTS:ObjectName="Quality_Other_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="432"
-  DTS:VersionGUID="{266DCE3C-3327-4EBF-B84A-86F873BDE893}">
+  DTS:VersionBuild="434"
+  DTS:VersionGUID="{6B23B69F-0A62-42F5-8751-D821AC957DE0}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -43,7 +43,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="numReportID"
-              DTS:DTSID="{1DCAC551-8951-4CC6-9969-3E92F304A72A}"
+              DTS:DTSID="{7DA46B08-096D-4E04-863A-DCB3DC4077E9}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -52,7 +52,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strReportCode"
-              DTS:DTSID="{2CE962C7-15E5-49CB-882B-2EE3742C02F7}"
+              DTS:DTSID="{6485E099-04A3-42EC-B0BF-8EFF108D11F0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -61,7 +61,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strFormType"
-              DTS:DTSID="{B0AB4C65-8677-4CD2-8A26-50C98E7AF9B6}"
+              DTS:DTSID="{41F3ADCB-6FDF-4735-A496-21949B2A25E9}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -70,7 +70,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strSource"
-              DTS:DTSID="{A7A49276-3176-4934-9D3C-717230D1FE6B}"
+              DTS:DTSID="{4170FA6B-2711-4E94-A701-947AEBC7B096}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -79,7 +79,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strFormStatus"
-              DTS:DTSID="{A9EDA0BA-CFEB-4CAA-A568-C542CC498E23}"
+              DTS:DTSID="{95E97F19-5746-4537-80F8-75D0299FF21A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -88,7 +88,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="EventDate"
-              DTS:DTSID="{135DF276-56C8-4DCD-8F7B-47B8EC905717}"
+              DTS:DTSID="{7AD4DD7C-CCD6-416D-A77E-909A37A1D460}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -97,7 +97,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="SubmittedDate"
-              DTS:DTSID="{F4C5D573-C356-4CB0-8944-A0E5235BF8EF}"
+              DTS:DTSID="{706ABD9A-F773-4B22-A217-2F4BE2903E80}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -106,7 +106,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="StartDate"
-              DTS:DTSID="{82642F4C-E50B-488B-B081-D561D014AEB8}"
+              DTS:DTSID="{8217CB7F-859F-419C-9E4D-2297CE121B5D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -115,7 +115,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strSubmitterName"
-              DTS:DTSID="{8D92191D-6C82-4577-8F58-984F4C3E4D3E}"
+              DTS:DTSID="{680E4675-6AA4-4A50-A8D1-53DC7BC42373}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -124,7 +124,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strSubmitterEmail"
-              DTS:DTSID="{1B9FE259-0B97-42D0-A6A6-03256944718C}"
+              DTS:DTSID="{0237AAB9-BF59-4838-8826-4CF9A8D4EFBB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -133,16 +133,16 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="empID"
-              DTS:DTSID="{732E6781-68F0-4D1A-A0AD-78C28D6294EB}"
+              DTS:DTSID="{E3F39534-411F-4BE0-886A-F1C5367F0F16}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="30"
+              DTS:MaximumWidth="60"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strCSRSite"
-              DTS:DTSID="{582A0FBC-FFA6-4FB6-AC56-F79EEAE502BD}"
+              DTS:DTSID="{D7263536-087E-4260-9B8A-3461B76014FC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -151,7 +151,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strCoachReason_ Current_Coaching_Initiatives"
-              DTS:DTSID="{0DFB68DC-25ED-46A8-B91A-3F2C07287BB4}"
+              DTS:DTSID="{DDAD51CF-6DF5-4AF9-B5FB-4301FEBFD2E7}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -160,7 +160,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="txtDescription"
-              DTS:DTSID="{D6C2CD8B-119F-4CF0-B621-E9DDDB6BD340}"
+              DTS:DTSID="{9BA26E37-C02C-4F89-AE60-FFE803E46CD7}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -169,7 +169,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strProgram"
-              DTS:DTSID="{17FC7861-EC20-400E-8760-F1C3AEFAAC35}"
+              DTS:DTSID="{420BF70A-0CF8-4D6B-9036-A6335DD69A8A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -178,7 +178,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Competency"
-              DTS:DTSID="{31F3935F-3D06-4E67-8D80-C1493ABA1891}"
+              DTS:DTSID="{3023BC97-9B71-4729-9359-EF9FDE051A2F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -187,7 +187,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Note"
-              DTS:DTSID="{377D2C86-7BC2-4D11-9F0C-522F957D9122}"
+              DTS:DTSID="{249F19B6-4D63-419C-83A9-74B0D39F3264}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -196,7 +196,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strBingoType"
-              DTS:DTSID="{2A320D73-FB5D-47E4-AEC5-439829F2FF72}"
+              DTS:DTSID="{202177B5-CDD3-4901-9C21-4D1C2E25F2C3}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -519,7 +519,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="numReportID"
-              DTS:DTSID="{A9B95F66-994E-4C85-B3AE-A14AA23969B8}"
+              DTS:DTSID="{37A8D702-D5D4-4539-BB1D-F0C43633EAFB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -528,7 +528,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strReportCode"
-              DTS:DTSID="{1B0022AD-E552-409D-981F-4166BFB9414D}"
+              DTS:DTSID="{4FC1B9BF-1C7F-4FF7-87E2-D44CE5B399E1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -537,7 +537,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strFormType"
-              DTS:DTSID="{465E412B-C27C-4C15-84C7-FD8062DC3260}"
+              DTS:DTSID="{D3C4A89A-6C8F-40E1-AB50-B379D4BCC6F5}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -546,7 +546,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strSource"
-              DTS:DTSID="{0C823A85-9B21-4881-9884-9A3B456ABE1C}"
+              DTS:DTSID="{9E045EB5-914A-4748-9071-A02B058FB2AA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -555,7 +555,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strFormStatus"
-              DTS:DTSID="{C31EE3E3-E9C6-4944-8397-EF6ECC0BC957}"
+              DTS:DTSID="{BADBB4D2-7DB0-4B95-B925-29170B830806}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -564,7 +564,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="EventDate"
-              DTS:DTSID="{36939D0B-2534-4218-95E2-B4C9140E758B}"
+              DTS:DTSID="{5C092F8D-BC91-418A-AF76-ACDB678D8BD3}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -573,7 +573,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="SubmittedDate"
-              DTS:DTSID="{397EE9B5-35FD-48EE-BD92-EBC9AB14EE29}"
+              DTS:DTSID="{09B1C532-F5DE-4F54-AF7A-72B0B2A50DCA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -582,7 +582,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="StartDate"
-              DTS:DTSID="{7103A143-7C30-465C-9BDC-FD80CA120EE3}"
+              DTS:DTSID="{42DB1C72-1273-436D-A06B-39EDB9C91EC0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -591,7 +591,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strSubmitterName"
-              DTS:DTSID="{01C4A766-B201-4327-BFF2-7A2E936ED7BF}"
+              DTS:DTSID="{A5334941-371E-4F3A-AA62-3CF5641E3D35}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -600,7 +600,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strSubmitterEmail"
-              DTS:DTSID="{B262CC6D-3C52-47B5-9789-43868DABBEEB}"
+              DTS:DTSID="{A92F32B7-1D3F-4FFF-AE69-0B590BD690F0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -609,16 +609,16 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strCSR"
-              DTS:DTSID="{E3662E9E-5650-4D14-A353-FD07E94A44BB}"
+              DTS:DTSID="{617280FF-03F6-4C75-A788-3A632AECF004}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="30"
+              DTS:MaximumWidth="60"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strCSRSite"
-              DTS:DTSID="{1F6319C6-ACA6-4238-B8F6-D3C26E0086AE}"
+              DTS:DTSID="{DA2169A0-31E6-4C74-AD6F-9484DEC72E3C}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -627,7 +627,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strCoachReason_ Current_Coaching_Initiatives"
-              DTS:DTSID="{D8706191-32D2-4B87-9C53-8D5950D46C3A}"
+              DTS:DTSID="{C2106621-1051-426E-912F-114D3899CE4E}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -636,7 +636,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="txtDescription"
-              DTS:DTSID="{0537F2EE-4F20-4A27-A19D-D4FB9183DF8C}"
+              DTS:DTSID="{6F65A425-758B-445D-8A5E-1A1EE84BE005}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -645,7 +645,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strProgram"
-              DTS:DTSID="{143ABBF8-65AF-4976-8D61-36640BF7F463}"
+              DTS:DTSID="{11C30767-C4A9-4003-BBD5-A261A2292F74}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -860,35 +860,14 @@
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_beffbe422c244276a2daecbda870e1c4")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_beffbe422c244276a2daecbda870e1c4")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -1177,14 +1156,35 @@ namespace ST_beffbe422c244276a2daecbda870e1c4.Properties {
     }
 }]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_beffbe422c244276a2daecbda870e1c4")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_beffbe422c244276a2daecbda870e1c4")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -1538,7 +1538,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           refId="Package\Foreach Bingo File\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strCSRSite]"
                           cachedCodepage="1252"
                           cachedDataType="str"
-                          cachedLength="30"
+                          cachedLength="60"
                           cachedName="strCSRSite"
                           lineageId="Package\Foreach Bingo File\Load  Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[strCSRSite]" />
                         <inputColumn
@@ -1812,7 +1812,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          length="30"
+                          length="60"
                           lineageId="Package\Foreach Bingo File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of strCSRSite]"
                           name="Copy of strCSRSite"
                           truncationRowDisposition="FailComponent">
@@ -2282,7 +2282,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Foreach Bingo File\Load  Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[strCSRSite]"
-                          length="30"
+                          length="60"
                           lineageId="Package\Foreach Bingo File\Load  Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[strCSRSite]"
                           name="strCSRSite"
                           truncationRowDisposition="FailComponent">
@@ -2523,7 +2523,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           refId="Package\Foreach Bingo File\Load  Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[strCSRSite]"
                           codePage="1252"
                           dataType="str"
-                          length="30"
+                          length="60"
                           name="strCSRSite" />
                         <externalMetadataColumn
                           refId="Package\Foreach Bingo File\Load  Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[strCoachReason_ Current_Coaching_Initiatives]"
@@ -2746,7 +2746,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <inputColumn
                           refId="Package\Foreach Bingo File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of strCSRSite]"
                           cachedDataType="wstr"
-                          cachedLength="30"
+                          cachedLength="60"
                           cachedName="Copy of strCSRSite"
                           externalMetadataColumnId="Package\Foreach Bingo File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EMP_Site]"
                           lineageId="Package\Foreach Bingo File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of strCSRSite]" />
@@ -2873,7 +2873,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <externalMetadataColumn
                           refId="Package\Foreach Bingo File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EMP_Site]"
                           dataType="wstr"
-                          length="30"
+                          length="60"
                           name="EMP_Site" />
                         <externalMetadataColumn
                           refId="Package\Foreach Bingo File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Program]"
@@ -4388,7 +4388,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <externalMetadataColumn
                           refId="Package\Foreach CTC File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EMP_Site]"
                           dataType="wstr"
-                          length="30"
+                          length="60"
                           name="EMP_Site" />
                         <externalMetadataColumn
                           refId="Package\Foreach CTC File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CoachReason_Current_Coaching_Initiatives]"
@@ -4786,35 +4786,14 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -5169,14 +5148,35 @@ namespace ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties {
     }
 }]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="ST_a9ab4b222629425a8a25dce791db949f.csproj"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?><Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><PropertyGroup><ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration><Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform><ProductVersion>8.0.30703</ProductVersion><SchemaVersion>2.0</SchemaVersion><ProjectGuid>{02dfe1d3-f9fa-4129-9ebc-870917e35324}</ProjectGuid><OutputType>Library</OutputType><AppDesignerFolder>Properties</AppDesignerFolder><RootNamespace>ST_afb28a42781742a8aa8fe337a9aeeb2c</RootNamespace><AssemblyName>ST_a9ab4b222629425a8a25dce791db949f</AssemblyName><TargetFrameworkVersion>v4.0</TargetFrameworkVersion><FileAlignment>512</FileAlignment><ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Debug' "><DebugSymbols>true</DebugSymbols><DebugType>full</DebugType><Optimize>false</Optimize><OutputPath>.\bin\Debug\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>DEBUG;TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Release' "><DebugSymbols>false</DebugSymbols><Optimize>true</Optimize><OutputPath>.\bin\Release\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><ItemGroup><Reference Include="System" /><Reference Include="System.Data" /><Reference Include="System.Windows.Forms" /><Reference Include="System.Xml" /><Reference Include="Microsoft.SqlServer.ManagedDTS, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" /><Reference Include="Microsoft.SqlServer.ScriptTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" /></ItemGroup><ItemGroup><AppDesigner Include="Properties\" /><Compile Include="Properties\AssemblyInfo.cs"><SubType>Code</SubType></Compile><EmbeddedResource Include="Properties\Resources.resx"><Generator>ResXFileCodeGenerator</Generator><LastGenOutput>Resources.Designer.cs</LastGenOutput></EmbeddedResource><Compile Include="Properties\Resources.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Resources.resx</DependentUpon></Compile><None Include="Properties\Settings.settings"><Generator>SettingsSingleFileGenerator</Generator><LastGenOutput>Settings.Designer.cs</LastGenOutput></None><Compile Include="Properties\Settings.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Settings.settings</DependentUpon></Compile><Compile Include="ScriptMain.cs"><SubType>Code</SubType></Compile></ItemGroup><!-- Include the build rules for a C# project.--><Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" /><ProjectExtensions><VisualStudio><FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}"><ProjectProperties HostName="ScriptTask" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" DebugInfoCommandLine="" DebugInfoWorkingDir="" IconImageList="" /><Host Name="ScriptTask" GeneratedNamespace="$safeprojectname" IconIndex=""></Host><ProjectClient><HostIdentifier>SSIS_ST110</HostIdentifier></ProjectClient></FlavorProperties></VisualStudio></ProjectExtensions></Project>]]></ProjectItem>
@@ -5479,7 +5479,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           refId="Package\Foreach Non CTC and QNB File\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strCSRSite]"
                           cachedCodepage="1252"
                           cachedDataType="str"
-                          cachedLength="30"
+                          cachedLength="60"
                           cachedName="strCSRSite"
                           lineageId="Package\Foreach Non CTC and QNB File\Load  Staging Table\OTH_File.Outputs[Flat File Source Output].Columns[strCSRSite]" />
                         <inputColumn
@@ -5747,7 +5747,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          length="30"
+                          length="60"
                           lineageId="Package\Foreach Non CTC and QNB File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of strCSRSite]"
                           name="Copy of strCSRSite"
                           truncationRowDisposition="FailComponent">
@@ -6003,7 +6003,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <inputColumn
                           refId="Package\Foreach Non CTC and QNB File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of strCSRSite]"
                           cachedDataType="wstr"
-                          cachedLength="30"
+                          cachedLength="60"
                           cachedName="Copy of strCSRSite"
                           externalMetadataColumnId="Package\Foreach Non CTC and QNB File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EMP_Site]"
                           lineageId="Package\Foreach Non CTC and QNB File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of strCSRSite]" />
@@ -6102,7 +6102,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <externalMetadataColumn
                           refId="Package\Foreach Non CTC and QNB File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EMP_Site]"
                           dataType="wstr"
-                          length="30"
+                          length="60"
                           name="EMP_Site" />
                         <externalMetadataColumn
                           refId="Package\Foreach Non CTC and QNB File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Program]"
@@ -6473,7 +6473,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Foreach Non CTC and QNB File\Load  Staging Table\OTH_File.Outputs[Flat File Source Output].ExternalColumns[strCSRSite]"
-                          length="30"
+                          length="60"
                           lineageId="Package\Foreach Non CTC and QNB File\Load  Staging Table\OTH_File.Outputs[Flat File Source Output].Columns[strCSRSite]"
                           name="strCSRSite"
                           truncationRowDisposition="FailComponent">
@@ -6632,7 +6632,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           refId="Package\Foreach Non CTC and QNB File\Load  Staging Table\OTH_File.Outputs[Flat File Source Output].ExternalColumns[strCSRSite]"
                           codePage="1252"
                           dataType="str"
-                          length="30"
+                          length="60"
                           name="strCSRSite" />
                         <externalMetadataColumn
                           refId="Package\Foreach Non CTC and QNB File\Load  Staging Table\OTH_File.Outputs[Flat File Source Output].ExternalColumns[strCoachReason_ Current_Coaching_Initiatives]"
@@ -7041,11 +7041,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="64" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="158.4,41.6"
+          Size="158,42"
           Id="Package\Encrypt Failed Files\File System Task"
           TopLeft="32.7492123156178,6.78693091492619" />
         <NodeLayout
-          Size="146.4,41.6"
+          Size="146,42"
           Id="Package\Encrypt Failed Files\Pause 10 secs"
           TopLeft="35.847624617207,75.5764743633338" />
         <EdgeLayout
@@ -7073,12 +7073,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="196.8,178.4"
-          Size="196.8,221.6"
+          PanelSize="197,179"
+          Size="197,222"
           Id="Package\Encrypt Failed Files"
           TopLeft="936.80000858307,196.141179490667" />
         <NodeLayout
-          Size="158.4,41.6"
+          Size="158,42"
           Id="Package\Foreach Bingo File\File System Task"
           TopLeft="7.50000000000006,523.1" />
         <NodeLayout
@@ -7086,19 +7086,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Id="Package\Foreach Bingo File\Load  Staging Table"
           TopLeft="14.4714285811599,109.5" />
         <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Foreach Bingo File\Load Coaching_Log"
           TopLeft="14.7,315.1" />
         <NodeLayout
-          Size="168,41.6"
+          Size="168,42"
           Id="Package\Foreach Bingo File\Load File List table"
           TopLeft="12.7000000000001,419.1" />
         <NodeLayout
-          Size="168.8,44"
+          Size="169,44"
           Id="Package\Foreach Bingo File\Truncate Staging Table"
           TopLeft="5.5,6.1117647144622" />
         <NodeLayout
-          Size="164,41.6"
+          Size="164,42"
           Id="Package\Foreach Bingo File\Update staging table and reject records"
           TopLeft="7.90000000000003,213.5" />
         <EdgeLayout
@@ -7240,12 +7240,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43.924528301886795"
           IsExpanded="True"
-          PanelSize="192,622.4"
-          Size="192,666.4"
+          PanelSize="192,622"
+          Size="192,666"
           Id="Package\Foreach Bingo File"
-          TopLeft="432.571430965345,169.976469695939" />
+          TopLeft="453.571430965345,163.976469695939" />
         <NodeLayout
-          Size="164.8,44"
+          Size="165,44"
           Id="Package\Foreach CTC File\File System Task"
           TopLeft="9.10000000000005,520.7" />
         <NodeLayout
@@ -7253,19 +7253,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Id="Package\Foreach CTC File\Load  Staging Table"
           TopLeft="15.5,109.5" />
         <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Foreach CTC File\Load Coaching_Log"
           TopLeft="5.50000000000004,315.1" />
         <NodeLayout
-          Size="154.4,44"
+          Size="154,44"
           Id="Package\Foreach CTC File\Load File List table"
           TopLeft="14.3000000000001,416.7" />
         <NodeLayout
-          Size="168.8,44"
+          Size="169,44"
           Id="Package\Foreach CTC File\Truncate Staging Table"
           TopLeft="7.09999999999999,5.5" />
         <NodeLayout
-          Size="164,41.6"
+          Size="164,42"
           Id="Package\Foreach CTC File\Update staging table and reject records"
           TopLeft="9.50000000000003,213.5" />
         <EdgeLayout
@@ -7383,20 +7383,20 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43.924528301886795"
           IsExpanded="True"
-          PanelSize="183.2,620"
-          Size="183.2,664"
+          PanelSize="183,620"
+          Size="183,664"
           Id="Package\Foreach CTC File"
-          TopLeft="225.414550779633,163.585240416923" />
+          TopLeft="234.414550779633,165.585240416923" />
         <NodeLayout
-          Size="188.8,41.6"
+          Size="189,42"
           Id="Package\Foreach Loop Container\Backup Encrypted Files"
           TopLeft="13.4476195763567,151.079741488746" />
         <NodeLayout
-          Size="158.4,41.6"
+          Size="158,42"
           Id="Package\Foreach Loop Container\File System Task"
           TopLeft="20.1142863565561,7.85882444744708" />
         <NodeLayout
-          Size="132,41.6"
+          Size="132,42"
           Id="Package\Foreach Loop Container\Pause 10 secs"
           TopLeft="31.8603183026216,77.6000018961289" />
         <EdgeLayout
@@ -7458,12 +7458,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43.2"
           IsExpanded="True"
-          PanelSize="216,247.2"
-          Size="216,290.4"
+          PanelSize="216,247"
+          Size="216,290"
           Id="Package\Foreach Loop Container"
-          TopLeft="27.4285718956772,166.917648894894" />
+          TopLeft="4.42857189567721,166.917648894894" />
         <NodeLayout
-          Size="158.4,41.6"
+          Size="158,42"
           Id="Package\Foreach Non CTC and QNB File\File System Task"
           TopLeft="7.50000000000006,523.1" />
         <NodeLayout
@@ -7471,19 +7471,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Id="Package\Foreach Non CTC and QNB File\Load  Staging Table"
           TopLeft="13.9,109.5" />
         <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Foreach Non CTC and QNB File\Load Coaching_Log"
           TopLeft="14.7,315.1" />
         <NodeLayout
-          Size="154.4,44"
+          Size="154,44"
           Id="Package\Foreach Non CTC and QNB File\Load File List table"
           TopLeft="12.7000000000001,419.1" />
         <NodeLayout
-          Size="168.8,44"
+          Size="169,44"
           Id="Package\Foreach Non CTC and QNB File\Truncate Staging Table"
           TopLeft="5.5,6.1117647144622" />
         <NodeLayout
-          Size="164,41.6"
+          Size="164,42"
           Id="Package\Foreach Non CTC and QNB File\Update staging table and reject records"
           TopLeft="7.90000000000003,213.5" />
         <EdgeLayout
@@ -7625,36 +7625,36 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43.924528301886795"
           IsExpanded="True"
-          PanelSize="250.4,622.4"
-          Size="250.4,666.4"
+          PanelSize="250,622"
+          Size="250,666"
           Id="Package\Foreach Non CTC and QNB File"
-          TopLeft="662.742864451117,175.758825906007" />
+          TopLeft="669.742864451117,167.758825906007" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="135.428571895677,166.917648894894">
+          TopLeft="112.428571895677,166.917648894894">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="181.585978883956,-3.332408477971"
+              EndConnector="184.319312217289,-1.332408477971"
               Start="0,0"
-              End="181.585978883956,-10.832408477971">
+              End="184.319312217289,-8.832408477971">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,-21.832408477971" />
+                    End="0,-19.832408477971" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,-21.832408477971"
-                    Point2="0,-25.832408477971"
-                    Point3="4,-25.832408477971" />
+                    Point1="0,-19.832408477971"
+                    Point2="0,-23.832408477971"
+                    Point3="4,-23.832408477971" />
                   <mssgle:LineSegment
-                    End="177.585978883956,-25.832408477971" />
+                    End="180.319312217289,-23.832408477971" />
                   <mssgle:CubicBezierSegment
-                    Point1="177.585978883956,-25.832408477971"
-                    Point2="181.585978883956,-25.832408477971"
-                    Point3="181.585978883956,-21.832408477971" />
+                    Point1="180.319312217289,-23.832408477971"
+                    Point2="184.319312217289,-23.832408477971"
+                    Point3="184.319312217289,-19.832408477971" />
                   <mssgle:LineSegment
-                    End="181.585978883956,-10.832408477971" />
+                    End="184.319312217289,-8.832408477971" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -7665,85 +7665,79 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="408.614550779633,499.380855056431">
+          TopLeft="417.414550779633,497.280855056431">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="23.956880185712,0"
+              EndConnector="36.1568801857119,0"
               Start="0,0"
-              End="16.456880185712,0">
+              End="28.6568801857119,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="16.456880185712,0" />
+                    End="28.6568801857119,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-17.076013032144,5,50.60890625,11.609375"
+              BoundingBox="-10.9760130321441,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="624.571430965345,506.067647800973">
+          TopLeft="645.571430965345,498.867647800973">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="38.1714334857721,0"
+              EndConnector="24.1714334857721,0"
               Start="0,0"
-              End="30.6714334857721,0">
+              End="16.6714334857721,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="30.6714334857721,0" />
+                    End="16.6714334857721,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-9.96873638211394,5,50.60890625,11.609375"
+              BoundingBox="-16.9687363821139,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="913.142864451117,508.958825906007">
+          TopLeft="919.742864451117,500.758825906007">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="23.6571441319526,-202.01764641534"
+              EndConnector="115.557144131953,-82.61764641534"
               Start="0,0"
-              End="16.1571441319526,-202.01764641534">
+              End="115.557144131953,-75.11764641534">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="7.82857206597629,0" />
+                    End="111.557144131953,0" />
                   <mssgle:CubicBezierSegment
-                    Point1="7.82857206597629,0"
-                    Point2="11.8285720659763,0"
-                    Point3="11.8285720659763,-4" />
+                    Point1="111.557144131953,0"
+                    Point2="115.557144131953,0"
+                    Point3="115.557144131953,-4" />
                   <mssgle:LineSegment
-                    End="11.8285720659763,-198.01764641534" />
-                  <mssgle:CubicBezierSegment
-                    Point1="11.8285720659763,-198.01764641534"
-                    Point2="11.8285720659763,-202.01764641534"
-                    Point3="15.8285720659763,-202.01764641534" />
-                  <mssgle:LineSegment
-                    End="16.1571441319526,-202.01764641534" />
+                    End="115.557144131953,-75.11764641534" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-13.4758810590237,1,50.60890625,11.609375"
+              BoundingBox="90.2526910069529,1,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -7768,19 +7762,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="152,41.6"
-          Id="Package\Foreach Bingo File\Load  Staging Table\Flat File Source"
-          TopLeft="33.1428577072766,16.5176472904773" />
-        <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Foreach Bingo File\Load  Staging Table\OLE DB Destination"
           TopLeft="33.1428577072767,227.576473779909" />
         <NodeLayout
-          Size="156.8,41.6"
+          Size="152,42"
+          Id="Package\Foreach Bingo File\Load  Staging Table\Flat File Source"
+          TopLeft="33.1428577072766,16.5176472904773" />
+        <NodeLayout
+          Size="157,42"
           Id="Package\Foreach Bingo File\Load  Staging Table\Data Conversion"
           TopLeft="36.0000006130764,83.2000011668486" />
         <NodeLayout
-          Size="131.2,41.6"
+          Size="131,42"
           Id="Package\Foreach Bingo File\Load  Staging Table\Row Count"
           TopLeft="52.0000008855547,161.505884618" />
         <EdgeLayout
@@ -7871,47 +7865,25 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="172,41.6"
-          Id="Package\Foreach CTC File\Load  Staging Table\OLE DB Destination"
-          TopLeft="4.70000000000003,411.9" />
-        <NodeLayout
-          Size="131.2,41.6"
+          Size="131,42"
           Id="Package\Foreach CTC File\Load  Staging Table\Row Count"
           TopLeft="25.9,310.3" />
         <NodeLayout
-          Size="156.8,41.6"
+          Size="172,42"
+          Id="Package\Foreach CTC File\Load  Staging Table\OLE DB Destination"
+          TopLeft="4.70000000000003,411.9" />
+        <NodeLayout
+          Size="157,42"
           Id="Package\Foreach CTC File\Load  Staging Table\Data Conversion"
           TopLeft="13.1,208.7" />
         <NodeLayout
-          Size="154.4,41.6"
+          Size="154,42"
           Id="Package\Foreach CTC File\Load  Staging Table\Derived Column"
           TopLeft="14.3,107.1" />
         <NodeLayout
-          Size="120.8,41.6"
+          Size="121,42"
           Id="Package\Foreach CTC File\Load  Staging Table\CTC_File"
           TopLeft="31.1,5.49999999999995" />
-        <EdgeLayout
-          Id="Package\Foreach CTC File\Load  Staging Table.Paths[Row Count Output 1]"
-          TopLeft="91.1,351.9">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,59.9999999999999"
-              Start="0,0"
-              End="0,52.4999999999999">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.4999999999999" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
         <EdgeLayout
           Id="Package\Foreach CTC File\Load  Staging Table.Paths[Flat File Source Output]"
           TopLeft="91.5,47.1">
@@ -7978,6 +7950,28 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach CTC File\Load  Staging Table.Paths[Row Count Output 1]"
+          TopLeft="91.1,351.9">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,59.9999999999999"
+              Start="0,0"
+              End="0,52.4999999999999">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
@@ -8000,43 +7994,21 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Foreach Non CTC and QNB File\Load  Staging Table\OLE DB Destination"
           TopLeft="5.50000000000003,310.3" />
         <NodeLayout
-          Size="123.2,41.6"
+          Size="123,42"
           Id="Package\Foreach Non CTC and QNB File\Load  Staging Table\OTH_File"
           TopLeft="21.5,5.49999999999995" />
         <NodeLayout
-          Size="156.8,41.6"
+          Size="157,42"
           Id="Package\Foreach Non CTC and QNB File\Load  Staging Table\Data Conversion"
           TopLeft="13.1,107.1" />
         <NodeLayout
-          Size="131.2,41.6"
+          Size="131,42"
           Id="Package\Foreach Non CTC and QNB File\Load  Staging Table\Row Count"
           TopLeft="25.9,208.7" />
-        <EdgeLayout
-          Id="Package\Foreach Non CTC and QNB File\Load  Staging Table.Paths[Row Count Output 1]"
-          TopLeft="91.5,250.3">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,60"
-              Start="0,0"
-              End="0,52.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
         <EdgeLayout
           Id="Package\Foreach Non CTC and QNB File\Load  Staging Table.Paths[Flat File Source Output]"
           TopLeft="83.1,47.1">
@@ -8085,6 +8057,28 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                   Capacity="5">
                   <mssgle:LineSegment
                     End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach Non CTC and QNB File\Load  Staging Table.Paths[Row Count Output 1]"
+          TopLeft="91.5,250.3">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

@@ -1,0 +1,54 @@
+/* 
+TFS 18833 - Expand the site field size in feeds
+CCO_eCoaching_Log_DB_RunOnce_TFS_18833_Site_Field_Sizes.txt
+
+Run one statement at a time
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+*/
+
+
+-- Run with nothing selected.
+
+--*****************
+
+ALTER TABLE EC.Generic_Coaching_Stage
+ALTER COLUMN CSR_Site nvarchar(60);
+GO
+
+ALTER TABLE EC.Generic_Coaching_Rejected
+ALTER COLUMN CSR_Site nvarchar(60);
+GO
+
+ALTER TABLE EC.Outlier_Coaching_Stage
+ALTER COLUMN CSR_Site nvarchar(60);
+GO
+
+ALTER TABLE EC.Outlier_Coaching_Rejected
+ALTER COLUMN CSR_Site nvarchar(60);
+GO
+
+
+ALTER TABLE EC.Quality_Other_Coaching_Stage
+ALTER COLUMN Emp_Site nvarchar(60);
+GO
+
+ALTER TABLE EC.Quality_Other_Coaching_Rejected
+ALTER COLUMN Emp_Site nvarchar(60);
+GO
+
+
+
+ALTER TABLE EC.Training_Coaching_Stage
+ALTER COLUMN CSR_Site nvarchar(60);
+GO
+
+ALTER TABLE EC.Training_Coaching_Rejected
+ALTER COLUMN CSR_Site nvarchar(60);
+GO
+
+--*****************

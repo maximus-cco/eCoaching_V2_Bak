@@ -7,13 +7,13 @@
   DTS:CreatorName="VNGT\palasu"
   DTS:DTSID="{5935C644-1A96-420A-9122-46D5AD971041}"
   DTS:ExecutableType="SSIS.Package.3"
-  DTS:LastModifiedProductVersion="13.0.2165.0"
+  DTS:LastModifiedProductVersion="15.0.2000.68"
   DTS:LocaleID="1033"
   DTS:ObjectName="Training_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="345"
-  DTS:VersionGUID="{9479BB72-6983-43C5-A48F-8C6ACAA56AEC}">
+  DTS:VersionBuild="347"
+  DTS:VersionGUID="{5F9D5F31-A0B8-4CFE-9C6A-8AF27B8AA217}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -24,7 +24,7 @@
       DTS:ObjectName="destnationdb">
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDevEncrypt;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS-Verint_Coaching-{5D10059B-A5CC-4046-89F4-274018AD660B}destnationdb;" />
+          DTS:ConnectionString="Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Application Name=SSIS-Verint_Coaching-{5D10059B-A5CC-4046-89F4-274018AD660B}destnationdb;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -74,7 +74,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="numReportID"
-              DTS:DTSID="{C57361C2-BE79-496F-AB03-17CB41EE889A}"
+              DTS:DTSID="{40487891-FAF8-4BF4-8E94-4F0635764D7A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -83,7 +83,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strReportCode"
-              DTS:DTSID="{747C3912-B452-46E8-B9A1-C4B90159BCAE}"
+              DTS:DTSID="{87E1C4D2-AE71-4A17-B3E0-6B8CAED72C03}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -92,7 +92,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strFormType"
-              DTS:DTSID="{9ACA548D-1B81-4A14-A79E-190EDB60CBDC}"
+              DTS:DTSID="{5CCE8E7C-5C56-46AC-8022-2C909687B683}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -101,7 +101,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strSource"
-              DTS:DTSID="{682CCC82-C149-4DA3-8BD1-97A4304E6FE4}"
+              DTS:DTSID="{6AA94616-EDBC-4812-ABD3-B0C0A0E567F5}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -110,7 +110,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strFormStatus"
-              DTS:DTSID="{DE73EEB7-AC54-406A-959B-3A2F28DD984B}"
+              DTS:DTSID="{BE9E1B2B-BF86-4CD3-8B6B-5EAAD18D8337}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -119,7 +119,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="EventDate"
-              DTS:DTSID="{17C56C2F-5D21-455C-B054-7E9DA88018EE}"
+              DTS:DTSID="{A4F4F69F-9AE0-455F-B0E9-60048FDEC174}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -128,7 +128,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="SubmittedDate"
-              DTS:DTSID="{0B89C266-99C9-4355-B291-81A2E9DCB232}"
+              DTS:DTSID="{9FE21CB8-98A0-45F0-B72A-C8263012C182}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -137,7 +137,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="StartDate"
-              DTS:DTSID="{D63D678C-9EB3-41F4-AE76-9634572723B9}"
+              DTS:DTSID="{7A75C155-8C99-4716-A847-085E82FA16F2}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -146,7 +146,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strSubmitterName"
-              DTS:DTSID="{DBF8247C-DB8B-4C9F-BE63-3FE206A50CA0}"
+              DTS:DTSID="{611130F3-C3D8-4A5C-8995-DA326DDE9C63}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -155,7 +155,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strSubmitterEmail"
-              DTS:DTSID="{38C9A2BA-741D-496E-AC59-3D30F046D556}"
+              DTS:DTSID="{17455C27-0A09-43FF-853E-9C96B12F4C87}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -164,25 +164,25 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strCSR"
-              DTS:DTSID="{8D049075-9C87-4546-BD50-9B0FCC201746}"
+              DTS:DTSID="{4E555750-E8CB-4D59-8B17-03C0496FB50D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="50"
+              DTS:MaximumWidth="60"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strCSRSite"
-              DTS:DTSID="{7D9B9661-F867-4768-9104-D870A0E02E3E}"
+              DTS:DTSID="{D727BD8C-345A-4F97-9E73-FD7C2496CA9B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="50"
+              DTS:MaximumWidth="20"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strCoachReason_ Current_Coaching_Initiatives"
-              DTS:DTSID="{F7CE5BC7-551B-4BA4-8EC4-1C4D7B0780E6}"
+              DTS:DTSID="{F4D413A4-0DA2-4DE5-82DD-33E057786572}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -191,7 +191,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="txtDescription"
-              DTS:DTSID="{8672D43B-8A80-4778-8EB6-83CF214D1193}"
+              DTS:DTSID="{B5D63AF2-C5E2-4608-B25C-CB70D684C223}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -200,7 +200,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="strProgram"
-              DTS:DTSID="{CE321C95-A694-4672-9CB9-EED78EB1A965}"
+              DTS:DTSID="{3E07189F-878B-4D39-A7D1-35F66E361BAD}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -412,35 +412,14 @@
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_363f7d3d5ad14a1b9546d8e43cfb70cd")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_363f7d3d5ad14a1b9546d8e43cfb70cd")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -819,14 +798,35 @@ namespace ST_363f7d3d5ad14a1b9546d8e43cfb70cd.Properties {
     }
 }]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_363f7d3d5ad14a1b9546d8e43cfb70cd")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_363f7d3d5ad14a1b9546d8e43cfb70cd")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -1100,35 +1100,14 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_8c86485b1a8e4e3d89396c1f3ab1d4fe")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_8c86485b1a8e4e3d89396c1f3ab1d4fe")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -1482,14 +1461,35 @@ namespace ST_8c86485b1a8e4e3d89396c1f3ab1d4fe.Properties {
     }
 }]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_8c86485b1a8e4e3d89396c1f3ab1d4fe")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_8c86485b1a8e4e3d89396c1f3ab1d4fe")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="ST_8c86485b1a8e4e3d89396c1f3ab1d4fe.csproj"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -1805,14 +1805,14 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           refId="Package\Load each Training File\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strFormType]"
                           cachedCodepage="1252"
                           cachedDataType="str"
-                          cachedLength="50"
+                          cachedLength="20"
                           cachedName="strFormType"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strFormType]" />
                         <inputColumn
                           refId="Package\Load each Training File\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strFormStatus]"
                           cachedCodepage="1252"
                           cachedDataType="str"
-                          cachedLength="50"
+                          cachedLength="30"
                           cachedName="strFormStatus"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strFormStatus]" />
                         <inputColumn
@@ -1840,7 +1840,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           refId="Package\Load each Training File\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strSubmitterName]"
                           cachedCodepage="1252"
                           cachedDataType="str"
-                          cachedLength="50"
+                          cachedLength="30"
                           cachedName="strSubmitterName"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strSubmitterName]" />
                         <inputColumn
@@ -1854,21 +1854,21 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           refId="Package\Load each Training File\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strCSR]"
                           cachedCodepage="1252"
                           cachedDataType="str"
-                          cachedLength="50"
+                          cachedLength="10"
                           cachedName="strCSR"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strCSR]" />
                         <inputColumn
                           refId="Package\Load each Training File\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strCSRSite]"
                           cachedCodepage="1252"
                           cachedDataType="str"
-                          cachedLength="50"
+                          cachedLength="60"
                           cachedName="strCSRSite"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strCSRSite]" />
                         <inputColumn
                           refId="Package\Load each Training File\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strCoachReason_ Current_Coaching_Initiatives]"
                           cachedCodepage="1252"
                           cachedDataType="str"
-                          cachedLength="50"
+                          cachedLength="20"
                           cachedName="strCoachReason_ Current_Coaching_Initiatives"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strCoachReason_ Current_Coaching_Initiatives]" />
                         <inputColumn
@@ -2093,7 +2093,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          length="20"
+                          length="60"
                           lineageId="Package\Load each Training File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCSRSite]"
                           name="strCSRSite"
                           truncationRowDisposition="FailComponent">
@@ -2370,7 +2370,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           refId="Package\Load each Training File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[numReportID]"
                           cachedCodepage="1252"
                           cachedDataType="str"
-                          cachedLength="50"
+                          cachedLength="20"
                           cachedName="numReportID"
                           externalMetadataColumnId="Package\Load each Training File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Report_ID]"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[numReportID]" />
@@ -2430,7 +2430,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <inputColumn
                           refId="Package\Load each Training File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strCSRSite]"
                           cachedDataType="wstr"
-                          cachedLength="20"
+                          cachedLength="60"
                           cachedName="strCSRSite"
                           externalMetadataColumnId="Package\Load each Training File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CSR_Site]"
                           lineageId="Package\Load each Training File\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCSRSite]" />
@@ -2538,7 +2538,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                         <externalMetadataColumn
                           refId="Package\Load each Training File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CSR_Site]"
                           dataType="wstr"
-                          length="20"
+                          length="60"
                           name="CSR_Site" />
                         <externalMetadataColumn
                           refId="Package\Load each Training File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[TextDescription]"
@@ -2566,10 +2566,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           length="30"
                           name="Program" />
                         <externalMetadataColumn
-                          refId="Package\Load each Training File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Reject_reason]"
+                          refId="Package\Load each Training File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Reject_Reason]"
                           dataType="wstr"
                           length="200"
-                          name="Reject_reason" />
+                          name="Reject_Reason" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -2665,7 +2665,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[numReportID]"
-                          length="50"
+                          length="20"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[numReportID]"
                           name="numReportID"
                           truncationRowDisposition="FailComponent">
@@ -2709,7 +2709,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[strFormType]"
-                          length="50"
+                          length="20"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strFormType]"
                           name="strFormType"
                           truncationRowDisposition="FailComponent">
@@ -2731,7 +2731,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[strFormStatus]"
-                          length="50"
+                          length="30"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strFormStatus]"
                           name="strFormStatus"
                           truncationRowDisposition="FailComponent">
@@ -2819,7 +2819,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[strSubmitterName]"
-                          length="50"
+                          length="30"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strSubmitterName]"
                           name="strSubmitterName"
                           truncationRowDisposition="FailComponent">
@@ -2863,7 +2863,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[strCSR]"
-                          length="50"
+                          length="10"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strCSR]"
                           name="strCSR"
                           truncationRowDisposition="FailComponent">
@@ -2885,7 +2885,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[strCSRSite]"
-                          length="50"
+                          length="60"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strCSRSite]"
                           name="strCSRSite"
                           truncationRowDisposition="FailComponent">
@@ -2907,7 +2907,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[strCoachReason_ Current_Coaching_Initiatives]"
-                          length="50"
+                          length="20"
                           lineageId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].Columns[strCoachReason_ Current_Coaching_Initiatives]"
                           name="strCoachReason_ Current_Coaching_Initiatives"
                           truncationRowDisposition="FailComponent">
@@ -3060,13 +3060,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           refId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[strCSRSite]"
                           codePage="1252"
                           dataType="str"
-                          length="50"
+                          length="60"
                           name="strCSRSite" />
                         <externalMetadataColumn
                           refId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[strCoachReason_ Current_Coaching_Initiatives]"
                           codePage="1252"
                           dataType="str"
-                          length="50"
+                          length="20"
                           name="strCoachReason_ Current_Coaching_Initiatives" />
                         <externalMetadataColumn
                           refId="Package\Load each Training File\Load  Staging Table\Training_File.Outputs[Flat File Source Output].ExternalColumns[txtDescription]"
@@ -3433,15 +3433,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="129.6,50.4"
+          Size="130,50"
           Id="Package\Decrypt and Backup Files\Backup Encrypted Files"
           TopLeft="27.0857199785663,148.000002479553" />
         <NodeLayout
-          Size="129.6,41.6"
+          Size="130,42"
           Id="Package\Decrypt and Backup Files\Decrypt Files"
           TopLeft="28.1142915336456,12.8941197576819" />
         <NodeLayout
-          Size="146.4,41.6"
+          Size="146,42"
           Id="Package\Decrypt and Backup Files\Pause 10 secs"
           TopLeft="23.2000014986311,80.9411784696744" />
         <EdgeLayout
@@ -3491,16 +3491,16 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="198.4,240.8"
-          Size="198.4,284"
+          PanelSize="198,241"
+          Size="198,284"
           Id="Package\Decrypt and Backup Files"
           TopLeft="64.9523820585129,134.249021175081" />
         <NodeLayout
-          Size="158.4,41.6"
+          Size="158,42"
           Id="Package\Encrypt failed files\File System Task"
           TopLeft="20.4952394933117,12.4392191668011" />
         <NodeLayout
-          Size="146.4,41.6"
+          Size="146,42"
           Id="Package\Encrypt failed files\Pause 10 secs"
           TopLeft="26.742858660951,80.9411783238183" />
         <EdgeLayout
@@ -3528,12 +3528,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="204.8,144.8"
-          Size="204.8,188"
+          PanelSize="205,145"
+          Size="205,188"
           Id="Package\Encrypt failed files"
           TopLeft="63.6190487024735,433.36470823893" />
         <NodeLayout
-          Size="164.8,44"
+          Size="165,44"
           Id="Package\Load each Training File\File System Task"
           TopLeft="80.5476203256725,350.800217385407" />
         <NodeLayout
@@ -3541,19 +3541,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Id="Package\Load each Training File\Load  Staging Table"
           TopLeft="51.4339622641509,76.433962264151" />
         <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Load each Training File\Load Coaching_Log"
           TopLeft="84.3342323411553,218.456600273039" />
         <NodeLayout
-          Size="154.4,44"
+          Size="154,44"
           Id="Package\Load each Training File\Load File List table"
           TopLeft="88.8355800695129,281.242836645803" />
         <NodeLayout
-          Size="129.6,48"
+          Size="130,48"
           Id="Package\Load each Training File\Truncate Staging Table"
           TopLeft="56.052829371244,9.08124302894412" />
         <NodeLayout
-          Size="276,41.6"
+          Size="276,42"
           Id="Package\Load each Training File\Update  Staging table and Reject Records"
           TopLeft="37.978436346278,146.604439451595" />
         <EdgeLayout
@@ -3705,8 +3705,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <ContainerLayout
           HeaderHeight="43.924528301886795"
           IsExpanded="True"
-          PanelSize="337.6,792"
-          Size="337.6,836"
+          PanelSize="338,792"
+          Size="338,836"
           Id="Package\Load each Training File"
           TopLeft="307.404767046169,53.4901964359217" />
         <EdgeLayout
@@ -3802,23 +3802,23 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="154.4,41.6"
+          Size="154,42"
           Id="Package\Load each Training File\Load  Staging Table\Derived Column"
           TopLeft="178.701301744564,154.053478096371" />
         <NodeLayout
-          Size="140,41.6"
+          Size="140,42"
           Id="Package\Load each Training File\Load  Staging Table\Training_File"
           TopLeft="174.545457517946,26.6951875401653" />
         <NodeLayout
-          Size="131.2,41.6"
+          Size="131,42"
           Id="Package\Load each Training File\Load  Staging Table\Row Count"
           TopLeft="188.259743465785,222.737971038255" />
         <NodeLayout
-          Size="172,41.6"
+          Size="172,42"
           Id="Package\Load each Training File\Load  Staging Table\OLE DB Destination"
           TopLeft="182.025977125858,286.472731290399" />
         <NodeLayout
-          Size="156.8,41.6"
+          Size="157,42"
           Id="Package\Load each Training File\Load  Staging Table\Data Conversion"
           TopLeft="179.480522537055,94.3229959752508" />
         <EdgeLayout
