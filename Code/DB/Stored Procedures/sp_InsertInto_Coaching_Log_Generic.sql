@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Generic(05).sql
-Last Modified Date: 08/27/2019
+sp_InsertInto_Coaching_Log_Generic(06).sql
+Last Modified Date:  11/30/2020
 Last Modified By: Susmitha Palacherla
 
+Version 06: Modified to support ATT AED feed. TFS 19502  - 11/30/2020
 Version 05: Modified to support ATT AP% feeds. TFS 15095  - 08/27/2019
 Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 Version 03: Modified to support Encryption of sensitive data. Open Key and Removed LanID- TFS 7856 - 10/23/2017
@@ -38,6 +39,7 @@ GO
 -- Modified to support Encryption of sensitive data. Open Key and Removed LanID. TFS 7856 - 10/23/2017
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Modified to support ATT AP% feeds. TFS 15095  - 8/27/2019
+-- Modified to support AED feed. TFS 19502  - 11/30/2020
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
 @Count INT OUTPUT
@@ -122,7 +124,7 @@ CASE cs.Program
   CASE 
 		 WHEN cs.[Report_Code] like 'SEA%' 
 		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br /> <br />')
-		 WHEN  (cs.[Report_Code] like 'OTH%' OR cs.[Report_Code] like 'AP%')
+		 WHEN  (cs.[Report_Code] like 'OTH%' OR cs.[Report_Code] like 'A%')
 		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '|'  ,'<br />')
 		 WHEN  cs.[Report_Code] like 'DTT%'
 		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '      '  ,'<br />') 
@@ -215,7 +217,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
  OPTION (MAXDOP 1)   
  
   -- Truncate Staging Table
-Truncate Table [EC].[Generic_Coaching_Stage]
+--Truncate Table [EC].[Generic_Coaching_Stage]
 
 
 CLOSE SYMMETRIC KEY [CoachingKey]   
@@ -252,5 +254,4 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Generic
 GO
-
 

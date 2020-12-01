@@ -1,0 +1,27 @@
+/* 
+TFS 19502 - AED Feed
+CCO_eCoaching_Log_DB_RunOnce_TFS_19502_AEDFeed.txt
+
+Run one statement at a time
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+*/
+
+
+-- Run with nothing selected.
+
+--*****************
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+           ('Attendance Earn Back Day')
+GO
+
+-- SELECT * from [EC].[DIM_Sub_Coaching_Reason] where SubCoachingReason = 'Attendance Earn Back Day';
+-- 282
+--*****************

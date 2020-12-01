@@ -1,8 +1,10 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(21).sql
-Last Modified Date: 09/15/2020
+sp_SelectReviewFrom_Coaching_Log(22).sql
+Last Modified Date:  11/30/2020
 Last Modified By: Susmitha Palacherla
 
+
+Version 22: Changes to support AED feed. TFS 19502  - 11/30/2020
 Version 21: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 Version 20: Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
 Version 19: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
@@ -51,6 +53,7 @@ GO
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --  Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
 --  Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
+--  Changes to support AED feed. TFS 19502  - 11/30/2020
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -200,6 +203,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   CASE WHEN (cc.DTT IS NOT NULL AND cl.strReportCode LIKE ''DTT%'') THEN 1 ELSE 0 END "OTH / DTT",
   CASE WHEN (cc.ATTAP IS NOT NULL AND cl.strReportCode LIKE ''APW%'') THEN 1 ELSE 0 END "OTH / APW",
   CASE WHEN (cc.ATTAP IS NOT NULL AND cl.strReportCode LIKE ''APS%'') THEN 1 ELSE 0 END "OTH / APS",
+  CASE WHEN (cc.AED IS NOT NULL AND cl.strReportCode LIKE ''AED%'') THEN 1 ELSE 0 END "OTH / AED",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSR2%'') THEN 1 ELSE 0 END "PSC / MSR",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSRS%'') THEN 1 ELSE 0 END "PSC / MSRS",
   CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQN2%'') THEN 1 ELSE 0 END "Quality / BQN",
@@ -265,6 +269,7 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END) QMB,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SEA,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 242) THEN [clr].[Value] ELSE NULL END) DTT,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 282) THEN [clr].[Value] ELSE NULL END) AED,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 252) THEN [clr].[Value] ELSE NULL END) ATTAP,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 63) THEN [clr].[Value] ELSE NULL END)	WAH_RTS
@@ -296,5 +301,4 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
-
 

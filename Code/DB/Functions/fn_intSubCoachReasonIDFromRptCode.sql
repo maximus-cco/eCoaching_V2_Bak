@@ -1,9 +1,10 @@
 /*
-fn_intSubCoachReasonIDFromRptCode(10).sql
+fn_intSubCoachReasonIDFromRptCode(11).sql
 
-Last Modified Date: 09/15/2020
+Last Modified Date:  11/30/2020
 Last Modified By: Susmitha Palacherla
 
+Version 11: Modified to support ATT AED feed. TFS 19502  - 11/30/2020
 Version 10: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 Version 09: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 08: Modified to support ATT AP% feeds. TFS 15095  - 08/27/2019
@@ -54,6 +55,7 @@ GO
 -- TFS 15095 - To add ATT APS and APW Reports - 08/27/2019
 -- TFS 15465 - To add BQM - 09/23/2019
 -- TFS 18154 - To add IDD - 09/15/2020
+-- TFS 19502  - To add AED - 11/30/2020
 -- =============================================
 CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -105,6 +107,7 @@ BEGIN
 			WHEN N'BQM' THEN 42
 			WHEN N'APS' THEN 252
 			WHEN N'APW' THEN 252
+			WHEN N'AED' THEN 282
 			WHEN N'IDD' THEN 281
         ELSE -1
       END;
@@ -115,4 +118,5 @@ RETURN @intSubCoachReasonID
 
 END  -- fn_intSubCoachReasonIDFromRptCode()
 GO
+
 
