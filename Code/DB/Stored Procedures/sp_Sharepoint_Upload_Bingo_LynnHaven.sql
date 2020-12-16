@@ -1,7 +1,8 @@
 /*
-Last Modified Date: 12/8/2020
+Last Modified Date: 12/15/2020
 Last Modified By: Susmitha Palacherla
 
+Version 01A: Revised from unit testing - TFS 19526 - 12/15/2020
 Version 01: Document Initial Revision - TFS 19526 - 12/8/2020
 */
 
@@ -17,6 +18,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -50,7 +52,7 @@ BEGIN TRY
 	-- *** BEGIN: INSERT CUSTOM CODE HERE ***
 	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 
-	  DECLARE @EmployeeSite nvarchar(30) = 'LynnHaven',
+	  DECLARE @EmployeeSite nvarchar(30) = 'Lynn Haven',
 	          @BeginDate datetime = (SELECT DATEADD(DD,1,EOMONTH(Getdate(),-2))), -- For First day of previous month use -2
               @EndDate datetime = (SELECT EOMONTH(Getdate(), -1));-- For Last Day of previous month use -1;
 -- Open Symmetric key
@@ -86,5 +88,4 @@ BEGIN CATCH
 	THROW;
 END CATCH
 GO
-
 
