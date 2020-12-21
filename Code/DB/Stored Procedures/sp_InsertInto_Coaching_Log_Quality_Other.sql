@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Other(09).sql
-Last Modified Date: 09/30/2019
+sp_InsertInto_Coaching_Log_Quality_Other(10).sql
+Last Modified Date: 12/21/2020
 Last Modified By: Susmitha Palacherla
 
+Version 10: Updated to handle Bingo logs for diffrent Programs for employee in same month. TFS 19526 - 12/21/2020
 Version 09: Updated to support wild card bingo images. TFS 15465 - 09/30/2019
 Version 08: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 07: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
@@ -32,8 +33,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
@@ -48,7 +47,7 @@ GO
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 -- Updated to support QM Bingo eCoaching logs. TFS 154653 - 09/23/2019
--- Updated to support wild card images. TFS 154653 - 09/30/2019
+-- Updated to handle Bingo logs for diffrent Programs for employee in same month. TFS 19526 - 12/21/2020
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 @Count INT OUTPUT
@@ -110,6 +109,7 @@ select  Distinct LOWER(cs.EMP_ID)	[FormName],
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
+		--csr.Emp_Program [ProgramName],
         [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])[SourceID],
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.EMP_ID)[SiteID],
@@ -194,13 +194,14 @@ INSERT INTO [EC].[Coaching_Log_Bingo]
            ,[Note]
            ,[Description]
 		   ,[BingoType])
-    SELECT cf.[CoachingID],
+    SELECT DISTINCT cf.[CoachingID],
            qs.[Competency],
 		   qs.[Note],
            qs.[TextDescription],
 		   qs.[BingoType]
     FROM [EC].[Quality_Other_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
     ON qs.[EMP_ID] = cf.[EmpID] AND  qs.[Report_Code] = cf.[strReportCode]
+	AND qs.[Program] = cf.[ProgramName]
     LEFT OUTER JOIN  [EC].[Coaching_Log_Bingo]cb
     ON cf.[CoachingID] = cb.[CoachingID]  
     WHERE qs.Report_Code LIKE 'BQ%'
@@ -211,8 +212,16 @@ INSERT INTO [EC].[Coaching_Log_Bingo]
 
    WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
-
     -- Populate Image value in [EC].[Coaching_Log_Quality_Now_Bingo] Table
+/*
+ Update [EC].[Coaching_Log_Bingo]
+Set CompImage = ISNULL(I.ImageDesc, 
+FROM [EC].[Coaching_Log_Bingo] B JOIN [EC].[Bingo_Images]I
+ON B.Competency = I.Competency
+AND B.[BingoType]= I.[BingoType]
+Where B.CompImage is NULL
+ */
+
 Update [EC].[Coaching_Log_Bingo]
 Set CompImage =  [EC].[fn_strImageForCompetency]([Competency],[BingoType])
 Where [CompImage] is NULL
@@ -256,3 +265,6 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Quality_Other
 GO
+
+
+
