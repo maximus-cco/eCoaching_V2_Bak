@@ -1,9 +1,8 @@
 /*
-CCO_eCoaching_SOIBean_Bingo_Upload(01).sql
-
-Last Modified Date: 12/15/2020
+Last Modified Date: 12/21/2020
 Last Modified By: Susmitha Palacherla
 
+Version 02: Updated to remove CoachingLogID - TFS 19526 - 12/21/2020
 Version 01: Document Initial Revision - TFS 19526 - 12/15/2020
 
 
@@ -45,7 +44,6 @@ CREATE TABLE [EC].[Coaching_Log_Bingo_SharePoint_Uploads](
 	[Employee_Site] [nvarchar](50) NOT NULL,
 	[Month_Year] [nvarchar](7) NOT NULL,
 	[EventDate] [datetime] NOT NULL,
-	[CoachingID] [bigint] NOT NULL,
 	[Upload_Status] [nvarchar](50) NULL,
 	[Initial_UploadDate] [datetime] NULL,
 	[Last_UploadDate] [datetime] NULL,
@@ -55,8 +53,9 @@ CREATE TABLE [EC].[Coaching_Log_Bingo_SharePoint_Uploads](
 	[Employee_Site] ASC,
 	[Month_Year] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
+) ON [PRIMARY]
 GO
+
 
 
 --******************************

@@ -18,7 +18,6 @@ Production – F3420-ECLDBP01 – eCoaching
 --*****************
 
 -- 1. Create Table [EC].[Coaching_Log_Bingo_SharePoint_Uploads]
-
 SET ANSI_NULLS ON
 GO
 
@@ -30,7 +29,6 @@ CREATE TABLE [EC].[Coaching_Log_Bingo_SharePoint_Uploads](
 	[Employee_Site] [nvarchar](50) NOT NULL,
 	[Month_Year] [nvarchar](7) NOT NULL,
 	[EventDate] [datetime] NOT NULL,
-	[CoachingID] [bigint] NOT NULL,
 	[Upload_Status] [nvarchar](50) NULL,
 	[Initial_UploadDate] [datetime] NULL,
 	[Last_UploadDate] [datetime] NULL,
@@ -42,6 +40,9 @@ CREATE TABLE [EC].[Coaching_Log_Bingo_SharePoint_Uploads](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
+
+
 
 --*****************
 

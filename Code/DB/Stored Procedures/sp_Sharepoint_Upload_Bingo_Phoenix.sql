@@ -1,7 +1,8 @@
 /*
-Last Modified Date: 12/8/2020
+Last Modified Date: 12/21/2020
 Last Modified By: Susmitha Palacherla
 
+Version 02: Updated to roll up competencies across programs for Employee. TFS 19526 - 12/21/2020
 Version 01: Document Initial Revision - TFS 19526 - 12/8/2020
 */
 
@@ -23,6 +24,7 @@ GO
 --	Create Date:	12/8/2020
 --	Description:    Extracts previous month Phoenix Bingo logs for upload to Sharepoint
 --  Initial Revision. Extract bingo logs from ecl and post to share point sites. TFS 19526 - 12/8/2020
+-- Updated to roll up competencies across programs for Employee. TFS 19526 - 12/21/2020
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Sharepoint_Upload_Bingo_Phoenix] 
 AS
@@ -52,23 +54,25 @@ BEGIN TRY
 
 
 	  DECLARE @EmployeeSite nvarchar(30) = 'Phoenix',
-	          @BeginDate datetime = (SELECT DATEADD(DD,1,EOMONTH(Getdate(),-2))), -- For First day of previous month use -2
-              @EndDate datetime = (SELECT EOMONTH(Getdate(), -1));-- For Last Day of previous month use -1;
+              @BingoType nvarchar(2) = N'QN',
+	          @BeginDate datetime = (SELECT BeginDate FROM [EC].[View_Coaching_Log_Bingo_Upload_Dates]),
+              @EndDate datetime = (SELECT EndDate FROM [EC].[View_Coaching_Log_Bingo_Upload_Dates]);
+
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
-               SELECT DISTINCT
+                     SELECT DISTINCT
 			    CASE WHEN ehv.Emp_Job_Code like 'WACS4%' THEN 'Supervisor' ELSE 'CSR' END  AS [Title],
 			    ehv.Emp_Name AS [Employee_Name],
 			    ehv.Emp_ID AS [Employee_ID],
 			    ehv.Emp_Site AS [Employee_Site],
-			    [EC].[fn_strBingoCompetenciesFromCoachingID] (cb.CoachingID) AS [Competencies],
+			    [EC].[fn_strBingoCompetenciesFromEmpID](s.Employee_ID, @BingoType) AS [Competencies],
 				FORMAT(@BeginDate, 'MM/yyyy') AS [Month_Year],
 			    ehv.Emp_Email AS [Employee_Email]
-			    FROM EC.View_Employee_Hierarchy ehv INNER JOIN [EC].[Coaching_Log_Bingo_SharePoint_Uploads] s
-				ON ehv.Emp_ID = s.Employee_ID INNER JOIN EC.Coaching_Log_Bingo cb 
-				ON s.CoachingID = cb.CoachingID 
-				WHERE s.EventDate between @BeginDate and @EndDate
+			    FROM EC.View_Employee_Hierarchy ehv
+				 INNER JOIN [EC].[Coaching_Log_Bingo_SharePoint_Uploads] s
+				       ON (ehv.Emp_ID = s.Employee_ID AND ehv.Emp_Site = s.Employee_Site)
+					WHERE s.EventDate between @BeginDate and @EndDate
 				AND ehv.Emp_Site = @EmployeeSite;
 	 
 
@@ -87,5 +91,8 @@ BEGIN CATCH
 	THROW;
 END CATCH
 GO
+
+
+
 
 
