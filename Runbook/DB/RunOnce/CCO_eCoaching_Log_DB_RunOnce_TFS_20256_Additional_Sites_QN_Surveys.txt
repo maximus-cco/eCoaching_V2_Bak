@@ -1,0 +1,43 @@
+/* 
+TFS 20256 -  Add Quality Now surveys for additional sites
+
+Run with nothing selected
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+*/
+
+--1. Update Survey_Sites Table
+
+UPDATE [EC].[Survey_Sites]
+SET isPilot = 1
+WHERE SiteID in (4,7,12,15,18);
+	
+GO
+
+
+
+
+--2a. Survey_DIM_Question Table (Set EndDate to Inactive question)
+
+
+UPDATE [EC].[Survey_DIM_Question]
+SET EndDate = 20190422 where QuestionID = 7;
+GO
+
+
+--2b Survey_DIM_Question Table (Activate HoTTopic question)
+
+UPDATE [EC].[Survey_DIM_Question]
+SET  StartDate = 20210401,
+EndDate = 20210731,
+isActive = 1,
+LastUpdateDate = GetDate()
+WHERE QuestionID = 6;
+GO
+
+
+--*****************
