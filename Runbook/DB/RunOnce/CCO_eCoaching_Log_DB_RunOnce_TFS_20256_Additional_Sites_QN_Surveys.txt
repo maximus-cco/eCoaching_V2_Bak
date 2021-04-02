@@ -33,7 +33,7 @@ GO
 
 UPDATE [EC].[Survey_DIM_Question]
 SET  StartDate = 20210401,
-EndDate = 20210731,
+EndDate = 20210630,
 isActive = 1,
 LastUpdateDate = GetDate()
 WHERE QuestionID = 6;
