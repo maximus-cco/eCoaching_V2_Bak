@@ -1,20 +1,16 @@
 ﻿$(document).ready(function () {
     $('#modal-container').css('margin-top', '10%');
     $('.modal-content').css('width', '35%');
-
-    // Prevent form multiple submits
+    
     $('body').on('click', '#btn-update', function () {
+        // Prevent form multiple submits
         $(this).attr('disabled', 'disabled');
-    });
-
-    // Submit
-    var form = $('#form-edit-ecoaching-access-control');
-    form.on('submit', function (event) {
         event.preventDefault();
 
+        var form = $('#form-edit-ecoaching-access-control');
         $.validator.unobtrusive.parse(form);
         if (!form.valid()) {
-            return false;
+              return false;
         }
 
         var ajaxRequest = $.ajax({
@@ -55,6 +51,6 @@
             var info = 'Failed to update the user.';
             $("#message").html('<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' + info + '</div>');
         });
-    }) // end of form.on('submit', function (event)
+    }) // end $('body').on('click', '#btn-update', function () {
 
 })
