@@ -223,7 +223,8 @@ namespace eCoachingLog.Utils
 			"Please review the <b><a href='https://maximus365.sharepoint.com/sites/CCO/bi/ReportsCatalog/CSRDashboard/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a>, " +
 			"the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below.";
 
-		// Performance Scorecard MSR and MSRS static text
+		// TODO: check where the scorecard is now.
+        // Performance Scorecard MSR and MSRS static text
 		public const string REVIEW_MSR_PSCORECARD = "To review your full details, please visit the " +
 			"<a href='https://f3420-mwbp11.ad.local/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
 			"If you have any questions, please see your supervisor.";
