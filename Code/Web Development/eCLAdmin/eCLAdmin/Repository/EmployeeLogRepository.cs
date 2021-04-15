@@ -289,7 +289,7 @@ namespace eCLAdmin.Repository
 
             logName = logName.Trim().Replace("'", "''");
             using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectReviewFrom_Coaching_Log_For_Delete]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_Log_For_Delete]", connection))
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -323,7 +323,7 @@ namespace eCLAdmin.Repository
             CoachingLogDetail logDetail = new CoachingLogDetail();
 
             using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_SRMGR_Review]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_Log_For_Delete_Review]", connection))
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -397,7 +397,7 @@ namespace eCLAdmin.Repository
             WarningLogDetail logDetail = new WarningLogDetail();
 
             using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_SRMGR_Review]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_Log_For_Delete_Review]", connection))
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
