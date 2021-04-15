@@ -246,6 +246,7 @@
     <Content Include="Content\dataTables.responsive.css" />
     <Content Include="Content\Images\ajax-loader.gif" />
     <Content Include="Content\Images\ajax-spinner.gif" />
+    <Content Include="Content\Images\aw_snap.png" />
     <Content Include="Content\Images\ecl-logo-small.png" />
     <Content Include="Content\Images\ecl-logo.png" />
     <Content Include="Content\Images\eCL.png" />
