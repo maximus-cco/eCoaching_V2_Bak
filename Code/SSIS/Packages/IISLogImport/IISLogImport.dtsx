@@ -1,0 +1,1152 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="9/10/2018 8:31:58 AM"
+  DTS:CreationName="SSIS.Package.3"
+  DTS:CreatorComputerName="F3360-DP2QJC2-L"
+  DTS:CreatorName="AD\lili.huang"
+  DTS:DTSID="{E72E9D46-2724-4F36-9ED4-B63EAED71610}"
+  DTS:ExecutableType="SSIS.Package.3"
+  DTS:LastModifiedProductVersion="13.0.2165.0"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="IISLogImport"
+  DTS:PackageType="5"
+  DTS:VersionBuild="208"
+  DTS:VersionGUID="{F9091D27-7D0F-4882-82D7-F1CDF3A97D14}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">6</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DB Connection Manager]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{7F872272-2C41-4DE8-9F78-91F42466706B}"
+      DTS:ObjectName="DB Connection Manager">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[User::vDBConnStr]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Retain="True"
+          DTS:ConnectionString="Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11;Integrated Security=SSPI;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[Flat File Connection Manager]"
+      DTS:CreationName="FLATFILE"
+      DTS:DTSID="{46A33238-87C4-4202-90A0-57B939CC5B33}"
+      DTS:ObjectName="Flat File Connection Manager">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[User::vCurrentFile]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="1033"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x003C_none_x003E_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="dummy.csv">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="UserName"
+              DTS:DTSID="{085835AF-F9DC-405B-8B33-1C526AA9E1BB}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="DateTime"
+              DTS:DTSID="{9110E866-CB30-4EC3-9DFD-0D87BCFFD9E9}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Target"
+              DTS:DTSID="{960C4861-1A22-4522-A64E-052357E375D4}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="PageName"
+              DTS:DTSID="{08F8ECAE-AEF8-4FF6-AAF2-E922A1DC2F8A}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="StatusCode"
+              DTS:DTSID="{EB40EE70-1404-4F72-9301-8842E7A5906D}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{69A44F86-AED0-47B3-B459-E6018E2808E5}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="vCount">
+      <DTS:VariableValue
+        DTS:DataType="2">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{22B328A7-5EA5-4B72-B2FF-B4EC7A822570}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="vCurrentFile">
+      <DTS:VariableValue
+        DTS:DataType="8">dummy.csv</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{58691DE7-FC54-4783-ADAE-517438885B83}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="( @[User::vEnv] ) == &quot;PROD&quot; ? &quot;\\\\f3420-ecldbp01\\Data\\Coaching\\IISLogImport&quot; : &#xA; ( @[User::vEnv] ) == &quot;TEST&quot; ? &quot;\\\\f3420-ecldbt01\\Data\\Coaching\\IISLogImport&quot; :&#xA; &quot;\\\\f3420-ecldbd01\\Data\\Coaching\\IISLogImport&quot;"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="vCurrentFolder">
+      <DTS:VariableValue
+        DTS:DataType="8">\\f3420-ecldbd01\Data\Coaching\IISLogImport</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{47873A72-AB55-4065-9BF7-AC3C9BF9F660}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="( @[User::vEnv] ) == &quot;PROD&quot; ? &quot;Data Source=F3420-ECLDBP01;Initial Catalog=eCoaching;Provider=SQLNCLI11;Integrated Security=SSPI;&quot; : &#xA;( @[User::vEnv] ) == &quot;UAT&quot; ? &quot;Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingUat;Provider=SQLNCLI11;Integrated Security=SSPI;&quot; :&#xA;( @[User::vEnv] ) == &quot;TEST&quot; ? &quot;Data Source=F3420-ECLDBT01;Initial Catalog=eCoachingTest;Provider=SQLNCLI11;Integrated Security=SSPI;&quot; :&#xA; &quot;Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11;Integrated Security=SSPI;&quot;"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="vDBConnStr">
+      <DTS:VariableValue
+        DTS:DataType="8">Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev;Provider=SQLNCLI11;Integrated Security=SSPI;</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{0D62AC94-6F2C-4610-B570-7AB790234B6B}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="vEnv">
+      <DTS:VariableValue
+        DTS:DataType="8">DEV</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Foreach Loop Container"
+      DTS:CreationName="STOCK:FOREACHLOOP"
+      DTS:Description="Foreach Loop Container"
+      DTS:DTSID="{311A4CE3-DE41-4296-838E-591B0E09D59F}"
+      DTS:ExecutableType="STOCK:FOREACHLOOP"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Foreach Loop Container">
+      <DTS:ForEachEnumerator
+        DTS:CreationName="DTS.ForEachFileEnumerator.3"
+        DTS:DTSID="{A803B55D-2782-48BE-8F74-D7B0F4A0B5A1}"
+        DTS:ObjectName="{A803B55D-2782-48BE-8F74-D7B0F4A0B5A1}">
+        <DTS:PropertyExpression
+          DTS:Name="Directory">@[User::vCurrentFolder]</DTS:PropertyExpression>
+        <DTS:PropertyExpression
+          DTS:Name="FileSpec">"*.csv"</DTS:PropertyExpression>
+        <DTS:ObjectData>
+          <ForEachFileEnumeratorProperties>
+            <FEFEProperty
+              Folder="\\f3420-ecldbd01\Data\Coaching\IISLogImport" />
+            <FEFEProperty
+              FileSpec="*.csv" />
+            <FEFEProperty
+              FileNameRetrievalType="0" />
+            <FEFEProperty
+              Recurse="0" />
+          </ForEachFileEnumeratorProperties>
+        </DTS:ObjectData>
+      </DTS:ForEachEnumerator>
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Check if the file has been imported"
+          DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{DDF18C76-0DDF-4D22-9CB7-196B89C43D5E}"
+          DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Check if the file has been imported"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7F872272-2C41-4DE8-9F78-91F42466706B}"
+              SQLTask:SqlStatementSource="SELECT COUNT(*) AS FileCount FROM ec.IISLog_FileImport&#xA;WHERE FileName = ?"
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="FileCount"
+                SQLTask:DtsVariableName="User::vCount" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::vCurrentFile"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Cleanup"
+          DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{A1C49439-AEF1-4F14-BD5E-546C530BEC73}"
+          DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Cleanup"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7F872272-2C41-4DE8-9F78-91F42466706B}"
+              SQLTask:SqlStatementSource="TRUNCATE TABLE [EC].IISLog_Stage;&#xA;&#xA;UPDATE [EC].[IISLog_FileImport] SET ImportFlag=1&#xA;WHERE [FileName] = ?&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::vCurrentFile"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Commit Transaction"
+          DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{67B8E1B2-498E-40A6-861D-48643B1A92C2}"
+          DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Commit Transaction"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7F872272-2C41-4DE8-9F78-91F42466706B}"
+              SQLTask:SqlStatementSource="COMMIT TRANSACTION;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Delete file"
+          DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.FileSystemTask.FileSystemTask, Microsoft.SqlServer.FileSystemTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:Description="Delete file"
+          DTS:DTSID="{77C93937-C8BA-40B4-9311-4245F28845EE}"
+          DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.FileSystemTask.FileSystemTask, Microsoft.SqlServer.FileSystemTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Delete file"
+          DTS:TaskContact="File System Task;Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <FileSystemData
+              TaskOperationType="DeleteFile"
+              TaskOverwriteDestFile="True"
+              TaskSourcePath="User::vCurrentFile"
+              TaskIsSourceVariable="True"
+              TaskDestinationPath="User::vArchiveFolder"
+              TaskIsDestinationVariable="True" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Insert file name in db"
+          DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{05eeccdf-62ea-437f-8204-b38323ea1c46}"
+          DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Insert file name in db"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7F872272-2C41-4DE8-9F78-91F42466706B}"
+              SQLTask:SqlStatementSource="INSERT INTO ec.IISLog_FileImport &#xA;VALUES (?, GETDATE(), 0);" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::vCurrentFile"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Load file into IISLog Stage table"
+          DTS:CreationName="SSIS.Pipeline.3"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{596987DE-C457-48C2-B360-9415AA08CAB7}"
+          DTS:ExecutableType="SSIS.Pipeline.3"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load file into IISLog Stage table"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1">
+              <components>
+                <component
+                  refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source"
+                  componentClassID="DTSAdapter.FlatFileSource.3"
+                  contactInfo="Flat File Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Flat File Source"
+                  localeId="1033"
+                  name="Flat File Source"
+                  usesDispositions="true"
+                  validateExternalMetadata="False"
+                  version="1">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      description="Specifies whether zero-length columns are treated as null."
+                      name="RetainNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of an output column containing the file name. If no name is specified, no output column containing the file name will be generated."
+                      name="FileNameColumnName"></property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Connections[FlatFileConnection]"
+                      connectionManagerID="Package.ConnectionManagers[Flat File Connection Manager]"
+                      connectionManagerRefId="Package.ConnectionManagers[Flat File Connection Manager]"
+                      name="FlatFileConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output]"
+                      name="Flat File Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[UserName]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[UserName]"
+                          length="50"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[UserName]"
+                          name="UserName"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[DateTime]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[DateTime]"
+                          length="50"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[DateTime]"
+                          name="DateTime"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[Target]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Target]"
+                          length="50"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[Target]"
+                          name="Target"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[PageName]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[PageName]"
+                          length="50"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[PageName]"
+                          name="PageName"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[StatusCode]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[StatusCode]"
+                          length="50"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[StatusCode]"
+                          name="StatusCode"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[UserName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="UserName" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[DateTime]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="DateTime" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Target]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="Target" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[PageName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="PageName" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[StatusCode]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="StatusCode" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Error Output]"
+                      isErrorOut="true"
+                      name="Flat File Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                          codePage="1252"
+                          dataType="text"
+                          description="Flat File Source Error Output Column"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                          name="Flat File Source Error Output Column" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination"
+                  componentClassID="DTSAdapter.OLEDBDestination.3"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination"
+                  usesDispositions="true"
+                  validateExternalMetadata="False"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[EC].[IISLog_Stage]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">0</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">2147483647</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[DB Connection Manager]"
+                      connectionManagerRefId="Package.ConnectionManagers[DB Connection Manager]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[UserName]"
+                          cachedDataType="wstr"
+                          cachedLength="50"
+                          cachedName="UserName"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[UserName]"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[UserName]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Target]"
+                          cachedDataType="wstr"
+                          cachedLength="50"
+                          cachedName="Target"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Target]"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[Target]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[PageName]"
+                          cachedDataType="wstr"
+                          cachedLength="50"
+                          cachedName="PageName"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PageName]"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[PageName]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[StatusCode]"
+                          cachedDataType="wstr"
+                          cachedLength="50"
+                          cachedName="StatusCode"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[StatusCode]"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[StatusCode]" />
+                        <inputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DateTime]"
+                          cachedDataType="wstr"
+                          cachedLength="50"
+                          cachedName="DateTime"
+                          externalMetadataColumnId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[IISLogDateTime]"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output].Columns[DateTime]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[UserName]"
+                          dataType="wstr"
+                          length="50"
+                          name="UserName" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[IISLogDateTime]"
+                          dataType="dbTimeStamp"
+                          name="IISLogDateTime" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Target]"
+                          dataType="wstr"
+                          length="100"
+                          name="Target" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PageName]"
+                          dataType="wstr"
+                          length="50"
+                          name="PageName" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[StatusCode]"
+                          dataType="i4"
+                          name="StatusCode" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Foreach Loop Container\Load file into IISLog Stage table.Paths[Flat File Source Output]"
+                  endId="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  name="Flat File Source Output"
+                  startId="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source.Outputs[Flat File Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Load Stage table into IISLog table"
+          DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{C605C31E-ADAF-4ED9-BE44-ADF40BD171C7}"
+          DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load Stage table into IISLog table"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7F872272-2C41-4DE8-9F78-91F42466706B}"
+              SQLTask:SqlStatementSource="EXEC [EC].[sp_InsertInto_IISLog_From_Stage];&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Rollback Transaction"
+          DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{5CDB687C-63E8-43E5-8878-89029A681428}"
+          DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Rollback Transaction"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7F872272-2C41-4DE8-9F78-91F42466706B}"
+              SQLTask:SqlStatementSource="ROLLBACK TRANSACTION;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach Loop Container\Start Transaction"
+          DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{B399BF01-B37A-4610-832C-072F760D15EC}"
+          DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Start Transaction"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7F872272-2C41-4DE8-9F78-91F42466706B}"
+              SQLTask:SqlStatementSource="BEGIN TRANSACTION;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{E014575A-CEEC-4EB8-A198-E0419F3141E9}"
+          DTS:From="Package\Foreach Loop Container\Start Transaction"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Foreach Loop Container\Load file into IISLog Stage table" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{B9F3C9C0-492C-4614-AE3C-851EFE51F8BF}"
+          DTS:EvalOp="1"
+          DTS:Expression="@[User::vCount] == 0"
+          DTS:From="Package\Foreach Loop Container\Check if the file has been imported"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Foreach Loop Container\Insert file name in db" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{0426FC15-E08D-4FFE-AA99-BAF5527627B2}"
+          DTS:From="Package\Foreach Loop Container\Load file into IISLog Stage table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\Foreach Loop Container\Load Stage table into IISLog table" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 3]"
+          DTS:CreationName=""
+          DTS:DTSID="{80762FE0-2EDB-452C-9858-571DE93D2420}"
+          DTS:From="Package\Foreach Loop Container\Load Stage table into IISLog table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 3"
+          DTS:To="Package\Foreach Loop Container\Commit Transaction" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 4]"
+          DTS:CreationName=""
+          DTS:DTSID="{020B6561-34EF-469F-9E51-1656254B89DB}"
+          DTS:From="Package\Foreach Loop Container\Commit Transaction"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 4"
+          DTS:To="Package\Foreach Loop Container\Cleanup" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 5]"
+          DTS:CreationName=""
+          DTS:DTSID="{1F980CC0-0E97-40E6-AD40-90CFF0B54269}"
+          DTS:From="Package\Foreach Loop Container\Load Stage table into IISLog table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 5"
+          DTS:To="Package\Foreach Loop Container\Rollback Transaction"
+          DTS:Value="1" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 6]"
+          DTS:CreationName=""
+          DTS:DTSID="{2E70AC87-7442-49D0-9736-EC1D7DC30778}"
+          DTS:From="Package\Foreach Loop Container\Insert file name in db"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 6"
+          DTS:To="Package\Foreach Loop Container\Start Transaction" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 7]"
+          DTS:CreationName=""
+          DTS:DTSID="{D0850DB8-F1FC-4C41-8A9D-C8381A9DE5A0}"
+          DTS:From="Package\Foreach Loop Container\Cleanup"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 7"
+          DTS:To="Package\Foreach Loop Container\Delete file" />
+      </DTS:PrecedenceConstraints>
+      <DTS:ForEachVariableMappings>
+        <DTS:ForEachVariableMapping
+          DTS:CreationName=""
+          DTS:DTSID="{45AFE42B-431B-43AA-A1FF-5BBE44E10A82}"
+          DTS:ObjectName="{45AFE42B-431B-43AA-A1FF-5BBE44E10A82}"
+          DTS:ValueIndex="0"
+          DTS:VariableName="User::vCurrentFile" />
+      </DTS:ForEachVariableMappings>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="sql11">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="246.4,41.6"
+          Id="Package\Foreach Loop Container\Check if the file has been imported"
+          TopLeft="21.914288417174,8.5058832688316" />
+        <NodeLayout
+          Size="174.4,41.6"
+          Id="Package\Foreach Loop Container\Commit Transaction"
+          TopLeft="22.7714312889139,378.482358799014" />
+        <NodeLayout
+          Size="127.2,41.6"
+          Id="Package\Foreach Loop Container\Delete file"
+          TopLeft="44.2000030824117,515.517655130241" />
+        <NodeLayout
+          Size="231.2,41.6"
+          Id="Package\Foreach Loop Container\Load file into IISLog Stage table"
+          TopLeft="136.771433230322,225.482356720565" />
+        <NodeLayout
+          Size="176.8,41.6"
+          Id="Package\Foreach Loop Container\Rollback Transaction"
+          TopLeft="228.771434797073,378.764711800249" />
+        <NodeLayout
+          Size="164,41.6"
+          Id="Package\Foreach Loop Container\Start Transaction"
+          TopLeft="172.057148116948,156.423532783614" />
+        <NodeLayout
+          Size="240.8,41.6"
+          Id="Package\Foreach Loop Container\Load Stage table into IISLog table"
+          TopLeft="135.314290307493,290.541179198955" />
+        <EdgeLayout
+          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 3]"
+          TopLeft="216.914290307493,332.141179198955">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-106.942859018579,46.3411796000588"
+              Start="0,0"
+              End="-106.942859018579,38.8411796000588">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,14.7200012641821" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,14.7200012641821"
+                    Point2="0,18.7200012641821"
+                    Point3="-4,18.7200012641821" />
+                  <mssgle:LineSegment
+                    End="-102.942859018579,18.7200012641821" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-102.942859018579,18.7200012641821"
+                    Point2="-106.942859018579,18.7200012641821"
+                    Point3="-106.942859018579,22.7200012641821" />
+                  <mssgle:LineSegment
+                    End="-106.942859018579,38.8411796000588" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 5]"
+          TopLeft="294.514290307493,332.141179198955">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="22.6571444895799,46.623532601294"
+              Start="0,0"
+              End="22.6571444895799,39.123532601294">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,14.8340606943841" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,14.8340606943841"
+                    Point2="0,18.8340606943841"
+                    Point3="4,18.8340606943841" />
+                  <mssgle:LineSegment
+                    End="18.6571444895799,18.8340606943841" />
+                  <mssgle:CubicBezierSegment
+                    Point1="18.6571444895799,18.8340606943841"
+                    Point2="22.6571444895799,18.8340606943841"
+                    Point3="22.6571444895799,22.8340606943841" />
+                  <mssgle:LineSegment
+                    End="22.6571444895799,39.123532601294" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-3.91277541146006,23.8340606943841,30.4826953125,9.7490234375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="181.6,41.6"
+          Id="Package\Foreach Loop Container\Insert file name in db"
+          TopLeft="161.48571936549,88.0470595871288" />
+        <EdgeLayout
+          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 1]"
+          TopLeft="145.114288417174,50.1058832688316">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="107.171430948316,37.9411763182972"
+              Start="0,0"
+              End="107.171430948316,30.4411763182972">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,14.9705881591486" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,14.9705881591486"
+                    Point2="0,18.9705881591486"
+                    Point3="4,18.9705881591486" />
+                  <mssgle:LineSegment
+                    End="103.171430948316,18.9705881591486" />
+                  <mssgle:CubicBezierSegment
+                    Point1="103.171430948316,18.9705881591486"
+                    Point2="107.171430948316,18.9705881591486"
+                    Point3="107.171430948316,22.9705881591486" />
+                  <mssgle:LineSegment
+                    End="107.171430948316,30.4411763182972" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="45.5857154741579,23.9705881591486,16,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 2]"
+          TopLeft="254.042861768908,267.082356720565">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,23.4588224783896"
+              Start="0,0"
+              End="0,15.9588224783896">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,15.9588224783896" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 6]"
+          TopLeft="253.171433741219,129.647059587129">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,26.776473196485"
+              Start="0,0"
+              End="0,19.276473196485">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.276473196485" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint]"
+          TopLeft="253.214290673635,198.023532783614">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.4588239369513"
+              Start="0,0"
+              End="0,19.9588239369513">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.9588239369513" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="117.6,41.6"
+          Id="Package\Foreach Loop Container\Cleanup"
+          TopLeft="47.1428599892832,448.482358288518" />
+        <EdgeLayout
+          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 4]"
+          TopLeft="107.957145639099,420.082358799014">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.3999994895043"
+              Start="0,0"
+              End="0,20.8999994895043">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.8999994895043" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach Loop Container.PrecedenceConstraints[Constraint 7]"
+          TopLeft="106.871431535847,490.082358288518">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,25.4352968417235"
+              Start="0,0"
+              End="0,17.9352968417235">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,17.9352968417235" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="596,584.8"
+          Size="596,628"
+          Id="Package\Foreach Loop Container"
+          TopLeft="137.142859478386,40.9882358689621" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Foreach Loop Container\Load file into IISLog Stage table">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="152,41.6"
+          Id="Package\Foreach Loop Container\Load file into IISLog Stage table\Flat File Source"
+          TopLeft="175.428574416102,54.4470595871289" />
+        <NodeLayout
+          Size="172,41.6"
+          Id="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination"
+          TopLeft="237.142861181376,184.141179053099" />
+        <EdgeLayout
+          Id="Package\Foreach Loop Container\Load file into IISLog Stage table.Paths[Flat File Source Output]"
+          TopLeft="251.428574416102,96.0470595871289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="71.7142867652738,88.0941194659698"
+              Start="0,0"
+              End="71.7142867652738,80.5941194659698">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,40.0470597329849" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,40.0470597329849"
+                    Point2="0,44.0470597329849"
+                    Point3="4,44.0470597329849" />
+                  <mssgle:LineSegment
+                    End="67.7142867652738,44.0470597329849" />
+                  <mssgle:CubicBezierSegment
+                    Point1="67.7142867652738,44.0470597329849"
+                    Point2="71.7142867652738,44.0470597329849"
+                    Point3="71.7142867652738,48.0470597329849" />
+                  <mssgle:LineSegment
+                    End="71.7142867652738,80.5941194659698" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Foreach Loop Container\Load file into IISLog Stage table\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

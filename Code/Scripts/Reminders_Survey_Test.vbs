@@ -1,21 +1,27 @@
-'Test
+' Test
 
-'Begin - Environment Related
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=F3420-ECLDBT01"
-Const eCoachingUrl = "https://f3420-mpmd01.ad.local/eCoachingLog_st/Survey"
+' Begin - Environment Related
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=UVAADADSQL52CCO"
+Const eCoachingUrl = "https://UVAADADWEB50CCO.ad.local/ecl_test/Survey"
 Const fromAddress = "eCoachingTest@maximus.com"
-Const imgPath = "\\f3420-ecldbt01.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-'End - Environment Related
+Const imgPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\Logs\Reminders_Survey_Test.log"
+' End - Environment Related
 
-
-'Begin - Non-Environment Related
+' Begin - Non-Environment Related
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
+Const ForAppending = 8
 Const smtpServer = "ironport.maximus.com" 
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1
-'End - Non-Environment Related
+' End - Non-Environment Related
 
+'Specify log file
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+Set objLogFile = objFSO.OpenTextFile(strLogFile, ForAppending, True)
+objLogFile.WriteBlankLines(2) 
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Survey Reminders!"
 
 'variables for database connection and recordset
 Dim dbConn, rs
@@ -181,9 +187,15 @@ With objMsg
     .From = fromAddress
     .Subject = ToSubject
     .HTMLBody = htmlbody
+On Error Resume Next ' Turn in-Line Error Handling On before sending email
   .Send
 End With
 
+
+  If Err.Number <> 0 Then ' If it failed, report the error
+     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending reminder for Survey " + cstr(SurveyID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
+ 
+  End If
 
   ' Clean up variables.
     Set objMsg = Nothing
@@ -219,3 +231,5 @@ Sub SafeQuit (rs, dbConn)
 	
 	Wscript.Quit
 End Sub
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Survey Reminders!"
+objLogfile.close

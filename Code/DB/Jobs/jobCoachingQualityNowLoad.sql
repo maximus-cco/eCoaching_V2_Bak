@@ -12,9 +12,9 @@ DECLARE @environment nvarchar(5) = N'PROD'  -- DEV, TEST, or PROD
 --=================================================================
 -- Do not modify below this section
 --=================================================================
-IF ((@@SERVERNAME = 'F3420-ECLDBD01' AND @environment <> 'DEV')
-        OR (@@SERVERNAME = 'f3420-ecldbt01' AND @environment <> 'TEST')
-	OR (@@SERVERNAME = 'F3420-ECLDBP01' AND @environment <> 'PROD')
+IF ((@@SERVERNAME = 'UVAADADSQL50CCO' AND @environment <> 'DEV')
+        OR (@@SERVERNAME = 'UVAADADSQL52CCO' AND @environment <> 'TEST')
+	OR (@@SERVERNAME = 'UVAAPADSQL50CCO' AND @environment <> 'PROD')
     )
 BEGIN
 	DECLARE @error nvarchar(1000) = CONCAT('Unknown environment [', @environment, '] for current server.');
@@ -24,7 +24,7 @@ END
 SET @environment = UPPER(LTRIM(RTRIM(@environment)))
 --DECLARE @currJobId binary(16)
 DECLARE @jobName nvarchar(100) = N'CoachingQualityNowLoad'
-DECLARE @configfileName nvarchar(100) = CONCAT(CASE @environment WHEN 'PROD' THEN N'' ELSE @environment + N'_' END, N'Quality_Now_Coaching.dtsConfig')
+DECLARE @configfileName nvarchar(100) = CONCAT(@environment + N'_', N'Quality_Now_Coaching.dtsConfig')
 DECLARE @jobNameStepBase nvarchar(120) = CONCAT(@jobName,N'--STEP_')
 DECLARE @jobNameStep nvarchar(120)
 DECLARE @mainJobId BINARY(16)
@@ -76,9 +76,9 @@ SET @mainJobId = @jobId
 -------------------------------------------------------------------
 DECLARE @proxyName nvarchar(50) = N'ECLProxy'
 DECLARE @packagePath nvarchar(1000) = 
-			(SELECT CASE @environment WHEN 'PROD' THEN N'\\F3420-ECLDBP01\SSIS\Coaching\Packages\'
-									  WHEN 'TEST' THEN N'\\F3420-ECLDBT01\SSIS\Coaching\Packages\Quality_Now_Coaching\'
-									  ELSE N'\\F3420-ECLDBD01\SSIS\Coaching\Packages\Quality_Now_Coaching\' END) -- Assume dev
+			(SELECT CASE @environment WHEN 'PROD' THEN N'\\UVAAPADSQL50CCO\SSIS\Coaching\Packages\'
+									  WHEN 'TEST' THEN N'\\UVAADADSQL52CCO\SSIS\Coaching\Packages\Quality_Now_Coaching\'
+									  ELSE N'\\UVAADADSQL50CCO\SSIS\Coaching\Packages\Quality_Now_Coaching\' END) -- Assume dev
 
 DECLARE @configfilePath nvarchar(1000) = 
 			(SELECT CASE @environment WHEN 'PROD' THEN N'H:\SSIS\Coaching\ConfigFiles\'
@@ -86,15 +86,15 @@ DECLARE @configfilePath nvarchar(1000) =
 									  ELSE N'G:\SSIS\Coaching\ConfigFiles\' END) -- Assume dev
 
 DECLARE @scriptPath nvarchar(1000) = 
-			(SELECT CASE @environment WHEN 'PROD' THEN N'"\\F3420-ECLDBP01\SSIS\Coaching\Notifications\'
-									  WHEN 'TEST' THEN N'"\\F3420-ECLDBT01\SSIS\Coaching\Notifications\'
-									  ELSE N'"\\F3420-ECLDBD01\SSIS\Coaching\Notifications\' END) -- Assume dev
+			(SELECT CASE @environment WHEN 'PROD' THEN N'"\\UVAAPADSQL50CCO\SSIS\Coaching\Notifications\'
+									  WHEN 'TEST' THEN N'"\\UVAADADSQL52CCO\SSIS\Coaching\Notifications\'
+									  ELSE N'"\\UVAADADSQL50CCO\SSIS\Coaching\Notifications\' END) -- Assume dev
 
 
-DECLARE @scriptName nvarchar(100) = N'Notifications' + CASE @environment WHEN 'PROD' THEN N'.vbs' ELSE N'_' +  @environment + N'.vbs"' END
+DECLARE @scriptName nvarchar(100) = N'Notifications_'  +  @environment + N'.vbs"' 
 
 
-DECLARE @totalSteps int = 2
+DECLARE @totalSteps int = (SELECT CASE @environment WHEN 'PROD' THEN 2 ELSE 1 END) -- Add Notifications Step only in prod
 DECLARE @stepId int = 0
 DECLARE @successAction int = 3 -- go to next step
 
@@ -127,6 +127,9 @@ IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 -------------------------------------------------------------------
 -- Object 2:  Step [Notifications]
 -------------------------------------------------------------------
+
+IF @environment  = N'PROD'
+BEGIN
 DECLARE @scriptCommand nvarchar(4000) = N'start /w wscript.exe ' + @scriptPath + @scriptName
 SET @jobId = @mainJobId
 SET @stepName =  N'Notifications'
@@ -148,7 +151,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=@stepName,
 		@flags=0, 
 		@proxy_name=@proxyName
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback		
-
+END;
 -------------------------------------------------------------------
 -- Schedule the job (generally only enabled for prod)
 -------------------------------------------------------------------
@@ -162,7 +165,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'Daily',
 		@freq_subday_interval=0, -- N/A
 		@freq_relative_interval=0, 
 		@freq_recurrence_factor=1, 
-		@active_start_date=20190502, -- May 2nd 2019
+		@active_start_date=20210423, -- May 2nd 2019
 		@active_end_date=99991231, -- No end date
 		@active_start_time=110000, -- 11:00 AM server time (MT)
 		@active_end_time=235959 --11:59:59

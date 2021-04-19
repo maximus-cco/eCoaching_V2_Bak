@@ -1,22 +1,28 @@
-'Test
+' Test
 
-'Begin - Environment Related
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=F3420-ECLDBT01"
-Const eCoachingUrl = "https://f3420-mpmd01.ad.local/eCoachingLog_st/"
+' Begin - Environment Related
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=UVAADADSQL52CCO"
+Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_test/"
 Const fromAddress = "eCoachingTest@maximus.com"
-Const imgPath = "\\f3420-ecldbt01.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-'End - Environment Related
+Const imgPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\Logs\Notifications_Test.log"
+' End - Environment Related
 
-
-'Begin - Non-Environment Related
+' Begin - Non-Environment Related
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
 Const smtpServer = "ironport.maximus.com" 
+Const ForAppending = 8
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1
 Const adCmdStoredProc = 4
-'End - Non-Environment Related
+' End - Non-Environment Related
 
+'Specify log file
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+Set objLogFile = objFSO.OpenTextFile(strLogFile, ForAppending, True)
+objLogFile.WriteBlankLines(2) 
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Notifications!"
 
 
 'variables for database connection and recordset
@@ -232,13 +238,21 @@ Sub SendMail(strEmail, strSubject, strFormID, strFormStatus, strPerson, strSourc
         Set .Configuration = objConfiguration
             .MimeFormatted = True
             ' change to line to ToAddress to go to the correct destination and uncomment the .CC line
-           .To =  ToAddress '"susmitha.palacherla@gdit.com" 
+           .To =  ToAddress '"susmithacpalacherla@maximus.com" 
            .Cc = ToCopy
            .From = fromAddress
            .Subject = strSubject
            .HTMLBody = htmlbody
+On Error Resume Next ' Turn in-Line Error Handling On before sending email
            .Send
     End With
+
+
+  If Err.Number <> 0 Then ' If it failed, report the error
+     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending notification for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
+ 
+  End If
+
 	
     ' Clean up variables.
     Set objMsg = Nothing
@@ -280,6 +294,8 @@ Sub SafeCloseDbConn ( dbConn)
 		Set dbConn = Nothing
 	End If
 End Sub
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Notifications!"
+objLogfile.close
 
 Sub SafeQuit (rs, dbConn)
     SafeCloseRecordSet rs

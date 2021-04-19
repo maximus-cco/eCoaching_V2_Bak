@@ -2,31 +2,31 @@
 
 ' Begin - Environment Related
 
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingDev;Data Source=F3420-ECLDBD01"
-Const eCoachingUrl = "https://f3420-mpmd01.ad.local/eCoachingLog_dev/"
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingDev;Data Source=UVAADADSQL50CCO"
+Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_dev/"
 Const fromAddress = "eCoachingDev@maximus.com"
-Const imgPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const imgPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
 
-Const imgaaPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\aa.png"
-Const imgalPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\al.png"
-Const imgccPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\cc.png"
-Const imgnnPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\nn.png"
-Const imgppPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\pp.png"
-Const imgprPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\pr.png"
-Const imgsoPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\so.png"
-Const imgwcPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\wc.png"
+Const imgaaPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\aa.png"
+Const imgalPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\al.png"
+Const imgccPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\cc.png"
+Const imgnnPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\nn.png"
+Const imgppPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\pp.png"
+Const imgprPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\pr.png"
+Const imgsoPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\so.png"
+Const imgwcPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\wc.png"
 
-Const imgaa_qmPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\aa_qm.png"
-Const imgcc_qmPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\cc_qm.png"
-Const imgmm_qmPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\mm_qm.png"
-Const imgpp_qmPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\pp_qm.png"
-Const imgpr_qmPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\pr_qm.png"
-Const imgrr_qmPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\rr_qm.png"
-Const imgso_qmPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\so_qm.png"
-Const imgwc_qmPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\wc_qm.png"
+Const imgaa_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\aa_qm.png"
+Const imgcc_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\cc_qm.png"
+Const imgmm_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\mm_qm.png"
+Const imgpp_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\pp_qm.png"
+Const imgpr_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\pr_qm.png"
+Const imgrr_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\rr_qm.png"
+Const imgso_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\so_qm.png"
+Const imgwc_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\wc_qm.png"
 
 
-Const strLogFile = "\\f3420-ecldbd01\ssis\Coaching\Notifications\Logs\QNBingoNotification.log"
+Const strLogFile = "\\UVAADADSQL50CCO\ssis\Coaching\Notifications\Logs\Notifications_Bingo_Dev.log"
 
 ' End - Environment Related
 
@@ -281,6 +281,11 @@ On Error Resume Next ' Turn in-Line Error Handling On
 
 End With
 
+'Using objFile.Write instead of objFile.WriteLine. This will write to the file without a newline at the end.
+
+   If Err.Number <> 0 Then ' If it failed, report the error
+     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending notification for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
+   End If
 
   ' Clean up variables.
     Set objMsg = Nothing
@@ -288,10 +293,6 @@ End With
     Set objFields = Nothing
     Set objBodyPart = Nothing
 
-     If Err.Number <> 0 Then ' If it failed, report the error
-     objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Sending notification for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description + "."
- 
-     End If
 
     If Err.Number = 0 Then ' Email was successfully sent
 	    Set dbConn = CreateObject("ADODB.Connection")
@@ -335,6 +336,6 @@ Sub SafeQuit (rs, dbConn)
 	
 	Wscript.Quit
 End Sub
-objLogfile.WriteLine "  " + "End Bingo Notifications"
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Bingo Notifications!"
 objLogfile.close
 

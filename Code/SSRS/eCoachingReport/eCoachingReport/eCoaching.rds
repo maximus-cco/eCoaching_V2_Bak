@@ -2,8 +2,7 @@
 <RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="eCoaching">
   <ConnectionProperties>
     <Extension>SQL</Extension>
-    <ConnectString>Data Source=F3420-ECLDBD01;Initial Catalog=eCoachingDev</ConnectString>
-    <IntegratedSecurity>true</IntegratedSecurity>
+    <ConnectString>Data Source=UVAADADSQL50CCO;Initial Catalog=eCoachingDev</ConnectString>
   </ConnectionProperties>
-  <DataSourceID>725ae293-72af-4889-a1d1-3b88f21a7a4c</DataSourceID>
+  <DataSourceID>a5c94e33-d69c-49ff-b74d-65b0105402b7</DataSourceID>
 </RptDataSource>

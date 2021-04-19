@@ -1,20 +1,21 @@
-<?xml version="1.0"?><DTSConfiguration>
+<?xml version="1.0"?>
+<DTSConfiguration>
 <DTSConfigurationHeading>
-<DTSConfigurationFileInfo GeneratedBy="VNGT\palasu" GeneratedFromPackageName="IQS_Coaching" GeneratedFromPackageID="{5935C644-1A96-420A-9122-46D5AD971041}" GeneratedDate="7/31/2017 12:24:51 PM"/>
+<DTSConfigurationFileInfo GeneratedBy="MAXCORP\236464" GeneratedFromPackageName="IQS_Coaching" GeneratedFromPackageID="{44A14508-D718-46DC-8F9F-E38514B55B20}" GeneratedDate="3/30/2021 10:53:13 AM"/>
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingTest</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>F3420-ECLDBT01</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAADADSQL52CCO</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>ironport.maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::AdhocNPN].Properties[Value]" ValueType="Boolean"><ConfiguredValue>0</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::BeginDate].Properties[Value]" ValueType="Int32"><ConfiguredValue>0</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::CCEmail].Properties[Value]" ValueType="String"><ConfiguredValue>BrianECoughlin@maximus.com;SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbt01\data\Coaching\IQS\Decrypt_in\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbt01\data\Coaching\IQS\Decrypt_out\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Encrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbt01\data\Coaching\IQS\Encrypt_in\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Encrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbt01\data\Coaching\IQS\Encrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::CCEmail].Properties[Value]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL52CCO\data\Coaching\IQS\Decrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL52CCO\data\Coaching\IQS\Decrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Encrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL52CCO\data\Coaching\IQS\Encrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Encrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL52CCO\data\Coaching\IQS\Encrypt_out\</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::EndDate].Properties[Value]" ValueType="Int32"><ConfiguredValue>0</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FilePrefix].Properties[Value]" ValueType="String"><ConfiguredValue>Test_eCL_IQS_Scorecard_</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FromEmail].Properties[Value]" ValueType="String"><ConfiguredValue>eCoachingTest@maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::SystemName].Properties[Value]" ValueType="String"><ConfiguredValue>Test</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmail].Properties[Value]" ValueType="String"><ConfiguredValue>DavidLHinman@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmail].Properties[Value]" ValueType="String"><ConfiguredValue>JackieKMiller@maximus.com;DouglasRStearns@maximus.com</ConfiguredValue></Configuration>
 </DTSConfiguration>

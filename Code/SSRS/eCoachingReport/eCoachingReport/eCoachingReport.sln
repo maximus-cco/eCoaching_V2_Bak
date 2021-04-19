@@ -1,35 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "eCoachingReport", "eCoachingReport.rptproj", "{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}"
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "eCoachingReport", "eCoachingReport.rptproj", "{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any PC = Debug|Any PC
-		Dev|Any PC = Dev|Any PC
-		LoadTest|Any PC = LoadTest|Any PC
-		Prod|Any PC = Prod|Any PC
-		SysTest|Any PC = SysTest|Any PC
+		Debug|Default = Debug|Default
+		Dev|Default = Dev|Default
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.ActiveCfg = Debug
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Debug|Any PC.Build.0 = Debug
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.ActiveCfg = Dev
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.Build.0 = Dev
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Dev|Any PC.Deploy.0 = Dev
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.ActiveCfg = LoadTest
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.Build.0 = LoadTest
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.LoadTest|Any PC.Deploy.0 = LoadTest
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Prod|Any PC.ActiveCfg = Prod
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Prod|Any PC.Build.0 = Prod
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.Prod|Any PC.Deploy.0 = Prod
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.ActiveCfg = SysTest
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.Build.0 = SysTest
-		{68BE983F-A9E3-46BA-B7AF-01788FEABCBD}.SysTest|Any PC.Deploy.0 = SysTest
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Debug|Default.ActiveCfg = Debug
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Dev|Default.ActiveCfg = Prod
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Dev|Default.Build.0 = Prod
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Dev|Default.Deploy.0 = Prod
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DBC38068-60A3-489A-9488-5F97FF1AD0D8}
 	EndGlobalSection
 EndGlobal

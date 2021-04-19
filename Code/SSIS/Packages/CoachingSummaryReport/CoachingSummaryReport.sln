@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "CoachingSummaryReport", "CoachingSummaryReport.dtproj", "{406C3260-8E6C-4A76-AFBB-8116DA65186C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{406C3260-8E6C-4A76-AFBB-8116DA65186C}.Development|Default.ActiveCfg = Development
+		{406C3260-8E6C-4A76-AFBB-8116DA65186C}.Development|Default.Build.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F9CF590C-E14A-47C5-ACDE-62462D1C7AE6}
+	EndGlobalSection
+EndGlobal

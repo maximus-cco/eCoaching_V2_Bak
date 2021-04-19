@@ -1,0 +1,389 @@
+/* 
+TFS 20677 -  AD island to AD AWS environment changes
+
+**********************************************
+ 
+---Connect to the database with your SA account and ---
+----- Run one statement at a time---------
+
+LOOK FOR NOTE UNDER EACH STEP TO SEE IF TASKS MAY ALREADY BE COMPLETED AND NOT NEEDED
+
+**********************************************
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+
+*/
+
+
+--1. Open and apply master key
+
+OPEN MASTER KEY DECRYPTION BY PASSWORD = '#c0@3h!ngP90m@$2er';
+ALTER MASTER KEY ADD ENCRYPTION BY SERVICE MASTER KEY;
+CLOSE MASTER KEY;
+
+--**********************************************
+--**********************************************
+
+--2. Drop Users if needed (--- May not be needed ---)
+
+
+/*
+
+
+USE [eCoaching]
+GO
+
+CREATE USER [AD\SA-Susmitha.Palacher] FOR LOGIN [AD\SA-Susmitha.Palacher] WITH DEFAULT_SCHEMA=[dbo];
+GO
+
+DROP USER [Ad\brian.coughlin];
+GO
+
+DROP USER [AD\jourdain.augustin];
+GO
+
+DROP USER [AD\JohnEric.Tiongson];
+GO
+
+DROP USER [SHAREDSERVICES\SVC-SS-SQLECLP01];
+GO
+
+DROP USER [VNGT\211augujo];
+GO
+
+DROP USER [VNGT\211mohak1];
+GO
+
+DROP USER [VNGT\211hinmda];
+GO
+
+DROP USER [VNGT\211huanli];
+GO
+
+DROP USER [VNGT\211palasu];
+GO
+
+
+DROP USER [VNGT\211queeti];
+GO
+
+
+DROP USER [VNGT\cmsprod];
+GO
+
+
+DROP USER [VNGT\coaching_users];
+GO
+
+DROP USER [VNGT\cougbr];
+GO
+
+
+DROP USER [VNGT\F3420-MWBP11$];
+GO
+
+DROP USER [AD\F3420-MWBP11$];
+GO
+
+
+DROP USER [AD\SVC-F3420-ECLDBP01];
+GO
+
+DROP USER [VNGT\kempaa];
+GO
+
+DROP USER [VNGT\SG_SQLOpsMgr];
+GO
+
+DROP USER [VNGT\SVC-SQLECLP01];
+GO
+
+DROP USER [VNGT\VACMSMPMD01$];
+GO
+
+DROP USER [VNGT\VADENMWBP11$];
+GO
+
+DROP USER [AD\SVC-F3420-APPCROPT01];
+GO
+
+DROP USER [AD\virginia.collins];
+GO
+
+*/
+
+--**********************************************
+--**********************************************
+
+--3. Create logins  (--- May not be needed ---)
+
+
+IF (SUSER_ID('AD\Doug.Stearns') IS NULL) BEGIN CREATE LOGIN [AD\Doug.Stearns] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--Doug.Stearns
+IF (SUSER_ID('AD\lili.huang') IS NULL) BEGIN CREATE LOGIN [AD\lili.huang] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--lili.huang
+IF (SUSER_ID('AD\Susmitha.Palacherla') IS NULL) BEGIN CREATE LOGIN [AD\Susmitha.Palacherla] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--Susmitha.Palacherla
+IF (SUSER_ID('AD\David.Hinman') IS NULL) BEGIN CREATE LOGIN [AD\David.Hinman] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--David.Hinman 
+IF (SUSER_ID('AD\lisa.stein') IS NULL) BEGIN CREATE LOGIN [AD\lisa.stein] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--lisa.stein
+IF (SUSER_ID('AD\Jackie.Miller') IS NULL) BEGIN CREATE LOGIN [AD\Jackie.Miller] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--Jackie.Miller
+IF (SUSER_ID('AD\Steve.Borkowski') IS NULL) BEGIN CREATE LOGIN [AD\Steve.Borkowski] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--Steve.Borkowski
+
+IF (SUSER_ID('MAXCORP\236691') IS NULL) BEGIN CREATE LOGIN [MAXCORP\236691] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--Doug.Stearns
+IF (SUSER_ID('MAXCORP\236583') IS NULL) BEGIN CREATE LOGIN [MAXCORP\236583] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--lili.huang
+IF (SUSER_ID('MAXCORP\236464') IS NULL) BEGIN CREATE LOGIN [MAXCORP\236464] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--Susmitha.Palacherla
+IF (SUSER_ID('MAXCORP\236472') IS NULL) BEGIN CREATE LOGIN [MAXCORP\236472] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--David.Hinman 
+IF (SUSER_ID('MAXCORP\236687') IS NULL) BEGIN CREATE LOGIN [MAXCORP\236687] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--lisa.stein
+IF (SUSER_ID('MAXCORP\237846') IS NULL) BEGIN CREATE LOGIN [MAXCORP\237846] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--Jackie.Miller
+IF (SUSER_ID('MAXCORP\228074') IS NULL) BEGIN CREATE LOGIN [MAXCORP\228074] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--Steve.Borkowski
+
+--IF (SUSER_ID('AD\sa-david.hinman') IS NULL) BEGIN CREATE LOGIN [AD\sa-david.hinman] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;
+--IF (SUSER_ID('AD\SA-Susmitha.Palacher') IS NULL) BEGIN CREATE LOGIN [AD\SA-Susmitha.Palacher] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;
+IF (SUSER_ID('MAXCORP\1_236464') IS NULL) BEGIN CREATE LOGIN [MAXCORP\1_236464] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;--Susmitha.Palacherla(SA)
+
+IF (SUSER_ID('AD\UVAAPADWEB50CCO$') IS NULL) BEGIN CREATE LOGIN [AD\UVAAPADWEB50CCO$] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;
+IF (SUSER_ID('ecljobowner') IS NULL) BEGIN CREATE LOGIN [ecljobowner] WITH PASSWORD=N'bi2R&S!uBRE02S4aC3-S', DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english], CHECK_EXPIRATION=OFF, CHECK_POLICY=ON END;
+IF (SUSER_ID('AD\SVC-F3420-APPECLP01') IS NULL) BEGIN CREATE LOGIN [AD\SVC-F3420-APPECLP01] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;
+IF (SUSER_ID('AD\SVC-F3420-APPCROPP01') IS NULL) BEGIN CREATE LOGIN [AD\SVC-F3420-APPCROPP01] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;
+IF (SUSER_ID('AD\SVC-F3420-APPCMTP01') IS NULL) BEGIN CREATE LOGIN [AD\SVC-F3420-APPCMTP01] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;
+IF (SUSER_ID('AD\SVC-F3420-APPIQSP01') IS NULL) BEGIN CREATE LOGIN [AD\SVC-F3420-APPIQSP01] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;
+IF (SUSER_ID('AD\SVC-F3420-APPEASEP01') IS NULL) BEGIN CREATE LOGIN [AD\SVC-F3420-APPEASEP01] FROM WINDOWS WITH DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[us_english] END;
+
+
+--**********************************************
+--**********************************************
+
+--4. Grant sql agent view to maximus accounts  (--- May not be needed ---)
+
+USE [msdb]
+GO
+
+CREATE USER [MAXCORP\236464] FOR LOGIN [MAXCORP\236464] WITH DEFAULT_SCHEMA=[dbo];--AD\Susmitha.Palacherla
+CREATE USER [MAXCORP\236583] FOR LOGIN [MAXCORP\236583] WITH DEFAULT_SCHEMA=[dbo];--AD\lili.huang
+CREATE USER [MAXCORP\237846] FOR LOGIN [MAXCORP\237846] WITH DEFAULT_SCHEMA=[dbo];--AD\Jackie.Miller
+CREATE USER [MAXCORP\236691] FOR LOGIN [MAXCORP\236691] WITH DEFAULT_SCHEMA=[dbo];--AD\Doug.Stearns
+CREATE USER [ecljobowner] FOR LOGIN [ecljobowner] WITH DEFAULT_SCHEMA=[dbo];--ecljobowner
+
+
+EXEC sp_AddRoleMember 'SQLAgentUserRole', 'ecljobowner';
+EXEC sp_AddRoleMember 'SQLAgentReaderRole', 'ecljobowner';
+EXEC sp_AddRoleMember 'SQLAgentOperatorRole', 'ecljobowner';
+
+EXEC sp_AddRoleMember 'SQLAgentUserRole', 'MAXCORP\236464';
+EXEC sp_AddRoleMember 'SQLAgentReaderRole', 'MAXCORP\236464';
+EXEC sp_AddRoleMember 'SQLAgentOperatorRole', 'MAXCORP\236464';
+
+EXEC sp_AddRoleMember 'SQLAgentUserRole', 'MAXCORP\236583';
+EXEC sp_AddRoleMember 'SQLAgentReaderRole', 'MAXCORP\236583';
+EXEC sp_AddRoleMember 'SQLAgentOperatorRole', 'MAXCORP\236583';
+
+EXEC sp_AddRoleMember 'SQLAgentUserRole', 'MAXCORP\237846';
+EXEC sp_AddRoleMember 'SQLAgentReaderRole', 'MAXCORP\237846';
+EXEC sp_AddRoleMember 'SQLAgentOperatorRole', 'MAXCORP\237846';
+
+EXEC sp_AddRoleMember 'SQLAgentUserRole', 'MAXCORP\236691';
+EXEC sp_AddRoleMember 'SQLAgentReaderRole', 'MAXCORP\236691';
+EXEC sp_AddRoleMember 'SQLAgentOperatorRole', 'MAXCORP\236691';
+
+
+
+--**********************************************
+--**********************************************
+
+--5. Create Users in eCoaching database  (--- May not be needed ---)
+
+USE [eCoaching]
+GO
+
+
+CREATE USER [AD\lili.huang] FOR LOGIN [AD\lili.huang] WITH DEFAULT_SCHEMA=[EC];--AD\lili.huang
+CREATE USER [AD\Susmitha.Palacherla] FOR LOGIN [AD\Susmitha.Palacherla] WITH DEFAULT_SCHEMA=[EC];--AD\Susmitha.Palacherla
+CREATE USER [AD\David.Hinman] FOR LOGIN [AD\David.Hinman] WITH DEFAULT_SCHEMA=[EC];--AD\David.Hinman
+CREATE USER [AD\lisa.stein] FOR LOGIN [AD\lisa.stein] WITH DEFAULT_SCHEMA=[EC];--AD\lisa.stein
+CREATE USER [AD\Jackie.Miller] FOR LOGIN [AD\Jackie.Miller] WITH DEFAULT_SCHEMA=[EC];--AD\Jackie.Miller
+CREATE USER [AD\Doug.Stearns] FOR LOGIN [AD\Doug.Stearns] WITH DEFAULT_SCHEMA=[EC];--AD\Doug.Stearns
+CREATE USER [AD\Steve.Borkowski] FOR LOGIN [AD\Steve.Borkowski] WITH DEFAULT_SCHEMA=[EC];--AD\Steve.Borkowski
+
+
+CREATE USER [MAXCORP\236583] FOR LOGIN [MAXCORP\236583] WITH DEFAULT_SCHEMA=[EC];--AD\lili.huang
+CREATE USER [MAXCORP\236464] FOR LOGIN [MAXCORP\236464] WITH DEFAULT_SCHEMA=[EC];--AD\Susmitha.Palacherla
+CREATE USER [MAXCORP\236472] FOR LOGIN [MAXCORP\236472] WITH DEFAULT_SCHEMA=[EC];--AD\David.Hinman
+CREATE USER [MAXCORP\236687] FOR LOGIN [MAXCORP\236687] WITH DEFAULT_SCHEMA=[EC];--AD\lisa.stein
+CREATE USER [MAXCORP\237846] FOR LOGIN [MAXCORP\237846] WITH DEFAULT_SCHEMA=[EC];--AD\Jackie.Miller
+CREATE USER [MAXCORP\236691] FOR LOGIN [MAXCORP\236691] WITH DEFAULT_SCHEMA=[EC];--AD\Doug.Stearns
+CREATE USER [MAXCORP\228074] FOR LOGIN [MAXCORP\228074] WITH DEFAULT_SCHEMA=[EC];--AD\Steve.Borkowski
+
+CREATE USER [AD\sa-david.hinman] FOR LOGIN [AD\sa-david.hinman] WITH DEFAULT_SCHEMA=[EC];
+CREATE USER [AD\SA-Lili.Huang] FOR LOGIN [AD\SA-Lili.Huang] WITH DEFAULT_SCHEMA=[EC];
+CREATE USER [AD\SA-Susmitha.Palacher] FOR LOGIN [AD\SA-Susmitha.Palacher] WITH DEFAULT_SCHEMA=[EC];
+CREATE USER [MAXCORP\1_236464] FOR LOGIN [MAXCORP\1_236464] WITH DEFAULT_SCHEMA=[EC];
+
+CREATE USER [AD\UVAAPADWEB50CCO$] FOR LOGIN [AD\UVAAPADWEB50CCO$] WITH DEFAULT_SCHEMA=[EC];
+CREATE USER [AD\SVC-F3420-APPECLP01] FOR LOGIN [AD\SVC-F3420-APPECLP01] WITH DEFAULT_SCHEMA=[EC];
+CREATE USER [AD\SVC-F3420-APPCROPP01] FOR LOGIN [AD\SVC-F3420-APPCROPP01] WITH DEFAULT_SCHEMA=[EC];
+CREATE USER [AD\SVC-F3420-APPCMTP01] FOR LOGIN [AD\SVC-F3420-APPCMTP01] WITH DEFAULT_SCHEMA=[EC];
+CREATE USER [AD\SVC-F3420-APPIQSP01] FOR LOGIN [AD\SVC-F3420-APPIQSP01] WITH DEFAULT_SCHEMA=[EC];
+CREATE USER [AD\SVC-F3420-APPEASEP01] FOR LOGIN [AD\SVC-F3420-APPEASEP01] WITH DEFAULT_SCHEMA=[EC];
+
+
+
+
+--**********************************************
+--**********************************************
+
+--6. Assign role membership to users  (--- May not be needed ---)
+
+
+
+EXEC sp_AddRoleMember 'db_owner', 'AD\sa-david.hinman';
+EXEC sp_AddRoleMember 'db_owner', 'AD\SA-Susmitha.Palacher';
+EXEC sp_AddRoleMember 'db_owner', 'MAXCORP\1_236464';
+
+EXEC sp_AddRoleMember 'ecoaching_admin', 'AD\SVC-F3420-APPECLP01';
+EXEC sp_AddRoleMember 'ecoaching_admin', 'AD\UVAAPADWEB50CCO$';
+
+EXEC sp_AddRoleMember 'ecoaching_admin', 'AD\lili.huang';--AD\lili.huang
+EXEC sp_AddRoleMember 'ecoaching_admin', 'AD\Susmitha.Palacherla';--AD\Susmitha.Palacherla
+EXEC sp_AddRoleMember 'ecoaching_admin', 'AD\David.Hinman';--AD\David.Hinman
+EXEC sp_AddRoleMember 'ecoaching_admin', 'AD\lisa.stein';--AD\lisa.stein
+EXEC sp_AddRoleMember 'ecoaching_admin', 'AD\Jackie.Miller';--AD\Jackie.Miller
+EXEC sp_AddRoleMember 'ecoaching_admin', 'AD\Doug.Stearns';--AD\Doug.Stearns
+EXEC sp_AddRoleMember 'ecoaching_admin', 'AD\Steve.Borkowski';--AD\Steve.Borkowski
+
+EXEC sp_AddRoleMember 'ecoaching_admin', 'MAXCORP\236583';--AD\lili.huang
+EXEC sp_AddRoleMember 'ecoaching_admin', 'MAXCORP\236464';--AD\Susmitha.Palacherla
+EXEC sp_AddRoleMember 'ecoaching_admin', 'MAXCORP\236472';--AD\David.Hinman
+EXEC sp_AddRoleMember 'ecoaching_admin', 'MAXCORP\236687';--AD\lisa.stein
+EXEC sp_AddRoleMember 'ecoaching_admin', 'MAXCORP\237846';--AD\Jackie.Miller
+EXEC sp_AddRoleMember 'ecoaching_admin', 'MAXCORP\236691';--AD\Doug.Stearns
+EXEC sp_AddRoleMember 'ecoaching_admin', 'MAXCORP\228074';--Steve.Borkowski
+
+
+EXEC sp_AddRoleMember 'ecoaching_user', 'AD\SVC-F3420-APPCROPP01';
+EXEC sp_AddRoleMember 'ecoaching_user', 'AD\SVC-F3420-APPCMTP01';
+EXEC sp_AddRoleMember 'ecoaching_user', 'AD\SVC-F3420-APPIQSP01';
+EXEC sp_AddRoleMember 'ecoaching_user', 'AD\SVC-F3420-APPEASEP01';
+
+
+
+
+
+--**********************************************
+--**********************************************
+
+--7. Grant certificate control to roles  (--- May not be needed ---)
+
+
+GRANT CONTROL ON CERTIFICATE :: [CoachingCert] TO ecoaching_admin;
+GRANT CONTROL ON SYMMETRIC KEY :: [CoachingKey] TO ecoaching_admin;
+GRANT CONTROL ON CERTIFICATE :: [CoachingCert] TO ecoaching_user;
+GRANT CONTROL ON SYMMETRIC KEY :: [CoachingKey] TO ecoaching_user;
+
+
+
+
+--**********************************************
+--**********************************************
+
+--8. Create Credential if not exists  (--- May not be needed ---)
+
+CREATE CREDENTIAL ECLCredential WITH IDENTITY='AD\SVC-F3420-APPECLP01',SECRET='3H5oU/7NN:0V86M$2NK9'
+
+--**********************************************
+--**********************************************
+
+--9. Create proxy of not exists
+
+EXEC msdb.dbo.sp_add_proxy @proxy_name=N'ECLProxy',@credential_name=N'ECLCredential', 
+		@enabled=1;
+GO
+
+EXEC msdb.dbo.sp_grant_proxy_to_subsystem @proxy_name=N'ECLProxy', @subsystem_id=3;
+GO
+
+EXEC msdb.dbo.sp_grant_proxy_to_subsystem @proxy_name=N'ECLProxy', @subsystem_id=11;
+GO
+
+EXEC msdb.dbo.sp_grant_login_to_proxy @proxy_name=N'ECLProxy', @login_name=N'ecljobowner';
+GO
+
+
+
+
+
+--**********************************************
+--**********************************************
+
+
+--10. Table updates
+--10a.
+
+ALTER TABLE [EC].[Coaching_Log_Bingo]  WITH NOCHECK ADD  CONSTRAINT [fkBingoCoachingID] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log] ([CoachingID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Bingo] CHECK CONSTRAINT [fkBingoCoachingID]
+GO
+
+
+--**********************************************
+
+
+--10b.
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations]  WITH NOCHECK ADD  CONSTRAINT [fkQNEvalCoachingID] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log] ([CoachingID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations] CHECK CONSTRAINT [fkQNEvalCoachingID]
+GO
+
+
+
+
+
+--**********************************************
+--**********************************************
+
+--11. Install cert for SSRS if needed (ccO02112023)  (--- May not be needed ---)
+
+---**Prep - This should be done *---
+1. Place cert on Server (H:\Apps\Software\Cert)
+2. Import server into Certificate store (Personal)
+
+
+
+---**Bind the cert to SSRS website*---
+1. Under Web Service url , went to advanced tab and removed the bindings for 443
+2. Under Web portal URL , went to advanced tab and removed the bindings for 443
+3. Updated the Virtual directory in Web portal URL (was at Reports, i updated to Reports_ECLP01 for our prod url)and apply
+3. Went to advanced tab in Under Web Service url and added the cert binding for all IP4 and IP6 addresses
+3. Went to advanced tab in Under Web portal URL and added the cert binding for all IP4 and IP6 addresses
+
+
+--**********************************************
+--**********************************************
+
+
+--12. Add the HSTS header for SSRS  (--- May not be needed ---)
+
+
+1.Launch SQL Server Management Studio (SSMS) locally with an account that has permissions to Reporting Services. (SA-susmitha.palacher)
+  For the Server Type, choose Reporting Services and server name  https://uvaapadsql50cco.ad.local/Reports_ECLP01
+
+2. In Object Explorer, right-click on the SSRS instance and choose Properties.
+3. In the Server Properties dialog, click on Advanced under Select a page.  
+4. On the right-hand side under “User-defined”, click in the column next to CustomHeaders and enter the following (should be entered in one line)
+<CustomHeaders><Header><Name>Strict-Transport-Security</Name><Pattern>(.+)\/Reports_ECLP01\/(.+)</Pattern><Value>max-age=31536000; includeSubDomains=true; preload</Value></Header></CustomHeaders>
+
+
+--**********************************************
+--**********************************************
+
+
+
+--**********************************************
+--**********************************************

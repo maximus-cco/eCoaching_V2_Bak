@@ -1,19 +1,20 @@
-<?xml version="1.0"?><DTSConfiguration>
+<?xml version="1.0"?>
+<DTSConfiguration>
 <DTSConfigurationHeading>
-<DTSConfigurationFileInfo GeneratedBy="VNGT\palasu" GeneratedFromPackageName="Training_Coaching" GeneratedFromPackageID="{5935C644-1A96-420A-9122-46D5AD971041}" GeneratedDate="3/4/2016 12:47:46 PM"/>
+<DTSConfigurationFileInfo GeneratedBy="MAXCORP\236464" GeneratedFromPackageName="Training_Coaching" GeneratedFromPackageID="{DD48AEAF-BABC-4DD6-8F17-2D18BF964014}" GeneratedDate="3/30/2021 1:33:17 PM"/>
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoaching</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>F3420-ECLDBP01</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAAPADSQL50CCO</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>ironport.maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FailMessage].Properties[Value]" ValueType="String"><ConfiguredValue>Training Coaching Load failed in Prod</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbp01\data\coaching\Training\Decrypt_out\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbp01\data\coaching\Training\Decrypt_in\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptedBackupPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbp01\data\coaching\Training\Backups\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbp01\data\coaching\Training\Encrypt_out\</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\f3420-ecldbp01\data\coaching\Training\Encrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Training\Decrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Training\Decrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptedBackupPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Training\Backups\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Training\Encrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Training\Encrypt_in\</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::VarDBName].Properties[Value]" ValueType="String"><ConfiguredValue>Prod</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[CCLine]" ValueType="String"><ConfiguredValue>LiliHuang@maximus.com;DavidLHinman@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[CCLine]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[FromLine]" ValueType="String"><ConfiguredValue>eCoaching@maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[Subject]" ValueType="String"><ConfiguredValue>Training Coaching Load Failed</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[ToLine]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[ToLine]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com;LiliHuang@maximus.com;DavidLHinman@maximus.com</ConfiguredValue></Configuration>
 </DTSConfiguration>

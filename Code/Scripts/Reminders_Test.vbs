@@ -1,21 +1,27 @@
-'Test
+' Test
 
-'Begin - Environment Related
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=F3420-ECLDBT01"
-Const eCoachingUrl = "https://f3420-mpmd01.ad.local/eCoachingLog_st/"
+' Begin - Environment Related
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=UVAADADSQL52CCO"
+Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_test/"
 Const fromAddress = "eCoachingTest@maximus.com"
-Const imgPath = "\\f3420-ecldbt01.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-'End - Environment Related
+Const imgPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\Logs\Reminders_Test.log"
+' End - Environment Related
 
-
-'Begin - Non-Environment Related
+' Begin - Non-Environment Related
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
-Const smtpServer = "ironport.maximus.com" 
+Const smtpServer = "ironport.maximus.com"
+Const ForAppending = 8 
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1
-'End - Non-Environment Related
+' End - Non-Environment Related
 
+'Specify log file
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+Set objLogFile = objFSO.OpenTextFile(strLogFile, ForAppending, True)
+objLogFile.WriteBlankLines(2) 
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Notifications!"
 
 
 'variables for database connection and recordset
@@ -30,6 +36,7 @@ Dim strSubject
 Dim strCtrMessage
 Dim strsubCoachingSource
 Dim numLogType
+
 
 Dim arrResultSet
 Dim totalPendingEmail
@@ -74,8 +81,6 @@ For j = 0 to totalPendingEmail
         strCCEmail = arrResultSet(6,j) 
 	strsubCoachingSource = arrResultSet(3,j) 'Empower for DTT Feeds
         numLogType = arrResultSet(12,j)
-	
-
 
 	'configure the subject line
 	strSubject = "Alert! eCoaching Log Past Due Follow-up:  "  '& " (" & strFormName & ")"
@@ -107,7 +112,7 @@ dim spUpdateReminderMailSent
 On Error Resume Next
 
 
-    Select Case (strsubCoachingSource)
+  Select Case (strsubCoachingSource)
         Case "Warning"
         strSubject = "Alert! Warning Log Past Due Follow-up:  "  &  strFormName 
         Case Else
@@ -118,15 +123,17 @@ On Error Resume Next
   mailbody =  strFormName & " requires your attention. Please review and discuss with the employee."
 
   Select Case (strsubCoachingSource)
-  Case "Empower"
-        mailBody = strFormName & " requires your attention. Please review the log and take appropriate action."
+        Case "Empower"
+            mailBody = strFormName & " requires your attention. Please review the log and take appropriate action."
   Case "WAH-RTS"
             mailBody = strFormName & " requires your attention. Please review the log and take appropriate action."
-  Case "Warning"
-        mailBody = strFormName & " requires your attention. Please review and acknowledge the log."
-End Select
+        Case "Warning"
+            mailBody = strFormName & " requires your attention. Please review and acknowledge the log."
+  End Select
 
   strCtrMessage = (mailBody)
+
+
            
 
   strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
@@ -210,10 +217,14 @@ CCAddress = strCCEmail
     .From = fromAddress
     .Subject = ToSubject
     .HTMLBody = htmlbody
+On Error Resume Next ' Turn in-Line Error Handling On before sending email
   .Send
 End With
 
-
+  If Err.Number <> 0 Then ' If it failed, report the error
+     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending reminder for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
+ 
+  End If
    ' Clean up variables.
     Set objMsg = Nothing
     Set objConfiguration = Nothing
@@ -230,7 +241,11 @@ End With
 'Update record to indicate mail has been sent - replace fromID field with new mail column
 ' use numbers because the actual string values aren't recognized without adovbs.inc - http://www.af-chicago.org/app/adovbs.inc
 
+
+
 spUpdateReminderMailSent = "EXEC EC.sp_UpdateReminderMailSent @intNumID ='" & numID & "',@intLogType ='" & numLogType & "'"
+
+'spUpdateReminderMailSent = "EXEC EC.sp_UpdateReminderMailSent @nvcNumID ='" & numID & "'"
 
 dbConn.execute(spUpdateReminderMailSent), , 129
  SafeCloseDbConn dbConn
@@ -265,3 +280,5 @@ Sub SafeQuit (rs, dbConn)
 	
 	Wscript.Quit
 End Sub
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Notifications!"
+objLogfile.close

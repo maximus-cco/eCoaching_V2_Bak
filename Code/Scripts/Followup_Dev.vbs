@@ -1,20 +1,33 @@
 ' Dev
 
 ' Begin - Environment Related
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingDev;Data Source=F3420-ECLDBD01"
-Const eCoachingUrl = "https://f3420-mpmd01.ad.local/eCoachingLog_dev/"
+
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingDev;Data Source=UVAADADSQL50CCO"
+Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_dev/"
 Const fromAddress = "eCoachingDev@maximus.com"
-Const imgPath = "\\f3420-ecldbd01.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const imgPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const strLogFile = "\\UVAADADSQL50CCO.ad.local\ssis\Coaching\Notifications\Logs\Followup_Dev.log"
+
 ' End - Environment Related
 
 ' Begin - Non-Environment Related
+
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
 Const smtpServer = "ironport.maximus.com" 
+Const ForAppending = 8
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1
+
 ' End - Non-Environment Related
 
+
+'Specify log file
+
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+Set objLogFile = objFSO.OpenTextFile(strLogFile, ForAppending, True)
+objLogFile.WriteBlankLines(2) 
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Followup Notifications!"
 
 'variables for database connection and recordset
 Dim dbConn, rs
@@ -182,17 +195,22 @@ ToAddress = strToEmail
     .From = fromAddress
     .Subject = ToSubject
     .HTMLBody = htmlbody
+On Error Resume Next ' Turn in-Line Error Handling On before sending email
   .Send
 End With
 
+'Using objFile.Write instead of objFile.WriteLine. This will write to the file without a newline at the end.
+
+    If Err.Number <> 0 Then ' If it failed, report the error
+     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending Followup notification for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
+ 
+     End If
 
    ' Clean up variables.
     Set objMsg = Nothing
     Set objConfiguration = Nothing
     Set objFields = Nothing
     Set objBodyPart = Nothing
-
-
 
 End Sub
 	
@@ -222,3 +240,6 @@ Sub SafeQuit (rs, dbConn)
 	
 	Wscript.Quit
 End Sub
+
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Followup Notifications!"
+objLogfile.close

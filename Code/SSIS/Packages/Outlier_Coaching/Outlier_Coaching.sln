@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "Outlier_Coaching", "Outlier_Coaching.dtproj", "{3D1E58E5-EA99-4B7B-B75B-E3F4E48F8262}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D1E58E5-EA99-4B7B-B75B-E3F4E48F8262}.Development|Default.ActiveCfg = Development
+		{3D1E58E5-EA99-4B7B-B75B-E3F4E48F8262}.Development|Default.Build.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6DAEA5B7-4C16-4AD6-B2B0-2A3CD0937E0A}
+	EndGlobalSection
+EndGlobal
