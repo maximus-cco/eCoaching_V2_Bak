@@ -130,7 +130,7 @@ training
 'WTTI02' -- Instructor
 'WTTR12' -- Specialist, Training
 'WTTR13' -- Sr Specialist, Training
-'WTID13' -- Sr Developer, Instructional.
+'WTID13' -- Sr Developer, Instructional
     submitters
 'WTTR12' -- Specialist, Training (to WTTI02 only)
 'WTTR13' -- Sr Specialist, Training (to WTTI02 only)

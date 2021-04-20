@@ -20,7 +20,7 @@ where UserId = '236691'
 -- put me there
 insert into EC.AT_User
 (UserId, UserLanID, UserName, EmpJobCode, Active)
-values ('236691',EncryptByKey(Key_GUID('CoachingKey'), 'Doug.Stearns'),
+values ('236691',EncryptByKey(Key_GUID('CoachingKey'), N'Doug.Stearns'),
         EncryptByKey(Key_GUID('CoachingKey'), 'Stearns, Douglas R'), 'WACS60', 1)
 
 -- change me there
@@ -28,7 +28,7 @@ update EC.AT_User
 set 
 EmpJobCode = 'WACS01'
 --Active = 1 -- 1=active/0=inactive
---UserLanID = EncryptByKey(Key_GUID('CoachingKey'), 'DougR.Stearns')
+--UserLanID = EncryptByKey(Key_GUID('CoachingKey'), N'DougR.Stearns')
 where UserId = '236691'
 
 

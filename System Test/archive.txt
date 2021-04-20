@@ -1,0 +1,129 @@
+-- show logs to archive 
+
+-- count of coaching logs that are not short calls, bingo, quality now
+select count(*)
+from EC.Coaching_Log
+where StatusID = 2
+and SubmittedDate < dateadd(year, -1, getdate())
+and strReportCode not like 'ISQ%' -- short calls -- 7164
+and strReportCode not like 'BQ%'  -- bingo -- 0
+and SourceID not in (135,236,235,236) -- quality now -- 57
+
+-- count of coaching reason logs that are not short calls, bingo, quality now
+select count(*)
+from EC.Coaching_Log_Reason
+where CoachingID in (
+select CoachingID
+from EC.Coaching_Log
+where StatusID = 2
+and SubmittedDate < dateadd(year, -1, getdate()))
+and strReportCode not like 'ISQ%' -- short calls
+and strReportCode not like 'BQ%'  -- bingo
+and SourceID not in (135,236,235,236) -- quality now
+
+-- count of coaching bingo logs
+select count(*) 
+from EC.Coaching_Log_Bingo
+where CoachingID in (
+select CoachingID
+from EC.Coaching_Log
+where StatusID = 2
+and SubmittedDate < dateadd(year, -1, getdate()))
+
+-- count of coaching quality now
+select count(*) 
+from EC.Coaching_Log_Quality_Now_Evaluations
+where CoachingID in (
+select CoachingID
+from EC.Coaching_Log
+where StatusID = 2
+and SubmittedDate < dateadd(year, -1, getdate()))
+
+-- count of coaching short calls
+select count(*)
+from EC.ShortCalls_Evaluations
+where CoachingID in (
+select CoachingID
+from EC.Coaching_Log
+where StatusID = 2
+and SubmittedDate < dateadd(year, -1, getdate()))
+
+
+
+-- to run the archive job
+begin
+
+declare @return_value int
+set @return_value = 0
+
+EXEC @return_value = [EC].[sp_Insert_Into_Coaching_Log_Archive] @strArchivedBy = N'Manual'
+
+select @return_value
+
+end
+
+
+
+-- show the archived logs
+
+-- count of total archived logs or logs archived since yesterday 
+select count(*) 
+from EC.Coaching_Log_Archive
+where ArchivedDate > dateadd(day, -1, getdate()))
+
+-- count of archived logs by archive date
+select ArchivedDate, count(*) 
+from EC.Coaching_Log_Archive
+group by ArchivedDate
+
+-- archived logs depending on type
+select 
+cla.CoachingID,
+cla.FormName,
+cla.SourceID,
+cla.StatusID,
+cla.SubmittedDate,
+cla.strReportCode,
+cla.ArchivedDate,
+clra.CoachingReasonID,
+clra.CoachingReasonID,
+clra.[Value],
+clra.ArchivedDate,
+--sea.VerintCallID,
+--sea.ArchivedDate
+--clba.Competency,
+--clba.BingoType,
+--clba.ArchivedDate
+qnea.QNBatchID,
+qnea.Eval_ID,
+qnea.ArchivedDate
+from EC.Coaching_Log_Archive cla
+join EC.Coaching_Log_Reason_Archive clra on clra.CoachingID = cla.CoachingID
+--join EC.ShortCalls_Evaluations_Archive sea on sea.CoachingID = cla.CoachingID
+--join EC.Coaching_Log_Bingo_Archive clba on  clba.CoachingID = cla.CoachingID
+join EC.Coaching_Log_Quality_Now_Evaluations_Archive qnea on qnea.CoachingID = cla.CoachingID
+where cla.ArchivedDate > dateadd(day, -1, getdate()))
+--and cla.strReportCode like 'ISQ%'   -- short calls
+--and (cla.SourceID in (218)          -- bingo
+--and  cla.strReportCode like 'BQ%')  -- "
+and cla.SourceID in (135,236,235,236) -- quality now 
+
+-- 
+select count(*)
+from EC.Coaching_Log_Archive
+where StatusID = 2
+and ArchivedDate > dateadd(day, -1, getdate()))
+and strReportCode not like 'ISQ%' -- short calls
+--and (cla.SourceID in (218)          -- bingo
+--and  cla.strReportCode like 'BQ%')  -- "
+--and SourceID in (135,236,235,236) -- quality now
+
+select * from EC.Coaching_Log_Archive
+where ArchivedDate > dateadd(day, -1, getdate()))
+and strReportCode not like 'ISQ%' -- short calls
+--and (cla.SourceID in (218)          -- bingo
+--and  cla.strReportCode like 'BQ%')  -- "
+--and SourceID in (135,236,235,236) -- quality now
+and CoachingID not in (
+select CoachingID from EC.Coaching_Log)
+

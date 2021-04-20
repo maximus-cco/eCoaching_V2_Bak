@@ -32,7 +32,7 @@ CSRReviewAutoDate = '2018-05-02 09:32:00.000'
 where CoachingID = 715954
 
 -- info tables
-select * from Survey_Sites
+select * from EC.Survey_Sites
 select * from EC.Survey_DIM_Type
 select * from EC.Survey_DIM_Question
 select * from EC.Survey_DIM_QAnswer
@@ -131,6 +131,32 @@ InactivationDate = null,
 InactivationReason = null
 where SurveyID = 27
 
+
+-- quanlity now log surveys
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+select cl.FormName,
+       dsour.CoachingSource,
+       dsour.SubCoachingSource,
+       cl.QNBatchID,
+       cl.QNBatchStatus,
+       CONVERT(nvarchar(100),DecryptByKey(eh.Emp_LanID)) AS [Decrypted Emp_LanID],
+       dsite.City,
+       srh.SurveyID,
+       srh.Status,
+       srh.FormName,
+       CONVERT(nvarchar(100),DecryptByKey(srh.EmpLanID))
+from EC.Coaching_Log cl
+join EC.Employee_Hierarchy eh on cl.EmpID = eh.Emp_ID
+join EC.DIM_Site dsite on cl.SiteID = dsite.SiteID
+join EC.DIM_Source dsour on cl.SourceID = dsour.SourceID
+join EC.Survey_Response_Header srh on cl.CoachingID = srh.CoachingID
+where cl.StatusID in (1)
+and cl.SourceID in (235,236)
+and cl.CSRReviewAutoDate > '2019-12-01 00:00:00.000'
+
+CLOSE SYMMETRIC KEY CoachingKey
 
 -- to access web page
 https://f3420-mpmd01/eCoachingLog_st/Survey?id=27

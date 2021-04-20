@@ -28,6 +28,7 @@ SELECT cl.CoachingID,
        dsite.City,
        CONVERT(nvarchar(100),DecryptByKey(eh.Emp_LanID)) AS [Decrypted Emp_LanID],
        cl.EmpID,
+       CONVERT(nvarchar(100),DecryptByKey(eh.Emp_Name)) AS [Decrypted Emp_Name],
        cl.Description,
        cl.CoachingDate,
        cl.CoachingNotes,
@@ -89,8 +90,9 @@ SELECT cl.CoachingID,
   join EC.DIM_Status dstat on cl.StatusID = dstat.StatusID
   join EC.DIM_Site dsite on cl.SiteID = dsite.SiteID
   join EC.DIM_Module dm on cl.ModuleID = dm.ModuleID
+ where cl.strReportCode like 'ISQ20200402'
+   and cl.SubmittedDate > '2020-03-27 00:00:00.000'
   order by cl.CoachingID
-
 
 CLOSE SYMMETRIC KEY CoachingKey
 /* ***********************************************

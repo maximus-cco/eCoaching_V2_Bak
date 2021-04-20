@@ -27,15 +27,15 @@ where Emp_Job_Code in ('WACS60')
 and Active = 'A'
 
 select * from EC.Employee_Hierarchy
-where Sup_ID = '412776'
+where Sup_ID = '237488'
 
 select * from EC.Employee_Hierarchy
-where Mgr_ID = '412776'
+where Mgr_ID = '237488'
 
 select * from EC.Employee_Hierarchy
-where (SrMgrLvl1_ID = '412776'
- or  SrMgrLvl2_ID = '412776'
- or  SrMgrLvl3_ID = '412776')
+where (SrMgrLvl1_ID = '237488'
+ or  SrMgrLvl2_ID = '237488'
+ or  SrMgrLvl3_ID = '237488')
 /***************************************************************
     id srmgr
 ***************************************************************/
@@ -73,29 +73,29 @@ where UserId = '236691'
 
 update EC.Employee_Hierarchy
 set Sup_ID = '236691'
-where Sup_ID = '412776'
+where Sup_ID = '237488'
 
 update EC.Employee_Hierarchy
 set Mgr_ID = '236691'
-where Mgr_ID = '412776'
+where Mgr_ID = '237488'
 
 update EC.Employee_Hierarchy
 set SrMgrLvl1_ID = '236691'
-where SrMgrLvl1_ID = '412776'
+where SrMgrLvl1_ID = '237488'
 
 update EC.Employee_Hierarchy
 set SrMgrLvl2_ID = '236691'
-where SrMgrLvl2_ID = '412776'
+where SrMgrLvl2_ID = '237488'
 
 update EC.Employee_Hierarchy
 set SrMgrLvl3_ID = '236691'
-where SrMgrLvl3_ID = '412776'
+where SrMgrLvl3_ID = '237488'
 
 update EC.Employee_Hierarchy
 set SrMgrLvl1_ID = '236691', 
-SrMgrLvl2_ID = '999999', 
-SrMgrLvl3_ID = '999999'
-where Emp_ID in ('x365663','x368329','236472','236687','236281')
+SrMgrLvl2_ID = '236332', 
+SrMgrLvl3_ID = '236332'
+where Emp_ID in ('236281','236472','236687','236691','237863','x365663','x368329','X368771')
 
 /***************************************************************
     change to srmgr
@@ -113,31 +113,31 @@ set EmpJobCode = 'WSTE13'
 where UserId = '236691'
 
 update EC.Employee_Hierarchy
-set Sup_ID = '412776'
+set Sup_ID = '237488'
 where Sup_ID = '236691'
 
 update EC.Employee_Hierarchy
-set Mgr_ID = '412776'
+set Mgr_ID = '237488'
 where Mgr_ID = '236691'
 
 update EC.Employee_Hierarchy
-set SrMgrLvl1_ID = '412776'
+set SrMgrLvl1_ID = '237488'
 where SrMgrLvl1_ID = '236691'
 
 update EC.Employee_Hierarchy
-set SrMgrLvl2_ID = '412776'
+set SrMgrLvl2_ID = '237488'
 where SrMgrLvl2_ID = '236691'
 
 update EC.Employee_Hierarchy
-set SrMgrLvl3_ID = '412776'
+set SrMgrLvl3_ID = '237488'
 where SrMgrLvl3_ID = '236691'
 
 
 update EC.Employee_Hierarchy
-set SrMgrLvl1_ID = '236952', 
-SrMgrLvl2_ID = '999999', 
-SrMgrLvl3_ID = '999999'
-where Emp_ID in ('x365663','x368329','236472','236687','236281')
+set SrMgrLvl1_ID = '236332', 
+SrMgrLvl2_ID = '236332', 
+SrMgrLvl3_ID = '236332'
+where Emp_ID in ('236281','236472','236687','236691','237863','x365663','x368329','X368771')
 
 
 /***************************************************************

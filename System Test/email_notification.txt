@@ -24,12 +24,31 @@ where CoachingID in (689247)
 /*************************************************
      email reminders for coaching logs
 *************************************************/
+
+/*
+    Empower/Attendance/Discrepancy Tracking/Opportunity/Pending Employee Review
+    OMR/OMR Exceptions/Low CSAT/Research Required/Pending Manager Review
+    OMR/OMR Excpetions/Low CSAT/Opportunity/Pending Supervisor Review
+    Verint CCO/Quality/Other/Did Not Meet Goal/Pending Supervisor Review
+    Verint GDIT/Quality/Other/Did Not Meet Goal/Pending Supervisor Review
+    Warning/All/All/Opportunity/Pending Employee Review
+    any/Work at Home (Return to Site Only)/Pending Employee Review
+*/
 -- stored procedure to show logs that need emails reminders sent
 exec EC.sp_SelectCoaching4Reminder 
 
--- set the initial email notification date
+-- set the initial email notification date - feed files
 update EC.Coaching_Log
 set NotificationDate = '2016-02-22 13:14:27'
+where CoachingID in ()
+
+-- ui submission uses submitteddate
+update EC.Coaching_Log
+set SubmittedDate = dateadd(hour,-49,SubmittedDate)
+where CoachingID in (772464,772465,772469,772470)
+
+update EC.Coaching_Log
+set SubmittedDate = '2020-08-26 00:00:00.000'
 where CoachingID in ()
 
 -- update notification date in past - first reminder - iqs=48; omr=72

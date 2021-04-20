@@ -22,21 +22,21 @@ DECRYPTION BY CERTIFICATE [CoachingCert];
 
 select 
 Emp_ID,
-CONVERT(nvarchar(100),DecryptByKey(Emp_LanID)) AS [Decrypted Emp_LanID],
+--CONVERT(nvarchar(100),DecryptByKey(Emp_LanID)) AS [Decrypted Emp_LanID],
+CONVERT(nvarchar(100),DecryptByKey(Emp_Name)) AS [Decrypted Emp_Name],
 Emp_Job_Code,
 Emp_Job_Description,
-CONVERT(nvarchar(100),DecryptByKey(Emp_Name)) AS [Decrypted Emp_Name],
 Emp_Site,
 Sup_ID,
-CONVERT(nvarchar(100),DecryptByKey(Sup_LanID)) AS [Decrypted Sup_LanID],
+--CONVERT(nvarchar(100),DecryptByKey(Sup_LanID)) AS [Decrypted Sup_LanID],
+CONVERT(nvarchar(100),DecryptByKey(Sup_Name)) AS [Decrypted Sup_Name],
 Sup_Job_Code,
 Sup_Job_Description,
-CONVERT(nvarchar(100),DecryptByKey(Sup_Name)) AS [Decrypted Sup_Name],
 Mgr_ID,
-CONVERT(nvarchar(100),DecryptByKey(Mgr_LanID)) AS [Decrypted Mgr_LanID],
+--CONVERT(nvarchar(100),DecryptByKey(Mgr_LanID)) AS [Decrypted Mgr_LanID],
+CONVERT(nvarchar(100),DecryptByKey(Mgr_Name)) AS [Decrypted Mgr_Name],
 Mgr_Job_Code,
 Mgr_Job_Description,
-CONVERT(nvarchar(100),DecryptByKey(Mgr_Name)) AS [Decrypted Mgr_Name],
 CONVERT(nvarchar(100),DecryptByKey(Emp_Email)) AS [Decrypted Emp_Email],
 CONVERT(nvarchar(100),DecryptByKey(Sup_Email)) AS [Decrypted Sup_Email],
 CONVERT(nvarchar(100),DecryptByKey(Mgr_Email)) AS [Decrypted Mgr_Email],
@@ -65,12 +65,12 @@ where Emp_ID in (
 ,'236472'   -- 'David.Hinman'         'Hinman, David L'         'WISO14'
 ,'236687'   -- 'lisa.stein'           'Stein, Lisa D'           'WSTE12'
 ,'236281'   -- 'Lola.Treinen'         'Treinen, Lola R'         'WISO14'
-,'237863'   -- 'brian.coughlin'       'Coughlin, Brian E'       'WSTE14'
-,'x368771'  -- 'Leslie.Keune'         'Keune, Leslie A'         'WPPT50'
+,'237846'   -- 'Jackie.Miller'        'Miller, Jackie K'        'WSTE14'
 --,'237840'   -- 'Timothy.Queen'        'Queen, Timothy K'        'WPPT60'
+--,'x368771'  -- 'Leslie.Keune'         'Keune, Leslie A'         'WPPT50'
+--,'236332'   -- 'Michael.Ingram'       'Ingram, Michael T'       'WPPM60'
 --,'236464'   -- 'Susmitha.Palacherla'  'Palacherla, Susmitha C'  'WISO13'
 --,'237857'   -- 'Jourdain.Augustin'    'Augustin, Jourdain M'    'WISO13'
---,'236332'   -- 'Michael.Ingram'       'Ingram, Michael T'       'WPPM60'
 --,'236583'   -- 'Lili.Huang'           'Huang, Lili'             'WISO12'
 --,'236333'   -- 'Timothy.Leonard'      'Leonard, Timothy M'      'WISO15'
 --,'237849'   -- 'Jacqueline.Haltmeyer' 'Haltmeyer, Jacqueline K' 'WISA70'
@@ -82,6 +82,10 @@ where Emp_ID in (
 --,'236941'   -- 'Sara.Stonecipher'     'Stonecipher, Sara'         'WPPM11'
 --,'236328'   -- 'DEANNA.MORRIS'        'Morris-Stringer, Deanna L' 'WPPM11'
 --,'236732'   -- 'KIRSTINA.PRAHL'       'Prahl, Kirstina M'         'WPPM11'
+--,'236424'   -- 'Amy.Kennedy'       		'Barnes, Amy E'         		'WPSM13'
+--,'237863'   -- 'brian.coughlin'       'Coughlin, Brian E'       'WSTE14'
+--,'236637'   -- 'James.Reem'           'Reem, James P'             'WISO14'
+--,'228596'   -- 'Kalyan.Moharar'       'Moharar, Kalyan K'         'WISO13'
 )
 
 CLOSE SYMMETRIC KEY CoachingKey
@@ -97,6 +101,7 @@ where Emp_ID = '236691'
 -- activate a termed record
 update EC.employee_Hierarchy
 set end_date = '99991231',
+term_date = null,
 active = 'A' 
 where Emp_ID in ('')
 /* ***********************************************
@@ -220,4 +225,29 @@ CLOSE SYMMETRIC KEY CoachingKey
 
 /* ***********************************************
     change email address 
+   *********************************************** */
+
+
+/* ***********************************************
+    emp id to lan id table 
+   *********************************************** */
+   
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];  
+
+select ID, 
+       EmpID, 
+       StartDate, 
+       EndDate, 
+       CONVERT(nvarchar(100),DecryptByKey(LanID)) AS [Decrypted Emp_LanID],
+       DatetimeInserted, 
+       DatetimeLastUpdated, 
+       LanID_Drop
+from EmployeeID_To_LanID
+where EmpID = '236691'
+
+CLOSE SYMMETRIC KEY CoachingKey
+
+/* ***********************************************
+    emp id to lan id table 
    *********************************************** */

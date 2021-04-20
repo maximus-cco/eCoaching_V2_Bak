@@ -14,6 +14,7 @@ SELECT cl.CoachingID,
        dsite.City,
        CONVERT(nvarchar(100),DecryptByKey(eh.Emp_LanID)) AS [Decrypted Emp_LanID],
        cl.EmpID,
+       CONVERT(nvarchar(100),DecryptByKey(eh.Emp_Name)) AS [Decrypted Emp_Name],
        cl.SubmitterID,
        cl.EventDate,
        cl.CoachingDate,
@@ -88,6 +89,9 @@ SELECT cl.CoachingID,
    --and cl.SubmittedDate > '2014-10-01 00:00:00.000'
    --and (cl.strReportCode like 'BRN20170411'
    --or cl.strReportCode like 'BRL20170411')
+   --and cl.SourceID in (122,123,124,130,222,223,224,230) -- iqs non quality now
+   --and cl.SourceID not in (135,236,235,236,122,123,124,130,222,223,224,230) -- non iqs 
+     
   order by cl.CoachingID
   
 CLOSE SYMMETRIC KEY CoachingKey

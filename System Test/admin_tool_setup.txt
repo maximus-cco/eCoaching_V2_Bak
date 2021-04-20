@@ -7,7 +7,7 @@
 --205 ManageWarningLogs
 --206 ReactivateCoachingLogs
 --207 ReactivateWarningLogs
---208 SeniorManagerDashboard
+--208 SeniorManagerDashboard - removed
 --209 Reports
 --210 Report-RunCoachingSummary
 --211 Report-RunWarningSummary
@@ -24,7 +24,7 @@ select * from EC.AT_Module_Access
 --102 CoachingUser
 --103 WarningAdmin
 --104 WarningUser
---105 SeniorManager
+--105 SeniorManager - removed
 --106 ReportCoachingAdmin
 --107 ReportWarningAdmin
 --108 ReportCoachingCSRUser
