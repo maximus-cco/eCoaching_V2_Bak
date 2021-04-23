@@ -1,11 +1,11 @@
 ' Test
 
 ' Begin - Environment Related
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=UVAADADSQL52CCO"
-Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_test/"
-Const fromAddress = "eCoachingTest@maximus.com"
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingUAT;Data Source=UVAADADSQL52CCO"
+Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_uat/"
+Const fromAddress = "eCoachingUAT@maximus.com"
 Const imgPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\Logs\Notifications_Test.log"
+Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\UAT\Logs\Notifications_UAT.log"
 ' End - Environment Related
 
 ' Begin - Non-Environment Related
@@ -255,12 +255,10 @@ On Error Resume Next ' Turn in-Line Error Handling On before sending email
            .Send
     End With
 
-
   If Err.Number <> 0 Then ' If it failed, report the error
      objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending notification for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
  
   End If
-
 	
     ' Clean up variables.
     Set objMsg = Nothing

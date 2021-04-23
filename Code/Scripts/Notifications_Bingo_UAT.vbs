@@ -1,32 +1,32 @@
-' Prod
+' Test
 
 ' Begin - Environment Related
 
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoaching;Data Source=UVAAPADSQL50CCO"
-Const eCoachingUrl = "https://uvaapadweb50cco.ad.local/ecl/"
-Const fromAddress = "eCoachingProd@maximus.com"
-Const imgPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingUAT;Data Source=UVAADADSQL52CCO"
+Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_uat/"
+Const fromAddress = "eCoachingUAT@maximus.com"
+Const imgPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
 
-Const imgaaPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\aa.png"
-Const imgalPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\al.png"
-Const imgccPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\cc.png"
-Const imgnnPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\nn.png"
-Const imgppPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\pp.png"
-Const imgprPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\pr.png"
-Const imgsoPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\so.png"
-Const imgwcPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\wc.png"
+Const imgaaPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\aa.png"
+Const imgalPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\al.png"
+Const imgccPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\cc.png"
+Const imgnnPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\nn.png"
+Const imgppPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\pp.png"
+Const imgprPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\pr.png"
+Const imgsoPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\so.png"
+Const imgwcPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\wc.png"
 
-Const imgaa_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\aa_qm.png"
-Const imgcc_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\cc_qm.png"
-Const imgmm_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\mm_qm.png"
-Const imgpp_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\pp_qm.png"
-Const imgpr_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\pr_qm.png"
-Const imgrr_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\rr_qm.png"
-Const imgso_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\so_qm.png"
-Const imgwc_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\wc_qm.png"
+Const imgaa_qmPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\aa_qm.png"
+Const imgcc_qmPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\cc_qm.png"
+Const imgmm_qmPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\mm_qm.png"
+Const imgpp_qmPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\pp_qm.png"
+Const imgpr_qmPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\pr_qm.png"
+Const imgrr_qmPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\rr_qm.png"
+Const imgso_qmPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\so_qm.png"
+Const imgwc_qmPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\wc_qm.png"
 
 
-Const strLogFile = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\Logs\Notifications_Bingo_Prod.log"
+Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\UAT\Logs\Notifications_Bingo_UAT.log"
 
 ' End - Environment Related
 
@@ -281,14 +281,15 @@ With objMsg
     .Subject = toSubject
     .HTMLBody = htmlbody
 
-On Error Resume Next ' Turn in-Line Error Handling On before sending email
+On Error Resume Next ' Turn in-Line Error Handling on before sending email
   .Send
+
 End With
 
-  If Err.Number <> 0 Then ' If it failed, report the error
-     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending bingo notification for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
+     If Err.Number <> 0 Then ' If it failed, report the error
+     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending Bingo notification for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description + "."
  
-  End If
+     End If
 
   ' Clean up variables.
     Set objMsg = Nothing
@@ -296,7 +297,9 @@ End With
     Set objFields = Nothing
     Set objBodyPart = Nothing
 
-     If Err.Number = 0 Then ' Email was successfully sent
+
+
+    If Err.Number = 0 Then ' Email was successfully sent
 	    Set dbConn = CreateObject("ADODB.Connection")
         dbConn.Open dbConnStr
 
@@ -342,3 +345,5 @@ End Sub
 
 objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Bingo Notifications!"
 objLogfile.close
+
+

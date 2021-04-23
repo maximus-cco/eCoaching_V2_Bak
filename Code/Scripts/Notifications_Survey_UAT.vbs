@@ -1,24 +1,21 @@
-' Dev
+' Test
 
 ' Begin - Environment Related
-
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingDev;Data Source=UVAADADSQL50CCO"
-Const eCoachingUrl = "https://UVAADADWEB50CCO.ad.local/ecl_dev/Survey"
-Const fromAddress = "eCoachingDev@maximus.com"
-Const imgPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-Const strLogFile = "\\UVAADADSQL50CCO.ad.local\ssis\Coaching\Notifications\Logs\Reminders_Survey_Dev.log"
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingUAT;Data Source=UVAADADSQL52CCO"
+Const eCoachingUrl = "https://UVAADADWEB50CCO.ad.local/ecl_uat/Survey"
+Const fromAddress = "eCoachingUAT@maximus.com"
+Const imgPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\UAT\Logs\Notifications_Survey_UAT.log"
 
 ' End - Environment Related
 
 ' Begin - Non-Environment Related
-
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
 Const smtpServer = "ironport.maximus.com" 
 Const ForAppending = 8
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1
-
 ' End - Non-Environment Related
 
 
@@ -26,11 +23,10 @@ Const adStateOpen = 1
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 Set objLogFile = objFSO.OpenTextFile(strLogFile, ForAppending, True)
 objLogFile.WriteBlankLines(2) 
-objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Survey Reminders!"
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Survey Notifications!"
 
 'variables for database connection and recordset
 Dim dbConn, rs
-
 
 'variables for values returned from query
 Dim strPerson 
@@ -40,12 +36,12 @@ Dim strCtrMessage
 Dim strEmail 
 Dim SurveyID 
 Dim strExpiryDate
+ 
 
 Dim arrResultSet
 Dim totalPendingEmail
 
-
-dim spGetEmailToSend : spGetEmailToSend = "EC.sp_SelectSurvey4Reminder"
+dim spGetEmailToSend : spGetEmailToSend = "EC.sp_SelectSurvey4Contact"
 
 On Error Resume Next
 
@@ -54,8 +50,7 @@ Set dbConn = CreateObject("ADODB.Connection")
 dbConn.Open dbConnStr
 dbConn.commandTimeout = 120
 
-
-    If Err.Number <> 0 Then ' If it failed, report the error
+       If Err.Number <> 0 Then ' If it failed, report the error
        objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Failed to connect to database:  " & Err.Number & Err.Description
        Err.Clear
    End If
@@ -63,7 +58,6 @@ dbConn.commandTimeout = 120
 
 ' Get pending email to send
 Set rs = dbConn.execute(spGetEmailToSend) 
-
 
 If Err.Number <> 0 Then ' If it failed, report the error
    objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Failed to execute stored procedure:  " & Err.Number & Err.Description
@@ -83,7 +77,10 @@ totalPendingEmail = UBound(arrResultSet, 2)
 SafeCloseRecordSet rs
 SafeCloseDbConn dbConn
 
-'To go through the entire list and send pending Email
+
+
+' Send pending email
+
 
 For j = 0 to totalPendingEmail
 
@@ -94,9 +91,12 @@ For j = 0 to totalPendingEmail
 	strExpiryDate= arrResultSet(6,j)
 
 
-	'send mail
-	SendMail strEmail, strSubject, strFormName, strPerson, SurveyID, strExpiryDate
+	'configure the subject line
+	strSubject = "eCoaching Log Survey "  '& " (" & strPerson & ")"
 
+	'send mail
+		SendMail strEmail, strSubject, strFormName, strPerson, SurveyID, strExpiryDate
+	
 Next
 
 
@@ -107,22 +107,21 @@ Sub SendMail(strEmail, strSubject, strFormName, strPerson, SurveyID,strExpiryDat
 Dim htmlbody
 Dim ToAddress
 Dim ToSubject
-Dim mailArray
 Dim mailTo
 Dim mailBody
 
+Dim spUpdateEmailSent
 
 On Error Resume Next
 
+ strSubject = "eCoaching Log Survey "  '& " (" & strPerson & ")"
 
- strSubject = "eCoaching Log Survey Follow-up"  '& " (" & strPerson & ")"
  mailbody = "Please take time to complete this survey regarding a coaching session for "  & strFormName & ". This survey will expire on "  & strExpiryDate & "."
  strCtrMessage = (mailBody)
-            
 
 
  strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
- & "  <a href=""" & eCoachingUrl & "?id=" & SurveyID & """>Please click here to open the survey form and respond to the questions.</a>"
+    & "  <a href=""" & eCoachingUrl & "?id=" & SurveyID & """>Please click here to open the survey form and respond to the questions.</a>"
 
 
 'add test to subject line
@@ -152,6 +151,7 @@ ToAddress = strEmail
 & "</html>"& vbCrLf 
 
 
+
 'variables for configuring mail message
 Dim objMsg
 Dim objConfiguration 
@@ -178,22 +178,10 @@ With objFields
 End With
 
 
-
 ' Apply the settings to the message.
 With objMsg
     Set .Configuration = objConfiguration
- 
-
-   'set mail importance
-     ' For Outlook 2003:
-          .Fields.Item( "urn:schemas:mailheader:X-MSMail-Priority" ) =  "High"     
-      ' For Outlook 2003 also:
-          .Fields.Item( "urn:schemas:mailheader:X-Priority" ) =  2 
-      ' For Outlook Express:
-          .Fields.Item( "urn:schemas:httpmail:importance" ) =  2 
-          .Fields.Update 
-
-       .MimeFormatted = True
+    .MimeFormatted = True
 
 'change to line to ToAddress to go to the correct destination and uncomment the .CC line
     .To =  ToAddress '"susmitha.palacherla@gdit.com" 
@@ -204,12 +192,10 @@ On Error Resume Next ' Turn in-Line Error Handling On before sending email
   .Send
 End With
 
-'Using objFile.Write instead of objFile.WriteLine. This will write to the file without a newline at the end.
-
-   If Err.Number <> 0 Then ' If it failed, report the error
-     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending reminder for Survey " + cstr(SurveyID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
+  If Err.Number <> 0 Then ' If it failed, report the error
+     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending Survey notification for Survey " + cstr(SurveyID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
  
-   End If
+  End If
 
   ' Clean up variables.
     Set objMsg = Nothing
@@ -217,9 +203,26 @@ End With
     Set objFields = Nothing
     Set objBodyPart = Nothing
 
+If Err.Number = 0 Then ' Email was successfully sent
+
+Set dbConn = CreateObject("ADODB.Connection")
+dbConn.Open dbConnStr
+
+
+'Update record to indicate mail has been sent - replace fromID field with new mail column
+' use numbers because the actual string values aren't recognized without adovbs.inc - http://www.af-chicago.org/app/adovbs.inc
+
+spUpdateEmailSent = "EXEC EC.sp_UpdateSurveyMailSent @nvcSurveyID ='" & SurveyID & "'"
+
+
+dbConn.execute(spUpdateEmailSent), , 129
+
+ SafeCloseDbConn dbConn
+	Else
+	    Err.Clear
+	End If
 
 End Sub
-
 
 Sub SafeCloseRecordSet (rs)
     If Not (rs Is Nothing) Then
@@ -230,7 +233,7 @@ Sub SafeCloseRecordSet (rs)
 	End If
 End Sub
 
-Sub SafeCloseDbConn (dbConn)
+Sub SafeCloseDbConn ( dbConn)
     If Not (dbConn Is Nothing) Then
 	    If dbConn.State = adStateOpen Then 
 		    dbConn.Close
@@ -239,13 +242,14 @@ Sub SafeCloseDbConn (dbConn)
 	End If
 End Sub
 
+
 Sub SafeQuit (rs, dbConn)
     SafeCloseRecordSet rs
 	SafeCloseDbConn dbConn
-	objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Survey Reminders!"
+	objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Survey Notifications!"
 	objLogfile.close
-    Wscript.Quit
+     Wscript.Quit
 End Sub
 
-objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Survey Reminders!"
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Survey Notifications!"
 objLogfile.close

@@ -52,16 +52,23 @@ On Error Resume Next
 'connect to database and run stored procedure
 Set dbConn = CreateObject("ADODB.Connection")
 dbConn.Open dbConnStr
+dbConn.commandTimeout = 120
 
+
+    If Err.Number <> 0 Then ' If it failed, report the error
+       objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Failed to connect to database:  " & Err.Number & Err.Description
+       Err.Clear
+   End If
 
 ' Get pending email to send
 Set rs = dbConn.execute(spGetEmailToSend) 
 
-
-If Err.Number <> 0 Then
-    Err.Clear
-    SafeQuit rs, dbConn
+If Err.Number <> 0 Then ' If it failed, report the error
+   objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Failed to execute stored procedure:  " & Err.Number & Err.Description
+       Err.Clear
+   SafeQuit rs, dbConn
 End If
+
 
 arrResultSet = rs.GetRows()
 If Err.Number <> 0 Then
@@ -245,8 +252,9 @@ End Sub
 Sub SafeQuit (rs, dbConn)
     SafeCloseRecordSet rs
 	SafeCloseDbConn dbConn
-	
-	Wscript.Quit
+	objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Survey Notifications!"
+	objLogfile.close
+    Wscript.Quit
 End Sub
 
 objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Survey Notifications!"

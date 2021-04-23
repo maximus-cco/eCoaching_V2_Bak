@@ -1,28 +1,28 @@
 ' Test
 
 ' Begin - Environment Related
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=UVAADADSQL52CCO"
-Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_test/"
-Const fromAddress = "eCoachingTest@maximus.com"
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingUAT;Data Source=UVAADADSQL52CCO"
+Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_uat/"
+Const fromAddress = "eCoachingUAT@maximus.com"
 Const imgPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\Logs\Reminders_Test.log"
+Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\UAT\Logs\Followup_UAT.log"
 ' End - Environment Related
 
 ' Begin - Non-Environment Related
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
-Const smtpServer = "ironport.maximus.com"
-Const ForAppending = 8 
+Const ForAppending = 8
+Const smtpServer = "ironport.maximus.com" 
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1
 ' End - Non-Environment Related
 
+
 'Specify log file
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 Set objLogFile = objFSO.OpenTextFile(strLogFile, ForAppending, True)
 objLogFile.WriteBlankLines(2) 
-objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Notifications!"
-
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Followup Notifications!"
 
 'variables for database connection and recordset
 Dim dbConn, rs
@@ -31,17 +31,16 @@ Dim dbConn, rs
 Dim  numID
 Dim strFormName 
 Dim strToEmail 
-Dim strCCEmail 
+Dim strCSRName
 Dim strSubject 
 Dim strCtrMessage
-Dim strsubCoachingSource
-Dim numLogType
+
 
 
 Dim arrResultSet
 Dim totalPendingEmail
 
-dim spGetEmailToSend : spGetEmailToSend = "EC.sp_SelectCoaching4Reminder"
+dim spGetEmailToSend : spGetEmailToSend = "EC.sp_SelectCoaching4FollowUp"
 
 On Error Resume Next
 
@@ -50,6 +49,7 @@ On Error Resume Next
 Set dbConn = CreateObject("ADODB.Connection")
 dbConn.Open dbConnStr
 dbConn.commandTimeout = 120
+
 
     If Err.Number <> 0 Then ' If it failed, report the error
        objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Failed to connect to database:  " & Err.Number & Err.Description
@@ -84,60 +84,35 @@ For j = 0 to totalPendingEmail
 
 	numID = arrResultSet(0,j)
 	strFormName = arrResultSet(1,j)
-	strToEmail = arrResultSet(5,j) 
-        strCCEmail = arrResultSet(6,j) 
-	strsubCoachingSource = arrResultSet(3,j) 'Empower for DTT Feeds
-        numLogType = arrResultSet(12,j)
+	strToEmail = arrResultSet(2,j) 
+        strCSRName = arrResultSet(3,j) 
+	
+
 
 	'configure the subject line
-	strSubject = "Alert! eCoaching Log Past Due Follow-up:  "  '& " (" & strFormName & ")"
+	 strSubject = "eCoaching Log Follow-up"  & " (" & strCSRName & ")"
 
 	'send mail
-		SendMail strToEmail, strCCEmail, strSubject, strFormName
-
+		SendMail strToEmail, strSubject, strFormName
 
 Next
 
 
-
-
-
-Sub SendMail(strToEmail, strCCEmail, strSubject, strFormName)
+Sub SendMail(strToEmail, strSubject, strFormName)
 'msgbox(strFormName)
 
 'variables for sending mail
 Dim htmlbody
 Dim ToAddress
 Dim ToSubject
-Dim mailArray
-Dim mailTo
 Dim mailBody
-
-dim spUpdateReminderMailSent
-
 
 On Error Resume Next
 
 
-  Select Case (strsubCoachingSource)
-        Case "Warning"
-        strSubject = "Alert! Warning Log Past Due Follow-up:  "  &  strFormName 
-        Case Else
-        strSubject = "Alert! eCoaching Log Past Due Follow-up:  "  &  strFormName 
-  End Select
 
 
-  mailbody =  strFormName & " requires your attention. Please review and discuss with the employee."
-
-  Select Case (strsubCoachingSource)
-        Case "Empower"
-            mailBody = strFormName & " requires your attention. Please review the log and take appropriate action."
-  Case "WAH-RTS"
-            mailBody = strFormName & " requires your attention. Please review the log and take appropriate action."
-        Case "Warning"
-            mailBody = strFormName & " requires your attention. Please review and acknowledge the log."
-  End Select
-
+  mailbody =  " You are required to follow-up with the employee on the following eCoaching Log:"
   strCtrMessage = (mailBody)
 
 
@@ -148,7 +123,7 @@ On Error Resume Next
 
                
   strCtrMessage = strCtrMessage & "  <br /><br />" & vbCrLf _
-  &  strFormName 
+  & "Form ID: " & strFormName 
 
 'msgbox(strCtrMessage)
 
@@ -156,7 +131,7 @@ On Error Resume Next
 'add test to subject line
 ToSubject = strSubject
 ToAddress = strToEmail
-CCAddress = strCCEmail
+
 
 'configure HTML message
 
@@ -220,18 +195,19 @@ CCAddress = strCCEmail
 
 'change to line to ToAddress to go to the correct destination and uncomment the .CC line
     .To =  ToAddress '"susmitha.palacherla@gdit.com" 
-    .Cc = CCAddress 
     .From = fromAddress
     .Subject = ToSubject
     .HTMLBody = htmlbody
 On Error Resume Next ' Turn in-Line Error Handling On before sending email
+
   .Send
 End With
 
   If Err.Number <> 0 Then ' If it failed, report the error
-     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending reminder for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
+     objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending followup notification for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
  
   End If
+
    ' Clean up variables.
     Set objMsg = Nothing
     Set objConfiguration = Nothing
@@ -239,28 +215,9 @@ End With
     Set objBodyPart = Nothing
 
 
-  If Err.Number = 0 Then ' Email was successfully sent
-	 Set dbConn = CreateObject("ADODB.Connection")
-        dbConn.Open dbConnStr
-
-
-
-'Update record to indicate mail has been sent - replace fromID field with new mail column
-' use numbers because the actual string values aren't recognized without adovbs.inc - http://www.af-chicago.org/app/adovbs.inc
-
-
-
-spUpdateReminderMailSent = "EXEC EC.sp_UpdateReminderMailSent @intNumID ='" & numID & "',@intLogType ='" & numLogType & "'"
-
-'spUpdateReminderMailSent = "EXEC EC.sp_UpdateReminderMailSent @nvcNumID ='" & numID & "'"
-
-dbConn.execute(spUpdateReminderMailSent), , 129
- SafeCloseDbConn dbConn
-	Else
-	    Err.Clear
-	End If
 
 End Sub
+	
 
 
 Sub SafeCloseRecordSet (rs)
@@ -284,10 +241,10 @@ End Sub
 Sub SafeQuit (rs, dbConn)
     SafeCloseRecordSet rs
 	SafeCloseDbConn dbConn
-	objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Reminders!"
-        objLogfile.close
-   Wscript.Quit
+	objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Followup Notifications!"
+	objLogfile.close
+     Wscript.Quit
 End Sub
 
-objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Reminders!"
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Followup Notifications!"
 objLogfile.close

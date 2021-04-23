@@ -1,26 +1,22 @@
-' Dev
+' Test
 
 ' Begin - Environment Related
-
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingDev;Data Source=UVAADADSQL50CCO"
-Const eCoachingUrl = "https://UVAADADWEB50CCO.ad.local/ecl_dev/Survey"
-Const fromAddress = "eCoachingDev@maximus.com"
-Const imgPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-Const strLogFile = "\\UVAADADSQL50CCO.ad.local\ssis\Coaching\Notifications\Logs\Reminders_Survey_Dev.log"
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingUAT;Data Source=UVAADADSQL52CCO"
+Const eCoachingUrl = "https://UVAADADWEB50CCO.ad.local/ecl_uat/Survey"
+Const fromAddress = "eCoachingUAT@maximus.com"
+Const imgPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
+Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\UAT\Logs\Reminders_Survey_UAT.log"
 
 ' End - Environment Related
 
 ' Begin - Non-Environment Related
-
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
 Const smtpServer = "ironport.maximus.com" 
 Const ForAppending = 8
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1
-
 ' End - Non-Environment Related
-
 
 'Specify log file
 Set objFSO = CreateObject("Scripting.FileSystemObject")
@@ -59,7 +55,6 @@ dbConn.commandTimeout = 120
        objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Failed to connect to database:  " & Err.Number & Err.Description
        Err.Clear
    End If
-
 
 ' Get pending email to send
 Set rs = dbConn.execute(spGetEmailToSend) 
@@ -204,12 +199,10 @@ On Error Resume Next ' Turn in-Line Error Handling On before sending email
   .Send
 End With
 
-'Using objFile.Write instead of objFile.WriteLine. This will write to the file without a newline at the end.
-
-   If Err.Number <> 0 Then ' If it failed, report the error
+  If Err.Number <> 0 Then ' If it failed, report the error
      objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending reminder for Survey " + cstr(SurveyID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
  
-   End If
+  End If
 
   ' Clean up variables.
     Set objMsg = Nothing

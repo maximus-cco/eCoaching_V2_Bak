@@ -1,17 +1,18 @@
 ' Test
 
 ' Begin - Environment Related
-Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingTest;Data Source=UVAADADSQL52CCO"
-Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_test/"
-Const fromAddress = "eCoachingTest@maximus.com"
+Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoachingUAT;Data Source=UVAADADSQL52CCO"
+Const eCoachingUrl = "https://uvaadadweb50cco.ad.local/ecl_uat/"
+Const fromAddress = "eCoachingUAT@maximus.com"
 Const imgPath = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
-Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\Logs\Reminders_Test.log"
+Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\UAT\Logs\Reminders_UAT.log"
+
 ' End - Environment Related
 
 ' Begin - Non-Environment Related
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
-Const smtpServer = "ironport.maximus.com"
-Const ForAppending = 8 
+Const ForAppending = 8
+Const smtpServer = "ironport.maximus.com" 
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1
@@ -21,8 +22,7 @@ Const adStateOpen = 1
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 Set objLogFile = objFSO.OpenTextFile(strLogFile, ForAppending, True)
 objLogFile.WriteBlankLines(2) 
-objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Notifications!"
-
+objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Starting Reminders!"
 
 'variables for database connection and recordset
 Dim dbConn, rs
@@ -58,6 +58,7 @@ dbConn.commandTimeout = 120
 
 ' Get pending email to send
 Set rs = dbConn.execute(spGetEmailToSend) 
+
 
 If Err.Number <> 0 Then ' If it failed, report the error
    objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Failed to execute stored procedure:  " & Err.Number & Err.Description
@@ -228,10 +229,12 @@ On Error Resume Next ' Turn in-Line Error Handling On before sending email
   .Send
 End With
 
+
   If Err.Number <> 0 Then ' If it failed, report the error
      objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Sending reminder for log " + cstr(numID) + " to " + ToAddress + " Failed. Error Code: " & Err.Number & Err.Description
  
   End If
+
    ' Clean up variables.
     Set objMsg = Nothing
     Set objConfiguration = Nothing

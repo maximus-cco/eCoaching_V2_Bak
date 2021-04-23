@@ -52,12 +52,20 @@ On Error Resume Next
 ' Connect to database
 Set dbConn = CreateObject("ADODB.Connection")
 dbConn.Open dbConnStr
+dbConn.commandTimeout = 180
+
+    If Err.Number <> 0 Then ' If it failed, report the error
+       objLogfile.Write "  " + cstr(date) + " " + cstr(time) + " - " + "Failed to connect to database: " & Err.Number & Err.Description
+       Err.Clear
+   End If
+
 ' Get pending email to send
 Set rs = dbConn.execute(spGetEmailToSend) 
 
-If Err.Number <> 0 Then
+If Err.Number <> 0 Then ' If it failed, report the error
+   objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "Failed to execute stored procedure: " & Err.Number & Err.Description
     Err.Clear
-    SafeQuit rs, dbConn
+   SafeQuit rs, dbConn
 End If
 
 arrResultSet = rs.GetRows()
@@ -282,7 +290,7 @@ Sub SafeCloseRecordSet (rs)
 	End If
 End Sub
 
-Sub SafeCloseDbConn ( dbConn)
+Sub SafeCloseDbConn (dbConn)
     If Not (dbConn Is Nothing) Then
 	    If dbConn.State = adStateOpen Then 
 		    dbConn.Close
@@ -292,10 +300,12 @@ Sub SafeCloseDbConn ( dbConn)
 End Sub
 
 Sub SafeQuit (rs, dbConn)
-    SafeCloseRecordSet rs
+       SafeCloseRecordSet rs
 	SafeCloseDbConn dbConn
-	
-	Wscript.Quit
+        objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Notifications!"
+        objLogfile.close
+   Wscript.Quit
 End Sub
+
 objLogfile.WriteLine "  " + cstr(date) + " " + cstr(time) + " - " + "End Notifications!"
 objLogfile.close
