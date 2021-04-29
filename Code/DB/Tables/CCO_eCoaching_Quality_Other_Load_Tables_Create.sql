@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Quality_Other_Load_Tables_Create(06).sql
-Last Modified Date: 10/9/2020
+CCO_eCoaching_Quality_Other_Load_Tables_Create(07).sql
+Last Modified Date: 4/22/2021
 Last Modified By: Susmitha Palacherla
 
+Version 07: TFS 20677 -  AD island to AD AWS environment changes - 4/22/2021
 Version 06: TFS 18833 -  Expand the site field size in feeds - 10/9/2020
 Version 05: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 04: Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
@@ -244,6 +245,13 @@ CREATE TABLE [EC].[Coaching_Log_Bingo](
 
 GO
 
+ALTER TABLE [EC].[Coaching_Log_Bingo]  WITH NOCHECK ADD  CONSTRAINT [fkBingoCoachingID] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log] ([CoachingID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Bingo] CHECK CONSTRAINT [fkBingoCoachingID]
+GO
 
 --**********************************************************************************
 

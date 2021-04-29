@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Outliers_Load_Tables_Create(05).sql
-Last Modified Date: 10/9/2020
+CCO_eCoaching_Outliers_Load_Tables_Create(06).sql
+Last Modified Date: 4/22/2021
 Last Modified By: Susmitha Palacherla
 
+Version 06: TFS 20677 -  AD island to AD AWS environment changes - 4/22/2021
 Version 05: TFS 18833 -  Expand the site field size in feeds - 10/9/2020
 Version 04: New process for short calls. TFS 14108 - 07/08/2019
 Added new tables to support Short Calls handling
@@ -355,6 +356,13 @@ CREATE TABLE [EC].[ShortCalls_Evaluations](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
+GO
+ALTER TABLE [EC].[ShortCalls_Evaluations]  WITH NOCHECK ADD  CONSTRAINT [fkShortCallsCoachingID] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log] ([CoachingID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [EC].[ShortCalls_Evaluations] CHECK CONSTRAINT [fkShortCallsCoachingID]
 GO
 
 --**************************************************************

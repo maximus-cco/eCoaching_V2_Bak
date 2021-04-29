@@ -367,7 +367,7 @@ CREATE USER [MAXCORP\278731] FOR LOGIN [MAXCORP\278731];--Reginald.Tate
 CREATE USER [MAXCORP\226467] FOR LOGIN [MAXCORP\226467];--Russell.Hyde
 CREATE USER [MAXCORP\236941] FOR LOGIN [MAXCORP\236941];--Sara.Stonecipher
 CREATE USER [MAXCORP\236365] FOR LOGIN [MAXCORP\236365];--Shelly.Encke
---CREATE USER [MAXCORP\237355] FOR LOGIN [MAXCORP\237355];--Scott.Potter
+CREATE USER [MAXCORP\237355] FOR LOGIN [MAXCORP\237355];--Scott.Potter
 CREATE USER [MAXCORP\338077] FOR LOGIN [MAXCORP\338077];--Summer.Gernon
 
 
@@ -469,7 +469,7 @@ EXEC sp_AddRoleMember 'ecoaching_user', 'MAXCORP\278731'--Reginald.Tate
 EXEC sp_AddRoleMember 'ecoaching_user', 'MAXCORP\226467'--Russell.Hyde
 EXEC sp_AddRoleMember 'ecoaching_user', 'MAXCORP\236941'--Sara.Stonecipher
 EXEC sp_AddRoleMember 'ecoaching_user', 'MAXCORP\236365'--Shelly.Encke
---EXEC sp_AddRoleMember 'ecoaching_user', 'MAXCORP\237355'--Scott.Potter
+EXEC sp_AddRoleMember 'ecoaching_user', 'MAXCORP\237355'--Scott.Potter
 EXEC sp_AddRoleMember 'ecoaching_user', 'MAXCORP\338077'--Summer.Gernon
 
 
@@ -598,8 +598,119 @@ GO
 
 --**********************************************
 --**********************************************
+--13. Indexes, Run one step at a time.
+
+--13a.
+CREATE NONCLUSTERED INDEX [IDX_Coaching_Log_EmailSent_FormName] ON [EC].[Coaching_Log]
+(
+	[EmailSent] ASC,
+	[FormName] ASC,
+	[strReportCode] ASC,
+	[SourceID] ASC,
+	[ModuleID] ASC,
+	[StatusID] ASC,
+	[EmpID] ASC,
+	[MgrID] ASC,
+	[SubmittedDate] ASC
+)
+INCLUDE([CoachingID],[CoachingDate],[isCSE])
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+--*********************
+
+--13b.
+
+CREATE NONCLUSTERED INDEX [IDX_Coaching_Log_QNEvals_CoachingID_EvalStatus] ON [EC].[Coaching_Log_Quality_Now_Evaluations] 
+(
+	[CoachingID] ASC,
+	[EvalStatus] ASC
+)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+
+--*********************
 
 
+--13c.
+
+CREATE NONCLUSTERED INDEX [IDX_Coaching_Log_QNEvals_CoachingID_EvalStatus_Include] ON [EC].[Coaching_Log_Quality_Now_Evaluations] 
+(
+	[CoachingID] ASC,
+	[EvalStatus] ASC
+)
+ INCLUDE ([Eval_ID], [Eval_Date], [Evaluator_ID], [Call_Date], [Journal_ID], [Program], [VerintFormName], [isCoachingMonitor], [Business_Process], [Business_Process_Reason], [Business_Process_Comment], [Info_Accuracy], [Info_Accuracy_Reason], [Info_Accuracy_Comment], [Privacy_Disclaimers], [Privacy_Disclaimers_Reason], [Privacy_Disclaimers_Comment], [Issue_Resolution], [Issue_Resolution_Comment], [Call_Efficiency], [Call_Efficiency_Comment], [Active_Listening], [Active_Listening_Comment], [Personality_Flexing], [Personality_Flexing_Comment], [Customer_Temp_Start], [Customer_Temp_Start_Comment], [Customer_Temp_End], [Customer_Temp_End_Comment])
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+
+
+--*********************
+
+--13d.
+
+CREATE NONCLUSTERED INDEX [IDX_Emp_Hierarchy_Emp_Job_Code_End_Date] ON [EC].[Employee_Hierarchy]
+ (
+	[Emp_Job_Code] ASC, 
+	[End_Date] ASC
+) INCLUDE ([Emp_ID], [Emp_Site])
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+
+--*********************
+
+--13e.
+
+CREATE NONCLUSTERED INDEX [IDX_Emp_Hierarchy_Active_Emp_Job_Code] ON [EC].[Employee_Hierarchy] 
+(
+	[Active] ASC,
+	[Emp_Job_Code] ASC
+)
+ INCLUDE ([Emp_Name], [Emp_LanID], [Emp_Email], [Emp_Site], [Hire_Date], [Start_Date], [End_Date], [Sup_ID], [Sup_Name], [Sup_LanID], [Sup_Email], [Mgr_ID], [Mgr_Name], [Mgr_Email])
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+
+--*********************
+
+--13f.
+
+CREATE NONCLUSTERED INDEX [IDX_EmployeeID_To_LanID_EmpID] ON [EC].[EmployeeID_To_LanID] ([EmpID] ASC)
+
+--*********************
+
+--13g.
+UPDATE STATISTICS [EC].[Coaching_Log];
+
+--13h.
+UPDATE STATISTICS [EC].[Employee_Hierarchy];
+
+--13i.
+UPDATE STATISTICS [EC].[Coaching_Log_Quality_Now_Evaluations] ;
+
+
+--13j.
+UPDATE STATISTICS  [EC].[EmployeeID_To_LanID];
+--0:00
 
 --**********************************************
+
+--14. Encrypt database connections
+
+Test If Database connections are encrypted by running:
+
+SELECT encrypt_option 
+FROM sys.dm_exec_connections 
+WHERE session_id = @@SPID 
+
+If 0 then follow the steps below.
+
+Add the thumbprint (hash value) to the registry:
+Open up the registry (regedit) and navigate to the SQL Server instance hive. The default location for SQL Server would be:
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQLServer\SuperSocketNetLib
+If your SQL instance is not using the default name, then MSSQL11.MSSQLSERVER would instead be replaced with MSSQL11.<Instance Name>.
+Create a string value “Certificate” on the above location or modify the already-created value and paste the copied thumbprint value into it.
+At the same registry location, change the “ForceEncryption” value to “1” to have SQL Server force encryption.
+Once completed, have the DBA restart the SQL Server services to load the SSL Certificate and make the changes take effect
+
+thumbprint (hash value): 
+71d030fcaddc0d5f62c95c0ed007777eeefb3e4e
 --**********************************************
