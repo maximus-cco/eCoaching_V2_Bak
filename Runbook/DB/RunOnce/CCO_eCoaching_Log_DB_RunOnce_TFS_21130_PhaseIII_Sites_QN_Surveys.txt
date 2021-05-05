@@ -1,0 +1,27 @@
+/* 
+TFS 21130  -  Add Quality Now surveys for Phase III sites
+
+Run with nothing selected
+
+Development – F3420-ECLDBD01 - eCoachingDev
+Test - F3420-ECLDBT01 - eCoachingTest
+Production – F3420-ECLDBP01 – eCoaching
+
+
+select * from [EC].[Survey_Sites]
+where isPilot = 0
+and isActive = 1
+and city in ('Bogalusa', 'Brownsville', 'Lawrence', 'Phoenix', 'Sandy')
+
+
+*/
+
+--1. Update Survey_Sites Table
+UPDATE [EC].[Survey_Sites]
+SET isPilot = 1
+WHERE SiteID in (1,3,10,14,16);
+	
+GO
+
+
+
