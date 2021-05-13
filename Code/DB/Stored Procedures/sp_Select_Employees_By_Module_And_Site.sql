@@ -1,9 +1,9 @@
 /*
-sp_Select_Employees_By_Module_And_Site(02).sql
-Last Modified Date: 04/30/2018
+sp_Select_Employees_By_Module_And_Site(03).sql
+Last Modified Date: 5/11/2021
 Last Modified By: Susmitha Palacherla
 
-
+Version 03: Fix ambiguous column reference during employee selection in submission page. TFS 21223 - 5/11/2021
 Version 02: Submissions move to new architecture. Additional changes from V&V feedback - TFS 7136 - 04/30/2018
 Version 01: Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
 
@@ -30,6 +30,7 @@ GO
 --	Create Date:	04/15/2018
 --	Description: *	This procedure takes a ModuleID and SiteID and returns Employees.
 --  Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/30/2018 
+--  Fix ambiguous column reference during employee selection in submission page. TFS 21223 - 5/11/2021
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site] 
 @intModuleIDin INT, @intSiteIDin INT = -1, @nvcUserEmpIDin  nvarchar(10)
@@ -76,7 +77,7 @@ AND VEH.[Emp_ID] <> '''+ @nvcUserEmpIDin + ''''
 
 -- Conditional Filter to restrtict Training staff with specific job codes to submit only for certain job codes.
 
-SET @nvcSQL02 = ' AND [Emp_Job_Code] NOT IN (''WTTR12'', ''WTTR13'', ''WTID13'')' 
+SET @nvcSQL02 = ' AND VEH.[Emp_Job_Code] NOT IN (''WTTR12'', ''WTTR13'', ''WTID13'')' 
 
 
 -- Generic  Filter for all scenarios.
@@ -93,13 +94,12 @@ SET @nvcSQL = @nvcSQL01 + @nvcSQL02 + @nvcSQL03
 ELSE
 SET @nvcSQL = @nvcSQL01 + @nvcSQL03
 
---Print @nvcSQL
+Print @nvcSQL
 
 EXEC (@nvcSQL)	
 
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_Select_Employees_By_Module
+
 GO
-
-
 
