@@ -20,8 +20,10 @@ namespace eCoachingLog.Models.Common
 		public string CallEfficiency { get; set; }
 		public string ActiveListening { get; set; }
 		public string PersonalityFlexing { get; set; }
-		// Show Supervisors ONLY
-		public string StartTemperature { get; set; }
+        public string Channel { get; set; }
+        public string ActivityId { get; set; } // UCID/Verizon Call ID for Web Chat; DCN for Written Correspondence
+        // Show Supervisors ONLY
+        public string StartTemperature { get; set; }
 		public string EndTemperature { get; set; }
 	}
 }

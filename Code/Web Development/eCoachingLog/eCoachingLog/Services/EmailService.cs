@@ -72,12 +72,12 @@ namespace eCoachingLog.Services
 			Tuple<string, string, string, string> recipientsAndText = GetRecipientsAndBodyTextFromDb(submission);
 			string status = recipientsAndText.Item4;
 			msg.Subject = subject + status + string.Format(" ({0})", submission.Employee.Name.Trim());
-			msg.To.Add(recipientsAndText.Item1);
-			if (!string.IsNullOrEmpty(recipientsAndText.Item2))
-			{
-				msg.Bcc.Add(new MailAddress(recipientsAndText.Item2));
-			}
-			msg.From = new MailAddress(fromAddress, fromDisplayName);
+            msg.To.Add(recipientsAndText.Item1);
+            if (!string.IsNullOrEmpty(recipientsAndText.Item2))
+            {
+                msg.Bcc.Add(new MailAddress(recipientsAndText.Item2));
+            }
+            msg.From = new MailAddress(fromAddress, fromDisplayName);
 
 			string txtFromDb = recipientsAndText.Item3;
 			txtFromDb = txtFromDb.Replace("strPerson", submission.Employee.Name)
@@ -94,19 +94,20 @@ namespace eCoachingLog.Services
 		private bool Send(MailMessage msg)
 		{
 			bool success = false;
-
-			try
+ 
+            SmtpClient smtpClient = null;
+            try
 			{
-				// https://msdn.microsoft.com/en-us/library/k1c4h6e2(v=vs.110).aspx
-				// Initializes a new instance of the SmtpClient class by using configuration file settings.
-				var smtpClient = new SmtpClient();
-
 				logger.Debug("Sending email...");
-				smtpClient.Send(msg);
-				logger.Debug("Email sent");
-
+                
+                // https://msdn.microsoft.com/en-us/library/k1c4h6e2(v=vs.110).aspx
+                // Initializes a new instance of the SmtpClient class by using configuration file settings.
+                smtpClient = new SmtpClient();
+                smtpClient.Send(msg);
 				success = true;
-			}
+
+                logger.Debug("Email sent");
+            }
 			catch (Exception ex)
 			{
 				StringBuilder info = new StringBuilder();
@@ -127,7 +128,19 @@ namespace eCoachingLog.Services
 				logger.Warn("To: " + to.ToString());
 				logger.Warn(msg.Body);
 			}
-			return success;
+            finally
+            {
+                if (msg != null)
+                {
+                    msg.Dispose();
+                }
+
+                if (smtpClient != null)
+                {
+                    smtpClient.Dispose();
+                }
+            }
+            return success;
 		}
 
 		private Tuple<string, string, string, string> GetRecipientsAndBodyTextFromDb(NewSubmission submission)

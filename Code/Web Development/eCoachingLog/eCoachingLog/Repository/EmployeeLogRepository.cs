@@ -943,8 +943,10 @@ namespace eCoachingLog.Repository
 						sc.PersonalityFlexing = dataReader["Personality Flexing"].ToString();
 						sc.StartTemperature = dataReader["Start Temperature"].ToString();
 						sc.EndTemperature = dataReader["End Temperature"].ToString();
+                        sc.Channel = dataReader["Channel"].ToString();
+                        sc.ActivityId = dataReader["Activity ID"].ToString();
 
-						scList.Add(sc);
+                        scList.Add(sc);
 					}
 				}
 			}

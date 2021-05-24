@@ -2,6 +2,8 @@
 @using eCoachingLog.Models.Common
 @{
 	var user = ((User)Session["AuthenticatedUser"]);
+    const string WebChat = "Web Chat";
+    const string WrittenCorrespondence = "Written Correspondence";
 }
 <br />
 @foreach (Scorecard s in Model.LogDetail.Scorecards)
@@ -18,22 +20,50 @@
 				<div class="panel-body">
 					<p><strong>Form Name:</strong> @s.ScorecardName</p>
 					<p><strong>Verint:</strong> @s.VerintId</p>
+                    @if (String.Equals(s.Channel, WebChat, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <p><strong>Activity ID:</strong> @s.ActivityId</p>
+                    }
+                    @if (String.Equals(s.Channel, WrittenCorrespondence, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <p><strong>DCN:</strong> @s.ActivityId</p>
+                    }
 					<p><strong>Coaching Monitor:</strong> @s.CoachingMonitor</p>
 					<p><strong>Program:</strong> @s.Program</p>
 					<p><strong>Date Of Event:</strong> @s.DateOfEvent</p>
 					<p><strong>Submitter:</strong> @s.SubmitterName</p>
 					@if (!user.IsCsr)
-					{
+                    {
+                        // default to Phone
+                        var issueResolutionLabel = "Issue Resolution";
+                        var efficiencyLabel = "Call Efficiency";
+                        var issueDiagnosisLabel = "Active Listening";
+                        var communicationLabel = "Personality Flexing";
+                        if (String.Equals(s.Channel, WebChat, StringComparison.OrdinalIgnoreCase))
+                        {
+                            efficiencyLabel = "Chat Efficiency";
+                            issueDiagnosisLabel = "Issue Diagnosis";
+                            communicationLabel = "Professional Communication";
+                        } else if (String.Equals(s.Channel, WrittenCorrespondence, StringComparison.OrdinalIgnoreCase))
+                        {
+                            efficiencyLabel = "";
+                            issueDiagnosisLabel = "";
+                            issueResolutionLabel = "Business Correspondence";
+                            communicationLabel = "";
+                        }
 						<p><strong>Business Process:</strong> @Html.Raw(s.BusinessProcess)</p>
 						<p><strong>Information Accuracy:</strong> @Html.Raw(s.InfoAccuracy)</p>
 						<p><strong>Privacy Disclaimers:</strong> @Html.Raw(s.PrivacyDisclaimers)</p>
-						<p><strong>Issue Resolution:</strong> @Html.Raw(s.IssueResolution)</p>
-						<p><strong>Call Efficiency:</strong> @Html.Raw(s.CallEfficiency)</p>
-						<p><strong>Active Listening:</strong> @Html.Raw(s.ActiveListening)</p>
-						<p><strong>Personality Flexing:</strong> @Html.Raw(s.PersonalityFlexing)</p>
-						<p><strong>Start Temperature:</strong> @Html.Raw(s.StartTemperature)</p>
-						<p><strong>End Temperature:</strong> @Html.Raw(s.EndTemperature)</p>
-					}
+						<p><strong>@issueResolutionLabel:</strong> @Html.Raw(s.IssueResolution)</p>
+                        if (s.Channel != null && s.Channel != "Written Correspondence")
+                        {
+                            <p><strong>@efficiencyLabel:</strong> @Html.Raw(s.CallEfficiency)</p>
+     						<p><strong>@issueDiagnosisLabel:</strong> @Html.Raw(s.ActiveListening)</p>
+						    <p><strong>@communicationLabel:</strong> @Html.Raw(s.PersonalityFlexing)</p>
+						    <p><strong>Start Temperature:</strong> @Html.Raw(s.StartTemperature)</p>
+						    <p><strong>End Temperature:</strong> @Html.Raw(s.EndTemperature)</p>
+                        }
+                    }
 				</div>
 			</div>
 		</div>
