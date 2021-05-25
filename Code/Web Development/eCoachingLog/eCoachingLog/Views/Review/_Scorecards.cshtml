@@ -55,7 +55,7 @@
 						<p><strong>Information Accuracy:</strong> @Html.Raw(s.InfoAccuracy)</p>
 						<p><strong>Privacy Disclaimers:</strong> @Html.Raw(s.PrivacyDisclaimers)</p>
 						<p><strong>@issueResolutionLabel:</strong> @Html.Raw(s.IssueResolution)</p>
-                        if (s.Channel != null && s.Channel != "Written Correspondence")
+                        if (!String.Equals(s.Channel, WrittenCorrespondence, StringComparison.OrdinalIgnoreCase))
                         {
                             <p><strong>@efficiencyLabel:</strong> @Html.Raw(s.CallEfficiency)</p>
      						<p><strong>@issueDiagnosisLabel:</strong> @Html.Raw(s.ActiveListening)</p>
