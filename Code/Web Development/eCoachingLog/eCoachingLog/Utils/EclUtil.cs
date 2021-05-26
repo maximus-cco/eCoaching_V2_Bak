@@ -6,7 +6,7 @@ using System.Web;
 
 namespace eCoachingLog.Utils
 {
-	public static class eCoachingLogUtil
+	public static class EclUtil
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -25,5 +25,15 @@ namespace eCoachingLog.Utils
 			string strOut = HttpUtility.HtmlEncode(strIn);
 			return strOut;
 		}
+
+        public static string RemoveToken(string str, string token)
+        {
+            if (string.IsNullOrEmpty(str) || string.IsNullOrEmpty(token))
+            {
+                return str;
+            }
+
+            return str.Replace(str, token);
+        }
     }
 }

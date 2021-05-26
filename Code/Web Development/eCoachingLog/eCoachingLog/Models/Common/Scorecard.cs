@@ -23,6 +23,8 @@ namespace eCoachingLog.Models.Common
         public string Channel { get; set; }
         public string ActivityId { get; set; } // UCID/Verizon Call ID for Web Chat; DCN for Written Correspondence
         // Show Supervisors ONLY
+        public string ContactReason { get; set; }
+        public string ContactReasonComment { get; set;  }
         public string StartTemperature { get; set; }
 		public string EndTemperature { get; set; }
 	}

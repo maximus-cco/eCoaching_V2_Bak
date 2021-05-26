@@ -291,10 +291,10 @@ namespace eCoachingLog.Services
 			}
 
 			// Strip potential harmful characters entered by the user
-			review.DetailsCoached = eCoachingLogUtil.CleanInput(review.DetailsCoached);
-			review.Comment = eCoachingLogUtil.CleanInput(review.Comment);
-			review.DetailReasonCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonCoachable);
-			review.DetailReasonNotCoachable = eCoachingLogUtil.CleanInput(review.DetailReasonNotCoachable);
+			review.DetailsCoached = EclUtil.CleanInput(review.DetailsCoached);
+			review.Comment = EclUtil.CleanInput(review.Comment);
+			review.DetailReasonCoachable = EclUtil.CleanInput(review.DetailReasonCoachable);
+			review.DetailReasonNotCoachable = EclUtil.CleanInput(review.DetailReasonNotCoachable);
 
 			if (review.IsShortCallPendingSupervisorForm)
 			{
@@ -500,7 +500,7 @@ namespace eCoachingLog.Services
 				return notes;
 			}
 
-			return eCoachingLogUtil.CleanInput(review.LogDetail.CoachingNotes + "<br />" + notes);
+			return EclUtil.CleanInput(review.LogDetail.CoachingNotes + "<br />" + notes);
 		}
 
 		private string GetNextStatus(Review review, User user)

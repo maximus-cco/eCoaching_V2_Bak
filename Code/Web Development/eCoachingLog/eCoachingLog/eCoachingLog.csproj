@@ -238,7 +238,7 @@
     <Compile Include="Services\IUserService.cs" />
     <Compile Include="Services\NewSubmissionService.cs" />
     <Compile Include="Services\UserService.cs" />
-    <Compile Include="Utils\eCoachingLogUtil.cs" />
+    <Compile Include="Utils\EclUtil.cs" />
     <Compile Include="Utils\FileUtil.cs" />
     <Compile Include="ViewModels\AcknowledgeViewModel.cs" />
     <Compile Include="Models\Common\Employee.cs" />

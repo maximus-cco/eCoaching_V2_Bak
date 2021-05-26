@@ -31,8 +31,8 @@ namespace eCoachingLog.Services
             }
 
 			// Strip potential harmful characters entered by the user
-			submission.BehaviorDetail = eCoachingLogUtil.CleanInput(submission.BehaviorDetail);
-			submission.Plans = eCoachingLogUtil.CleanInput(submission.Plans);
+			submission.BehaviorDetail = EclUtil.CleanInput(submission.BehaviorDetail);
+			submission.Plans = EclUtil.CleanInput(submission.Plans);
 
 			List<CoachingReason> crs = submission.CoachingReasons;
 			// We only care about the selected reasons
