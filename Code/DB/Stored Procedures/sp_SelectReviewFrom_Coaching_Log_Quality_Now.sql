@@ -1,8 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log_Quality_Now(05).sql
-Last Modified Date: 4/20/2020
+sp_SelectReviewFrom_Coaching_Log_Quality_Now(07).sql
+Last Modified Date: 5/24/2021
 Last Modified By: Susmitha Palacherla
 
+Version 07: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 06: Add EvalID to the return. TFS 17030 - 04/20/2020
 Version 05: Handle blank evaluator in quality now logs from iqs . TFS 16924 - 4/7/2020
 Version 04: Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
@@ -21,6 +22,7 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
@@ -31,15 +33,15 @@ GO
 -- Author:           Susmitha Palacherla
 -- Create Date:      03/01/2019
 -- Description:      This procedure displays the Quality Now Evluations for a Coaching Log
--- Last Update:      Add EvalID to the return. TFS 17030 - 04/20/2020
+-- LAdded EvalID to the return. TFS 17030 - 04/20/2020
+-- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now] @intLogId BIGINT
 AS
 
 BEGIN
-	DECLARE	
-
-@nvcSQL nvarchar(max)
+	DECLARE	@nvcSQL nvarchar(max);
+      
 
 
 -- Open Symmetric key
@@ -47,8 +49,16 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
 SET @nvcSQL = 'SELECT  ''Evaluation '' + CONVERT(NVARCHAR(1),ROW_NUMBER() OVER(ORDER BY qne.[Eval_Date] ASC)) [Evaluation],
 qne.[VerintFormName] [Form Name] 
-      ,qne.Eval_ID [Evaluation ID]
-      ,qne.[Journal_ID] [Call ID]
+      ,qne.[Eval_ID] [Evaluation ID]
+	  ,qne.[Channel]
+	  ,qne.[Reason_For_Contact] [Reason For Contact]
+	  ,qne.[Contact_Reason_Comment] [Reason For Contact Comments]
+	  ,qne.[Journal_ID] [Call ID]
+      ,CASE qne.[Channel]  
+	          WHEN ''Web Chat'' THEN qne.[ActivityID] 
+			  WHEN ''Written Correspondence'' THEN qne.[DCN] 
+			  ELSE '''' END AS [Activity ID]
+	  ,qne.[CaseNumber] [Case Number]
 	  ,qne.[isCoachingMonitor] [Coaching Monitor]
 	  ,qne.[Program] strProgram
 	  ,qne.[Call_Date] [Date of Event]
@@ -62,8 +72,8 @@ qne.[VerintFormName] [Form Name]
 	  ,qne.[Personality_Flexing]  + ''<br />'' + qne.[Personality_Flexing_Comment] [Personality Flexing]
 	  ,qne.[Customer_Temp_Start]   + ''<br />'' + qne.[Customer_Temp_Start_Comment] [Start Temperature]
 	  ,qne.[Customer_Temp_End] + ''<br />'' + qne.[Customer_Temp_End_Comment] [End Temperature]
- FROM [EC].[Coaching_Log_Quality_Now_Evaluations] qne JOIN [EC].[Coaching_Log] cl
- ON qne.CoachingID = cl.CoachingID LEFT JOIN EC.Employee_Hierarchy sub 
+ FROM [EC].[Coaching_Log_Quality_Now_Evaluations] qne  WITH (NOLOCK) JOIN [EC].[Coaching_Log] cl  WITH (NOLOCK)
+ ON qne.CoachingID = cl.CoachingID LEFT JOIN EC.Employee_Hierarchy sub  WITH (NOLOCK)
  ON qne.Evaluator_ID = sub.Emp_ID
  Where qne.CoachingID = '''+CONVERT(NVARCHAR(20),@intLogId) + '''
  AND qne.EvalStatus = ''Active''
@@ -79,10 +89,6 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log_Quality_Now
 GO
-
-
-
-
 
 
 

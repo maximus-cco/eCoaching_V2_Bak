@@ -1,8 +1,9 @@
 /*
-sp_Insert_Into_Coaching_Log_Archive(06).sql
-Last Modified Date: 07/20/2020
+sp_Insert_Into_Coaching_Log_Archive(07).sql
+Last Modified Date: 5/24/2021
 Last Modified By: Susmitha Palacherla
 
+Version 07: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 06: Updated to archive Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
 Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 04: Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
@@ -22,12 +23,14 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -41,6 +44,7 @@ GO
 --  Modified to incorporate new column ConfirmedCSE. TFS 14049 - 04/18/2019
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to archive Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
+-- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive] @strArchivedBy nvarchar(50)= 'Automated Process'
 
@@ -274,7 +278,13 @@ INSERT INTO [EC].[Coaching_Log_Reason_Archive]
            ,[Inserted_Date]
            ,[Last_Updated_Date]
            ,[ArchivedBy]
-           ,[ArchivedDate])
+           ,[ArchivedDate]
+		   ,[Channel]
+           ,[ActivityID]
+           ,[DCN]
+           ,[CaseNumber]
+		   ,[Reason_For_Contact]
+           ,[Contact_Reason_Comment])
    SELECT qne.[QNBatchID]
       ,qne.[CoachingID]
       ,[Eval_ID]
@@ -312,6 +322,12 @@ INSERT INTO [EC].[Coaching_Log_Reason_Archive]
       ,[Last_Updated_Date]
 	  ,@strArchivedBy
 	  ,GetDate()
+	  ,[Channel]
+      ,[ActivityID]
+      ,[DCN]
+      ,[CaseNumber]
+	  ,[Reason_For_Contact]
+      ,[Contact_Reason_Comment]
   FROM [EC].[Coaching_Log_Quality_Now_Evaluations] QNE JOIN #ArchiveLogs A
   ON QNE.CoachingID = A.CoachingID;
   
@@ -410,4 +426,5 @@ COMMIT TRANSACTION
 END -- sp_Insert_Into_Coaching_Log_Archive
 
 GO
+
 

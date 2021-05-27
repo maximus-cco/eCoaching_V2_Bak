@@ -1,8 +1,9 @@
 /*
-sp_InsertInto_Coaching_Log_Quality_Now(07).sql
-Last Modified Date: 04/07/2020
+sp_InsertInto_Coaching_Log_Quality_Now(08).sql
+Last Modified Date: 5/24/2021
 Last Modified By: Susmitha Palacherla
 
+Version 08: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 07: Added distinct clause to Evaluation Insert - TFS 16924 - 04/07/2020
 Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
 Version 05: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
@@ -28,6 +29,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --    ========================================================================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      03/01/2019
@@ -39,7 +41,7 @@ GO
 -- Initial revision. TFS 13332 -  03/01/2019
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
--- Updated to handle blank evaluator in quality now logs from iqs . TFS 16924 - 4/7/2020
+-- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 --    =======================================================================================
 
 CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
@@ -172,7 +174,8 @@ BEGIN
       ,[Call_Date]
       ,[Journal_ID]
       ,[EvalStatus]
-       ,REPLACE(EC.fn_nvcHtmlEncode([Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />') 
+       --,REPLACE(EC.fn_nvcHtmlEncode([Summary_CallerIssues]), CHAR(13) + CHAR(10) ,'<br />') 
+	   ,'NA'
       ,[Program]
       ,[VerintFormName]
       ,[isCoachingMonitor]
@@ -199,6 +202,12 @@ BEGIN
       ,[Customer_Temp_End_Comment]
 	  ,GetDate()
 	  ,GetDate()
+	  ,[Channel]
+      ,[ActivityID]
+      ,[DCN]
+      ,[CaseNumber]
+	  ,[Reason_For_Contact]
+      ,[Contact_Reason_Comment]
 	  FROM EC.Quality_Now_Coaching_Stage qcs 
 	 JOIN @logsInserted inserted ON qcs.QN_Batch_ID = inserted.QNBatchID;
 	 
@@ -219,7 +228,7 @@ BEGIN
 	  JOIN @logsInserted inserted ON qcs.QN_Batch_ID = inserted.QNBatchID; 
  
      --Truncate Staging Table
-     Truncate Table EC.Quality_Now_Coaching_Stage;
+     --Truncate Table EC.Quality_Now_Coaching_Stage;
 	
 	COMMIT TRANSACTION
   END TRY
@@ -237,9 +246,6 @@ BEGIN
 END -- sp_InsertInto_Coaching_Log_Quality_Now
 
 GO
-
-
-
 
 
 

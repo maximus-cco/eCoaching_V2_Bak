@@ -1,8 +1,9 @@
 /*
-sp_Dashboard_Director_Site_Export(04).sql
-Last Modified Date: 09/03/2019
+sp_Dashboard_Director_Site_Export(05).sql
+Last Modified Date: 5/24/2021
 Last Modified By: Susmitha Palacherla
 
+Version 05: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 04: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 03A: Updated from UAT Feedback - TFS 14108 - 08/01/2019
 Version 03: Modified to support new handling for Short Calls. TFS 14108 - 07/09/2019
@@ -22,6 +23,7 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -33,6 +35,7 @@ GO
 --  Modified to incorporate QualityNow Logs. TFS 13332 -  03/15/2019
 --  Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+--  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Dashboard_Director_Site_Export] 
 @nvcUserIdin nvarchar(10),
@@ -53,13 +56,23 @@ DECLARE
 @strEDate nvarchar(10),
 @nvcSQL1 nvarchar(max),
 @nvcSQL2 nvarchar(max),
+@nvcSQL2All nvarchar(max),
+@nvcSQL2Phone nvarchar(max),
+@nvcSQL2AllPhone nvarchar(max),
+@nvcSQL2WebChat nvarchar(max),
+@nvcSQL2AllWebChat nvarchar(max),
+@nvcSQL2WrittenCorr nvarchar(max),
+@nvcSQL2AllWrittenCorr nvarchar(max),
 @nvcSQL3 nvarchar(max),
+@NewLineChar nvarchar(2),
 @where nvarchar(1000)
 
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
+
+SET @NewLineChar = CHAR(13) + CHAR(10)
 SET @strSDate = convert(varchar(8), @strSDatein,112)
 SET @strEDate = convert(varchar(8), @strEDatein,112)
 
@@ -75,6 +88,7 @@ BEGIN
 SET @where = @where +  ' AND [cl].[StatusID] = 1 '
 END
 
+-- Non QN Logs	
 
 SET @nvcSQL1 = 'SELECT [cl].[CoachingID] strLogID
   ,[cl].[FormName] FormName
@@ -111,8 +125,7 @@ SET @nvcSQL1 = 'SELECT [cl].[CoachingID] strLogID
 ,[cl].[EmpAckFollowupAutoDate] CSRFollowupAutoDate
 ,[cl].[EmpAckFollowupComments] CSRFollowupComments
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
-JOIN [EC].[Employee_Hierarchy] eh WITH (NOLOCK) ON eh.[EMP_ID] = veh.[EMP_ID]
-JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)  ON cl.EmpID = eh.Emp_ID 
+JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)  ON cl.EmpID = veh.Emp_ID 
 LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
 JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
@@ -125,14 +138,17 @@ AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + '''
 AND [cl].[SourceID] NOT IN (235,236) ' +
 @where + ' ' + '
 AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
-AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+AND (veh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
 ORDER BY [cl].[CoachingID];'
  
+ 
+-- QN Logs
 
- SET @nvcSQL2 = 'SELECT [cl].[CoachingID] strLogID
+ SET @nvcSQL2All = 'SELECT [cl].[CoachingID] strLogID
   ,[cl].[FormName] FormName
   ,[cl].[QNBatchID] QNBatchID
   ,[cl].[QNBatchStatus] QNBatchStatus
+  ,[qne].[Channel]
   ,[cl].[EmpID]	EmpID
   ,[veh].[Emp_Name]	EmpName
   ,[veh].[Sup_Name]	EmpSupName
@@ -150,8 +166,11 @@ ORDER BY [cl].[CoachingID];'
   ,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
   ,[cl].[MgrNotes] MgrNotes
   ,[cl].[CSRReviewAutoDate]	EmpReviewAutoDate
-  ,[cl].[CSRComments] EmpComments
-  ,[qne].[VerintFormName] EvaluationForm
+  ,[cl].[CSRComments] EmpComments '
+
+
+  SET @nvcSQL2Phone =  ' ,[qne].[VerintFormName] EvaluationForm
+  ,[qne].[Channel] Channel
   ,[qne].[Journal_ID] VerintID
   ,[qne].[isCoachingMonitor] isCoachingMonitor
   ,[qne].[Program] ProgramName
@@ -160,7 +179,9 @@ ORDER BY [cl].[CoachingID];'
   ,[qne].[EvalStatus] EvaluationStatus
   ,[dcr].[CoachingReason] CoachingReason
   ,[dscr].[SubCoachingReason] SubCoachingReason
-  ,[cl].[Description] Description
+ ,''NA'' Description
+ ,[qne].[Reason_For_Contact] ReasonForContact
+,[qne].[Contact_Reason_Comment] ReasonForContactComments
 ,[qne].[Business_Process] BusinessProcess
 ,[qne].[Business_Process_Reason] BusinessProcessReason
 ,[qne].[Business_Process_Comment] BusinessProcessComment
@@ -183,8 +204,7 @@ ORDER BY [cl].[CoachingID];'
 ,[qne].[Customer_Temp_End] CustomerTempEnd
 ,[qne].[Customer_Temp_End_Comment] CustomerTempEndComment
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
-JOIN [EC].[Employee_Hierarchy] eh WITH (NOLOCK) ON eh.[EMP_ID] = veh.[EMP_ID]
-JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)  ON cl.EmpID = eh.Emp_ID 
+JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)  ON cl.EmpID = veh.Emp_ID 
 JOIN [EC].[Coaching_Log_Quality_Now_Evaluations]qne  WITH (NOLOCK) ON cl.CoachingID = qne.CoachingID
 LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON qne.Evaluator_ID = vehs.EMP_ID 
 JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
@@ -197,11 +217,120 @@ WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
 AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + ''' 
 AND [cl].[SourceID] IN (235,236)
 AND [QNBatchStatus] = ''Active'' ' +
-@where + ' ' + '
-AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
-AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
++ @NewLineChar + @where + ' ' + @NewLineChar +
++ 'AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
+AND (veh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+AND qne.[Channel] NOT IN (''Web Chat'',''Written Correspondence'')
 ORDER BY [cl].[CoachingID]'
 
+SET @nvcSQL2AllPhone  = @nvcSQL2All +  @NewLineChar + @nvcSQL2Phone;
+
+SET @nvcSQL2WebChat = '  ,[qne].[VerintFormName] EvaluationForm
+  ,[qne].[Channel] Channel
+  ,[qne].[Journal_ID] VerintID
+  ,[qne].[ActivityID] ActivityIDID
+  ,[qne].[isCoachingMonitor] isCoachingMonitor
+  ,[qne].[Program] ProgramName
+  ,[qne].[Call_Date] EventDate
+  ,[vehs].[Emp_Name] SubmitterName
+  ,[qne].[EvalStatus] EvaluationStatus
+  ,[dcr].[CoachingReason] CoachingReason
+  ,[dscr].[SubCoachingReason] SubCoachingReason
+ ,''NA'' Description
+ ,[qne].[Reason_For_Contact] ReasonForContact
+,[qne].[Contact_Reason_Comment] ReasonForContactComments
+,[qne].[Business_Process] BusinessProcess
+,[qne].[Business_Process_Reason] BusinessProcessReason
+,[qne].[Business_Process_Comment] BusinessProcessComment
+,[qne].[Info_Accuracy] InfoAccuracy
+,[qne].[Info_Accuracy_Reason] InfoAccuracyReason
+,[qne].[Info_Accuracy_Comment] InfoAccuracyComment
+,[qne].[Privacy_Disclaimers] PrivacyDisclaimers
+,[qne].[Privacy_Disclaimers_Reason] PrivacyDisclaimersReason
+,[qne].[Privacy_Disclaimers_Comment] PrivacyDisclaimersComment
+,[qne].[Issue_Resolution] IssueResolution
+,[qne].[Issue_Resolution_Comment] IssueResolutionComment
+,[qne].[Call_Efficiency] ChatEfficiency
+,[qne].[Call_Efficiency_Comment] ChatEfficiencyComment
+,[qne].[Active_Listening] IssueDiagnosis
+,[qne].[Active_Listening_Comment] IssueDiagnosisComment
+,[qne].[Personality_Flexing] ProfessionalCommunication
+,[qne].[Personality_Flexing_Comment] ProfessionalCommunicationComment
+,[qne].[Customer_Temp_Start] CustomerTempStart
+,[qne].[Customer_Temp_Start_Comment] CustomerTempStartComment
+,[qne].[Customer_Temp_End] CustomerTempEnd
+,[qne].[Customer_Temp_End_Comment] CustomerTempEndComment
+FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)  ON cl.EmpID = veh.Emp_ID 
+JOIN [EC].[Coaching_Log_Quality_Now_Evaluations]qne  WITH (NOLOCK) ON cl.CoachingID = qne.CoachingID
+LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON qne.Evaluator_ID = vehs.EMP_ID 
+JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
+JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
+JOIN [EC].[DIM_Site] si ON cl.SiteID = si.SiteID 
+JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) ON cl.CoachingID = clr.CoachingID 
+JOIN [EC].[DIM_Coaching_Reason]dcr ON clr.CoachingReasonID = dcr.CoachingReasonID
+JOIN [EC].[DIM_Sub_Coaching_Reason]dscr ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID 
+WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
+AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + ''' 
+AND [cl].[SourceID] IN (235,236)
+AND [QNBatchStatus] = ''Active'' ' +
++ @NewLineChar + @where + ' ' + @NewLineChar +
++ 'AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
+AND (veh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+AND qne.[Channel] = ''Web Chat''
+ORDER BY [cl].[CoachingID]'
+
+SET @nvcSQL2AllWebChat  = @nvcSQL2All +  @NewLineChar + @nvcSQL2WebChat;
+
+
+SET @nvcSQL2WrittenCorr = '  ,[qne].[VerintFormName] EvaluationForm
+  ,[qne].[Channel] Channel
+  ,[qne].[Journal_ID] VerintID
+  ,[qne].[DCN] DCN
+  ,[qne].[isCoachingMonitor] isCoachingMonitor
+  ,[qne].[Program] ProgramName
+  ,[qne].[Call_Date] EventDate
+  ,[vehs].[Emp_Name] SubmitterName
+  ,[qne].[EvalStatus] EvaluationStatus
+  ,[dcr].[CoachingReason] CoachingReason
+  ,[dscr].[SubCoachingReason] SubCoachingReason
+ ,''NA'' Description
+ ,[qne].[Reason_For_Contact] ReasonForContact
+,[qne].[Contact_Reason_Comment] ReasonForContactComments
+,[qne].[Business_Process] BusinessProcess
+,[qne].[Business_Process_Reason] BusinessProcessReason
+,[qne].[Business_Process_Comment] BusinessProcessComment
+,[qne].[Info_Accuracy] InfoAccuracy
+,[qne].[Info_Accuracy_Reason] InfoAccuracyReason
+,[qne].[Info_Accuracy_Comment] InfoAccuracyComment
+,[qne].[Privacy_Disclaimers] PrivacyDisclaimers
+,[qne].[Privacy_Disclaimers_Reason] PrivacyDisclaimersReason
+,[qne].[Privacy_Disclaimers_Comment] PrivacyDisclaimersComment
+,[qne].[Issue_Resolution] BusinessCorrespondence 
+,[qne].[Issue_Resolution_Comment] BusinessCorrespondenceComment
+FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)  ON cl.EmpID = veh.Emp_ID 
+JOIN [EC].[Coaching_Log_Quality_Now_Evaluations]qne  WITH (NOLOCK) ON cl.CoachingID = qne.CoachingID
+LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON qne.Evaluator_ID = vehs.EMP_ID 
+JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
+JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
+JOIN [EC].[DIM_Site] si ON cl.SiteID = si.SiteID 
+JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) ON cl.CoachingID = clr.CoachingID 
+JOIN [EC].[DIM_Coaching_Reason]dcr ON clr.CoachingReasonID = dcr.CoachingReasonID
+JOIN [EC].[DIM_Sub_Coaching_Reason]dscr ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID 
+WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
+AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + ''' 
+AND [cl].[SourceID] IN (235,236)
+AND [QNBatchStatus] = ''Active'' ' +
++ @NewLineChar + @where + ' ' + @NewLineChar +
++ 'AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
+AND (veh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+AND qne.[Channel] = ''Written Correspondence''
+ORDER BY [cl].[CoachingID]'
+
+SET @nvcSQL2AllWrittenCorr  = @nvcSQL2All +  @NewLineChar + @nvcSQL2WrittenCorr;
+
+-- ISQ Logs
 
 SET @nvcSQL3 = 
 'SELECT [cl].[CoachingID] CoachingID
@@ -244,9 +373,8 @@ ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reaso
 ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID  JOIN [EC].[DIM_Status] s 
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
 ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si 
-ON cl.SiteID = si.SiteID JOIN [EC].[Employee_Hierarchy] eh
-ON cl.EmpID = eh.Emp_ID  JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
-ON eh.[EMP_ID] = veh.[EMP_ID] JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
+ON cl.SiteID = si.SiteID JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+ON cl.[EMPID] = veh.[EMP_ID] JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
 ON cl.SubmitterId = vehs.EMP_ID 
 WHERE convert(varchar(8), [SubmittedDate], 112) >= ''' + @strSDate + '''
 AND convert(varchar(8), [SubmittedDate], 112) <= ''' + @strEDate + ''' 
@@ -254,15 +382,21 @@ AND [cl].[SourceID] = 212
 AND SUBSTRING([cl].[strReportCode], 1, 3) = ''ISQ'' ' +
 @where + ' ' + '
 AND cl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
-AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
+AND (veh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR veh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
 ORDER BY [cl].[CoachingID]'
 
 SET NOCOUNT ON;  
 EXEC (@nvcSQL1)	
 --PRINT @nvcSQL1
 
-EXEC (@nvcSQL2)	
---PRINT @nvcSQL2
+EXEC (@nvcSQL2AllPhone);
+--PRINT @nvcSQL2AllPhone;
+
+EXEC (@nvcSQL2AllWebChat);	
+--PRINT @nvcSQL2AllWebChat;
+
+EXEC (@nvcSQL2AllWrittenCorr);	
+--PRINT @nvcSQL2AllWrittenCorr;
 
 EXEC (@nvcSQL3)	
 --PRINT @nvcSQL3
@@ -270,12 +404,7 @@ EXEC (@nvcSQL3)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
-END -- sp_Dashboard_Director_Site_Export
+END -- sp_Dashboard_Director_Site_Coaching_Export
 GO
-
-
-
-
-
 
 

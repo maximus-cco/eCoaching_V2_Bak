@@ -1,8 +1,9 @@
 /*
-sp_rptQNCoachingSummary(01).sql
-Last Modified Date: 04/02/2019
+sp_rptQNCoachingSummary(02).sql
+Last Modified Date: 5/24/2021
 Last Modified By: Susmitha Palacherla
 
+Version 02: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 01: Document Initial Revision - TFS 13333 - 04/02/2019
 */
 
@@ -16,15 +17,12 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_rptQNCoachingSummary]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
 
 
 /******************************************************************************* 
@@ -33,6 +31,7 @@ GO
 --	Description: Selects list of Quality Now Coaching Log Attributes for Coaching Summary Report.
 --  Revision History:
 --  Initial Revision: Quality Now Initiative TFS 13333 -  03/27/2019
+--  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 
  *******************************************************************************/
 
@@ -89,7 +88,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 			  ,p.FormName AS [Form Name]
 			   ,p.QNBatchID [Quality Now Batch ID]
                ,p.QNBatchStatus [Quality Now Batch Status]
- 			  ,c.Status
+			   ,c.Status
 			  ,p.EmpID AS [Employee ID]
     	      ,CONVERT(nvarchar(50),DecryptByKey(c.EmpName)) AS [Employee Name]
     	      ,c.Site 
@@ -111,29 +110,35 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		      ,CASE 
 		       WHEN c.ReviewMgrID IS NULL  THEN '-'
 		         ELSE CONVERT(nvarchar(50),DecryptByKey(c.ReviewMgrName)) END AS [Review Manager Name]
-		      ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
+			 -- ,q.[Summary_CallerIssues] AS Description
+			    ,'NA' AS [Description]
+			  ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
+			  ,ISNULL(CONVERT(varchar,q.Call_Date,121),'-') AS [Event Date]
               ,ISNULL(CONVERT(varchar,p.CoachingDate,121),'-') AS [Coaching Date]
               ,ISNULL(CONVERT(varchar,p.SubmittedDate,121),'-') AS [Submitted Date]
 		      ,c.Source AS [Coaching Source]
 		      ,c.SubSource AS [Sub Coaching Source]  
+			   ,[EC].[fn_strCoachingReasonFromCoachingID](c.CoachingID) AS [Coaching Reason]
+	          ,[EC].[fn_strSubCoachingReasonFromCoachingID](c.CoachingID)AS [SubCoaching Reason]
+			  ,'NA' AS [Value]
+			   ,q.Evaluator_ID AS [Submitter ID]
+		        ,CONVERT(nvarchar(50),DecryptByKey(qs.Emp_Name)) AS [Submitter Name]
 		      ,ISNULL(CONVERT(varchar,p.SupReviewedAutoDate,121),'-') AS [Supervisor Reviewed Date]
               ,ISNULL(CONVERT(varchar,p.MgrReviewManualDate,121),'-') AS [Manager Reviewed Manual Date]
 			  ,ISNULL(CONVERT(varchar,p.MgrReviewAutoDate,121),'-') AS [Manager Reviewed Auto Date]
               ,COALESCE(p.MgrNotes,'-') AS [Manager Notes]
               ,ISNULL(CONVERT(varchar,p.CSRReviewAutoDate,121),'-') AS [Employee Reviewed Date]
               ,COALESCE(p.CSRComments,'-') AS [Employee Comments]
-			  ,ISNULL(CONVERT(varchar,q.Call_Date,121),'-') AS [Event Date]
-			  ,q.[Summary_CallerIssues] AS Description
-		      ,[EC].[fn_strCoachingReasonFromCoachingID](c.CoachingID) AS [Coaching Reason]
-	          ,[EC].[fn_strSubCoachingReasonFromCoachingID](c.CoachingID)AS [SubCoaching Reason]
-			  ,'NA' AS [Value]
-			   ,q.Evaluator_ID AS [Submitter ID]
-		        ,CONVERT(nvarchar(50),DecryptByKey(qs.Emp_Name)) AS [Submitter Name]
-				,q.Program AS [Program]
+			  ,q.Program AS [Program]
+			  ,q.[Channel] AS [Channel]
 			  ,ISNULL(q.Journal_ID,'-') AS [Verint ID]
-              ,ISNULL(q.VerintFormName,'-') AS [Verint Form Name]
-              ,ISNULL(q.isCoachingMonitor,'-') AS [Coaching Monitor]
-			  ,ISNULL(q.EvalStatus,'-') AS [Evaluation Status]
+			  ,CASE q.[Channel] WHEN 'Web Chat' THEN q.ActivityID ELSE '' END AS [ActivityID]
+			  ,CASE q.[Channel] WHEN 'Written Correspondence' THEN q.DCN ELSE '' END AS [DCN]
+			  ,COALESCE(q.VerintFormName,'-') AS [Verint Form Name]
+              ,COALESCE(q.isCoachingMonitor,'-') AS [Coaching Monitor]
+			  ,COALESCE(q.EvalStatus,'-') AS [Evaluation Status]
+			  ,q.[Reason_For_Contact] AS [Reason For Contact]
+		 	  ,q.[Contact_Reason_Comment] AS [Reason For Contact Comments]
 			  ,q.Business_Process AS [Business Process]
 			,q.Business_Process_Reason AS [Business Process Reason]
 			,q.Business_Process_Comment AS [Business Process Comment]
@@ -143,18 +148,26 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 			,q.Privacy_Disclaimers AS [Privacy Disclaimers]
 			,q.Privacy_Disclaimers_Reason AS [Privacy Disclaimers Reason]
 			,q.Privacy_Disclaimers_Comment AS [Privacy Disclaimers Comment]
-			,q.Issue_Resolution AS [Issue Resolution]
-			,q.Issue_Resolution_Comment AS [Issue Resolution Comment]
-			,q.Call_Efficiency AS [Call Efficiency]
-			,q.Call_Efficiency_Comment AS [Call Efficiency Comment]
-			,q.Active_Listening AS [Active Listening]
-			,q.Active_Listening_Comment AS [Active Listening Comment]
-			,q.Personality_Flexing AS [Personality Flexing]
-			,q.Personality_Flexing_Comment AS [Personality Flexing Comment]
-			,q.Customer_Temp_Start AS [Customer Temp Start]
-			,q.Customer_Temp_Start_Comment AS [Customer Temp Start Comment]
-			,q.Customer_Temp_End AS [Customer Temp End]
-			,q.Customer_Temp_End_Comment AS [Customer Temp End Comment]
+			,CASE [q].[Channel] WHEN 'Written Correspondence'  THEN '' ELSE q.Issue_Resolution END AS [Issue Resolution]
+			,CASE [q].[Channel] WHEN 'Written Correspondence'  THEN '' ELSE q.Issue_Resolution_Comment END AS  [Issue Resolution Comment]
+			,CASE [q].[Channel] WHEN 'Written Correspondence'  THEN q.Issue_Resolution ELSE '' END AS [Business Correspondence]
+			,CASE [q].[Channel] WHEN 'Written Correspondence'  THEN q.Issue_Resolution_Comment ELSE '' END AS  [Business Correspondence Comment]
+			,CASE WHEN [q].[Channel] IN ('Written Correspondence', 'Web Chat')  THEN '' ELSE q.Call_Efficiency END AS [Call Efficiency]
+			,CASE WHEN [q].[Channel] IN ('Written Correspondence', 'Web Chat')   THEN '' ELSE q.Call_Efficiency_Comment  END AS  [Call Efficiency Comment]
+			,CASE [q].[Channel] WHEN 'Web Chat'  THEN q.Call_Efficiency ELSE '' END AS [Chat Efficiency]
+			,CASE [q].[Channel] WHEN 'Web Chat'   THEN q.Call_Efficiency_Comment ELSE ''  END AS  [Chat Efficiency Comment]
+			,CASE  WHEN [q].[Channel] IN ('Written Correspondence', 'Web Chat')  THEN '' ELSE q.Active_Listening END AS [Active Listening]
+			,CASE  WHEN [q].[Channel] IN ('Written Correspondence', 'Web Chat')   THEN '' ELSE q.Active_Listening_Comment  END AS [Active Listening Comment]
+			,CASE [q].[Channel] WHEN 'Web Chat'  THEN q.Active_Listening ELSE '' END AS [Issue Diagnosis]
+			,CASE [q].[Channel] WHEN 'Web Chat'   THEN q.Active_Listening_Comment ELSE ''  END AS  [Issue Diagnosis Comment]
+			,CASE  WHEN [q].[Channel] IN ('Written Correspondence', 'Web Chat')  THEN '' ELSE q.Personality_Flexing END AS [Personality Flexing]
+			,CASE  WHEN [q].[Channel] IN ('Written Correspondence', 'Web Chat')   THEN '' ELSE q.Personality_Flexing_Comment  END AS [Personality Flexing Comment]
+			,CASE [q].[Channel] WHEN 'Web Chat'  THEN q.Personality_Flexing ELSE '' END AS [Professional Communication]
+			,CASE [q].[Channel] WHEN 'Web Chat'   THEN q.Personality_Flexing_Comment ELSE ''  END AS [Professional Communication Comment]
+			,CASE  WHEN  [q].[Channel] =  'Written Correspondence'  THEN '' ELSE q.Customer_Temp_Start END AS  [Customer Temp Start]
+			,CASE  WHEN  [q].[Channel] =  'Written Correspondence'  THEN '' ELSE q.Customer_Temp_Start_Comment END AS  [Customer Temp Start Comment]
+			,CASE  WHEN  [q].[Channel] = 'Written Correspondence'  THEN '' ELSE q.Customer_Temp_End END AS [Customer Temp End]
+			,CASE  WHEN  [q].[Channel] = 'Written Correspondence'  THEN '' ELSE q.Customer_Temp_End_Comment END AS  [Customer Temp End Comment]
       FROM [EC].[Coaching_Log] p WITH(NOLOCK)
       JOIN  (SELECT distinct [cl].[ModuleID] ModuleID
               ,[mo].[Module]Module
@@ -245,10 +258,6 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
-
-
-
 GO
-
 
 

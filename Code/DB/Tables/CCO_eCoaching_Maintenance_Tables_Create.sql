@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Maintenance_Tables_Create.(06).sql
-Last Modified Date: 07/20/2020
+CCO_eCoaching_Maintenance_Tables_Create.(07).sql
+
+Last Modified Date: 5/19/2021
 Last Modified By: Susmitha Palacherla
 
-
+Version 07: TFS 21276 - Update QN Alt Channels compliance and mastery levels 
 Version 06: Updated to add additional archive tables for Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
 Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
 version 04: Added ConfirmedCSE to Coaching Log Archive Table - TFS 14049 - 04/26/2019
@@ -230,7 +231,13 @@ CREATE TABLE [EC].[Coaching_Log_Quality_Now_Evaluations_Archive](
 	[Inserted_Date] [datetime] NULL,
 	[Last_Updated_Date] [datetime] NULL,
 	[ArchivedBy] [nvarchar](50) NOT NULL,
-	[ArchivedDate] [datetime] NOT NULL
+	[ArchivedDate] [datetime] NOT NULL,
+        [Channel] [nvarchar](30) NULL,
+	[ActivityID] [nvarchar](30) NULL,
+	[DCN] [nvarchar](20) NULL,
+	[CaseNumber] [nvarchar](10) NULL,
+	[Reason_For_Contact] [nvarchar](100) NULL,
+	[Contact_Reason_Comment] [nvarchar](1024) NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 

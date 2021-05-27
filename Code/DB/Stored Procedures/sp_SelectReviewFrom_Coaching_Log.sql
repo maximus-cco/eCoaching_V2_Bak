@@ -1,9 +1,9 @@
 /*
-sp_SelectReviewFrom_Coaching_Log(22).sql
-Last Modified Date:  11/30/2020
+sp_SelectReviewFrom_Coaching_Log(23).sql
+Last Modified Date: 5/24/2021
 Last Modified By: Susmitha Palacherla
 
-
+Version 23: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 22: Changes to support AED feed. TFS 19502  - 11/30/2020
 Version 21: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 Version 20: Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
@@ -54,6 +54,7 @@ GO
 --  Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
 --  Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 --  Changes to support AED feed. TFS 19502  - 11/30/2020
+--  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 --	=====================================================================
 
 CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -239,7 +240,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   cl.EmpAckFollowupAutoDate,
   cl.EmpAckFollowupComments,
   ''Coaching'' strLogType
-FROM [EC].[Coaching_Log] cl ';
+FROM [EC].[Coaching_Log] cl  WITH (NOLOCK) ';
 	    
 SET @nvcSQL3 = @nvcSQL3 + N' JOIN 
 (
@@ -273,15 +274,15 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 252) THEN [clr].[Value] ELSE NULL END) ATTAP,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 63) THEN [clr].[Value] ELSE NULL END)	WAH_RTS
-  FROM [EC].[Coaching_Log_Reason] clr,
+  FROM [EC].[Coaching_Log_Reason] clr  WITH (NOLOCK),
     [EC].[DIM_Coaching_Reason] cr,
-	[EC].[Coaching_Log] ccl 
+	[EC].[Coaching_Log] ccl  WITH (NOLOCK) 
   WHERE [ccl].[CoachingID] = ''' + CONVERT(NVARCHAR, @intLogId) + '''
     AND [clr].[CoachingReasonID] = [cr].[CoachingReasonID]
     AND [ccl].[CoachingID] = [clr].[CoachingID] 
   GROUP BY ccl.FormName 
 ) cc ON [cl].[FormName] = [cc].[FormName]
-JOIN [EC].[Employee_Hierarchy] eh ON [cl].[EMPID] = [eh].[Emp_ID] 
+JOIN [EC].[Employee_Hierarchy] eh  WITH (NOLOCK) ON [cl].[EMPID] = [eh].[Emp_ID] 
 JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) ON [veh].[Emp_ID] = [eh].[Emp_ID]
 LEFT JOIN [EC].[View_Employee_Hierarchy] vehSubmitter WITH (NOLOCK) ON [cl].[SubmitterID] = [vehSubmitter].[Emp_ID] 
 JOIN [EC].[View_Employee_Hierarchy] vehSup WITH (NOLOCK) ON ISNULL([cl].[Review_SupID], ''999999'') = [vehSup].[Emp_ID] 
@@ -301,4 +302,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
+
 

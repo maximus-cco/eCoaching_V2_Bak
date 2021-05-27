@@ -9,12 +9,16 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Default = Debug|Default
 		Dev|Default = Dev|Default
+		Test|Default = Test|Default
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Debug|Default.ActiveCfg = Debug
-		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Dev|Default.ActiveCfg = Prod
-		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Dev|Default.Build.0 = Prod
-		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Dev|Default.Deploy.0 = Prod
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Dev|Default.ActiveCfg = Test
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Dev|Default.Build.0 = Test
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Dev|Default.Deploy.0 = Test
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Test|Default.ActiveCfg = Test
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Test|Default.Build.0 = Test
+		{AE3C19A1-D16F-4516-A7BC-30FFB0CDFDA8}.Test|Default.Deploy.0 = Test
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

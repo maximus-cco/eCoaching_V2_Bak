@@ -1,0 +1,92 @@
+/* 
+TFS 21276 - Update QN Alt Channels compliance and mastery levels
+
+
+1. Update staging table - Add Channel, ActivityID, DCN, CaseNumber
+2. update SSIS package
+3. Update QN Evals table
+4. Update load stored procedures - update, insert
+5. update review sp
+6. Update summary report sp and ssis package
+7. update ssrs report sp and package
+8. update export sp
+
+**********************************************
+ 
+---Connect to the database with your SA account and ---
+----- Run one statement at a time---------
+
+**********************************************
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+
+*/
+
+
+--1. Add Columns to staging table
+
+ALTER TABLE [EC].[Quality_Now_Coaching_Stage]
+ADD [Channel] nvarchar(30) NULL
+   ,[ActivityID] nvarchar(30) NULL
+   ,[DCN] nvarchar(20) NULL
+   ,[CaseNumber] nvarchar(10) NULL
+   ,[Reason_For_Contact] nvarchar(100) NULL
+   ,[Contact_Reason_Comment] nvarchar(1024) NULL
+GO 
+
+
+
+
+--**********************************************
+
+--2. Add Columns to Evaluations table
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations]
+ADD [Channel] nvarchar(30) NULL
+   ,[ActivityID] nvarchar(30) NULL
+   ,[DCN] nvarchar(20) NULL
+   ,[CaseNumber] nvarchar(10) NULL
+   ,[Reason_For_Contact] nvarchar(100) NULL
+   ,[Contact_Reason_Comment] nvarchar(1024) NULL
+GO 
+
+
+UPDATE [EC].[Coaching_Log_Quality_Now_Evaluations]
+SET Channel = CASE
+WHEN [QNBatchID] LIKE 'QA%' THEN 'ARC'
+WHEN [QNBatchID] LIKE 'QI%' THEN 'ISG'
+WHEN [QNBatchID] LIKE 'QN%' THEN 'Phone'
+WHEN [QNBatchID] LIKE 'QT%' THEN 'Web Chat'
+WHEN [QNBatchID] LIKE 'QW%' THEN 'Written Correspondence'
+ELSE 'Unknown' END
+WHERE Channel is NULL
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations] ADD CONSTRAINT df_Channel
+DEFAULT 'Unknown' FOR Channel
+GO
+
+--**********************************************
+
+
+--2. Add Columns to QN Evaluations Archive table
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations_Archive]
+ADD [Channel] nvarchar(30) NULL
+   ,[ActivityID] nvarchar(30) NULL
+   ,[DCN] nvarchar(20) NULL
+   ,[CaseNumber] nvarchar(10) NULL
+   ,[Reason_For_Contact] nvarchar(100) NULL
+   ,[Contact_Reason_Comment] nvarchar(1024) NULL
+  GO
+
+
+--**********************************************
+
+
+
+--**********************************************

@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Quality_Now_Load_Tables_Create(03).sql
+CCO_eCoaching_Quality_Now_Load_Tables_Create(04).sql
 
-Last Modified Date: 4/22/2021
+Last Modified Date: 5/19/2021
 Last Modified By: Susmitha Palacherla
 
+Version 04: TFS 21276 - Update QN Alt Channels compliance and mastery levels 
 Version 03: TFS 20677 -  AD island to AD AWS environment changes - 4/22/2021
 Version 02:Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
@@ -77,7 +78,13 @@ CREATE TABLE [EC].[Quality_Now_Coaching_Stage](
 	[Customer_Temp_End_Comment] [nvarchar](2000) NULL,
 	[Emp_Role] [nvarchar](3) NULL,
 	[Module] [int] NULL,
-	[Reject_Reason] [nvarchar](200) NULL
+	[Reject_Reason] [nvarchar](200) NULL,
+        [Channel] [nvarchar](30) NULL,
+	[ActivityID] [nvarchar](30) NULL,
+	[DCN] [nvarchar](20) NULL,
+	[CaseNumber] [nvarchar](10) NULL,
+	[Reason_For_Contact] [nvarchar](100) NULL,
+	[Contact_Reason_Comment] [nvarchar](1024) NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
@@ -164,14 +171,22 @@ CREATE TABLE [EC].[Coaching_Log_Quality_Now_Evaluations](
 	[Customer_Temp_End_Comment] [nvarchar](2000) NULL,
 	[Inserted_Date] [datetime] NULL,
 	[Last_Updated_Date] [datetime] NULL,
+	[Channel] [nvarchar](30) NULL,
+	[ActivityID] [nvarchar](30) NULL,
+	[DCN] [nvarchar](20) NULL,
+	[CaseNumber] [nvarchar](10) NULL,
+	[Reason_For_Contact] [nvarchar](100) NULL,
+	[Contact_Reason_Comment] [nvarchar](1024) NULL
  CONSTRAINT [PK_QN_Evals] PRIMARY KEY CLUSTERED 
 (
 	[QNBatchID] ASC,
 	[CoachingID] ASC,
 	[Eval_ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] 
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
 
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations] ADD  CONSTRAINT [df_Channel]  DEFAULT ('Unknown') FOR [Channel]
 GO
 
 ALTER TABLE [EC].[Coaching_Log_Quality_Now_Evaluations]  WITH NOCHECK ADD  CONSTRAINT [fkQNEvalCoachingID] FOREIGN KEY([CoachingID])

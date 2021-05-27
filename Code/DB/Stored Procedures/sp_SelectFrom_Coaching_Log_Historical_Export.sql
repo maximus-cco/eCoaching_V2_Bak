@@ -1,8 +1,9 @@
 /*
-sp_SelectFrom_Coaching_Log_Historical_Export(09).sql
-Last Modified Date: 09/03/2019
+sp_SelectFrom_Coaching_Log_Historical_Export(10).sql
+Last Modified Date: 5/24/2021
 Last Modified By: Susmitha Palacherla
 
+Version 10: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 09: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
 Version 08: Modified to add left join for submitter during changes for TFS 15058 - 08/13/2019
 Version 07b: Updated from UAT Feedback - TFS 14108 - 08/01/2019
@@ -27,8 +28,11 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/14/2015
@@ -42,6 +46,7 @@ GO
 -- Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
 -- Modified to add left join for submitter during changes for TFS 15058 - 08/13/2019
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+-- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
 
@@ -67,6 +72,13 @@ BEGIN
 DECLARE	
 @nvcSQL1 nvarchar(max),
 @nvcSQL2 nvarchar(max),
+@nvcSQL2All nvarchar(max),
+@nvcSQL2Phone nvarchar(max),
+@nvcSQL2AllPhone nvarchar(max),
+@nvcSQL2WebChat nvarchar(max),
+@nvcSQL2AllWebChat nvarchar(max),
+@nvcSQL2WrittenCorr nvarchar(max),
+@nvcSQL2AllWrittenCorr nvarchar(max),
 @nvcSQL3 nvarchar(max),
 @nvcSubSource nvarchar(100),
 @strSDate nvarchar(8),
@@ -88,9 +100,9 @@ SET @where = 'WHERE 1 = 1 '
 IF @intEmpActive  <> 3
 BEGIN
     IF @intEmpActive = 1
-	SET @where = @where + @NewLineChar + ' AND [eh].[Active] NOT IN (''T'',''D'')'
+	SET @where = @where + @NewLineChar + ' AND [veh].[Active] NOT IN (''T'',''D'')'
 	ELSE
-	SET @where = @where + @NewLineChar + ' AND [eh].[Active] IN (''T'',''D'')'
+	SET @where = @where + @NewLineChar + ' AND [veh].[Active] IN (''T'',''D'')'
 END
 
 
@@ -118,12 +130,12 @@ END
 
 IF @nvcSupIdin  <> '-1'
 BEGIN
-	SET @where = @where + @NewLineChar + ' AND [eh].[Sup_ID] = ''' + @nvcSupIdin  + '''' 
+	SET @where = @where + @NewLineChar + ' AND [veh].[Sup_ID] = ''' + @nvcSupIdin  + '''' 
 END
 
 IF @nvcMgrIdin  <> '-1'
 BEGIN
-	SET @where = @where + @NewLineChar + ' AND [eh].[Mgr_ID] = ''' + @nvcMgrIdin  + '''' 
+	SET @where = @where + @NewLineChar + ' AND [veh].[Mgr_ID] = ''' + @nvcMgrIdin  + '''' 
 END	
 
 IF @nvcSubmitterIdin  <> '-1'
@@ -136,7 +148,7 @@ BEGIN
 	SET @where = @where + @NewLineChar + ' AND [cl].[SiteID] = ''' + CONVERT(nvarchar, @intSiteIdin) + ''''
 END			 
 
-	 		 
+	 -- Non QN Logs		 
 
 SET @nvcSQL1 = ';WITH CL 
 AS 
@@ -182,8 +194,7 @@ SELECT [cl].[CoachingID] CoachingID
 ,[cl].[EmpAckFollowupAutoDate] CSRFollowupAutoDate
 ,[cl].[EmpAckFollowupComments] CSRFollowupComments
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
-JOIN [EC].[Employee_Hierarchy] eh WITH (NOLOCK) ON eh.[EMP_ID] = veh.[EMP_ID]
-JOIN cl ON cl.EmpID = eh.Emp_ID 
+JOIN cl ON cl.EmpID = veh.Emp_ID 
 LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
 JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
@@ -194,9 +205,9 @@ JOIN [EC].[DIM_Sub_Coaching_Reason]dscr ON clr.SubCoachingReasonID = dscr.SubCoa
 + @NewLineChar + @where + ' ' + '
 ORDER BY [cl].[CoachingID];'
 
+-- QN Logs
 
-
-SET @nvcSQL2 = ';WITH CL 
+SET @nvcSQL2All = ';WITH CL 
 AS 
 (
   SELECT * From [EC].[Coaching_Log] WITH (NOLOCK)
@@ -227,8 +238,10 @@ SELECT [cl].[CoachingID] CoachingID
   ,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
   ,[cl].[MgrNotes] MgrNotes
   ,[cl].[CSRReviewAutoDate]	EmpReviewAutoDate
-  ,[cl].[CSRComments] EmpComments
-  ,[qne].[VerintFormName] EvaluationForm
+  ,[cl].[CSRComments] EmpComments '
+
+SET @nvcSQL2Phone = '  ,[qne].[VerintFormName] EvaluationForm
+  ,[qne].[Channel] Channel
   ,[qne].[Journal_ID] VerintID
   ,[qne].[isCoachingMonitor] isCoachingMonitor
   ,[qne].[Program] ProgramName
@@ -237,7 +250,9 @@ SELECT [cl].[CoachingID] CoachingID
   ,[qne].[EvalStatus] EvaluationStatus
   ,[dcr].[CoachingReason] CoachingReason
   ,[dscr].[SubCoachingReason] SubCoachingReason
-  ,REPLACE(EC.fn_nvcHtmlDecode(cl.Description), ''<br />'', ''|'') Description
+  ,''NA'' Description
+,[qne].[Reason_For_Contact] ReasonForContact
+,[qne].[Contact_Reason_Comment] ReasonForContactComments
 ,[qne].[Business_Process] BusinessProcess
 ,[qne].[Business_Process_Reason] BusinessProcessReason
 ,[qne].[Business_Process_Comment] BusinessProcessComment
@@ -266,14 +281,114 @@ ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reaso
 ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID  JOIN [EC].[DIM_Status] s 
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
 ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si 
-ON cl.SiteID = si.SiteID JOIN [EC].[Employee_Hierarchy] eh
-ON cl.EmpID = eh.Emp_ID  JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
-ON eh.[EMP_ID] = veh.[EMP_ID] LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
+ON cl.SiteID = si.SiteID JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+ON cl.[EMPID] = veh.[EMP_ID] LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
 ON qne.Evaluator_ID = vehs.EMP_ID ' +
-+ @NewLineChar + @where + ' ' +
-'AND qne.[EvalStatus] = ''Active''
++ @NewLineChar + @where + ' ' + @NewLineChar +
++ 'AND qne.[Channel] NOT IN (''Web Chat'',''Written Correspondence'')
+AND qne.[EvalStatus] = ''Active''
 ORDER BY [cl].[CoachingID];'
 
+
+SET @nvcSQL2AllPhone  = @nvcSQL2All +  @NewLineChar + @nvcSQL2Phone;
+
+
+SET @nvcSQL2WebChat = '  ,[qne].[VerintFormName] EvaluationForm
+  ,[qne].[Channel] Channel
+  ,[qne].[Journal_ID] VerintID
+  ,[qne].[ActivityID] ActivityIDID
+  ,[qne].[isCoachingMonitor] isCoachingMonitor
+  ,[qne].[Program] ProgramName
+  ,[qne].[Call_Date] EventDate
+  ,[vehs].[Emp_Name] SubmitterName
+  ,[qne].[EvalStatus] EvaluationStatus
+  ,[dcr].[CoachingReason] CoachingReason
+  ,[dscr].[SubCoachingReason] SubCoachingReason
+ ,''NA'' Description
+ ,[qne].[Reason_For_Contact] ReasonForContact
+,[qne].[Contact_Reason_Comment] ReasonForContactComments
+,[qne].[Business_Process] BusinessProcess
+,[qne].[Business_Process_Reason] BusinessProcessReason
+,[qne].[Business_Process_Comment] BusinessProcessComment
+,[qne].[Info_Accuracy] InfoAccuracy
+,[qne].[Info_Accuracy_Reason] InfoAccuracyReason
+,[qne].[Info_Accuracy_Comment] InfoAccuracyComment
+,[qne].[Privacy_Disclaimers] PrivacyDisclaimers
+,[qne].[Privacy_Disclaimers_Reason] PrivacyDisclaimersReason
+,[qne].[Privacy_Disclaimers_Comment] PrivacyDisclaimersComment
+,[qne].[Issue_Resolution] IssueResolution
+,[qne].[Issue_Resolution_Comment] IssueResolutionComment
+,[qne].[Call_Efficiency] ChatEfficiency
+,[qne].[Call_Efficiency_Comment] ChatEfficiencyComment
+,[qne].[Active_Listening] IssueDiagnosis
+,[qne].[Active_Listening_Comment] IssueDiagnosisComment
+,[qne].[Personality_Flexing] ProfessionalCommunication
+,[qne].[Personality_Flexing_Comment] ProfessionalCommunicationComment
+,[qne].[Customer_Temp_Start] CustomerTempStart
+,[qne].[Customer_Temp_Start_Comment] CustomerTempStartComment
+,[qne].[Customer_Temp_End] CustomerTempEnd
+,[qne].[Customer_Temp_End_Comment] CustomerTempEndComment
+FROM cl JOIN [EC].[Coaching_Log_Quality_Now_Evaluations]qne WITH (NOLOCK) 
+ON cl.CoachingID = qne.CoachingID JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) 
+ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr
+ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID  JOIN [EC].[DIM_Status] s 
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si 
+ON cl.SiteID = si.SiteID JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+ON cl.[EMPID] = veh.[EMP_ID] LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
+ON qne.Evaluator_ID = vehs.EMP_ID ' +
++ @NewLineChar + @where + ' ' + @NewLineChar +
++ 'AND qne.[Channel] = ''Web Chat''
+AND qne.[EvalStatus] = ''Active''
+ORDER BY [cl].[CoachingID];'
+
+SET @nvcSQL2AllWebChat  = @nvcSQL2All +  @NewLineChar + @nvcSQL2WebChat;
+
+
+SET @nvcSQL2WrittenCorr = '  ,[qne].[VerintFormName] EvaluationForm
+  ,[qne].[Channel] Channel
+  ,[qne].[Journal_ID] VerintID
+  ,[qne].[DCN] DCN
+  ,[qne].[isCoachingMonitor] isCoachingMonitor
+  ,[qne].[Program] ProgramName
+  ,[qne].[Call_Date] EventDate
+  ,[vehs].[Emp_Name] SubmitterName
+  ,[qne].[EvalStatus] EvaluationStatus
+  ,[dcr].[CoachingReason] CoachingReason
+  ,[dscr].[SubCoachingReason] SubCoachingReason
+  ,''NA'' Description
+  ,[qne].[Reason_For_Contact] ReasonForContact
+,[qne].[Contact_Reason_Comment] ReasonForContactComments
+,[qne].[Business_Process] BusinessProcess
+,[qne].[Business_Process_Reason] BusinessProcessReason
+,[qne].[Business_Process_Comment] BusinessProcessComment
+,[qne].[Info_Accuracy] InfoAccuracy
+,[qne].[Info_Accuracy_Reason] InfoAccuracyReason
+,[qne].[Info_Accuracy_Comment] InfoAccuracyComment
+,[qne].[Privacy_Disclaimers] PrivacyDisclaimers
+,[qne].[Privacy_Disclaimers_Reason] PrivacyDisclaimersReason
+,[qne].[Privacy_Disclaimers_Comment] PrivacyDisclaimersComment
+,[qne].[Issue_Resolution] BusinessCorrespondence 
+,[qne].[Issue_Resolution_Comment] BusinessCorrespondenceComment
+FROM cl JOIN [EC].[Coaching_Log_Quality_Now_Evaluations]qne WITH (NOLOCK) 
+ON cl.CoachingID = qne.CoachingID JOIN [EC].[Coaching_Log_Reason]clr WITH (NOLOCK) 
+ON cl.CoachingID = clr.CoachingID JOIN [EC].[DIM_Coaching_Reason]dcr
+ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reason]dscr
+ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID  JOIN [EC].[DIM_Status] s 
+ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
+ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si 
+ON cl.SiteID = si.SiteID JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+ON cl.[EMPID] = veh.[EMP_ID] LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
+ON qne.Evaluator_ID = vehs.EMP_ID ' +
++ @NewLineChar + @where + ' ' + @NewLineChar +
++ 'AND qne.[Channel] = ''Written Correspondence''
+AND qne.[EvalStatus] = ''Active''
+ORDER BY [cl].[CoachingID];'
+
+SET @nvcSQL2AllWrittenCorr  = @nvcSQL2All +  @NewLineChar + @nvcSQL2WrittenCorr;
+
+-- ISQ Logs
 
 SET @nvcSQL3 = ';WITH CL 
 AS 
@@ -326,26 +441,33 @@ ON clr.CoachingReasonID = dcr.CoachingReasonID JOIN [EC].[DIM_Sub_Coaching_Reaso
 ON clr.SubCoachingReasonID = dscr.SubCoachingReasonID  JOIN [EC].[DIM_Status] s 
 ON cl.StatusID = s.StatusID JOIN [EC].[DIM_Source] so 
 ON cl.SourceID = so.SourceID JOIN [EC].[DIM_Site] si 
-ON cl.SiteID = si.SiteID JOIN [EC].[Employee_Hierarchy] eh
-ON cl.EmpID = eh.Emp_ID  JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
-ON eh.[EMP_ID] = veh.[EMP_ID] LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
+ON cl.SiteID = si.SiteID  JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
+ON cl.[EMPID] = veh.[EMP_ID] LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK)
 ON cl.SubmitterId = vehs.EMP_ID ' +
 + @NewLineChar + @where + ' ' +
 'ORDER BY [cl].[CoachingID];'
 
 
 SET NOCOUNT ON;  
-EXEC (@nvcSQL1)	
---PRINT @nvcSQL1
 
-EXEC (@nvcSQL2)	
---PRINT @nvcSQL2
+EXEC (@nvcSQL1);	
+--PRINT @nvcSQL1;
 
-EXEC (@nvcSQL3)	
---PRINT @nvcSQL3
+EXEC (@nvcSQL2AllPhone);
+--PRINT @nvcSQL2AllPhone;
+
+EXEC (@nvcSQL2AllWebChat);	
+--PRINT @nvcSQL2AllWebChat;
+
+EXEC (@nvcSQL2AllWrittenCorr);	
+--PRINT @nvcSQL2AllWrittenCorr;
+
+EXEC (@nvcSQL3);	
+--PRINT @nvcSQL3;
 
 -- Close Symmetric key
-CLOSE SYMMETRIC KEY [CoachingKey] 		    
+CLOSE SYMMETRIC KEY [CoachingKey];		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
 GO
+
 

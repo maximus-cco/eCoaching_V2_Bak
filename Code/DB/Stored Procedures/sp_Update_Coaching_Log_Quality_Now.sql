@@ -1,9 +1,9 @@
 /*
-sp_Update_Coaching_Log_Quality_Now(05).sql
-Last Modified Date: 08/07/2019
+sp_Update_Coaching_Log_Quality_Now(06).sql
+Last Modified Date: 5/24/2021
 Last Modified By: Susmitha Palacherla
 
-
+Version 06: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 05: Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 Version 04: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 Version 03: Fix bug with updates to QNStrengthsOpportunities  - TFS 14555 - 06/03/2019
@@ -27,8 +27,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
---    ===========================================================================================
+--   ===========================================================================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      03/01/2019
 -- Description:     This procedure updates the Quality Now scorecards in the Coaching_Log and QN_Evaluations tables. 
@@ -36,6 +35,8 @@ GO
 -- Fix bug with updates to QNStrengthsOpportunities  - TFS 14555 - 06/03/2019
 -- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 -- Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
+-- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
+
 --    ===========================================================================================
 CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality_Now] AS
 BEGIN
@@ -65,7 +66,7 @@ BEGIN TRY
 	QNBatchID nvarchar(20),
 	EvalID nvarchar(20),
 	EvalStatus nvarchar(10),
-	SummaryCallerIssues nvarchar(max),
+	--SummaryCallerIssues nvarchar(max),
 	BusinessProcess [nvarchar](20),
 	BusinessProcessReason [nvarchar](200),
 	BusinessProcessComment [nvarchar](2000),
@@ -87,6 +88,12 @@ BEGIN TRY
 	CustomerTempStartComment [nvarchar](2000),
 	CustomerTempEnd [nvarchar](30),
 	CustomerTempEndComment [nvarchar](2000),
+	Channel [nvarchar](30),
+	ActivityID [nvarchar](30),
+	DCN [nvarchar](20),
+	CaseNumber [nvarchar](10),
+	ReasonForContact [nvarchar](100),
+	ContactReasonComment [nvarchar](1024)
   );
 
 
@@ -128,7 +135,7 @@ BEGIN TRY
        ,cqe.[QNBatchID]
 	   ,cqe.[Eval_ID]
       ,qcs.[EvalStatus]
-      ,replace(EC.fn_nvcHtmlEncode(qcs.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />')
+   --   ,replace(EC.fn_nvcHtmlEncode(qcs.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />')
       ,qcs.[Business_Process]
       ,qcs.[Business_Process_Reason]
       ,qcs.[Business_Process_Comment]
@@ -150,13 +157,19 @@ BEGIN TRY
       ,qcs.[Customer_Temp_Start_Comment]
       ,qcs.[Customer_Temp_End]
       ,qcs.[Customer_Temp_End_Comment]
+	  ,qcs.[Channel]
+      ,qcs.[ActivityID]
+      ,qcs.[DCN]
+      ,qcs.[CaseNumber]
+	  ,qcs.[Reason_For_Contact]
+	  ,qcs.[Contact_Reason_Comment]
   FROM EC.Quality_Now_Coaching_Stage qcs
   JOIN EC.Coaching_Log_Quality_Now_Evaluations cqe WITH (NOLOCK) ON 
   qcs.[Eval_ID] = cqe.[Eval_ID]
   AND qcs.QN_Batch_ID = cqe.QNBatchID
     WHERE CHECKSUM(
   CONCAT(qcs.[EvalStatus] , '|'
-      ,replace(EC.fn_nvcHtmlEncode(qcs.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />') , '|'
+    --  ,replace(EC.fn_nvcHtmlEncode(qcs.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />') , '|'
       ,qcs.[Business_Process] , '|'
       ,qcs.[Business_Process_Reason] , '|'
       ,qcs.[Business_Process_Comment] , '|'
@@ -177,7 +190,13 @@ BEGIN TRY
       ,qcs.[Customer_Temp_Start], '|'
       ,qcs.[Customer_Temp_Start_Comment], '|'
       ,qcs.[Customer_Temp_End], '|'
-      ,qcs.[Customer_Temp_End_Comment])) <>
+      ,qcs.[Customer_Temp_End_Comment], '|'
+	  ,qcs.[Channel], '|'
+      ,qcs.[ActivityID], '|'
+      ,qcs.[DCN], '|'
+      ,qcs.[CaseNumber], '|'
+	  ,qcs.[Reason_For_Contact], '|'
+	  ,qcs.[Contact_Reason_Comment])) <>
 CHECKSUM(
 CONCAT(cqe.[EvalStatus] , '|'
       ,cqe.[Summary_CallerIssues] , '|'
@@ -201,7 +220,13 @@ CONCAT(cqe.[EvalStatus] , '|'
       ,cqe.[Customer_Temp_Start], '|'
       ,cqe.[Customer_Temp_Start_Comment], '|'
       ,cqe.[Customer_Temp_End], '|'
-      ,cqe.[Customer_Temp_End_Comment]));
+      ,cqe.[Customer_Temp_End_Comment], '|'
+	  ,cqe.[Channel], '|'
+      ,cqe.[ActivityID], '|'
+      ,cqe.[DCN], '|'
+      ,cqe.[CaseNumber], '|'
+	  ,cqe.[Reason_For_Contact], '|'
+	  ,cqe.[Contact_Reason_Comment]));
 
 -- Update from here
 
@@ -233,7 +258,7 @@ CONCAT(cqe.[EvalStatus] , '|'
 
        UPDATE EC.Coaching_Log_Quality_Now_Evaluations
        SET [EvalStatus] = temp.[EvalStatus] 
-      ,[Summary_CallerIssues] = temp.[SummaryCallerIssues]
+    --  ,[Summary_CallerIssues] = temp.[SummaryCallerIssues]
       ,[Business_Process] = temp.[BusinessProcess] 
       ,[Business_Process_Reason] = temp.[BusinessProcessReason] 
       ,[Business_Process_Comment] = temp.[BusinessProcessComment] 
@@ -255,6 +280,12 @@ CONCAT(cqe.[EvalStatus] , '|'
       ,[Customer_Temp_Start_Comment] = temp.[CustomerTempStartComment]
       ,[Customer_Temp_End] = temp.[CustomerTempEnd]
       ,[Customer_Temp_End_Comment] = temp.[CustomerTempEndComment]
+	  ,[Channel]= temp.[Channel]
+      ,[ActivityID]= temp.[ActivityID]
+      ,[DCN]= temp.[DCN]
+      ,[CaseNumber]= temp.[CaseNumber]
+	  ,[Reason_For_Contact] = temp.ReasonForContact
+	  ,[Contact_Reason_Comment] = temp.ContactReasonComment
 	  ,[Last_Updated_date] = GetDate()
 	FROM  #Temp_Quality_Now_Evaluations_To_Update temp JOIN EC.Coaching_Log_Quality_Now_Evaluations qne
 	ON qne.CoachingID = temp.CoachingID
@@ -278,17 +309,5 @@ END CATCH
 END -- [EC].[sp_Update_Coaching_Log_Quality_Now]
 
 GO
-
-
-
-
-
-
-
-
-
-
-
-
 
 
