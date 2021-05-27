@@ -934,19 +934,18 @@ namespace eCoachingLog.Repository
 						sc.DateOfEvent = dataReader["Date Of Event"].ToString();
 						sc.Program = dataReader["strProgram"].ToString();
 						sc.SubmitterName = dataReader["Submitter"].ToString();
-						sc.BusinessProcess = EclUtil.RemoveToken(dataReader["Business Process"].ToString(), "<br /");
-						sc.InfoAccuracy = EclUtil.RemoveToken(dataReader["Info Accuracy"].ToString(), "<br /");
-                        sc.PrivacyDisclaimers = EclUtil.RemoveToken(dataReader["Privacy Disclaimers"].ToString(), "<br /");
-                        sc.IssueResolution = EclUtil.RemoveToken(dataReader["Issue Resolution"].ToString(), "<br /");
-                        sc.CallEfficiency = EclUtil.RemoveToken(dataReader["Call Efficiency"].ToString(), "<br /");
-                        sc.ActiveListening = EclUtil.RemoveToken(dataReader["Active Listening"].ToString(), "<br /");
-						sc.PersonalityFlexing = EclUtil.RemoveToken(dataReader["Personality Flexing"].ToString(), "<br /");
-						sc.StartTemperature = EclUtil.RemoveToken(dataReader["Start Temperature"].ToString(), "<br /");
-						sc.EndTemperature = EclUtil.RemoveToken(dataReader["End Temperature"].ToString(), "<br /");
-                        sc.Channel = EclUtil.RemoveToken(dataReader["Channel"].ToString(), "<br /");
-                        sc.ActivityId = EclUtil.RemoveToken(dataReader["Activity ID"].ToString(), "<br /");
-                        sc.ContactReason = EclUtil.RemoveToken(dataReader["Reason For Contact"].ToString(), "<br /");
-                        sc.ContactReasonComment = EclUtil.RemoveToken(dataReader["Reason For Contact comments"].ToString(), "<br /");
+						sc.BusinessProcess = dataReader["Business Process"].ToString();
+						sc.InfoAccuracy = dataReader["Info Accuracy"].ToString();
+                        sc.PrivacyDisclaimers = dataReader["Privacy Disclaimers"].ToString();
+                        sc.IssueResolution = dataReader["Issue Resolution"].ToString();
+                        sc.CallEfficiency = dataReader["Call Efficiency"].ToString();
+                        sc.ActiveListening = dataReader["Active Listening"].ToString();
+						sc.PersonalityFlexing = dataReader["Personality Flexing"].ToString();
+						sc.StartTemperature = dataReader["Start Temperature"].ToString();
+						sc.EndTemperature = dataReader["End Temperature"].ToString();
+                        sc.Channel = dataReader["Channel"].ToString();
+                        sc.ActivityId = dataReader["Activity ID"].ToString();
+                        sc.ContactReason = dataReader["Reason For Contact"].ToString();
 
                         scList.Add(sc);
 					}

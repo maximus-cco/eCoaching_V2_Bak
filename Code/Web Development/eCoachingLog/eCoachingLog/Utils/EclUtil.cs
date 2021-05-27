@@ -33,7 +33,7 @@ namespace eCoachingLog.Utils
                 return str;
             }
 
-            return str.Replace(str, token);
+            return str.Replace(token, "");
         }
     }
 }
