@@ -47,12 +47,12 @@ BEGIN
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
+
 SET @nvcSQL = 'SELECT  ''Evaluation '' + CONVERT(NVARCHAR(1),ROW_NUMBER() OVER(ORDER BY qne.[Eval_Date] ASC)) [Evaluation],
 qne.[VerintFormName] [Form Name] 
       ,qne.[Eval_ID] [Evaluation ID]
 	  ,qne.[Channel]
-	  ,qne.[Reason_For_Contact] [Reason For Contact]
-	  ,qne.[Contact_Reason_Comment] [Reason For Contact Comments]
+	   ,qne.[Reason_For_Contact]  + ''<br />'' + qne.[Contact_Reason_Comment] [Reason For Contact]
 	  ,qne.[Journal_ID] [Call ID]
       ,CASE qne.[Channel]  
 	          WHEN ''Web Chat'' THEN qne.[ActivityID] 
@@ -78,6 +78,7 @@ qne.[VerintFormName] [Form Name]
  Where qne.CoachingID = '''+CONVERT(NVARCHAR(20),@intLogId) + '''
  AND qne.EvalStatus = ''Active''
  ORDER BY qne.[Eval_Date]'
+
 
 		
 EXEC (@nvcSQL)	
