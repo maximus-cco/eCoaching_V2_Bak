@@ -1,8 +1,9 @@
 /*
-sp_Update_Coaching_Log_Quality_Now(06).sql
-Last Modified Date: 5/24/2021
+sp_Update_Coaching_Log_Quality_Now(07).sql
+Last Modified Date: 6/8/2021
 Last Modified By: Susmitha Palacherla
 
+Version 07: Updated to support special characters in description texts in IQS feeds. TFS 21496 - 6/8/2021
 Version 06: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 05: Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 Version 04: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
@@ -27,7 +28,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
---   ===========================================================================================
+--    ===========================================================================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      03/01/2019
 -- Description:     This procedure updates the Quality Now scorecards in the Coaching_Log and QN_Evaluations tables. 
@@ -36,6 +37,7 @@ GO
 -- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 -- Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
+-- Updated to support special characters in description texts in IQS feeds. TFS 21496 - 6/8/2021
 
 --    ===========================================================================================
 CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality_Now] AS
@@ -135,7 +137,6 @@ BEGIN TRY
        ,cqe.[QNBatchID]
 	   ,cqe.[Eval_ID]
       ,qcs.[EvalStatus]
-   --   ,replace(EC.fn_nvcHtmlEncode(qcs.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />')
       ,qcs.[Business_Process]
       ,qcs.[Business_Process_Reason]
       ,qcs.[Business_Process_Comment]
@@ -169,7 +170,6 @@ BEGIN TRY
   AND qcs.QN_Batch_ID = cqe.QNBatchID
     WHERE CHECKSUM(
   CONCAT(qcs.[EvalStatus] , '|'
-    --  ,replace(EC.fn_nvcHtmlEncode(qcs.Summary_CallerIssues), CHAR(13) + CHAR(10) ,'<br />') , '|'
       ,qcs.[Business_Process] , '|'
       ,qcs.[Business_Process_Reason] , '|'
       ,qcs.[Business_Process_Comment] , '|'
@@ -199,7 +199,6 @@ BEGIN TRY
 	  ,qcs.[Contact_Reason_Comment])) <>
 CHECKSUM(
 CONCAT(cqe.[EvalStatus] , '|'
-      ,cqe.[Summary_CallerIssues] , '|'
       ,cqe.[Business_Process] , '|'
       ,cqe.[Business_Process_Reason] , '|'
       ,cqe.[Business_Process_Comment] , '|'
@@ -258,7 +257,6 @@ CONCAT(cqe.[EvalStatus] , '|'
 
        UPDATE EC.Coaching_Log_Quality_Now_Evaluations
        SET [EvalStatus] = temp.[EvalStatus] 
-    --  ,[Summary_CallerIssues] = temp.[SummaryCallerIssues]
       ,[Business_Process] = temp.[BusinessProcess] 
       ,[Business_Process_Reason] = temp.[BusinessProcessReason] 
       ,[Business_Process_Comment] = temp.[BusinessProcessComment] 
@@ -309,5 +307,7 @@ END CATCH
 END -- [EC].[sp_Update_Coaching_Log_Quality_Now]
 
 GO
+
+
 
 
