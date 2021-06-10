@@ -1,9 +1,9 @@
 /*
-CCO_eCoaching_Maintenance_Tables_Create.(07).sql
-
-Last Modified Date: 5/19/2021
+CCO_eCoaching_Maintenance_Tables_Create.(08).sql
+Last Modified Date: 6/9/2021
 Last Modified By: Susmitha Palacherla
 
+Version 08: TFS 21493 - Written Corr Bingo records in bingo feeds
 Version 07: TFS 21276 - Update QN Alt Channels compliance and mastery levels 
 Version 06: Updated to add additional archive tables for Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
 Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
@@ -297,7 +297,8 @@ CREATE TABLE [EC].[Coaching_Log_Bingo_Archive](
 	[CompImage] [nvarchar](100) NULL,
 	[BingoType] [nvarchar](30) NULL,
 	[ArchivedBy] [nvarchar](50) NOT NULL,
-	[ArchivedDate] [datetime] NOT NULL
+	[ArchivedDate] [datetime] NOT NULL,
+        [Include] [bit] NULL
 ) ON [PRIMARY]
 GO
 

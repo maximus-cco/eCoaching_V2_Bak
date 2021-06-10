@@ -15,6 +15,7 @@ Const imgppPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images
 Const imgprPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\pr.png"
 Const imgsoPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\so.png"
 Const imgwcPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\wc.png"
+Const imgqcPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\qc.png"
 
 Const imgaa_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\aa_qm.png"
 Const imgcc_qmPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\cc_qm.png"
@@ -48,6 +49,7 @@ Const imgppName = "pp.png"
 Const imgprName = "pr.png"
 Const imgsoName = "so.png"
 Const imgwcName = "wc.png"
+Const imgqcName = "qc.png"
 
 
 Const imgaa_qmName = "aa_qm.png"
@@ -226,6 +228,7 @@ Set objBodyPart  = objMsg.AddRelatedBodyPart(imgppPath, imgppName, CdoReferenceT
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgprPath, imgprName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgsoPath, imgsoName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgwcPath, imgwcName, CdoReferenceTypeName)
+Set objBodyPart  = objMsg.AddRelatedBodyPart(imgqcPath, imgqcName, CdoReferenceTypeName)
 
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgaa_qmPath, imgaa_qmName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgcc_qmPath, imgcc_qmName, CdoReferenceTypeName)
@@ -246,6 +249,7 @@ objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgppName
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgprName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgsoName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgwcName & ">"""
+objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgqcName & ">"""
 
 
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgaa_qmName & ">"""

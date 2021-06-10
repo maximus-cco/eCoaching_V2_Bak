@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Quality_Other_Load_Tables_Create(07).sql
-Last Modified Date: 4/22/2021
+CCO_eCoaching_Quality_Other_Load_Tables_Create(08).sql
+Last Modified Date: 6/9/2021
 Last Modified By: Susmitha Palacherla
 
+Version 08: TFS 21493 - Written Corr Bingo records in bingo feeds
 Version 07: TFS 20677 -  AD island to AD AWS environment changes - 4/22/2021
 Version 06: TFS 18833 -  Expand the site field size in feeds - 10/9/2020
 Version 05: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
@@ -236,13 +237,16 @@ GO
 
 CREATE TABLE [EC].[Coaching_Log_Bingo](
 	[CoachingID] [bigint] NOT NULL,
-	[Competency] [nvarchar](30) NULL,
+	[Competency] [nvarchar](30) NOT NULL,
 	[Note] [nvarchar](30) NULL,
 	[Description] [nvarchar](4000) NULL,
 	[CompImage] [nvarchar](100) NULL,
-	[BingoType][nvarchar](30) NULL
+	[BingoType] [nvarchar](30) NULL,
+	[Include] [bit] NOT NULL
 ) ON [PRIMARY]
+GO
 
+ALTER TABLE [EC].[Coaching_Log_Bingo] ADD  CONSTRAINT [df_include]  DEFAULT ((1)) FOR [Include]
 GO
 
 ALTER TABLE [EC].[Coaching_Log_Bingo]  WITH NOCHECK ADD  CONSTRAINT [fkBingoCoachingID] FOREIGN KEY([CoachingID])
@@ -252,6 +256,7 @@ GO
 
 ALTER TABLE [EC].[Coaching_Log_Bingo] CHECK CONSTRAINT [fkBingoCoachingID]
 GO
+
 
 --**********************************************************************************
 
@@ -291,7 +296,13 @@ INSERT INTO [EC].[Bingo_Images]
            	   ('<img border="20" src="cid:pp_qm.png">','Privacy Protector','QM'),
 	   	   ('<img border="20" src="cid:pr_qm.png">','Process Pro','QM'),
    	   	   ('<img border="20" src="cid:rr_qm.png">','Resolution Rock Star','QM'),
-	   	   ('<img border="20" src="cid:so_qm.png">','Smooth Operator','QM')
+	   	   ('<img border="20" src="cid:so_qm.png">','Smooth Operator','QM'),
+    		   ('<img border="20" src="cid:wc.png">','Wild Card','QN'),
+	   	   ('<img border="20" src="cid:wc_qm.png">','Wild Card','QM'),
+                   ('<img border="20" src="cid:qc.png">','Quality Correspondent 1','QN'),
+	   	   ('<img border="20" src="cid:qc.png">','Quality Correspondent 2','QN'),	
+	   	   ('<img border="20" src="cid:qc.png">','Quality Correspondent 3','QN'),
+           	   ('<img border="20" src="cid:qc.png">','Quality Correspondent 4','QN')
 		  
 GO
 

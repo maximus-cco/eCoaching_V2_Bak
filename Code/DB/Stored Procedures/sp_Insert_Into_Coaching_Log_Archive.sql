@@ -1,8 +1,9 @@
 /*
-sp_Insert_Into_Coaching_Log_Archive(07).sql
-Last Modified Date: 5/24/2021
+sp_Insert_Into_Coaching_Log_Archive(08).sql
+Last Modified Date: 6/8/2021
 Last Modified By: Susmitha Palacherla
 
+Version 08: Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 Version 07: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 Version 06: Updated to archive Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
 Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
@@ -23,14 +24,12 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -45,6 +44,7 @@ GO
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to archive Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
+-- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive] @strArchivedBy nvarchar(50)= 'Automated Process'
 
@@ -240,7 +240,7 @@ INSERT INTO [EC].[Coaching_Log_Reason_Archive]
   FROM [EC].[Coaching_Log_Reason]CLR JOIN #ArchiveLogs A
   ON CLR.CoachingID = A.CoachingID;
 
--- Insert Quality Noew detail records in Archive table.
+-- Insert Quality Now detail records in Archive table.
   INSERT INTO [EC].[Coaching_Log_Quality_Now_Evaluations_Archive]
            ([QNBatchID]
            ,[CoachingID]
@@ -371,7 +371,8 @@ INSERT INTO [EC].[Coaching_Log_Bingo_Archive]
            ,[CompImage]
            ,[BingoType]
            ,[ArchivedBy]
-           ,[ArchivedDate])
+           ,[ArchivedDate]
+		   ,[Include])
   SELECT clb.[CoachingID]
       ,[Competency]
       ,[Note]
@@ -380,6 +381,7 @@ INSERT INTO [EC].[Coaching_Log_Bingo_Archive]
       ,[BingoType]
 	  ,@strArchivedBy
 	  ,GetDate()
+	  ,[Include]
   FROM [EC].[Coaching_Log_Bingo] CLB JOIN #ArchiveLogs A
   ON CLB.CoachingID = A.CoachingID;
 
@@ -426,5 +428,7 @@ COMMIT TRANSACTION
 END -- sp_Insert_Into_Coaching_Log_Archive
 
 GO
+
+
 
 

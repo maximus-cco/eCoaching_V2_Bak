@@ -1,7 +1,8 @@
 /*
-Last Modified Date: 12/21/2020
+Last Modified Date: 6/8/2021
 Last Modified By: Susmitha Palacherla
 
+Version 02: Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 Version 01: Initial Revision - Extract bingo logs from ecl and post to share point sites. TFS 19526 - 12/8/2020
 */
 
@@ -33,7 +34,8 @@ SELECT b.[CoachingID]
       ,[BingoType]
   FROM [EC].[Coaching_Log_Bingo]b INNER JOIN EC.Coaching_Log cl
   ON b.CoachingID = cl.CoachingID, params
-  WHERE cl.EventDate between BeginDate and EndDate;
+  WHERE cl.EventDate between BeginDate and EndDate
+  AND b.Include = 1;
 GO
 
 

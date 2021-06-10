@@ -1,0 +1,62 @@
+/*
+
+TFS 21493 – Quality Now Rewards and Recognition (Bingo)
+
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+
+Steps Summary
+
+1a. Add [Include] flag to Bingo detail table
+1b. Add [Include] flag to Bingo Archive table
+2. Insert into TABLE [EC].[Bingo_Images] for QC
+
+
+
+--******************************************
+
+
+--RUN ONE STEP AT A TIME
+
+--******************************************/
+
+
+
+--1a. Add Include flag to Bingo table
+
+	ALTER TABLE [EC].[Coaching_Log_Bingo]
+	ADD [Include] bit NOT NULL
+	CONSTRAINT df_include DEFAULT 1;
+	GO
+
+--1b. Add Include flag to Bingo Archive table
+
+	ALTER TABLE [EC].[Coaching_Log_Bingo_Archive]
+	ADD [Include] bit;
+	GO
+
+
+--******************************************
+
+--2. Insert into TABLE [EC].[Bingo_Images]
+
+
+    INSERT INTO [EC].[Bingo_Images]
+           ([ImageDesc]
+           ,[Competency]
+	   ,[BingoType])
+     VALUES
+           ('<img border="20" src="cid:qc.png">','Quality Correspondent 1','QN'),
+	   ('<img border="20" src="cid:qc.png">','Quality Correspondent 2','QN'),	
+	   ('<img border="20" src="cid:qc.png">','Quality Correspondent 3','QN'),
+           ('<img border="20" src="cid:qc.png">','Quality Correspondent 4','QN')
+		  
+GO
+
+
+--******************************************
+

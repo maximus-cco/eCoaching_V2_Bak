@@ -1,8 +1,9 @@
 /*
-sp_Update_Quality_Other_Coaching_Stage(04).sql
-Last Modified Date: 09/23/2019
+sp_Update_Quality_Other_Coaching_Stage(05).sql
+Last Modified Date: 6/8/2021
 Last Modified By: Susmitha Palacherla
 
+Version 05: Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 Version 04: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 03:  Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
 Version 02:  Modified to support OTA Report. TFS 12591 - 11/26/2018
@@ -26,8 +27,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/14/2017
@@ -40,6 +39,7 @@ GO
 -- Modified to support OTA Report. TFS 12591 - 11/26/2018
 -- Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 -- Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
+-- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
 @Count INT OUTPUT
@@ -50,69 +50,60 @@ BEGIN
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
 -- For Files where EmpID sent in strCSR. Copy directly to EmpID (KUD)
-BEGIN
+
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Emp_ID]=[Emp_LanID]
 WHERE NOT ISNULL([Emp_LANID],' ') like '%.%'
-AND [Emp_ID] IS NULL
-OPTION (MAXDOP 1)
-END  
+AND [Emp_ID] IS NULL;
 
-WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
+
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
 -- For Files where Emp LanID sent in strCSR.
 -- Lookup Employee ID and Populate into (HFC)
 
-BEGIN
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [EMP_ID]= [EC].[fn_nvcGetEmpIdFromLanId] ([EMP_LANID],[Submitted_Date])
 WHERE  ISNULL([Emp_LANID],' ') like '%.%'
-AND [Emp_ID] IS NULL
-OPTION (MAXDOP 1)
-END 
+AND [Emp_ID] IS NULL;
+
  
-WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms  
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Replace unknown Employee Ids with ''
 
-BEGIN
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [EMP_ID]= ''
-WHERE  [EMP_ID]='999999'
-OPTION (MAXDOP 1)
-END 
+WHERE  [EMP_ID]='999999';
+
  
-WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms  
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Populate SubmitterID as 999999 where NULL
-BEGIN
 
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Submitter_ID]= '999999'
-WHERE [Submitter_ID] IS NULL
-OPTION (MAXDOP 1)
-END  
+WHERE [Submitter_ID] IS NULL;
+ 
       
-WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
  -- Populate Program Value from Employee table where missing
-BEGIN
+
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Program]= H.[Emp_Program]
 FROM [EC].[Quality_Other_Coaching_Stage]S JOIN [EC].[Employee_Hierarchy]H
 ON S.[EMP_ID]=H.[Emp_ID]
-WHERE ([Program] IS NULL OR [Program]= '')
-OPTION (MAXDOP 1)
-END 
+WHERE ([Program] IS NULL OR [Program]= '');
+
  
-WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms  
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 
 -- Determine and populate Reject Reasons
-
 -- Employee not an Active Supervisor (CTC and QNBS)
 
-BEGIN
+
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Reject_Reason]= N'Record does not belong to an active Supervisor.'
 WHERE (EMP_ID = '' OR
@@ -122,16 +113,13 @@ EMP_ID NOT IN
  AND Active NOT IN ('T','D','P','L') 
  ))
 AND (Report_Code lIKE 'CTC%' OR Report_Code LIKE 'BQNS%' OR Report_Code LIKE 'BQMS%')
-AND [Reject_Reason]is NULL
+AND [Reject_Reason]is NULL;
 	
-OPTION (MAXDOP 1)
-END  
-
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+	
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Employee not an Active CSR (HFC and KUD)
 
-BEGIN
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Reject_Reason]= N'Record does not belong to an active CSR.'
 WHERE (EMP_ID = '' OR
@@ -141,17 +129,14 @@ EMP_ID NOT IN
  AND Active NOT IN ('T','D','P','L') 
  ))
  AND (Report_Code lIKE 'HFC%' OR Report_Code LIKE 'KUD%' OR Report_Code LIKE 'BQN2%' OR Report_Code LIKE 'BQM2%')
-AND [Reject_Reason]is NULL
-	
-OPTION (MAXDOP 1)
-END  
+AND [Reject_Reason]is NULL;
 
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Employee not an Active Quality Lead Specialist (OTA)
 
-BEGIN
+
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Reject_Reason]= N'Record does not belong to an active Quality Specialist.'
 WHERE (EMP_ID = '' OR
@@ -161,15 +146,65 @@ EMP_ID NOT IN
  AND Active NOT IN ('T','D','P','L') 
  ))
 AND Report_Code lIKE 'OTA%' 
-AND [Reject_Reason]is NULL
-	
-OPTION (MAXDOP 1)
-END  
+AND [Reject_Reason]is NULL;
+ 
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
+
+-- Reject BQN logs where an Employee does not have a valid set of QC competencies.
+
+DECLARE @ReportCode nvarchar(30);
+SET @ReportCode = (Select DISTINCT Report_Code FROM [EC].[Quality_Other_Coaching_Stage]);
+--SELECT  @ReportCode;
+
+IF @ReportCode LIKE 'BQ%'
+
+BEGIN
+
+	WITH comps AS
+	(SELECT EMP_ID, STRING_AGG(Competency, '|') AS Competencies
+	FROM ec.Quality_Other_Coaching_Stage
+	WHERE Competency like 'Quality Correspondent%'
+	GROUP BY EMP_ID)
+	, invalidcomps AS
+	(SELECT EMP_ID, Competencies FROM comps
+	 WHERE Competencies IN
+	 ('Quality Correspondent 1', 'Quality Correspondent 1|Quality Correspondent 2|Quality Correspondent 3'))
+
+ --SELECT * FROM invalidcomps;
+
+	UPDATE [EC].[Quality_Other_Coaching_Stage]
+	SET [Reject_Reason]= N'Employee does not have a valid set of Quality Correspondent competencies '
+	FROM [EC].[Quality_Other_Coaching_Stage] s JOIN invalidcomps i
+	ON s.EMP_ID = i.EMP_ID
+	WHERE Report_Code lIKE 'BQN%' 
+	AND [Reject_Reason]is NULL;
+
+  
+-- Reject duplicate competencies for Bingo logs
+
+	WITH dups AS
+		(SELECT d.[EMP_ID], d.[Competency], d.[BingoType], COUNT(*) as Rec_Count FROM
+		(SELECT DISTINCT [EMP_ID],
+				[Competency],
+				[BingoType],
+				[Program],
+				[TextDescription],
+				[Note]				
+		FROM [EC].[Quality_Other_Coaching_Stage])d
+		GROUP BY d.[EMP_ID], d.[Competency], d.[BingoType]
+		HAVING COUNT(*) > 1)
+			--Select * from dups;
+
+	UPDATE [EC].[Quality_Other_Coaching_Stage]
+	SET [Reject_Reason]= N'Duplicate records for the same Competency and type. '
+	FROM [EC].[Quality_Other_Coaching_Stage] s JOIN dups d
+	ON (s.EMP_ID = d.EMP_ID AND s.Competency = d.Competency and s.BingoType = d.BingoType)
+	AND [Reject_Reason]is NULL;
+	
+END;
 
 --Insert Rejected Records into Rejected Table
-BEGIN
 INSERT INTO [EC].[Quality_Other_Coaching_Rejected]
            ([Report_ID]
            ,[Report_Code]
@@ -191,31 +226,24 @@ INSERT INTO [EC].[Quality_Other_Coaching_Rejected]
    FROM [EC].[Quality_Other_Coaching_Stage]S left outer join [EC].[Quality_Other_Coaching_Rejected] R 
   ON S.Report_ID = R.Report_ID and S.Report_Code = R.Report_Code 
   WHERE R.Report_ID is NULL and R.Report_Code is NULL 
-  AND S.[Reject_Reason] is not NULL                
+  AND S.[Reject_Reason] is not NULL;              
 
-OPTION (MAXDOP 1)
-END
+
     
 -- Delete rejected records
-
-BEGIN
 DELETE FROM [EC].[Quality_Other_Coaching_Stage]
-WHERE [Reject_Reason]is not NULL
+WHERE [Reject_Reason]is not NULL;
 
-SELECT @Count =@@ROWCOUNT
-
-OPTION (MAXDOP 1)
-END
-
-
+SELECT @Count = @@ROWCOUNT;
 
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];	
 
 
 END  -- [EC].[sp_Update_Quality_Other_Coaching_Stage]
-
 GO
+
+
 
 
 
