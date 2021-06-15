@@ -35,6 +35,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
@@ -277,7 +278,7 @@ CLOSE SYMMETRIC KEY [CoachingKey]
 
 
 -- Truncate Staging Table
---Truncate Table [EC].[Quality_Other_Coaching_Stage]
+Truncate Table [EC].[Quality_Other_Coaching_Stage]
 
                   
 COMMIT TRANSACTION

@@ -27,6 +27,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/14/2017
@@ -41,7 +42,7 @@ GO
 -- Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- =============================================
-CREATE PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
+ALTER PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
 @Count INT OUTPUT
 AS
 BEGIN
@@ -168,8 +169,8 @@ BEGIN
 	GROUP BY EMP_ID)
 	, invalidcomps AS
 	(SELECT EMP_ID, Competencies FROM comps
-	 WHERE Competencies IN
-	 ('Quality Correspondent 1', 'Quality Correspondent 1|Quality Correspondent 2|Quality Correspondent 3'))
+		 WHERE Competencies NOT IN
+	 ('Quality Correspondent 1|Quality Correspondent 2', 'Quality Correspondent 1|Quality Correspondent 2|Quality Correspondent 3|Quality Correspondent 4'))
 
  --SELECT * FROM invalidcomps;
 
@@ -178,28 +179,23 @@ BEGIN
 	FROM [EC].[Quality_Other_Coaching_Stage] s JOIN invalidcomps i
 	ON s.EMP_ID = i.EMP_ID
 	WHERE Report_Code lIKE 'BQN%' 
+	AND Competency like 'Quality Correspondent%'
 	AND [Reject_Reason]is NULL;
 
   
 -- Reject duplicate competencies for Bingo logs
 
-	WITH dups AS
-		(SELECT d.[EMP_ID], d.[Competency], d.[BingoType], COUNT(*) as Rec_Count FROM
-		(SELECT DISTINCT [EMP_ID],
-				[Competency],
-				[BingoType],
-				[Program],
-				[TextDescription],
-				[Note]				
-		FROM [EC].[Quality_Other_Coaching_Stage])d
-		GROUP BY d.[EMP_ID], d.[Competency], d.[BingoType]
+WITH dups AS
+		(SELECT [EMP_ID], [Competency], [BingoType], [Program], COUNT(*) as Rec_Count 		
+		FROM [EC].[Quality_Other_Coaching_Stage]
+		GROUP BY [EMP_ID], [Competency], [BingoType],[Program]
 		HAVING COUNT(*) > 1)
 			--Select * from dups;
 
 	UPDATE [EC].[Quality_Other_Coaching_Stage]
-	SET [Reject_Reason]= N'Duplicate records for the same Competency and type. '
+	SET [Reject_Reason]= N'Duplicate records for the same Competency and type and program. '
 	FROM [EC].[Quality_Other_Coaching_Stage] s JOIN dups d
-	ON (s.EMP_ID = d.EMP_ID AND s.Competency = d.Competency and s.BingoType = d.BingoType)
+	ON (s.EMP_ID = d.EMP_ID AND s.Competency = d.Competency and s.BingoType = d.BingoType and s.Program = d.Program)
 	AND [Reject_Reason]is NULL;
 	
 END;
@@ -232,7 +228,7 @@ INSERT INTO [EC].[Quality_Other_Coaching_Rejected]
     
 -- Delete rejected records
 DELETE FROM [EC].[Quality_Other_Coaching_Stage]
-WHERE [Reject_Reason]is not NULL;
+WHERE [Reject_Reason] is not NULL;
 
 SELECT @Count = @@ROWCOUNT;
 
@@ -242,6 +238,8 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 
 END  -- [EC].[sp_Update_Quality_Other_Coaching_Stage]
 GO
+
+
 
 
 
