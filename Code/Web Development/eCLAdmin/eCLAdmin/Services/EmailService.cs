@@ -63,12 +63,12 @@ namespace eCLAdmin.Services
                 return;
             }
 
-			try
+            var smtpClient = new SmtpClient();
+            MailMessage mailMessage = new MailMessage();
+            try
 			{
 				// https://msdn.microsoft.com/en-us/library/k1c4h6e2(v=vs.110).aspx
 				// Initializes a new instance of the SmtpClient class by using configuration file settings.
-				var smtpClient = new SmtpClient();
-				MailMessage mailMessage = new MailMessage();
 				mailMessage.Subject = email.Subject;
 				mailMessage.From = new MailAddress(email.From, "eCoaching Log Admin");
 
@@ -100,6 +100,18 @@ namespace eCLAdmin.Services
 
 				logger.Warn(info);
 			}
+            finally
+            {
+                if (mailMessage != null)
+                {
+                    mailMessage.Dispose();
+                }
+
+                if (smtpClient != null)
+                {
+                    smtpClient.Dispose();
+                }
+            }
         }
     }
 }
