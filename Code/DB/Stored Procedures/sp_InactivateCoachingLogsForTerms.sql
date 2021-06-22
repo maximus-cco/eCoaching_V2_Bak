@@ -1,8 +1,9 @@
 /*
-sp_InactivateCoachingLogsForTerms(03).sql
-Last Modified Date: 05/22/2019
+sp_InactivateCoachingLogsForTerms(04).sql
+Last Modified Date: 6/21/2021
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
 Version 03: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 Version 02: Modified to support Encryption of sensitive data -Removed joins on LanID - TFS 7856 - 10/23/2017
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
@@ -18,12 +19,12 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 -- =============================================
@@ -38,6 +39,7 @@ GO
 -- Updated to not Inactivate Warning logs for termed Employees per TFS 3441 - 09/08/2016
 --  Modified to support Encryption of sensitive data. Removed joins on LanID. TFS 7856 - 10/23/2017
 -- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
+-- Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
 -- =============================================
 CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
 AS
@@ -47,16 +49,13 @@ BEGIN
  
  -- Inactivate Warnings logs for Termed Employees
 
-
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 
 BEGIN TRY
 
-
--- Log records being inactivated to Audit table and 
 -- Inactivate Warning logs for Termed Employees
-BEGIN
+-- Log records being inactivated to Audit table 
+
 INSERT INTO [EC].[AT_Warning_Inactivate_Reactivate_Audit]
            ([WarningID]
            ,[FormName]
@@ -80,14 +79,13 @@ ON W.[EmpID] = H.[Emp_ID]
 WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
 AND H.[Active] = 'D'
 AND H.[End_Date]<> '99991231'
-AND W.[StatusID] <> 2	 
-OPTION (MAXDOP 1)
-END
-
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+AND W.[StatusID] <> 2;	 
 
 
-BEGIN
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+
+-- Inactivate the Warning logs
+
 UPDATE [EC].[Warning_Log]
 SET [StatusID] = 2
 FROM [EC].[Warning_Log] W JOIN [EC].[Employee_Hierarchy]H
@@ -95,16 +93,14 @@ ON W.[EmpID] = H.[Emp_ID]
 WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
 AND H.[Active] = 'D'
 AND H.[End_Date]<> '99991231'
-AND W.[StatusID] <> 2
-OPTION (MAXDOP 1)
-END
+AND W.[StatusID] <> 2;
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
 
 -- Inactivate Surveys for Termed Employees
 
-BEGIN
 UPDATE [EC].[Survey_Response_Header]
 SET [Status] = 'Inactive'
 ,[InactivationDate] = GETDATE()
@@ -115,36 +111,28 @@ WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
 AND H.[Active] in ('T','D')
 AND H.[End_Date]<> '99991231'
 AND SH.[Status] = 'Open'
-AND [InactivationReason] IS NULL
-OPTION (MAXDOP 1)
-END
+AND [InactivationReason] IS NULL;
 
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
 
  -- Inactivate Expired Survey records (5 days after creation date)
-
-BEGIN
+ 
 UPDATE [EC].[Survey_Response_Header]
 SET [Status] = 'Inactive'
 ,[InactivationDate] = GETDATE()
 ,[InactivationReason] = 'Survey Expired'
 WHERE DATEDIFF(DAY, [CreatedDate],  GETDATE())>= 5
 AND [Status]  = 'Open'
-AND [InactivationReason] IS NULL
-OPTION (MAXDOP 1)
-END
+AND [InactivationReason] IS NULL;
 
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
-
-
---Log records being inactivated to Audit table and 
 --Inactivate Coaching logs for Termed Employees
+--Log records being inactivated to Audit table 
 
-BEGIN
 INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
            ([CoachingID]
            ,[FormName]
@@ -168,14 +156,12 @@ ON C.[EmpID] = H.[Emp_ID]
 WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
 AND H.[Active] in ('T','D')
 AND H.[End_Date]<> '99991231'
-AND C.[StatusID] not in (1,2)	 
-OPTION (MAXDOP 1)		 
-END
+AND C.[StatusID] not in (1,2); 
 
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+-- Inactivate the Coaching logs for terms
 
-BEGIN
 UPDATE [EC].[Coaching_Log]
 SET [StatusID] = 2
 FROM [EC].[Coaching_Log] C JOIN [EC].[Employee_Hierarchy]H
@@ -183,18 +169,14 @@ ON C.[EmpID] = H.[Emp_ID]
 WHERE CAST(H.[End_Date] AS DATETIME)< GetDate()
 AND H.[Active] in ('T','D')
 AND H.[End_Date]<> '99991231'
-AND C.[StatusID] not in (1,2)
-OPTION (MAXDOP 1)
-END
+AND C.[StatusID] not in (1,2);
 
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
--- Log records being inactivated to Audit table and 
 -- Inactivate Coaching logs for Employees on Extended Absence
+-- Log records being inactivated to Audit table and 
 
-
-BEGIN
 INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
            ([CoachingID]
            ,[FormName]
@@ -217,24 +199,19 @@ FROM [EC].[Coaching_Log] C JOIN [EC].[EmpID_To_SupID_Stage]H
 ON C.[EmpID] = LTRIM(H.[Emp_ID])
 WHERE H.[Emp_Status]= 'EA'
 AND H.[Emp_LanID] IS NOT NULL
-AND C.[StatusID] not in (1,2) 
-OPTION (MAXDOP 1)		 
-END
+AND C.[StatusID] not in (1,2);
 
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+-- Inactivate the Coaching logs for EA
 
-
-BEGIN
 UPDATE [EC].[Coaching_Log]
 SET [StatusID] = 2
 FROM [EC].[Coaching_Log] C JOIN [EC].[EmpID_To_SupID_Stage]H
 ON C.[EmpID] = LTRIM(H.[Emp_ID])
 WHERE H.[Emp_Status]= 'EA'
 AND H.[Emp_LanID] IS NOT NULL
-AND C.[StatusID] not in (1,2)
-OPTION (MAXDOP 1)
-END
+AND C.[StatusID] not in (1,2);
 
 
 COMMIT TRANSACTION

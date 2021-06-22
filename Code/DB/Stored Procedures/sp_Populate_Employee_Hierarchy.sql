@@ -1,8 +1,9 @@
 /*
-sp_Populate_Employee_Hierarchy(07).sql
-Last Modified Date: 05/22/2019
+sp_Populate_Employee_Hierarchy(08).sql
+Last Modified Date: 6/21/2021
 Last Modified By: Susmitha Palacherla
 
+Version 08: Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
 Version 07: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 Version 06:  Cross check employees on Leave against Aspect data - TFS 13074 - 12/21/2018
 Version 05:  Updated to support Encryption of sensitive data - TFS 7856 - 11/17/2017
@@ -22,12 +23,12 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Populate_Employee_Hierarchy]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -42,6 +43,7 @@ GO
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/17/2017
 -- Updated to cross check employees on Leave against Aspect data - TFS 13074 - 12/21/2018
 -- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
+-- Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
 -- =============================================
 CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
@@ -52,34 +54,31 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
  --Assigns End_Date to Inactive Records with status change in feed
  
-BEGIN
 	UPDATE [EC].[Employee_Hierarchy] 
 	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
 	FROM [EC].[Employee_Hierarchy_Stage] S JOIN [EC].[Employee_Hierarchy]H
 	ON H.Emp_ID = S.Emp_ID
 	AND S.Active in ('T', 'D')
-	AND H.END_DATE= '99991231'
-OPTION (MAXDOP 1)
-END
+	AND H.END_DATE= '99991231';
 
+	
+   WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
 -- Assigns End_Date to Inactive Records that stop arriving in feed
-BEGIN
+
 	UPDATE [EC].[Employee_Hierarchy] 
 	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
 	,[Active] = 'T'
 	 WHERE END_DATE = '99991231' AND Active = 'A'
 	 AND Emp_ID <> '999999'
 	 AND EMP_ID NOT IN
-	(SELECT Emp_ID FROM [EC].[Employee_Hierarchy_Stage])
+	(SELECT Emp_ID FROM [EC].[Employee_Hierarchy_Stage]);
 
-OPTION (MAXDOP 1)
-END
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
 -- Assigns Open Ended End_Date for Rehire records
-BEGIN
+
 	UPDATE [EC].[Employee_Hierarchy] 
 	SET [Active]= S.Active
 	,[Start_Date] = S.Start_Date
@@ -87,14 +86,12 @@ BEGIN
 	FROM [EC].[Employee_Hierarchy_Stage] S JOIN [EC].[Employee_Hierarchy]H
 	ON H.Emp_ID = S.Emp_ID
 	AND S.Active not in ('T', 'D')
-	AND H.END_DATE  <> '99991231'
-OPTION (MAXDOP 1)
-END
+	AND H.END_DATE  <> '99991231';
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
 -- Updates Existing Records
-BEGIN
+
 	UPDATE [EC].[Employee_Hierarchy]
 	   SET [Emp_Name] = EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Emp_Name],'''', ''))
 	      ,[Emp_Email] = EncryptByKey(Key_GUID('CoachingKey'), S.[Emp_Email])
@@ -126,14 +123,13 @@ BEGIN
 		  ,FLSA_Status = S.FLSA_Status
 	 FROM [EC].[Employee_Hierarchy]H JOIN [EC].[Employee_Hierarchy_Stage]S
 	 ON H.[Emp_ID] = S.[EMP_ID]
-	 WHERE H.[Emp_ID] is NOT NULL
-OPTION (MAXDOP 1)
-END
+	 WHERE H.[Emp_ID] is NOT NULL;
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
     
 -- Inserts New Records
-BEGIN
+
 	INSERT INTO [EC].[Employee_Hierarchy]
 			  ([Emp_ID]
 			   ,[Emp_Name]
@@ -169,7 +165,7 @@ BEGIN
 			   ,[Emp_Pri_Name]
 		   
 			  )
-							 SELECT S.[Emp_ID]
+							 SELECT DISTINCT S.[Emp_ID]
 						      ,EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Emp_Name],'''', ''))
                               ,EncryptByKey(Key_GUID('CoachingKey'), S.[Emp_Email])
 							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Emp_LanID)
@@ -192,7 +188,7 @@ BEGIN
 							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Mgr_LanID)
 							  ,S.[Mgr_Job_Code]
 							  ,S.[Mgr_Job_Description]
-							 ,S.[Dept_ID]
+						      ,S.[Dept_ID]
 							  ,S.[Dept_Description]
 							  ,S.[Reg_Temp]
 							  ,S.[Full_Part_Time]
@@ -205,48 +201,36 @@ BEGIN
 						  FROM [EC].[Employee_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy]H
 						  ON S.Emp_ID = H.Emp_ID
 						  WHERE (H.EMP_ID IS NULL and S.Emp_ID <> '')
-						  AND S.Active NOT IN ('T', 'D')
+						  AND S.Active NOT IN ('T', 'D');
 					
 
-OPTION (MAXDOP 1)
-END
+ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
 -- Update Employee Status from Aspect
-BEGIN
+
 	UPDATE [EC].[Employee_Hierarchy]
 	   SET [Active] = 'A'
 	    FROM [EC].[Employee_Hierarchy]H JOIN [EC].[EmpID_To_SupID_Stage]S
 	 ON H.[Emp_ID] = S.[EMP_ID]
 	 WHERE H.[Active] in ('L','P')
 	  AND H.End_Date = 99991231
-	 AND S.[Emp_Status] IN ('RFT','RPT', 'TPT', 'TFT')
-OPTION (MAXDOP 1)
-END
+	 AND S.[Emp_Status] IN ('RFT','RPT', 'TPT', 'TFT');
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+ WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
 
+ -- Populate SrMgr IDs
 
--- Close Symmetric key
-CLOSE SYMMETRIC KEY [CoachingKey];	 
-
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
-    
--- Populate SrMgr IDs
-BEGIN
               UPDATE [EC].[Employee_Hierarchy]
               SET [SrMgrLvl1_ID]=	[EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([H].[Emp_ID])		  
 				 ,[SrMgrLvl2_ID]=	[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([H].[Emp_ID])	
 	             ,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
-	FROM [EC].[Employee_Hierarchy]H
+	FROM [EC].[Employee_Hierarchy]H;
 
-     OPTION (MAXDOP 1)
-     END
+ -- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey];	 
 
 END --sp_Populate_Employee_Hierarchy
-
-
 GO
-
 
 
 
