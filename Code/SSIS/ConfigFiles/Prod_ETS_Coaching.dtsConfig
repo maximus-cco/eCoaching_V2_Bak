@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<DTSConfiguration>
+<DTSConfigurationHeading>
+<DTSConfigurationFileInfo GeneratedBy="MAXCORP\236464" GeneratedFromPackageName="ETS_Coaching" GeneratedFromPackageID="{79275F8F-1B0F-4AD8-8F65-DC1682E9445F}" GeneratedDate="3/30/2021 9:49:37 PM"/>
+</DTSConfigurationHeading>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoaching</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAAPADSQL50CCO</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpint.maxcorp.maximus</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::CC].Properties[Value]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\ETS\Decrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\ETS\Decrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptedBackupPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\ETS\Backups\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\ETS\Encrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\ETS\Encrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FailMessage].Properties[Value]" ValueType="String"><ConfiguredValue>ETS Coaching file failed in Prod</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::From].Properties[Value]" ValueType="String"><ConfiguredValue>eCoaching@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Subject].Properties[Value]" ValueType="String"><ConfiguredValue>ETS Load Failed in Prod</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::To].Properties[Value]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com;LiliHuang@maximus.com;DavidLHinman@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::VarDBName].Properties[Value]" ValueType="String"><ConfiguredValue>Prod</ConfiguredValue></Configuration>
+</DTSConfiguration>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<DTSConfiguration>
+<DTSConfigurationHeading>
+<DTSConfigurationFileInfo GeneratedBy="MAXCORP\236464" GeneratedFromPackageName="Employee_Hierarchy" GeneratedFromPackageID="{68EC1F00-D41B-4E27-A812-27171DEEAAC8}" GeneratedDate="3/30/2021 10:31:21 AM"/>
+</DTSConfigurationHeading>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingTest</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[DestinationDB].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAADADSQL52CCO</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpint.maxcorp.maximus</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::CcEmail].Properties[Value]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_In].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL52CCO\data\coaching\HRInfo\Decrypt_In\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Decrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL52CCO\data\coaching\HRInfo\Decrypt_Out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Encrypt_Out].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL52CCO\data\coaching\HRInfo\Encrypt_Out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FileBackup].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL52CCO\data\coaching\HRInfo\Backups\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FromEmail].Properties[Value]" ValueType="String"><ConfiguredValue>eCoachingTest@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::ToEmail].Properties[Value]" ValueType="String"><ConfiguredValue>JackieKMiller@maximus.com;DouglasRStearns@maximus.com</ConfiguredValue></Configuration>
+</DTSConfiguration>

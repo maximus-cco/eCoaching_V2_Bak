@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<DTSConfiguration>
+<DTSConfigurationHeading>
+<DTSConfigurationFileInfo GeneratedBy="MAXCORP\236464" GeneratedFromPackageName="Quality_Other_Coaching" GeneratedFromPackageID="{675BDB45-A3DE-4DFF-AE2B-FACC21936DB7}" GeneratedDate="3/30/2021 1:27:54 PM"/>
+</DTSConfigurationHeading>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoaching</ConfiguredValue>
+</Configuration><Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAAPADSQL50CCO</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpint.maxcorp.maximus</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FailMessage].Properties[Value]" ValueType="String"><ConfiguredValue>Quality Other Coaching Load failed in Prod</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Quality\Decrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Quality\Decrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptedBackupPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Quality\Backups\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Quality\Encrypt_out\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::EncryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO\data\coaching\Quality\Encrypt_in\</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::VarDBName].Properties[Value]" ValueType="String"><ConfiguredValue>Prod</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[CCLine]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[FromLine]" ValueType="String"><ConfiguredValue>eCoaching@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[Subject]" ValueType="String"><ConfiguredValue>Quality Other Coaching Load Failed</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[ToLine]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com;LiliHuang@maximus.com;DavidLHinman@maximus.com</ConfiguredValue></Configuration>
+</DTSConfiguration>

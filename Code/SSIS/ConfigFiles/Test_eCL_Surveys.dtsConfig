@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<DTSConfiguration>
+<DTSConfigurationHeading>
+<DTSConfigurationFileInfo GeneratedBy="MAXCORP\236464" GeneratedFromPackageName="eCL_Surveys" GeneratedFromPackageID="{2DECB496-9218-43F2-A72C-440D9E9ED03D}" GeneratedDate="3/30/2021 8:36:13 AM"/>
+</DTSConfigurationHeading>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingTest</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAADADSQL52CCO</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpint.maxcorp.maximus</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::FailMessage].Properties[Value]" ValueType="String"><ConfiguredValue>Survey Generation failed in Test.</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::Resend].Properties[Value]" ValueType="Boolean"><ConfiguredValue>0</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[CCLine]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[FromLine]" ValueType="String"><ConfiguredValue>eCoachingTest@maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[Subject]" ValueType="String"><ConfiguredValue>Survey Generation Failed</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[ToLine]" ValueType="String"><ConfiguredValue>JackieKMiller@maximus.com;DouglasRStearns@maximus.com</ConfiguredValue></Configuration>
+</DTSConfiguration>
