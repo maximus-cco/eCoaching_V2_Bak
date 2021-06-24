@@ -11,7 +11,7 @@ Const strLogFile = "\\UVAADADSQL52CCO.ad.local\ssis\coaching\Notifications\UAT\L
 ' Begin - Non-Environment Related
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
 Const ForAppending = 8
-Const smtpServer = "ironport.maximus.com" 
+Const smtpServer = "smtpint.maxcorp.maximus"  
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1

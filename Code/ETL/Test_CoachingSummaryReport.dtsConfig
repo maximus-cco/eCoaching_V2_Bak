@@ -5,7 +5,7 @@
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[dbconn].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingTest</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[dbconn].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAADADSQL52CCO</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[smtpconn].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>ironport.maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[smtpconn].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpint.maxcorp.maximus</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::Adhoc].Properties[Value]" ValueType="Boolean"><ConfiguredValue>0</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::BackupsDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL52CCO\data\Coaching\Reports\Backups\</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::BeginDate].Properties[Value]" ValueType="Int32"><ConfiguredValue>0</ConfiguredValue></Configuration>

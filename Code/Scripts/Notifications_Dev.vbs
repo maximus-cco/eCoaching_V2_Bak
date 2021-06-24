@@ -14,7 +14,7 @@ Const strLogFile = "\\UVAADADSQL50CCO\ssis\Coaching\Notifications\Logs\Notificat
 
 Const imgName = "BCC-eCL-LOGO-10142011-185x40.png"
 Const ForAppending = 8
-Const smtpServer = "ironport.maximus.com" 
+Const smtpServer = "SMTPInt.maxcorp.maximus" 
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
 Const adStateOpen = 1

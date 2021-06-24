@@ -13,8 +13,8 @@
   DTS:ObjectName="eCL_Surveys"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="278"
-  DTS:VersionGUID="{0385E9BC-ABAF-4235-9022-E61ABFE87A48}">
+  DTS:VersionBuild="279"
+  DTS:VersionGUID="{D94432E2-E732-4068-BB8D-184520937D7A}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -35,7 +35,7 @@
       DTS:ObjectName="SMTP Connection Manager">
       <DTS:ObjectData>
         <SmtpConnectionManager
-          ConnectionString="SmtpServer=smtpout.gdit.com;UseWindowsAuthentication=True;EnableSsl=False;"
+          ConnectionString="SmtpServer=smtpint.maxcorp.maximus;UseWindowsAuthentication=False;EnableSsl=False;"
           ConnectByProxy="False" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>

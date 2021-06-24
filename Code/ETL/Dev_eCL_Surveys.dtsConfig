@@ -5,7 +5,7 @@
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingDev</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAADADSQL50CCO</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>ironport.maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpint.maxcorp.maximus</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::FailMessage].Properties[Value]" ValueType="String"><ConfiguredValue>Survey Generation failed in Dev.</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::Resend].Properties[Value]" ValueType="Boolean"><ConfiguredValue>0</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.EventHandlers[OnTaskFailed]\Send Mail Task.Properties[CCLine]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>

@@ -33,7 +33,7 @@ Const strLogFile = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\Logs\
 
 ' Begin - Non-Environment Related
 
-Const smtpServer = "ironport.maximus.com" 
+Const smtpServer = "smtpint.maxcorp.maximus" 
 Const ForAppending = 8
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2

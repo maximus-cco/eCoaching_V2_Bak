@@ -13,8 +13,8 @@
   DTS:ObjectName="ETS_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="321"
-  DTS:VersionGUID="{61BDBBEA-539D-4F5F-895F-2E48E3415094}">
+  DTS:VersionBuild="322"
+  DTS:VersionGUID="{C7836DE4-D190-4B9F-8958-6A28292B845F}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -34,7 +34,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\ETS\Decrypt_out\eCL_ETS_Feed_FWH20160323.csv">
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\eCL_ETS_Feed_FWH20160323.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -104,7 +104,7 @@
         DTS:Name="ConnectionString">@[User::EncryptedOutPath]+  @[User::VarEncryptedFileName]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\ETS\Encrypt_out\" />
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\coaching\ETS\Encrypt_out\" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -123,7 +123,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\ETS\Decrypt_out\eCL_ETS_Feed_FWH20160323.csv">
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\eCL_ETS_Feed_FWH20160323.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -308,7 +308,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\ETS\Decrypt_out\eCL_ETS_Feed_FWH20160323.csv">
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\eCL_ETS_Feed_FWH20160323.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -384,7 +384,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\ETS\Decrypt_out\eCL_ETS_Feed_FWH20160323.csv">
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\eCL_ETS_Feed_FWH20160323.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -559,7 +559,7 @@
       DTS:ObjectName="SMTP Connection Manager">
       <DTS:ObjectData>
         <SmtpConnectionManager
-          ConnectionString="SmtpServer=smtpout.gdit.com;UseWindowsAuthentication=True;EnableSsl=False;"
+          ConnectionString="SmtpServer=smtpint.maxcorp.maximus;UseWindowsAuthentication=False;EnableSsl=False;"
           ConnectByProxy="False" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -582,7 +582,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="CC">
       <DTS:VariableValue
-        DTS:DataType="8">susmitha.palacherla@gdit.com</DTS:VariableValue>
+        DTS:DataType="8">SusmithaCPalacherla@maximus.com</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -591,7 +591,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="DecryptedOutPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\ETS\Decrypt_out\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -600,7 +600,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="DecryptInPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\ETS\Decrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -609,7 +609,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="EncryptedBackupPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\ETS\Backups\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\ETS\Backups\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -618,7 +618,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="EncryptedOutPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\ETS\Encrypt_out\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\ETS\Encrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -627,7 +627,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="EncryptInPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\ETS\Encrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\ETS\Encrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -649,7 +649,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="From">
       <DTS:VariableValue
-        DTS:DataType="8">eCoachingDev@gdit.com</DTS:VariableValue>
+        DTS:DataType="8">eCoachingDev@maximus.com</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -698,7 +698,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="To">
       <DTS:VariableValue
-        DTS:DataType="8">susmitha.palacherla@gdit.com</DTS:VariableValue>
+        DTS:DataType="8">SusmithaCPalacherla@maximus.com</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -756,7 +756,7 @@
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\data\coaching\ETS\Decrypt_out\" />
+              Folder="\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\" />
             <FEFEProperty
               FileSpec="eCL*.csv" />
             <FEFEProperty
@@ -803,36 +803,6 @@
               VSTAMajorVersion="15"
               VSTAMinorVersion="0"
               Language="CSharp">
-              <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_beffbe422c244276a2daecbda870e1c4")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_beffbe422c244276a2daecbda870e1c4")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -953,14 +923,34 @@ using System.Runtime.CompilerServices;
   </resheader>
 </root>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_beffbe422c244276a2daecbda870e1c4.Properties.Settings.get_Default():ST_beffbe422c244276a2daecbda870e1c4.Properties.Sett" +
+    "ings")]
+
+namespace ST_beffbe422c244276a2daecbda870e1c4.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -1078,55 +1068,6 @@ namespace ST_beffbe422c244276a2daecbda870e1c4
 	}
 }]]></ProjectItem>
               <ProjectItem
-                Name="Project"
-                Encoding="UTF16LE"><![CDATA[<?xml version="1.0" encoding="UTF-16" standalone="yes"?>
-<c:Project xmlns:c="http://schemas.microsoft.com/codeprojectml/2010/08/main" xmlns:msb="http://schemas.microsoft.com/developer/msbuild/2003" runtimeVersion="4.0" schemaVersion="1.0">
-  <msb:PropertyGroup>
-    <msb:CodeName>ST_beffbe422c244276a2daecbda870e1c4</msb:CodeName>
-    <msb:Language>msBuild</msb:Language>
-    <msb:DisplayName>ST_beffbe422c244276a2daecbda870e1c4</msb:DisplayName>
-    <msb:ProjectId>{1CBD4C30-72B6-4D93-85FC-E5EDC1FB89A2}</msb:ProjectId>
-  </msb:PropertyGroup>
-  <msb:ItemGroup>
-    <msb:Project Include="ST_beffbe422c244276a2daecbda870e1c4.csproj" />
-    <msb:File Include="Properties\Settings.settings" />
-    <msb:File Include="Properties\AssemblyInfo.cs" />
-    <msb:File Include="Properties\Resources.resx" />
-    <msb:File Include="Properties\Resources.Designer.cs" />
-    <msb:File Include="Properties\Settings.Designer.cs" />
-    <msb:File Include="ScriptMain.cs" />
-  </msb:ItemGroup>
-</c:Project>]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_beffbe422c244276a2daecbda870e1c4.Properties.Settings.get_Default():ST_beffbe422c244276a2daecbda870e1c4.Properties.Sett" +
-    "ings")]
-
-namespace ST_beffbe422c244276a2daecbda870e1c4.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
-              <ProjectItem
                 Name="ST_beffbe422c244276a2daecbda870e1c4.csproj"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -1212,6 +1153,65 @@ namespace ST_beffbe422c244276a2daecbda870e1c4.Properties {
     </VisualStudio>
   </ProjectExtensions>
 </Project>]]></ProjectItem>
+              <ProjectItem
+                Name="Project"
+                Encoding="UTF16LE"><![CDATA[<?xml version="1.0" encoding="UTF-16" standalone="yes"?>
+<c:Project xmlns:c="http://schemas.microsoft.com/codeprojectml/2010/08/main" xmlns:msb="http://schemas.microsoft.com/developer/msbuild/2003" runtimeVersion="4.0" schemaVersion="1.0">
+  <msb:PropertyGroup>
+    <msb:CodeName>ST_beffbe422c244276a2daecbda870e1c4</msb:CodeName>
+    <msb:Language>msBuild</msb:Language>
+    <msb:DisplayName>ST_beffbe422c244276a2daecbda870e1c4</msb:DisplayName>
+    <msb:ProjectId>{1CBD4C30-72B6-4D93-85FC-E5EDC1FB89A2}</msb:ProjectId>
+  </msb:PropertyGroup>
+  <msb:ItemGroup>
+    <msb:Project Include="ST_beffbe422c244276a2daecbda870e1c4.csproj" />
+    <msb:File Include="Properties\Settings.settings" />
+    <msb:File Include="Properties\AssemblyInfo.cs" />
+    <msb:File Include="Properties\Resources.resx" />
+    <msb:File Include="Properties\Resources.Designer.cs" />
+    <msb:File Include="Properties\Settings.Designer.cs" />
+    <msb:File Include="ScriptMain.cs" />
+  </msb:ItemGroup>
+</c:Project>]]></ProjectItem>
+              <ProjectItem
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_beffbe422c244276a2daecbda870e1c4")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_beffbe422c244276a2daecbda870e1c4")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+              <ProjectItem
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -1430,7 +1430,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\data\coaching\ETS\Decrypt_out\" />
+              Folder="\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\" />
             <FEFEProperty
               FileSpec="eCL_Compliance_ETS_Feed*.csv" />
             <FEFEProperty
@@ -2570,7 +2570,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\data\coaching\ETS\Decrypt_out\" />
+              Folder="\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\" />
             <FEFEProperty
               FileSpec="eCL_ETS_Feed*.csv" />
             <FEFEProperty
@@ -4506,7 +4506,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\data\coaching\ETS\Decrypt_out\" />
+              Folder="\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\" />
             <FEFEProperty
               FileSpec="eCL_ETS_Feed*.csv" />
             <FEFEProperty
@@ -5659,7 +5659,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\data\coaching\ETS\Encrypt_out\" />
+              Folder="\\UVAADADSQL50CCO\data\coaching\ETS\Encrypt_out\" />
             <FEFEProperty
               FileSpec="eCL*ETS_*.encrypt" />
             <FEFEProperty
@@ -5725,14 +5725,35 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -6105,35 +6126,14 @@ namespace ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties {
     }
 }]]></ProjectItem>
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_afb28a42781742a8aa8fe337a9aeeb2c")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -6443,9 +6443,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           <DTS:ObjectData>
             <SendMailTask:SendMailTaskData
               SendMailTask:SMTPServer="{B0353163-F3B2-45F0-8FEB-020D19CB8D2E}"
-              SendMailTask:From="eCoachingDev@gdit.com"
-              SendMailTask:To="susmitha.palacherla@gdit.com"
-              SendMailTask:CC="susmitha.palacherla@gdit.com"
+              SendMailTask:From="eCoachingDev@maximus.com"
+              SendMailTask:To="SusmithaCPalacherla@maximus.com"
+              SendMailTask:CC="SusmithaCPalacherla@maximus.com"
               SendMailTask:Subject="ETS Load Failed in Dev"
               SendMailTask:MessageSourceType="Variable"
               SendMailTask:MessageSource="User::FailMessage" xmlns:SendMailTask="www.microsoft.com/sqlserver/dts/tasks/sendmailtask" />

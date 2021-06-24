@@ -5,7 +5,7 @@
 </DTSConfigurationHeading>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoachingDev</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Connections[destnationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAADADSQL50CCO</ConfiguredValue></Configuration>
-<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>ironport.maximus.com</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[SMTP Connection Manager].Properties[SmtpServer]" ValueType="String"><ConfiguredValue>smtpint.maxcorp.maximus</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::CC].Properties[Value]" ValueType="String"><ConfiguredValue>SusmithaCPalacherla@maximus.com</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptedOutPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_out\</ConfiguredValue></Configuration>
 <Configuration ConfiguredType="Property" Path="\Package.Variables[User::DecryptInPath].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAADADSQL50CCO\data\coaching\ETS\Decrypt_in\</ConfiguredValue></Configuration>

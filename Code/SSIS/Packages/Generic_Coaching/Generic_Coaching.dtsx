@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="Generic_Coaching"
   DTS:PackageType="5"
-  DTS:VersionBuild="347"
-  DTS:VersionGUID="{B2806F43-DCF0-4480-AA0D-F3E7CDAA0AF6}">
+  DTS:VersionBuild="349"
+  DTS:VersionGUID="{1F05EE73-083A-46BD-A6B9-8EE553BF9C83}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -36,7 +36,7 @@
         DTS:Name="ConnectionString">@[User::EncryptedOutPath] +  @[User::varEncryptedFileName]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\Generic\Encrypt_Out\" />
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\coaching\Generic\Encrypt_out\" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -55,7 +55,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\Generic\Decrypt_out\">
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\coaching\Generic\Decrypt_out\">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -213,7 +213,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\Generic\Decrypt_out\">
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\coaching\Generic\Decrypt_out\">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -397,7 +397,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\coaching\Generic\Decrypt_out\">
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\coaching\Generic\Decrypt_out\">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -541,11 +541,12 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SMTP Connection Manager]"
       DTS:CreationName="SMTP"
+      DTS:Description="Email relay server"
       DTS:DTSID="{1710AB8F-763A-47F6-8929-254973F8F4C4}"
       DTS:ObjectName="SMTP Connection Manager">
       <DTS:ObjectData>
         <SmtpConnectionManager
-          ConnectionString="SmtpServer=smtpout.gdit.com;UseWindowsAuthentication=True;EnableSsl=False;"
+          ConnectionString="SmtpServer=smtpint.maxcorp.maximus;UseWindowsAuthentication=False;EnableSsl=False;"
           ConnectByProxy="False" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -566,7 +567,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="DecryptedOutPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\Generic\Decrypt_out\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\Generic\Decrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -575,7 +576,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="DecryptInPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\Generic\Decrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\Generic\Decrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -584,7 +585,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="EncryptedBackupPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\Generic\Backups\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\Generic\Backups\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -593,7 +594,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="EncryptedOutPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\Generic\Encrypt_Out\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\Generic\Encrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -602,7 +603,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="EncryptInPath">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\coaching\Generic\Encrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\coaching\Generic\Encrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -709,7 +710,7 @@
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\data\coaching\Generic\Decrypt_out\" />
+              Folder="\\UVAADADSQL50CCO\data\coaching\Generic\Decrypt_out\" />
             <FEFEProperty
               FileSpec="eCL*.csv" />
             <FEFEProperty
@@ -1382,7 +1383,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\data\coaching\Generic\Encrypt_Out\" />
+              Folder="\\UVAADADSQL50CCO\data\coaching\Generic\Encrypt_out\" />
             <FEFEProperty
               FileSpec="eCL_Generic_*.encrypt" />
             <FEFEProperty
@@ -1447,15 +1448,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMajorVersion="15"
               VSTAMinorVersion="0"
               Language="CSharp">
-              <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -1575,6 +1567,35 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
+              <ProjectItem
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties.Settings.get_Default():ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties.Sett" +
+    "ings")]
+
+namespace ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -1799,35 +1820,6 @@ namespace ST_afb28a42781742a8aa8fe337a9aeeb2c
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties.Settings.get_Default():ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties.Sett" +
-    "ings")]
-
-namespace ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
-              <ProjectItem
                 Name="Properties\AssemblyInfo.cs"
                 Encoding="UTF8"><![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -1857,6 +1849,15 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+              <ProjectItem
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -2083,7 +2084,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\data\coaching\Generic\Decrypt_out\" />
+              Folder="\\UVAADADSQL50CCO\data\coaching\Generic\Decrypt_out\" />
             <FEFEProperty
               FileSpec="eCL_Generic_Feed_OTH_*.csv" />
             <FEFEProperty
@@ -3709,7 +3710,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="\\f3420-ecldbd01\data\coaching\Generic\Decrypt_out\" />
+              Folder="\\UVAADADSQL50CCO\data\coaching\Generic\Decrypt_out\" />
             <FEFEProperty
               FileSpec="eCL_Generic_Feed_OTH20*.csv" />
             <FEFEProperty
@@ -5334,9 +5335,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           <DTS:ObjectData>
             <SendMailTask:SendMailTaskData
               SendMailTask:SMTPServer="{1710AB8F-763A-47F6-8929-254973F8F4C4}"
-              SendMailTask:From="eCoachingDev@gdit.com"
-              SendMailTask:To="susmitha.palacherla@gdit.com"
-              SendMailTask:CC="susmitha.palacherla@gdit.com"
+              SendMailTask:From="eCoachingDev@maximus.com"
+              SendMailTask:To="SusmithaCPalacherla@maximus.com"
+              SendMailTask:CC="SusmithaCPalacherla@maximus.com"
               SendMailTask:Subject="Generic Coaching Load Failed"
               SendMailTask:MessageSourceType="Variable"
               SendMailTask:MessageSource="User::FailMessage" xmlns:SendMailTask="www.microsoft.com/sqlserver/dts/tasks/sendmailtask" />

@@ -16,7 +16,9 @@ Const imgprPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images
 Const imgsoPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\so.png"
 Const imgwcPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\wc.png"
 Const imgqcPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\qc.png"
-
+'Const imgqc2Path = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\qc2.png"
+'Const imgqc3Path = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\qc3.png"
+'Const imgqc4Path = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\qc4.png"
 
 Const imgaa_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\aa_qm.png"
 Const imgcc_qmPath = "\\UVAADADSQL50CCO.ad.local\ssis\coaching\Notifications\images\cc_qm.png"
@@ -34,7 +36,7 @@ Const strLogFile = "\\UVAADADSQL50CCO\ssis\Coaching\Notifications\Logs\Notificat
 
 ' Begin - Non-Environment Related
 
-Const smtpServer = "ironport.maximus.com" 
+Const smtpServer = "smtpint.maxcorp.maximus" 
 Const ForAppending = 8
 Const cdoReferenceTypeName = 1
 Const cdoSendUsingPort = 2
@@ -51,6 +53,9 @@ Const imgprName = "pr.png"
 Const imgsoName = "so.png"
 Const imgwcName = "wc.png"
 Const imgqcName = "qc.png"
+'Const imgqc2Name = "qc2.png"
+'Const imgqc3Name = "qc3.png"
+'Const imgqc4Name = "qc4.png"
 
 
 Const imgaa_qmName = "aa_qm.png"
@@ -232,7 +237,9 @@ Set objBodyPart  = objMsg.AddRelatedBodyPart(imgprPath, imgprName, CdoReferenceT
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgsoPath, imgsoName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgwcPath, imgwcName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgqcPath, imgqcName, CdoReferenceTypeName)
-
+'Set objBodyPart  = objMsg.AddRelatedBodyPart(imgqc2Path, imgqc2Name, CdoReferenceTypeName)
+'Set objBodyPart  = objMsg.AddRelatedBodyPart(imgqc3Path, imgqc3Name, CdoReferenceTypeName)
+'Set objBodyPart  = objMsg.AddRelatedBodyPart(imgqc4Path, imgqc4Name, CdoReferenceTypeName)
 
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgaa_qmPath, imgaa_qmName, CdoReferenceTypeName)
 Set objBodyPart  = objMsg.AddRelatedBodyPart(imgcc_qmPath, imgcc_qmName, CdoReferenceTypeName)
@@ -254,7 +261,9 @@ objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgprName
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgsoName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgwcName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgqcName & ">"""
-
+'objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgqc2Name & ">"""
+'objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgqc3Name & ">"""
+'objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgqc4Name & ">"""
 
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgaa_qmName & ">"""
 objBodyPart.Fields.Item("urn:schemas:mailheader:Content-ID") = """<" & imgcc_qmName & ">"""

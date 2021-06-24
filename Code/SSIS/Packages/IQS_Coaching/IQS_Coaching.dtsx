@@ -13,8 +13,8 @@
   DTS:ObjectName="IQS_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="291"
-  DTS:VersionGUID="{81AF71C6-120F-46A1-91D7-419DA6E825FF}">
+  DTS:VersionBuild="292"
+  DTS:VersionGUID="{F84B05A0-BA3E-4085-8695-560EE4C74F3D}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -28,7 +28,7 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:FileUsageType="1"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_in\" />
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\Coaching\IQS\Decrypt_in\" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -53,7 +53,7 @@ Right("0" + (DT_STR,4,1252) DatePart("m",getdate()),2) +
 Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv.zip.encrypt"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\Test_eCL_IQS_Scorecard_20210330.csv.zip.encrypt" />
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\Coaching\IQS\Encrypt_out\Dev_eCL_IQS_Scorecard_20210623.csv.zip.encrypt" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -75,7 +75,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
           DTS:AlwaysCheckForRowDelimiters="False"
-          DTS:ConnectionString="\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_out\Test_eCL_IQS_Scorecard_20210330.csv">
+          DTS:ConnectionString="\\UVAADADSQL50CCO\data\Coaching\IQS\Decrypt_out\Dev_eCL_IQS_Scorecard_20210623.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -313,7 +313,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:ObjectName="SMTP Connection Manager">
       <DTS:ObjectData>
         <SmtpConnectionManager
-          ConnectionString="SmtpServer=smtpout.gdit.com;UseWindowsAuthentication=True;EnableSsl=False;"
+          ConnectionString="SmtpServer=smtpint.maxcorp.maximus;UseWindowsAuthentication=False;EnableSsl=False;"
           ConnectByProxy="False" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -343,7 +343,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="BeginDate">
       <DTS:VariableValue
-        DTS:DataType="3">20150101</DTS:VariableValue>
+        DTS:DataType="3">0</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -352,7 +352,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="CCEmail">
       <DTS:VariableValue
-        DTS:DataType="8">susmitha.palacherla@gdit.com</DTS:VariableValue>
+        DTS:DataType="8">SusmithaCPalacherla@maximus.com</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -363,7 +363,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="DayOfWeek">
       <DTS:VariableValue
-        DTS:DataType="3">3</DTS:VariableValue>
+        DTS:DataType="3">4</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -372,7 +372,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Decrypt_In">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Decrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -381,7 +381,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Decrypt_Out">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Decrypt_out\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Decrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -392,7 +392,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="EncryptedFile">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\Test_eCL_IQS_Scorecard_20210330.csv.zip.encrypt</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Encrypt_out\Dev_eCL_IQS_Scorecard_20210623.csv.zip.encrypt</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -410,7 +410,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Encrypt_In">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Encrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -419,7 +419,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Encrypt_Out">
       <DTS:VariableValue
-        DTS:DataType="8">\\f3420-ecldbd01\data\Coaching\IQS\Encrypt_out\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Encrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -428,7 +428,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="EndDate">
       <DTS:VariableValue
-        DTS:DataType="3">20151231</DTS:VariableValue>
+        DTS:DataType="3">0</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -450,7 +450,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="FileName">
       <DTS:VariableValue
-        DTS:DataType="8">Test_eCL_IQS_Scorecard_20210330.csv</DTS:VariableValue>
+        DTS:DataType="8">Dev_eCL_IQS_Scorecard_20210623.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -459,7 +459,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="FilePrefix">
       <DTS:VariableValue
-        DTS:DataType="8">Test_eCL_IQS_Scorecard_</DTS:VariableValue>
+        DTS:DataType="8">Dev_eCL_IQS_Scorecard_</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -468,7 +468,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="FromEmail">
       <DTS:VariableValue
-        DTS:DataType="8">eCoachingDev@gdit.com</DTS:VariableValue>
+        DTS:DataType="8">eCoachingDev@maximus.com</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -488,7 +488,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="NPNLoad">
       <DTS:VariableValue
-        DTS:DataType="8">SELECT * FROM EC.fn_NPNQualityRecs(20150101,20151231)</DTS:VariableValue>
+        DTS:DataType="8">SELECT * FROM EC.fn_NPNQualityRecs(0,0)</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -533,7 +533,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="ToEmail">
       <DTS:VariableValue
-        DTS:DataType="8">susmitha.palacherla@gdit.com</DTS:VariableValue>
+        DTS:DataType="8">SusmithaCPalacherla@maximus.com</DTS:VariableValue>
     </DTS:Variable>
   </DTS:Variables>
   <DTS:Executables>
@@ -556,14 +556,35 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
           ReadOnlyVariables="User::EncryptedFile"
           ReadWriteVariables="User::EncryptedFileExists">
           <ProjectItem
-            Name="Properties\Settings.settings"
-            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -940,35 +961,14 @@ namespace ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties {
   </ProjectExtensions>
 </Project>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.Designer.cs"
             Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -4219,34 +4219,14 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
   </resheader>
 </root>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\Settings.Designer.cs"
-            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_193e5478e5864ef598e1c7f28cb71fb9.Properties.Settings.get_Default():ST_193e5478e5864ef598e1c7f28cb71fb9.Properties.Sett" +
-    "ings")]
-
-namespace ST_193e5478e5864ef598e1c7f28cb71fb9.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="ScriptMain.cs"
             Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -4385,6 +4365,35 @@ namespace ST_193e5478e5864ef598e1c7f28cb71fb9
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
           <ProjectItem
+            Name="Properties\Settings.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_193e5478e5864ef598e1c7f28cb71fb9.Properties.Settings.get_Default():ST_193e5478e5864ef598e1c7f28cb71fb9.Properties.Sett" +
+    "ings")]
+
+namespace ST_193e5478e5864ef598e1c7f28cb71fb9.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
+          <ProjectItem
             Name="Properties\AssemblyInfo.cs"
             Encoding="UTF8"><![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -4414,15 +4423,6 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
-          <ProjectItem
-            Name="Properties\Settings.settings"
-            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.Designer.cs"
             Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -4622,9 +4622,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <DTS:ObjectData>
         <SendMailTask:SendMailTaskData
           SendMailTask:SMTPServer="{E20BFB92-2D3C-4024-90F6-70446CB09A64}"
-          SendMailTask:From="eCoachingDev@gdit.com"
-          SendMailTask:To="susmitha.palacherla@gdit.com"
-          SendMailTask:CC="susmitha.palacherla@gdit.com"
+          SendMailTask:From="eCoachingDev@maximus.com"
+          SendMailTask:To="SusmithaCPalacherla@maximus.com"
+          SendMailTask:CC="SusmithaCPalacherla@maximus.com"
           SendMailTask:Subject="IQS File is Missing"
           SendMailTask:MessageSource="Encrypted IQS File is missing. Please regenerate and notify eCoaching Engineering team." xmlns:SendMailTask="www.microsoft.com/sqlserver/dts/tasks/sendmailtask" />
       </DTS:ObjectData>
@@ -4847,9 +4847,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           <DTS:ObjectData>
             <SendMailTask:SendMailTaskData
               SendMailTask:SMTPServer="{E20BFB92-2D3C-4024-90F6-70446CB09A64}"
-              SendMailTask:From="eCoachingDev@gdit.com"
-              SendMailTask:To="susmitha.palacherla@gdit.com"
-              SendMailTask:CC="susmitha.palacherla@gdit.com"
+              SendMailTask:From="eCoachingDev@maximus.com"
+              SendMailTask:To="SusmithaCPalacherla@maximus.com"
+              SendMailTask:CC="SusmithaCPalacherla@maximus.com"
               SendMailTask:Subject="IQS Load failed"
               SendMailTask:MessageSourceType="Variable"
               SendMailTask:MessageSource="User::FailMessage" xmlns:SendMailTask="www.microsoft.com/sqlserver/dts/tasks/sendmailtask" />
