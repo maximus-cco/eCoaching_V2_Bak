@@ -1,8 +1,9 @@
 /*
-sp_SelectCoaching4QNBingo(02).sql
-Last Modified Date: 09/23/2019
+sp_SelectCoaching4QNBingo(03).sql
+Last Modified Date: 8/2/2021
 Last Modified By: Susmitha Palacherla
 
+Version 03: Updated to improve performance for Bingo upload job - TFS 22443 - 8/2/2021
 Version 02: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 01: Initial revision. TFS 15063 - 08/15/2019
 */
@@ -27,6 +28,7 @@ GO
 --	Description: 	   This procedure queries db for Bingo feed records to send out mail
 --  Last Updated By: Susmitha Palacherla
 --  Initial Revision. TFS 15465 - 09/23/2019
+--  Add trigger and review performance for Bingo upload job - TFS 22443 - 8/2/2021
 --  	=====================================================================
 CREATE PROCEDURE [EC].[sp_SelectCoaching4Bingo]
 AS
@@ -48,7 +50,7 @@ SELECT distinct b.CoachingID numID
 	,veh.Emp_Name strCSRName
 	,CASE when cl.moduleid = 1 THEN veh.Sup_Email ELSE '' '' END strCCEmail
 	,b.BingoType strBingoType
- ,RIGHT([EC].[fn_strAchievementsForCoachingId](b.[CoachingID]), LEN([EC].[fn_strAchievementsForCoachingId](b.[CoachingID]))-4) AS strAchievements
+  ,[EC].[fn_strAchievementsForCoachingId](b.[CoachingID]) AS strAchievements
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 JOIN [EC].[Employee_Hierarchy] eh WITH (NOLOCK) ON eh.Emp_ID = veh.Emp_ID
 JOIN [EC].[Coaching_Log] cl WITH (NOLOCK) ON eh.Emp_ID = cl.EMPID 
@@ -67,6 +69,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectCoaching4Bingo
 GO
-
 
 

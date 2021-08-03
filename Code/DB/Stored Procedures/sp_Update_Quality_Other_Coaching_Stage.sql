@@ -1,8 +1,9 @@
 /*
-sp_Update_Quality_Other_Coaching_Stage(05).sql
-Last Modified Date: 6/8/2021
+sp_Update_Quality_Other_Coaching_Stage(06).sql
+Last Modified Date: 8/2/2021
 Last Modified By: Susmitha Palacherla
 
+Version 06: Updated to improve performance for Bingo upload job - TFS 22443 - 8/2/2021
 Version 05: Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 Version 04: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 03:  Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
@@ -41,8 +42,9 @@ GO
 -- Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/12/2019
 -- Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
+-- Add trigger and review performance for Bingo upload job - TFS 22443 - 8/2/2021
 -- =============================================
-ALTER PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
+CREATE PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
 @Count INT OUTPUT
 AS
 BEGIN
@@ -163,14 +165,14 @@ IF @ReportCode LIKE 'BQ%'
 BEGIN
 
 	WITH comps AS
-	(SELECT EMP_ID, STRING_AGG(Competency, '|') AS Competencies
+	(SELECT EMP_ID, STRING_AGG([Competency], '|') WITHIN GROUP (ORDER BY [Competency] ASC) AS Competencies
 	FROM ec.Quality_Other_Coaching_Stage
 	WHERE Competency like 'Quality Correspondent%'
 	GROUP BY EMP_ID)
 	, invalidcomps AS
 	(SELECT EMP_ID, Competencies FROM comps
 		 WHERE Competencies NOT IN
-	 ('Quality Correspondent 1|Quality Correspondent 2', 'Quality Correspondent 1|Quality Correspondent 2|Quality Correspondent 3|Quality Correspondent 4'))
+	 (N'Quality Correspondent 1|Quality Correspondent 2', N'Quality Correspondent 1|Quality Correspondent 2|Quality Correspondent 3|Quality Correspondent 4'))
 
  --SELECT * FROM invalidcomps;
 
@@ -185,7 +187,7 @@ BEGIN
   
 -- Reject duplicate competencies for Bingo logs
 
-WITH dups AS
+	WITH dups AS
 		(SELECT [EMP_ID], [Competency], [BingoType], [Program], COUNT(*) as Rec_Count 		
 		FROM [EC].[Quality_Other_Coaching_Stage]
 		GROUP BY [EMP_ID], [Competency], [BingoType],[Program]
@@ -228,7 +230,7 @@ INSERT INTO [EC].[Quality_Other_Coaching_Rejected]
     
 -- Delete rejected records
 DELETE FROM [EC].[Quality_Other_Coaching_Stage]
-WHERE [Reject_Reason] is not NULL;
+WHERE [Reject_Reason]is not NULL;
 
 SELECT @Count = @@ROWCOUNT;
 
@@ -238,10 +240,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 
 END  -- [EC].[sp_Update_Quality_Other_Coaching_Stage]
 GO
-
-
-
-
-
 
 

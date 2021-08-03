@@ -1,8 +1,9 @@
 /*
-fn_strAchievementsForCoachingId(03).sql
-Last Modified Date: 06/08/2021
+fn_strAchievementsForCoachingId(04).sql
+Last Modified Date: 8/2/2021
 Last Modified By: Susmitha Palacherla
 
+Version 04: Updated to improve performance for Bingo upload job - TFS 22443 - 8/2/2021
 Version 03: Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 Version 02: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 Version 01: Created to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
@@ -25,8 +26,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         08/12/2019
@@ -34,6 +33,7 @@ GO
 -- Quality Now Rewards and Recognition (Bingo). TFS 15063 - 08/12/2019
 -- Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
+-- Add trigger and review performance for Bingo upload job - TFS 22443 - 8/2/2021
 -- =============================================
 CREATE FUNCTION [EC].[fn_strAchievementsForCoachingId] (
   @CoachingID BIGINT
@@ -44,12 +44,11 @@ BEGIN
   DECLARE @strAchievements NVARCHAR(1000)
 
 
-  SET @strAchievements =  (SELECT STUFF((SELECT  ' &nbsp ' + CAST([CompImage] AS VARCHAR(100)) AS [text()]
-            FROM [EC].[Coaching_Log_Bingo]
-         WHERE [CoachingID] =  @CoachingID
-		 AND [Include] = 1
-	      FOR XML PATH(''), TYPE)
-        .value('.','NVARCHAR(1000)'),1,2,'') List_Output) 
+  SET @strAchievements =  (SELECT STRING_AGG([CompImage],  ' &nbsp ') WITHIN GROUP (ORDER BY [CompImage] ASC) AS Competencies
+FROM [EC].[Coaching_Log_Bingo]
+WHERE [Include] = 1
+AND CoachingID =   @CoachingID
+GROUP BY CoachingID) 
 
     IF @strAchievements IS NULL
     SET @strAchievements = ''

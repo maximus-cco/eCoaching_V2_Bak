@@ -1,10 +1,9 @@
 /*
-fn_strBingoCompetenciesFromCoachingID(01).sql
-
-Last Modified Date:  12/8/2020
+fn_strBingoCompetenciesFromCoachingID(02).sql
+Last Modified Date: 8/2/2021
 Last Modified By: Susmitha Palacherla
 
-
+Version 02: Updated to improve performance for Bingo upload job - TFS 22443 - 8/2/2021
 Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 
 */
@@ -31,6 +30,7 @@ GO
 -- Description:	     Given a CoachingID returns the Bingo Competency Values 
 --                   concatenated as a single string of values separated by a '|'
 -- Initial Revision. Extract bingo logs from ecl and post to share point sites. TFS 19526 - 12/8/2020
+-- Add trigger and review performance for Bingo upload job - TFS 22443 - 8/2/2021
 -- =============================================
 CREATE FUNCTION [EC].[fn_strBingoCompetenciesFromCoachingID] (
   @bigintCoachingID bigint
@@ -42,21 +42,17 @@ BEGIN
   
   IF @bigintCoachingID IS NOT NULL
   BEGIN
-  SET @strValue = (SELECT STUFF((SELECT  ' | ' + CAST([Competency] AS VARCHAR(1000)) [text()]
-            FROM [EC].[Coaching_Log_Bingo]
-         WHERE [CoachingID] = b.[CoachingID]
-         FOR XML PATH(''), TYPE)
-        .value('.','NVARCHAR(MAX)'),1,2,' ') List_Output
-FROM [EC].[Coaching_Log_Bingo] b
-  where b.[CoachingID]= @bigintCoachingID
-GROUP BY [CoachingID])       
+		  SET @strValue = (SELECT STRING_AGG([Competency],  ' | ') WITHIN GROUP (ORDER BY [Competency] ASC) AS Competencies
+					FROM [EC].[Coaching_Log_Bingo]
+				 WHERE [CoachingID] = @bigintCoachingID
+			GROUP BY [CoachingID])       
 	END
-    ELSE
+  ELSE
     SET @strValue = NULL
         
 RETURN @strValue
 
-END  -- fn_strBingoCompetenciesFromCoachingID
+END  -- fn_strValueFromCoachingID
 
 GO
 
