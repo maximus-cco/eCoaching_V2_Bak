@@ -1,8 +1,8 @@
 ﻿$(document).ready(function () {
     $('#modal-container').css('margin-top', '10%');
     $('.modal-content').css('width', '35%');
-    
-    $('body').on('click', '#btn-update', function () {
+
+    $('#btn-update').on('click', function (e) {
         // Prevent form multiple submits
         $(this).attr('disabled', 'disabled');
         event.preventDefault();
@@ -10,7 +10,7 @@
         var form = $('#form-edit-ecoaching-access-control');
         $.validator.unobtrusive.parse(form);
         if (!form.valid()) {
-              return false;
+            return false;
         }
 
         var ajaxRequest = $.ajax({
@@ -51,6 +51,6 @@
             var info = 'Failed to update the user.';
             $("#message").html('<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' + info + '</div>');
         });
-    }) // end $('body').on('click', '#btn-update', function () {
+    }) // end $('#btn-update').on('click', function (e) 
 
 })
