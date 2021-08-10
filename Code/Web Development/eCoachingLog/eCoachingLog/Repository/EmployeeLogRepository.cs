@@ -560,6 +560,11 @@ namespace eCoachingLog.Repository
 
 		public int GetLogListTotal(LogFilter logFilter, string userId, string search)
 		{
+            if (logFilter == null)
+            {
+                logger.Error("logFilter is null!");
+            }
+
 			int count = -1;
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Count]", connection))

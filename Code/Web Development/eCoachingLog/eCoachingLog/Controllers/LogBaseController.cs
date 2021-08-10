@@ -38,6 +38,11 @@ namespace eCoachingLog.Controllers
 		{
 			logger.Debug("Entered LoadData");
 
+            if (logFilter == null)
+            {
+                logger.Error("LoadData: logFilter is null!!!");
+            }
+
 			// Get Start (paging start index) and length (page size for paging)
 			var draw = Request.Form.GetValues("draw").FirstOrDefault();
 			var start = Request.Form.GetValues("start").FirstOrDefault();
