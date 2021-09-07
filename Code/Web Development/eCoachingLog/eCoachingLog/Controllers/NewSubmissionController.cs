@@ -152,7 +152,7 @@ namespace eCoachingLog.Controllers
 
             TempData["ShowSuccessMessage"] = false;
             TempData["ShowFailMessage"] = true;
-            TempData["FailMessage"] = "Please correct all errors indicated in red to proceed###";
+            TempData["FailMessage"] = "Please correct all errors indicated in red to proceed.";
             ViewBag.ClientValidateCoachingReasons = true;
 			ViewBag.ValidationError = true;
             return StayOnThisPage(vm);
