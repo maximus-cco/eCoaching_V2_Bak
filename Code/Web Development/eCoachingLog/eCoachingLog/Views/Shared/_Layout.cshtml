@@ -1,9 +1,4 @@
-﻿@using eCoachingLog.Models.User
-@{
-	var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
-	var user = ((User)Session["AuthenticatedUser"]);
-}
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -21,53 +16,23 @@
         <img alt="CCO logo" src="~/Content/Images/cco-logo.jpg">
         <span style="float: right;"><img alt="eCL logo" src="~/Content/Images/eCL-logo.png"></span>
     </div>
-    <nav class="navbar navbar-inverse navbar-static-top" role="navigation" id="topnavbar">
-		<div class="container-fluid">
-			<div class="row col-sm-12">
-				<ul class='nav navbar-nav @(@controllerName == "Survey" ? "hide" : "show")'>
-				@if (user.IsAccessNewSubmission)
-				{
-					<li>@Html.ActionLink("New Submission", "Index", "NewSubmission")</li>
-				}
-				@if (user.IsAccessMyDashboard)
-				{
-					<li>@Html.ActionLink("My Dashboard", "Index", "MyDashboard", null, new { id = "mydashboard" })</li>
-				}
-				@if (user.IsAccessHistoricalDashboard)
-				{
-					<li>@Html.ActionLink("Historical Dashboard", "Index", "HistoricalDashboard")</li>
-				}
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Help<span class="caret"></span></a>
-						<ul class="dropdown-menu" role="menu">
-							<li>@Html.ActionLink("Report an eCL System Issue ...", "ReportIssue", new { controller = "Help" }, new { target = "_blank" })</li>
-						</ul>
-					</li>
-				</ul>
 
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#"><span class="glyphicon glyphicon-user"></span>&nbsp;@(@user.Name)</a></li>
-					<li>
-						<a href="@Url.Action("Index", "Logout")">
-							<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Logout
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-    </nav>
+    @Html.Partial("_MenuBar")
 
     <div class="body-content">
         <div class="please-wait"></div>
-        <div id="flash-message">
-            @Vereyon.Web.FlashMessageHtmlHelper.RenderFlashMessages(Html)
-        </div>
         @RenderBody()
     </div>
 
     <div id="modal-container" class="modal" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
         <div class="modal-content">
         </div>
+    </div>
+
+    <div id="modal-container-overlay" class="modal" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-content">
+        </div>
+        <div class="please-wait-overlay"></div>
     </div>
 
     <script>
@@ -77,7 +42,6 @@
         var sessionExpiredUrl = '@Url.Action("SessionExpired", "Home")';
         var errorUrl = '@Url.Action("Index", "Error")';
 		var keepSessionAliveUrl = '@Url.Action("KeepSessionAlive", "Home")';
-		var getLogDetailsUrl = '@Url.Action("Index", "Review")';
     </script>
 
     @RenderSection("scripts", required: false)

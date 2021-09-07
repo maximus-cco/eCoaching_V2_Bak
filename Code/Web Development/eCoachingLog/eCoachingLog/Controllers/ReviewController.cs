@@ -27,7 +27,7 @@ namespace eCoachingLog.Controllers
 		}
 
 		// GET: Review
-		public ActionResult Index(int logId, bool isCoaching)
+		public ActionResult Index(int logId, bool isCoaching, string action)
         {
 			logger.Debug("Entered Review.Index: logId=" + logId + ", isCoaching=" + isCoaching);
 			Session["reviewLogId"] = logId;
@@ -39,23 +39,18 @@ namespace eCoachingLog.Controllers
 			}
 
 			int currentPage = (int)Session["currentPage"];
-			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
+            action = Constants.PAGE_HISTORICAL_DASHBOARD == currentPage ? "view" : action;
 
+			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
 			// Get coaching reasons for this log
 			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching);
-
-			// Check if the user is authorized to view the log detail
-			bool isAuthorizedToView = this.reviewService.IsAccessAllowed(currentPage, logDetail, isCoaching, user);
-			if (!isAuthorizedToView)
+            try
 			{
-				ViewBag.LogName = logDetail.FormName;
-				return PartialView("_Unauthorized");
-			}
-
-			try
-			{
-				var vm = Init(user, currentPage, logDetail, isCoaching);
-				return PartialView(vm.ReviewPageName, vm);
+				var vm = Init(user, currentPage, logDetail, isCoaching, action);
+                // further set QN fields
+                vm = SetQnProperties(vm, (CoachingLogDetail)logDetail, action);
+ 
+                return PartialView(vm.ReviewPageName, vm);
 			}
 			catch (Exception ex)
 			{
@@ -75,8 +70,206 @@ namespace eCoachingLog.Controllers
 				return PartialView("_Error");
 			}
         }
+        private ReviewViewModel SetQnProperties(ReviewViewModel vm, CoachingLogDetail logDetail, string action)
+        {
+            if (!logDetail.IsQn && !logDetail.IsQnSupervisor)
+            {
+                return vm;
+            }
 
-		public JsonResult InitShortCallBehaviors(bool isValid)
+            vm.QnSummaryEditable = GetQnSummary(logDetail.QnSummaryList, false);
+            vm.QnSummaryReadOnly = GetQnSummary(logDetail.QnSummaryList, true);
+
+            // Supervisor edit quality now log summary
+            if (String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase))
+            {
+                vm.IsReadOnly = false;
+                vm.AllowCopy = true;
+                vm.ReviewPageName = "_QnEditLogSummary";
+            }
+            // Supervisor coach (csr) quliaty now log
+            else if (String.Equals(action, "coach", StringComparison.OrdinalIgnoreCase))
+            {
+                vm.IsReadOnly = false;
+                 if (logDetail.IsQnSupervisor || logDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW) // status id 6: first round coaching, not notes yet
+                {
+                    vm.ShowCoachingNotes = false;
+                }
+
+                if (logDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_COACHING)
+                {
+                    vm.ShowSupervisorReviewInfo = true;
+                    vm.ShowEmployeeReviewInfo = true;
+                }
+                // first round coaching, neither supervisor nor csr has reviewed yet.
+                else
+                {
+                    vm.ShowSupervisorReviewInfo = false;
+                    vm.ShowEmployeeReviewInfo = false;
+                }
+
+                vm.ReviewPageName = "_QnCoach";
+            }
+            // csr acks/reviews
+            else if (String.Equals(action, "csrReview", StringComparison.OrdinalIgnoreCase))
+            {
+                vm.IsReadOnly = false;
+                vm.ShowEvalSummary = true;
+                vm.ShowCoachingNotes = true;
+            }
+            // supervisor has listened to an additional call, comes here to decide if more coaching is needed.
+            else if (String.Equals(action, "followupReview", StringComparison.OrdinalIgnoreCase))
+            {
+                vm.IsReadOnly = false;
+                vm.AllowCopy = true;
+                vm.ShowEvalSummary = true;
+                vm.ShowCoachingNotes = true;
+                vm.ReviewPageName = "_QnFollowupReview";
+            }
+            // view linked log
+            else if (String.Equals(action, "followupView", StringComparison.OrdinalIgnoreCase))
+            {
+                vm.IsReadOnly = true;
+                vm.ShowEvalSummary = true;
+                vm.ShowCoachingNotes = true;
+                vm.ReviewPageName = "_QnFollowupView";
+                //if (logDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+                //{
+                //    // show Copy link?  
+                //    vm.AllowCopy = true;
+                //}
+            }
+            else if (String.Equals(action, "view", StringComparison.OrdinalIgnoreCase))
+            {
+                vm.IsReadOnly = true;
+                vm.ShowEvalSummary = true;
+            }
+            else if (String.Equals(action, "coach", StringComparison.OrdinalIgnoreCase))
+            {
+                if (logDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_COACHING)
+                {
+                    vm.ShowSupervisorReviewInfo = true;
+                    vm.ShowEmployeeReviewInfo = true;
+                }
+                // first round coaching, neither supervisor nor csr has reviewed yet.
+                else
+                {
+                    vm.ShowSupervisorReviewInfo = false;
+                    vm.ShowEmployeeReviewInfo = false;
+                }
+            }
+
+            vm.ShowEvalDetail = ShowQnEvalDetail(logDetail.StatusId, action, GetUserFromSession());
+
+            // supervisor links followup log(s) to the original QN log
+            if (logDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION)
+            {
+                vm.AdditionalActivityLogs = GetPotentialFollowupMonitorLogsQn(vm.LogDetail.LogId);
+            }
+            // followup logs are linked to the original QN log, since the orginal QN log is completed or pending followup coaching/pending followup employee review
+            else if (logDetail.StatusId > Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION || logDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
+            {
+                vm.AdditionalActivityLogs = vm.LogDetail.LinkedLogs;
+            }
+
+            return vm;
+        }
+
+        private bool ShowQnEvalDetail(int statusId, string action, User user)
+        {
+            if (user.IsCsr)
+            {
+                return false;
+            }
+
+            if (user.IsManager || user.IsDirector || user.IsHr || user.IsAnalyst)
+            {
+                return true;
+            }
+
+            if (statusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+            {
+                return String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase)
+                    || String.Equals(action, "followupView", StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (statusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_COACHING)
+            {
+                return String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (statusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION)
+            {
+                return String.Equals(action, "followupReview", StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (statusId == Constants.LOG_STATUS_COMPLETED)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private string GetQnSummary(List<LogSummary> summaryList, bool isReadOnly)
+        {
+            if (summaryList == null || summaryList.Count < 1)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder summary = new StringBuilder();           
+            foreach (var s in summaryList)
+            {
+                if (isReadOnly)
+                {
+                    if (s.IsReadOnly)
+                    {
+                        var temp = summary.Length > 0 ? ". " : "";
+                        summary.Append(temp).Append(s.Summary);
+                    }
+                }
+                else
+                {
+                    if (!s.IsReadOnly)
+                    {
+                        var temp = summary.Length > 0 ? ". " : "";
+                        summary.Append(temp).Append(s.Summary);
+                    }
+                }
+
+             } // end foreach
+
+            return summary.ToString();
+        }
+
+        private List<TextValue> GetPotentialFollowupMonitorLogsQn(long logId)
+        {
+            return reviewService.GetPotentialFollowupMonitorLogsQn(logId);
+
+
+            //var additionalLogs = new List<TextValue>();
+
+            //if (statusId == 6)
+            //{
+            //    return additionalLogs;
+            //}
+
+
+            //var log = new TextValue();
+            //log.Value = "189529";
+            //log.Text = "eCL-M-202620-189529";
+            //additionalLogs.Add(log);
+
+            //var log1 = new TextValue();
+            //log1.Value = "190323";
+            //log1.Text = "eCL-M-202620-190323";
+            //additionalLogs.Add(log1);
+
+            //return additionalLogs;
+        }
+
+        public JsonResult InitShortCallBehaviors(bool isValid)
 		{
 			IList<Behavior> behaviorList = GetShortCallBehaviorListFromSessionOrDB(isValid);
 			IEnumerable<SelectListItem> behaviors = new SelectList(behaviorList, "Id", "Text");
@@ -138,7 +331,53 @@ namespace eCoachingLog.Controllers
 					);
 		}
 
-		[HttpPost]
+        [HttpPost]
+        public ActionResult SaveSummaryQn(long logId, string summary)
+        {
+            logger.Debug("Entered SaveSummaryQn");
+
+            bool success = false;
+            User user = GetUserFromSession();
+
+            success = this.reviewService.SaveSummaryQn(logId, summary, user.LanId);
+            return Json(new
+            {
+                success = success,
+                successMsg = success ? "Log summary has been successfully saved." : "Failed to save log summary."
+            });
+        }
+
+        [HttpPost]
+        public ActionResult SubmitFollowupReviewQn(long logId, long[] linkedTo, bool isCoachingRequired, string comments)
+        {
+            if (logger.IsDebugEnabled)
+            {
+                logger.Debug("Entered SubmitFollowupReviewQn");
+                logger.Debug("logId:" + logId);
+                if (linkedTo != null)
+                {
+                    for (int i = 0; i < linkedTo.Length; i++)
+                        logger.Debug("linkedTo[" + i + "]:" + linkedTo[i]);
+                } else
+                {
+                    logger.Debug("linkedTo is null!");
+                }
+                logger.Debug("isCoachingRequired:" + isCoachingRequired);
+                logger.Debug("comments:" + comments);
+            }
+
+            bool success = false;
+            User user = GetUserFromSession();
+            success = this.reviewService.SaveFollowupDecisionQn(logId, linkedTo, isCoachingRequired, comments, user.LanId);
+            return Json(new
+            {
+                success = success,
+                successMsg = success ? "Log has been successfully updated." : "Failed to update the log."
+            });
+        }
+
+
+        [HttpPost]
 		public ActionResult Save(ReviewViewModel vm)
 		{
 			logger.Debug("!!!!!!!!!!Entered Save");
@@ -163,6 +402,11 @@ namespace eCoachingLog.Controllers
 
 				try
 				{
+                    //if (vm.LogDetail.IsQualityNowLog)
+                    //{
+                    //    // set followup due date: today + 7 days (this is the first round followup due date)
+                    //    //vm.Followup7DayDueDate
+                    //}
 					// Update database
 					int logIdInSession = (int)Session["reviewLogId"];
 					// Pass logIdInSession to log error if for some reason web form not posted back.
@@ -204,7 +448,7 @@ namespace eCoachingLog.Controllers
 			});
 		}
 
-		private ReviewViewModel Init(User user, int currentPage, BaseLogDetail logDetail, bool isCoaching)
+		private ReviewViewModel Init(User user, int currentPage, BaseLogDetail logDetail, bool isCoaching, string action)
 		{
 			var vm = new ReviewViewModel();
 			if (isCoaching)
@@ -241,6 +485,15 @@ namespace eCoachingLog.Controllers
 				vm.IsFollowupOverDue = IsFollowupOverDue(vm);
 			}
 
+            if (user.IsSupervisor)
+            {
+                vm.ShowFollowupReminder = true;
+            }
+            else
+            {
+                // do nothing
+            }
+
 			// Load short call list
 			if (vm.LogDetail.IsOmrShortCall)
 			{
@@ -262,7 +515,7 @@ namespace eCoachingLog.Controllers
 				}
 			}
 
-			// User clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning
+			// User clicks a log on Historical Dashboard, My Dashboard/My Submitted, Survey, or the log is warning, or log is completed
 			if (Constants.PAGE_HISTORICAL_DASHBOARD == currentPage
 				|| Constants.PAGE_SURVEY == currentPage
 				|| Constants.PAGE_MY_SUBMISSION == currentPage
@@ -290,9 +543,10 @@ namespace eCoachingLog.Controllers
 			DetermineMgrSupNotesVisibility(vm);
 			vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
 
-			// Init Acknowledge partial
-			if (IsAcknowledgeForm(vm))
-			{
+            // Init Acknowledge partial
+            //if ((String.IsNullOrEmpty(action) || action == "csrReview") && IsAcknowledgeForm(vm))
+            if (IsAcknowledgeForm(vm))
+            {
 				vm.IsAcknowledgeForm = true;
 				return InitAckForm(vm, user, isCoaching);
 			}
@@ -340,6 +594,7 @@ namespace eCoachingLog.Controllers
 				vm.IsAckOverTurnedAppeal = false;
 				vm.IsMoreReviewRequired = false;
 			}
+
 			// Checkbox display text
 			if (vm.IsAckOverTurnedAppeal)
 			{
@@ -467,15 +722,34 @@ namespace eCoachingLog.Controllers
 				return vm;
 			}
 			
+            // Qn - 1st round is done (6->4->11); just waiting for a new log to open (listening to more calls),
+            // when the new log is done, close the original one (status 11)
+            if (IsQnPendingMoreCalls(vm))
+            {
+                vm.IsReadOnly = true;
+                vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
+            }
+
 			// Regular Pending Form.
 			vm.IsRegularPendingForm = true;
 			vm.IsReadOnly = IsReadOnly(vm, user);
+            // First round followup, due date should be today plus 7 days
+            //if (vm.LogDetail.IsQn && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+            //{
+            //    vm.FollowupDueDate = DateTime.Now.AddDays(7).ToString("MM/dd/yyyy");
+            //}
 
 			vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
 			return vm;
 		}
 
-		private bool IsAcknowledgeForm(ReviewViewModel vm)
+        private bool IsQnPendingMoreCalls(ReviewViewModel vm)
+        {
+            return vm.LogDetail.IsQn && vm.LogDetail.StatusId == 11;
+        }
+
+
+        private bool IsAcknowledgeForm(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
 			var isUserReassignedTo = userEmployeeId == vm.LogDetail.ReassignedToEmpId;
@@ -615,6 +889,12 @@ namespace eCoachingLog.Controllers
 		private bool IsFollowupPendingCsr(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
+            if (userEmployeeId == vm.LogDetail.EmployeeId 
+                && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW)
+            {
+                return true;
+            }
+
 			return (userEmployeeId == vm.LogDetail.EmployeeId
 				&& vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW
 				&& !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate)); 
@@ -749,8 +1029,9 @@ namespace eCoachingLog.Controllers
 				// if Pending Supervisor Review - Only Supervisor or reassigned to can enter data on review page
 				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
 				{
-					if(user.EmployeeId == vm.LogDetail.SupervisorEmpId
-						|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+					//if(user.EmployeeId == vm.LogDetail.SupervisorEmpId
+					//	|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+                    if (user.IsSupervisor)
 					{
 						readOnly = false;
 					}
@@ -920,6 +1201,12 @@ namespace eCoachingLog.Controllers
 
 		private bool ShowFollowupInfo(ReviewViewModel vm, int currentPage)
 		{
+            // do not show this for QN logs
+            //if (vm.LogDetail.IsQn)
+            //{
+            //    return false;
+            //}
+
 			var user = GetUserFromSession();
 
 			if (vm.LogDetail.ModuleId != Constants.MODULE_CSR || !vm.LogDetail.IsFollowupRequired)
@@ -968,6 +1255,11 @@ namespace eCoachingLog.Controllers
 			{
 				return false;
 			}
+
+            if (String.IsNullOrEmpty(vm.LogDetail.FollowupDueDate))
+            {
+                return false;
+            }
 
 			var today = DateTime.Now;
 			var followupDueDate = DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace("PDT", ""));

@@ -153,8 +153,9 @@ namespace eCoachingLog.Repository
 						logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
 						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
 
-						logDetail.IsQualityNowLog = Convert.ToInt16(dataReader["isIQSQN"]) == 1 ? true : false;
-						logDetail.BatchId = dataReader["strQNBatchId"].ToString();
+						logDetail.IsQn = Convert.ToInt16(dataReader["isIQSQN"]) == 1 ? true : false;
+                        logDetail.IsQnSupervisor = Convert.ToInt16(dataReader["isIQSQNS"]) == 1 ? true : false;
+                        logDetail.BatchId = dataReader["strQNBatchId"].ToString();
 						logDetail.StrengthOpportunity = dataReader["strQNStrengthsOpportunities"].ToString();
 
 						if (string.IsNullOrEmpty(dataReader["IsFollowupRequired"].ToString()))
@@ -183,7 +184,20 @@ namespace eCoachingLog.Repository
 						logDetail.SrMgrLevelTwoEmpId = dataReader["strEmpSrMgrLvl2ID"].ToString().Trim().ToUpper();
 						logDetail.SrMgrLevelThreeEmpId = dataReader["strEmpSrMgrLvl3ID"].ToString().Trim().ToUpper();
 
-						break;
+                        // load 2nd resultset - qn linked logs
+                        dataReader.NextResult();
+                        var linkedLogs = new List<TextValue>();
+                        while (dataReader.Read())
+                        {
+                            var temp = new TextValue(
+                                    dataReader["QNLinkedFormName"].ToString(),
+                                    dataReader["QNLinkedID"].ToString()
+                                );
+                            linkedLogs.Add(temp);
+                        }
+                        logDetail.LinkedLogs = linkedLogs;
+
+                        break;
                     } // End while
                 } // End using SqlDataReader
             } // End using SqlCommand
@@ -509,14 +523,14 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@strSDatein", logFilter.SubmitDateFrom);
 				command.Parameters.AddWithValueSafe("strEDatein", logFilter.SubmitDateTo);
 				command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
-				command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
+                command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
 				command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
 				command.Parameters.AddWithValueSafe("@PageSize", pageSize);
 				command.Parameters.AddWithValueSafe("@startRowIndex", rowStartIndex);
 				command.Parameters.AddWithValueSafe("@sortBy", sortBy);
 				command.Parameters.AddWithValueSafe("@sortASC", sortDirection);
 				command.Parameters.AddWithValueSafe("@nvcSearch", search);
-				command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
+                command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
 				connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
@@ -600,7 +614,111 @@ namespace eCoachingLog.Repository
 			return count;
 		}
 
-		public IList<LogStatus> GetAllLogStatuses()
+        public List<LogBase> GetLogListQn(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search)
+        {
+            List<LogBase> logs = new List<LogBase>();
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Details_QN]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+                command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
+                command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
+                command.Parameters.AddWithValueSafe("@nvcEmpIdin", logFilter.EmployeeId);
+                command.Parameters.AddWithValueSafe("@nvcSupIdin", logFilter.SupervisorId);
+                command.Parameters.AddWithValueSafe("@nvcMgrIdin", logFilter.ManagerId);
+                command.Parameters.AddWithValueSafe("@nvcSubmitterIdin", logFilter.SubmitterId);
+                command.Parameters.AddWithValueSafe("@strSDatein", logFilter.SubmitDateFrom);
+                command.Parameters.AddWithValueSafe("@strEDatein", logFilter.SubmitDateTo);
+                command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
+                command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
+                command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
+                command.Parameters.AddWithValueSafe("@PageSize", pageSize);
+                command.Parameters.AddWithValueSafe("@startRowIndex", rowStartIndex);
+                command.Parameters.AddWithValueSafe("@sortBy", sortBy);
+                command.Parameters.AddWithValueSafe("@sortASC", sortDirection);
+                command.Parameters.AddWithValueSafe("@nvcSearch", search);
+                command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
+                connection.Open();
+
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        LogBase log = new LogBase();
+                        //log.RowNumber = (long)dataReader["RowNumber"];
+                        log.ID = (long)dataReader["strLogID"];
+                        log.FormName = dataReader["strFormID"].ToString();
+                        log.EmployeeName = dataReader["strEmpName"].ToString().Trim();
+                        log.SupervisorName = dataReader["strEmpSupName"].ToString();
+                        log.ManagerName = dataReader["strEmpMgrName"].ToString();
+                        log.Status = dataReader["strFormStatus"].ToString();
+                        log.SubmitterName = dataReader["strSubmitterName"].ToString();
+                        log.Source = dataReader["strSource"].ToString();
+                        log.Reasons = dataReader["strCoachingReason"].ToString();
+                        log.SubReasons = dataReader["strSubCoachingReason"].ToString();
+                        log.Value = dataReader["strValue"].ToString();
+                        log.CreatedDate = dataReader["SubmittedDate"].ToString();
+                        log.IsCoaching = !string.IsNullOrEmpty(log.Source) && log.Source != "Warning" ? true : false;
+
+                        // the sp to return my team's warning is not returning these 3 fields
+                        // the sp to return log list for Director Dashboard is not returing these 3 fields
+                        if (logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING
+                            && logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING
+                            && logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_SITE_WARNING
+                            && logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_SITE_COMPLETED)
+                        {
+                            log.IsFollowupRequired = dataReader["IsFollowupRequired"].ToString().ToLower().Equals("yes") ? true : false;
+                            log.FollowupDueDate = dataReader["FollowupDueDate"].ToString();
+                            log.HasFollowupHappened = dataReader["IsFollowupCompleted"].ToString().ToLower().Equals("yes") ? true : false;
+                        }
+
+                        logs.Add(log);
+                    }
+                }
+            }
+            return logs;
+        }
+
+        public int GetLogListTotalQn(LogFilter logFilter, string userId, string search)
+        {
+            int count = -1;
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Count_QN]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+                command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
+                command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
+                command.Parameters.AddWithValueSafe("@nvcEmpIdin", logFilter.EmployeeId);
+                command.Parameters.AddWithValueSafe("@nvcSupIdin", logFilter.SupervisorId);
+                command.Parameters.AddWithValueSafe("@nvcMgrIdin", logFilter.ManagerId);
+                command.Parameters.AddWithValueSafe("@nvcSubmitterIdin", logFilter.SubmitterId);
+                command.Parameters.AddWithValueSafe("@strSDatein", logFilter.SubmitDateFrom);
+                command.Parameters.AddWithValueSafe("@strEDatein", logFilter.SubmitDateTo);
+                command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
+                command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
+                command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
+                command.Parameters.AddWithValueSafe("@nvcSearch", search);
+                command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
+
+                try
+                {
+                    connection.Open();
+                    count = (int)command.ExecuteScalar();
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Failed to get log total: " + ex.Message);
+                    throw new Exception(ex.Message);
+                }
+            }
+            return count;
+        }
+
+        public IList<LogStatus> GetAllLogStatuses()
 		{
 			var statuses = new List<LogStatus>();
 			using (SqlConnection connection = new SqlConnection(conn))
@@ -864,7 +982,31 @@ namespace eCoachingLog.Repository
 			return logCountsForSites;
 		}
 
-		public IList<ChartDataset> GetChartDataSets(User user)
+        public IList<LogCount> GetLogCountsQn(User user)
+        {
+            var logCounts = new List<LogCount>();
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Summary_Count_QN]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        LogCount lc = new LogCount();
+                        lc.Description = dataReader["CountType"].ToString();
+                        lc.Count = Convert.ToInt32(dataReader["LogCount"]);
+                        logCounts.Add(lc);
+                    }
+                }
+            }
+            return logCounts;
+        }
+
+        public IList<ChartDataset> GetChartDataSets(User user)
 		{
 			var chartDatasets = new List<ChartDataset>();
 			using (SqlConnection connection = new SqlConnection(conn))
@@ -916,47 +1058,65 @@ namespace eCoachingLog.Repository
 			return logCountByStatusForSites;
 		}
 
-		public IList<Scorecard> GetScorecards(long logId)
-		{
-			var scList = new List<Scorecard>();
-			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now]", connection))
-			{
-				command.CommandType = CommandType.StoredProcedure;
-				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-				command.Parameters.AddWithValueSafe("@intLogId", logId);
-				connection.Open();
-				using (SqlDataReader dataReader = command.ExecuteReader())
-				{
-					while (dataReader.Read())
-					{
-						Scorecard sc = new Scorecard();
-						sc.EvalId = dataReader["Evaluation ID"].ToString();
-						sc.EvalName = dataReader["Evaluation"].ToString();
-						sc.ScorecardName = dataReader["Form Name"].ToString();
-						sc.VerintId = dataReader["Call ID"].ToString();
-						sc.CoachingMonitor = dataReader["Coaching Monitor"].ToString();
-						sc.DateOfEvent = dataReader["Date Of Event"].ToString();
-						sc.Program = dataReader["strProgram"].ToString();
-						sc.SubmitterName = dataReader["Submitter"].ToString();
-						sc.BusinessProcess = dataReader["Business Process"].ToString();
-						sc.InfoAccuracy = dataReader["Info Accuracy"].ToString();
+        public CoachingLogDetail GetScorecardsAndSummary(long logId)
+        {
+            var log = new CoachingLogDetail();
+            var scList = new List<Scorecard>();
+            var summaryList = new List<LogSummary>();
+
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@intLogId", logId);
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        Scorecard sc = new Scorecard();
+                        sc.EvalId = dataReader["Evaluation ID"].ToString();
+                        sc.EvalName = dataReader["Evaluation"].ToString();
+                        sc.ScorecardName = dataReader["Form Name"].ToString();
+                        sc.VerintId = dataReader["Call ID"].ToString();
+                        sc.CoachingMonitor = dataReader["Coaching Monitor"].ToString();
+                        sc.DateOfEvent = dataReader["Date Of Event"].ToString();
+                        sc.Program = dataReader["strProgram"].ToString();
+                        sc.SubmitterName = dataReader["Submitter"].ToString();
+                        sc.BusinessProcess = dataReader["Business Process"].ToString();
+                        sc.InfoAccuracy = dataReader["Info Accuracy"].ToString();
                         sc.PrivacyDisclaimers = dataReader["Privacy Disclaimers"].ToString();
                         sc.IssueResolution = dataReader["Issue Resolution"].ToString();
                         sc.CallEfficiency = dataReader["Call Efficiency"].ToString();
                         sc.ActiveListening = dataReader["Active Listening"].ToString();
-						sc.PersonalityFlexing = dataReader["Personality Flexing"].ToString();
-						sc.StartTemperature = dataReader["Start Temperature"].ToString();
-						sc.EndTemperature = dataReader["End Temperature"].ToString();
+                        sc.PersonalityFlexing = dataReader["Personality Flexing"].ToString();
+                        sc.StartTemperature = dataReader["Start Temperature"].ToString();
+                        sc.EndTemperature = dataReader["End Temperature"].ToString();
                         sc.Channel = dataReader["Channel"].ToString();
                         sc.ActivityId = dataReader["Activity ID"].ToString();
                         sc.ContactReason = dataReader["Reason For Contact"].ToString();
 
                         scList.Add(sc);
-					}
-				}
-			}
-			return scList;
-		}
-	}
+                    }
+
+                    // load 2nd resultset - summary
+                    dataReader.NextResult();
+                    while (dataReader.Read())
+                    {
+                        var temp = new LogSummary();
+                        temp.Summary = dataReader["EvalSummaryNotes"].ToString();
+                        temp.IsReadOnly = dataReader["IsReadOnly"] == DBNull.Value ? false : (bool)dataReader["IsReadOnly"];
+                        summaryList.Add(temp);
+                    }
+
+                }
+            }
+
+            log.Scorecards = scList;
+            log.QnSummaryList = summaryList;
+            return log;
+        }
+
+    }
 }

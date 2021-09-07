@@ -17,7 +17,7 @@
 
 			<div class="modal-body" style="font-size: small;">
 				@{ Html.RenderPartial("_Reasons", Model.LogDetail.Reasons); }
-				@if (!Model.LogDetail.IsQualityNowLog)
+				@if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor)
 				{
 					<div class="mt-2">
 						<strong>Details of the behavior being coached:</strong><br />
@@ -27,8 +27,23 @@
 				else
 				{
 					<!-- Quality NOW -->
-					Html.RenderPartial("_Scorecards");
-				}
+                    Html.RenderPartial("_Scorecards");
+                    <div class="text-primary"><strong><mark>Evaluation Summary:</mark></strong></div>
+                    <div class="text-info">@Model.QnSummaryAll</div>
+                    <!-- QN log submitted by quality specialist, which need to be followed up (monitoring additional activities) -->
+                    if (Model.LogDetail.IsQn)
+                    {
+                        <div class="text-primary"  style="margin-top: 5px;"><strong><mark>Additonal monitoring:</mark></strong></div>
+                        if (Model.AdditionalActivityLogs != null)
+                        {
+                            for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
+                            {
+                                <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true">&nbsp;@Model.AdditionalActivityLogs[i].Text View</a>
+                                <br />
+                            }
+                        }
+                    }
+                }
 
 				@if (Model.LogDetail.IsOmrShortCall)
 				{
@@ -44,9 +59,25 @@
 				@{ Html.RenderPartial("_ReviewInfo"); }
 
 				@if (Model.ShowFollowupInfo)
-				{
-					Html.RenderPartial("_FollowupInfo");
-				}
+                {
+                    if (Model.LogDetail.IsQn)
+                    {
+                        if (Model.LogDetail.IsFollowupRequired)
+                        {
+                            Html.RenderPartial("_QnFollowupInfo");
+                        }
+                        else
+                        {
+                            <div class='mt-2'>
+                                <strong><mark>Follow-up Coaching is NOT required.</mark></strong><br />
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        Html.RenderPartial("_FollowupInfo");
+                    }
+                }
 				<div class="modal-footer mt-2">
 					<div class="form-group">
 						<button class="btn btn-default float-right" id="btn-close" data-dismiss="modal">Close</button>

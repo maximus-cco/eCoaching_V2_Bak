@@ -31,7 +31,11 @@ namespace eCoachingLog.Services
 
 			if (user.IsAccessMyDashboard)
 			{
-				return Constants.MY_DASHBOARD;
+                if (user.IsDirector)
+                {
+                    return Constants.MY_DASHBOARD;
+                }
+                return Constants.MY_DASHBOARD_QN;
 			}
 
 			if (user.IsAccessHistoricalDashboard)

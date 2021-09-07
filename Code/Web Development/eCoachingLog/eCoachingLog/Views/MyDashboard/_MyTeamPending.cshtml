@@ -16,7 +16,7 @@
 				@{ Html.RenderPartial("_MyTeamPendingMgrSearch"); }
 			</div>
 		}
-		else if (Model.Search.UserRole == Constants.USER_ROLE_SUPERVISOR || Model.Search.UserRole == Constants.USER_ROLE_OTHER)
+		else if (Model.Search.UserRole == Constants.USER_ROLE_SUPERVISOR)
 		{
 			<div id="div-my-team-pending-search">
 				@{ Html.RenderPartial("_MyTeamPendingSupSearch"); }

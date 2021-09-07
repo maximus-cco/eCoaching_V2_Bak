@@ -8,6 +8,8 @@ namespace eCoachingLog.Models.Common
 		public string LogType { get; set; }
 		public string UserRole { get; set; }
 
+        public bool IsBothQnNonQn { get; set; }
+
 		public string SiteName { get; set; }
 
 		public int SiteId { get; set; }

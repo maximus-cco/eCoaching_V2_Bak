@@ -1,0 +1,7 @@
+﻿@model eCoachingLog.ViewModels.MyDashboardQnViewModel
+
+<a href="#demo" style="color:green; margin-left: 1em;" data-toggle="collapse">
+    <span class="glyphicon glyphicon-minus-sign"></span>
+    <strong>My team's last three months performance</strong>
+</a>
+@{ Html.RenderPartial("_StatisticTable"); }

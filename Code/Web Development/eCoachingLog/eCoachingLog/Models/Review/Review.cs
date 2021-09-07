@@ -52,5 +52,9 @@ namespace eCoachingLog.Models.Review
 		public IList<ShortCall> ShortCallList { get; set; }
 		public string Comments { get; set; }
 		public DateTime? DateConfirmed { get; set; }
-	}
+
+        public bool? IsFollowupCoachingRequired { get; set; }
+        public string FollowupDueDate { get; set; }
+
+    }
 }

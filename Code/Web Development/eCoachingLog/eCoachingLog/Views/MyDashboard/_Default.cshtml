@@ -1,31 +1,37 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
 
-<h2 class="ecl-page-header">My Dashboard</h2>
+<h1 class="ecl-page-header">
+    @Html.ActionLink("My Dashboard", "Index", "MyDashboard") >> Non Quality Now
+</h1>
+
 <input type="hidden" name="whatlog" id="whatlog" />
 
 <div class="row">
-	<div class="col-xs-6">
-		<div class="panel panel-default">
-			@if (Model.LogCountList.Count > 7)
-			{
-				<div class="chart-container-big">
-					<canvas id="myBar"></canvas>
-				</div>
-			}
-			else if (Model.LogCountList.Count < 4)
-			{
-				<div class="chart-container-small">
-					<canvas id="myBar"></canvas>
-				</div>
-			}
-			else
-			{
-				<div class="chart-container">
-					<canvas id="myBar"></canvas>
-				</div>
-			}
-		</div>
-	</div>
+    @if (!Model.User.IsAnalyst)
+    {
+	    <div class="col-xs-6">
+		    <div class="panel panel-default">
+			    @if (Model.LogCountList.Count > 7)
+                {
+				    <div class="chart-container-big">
+					    <canvas id="myBar"></canvas>
+				    </div>
+                }
+                else if (Model.LogCountList.Count < 4)
+                {
+				    <div class="chart-container-small">
+					    <canvas id="myBar"></canvas>
+				    </div>
+                }
+                else
+                {
+				    <div class="chart-container">
+					    <canvas id="myBar"></canvas>
+				    </div>
+                }
+		    </div>
+	    </div>
+    }
 	<div class="col-xs-3">
 		<div class="panel panel-green">
 			<div class="panel-heading">
@@ -49,7 +55,9 @@
 	var loadDataUrl = '@Url.Action("LoadData", "LogBase")';
 	var getChartData = '@Url.Action("GetChartData", "MyDashboard")';
 	var searchUrl = '@Url.Action("Search", "MyDashboard")';
-	var isChartBySite = '@Model.IsChartBySite';
+    var isChartBySite = '@Model.IsChartBySite';
+
+    var getLogDetailsUrl = '@Url.Action("Index", "Review")';
 </script>
 
 @Scripts.Render("~/bundles/scripts/myDashboard")

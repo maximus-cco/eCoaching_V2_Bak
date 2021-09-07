@@ -1,0 +1,54 @@
+﻿@using eCoachingLog.Models.User
+@{
+    var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+    var user = ((User)Session["AuthenticatedUser"]);
+}
+<nav class="navbar navbar-inverse navbar-static-top" role="navigation" id="topnavbar">
+    <div class="container-fluid">
+        <div class="row col-sm-12">
+            <ul class='nav navbar-nav @(@controllerName == "Survey" ? "hide" : "show")'>
+                @if (user.IsAccessNewSubmission)
+                {
+                    <li>@Html.ActionLink("New Submission", "Index", "NewSubmission")</li>
+                }
+                @if (user.IsAccessMyDashboard)
+                {
+                    if (user.IsDirector)
+                    {
+                        <li>@Html.ActionLink("My Dashboard", "Index", "MyDashboard")</li>
+                    }
+                    else
+                    {
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Dashboard<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>@Html.ActionLink("Quality Now", "Index", "MyDashboardQn", null, new { id = "qnmydashboard" })</li>
+                                <li>@Html.ActionLink("Non Quality Now", "IndexNonQn", "MyDashboard", null, new { id = "mydashboard" })</li>
+                            </ul>
+                        </li>
+                    }
+                }
+                @if (user.IsAccessHistoricalDashboard)
+                {
+                    <li>@Html.ActionLink("Historical Dashboard", "Index", "HistoricalDashboard")</li>
+                }
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Help<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>@Html.ActionLink("Report an eCL System Issue ...", "ReportIssue", new { controller = "Help" }, new { target = "_blank" })</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><span class="glyphicon glyphicon-user"></span>&nbsp;@(@user.Name)</a></li>
+                <li>
+                    <a href="@Url.Action("Index", "Logout")">
+                        <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+

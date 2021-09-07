@@ -12,8 +12,8 @@ namespace eCoachingLog
             var scriptBundle = new ScriptBundle("~/bundles/scripts");
             scriptBundle.Orderer = new EclBundleOrderer();
             scriptBundle.Include(
-                        "~/Scripts/modernizr-*",
-                        "~/Scripts/jquery-{version}.js",
+                        //"~/Scripts/modernizr-*",
+                        "~/Scripts/jquery.js",
                         "~/Scripts/jquery.validate.js",
                         "~/Scripts/jquery.validate.unobtrusive.js",
                         "~/Scripts/jquery.unobtrusive-ajax.js",
@@ -29,7 +29,7 @@ namespace eCoachingLog
                         "~/Scripts/raphael.js",
 						"~/Scripts/Chart.js",
 						"~/Scripts/bootstrap-notify.js",
-                        "~/Scripts/eCoachingLog/layout.js");
+                        "~/Scripts/eCoachingLog/global.js");
             bundles.Add(scriptBundle);
 
             // javascript bundle for New Submission
@@ -57,8 +57,19 @@ namespace eCoachingLog
             var dashboardScriptBundle = new ScriptBundle("~/bundles/scripts/myDashboard");
             dashboardScriptBundle.Orderer = new EclBundleOrderer();
             dashboardScriptBundle.Include(
-                        "~/Scripts/eCoachingLog/myDashboard.js");
+                        "~/Scripts/eCoachingLog/myDashboard.js",
+                        "~/Scripts/eCoachingLog/common.js",
+                        "~/Scripts/eCoachingLog/dashboardCommon.js");
             bundles.Add(dashboardScriptBundle);
+
+            // javascript bundle for my dashboard QN
+            var dashboardQnScriptBundle = new ScriptBundle("~/bundles/scripts/myDashboardQn");
+            dashboardQnScriptBundle.Orderer = new EclBundleOrderer();
+            dashboardQnScriptBundle.Include(
+                        "~/Scripts/eCoachingLog/myDashboardQn.js",
+                        "~/Scripts/eCoachingLog/common.js",
+                        "~/Scripts/eCoachingLog/dashboardCommon.js");
+            bundles.Add(dashboardQnScriptBundle);
 
             // javascript bundle for log list
             var logListScriptBundle = new ScriptBundle("~/bundles/scripts/logList");
@@ -66,6 +77,20 @@ namespace eCoachingLog
 			logListScriptBundle.Include(
 						"~/Scripts/eCoachingLog/logList.js");
             bundles.Add(logListScriptBundle);
+
+            // javascript bundle for log list QN
+            var logListQnScriptBundle = new ScriptBundle("~/bundles/scripts/logListQn");
+            logListQnScriptBundle.Orderer = new EclBundleOrderer();
+            logListQnScriptBundle.Include(
+                        "~/Scripts/eCoachingLog/logListQn.js");
+            bundles.Add(logListQnScriptBundle);
+
+            // javascript bundle for log list QN
+            var logListQNScriptBundle = new ScriptBundle("~/bundles/scripts/logListQN");
+            logListQNScriptBundle.Orderer = new EclBundleOrderer();
+            logListQNScriptBundle.Include(
+                        "~/Scripts/eCoachingLog/logListQN.js");
+            bundles.Add(logListQNScriptBundle);
 
 			// javascript bundle for mydashboard warning list
 			var warningListScriptBundle = new ScriptBundle("~/bundles/scripts/warningList");
@@ -78,8 +103,9 @@ namespace eCoachingLog
 			var hisDashboardSearchScriptBundle = new ScriptBundle("~/bundles/scripts/historicalDashboard");
 			hisDashboardSearchScriptBundle.Orderer = new EclBundleOrderer();
 			hisDashboardSearchScriptBundle.Include(
-						"~/Scripts/eCoachingLog/historicalDashboard.js");
-			bundles.Add(hisDashboardSearchScriptBundle);
+						"~/Scripts/eCoachingLog/historicalDashboard.js",
+                        "~/Scripts/eCoachingLog/dashboardCommon.js");
+            bundles.Add(hisDashboardSearchScriptBundle);
 
 			// javascript bundle for survey
 			var surveyScriptBundle = new ScriptBundle("~/bundles/scripts/survey");

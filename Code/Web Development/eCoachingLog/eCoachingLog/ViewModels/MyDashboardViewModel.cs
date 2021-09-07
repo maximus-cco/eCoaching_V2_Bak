@@ -1,4 +1,5 @@
 ﻿using eCoachingLog.Models.Common;
+using eCoachingLog.Models.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,12 @@ namespace eCoachingLog.ViewModels
 {
 	public class MyDashboardViewModel : BaseViewModel
 	{
-		// TODO: wrap them in User
-		// public User User { get; set; }
-		public string UserId { get; set; }
-        public string UserLanId { get; set; }
+        // TODO: wrap them in User
+        public User User { get; set; }
+        //public string UserId { get; set; }
+        //      public string UserLanId { get; set; }
 
-		public int MyTotalPending { get; set; }
+        public int MyTotalPending { get; set; }
 		public IList<LogCount> LogCountList { get; set; }
 		public IList<LogCountForSite> LogCountForSiteList { get; set; }
 
@@ -81,11 +82,10 @@ namespace eCoachingLog.ViewModels
 			this.WarningStatusSelectList = new List<SelectListItem>();
 		}
 
-        public MyDashboardViewModel(string userId, string userLanId, string userRole) : this()
+        public MyDashboardViewModel(User user) : this()
         {
-            this.UserId = userId;
-            this.UserLanId = userLanId;
-			this.Search.UserRole = userRole;
+            this.User = user;
+			this.Search.UserRole = user.Role;
         }
 	}
 }

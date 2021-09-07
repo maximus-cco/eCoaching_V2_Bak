@@ -21,9 +21,53 @@ namespace eCoachingLog.Models.User
 		// Whether the user is allowed to export data to excel on Historical Dashboard page
 		public bool IsExportExcel { get; set; }
 		// Whether to display follow up information on dashboards
-		public bool ShowFollowup { get; set; }
+		public bool ShowFollowup
+        {
+            get
+            {
+                return this.IsSupervisor;
+            }
+            set
+            {
+                // todo:
+            }
+        }
 
-		public bool IsCsr
+        public string Title
+        {
+            get
+            {
+                if (this.IsCsr)
+                {
+                    return "CSR";
+                }
+
+                if (this.IsSupervisor)
+                {
+                    return "Supervisor";
+                }
+
+                return "";
+            }
+        }
+
+        public bool IsAnalyst
+        {
+            get
+            {
+                return string.Equals(this.Role, Constants.USER_ROLE_ANALYST, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public bool IsArc
+        {
+            get
+            {
+                return string.Equals(this.Role, Constants.USER_ROLE_ARC, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public bool IsCsr
 		{
 			get
 			{
@@ -31,7 +75,15 @@ namespace eCoachingLog.Models.User
 			}
 		}
 
-		public bool IsSupervisor
+        public bool IsEmployee
+        {
+            get
+            {
+                return string.Equals(this.Role, Constants.USER_ROLE_EMPLOYEE, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public bool IsSupervisor
 		{
 			get
 			{
@@ -39,7 +91,31 @@ namespace eCoachingLog.Models.User
 			}
 		}
 
-		public User()
+        public bool IsManager
+        {
+            get
+            {
+                return string.Equals(this.Role, Constants.USER_ROLE_MANAGER, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public bool IsDirector
+        {
+            get
+            {
+                return string.Equals(this.Role, Constants.USER_ROLE_DIRECTOR, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public bool IsHr
+        {
+            get
+            {
+                return string.Equals(this.Role, Constants.USER_ROLE_HR, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public User()
         {
             this.EmployeeId = "-1";
 			this.LanId = string.Empty;

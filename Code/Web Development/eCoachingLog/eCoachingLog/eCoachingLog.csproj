@@ -130,10 +130,6 @@
       <Private>True</Private>
       <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Vereyon.Web.FlashMessage, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Vereyon.Web.FlashMessage.1.0.1\lib\net40\Vereyon.Web.FlashMessage.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -155,19 +151,23 @@
     <Compile Include="Controllers\LoadTestController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
+    <Compile Include="Controllers\MyDashboardQnController.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Models\Common\Behavior.cs" />
+    <Compile Include="Models\Common\TextValue.cs" />
     <Compile Include="Models\Common\LogBase.cs" />
     <Compile Include="Models\Common\LogCount.cs" />
     <Compile Include="Models\Common\LogCountForSite.cs" />
     <Compile Include="Models\Common\LogState.cs" />
     <Compile Include="Models\Common\LogCountByStatusForSite.cs" />
+    <Compile Include="Models\Common\LogSummary.cs" />
     <Compile Include="Models\Common\LogValue.cs" />
     <Compile Include="Models\Common\Scorecard.cs" />
     <Compile Include="Models\Common\ShortCall.cs" />
     <Compile Include="Models\MyDashboard\ChartData.cs" />
     <Compile Include="Models\MyDashboard\ChartDataset.cs" />
+    <Compile Include="Models\MyDashboard\QnStatistic.cs" />
     <Compile Include="Models\Review\Review.cs" />
     <Compile Include="Models\Survey\Question.cs" />
     <Compile Include="Models\Survey\SingleChoice.cs" />
@@ -253,6 +253,7 @@
     <Compile Include="Services\IEmployeeService.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\HistoricalDashboardViewModel.cs" />
+    <Compile Include="ViewModels\MyDashboardQnViewModel.cs" />
     <Compile Include="ViewModels\MyDashboardViewModel.cs" />
     <Compile Include="ViewModels\NewSubmissionViewModel.cs" />
     <Compile Include="ViewModels\ReviewViewModel.cs" />
@@ -299,29 +300,32 @@
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\dataTables.responsive.js" />
+    <Content Include="Scripts\eCoachingLog\common.js" />
+    <Content Include="Scripts\eCoachingLog\dashboardCommon.js" />
+    <Content Include="Scripts\eCoachingLog\logListQn.js" />
     <Content Include="Scripts\eCoachingLog\myDashboard.js" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
     <Content Include="Scripts\eCoachingLog\dateTimePicker.js" />
     <Content Include="Scripts\eCoachingLog\eclChart.js" />
     <Content Include="Scripts\eCoachingLog\historicalDashboard.js" />
     <Content Include="Scripts\eCoachingLog\logList.js" />
+    <Content Include="Scripts\eCoachingLog\myDashboardQn.js" />
     <Content Include="Scripts\eCoachingLog\warningList.js" />
     <Content Include="Scripts\eCoachingLog\newSubmission.js" />
     <Content Include="Scripts\eCoachingLog\review.js" />
     <Content Include="Scripts\eCoachingLog\survey.js" />
-    <Content Include="Scripts\jquery-2.2.0.js" />
+    <Content Include="Scripts\jquery.js" />
     <Content Include="Scripts\jquery.dataTables.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.userTimeout.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\moment-with-locales.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\raphael.js" />
     <Content Include="Scripts\respond.js" />
-    <Content Include="Scripts\eCoachingLog\layout.js" />
+    <Content Include="Scripts\eCoachingLog\global.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -406,6 +410,33 @@
     <Content Include="Views\MyDashboard\_MyFollowup.cshtml" />
     <Content Include="Views\Review\_ReviewWarningHome.cshtml" />
     <Content Include="Views\Review\_EmployeeWarningReviewInfo.cshtml" />
+    <Content Include="Views\_CountByStatus.cshtml" />
+    <Content Include="Views\MyDashboardQn\_CountByStatus.cshtml" />
+    <Content Include="Views\MyDashboardQn\_Default.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyCompleted.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyPendingFollowupCoaching.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyPendingFollowupPrepare.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyPendingReview.cshtml" />
+    <Content Include="Views\Review\_QnCoach.cshtml" />
+    <Content Include="Views\Review\_QnEditLogSummary.cshtml" />
+    <Content Include="Views\Review\_QnFollowupReview.cshtml" />
+    <Content Include="Views\Review\_QnFollowupView.cshtml" />
+    <Content Include="Views\Shared\_LogListQn.cshtml" />
+    <Content Include="Views\Shared\_MenuBar.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamPending.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamPendingMgrSearch.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamPendingSupSearch.cshtml" />
+    <Content Include="Views\MyDashboardCommon_test\_MyTeamPendingMgrSearch.cshtml" />
+    <Content Include="Views\MyDashboardCommon_test\_MyTeamPendingSupSearch.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamCompleted.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamCompletedSearch.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyCompletedSearch.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamStatistic.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyStatistic.cshtml" />
+    <Content Include="Views\MyDashboardQn\_StatisticTable.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MySubmission.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MySubmissionSearch.cshtml" />
+    <Content Include="Views\Review\_QnFollowupInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

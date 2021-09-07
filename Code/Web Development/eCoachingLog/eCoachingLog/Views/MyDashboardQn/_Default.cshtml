@@ -1,0 +1,50 @@
+﻿@model eCoachingLog.ViewModels.MyDashboardQnViewModel
+
+<h1 class="ecl-page-header">
+    @Html.ActionLink("My Dashboard", "Index", "MyDashboardQn") >> Quality Now
+</h1>
+
+<input type="hidden" name="whatlog" id="whatlog" />
+
+<div class="row">
+    <div class="col-xs-4">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <strong>Click View to see log list&nbsp;</strong>
+            </div>
+            <div class="panel-body">
+                @{ Html.RenderPartial("_CountByStatus"); }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-8">
+            @if (Model.ShowMyTeamPerformance)
+            {
+                @Html.Partial("_MyTeamStatistic", Model)
+            }
+            else if (Model.ShowMyPerformance)
+            {
+                @Html.Partial("_MyStatistic", Model)
+            }
+    </div>
+</div>
+
+<div id="div-log-list"></div>
+
+<script>
+    var totalPending = '@Model.MyTotalPending';
+    var showPendingText = totalPending > 0;
+    var getLogListUrl = '@Url.Action("GetLogsQn", "MyDashboardQn")';
+    var qnSaveSummaryUrl = '@Url.Action("SaveSummaryQn", "Review")';
+    var saveUrl = '@Url.Action("Save", "Review")';
+    var qnSubmitFollowupReviewUrl = '@Url.Action("SubmitFollowupReviewQn", "Review")';
+
+    var getLogDetailsUrl = '@Url.Action("Index", "Review")';
+    var searchUrl = '@Url.Action("Search", "MyDashboardQn")';
+</script>
+
+@Scripts.Render("~/bundles/scripts/myDashboardQn")
+
+
+

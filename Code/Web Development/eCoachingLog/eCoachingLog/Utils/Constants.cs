@@ -10,7 +10,8 @@ namespace eCoachingLog.Utils
 
 		public const string NEW_SBUMISSION = "NewSubmission";
 		public const string MY_DASHBOARD = "MyDashboard";
-		public const string REVIEW = "Review";
+        public const string MY_DASHBOARD_QN = "MyDashboardQn";
+        public const string REVIEW = "Review";
 		public const string HISTORICAL_DASHBOARD = "HistoricalDashboard";
 		public const string UNAUTHORIZED = "Unauthorized";
 
@@ -23,16 +24,18 @@ namespace eCoachingLog.Utils
 
 		public const string USER_ROLE_CSR = "CSR";
 		public const string USER_ROLE_ARC = "ARC";
-		public const string USER_ROLE_RESTRICTED = "Restricted";
+		//public const string USER_ROLE_RESTRICTED = "Restricted";
 		public const string USER_ROLE_SUPERVISOR = "Supervisor";
 		public const string USER_ROLE_MANAGER = "Manager";
 		// We don't have sr manager role
 		// public const string USER_ROLE_SR_MANAGER = "SrManager";
 		public const string USER_ROLE_DIRECTOR = "Director";
-		public const string USER_ROLE_OTHER = "Other";
+		public const string USER_ROLE_EMPLOYEE = "Employee";
 		public const string USER_ROLE_HR = "HR";
+        public const string USER_ROLE_ANALYST = "Analyst";
 
-		public const int PAGE_MY_DASHBOARD = 10;
+        public const int PAGE_MY_DASHBOARD = 10;
+        public const int PAGE_MY_DASHBOARD_QN = 11;
 		public const int PAGE_HISTORICAL_DASHBOARD = 20;
 		public const int PAGE_SURVEY = 30;
 		public const int PAGE_MY_SUBMISSION = 50;
@@ -45,8 +48,13 @@ namespace eCoachingLog.Utils
 		public const string LOG_SEARCH_TYPE_MY_TEAM_PENDING = "MyTeamPending";
 		public const string LOG_SEARCH_TYPE_MY_TEAM_COMPLETED = "MyTeamCompleted";
 		public const string LOG_SEARCH_TYPE_MY_TEAM_WARNING = "MyTeamWarning";
-		// director dashboard
-		public const string LOG_SEARCH_TYPE_MY_SITE_PENDING = "MySitePending";
+        // QN - extra
+        public const string LOG_SEARCH_TYPE_MY_PENDING_REVIEW = "MyPendingReview";
+        public const string LOG_SEARCH_TYPE_MY_PENDING_FOLLOWUP_REVIEW = "MyPendingFollowupReview";
+        public const string LOG_SEARCH_TYPE_MY_PENDING_FOLLOWUP_COACH = "MyPendingFollowupCoach";
+
+        // director dashboard
+        public const string LOG_SEARCH_TYPE_MY_SITE_PENDING = "MySitePending";
 		public const string LOG_SEARCH_TYPE_MY_SITE_COMPLETED = "MySiteCompleted";
 		public const string LOG_SEARCH_TYPE_MY_SITE_WARNING = "MySiteWarning";
 
@@ -102,8 +110,11 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_PENDING_QUALITYLEAD_REVIEW = 8;
 		public const int LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW = 9;
 		public const int LOG_STATUS_PENDING_FOLLOWUP = 10;
-		// Status Description
-		public const string LOG_STATUS_UNKNOWN_TEXT = "Unknown";
+        public const int LOG_STATUS_PENDING_FOLLOWUP_PREPARATION = 11;
+        public const int LOG_STATUS_PENDING_FOLLOWUP_COACHING = 12;
+        public const int LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW = 13;
+        // Status Description
+        public const string LOG_STATUS_UNKNOWN_TEXT = "Unknown";
 		public const string LOG_STATUS_COMPLETED_TEXT = "Completed";
 		public const string LOG_STATUS_INACTIVE_TEXT = "Inactive";
 		public const string LOG_STATUS_PENDING_ACKNOWLEDGEMENT_TEXT = "Pending Acknowledgement";
@@ -114,8 +125,11 @@ namespace eCoachingLog.Utils
 		public const string LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT = "Pending Quality Lead Review";
 		public const string LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW_TEXT = "Pending Deputy Program Manager Review";
 		public const string LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT = "Pending Follow-up";
+        public const string LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_PREPARATION_TEXT = "Pending Follow-up Preparation";
+        public const string LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_COACHING_TEXT = "Pending Follow-up Coaching";
+        public const string LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW_TEXT = "Pending Follow-up Employee Review";
 
-		public const int LOG_STATUS_LEVEL_1 = 1;
+        public const int LOG_STATUS_LEVEL_1 = 1;
 		public const int LOG_STATUS_LEVEL_2 = 2;
 		public const int LOG_STATUS_LEVEL_3 = 3;
 		public const int LOG_STATUS_LEVEL_4 = 4;
@@ -124,7 +138,7 @@ namespace eCoachingLog.Utils
 		public const int SOURCE_INTERNAL_CCO_REPORTING = 218;
 
 		public static readonly List<string> EXCEL_SHEET_NAMES =
-			new List<string>() { "eCL", "Quality Now eCL - Phone", "Quality Now eCL - Web Chat", "Quality Now eCL - Written Correspondence", "Short Call eCL" };
+			new List<string>() { "eCL", "Quality Now eCL", "Short Call eCL" };
 
 		public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
 		{
@@ -134,10 +148,24 @@ namespace eCoachingLog.Utils
 			{ "My Submissions", "_MySubmission" },
 			{ "My Team's Completed", "_MyTeamCompleted" },
 			{ "My Team's Pending", "_MyTeamPending" },
-			{ "My Team's Warnings", "_MyTeamWarning" }
-		};
+			{ "My Team's Warnings", "_MyTeamWarning" },
+        };
 
-		public static readonly Dictionary<int, string> Colors = new Dictionary<int, string>
+        public static readonly Dictionary<string, string> QnLogTypeToPageName = new Dictionary<string, string>
+        {
+            { "My Pending", "_MyPendingReview" }, // csr, status 4
+            { "My Pending Review", "_MyPendingReview" }, // supervisor, status 6
+            { "My Pending Follow-up Preparation", "_MyPendingFollowupPrepare" }, 
+            { "My Pending Follow-up Coaching", "_MyPendingFollowupCoaching" }, 
+            { "My Team's Pending", "_MyTeamPending" },
+            { "My Pending Follow-up", "_MyPendingFollowup" },
+            { "My Team's Pending Follow-up", "_MyTeamPendingFollowup" },
+            { "My Team's Completed", "_MyTeamCompleted" },
+            { "My Completed", "_MyCompleted" },
+            { "My Submissions", "_MySubmission" }
+        };
+
+        public static readonly Dictionary<int, string> Colors = new Dictionary<int, string>
 		{
 			{ 1, "#2B65EC" },
 			{ 2, "#93FFE8" },
@@ -147,17 +175,26 @@ namespace eCoachingLog.Utils
 			{ 6, "#B93B8F" },
 			{ 7, "#7BFF33" },
 			{ 8, "#FF0000" },
-			{ 9, "#1B3BA6" }
-		};
+			{ 9, "#1B3BA6" },
+            { 10, "#1B3BA6" },
+            { 11, "#1B3BA6" },
+            { 12, "#1B3BA6" },
+            { 13, "#1B3BA6" },
+            { 14, "#1B3BA6" },
+            { 15, "#1B3BA6" }
+        };
 
 		public static readonly Dictionary<Tuple<int, int>, int> LogStatusLevel = new Dictionary<Tuple<int, int>, int>
 		{
 			// CSR
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_EMPLOYEE_REVIEW), LOG_STATUS_LEVEL_1 },
-			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_SUPERVISOR_REVIEW), LOG_STATUS_LEVEL_2 },
+            { new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW), LOG_STATUS_LEVEL_1 },
+            { new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_SUPERVISOR_REVIEW), LOG_STATUS_LEVEL_2 },
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_MANAGER_REVIEW), LOG_STATUS_LEVEL_3 },
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_ACKNOWLEDGEMENT), LOG_STATUS_LEVEL_4 },
 			{ new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_FOLLOWUP), LOG_STATUS_LEVEL_2 },
+            { new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_FOLLOWUP_COACHING), LOG_STATUS_LEVEL_2 },
+            { new Tuple<int, int>(MODULE_CSR, LOG_STATUS_PENDING_FOLLOWUP_PREPARATION), LOG_STATUS_LEVEL_2 },
 			// Supervisor
 			{ new Tuple<int, int>(MODULE_SUPERVISOR, LOG_STATUS_PENDING_EMPLOYEE_REVIEW), LOG_STATUS_LEVEL_1 },
 			{ new Tuple<int, int>(MODULE_SUPERVISOR, LOG_STATUS_PENDING_MANAGER_REVIEW), LOG_STATUS_LEVEL_2 },
@@ -191,7 +228,7 @@ namespace eCoachingLog.Utils
 		};
 
 		// TODO: move to resource file or database
-		public const string REVIEW_OTH_APS_TEXT = "Your CSR has reached a major attendance milestone with 11 perfect shifts.You are encouraged to validate that the CSR indeed earned perfect attendance and verify that the hours have been removed in the Attendance Tracking Tool. And of course, please say thank you to your CSR for a job well done. This notification is for your CSR and does not apply to your personal attendance. Please refer to the name listed beside the 'employee' field to determine the employee who is receiving this message.";
+		public const string REVIEW_OTH_APS_TEXT = "Your CSR has reached a major attendance milestone with 22 perfect shifts.You are encouraged to validate that the CSR indeed earned perfect attendance and verify that the hours have been removed in the Attendance Tracking Tool. And of course, please say thank you to your CSR for a job well done. This notification is for your CSR and does not apply to your personal attendance. Please refer to the name listed beside the 'employee' field to determine the employee who is receiving this message.";
 		public const string REVIEW_OTH_APW_TEXT = "Your CSR had perfect attendance during a recent critical week. You are encouraged to validate that the CSR indeed earned perfect attendance and verify that the hours have been removed in the Attendance Tracking Tool. And of course, please say thank you to your CSR for a job well done. This notification is for your CSR and does not apply to your personal attendance. Please refer to the name listed beside the 'employee' field to determine the employee who is receiving this message.";
 
 		public const string REVIEW_OMR_SHORT_CALL_TEXT = "The CSR has multiple short calls that exceed the threshold. Please coach the behavior so the CSR has fewer short calls.";
@@ -223,8 +260,7 @@ namespace eCoachingLog.Utils
 			"Please review the <b><a href='https://maximus365.sharepoint.com/sites/CCO/bi/ReportsCatalog/CSRDashboard/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a>, " +
 			"the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below.";
 
-		// TODO: check where the scorecard is now.
-        // Performance Scorecard MSR and MSRS static text
+		// Performance Scorecard MSR and MSRS static text
 		public const string REVIEW_MSR_PSCORECARD = "To review your full details, please visit the " +
 			"<a href='https://f3420-mwbp11.ad.local/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
 			"If you have any questions, please see your supervisor.";

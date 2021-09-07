@@ -38,11 +38,15 @@ namespace eCoachingLog.Models.Common
 		public string EmployeeReviewDate { get; set; }
 		public string Comment { get; set; }
 
-		// Quality Now
-		public bool IsQualityNowLog { get; set; }
-		public string BatchId { get; set; }
-		public IList<Scorecard> Scorecards { get; set; }
-		public string StrengthOpportunity { get; set; }
+        // TODO: move to CoachingLogQn?
+        // Quality Now (submitted by quality specialist)
+        public bool IsQn{ get; set; }
+        // this is the followup qn log
+        //public bool IsQnFollowup { get; set; }
+        public bool IsQnSupervisor { get; set; } // submitted by supervisor
+
+        public string BatchId { get; set; }
+        public string StrengthOpportunity { get; set; }
 
 		// Coaching or Warning?
 		public bool IsCoachingLog { get; set; }
@@ -60,7 +64,6 @@ namespace eCoachingLog.Models.Common
 			this.LogId = -1;
 			this.FormName = String.Empty;
 			this.Reasons = new List<LogReason>();
-			this.Scorecards = new List<Scorecard>();
 		}
     }
 }

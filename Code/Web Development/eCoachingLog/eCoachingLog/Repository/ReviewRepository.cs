@@ -208,8 +208,10 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
 				command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", DateTime.Now);
 				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsCoached);
+                //command.Parameters.AddWithValueSafe("@isFollowupCoachingRequired", review.IsFollowupCoachingRequired);
+                //command.Parameters.AddWithValueSafe("@followupDueDate", review.FollowupDueDate);
 
-				try
+                try
 				{
 					connection.Open();
 					int rowsUpdated = command.ExecuteNonQuery();
@@ -590,5 +592,99 @@ namespace eCoachingLog.Repository
 			} // end Using 
 			return success;
 		}
-	}
+
+        public bool SaveSummaryQn(long logId, string summary, string userId)
+        {
+            bool success = false;
+
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Quality_Now_Summary]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvcFormID", logId);
+                command.Parameters.AddWithValueSafe("@nvcEvalSummary", summary);
+                command.Parameters.AddWithValueSafe("@nvcUserID", userId);
+
+                try
+                {
+                    connection.Open();
+                    int rowsUpdated = command.ExecuteNonQuery();
+
+                    if (rowsUpdated == 0)
+                    {
+                        throw new Exception("Couldn't update log [" + logId + "].");
+                    }
+
+                    success = true;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Failed to update log [" + logId + "]: " + ex.Message);
+                }
+            } // end Using 
+            return success;
+        }
+
+        public bool SaveFollowupDecisionQn(long logId, long[] logsLinkedTo, bool isCoachingRequired, string comments, string userId)
+        {
+            bool success = false;
+
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Supervisor_Review_Followup]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvcFormID",logId);
+                command.Parameters.AddWithValueSafe("@bitIsFollowup", isCoachingRequired);
+                command.Parameters.AddIdsTableType("@tableIds", logsLinkedTo);
+                command.Parameters.AddWithValueSafe("@dtmFollowupReviewAutoDate", DateTime.Now);
+                command.Parameters.AddWithValueSafe("@nvcFollowupReviewSupID", userId);
+                command.Parameters.AddWithValueSafe("@nvcFollowupReviewCoachingNotes", comments);
+
+                try
+                {
+                    connection.Open();
+                    int rowsUpdated = command.ExecuteNonQuery();
+
+                    if (rowsUpdated == 0)
+                    {
+                        throw new Exception("Couldn't update log [" + logId + "].");
+                    }
+
+                    success = true;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Failed to update log [" + logId + "]: " + ex.Message);
+                }
+            } // end Using 
+            return success;
+        }
+
+        public List<TextValue> GetPotentialFollowupMonitorLogsQn(long logId)
+        {
+            var logIdNameList = new List<TextValue>();
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Additional_Calls_For_Quality_Now_Followup]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvFormID", logId);
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        var id = dataReader["CoachingID"].ToString();
+                        var name = dataReader["FormName"].ToString().Trim();
+                        var idName = new TextValue(name, id);
+                        logIdNameList.Add(idName);
+                    }
+                } // end using SqlDataReader
+            } // end using SqlCommand
+
+            return logIdNameList;
+        }
+    }
 }

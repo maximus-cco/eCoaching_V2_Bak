@@ -1,16 +1,21 @@
 ﻿@using eCoachingLog.Models.User
 @using eCoachingLog.Models.Common
+@model eCoachingLog.ViewModels.ReviewViewModel
+
 @{
 	var user = ((User)Session["AuthenticatedUser"]);
     const string WebChat = "Web Chat";
     const string WrittenCorrespondence = "Written Correspondence";
 }
 <br />
+@*Read Only? @Model.IsReadOnly
+<br /> 
+Page Name: @Model.ReviewPageName*@ 
 @foreach (Scorecard s in Model.LogDetail.Scorecards)
 {
 	<div class="panel-group" id="accordion-@s.EvalId">
 		<div class="panel panel-maximus-color">
-			<div class="panel-heading-thin panel-heading-collapse" data-toggle="collapse" data-parent="#accordion-@s.EvalId" data-target="#@s.EvalId">
+			<div class="panel-heading-thin panel-heading-collape" data-toggle="collapse" data-parent="#accordion-@s.EvalId" data-target="#@s.EvalId">
 				<p class="panel-title-small accordion-toggle">
 					&nbsp; @s.EvalName
 					<span class="glyphicon glyphicon-plus pull-right">&nbsp;</span>
@@ -32,7 +37,7 @@
 					<p><strong>Program:</strong> @s.Program</p>
 					<p><strong>Date Of Event:</strong> @s.DateOfEvent</p>
 					<p><strong>Submitter:</strong> @s.SubmitterName</p>
-					@if (!user.IsCsr)
+					@if (!user.IsCsr && Model.ShowEvalDetail)
                     {
                         // default to Phone
                         var issueResolutionLabel = "Issue Resolution";
@@ -51,11 +56,34 @@
                             issueResolutionLabel = "Business Correspondence";
                             communicationLabel = "";
                         }
-                        <p><strong>Contact Reason:</strong> @Html.Raw(s.ContactReason)</p>
-						<p><strong>Business Process:</strong> @Html.Raw(s.BusinessProcess)</p>
-						<p><strong>Information Accuracy:</strong> @Html.Raw(s.InfoAccuracy)</p>
-						<p><strong>Privacy Disclaimers:</strong> @Html.Raw(s.PrivacyDisclaimers)</p>
-						<p><strong>@issueResolutionLabel:</strong> @Html.Raw(s.IssueResolution)</p>
+						<p><strong>Business Process:</strong> Compliant@*@Html.Raw(s.BusinessProcess)*@<br />
+                            <strong>Comments:</strong>
+                            <span id="bp_comments_@s.EvalId">Zachery checked off the name for disclosure and logged his research on the MAPDP tab</span> 
+                            @if (Model.AllowCopy)
+                            {
+                                <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>  
+                            }
+                        </p>
+
+						<p><strong>Information Accuracy:</strong> Compliant@*@Html.Raw(s.InfoAccuracy)*@<br />
+                            <strong>Comments:</strong>
+                            <span id="ia_comments_@s.EvalId">Zachery advised the card takes 4 weeks the card 10 days</span>
+                            @if (Model.AllowCopy)
+                            {
+                                <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
+                            }  
+                        </p>
+
+						<p><strong>Privacy Disclaimers:</strong> Compliant@*@Html.Raw(s.PrivacyDisclaimers)*@<br />
+                            <strong>Comments:</strong>
+                            <span id="pd_comments_@s.EvalId">Zachery verified the callers name to pass disclosure</span>
+                            @if (Model.AllowCopy)
+                            {
+                                <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
+                            }
+                        </p>
+
+                        <p><strong>@issueResolutionLabel:</strong> @Html.Raw(s.IssueResolution)</p>
                         if (!String.Equals(s.Channel, WrittenCorrespondence, StringComparison.OrdinalIgnoreCase))
                         {
                             <p><strong>@efficiencyLabel:</strong> @Html.Raw(s.CallEfficiency)</p>
@@ -77,13 +105,24 @@
 </div>
 
 <script>
-	$(function () {
-		$('body').on('shown.bs.collapse', '.collapse', function () {
-			$(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-		});
+    $(function () {
+        $("a[name=copy]").on("click", function (e) {
+            var textToCopyId = $(this).prev("span").attr("id");
+            var element = document.getElementById(textToCopyId);
+            var range = document.createRange();
+            range.selectNodeContents(element);
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('copy');
 
-		$('body').on('hidden.bs.collapse', '.collapse', function () {
-			$(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
-		});
-	});
+            $('a[name=copy]:contains("Copied")').text('Copy');
+            $(this).text("Copied");
+
+            return false;
+        });
+
+    })
 </script>
+
+

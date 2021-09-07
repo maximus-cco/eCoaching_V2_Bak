@@ -23,5 +23,9 @@ namespace eCoachingLog.Repository
 		bool CompleteShortCallsConfirm(Review review, string nextstatus, User user);
 		bool CompleteSupervisorFollowup(Review review, string nextStatus, User user);
 		bool CompleteEmployeeAckFollowup(Review review, string nextStatus, User user);
-	}
+
+        bool SaveSummaryQn(long logId, string summary, string userLanId);
+        bool SaveFollowupDecisionQn(long logId, long[] logsLinkedTo, bool isCoachingRequired, string comments, string userId);
+        List<TextValue> GetPotentialFollowupMonitorLogsQn(long logId);
+    }
 }

@@ -53,9 +53,9 @@
 
 	<div class='form-group mt-2 hide' id='div-noncoachable-detail-reason'>
 		<label for="DetailReasonNotCoachable" class="required">Please provide reason/explanation/justification as to why the item was not coachable:</label>
-		@Html.TextAreaFor(m => m.DetailReasonNotCoachable, new { @class = "form-control", @rows = "5", maxlength = 3000 })
+		@Html.TextAreaFor(m => m.DetailReasonNotCoachable, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
 		<div class="help-block">
-			<span id="detail-reason-not-coachable" class="pull-right">3000 remaining</span>
+            <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.DetailReasonNotCoachable)
 	</div>
@@ -69,9 +69,9 @@
 		{
 			<label for="DetailReasonCoachable" class="required">Provide the details from the coaching session including action plans developed:</label>
 		}
-		@Html.TextAreaFor(m => m.DetailReasonCoachable, new { @class = "form-control", @rows = "5", maxlength = 3000 })
+		@Html.TextAreaFor(m => m.DetailReasonCoachable, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
 		<div class="help-block">
-			<span id="detail-reason-coachable" class="pull-right">3000 remaining</span>
+            <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.DetailReasonCoachable)
 	</div>

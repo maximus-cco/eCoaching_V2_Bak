@@ -53,8 +53,8 @@ namespace eCoachingLog
 
             // 4. Store the container for use by the application
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
-            
-            // Version Disclosure (ASP.NET MVC) - fix
+			
+			// Version Disclosure (ASP.NET MVC) - fix
             MvcHandler.DisableMvcResponseHeader = true; 
         }
 

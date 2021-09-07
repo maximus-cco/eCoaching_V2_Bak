@@ -292,11 +292,20 @@ namespace eCoachingLog.Services
 
 			// Strip potential harmful characters entered by the user
 			review.DetailsCoached = EclUtil.CleanInput(review.DetailsCoached);
-			review.Comment = EclUtil.CleanInput(review.Comment);
+            review.DetailsFollowup = EclUtil.CleanInput(review.DetailsFollowup);
+            review.Comment = EclUtil.CleanInput(review.Comment);
 			review.DetailReasonCoachable = EclUtil.CleanInput(review.DetailReasonCoachable);
 			review.DetailReasonNotCoachable = EclUtil.CleanInput(review.DetailReasonNotCoachable);
 
-			if (review.IsShortCallPendingSupervisorForm)
+            // QN log: 12->13
+            if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_COACHING)
+            {
+                string nextStatus = Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW_TEXT;
+                review.DetailsFollowup = review.DetailsCoached;
+                return reviewRepository.CompleteSupervisorFollowup(review, nextStatus, user);
+            }
+
+            if (review.IsShortCallPendingSupervisorForm)
 			{
 				string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 				review.DetailsCoached = FormatCoachingNotes(review, user);
@@ -337,11 +346,11 @@ namespace eCoachingLog.Services
 			if (review.IsFollowupPendingSupervisorForm)
 			{
 				string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
-
 				return reviewRepository.CompleteSupervisorFollowup(review, nextStatus, user);
 			}
-			// unexpected pending form, should never reach here
-			StringBuilder sb = new StringBuilder("Unexpected review form: ");
+
+            // unexpected pending form, should never reach here
+            StringBuilder sb = new StringBuilder("Unexpected review form: ");
 			var userId = user == null ? "usernull" : user.EmployeeId;
 			sb.Append("[").Append(userId).Append("]")
 				.Append("|LogId[").Append(logIdInSession).Append("]");
@@ -374,6 +383,10 @@ namespace eCoachingLog.Services
 		{
 			bool success = false;
 			string nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
+            if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_COACHING)
+            {
+                nextStatus = Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW_TEXT;
+            }
 			review.DetailsCoached = FormatCoachingNotes(review, user);
 			success = reviewRepository.CompleteRegularPendingReview(review, nextStatus, user);
 			return success;
@@ -390,8 +403,8 @@ namespace eCoachingLog.Services
 				return reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, FormatCoachingNotes(review, user), user);
 			}
 
-			// Followup required
-			if (review.LogDetail.IsFollowupRequired)
+            // Followup required; 
+ 			if (review.LogDetail.IsFollowupRequired)
 			{
 				// CSR completes review, set status to Pending Supervisor Followup
 				if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
@@ -410,8 +423,22 @@ namespace eCoachingLog.Services
 				return reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
 			}
 
-			// Go to Completed
-			if (!review.IsMoreReviewRequired)
+            // TODO: 1-eval log will follow current workflow;
+            // 5-eval log will go to Pending Followup Preparation;
+            if ( review.LogDetail.IsQn)
+            {
+                // use status instead, all an logs go to 11 after 4
+                //if (review.LogDetail.LinkedLogs == null || review.LogDetail.LinkedLogs.Count < 2)
+                if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
+                {
+                    //return reviewRepository.CompleteAckRegularReview(review, Constants.LOG_STATUS_COMPLETED_TEXT, user);
+                    return reviewRepository.CompleteAckRegularReview(review, Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_PREPARATION_TEXT, user);
+                }
+                return reviewRepository.CompleteAckRegularReview(review, Constants.LOG_STATUS_COMPLETED_TEXT, user);
+            }
+
+            // Go to Completed
+            if (!review.IsMoreReviewRequired)
 			{
 				nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
 				success = reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
@@ -512,7 +539,6 @@ namespace eCoachingLog.Services
 			{
 				if (review.LogDetail.EmployeeId == user.EmployeeId)
 				{
-
 					if (review.LogDetail.HasSupAcknowledged) 
 					{
 						nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
@@ -632,5 +658,23 @@ namespace eCoachingLog.Services
 			// if nextStatus is unknown, then something must be wrong
 			return nextStatus;
 		}
-	}
+
+        // Quality now - save summary 
+        public bool SaveSummaryQn(long logId, string summary, string userLanId)
+        {
+            return this.reviewRepository.SaveSummaryQn(logId, summary, userLanId);
+        }
+
+        public bool SaveFollowupDecisionQn(long logId, long[] logsLinkedTo, bool isCoachingRequired, string comments, string userId)
+        {
+            return this.reviewRepository.SaveFollowupDecisionQn(logId, logsLinkedTo, isCoachingRequired, comments, userId);
+        }
+
+        public List<TextValue> GetPotentialFollowupMonitorLogsQn(long logId)
+        {
+            return this.reviewRepository.GetPotentialFollowupMonitorLogsQn(logId);
+        }
+
+
+    }
 }

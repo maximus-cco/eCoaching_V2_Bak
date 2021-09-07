@@ -48,18 +48,16 @@
 		<label for="FollowupDetails" class="required">Provide the details from the follow-up coaching session including action plans developed:</label>
 		@if (Model.IsFollowupDue || Model.IsFollowupOverDue)
 		{
-			@Html.TextAreaFor(m => m.FollowupDetails, new { @class = "form-control",  @rows = "5", maxlength = 3000 })
+			@Html.TextAreaFor(m => m.FollowupDetails, new { @class = "form-control remaining",  @rows = "5", maxlength = 3000 })
 		}
 		else
 		{
-			@Html.TextAreaFor(m => m.FollowupDetails, new { @class = "form-control", @readonly = "readonly", @rows = "5", maxlength = 3000 })
+			@Html.TextAreaFor(m => m.FollowupDetails, new { @class = "form-control remaining", @readonly = "readonly", @rows = "5", maxlength = 3000 })
 		}
 
 		<div class="help-block">
 			Provide as much detail as possible.
-			<span class="pull-right">
-				<span id="detail-followup-remaining">3000</span>&nbsp;remaining
-			</span>
+            <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.FollowupDetails)
 	</div>

@@ -67,7 +67,7 @@
 		.fail(function () {
 			$('#select-manager').html('<option value="">error ...&nbsp;&nbsp;</option>');
 		})
-		.complete(function () {
+		.always(function () {
 			$('#select-manager').removeClass('loadinggif')
 		});
 	});
@@ -96,7 +96,7 @@
 		.fail(function () {
 			$('#select-supervisor').html('<option value="">error ...&nbsp;&nbsp;</option>');
 		})
-		.complete(function () {
+		.always(function () {
 			$('#select-supervisor').removeClass('loadinggif')
 		});
 	});
@@ -133,7 +133,7 @@
 		.fail(function () {
 			$('#select-employee').html('<option value="">error ...&nbsp;&nbsp;</option>');
 		})
-		.complete(function () {
+		.always(function () {
 			$('#select-employee').removeClass('loadinggif')
 		});
 	}

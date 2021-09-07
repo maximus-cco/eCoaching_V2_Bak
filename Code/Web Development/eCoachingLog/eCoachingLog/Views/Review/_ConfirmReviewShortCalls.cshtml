@@ -21,10 +21,10 @@
 
 	<div class='form-group mt-2'>
 		<label for="DetailsCoached" class="required">Provide comments below:</label>
-		@Html.TextAreaFor(m => m.Comments, new { @class = "form-control", @rows = "5", maxlength = 3000 })
+		@Html.TextAreaFor(m => m.Comments, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
 		<div class="help-block">
 			@*Provide as much detail as possible.*@
-			<span id="comments-remaining" class="pull-right">3000 remaining</span>
+            <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.Comments)
 	</div>

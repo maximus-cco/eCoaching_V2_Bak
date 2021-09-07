@@ -33,10 +33,16 @@ namespace eCoachingLog.Controllers
             this.empLogService = employeeLogService;
 		}
 
-		[HttpPost]
+        // non-qn
+        [HttpPost]
 		public ActionResult LoadData(LogFilter logFilter)
 		{
 			logger.Debug("Entered LoadData");
+			
+			if (logFilter == null)
+            {
+                logger.Error("LoadData: logFilter is null!!!");
+            }
 
             if (logFilter == null)
             {
@@ -79,7 +85,90 @@ namespace eCoachingLog.Controllers
 			}
 		}
 
-		protected int GetLogStatusLevel(int moduleId, int statusId)
+        // qn + non-qn
+        [HttpPost]
+        public ActionResult LoadDataAll(LogFilter logFilter)
+        {
+            logger.Debug("Entered LoadData");
+
+            // Get Start (paging start index) and length (page size for paging)
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Get Sort columns value
+            var sortBy = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            var sortDirection = Request.Form.GetValues("order[0][dir]").FirstOrDefault() == "asc" ? "Y" : "N";
+            var search = Request.Form.GetValues("search[value]").FirstOrDefault();
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int rowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
+            int totalRecords = 0;
+            User user = GetUserFromSession();
+            try
+            {
+                List<LogBase> logs = empLogService.GetLogList(logFilter, user.EmployeeId, pageSize, rowStartIndex, sortBy, sortDirection, search);
+                totalRecords = empLogService.GetLogListTotal(logFilter, user.EmployeeId, search);
+                Session["TotalPending"] = totalRecords;
+                return Json(new { draw = draw, recordsFiltered = totalRecords, recordsTotal = totalRecords, data = logs }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var userId = user == null ? "usernull" : user.EmployeeId;
+                StringBuilder msg = new StringBuilder("Exception: ");
+                msg.Append("[")
+                    .Append(userId)
+                    .Append("]: ")
+                    .Append(ex.Message)
+                    .Append(Environment.NewLine)
+                    .Append(ex.StackTrace);
+                logger.Warn(msg);
+
+                var errorMsg = "Data is currently unavailable, please try again later.";
+                return Json(new { draw = 1, recordsFiltered = 0, recordsTotal = 0, data = new List<LogBase>(), error = errorMsg }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult LoadDataQn(LogFilter logFilter)
+        {
+            logger.Debug("Entered LoadDataQn");
+
+            // Get Start (paging start index) and length (page size for paging)
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Get Sort columns value
+            var sortBy = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            var sortDirection = Request.Form.GetValues("order[0][dir]").FirstOrDefault() == "asc" ? "Y" : "N";
+            var search = Request.Form.GetValues("search[value]").FirstOrDefault();
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int rowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
+            int totalRecords = 0;
+            User user = GetUserFromSession();
+            try
+            {
+                List<LogBase> logs = empLogService.GetLogListQn(logFilter, user.EmployeeId, pageSize, rowStartIndex, sortBy, sortDirection, search);
+                totalRecords = empLogService.GetLogListTotalQn(logFilter, user.EmployeeId, search);
+                Session["TotalPending"] = totalRecords;
+                return Json(new { draw = draw, recordsFiltered = totalRecords, recordsTotal = totalRecords, data = logs }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var userId = user == null ? "usernull" : user.EmployeeId;
+                StringBuilder msg = new StringBuilder("Exception: ");
+                msg.Append("[")
+                    .Append(userId)
+                    .Append("]: ")
+                    .Append(ex.Message)
+                    .Append(Environment.NewLine)
+                    .Append(ex.StackTrace);
+                logger.Warn(msg);
+
+                var errorMsg = "Data is currently unavailable, please try again later.";
+                return Json(new { draw = 1, recordsFiltered = 0, recordsTotal = 0, data = new List<LogBase>(), error = errorMsg }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        protected int GetLogStatusLevel(int moduleId, int statusId)
 		{
 			var statusLevel = -1;
 			var tuple = new Tuple<int, int>(moduleId, statusId);
@@ -175,5 +264,198 @@ namespace eCoachingLog.Controllers
 				Session.Contents.Remove("fileStream");
 			}
 		}
-	}
+
+        protected SelectList GetSupsForMgrMyPending(User user)
+        {
+            SelectList supsForMgrMyPending = null;
+            if (Session["supsForMgrMyPending"] == null)
+            {
+                supsForMgrMyPending = new SelectList(employeeService.GetSupsForMgrMyPending(user), "Id", "Name");
+                Session["supsForMgrMyPending"] = supsForMgrMyPending;
+            }
+            else
+            {
+                supsForMgrMyPending = (SelectList)Session["supsForMgrMyPending"];
+            }
+
+            return supsForMgrMyPending;
+        }
+
+        protected SelectList GetEmpsForSupMyTeamPending(User user)
+        {
+            SelectList empsForSupMyTeamPending = null;
+            if (Session["empsForSupMyTeamPending"] == null)
+            {
+                empsForSupMyTeamPending = new SelectList(employeeService.GetEmpsForSupMyTeamPending(user), "Id", "Name");
+                Session["empsForSupMyTeamPending"] = empsForSupMyTeamPending;
+            }
+            else
+            {
+                empsForSupMyTeamPending = (SelectList)Session["empsForSupMyTeamPending"];
+            }
+
+            return empsForSupMyTeamPending;
+        }
+
+        protected SelectList GetSupsForMgrMyTeamPending(User user)
+        {
+            SelectList supsForSupMyTeamPending = null;
+            if (Session["supsForSupMyTeamPending"] == null)
+            {
+                supsForSupMyTeamPending = new SelectList(employeeService.GetSupsForMgrMyTeamPending(user), "Id", "Name");
+                Session["supsForSupMyTeamPending"] = supsForSupMyTeamPending;
+            }
+            else
+            {
+                supsForSupMyTeamPending = (SelectList)Session["supsForSupMyTeamPending"];
+            }
+
+            return supsForSupMyTeamPending;
+        }
+
+        protected SelectList GetEmpsForMgrMyTeamPending(User user)
+        {
+            SelectList empsForMgrMyTeamPending = null;
+            if (Session["empsForMgrMyTeamPending"] == null)
+            {
+                empsForMgrMyTeamPending = new SelectList(employeeService.GetEmpsForMgrMyTeamPending(user), "Id", "Name");
+                Session["empsForMgrMyTeamPending"] = empsForMgrMyTeamPending;
+            }
+            else
+            {
+                empsForMgrMyTeamPending = (SelectList)Session["empsForMgrMyTeamPending"];
+            }
+
+            return empsForMgrMyTeamPending;
+        }
+
+        protected SelectList GetMgrsForSupMyTeamCompleted(User user)
+        {
+            SelectList mgrsForSupMyTeamCompleted = null;
+            if (Session["mgrsForSupMyTeamCompleted"] == null)
+            {
+                mgrsForSupMyTeamCompleted = new SelectList(employeeService.GetMgrsForSupMyTeamCompleted(user), "Id", "Name");
+                Session["mgrsForSupMyTeamCompleted"] = mgrsForSupMyTeamCompleted;
+            }
+            else
+            {
+                mgrsForSupMyTeamCompleted = (SelectList)Session["mgrsForSupMyTeamCompleted"];
+            }
+
+            return mgrsForSupMyTeamCompleted;
+        }
+
+        protected SelectList GetEmpsForSupMyTeamCompleted(User user)
+        {
+            SelectList empsForSupMyTeamCompleted = null;
+            if (Session["empsForSupMyTeamCompleted"] == null)
+            {
+                empsForSupMyTeamCompleted = new SelectList(employeeService.GetEmpsForSupMyTeamCompleted(user), "Id", "Name");
+                Session["empsForSupMyTeamCompleted"] = empsForSupMyTeamCompleted;
+            }
+            else
+            {
+                empsForSupMyTeamCompleted = (SelectList)Session["empsForSupMyTeamCompleted"];
+            }
+
+            return empsForSupMyTeamCompleted;
+        }
+
+        protected SelectList GetSupsForMgrMyTeamCompleted(User user)
+        {
+            SelectList supsForMgrMyTeamCompleted = null;
+            if (Session["supsForMgrMyTeamCompleted"] == null)
+            {
+                supsForMgrMyTeamCompleted = new SelectList(employeeService.GetSupsForMgrMyTeamCompleted(user), "Id", "Name");
+                Session["supsForMgrMyTeamCompleted"] = supsForMgrMyTeamCompleted;
+            }
+            else
+            {
+                supsForMgrMyTeamCompleted = (SelectList)Session["supsForMgrMyTeamCompleted"];
+            }
+
+            return supsForMgrMyTeamCompleted;
+        }
+
+        protected SelectList GetEmpsForMgrMyTeamCompleted(User user)
+        {
+            SelectList empsForMgrMyTeamCompleted = null;
+            if (Session["empsForMgrMyTeamCompleted"] == null)
+            {
+                empsForMgrMyTeamCompleted = new SelectList(employeeService.GetEmpsForMgrMyTeamCompleted(user), "Id", "Name");
+                Session["empsForMgrMyTeamCompleted"] = empsForMgrMyTeamCompleted;
+            }
+            else
+            {
+                empsForMgrMyTeamCompleted = (SelectList)Session["empsForMgrMyTeamCompleted"];
+            }
+
+            return empsForMgrMyTeamCompleted;
+        }
+
+        protected SelectList GetWarningStatuses(User user)
+        {
+            SelectList warningStatuses = null;
+            if (Session["warningStatuses"] == null)
+            {
+                warningStatuses = new SelectList(empLogService.GetWarningStatuses(user), "Id", "Name");
+                Session["warningStatuses"] = warningStatuses;
+            }
+            else
+            {
+                warningStatuses = (SelectList)Session["warningStatuses"];
+            }
+
+            return warningStatuses;
+        }
+
+        protected SelectList GetMgrsForMySubmission(User user)
+        {
+            SelectList mgrsForMySubmission = null;
+            if (Session["mgrsForMySubmission"] == null)
+            {
+                mgrsForMySubmission = new SelectList(employeeService.GetFiltersForMySubmission(user, Constants.MY_SUBMISSION_FILTER_MANAGER), "Id", "Name");
+                Session["mgrsForMySubmission"] = mgrsForMySubmission;
+            }
+            else
+            {
+                mgrsForMySubmission = (SelectList)Session["mgrsForMySubmission"];
+            }
+
+            return mgrsForMySubmission;
+        }
+
+        protected SelectList GetSupsForMySubmission(User user)
+        {
+            SelectList supsForMySubmission = null;
+            if (Session["supsForMySubmission"] == null)
+            {
+                supsForMySubmission = new SelectList(employeeService.GetFiltersForMySubmission(user, Constants.MY_SUBMISSION_FILTER_SUPERVISOR), "Id", "Name");
+                Session["supsForMySubmission"] = supsForMySubmission;
+            }
+            else
+            {
+                supsForMySubmission = (SelectList)Session["supsForMySubmission"];
+            }
+
+            return supsForMySubmission;
+        }
+
+        protected SelectList GetEmpsForMySubmission(User user)
+        {
+            SelectList empsForMySubmission = null;
+            if (Session["empsForMySubmission"] == null)
+            {
+                empsForMySubmission = new SelectList(employeeService.GetFiltersForMySubmission(user, Constants.MY_SUBMISSION_FILTER_EMPLOYEE), "Id", "Name");
+                Session["empsForMySubmission"] = empsForMySubmission;
+            }
+            else
+            {
+                empsForMySubmission = (SelectList)Session["empsForMySubmission"];
+            }
+
+            return empsForMySubmission;
+        }
+
+    }
 }

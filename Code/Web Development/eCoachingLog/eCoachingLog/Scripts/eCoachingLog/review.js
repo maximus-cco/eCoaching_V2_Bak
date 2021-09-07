@@ -20,37 +20,42 @@
 
 	const maxLength = 3000;
 	// Ack - oppotunity
-	$('body').on('keyup', '#textarea-employee-comments', function (e) {
-	var remaining = maxLength - $(this).val().length;
-	$('#employee-comments').text(remaining + ' remaining');
-	});
+	//$('body').on('keyup', '#textarea-employee-comments', function (e) {
+	//var remaining = maxLength - $(this).val().length;
+	//$('#employee-comments').text(remaining + ' remaining');
+	//});
 	// Research - coachable
-	$('body').on('keyup', '#DetailReasonCoachable', function (e) {
-		var remaining = maxLength - $(this).val().length;
-		$('#detail-reason-coachable').text(remaining + ' remaining');
-	});
+	//$('body').on('keyup', '#DetailReasonCoachable', function (e) {
+	//	var remaining = maxLength - $(this).val().length;
+	//	$('#detail-reason-coachable').text(remaining + ' remaining');
+	//});
 	// Research - not coachable
-	$('body').on('keyup', '#DetailReasonNotCoachable', function (e) {
-		var remaining = maxLength - $(this).val().length;
-		$('#detail-reason-not-coachable').text(remaining + ' remaining');
-	});
+	//$('body').on('keyup', '#DetailReasonNotCoachable', function (e) {
+	//	var remaining = maxLength - $(this).val().length;
+	//	$('#detail-reason-not-coachable').text(remaining + ' remaining');
+	//});
 	// Cse - Yes
-	$('body').on('keyup', '#DetailsCoached', function (e) {
-		var remaining = maxLength - $(this).val().length;
-		$('#detail-remaining').text(remaining + ' remaining');
-	});
+	//$('body').on('keyup', '#DetailsCoached', function (e) {
+	//	var remaining = maxLength - $(this).val().length;
+	//	$('#detail-remaining').text(remaining + ' remaining');
+	//});
 	// Cse - No
-	$('body').on('keyup', '#ReasonNotCse', function (e) {
-		var remaining = maxLength - $(this).val().length;
-		$('#non-cse-remaining').text(remaining + ' remaining');
-	});
+	//$('body').on('keyup', '#ReasonNotCse', function (e) {
+	//	var remaining = maxLength - $(this).val().length;
+	//	$('#non-cse-remaining').text(remaining + ' remaining');
+	//});
 	// Comments
-	$('body').on('keyup', '#Comments', function (e) {
-		var remaining = maxLength - $(this).val().length;
-		$('#comments-remaining').text(remaining + ' remaining');
-	});
+	//$('body').on('keyup', '#Comments', function (e) {
+	//	var remaining = maxLength - $(this).val().length;
+	//	$('#comments-remaining').text(remaining + ' remaining');
+	//});
 	// Followup
-	$('body').on('keyup', '#FollowupDetails', function (e) {
-		$('#detail-followup-remaining').text(maxLength - $(this).val().length);
+	//$('body').on('keyup', '#FollowupDetails', function (e) {
+	//	$('#detail-followup-remaining').text(maxLength - $(this).val().length);
+	//});
+    // QN log summary
+	$('body').on('keyup', '.remaining', function (e) {
+	    $(this).next().find(".remaining-count").text(maxLength - $(this).val().length);
 	});
+
 })

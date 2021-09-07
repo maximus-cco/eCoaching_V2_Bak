@@ -36,10 +36,12 @@ namespace eCoachingLog.Services
             if (isCoaching)
             {
                 logDetail = employeeLogRepository.GetCoachingDetail(logId);
-				if (logDetail.IsQualityNowLog)
+				if (logDetail.IsQn || logDetail.IsQnSupervisor)
 				{
-					logDetail.Scorecards = employeeLogRepository.GetScorecards(logId);
-				}
+                    var temp = employeeLogRepository.GetScorecardsAndSummary(logId);
+                    ((CoachingLogDetail)logDetail).Scorecards = temp.Scorecards;
+                    ((CoachingLogDetail)logDetail).QnSummaryList = temp.QnSummaryList;
+                }
             }
             else
             {
@@ -162,12 +164,50 @@ namespace eCoachingLog.Services
 			return logs;
 		}
 
-		public int GetLogListTotal(LogFilter logFilter, string userId, string search)
+        public List<LogBase> GetLogListQn(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search)
+        {
+            List<LogBase> logs = employeeLogRepository.GetLogListQn(logFilter, userId, pageSize, startRowIndex, sortBy, sortDirection, search);
+            foreach (LogBase log in logs)
+            {
+                // Log New Text
+                try
+                {
+                    if (!string.IsNullOrEmpty(log.CreatedDate) && (DateTime.Today - Convert.ToDateTime(log.CreatedDate)).Days < 1)
+                    {
+                        log.LogNewText = "New!";
+                    }
+                    else
+                    {
+                        log.LogNewText = string.Empty;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Debug("Error converting createdate to datetime: " + ex.Message);
+                }
+
+                // Created Date displays PDT
+                // log.CreatedDate = eCoachingLogUtil.AppendPdt(log.CreatedDate);
+                // Reasons
+                log.Reasons = log.Reasons.Replace("|", "<br />");
+                log.SubReasons = log.SubReasons.Replace("|", "<br />");
+                log.Value = log.Value.Replace("|", "<br />");
+            }
+
+            return logs;
+        }
+
+        public int GetLogListTotal(LogFilter logFilter, string userId, string search)
 		{
 			return employeeLogRepository.GetLogListTotal(logFilter, userId, search);
 		}
 
-		public IList<LogStatus> GetAllLogStatuses()
+        public int GetLogListTotalQn(LogFilter logFilter, string userId, string search)
+        {
+            return employeeLogRepository.GetLogListTotalQn(logFilter, userId, search);
+        }
+
+        public IList<LogStatus> GetAllLogStatuses()
 		{
 			return this.employeeLogRepository.GetAllLogStatuses();
 		}
@@ -217,12 +257,17 @@ namespace eCoachingLog.Services
 			return employeeLogRepository.GetLogCounts(user);
 		}
 
-		public IList<ChartDataset> GetChartDataSets(User user)
+        public IList<LogCount> GetLogCountsQn(User user)
+        {
+            return employeeLogRepository.GetLogCountsQn(user);
+        }
+
+        public IList<ChartDataset> GetChartDataSets(User user)
 		{
 			return employeeLogRepository.GetChartDataSets(user);
-		}
+        }
 
-		public IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end)
+        public IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end)
 		{
 			return employeeLogRepository.GetLogCountsForSites(user, start, end);
 		}
@@ -231,5 +276,21 @@ namespace eCoachingLog.Services
 		{
 			return employeeLogRepository.GetLogCountByStatusForSites(user, start, end);
 		}
-	}
+
+        public IList<QnStatistic> GetPast3MonthStatisticQn(User user, DateTime current)
+        {
+            var statistic = new List<QnStatistic>();
+            var cMonth = current;
+            var s1 = new QnStatistic(cMonth, "John Test", 1, 1, 1, 1, 1, 1);
+            statistic.Add(s1);
+            if (user.IsSupervisor || user.IsManager)
+            {
+                var s2 = new QnStatistic(cMonth, "John TTest", 1, 1, 1, 1, 1, 1);
+                statistic.Add(s2);
+            }
+
+            return statistic;
+        }
+
+    }
 }

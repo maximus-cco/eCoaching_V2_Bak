@@ -14,7 +14,7 @@ namespace eCoachingLog.Extensions
             return parameters.AddWithValue(parameterName, value ?? DBNull.Value);
         }
 
-		public static SqlParameter AddIdsTableType(this SqlParameterCollection target, string name, List<long> values)
+		public static SqlParameter AddIdsTableType(this SqlParameterCollection target, string name, long[] values)
 		{
 			DataTable dataTable = new DataTable();
 			dataTable.Columns.Add("ID", typeof(long));

@@ -11,7 +11,9 @@
 	var getChartData = '@Url.Action("GetChartData", "MyDashboard")';
 	var getDataByMonth = '@Url.Action("GetDataByMonth", "MyDashboard")';
 	var searchUrl = '@Url.Action("Search", "MyDashboard")';
-	var isChartBySite = '@Model.IsChartBySite';
+    var isChartBySite = '@Model.IsChartBySite';
+
+    var getLogDetailsUrl = '@Url.Action("Index", "Review")';
 </script>
 
 @Scripts.Render("~/bundles/scripts/myDashboard")

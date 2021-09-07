@@ -26,7 +26,7 @@ namespace eCoachingLog.Controllers
             logger.Debug("Entered MyDashboardController(IEmployeeLogService, IDashboardService)");
         }
 
-        // GET: MyDashboard
+        // GET: MyDashboard - qn + non qn logs (user is director)
         public ActionResult Index()
         {
 			var user = GetUserFromSession();
@@ -46,7 +46,17 @@ namespace eCoachingLog.Controllers
 			return View("_Default", vm);
         }
 
-		[HttpPost]
+        // GET: MyDashboard - non qn logs
+        public ActionResult IndexNonQn()
+        {
+            var user = GetUserFromSession();
+            Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
+            var vm = InitMyDashboardViewModel(null, null);
+
+            return View("_Default", vm);
+        }
+
+        [HttpPost]
 		public ActionResult GetDataByMonth(string month)
 		{
 			DateTime selectedMonth = DateTime.Parse(month);
@@ -65,7 +75,7 @@ namespace eCoachingLog.Controllers
 			return PartialView(whatLog, InitMyDashboardVMByLogType(whatLog, siteId, siteName, month)); 
 		}
 
-		[HttpPost]
+        [HttpPost]
 		public ActionResult Search(MyDashboardViewModel vm, int? pageSizeSelected)
 		{
 			logger.Debug("Entered Search...");
@@ -120,10 +130,10 @@ namespace eCoachingLog.Controllers
 				, @"application/json");
 		}
 
-		private MyDashboardViewModel InitMyDashboardViewModel(DateTime? start, DateTime? end)
+        private MyDashboardViewModel InitMyDashboardViewModel(DateTime? start, DateTime? end)
         {
             var user = GetUserFromSession();
-            var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
+            var vm = new MyDashboardViewModel(user);
 
 			//if (vm.Search.UserRole == Constants.USER_ROLE_CSR)
 			//{
@@ -144,9 +154,9 @@ namespace eCoachingLog.Controllers
 				{
 					lc.LogListPageName = Constants.LogTypeToPageName[lc.Description];
 
-					if (lc.Description == "My Pending")
+					if (lc.Description.StartsWith("My Pending"))
 					{
-						vm.MyTotalPending = lc.Count;
+						vm.MyTotalPending += lc.Count;
 					}
 				}
 				vm.LogCountList = logCountList;
@@ -157,10 +167,10 @@ namespace eCoachingLog.Controllers
 			return vm;
         }
 
-		private MyDashboardViewModel InitMyDashboardVMByLogType(string whatLog, int? siteId, string siteName, string month)
+        private MyDashboardViewModel InitMyDashboardVMByLogType(string whatLog, int? siteId, string siteName, string month)
 		{
 			var user = GetUserFromSession();
-			var vm = new MyDashboardViewModel(user.EmployeeId, user.LanId, user.Role);
+			var vm = new MyDashboardViewModel(user);
 			// Default to all
 			vm.Search.SiteId = -1;
 			vm.Search.EmployeeId = "-1";
@@ -185,7 +195,6 @@ namespace eCoachingLog.Controllers
 					{
 						// Supervisor dropdown
 						vm.SupervisorSelectList = GetSupsForMgrMyPending(user);
-
 						// Employee dropdown
 						if (Session["empsForMgrMyPending"] == null)
 						{
@@ -215,7 +224,7 @@ namespace eCoachingLog.Controllers
 				// My Team Pending on My Dashboard
 				case "_MyTeamPending":
 					vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_TEAM_PENDING;
-					if (user.Role == Constants.USER_ROLE_SUPERVISOR || user.Role == Constants.USER_ROLE_OTHER)
+					if (user.Role == Constants.USER_ROLE_SUPERVISOR)
 					{
 						// Employee dropdown
 						vm.EmployeeSelectList = GetEmpsForSupMyTeamPending(user);
@@ -297,199 +306,7 @@ namespace eCoachingLog.Controllers
 			return vm;
 		}
 
-		private SelectList GetSupsForMgrMyPending(User user)
-		{
-			SelectList supsForMgrMyPending = null;
-			if (Session["supsForMgrMyPending"] == null)
-			{
-				supsForMgrMyPending = new SelectList(employeeService.GetSupsForMgrMyPending(user), "Id", "Name");
-				Session["supsForMgrMyPending"] = supsForMgrMyPending;
-			}
-			else
-			{
-				supsForMgrMyPending = (SelectList)Session["supsForMgrMyPending"];
-			}
-
-			return supsForMgrMyPending;
-		}
-
-		private SelectList GetEmpsForSupMyTeamPending(User user)
-		{
-			SelectList empsForSupMyTeamPending = null;
-			if (Session["empsForSupMyTeamPending"] == null)
-			{
-				empsForSupMyTeamPending = new SelectList(employeeService.GetEmpsForSupMyTeamPending(user), "Id", "Name");
-				Session["empsForSupMyTeamPending"] = empsForSupMyTeamPending;
-			}
-			else
-			{
-				empsForSupMyTeamPending = (SelectList)Session["empsForSupMyTeamPending"];
-			}
-
-			return empsForSupMyTeamPending;
-		}
-
-		private SelectList GetSupsForMgrMyTeamPending(User user)
-		{
-			SelectList supsForSupMyTeamPending = null;
-			if (Session["supsForSupMyTeamPending"] == null)
-			{
-				supsForSupMyTeamPending = new SelectList(employeeService.GetSupsForMgrMyTeamPending(user), "Id", "Name");
-				Session["supsForSupMyTeamPending"] = supsForSupMyTeamPending;
-			}
-			else
-			{
-				supsForSupMyTeamPending = (SelectList)Session["supsForSupMyTeamPending"];
-			}
-
-			return supsForSupMyTeamPending;
-		}
-
-		private SelectList GetEmpsForMgrMyTeamPending(User user)
-		{
-			SelectList empsForMgrMyTeamPending = null;
-			if (Session["empsForMgrMyTeamPending"] == null)
-			{
-				empsForMgrMyTeamPending = new SelectList(employeeService.GetEmpsForMgrMyTeamPending(user), "Id", "Name");
-				Session["empsForMgrMyTeamPending"] = empsForMgrMyTeamPending;
-			}
-			else
-			{
-				empsForMgrMyTeamPending = (SelectList)Session["empsForMgrMyTeamPending"];
-			}
-
-			return empsForMgrMyTeamPending;
-		}
-
-		private SelectList GetMgrsForSupMyTeamCompleted(User user)
-		{
-			SelectList mgrsForSupMyTeamCompleted = null;
-			if (Session["mgrsForSupMyTeamCompleted"] == null)
-			{
-				mgrsForSupMyTeamCompleted = new SelectList(employeeService.GetMgrsForSupMyTeamCompleted(user), "Id", "Name");
-				Session["mgrsForSupMyTeamCompleted"] = mgrsForSupMyTeamCompleted;
-			}
-			else
-			{
-				mgrsForSupMyTeamCompleted = (SelectList)Session["mgrsForSupMyTeamCompleted"];
-			}
-
-			return mgrsForSupMyTeamCompleted;
-		}
-
-		private SelectList GetEmpsForSupMyTeamCompleted(User user)
-		{
-			SelectList empsForSupMyTeamCompleted = null;
-			if (Session["empsForSupMyTeamCompleted"] == null)
-			{
-				empsForSupMyTeamCompleted = new SelectList(employeeService.GetEmpsForSupMyTeamCompleted(user), "Id", "Name");
-				Session["empsForSupMyTeamCompleted"] = empsForSupMyTeamCompleted;
-			}
-			else
-			{
-				empsForSupMyTeamCompleted = (SelectList)Session["empsForSupMyTeamCompleted"];
-			}
-
-			return empsForSupMyTeamCompleted;
-		}
-
-		private SelectList GetSupsForMgrMyTeamCompleted(User user)
-		{
-			SelectList supsForMgrMyTeamCompleted = null;
-			if (Session["supsForMgrMyTeamCompleted"] == null)
-			{
-				supsForMgrMyTeamCompleted = new SelectList(employeeService.GetSupsForMgrMyTeamCompleted(user), "Id", "Name");
-				Session["supsForMgrMyTeamCompleted"] = supsForMgrMyTeamCompleted;
-			}
-			else
-			{
-				supsForMgrMyTeamCompleted = (SelectList)Session["supsForMgrMyTeamCompleted"];
-			}
-
-			return supsForMgrMyTeamCompleted;
-		}
-
-		private SelectList GetEmpsForMgrMyTeamCompleted(User user)
-		{
-			SelectList empsForMgrMyTeamCompleted = null;
-			if (Session["empsForMgrMyTeamCompleted"] == null)
-			{
-				empsForMgrMyTeamCompleted = new SelectList(employeeService.GetEmpsForMgrMyTeamCompleted(user), "Id", "Name");
-				Session["empsForMgrMyTeamCompleted"] = empsForMgrMyTeamCompleted;
-			}
-			else
-			{
-				empsForMgrMyTeamCompleted = (SelectList)Session["empsForMgrMyTeamCompleted"];
-			}
-
-			return empsForMgrMyTeamCompleted;
-		}
-
-		private SelectList GetWarningStatuses(User user)
-		{
-			SelectList warningStatuses = null;
-			if (Session["warningStatuses"] == null)
-			{
-				warningStatuses = new SelectList(empLogService.GetWarningStatuses(user), "Id", "Name");
-				Session["warningStatuses"] = warningStatuses;
-			}
-			else
-			{
-				warningStatuses = (SelectList)Session["warningStatuses"];
-			}
-
-			return warningStatuses;
-		}
-
-		private SelectList GetMgrsForMySubmission(User user)
-		{
-			SelectList mgrsForMySubmission = null;
-			if (Session["mgrsForMySubmission"] == null)
-			{
-				mgrsForMySubmission = new SelectList(employeeService.GetFiltersForMySubmission(user, Constants.MY_SUBMISSION_FILTER_MANAGER), "Id", "Name");
-				Session["mgrsForMySubmission"] = mgrsForMySubmission;
-			}
-			else
-			{
-				mgrsForMySubmission = (SelectList)Session["mgrsForMySubmission"];
-			}
-
-			return mgrsForMySubmission;
-		}
-
-		private SelectList GetSupsForMySubmission(User user)
-		{
-			SelectList supsForMySubmission = null;
-			if (Session["supsForMySubmission"] == null)
-			{
-				supsForMySubmission = new SelectList(employeeService.GetFiltersForMySubmission(user, Constants.MY_SUBMISSION_FILTER_SUPERVISOR), "Id", "Name");
-				Session["supsForMySubmission"] = supsForMySubmission;
-			}
-			else
-			{
-				supsForMySubmission = (SelectList)Session["supsForMySubmission"];
-			}
-
-			return supsForMySubmission;
-		}
-
-		private SelectList GetEmpsForMySubmission(User user)
-		{
-			SelectList empsForMySubmission = null;
-			if (Session["empsForMySubmission"] == null)
-			{
-				empsForMySubmission = new SelectList(employeeService.GetFiltersForMySubmission(user, Constants.MY_SUBMISSION_FILTER_EMPLOYEE), "Id", "Name");
-				Session["empsForMySubmission"] = empsForMySubmission;
-			}
-			else
-			{
-				empsForMySubmission = (SelectList)Session["empsForMySubmission"];
-			}
-
-			return empsForMySubmission;
-		}
-
-		private ChartData CreateChartData(IList<ChartDataset> dataSets)
+    	private ChartData CreateChartData(IList<ChartDataset> dataSets)
 		{
 			ChartData data = new ChartData();
 			int index = 1;

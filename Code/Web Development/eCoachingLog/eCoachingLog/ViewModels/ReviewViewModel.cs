@@ -21,9 +21,13 @@ namespace eCoachingLog.ViewModels
 		public DateTime? DateCoached { get; set; }
 		[AllowHtml]
 		public string DetailsCoached { get; set; }
+        [AllowHtml]
+        public string FollowupComments { get; set; }
+        public bool ShowSupervisorReviewInfo { get; set; }
+        public bool ShowEmployeeReviewInfo { get; set; }
 
-		// Short Call - Confirm view by Manager - Comments
-		[AllowHtml]
+        // Short Call - Confirm view by Manager - Comments
+        [AllowHtml]
 		public string Comments { get; set; }
 		public DateTime? DateConfirmed { get; set; }
 
@@ -44,7 +48,70 @@ namespace eCoachingLog.ViewModels
 		[AllowHtml]
 		public string Comment { get; set; }
 
-		public IEnumerable<SelectListItem> MainReasonNotCoachableList { get; set; }
+        //public bool ShowLogLinkInfo 
+        //{
+        //    get
+        //    {
+        //        bool show = false;
+        //        if (this.LogDetail.IsQnSupervisor && this.LogDetail.StatusId == 6) // pending supervisor review
+        //        {
+        //            show = true;
+        //        }
+
+        //        return true;
+        //    }
+        //}
+
+        // public int LogIdLinkedTo { get; set; }
+        // todo
+        // a list of CheckBox
+        public List<TextValue> AdditionalActivityLogs { get; set; } // link to the log used to listen to additional call
+        public bool HasAdditionalActivityLogs
+        {
+            get
+            {
+                return AdditionalActivityLogs != null && AdditionalActivityLogs.Count > 0;
+            }
+        }
+
+        [AllowHtml]
+        public string QnSummaryEditable { get; set; }
+        public string QnSummaryReadOnly { get; set; }
+        public string QnSummaryAll
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(QnSummaryReadOnly) && String.IsNullOrEmpty(QnSummaryEditable))
+                {
+                    return "";
+                }
+
+                if (String.IsNullOrEmpty(QnSummaryReadOnly))
+                {
+                    return QnSummaryEditable;
+                }
+
+                if (String.IsNullOrEmpty(QnSummaryReadOnly))
+                {
+                    return QnSummaryReadOnly;
+                }
+
+                return QnSummaryReadOnly + "." + QnSummaryEditable;
+            }
+        }
+        public bool IsReadyToCoach
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(QnSummaryEditable) || !String.IsNullOrEmpty(QnSummaryReadOnly);
+            }
+        }
+        public bool ShowEvalDetail { get; set; }
+        public bool ShowEvalSummary { get; set; }
+
+        public bool AllowCopy { get; set; }
+
+        public IEnumerable<SelectListItem> MainReasonNotCoachableList { get; set; }
 		public IEnumerable<SelectListItem> EmployeeCommentsDdlList { get; set; }
 
 		// Show Manger Notes, Coching Notes
@@ -80,8 +147,19 @@ namespace eCoachingLog.ViewModels
 
 		public string CommentTextboxLabel { get; set; }
 
-		// Followup related
-		public bool ShowFollowupInfo { get; set; }
+        // Quality Now (submitted by quanlity staff) followup related
+        public bool ShowFollowupCoaching { get; set; }
+        public bool? IsFollowupCoachingRequired { get; set; }
+        public string FollowupDueDate
+        {
+            get
+            {
+                return DateTime.Now.AddDays(7).ToString("MM/dd/yyyy");
+            }
+        }
+        public bool ShowFollowupReminder { get; set; }
+
+        public bool ShowFollowupInfo { get; set; }
 		public bool IsFollowupCompleted { get; set; }
 		public bool IsFollowupAcknowledged { get; set; }
 		public bool IsFollowupDue { get; set; }
@@ -107,7 +185,6 @@ namespace eCoachingLog.ViewModels
 		// short call list
 		public IList<ShortCall> ShortCallList { get; set; }
 		public string ShortCallBehaviorActionList { get; set; }
-		public bool ShowEmployeeReviewInfo { get; set; }
 
 		public bool IsWarning { get; set; }
 
@@ -137,6 +214,12 @@ namespace eCoachingLog.ViewModels
 			// Regular Pending
 			if (this.IsRegularPendingForm)
 			{
+                if (this.ShowFollowupCoaching && this.IsFollowupCoachingRequired == null)
+                {
+                    var isFollowupCoachingRequired = new[] { "IsFollowupCoachingRequired" };
+                    yield return new ValidationResult("Select Yes or No.", isFollowupCoachingRequired);
+                }
+
 				if (!this.DateCoached.HasValue)
 				{
 					var dateCoached = new[] { "DateCoached" };
@@ -351,8 +434,10 @@ namespace eCoachingLog.ViewModels
 				DateConfirmed = vm.DateConfirmed,
 				DateFollowup = vm.ActualFollowupDate,
 				DetailsFollowup = vm.FollowupDetails,
-				IsCoaching = !vm.IsWarning
-			};
+				IsCoaching = !vm.IsWarning,
+                IsFollowupCoachingRequired = vm.IsFollowupCoachingRequired,
+                FollowupDueDate = vm.FollowupDueDate
+            };
 		}
 
 	} // End class ReviewViewModel

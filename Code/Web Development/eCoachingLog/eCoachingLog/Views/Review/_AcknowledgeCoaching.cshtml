@@ -17,6 +17,12 @@
 	{ Html.RenderPartial("_FollowupInfo"); }
 }
 
+@Model.LogDetail.EmployeeReviewDate
+@if (!string.IsNullOrEmpty(Model.LogDetail.EmployeeReviewDate))
+{
+    Html.RenderPartial("_EmployeeReviewInfo");
+}
+
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
 {
 	@Html.HiddenFor(m => m.IsAcknowledgeForm)
@@ -30,6 +36,7 @@
 	@Html.HiddenFor(m => m.LogDetail.StatusId)
 	@Html.HiddenFor(m => m.LogDetail.CoachingNotes)
 	@Html.HiddenFor(m => m.LogDetail.HasSupAcknowledged)
+    @Html.HiddenFor(m => m.LogDetail.HasEmpAcknowledged)
 	@Html.HiddenFor(m => m.LogDetail.SupervisorEmail)
 	@Html.HiddenFor(m => m.LogDetail.ManagerEmail)
 	@Html.HiddenFor(m => m.LogDetail.FormName)
@@ -37,6 +44,7 @@
 	@Html.HiddenFor(m => m.LogDetail.IsBqns)
 	@Html.HiddenFor(m => m.LogDetail.IsBqm)
 	@Html.HiddenFor(m => m.LogDetail.IsBqms)
+    @Html.HiddenFor(m => m.LogDetail.IsQn)
 
 	<div class='form-group mt-2'>
 		<label for="AcknowledgeCheckBox" class="required">@Model.AckCheckboxTitle</label><br />
@@ -48,10 +56,10 @@
 
 	<div class='form-group mt-2 @(Model.ShowCommentTextBox ? "show" : "hide")'>
 		<label for="EmployeeCommentsTextBox" class='@Model.IsAckOverTurnedAppeal ? "required" : ""'>@Model.CommentTextboxLabel</label>
-		@Html.TextAreaFor(m => m.Comment, new { @class = "form-control", @rows = "5", id = "textarea-employee-comments", maxlength = 3000 })
+		@Html.TextAreaFor(m => m.Comment, new { @class = "form-control remaining", @rows = "5", id = "textarea-employee-comments", maxlength = 3000 })
 		<div class="help-block">
 			Provide as much detail as possible.
-			<span id="employee-comments" class="pull-right">3000 remaining</span>
+            <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
 		</div>
 		@Html.ValidationMessageFor(m => m.Comment)
 	</div>

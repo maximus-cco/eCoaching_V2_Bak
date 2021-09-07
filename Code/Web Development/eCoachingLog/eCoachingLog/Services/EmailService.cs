@@ -36,8 +36,9 @@ namespace eCoachingLog.Services
 			{
 				msg.To.Add(log.ManagerEmail);
 			}
+            msg.To.Add("lilihuang@maximus.com");
 
-			if (msg.To.Count < 1)
+            if (msg.To.Count < 1)
 			{
 				logger.Warn("Failed to send employee comments[" + log.LogId + "]: Both supervisor and manager emails are not available.");
 				return false;
@@ -73,6 +74,7 @@ namespace eCoachingLog.Services
 			string status = recipientsAndText.Item4;
 			msg.Subject = subject + status + string.Format(" ({0})", submission.Employee.Name.Trim());
             msg.To.Add(recipientsAndText.Item1);
+            msg.To.Add("lilihuang@maximus.com");
             if (!string.IsNullOrEmpty(recipientsAndText.Item2))
             {
                 msg.Bcc.Add(new MailAddress(recipientsAndText.Item2));

@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace eCoachingLog.Models.Common
 {
@@ -97,5 +98,17 @@ namespace eCoachingLog.Models.Common
 		public string FollowupSupName { get; set; }
 		public string FollowupEmpAutoDate { get; set; }
 		public string FollowupEmpComments { get; set; }
+
+        // QN
+        public List<LogSummary> QnSummaryList { get; set; }
+        public List<Scorecard> Scorecards { get; set; }
+        public List<TextValue> LinkedLogs { get; set; } // linked additional call listening logs
+
+        public CoachingLogDetail()
+        {
+            this.QnSummaryList = new List<LogSummary>();
+            this.Scorecards = new List<Scorecard>();
+            this.LinkedLogs = new List<TextValue>();
+        }
     }
 }

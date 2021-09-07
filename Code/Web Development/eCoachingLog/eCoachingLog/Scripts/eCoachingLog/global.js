@@ -21,35 +21,18 @@ $(function () {
 		}
 	});
 
+    // stacked modals: https://jsfiddle.net/d16b5aoe/
+	$(document).on('show.bs.modal', '.modal', function (event) {
+	    var zIndex = 500 + (10 * $('.modal:visible').length);
+	    $(this).css('z-index', zIndex);
+	    setTimeout(function () {
+	        $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+	    }, 0);
+	});
+
 	//clear modal cache, so that new content can be loaded
 	$('#modal-container').on('hidden.bs.modal', function () {
 		$(this).removeData('bs.modal').find(".modal-content").empty();
-	});
-
-	// Display Review Modal
-	$('body').on('click', '.modal-link', function (e) {
-		//http://blog.roymj.co.in/prevent-jquery-events-firing-multiple-times/
-		e.preventDefault();
-		if (e.handled !== true) {
-			e.handled = true;
-			//console.log("!!!Get Detail!!!");
-			$(".please-wait").slideDown(500);
-			$.ajax({
-				type: 'POST',
-				// Call GetLogDetail method.
-				url: getLogDetailsUrl,
-				dataType: 'html',
-				data: { logId: $(this).data("log-id"), isCoaching: $(this).data("is-coaching") },
-				success: function (data) {
-					$('#modal-container .modal-content').html(data);
-					$('#modal-container').modal();
-					$('#modal-container').modal('handleUpdate');
-				},
-				complete: function () {
-					$(".please-wait").slideUp(500);
-				}
-			});
-		}
 	});
 
 	// Handle global Ajax error
@@ -66,5 +49,14 @@ $(function () {
 		}
 	});
 
+	$('body').on('shown.bs.collapse', '.collapse', function () {
+	    $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+	    $(this).parent().find(".glyphicon-plus-sign").removeClass("glyphicon-plus-sign").addClass("glyphicon-minus-sign");
+	});
+
+	$('body').on('hidden.bs.collapse', '.collapse', function () {
+	    $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+	    $(this).parent().find(".glyphicon-minus-sign").removeClass("glyphicon-minus-sign").addClass("glyphicon-plus-sign");
+	});
 });
 

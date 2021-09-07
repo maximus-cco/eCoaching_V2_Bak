@@ -95,6 +95,7 @@ namespace eCoachingLog.Controllers
 		{
 			logger.Debug("Entered Search...");
 			vm.Search.LogType = Constants.LOG_SEARCH_TYPE_HISTORICAL;
+            vm.Search.IsBothQnNonQn = true;
 			return PartialView("_LogList", vm.Search);
 		}
 

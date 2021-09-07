@@ -37,14 +37,19 @@ namespace eCoachingLog.Repository
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFilter, string userId, string search);
 
-		IList<LogState> GetWarningStatuses(User user);
+        List<LogBase> GetLogListQn(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search);
+        int GetLogListTotalQn(LogFilter logFilter, string userId, string search);
+
+        IList<LogState> GetWarningStatuses(User user);
 
 		IList<LogCount> GetLogCounts(User user);
-		IList<ChartDataset> GetChartDataSets(User user);
+        IList<LogCount> GetLogCountsQn(User user);
+
+        IList<ChartDataset> GetChartDataSets(User user);
 
 		IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end);
 		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end);
 
-		IList<Scorecard> GetScorecards(long logId);
+        CoachingLogDetail GetScorecardsAndSummary(long logId);
 	}
 }

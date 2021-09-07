@@ -1,0 +1,227 @@
+﻿@using eCoachingLog.Models.User
+@model eCoachingLog.ViewModels.ReviewViewModel
+@{
+    var user = ((User)Session["AuthenticatedUser"]);
+}
+
+<div class="container-fluid" style="height: 100%;">
+    <div class="row row-eq-height">
+        <div class="col-xs-3 blue-bar">
+            @{Html.RenderPartial("_CoachingLogInfo"); }
+        </div>
+
+        <div class="col-xs-9">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title">Follow-up Review</h2>
+                <div class="text-danger"><mark>Please complete follow-up by @Model.FollowupDueDate.</mark></div>
+                <div class="danger pull-right">Please do NOT include PII or PHI in the log entry.</div>
+            </div>
+
+            <div class="modal-body" style="font-size: small;">
+                @{ Html.RenderPartial("_Reasons", Model.LogDetail.Reasons); }
+                @{ Html.RenderPartial("_Scorecards"); }
+                @if (Model.ShowEvalSummary)
+                {
+                    <div class="text-primary"><strong><mark>Evaluation Summary:</mark></strong></div>
+                    <div class="text-info">@Model.QnSummaryAll</div>
+                }
+
+                <div class='mt-2 @(Model.ShowCoachingNotes ? "show" : "hide")'>
+                    <strong>Coaching Notes:</strong>
+                    <br />
+                    @Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
+                </div>
+
+                @{ Html.RenderPartial("_SupervisorReviewInfo"); }
+                @{ Html.RenderPartial("_EmployeeReviewInfo"); }
+
+                <hr>
+                @if (Model.HasAdditionalActivityLogs)
+                {
+                    <p class="text-primary text-medium"><strong>Please select log(s) submitted as additional monitoring:</strong></p>
+                    <div class="form-group" id="div-followup-logs">
+                        @for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
+                        {
+                            @:<label class="checkbox-inline">
+                                @Html.CheckBoxFor(m => m.AdditionalActivityLogs[i].IsSelected, new { value = Model.AdditionalActivityLogs[i].Value, @class = "logselection" })@Model.AdditionalActivityLogs[i].Text
+                            @:&nbsp;</label>
+                            <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true">View</a>
+                            <br />
+                        }
+                    </div>
+                    <div class="help-block">
+                        @if (Model.AdditionalActivityLogs.Count == 1)
+                        {
+                            <small class="text-danger">In order to proceed, you need to have monitored at least two additonal activities.</small>
+                        }
+                        else
+                        {
+                            <small class="text-muted">In order to proceed, you need to select at least two associated logs listed above.</small>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="help-block">
+                        <small class="text-danger">We are not able to find any potentional logs that could be related to this log as additional monitoring. In order to proceed, you need to have monitored at least two additonal activities.</small>
+                    </div>
+                }
+
+                @Html.HiddenFor(m => m.LogDetail.LogId, new { @id = "logId" })
+                <div id="div-follow-up" class="hide">
+                    <label class="text-primary text-medium required">Is follow-up coaching required?</label>
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(m => m.IsFollowupCoachingRequired, true, new { @class = "IsCoachingRequired" }) Yes
+                        </label>
+                        <label class="radio-inline ml-3">
+                            @Html.RadioButtonFor(m => m.IsFollowupCoachingRequired, false, new { @class = "IsCoachingRequired" }) No
+                        </label>
+                        @Html.ValidationMessageFor(m => m.IsFollowupCoachingRequired)
+                    </div>
+                </div>
+
+                <div class='form-group mt-3 hide' id='div-date-coached'>
+                    <label for="DateCoached" id="label-date-coached" class="required">Enter the date of coaching:</label>
+                    <div class="col-xs-4 input-group date">
+                        @Html.TextBoxFor(m => m.DateCoached, new { @class = "form-control" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.DateCoached)
+                </div>
+
+                <div class='form-group mt-3 hide' id='div-coaching-detail'>
+                    <label for="DetailsCoached" class="required">Provide the details from the coaching session including action plans developed:</label>
+                    @Html.TextAreaFor(m => m.DetailsCoached, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
+                    <div class="help-block">
+                        Provide as much detail as possible.
+                        <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.DetailsCoached)
+                </div>
+
+                <div class='form-group mt-3 hide' id='div-comments'>
+                    <label for="DetailsCoached" class="">Comments:</label>
+                    @Html.TextAreaFor(m => m.FollowupComments, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
+                    <div class="help-block">
+                        Provide as much detail as possible.
+                        <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.FollowupComments)
+                </div>
+
+            </div>
+            <!-- /.modal-body -->
+
+            <div class="modal-footer" id="div-review-modal-footer">
+                <div id="div-submit-cancel" class="hide">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary float-right" type="submit" id="btn-followup-review-submit">Submit</button>
+                </div>
+                <div id="div-close" class="hide">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!--/.modal-footer -->
+        </div>
+        <!--/.col-xs-9 -->
+    </div>
+    <!--/.row -->
+</div>
+
+<script>
+    var totalSelected = 0;
+    var showSubmitCancel = '@Model.HasAdditionalActivityLogs';
+    $(document).ready(function () {
+
+        $('#div-submit-cancel').addClass("hide");
+        $('#div-close').removeClass("hide");
+
+        $('.logselection').on('change', function (e) {
+            if ($(this).is(':checked')) {
+                totalSelected++;
+            } else {
+                totalSelected--;
+            }
+
+            ShowHideFollowUpQuestion();
+        });
+
+        function ShowHideFollowUpQuestion() {
+            if (totalSelected > 1) {
+                $('#div-follow-up').removeClass("hide");
+                $('.IsCoachingRequired').prop('checked', false);
+                if ($('#div-comments').hasClass("hide")) {
+                    $('#div-close').removeClass("hide");
+                } else {
+                    $('#div-close').addClass("hide");
+                    $('#div-submit-cancel').removeClass("hide");
+                }
+            } else {
+                $('#div-follow-up').addClass("hide");
+                $('#div-comments').addClass("hide");
+                $('#div-submit-cancel').addClass("hide");
+                $('#div-close').removeClass("hide");
+            }
+        }
+
+        $(".IsCoachingRequired").on("change", function () {
+            var isCoachingRequired = $('input:radio[name="IsFollowupCoachingRequired"]:checked').val();
+            $('#div-comments').removeClass('hide');
+            $('#div-submit-cancel').removeClass("hide");
+            $('#div-close').addClass("hide");
+        });
+
+        $('#btn-followup-review-submit').on('click', function (e) {
+            e.preventDefault();
+
+            var isCoachingRequired = $('input:radio[name="IsFollowupCoachingRequired"]:checked').val();
+            var comments = $('#FollowupComments').val();
+            var id = $('#logId').val();
+            submit(qnSubmitFollowupReviewUrl, id, isCoachingRequired, comments);
+        })
+
+        function submit(url, logId, isCochingRequired, comments) {
+            var selected = [];
+            $('.logselection').each(function () {
+                if ($(this).is(':checked')) {
+                    selected.push($(this).attr('value'));
+                }
+            });
+
+            var request = $.ajax({
+                type: 'POST',
+                url: url,
+                traditional: true,
+                data: { logId: logId, linkedTo: selected, isCoachingRequired: isCochingRequired, comments: comments },
+                dataType: 'json',
+           });
+
+            request.always(function (data) {
+                $(".please-wait").slideUp(500); // Hide spinner
+            });
+
+            request.done(function (data) {
+                if (data.success === true) {
+                    $('#modal-container').modal('hide');
+                    // Refresh log list, server side LoadDataQn gets called
+                    myTable.ajax.reload();
+                    // Display success message
+                    showNotification(data.successMsg, "glyphicon glyphicon-saved", "info");
+                } // end success
+                else {
+                    $('#modal-container').modal('hide');
+                    // Display error message
+                    showNotification(data.successMsg, "glyphicon glyphicon-warning-sign", "info");
+                }
+            }) // end request.done
+        } // end function submit
+
+    });
+</script>
+
+@Scripts.Render("~/bundles/scripts/review")
+

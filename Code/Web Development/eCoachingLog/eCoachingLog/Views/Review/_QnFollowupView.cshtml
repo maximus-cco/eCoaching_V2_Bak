@@ -1,0 +1,60 @@
+﻿@using eCoachingLog.Models.User
+@using eCoachingLog.Models.Common
+@model eCoachingLog.ViewModels.ReviewViewModel
+@{
+    var user = ((User)Session["AuthenticatedUser"]);
+}
+
+<div class="container-fluid" style="height: 100%;">
+    <div class="row row-eq-height">
+        <div class="col-xs-3 blue-bar">
+            @{Html.RenderPartial("_CoachingLogInfo"); }
+        </div>
+
+        <div class="col-xs-9">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+
+            <div class="modal-body" style="font-size: small;">
+                @{ Html.RenderPartial("_Reasons", Model.LogDetail.Reasons); }
+                @{ Html.RenderPartial("_Scorecards"); }
+                @if (Model.ShowEvalSummary)
+                {
+                    <div class="text-primary"><strong><mark>Evaluation Summary:</mark></strong></div>
+                    <div class="text-info">@Model.QnSummaryAll</div>
+                }
+
+                <!-- QN log submitted by quality specialist, which need to be followed up (monitoring additional activities) -->
+                @if (Model.LogDetail.IsQn)
+                {
+                    <div class="text-primary" style="margin-top: 5px;"><strong><mark>Additonal monitoring:</mark></strong></div>
+                    if (Model.AdditionalActivityLogs != null)
+                    {
+                        for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
+                        {
+                            <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true">&nbsp;@Model.AdditionalActivityLogs[i].Text View</a>
+                            <br />
+                        }
+                    }
+                }
+
+                <div class='mt-2 @(Model.ShowCoachingNotes ? "show" : "hide")'>
+                    <strong>Coaching Notes:</strong>
+                    <br />
+                    @Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
+                </div>
+
+                @{ Html.RenderPartial("_SupervisorReviewInfo"); }
+                @{ Html.RenderPartial("_EmployeeReviewInfo"); }
+
+            </div>
+            <!-- /.modal-body -->
+
+            <div class="modal-footer" id="div-review-modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+    <!--/.row -->
+</div>

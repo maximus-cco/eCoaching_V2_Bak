@@ -9,6 +9,10 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title">Review</h4>
+                @if (Model.ShowFollowupReminder)
+                {
+                    <div class="text-danger"><mark>Please complete follow-up by @Model.FollowupDueDate.</mark></div>
+                }
 				@if (!Model.IsReadOnly)
 				{
 					<div class="danger pull-right">Please do NOT include PII or PHI in the log entry.</div>
@@ -22,7 +26,7 @@
 			<div class="modal-body" style="font-size: small;">
 				@{ Html.RenderPartial("_Reasons", Model.LogDetail.Reasons); }
 
-                @if (!Model.LogDetail.IsQualityNowLog)
+                @if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor)
 				{
 				    <div class="mt-2">
 					    <strong>Details of the behavior being coached:</strong>
@@ -40,8 +44,24 @@
 				else
 				{
 					<!-- Display Quality NOW log -->
-					Html.RenderPartial("_Scorecards");
-				}
+                    Html.RenderPartial("_Scorecards");
+                    if (Model.ShowEvalSummary && Model.QnSummaryAll != null && Model.QnSummaryAll.Trim() != "")
+                    {
+				        <div class="text-primary"><strong><mark>Evaluation Summary:</mark></strong></div>
+				        <div class="text-info">@Model.QnSummaryAll</div>
+                    }
+                    <!-- QN log submitted by quality specialist, which need to be followed up (monitoring additional activities) -->
+                    if (Model.LogDetail.IsQn && Model.LogDetail.StatusId == 13 && Model.AdditionalActivityLogs != null && Model.AdditionalActivityLogs.Count > 0)
+                    {
+                        <div class="text-primary" style="margin-top: 5px;"><strong><mark>Additonal monitoring:</mark></strong></div>
+                        for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
+                        {
+                            <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true">&nbsp;@Model.AdditionalActivityLogs[i].Text View</a>
+                            <br />
+                        }
+                        <br />
+                    }
+                }
 
 				<div class="mt-2 instruction-text @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")">
 					@Html.Raw(Model.InstructionText)
@@ -65,9 +85,10 @@
 					@if (Model.IsReadOnly || (Model.IsFollowupPendingSupervisorForm && !Model.IsFollowupDue && !Model.IsFollowupOverDue))
 					{
 						<button class="btn btn-primary float-right" id="btn-close" data-dismiss="modal">Close</button>
-					}
-					else if (Model.IsAcknowledgeForm || Model.IsReviewForm)
-					{
+                    }
+                    else if (Model.IsAcknowledgeForm || Model.IsReviewForm)
+                    {
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 						<button class="btn btn-primary float-right" type="submit" id="btn-submit">Submit</button>
 					}
 				</div>

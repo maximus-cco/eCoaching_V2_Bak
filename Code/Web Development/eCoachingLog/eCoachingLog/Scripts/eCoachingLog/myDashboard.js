@@ -2,28 +2,8 @@
 	// Show how many pendings on page inital display
 	if (typeof showPendingText !== 'undefined' && showPendingText === true)
 	{
-		$.notify({
-			//title: '<strong>Attention: </strong>',
-			message: 'You have <span class="lead">' + totalPending + '</span> pending logs that require your action.',
-			icon: 'glyphicon glyphicon-bell',
-		},
-		{
-			type: 'info',
-			delay: 10000, // 10 seconds
-			placement: {
-				from: "bottom",
-				align: "right"
-			},
-			offset: {
-				x: 20,
-				y: 20
-			},
-			animate: {
-				enter: 'animated fadeInUp',
-				exit: 'animated fadeOutDown'
-			},
-			mouse_over: 'pause',
-		});
+	    var msg = 'You have <span class="lead">' + totalPending + '</span> pending logs that require your action.';
+	    showNotification(msg, "glyphicon glyphicon-bell", "info");
 	}
 
 	// onclick "Is the coaching opportunity a confirmed Customer Service Escalation (CSE)?"
@@ -112,34 +92,34 @@
 		//}
 	});
 
-	// Search log
-	$('body').on('click', '#btn-search', function (e) {
-		e.preventDefault();
-		if (e.handled !== true) {
-			e.handled = true;
-			$(".please-wait").slideDown(500);
-			var pageSizeSelected = {
-				pageSizeSelected: $('input[name=pageSizeSelected').val()
-			};
-			$.ajax({
-				type: 'POST',
-				url: searchUrl,
-				data: $('#form-search-mydashboard').serialize() + '&' + $.param(pageSizeSelected),
-				success: function (data) {
-					// hide please-wait inside DataTables initComplete callback.
-					// Warning logs not allowed to export
-					if ($('input[name=typeSelected').val() === 'MySiteWarning')
-					{
-						$('#btn-export-excel-director').hide();
-					}
-					else {
-						$('#btn-export-excel-director').show();
-					}
-					$('#div-search-result').html(data);
-				}
-			});
-		}
-	});
+	//// Search log
+	//$('body').on('click', '#btn-search', function (e) {
+	//	e.preventDefault();
+	//	if (e.handled !== true) {
+	//		e.handled = true;
+	//		$(".please-wait").slideDown(500);
+	//		var pageSizeSelected = {
+	//			pageSizeSelected: $('input[name=pageSizeSelected').val()
+	//		};
+	//		$.ajax({
+	//			type: 'POST',
+	//			url: searchUrl,
+	//			data: $('#form-search-mydashboard').serialize() + '&' + $.param(pageSizeSelected),
+	//			success: function (data) {
+	//				// hide please-wait inside DataTables initComplete callback.
+	//				// Warning logs not allowed to export
+	//				if ($('input[name=typeSelected').val() === 'MySiteWarning')
+	//				{
+	//					$('#btn-export-excel-director').hide();
+	//				}
+	//				else {
+	//					$('#btn-export-excel-director').show();
+	//				}
+	//				$('#div-search-result').html(data);
+	//			}
+	//		});
+	//	}
+	//});
 
 	// Export to excel - my dashboard/director
 	$('body').on('click', '#btn-export-excel-director', function (e) {
@@ -208,7 +188,7 @@
 		.fail(function () {
 			$behaviorDropdown.html('<option value="">error ...&nbsp;&nbsp;</option>');
 		})
-		.complete(function () {
+		.always(function () {
 			$behaviorDropdown.removeClass('loadinggif')
 		});
 	});
@@ -233,7 +213,7 @@
 		})
 		.fail(function () {
 		})
-		.complete(function () {
+		.always(function () {
 		});
 	});
 
@@ -252,172 +232,155 @@
 		}
 	});
 
-    function submitReview(url, tableToRefresh) {
-    	// Do not send input fields in hidden div (display:none) to server
-    	$('div:hidden :input').prop("disabled", true);
+    //// TODO: check why i need this here??
+	//$('body').on('click', '#btn-save-summary', function (e) {
+	//    e.preventDefault();
+	//    $(this).prop('disabled', true);
+	//    saveSummary(qnSaveSummaryUrl);
+	//});
 
-    	var request = $.ajax({
-    		type: 'POST',
-    		url: url,
-    		data: $('#form-mydashboard-review-pending').serialize(),
-    		dataType: 'json'
-    	});
+	$('body').on('click', 'input[type=radio][name=IsFollowupRequired]', function (e) {
+	    //alert($(this).val());
+	    if ($(this).val() === 'True') {
+	        $('#div-followup-deadline').removeClass('hide');
+	        $('#div-followup-deadline').addClass('show');
+	    } else {
+	        $('#div-followup-deadline').removeClass('show');
+	        $('#div-followup-deadline').addClass('hide');
+	    }
+	    //var dueDate = new Date(); 
+	    //dueDate.setDate(dueDate.getDate() + 7);
+	    //$('#followup-due-date').text(dueDate.format('MM/DD/YYYY'));
+	})
 
-    	request.always(function (data) {
-    		$(".please-wait").slideUp(500); // Hide spinner
-    	});
-
-    	request.done(function (data) {
-    		if (data.valid === false)
-    		{
-    			$('#btn-submit').prop('disabled', false);
-    			$('#div-error-prompt').html('<br />Please correct the error(s) and try again.');
-
-				// Reset all error msgs
-    			$.each(data.allfields, function (i, field) {
-    				$('[name="' + field + '"]').removeClass('errorClass');
-    				container = $('span[data-valmsg-for="' + field + '"]').html('');
-    			});
-
-				// Display error msgs
-    			$.each(data.errors, function (key, value) {
-    				var container = $('span[data-valmsg-for="' + key + '"]');
-    				container.removeClass("field-validation-valid").addClass("field-validation-error");
-    				container.html(value);
-
-    				$('[name="' + key + '"]').addClass('errorClass');
-    			});
-    		}
-    		else
-    		{
-    			if (data.success === true) {
-    				$('#modal-container').modal('hide');
-    				// Refresh log list, server side LoadData gets called
-    				tableToRefresh.ajax.reload();
-    				//// Update count display
-    				//$countToUpdate.html(data.count);
-    				// Display success message
-    				$.notify({
-    					message: data.successMsg,
-						icon: 'glyphicon glyphicon-saved',
-    				},
-					{
-						type: 'success',
-						delay: 6000, // 6 seconds
-    					placement: {
-    						from: "bottom",
-							align: "right"
-    					},
-    					offset: {
-    						x: 30,
-    						y: 10
-    					},
-    					animate: {
-    						enter: 'animated fadeInUp',
-    						exit: 'animated fadeOutDown'
-    					},
-    					mouse_over: 'pause',
-    				});
-    			}
-    			else {
-    				$('#modal-container').modal('hide');
-					// Display error message
-    				$.notify({
-    					message: data.errorMsg,
-    					icon: 'glyphicon glyphicon-warning-sign',
-    				},
-					{
-						type: 'danger',
-						delay: 10000, // 10 seconds
-						placement: {
-							from: "bottom",
-							align: "right"
-						},
-						offset: {
-							x: 30,
-							y: 10
-						},
-						animate: {
-							enter: 'animated fadeInUp',
-							exit: 'animated fadeOutDown'
-						},
-    					mouse_over: 'pause',
-					});
-    			}
-    		}
-    	});
-    }
-
-    function toggleCse(cseSelected) {
-    	$('div:hidden :input').prop("disabled", false);
-
-    	resetValidationErrors();
-
-    	if (cseSelected === 'true') {
-    		// Show 'Enter the date coached:'
-    		// Hide 'Enter the date reviewed:'
-    		$('#div-date-coached').removeClass('hide');
-    		$('#div-date-reviewed').removeClass('show');
-    		$('#div-date-reviewed').addClass('hide');
-    		// Show 'Provide the details from the coaching session including action plans developed:'
-    		// Hide 'Provide explanation for Employee and Supervisor as to reason why this is not a CSE:'
-    		$('#div-coaching-detail').removeClass('hide');
-    		$('#div-why-not-cse').removeClass('show');
-    		$('#div-why-not-cse').addClass('hide');
-    	}
-    	else {
-    		// Hide 'Enter the date coached:'
-    		// Show 'Enter the date reviewed:'
-    		$('#div-date-reviewed').removeClass('hide');
-    		$('#div-date-coached').removeClass('show');
-    		$('#div-date-coached').addClass('hide');
-    		// Hide 'Provide the details from the coaching session including action plans developed:'
-    		// Show 'Provide explanation for Employee and Supervisor as to reason why this is not a CSE:'
-    		$('#div-why-not-cse').removeClass('hide');
-    		$('#div-coaching-detail').removeClass('show');
-    		$('#div-coaching-detail').addClass('hide');
-    	}
-    }
-
-    function resetValidationErrors() {
-    	$('#div-error-prompt').html('');
-
-    	// reset error msg
-    	$("form :input:visible").each(function () {
-    		$(this).removeClass('errorClass');
-    		var field = $(this).attr("id");
-    		var errorMsg = $('span[data-valmsg-for="' + field + '"]').text();
-    		if (errorMsg) {
-    			$('span[data-valmsg-for="' + field + '"]').html('');
-    		}
-    	});
-    }
-
-    function toggleCoachingRequired(coachingRequired) {
-    	$('div:hidden :input').prop("disabled", false);
-
-    	resetValidationErrors();
-
-    	if (coachingRequired === 'true') {
-    		// show
-    		$('#div-coachable-detail-reason').removeClass('hide');
-    		// hide
-    		$('#div-noncoachable-main-reason').removeClass('show');
-    		$('#div-noncoachable-main-reason').addClass('hide');
-    		$('#div-noncoachable-detail-reason').removeClass('show');
-    		$('#div-noncoachable-detail-reason').addClass('hide');
-    	}
-    	else {
-    		// show
-    		$('#div-noncoachable-main-reason').removeClass('hide');
-    		$('#div-noncoachable-main-reason').addClass('show');
-    		$('#div-noncoachable-detail-reason').removeClass('hide');
-    		$('#div-noncoachable-detail-reason').addClass('show');
-    		// hide
-    		$('#div-coachable-detail-reason').removeClass('show');
-    		$('#div-coachable-detail-reason').addClass('hide');
-    	}
-    }
 });
+
+function submitReview(url, tableToRefresh) {
+    // Do not send input fields in hidden div (display:none) to server
+    $('div:hidden :input').prop("disabled", true);
+
+    var request = $.ajax({
+        type: 'POST',
+        url: url,
+        data: $('#form-mydashboard-review-pending').serialize(),
+        dataType: 'json'
+    });
+
+    request.always(function (data) {
+        $(".please-wait").slideUp(500); // Hide spinner
+    });
+
+    request.done(function (data) {
+        if (data.valid === false) {
+            $('#btn-submit').prop('disabled', false);
+            $('#div-error-prompt').html('<br />Please correct the error(s) and try again.');
+
+            // Reset all error msgs
+            $.each(data.allfields, function (i, field) {
+                $('[name="' + field + '"]').removeClass('errorClass');
+                container = $('span[data-valmsg-for="' + field + '"]').html('');
+            });
+
+            // Display error msgs
+            $.each(data.errors, function (key, value) {
+                var container = $('span[data-valmsg-for="' + key + '"]');
+                container.removeClass("field-validation-valid").addClass("field-validation-error");
+                container.html(value);
+
+                $('[name="' + key + '"]').addClass('errorClass');
+            });
+        }
+        else {
+            if (data.success === true) {
+                $('#modal-container').modal('hide');
+                // Refresh log list, server side LoadData gets called
+                tableToRefresh.ajax.reload();
+                //// Update count display
+                //$countToUpdate.html(data.count);
+                // Display success message
+                showNotification(data.successMsg, "glyphicon glyphicon-saved", "success");
+            }
+            else {
+                $('#modal-container').modal('hide');
+                // Display error message
+                showNotification(data.errorMsg, "glyphicon glyphicon-warning-sign", "danger");
+            }
+        }
+    });
+}
+
+function toggleCse(cseSelected) {
+    $('div:hidden :input').prop("disabled", false);
+
+    resetValidationErrors();
+
+    if (cseSelected === 'true') {
+        // Show 'Enter the date coached:'
+        // Hide 'Enter the date reviewed:'
+        $('#div-date-coached').removeClass('hide');
+        $('#div-date-reviewed').removeClass('show');
+        $('#div-date-reviewed').addClass('hide');
+        // Show 'Provide the details from the coaching session including action plans developed:'
+        // Hide 'Provide explanation for Employee and Supervisor as to reason why this is not a CSE:'
+        $('#div-coaching-detail').removeClass('hide');
+        $('#div-why-not-cse').removeClass('show');
+        $('#div-why-not-cse').addClass('hide');
+    }
+    else {
+        // Hide 'Enter the date coached:'
+        // Show 'Enter the date reviewed:'
+        $('#div-date-reviewed').removeClass('hide');
+        $('#div-date-coached').removeClass('show');
+        $('#div-date-coached').addClass('hide');
+        // Hide 'Provide the details from the coaching session including action plans developed:'
+        // Show 'Provide explanation for Employee and Supervisor as to reason why this is not a CSE:'
+        $('#div-why-not-cse').removeClass('hide');
+        $('#div-coaching-detail').removeClass('show');
+        $('#div-coaching-detail').addClass('hide');
+    }
+}
+
+function resetValidationErrors() {
+    $('#div-error-prompt').html('');
+
+    // reset error msg
+    $("form :input:visible").each(function () {
+        $(this).removeClass('errorClass');
+        var field = $(this).attr("id");
+        var errorMsg = $('span[data-valmsg-for="' + field + '"]').text();
+        if (errorMsg) {
+            $('span[data-valmsg-for="' + field + '"]').html('');
+        }
+    });
+}
+
+function toggleCoachingRequired(coachingRequired) {
+    $('div:hidden :input').prop("disabled", false);
+
+    resetValidationErrors();
+
+    if (coachingRequired === 'true') {
+        // show
+        $('#div-coachable-detail-reason').removeClass('hide');
+        // hide
+        $('#div-noncoachable-main-reason').removeClass('show');
+        $('#div-noncoachable-main-reason').addClass('hide');
+        $('#div-noncoachable-detail-reason').removeClass('show');
+        $('#div-noncoachable-detail-reason').addClass('hide');
+    }
+    else {
+        // show
+        $('#div-noncoachable-main-reason').removeClass('hide');
+        $('#div-noncoachable-main-reason').addClass('show');
+        $('#div-noncoachable-detail-reason').removeClass('hide');
+        $('#div-noncoachable-detail-reason').addClass('show');
+        // hide
+        $('#div-coachable-detail-reason').removeClass('show');
+        $('#div-coachable-detail-reason').addClass('hide');
+    }
+}
+
+
+
 
 

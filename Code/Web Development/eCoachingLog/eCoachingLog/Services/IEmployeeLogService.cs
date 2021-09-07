@@ -37,12 +37,20 @@ namespace eCoachingLog.Services
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
 		int GetLogListTotal(LogFilter logFiler, string userId, string search);
 
-		IList<LogState> GetWarningStatuses(User user);
+        List<LogBase> GetLogListQn(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
+        int GetLogListTotalQn(LogFilter logFiler, string userId, string search);
+
+        //List<LogBase> GetLogList_QN_Followup(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
+
+        IList<LogState> GetWarningStatuses(User user);
 
 		IList<LogCount> GetLogCounts(User user);
 		IList<ChartDataset> GetChartDataSets(User user);
+        IList<LogCount> GetLogCountsQn(User user);
+        //IList<ChartDataset> GetChartDataSetsQn(User user);
+        IList<QnStatistic> GetPast3MonthStatisticQn(User user, DateTime current);
 
-		IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end);
+        IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end);
 		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end);
 	}
 }

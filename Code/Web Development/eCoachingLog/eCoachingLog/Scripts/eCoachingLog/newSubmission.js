@@ -2,6 +2,13 @@
 	var cancelBtnClicked = false;
 	var workAtHomeChecked = false;
 	var showWorkAtHomeBehaviorDiv = false;
+
+	if (showSuccessMessage === 'True') {
+	    $('#success-message').removeClass('hide');
+	} else if (showFailMessage === 'True') {
+	    $('#fail-message').removeClass('hide');
+	}
+
 	// Check unsaved data
     $('#new-submission-form').data('serialize', $('#new-submission-form').serialize());
     $(window).on('beforeunload', function (e) {
@@ -140,7 +147,7 @@
             data: { siteIdSelected: $(this).val() },
 
             success: function (result) {
-            	$(".please-wait").slideUp(500);
+                $(".please-wait").slideUp(500);
                 $('#div-new-submission-main').html(result);
             }
         });

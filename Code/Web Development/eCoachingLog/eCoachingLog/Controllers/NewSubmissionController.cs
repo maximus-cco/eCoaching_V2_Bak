@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using Vereyon.Web;
 
 namespace eCoachingLog.Controllers
 {
@@ -63,6 +62,7 @@ namespace eCoachingLog.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Save(NewSubmissionViewModel vm)
         {
 			logger.Debug("Entered Save ...");
@@ -71,8 +71,8 @@ namespace eCoachingLog.Controllers
             {
                 bool isDuplicate = false;
 				string logNameSaved = null;
-				
-				string failMsg = "Failed to save your submission. Please ensure you have entered all required fields.";
+
+                string failMsg = "Failed to save your submission. Please ensure you have entered all required fields.";
 				string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
 				try
 				{
@@ -103,7 +103,9 @@ namespace eCoachingLog.Controllers
 					{
 						throw new Exception("Failed to save submission.");
 					}
-					FlashMessage.Confirmation(string.Format("Your submission {0} was saved successfully.", logNameSaved));
+                    TempData["ShowSuccessMessage"] = true;
+                    TempData["ShowFailMessage"] = false;
+                    TempData["SuccessMessage"] = string.Format("Your submission {0} was saved successfully.", logNameSaved);
 					
 					// send email
 					// work around to get email attributes for direct
@@ -132,13 +134,15 @@ namespace eCoachingLog.Controllers
 
 					if (string.IsNullOrEmpty(logNameSaved)) // Failed to save
 					{
+						TempData["ShowSuccessMessage"] = false;
+                        TempData["ShowFailMessage"] = true;
 						if (isDuplicate) // Same log already exists
 						{
-							FlashMessage.Info(duplicateMsg);
+                            TempData["FailMessage"] = duplicateMsg;
 						}
 						else
 						{
-							FlashMessage.Warning(failMsg);
+                            TempData["FailMessage"] = failMsg;
 						}
 					}
 					return StayOnThisPage(vm);
@@ -146,7 +150,9 @@ namespace eCoachingLog.Controllers
                 return RedirectToAction("Index");
             }
 
-            FlashMessage.Danger("Please correct all errors indicated in red to proceed.");
+            TempData["ShowSuccessMessage"] = false;
+            TempData["ShowFailMessage"] = true;
+            TempData["FailMessage"] = "Please correct all errors indicated in red to proceed###";
             ViewBag.ClientValidateCoachingReasons = true;
 			ViewBag.ValidationError = true;
             return StayOnThisPage(vm);
