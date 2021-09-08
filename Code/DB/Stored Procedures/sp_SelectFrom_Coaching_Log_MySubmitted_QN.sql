@@ -1,31 +1,23 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyCompleted' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	05/22/2018
---	Description: *	This procedure returns the Completed logs for logged in user.
---  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
---  Modified to support Quality Now  TFS 13332 -  03/01/2019
---  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
---  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
---  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--	Create Date:	08/03/2021
+--	Description: *	This procedure returns the Submitted QN logs for logged in user.
+--  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --	=====================================================================
 
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_QN] 
 @nvcUserIdin nvarchar(10),
+@intStatusIdin int,
+@nvcEmpIdin nvarchar(10),
+@nvcSupIdin nvarchar(10),
+@nvcMgrIdin nvarchar(10),
 @strSDatein datetime,
 @strEDatein datetime,
 @PageSize int,
@@ -41,14 +33,17 @@ BEGIN
 SET NOCOUNT ON
 
 DECLARE	
-@nvcSQL nvarchar(max),
+@nvcSubSource nvarchar(100),
+@NewLineChar nvarchar(2),
 @strSDate nvarchar(10),
 @strEDate nvarchar(10),
+@where nvarchar(max),
+@nvcSQL nvarchar(max),
 @UpperBand int,
 @LowerBand int,
 @SortExpression nvarchar(100),
-@SortOrder nvarchar(10) ,
-@OrderKey nvarchar(10)
+@SortOrder nvarchar(10) 
+
   
 
 SET @LowerBand  = @startRowIndex 
@@ -66,8 +61,34 @@ SET  @SortExpression = @sortBy +  @SortOrder
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
+SET @NewLineChar = CHAR(13) + CHAR(10)
 SET @strSDate = convert(varchar(8), @strSDatein,112)
 Set @strEDate = convert(varchar(8), @strEDatein,112)
+
+SET @where = ' AND convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''' +  @NewLineChar +
+			 ' AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + ''''
+			
+
+IF @intStatusIdin  <> -1
+BEGIN
+	SET @where = @where + @NewLineChar + 'AND  [cl].[StatusID] = ''' + CONVERT(nvarchar,@intStatusIdin) + ''''
+END
+
+
+IF @nvcSupIdin  <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [eh].[Sup_ID] = ''' + @nvcSupIdin  + '''' 
+END
+
+IF @nvcMgrIdin  <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [eh].[Mgr_ID] = ''' + @nvcMgrIdin  + '''' 
+END
+
+IF @nvcEmpIdin  <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [cl].[EmpID] = ''' + @nvcEmpIdin  + '''' 
+END
 
 SET @nvcSQL = 'WITH TempMain 
 AS 
@@ -102,16 +123,14 @@ AS
     FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 	JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
 	JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON cl.EmpID = eh.Emp_ID 
-	LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
+	JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
-	WHERE  cl.EmpID = '''+@nvcUserIdin+''' 
-    AND [cl].[StatusID] = 1
-	AND [cl].[SourceID] NOT IN (235,236)
-	AND convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
-	AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-	AND [cl].[EmpID] <> ''999999''
-	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate]
+	WHERE  [cl].[SubmitterID] = '''+@nvcUserIdin+''' '+ @NewLineChar +
+	' AND [cl].[StatusID] <> 2 ' + @NewLineChar +
+	' AND [cl].[SourceID] IN (235, 236) ' + @NewLineChar +
+	@where + ' ' + '
+  	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate]
 	, [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate]
 
   ) x 
@@ -126,13 +145,12 @@ SELECT strLogID,
   ,strSource
   ,SubmittedDate
   ,strSubmitterName
-   ,IsFollowupRequired
+  ,IsFollowupRequired
   ,FollowupDueDate
   ,IsFollowupCompleted
   ,[EC].[fn_strCoachingReasonFromCoachingID](T.strLogID) strCoachingReason
   ,[EC].[fn_strSubCoachingReasonFromCoachingID](T.strLogID) strSubCoachingReason
-  ,CASE WHEN strSource in (''Verint-CCO'', ''Verint-CCO Supervisor'') THEN ''''
- ELSE [EC].[fn_strValueFromCoachingID](T.strLogID) END strValue
+  ,'''' strValue
   ,RowNumber                 
 FROM TempMain T
 WHERE RowNumber >= ''' + CONVERT(VARCHAR, @LowerBand) + '''  AND RowNumber < ''' + CONVERT(VARCHAR, @UpperBand) + '''
@@ -146,8 +164,6 @@ EXEC (@nvcSQL)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
-END -- sp_SelectFrom_Coaching_Log_MyCompleted
+END -- sp_SelectFrom_Coaching_Log_MySubmitted_QN
 GO
-
-
 

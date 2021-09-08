@@ -1,13 +1,3 @@
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MySubmitted_Count' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_Count]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -16,13 +6,12 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	05/22/2018
---	Description: *	This procedure returns the Count of Submitted logs for logged in user.
---  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
---  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--	Create Date:	08/03/2021
+--	Description: *	This procedure returns the Submitted QN logs for logged in user.
+--  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --	=====================================================================
 
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_Count] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted_Count_QN] 
 @nvcUserIdin nvarchar(10),
 @intStatusIdin int,
 @nvcEmpIdin nvarchar(10),
@@ -53,7 +42,6 @@ Set @strEDate = convert(varchar(8), @strEDatein,112)
 SET @where = ' AND convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''' +  @NewLineChar +
 			 ' AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + ''''
 			
-
 
 IF @intStatusIdin  <> -1
 BEGIN
@@ -92,7 +80,7 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
 	WHERE  [cl].[SubmitterID] = '''+@nvcUserIdin+''' '+ @NewLineChar +
 	' AND [cl].[StatusID] <> 2' + @NewLineChar +
-	' AND [cl].[SourceID] NOT IN (235, 236) ' + @NewLineChar +
+	' AND [cl].[SourceID] IN (235, 236) ' + @NewLineChar +
 	@where + ' ' + '
     ) x 
 ) SELECT count(strFormID) FROM TempMain';
@@ -110,9 +98,7 @@ Return(0);
 ErrorHandler:
 Return(@@ERROR);
 	    
-END --sp_SelectFrom_Coaching_Log_MySubmitted_Count
-
-
-
+END --sp_SelectFrom_Coaching_Log_MySubmitted_Count_QN
 GO
+
 

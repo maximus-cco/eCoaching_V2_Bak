@@ -1,12 +1,3 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyCompleted' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -15,16 +6,12 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	05/22/2018
---	Description: *	This procedure returns the Completed logs for logged in user.
---  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
---  Modified to support Quality Now  TFS 13332 -  03/01/2019
---  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
---  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
---  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--	Create Date:	08/03/2021
+--	Description: *	This procedure returns the Completed QN logs for logged in user.
+--  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --	=====================================================================
 
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted_QN] 
 @nvcUserIdin nvarchar(10),
 @strSDatein datetime,
 @strEDatein datetime,
@@ -107,7 +94,7 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
 	WHERE  cl.EmpID = '''+@nvcUserIdin+''' 
     AND [cl].[StatusID] = 1
-	AND [cl].[SourceID] NOT IN (235,236)
+	AND [cl].[SourceID] IN (235,236)
 	AND convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 	AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
 	AND [cl].[EmpID] <> ''999999''
@@ -131,8 +118,7 @@ SELECT strLogID,
   ,IsFollowupCompleted
   ,[EC].[fn_strCoachingReasonFromCoachingID](T.strLogID) strCoachingReason
   ,[EC].[fn_strSubCoachingReasonFromCoachingID](T.strLogID) strSubCoachingReason
-  ,CASE WHEN strSource in (''Verint-CCO'', ''Verint-CCO Supervisor'') THEN ''''
- ELSE [EC].[fn_strValueFromCoachingID](T.strLogID) END strValue
+  ,'''' strValue
   ,RowNumber                 
 FROM TempMain T
 WHERE RowNumber >= ''' + CONVERT(VARCHAR, @LowerBand) + '''  AND RowNumber < ''' + CONVERT(VARCHAR, @UpperBand) + '''
@@ -146,8 +132,6 @@ EXEC (@nvcSQL)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
-END -- sp_SelectFrom_Coaching_Log_MyCompleted
+END -- sp_SelectFrom_Coaching_Log_MyCompleted_QN
 GO
-
-
 

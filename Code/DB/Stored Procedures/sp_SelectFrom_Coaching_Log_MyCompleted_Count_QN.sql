@@ -1,28 +1,17 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyCompleted_Count' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted_Count]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	05/22/2018
---	Description: *	This procedure returns the Count of Completed logs for logged in user.
---  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
---  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
---	=====================================================================
+--	Create Date:	08/03/2021
+--	Description: *	This procedure returns the Completed QN log count for logged in user.
+--  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
+--	===================================================================== 
 
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted_Count] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted_Count_QN] 
 @nvcUserIdin nvarchar(10),
 @strSDatein datetime,
 @strEDatein datetime
@@ -56,7 +45,7 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
 	WHERE  cl.EmpID = '''+@nvcUserIdin+''' 
     AND [cl].[StatusID] = 1
-	AND [cl].[SourceID] NOT IN (235,236)
+	AND [cl].[SourceID] IN (235,236)
 	AND convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
 	AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
 	AND [cl].[EmpID] <> ''999999''
@@ -79,7 +68,6 @@ Return(0);
 ErrorHandler:
 Return(@@ERROR);
 	    
-END --sp_SelectFrom_Coaching_Log_MyCompleted_Count
+END --sp_SelectFrom_Coaching_Log_MyCompleted_Count_QN
 GO
-
 

@@ -1,12 +1,3 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyCompleted' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -15,19 +6,13 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	05/22/2018
---	Description: *	This procedure returns the Completed logs for logged in user.
---  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
---  Modified to support Quality Now  TFS 13332 -  03/01/2019
---  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
---  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
---  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--	Create Date:	08/03/2021
+--	Description: *	This procedure returns the Pending Review QN logs for logged in user.
+--  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --	=====================================================================
 
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyCompleted] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_QN] 
 @nvcUserIdin nvarchar(10),
-@strSDatein datetime,
-@strEDatein datetime,
 @PageSize int,
 @startRowIndex int, 
 @sortBy nvarchar(100),
@@ -42,14 +27,19 @@ SET NOCOUNT ON
 
 DECLARE	
 @nvcSQL nvarchar(max),
-@strSDate nvarchar(10),
-@strEDate nvarchar(10),
+@nvcSQL1 nvarchar(max),
+@nvcSQL2 nvarchar(max),
+@nvcEmpRole nvarchar(40),
 @UpperBand int,
 @LowerBand int,
 @SortExpression nvarchar(100),
 @SortOrder nvarchar(10) ,
-@OrderKey nvarchar(10)
-  
+@NewLineChar nvarchar(2),
+@where nvarchar(max);        
+
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+
 
 SET @LowerBand  = @startRowIndex 
 SET @UpperBand  = @startRowIndex + @PageSize 
@@ -60,16 +50,35 @@ SET @UpperBand  = @startRowIndex + @PageSize
 IF @sortASC = 'y' 
 SET @SortOrder = ' ASC' ELSE 
 SET @SortOrder = ' DESC' 
-SET  @SortExpression = @sortBy +  @SortOrder
+SET @SortExpression =  @sortBy +  @SortOrder
 --PRINT @SortExpression
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
-SET @strSDate = convert(varchar(8), @strSDatein,112)
-Set @strEDate = convert(varchar(8), @strEDatein,112)
 
-SET @nvcSQL = 'WITH TempMain 
+SET @NewLineChar = CHAR(13) + CHAR(10)
+SET @where = 'WHERE cl.[SourceID] in (235, 236) '
+
+
+IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'Supervisor' )
+RETURN 1
+
+IF @nvcEmpRole in ('CSR', 'ARC')
+BEGIN
+SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (3,4,13))'
+END
+
+IF @nvcEmpRole = 'Supervisor'
+BEGIN
+SET @where = @where + ' AND ((cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (3,4))' +  @NewLineChar +
+		       ' OR ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] = 6 ))' +  @NewLineChar +
+		       ' OR (cl.[ReassignedToId] = ''' + @nvcUserIdin + '''  AND [ReassignCount] <> 0 AND cl.[StatusID] = 6 ))'
+END
+
+
+SET @nvcSQL1 = 'WITH TempMain 
 AS 
 (
   SELECT DISTINCT x.strFormID
@@ -84,7 +93,7 @@ AS
 				,x.IsFollowupRequired
 				,x.FollowupDueDate
 				,x.IsFollowupCompleted
-				,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
+			  ,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
   FROM 
   (
     SELECT DISTINCT [cl].[FormName] strFormID
@@ -99,21 +108,18 @@ AS
 	  ,CASE WHEN [cl].[IsFollowupRequired] = 1 THEN ''Yes'' ELSE ''No'' END IsFollowupRequired
      ,[cl].[FollowupDueDate] FollowupDueDate
 	 ,CASE WHEN [cl].[IsFollowupRequired] = 1 AND [cl].[FollowupActualDate] IS NOT NULL THEN ''Yes'' ELSE ''No'' END IsFollowupCompleted
-    FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
+  	FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 	JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
 	JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON cl.EmpID = eh.Emp_ID 
 	LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
-	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
-	WHERE  cl.EmpID = '''+@nvcUserIdin+''' 
-    AND [cl].[StatusID] = 1
-	AND [cl].[SourceID] NOT IN (235,236)
-	AND convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''
-	AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-	AND [cl].[EmpID] <> ''999999''
-	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate]
-	, [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate]
+	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
+	@where + ' ' + '
+	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status],
+	 [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate] '
 
+
+SET @nvcSQL2 = ' 
   ) x 
 )
 
@@ -126,28 +132,26 @@ SELECT strLogID,
   ,strSource
   ,SubmittedDate
   ,strSubmitterName
-   ,IsFollowupRequired
+  ,IsFollowupRequired
   ,FollowupDueDate
   ,IsFollowupCompleted
   ,[EC].[fn_strCoachingReasonFromCoachingID](T.strLogID) strCoachingReason
   ,[EC].[fn_strSubCoachingReasonFromCoachingID](T.strLogID) strSubCoachingReason
-  ,CASE WHEN strSource in (''Verint-CCO'', ''Verint-CCO Supervisor'') THEN ''''
- ELSE [EC].[fn_strValueFromCoachingID](T.strLogID) END strValue
+ , '''' strValue
   ,RowNumber                 
 FROM TempMain T
 WHERE RowNumber >= ''' + CONVERT(VARCHAR, @LowerBand) + '''  AND RowNumber < ''' + CONVERT(VARCHAR, @UpperBand) + '''
 ORDER BY ' + @SortExpression  
 
 
-
+SET @nvcSQL = @nvcSQL1 + @nvcSQL2; 
 EXEC (@nvcSQL)	
 --PRINT @nvcSQL
 
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
-END -- sp_SelectFrom_Coaching_Log_MyCompleted
+END -- sp_SelectFrom_Coaching_Log_MyPending_QN
 GO
-
 
 

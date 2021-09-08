@@ -1,25 +1,3 @@
-/*
-sp_Update_Review_Coaching_Log_Manager_Pending_Research(04).sql
-Last Modified Date: 06/01/2018
-Last Modified By: Susmitha Palacherla
-
-Version 04: Renamed during My Dashboard move to new architecture - TFS 7137 - 06/01/2018
-
-Version 03: Updated to increase size for
-param @nvcstrReasonNotCoachable to 100 - TFS 6881 - 06/01/2017
-
-Version 02: New Breaks BRN and BRL feeds - TFS 6145 - 4/13/2017
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update5Review_Coaching_Log' 
-)
-   DROP PROCEDURE [EC].[sp_Update5Review_Coaching_Log]
-GO
 
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
@@ -35,10 +13,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:    11/16/2012
@@ -52,11 +26,13 @@ GO
 --    Updated per TFS 6881 to increase size for param @nvcstrReasonNotCoachable to 100 - 06/01/2017
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
 --    TFS 7137 move my dashboard to new architecture - 06/12/2018
+--    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_Research]
+
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_Research]
 (
   @nvcFormID BIGINT,
-  @nvcFormStatus Nvarchar(30),
+  @nvcFormStatus Nvarchar(60),
   @nvcstrReasonNotCoachable Nvarchar(100),
   @nvcReviewerID Nvarchar(10),
   @dtmReviewAutoDate datetime,
@@ -189,6 +165,5 @@ END --sp_Update_Review_Coaching_Log_Manager_Pending_Research
 
 
 GO
-
 
 

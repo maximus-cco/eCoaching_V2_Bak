@@ -1,0 +1,194 @@
+/*
+
+TFS 22187 – Quality Now workflow enhancement.
+
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+1. Add new Status values to [EC].[DIM_Status table]
+2. Create Table [EC].[Coaching_Log_Quality_Now_Summary]
+3. add columns to [EC].[UI_Dashboard_Summary_Display] and populate them
+4. Add additional columns to Coaching_log table for Sup Followup Review
+5. Add additional columns to Coaching_log_Archive table for Sup Followup Review
+
+
+--******************************************
+
+--RUN ONE STEP AT A TIME
+
+--******************************************/
+
+-- Details
+
+1. Add new Status values to DIM_Status table
+
+INSERT INTO [EC].[DIM_Status]
+           ([Status])
+     VALUES
+           ('Pending Follow-up Preparation'),
+           ('Pending Follow-up Coaching'),
+            ('Pending Follow-up Employee Review')
+GO
+
+
+--********************************
+
+--2. Create Table [EC].[Coaching_Log_Quality_Now_Summary]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_Quality_Now_Summary](
+	[SummaryID] [bigint] IDENTITY(1,1) NOT NULL,
+	[CoachingID] [bigint] NOT NULL,
+	[EvalSummaryNotes] [nvarchar](max) NULL,
+	[CreateDate] [datetime] NULL,
+	[CreateBy] [nvarchar](20) NULL,
+	[LastModifyDate] [datetime] NULL,
+	[LastModifyBy] [nvarchar](20) NULL,
+	[IsReadOnly] [bit] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[SummaryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Summary]  WITH NOCHECK ADD  CONSTRAINT [fkQNSummaryCoachingID] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log] ([CoachingID])
+ON DELETE CASCADE
+GO
+
+--********************************
+
+-- 3. add columns to [EC].[UI_Dashboard_Summary_Display] and populate them
+
+ALTER TABLE [EC].[UI_Dashboard_Summary_Display]
+ADD MyCompletedQN bit NULL
+   ,MySubmissionQN bit NULL
+   ,MyPendingQN bit NULL
+   ,MyPendingFollowupPrepQN bit NULL
+   ,MyPendingFollowupCoachQN bit NULL
+   ,MyTeamPendingQN bit NULL
+   ,MyTeamcompletedQN bit NULL;
+GO
+
+UPDATE [EC].[UI_Dashboard_Summary_Display]
+SET MyCompletedQN = 1
+   ,MySubmissionQN = 0
+   ,MyPendingQN = 1
+   ,MyPendingFollowupPrepQN = 0
+   ,MyPendingFollowupCoachQN = 0
+   ,MyTeamPendingQN = 0
+   ,MyTeamcompletedQN = 0
+  WHERE [RoleName] = 'CSR';
+
+GO
+
+UPDATE [EC].[UI_Dashboard_Summary_Display]
+SET MyCompletedQN = 1
+   ,MySubmissionQN = 1
+   ,MyPendingQN = 1
+   ,MyPendingFollowupPrepQN = 0
+   ,MyPendingFollowupCoachQN = 0
+   ,MyTeamPendingQN = 0
+   ,MyTeamcompletedQN = 0
+  WHERE [RoleName] IN ( 'ARC', 'Employee');
+
+GO
+
+UPDATE [EC].[UI_Dashboard_Summary_Display]
+SET MyCompletedQN = 1
+   ,MySubmissionQN = 1
+   ,MyPendingQN = 1
+   ,MyPendingFollowupPrepQN = 1
+   ,MyPendingFollowupCoachQN = 1
+   ,MyTeamPendingQN = 1
+   ,MyTeamcompletedQN = 1
+  WHERE [RoleName] = 'Supervisor';
+
+GO
+
+UPDATE [EC].[UI_Dashboard_Summary_Display]
+SET MyCompletedQN = 0
+   ,MySubmissionQN = 1
+   ,MyPendingQN = 0
+   ,MyPendingFollowupPrepQN = 0
+   ,MyPendingFollowupCoachQN = 0
+   ,MyTeamPendingQN = 1
+   ,MyTeamcompletedQN = 1
+  WHERE [RoleName] = 'Manager';
+
+GO
+
+
+UPDATE [EC].[UI_Dashboard_Summary_Display]
+SET MyCompletedQN = 0
+   ,MySubmissionQN = 0
+   ,MyPendingQN = 0
+   ,MyPendingFollowupPrepQN = 0
+   ,MyPendingFollowupCoachQN = 0
+   ,MyTeamPendingQN = 0
+   ,MyTeamcompletedQN = 0
+  WHERE [RoleName] In ( 'Director', 'HR', 'Restricted');
+
+GO
+
+UPDATE [EC].[UI_Dashboard_Summary_Display]
+SET MyCompletedQN = 0
+   ,MySubmissionQN = 1
+   ,MyPendingQN = 0
+   ,MyPendingFollowupPrepQN = 0
+   ,MyPendingFollowupCoachQN = 0
+   ,MyTeamPendingQN = 0
+   ,MyTeamcompletedQN = 0
+  WHERE [RoleName] = 'Analyst';
+
+GO
+
+ALTER TABLE [EC].[UI_Dashboard_Summary_Display] ALTER COLUMN  MyCompletedQN bit NOT NULL;
+ALTER TABLE [EC].[UI_Dashboard_Summary_Display] ALTER COLUMN MySubmissionQN bit NOT NULL
+ALTER TABLE [EC].[UI_Dashboard_Summary_Display] ALTER COLUMN MyPendingQN bit NOT NULL
+ALTER TABLE [EC].[UI_Dashboard_Summary_Display] ALTER COLUMN MyPendingFollowupPrepQN bit NOT NULL
+ALTER TABLE [EC].[UI_Dashboard_Summary_Display] ALTER COLUMN MyPendingFollowupCoachQN bit NOT NULL
+ALTER TABLE [EC].[UI_Dashboard_Summary_Display] ALTER COLUMN MyTeamPendingQN bit NOT NULL
+ALTER TABLE [EC].[UI_Dashboard_Summary_Display] ALTER COLUMN MyTeamcompletedQN bit NOT NULL
+GO
+
+--********************************
+
+--4. Add additional columns for Sup Followup Review to Coaching_log Table
+
+ALTER TABLE [EC].[Coaching_Log]
+ADD [SupFollowupReviewAutoDate] [datetime] NULL,
+    [SupFollowupReviewCoachingNotes] [nvarchar](4000) NULL,
+	[SupFollowupReviewMonitoredLogs] [nvarchar](200) NULL,
+        [FollowupReviewSupID] [nvarchar](20) NULL
+
+GO
+--********************************
+
+
+--5. Add additional columns for Sup Followup Review to Coaching_log_Archive Table
+
+ALTER TABLE [EC].[Coaching_Log_Archive]
+ADD [SupFollowupReviewAutoDate] [datetime] NULL,
+    [SupFollowupReviewCoachingNotes] [nvarchar](4000) NULL,
+	[SupFollowupReviewMonitoredLogs] [nvarchar](200) NULL,
+        [FollowupReviewSupID] [nvarchar](20) NULL
+GO
+
+--********************************
+
+
+
+
+
+

@@ -1,14 +1,3 @@
-/*
-sp_SelectFrom_Coaching_Log_MyFollowup(01).sql
-Last Modified Date: 09/17/2019
-Last Modified By: Susmitha Palacherla
-
-
-Version 01: Initial Revision. Display MyFollowup for CSRs. TFS 15621 - 09/17/2019 
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -24,16 +13,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	09/17/2019
 --	Description: *	This procedure returns the CSRs logs that are pending follow-up by the supervisor 
 --  Initial Revision. Display MyFollowup for CSRs. TFS 15621 - 09/17/2019 
+--  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyFollowup] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyFollowup] 
 @nvcUserIdin nvarchar(10),
 @PageSize int,
 @startRowIndex int, 
@@ -80,7 +67,7 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = ''
+SET @where = 'WHERE 1 = 1 AND cl.[SourceID] NOT IN (235,236)'
 
 
 
@@ -168,7 +155,4 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MyFollowup
 GO
-
-
-
 

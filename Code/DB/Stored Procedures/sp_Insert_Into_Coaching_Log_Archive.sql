@@ -1,20 +1,3 @@
-/*
-sp_Insert_Into_Coaching_Log_Archive(08).sql
-Last Modified Date: 6/8/2021
-Last Modified By: Susmitha Palacherla
-
-Version 08: Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
-Version 07: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
-Version 06: Updated to archive Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
-Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 04: Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
-Version 03: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -24,12 +7,6 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive]
 GO
 
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -45,8 +22,10 @@ GO
 --  Updated to archive Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
+-- Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 -- =============================================
-CREATE PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive] @strArchivedBy nvarchar(50)= 'Automated Process'
+
+CREATE OR ALTER PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive] @strArchivedBy nvarchar(50)= 'Automated Process'
 
 AS
 BEGIN
@@ -147,6 +126,10 @@ INSERT INTO [EC].[Coaching_Log_Archive]
            ,[EmpAckFollowupAutoDate]
            ,[EmpAckFollowupComments]
 		   ,[FollowupSupID]
+		   ,[SupFollowupReviewAutoDate] 
+           ,[SupFollowupReviewCoachingNotes] 
+	       ,[SupFollowupReviewMonitoredLogs]
+           ,[FollowupReviewSupID] 
            ,[ArchivedBy]
            ,[ArchivedDate]
 		)
@@ -217,6 +200,10 @@ INSERT INTO [EC].[Coaching_Log_Archive]
       ,[EmpAckFollowupAutoDate]
       ,[EmpAckFollowupComments]
 	  ,[FollowupSupID]
+	  ,[SupFollowupReviewAutoDate] 
+      ,[SupFollowupReviewCoachingNotes] 
+	  ,[SupFollowupReviewMonitoredLogs]
+      ,[FollowupReviewSupID]
       ,@strArchivedBy
 	  ,GetDate()
   FROM [EC].[Coaching_Log] CL JOIN #ArchiveLogs A
@@ -428,7 +415,5 @@ COMMIT TRANSACTION
 END -- sp_Insert_Into_Coaching_Log_Archive
 
 GO
-
-
 
 

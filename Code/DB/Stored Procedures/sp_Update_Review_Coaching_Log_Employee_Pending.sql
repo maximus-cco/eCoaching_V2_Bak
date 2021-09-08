@@ -1,20 +1,3 @@
-/*
-Last Modified Date: 03/23/2020
-Last Modified By: Susmitha Palacherla
-
-Version 02: Updated to capture CSRComments. TFS 16855- 03/23/2020
-Version 01: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
-
-*/
-
-
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update4Review_Coaching_Log' 
-)
-   DROP PROCEDURE [EC].[sp_Update4Review_Coaching_Log]
-GO
-
 
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
@@ -28,6 +11,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:     11/16/12
@@ -39,12 +23,14 @@ GO
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
 --    Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --    Updated to capture CSRComments. TFS 16855- 03/23/2020
+--    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Pending]
+
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Pending]
 (
   @nvcLogType nvarchar(20),
   @nvcFormID BIGINT,
-  @nvcFormStatus Nvarchar(30),
+  @nvcFormStatus Nvarchar(60),
   @bitisCSRAcknowledged bit,
   @nvcCSRComments Nvarchar(max),
   @dtmCSRReviewAutoDate datetime
@@ -138,7 +124,4 @@ END CATCH;
 
 END --sp_Update_Review_Coaching_Log_Employee_Pending
 GO
-
-
-
 

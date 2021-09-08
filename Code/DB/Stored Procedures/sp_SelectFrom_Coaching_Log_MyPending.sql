@@ -1,20 +1,3 @@
-/*
-sp_SelectFrom_Coaching_Log_MyPending(08).sql
-Last Modified Date: 08/18/2020
-Last Modified By: Susmitha Palacherla
-
-Version 08: Removed references to SrMgr Role. TFS 18062 - 08/18/2020
-Version 07: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
-Version 06: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
-Version 05: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
-Version 04: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 03: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
-Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -42,8 +25,10 @@ GO
 --  Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
+--  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending] 
+
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending] 
 @nvcUserIdin nvarchar(10),
 @nvcEmpIdin nvarchar(10),
 @nvcSupIdin nvarchar(10),
@@ -96,7 +81,7 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE [cl].[StatusID] <> 2'
+SET @where = 'WHERE [cl].[StatusID] <> 2 AND [cl].[SourceID] NOT IN (235,236) '
 
 
 IF @nvcSupIdin  <> '-1'
@@ -249,6 +234,4 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending
 GO
-
-
 

@@ -1,12 +1,3 @@
-/*
-sp_Update_Review_Coaching_Log_Employee_Pending_Followup(01).sql
-Last Modified Date: 09/03/2019
-Last Modified By: Susmitha Palacherla
-
-
-Version 01:  Initial Revision. Follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-
-*/
 
 IF EXISTS (
   SELECT * 
@@ -23,16 +14,19 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:     11/16/12
 --    Description:    This procedure allows csrs to update the e-Coaching records from the review page after sup follow up.
 --    Initial Revision. Incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+--    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Pending_Followup]
+
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Pending_Followup]
 (
   @nvcFormID BIGINT,
-  @nvcFormStatus Nvarchar(30),
+  @nvcFormStatus Nvarchar(60),
   @bitisCSRAcknowledged bit,
   @nvcCSRComments Nvarchar(max),
   @dtmCSRReviewAutoDate datetime
@@ -103,5 +97,6 @@ BEGIN CATCH
 END CATCH;
 
 END --sp_Update_Review_Coaching_Log_Employee_Pending_Followup
-
 GO
+
+

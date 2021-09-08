@@ -1,16 +1,3 @@
-/*
-sp_SelectFrom_Coaching_Log_MyTeamCompleted(04).sql
-Last Modified Date: 09/17/2019
-Last Modified By: Susmitha Palacherla
-
-Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
-Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -34,8 +21,10 @@ GO
 --  Modified to support Quality Now  TFS 13332 -  03/01/2019
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
+--  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamCompleted] 
+
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamCompleted] 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
 @nvcEmpIdin nvarchar(10),
@@ -90,7 +79,8 @@ Set @strEDate = convert(varchar(8), @strEDatein,112)
 
 SET @where = ' WHERE convert(varchar(8), [cl].[SubmittedDate], 112) >= ''' + @strSDate + '''' +  @NewLineChar +
 			 ' AND convert(varchar(8), [cl].[SubmittedDate], 112) <= ''' + @strEDate + '''' + @NewLineChar +
-			 ' AND [cl].[StatusID] = 1 '
+			 ' AND [cl].[StatusID] = 1 ' +
+			 ' AND [cl].[SourceID] NOT IN (235,236) '
 
 
 IF @intSourceIdin  <> -1
@@ -185,8 +175,9 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MyTeamCompleted
 
+
+
+
 GO
-
-
 
 

@@ -1,12 +1,5 @@
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update6Review_Coaching_Log' 
-)
-   DROP PROCEDURE [EC].[sp_Update6Review_Coaching_Log]
-GO
-
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
   WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update_Review_Coaching_Log_Employee_Acknowledge' 
 )
    DROP PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Acknowledge]
@@ -21,7 +14,6 @@ GO
 
 
 
-
 --    ====================================================================
 --    Author:         Jourdain Augustin
 --    Create Date:    7/31/13
@@ -29,11 +21,13 @@ GO
 --    Last Update:    11/02/2015
 --    Updated per TFS 864 to open CSR comments for all ecls
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
+--    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Acknowledge]
+
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Employee_Acknowledge]
 (
   @nvcFormID BIGINT,
-  @nvcFormStatus Nvarchar(30),
+  @nvcFormStatus Nvarchar(60),
   @bitisCSRAcknowledged bit,
   @dtmCSRReviewAutoDate datetime,
   @nvcCSRComments Nvarchar(max)

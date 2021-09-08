@@ -1,15 +1,3 @@
-/*
-sp_Dashboard_Summary_Count_ByStatus(03).sql
-Last Modified Date: 08/18/2020
-Last Modified By: Susmitha Palacherla
-
-Version 03: Removed references to SrMgr Role. TFS 18062 - 08/18/2020
-Version 02: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -23,6 +11,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -31,8 +20,9 @@ GO
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
+--  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Dashboard_Summary_Count_ByStatus] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count_ByStatus] 
 @nvcEmpID nvarchar(10)
 
 AS
@@ -48,8 +38,6 @@ DECLARE
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
 SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID)
 --PRINT @nvcEmpRole
-
- 
 
 --3 - Pending Acknowledgement
 --4 - Pending Employee Review
@@ -71,6 +59,7 @@ SET @nvcSQL = ' ;WITH SelectedStatus AS
                 (SELECT StatusID, Count(cl.CoachingID) LogCount
 				FROM [EC].[Coaching_Log] cl WITH(NOLOCK)  
 			    WHERE   (cl.[EmpID] = ''' + @nvcEmpID + '''  AND cl.[StatusID] in (3,4))
+				AND cl.[SourceID] NOT IN (235, 236)
 		   	    GROUP BY [cl].[StatusID])
 
 				SELECT s.Status, COALESCE(cl.LogCount,0) AS LogCount
@@ -92,13 +81,12 @@ SET @nvcSQL = ';WITH SelectedStatus AS
 		       OR ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcEmpID + ''' AND cl.[StatusID] in (3,6,8,10)))
 		       OR (cl.[ReassignedToId] = ''' + @nvcEmpID + '''  AND [ReassignCount] <> 0 AND cl.[StatusID]in (3,6,8,10)))
 		       AND cl.[EmpID]  <> ''999999''
+			   AND cl.[SourceID] NOT IN (235, 236)
 			   GROUP BY [cl].[StatusID])
 			   
 			   	SELECT s.Status, COALESCE(cl.LogCount,0) AS LogCount
 				FROM SelectedStatus s left join SelectedLogs cl
 				ON s.statusid = cl.StatusID '
-
-
 
 
 IF @nvcEmpRole = 'Manager'
@@ -117,13 +105,12 @@ SET @nvcSQL = ';WITH SelectedStatus AS
 			  OR ([cl].[strReportCode] LIKE ''LCS%'' AND [ReassignCount] = 0 AND cl.[MgrID] = ''' + @nvcEmpID + ''' AND [cl].[StatusID]= 5) )
 			  OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = ''' +  @nvcEmpID + ''' AND  cl.[StatusID] in (5,7,9))  
               ) AND ''' + @nvcEmpID + ''' <> ''999999''
+			  AND cl.[SourceID] NOT IN (235, 236)
 			  GROUP BY [cl].[StatusID])
 			  
 			   SELECT s.Status, COALESCE(cl.LogCount,0) AS LogCount
 			   FROM SelectedStatus s left join SelectedLogs cl
 			   ON s.statusid = cl.StatusID '
-	     
-
 	
 EXEC (@nvcSQL);
 --PRINT @nvcSQL
@@ -141,6 +128,3 @@ ErrorHandler:
 	    
 END --sp_Dashboard_Summary_Count_ByStatus
 GO
-
-
-

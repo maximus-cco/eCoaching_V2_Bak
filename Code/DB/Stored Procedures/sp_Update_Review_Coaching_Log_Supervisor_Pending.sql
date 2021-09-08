@@ -1,12 +1,5 @@
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update1Review_Coaching_Log' 
-)
-   DROP PROCEDURE [EC].[sp_Update1Review_Coaching_Log]
-GO
-
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
   WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update_Review_Coaching_Log_Supervisor_Pending' 
 )
    DROP PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending]
@@ -20,8 +13,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/12
@@ -30,11 +21,12 @@ GO
 --    Updated per TFS 1709 Admin tool setup to reset reassign count  - 5/2/2016
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
 --    TFS 7137 move my dashboard to new architecture - 06/12/2018
+--    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending]
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending]
 (
   @nvcFormID BIGINT,
-  @nvcFormStatus Nvarchar(30),
+  @nvcFormStatus Nvarchar(60),
   @nvcReviewSupID Nvarchar(10),
   @dtmSupReviewedAutoDate datetime,
   @nvctxtCoachingNotes Nvarchar(max) 
@@ -43,26 +35,36 @@ AS
 
 BEGIN
 
-DECLARE @RetryCounter INT;
+DECLARE  @intSourceID int
+		,@intStatusID int
+        ,@RetryCounter INT;
+
+SET @intSourceID = (Select SourceID from EC.Coaching_log where CoachingID =   @nvcFormID )
+SET @intStatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus);
 SET @RetryCounter = 1;
 
 RETRY: -- Label RETRY
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 BEGIN TRANSACTION;
-
 BEGIN TRY
-
 
 UPDATE [EC].[Coaching_Log]
 SET 
-  StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
+  StatusID = @intStatusID,
   Review_SupID = @nvcReviewSupID,
   SupReviewedAutoDate = @dtmSupReviewedAutoDate,
   CoachingNotes = @nvctxtCoachingNotes,
   ReassignCount = 0
-WHERE CoachingID = @nvcFormID
-OPTION (MAXDOP 1);
+WHERE CoachingID = @nvcFormID;
+
+IF @intSourceID in (235,236)
+BEGIN
+UPDATE [EC].[Coaching_Log_Quality_Now_Summary]
+SET [IsReadOnly]= 1
+   ,[LastModifyDate]= GetDate()
+   ,[LastModifyBy]=  @nvcReviewSupID
+WHERE CoachingID = @nvcFormID AND [IsReadOnly] = 0;
+END  
 	
 COMMIT TRANSACTION;
 END TRY

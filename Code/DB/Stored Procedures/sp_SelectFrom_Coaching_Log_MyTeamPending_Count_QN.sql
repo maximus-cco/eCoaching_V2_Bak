@@ -1,29 +1,20 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyTeamPending_Count' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamPending_Count]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	05/22/2018
---	Description: *	This procedure returns the Count of Completed logs for logged in user.
---  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
---  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--	Create Date:	08/03/2021
+--	Description: *	This procedure returns the count of pending QN logs for employees reporting to the logged in user.
+--  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --	=====================================================================
 
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamPending_Count] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamPending_Count_QN] 
 @nvcUserIdin nvarchar(10),
-@intSourceIdin int,
+@intStatusIdin int,
 @nvcEmpIdin nvarchar(10),
 @nvcSupIdin nvarchar(10)
 
@@ -42,13 +33,13 @@ DECLARE
 
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE [cl].[StatusID] <> 2 AND [cl].[SourceID] NOT IN (235,236) '
+SET @where = 'WHERE [cl].[StatusID] in (3,6,11,12) AND [cl].[SourceID] IN (235,236) '
 
-IF @intSourceIdin  <> -1
+IF @intStatusIdin  <> -1
 BEGIN
-    SET @nvcSubSource = (SELECT SubCoachingSource FROM DIM_Source WHERE SourceID = @intSourceIdin)
-	SET @where = @where + @NewLineChar + 'AND [so].[SubCoachingSource] =  ''' + @nvcSubSource + ''''
+	SET @where = @where + @NewLineChar + 'AND  [cl].[StatusID] = ''' + CONVERT(nvarchar,@intStatusIdin) + ''''
 END
+
 
 
 IF @nvcSupIdin  <> '-1'
@@ -93,6 +84,6 @@ Return(0);
 ErrorHandler:
 Return(@@ERROR);
 	    
-END --sp_SelectFrom_Coaching_Log_MyTeamPending_Count
+END --sp_SelectFrom_Coaching_Log_MyTeamPending_Count_QN
 GO
 

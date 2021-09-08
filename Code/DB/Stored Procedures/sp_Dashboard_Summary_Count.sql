@@ -1,17 +1,3 @@
-/*
-sp_Dashboard_Summary_Count(06).sql
-Last Modified Date: 08/18/2020
-Last Modified By: Susmitha Palacherla
-
-Version 06: Removed references to SrMgr Role. TFS 18062 - 08/18/2020
-Version 05: Additional updates from V&V feedback to support changes to warnings workflow. TFS 15803 - 12/4/2019
-Version 04: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
-Version 03: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
-Version 02: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
-
-*/
-
 
 IF EXISTS (
   SELECT * 
@@ -28,6 +14,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -38,8 +25,9 @@ GO
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
+--  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
 
 AS
@@ -69,21 +57,21 @@ DECLARE
 
 
 
-OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
-SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID)
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID);
 
 
 
-SET @bitMyPending = (SELECT [MyPending] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
-SET @bitMyFollowup = (SELECT [MyFollowup] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
-SET @bitMyCompleted = (SELECT [MyCompleted] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
-SET @bitMyTeamPending = (SELECT [MyTeamPending] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
-SET @bitMyTeamCompleted = (SELECT [MyTeamcompleted] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
-SET @bitMyTeamWarning = (SELECT [MyTeamWarning] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
-SET @bitMySubmission = (SELECT [MySubmission] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole)
+SET @bitMyPending = (SELECT [MyPending] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
+SET @bitMyFollowup = (SELECT [MyFollowup] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
+SET @bitMyCompleted = (SELECT [MyCompleted] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
+SET @bitMyTeamPending = (SELECT [MyTeamPending] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
+SET @bitMyTeamCompleted = (SELECT [MyTeamcompleted] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
+SET @bitMyTeamWarning = (SELECT [MyTeamWarning] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
+SET @bitMySubmission = (SELECT [MySubmission] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
  
 
-SET @SelectList = '' 
+SET @SelectList = '';
 
 
 IF @bitMyPending = 1
@@ -94,7 +82,8 @@ BEGIN
 SET @intMyPendingCoaching = (SELECT COALESCE(COUNT(cl.CoachingID),0)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON cl.EmpID = eh.Emp_ID
-                 WHERE cl.EmpID = @nvcEmpID  AND StatusID in (3,4));
+                 WHERE cl.[SourceID] NOT IN (235, 236)
+				 AND cl.EmpID = @nvcEmpID  AND StatusID in (3,4));
 
 
 SET @intMyPendingWarning = (SELECT COALESCE(COUNT(wl.WarningID),0)
@@ -102,7 +91,7 @@ SET @intMyPendingWarning = (SELECT COALESCE(COUNT(wl.WarningID),0)
 				 ON wl.EmpID = eh.Emp_ID
                  WHERE wl.EmpID = @nvcEmpID  AND StatusID = 4);
 
-SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning
+SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning;
 
 END
 
@@ -112,16 +101,17 @@ BEGIN
 SET @intMyPendingCoaching = (SELECT COUNT(cl.CoachingID)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON cl.EmpID = eh.Emp_ID
-                 WHERE ((cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
+                 WHERE  cl.[SourceID] NOT IN (235, 236) AND 
+				 ((cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
 				 OR (cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID in (3,6,8,10)) 
-				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID in (3,6,8,10))))
+				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID in (3,6,8,10))));
 
 SET @intMyPendingWarning = (SELECT COALESCE(COUNT(wl.WarningID),0)
                  FROM EC.Warning_Log wl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON wl.EmpID = eh.Emp_ID
                  WHERE wl.EmpID = @nvcEmpID  AND StatusID = 4);
 
-SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning
+SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning;
 			
 END
 
@@ -130,7 +120,8 @@ BEGIN
 SET @intMyPending = (SELECT COUNT(cl.CoachingID)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON cl.EmpID = eh.Emp_ID
-                 WHERE ((cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
+                 WHERE cl.[SourceID] NOT IN (235, 236) AND
+				 ((cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
 			    OR (ISNULL([cl].[strReportCode], ' ') NOT LIKE 'LCS%' AND ISNULL([cl].[strReportCode], ' ') NOT LIKE 'BQ%' AND cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND cl.[StatusID] in (3,5,6,8) 
 			     OR (ISNULL([cl].[strReportCode], ' ') NOT LIKE 'LCS%' AND cl.ReassignCount= 0 AND  eh.Mgr_ID =  @nvcEmpID  AND cl.[StatusID] in (5,7,9)) 
 			     OR ([cl].[strReportCode] LIKE 'LCS%' AND [ReassignCount] = 0 AND cl.[MgrID] = @nvcEmpID AND [cl].[StatusID]= 5) )
@@ -139,7 +130,7 @@ SET @intMyPending = (SELECT COUNT(cl.CoachingID)
 END
 
 SET @SelectList = @SelectList + ' UNION
-SELECT ''My Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPending)+ ''' AS LogCount'
+SELECT ''My Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPending)+ ''' AS LogCount';
 END
 
 
@@ -147,10 +138,11 @@ IF @bitMyFollowup = 1
 
 BEGIN
 SET @intMyFollowup = (SELECT COUNT(CoachingID) FROM EC.Coaching_Log WITH (NOLOCK)
-                       WHERE EmpID = @nvcEmpID  AND StatusID = 10 AND EmpID <> '999999')
+                       WHERE [SourceID] NOT IN (235, 236) 
+					   AND EmpID = @nvcEmpID  AND StatusID = 10 AND EmpID <> '999999');
 
 SET @SelectList = @SelectList + ' UNION
-SELECT ''My Follow-up'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyFollowup)+ ''' AS LogCount '
+SELECT ''My Follow-up'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyFollowup)+ ''' AS LogCount ';
 END
 
 
@@ -160,10 +152,11 @@ IF @bitMyCompleted = 1
 
 BEGIN
 SET @intMyCompleted = (SELECT COUNT(CoachingID) FROM EC.Coaching_Log WITH (NOLOCK)
-                       WHERE EmpID = @nvcEmpID  AND StatusID = 1 AND EmpID <> '999999')
+                       WHERE [SourceID] NOT IN (235, 236) 
+					   AND EmpID = @nvcEmpID  AND StatusID = 1 AND EmpID <> '999999');
 
 SET @SelectList = @SelectList + ' UNION
-SELECT ''My Completed'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyCompleted)+ ''' AS LogCount '
+SELECT ''My Completed'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyCompleted)+ ''' AS LogCount ';
 END
 
 
@@ -174,12 +167,13 @@ SET @intMyTeamPending = (SELECT COUNT(cl.CoachingID)
 						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 						 ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
 						 ON cl.StatusID = s.StatusID 
-						 WHERE s.Status like 'Pending%'
-						 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
+						 WHERE cl.[SourceID] NOT IN (235, 236) 
+						 AND s.Status like 'Pending%'
+						 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID));
 
 
 SET @SelectList = @SelectList + ' UNION
-SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPending)+ ''' AS LogCount'
+SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPending)+ ''' AS LogCount';
 END
 
 
@@ -188,13 +182,14 @@ BEGIN
 SET @intMyTeamCompleted = (SELECT COUNT(cl.CoachingID)
 						   FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 						   ON cl.EmpID = eh.Emp_ID 
-						   WHERE cl.StatusID = 1
-						   AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
+						   WHERE cl.[SourceID] NOT IN (235, 236) 
+						   AND cl.StatusID = 1
+						   AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID));
 						  
 
 
 SET @SelectList = @SelectList + ' UNION
-SELECT ''My Team''''s Completed'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamCompleted)+ ''' AS LogCount'
+SELECT ''My Team''''s Completed'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamCompleted)+ ''' AS LogCount';
 END
 
 
@@ -205,23 +200,25 @@ SET @intMyTeamWarning = (SELECT COUNT(wl.WarningID)
 					 ON wl.EmpID = eh.Emp_ID 
 					 WHERE wl.StatusID <> 2
 					 AND wl.siteID <> -1
-					 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID)) 
+					 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID)); 
 
 
 SET @SelectList = @SelectList + ' UNION
-SELECT ''My Team''''s Warnings'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamWarning)+ ''' AS LogCount '
+SELECT ''My Team''''s Warnings'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamWarning)+ ''' AS LogCount ';
 END
 
 
 IF @bitMySubmission = 1
 BEGIN
 SET @intMySubmission = (SELECT COUNT(CoachingID) FROM EC.Coaching_Log WITH (NOLOCK)
-						WHERE SubmitterID = @nvcEmpID AND SubmitterID <> '999999'
-						AND StatusID <> 2)
+						WHERE SubmitterID = @nvcEmpID
+						AND SubmitterID <> '999999'
+						AND [SourceID] NOT IN (235, 236) 
+						AND StatusID <> 2);
 
 
 SET @SelectList = @SelectList + ' UNION
-SELECT ''My Submissions'' AS CountType, '''+ CONVERT(NVARCHAR,@intMySubmission)+ ''' AS LogCount '
+SELECT ''My Submissions'' AS CountType, '''+ CONVERT(NVARCHAR,@intMySubmission)+ ''' AS LogCount ';
 END
 
   SET @nvcSQL = 
@@ -273,6 +270,4 @@ EXEC (@nvcSQL)
 END -- sp_Dashboard_Summary_Count
 
 GO
-
-
 

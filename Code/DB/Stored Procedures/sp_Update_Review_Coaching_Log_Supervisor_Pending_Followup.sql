@@ -1,13 +1,3 @@
-/*
-sp_Update_Review_Coaching_Log_Supervisor_Pending_Followup(01).sql
-Last Modified Date: 09/09/2019
-Last Modified By: Susmitha Palacherla
-
-
-Version 01:  Initial Revision. Follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
-
-*/
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -23,17 +13,18 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      08/28/2019
 --    Description: *    This procedure allows supervisors to update the e-Coaching records from review page. 
 --    Initial Revision. Incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+--    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending_Followup]
+
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending_Followup]
 (
   @nvcFormID BIGINT,
-  @nvcFormStatus Nvarchar(30),
+  @nvcFormStatus Nvarchar(60),
   @nvcReviewSupID Nvarchar(10),
   @dtmSupReviewedAutoDate datetime,
   @dtmSupFollowupDate datetime,
@@ -43,12 +34,14 @@ AS
 
 BEGIN
 
-DECLARE @RetryCounter INT;
+DECLARE @intSourceID int,
+        @RetryCounter INT;
 SET @RetryCounter = 1;
+SET @intSourceID = (Select SourceID from EC.Coaching_log where CoachingID =   @nvcFormID )
 
 RETRY: -- Label RETRY
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
 BEGIN TRANSACTION;
 
 BEGIN TRY
@@ -62,8 +55,17 @@ SET
   [FollowupActualDate]= @dtmSupFollowupDate,
   [SupFollowupCoachingNotes]= @nvctxtCoachingNotes,
   [ReassignCount] = 0
-WHERE CoachingID = @nvcFormID
-OPTION (MAXDOP 1);
+WHERE CoachingID = @nvcFormID;
+
+IF @intSourceID in (235,236)
+BEGIN
+UPDATE [EC].[Coaching_Log_Quality_Now_Summary]
+SET [IsReadOnly]= 1
+   ,[LastModifyDate]= GetDate()
+   ,[LastModifyBy]=  @nvcReviewSupID
+WHERE CoachingID = @nvcFormID AND [IsReadOnly] = 0;
+END  
+
 	
 COMMIT TRANSACTION;
 END TRY
@@ -111,6 +113,4 @@ END CATCH;
 END --sp_Update_Review_Coaching_Log_Supervisor_Pending_Followup
 
 GO
-
-
 

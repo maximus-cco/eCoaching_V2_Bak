@@ -1,17 +1,3 @@
-/*
-Last Modified Date: 04/26/2019
-Last Modified By: Susmitha Palacherla
-Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
-*/
-
-
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update3Review_Coaching_Log' 
-)
-   DROP PROCEDURE [EC].[sp_Update3Review_Coaching_Log]
-GO
-
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
   WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update_Review_Coaching_Log_Manager_Pending_CSE' 
@@ -26,6 +12,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:     11/16/12
@@ -35,11 +22,13 @@ GO
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
 --    TFS 7137 move my dashboard to new architecture - 06/12/2018
 --    Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
+--    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_CSE]
+
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_CSE]
 (
   @nvcFormID BIGINT,
-  @nvcFormStatus Nvarchar(30),
+  @nvcFormStatus Nvarchar(60),
   @nvcReviewMgrID Nvarchar(10),
   @dtmMgrReviewAutoDate datetime,
   @dtmMgrReviewManualDate datetime,
@@ -117,7 +106,11 @@ BEGIN CATCH
 END CATCH;
 
 END --sp_Update_Review_Coaching_Log_Manager_Pending_CSE
-GO
 
+
+
+
+
+GO
 
 

@@ -1,15 +1,3 @@
-/*
-sp_SelectFrom_Coaching_Log_MySubmitted(04).sql
-Last Modified Date: 09/17/2019
-Last Modified By: Susmitha Palacherla
-
-Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
-Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
-
-*/
-
 
 IF EXISTS (
   SELECT * 
@@ -34,8 +22,10 @@ GO
 --  Modified to support Quality Now TFS 13332 -  03/01/2019
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
+--  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted] 
+
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MySubmitted] 
 @nvcUserIdin nvarchar(10),
 @intStatusIdin int,
 @nvcEmpIdin nvarchar(10),
@@ -152,7 +142,8 @@ AS
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
 	WHERE  [cl].[SubmitterID] = '''+@nvcUserIdin+''' '+ @NewLineChar +
-	' AND [cl].[StatusID] <> 2' + @NewLineChar +
+	' AND [cl].[StatusID] <> 2 ' + @NewLineChar +
+	' AND [cl].[SourceID] NOT IN (235, 236) ' + @NewLineChar +
 	@where + ' ' + '
   	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate]
 	, [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate]
@@ -191,8 +182,8 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MySubmitted
 
+
+
 GO
-
-
 
 

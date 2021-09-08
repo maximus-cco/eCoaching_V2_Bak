@@ -1,12 +1,3 @@
-
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update_Review_Coaching_Log_Supervisor_Acknowledge' 
-)
-   DROP PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Acknowledge]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
@@ -15,25 +6,17 @@ GO
 
 
 --    ====================================================================
---    Author:                 Jourdain Augustin
---    Create Date:      7/31/13
---    Description: *    This procedure allows Sups to update the e-Coaching records from the review page for Pending Acknowledgment records. 
---    Last Update:    12/16/2014
---    Updated per SCR 13891 to capture review sup id.
---    TFS 7856 encryption/decryption - emp name, emp lanid, email
---    TFS 7137 move my dashboard to new architecture - 06/12/2018
---    TFS 12591 Modified to support OTA Report - 11/26/2018
---   Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
-
+--	Author:			Susmitha Palacherla
+--	Create Date:	08/13/2021
+--	Description: *	This procedure allows supervisors to insert or update Quality Now
+--  Eval Summary notes to be shared CSRs during review.
 --    =====================================================================
 
-CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Acknowledge]
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Quality_Now_Summary]
 (
   @nvcFormID BIGINT,
-  @nvcCoachingNotes Nvarchar(4000),
-  @nvcFormStatus Nvarchar(60),
-  @nvcReviewSupID Nvarchar(10),
-  @dtmSUPReviewAutoDate datetime
+  @nvcEvalSummary Nvarchar(max),
+  @nvcUserID Nvarchar(10)
 )
 AS
 
@@ -44,20 +27,33 @@ SET @RetryCounter = 1;
 
 RETRY: -- Label RETRY
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 BEGIN TRANSACTION;
 
 BEGIN TRY
 
+IF EXISTS 
+(SELECT * FROM [EC].[Coaching_Log_Quality_Now_Summary] WHERE [CoachingID] = @nvcFormID AND ISNULL([IsReadOnly], 0) <> 1)
+		BEGIN
+		   UPDATE [EC].[Coaching_Log_Quality_Now_Summary]
+		   SET [EvalSummaryNotes]= @nvcEvalSummary
+			  ,[LastModifyDate]= GetDate()
+			  ,[LastModifyBy]=  @nvcUserID
+           WHERE CoachingID = @nvcFormID
+		   AND [IsReadOnly]= 0
 
-UPDATE [EC].[Coaching_Log]
-SET 
-  StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
-  CoachingNotes = @nvcCoachingNotes,
-  Review_SupID = @nvcReviewSupID,
-  SUPReviewedAutoDate = @dtmSUPReviewAutoDate
-WHERE CoachingID = @nvcFormID
-OPTION (MAXDOP 1);
+		END
+ELSE
+		BEGIN
+		INSERT INTO [EC].[Coaching_Log_Quality_Now_Summary] ([CoachingID],[EvalSummaryNotes],[CreateDate],[CreateBy],[LastModifyDate],[LastModifyBy],[IsReadOnly]) 
+		VALUES (@nvcFormID
+			   ,@nvcEvalSummary
+			   ,GetDate()
+			   ,@nvcUserID
+			   ,GetDate()
+			   ,@nvcUserID
+			   ,0);
+		END
+      
 	
 COMMIT TRANSACTION;
 END TRY
@@ -102,11 +98,6 @@ BEGIN CATCH
   END -- ELSE
 END CATCH;
 
-END --sp_Update_Review_Coaching_Log_Supervisor_Acknowledge
-
-
-
-
+END --sp_Update_Review_Coaching_Log_Quality_Now_Summary
 GO
-
 

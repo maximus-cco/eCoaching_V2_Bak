@@ -1,32 +1,3 @@
-/*
-sp_SelectReviewFrom_Coaching_Log(23).sql
-Last Modified Date: 5/24/2021
-Last Modified By: Susmitha Palacherla
-
-Version 23: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
-Version 22: Changes to support AED feed. TFS 19502  - 11/30/2020
-Version 21: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
-Version 20: Updated to add SrMgr details to return. TFS 18062 - 08/13/2020
-Version 19: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
-Version 18: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
-Version 17: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
-Version 16: Modified to incorporate ATT AP% Attendance feeds. TFS 15095 - 08/26/2019
-Version 15: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/5/2019
-Version 14: Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
-Version 13: Modified to add ConfirmedCSE. TFS 14049 - 04/26/2019
-Version 12: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 11: Modified to support OTA Report. TFS 12591 - 11/26/2018
-Version 10: New PBH Feed - TFS 11451 - 7/30/2018
-Version 09 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
-Version 08: Modified to support additional Modules per TFS 8793 - 11/16/2017
-Version 07: Modified to use LEFT Join on Submitter table for unknown Submitters - TFS 7541 - 09/19/2017
-Version 06: New OTH DTT - TFS 7646 - 9/1/2017
-Version 05: Updated to incorporate HNC and ICC Reports per TFS 7174 - 07/24/2017
-Version 04: Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
-Version 03: New Breaks BRN and BRL feeds - TFS 6145 - 4/13/2017
-Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-*/
 
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
@@ -55,9 +26,10 @@ GO
 --  Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 --  Changes to support AED feed. TFS 19502  - 11/30/2020
 --  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
+--  Updated to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --	=====================================================================
 
-CREATE PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
 AS
 
 BEGIN
@@ -68,6 +40,7 @@ DECLARE
   @nvcSQL1 nvarchar(max)= '',
   @nvcSQL2 nvarchar(max)= '',
   @nvcSQL3 nvarchar(max)= '',
+  @nvcSQL4 nvarchar(1000)= '',
   @nvcEmpID nvarchar(10),
   @nvcMgrID nvarchar(10);
 
@@ -158,9 +131,13 @@ SET @nvcSQL2 = @nvcSQL2 + N'
 	ELSE 0 
   END isIQS,
    CASE 
-    WHEN sc.SubCoachingSource in (''Verint-CCO'', ''Verint-CCO Supervisor'') THEN 1 
+    WHEN sc.SubCoachingSource in (''Verint-CCO'') THEN 1 
 	ELSE 0 
   END isIQSQN,
+     CASE 
+    WHEN sc.SubCoachingSource in (''Verint-CCO Supervisor'') THEN 1 
+	ELSE 0 
+  END isIQSQNS,
   cl.QNBatchID strQNBatchID,
   cl.QNStrengthsOpportunities  strQNStrengthsOpportunities,
   CASE 
@@ -292,9 +269,22 @@ JOIN [EC].[DIM_Source] sc ON [cl].[SourceID] = [sc].[SourceID]
 JOIN [EC].[DIM_Site] st ON [cl].[SiteID] = [st].[SiteID] 
 JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
 ORDER BY [cl].[FormName]';
+
+
+SET @nvcSQL4 = @nvcSQL4 +  N'
+WITH ids AS
+(
+SELECT value FROM [EC].[Coaching_Log] cl  WITH (NOLOCK)
+CROSS APPLY string_split([SupFollowupReviewMonitoredLogs], ''|'')
+WHERE coachingid = ''' + CONVERT(NVARCHAR, @intLogId) + '''
+ )
+ SELECT i.value as QNLinkedID, cl.formname as QNLinkedFormName
+FROM ids i INNER JOIN[EC].[Coaching_Log] cl  WITH (NOLOCK)
+ on i.value = cl.CoachingID '
 		
 SET @nvcSQL =  @nvcSQL + @nvcSQL1 +  @nvcSQL2 +  @nvcSQL3;
 EXEC (@nvcSQL);
+EXEC (@nvcSQL4);
 
 --PRINT (@nvcSQL);
 -- Close Symmetric key
@@ -302,5 +292,4 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
-
 

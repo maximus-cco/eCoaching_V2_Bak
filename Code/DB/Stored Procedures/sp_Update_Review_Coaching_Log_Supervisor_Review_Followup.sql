@@ -1,63 +1,62 @@
-
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update_Review_Coaching_Log_Supervisor_Acknowledge' 
-)
-   DROP PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Acknowledge]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --    ====================================================================
---    Author:                 Jourdain Augustin
---    Create Date:      7/31/13
---    Description: *    This procedure allows Sups to update the e-Coaching records from the review page for Pending Acknowledgment records. 
---    Last Update:    12/16/2014
---    Updated per SCR 13891 to capture review sup id.
---    TFS 7856 encryption/decryption - emp name, emp lanid, email
---    TFS 7137 move my dashboard to new architecture - 06/12/2018
---    TFS 12591 Modified to support OTA Report - 11/26/2018
---   Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
-
+--    Author:                 Susmitha Palacherla
+--    Create Date:      08/31/2021
+--    Description: *    This procedure allows supervisors to update the QN ecls with review info. 
+--    Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/30/2021
 --    =====================================================================
 
-CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Acknowledge]
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Review_Followup]
 (
   @nvcFormID BIGINT,
-  @nvcCoachingNotes Nvarchar(4000),
-  @nvcFormStatus Nvarchar(60),
-  @nvcReviewSupID Nvarchar(10),
-  @dtmSUPReviewAutoDate datetime
+  @bitIsFollowup bit,
+  @tableIds IdsTableType READONLY,
+  @nvcFollowupReviewSupID Nvarchar(10),
+  @dtmFollowupReviewAutoDate datetime,
+  @nvcFollowupReviewCoachingNotes Nvarchar(4000) 
 )
 AS
 
 BEGIN
 
-DECLARE @RetryCounter INT;
+DECLARE  @MonitoredLogs nvarchar(200),
+         @RetryCounter INT;
 SET @RetryCounter = 1;
 
 RETRY: -- Label RETRY
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
 BEGIN TRANSACTION;
 
 BEGIN TRY
 
 
+CREATE TABLE #mlogs (ID bigint, ReviewMonitoredLogs nvarchar(200)); -- QN Supervisor logs to tie to original Coaching log
+
+INSERT INTO #mlogs (ID)
+SELECT ID
+FROM @tableIds;
+
+SET @MonitoredLogs = (SELECT STRING_AGG(CONVERT(NVARCHAR(20),ID), ' | ') AS MonitoredLogs FROM #mlogs);
+
+PRINT @MonitoredLogs;
+
 UPDATE [EC].[Coaching_Log]
 SET 
-  StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
-  CoachingNotes = @nvcCoachingNotes,
-  Review_SupID = @nvcReviewSupID,
-  SUPReviewedAutoDate = @dtmSUPReviewAutoDate
-WHERE CoachingID = @nvcFormID
-OPTION (MAXDOP 1);
+  StatusID = CASE @bitIsFollowUp
+             WHEN 1 THEN 12 ELSE 13 END,
+  [IsFollowupRequired] = @bitIsFollowup,
+  [SupFollowupReviewCoachingNotes] = @nvcFollowupReviewCoachingNotes,
+  [SupFollowupReviewMonitoredLogs] = @MonitoredLogs,
+  [SupFollowupReviewAutoDate] = @dtmFollowupReviewAutoDate,
+  [FollowupReviewSupID] = @nvcFollowupReviewSupID
+WHERE CoachingID = @nvcFormID;
+
 	
 COMMIT TRANSACTION;
 END TRY
@@ -102,11 +101,7 @@ BEGIN CATCH
   END -- ELSE
 END CATCH;
 
-END --sp_Update_Review_Coaching_Log_Supervisor_Acknowledge
-
-
-
+END --sp_Update_Review_Coaching_Log_Supervisor_Review_Followup
 
 GO
-
 

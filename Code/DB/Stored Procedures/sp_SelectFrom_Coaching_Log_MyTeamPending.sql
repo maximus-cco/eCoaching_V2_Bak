@@ -1,16 +1,3 @@
-/*
-sp_SelectFrom_Coaching_Log_MyTeamPending(04).sql
-Last Modified Date: 09/17/2019
-Last Modified By: Susmitha Palacherla
-
-Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
-Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -27,9 +14,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -38,8 +22,10 @@ GO
 --  Modified to support Quality Now  TFS 13332 -  03/01/2019
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
+--  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamPending] 
+
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamPending] 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
 @nvcEmpIdin nvarchar(10),
@@ -84,7 +70,7 @@ SET  @SortExpression = @sortBy +  @SortOrder
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE [cl].[StatusID] NOT IN (1,2)'
+SET @where = 'WHERE [cl].[StatusID] <> 2 AND [cl].[SourceID] NOT IN (235,236) '
 
 IF @intSourceIdin  <> -1
 BEGIN
@@ -177,8 +163,6 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_SelectFrom_Coaching_Log_MyTeamPending
+
 GO
-
-
-
 
