@@ -10,17 +10,27 @@
 	<br />
 	@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
 </div>
-@*<div>Show followup Info: @Model.ShowFollowupInfo</div>
-<div>Is followup pending csr: @Model.IsFollowupPendingCsrForm </div>*@
-@if (Model.ShowFollowupInfo)
+
+@if (Model.LogDetail.IsQn)
 {
-	{ Html.RenderPartial("_FollowupInfo"); }
+    Html.RenderPartial("_SupervisorReviewInfo");
 }
 
-@Model.LogDetail.EmployeeReviewDate
 @if (!string.IsNullOrEmpty(Model.LogDetail.EmployeeReviewDate))
 {
     Html.RenderPartial("_EmployeeReviewInfo");
+}
+
+@if (Model.ShowFollowupInfo)
+{
+    if (Model.LogDetail.IsQn)
+    {
+        { Html.RenderPartial("_QnFollowupInfo"); }
+    }
+    else
+    {
+        { Html.RenderPartial("_FollowupInfo"); }
+    }
 }
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))

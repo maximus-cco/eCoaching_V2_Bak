@@ -1,8 +1,14 @@
 ﻿@model eCoachingLog.ViewModels.ReviewViewModel
-
 @if (Model.ShowFollowupInfo)
 {
-	{ Html.RenderPartial("_FollowupInfo"); }
+    if (Model.LogDetail.IsQn)
+    {
+        { Html.RenderPartial("_QnFollowupInfo"); }
+    }
+    else
+    {
+        { Html.RenderPartial("_FollowupInfo"); }
+    }
 }
 
 @if (Model.ShowSupervisorReviewInfo)

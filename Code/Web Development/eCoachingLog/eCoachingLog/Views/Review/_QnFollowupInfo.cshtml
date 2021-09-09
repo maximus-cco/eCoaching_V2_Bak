@@ -1,21 +1,24 @@
-﻿@*<div class="mt-2">
-	<strong>Follow-up notes:</strong><br />
-	@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.FollowupDetails))
-</div>*@
+﻿<div class="mt-2">
+    <strong>Follow-up notes:</strong><br />
+    @Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.FollowupDetails))
+</div>
 <div class="mt-2">
 	<strong>Supervisor follow-up review information:</strong><br />
 	@Model.LogDetail.FollowupSupName<br />
 	@Model.LogDetail.FollowupSupAutoDate<br />
 </div>
 
-<div class="mt-2">
-	<strong>Employee follow-up review information:</strong><br />
-	@Model.LogDetail.EmployeeName<br />
-	@Model.LogDetail.FollowupEmpAutoDate <br />
-</div>
-<div class="mt-2">
-	<strong>Employee follow-up feedback:</strong><br />
-	@Model.LogDetail.FollowupEmpComments
+@if (Model.IsFollowupAcknowledged)
+{
+    <div class="mt-2">
+        <strong>Employee follow-up feedback:</strong><br />
+        @Model.LogDetail.FollowupEmpComments
+    </div>
+    <div class="mt-2">
+	    <strong>Employee follow-up review information:</strong><br />
+	    @Model.LogDetail.EmployeeName<br />
+	    @Model.LogDetail.FollowupEmpAutoDate <br />
+    </div>
+}
 
-</div>
 
