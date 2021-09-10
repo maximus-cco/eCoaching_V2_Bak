@@ -14,17 +14,26 @@ namespace eCoachingLog.Models.Common
 		public string SubmitterName { get; set; }
 		public string BehaviorDetail { get; set; }
 		public string BusinessProcess { get; set; }
-		public string InfoAccuracy { get; set; }
-		public string PrivacyDisclaimers { get; set; }
-		public string IssueResolution { get; set; }
-		public string CallEfficiency { get; set; }
-		public string ActiveListening { get; set; }
-		public string PersonalityFlexing { get; set; }
+        public string BusinessProcessComment { get; set; }
+        public string InfoAccuracy { get; set; }
+        public string InfoAccuracyComment { get; set; }
+        public string PrivacyDisclaimers { get; set; }
+        public string PrivacyDisclaimersComment { get; set; }
+        public string IssueResolution { get; set; }
+        public string IssueResolutionComment { get; set; }
+        public string CallEfficiency { get; set; }
+        public string CallEfficiencyComment { get; set; }
+        public string ActiveListening { get; set; }
+        public string ActiveListeningComment { get; set; }
+        public string PersonalityFlexing { get; set; }
+        public string PersonalityFlexingComment { get; set; }
         public string Channel { get; set; }
         public string ActivityId { get; set; } // UCID/Verizon Call ID for Web Chat; DCN for Written Correspondence
         // Show Supervisors ONLY
         public string ContactReason { get; set; }
         public string StartTemperature { get; set; }
-		public string EndTemperature { get; set; }
-	}
+        public string StartTemperatureComment { get; set; }
+        public string EndTemperature { get; set; }
+        public string EndTemperatureComment { get; set; }
+    }
 }

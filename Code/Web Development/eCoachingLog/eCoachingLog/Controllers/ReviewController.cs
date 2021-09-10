@@ -117,7 +117,7 @@ namespace eCoachingLog.Controllers
                 vm.ShowEvalSummary = true;
                 vm.ShowCoachingNotes = true;
             }
-            // supervisor has listened to an additional call, comes here to decide if more coaching is needed.
+            // supervisor has listened to additional call(s), comes here to decide if more coaching is needed.
             else if (String.Equals(action, "followupReview", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = false;
