@@ -6,17 +6,6 @@
                 <th rowspan="2" colspan="2">
                     <table style="border: hidden;">
                         <tr>
-                            <td colspan="2">@Model.ThisMonth</td>
-                        </tr>
-                        <tr>
-                            <td width="50%">Improved</td>
-                            <td width="50%">Follow-Up</td>
-                        </tr>
-                    </table>
-                </th>
-                <th rowspan="2" colspan="2">
-                    <table style="border: hidden;">
-                        <tr>
                             <td colspan="2">@Model.MonthMinus1</td>
                         </tr>
                         <tr>
@@ -36,6 +25,17 @@
                         </tr>
                     </table>
                 </th>
+                <th rowspan="2" colspan="2">
+                    <table style="border: hidden;">
+                        <tr>
+                            <td colspan="2">@Model.MonthMinus3</td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Improved</td>
+                            <td width="50%">Follow-Up</td>
+                        </tr>
+                    </table>
+                </th>
 
         </thead>
         <tbody>
@@ -43,12 +43,12 @@
             {
                 <tr>
                     <td>@s.Name</td>
-                    <td>@s.ThisMonthImproved</td>
-                    <td>@s.ThisMonthFollowup</td>
                     <td>@s.ThisMonthMinus1Improved</td>
                     <td>@s.ThisMonthMinus1Followup</td>
                     <td>@s.ThisMonthMinus2Improved</td>
                     <td>@s.ThisMonthMinus2Followup</td>
+                    <td>@s.ThisMonthMinus3Improved</td>
+                    <td>@s.ThisMonthMinus3Followup</td>
                 </tr>
             }
         </tbody>

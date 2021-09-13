@@ -24,13 +24,6 @@ namespace eCoachingLog.ViewModels
         public bool ShowMyTeamPerformance { get; set; }
         public bool ShowMyPerformance { get; set; }
         // Last 3 months performance
-        public string ThisMonth
-        {
-            get
-            {
-                return DateTime.Now.ToString("MMMM yyyy");
-            }
-        }
         public string MonthMinus1
         {
             get
@@ -43,6 +36,13 @@ namespace eCoachingLog.ViewModels
             get
             {
                 return DateTime.Now.AddMonths(-2).ToString("MMMM yyyy");
+            }
+        }
+        public string MonthMinus3
+        {
+            get
+            {
+                return DateTime.Now.AddMonths(-3).ToString("MMMM yyyy");
             }
         }
         public IList<QnStatistic> Statistic { get; set; }

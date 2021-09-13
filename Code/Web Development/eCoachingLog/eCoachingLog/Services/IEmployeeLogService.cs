@@ -48,7 +48,7 @@ namespace eCoachingLog.Services
 		IList<ChartDataset> GetChartDataSets(User user);
         IList<LogCount> GetLogCountsQn(User user);
         //IList<ChartDataset> GetChartDataSetsQn(User user);
-        IList<QnStatistic> GetPast3MonthStatisticQn(User user, DateTime current);
+        IList<QnStatistic> GetPast3MonthStatisticQn(User user);
 
         IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end);
 		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end);

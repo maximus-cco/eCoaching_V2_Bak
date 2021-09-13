@@ -51,5 +51,7 @@ namespace eCoachingLog.Repository
 		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end);
 
         CoachingLogDetail GetScorecardsAndSummary(long logId);
-	}
+
+        IList<QnStatistic> GetPast3MonthStatisticQn(User user);
+    }
 }

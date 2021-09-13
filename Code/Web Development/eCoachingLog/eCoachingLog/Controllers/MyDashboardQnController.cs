@@ -34,7 +34,7 @@ namespace eCoachingLog.Controllers
             var vm = new MyDashboardQnViewModel();
             IList<LogCount> logCountList = empLogService.GetLogCountsQn(user);
             vm.LogCountList = logCountList;
-            vm.Statistic = empLogService.GetPast3MonthStatisticQn(user, DateTime.Now);
+            vm.Statistic = empLogService.GetPast3MonthStatisticQn(user);
 
             foreach (var lc in logCountList)
             {

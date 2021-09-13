@@ -277,19 +277,9 @@ namespace eCoachingLog.Services
 			return employeeLogRepository.GetLogCountByStatusForSites(user, start, end);
 		}
 
-        public IList<QnStatistic> GetPast3MonthStatisticQn(User user, DateTime current)
+        public IList<QnStatistic> GetPast3MonthStatisticQn(User user)
         {
-            var statistic = new List<QnStatistic>();
-            var cMonth = current;
-            var s1 = new QnStatistic(cMonth, "John Test", 1, 1, 1, 1, 1, 1);
-            statistic.Add(s1);
-            if (user.IsSupervisor || user.IsManager)
-            {
-                var s2 = new QnStatistic(cMonth, "John TTest", 1, 1, 1, 1, 1, 1);
-                statistic.Add(s2);
-            }
-
-            return statistic;
+            return employeeLogRepository.GetPast3MonthStatisticQn(user);
         }
 
     }

@@ -1127,5 +1127,35 @@ namespace eCoachingLog.Repository
             return log;
         }
 
+        public IList<QnStatistic> GetPast3MonthStatisticQn(User user)
+        {
+            var statistics = new List<QnStatistic>();
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Dashboard_Summary_Performance_QN]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvcUserId", user.EmployeeId);
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        QnStatistic temp = new QnStatistic();
+                        temp.Name = dataReader.GetString(1); // EmpName
+                        temp.ThisMonthMinus1Improved = dataReader.GetInt32(6);            
+                        temp.ThisMonthMinus1Followup = dataReader.GetInt32(7);
+                        temp.ThisMonthMinus2Improved = dataReader.GetInt32(4);
+                        temp.ThisMonthMinus2Followup = dataReader.GetInt32(5);
+                        temp.ThisMonthMinus3Improved = dataReader.GetInt32(2);
+                        temp.ThisMonthMinus3Followup = dataReader.GetInt32(3);
+
+                        statistics.Add(temp);
+                    }
+                }
+            }
+            return statistics;
+        }
+
     }
 }
