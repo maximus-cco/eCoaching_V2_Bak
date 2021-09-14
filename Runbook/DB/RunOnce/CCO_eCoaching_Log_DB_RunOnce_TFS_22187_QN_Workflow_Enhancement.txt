@@ -14,7 +14,7 @@ Summary
 3. add columns to [EC].[UI_Dashboard_Summary_Display] and populate them
 4. Add additional columns to Coaching_log table for Sup Followup Review
 5. Add additional columns to Coaching_log_Archive table for Sup Followup Review
-
+6. Increase size of [txtReasonNotCoachable] 
 
 --******************************************
 
@@ -24,7 +24,7 @@ Summary
 
 -- Details
 
-1. Add new Status values to DIM_Status table
+--1. Add new Status values to DIM_Status table
 
 INSERT INTO [EC].[DIM_Status]
            ([Status])
@@ -187,7 +187,17 @@ GO
 
 --********************************
 
+--6. Increase size of [txtReasonNotCoachable] 
 
+ALTER TABLE EC.Coaching_Log
+ALTER COLUMN [txtReasonNotCoachable] nvarchar(4000);
+GO
+
+ALTER TABLE EC.Coaching_Log_Archive
+ALTER COLUMN [txtReasonNotCoachable] nvarchar(4000);
+GO
+
+--********************************
 
 
 

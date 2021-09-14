@@ -1,13 +1,3 @@
-/*
-sp_rptQNCoachingSummary(02).sql
-Last Modified Date: 5/24/2021
-Last Modified By: Susmitha Palacherla
-
-Version 02: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
-Version 01: Document Initial Revision - TFS 13333 - 04/02/2019
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -24,7 +14,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2019
@@ -32,10 +21,11 @@ GO
 --  Revision History:
 --  Initial Revision: Quality Now Initiative TFS 13333 -  03/27/2019
 --  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
+--  Modified to support Quality Now workflow enhancement . TFS 22187 - 08/03/2021
 
  *******************************************************************************/
 
-CREATE PROCEDURE [EC].[sp_rptQNCoachingSummary] 
+CREATE OR ALTER PROCEDURE [EC].[sp_rptQNCoachingSummary] 
 (
 @intModulein int = -1,
 @intStatusin int = -1, 
@@ -111,7 +101,8 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		       WHEN c.ReviewMgrID IS NULL  THEN '-'
 		         ELSE CONVERT(nvarchar(50),DecryptByKey(c.ReviewMgrName)) END AS [Review Manager Name]
 			 -- ,q.[Summary_CallerIssues] AS Description
-			    ,'NA' AS [Description]
+			   ,p.QNStrengthsOpportunities AS [Strength and Opportunities]
+			   ,[EC].[fn_strQNEvalSummaryFromCoachingID](c.CoachingID) AS [Evaluation Summary]
 			  ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
 			  ,ISNULL(CONVERT(varchar,q.Call_Date,121),'-') AS [Event Date]
               ,ISNULL(CONVERT(varchar,p.CoachingDate,121),'-') AS [Coaching Date]
@@ -129,6 +120,13 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
               ,COALESCE(p.MgrNotes,'-') AS [Manager Notes]
               ,ISNULL(CONVERT(varchar,p.CSRReviewAutoDate,121),'-') AS [Employee Reviewed Date]
               ,COALESCE(p.CSRComments,'-') AS [Employee Comments]
+			   ,p.IsFollowupRequired AS [Follow-up Required]
+			  ,ISNULL(CONVERT(varchar,p.FollowupDueDate,121),'-') AS [Follow-up Date]
+			  ,ISNULL(CONVERT(varchar,p.FollowupActualDate,121),'-') AS [Follow-up Coaching Date]
+			  ,p.SupFollowupCoachingNotes AS [Follow-up Coaching Notes]
+			  ,p.FollowupActualDate AS [Supervisor Follow-up Auto Date]
+			  ,ISNULL(CONVERT(varchar,p.EmpAckFollowupAutoDate,121),'-') AS [CSR Follow-up Auto Date]
+			  ,p.EmpAckFollowupComments AS [CSR Follow-up Comments]
 			  ,q.Program AS [Program]
 			  ,q.[Channel] AS [Channel]
 			  ,ISNULL(q.Journal_ID,'-') AS [Verint ID]
@@ -259,5 +257,4 @@ RETURN @returnCode
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
 GO
-
 

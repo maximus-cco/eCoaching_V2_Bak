@@ -22,7 +22,6 @@ GO
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- Modified to add QN Eval Summary. TFS 22187 - 08/13/2021
 -- =============================================
-
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now] @intLogId BIGINT
 AS
 
@@ -49,15 +48,24 @@ BEGIN
 		,qne.[Program] strProgram
 		,qne.[Call_Date] [Date of Event]
 		,ISNULL(CONVERT(nvarchar(70), DecryptByKey(sub.Emp_Name)),'unknown') [Submitter]
-		,qne.[Business_Process] + '<br />' + qne.[Business_Process_Reason] + '<br />' + qne.[Business_Process_Comment] [Business Process]
-		,qne.[Info_Accuracy]  + '<br />' + qne.[Info_Accuracy_Reason] + '<br />' + qne.[Info_Accuracy_Comment] [Info Accuracy]
-		,qne.[Privacy_Disclaimers] + '<br />' + qne.[Privacy_Disclaimers_Reason] + '<br />' + qne.[Privacy_Disclaimers_Comment] [Privacy Disclaimers]
-		,qne.[Issue_Resolution]  + '<br />' + qne.[Issue_Resolution_Comment] [Issue Resolution]
-		,qne.[Call_Efficiency]  + '<br />' + qne.[Call_Efficiency_Comment] [Call Efficiency]
-		,qne.[Active_Listening]  + '<br />' + qne.[Active_Listening_Comment] [Active Listening]
-		,qne.[Personality_Flexing]  + '<br />' + qne.[Personality_Flexing_Comment] [Personality Flexing]
-		,qne.[Customer_Temp_Start]   + '<br />' + qne.[Customer_Temp_Start_Comment] [Start Temperature]
-		,qne.[Customer_Temp_End] + '<br />' + qne.[Customer_Temp_End_Comment] [End Temperature]
+		,qne.[Business_Process] + '<br />' + qne.[Business_Process_Reason] [Business Process]
+		,qne.[Business_Process_Comment] [Business Process Comments]
+		,qne.[Info_Accuracy]  + '<br />' + qne.[Info_Accuracy_Reason] [Info Accuracy]
+		,qne.[Info_Accuracy_Comment] [Info Accuracy Comments]
+		,qne.[Privacy_Disclaimers] + '<br />' + qne.[Privacy_Disclaimers_Reason] [Privacy Disclaimers]
+		,qne.[Privacy_Disclaimers_Comment]  [Privacy Disclaimers Comments]
+		,qne.[Issue_Resolution] [Issue Resolution]
+		,qne.[Issue_Resolution_Comment] [Issue Resolution Comments]
+		,qne.[Call_Efficiency] [Call Efficiency]
+		,qne.[Call_Efficiency_Comment] [Call Efficiency Comments]
+		,qne.[Active_Listening] [Active Listening]
+		,qne.[Active_Listening_Comment] [Active Listening Comments]
+		,qne.[Personality_Flexing] [Personality Flexing]
+		,qne.[Personality_Flexing_Comment]  [Personality Flexing Comments]
+		,qne.[Customer_Temp_Start] [Start Temperature]
+		,qne.[Customer_Temp_Start_Comment] [Start Temperature Comments]
+		,qne.[Customer_Temp_End] [End Temperature]
+		,qne.[Customer_Temp_End_Comment] [End Temperature Comments]
 	FROM [EC].[Coaching_Log_Quality_Now_Evaluations] qne  WITH (NOLOCK) 
 		JOIN [EC].[Coaching_Log] cl  WITH (NOLOCK) ON qne.CoachingID = cl.CoachingID 
 		LEFT JOIN EC.Employee_Hierarchy sub  WITH (NOLOCK) ON qne.Evaluator_ID = sub.Emp_ID
@@ -71,7 +79,5 @@ BEGIN
 	CLOSE SYMMETRIC KEY [CoachingKey];
 END
 GO
-
-
 
 
