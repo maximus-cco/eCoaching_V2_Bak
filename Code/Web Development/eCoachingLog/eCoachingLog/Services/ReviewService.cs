@@ -327,8 +327,21 @@ namespace eCoachingLog.Services
 				if (review.IsFollowupPendingCsrForm)
 				{
 					string nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
-					return reviewRepository.CompleteEmployeeAckFollowup(review, nextStatus, user);
-				}
+					bool success = reviewRepository.CompleteEmployeeAckFollowup(review, nextStatus, user);
+
+                    // Email supervisor and/or manager upon CSR completes qn log (Pending employee followup review -> Completed)
+                    if (success
+                            && review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW
+                            && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT)
+                    {
+                        if (!this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName, "Quality Now Follow-up Completed"))
+                        {
+                            logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
+                        }
+                    }
+
+                    return success;
+                }
 
 				return CompleteAckReview(review, user, emailTempFileName);
 			}
