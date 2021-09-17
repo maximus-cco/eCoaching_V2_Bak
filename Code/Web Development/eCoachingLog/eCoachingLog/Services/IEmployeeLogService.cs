@@ -24,7 +24,8 @@ namespace eCoachingLog.Services
         List<string> GetValues(int reasonId, string directOrIndirect, int moduleId);
 		List<LogReason> GetReasonsByLogId(long logId, bool isCoaching);
 		IList<LogStatus> GetAllLogStatuses();
-		IList<LogSource> GetAllLogSources(string userEmpId);
+        IList<LogStatus> GetQnLogPendingStatuses();
+        IList<LogSource> GetAllLogSources(string userEmpId);
 		IList<LogValue> GetAllLogValues();
 		// Historical Dashboard page - export to excel
 		DataSet GetLogDataTableToExport(LogFilter filter, string userId);

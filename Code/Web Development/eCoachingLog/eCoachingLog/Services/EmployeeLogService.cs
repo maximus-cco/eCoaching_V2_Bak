@@ -212,6 +212,28 @@ namespace eCoachingLog.Services
 			return this.employeeLogRepository.GetAllLogStatuses();
 		}
 
+        public IList<LogStatus> GetQnLogPendingStatuses()
+        {
+            var all = GetAllLogStatuses();
+            var pendingStatusList = new List<LogStatus>();
+            pendingStatusList.Add(new LogStatus(Constants.ALL_STATUSES, "All Pending Statuses"));
+            foreach (var a in all)
+            {
+                if (a.Id == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW ||
+                    a.Id == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW ||
+                    a.Id == Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION ||
+                    a.Id == Constants.LOG_STATUS_PENDING_FOLLOWUP_COACHING ||
+                    a.Id == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW)
+                {
+                    pendingStatusList.Add(a);
+                }
+            }
+
+            pendingStatusList = pendingStatusList.OrderBy(x => x.Description).ToList(); 
+
+            return pendingStatusList;
+        }
+
 		public IList<LogSource> GetAllLogSources(string userEmpId)
 		{
 			return this.employeeLogRepository.GetAllLogSources(userEmpId);

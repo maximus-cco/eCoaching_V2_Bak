@@ -64,7 +64,7 @@ $(document).ready(function () {
             { data: "EmployeeName", name: "strEMPName" },
             { data: "SupervisorName", name: "strEmpSupName" },
 			{ data: "ManagerName", name: "strEmpMgrName" },
-            { data: "Status", name: "strStatus" },
+            { data: "Status", name: "strFormStatus" },
             { data: "Reasons", name: "strCoachingReason", orderable: false },
             { data: "SubReasons", name: "strSubCoachingReason", orderable: false },
             { data: "Value", name: "strValue", orderable: false },

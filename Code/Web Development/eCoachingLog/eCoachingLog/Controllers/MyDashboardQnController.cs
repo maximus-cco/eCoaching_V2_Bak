@@ -146,13 +146,8 @@ namespace eCoachingLog.Controllers
                         // Employee dropdown
                         vm.EmployeeSelectList = GetEmpsForSupMyTeamPending(user);
                         // Pending Status dropdown
-                        var statusList = new List<LogStatus>();
-                        var s1 = new LogStatus();
-                        s1.Id = 12;
-                        s1.Description = "All Pending Status";
-                        statusList.Add(s1);
-                        IEnumerable<SelectListItem> status = new SelectList(statusList, "Id", "Description");
-                        vm.LogStatusSelectList = status;
+                        // Status dropdown
+                        vm.LogStatusSelectList = GetLogPendingStatusSelectList();
                     }
                     else if (user.Role == Constants.USER_ROLE_MANAGER)
                     {
@@ -161,13 +156,8 @@ namespace eCoachingLog.Controllers
                         // Employee dropdown
                         vm.EmployeeSelectList = GetEmpsForMgrMyTeamPending(user);
                         // Pending Status dropdown
-                        var statusList = new List<LogStatus>();
-                        var s1 = new LogStatus();
-                        s1.Id = 12;
-                        s1.Description = "All Pending Status";
-                        statusList.Add(s1);
-                        IEnumerable<SelectListItem> status = new SelectList(statusList, "Id", "Description");
-                        vm.LogStatusSelectList = status;
+                        // Status dropdown
+                        vm.LogStatusSelectList = GetLogPendingStatusSelectList();
                     }
                     // Source dropdown
                     vm.SourceSelectList = GetLogSourceSelectList(user);

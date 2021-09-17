@@ -236,8 +236,15 @@ namespace eCoachingLog.Controllers
 			return statuses;
 		}
 
-		// Download the generated excel file
-		public void Download()
+        protected IEnumerable<SelectListItem> GetLogPendingStatusSelectList()
+        {
+            IList<LogStatus> statusList = this.empLogService.GetQnLogPendingStatuses();
+            IEnumerable<SelectListItem> statuses = new SelectList(statusList, "Id", "Description");
+            return statuses;
+        }
+
+        // Download the generated excel file
+        public void Download()
 		{
 			string fileName = (string)Session["fileName"];
 			try

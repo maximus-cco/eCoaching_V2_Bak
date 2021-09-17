@@ -92,7 +92,7 @@ namespace eCoachingLog
 			}
 			else
 			{
-				Response.Redirect("/Error/Index");
+				Response.Redirect("../Error/Index", false);
 			}
         }
 
