@@ -13,6 +13,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -36,13 +37,32 @@ SET NOCOUNT ON
 
 DECLARE	
 @nvcSubSource nvarchar(100),
+@nvcEmpRole nvarchar(40),
 @NewLineChar nvarchar(2),
 @where nvarchar(max),
 @nvcSQL nvarchar(max);
 
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
+
+IF @nvcEmpRole NOT IN ('Manager','Supervisor' )
+RETURN 1
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE [cl].[StatusID] <> 2 AND [cl].[SourceID] NOT IN (235,236) '
+SET @where = 'WHERE cl.[SourceID] not in (235, 236) '
+
+IF @nvcEmpRole = 'Supervisor'
+BEGIN
+SET @where = @where + ' AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] IN (4,5,10) ' 
+END
+
+
+IF @nvcEmpRole = 'Manager'
+BEGIN
+SET @where = @where + ' AND (eh.[Mgr_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + ''' )' +  @NewLineChar +
+                      ' AND cl.[StatusID] IN (3,4,6,8,10) ' 
+END
 
 IF @intSourceIdin  <> -1
 BEGIN
@@ -84,6 +104,9 @@ AS
 EXEC (@nvcSQL)	
 --PRINT @nvcSQL	    
 
+-- Close Symmetric key
+CLOSE SYMMETRIC KEY [CoachingKey]; 	 
+
 If @@ERROR <> 0 GoTo ErrorHandler;
 
 SET NOCOUNT OFF;
@@ -95,4 +118,5 @@ Return(@@ERROR);
 	    
 END --sp_SelectFrom_Coaching_Log_MyTeamPending_Count
 GO
+
 

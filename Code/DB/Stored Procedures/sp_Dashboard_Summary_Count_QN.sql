@@ -67,7 +67,7 @@ BEGIN
 SET @intMyPendingQN = (SELECT COALESCE(COUNT(cl.CoachingID),0)
                  FROM EC.Coaching_Log cl 
                  WHERE cl.EmpID = @nvcEmpID  
-				 AND StatusID in (3,4,13)
+				 AND StatusID in (4,13)
 				 AND SourceID IN (235,236));
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPendingQN)+ ''' AS LogCount'
@@ -79,8 +79,7 @@ BEGIN
 SET @intMyPendingQN = (SELECT COUNT(cl.CoachingID)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON cl.EmpID = eh.Emp_ID
-                 WHERE ((cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
-				 OR (cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID = 6) 
+                 WHERE ((cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID = 6) 
 				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID = 6))
 				 AND SourceID IN (235,236));
 
@@ -138,16 +137,35 @@ END
 
 IF @bitMyTeamPendingQN = 1
 BEGIN
+
+IF @nvcEmpRole  = 'Supervisor'
+BEGIN
 SET @intMyTeamPendingQN = (SELECT COUNT(cl.CoachingID)
 						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 						 ON cl.EmpID = eh.Emp_ID  
-						 WHERE cl.StatusID IN (3,6,11,12)
+						 WHERE cl.StatusID IN (4,13)
 						 AND SourceID IN (235,236)
-						 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
+						 AND eh.Sup_ID = @nvcEmpID)
 
 
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPendingQN)+ ''' AS LogCount'
+END
+
+IF @nvcEmpRole  = 'Manager'
+BEGIN
+SET @intMyTeamPendingQN = (SELECT COUNT(cl.CoachingID)
+						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
+						 ON cl.EmpID = eh.Emp_ID  
+						 WHERE cl.StatusID IN (4,6,11,12,13)
+						 AND SourceID IN (235,236)
+						 AND (eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
+
+
+SET @SelectList = @SelectList + ' UNION
+SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPendingQN)+ ''' AS LogCount'
+END
+
 END
 
 
@@ -233,4 +251,5 @@ EXEC (@nvcSQL)
 END -- sp_Dashboard_Summary_Count_QN
 
 GO
+
 

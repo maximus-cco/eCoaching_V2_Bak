@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Maintenance_Tables_Create.(08).sql
-Last Modified Date: 6/9/2021
+CCO_eCoaching_Maintenance_Tables_Create.(09).sql
+Last Modified Date:9/15/2021
 Last Modified By: Susmitha Palacherla
 
+Version 09: Quality Now workflow enhancement. TFS 22187 - 09/15/2021
 Version 08: TFS 21493 - Written Corr Bingo records in bingo feeds
 Version 07: TFS 21276 - Update QN Alt Channels compliance and mastery levels 
 Version 06: Updated to add additional archive tables for Quality Now, Short Calls and Bingo detail records - TFS 17655 -  07/20/2020
@@ -27,6 +28,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 4. Create Table [EC].[Coaching_Log_Quality_Now_Evaluations_Archive]
 5. Create Table [EC].[ShortCalls_Evaluations_Archive]
 6. Create Table [EC].[Coaching_Log_Bingo_Archive]
+7. Create Table [EC].[Coaching_Log_Quality_Now_Summary_Archive]
 **************************************************************
 
 --Table creates
@@ -307,3 +309,30 @@ GO
 
 
 --**************************************************************
+
+--7. Create Table [EC].[Coaching_Log_Quality_Now_Summary_Archive]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_Quality_Now_Summary_Archive](
+	[SummaryID] [bigint] NOT NULL,
+	[CoachingID] [bigint] NOT NULL,
+	[EvalSummaryNotes] [nvarchar](max) NULL,
+	[CreateDate] [datetime] NULL,
+	[CreateBy] [nvarchar](20) NULL,
+	[LastModifyDate] [datetime] NULL,
+	[LastModifyBy] [nvarchar](20) NULL,
+	[IsReadOnly] [bit] NULL,
+	[ArchivedBy] [nvarchar](50) NOT NULL,
+	[ArchivedDate] [datetime] NOT NULL
+	) ON [PRIMARY]
+GO
+
+
+ALTER TABLE [EC].[Coaching_Log_Quality_Now_Summary_Archive] ADD  DEFAULT ('Manual') FOR [ArchivedBy]
+GO
+

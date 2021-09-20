@@ -27,19 +27,39 @@ SET NOCOUNT ON
 
 DECLARE	
 @nvcSubSource nvarchar(100),
+@nvcEmpRole nvarchar(40),
 @NewLineChar nvarchar(2),
 @where nvarchar(max),
 @nvcSQL nvarchar(max);
 
+-- Open Symmetric key
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE [cl].[StatusID] in (3,6,11,12) AND [cl].[SourceID] IN (235,236) '
+SET @where = 'WHERE cl.[SourceID] in (235, 236) '
+
+IF @nvcEmpRole NOT IN ('Manager','Supervisor' )
+RETURN 1
+
+IF @nvcEmpRole = 'Supervisor'
+BEGIN
+SET @where = @where + ' AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] IN (4,13) ' 
+END
+
+
+IF @nvcEmpRole = 'Manager'
+BEGIN
+SET @where = @where + ' AND (eh.[Mgr_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + ''' )' +  @NewLineChar +
+                      ' AND cl.[StatusID] IN (4,6,11,12,13) ' 
+END
+
+
 
 IF @intStatusIdin  <> -1
 BEGIN
 	SET @where = @where + @NewLineChar + 'AND  [cl].[StatusID] = ''' + CONVERT(nvarchar,@intStatusIdin) + ''''
 END
-
 
 
 IF @nvcSupIdin  <> '-1'
@@ -66,8 +86,7 @@ AS
 	LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
-	 @where + ' ' + '
-	AND (eh.Sup_ID = ''' + @nvcUserIdin + ''' OR eh.Mgr_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''')
+	 @where + ' ' + '	
     ) x 
 ) SELECT count(strFormID) FROM TempMain';
 

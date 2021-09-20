@@ -30,6 +30,7 @@ SET NOCOUNT ON
 
 DECLARE	
 @nvcSQL nvarchar(max),
+@nvcEmpRole nvarchar(40),
 @UpperBand int,
 @LowerBand int,
 @SortExpression nvarchar(100),
@@ -52,9 +53,27 @@ SET  @SortExpression = @sortBy +  @SortOrder
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE [cl].[StatusID] <> 2 AND [cl].[SourceID] IN (235,236) '
+SET @where = 'WHERE cl.[SourceID] in (235, 236) '
+
+IF @nvcEmpRole NOT IN ('Manager','Supervisor' )
+RETURN 1
+
+
+IF @nvcEmpRole = 'Supervisor'
+BEGIN
+SET @where = @where + ' AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] IN (4,13) ' 
+END
+
+
+IF @nvcEmpRole = 'Manager'
+BEGIN
+SET @where = @where + ' AND (eh.[Mgr_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + ''' )' +  @NewLineChar +
+                      ' AND cl.[StatusID] IN (4,6,11,12,13) ' 
+END
+
 
 
 IF @intStatusIdin  <> -1
@@ -110,8 +129,7 @@ AS
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
 	 @where + ' ' + '
-	AND (eh.Sup_ID = ''' + @nvcUserIdin + ''' OR eh.Mgr_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''')
-    GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status]
+	 GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status]
 	, [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate]
 
   ) x 

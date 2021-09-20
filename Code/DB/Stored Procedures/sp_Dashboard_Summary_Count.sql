@@ -14,7 +14,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -163,19 +162,38 @@ END
 
 IF @bitMyTeamPending = 1
 BEGIN
-SET @intMyTeamPending = (SELECT COUNT(cl.CoachingID)
-						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
-						 ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
-						 ON cl.StatusID = s.StatusID 
-						 WHERE cl.[SourceID] NOT IN (235, 236) 
-						 AND s.Status like 'Pending%'
-						 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID));
+
+IF @nvcEmpRole  = 'Supervisor'
+	BEGIN
+	SET @intMyTeamPending = (SELECT COUNT(cl.CoachingID)
+							 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
+							 ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
+							 ON cl.StatusID = s.StatusID 
+							 WHERE cl.[SourceID] NOT IN (235, 236) 
+							 AND cl.StatusID IN (4,5,10)
+						     AND eh.Sup_ID = @nvcEmpID);
 
 
-SET @SelectList = @SelectList + ' UNION
-SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPending)+ ''' AS LogCount';
+	SET @SelectList = @SelectList + ' UNION
+	SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPending)+ ''' AS LogCount';
+	END
+
+
+IF @nvcEmpRole  = 'Manager'
+	BEGIN
+	SET @intMyTeamPending = (SELECT COUNT(cl.CoachingID)
+							FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
+							ON cl.EmpID = eh.Emp_ID  
+							WHERE cl.StatusID IN (3,4,6,8,10)
+							AND SourceID NOT IN (235,236)
+							AND (eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
+
+
+	SET @SelectList = @SelectList + ' UNION
+	SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPending)+ ''' AS LogCount'
+	END
+
 END
-
 
 IF @bitMyTeamCompleted = 1
 BEGIN
@@ -270,4 +288,5 @@ EXEC (@nvcSQL)
 END -- sp_Dashboard_Summary_Count
 
 GO
+
 

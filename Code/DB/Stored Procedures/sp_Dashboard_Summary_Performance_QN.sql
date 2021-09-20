@@ -48,10 +48,8 @@ and Active = 'A'
 
  ,months as 
 (select distinct  dd.[CalendarYearMonth], (dd.[MonthName] + ' ' + convert(nvarchar(4),dd.[CalendarYear])) as YearMonth
-from ec.Coaching_Log cl WITH (NOLOCK)  inner join  EC.DIM_Date dd
-on dateadd(dd, datediff(dd, 0, cl.SubmittedDate),0) = dd.Fulldate 
-where SubmittedDate between convert(nvarchar(23), @sdate, 121)   and   convert(nvarchar(23), @edate, 121) 
-and sourceid = 235 
+from  EC.DIM_Date dd
+where Fulldate between convert(nvarchar(23), @sdate, 121)   and   convert(nvarchar(23), @edate, 121) 
 )
 
 ,empmonths as
@@ -197,5 +195,4 @@ ErrorHandler:
 	    
 END --sp_Dashboard_Summary_Performance_QN
 GO
-
 

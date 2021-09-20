@@ -8,6 +8,13 @@ IF EXISTS (
 GO
 
 
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date:   10/10/2016
@@ -24,7 +31,6 @@ GO
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 -- =============================================
-
 CREATE OR ALTER PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive] @strArchivedBy nvarchar(50)= 'Automated Process'
 
 AS
@@ -372,6 +378,31 @@ INSERT INTO [EC].[Coaching_Log_Bingo_Archive]
   FROM [EC].[Coaching_Log_Bingo] CLB JOIN #ArchiveLogs A
   ON CLB.CoachingID = A.CoachingID;
 
+  -- Insert QN Eval Summary records to Archive table.
+  INSERT INTO [EC].[Coaching_Log_Quality_Now_Summary_Archive]
+           ([SummaryID]
+           ,[CoachingID]
+           ,[EvalSummaryNotes]
+           ,[CreateDate]
+           ,[CreateBy]
+           ,[LastModifyDate]
+           ,[LastModifyBy]
+           ,[IsReadOnly]
+           ,[ArchivedBy]
+           ,[ArchivedDate])
+	SELECT [SummaryID]
+      ,QNS.[CoachingID]
+      ,[EvalSummaryNotes]
+      ,[CreateDate]
+      ,[CreateBy]
+      ,[LastModifyDate]
+      ,[LastModifyBy]
+      ,[IsReadOnly]
+	   ,@strArchivedBy
+	  ,GetDate()
+  FROM [EC].[Coaching_Log_Quality_Now_Summary] QNS JOIN #ArchiveLogs A
+  ON QNS.CoachingID = A.CoachingID;
+
   -- Delete archived coaching log and related detailed records
 
 --Delete archived Coaching Log Reason records
@@ -394,6 +425,11 @@ INSERT INTO [EC].[Coaching_Log_Bingo_Archive]
     FROM [EC].[Coaching_Log_Bingo] CLB JOIN #ArchiveLogs A
     ON CLB.CoachingID = A.CoachingID;
 
+	-- Delete archived QN Eval summary records
+  	DELETE QNS
+    FROM [EC].[Coaching_Log_Quality_Now_Summary] QNS JOIN #ArchiveLogs A
+     ON QNS.CoachingID = A.CoachingID;
+
 -- Delete archived Coaching Log records
 	DELETE CL
 	FROM [EC].[Coaching_Log] CL JOIN #ArchiveLogs A
@@ -415,5 +451,4 @@ COMMIT TRANSACTION
 END -- sp_Insert_Into_Coaching_Log_Archive
 
 GO
-
 

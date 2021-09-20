@@ -7,6 +7,7 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamPending]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
@@ -44,6 +45,7 @@ SET NOCOUNT ON
 
 DECLARE	
 @nvcSubSource nvarchar(100),
+@nvcEmpRole nvarchar(40),
 @nvcSQL nvarchar(max),
 @UpperBand int,
 @LowerBand int,
@@ -68,9 +70,27 @@ SET  @SortExpression = @sortBy +  @SortOrder
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
+
+IF @nvcEmpRole NOT IN ('Manager','Supervisor' )
+RETURN 1
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE [cl].[StatusID] <> 2 AND [cl].[SourceID] NOT IN (235,236) '
+SET @where = 'WHERE cl.[SourceID] not in (235, 236) '
+
+IF @nvcEmpRole = 'Supervisor'
+BEGIN
+SET @where = @where + ' AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] IN (4,5,10) ' 
+END
+
+
+IF @nvcEmpRole = 'Manager'
+BEGIN
+SET @where = @where + ' AND (eh.[Mgr_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + ''' )' +  @NewLineChar +
+                      ' AND cl.[StatusID] IN (3,4,6,8,10) ' 
+END
+
+
 
 IF @intSourceIdin  <> -1
 BEGIN
@@ -165,4 +185,7 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 END -- sp_SelectFrom_Coaching_Log_MyTeamPending
 
 GO
+
+
+
 

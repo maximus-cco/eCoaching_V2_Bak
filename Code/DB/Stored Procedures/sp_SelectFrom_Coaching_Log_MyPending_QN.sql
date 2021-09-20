@@ -67,13 +67,12 @@ RETURN 1
 
 IF @nvcEmpRole in ('CSR', 'ARC')
 BEGIN
-SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (3,4,13))'
+SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (4,13))'
 END
 
 IF @nvcEmpRole = 'Supervisor'
 BEGIN
-SET @where = @where + ' AND ((cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (3,4))' +  @NewLineChar +
-		       ' OR ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] = 6 ))' +  @NewLineChar +
+SET @where = @where + ' AND ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] = 6 )' +  @NewLineChar +
 		       ' OR (cl.[ReassignedToId] = ''' + @nvcUserIdin + '''  AND [ReassignCount] <> 0 AND cl.[StatusID] = 6 ))'
 END
 
@@ -153,5 +152,4 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending_QN
 GO
-
 
