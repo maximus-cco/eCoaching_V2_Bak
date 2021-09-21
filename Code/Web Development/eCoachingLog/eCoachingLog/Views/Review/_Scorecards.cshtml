@@ -112,19 +112,11 @@ Page Name: @Model.ReviewPageName*@
                             </p>
 						    <p><strong>Start Temperature:</strong> @Html.Raw(s.StartTemperature)<br />
                                 <strong>Comments:</strong>
-                                <span id="st_comments_@s.EvalId"> @Html.Raw(s.StartTemperatureComment)</span>
-                                @if (Model.AllowCopy && !String.IsNullOrEmpty(s.StartTemperatureComment))
-                                {
-                                    <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
-                                }
+                                <span> @Html.Raw(s.StartTemperatureComment)</span>
                             </p>
 						    <p><strong>End Temperature:</strong> @Html.Raw(s.EndTemperature)<br />
                                 <strong>Comments:</strong>
-                                <span id="et_comments_@s.EvalId"> @Html.Raw(s.EndTemperatureComment)</span>
-                                @if (Model.AllowCopy && !String.IsNullOrEmpty(s.EndTemperatureComment))
-                                {
-                                    <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
-                                }
+                                <span> @Html.Raw(s.EndTemperatureComment)</span>
                             </p>
                         }
                     }

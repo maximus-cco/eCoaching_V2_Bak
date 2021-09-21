@@ -608,7 +608,16 @@ namespace eCoachingLog.Repository
 				catch (Exception ex)
 				{
 					logger.Error("Failed to get log total: " + ex.Message);
-					throw new Exception(ex.Message);
+                    if (connection == null)
+                    {
+                        logger.Error("connection is null!");
+                    }
+                    if (command == null)
+                    {
+                        logger.Error("command is null!");
+                    }
+
+					throw ex;
 				}
 			}
 			return count;
@@ -712,7 +721,7 @@ namespace eCoachingLog.Repository
                 catch (Exception ex)
                 {
                     logger.Error("Failed to get log total: " + ex.Message);
-                    throw new Exception(ex.Message);
+                    throw ex;
                 }
             }
             return count;
@@ -848,7 +857,7 @@ namespace eCoachingLog.Repository
 				catch (Exception ex)
 				{
 					logger.Error("Failed to get log total: " + ex.Message);
-					throw new Exception(ex.Message);
+					throw ex;
 				}
 			}
 			return count;
@@ -900,7 +909,7 @@ namespace eCoachingLog.Repository
 				catch (Exception ex)
 				{
 					logger.Error("Failed to get log total: " + ex.Message);
-					throw new Exception(ex.Message);
+					throw ex;
 				}
 			}
 			return count;
