@@ -10,6 +10,8 @@ namespace eCoachingLog.Models.User
         public string Name { get; set; }
 		public string JobCode { get; set; }
         public string Role { get; set;}
+        // Indicates whether this user is a CSR's supervisor, managager, etc.
+        public bool IsCsrRelated { get; set; }
 		// Be able to view all logs on Historical Dashboard if true 
 		public bool IsEcl { get; set; }
 		// Whether the user is allowed to access New Submission page

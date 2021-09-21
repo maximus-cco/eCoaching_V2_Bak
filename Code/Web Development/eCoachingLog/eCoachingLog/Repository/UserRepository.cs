@@ -34,7 +34,8 @@ namespace eCoachingLog.Repository
                         user.Name = dataReader["Emp_Name"].ToString();
 						user.JobCode = dataReader["Emp_Job_Code"].ToString();
 						user.Role = dataReader["Role"].ToString();
-						user.IsEcl = (dataReader["ECLUser"] == DBNull.Value) ? false : (bool)dataReader["ECLUser"];
+                        user.IsCsrRelated = (dataReader["CSRRelated"] == DBNull.Value) ? false : (bool)dataReader["CSRRelated"];
+                        user.IsEcl = (dataReader["ECLUser"] == DBNull.Value) ? false : (bool)dataReader["ECLUser"];
 						user.IsAccessNewSubmission = (dataReader["NewSubmission"] == DBNull.Value) ? false : (bool)dataReader["NewSubmission"];
 						user.IsAccessMyDashboard = (dataReader["MyDashboard"] == DBNull.Value) ? false : (bool)dataReader["MyDashboard"];
 						user.IsAccessHistoricalDashboard = (dataReader["HistoricalDashboard"] == DBNull.Value) ? false : (bool)dataReader["HistoricalDashboard"];
