@@ -18,9 +18,9 @@
 
 <hr />
 
-<div class='form-group required @(@Model.IsWarning.HasValue && @Model.IsWarning.Value ? "hide" : "show")' style="padding-left: 20px;">
+<div class='form-group @(@Model.IsWarning.HasValue && @Model.IsWarning.Value ? "hide" : "show")' style="padding-left: 20px;">
     <label class="checkbox-inline">
-        @Html.CheckBoxFor(m => m.VerifiedCheckbox)<strong>I have verified that all the information on this form is true and complete to the best of my knowledge.</strong>
+        @Html.CheckBoxFor(m => m.VerifiedCheckbox)<span class="required"><strong>I have verified that all the information on this form is true and complete to the best of my knowledge.</strong></span>
     </label>
     @Html.ValidationMessageFor(m => m.VerifiedCheckbox)
 </div>
