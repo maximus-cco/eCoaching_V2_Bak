@@ -14,7 +14,7 @@
     <div id="message-text">@TempData["FailMessage"]</div>
 </div>
 
-<h2 class="ecl-page-header">New Submission<span class="danger" style="float: right; font-size: medium;"> Please do NOT include PII or PHI in the log entry.</span> </h2>
+<div class="ecl-page-header">New Submission<span class="danger" style="float: right;"> Please do NOT include PII or PHI in the log entry.</span> </div>
 @using (Html.BeginForm("Save", "NewSubmission", FormMethod.Post,
 				new { id = "new-submission-form", @class = "form-horizontal" }))
 {

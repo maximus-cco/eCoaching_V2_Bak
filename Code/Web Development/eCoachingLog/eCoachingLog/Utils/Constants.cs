@@ -138,10 +138,11 @@ namespace eCoachingLog.Utils
 		// ec.dim_source table
 		public const int SOURCE_INTERNAL_CCO_REPORTING = 218;
 
-		public static readonly List<string> EXCEL_SHEET_NAMES =
-			new List<string>() { "eCL", "Quality Now eCL", "Short Call eCL" };
+        public static readonly List<string> EXCEL_SHEET_NAMES =
+            new List<string>() { "eCL", "Short Call eCL", "Quality Now eCL", "Quality Now WebChat", "Quality Now Written Corr" };
 
-		public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
+
+        public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
 		{
 			{ "My Pending", "_MyPending" },
 			{ "My Follow-up", "_MyFollowup" },
