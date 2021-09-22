@@ -206,7 +206,13 @@ ul.navbar-nav {
 .danger {
     color: red;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 1em;
+}
+
+.success {
+    color: green;
+    font-weight: bold;
+    font-size: 1em;
 }
 
 #my-submission-summary tbody tr:hover {

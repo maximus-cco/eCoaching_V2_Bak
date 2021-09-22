@@ -4,17 +4,14 @@
     ViewBag.Title = "New Submission";
 }
 
-<div id="success-message" class="alert alert-success alert-dismissible hide">
-    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    <div id="message-text">@TempData["SuccessMessage"]</div>
-</div>
-
-<div id="fail-message" class="alert alert-danger alert-dismissible hide">
-    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    <div id="message-text">@TempData["FailMessage"]</div>
-</div>
-
 <div class="ecl-page-header">New Submission<span class="danger" style="float: right;"> Please do NOT include PII or PHI in the log entry.</span> </div>
+<div id="success-message" class="success hide">
+    @TempData["SuccessMessage"]
+</div>
+<div id="fail-message" class="danger hide">
+    @TempData["FailMessage"]
+</div>
+
 @using (Html.BeginForm("Save", "NewSubmission", FormMethod.Post,
 				new { id = "new-submission-form", @class = "form-horizontal" }))
 {

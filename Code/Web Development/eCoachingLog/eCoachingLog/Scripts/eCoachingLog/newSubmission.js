@@ -341,7 +341,8 @@
 
     function resetPage(moduleId) {
     	$(".please-wait").slideDown(500);
-        $('#flash-message').empty();
+    	$('#success-message').empty();
+    	$('#fail-message').empty();
         $.ajax({
             type: 'POST',
             url: resetPageUrl,
