@@ -67,6 +67,8 @@ namespace eCLAdmin.Utilities
                     }
                     break;
                 case Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW:
+                case Constants.LOG_STATUS_PENDING_FOLLOW_UP_PREPARATION:
+                case Constants.LOG_STATUS_PENDING_FOLLOW_UP_COACHING:
                     emailTo = employee.SupervisorEmail;
                     break;
                 case Constants.LOG_STATUS_PENDING_SRMANAGER_REVIEW:
