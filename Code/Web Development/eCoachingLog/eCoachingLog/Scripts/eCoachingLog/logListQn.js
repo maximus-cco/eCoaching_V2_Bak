@@ -27,40 +27,41 @@ $(document).ready(function () {
             /* Review and Coach */
             {
                 data: 'ID',
+                orderable: false,
                 render:
                     function (data, type, row, meta) {
-                        //console.log(data);
-                        // TODO: remove id check, instead, will add logic in service to determine based on each log's IsFiveEvalLog or IsOneEvalLog
-                        // all log under Pending Review or _MyPendingFollowupCoaching  needs these 2 links
                         if (showPrepareLink === 'True' && showCoachLink === 'True') {
-                        //if (data == 188111) {
                             var prepare = '<a href="#"' + 'data-action="editSummary"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                            'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Prepare</b>' + '</a>&nbsp;<font color="red">' + row['LogNewText'] + '</font>';
+                            'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Prepare</b></a>';
                             var coach = '<a href="#"' + 'data-action="coach"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                                'class="modal-link-qn"' + 'style="color: green; border-bottom: blue 0.125em solid;">' + '<b>Coach</b>' + '</a>&nbsp;<font color="red">' + row['LogNewText'] + '</font>';
+                                'class="modal-link-qn"' + 'style="color: green; border-bottom: blue 0.125em solid;">' + '<b>Coach</b></a>';
                             return prepare + '&nbsp;&nbsp;' + coach;
                         }
                         
 
                         if (showCsrReviewLink === 'True') {
                             var csrReview = '<a href="#"' + 'data-action="csrReview"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                                'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Review</b>' + '</a>&nbsp;<font color="red">' + row['LogNewText'] + '</font>';
+                                'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Review</b></a>';
                             return csrReview;
                         }
 
                         // decide if additional coaching (followup coaching is needed)
                         if (showFollowupReviewLink === 'True') {
                             var followup = '<a href="#"' + 'data-action="followupReview"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                                'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Review</b>' + '</a>&nbsp;<font color="red">' + row['LogNewText'] + '</font>';
+                                'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Review</b></a>';
                             return followup;
                         }
 
                         var view = '<a href="#"' + 'data-action="view"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                                'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>View</b>' + '</a>&nbsp;<font color="red">' + row['LogNewText'] + '</font>';
+                                'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>View</b></a>';
                         return view;
                 }
             },
-            { data: "FormName", name: "strFormID" },
+            {
+                data: "FormName", name: "strFormID", render: function (data, type, row, meta) {
+                    return data + '</a>&nbsp;<font color="red">' + row['LogNewText'] + '</font>';
+                }
+            },
             { data: "EmployeeName", name: "strEMPName" },
             { data: "SupervisorName", name: "strEmpSupName" },
 			{ data: "ManagerName", name: "strEmpMgrName" },
