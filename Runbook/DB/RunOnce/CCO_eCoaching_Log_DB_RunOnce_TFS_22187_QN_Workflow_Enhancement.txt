@@ -16,6 +16,7 @@ Summary
 5. Add additional columns to Coaching_log_Archive table for Sup Followup Review
 6. Increase size of [txtReasonNotCoachable] 
 7. Create Table [EC].[Coaching_Log_Quality_Now_Summary_Archive]
+8. Add Statusses to [EC].[AT_Reassign_Status_For_Module]
 
 --******************************************
 
@@ -226,4 +227,34 @@ GO
 ALTER TABLE [EC].[Coaching_Log_Quality_Now_Summary_Archive] ADD  DEFAULT ('Manual') FOR [ArchivedBy]
 GO
 
+--*********************************************
+
+--8. Add Statusses to [EC].[AT_Reassign_Status_For_Module]
+
+INSERT INTO [EC].[AT_Reassign_Status_For_Module]
+           ([ModuleId]
+           ,[Module]
+           ,[StatusId]
+           ,[Status]
+           ,[isActive])
+     VALUES
+	 (1,'CSR',11,'Pending Follow-up Preparation', 1),
+	 (1,'CSR',12,'Pending Follow-up Coaching', 1)
+
+--*********************************************
+
+
+--*********************************************
+
+
+--*********************************************
+
+
+--*********************************************
+
+
+--*********************************************
+
+
+--*********************************************
 

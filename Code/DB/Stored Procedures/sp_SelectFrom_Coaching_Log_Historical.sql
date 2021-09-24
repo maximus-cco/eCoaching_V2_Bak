@@ -1,17 +1,3 @@
-/*
-sp_SelectFrom_Coaching_Log_Historical(05).sql
-Last Modified Date: 10/30/2019
-Last Modified By: Susmitha Palacherla
-
-Version 05: TFS 15974 - Fix HC users receiving error on Historical Dashboard
-Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
-Version 03: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 01: Document Initial Revision created during hist dashboard redesign.  TFS 7138 - 04/30/2018
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -27,6 +13,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/24/2018
@@ -36,8 +23,9 @@ GO
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 --  Update to fix HC users receiving error on Historical Dashboard - TFS 15974
+--  Modified to support Quality Now workflow enhancement. TFS 22187 - 09/22/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
@@ -184,6 +172,16 @@ AS
 				,x.IsFollowupRequired
 				,x.FollowupDueDate
 				,x.IsFollowupCompleted
+				,x.SupervisorFollowupAutoDate
+				,x.FollowupCoachingNotes
+				,x.CSRFollowupAcknowledged
+				,x.CSRFollowupAutoDate
+				,x.CSRFollowupComments
+				,x.FollowupSupervisorID
+				,x.SupervisorFollowupReviewAutoDate
+				,x.SupervisorFollowupReviewCoachingNotes
+				,x.FollowupReviewMonitoredLogs
+				,x.FollowupReviewSupervisorID 
 				,x.orderkey
   ,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
   FROM 
@@ -200,6 +198,16 @@ AS
 	  ,CASE WHEN [cl].[IsFollowupRequired] = 1 THEN ''Yes'' ELSE ''No'' END IsFollowupRequired
       ,[cl].[FollowupDueDate] FollowupDueDate
 	  ,CASE WHEN [cl].[IsFollowupRequired] = 1 AND [cl].[FollowupActualDate] IS NOT NULL THEN ''Yes'' ELSE ''No'' END IsFollowupCompleted
+	  ,[cl].[SupFollowupAutoDate] SupervisorFollowupAutoDate
+      ,[cl].[SupFollowupCoachingNotes] FollowupCoachingNotes
+      ,CASE WHEN [cl].[IsEmpFollowupAcknowledged] = 1 THEN ''Yes'' ELSE ''No'' END CSRFollowupAcknowledged
+      ,[cl].[EmpAckFollowupAutoDate] CSRFollowupAutoDate
+      ,[cl].[EmpAckFollowupComments] CSRFollowupComments
+      ,[cl].[FollowupSupID] FollowupSupervisorID
+      ,[cl].[SupFollowupReviewAutoDate] SupervisorFollowupReviewAutoDate
+      ,[cl].[SupFollowupReviewCoachingNotes] SupervisorFollowupReviewCoachingNotes
+      ,[cl].[SupFollowupReviewMonitoredLogs] FollowupReviewMonitoredLogs
+     ,[cl].[FollowupReviewSupID] FollowupReviewSupervisorID 
 	  ,''ok1'' orderkey
     FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 	JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
@@ -209,8 +217,10 @@ AS
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
 	JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK) ON cl.CoachingID = clr.CoachingID' +  @NewLineChar +
 	@where + ' ' + '
-	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name]
-	, [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate]
+	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name],
+	 [cl].[IsFollowupRequired], [cl].[FollowupDueDate], [cl].[FollowupActualDate], [cl].[SupFollowupAutoDate], 
+	 [cl].[SupFollowupCoachingNotes], [cl].[IsEmpFollowupAcknowledged], [cl].[EmpAckFollowupAutoDate], [cl].[EmpAckFollowupComments],
+     [cl].[FollowupSupID], [cl].[SupFollowupReviewAutoDate], [cl].[SupFollowupReviewCoachingNotes], [cl].[SupFollowupReviewMonitoredLogs], [cl].[FollowupReviewSupID] 
 '
 
 SET @where = 
@@ -293,6 +303,16 @@ UNION
 	,''NA'' IsFollowupRequired
     ,'''' FollowupDueDate
 	,''NA'' IsFollowupcompleted
+	,'''' SupervisorFollowupAutoDate
+    ,''NA'' FollowupCoachingNotes
+    ,''NA'' CSRFollowupAcknowledged
+    ,'''' CSRFollowupAutoDate
+    ,''NA'' CSRFollowupComments
+    ,''NA'' FollowupSupervisorID
+    ,'''' SupervisorFollowupReviewAutoDate
+    ,''NA'' SupervisorFollowupReviewCoachingNotes
+    ,''NA'' FollowupReviewMonitoredLogs
+    ,''NA'' FollowupReviewSupervisorID 
 	,''ok2'' orderkey
   FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
   JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
@@ -319,7 +339,17 @@ SELECT strLogID,
   ,strSubmitterName
   ,IsFollowupRequired
   ,FollowupDueDate
-   ,IsFollowupCompleted
+  ,IsFollowupCompleted
+  ,SupervisorFollowupAutoDate
+  ,FollowupCoachingNotes
+  ,CSRFollowupAcknowledged
+  ,CSRFollowupAutoDate
+  ,CSRFollowupComments
+  ,FollowupSupervisorID
+  ,SupervisorFollowupReviewAutoDate
+  ,SupervisorFollowupReviewCoachingNotes
+  ,FollowupReviewMonitoredLogs
+  ,FollowupReviewSupervisorID 
   ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strCoachingReasonFromCoachingID](T.strLogID)
 	 ELSE [EC].[fn_strCoachingReasonFromWarningID](T.strLogID) 
    END strCoachingReason
@@ -349,9 +379,6 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- SelectFrom_Coaching_Log_Historical
-
-
 GO
-
 
 

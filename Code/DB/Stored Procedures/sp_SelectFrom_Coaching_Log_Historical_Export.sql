@@ -1,24 +1,3 @@
-/*
-sp_SelectFrom_Coaching_Log_Historical_Export(10).sql
-Last Modified Date: 5/24/2021
-Last Modified By: Susmitha Palacherla
-
-Version 10: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
-Version 09: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 08: Modified to add left join for submitter during changes for TFS 15058 - 08/13/2019
-Version 07b: Updated from UAT Feedback - TFS 14108 - 08/01/2019
-Version 07a: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 07/08/2019
-Added additional columns
-Version 07: Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
-Version 06: Additional Changes from V&V - TFS 13332 - 04/20/2019
-Version 05: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 04 : Modified during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
-Version 03: Encrypt/decrypt - TFS 7856  - 12/1/2017
-Version 02: Modified per SCR 14893 dashboard redesign performance round 2 - 06/2/2015
-Version 01: Document Initial Revision - 04/14/2015
-*/
-
-
 IF EXISTS (
   SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
   WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Historical_Export' 
@@ -31,7 +10,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -47,8 +25,9 @@ GO
 -- Modified to add left join for submitter during changes for TFS 15058 - 08/13/2019
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
+-- Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
+CREATE OR ALTER  PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
@@ -238,7 +217,20 @@ SELECT [cl].[CoachingID] CoachingID
   ,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
   ,[cl].[MgrNotes] MgrNotes
   ,[cl].[CSRReviewAutoDate]	EmpReviewAutoDate
-  ,[cl].[CSRComments] EmpComments '
+  ,[cl].[CSRComments] EmpComments 
+  ,CASE WHEN [cl].[IsFollowupRequired] = 1 THEN ''Yes'' ELSE ''No'' END FollowupRequired
+  ,[cl].[FollowupDueDate] FollowupDate
+  ,[cl].[FollowupActualDate]FollowupCoachingDate
+  ,[cl].[SupFollowupAutoDate] SupervisorFollowupAutoDate
+  ,[cl].[SupFollowupCoachingNotes] FollowupCoachingNotes
+  ,CASE WHEN [cl].[IsEmpFollowupAcknowledged] = 1 THEN ''Yes'' ELSE ''No'' END CSRFollowupAcknowledged
+  ,[cl].[EmpAckFollowupAutoDate] CSRFollowupAutoDate
+  ,[cl].[EmpAckFollowupComments] CSRFollowupComments
+  ,[cl].[FollowupSupID] FollowupSupervisorID
+  ,[cl].[SupFollowupReviewAutoDate] SupervisorFollowupReviewAutoDate
+  ,[cl].[SupFollowupReviewCoachingNotes] SupervisorFollowupReviewCoachingNotes
+  ,[cl].[SupFollowupReviewMonitoredLogs] FollowupReviewMonitoredLogs
+  ,[cl].[FollowupReviewSupID] FollowupReviewSupervisorID '
 
 SET @nvcSQL2Phone = '  ,[qne].[VerintFormName] EvaluationForm
   ,[qne].[Channel] Channel
@@ -453,6 +445,9 @@ SET NOCOUNT ON;
 EXEC (@nvcSQL1);	
 --PRINT @nvcSQL1;
 
+EXEC (@nvcSQL3);	
+--PRINT @nvcSQL3;
+
 EXEC (@nvcSQL2AllPhone);
 --PRINT @nvcSQL2AllPhone;
 
@@ -462,12 +457,12 @@ EXEC (@nvcSQL2AllWebChat);
 EXEC (@nvcSQL2AllWrittenCorr);	
 --PRINT @nvcSQL2AllWrittenCorr;
 
-EXEC (@nvcSQL3);	
---PRINT @nvcSQL3;
 
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
 GO
+
+
 
 

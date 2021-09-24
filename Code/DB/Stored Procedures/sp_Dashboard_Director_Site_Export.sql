@@ -1,16 +1,3 @@
-/*
-sp_Dashboard_Director_Site_Export(05).sql
-Last Modified Date: 5/24/2021
-Last Modified By: Susmitha Palacherla
-
-Version 05: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
-Version 04: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 03A: Updated from UAT Feedback - TFS 14108 - 08/01/2019
-Version 03: Modified to support new handling for Short Calls. TFS 14108 - 07/09/2019
-Version 02: Modified to incorporate Quality Now. TFS 13332 - 03/19/2019
-Version 01: Document Initial Revision created during Hist dashboard move to new architecture - TFS 7138 - 04/30/2018
-*/
-
 
 IF EXISTS (
   SELECT * 
@@ -20,6 +7,7 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_Dashboard_Director_Site_Export]
 GO
+
 
 SET ANSI_NULLS ON
 GO
@@ -36,8 +24,9 @@ GO
 --  Modified to incorporate new logic for OMR Short CallsLogs. TFS 14108 - 06/25/2019
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
+--  Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Dashboard_Director_Site_Export] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Director_Site_Export] 
 @nvcUserIdin nvarchar(10),
 @intSiteIdin int,
 @strSDatein datetime,
@@ -166,7 +155,20 @@ ORDER BY [cl].[CoachingID];'
   ,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
   ,[cl].[MgrNotes] MgrNotes
   ,[cl].[CSRReviewAutoDate]	EmpReviewAutoDate
-  ,[cl].[CSRComments] EmpComments '
+  ,[cl].[CSRComments] EmpComments
+  ,CASE WHEN [cl].[IsFollowupRequired] = 1 THEN ''Yes'' ELSE ''No'' END FollowupRequired
+  ,[cl].[FollowupDueDate] FollowupDate
+  ,[cl].[FollowupActualDate]FollowupCoachingDate
+  ,[cl].[SupFollowupAutoDate] SupervisorFollowupAutoDate
+  ,[cl].[SupFollowupCoachingNotes] FollowupCoachingNotes
+  ,CASE WHEN [cl].[IsEmpFollowupAcknowledged] = 1 THEN ''Yes'' ELSE ''No'' END CSRFollowupAcknowledged
+  ,[cl].[EmpAckFollowupAutoDate] CSRFollowupAutoDate
+  ,[cl].[EmpAckFollowupComments] CSRFollowupComments
+  ,[cl].[FollowupSupID] FollowupSupervisorID
+  ,[cl].[SupFollowupReviewAutoDate] SupervisorFollowupReviewAutoDate
+  ,[cl].[SupFollowupReviewCoachingNotes] SupervisorFollowupReviewCoachingNotes
+  ,[cl].[SupFollowupReviewMonitoredLogs] FollowupReviewMonitoredLogs
+  ,[cl].[FollowupReviewSupID] FollowupReviewSupervisorID '
 
 
   SET @nvcSQL2Phone =  ' ,[qne].[VerintFormName] EvaluationForm
@@ -389,6 +391,9 @@ SET NOCOUNT ON;
 EXEC (@nvcSQL1)	
 --PRINT @nvcSQL1
 
+EXEC (@nvcSQL3)	
+--PRINT @nvcSQL3
+
 EXEC (@nvcSQL2AllPhone);
 --PRINT @nvcSQL2AllPhone;
 
@@ -397,9 +402,6 @@ EXEC (@nvcSQL2AllWebChat);
 
 EXEC (@nvcSQL2AllWrittenCorr);	
 --PRINT @nvcSQL2AllWrittenCorr;
-
-EXEC (@nvcSQL3)	
---PRINT @nvcSQL3
 
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 

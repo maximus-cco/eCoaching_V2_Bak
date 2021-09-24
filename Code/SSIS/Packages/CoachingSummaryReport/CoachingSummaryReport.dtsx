@@ -13,8 +13,8 @@
   DTS:ObjectName="CoachingSummaryReport"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="96"
-  DTS:VersionGUID="{5E3F6861-A5FB-4255-9B1C-81B497E80642}">
+  DTS:VersionBuild="102"
+  DTS:VersionGUID="{D1972F1A-BACD-4451-987D-E42759D24577}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -44,7 +44,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Employee Level ID"
-              DTS:DTSID="{5095C6FF-071C-46D6-80D1-D314FA65D061}"
+              DTS:DTSID="{C796936B-62DB-43FE-80D7-709CF1078C26}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -53,7 +53,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Employee Level Name"
-              DTS:DTSID="{9D7DA5F5-0BB6-48EC-885D-356350371856}"
+              DTS:DTSID="{E971C2EF-B5FA-4438-982B-0BEA8FC00B0D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -62,7 +62,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Coaching ID"
-              DTS:DTSID="{A204066F-3140-428B-8A81-23B68BC5273E}"
+              DTS:DTSID="{1FEFAFD4-A9CB-40CE-89FA-5C09AE805DF8}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -71,7 +71,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Form Name"
-              DTS:DTSID="{C29E32AC-16D9-4A8F-A3C6-C6918F479CED}"
+              DTS:DTSID="{9E13D2B1-118F-4A51-84E8-7810D88BD822}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -80,7 +80,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Quality Now Batch ID"
-              DTS:DTSID="{635383B4-053A-4E75-BFB4-F31D74C7602B}"
+              DTS:DTSID="{635EA5F0-7B71-4F1A-84D7-2CA387B9031F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -89,16 +89,16 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Quality Now Batch Status"
-              DTS:DTSID="{2540E653-953E-4180-8188-5F7EEB38ED1C}"
+              DTS:DTSID="{720299AA-3DDD-44E3-84D2-8F28DD1A81E1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="100"
+              DTS:MaximumWidth="50"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Status"
-              DTS:DTSID="{542C61C7-5072-4940-91AB-0ACF6F28E40D}"
+              DTS:DTSID="{F4F78A9E-3A5D-41B0-965B-EACC89D5AC9F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -107,7 +107,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Employee ID"
-              DTS:DTSID="{E8AED050-9384-4844-8FF4-81E2E4CEA21E}"
+              DTS:DTSID="{02D4E964-7367-475C-83FA-9E294EBF966D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -116,7 +116,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Employee Name"
-              DTS:DTSID="{D466EBCA-8375-4FCB-A964-31A9E814BF84}"
+              DTS:DTSID="{EF1246AC-AFC1-4E12-ABA4-F23EB3EC5A9F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -125,7 +125,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Site"
-              DTS:DTSID="{B59A2FC9-9CB5-454A-A211-53BE602EE9BF}"
+              DTS:DTSID="{E37373E3-FBAE-4C09-88CA-D834F0FC4A9A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -134,7 +134,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Supervisor Employee ID"
-              DTS:DTSID="{F8739A58-9BFF-49F3-9307-F58E785FF9D8}"
+              DTS:DTSID="{AB903E9D-2F77-4F2E-9BED-1B8A1C4E8A6C}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -143,7 +143,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Supervisor Name"
-              DTS:DTSID="{56F50751-BC8A-4C03-B86D-0D02586673D4}"
+              DTS:DTSID="{21D1098F-73A7-40E3-8B38-D4E32A85665D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -152,7 +152,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Manager Employee ID"
-              DTS:DTSID="{8C66E010-0051-4337-B232-F78B5F3C89B8}"
+              DTS:DTSID="{53E72E6E-261A-4C3A-9897-B481553240D0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -161,7 +161,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Manager Name"
-              DTS:DTSID="{5C583CF3-9A11-4363-9F4F-B338E26EC97A}"
+              DTS:DTSID="{D66CFF7C-90A1-4327-B9B0-5D0F24A0E789}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -170,7 +170,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Current Supervisor Employee ID"
-              DTS:DTSID="{337B827D-D617-4FD3-A119-A2A0C907CCD6}"
+              DTS:DTSID="{47CEBC01-66CB-4455-B841-F9D0560B4ADE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -179,7 +179,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Current Supervisor Name"
-              DTS:DTSID="{29D88C6E-8EEF-407F-9E64-BD119A4DA089}"
+              DTS:DTSID="{8ABB7A99-E684-44FB-921D-C2CBE5A95EFB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -188,7 +188,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Current Manager Employee ID"
-              DTS:DTSID="{F3DEB4E2-ADC5-4BF5-AFF0-27D484A5184E}"
+              DTS:DTSID="{85FA216D-941B-4EFF-BEE0-690EC075ADDE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -197,7 +197,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Current Manager Name"
-              DTS:DTSID="{525E9EF1-87C0-4016-B83F-7EDA00928845}"
+              DTS:DTSID="{B73EBC6D-7703-4FDF-9FEE-6C15314FBD56}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -206,7 +206,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Review Supervisor Employee ID"
-              DTS:DTSID="{090BE7A3-5037-472D-8141-75530BCB81B9}"
+              DTS:DTSID="{0C7F56E0-43FB-4E42-9DC6-2EFFCB881ECE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -215,7 +215,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Review Supervisor Name"
-              DTS:DTSID="{ECA9F532-27B5-4F75-8447-494C2E6ABA12}"
+              DTS:DTSID="{18A43403-2FF2-4BBB-B0A4-E06D1B53F41F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -224,7 +224,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Review Manager Employee ID"
-              DTS:DTSID="{A649CF4B-2E3C-463E-BA56-C8A9DD308016}"
+              DTS:DTSID="{06A873F1-57B3-4828-873D-17CCF79A01AD}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -233,7 +233,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Review Manager Name"
-              DTS:DTSID="{C42DD044-E7EF-49C6-A319-080F94579BDF}"
+              DTS:DTSID="{89F2C37B-C9D0-4558-A2DA-9FA93F84CC48}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -242,7 +242,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Strength and Opportunities"
-              DTS:DTSID="{FD0462CD-0826-4C99-8010-443A9DC523EC}"
+              DTS:DTSID="{DB33F99F-25EE-4A51-A829-E4734C487A78}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -251,7 +251,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Evaluation Summary"
-              DTS:DTSID="{E2CB76D4-67ED-4B46-9452-C528D150045B}"
+              DTS:DTSID="{38DA02B5-7A18-4B0C-AACA-5B4BB5D30AB1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -260,7 +260,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Coaching Notes"
-              DTS:DTSID="{55D805FF-21EB-4639-85D4-B524530A93B2}"
+              DTS:DTSID="{238E440D-AC49-4218-87A0-0887D0E65F8D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -269,7 +269,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Event Date"
-              DTS:DTSID="{C629BA5E-BB8B-4469-B74F-7693A191C60F}"
+              DTS:DTSID="{5C9EAC5F-6431-4971-8FB7-FED90530C4BE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -278,7 +278,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Coaching Date"
-              DTS:DTSID="{1D513A39-B4BC-4D89-8953-28840D89BE67}"
+              DTS:DTSID="{EF40564D-BDD7-4D1B-842F-E1FA4F977909}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -287,7 +287,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Submitted Date"
-              DTS:DTSID="{3FF489CB-063B-4337-96E3-48EF4ABAD4C0}"
+              DTS:DTSID="{204E2F82-97EB-4C6F-A3F5-EC3FA6E1D57E}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -296,7 +296,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Coaching Source"
-              DTS:DTSID="{D0BADD6C-0C1D-4EEC-A16A-081062D42480}"
+              DTS:DTSID="{8C048ECC-54DB-49ED-BB24-651591A90213}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -305,7 +305,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Sub Coaching Source"
-              DTS:DTSID="{B9696801-E8C9-45F4-ACC9-5F73BD4F8265}"
+              DTS:DTSID="{CD6017D8-6692-4E24-B0B0-F86BB78ECB7E}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -314,7 +314,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Coaching Reason"
-              DTS:DTSID="{0634675A-EA27-44B1-AACC-D8B2C36EA303}"
+              DTS:DTSID="{4E8C6441-4B5E-437A-86DE-537D54C737DE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -323,7 +323,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="SubCoaching Reason"
-              DTS:DTSID="{4FCC8385-210A-4FF8-B3E0-8F96E482299B}"
+              DTS:DTSID="{6FC15BED-2DFB-4C44-95B0-E3EA458DBF2B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -332,7 +332,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Value"
-              DTS:DTSID="{6DB3AE49-B359-4BFF-A21B-BE28C4851A10}"
+              DTS:DTSID="{7F13C681-3E08-4DFD-9BA9-8FE17A9365DB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -341,7 +341,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Submitter ID"
-              DTS:DTSID="{BD05F09C-FDF1-4FA8-9037-94B6ED5AA35E}"
+              DTS:DTSID="{69536FBA-3AA4-4EAE-B391-765CF8724722}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -350,7 +350,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Submitter Name"
-              DTS:DTSID="{E3903504-D224-4AB9-9A85-3AA316DB9357}"
+              DTS:DTSID="{40061E9C-5DE9-4B79-B9A2-D587A36E97A9}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -359,7 +359,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Supervisor Reviewed Date"
-              DTS:DTSID="{AE177372-1B1D-47CC-99E6-639037056B0A}"
+              DTS:DTSID="{E47F909E-A08F-40D6-8F6D-23F831656E64}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -368,7 +368,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Manager Reviewed Manual Date"
-              DTS:DTSID="{D8D31DAC-DE74-4D92-BE49-F9CF0646B3D0}"
+              DTS:DTSID="{D2ABDFB2-D4C7-427D-862A-7E48F2AED1F4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -377,16 +377,16 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Manager Reviewed Auto Date"
-              DTS:DTSID="{5435CB45-44BD-44AE-8501-22C68341066B}"
+              DTS:DTSID="{57581F64-4251-471F-B362-2C5498B4F411}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="3000"
+              DTS:MaximumWidth="4000"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Manager Notes"
-              DTS:DTSID="{64EEA519-E110-45A5-99B5-8207E444AB04}"
+              DTS:DTSID="{591E6A6D-E95F-4D59-B23F-951B947504E6}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -395,7 +395,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Employee Reviewed Date"
-              DTS:DTSID="{4BDA6CF5-0578-4031-8C68-6CB35A865C50}"
+              DTS:DTSID="{E757419B-8C39-4DBC-84C2-1AC906088EEF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -404,7 +404,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Employee Comments"
-              DTS:DTSID="{5A8913C4-2197-4212-8AB6-518EDFB46EEC}"
+              DTS:DTSID="{2172C069-CEFA-4E28-B7BA-21D0C146F92B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -413,7 +413,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Follow-up Required"
-              DTS:DTSID="{B37D8A10-41B4-4C1D-A7BE-5ECA9C1DE645}"
+              DTS:DTSID="{E145F670-90FC-437A-AF19-BBB73438D02A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -422,7 +422,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Follow-up Date"
-              DTS:DTSID="{8364D36F-09E2-485D-A10A-F6F78E403992}"
+              DTS:DTSID="{9B7DF734-082A-4F68-B547-135D8EF258C3}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -431,7 +431,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Follow-up Coaching Date"
-              DTS:DTSID="{41B1DCF7-9564-4785-8D47-47B1FC114883}"
+              DTS:DTSID="{41B53466-392C-4B36-8088-2125024F7BB0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -440,7 +440,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Follow-up Coaching Notes"
-              DTS:DTSID="{10BD5A1E-0FD2-4061-B1D3-ABE8F960B6F0}"
+              DTS:DTSID="{BFB7ABCB-27C1-4EF5-A8D8-77AB96A24FFA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -449,7 +449,16 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Supervisor Follow-up Auto Date"
-              DTS:DTSID="{6B5FF14E-9BC5-44C1-8226-AF392094AA34}"
+              DTS:DTSID="{86C8E0B1-99DB-41B7-80D6-9CAB9949EED1}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="CSR Follow-up Acknowledged"
+              DTS:DTSID="{F5C13DDF-4C70-4FFF-B79A-71C10FA4D61D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -458,7 +467,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="CSR Follow-up Auto Date"
-              DTS:DTSID="{866087F7-7A0F-4736-A9B1-B381F409B6DC}"
+              DTS:DTSID="{693DF684-67D5-4FFA-AA1D-0B3396D63DC7}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -467,7 +476,52 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="CSR Follow-up Comments"
-              DTS:DTSID="{BCE60B00-4C1B-4E84-A02F-F819C0F02B1E}"
+              DTS:DTSID="{9B1242B1-E7AD-4462-965C-0F9E6EB92E93}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Follow-up Supervisor ID"
+              DTS:DTSID="{6A145529-F19C-45DF-980A-20267B50BA6D}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Supervisor Follow-up Review Auto Date"
+              DTS:DTSID="{6888FA89-61CD-4F37-97E3-3A8DB3874B1B}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="4000"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Supervisor Follow-up Review Coaching Notes"
+              DTS:DTSID="{AF369A19-60E8-459D-AD58-EA07E19B0D74}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="200"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Follow-up Review Monitored Logs"
+              DTS:DTSID="{14FAF36F-1B2F-4098-A160-3CDB0159B56F}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Follow-up Review Supervisor ID"
+              DTS:DTSID="{1E32C621-E33E-4D3E-807A-6516C287ABF0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -476,7 +530,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Program"
-              DTS:DTSID="{6BF0773E-737A-4E65-A1FF-6775D89BF64C}"
+              DTS:DTSID="{9FADCFA2-C767-4B3F-83B8-651432584FB6}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -485,7 +539,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Channel"
-              DTS:DTSID="{A03F1A1C-2449-4849-BD19-45042AE3F871}"
+              DTS:DTSID="{FD9B5F76-7BA2-4063-8354-D610F2E91D8B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -494,7 +548,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Verint ID"
-              DTS:DTSID="{8F9E9516-2141-4C51-965E-85448F4CF0CD}"
+              DTS:DTSID="{B3D539E0-07E1-4419-AD21-8B4EAC8B76F4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -503,7 +557,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Activity ID"
-              DTS:DTSID="{26B9565E-40E2-4F0A-865B-B3E4DF9EB4C7}"
+              DTS:DTSID="{BD4A8616-DB11-4E7F-9193-B57FB7C6ECF1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -512,7 +566,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="DCN"
-              DTS:DTSID="{F2CA1CAC-2396-4DC3-8596-0B5762821902}"
+              DTS:DTSID="{1E9A5F27-886A-4D06-AA3B-C2FB33368DC2}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -521,7 +575,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Verint Form Name"
-              DTS:DTSID="{54F83E0F-D3D7-4916-915D-812B44915ADA}"
+              DTS:DTSID="{15CF4084-9AC1-40AD-806D-B5BBB9597A78}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -530,7 +584,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Coaching Monitor"
-              DTS:DTSID="{224D1B72-9DE2-4C77-807E-7347B4632258}"
+              DTS:DTSID="{5C71612C-6D11-4334-AC18-03F18F8C0ADA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -539,7 +593,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Evaluation Status"
-              DTS:DTSID="{6B133FE0-C154-483B-916C-134E6E714253}"
+              DTS:DTSID="{04FE998F-0D99-4700-9B6F-6B5C754347FC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -548,16 +602,16 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Reason For Contact"
-              DTS:DTSID="{E0743405-9EB2-4048-93F6-43A2865FA443}"
+              DTS:DTSID="{D07AE99A-C3CA-4020-A390-CCE25BD83A26}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="1024"
+              DTS:MaximumWidth="2000"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Reason For Contact Comments"
-              DTS:DTSID="{CFADFD82-DCF4-4DB2-A3B0-1B8D099DCD57}"
+              DTS:DTSID="{C6448203-7712-4845-BACF-D487748E8996}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -566,7 +620,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Business Process"
-              DTS:DTSID="{71F3DADF-2144-4596-BD95-69041F94808F}"
+              DTS:DTSID="{471A912A-E9BE-45EE-8C5E-C22AE642D5CA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -575,7 +629,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Business Process Reason"
-              DTS:DTSID="{BB5D48E3-0963-4613-9E57-3E55094774EE}"
+              DTS:DTSID="{C5012CF0-C770-44AE-9352-7F1AB24EDDDC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -584,7 +638,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Business Process Comment"
-              DTS:DTSID="{466D32C0-3756-4B0D-ABE6-AD2A04DF145F}"
+              DTS:DTSID="{C9D239EB-A279-40F0-A93A-35E7046AF443}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -593,7 +647,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Info Accuracy"
-              DTS:DTSID="{A6A1ADA6-4FE6-4AFD-A31C-B5EA1C9DA23F}"
+              DTS:DTSID="{6DF66C4C-9D2C-44B9-B4DD-94E5550D2924}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -602,7 +656,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Info Accuracy Reason"
-              DTS:DTSID="{9AAAD135-91F1-4BB1-9AE0-A1385B433CBB}"
+              DTS:DTSID="{537F68F0-72A2-4C21-9720-F0E1CD2CAD9C}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -611,7 +665,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Info Accuracy Comment"
-              DTS:DTSID="{12E20D2E-BDCE-4580-ADCE-017813265CC4}"
+              DTS:DTSID="{2ED460CA-FB2C-4BA9-A583-E8BD55EC6B20}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -620,7 +674,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Privacy Disclaimers"
-              DTS:DTSID="{680BCF49-0AE9-486E-B9DA-D0BE5EF750D9}"
+              DTS:DTSID="{B027119A-7B35-4236-82B9-4A167F3C46CE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -629,7 +683,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Privacy Disclaimers Reason"
-              DTS:DTSID="{2835DEE9-870A-4AD0-81AA-9DBC094D161C}"
+              DTS:DTSID="{015D8FD0-E705-4CC9-8EED-A7153762930E}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -638,7 +692,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Privacy Disclaimers Comment"
-              DTS:DTSID="{C9B9CCF0-C705-49BC-B7F0-263EA8B321D3}"
+              DTS:DTSID="{F3846E58-4B16-4F09-8E97-D32B04AB0A4F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -647,7 +701,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Issue Resolution"
-              DTS:DTSID="{9FFD7A48-B43B-4F7F-8844-30E69CD2F29D}"
+              DTS:DTSID="{CBC3B8FB-36BA-40D7-807A-045FC5CE2EAC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -656,7 +710,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Issue Resolution Comment"
-              DTS:DTSID="{D44CAF82-92AA-40C0-85E7-EF1F1EB36DBC}"
+              DTS:DTSID="{655D91C4-3368-4FB6-A5E5-E88677A925FB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -665,7 +719,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Business Correspondence"
-              DTS:DTSID="{3FC4EAFA-F979-4158-B3F8-F19342D1FEAC}"
+              DTS:DTSID="{A0109C54-E4B1-4763-BDC1-9FE682637E4D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -674,7 +728,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Business Correspondence Comment"
-              DTS:DTSID="{9DB0C693-AFDB-4AAA-8854-735C1DF691B6}"
+              DTS:DTSID="{4FFFB0B1-CAE1-4471-96C0-F4B6234309CF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -683,7 +737,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Call Efficiency"
-              DTS:DTSID="{A24C2691-8D1D-4F65-9066-5A3395A5F7AA}"
+              DTS:DTSID="{A2D69C23-D02A-412A-81FF-9E20AA905E88}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -692,7 +746,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Call Efficiency Comment"
-              DTS:DTSID="{8A1566A3-59B1-4845-A2B4-DE8D9C6A6BEC}"
+              DTS:DTSID="{EF9D9ECF-CFCB-4069-93ED-24D1CC5A0917}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -701,7 +755,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Chat Efficiency"
-              DTS:DTSID="{FC1163DB-943D-4D69-AF38-9BE3F2DB7A8D}"
+              DTS:DTSID="{C4BFE63B-8BA5-4E40-A595-7C607671E827}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -710,7 +764,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Chat Efficiency Comment"
-              DTS:DTSID="{22A37E9B-A96B-46B5-8D09-9DC0B4472795}"
+              DTS:DTSID="{085BC1ED-5987-4F85-BDF1-F0731435F504}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -719,7 +773,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Active Listening"
-              DTS:DTSID="{EC9EA4B1-E38F-490C-B506-2661468EE86D}"
+              DTS:DTSID="{351336C6-4080-4D30-919B-CDD2BA9FDEC9}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -728,7 +782,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Active Listening Comment"
-              DTS:DTSID="{59874F25-0532-4084-A3AC-78AE9E2CC0B8}"
+              DTS:DTSID="{7A6B5388-67F0-4FBA-BA14-AF22D0808D62}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -737,7 +791,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Issue Diagnosis"
-              DTS:DTSID="{1BD7A579-C109-432C-AD84-C88B4413A784}"
+              DTS:DTSID="{F8459437-733F-4C67-A6A1-127FFE845A27}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -746,7 +800,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Issue Diagnosis Comment"
-              DTS:DTSID="{5B5174AD-D30A-4821-8E0D-5FD370A55325}"
+              DTS:DTSID="{B1199C9B-81B0-4BD7-8851-5243B9FC24C5}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -755,7 +809,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Personality Flexing"
-              DTS:DTSID="{8AB7820C-E74B-4C3F-8B16-C136D0394A0F}"
+              DTS:DTSID="{BF4E9930-8DE6-4996-94C3-9BE55085CEA0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -764,7 +818,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Personality Flexing Comment"
-              DTS:DTSID="{5AF22A85-820C-4A4E-95ED-24BD88310D46}"
+              DTS:DTSID="{7474FE3E-0197-491B-82CB-5D669EF09056}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -773,7 +827,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Professional Communication"
-              DTS:DTSID="{C998A461-1B59-46E3-BDB6-78EFA263A425}"
+              DTS:DTSID="{25F67C78-5E0E-43FC-BBC6-520C6E93388C}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -782,7 +836,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Professional Communication Comment"
-              DTS:DTSID="{0CD791D1-7135-4D19-A24A-39A78933C479}"
+              DTS:DTSID="{DB6A4F84-EACE-413C-9308-84AE1BB68965}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -791,7 +845,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Customer Temp Start"
-              DTS:DTSID="{780A3A32-8DA5-4991-8638-2C5AFAEEE931}"
+              DTS:DTSID="{FA0A466A-7544-4219-BBFC-AF8EF6D9C9AF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -800,7 +854,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Customer Temp Start Comment"
-              DTS:DTSID="{62446437-CA36-4036-A07E-719767316C74}"
+              DTS:DTSID="{B70238A3-56E5-485B-8405-6F74B5123DE4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -809,7 +863,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Customer Temp End"
-              DTS:DTSID="{0471C7A8-767A-4534-B00E-D941B7B813DD}"
+              DTS:DTSID="{881DC955-DC1A-4B6A-99B1-23DE6EA53376}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -818,7 +872,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Customer Temp End Comment"
-              DTS:DTSID="{081045BD-5A3E-4E66-9F13-DB933BFFB0F1}"
+              DTS:DTSID="{D10AAD4A-DDD3-4F93-AF6C-BDAEF29E7660}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -827,7 +881,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Report Date"
-              DTS:DTSID="{4FB4389A-4FF4-4086-95A3-D66B9F68D788}"
+              DTS:DTSID="{94B62519-7353-4B4C-AA52-C4AE8BB09EBC}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -3723,7 +3777,7 @@ General Dynamics Information Technology</DTS:VariableValue>
       DTS:LocaleID="-1"
       DTS:ObjectName="CSR Failure Notif"
       DTS:TaskContact="Send Mail Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="5">
       <DTS:Variables />
       <DTS:PropertyExpression
         DTS:Name="CCLine">@[User::CCEmail]</DTS:PropertyExpression>
@@ -3751,7 +3805,7 @@ General Dynamics Information Technology</DTS:VariableValue>
       DTS:LocaleID="-1"
       DTS:ObjectName="CSR QN Failure Notif"
       DTS:TaskContact="Send Mail Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="6">
       <DTS:Variables />
       <DTS:PropertyExpression
         DTS:Name="CCLine">@[User::CCEmail]</DTS:PropertyExpression>
@@ -4299,7 +4353,9 @@ General Dynamics Information Technology</DTS:VariableValue>
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Coaching Notes]" />
                     <inputColumn
                       refId="Package\CSR QN Report\Data Conversion.Inputs[Data Conversion Input].Columns[Supervisor Follow-up Auto Date]"
-                      cachedDataType="dbTimeStamp"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="30"
                       cachedName="Supervisor Follow-up Auto Date"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Auto Date]" />
                     <inputColumn
@@ -4315,6 +4371,40 @@ General Dynamics Information Technology</DTS:VariableValue>
                       cachedLength="3000"
                       cachedName="CSR Follow-up Comments"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[CSR Follow-up Comments]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Inputs[Data Conversion Input].Columns[CSR Follow-up Acknowledged]"
+                      cachedDataType="bool"
+                      cachedName="CSR Follow-up Acknowledged"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[CSR Follow-up Acknowledged]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Inputs[Data Conversion Input].Columns[Follow-up Supervisor ID]"
+                      cachedDataType="wstr"
+                      cachedLength="20"
+                      cachedName="Follow-up Supervisor ID"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Supervisor ID]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Inputs[Data Conversion Input].Columns[Supervisor Follow-up Review Auto Date]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="Supervisor Follow-up Review Auto Date"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Review Auto Date]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Inputs[Data Conversion Input].Columns[Supervisor Follow-up Review Coaching Notes]"
+                      cachedDataType="wstr"
+                      cachedLength="4000"
+                      cachedName="Supervisor Follow-up Review Coaching Notes"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Review Coaching Notes]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Inputs[Data Conversion Input].Columns[Follow-up Review Monitored Logs]"
+                      cachedDataType="wstr"
+                      cachedLength="200"
+                      cachedName="Follow-up Review Monitored Logs"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Review Monitored Logs]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Inputs[Data Conversion Input].Columns[Follow-up Review Supervisor ID]"
+                      cachedDataType="wstr"
+                      cachedLength="20"
+                      cachedName="Follow-up Review Supervisor ID"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Review Supervisor ID]" />
                   </inputColumns>
                   <externalMetadataColumns />
                 </input>
@@ -6110,6 +6200,131 @@ General Dynamics Information Technology</DTS:VariableValue>
                           name="FastParse">false</property>
                       </properties>
                     </outputColumn>
+                    <outputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of CSR Follow-up Acknowledged]"
+                      dataType="bool"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of CSR Follow-up Acknowledged]"
+                      name="Copy of CSR Follow-up Acknowledged"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[CSR Follow-up Acknowledged]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Follow-up Supervisor ID]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="20"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Follow-up Supervisor ID]"
+                      name="Copy of Follow-up Supervisor ID"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Supervisor ID]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Supervisor Follow-up Review Auto Date]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="30"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Supervisor Follow-up Review Auto Date]"
+                      name="Copy of Supervisor Follow-up Review Auto Date"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Review Auto Date]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Supervisor Follow-up Review Coaching Notes]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="4000"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Supervisor Follow-up Review Coaching Notes]"
+                      name="Copy of Supervisor Follow-up Review Coaching Notes"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Review Coaching Notes]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Follow-up Review Monitored Logs]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="200"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Follow-up Review Monitored Logs]"
+                      name="Copy of Follow-up Review Monitored Logs"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Review Monitored Logs]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Follow-up Review Supervisor ID]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      length="20"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Follow-up Review Supervisor ID]"
+                      name="Copy of Follow-up Review Supervisor ID"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="Specifies the input column used as the source of data for the conversion."
+                          name="SourceInputColumnLineageID">#{Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Review Supervisor ID]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
                   </outputColumns>
                   <externalMetadataColumns />
                 </output>
@@ -6858,6 +7073,47 @@ General Dynamics Information Technology</DTS:VariableValue>
                       cachedName="Copy of CSR Follow-up Comments"
                       externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[CSR Follow-up Comments]"
                       lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of CSR Follow-up Comments]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of CSR Follow-up Acknowledged]"
+                      cachedDataType="bool"
+                      cachedName="Copy of CSR Follow-up Acknowledged"
+                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[CSR Follow-up Acknowledged]"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of CSR Follow-up Acknowledged]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of Follow-up Supervisor ID]"
+                      cachedDataType="wstr"
+                      cachedLength="20"
+                      cachedName="Copy of Follow-up Supervisor ID"
+                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Follow-up Supervisor ID]"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Follow-up Supervisor ID]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of Supervisor Follow-up Review Auto Date]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="Copy of Supervisor Follow-up Review Auto Date"
+                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Supervisor Follow-up Review Auto Date]"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Supervisor Follow-up Review Auto Date]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of Supervisor Follow-up Review Coaching Notes]"
+                      cachedDataType="wstr"
+                      cachedLength="4000"
+                      cachedName="Copy of Supervisor Follow-up Review Coaching Notes"
+                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Supervisor Follow-up Review Coaching Notes]"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Supervisor Follow-up Review Coaching Notes]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of Follow-up Review Monitored Logs]"
+                      cachedDataType="wstr"
+                      cachedLength="200"
+                      cachedName="Copy of Follow-up Review Monitored Logs"
+                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Follow-up Review Monitored Logs]"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Follow-up Review Monitored Logs]" />
+                    <inputColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[Copy of Follow-up Review Supervisor ID]"
+                      cachedDataType="wstr"
+                      cachedLength="20"
+                      cachedName="Copy of Follow-up Review Supervisor ID"
+                      externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Follow-up Review Supervisor ID]"
+                      lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Follow-up Review Supervisor ID]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -6901,7 +7157,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                       refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Status]"
                       codePage="65001"
                       dataType="str"
-                      length="100"
+                      length="50"
                       name="Status" />
                     <externalMetadataColumn
                       refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Employee ID]"
@@ -7081,7 +7337,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                       refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Manager Notes]"
                       codePage="65001"
                       dataType="str"
-                      length="3000"
+                      length="4000"
                       name="Manager Notes" />
                     <externalMetadataColumn
                       refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Employee Reviewed Date]"
@@ -7333,7 +7589,7 @@ General Dynamics Information Technology</DTS:VariableValue>
                       refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Reason For Contact Comments]"
                       codePage="65001"
                       dataType="str"
-                      length="1024"
+                      length="2000"
                       name="Reason For Contact Comments" />
                     <externalMetadataColumn
                       refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Strength and Opportunities]"
@@ -7389,6 +7645,42 @@ General Dynamics Information Technology</DTS:VariableValue>
                       dataType="str"
                       length="4000"
                       name="CSR Follow-up Comments" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[CSR Follow-up Acknowledged]"
+                      codePage="65001"
+                      dataType="str"
+                      length="50"
+                      name="CSR Follow-up Acknowledged" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Follow-up Supervisor ID]"
+                      codePage="65001"
+                      dataType="str"
+                      length="50"
+                      name="Follow-up Supervisor ID" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Supervisor Follow-up Review Auto Date]"
+                      codePage="65001"
+                      dataType="str"
+                      length="50"
+                      name="Supervisor Follow-up Review Auto Date" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Supervisor Follow-up Review Coaching Notes]"
+                      codePage="65001"
+                      dataType="str"
+                      length="4000"
+                      name="Supervisor Follow-up Review Coaching Notes" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Follow-up Review Monitored Logs]"
+                      codePage="65001"
+                      dataType="str"
+                      length="200"
+                      name="Follow-up Review Monitored Logs" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Follow-up Review Supervisor ID]"
+                      codePage="65001"
+                      dataType="str"
+                      length="50"
+                      name="Follow-up Review Supervisor ID" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -8303,10 +8595,12 @@ General Dynamics Information Technology</DTS:VariableValue>
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Auto Date]"
-                      dataType="dbTimeStamp"
+                      codePage="1252"
+                      dataType="str"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Follow-up Auto Date]"
+                      length="30"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Auto Date]"
                       name="Supervisor Follow-up Auto Date"
                       truncationRowDisposition="FailComponent" />
@@ -8330,6 +8624,73 @@ General Dynamics Information Technology</DTS:VariableValue>
                       length="3000"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[CSR Follow-up Comments]"
                       name="CSR Follow-up Comments"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[CSR Follow-up Acknowledged]"
+                      dataType="bool"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CSR Follow-up Acknowledged]"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[CSR Follow-up Acknowledged]"
+                      name="CSR Follow-up Acknowledged"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Supervisor ID]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Follow-up Supervisor ID]"
+                      length="20"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Supervisor ID]"
+                      name="Follow-up Supervisor ID"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Review Auto Date]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Follow-up Review Auto Date]"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Review Auto Date]"
+                      name="Supervisor Follow-up Review Auto Date"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Review Coaching Notes]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Follow-up Review Coaching Notes]"
+                      length="4000"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Supervisor Follow-up Review Coaching Notes]"
+                      name="Supervisor Follow-up Review Coaching Notes"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Review Monitored Logs]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Follow-up Review Monitored Logs]"
+                      length="200"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Review Monitored Logs]"
+                      name="Follow-up Review Monitored Logs"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Review Supervisor ID]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Follow-up Review Supervisor ID]"
+                      length="20"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[Follow-up Review Supervisor ID]"
+                      name="Follow-up Review Supervisor ID"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[coll]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[coll]"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].Columns[coll]"
+                      name="coll"
                       truncationRowDisposition="FailComponent" />
                   </outputColumns>
                   <externalMetadataColumns
@@ -8763,7 +9124,9 @@ General Dynamics Information Technology</DTS:VariableValue>
                       name="Follow-up Coaching Notes" />
                     <externalMetadataColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Follow-up Auto Date]"
-                      dataType="dbTimeStamp"
+                      codePage="1252"
+                      dataType="str"
+                      length="30"
                       name="Supervisor Follow-up Auto Date" />
                     <externalMetadataColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CSR Follow-up Auto Date]"
@@ -8776,6 +9139,38 @@ General Dynamics Information Technology</DTS:VariableValue>
                       dataType="wstr"
                       length="3000"
                       name="CSR Follow-up Comments" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CSR Follow-up Acknowledged]"
+                      dataType="bool"
+                      name="CSR Follow-up Acknowledged" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Follow-up Supervisor ID]"
+                      dataType="wstr"
+                      length="20"
+                      name="Follow-up Supervisor ID" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Follow-up Review Auto Date]"
+                      dataType="dbTimeStamp"
+                      name="Supervisor Follow-up Review Auto Date" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Supervisor Follow-up Review Coaching Notes]"
+                      dataType="wstr"
+                      length="4000"
+                      name="Supervisor Follow-up Review Coaching Notes" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Follow-up Review Monitored Logs]"
+                      dataType="wstr"
+                      length="200"
+                      name="Follow-up Review Monitored Logs" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Follow-up Review Supervisor ID]"
+                      dataType="wstr"
+                      length="20"
+                      name="Follow-up Review Supervisor ID" />
+                    <externalMetadataColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[coll]"
+                      dataType="i4"
+                      name="coll" />
                   </externalMetadataColumns>
                 </output>
                 <output
@@ -9061,9 +9456,21 @@ General Dynamics Information Technology</DTS:VariableValue>
                       name="Follow-up Coaching Notes" />
                     <outputColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Follow-up Auto Date]"
-                      dataType="dbTimeStamp"
+                      codePage="1252"
+                      dataType="str"
+                      length="30"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Follow-up Auto Date]"
                       name="Supervisor Follow-up Auto Date" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[coll]"
+                      dataType="i4"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[coll]"
+                      name="coll" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CSR Follow-up Acknowledged]"
+                      dataType="bool"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CSR Follow-up Acknowledged]"
+                      name="CSR Follow-up Acknowledged" />
                     <outputColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CSR Follow-up Auto Date]"
                       codePage="1252"
@@ -9077,6 +9484,35 @@ General Dynamics Information Technology</DTS:VariableValue>
                       length="3000"
                       lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CSR Follow-up Comments]"
                       name="CSR Follow-up Comments" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Follow-up Supervisor ID]"
+                      dataType="wstr"
+                      length="20"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Follow-up Supervisor ID]"
+                      name="Follow-up Supervisor ID" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Follow-up Review Auto Date]"
+                      dataType="dbTimeStamp"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Follow-up Review Auto Date]"
+                      name="Supervisor Follow-up Review Auto Date" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Follow-up Review Coaching Notes]"
+                      dataType="wstr"
+                      length="4000"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Supervisor Follow-up Review Coaching Notes]"
+                      name="Supervisor Follow-up Review Coaching Notes" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Follow-up Review Monitored Logs]"
+                      dataType="wstr"
+                      length="200"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Follow-up Review Monitored Logs]"
+                      name="Follow-up Review Monitored Logs" />
+                    <outputColumn
+                      refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Follow-up Review Supervisor ID]"
+                      dataType="wstr"
+                      length="20"
+                      lineageId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Follow-up Review Supervisor ID]"
+                      name="Follow-up Review Supervisor ID" />
                     <outputColumn
                       refId="Package\CSR QN Report\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Employee Reviewed Date]"
                       codePage="1252"
@@ -12439,7 +12875,7 @@ General Dynamics Information Technology</DTS:VariableValue>
       DTS:LocaleID="-1"
       DTS:ObjectName="LSA Failure Notif"
       DTS:TaskContact="Send Mail Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="5">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:PropertyExpression
         DTS:Name="CCLine">@[User::CCEmail]</DTS:PropertyExpression>
@@ -15414,7 +15850,7 @@ General Dynamics Information Technology</DTS:VariableValue>
       DTS:LocaleID="-1"
       DTS:ObjectName="Quality Failure Notif"
       DTS:TaskContact="Send Mail Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="6">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:PropertyExpression
         DTS:Name="CCLine">@[User::CCEmail]</DTS:PropertyExpression>
@@ -18397,15 +18833,6 @@ General Dynamics Information Technology</DTS:VariableValue>
           VSTAMinorVersion="0"
           Language="CSharp">
           <ProjectItem
-            Name="Properties\Settings.settings"
-            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
-          <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -18524,6 +18951,35 @@ General Dynamics Information Technology</DTS:VariableValue>
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\Settings.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_ac1240f7c371412e9d663af9c57b62fc.Properties.Settings.get_Default():ST_ac1240f7c371412e9d663af9c57b62fc.Properties.Sett" +
+    "ings")]
+
+namespace ST_ac1240f7c371412e9d663af9c57b62fc.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
           <ProjectItem
             Name="ST_ac1240f7c371412e9d663af9c57b62fc.csproj"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -18747,35 +19203,6 @@ namespace ST_ac1240f7c371412e9d663af9c57b62fc
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\Settings.Designer.cs"
-            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_ac1240f7c371412e9d663af9c57b62fc.Properties.Settings.get_Default():ST_ac1240f7c371412e9d663af9c57b62fc.Properties.Sett" +
-    "ings")]
-
-namespace ST_ac1240f7c371412e9d663af9c57b62fc.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
-          <ProjectItem
             Name="Properties\AssemblyInfo.cs"
             Encoding="UTF8"><![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -18805,6 +19232,15 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.Designer.cs"
             Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -25159,7 +25595,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <NodeLayout
           Size="152,41.6"
           Id="Package\CSR QN Report"
-          TopLeft="168.000002861023,435.71764904075" />
+          TopLeft="168.384618259746,435.298294208491" />
         <NodeLayout
           Size="133.6,41.6"
           Id="Package\CSR Report"
@@ -25359,26 +25795,26 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-192.642856617363,37.572274627818"
+              EndConnector="-192.25824121864,37.1529197955588"
               Start="0,0"
-              End="-192.642856617363,30.072274627818">
+              End="-192.25824121864,29.6529197955588">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,14.786137313909" />
+                    End="0,14.5764598977794" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,14.786137313909"
-                    Point2="0,18.786137313909"
-                    Point3="-4,18.786137313909" />
+                    Point1="0,14.5764598977794"
+                    Point2="0,18.5764598977794"
+                    Point3="-4,18.5764598977794" />
                   <mssgle:LineSegment
-                    End="-188.642856617363,18.786137313909" />
+                    End="-188.25824121864,18.5764598977794" />
                   <mssgle:CubicBezierSegment
-                    Point1="-188.642856617363,18.786137313909"
-                    Point2="-192.642856617363,18.786137313909"
-                    Point3="-192.642856617363,22.786137313909" />
+                    Point1="-188.25824121864,18.5764598977794"
+                    Point2="-192.25824121864,18.5764598977794"
+                    Point3="-192.25824121864,22.5764598977794" />
                   <mssgle:LineSegment
-                    End="-192.642856617363,30.072274627818" />
+                    End="-192.25824121864,29.6529197955588" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -25457,54 +25893,54 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 15]"
-          TopLeft="320.000002861023,456.141178542603">
+          TopLeft="320.384618259746,455.931501126473">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="58.8571464480191,0"
+              EndConnector="58.4725310492959,0"
               Start="0,0"
-              End="51.3571464480191,0">
+              End="50.9725310492959,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="51.3571464480191,0" />
+                    End="50.9725310492959,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="10.4372255677596,5,30.4826953125,9.7490234375"
+              BoundingBox="10.244917868398,5,30.4826953125,9.7490234375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 16]"
-          TopLeft="244.000002861023,477.31764904075">
+          TopLeft="244.384618259746,476.898294208491">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="271.142861930692,41.9294139010689"
+              EndConnector="270.758246531969,42.3487687333281"
               Start="0,0"
-              End="271.142861930692,34.4294139010689">
+              End="270.758246531969,34.8487687333281">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,16.9647069505345" />
+                    End="0,17.1743843666641" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,16.9647069505345"
-                    Point2="0,20.9647069505345"
-                    Point3="4,20.9647069505345" />
+                    Point1="0,17.1743843666641"
+                    Point2="0,21.1743843666641"
+                    Point3="4,21.1743843666641" />
                   <mssgle:LineSegment
-                    End="267.142861930692,20.9647069505345" />
+                    End="266.758246531969,21.1743843666641" />
                   <mssgle:CubicBezierSegment
-                    Point1="267.142861930692,20.9647069505345"
-                    Point2="271.142861930692,20.9647069505345"
-                    Point3="271.142861930692,24.9647069505345" />
+                    Point1="266.758246531969,21.1743843666641"
+                    Point2="270.758246531969,21.1743843666641"
+                    Point3="270.758246531969,25.1743843666641" />
                   <mssgle:LineSegment
-                    End="271.142861930692,34.4294139010689" />
+                    End="270.758246531969,34.8487687333281" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -25786,25 +26222,25 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         <NodeLayout
           Size="159.2,41.6"
           Id="Package\CSR QN Report\Data Conversion"
-          TopLeft="31.2,84.8" />
+          TopLeft="33.123076993615,86.4774193290369" />
         <NodeLayout
           Size="154.4,41.6"
           Id="Package\CSR QN Report\Derived Column"
           TopLeft="29.9,156.7" />
         <EdgeLayout
           Id="Package\CSR QN Report.Paths[OLE DB Source Output]"
-          TopLeft="108.534615398723,47.1">
+          TopLeft="109.49615389553,47.1">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,37.7"
+              EndConnector="0,39.377419329037"
               Start="0,0"
-              End="0,30.2">
+              End="0,31.877419329037">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,30.2" />
+                    End="0,31.877419329037" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -25837,18 +26273,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\CSR QN Report.Paths[Data Conversion Output]"
-          TopLeft="108.95,126.4">
+          TopLeft="109.911538496807,128.077419329037">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,30.3"
+              EndConnector="0,28.6225806709631"
               Start="0,0"
-              End="0,22.8">
+              End="0,21.1225806709631">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,22.8" />
+                    End="0,21.1225806709631" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

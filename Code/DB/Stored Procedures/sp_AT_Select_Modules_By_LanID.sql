@@ -1,14 +1,3 @@
-/*
-sp_AT_Select_Modules_By_LanID(02).sql
-Last Modified Date: 10/23/2017
-Last Modified By: Susmitha Palacherla
-
-Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -17,12 +6,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_AT_Select_Modules_By_LanID]
 GO
+
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 
 --	====================================================================
@@ -34,7 +23,7 @@ GO
 --  Initial Revision. Admin tool setup, TFS 1709- 4/27/12016
 --  Modified to support Encryption of sensitive data - Open key. TFS 7856 - 10/23/2017
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_AT_Select_Modules_By_LanID] 
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Modules_By_LanID] 
 @nvcEmpLanIDin nvarchar(30),@strTypein nvarchar(10)= NULL
 
 AS
@@ -53,13 +42,22 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
 
 SET @dtmDate  = GETDATE()  
 SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@nvcEmpLanIDin,@dtmDate)
+
+print @nvcEmpID
 SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
 WHERE Emp_ID = @nvcEmpID)
+
+print @nvcEmpJobCode
+
 SET @strATWarnAdminUser = EC.fn_strCheckIfATWarningAdmin(@nvcEmpID) 
+print @strATWarnAdminUser
+
 SET @strATCoachAdminUser = EC.fn_strCheckIfATCoachingAdmin(@nvcEmpID) 
 
+print @strATCoachAdminUser
 
-IF ((@strATWarnAdminUser = 'YES' AND @strATCoachAdminUser = 'YES')
+   IF ((@nvcEmpID = '999999')  
+   OR (@strATWarnAdminUser = 'YES' AND @strATCoachAdminUser = 'YES')
    OR (@strTypein is NULL AND @strATCoachAdminUser = 'YES')
    OR (@strTypein = 'Coaching' AND @strATCoachAdminUser = 'YES')
    OR (@strTypein = 'Warning' AND @strATWarnAdminUser = 'YES'))
@@ -83,8 +81,7 @@ EXEC (@nvcSQL)
 
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Modules_By_LanID
-
-
-
-
 GO
+
+
+

@@ -7,7 +7,6 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_rptQNCoachingSummary]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
@@ -124,9 +123,15 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 			  ,ISNULL(CONVERT(varchar,p.FollowupDueDate,121),'-') AS [Follow-up Date]
 			  ,ISNULL(CONVERT(varchar,p.FollowupActualDate,121),'-') AS [Follow-up Coaching Date]
 			  ,p.SupFollowupCoachingNotes AS [Follow-up Coaching Notes]
-			  ,p.FollowupActualDate AS [Supervisor Follow-up Auto Date]
+			  ,ISNULL(CONVERT(varchar,p.SupFollowupAutoDate,121),'-') AS [Supervisor Follow-up Auto Date]
+			  ,p.IsEmpFollowupAcknowledged AS [CSR Follow-up Acknowledged]
 			  ,ISNULL(CONVERT(varchar,p.EmpAckFollowupAutoDate,121),'-') AS [CSR Follow-up Auto Date]
 			  ,p.EmpAckFollowupComments AS [CSR Follow-up Comments]
+			  ,p.FollowupSupID AS [Follow-up Supervisor ID]
+		      ,p.SupFollowupReviewAutoDate AS [Supervisor Follow-up Review Auto Date]
+			  ,p.SupFollowupReviewCoachingNotes AS [Supervisor Follow-up Review Coaching Notes]
+			  ,p.SupFollowupReviewMonitoredLogs AS [Follow-up Review Monitored Logs]
+			  ,p.FollowupReviewSupID  AS [Follow-up Review Supervisor ID]
 			  ,q.Program AS [Program]
 			  ,q.[Channel] AS [Channel]
 			  ,ISNULL(q.Journal_ID,'-') AS [Verint ID]
@@ -257,4 +262,5 @@ RETURN @returnCode
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
 GO
+
 

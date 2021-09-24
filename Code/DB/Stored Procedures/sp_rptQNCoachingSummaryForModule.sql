@@ -15,6 +15,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2019
@@ -111,13 +112,19 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
               ,COALESCE(p.MgrNotes,'-') AS [Manager Notes]
               ,ISNULL(CONVERT(varchar,p.CSRReviewAutoDate,121),'-') AS [Employee Reviewed Date]
               ,COALESCE(p.CSRComments,'-') AS [Employee Comments]
-			  ,p.IsFollowupRequired AS [Follow-up Required]
+			   ,p.IsFollowupRequired AS [Follow-up Required]
 			  ,ISNULL(CONVERT(varchar,p.FollowupDueDate,121),'-') AS [Follow-up Date]
 			  ,ISNULL(CONVERT(varchar,p.FollowupActualDate,121),'-') AS [Follow-up Coaching Date]
 			  ,p.SupFollowupCoachingNotes AS [Follow-up Coaching Notes]
-			  ,p.FollowupActualDate AS [Supervisor Follow-up Auto Date]
+			  ,ISNULL(CONVERT(varchar,p.SupFollowupAutoDate,121),'-') AS [Supervisor Follow-up Auto Date]
+			  ,p.IsEmpFollowupAcknowledged AS [CSR Follow-up Acknowledged]
 			  ,ISNULL(CONVERT(varchar,p.EmpAckFollowupAutoDate,121),'-') AS [CSR Follow-up Auto Date]
 			  ,p.EmpAckFollowupComments AS [CSR Follow-up Comments]
+			  ,p.FollowupSupID AS [Follow-up Supervisor ID]
+		      ,p.SupFollowupReviewAutoDate AS [Supervisor Follow-up Review Auto Date]
+			  ,p.SupFollowupReviewCoachingNotes AS [Supervisor Follow-up Review Coaching Notes]
+			  ,p.SupFollowupReviewMonitoredLogs AS [Follow-up Review Monitored Logs]
+			  ,p.FollowupReviewSupID  AS [Follow-up Review Supervisor ID]
 			  ,q.Program AS [Program]
 			  ,q.[Channel]AS [Channel]
 			  ,ISNULL(q.Journal_ID,'-') AS [Verint ID]
@@ -243,4 +250,5 @@ RETURN @returnCode
 -------------------------------------------------------------------------------------
 
 GO
+
 
