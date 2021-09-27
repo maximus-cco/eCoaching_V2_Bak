@@ -1,12 +1,26 @@
+/*
 
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Update_Employee_Hierarchy_Stage' 
-)
-   DROP PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage]
-GO
+ Modified to remove duplicates from PS file -  TFS 23042 - 09/22/2021
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+
+Steps Summary
+
+1. Alter procedure sp_Update_Employee_Hierarchy_Stage
+
+
+
+
+--******************************************
+
+
+--RUN WITH NOTHING SELECTED
+
+--******************************************/
 
 SET ANSI_NULLS ON
 GO
@@ -229,5 +243,9 @@ END TRY
 
 END  -- [EC].[sp_Update_Employee_Hierarchy_Stage]
 GO
+
+
+
+
 
 
