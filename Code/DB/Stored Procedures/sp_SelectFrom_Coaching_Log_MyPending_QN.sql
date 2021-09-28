@@ -1,8 +1,10 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -59,7 +61,7 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE cl.[SourceID] in (235, 236) '
+SET @where = 'WHERE cl.[SourceID] in (235) '
 
 
 IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'Supervisor' )
@@ -152,4 +154,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending_QN
 GO
+
 

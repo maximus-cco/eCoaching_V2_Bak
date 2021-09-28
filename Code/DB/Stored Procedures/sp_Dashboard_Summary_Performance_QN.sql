@@ -1,8 +1,10 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -39,7 +41,8 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserId )
 (select distinct eh.emp_id as EmpID
 from ec.Employee_Hierarchy eh 
 where (@nvcEmpRole in ('CSR', 'ARC') and eh.emp_id = @nvcUserId)
-or (@nvcEmpRole in ('Supervisor', 'Manager') and (eh.Sup_ID = @nvcUserId OR eh.Mgr_ID = @nvcUserId OR eh.SrMgrLvl1_ID = @nvcUserId OR eh.SrMgrLvl2_ID = @nvcUserId))
+or (@nvcEmpRole in ('Supervisor', 'Manager') and (eh.Emp_Job_Code like N'WACS0%')
+and (eh.Sup_ID = @nvcUserId OR eh.Mgr_ID = @nvcUserId OR eh.SrMgrLvl1_ID = @nvcUserId OR eh.SrMgrLvl2_ID = @nvcUserId))
 and Active = 'A'
 )
 
@@ -195,4 +198,5 @@ ErrorHandler:
 	    
 END --sp_Dashboard_Summary_Performance_QN
 GO
+
 

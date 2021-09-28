@@ -5,6 +5,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/03/2021
@@ -37,7 +38,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE cl.[SourceID] in (235, 236) '
+SET @where = 'WHERE cl.[SourceID] in (235) '
 
 IF @nvcEmpRole NOT IN ('Manager','Supervisor' )
 RETURN 1
@@ -105,4 +106,5 @@ Return(@@ERROR);
 	    
 END --sp_SelectFrom_Coaching_Log_MyTeamPending_Count_QN
 GO
+
 

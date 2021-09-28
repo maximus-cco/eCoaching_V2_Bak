@@ -5,6 +5,7 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
@@ -27,7 +28,7 @@ GO
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
 --	=====================================================================
-CREATE OR ALTER  PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
@@ -209,6 +210,7 @@ SELECT [cl].[CoachingID] CoachingID
   ,[so].[SubCoachingSource]	FormSubSource
   ,[s].[Status] FormStatus
   ,[cl].[QNStrengthsOpportunities] QNStrengthsOpportunities
+  ,[EC].[fn_strQNEvalSummaryFromCoachingID](cl.CoachingID) AS EvaluationSummary
   ,[cl].[CoachingDate] CoachingDate
    ,[cl].[CoachingNotes] CoachingNotes
   ,[cl].[SubmittedDate]	SubmittedDate
@@ -462,7 +464,5 @@ EXEC (@nvcSQL2AllWrittenCorr);
 CLOSE SYMMETRIC KEY [CoachingKey];		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
 GO
-
-
 
 

@@ -4,6 +4,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	8/3/2021
@@ -68,7 +70,7 @@ SET @intMyPendingQN = (SELECT COALESCE(COUNT(cl.CoachingID),0)
                  FROM EC.Coaching_Log cl 
                  WHERE cl.EmpID = @nvcEmpID  
 				 AND StatusID in (4,13)
-				 AND SourceID IN (235,236));
+				 AND SourceID IN (235));
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPendingQN)+ ''' AS LogCount'
 END
@@ -81,7 +83,7 @@ SET @intMyPendingQN = (SELECT COUNT(cl.CoachingID)
 				 ON cl.EmpID = eh.Emp_ID
                  WHERE ((cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID = 6) 
 				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID = 6))
-				 AND SourceID IN (235,236));
+				 AND SourceID IN (235));
 
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Pending Review'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPendingQN)+ ''' AS LogCount'		
@@ -99,7 +101,7 @@ SET @intMyPendingFollowupPrepQN = (SELECT COUNT(cl.CoachingID)
 				 ON cl.EmpID = eh.Emp_ID
                  WHERE ((cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID = 11) 
 				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID = 11))
-				 AND SourceID IN (235,236));
+				 AND SourceID IN (235));
 
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Pending Follow-Up Preparation'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPendingFollowupPrepQN)+ ''' AS LogCount '
@@ -114,7 +116,7 @@ SET @intMyPendingFollowupCoachQN = (SELECT COUNT(cl.CoachingID)
 				 ON cl.EmpID = eh.Emp_ID
                  WHERE ((cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID = 12) 
 				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID = 12))
-				 AND SourceID IN (235,236));
+				 AND SourceID IN (235));
 
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Pending Follow-Up Coaching'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPendingFollowupCoachQN)+ ''' AS LogCount '
@@ -144,7 +146,7 @@ SET @intMyTeamPendingQN = (SELECT COUNT(cl.CoachingID)
 						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 						 ON cl.EmpID = eh.Emp_ID  
 						 WHERE cl.StatusID IN (4,13)
-						 AND SourceID IN (235,236)
+						 AND SourceID IN (235)
 						 AND eh.Sup_ID = @nvcEmpID)
 
 
@@ -158,7 +160,7 @@ SET @intMyTeamPendingQN = (SELECT COUNT(cl.CoachingID)
 						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 						 ON cl.EmpID = eh.Emp_ID  
 						 WHERE cl.StatusID IN (4,6,11,12,13)
-						 AND SourceID IN (235,236)
+						 AND SourceID IN (235)
 						 AND (eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
 
 

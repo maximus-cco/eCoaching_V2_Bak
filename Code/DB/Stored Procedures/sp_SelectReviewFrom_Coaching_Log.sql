@@ -26,7 +26,7 @@ GO
 --  Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 --  Changes to support AED feed. TFS 19502  - 11/30/2020
 --  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
---  Updated to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
+-- Updated to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -216,6 +216,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   cl.IsEmpFollowupAcknowledged,
   cl.EmpAckFollowupAutoDate,
   cl.EmpAckFollowupComments,
+  cl.SupFollowupReviewCoachingNotes,
   ''Coaching'' strLogType
 FROM [EC].[Coaching_Log] cl  WITH (NOLOCK) ';
 	    
@@ -292,4 +293,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
+
 

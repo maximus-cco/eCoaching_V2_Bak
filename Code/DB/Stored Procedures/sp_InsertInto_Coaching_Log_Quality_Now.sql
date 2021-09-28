@@ -1,19 +1,3 @@
-/*
-sp_InsertInto_Coaching_Log_Quality_Now(08).sql
-Last Modified Date: 5/24/2021
-Last Modified By: Susmitha Palacherla
-
-Version 08: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
-Version 07: Added distinct clause to Evaluation Insert - TFS 16924 - 04/07/2020
-Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
-Version 05: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
-	reverted change from Version 04
-Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
-Version 03: Additional Changes from V&V - TFS 13332 - 04/20/2019
-Version 02: Updates from Unit and System testing - TFS 13332 - 04/04/2019
-Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
-*/
-
 
 IF EXISTS (
   SELECT * 
@@ -23,6 +7,7 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
 GO
+
 
 SET ANSI_NULLS ON
 GO
@@ -42,9 +27,10 @@ GO
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
+-- Updated to support Quality Now workflow enhancement. TFS 22187 - 09/27/2021
 --    =======================================================================================
 
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
 @Count INT OUTPUT
 AS
 BEGIN
@@ -56,6 +42,7 @@ BEGIN
   DECLARE @logsInserted TABLE ( 
     CoachingLogID bigint,
 	ModuleID int,
+	SourceId int,
 	QNBatchID nvarchar(20) 
   );
 
@@ -100,8 +87,8 @@ BEGIN
 	   ,qcs.QN_Batch_Status
       ,eh.Emp_Program
 	  ,EC.fn_intSourceIDFromSource('Indirect' , qcs.QN_Source) -- SourceID
-	  ,6 -- Pending Supervisor Review StatusID
-	  ,EC.fn_intSiteIDFromEmpID(LTRIM(RTRIM(qcs.User_EMPID)))  -- SiteID
+	  ,CASE WHEN qcs.[QN_Source] = N'Verint-CCO' THEN 6 ELSE 1 END -- StatusID
+      ,EC.fn_intSiteIDFromEmpID(LTRIM(RTRIM(qcs.User_EMPID)))  -- SiteID
 	  ,qcs.User_EMPID    -- EmpID
 	  ,'999999'  -- SubmitterID
 	  ,0                 -- isAvokeID
@@ -149,7 +136,7 @@ BEGIN
         ,MgrID
 		,QNStrengthsOpportunities
 		)
-	  OUTPUT INSERTED.[CoachingID], INSERTED.[ModuleID], INSERTED.[QNBatchID] INTO @logsInserted
+	  OUTPUT INSERTED.[CoachingID], INSERTED.[ModuleID], INSERTED.[SourceID], INSERTED.[QNBatchID] INTO @logsInserted
 	  SELECT * FROM #Temp_Logs_To_Insert;
 
       --SELECT @Count = @@ROWCOUNT;
@@ -161,6 +148,19 @@ BEGIN
 	  FROM @logsInserted 
 	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted);  
 
+	    -- Populate Followup Due Date for Verint-CCO logs
+
+	  UPDATE EC.Coaching_Log 
+	  SET FollowupDueDate = DATEADD(DAY, 30, DATEADD(dd, 0, DATEDIFF(dd, 0, submitteddate))) -- Submitteddate + 30 Days
+	  FROM @logsInserted 
+	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted WHERE SourceID = 235);  
+
+	  -- Populate Coaching Notes for Verint-CCO Supervisor logs
+
+	  UPDATE EC.Coaching_Log 
+	  SET CoachingNotes = N'Log automatically set to Completed status as part of Quality Now coaching process.'
+	  FROM @logsInserted 
+	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted WHERE SourceID = 236);  
 	
 	  -- Insert Evaluation details for each batch into Evaluations table
 
@@ -246,8 +246,5 @@ BEGIN
 END -- sp_InsertInto_Coaching_Log_Quality_Now
 
 GO
-
-
-
 
 

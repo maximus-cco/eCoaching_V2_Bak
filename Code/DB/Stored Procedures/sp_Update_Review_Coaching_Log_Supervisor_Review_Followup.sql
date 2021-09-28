@@ -1,8 +1,10 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
@@ -10,7 +12,6 @@ GO
 --    Description: *    This procedure allows supervisors to update the QN ecls with review info. 
 --    Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/30/2021
 --    =====================================================================
-
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Review_Followup]
 (
   @nvcFormID BIGINT,
@@ -44,7 +45,9 @@ FROM @tableIds;
 
 SET @MonitoredLogs = (SELECT STRING_AGG(CONVERT(NVARCHAR(20),ID), ' | ') AS MonitoredLogs FROM #mlogs);
 
-PRINT @MonitoredLogs;
+--PRINT @MonitoredLogs;
+OPEN SYMMETRIC KEY [CoachingKey]  
+DECRYPTION BY CERTIFICATE [CoachingCert];
 
 UPDATE [EC].[Coaching_Log]
 SET 
@@ -57,6 +60,14 @@ SET
   [FollowupReviewSupID] = @nvcFollowupReviewSupID
 WHERE CoachingID = @nvcFormID;
 
+IF @bitIsFollowUp = 0
+BEGIN
+UPDATE [EC].[Coaching_Log]
+SET CoachingNotes = coachingNotes +  '<br />' + [EC].[fn_strEmpNameFromEmpID](@nvcFollowupReviewSupID) + ' (' + convert(varchar, GetDate(),22) + ')' + N' No additional coaching is needed for this log.  Please acknowledge and enter comments.'
+WHERE CoachingID = @nvcFormID;
+END
+
+CLOSE SYMMETRIC KEY [CoachingKey];  
 	
 COMMIT TRANSACTION;
 END TRY
@@ -104,4 +115,5 @@ END CATCH;
 END --sp_Update_Review_Coaching_Log_Supervisor_Review_Followup
 
 GO
+
 
