@@ -22,6 +22,7 @@
         </div>
 		@Html.HiddenFor(m => m.SiteName)
 		@Html.HiddenFor(m => m.IsWorkAtHomeReturnSite)
+        @Html.HiddenFor(m => m.IsPfd)
         <div id="div-new-submission-main">
             @{Html.RenderPartial("_NewSubmission");}
         </div>

@@ -2,6 +2,7 @@
 	var cancelBtnClicked = false;
 	var workAtHomeChecked = false;
 	var showWorkAtHomeBehaviorDiv = false;
+	var pfdChecked = false;
 
 	if (showSuccessMessage === 'True') {
 	    $('#success-message').removeClass('hide');
@@ -65,7 +66,26 @@
         	workAtHomeChecked = isChecked;
         }
 
+        // Performance, Feedback, and Development (PFD)
+        if (reasonId == 64)
+        {
+            pfdChecked = isChecked;
+        }
+
         $('#IsWorkAtHomeReturnSite').val(workAtHomeChecked);
+        $('#IsPfd').val(pfdChecked);
+
+        // show pfd completed date input
+        if (pfdChecked)
+        {
+            $('#div-pfd-compmlete-date').removeClass('hide');
+            $('#div-pfd-compmlete-date').addClass('show');
+        }
+        else
+        {
+            $('#div-pfd-compmlete-date').removeClass('show');
+            $('#div-pfd-compmlete-date').addClass('hide');
+        }
 
 		// show HR text instead editable textarea (behavior)
         if (workAtHomeChecked)

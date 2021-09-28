@@ -67,6 +67,10 @@ namespace eCoachingLog.ViewModels
 		public string ReturnToSupervisor { get; set; }
 
 		public bool IsWorkAtHomeReturnSite { get; set; }
+        
+        public bool IsPfd { get; set; }
+        public DateTime? PfdCompletedDate { get; set; }
+        public bool ShowPfdCompletedDate { get; set; }
 
         public NewSubmissionViewModel() : base()
         {
@@ -97,6 +101,15 @@ namespace eCoachingLog.ViewModels
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (IsPfd)
+            {
+                if (!this.PfdCompletedDate.HasValue)
+                {
+                    var pfdCompletedDate = new[] { "PfdCompletedDate" };
+                    yield return new ValidationResult("Please enter a date.", pfdCompletedDate);
+                }
+            }
+
 			// validate Work At Home - Return to Site entries
 			if (IsWorkAtHomeReturnSite)
 			{
@@ -280,8 +293,9 @@ namespace eCoachingLog.ViewModels
 				FollowupDueDate = vm.FollowupDueDate,
 				IsFollowupRequired = vm.IsFollowupRequired,
                 WarningTypeId = vm.WarningTypeId,
-                WarningReasonId = vm.WarningReasonId
-			};
+                WarningReasonId = vm.WarningReasonId,
+                PfdCompletedDate = vm.PfdCompletedDate
+            };
         }
     }
 }

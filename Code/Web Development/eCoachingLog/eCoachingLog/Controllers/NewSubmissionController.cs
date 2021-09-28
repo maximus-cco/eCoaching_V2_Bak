@@ -205,8 +205,9 @@ namespace eCoachingLog.Controllers
             vm.ShowWarningQuestions = vmInSession.ShowWarningQuestions;
 			vm.ShowCallTypeChoice = vmInSession.ShowCallTypeChoice;
 			vm.ShowFollowup = vmInSession.ShowFollowup;
+            vm.ShowPfdCompletedDate = vm.IsPfd;
 
-			return View("Index", vm);
+            return View("Index", vm);
         }
 
         [HttpPost]
