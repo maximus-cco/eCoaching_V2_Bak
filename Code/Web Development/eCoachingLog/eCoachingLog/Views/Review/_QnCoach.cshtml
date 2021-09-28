@@ -15,7 +15,10 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h2 class="modal-title">Review - Coach</h2>
-                <div class="text-danger"><mark>Please complete follow-up by @Model.FollowupDueDate.</mark></div>
+                @if (!String.IsNullOrEmpty(Model.LogDetail.FollowupDueDate))
+                {
+                    <div class="text-danger"><mark>Please complete follow-up by @Model.LogDetail.FollowupDueDate.</mark></div>
+                }
 				@if (!Model.IsReadOnly)
                 {
 					<div class="danger pull-right">Please do NOT include PII or PHI in the log entry.</div>

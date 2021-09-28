@@ -746,12 +746,6 @@ namespace eCoachingLog.Controllers
 			// Regular Pending Form.
 			vm.IsRegularPendingForm = true;
 			vm.IsReadOnly = IsReadOnly(vm, user);
-            // First round followup, due date should be today plus 7 days
-            //if (vm.LogDetail.IsQn && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
-            //{
-            //    vm.FollowupDueDate = DateTime.Now.AddDays(7).ToString("MM/dd/yyyy");
-            //}
-
 			vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);
 			return vm;
 		}

@@ -167,7 +167,7 @@ namespace eCoachingLog.Repository
 							logDetail.IsFollowupRequired = Convert.ToInt16(dataReader["IsFollowupRequired"]) == 1 ? true : false;
 						}
 
-						if (logDetail.IsFollowupRequired)
+						if (logDetail.IsFollowupRequired || logDetail.IsQn)
 						{
 							logDetail.FollowupSupName = dataReader["strFollowupSupervisor"].ToString();
 							logDetail.FollowupSupAutoDate = EclUtil.AppendPdt(dataReader["SupFollowupAutoDate"].ToString());
