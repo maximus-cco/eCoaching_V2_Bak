@@ -49,6 +49,16 @@
     </div>
 </div>
 
+<div class="form-group @(@Model.ShowPfdCompletedDate ? "show" : "hide")'" id="div-pfd-compmlete-date">
+    <label for="pfd-complete-date" class="col-sm-3 control-label required" id="label-pfd-complete-date">Select the date the PFD was completed:</label>
+    <div class="col-sm-2">
+        <div class="input-group">
+            @Html.TextBoxFor(m => m.PfdCompletedDate, new { @class = "form-control date-no-manual-input", @id = "pfd-complete-date", @placeholder = "MM/DD/YYYY" })
+        </div>
+        @Html.ValidationMessageFor(m => m.PfdCompletedDate)
+    </div>
+</div>
+
 <div class='form-group @(@Model.IsWorkAtHomeReturnSite ? "show" : "hide")' id='div-wah-behavior'>
 	<label for="BehaviorDetail" class="col-sm-3 control-label required">Provide details of the behavior to be coached:</label>
 	<div class="col-sm-8">
