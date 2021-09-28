@@ -151,13 +151,6 @@ namespace eCoachingLog.ViewModels
         // Quality Now (submitted by quanlity staff) followup related
         public bool ShowFollowupCoaching { get; set; }
         public bool? IsFollowupCoachingRequired { get; set; }
-        public string FollowupDueDate
-        {
-            get
-            {
-                return DateTime.Now.AddDays(7).ToString("MM/dd/yyyy");
-            }
-        }
         public bool ShowFollowupReminder { get; set; }
 
         public bool ShowFollowupInfo { get; set; }
@@ -436,8 +429,7 @@ namespace eCoachingLog.ViewModels
 				DateFollowup = vm.ActualFollowupDate,
 				DetailsFollowup = vm.FollowupDetails,
 				IsCoaching = !vm.IsWarning,
-                IsFollowupCoachingRequired = vm.IsFollowupCoachingRequired,
-                FollowupDueDate = vm.FollowupDueDate
+                IsFollowupCoachingRequired = vm.IsFollowupCoachingRequired
             };
 		}
 

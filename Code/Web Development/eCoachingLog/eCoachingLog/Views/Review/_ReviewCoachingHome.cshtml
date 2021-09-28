@@ -11,7 +11,7 @@
 				<h4 class="modal-title">Review</h4>
                 @if (Model.ShowFollowupReminder)
                 {
-                    @if (!String.IsNullOrEmpty(Model.LogDetail.FollowupDueDate))
+                    if (!String.IsNullOrEmpty(Model.LogDetail.FollowupDueDate))
                     {
                         <div class="text-danger"><mark>Please complete follow-up by @Model.LogDetail.FollowupDueDate.</mark></div>
                     }
