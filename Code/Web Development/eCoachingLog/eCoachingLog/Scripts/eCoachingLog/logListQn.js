@@ -68,7 +68,6 @@ $(document).ready(function () {
             { data: "Status", name: "strFormStatus" },
             { data: "Reasons", name: "strCoachingReason", orderable: false },
             { data: "SubReasons", name: "strSubCoachingReason", orderable: false },
-            { data: "Value", name: "strValue", orderable: false },
             { data: "CreatedDate", name: "SubmittedDate" },
 			{ data: "FollowupDueDate", name: "FollowupDueDate", visible: true }
         ],

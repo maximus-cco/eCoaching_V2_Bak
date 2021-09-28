@@ -103,6 +103,7 @@ namespace eCoachingLog.Models.Common
         public List<LogSummary> QnSummaryList { get; set; }
         public List<Scorecard> Scorecards { get; set; }
         public List<TextValue> LinkedLogs { get; set; } // linked additional call listening logs
+        public string FollowupDecisionComments { get; set; } // comments whether followup coaching is required
 
         public CoachingLogDetail()
         {

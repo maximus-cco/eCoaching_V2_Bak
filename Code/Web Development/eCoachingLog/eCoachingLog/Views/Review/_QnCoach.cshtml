@@ -33,20 +33,24 @@
                 <!-- QN log submitted by quality specialist, which need to be followed up (monitoring additional activities) -->
                 @if (Model.LogDetail.IsQn && Model.LogDetail.StatusId != 6 && Model.AdditionalActivityLogs != null && Model.AdditionalActivityLogs.Count > 0)
                 {
-                    <div class="text-primary" style="margin-top: 5px;"><strong><mark>Additonal monitoring:</mark></strong></div>
+                    <div class="text-primary" style="margin-top: 8px;"><strong><mark>Additonal Monitoring:</mark></strong></div>
                     for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
                     {
                         <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true">&nbsp;@Model.AdditionalActivityLogs[i].Text View</a>
                             <br />
                     }
-                    <br />
                 }
 
-				<div class="text-primary"><strong><mark>Evaluation Summary:</mark></strong></div>
+                @if (Model.ShowFollowupDecisionComments)
+                {
+                    { Html.RenderPartial("_QnFollowupDecisionComments"); }
+                }
+
+				<div class="text-primary" style="margin-top: 8px;"><strong><mark>Evaluation Summary:</mark></strong></div>
 				<div class="text-info">
                     @if (Model.IsReadyToCoach)
                     {
-                        @:&nbsp;@Model.QnSummaryAll
+                        @Html.Raw(Model.QnSummaryAll)
                     }
                     else
                     {

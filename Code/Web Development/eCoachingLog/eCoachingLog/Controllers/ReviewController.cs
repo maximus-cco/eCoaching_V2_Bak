@@ -48,7 +48,7 @@ namespace eCoachingLog.Controllers
 			{
 				var vm = Init(user, currentPage, logDetail, isCoaching, action);
                 // further set QN fields
-                vm = SetQnProperties(vm, (CoachingLogDetail)logDetail, action);
+                vm = SetQnProperties(vm, (CoachingLogDetail)logDetail, action, user);
  
                 return PartialView(vm.ReviewPageName, vm);
 			}
@@ -70,7 +70,7 @@ namespace eCoachingLog.Controllers
 				return PartialView("_Error");
 			}
         }
-        private ReviewViewModel SetQnProperties(ReviewViewModel vm, CoachingLogDetail logDetail, string action)
+        private ReviewViewModel SetQnProperties(ReviewViewModel vm, CoachingLogDetail logDetail, string action, User user)
         {
             if (!logDetail.IsQn && !logDetail.IsQnSupervisor)
             {
@@ -159,6 +159,14 @@ namespace eCoachingLog.Controllers
                 }
             }
 
+            if (action == "view")
+            {
+                if (!user.IsCsr && (vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED || vm.LogDetail.StatusId > Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION))
+                {
+                    vm.ShowFollowupDecisionComments = true;
+                }
+            }
+
             vm.ShowEvalDetail = ShowQnEvalDetail(logDetail.StatusId, action, GetUserFromSession());
 
             // supervisor links followup log(s) to the original QN log
@@ -183,6 +191,11 @@ namespace eCoachingLog.Controllers
             }
 
             if (user.IsManager || user.IsDirector || user.IsHr || user.IsAnalyst)
+            {
+                return true;
+            }
+
+            if (user.IsSupervisor && action == "view")
             {
                 return true;
             }
@@ -1201,11 +1214,13 @@ namespace eCoachingLog.Controllers
 
 		private bool ShowFollowupInfo(ReviewViewModel vm, int currentPage)
 		{
-            // do not show this for QN logs
-            //if (vm.LogDetail.IsQn)
-            //{
-            //    return false;
-            //}
+            if (vm.LogDetail.IsQn)
+            {
+                return vm.LogDetail.IsFollowupRequired && (
+                            vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED ||
+                            vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW
+                       );
+            }
 
 			var user = GetUserFromSession();
 

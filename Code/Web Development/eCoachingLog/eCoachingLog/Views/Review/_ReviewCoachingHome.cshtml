@@ -51,15 +51,21 @@
 				        <div class="text-info">@Model.QnSummaryAll</div>
                     }
                     <!-- QN log submitted by quality specialist, which need to be followed up (monitoring additional activities) -->
+                    <!-- 13: Pending Follow-up Employee Review -->
                     if (Model.LogDetail.IsQn && Model.LogDetail.StatusId == 13 && Model.AdditionalActivityLogs != null && Model.AdditionalActivityLogs.Count > 0)
                     {
-                        <div class="text-primary" style="margin-top: 5px;"><strong><mark>Additonal monitoring:</mark></strong></div>
+                        <div class="text-primary" style="margin-top: 5px;"><strong><mark>Additonal Monitoring:</mark></strong></div>
                         for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
                         {
                             <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true">&nbsp;@Model.AdditionalActivityLogs[i].Text View</a>
                             <br />
                         }
-                        <br />
+                    }
+
+
+                    if (Model.ShowFollowupDecisionComments)
+                    {
+                        { Html.RenderPartial("_QnFollowupDecisionComments"); }
                     }
                 }
 

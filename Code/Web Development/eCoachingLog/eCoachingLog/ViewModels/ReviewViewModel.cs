@@ -96,7 +96,7 @@ namespace eCoachingLog.ViewModels
                     return QnSummaryReadOnly;
                 }
 
-                return QnSummaryReadOnly + "." + QnSummaryEditable;
+                return QnSummaryReadOnly + ". " + QnSummaryEditable;
             }
         }
         public bool IsReadyToCoach
@@ -108,6 +108,7 @@ namespace eCoachingLog.ViewModels
         }
         public bool ShowEvalDetail { get; set; }
         public bool ShowEvalSummary { get; set; }
+        public bool ShowFollowupDecisionComments { get; set; }
 
         public bool AllowCopy { get; set; }
 
