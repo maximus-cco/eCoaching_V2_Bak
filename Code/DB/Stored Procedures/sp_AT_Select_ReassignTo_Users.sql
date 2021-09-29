@@ -1,14 +1,3 @@
-/*
-sp_AT_Select_ReassignTo_Users(04).sql
-Last Modified Date: 09/03/2019
-Last Modified By: Susmitha Palacherla
-
-Version 04: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 03: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 12/01/2017
-Version 02: Modified to support additional Modules - TFS 8793 - 11/16/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
 
 IF EXISTS (
   SELECT * 
@@ -21,8 +10,10 @@ GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -35,8 +26,9 @@ GO
 -- added Active check for reassigned to supervisors and managers per TFS 3441 - 09/07/2016
 --  Modified to support Encryption of sensitive data - Open key and use employee View for emp attributes. TFS 7856 - 12/01/2017
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
+-- Modified during changes to QN Workflow. TFS 22187 - 09/20/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_AT_Select_ReassignTo_Users] 
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_ReassignTo_Users] 
 @strRequesterin nvarchar(30),@strFromUserIdin nvarchar(10), @intModuleIdin INT, @intStatusIdin INT
 AS
 
@@ -44,8 +36,6 @@ BEGIN
 DECLARE	
 @nvcSQL nvarchar(max),
 @nvcRequesterID nvarchar(10),
---@nvcRequesterJobCode Nvarchar(30),
---@intModuleID INT,
 @intRequesterSiteID int,
 @intFromUserSiteID int,
 @strSelect nvarchar(1000),
@@ -55,13 +45,12 @@ OPEN SYMMETRIC KEY [CoachingKey]
 DECRYPTION BY CERTIFICATE [CoachingCert]
 
 
---cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
+
 SET @dtmDate  = GETDATE()   
 SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate)
---SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@nvcRequesterID)
 SET @intFromUserSiteID = EC.fn_intSiteIDFromEmpID(@strFromUserIdin)
 
-IF ((@intStatusIdin IN (6,8,10) AND @intModuleIdin IN (1,3,4,5))
+IF ((@intStatusIdin IN (6,8,10, 11,12) AND @intModuleIdin IN (1,3,4,5))
 OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
 
 
@@ -105,4 +94,5 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 End --sp_AT_Select_ReassignTo_Users
 GO
+
 
