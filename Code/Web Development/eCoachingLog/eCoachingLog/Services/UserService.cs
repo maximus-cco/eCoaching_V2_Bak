@@ -31,7 +31,7 @@ namespace eCoachingLog.Services
 
 			if (user.IsAccessMyDashboard)
 			{
-                if (user.IsCsrRelated)
+                if (!user.IsDirector && user.IsCsrRelated)
                 {
                     return Constants.MY_DASHBOARD_QN;
                 }
