@@ -55,11 +55,14 @@ body {
 }
 /* end - overwrite bootstrap */
 
+html {
+    overflow-y: scroll;
+}
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
     padding-right: 10px;
-	margin-bottom: auto;
 }
 
 .ecl-logo {
