@@ -181,6 +181,8 @@ namespace eCoachingLog.Repository
 
                         logDetail.FollowupDecisionComments = dataReader["SupFollowupReviewCoachingNotes"].ToString();
 
+                        logDetail.PfdCompletedDate = EclUtil.AppendPdt(dataReader["PFDCompletedDate"].ToString());
+
                         // directors and senior managers
                         logDetail.SrMgrLevelOneEmpId = dataReader["strEmpSrMgrLvl1ID"].ToString().Trim().ToUpper();
 						logDetail.SrMgrLevelTwoEmpId = dataReader["strEmpSrMgrLvl2ID"].ToString().Trim().ToUpper();

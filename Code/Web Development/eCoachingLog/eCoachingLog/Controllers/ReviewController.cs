@@ -133,11 +133,6 @@ namespace eCoachingLog.Controllers
                 vm.ShowEvalSummary = true;
                 vm.ShowCoachingNotes = true;
                 vm.ReviewPageName = "_QnFollowupView";
-                //if (logDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
-                //{
-                //    // show Copy link?  
-                //    vm.AllowCopy = true;
-                //}
             }
             else if (String.Equals(action, "view", StringComparison.OrdinalIgnoreCase))
             {
@@ -259,27 +254,6 @@ namespace eCoachingLog.Controllers
         private List<TextValue> GetPotentialFollowupMonitorLogsQn(long logId)
         {
             return reviewService.GetPotentialFollowupMonitorLogsQn(logId);
-
-
-            //var additionalLogs = new List<TextValue>();
-
-            //if (statusId == 6)
-            //{
-            //    return additionalLogs;
-            //}
-
-
-            //var log = new TextValue();
-            //log.Value = "189529";
-            //log.Text = "eCL-M-202620-189529";
-            //additionalLogs.Add(log);
-
-            //var log1 = new TextValue();
-            //log1.Value = "190323";
-            //log1.Text = "eCL-M-202620-190323";
-            //additionalLogs.Add(log1);
-
-            //return additionalLogs;
         }
 
         public JsonResult InitShortCallBehaviors(bool isValid)
@@ -564,9 +538,16 @@ namespace eCoachingLog.Controllers
 				return InitAckForm(vm, user, isCoaching);
 			}
 
+            vm.ShowPfdDate = ShowPfdDate(vm);
+
 			// If it reaches here, it must be Review Form
 			return InitReviewForm(vm, user, isCoaching);
 		}
+
+        private bool ShowPfdDate(ReviewViewModel vm)
+        {
+            return !String.IsNullOrEmpty(vm.LogDetail.PfdCompletedDate);
+        }
 
 		private ReviewViewModel InitAckForm(ReviewViewModel vm, User user, bool isCoaching)
 		{

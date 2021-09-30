@@ -105,6 +105,9 @@ namespace eCoachingLog.Models.Common
         public List<TextValue> LinkedLogs { get; set; } // linked additional call listening logs
         public string FollowupDecisionComments { get; set; } // comments whether followup coaching is required
 
+        // quality pfd completed date
+        public string PfdCompletedDate { get; set; }
+
         public CoachingLogDetail()
         {
             this.QnSummaryList = new List<LogSummary>();
