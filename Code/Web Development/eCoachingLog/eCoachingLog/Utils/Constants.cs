@@ -135,8 +135,10 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_LEVEL_3 = 3;
 		public const int LOG_STATUS_LEVEL_4 = 4;
 
-		// ec.dim_source table
-		public const int SOURCE_INTERNAL_CCO_REPORTING = 218;
+        public const string COACHING_REASON_PFD = "Performance, Feedback, and Development (PFD)";
+
+        // ec.dim_source table
+        public const int SOURCE_INTERNAL_CCO_REPORTING = 218;
 
         public static readonly List<string> EXCEL_SHEET_NAMES =
             new List<string>() { "eCL", "Short Call eCL", "Quality Now eCL", "Quality Now WebChat", "Quality Now Written Corr" };

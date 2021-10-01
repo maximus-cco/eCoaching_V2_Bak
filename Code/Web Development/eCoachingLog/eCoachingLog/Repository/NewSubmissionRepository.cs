@@ -89,7 +89,7 @@ namespace eCoachingLog.Repository
 					startDate = submission.CoachingDate;
 				}
 
-                command.Parameters.AddWithValueSafe("@dtmPFDCompletedDate", submission.CoachingDate); 
+                command.Parameters.AddWithValueSafe("@dtmPFDCompletedDate", submission.PfdCompletedDate); 
 
                 // Call Type and Call ID
                 bool isAvokeId = false;

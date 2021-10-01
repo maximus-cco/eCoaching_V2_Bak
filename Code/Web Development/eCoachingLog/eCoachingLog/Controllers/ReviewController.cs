@@ -459,7 +459,8 @@ namespace eCoachingLog.Controllers
 				}
 			}
 
-			vm.ShowEmployeeReviewInfo = true;
+            vm.ShowPfdDate = ShowPfdDate(vm);
+            vm.ShowEmployeeReviewInfo = true;
 
 			if (vm.LogDetail.IsFollowupRequired)
 			{
@@ -538,15 +539,23 @@ namespace eCoachingLog.Controllers
 				return InitAckForm(vm, user, isCoaching);
 			}
 
-            vm.ShowPfdDate = ShowPfdDate(vm);
-
 			// If it reaches here, it must be Review Form
 			return InitReviewForm(vm, user, isCoaching);
 		}
 
         private bool ShowPfdDate(ReviewViewModel vm)
         {
-            return !String.IsNullOrEmpty(vm.LogDetail.PfdCompletedDate);
+            var show = false;
+            var reasons = vm.LogDetail.Reasons;
+            foreach (var r in reasons)
+            {
+                if (r.Description == Constants.COACHING_REASON_PFD) // pfd reason
+                {
+                    show = true;
+                    break;
+                }
+            }
+            return show;
         }
 
 		private ReviewViewModel InitAckForm(ReviewViewModel vm, User user, bool isCoaching)
