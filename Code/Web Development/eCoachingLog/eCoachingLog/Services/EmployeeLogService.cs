@@ -197,14 +197,14 @@ namespace eCoachingLog.Services
             return logs;
         }
 
-        public int GetLogListTotal(LogFilter logFilter, string userId, string search)
+        public int GetLogListTotal(LogFilter logFilter, User user, string search)
 		{
-			return employeeLogRepository.GetLogListTotal(logFilter, userId, search);
+			return employeeLogRepository.GetLogListTotal(logFilter, user, search);
 		}
 
-        public int GetLogListTotalQn(LogFilter logFilter, string userId, string search)
+        public int GetLogListTotalQn(LogFilter logFilter, User user, string search)
         {
-            return employeeLogRepository.GetLogListTotalQn(logFilter, userId, search);
+            return employeeLogRepository.GetLogListTotalQn(logFilter, user, search);
         }
 
         public IList<LogStatus> GetAllLogStatuses()

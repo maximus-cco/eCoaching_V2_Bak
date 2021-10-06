@@ -64,7 +64,7 @@ namespace eCoachingLog.Controllers
 			try
 			{
 				List<LogBase> logs = empLogService.GetLogList(logFilter, user.EmployeeId, pageSize, rowStartIndex, sortBy, sortDirection, search);
-				totalRecords = empLogService.GetLogListTotal(logFilter, user.EmployeeId, search);
+				totalRecords = empLogService.GetLogListTotal(logFilter, user, search);
 				Session["TotalPending"] = totalRecords;
 				return Json(new { draw = draw, recordsFiltered = totalRecords, recordsTotal = totalRecords, data = logs }, JsonRequestBehavior.AllowGet);
 			}
@@ -106,7 +106,7 @@ namespace eCoachingLog.Controllers
             try
             {
                 List<LogBase> logs = empLogService.GetLogList(logFilter, user.EmployeeId, pageSize, rowStartIndex, sortBy, sortDirection, search);
-                totalRecords = empLogService.GetLogListTotal(logFilter, user.EmployeeId, search);
+                totalRecords = empLogService.GetLogListTotal(logFilter, user, search);
                 Session["TotalPending"] = totalRecords;
                 return Json(new { draw = draw, recordsFiltered = totalRecords, recordsTotal = totalRecords, data = logs }, JsonRequestBehavior.AllowGet);
             }
@@ -147,7 +147,7 @@ namespace eCoachingLog.Controllers
             try
             {
                 List<LogBase> logs = empLogService.GetLogListQn(logFilter, user.EmployeeId, pageSize, rowStartIndex, sortBy, sortDirection, search);
-                totalRecords = empLogService.GetLogListTotalQn(logFilter, user.EmployeeId, search);
+                totalRecords = empLogService.GetLogListTotalQn(logFilter, user, search);
                 Session["TotalPending"] = totalRecords;
                 return Json(new { draw = draw, recordsFiltered = totalRecords, recordsTotal = totalRecords, data = logs }, JsonRequestBehavior.AllowGet);
             }

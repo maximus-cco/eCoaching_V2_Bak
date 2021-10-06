@@ -36,10 +36,10 @@ namespace eCoachingLog.Services
 		int GetLogCountToExport(int siteId, string status, string start, string end, string userId);
 
 		List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
-		int GetLogListTotal(LogFilter logFiler, string userId, string search);
+		int GetLogListTotal(LogFilter logFiler, User user, string search);
 
         List<LogBase> GetLogListQn(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
-        int GetLogListTotalQn(LogFilter logFiler, string userId, string search);
+        int GetLogListTotalQn(LogFilter logFiler, User user, string search);
 
         //List<LogBase> GetLogList_QN_Followup(LogFilter logFilter, string userId, int pageSize, int startRowIndex, string sortBy, string sortDirection, string search);
 

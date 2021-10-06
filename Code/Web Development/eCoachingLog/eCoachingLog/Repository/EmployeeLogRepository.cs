@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace eCoachingLog.Repository
 {
@@ -576,20 +577,15 @@ namespace eCoachingLog.Repository
 			return logs;
 		}
 
-		public int GetLogListTotal(LogFilter logFilter, string userId, string search)
+		public int GetLogListTotal(LogFilter logFilter, User user, string search)
 		{
-            if (logFilter == null)
-            {
-                logger.Error("logFilter is null!");
-            }
-
 			int count = -1;
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Count]", connection))
 			{
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-				command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+				command.Parameters.AddWithValueSafe("@nvcUserIdin", user.EmployeeId);
 				command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
 				command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
 				command.Parameters.AddWithValueSafe("@nvcEmpIdin", logFilter.EmployeeId);
@@ -612,20 +608,39 @@ namespace eCoachingLog.Repository
 				catch (Exception ex)
 				{
 					logger.Error("Failed to get log total: " + ex.Message);
-                    if (connection == null)
-                    {
-                        logger.Error("connection is null!");
-                    }
-                    if (command == null)
-                    {
-                        logger.Error("command is null!");
-                    }
+                    logger.Error(ex);
 
+                    LogGetLogListTotal(logFilter, user, search);
+                    
 					throw ex;
 				}
+                finally
+                {
+                    if (connection == null)
+                    {
+                        logger.Error("!!!!!!!!!!! connection is null !!!!!!!!!!!!!!");
+                    }
+                }
 			}
 			return count;
 		}
+
+        private void LogGetLogListTotal(LogFilter logFilter, User user, string search)
+        {
+            if (logFilter == null)
+            {
+                logger.Error("###logFilter is null!!!");
+                return;
+            }
+
+            var userId = user == null ? "usernull" : user.EmployeeId;
+            var msg = $"user[{userId}],role[{user.Role}],src[{logFilter.SourceId}],type[{logFilter.LogType}],site[{logFilter.SiteId}],";
+            msg += $"sup[{logFilter.SupervisorId}],mgr[{logFilter.ManagerId}],submitter[{logFilter.SubmitterId}],";
+            msg += $"from[{logFilter.SubmitDateFrom}],to[{logFilter.SubmitDateTo}],val[{logFilter.ValueId}],";
+            msg += $"status[{logFilter.StatusId}],active[{logFilter.ActiveEmployee}],search[{search}]";
+
+            logger.Error("&&&&&LogGetLogListTotal:" + msg);
+        }
 
         public List<LogBase> GetLogListQn(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search)
         {
@@ -694,7 +709,7 @@ namespace eCoachingLog.Repository
             return logs;
         }
 
-        public int GetLogListTotalQn(LogFilter logFilter, string userId, string search)
+        public int GetLogListTotalQn(LogFilter logFilter, User user, string search)
         {
             int count = -1;
             using (SqlConnection connection = new SqlConnection(conn))
@@ -702,7 +717,7 @@ namespace eCoachingLog.Repository
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-                command.Parameters.AddWithValueSafe("@nvcUserIdin", userId);
+                command.Parameters.AddWithValueSafe("@nvcUserIdin", user.EmployeeId);
                 command.Parameters.AddWithValueSafe("@intSourceIdin", logFilter.SourceId);
                 command.Parameters.AddWithValueSafe("@intSiteIdin", logFilter.SiteId);
                 command.Parameters.AddWithValueSafe("@nvcEmpIdin", logFilter.EmployeeId);
@@ -724,8 +739,19 @@ namespace eCoachingLog.Repository
                 }
                 catch (Exception ex)
                 {
-                    logger.Error("Failed to get log total: " + ex.Message);
+                    logger.Error("Failed to get QN log total: " + ex.Message);
+                    logger.Error(ex);
+
+                    LogGetLogListTotal(logFilter, user, search);
+
                     throw ex;
+                }
+                finally
+                {
+                    if (connection == null)
+                    {
+                        logger.Error("########## connection is null !!!!!!!!!!!!!!");
+                    }
                 }
             }
             return count;
