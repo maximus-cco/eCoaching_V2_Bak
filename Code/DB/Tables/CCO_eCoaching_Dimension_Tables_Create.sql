@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Dimension_Tables_Create(04).sql
-Last Modified Date: 09/17/2019
+CCO_eCoaching_Dimension_Tables_Create(05).sql
+Last Modified Date: 09/15/2021
 Last Modified By: Susmitha Palacherla
 
+Version 05: Quality Now workflow enhancement. TFS 22187 - 09/15/2021
 Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 03: Modified to add Sort Order to DIM_Program - TFS 13643 - 03/07/2019
 Version 02: UI Move to new architecture  - TFS 7136/7137/7138 - 6/13/2018
@@ -472,6 +473,7 @@ GO
 
 --17. [EC].[UI_Dashboard_Summary_Display]
 
+
 SET ANSI_NULLS ON
 GO
 
@@ -479,22 +481,34 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [EC].[UI_Dashboard_Summary_Display](
-	[RoleId] [int]  NOT NULL,
+	[RoleId] [int] NOT NULL,
 	[RoleName] [nvarchar](40) NOT NULL,
-	[MyPending] bit NOT NULL,
-	[MyCompleted] bit NOT NULL,
-	[MyTeamPending] bit NOT NULL,
-	[MyTeamcompleted] bit NOT NULL,
-	[MyTeamWarning] bit NOT NULL,
-	[MySubmission] bit NOT NULL,
-	[MyFollowup] bit NOT NULL
+	[MyPending] [bit] NOT NULL,
+	[MyCompleted] [bit] NOT NULL,
+	[MyTeamPending] [bit] NOT NULL,
+	[MyTeamcompleted] [bit] NOT NULL,
+	[MyTeamWarning] [bit] NOT NULL,
+	[MySubmission] [bit] NOT NULL,
+	[MyFollowup] [bit] NOT NULL,
+	[MyCompletedQN] [bit] NOT NULL,
+	[MySubmissionQN] [bit] NOT NULL,
+	[MyPendingQN] [bit] NOT NULL,
+	[MyPendingFollowupPrepQN] [bit] NOT NULL,
+	[MyPendingFollowupCoachQN] [bit] NOT NULL,
+	[MyTeamPendingQN] [bit] NOT NULL,
+	[MyTeamcompletedQN] [bit] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[RoleId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
 GO
+
+ALTER TABLE [EC].[UI_Dashboard_Summary_Display] ADD  DEFAULT ((0)) FOR [MyFollowup]
+GO
+
+
+
 --****************************************************************************************
 
 --18. [EC].[Reasons_By_ReportCode]
