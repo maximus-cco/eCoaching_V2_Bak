@@ -1,3 +1,4 @@
+
 SET ANSI_NULLS ON
 GO
 
@@ -33,7 +34,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE cl.[SourceID] in (235, 236) '
+SET @where = 'WHERE cl.[SourceID] in (235) '
 
 
 
@@ -42,8 +43,10 @@ RETURN 1
 
 IF @nvcEmpRole = 'Supervisor'
 BEGIN
-SET @where = @where + ' AND (eh.[Sup_ID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] = 11)';
+SET @where = @where + ' AND ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] = 11 )' +  @NewLineChar +
+		       ' OR (cl.[ReassignedToId] = ''' + @nvcUserIdin + '''  AND [ReassignCount] <> 0 AND cl.[StatusID] = 11))'
 END
+
 
 
 

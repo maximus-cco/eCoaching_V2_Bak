@@ -1,8 +1,12 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -33,7 +37,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE cl.[SourceID] in (235, 236) '
+SET @where = 'WHERE cl.[SourceID] in (235) '
 
 
 
@@ -41,10 +45,11 @@ IF @nvcEmpRole NOT IN ('Supervisor' )
 RETURN 1
 
 IF @nvcEmpRole = 'Supervisor'
-BEGIN
-SET @where = @where + ' AND (eh.[Sup_ID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] = 12)'
-END
 
+BEGIN
+SET @where = @where + ' AND ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] = 12 )' +  @NewLineChar +
+		       ' OR (cl.[ReassignedToId] = ''' + @nvcUserIdin + '''  AND [ReassignCount] <> 0 AND cl.[StatusID] = 12))'
+END
 
 
 SET @nvcSQL = 'WITH TempMain 
@@ -76,4 +81,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending_FollowupCoach_Count_QN
 GO
+
 

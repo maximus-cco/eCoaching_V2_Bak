@@ -6,6 +6,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/03/2021
@@ -38,10 +40,10 @@ SET @where = 'WHERE cl.[SourceID] in (235) '
 
 
 
-IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'Supervisor' )
+IF @nvcEmpRole NOT IN ('CSR', 'ARC','EMPLOYEE', 'Supervisor' )
 RETURN 1
 
-IF @nvcEmpRole in ('CSR', 'ARC')
+IF @nvcEmpRole in ('CSR', 'ARC', 'EMPLOYEE')
 BEGIN
 SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (4,13))'
 END
