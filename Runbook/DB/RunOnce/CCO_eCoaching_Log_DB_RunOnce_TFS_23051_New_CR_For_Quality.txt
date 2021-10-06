@@ -1,0 +1,118 @@
+/*
+TFS 23051 - New Coaching Reason for Quality
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Add record(s) to TABLE [EC].[DIM_Coaching_Reason]
+2. Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+3. Modify record(s) in TABLE [EC].[DIM_Source] (134,234 to set Quality = 1)
+4. Add additional column for PFD CompletedDate to Coaching_Log Table
+5. Add additional column for PFD CompletedDate to Coaching_Log_Archive Table
+6. Add entries in Email Notification Table
+
+
+-- Test
+select * from ec.dim_source
+where SourceID in (138, 238)
+
+select * from ec.DIM_Coaching_Reason
+where coachingreasonid = 64
+
+
+select * from ec.Coaching_Reason_Selection
+where coachingreasonid = 64
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+-- step1: add coaching reason
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReason])
+     VALUES
+          ('Performance, Feedback, and Development (PFD)');
+GO
+
+--****************************************************
+
+--step2: add into coaching reason selection
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+	         (64, 'Performance, Feedback, and Development (PFD)',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,1,0,0,0,0,0)
+ 
+
+GO
+
+
+--****************************************************
+
+-- step3: update DIM_Source Source
+
+update  ec.dim_source
+set Quality = 1
+where SourceID in (134, 234)
+GO
+
+--*****************************************************
+
+--4. Add additional column for PFD CompletedDate to Coaching_log Table
+
+ALTER TABLE [EC].[Coaching_Log]
+ADD [PFDCompletedDate] [datetime] NULL
+GO
+
+--*****************************************************
+
+--5. Add additional column for PFD CompletedDate to Coaching_log_Archive Table
+
+ALTER TABLE [EC].[Coaching_Log_Archive]
+ADD [PFDCompletedDate] [datetime] NULL
+GO
+
+--*****************************************************
+
+--6. Add entries in Email Notification Table
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+	 ('Quality', 'UI', 'Direct',  'Quality Alignment', 0, 'Pending Employee Review', 'Employee', 'eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.', 0, 'NA'),
+	 ('Quality', 'UI', 'Indirect',  'Quality Alignment', 0,'Pending Quality Lead Review','Supervisor', 'eCL: Pending Quality Lead Review',  'A new eCoaching Log has been entered on behalf of <strong> strPerson </strong> on <strong> strDateTime  </strong>  that requires your action. Please click on the link below to review the eCoaching log.', 0, 'NA')
+GO
+
+--*****************************************************

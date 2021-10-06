@@ -1,19 +1,3 @@
-/*
-sp_InsertInto_Coaching_Log(06a).sql
-Last Modified Date: 08/28/2020
-Last Modified By: Susmitha Palacherla
-
-Version 06a: Updated to support special handling for WAH- Return to Site - TFS 18255 - 08/27/2020
-Version 06: Updated to support special handling for WAH- Return to Site - TFS 18255 - 08/27/2020
-Version 05: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/03/2019
-Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
-Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
-Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -23,16 +7,12 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 --    ====================================================================
 --    Author:           Susmitha Palacherla
@@ -48,8 +28,9 @@ GO
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- Updated to support special handling for WAH- Return to Site - TFS 18255 - 08/27/2020
+-- Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
 (     @nvcEmpID Nvarchar(10),
       @nvcProgramName Nvarchar(50),
       @intSourceID INT,
@@ -119,6 +100,7 @@ CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
       @Behaviour Nvarchar(30),
 	  @bitisFollowupRequired bit,
 	  @dtmFollowupDueDate datetime,
+	  @dtmPFDCompletedDate datetime,
       @nvcNewFormName Nvarchar(50)OUTPUT
       )
    
@@ -194,7 +176,8 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
            ,[MgrID]
            ,[Behavior]
 		   ,[IsFollowupRequired]
-		   ,[FollowupDueDate])
+		   ,[FollowupDueDate]
+		   ,PFDCompletedDate)
      VALUES
            (@nvcEmpID 
            ,@nvcProgramName 
@@ -232,7 +215,8 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
 		   ,ISNULL(@nvcMgrID,'999999')
 		   ,@Behaviour
 		   ,@bitisFollowupRequired
-		   ,@dtmFollowupDueDate)
+		   ,@dtmFollowupDueDate
+		   ,@dtmPFDCompletedDate)
             
  CLOSE SYMMETRIC KEY [CoachingKey] 
             
@@ -257,19 +241,6 @@ WAITFOR DELAY '00:00:00:01'  -- Wait for 5 ms
 
 SET @nvcNewFormName = (SELECT [FormName] FROM  [EC].[Coaching_Log] WHERE [CoachingID] = @I)
 
-     /*
-           IF NOT @intCoachReasonID1 IS NULL
-       BEGIN
-            INSERT INTO [EC].[Coaching_Log_Reason]
-            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
-            VALUES (@I, @intCoachReasonID1,@intSubCoachReasonID1,
-            CASE WHEN @intCoachReasonID1 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID1 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID1 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
-             ELSE @nvcValue1 END) 
-        END
-        
-        */
     
  IF NOT @intCoachReasonID1 IS NULL
   BEGIN
@@ -296,18 +267,6 @@ While @SubReasonRowID <= @MaxSubReasonRowID
      END           
   END
  
-        
-       /*  
-        IF NOT @intCoachReasonID2 IS NULL  
-        BEGIN
-			INSERT INTO [EC].[Coaching_Log_Reason]
-            ([CoachingID],[CoachingReasonID],[SubCoachingReasonID],[Value])
-             VALUES (@I, @intCoachReasonID2,@intSubCoachReasonID2,@nvcValue2)
-        END 
-
-*/
-
-
  IF NOT @intCoachReasonID2 IS NULL  
     BEGIN
         
@@ -589,6 +548,6 @@ END TRY
   END CATCH  
 
   END -- sp_InsertInto_Coaching_Log
-GO
+  GO
 
 

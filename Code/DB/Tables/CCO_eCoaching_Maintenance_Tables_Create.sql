@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Maintenance_Tables_Create.(09).sql
-Last Modified Date:9/15/2021
+CCO_eCoaching_Maintenance_Tables_Create.(10).sql
+Last Modified Date:10/6/2021
 Last Modified By: Susmitha Palacherla
 
+Version 10: Updated to support New Coaching Reason for Quality - 23051 - 10/6/2021
 Version 09: Quality Now workflow enhancement. TFS 22187 - 09/15/2021
 Version 08: TFS 21493 - Written Corr Bingo records in bingo feeds
 Version 07: TFS 21276 - Update QN Alt Channels compliance and mastery levels 
@@ -72,7 +73,6 @@ CREATE TABLE [EC].[Coaching_Log_Archive](
 	[SourceID] [int] NOT NULL,
 	[StatusID] [int] NOT NULL,
 	[SiteID] [int] NOT NULL,
-	[EmpLanID] [nvarchar](50) NOT NULL,
 	[EmpID] [nvarchar](10) NOT NULL,
 	[SubmitterID] [nvarchar](10) NULL,
 	[EventDate] [datetime] NULL,
@@ -104,7 +104,7 @@ CREATE TABLE [EC].[Coaching_Log_Archive](
 	[strReportCode] [nvarchar](30) NULL,
 	[isCoachingRequired] [bit] NULL,
 	[strReasonNotCoachable] [nvarchar](100) NULL,
-	[txtReasonNotCoachable] [nvarchar](3000) NULL,
+	[txtReasonNotCoachable] [nvarchar](4000) NULL,
 	[VerintFormName] [nvarchar](50) NULL,
 	[ModuleID] [int] NULL,
 	[SupID] [nvarchar](20) NULL,
@@ -122,30 +122,36 @@ CREATE TABLE [EC].[Coaching_Log_Archive](
 	[ReassignedToID] [nvarchar](20) NULL,
 	[ArchivedBy] [nvarchar](50) NULL,
 	[ArchivedDate] [datetime] NOT NULL,
-        [isCoachingMonitor] [nvarchar](3) NULL,
+	[isCoachingMonitor] [nvarchar](3) NULL,
 	[QNBatchID] [nvarchar](20) NULL,
 	[QNBatchStatus] [nvarchar](10) NULL,
 	[QNStrengthsOpportunities] [nvarchar](2000) NULL,
-        [ConfirmedCSE][bit] NULL,
-        [IsFollowupRequired] bit NULL,
-	[FollowupDueDate][datetime] NULL,
-	[FollowupActualDate][datetime] NULL,
-	[SupFollowupAutoDate][datetime] NULL,
-	[SupFollowupCoachingNotes][nvarchar](4000) NULL,
-	[IsEmpFollowupAcknowledged] bit NULL,
-	[EmpAckFollowupAutoDate][datetime] NULL,
-	[EmpAckFollowupComments][nvarchar](3000) NULL,
-	[FollowupSupID] nvarchar(20) NULL,
+	[ConfirmedCSE] [bit] NULL,
+	[IsFollowupRequired] [bit] NULL,
+	[FollowupDueDate] [datetime] NULL,
+	[FollowupActualDate] [datetime] NULL,
+	[SupFollowupAutoDate] [datetime] NULL,
+	[SupFollowupCoachingNotes] [nvarchar](4000) NULL,
+	[IsEmpFollowupAcknowledged] [bit] NULL,
+	[EmpAckFollowupAutoDate] [datetime] NULL,
+	[EmpAckFollowupComments] [nvarchar](3000) NULL,
+	[FollowupSupID] [nvarchar](20) NULL,
+	[SupFollowupReviewAutoDate] [datetime] NULL,
+	[SupFollowupReviewCoachingNotes] [nvarchar](4000) NULL,
+	[SupFollowupReviewMonitoredLogs] [nvarchar](200) NULL,
+	[FollowupReviewSupID] [nvarchar](20) NULL,
+	[PFDCompletedDate] [datetime] NULL,
  CONSTRAINT [PK_Coaching_Log_Archive] PRIMARY KEY CLUSTERED 
 (
 	[CoachingID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
 ALTER TABLE [EC].[Coaching_Log_Archive] ADD  CONSTRAINT [ArchivedBy_def]  DEFAULT ('Manual') FOR [ArchivedBy]
 GO
+
+
 
 
 --**************************************************************

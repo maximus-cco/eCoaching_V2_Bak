@@ -6,6 +6,8 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
 GO
 
+
+
 SET ANSI_NULLS ON
 GO
 
@@ -78,7 +80,7 @@ SELECT cl.CoachingID numID,
   veh.Sup_Name strEmpSupName,
   veh.Sup_Email strEmpSupEmail,
   CASE 
-    WHEN (cl.[statusId] IN (6, 8, 10) AND cl.[ModuleID] NOT IN (-1, 2) AND cl.[ReassignedToID] IS NOT NULL AND [ReassignCount] <> 0)
+    WHEN (cl.[statusId] IN (6, 8, 10,11,12) AND cl.[ModuleID] NOT IN (-1, 2) AND cl.[ReassignedToID] IS NOT NULL AND [ReassignCount] <> 0)
       THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
     WHEN (cl.[statusId] = 5 AND cl.[ModuleID] = 2 AND cl.[ReassignedToID] IS NOT NULL AND [ReassignCount] <> 0)
       THEN [EC].[fn_strEmpNameFromEmpID](cl.[ReassignedToID])
@@ -217,6 +219,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   cl.EmpAckFollowupAutoDate,
   cl.EmpAckFollowupComments,
   cl.SupFollowupReviewCoachingNotes,
+  cl.PFDCompletedDate,
   ''Coaching'' strLogType
 FROM [EC].[Coaching_Log] cl  WITH (NOLOCK) ';
 	    

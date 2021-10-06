@@ -1,24 +1,3 @@
-/*
-fn_intSubCoachReasonIDFromRptCode(11).sql
-
-Last Modified Date:  11/30/2020
-Last Modified By: Susmitha Palacherla
-
-Version 11: Modified to support ATT AED feed. TFS 19502  - 11/30/2020
-Version 10: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
-Version 09: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
-Version 08: Modified to support ATT AP% feeds. TFS 15095  - 08/27/2019
-Version 07: Updated to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
-Version 06: New OTA feed - TFS 12591 - 11/29/2018
-Version 05: New PBH feed - TFS 11451 - 7/31/2018
-Version 04: New DTT feed - TFS 7646 - 8/31/2017
-Version 03: New Breaks BRN and BRL AND MSR feeds - TFS 6145 - 4/13/2017
-Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -28,11 +7,13 @@ IF EXISTS (
    DROP FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 -- =============================================
 -- Author:              Susmitha Palacherla
@@ -56,8 +37,9 @@ GO
 -- TFS 15465 - To add BQM - 09/23/2019
 -- TFS 18154 - To add IDD - 09/15/2020
 -- TFS 19502  - To add AED - 11/30/2020
+-- TFS 23048 - To add RDD - 10/4/2021
 -- =============================================
-CREATE FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
+CREATE OR ALTER FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
 )
 RETURNS INT
@@ -109,6 +91,7 @@ BEGIN
 			WHEN N'APW' THEN 252
 			WHEN N'AED' THEN 282
 			WHEN N'IDD' THEN 281
+			WHEN N'RDD' THEN 42
         ELSE -1
       END;
     ELSE

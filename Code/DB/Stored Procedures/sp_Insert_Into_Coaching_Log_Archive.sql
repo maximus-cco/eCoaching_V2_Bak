@@ -14,7 +14,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date:   10/10/2016
@@ -30,6 +29,7 @@ GO
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
+-- Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Insert_Into_Coaching_Log_Archive] @strArchivedBy nvarchar(50)= 'Automated Process'
 
@@ -136,6 +136,7 @@ INSERT INTO [EC].[Coaching_Log_Archive]
            ,[SupFollowupReviewCoachingNotes] 
 	       ,[SupFollowupReviewMonitoredLogs]
            ,[FollowupReviewSupID] 
+		   ,[PFDCompletedDate]
            ,[ArchivedBy]
            ,[ArchivedDate]
 		)
@@ -210,6 +211,7 @@ INSERT INTO [EC].[Coaching_Log_Archive]
       ,[SupFollowupReviewCoachingNotes] 
 	  ,[SupFollowupReviewMonitoredLogs]
       ,[FollowupReviewSupID]
+	  ,[PFDCompletedDate]
       ,@strArchivedBy
 	  ,GetDate()
   FROM [EC].[Coaching_Log] CL JOIN #ArchiveLogs A
@@ -451,4 +453,7 @@ COMMIT TRANSACTION
 END -- sp_Insert_Into_Coaching_Log_Archive
 
 GO
+
+
+
 
