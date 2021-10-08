@@ -1,25 +1,3 @@
-/*
-sp_rptCoachingSummary(07).sql
-Last Modified Date: 04/02/2019
-Last Modified By: Susmitha Palacherla
-
-
-Version 07:  Modified to support Quality Now. TFS 13333 - 04/02/2019
-
-Version 06:  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
-
-Version 05: Updated during 2012 upgrade to add distinct clause - TFS 7106 - 08/16/2017
-
-Version 04: Updated Joins to use left join - Suzy -  TFS 5621 - 04/19/2017
-
-Version 03: Updated formatting - Suzy -  TFS 5621 - 03/17/2017
-
-Version 02: Updated parameters - Suzy -  TFS 5621 - 03/14/2017
-
-Version 01: Document Initial Revision - Lili -  TFS 5621 - 03/09/2017
-
-*/
-
 
 IF EXISTS (
   SELECT * 
@@ -48,9 +26,10 @@ GO
 --  Updated during 2012 upgrade to add distinct clause - TFS 7106 - 08/16/2017
 --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 --  Modified to support Quality Now. TFS 13333 - 04/02/2019
+--  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
  *******************************************************************************/
 
-CREATE PROCEDURE [EC].[sp_rptCoachingSummary] 
+CREATE OR ALTER PROCEDURE [EC].[sp_rptCoachingSummary] 
 (
 @intModulein int = -1,
 @intStatusin int = -1, 
@@ -127,6 +106,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
               ,ISNULL(CONVERT(varchar,p.EventDate,121),'-') AS [Event Date]
               ,ISNULL(CONVERT(varchar,p.CoachingDate,121),'-') AS [Coaching Date]
               ,ISNULL(CONVERT(varchar,p.SubmittedDate,121),'-') AS [Submitted Date]
+			   ,ISNULL(CONVERT(varchar,p.PFDCompletedDate,121),'-') AS [PFD CompletedDate Date]
 		      ,c.Source AS [Coaching Source]
 		      ,c.SubSource AS [Sub Coaching Source]
 		      ,[EC].[fn_strCoachingReasonFromCoachingID](c.CoachingID) AS [Coaching Reason]
@@ -235,9 +215,6 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
-
-
 GO
-
 
 

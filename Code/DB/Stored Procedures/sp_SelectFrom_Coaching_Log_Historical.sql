@@ -7,11 +7,13 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 --	====================================================================
@@ -23,7 +25,8 @@ GO
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 --  Update to fix HC users receiving error on Historical Dashboard - TFS 15974
---  Modified to support Quality Now workflow enhancement. TFS 22187 - 09/22/2021
+--  Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
+--  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
 
@@ -182,6 +185,7 @@ AS
 				,x.SupervisorFollowupReviewCoachingNotes
 				,x.FollowupReviewMonitoredLogs
 				,x.FollowupReviewSupervisorID 
+				,x.PFDCompletedDate
 				,x.orderkey
   ,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
   FROM 
@@ -208,6 +212,7 @@ AS
       ,[cl].[SupFollowupReviewCoachingNotes] SupervisorFollowupReviewCoachingNotes
       ,[cl].[SupFollowupReviewMonitoredLogs] FollowupReviewMonitoredLogs
      ,[cl].[FollowupReviewSupID] FollowupReviewSupervisorID 
+	 ,[cl].[PFDCompletedDate]
 	  ,''ok1'' orderkey
     FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 	JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
@@ -220,7 +225,7 @@ AS
 	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name],
 	 [cl].[IsFollowupRequired], [cl].[FollowupDueDate], [cl].[FollowupActualDate], [cl].[SupFollowupAutoDate], 
 	 [cl].[SupFollowupCoachingNotes], [cl].[IsEmpFollowupAcknowledged], [cl].[EmpAckFollowupAutoDate], [cl].[EmpAckFollowupComments],
-     [cl].[FollowupSupID], [cl].[SupFollowupReviewAutoDate], [cl].[SupFollowupReviewCoachingNotes], [cl].[SupFollowupReviewMonitoredLogs], [cl].[FollowupReviewSupID] 
+     [cl].[FollowupSupID], [cl].[SupFollowupReviewAutoDate], [cl].[SupFollowupReviewCoachingNotes], [cl].[SupFollowupReviewMonitoredLogs], [cl].[FollowupReviewSupID], [cl].[PFDCompletedDate]
 '
 
 SET @where = 
@@ -350,6 +355,7 @@ SELECT strLogID,
   ,SupervisorFollowupReviewCoachingNotes
   ,FollowupReviewMonitoredLogs
   ,FollowupReviewSupervisorID 
+  ,PFDCompletedDate
   ,CASE WHEN T.orderkey = ''ok1'' THEN [EC].[fn_strCoachingReasonFromCoachingID](T.strLogID)
 	 ELSE [EC].[fn_strCoachingReasonFromWarningID](T.strLogID) 
    END strCoachingReason

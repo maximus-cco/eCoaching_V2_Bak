@@ -12,6 +12,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/14/2015
@@ -27,6 +28,7 @@ GO
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
+-- Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
 
@@ -173,6 +175,7 @@ SELECT [cl].[CoachingID] CoachingID
 ,[cl].[SupFollowupCoachingNotes] FollowupCoachingNotes
 ,[cl].[EmpAckFollowupAutoDate] CSRFollowupAutoDate
 ,[cl].[EmpAckFollowupComments] CSRFollowupComments
+,[cl].[PFDCompletedDate]
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
 JOIN cl ON cl.EmpID = veh.Emp_ID 
 LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
@@ -464,5 +467,6 @@ EXEC (@nvcSQL2AllWrittenCorr);
 CLOSE SYMMETRIC KEY [CoachingKey];		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
 GO
+
 
 

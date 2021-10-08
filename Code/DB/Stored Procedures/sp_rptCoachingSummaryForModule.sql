@@ -1,14 +1,3 @@
-/*
-sp_rptCoachingSummaryForModule(03).sql
-Last Modified Date: 04/02/2019
-Last Modified By: Susmitha Palacherla
-
-
-Version 03:  Modified to support Quality Now. TFS 13333 - 04/02/2019
-Version 02:  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
-Version 01: Document Initial Revision - TFS 6066 - 10/06/2017
-
-*/
 
 IF EXISTS (
   SELECT * 
@@ -26,10 +15,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 -- Create date:       10/5/2017
@@ -40,8 +25,11 @@ GO
 -- Initial Revision. Created during summary report scheduling. TFS 6066 - 10/05/2017
 -- Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 -- Modified to support Quality Now. TFS 13333 - 04/02/2019
+--  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
+
  *******************************************************************************/
-CREATE PROCEDURE [EC].[sp_rptCoachingSummaryForModule] 
+
+CREATE OR ALTER PROCEDURE [EC].[sp_rptCoachingSummaryForModule] 
 (
 @intModulein int = -1,
 @intBeginDate int = NULL,  -- YYYYMMDD
@@ -106,10 +94,11 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		       WHEN c.ReviewMgrID IS NULL  THEN '-'
 		         ELSE CONVERT(nvarchar(50),DecryptByKey(c.ReviewMgrName)) END AS [Review Manager Name]
 		       ,LTRIM(RTRIM(REPLACE(lEFT(p.Description,4000), '<br />', ''))) AS [Description]
-              ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
+			   ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
               ,ISNULL(CONVERT(varchar,p.EventDate,121),'-') AS [Event Date]
               ,ISNULL(CONVERT(varchar,p.CoachingDate,121),'-') AS [Coaching Date]
               ,ISNULL(CONVERT(varchar,p.SubmittedDate,121),'-') AS [Submitted Date]
+         	   ,ISNULL(CONVERT(varchar,p.PFDCompletedDate,121),'-') AS [PFD CompletedDate Date]
 			    --,p.EventDate AS [Event Date]
        --       ,p.CoachingDate AS [Coaching Date]
        --       ,p.SubmittedDate AS [Submitted Date]
@@ -215,11 +204,6 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
-
-
-
-
 GO
-
 
 

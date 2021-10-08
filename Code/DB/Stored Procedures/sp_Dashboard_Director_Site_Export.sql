@@ -15,6 +15,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	07/12/2018
@@ -25,6 +26,7 @@ GO
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 --  Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
+--  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Director_Site_Export] 
 @nvcUserIdin nvarchar(10),
@@ -100,6 +102,7 @@ SET @nvcSQL1 = 'SELECT [cl].[CoachingID] strLogID
   ,[cl].[Description] Description
   ,[cl].[CoachingNotes]	CoachingNotes
   ,[cl].[SubmittedDate]	SubmittedDate
+  ,[cl].[PFDCompletedDate]
   ,[cl].[SupReviewedAutoDate] SupReviewedAutoDate
   ,[cl].[MgrReviewManualDate] MgrReviewManualDate
   ,[cl].[MgrReviewAutoDate]	MgrReviewAutoDate
@@ -407,6 +410,8 @@ EXEC (@nvcSQL2AllWrittenCorr);
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
 END -- sp_Dashboard_Director_Site_Coaching_Export
+
 GO
+
 
 
