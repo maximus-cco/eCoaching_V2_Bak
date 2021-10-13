@@ -15,6 +15,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 -- Create date:       10/5/2017
@@ -95,13 +96,10 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		         ELSE CONVERT(nvarchar(50),DecryptByKey(c.ReviewMgrName)) END AS [Review Manager Name]
 		       ,LTRIM(RTRIM(REPLACE(lEFT(p.Description,4000), '<br />', ''))) AS [Description]
 			   ,COALESCE(p.CoachingNotes,'-') AS [Coaching Notes]    
-              ,ISNULL(CONVERT(varchar,p.EventDate,121),'-') AS [Event Date]
-              ,ISNULL(CONVERT(varchar,p.CoachingDate,121),'-') AS [Coaching Date]
-              ,ISNULL(CONVERT(varchar,p.SubmittedDate,121),'-') AS [Submitted Date]
-         	   ,ISNULL(CONVERT(varchar,p.PFDCompletedDate,121),'-') AS [PFD CompletedDate Date]
-			    --,p.EventDate AS [Event Date]
-       --       ,p.CoachingDate AS [Coaching Date]
-       --       ,p.SubmittedDate AS [Submitted Date]
+              ,ISNULL(CONVERT(varchar,p.EventDate,20),'-') AS [Event Date]
+              ,ISNULL(CONVERT(varchar,p.CoachingDate,20),'-') AS [Coaching Date]
+              ,ISNULL(CONVERT(varchar,p.SubmittedDate,20),'-') AS [Submitted Date]
+         	   ,ISNULL(CONVERT(varchar,p.PFDCompletedDate,20),'-') AS [PFD CompletedDate Date]
 		      ,c.Source AS [Coaching Source]
 		      ,c.SubSource AS [Sub Coaching Source]
 		      ,[EC].[fn_strCoachingReasonFromCoachingID](c.CoachingID) AS [Coaching Reason]
@@ -109,11 +107,11 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 	          ,[EC].[fn_strValueFromCoachingID](c.CoachingID)AS [Value]
 		      ,c.SubmitterID AS [Submitter ID]
 		        ,CONVERT(nvarchar(50),DecryptByKey(c.SubmitterName)) AS [Submitter Name]
-		     ,ISNULL(CONVERT(varchar,p.SupReviewedAutoDate,121),'-') AS [Supervisor Reviewed Date]
-              ,ISNULL(CONVERT(varchar,p.MgrReviewManualDate,121),'-') AS [Manager Reviewed Manual Date]
-			  ,ISNULL(CONVERT(varchar,p.MgrReviewAutoDate,121),'-') AS [Manager Reviewed Auto Date]
+		     ,ISNULL(CONVERT(varchar,p.SupReviewedAutoDate,20),'-') AS [Supervisor Reviewed Date]
+              ,ISNULL(CONVERT(varchar,p.MgrReviewManualDate,20),'-') AS [Manager Reviewed Manual Date]
+			  ,ISNULL(CONVERT(varchar,p.MgrReviewAutoDate,20),'-') AS [Manager Reviewed Auto Date]
               ,COALESCE(p.MgrNotes,'-') AS [Manager Notes]
-              ,ISNULL(CONVERT(varchar,p.CSRReviewAutoDate,121),'-') AS [Employee Reviewed Date]
+              ,ISNULL(CONVERT(varchar,p.CSRReviewAutoDate,20),'-') AS [Employee Reviewed Date]
               ,COALESCE(p.CSRComments,'-') AS [Employee Comments]
               ,ISNULL(p.ProgramName ,'-') AS [ProgramName]
               ,ISNULL(p.Behavior,'-')AS [Behavior]

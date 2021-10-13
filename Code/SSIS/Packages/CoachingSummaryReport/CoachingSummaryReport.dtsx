@@ -14,8 +14,8 @@
   DTS:ObjectName="CoachingSummaryReport"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="104"
-  DTS:VersionGUID="{AFD6A6A0-96E0-4676-AB7A-6AF73B07DF02}">
+  DTS:VersionBuild="105"
+  DTS:VersionGUID="{AEDB1F51-D44F-4D91-848B-175DC7959E20}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -5959,9 +5959,10 @@ General Dynamics Information Technology</DTS:VariableValue>
                   <outputColumns>
                     <outputColumn
                       refId="Package\CSR QN Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
-                      dataType="dbTimeStamp"
+                      dataType="wstr"
                       errorOrTruncationOperation="Computation"
                       errorRowDisposition="FailComponent"
+                      length="50"
                       lineageId="Package\CSR QN Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
                       name="ReportDate"
                       truncationRowDisposition="FailComponent">
@@ -5970,13 +5971,13 @@ General Dynamics Information Technology</DTS:VariableValue>
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Expression"
-                          name="Expression">[GETDATE]()</property>
+                          name="Expression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                         <property
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Friendly Expression"
                           expressionType="Notify"
-                          name="FriendlyExpression">GETDATE()</property>
+                          name="FriendlyExpression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                       </properties>
                     </outputColumn>
                   </outputColumns>
@@ -6575,7 +6576,8 @@ General Dynamics Information Technology</DTS:VariableValue>
                       lineageId="Package\CSR QN Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Customer Temp End Comment]" />
                     <inputColumn
                       refId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[ReportDate]"
-                      cachedDataType="dbTimeStamp"
+                      cachedDataType="wstr"
+                      cachedLength="50"
                       cachedName="ReportDate"
                       externalMetadataColumnId="Package\CSR QN Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Report Date]"
                       lineageId="Package\CSR QN Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]" />
@@ -10597,9 +10599,10 @@ General Dynamics Information Technology</DTS:VariableValue>
                   <outputColumns>
                     <outputColumn
                       refId="Package\CSR Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
-                      dataType="dbTimeStamp"
+                      dataType="wstr"
                       errorOrTruncationOperation="Computation"
                       errorRowDisposition="FailComponent"
+                      length="50"
                       lineageId="Package\CSR Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
                       name="ReportDate"
                       truncationRowDisposition="FailComponent">
@@ -10608,13 +10611,13 @@ General Dynamics Information Technology</DTS:VariableValue>
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Expression"
-                          name="Expression">[GETDATE]()</property>
+                          name="Expression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                         <property
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Friendly Expression"
                           expressionType="Notify"
-                          name="FriendlyExpression">GETDATE()</property>
+                          name="FriendlyExpression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                       </properties>
                     </outputColumn>
                   </outputColumns>
@@ -10975,7 +10978,8 @@ General Dynamics Information Technology</DTS:VariableValue>
                       lineageId="Package\CSR Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Employee Reviewed Date]" />
                     <inputColumn
                       refId="Package\CSR Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[ReportDate]"
-                      cachedDataType="dbTimeStamp"
+                      cachedDataType="wstr"
+                      cachedLength="50"
                       cachedName="ReportDate"
                       externalMetadataColumnId="Package\CSR Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Report Date]"
                       lineageId="Package\CSR Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]" />
@@ -13729,9 +13733,10 @@ General Dynamics Information Technology</DTS:VariableValue>
                   <outputColumns>
                     <outputColumn
                       refId="Package\LSA Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
-                      dataType="dbTimeStamp"
+                      dataType="wstr"
                       errorOrTruncationOperation="Computation"
                       errorRowDisposition="FailComponent"
+                      length="50"
                       lineageId="Package\LSA Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
                       name="ReportDate"
                       truncationRowDisposition="FailComponent">
@@ -13740,13 +13745,13 @@ General Dynamics Information Technology</DTS:VariableValue>
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Expression"
-                          name="Expression">[GETDATE]()</property>
+                          name="Expression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                         <property
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Friendly Expression"
                           expressionType="Notify"
-                          name="FriendlyExpression">GETDATE()</property>
+                          name="FriendlyExpression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                       </properties>
                     </outputColumn>
                   </outputColumns>
@@ -14121,7 +14126,8 @@ General Dynamics Information Technology</DTS:VariableValue>
                       lineageId="Package\LSA Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Employee Reviewed Date]" />
                     <inputColumn
                       refId="Package\LSA Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[ReportDate]"
-                      cachedDataType="dbTimeStamp"
+                      cachedDataType="wstr"
+                      cachedLength="50"
                       cachedName="ReportDate"
                       externalMetadataColumnId="Package\LSA Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Report Date]"
                       lineageId="Package\LSA Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]" />
@@ -15480,7 +15486,7 @@ General Dynamics Information Technology</DTS:VariableValue>
       DTS:LocaleID="-1"
       DTS:ObjectName="Quality Failure Notif"
       DTS:TaskContact="Send Mail Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="6">
+      DTS:ThreadHint="5">
       <DTS:Variables />
       <DTS:PropertyExpression
         DTS:Name="CCLine">@[User::CCEmail]</DTS:PropertyExpression>
@@ -16757,9 +16763,10 @@ General Dynamics Information Technology</DTS:VariableValue>
                   <outputColumns>
                     <outputColumn
                       refId="Package\Quality Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
-                      dataType="dbTimeStamp"
+                      dataType="wstr"
                       errorOrTruncationOperation="Computation"
                       errorRowDisposition="FailComponent"
+                      length="50"
                       lineageId="Package\Quality Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
                       name="ReportDate"
                       truncationRowDisposition="FailComponent">
@@ -16768,13 +16775,13 @@ General Dynamics Information Technology</DTS:VariableValue>
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Expression"
-                          name="Expression">[GETDATE]()</property>
+                          name="Expression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                         <property
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Friendly Expression"
                           expressionType="Notify"
-                          name="FriendlyExpression">GETDATE()</property>
+                          name="FriendlyExpression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                       </properties>
                     </outputColumn>
                   </outputColumns>
@@ -17149,7 +17156,8 @@ General Dynamics Information Technology</DTS:VariableValue>
                       lineageId="Package\Quality Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Employee Reviewed Date]" />
                     <inputColumn
                       refId="Package\Quality Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[ReportDate]"
-                      cachedDataType="dbTimeStamp"
+                      cachedDataType="wstr"
+                      cachedLength="50"
                       cachedName="ReportDate"
                       externalMetadataColumnId="Package\Quality Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Report Date]"
                       lineageId="Package\Quality Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]" />
@@ -18529,14 +18537,35 @@ General Dynamics Information Technology</DTS:VariableValue>
           VSTAMinorVersion="0"
           Language="CSharp">
           <ProjectItem
-            Name="Properties\Settings.settings"
-            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_ac1240f7c371412e9d663af9c57b62fc")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_ac1240f7c371412e9d663af9c57b62fc")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -18908,35 +18937,14 @@ namespace ST_ac1240f7c371412e9d663af9c57b62fc.Properties {
     }
 }]]></ProjectItem>
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_ac1240f7c371412e9d663af9c57b62fc")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_ac1240f7c371412e9d663af9c57b62fc")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.Designer.cs"
             Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -19126,7 +19134,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:LocaleID="-1"
       DTS:ObjectName="Sup Failure Notif"
       DTS:TaskContact="Send Mail Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-      DTS:ThreadHint="5">
+      DTS:ThreadHint="6">
       <DTS:Variables />
       <DTS:PropertyExpression
         DTS:Name="CCLine">@[User::CCEmail]</DTS:PropertyExpression>
@@ -20374,9 +20382,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                   <outputColumns>
                     <outputColumn
                       refId="Package\Supervisor Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
-                      dataType="dbTimeStamp"
+                      dataType="wstr"
                       errorOrTruncationOperation="Computation"
                       errorRowDisposition="FailComponent"
+                      length="50"
                       lineageId="Package\Supervisor Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
                       name="ReportDate"
                       truncationRowDisposition="FailComponent">
@@ -20385,13 +20394,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Expression"
-                          name="Expression">[GETDATE]()</property>
+                          name="Expression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                         <property
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Friendly Expression"
                           expressionType="Notify"
-                          name="FriendlyExpression">GETDATE()</property>
+                          name="FriendlyExpression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                       </properties>
                     </outputColumn>
                   </outputColumns>
@@ -20766,7 +20775,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                       lineageId="Package\Supervisor Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Employee Reviewed Date]" />
                     <inputColumn
                       refId="Package\Supervisor Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[ReportDate]"
-                      cachedDataType="dbTimeStamp"
+                      cachedDataType="wstr"
+                      cachedLength="50"
                       cachedName="ReportDate"
                       externalMetadataColumnId="Package\Supervisor Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Report Date]"
                       lineageId="Package\Supervisor Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]" />
@@ -23373,9 +23383,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                   <outputColumns>
                     <outputColumn
                       refId="Package\Training Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
-                      dataType="dbTimeStamp"
+                      dataType="wstr"
                       errorOrTruncationOperation="Computation"
                       errorRowDisposition="FailComponent"
+                      length="50"
                       lineageId="Package\Training Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]"
                       name="ReportDate"
                       truncationRowDisposition="FailComponent">
@@ -23384,13 +23395,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Expression"
-                          name="Expression">[GETDATE]()</property>
+                          name="Expression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                         <property
                           containsID="true"
                           dataType="System.String"
                           description="Derived Column Friendly Expression"
                           expressionType="Notify"
-                          name="FriendlyExpression">GETDATE()</property>
+                          name="FriendlyExpression">(DT_WSTR,50)(DT_DBTIMESTAMP)@[System::StartTime]</property>
                       </properties>
                     </outputColumn>
                   </outputColumns>
@@ -23765,7 +23776,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                       lineageId="Package\Training Report\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Employee Reviewed Date]" />
                     <inputColumn
                       refId="Package\Training Report\Flat File Destination.Inputs[Flat File Destination Input].Columns[ReportDate]"
-                      cachedDataType="dbTimeStamp"
+                      cachedDataType="wstr"
+                      cachedLength="50"
                       cachedName="ReportDate"
                       externalMetadataColumnId="Package\Training Report\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Report Date]"
                       lineageId="Package\Training Report\Derived Column.Outputs[Derived Column Output].Columns[ReportDate]" />
@@ -25936,7 +25948,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\CSR QN Report">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="151.2,41.6"
           Id="Package\CSR QN Report\OLE DB Source"
@@ -25972,9 +25984,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -25996,9 +26006,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -26020,9 +26028,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -26262,21 +26268,21 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
+          Size="154.4,41.6"
+          Id="Package\Quality Report\Derived Column"
+          TopLeft="201.71428914946,191.294120049394" />
+        <NodeLayout
           Size="151.2,41.6"
           Id="Package\Quality Report\OLE DB Source"
           TopLeft="210.098904684422,72.2227713743839" />
-        <NodeLayout
-          Size="172.8,41.6"
-          Id="Package\Quality Report\Flat File Destination"
-          TopLeft="193.14286043206,255.105885930705" />
         <NodeLayout
           Size="156.8,41.6"
           Id="Package\Quality Report\Data Conversion"
           TopLeft="202.28571773062,139.011766027167" />
         <NodeLayout
-          Size="154.4,41.6"
-          Id="Package\Quality Report\Derived Column"
-          TopLeft="201.71428914946,191.294120049394" />
+          Size="172.8,41.6"
+          Id="Package\Quality Report\Flat File Destination"
+          TopLeft="193.14286043206,255.105885930705" />
         <EdgeLayout
           Id="Package\Quality Report.Paths[OLE DB Source Output]"
           TopLeft="283.192311207521,113.822771374384">
