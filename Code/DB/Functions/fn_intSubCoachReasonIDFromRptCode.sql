@@ -14,7 +14,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
@@ -37,7 +36,7 @@ GO
 -- TFS 15465 - To add BQM - 09/23/2019
 -- TFS 18154 - To add IDD - 09/15/2020
 -- TFS 19502  - To add AED - 11/30/2020
--- TFS 23048 - To add RDD - 10/4/2021
+-- TFS 23048 - To add WCP - 10/4/2021
 -- =============================================
 CREATE OR ALTER FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -91,7 +90,7 @@ BEGIN
 			WHEN N'APW' THEN 252
 			WHEN N'AED' THEN 282
 			WHEN N'IDD' THEN 281
-			WHEN N'RDD' THEN 42
+			WHEN N'WCP' THEN 42
         ELSE -1
       END;
     ELSE

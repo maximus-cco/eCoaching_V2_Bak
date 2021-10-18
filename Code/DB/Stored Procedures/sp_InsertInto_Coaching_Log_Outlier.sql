@@ -1,21 +1,3 @@
-/*
-sp_InsertInto_Coaching_Log_Outlier(09).sql
-Last Modified Date: 09/15/2020
-Last Modified By: Susmitha Palacherla
-
-Version 09: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
-Version 08: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
-Version 07: Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
-Version 06: Modified to support Encryption of sensitive data. Opened Key and Removed LanID - TFS 7856 - 11/23/2017
-Version 05: Updated to support additional Modules - TFS 8793 - 11/16/2017
-Version 04: Updated to support MSR and MSRS Feeds. TFS 6147 - 06/02/2017
-Version 03: Support for Sup and quality Modules in Breaks feeds and also added Output param to capture count of Loaded records - TFS 6377 - 04/24/2017
-Version 02: New Breaks BRN and BRL feeds - TFS 6145 - 4/13/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -24,6 +6,8 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 GO
+
+
 
 SET ANSI_NULLS ON
 GO
@@ -47,14 +31,15 @@ GO
 -- Modified to support separate MSR feed source. TFS 14401 - 05/14/2019
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
+-- Changes to suppport New Written Corr feed- TFS 23048  - 10/4/2021
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 @Count INT OUTPUT
 
 AS
 BEGIN
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+
 BEGIN TRANSACTION
 BEGIN TRY
 
@@ -107,7 +92,7 @@ SELECT DISTINCT LOWER(cs.CSR_EMPID)	[FormName],
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
-        CASE WHEN (cs.Report_Code LIKE N'MSR%' OR cs.Report_Code LIKE N'IDD%')
+        CASE WHEN (cs.Report_Code LIKE N'MSR%' OR cs.Report_Code LIKE N'IDD%' OR cs.Report_Code LIKE N'WCP%')
         THEN  [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source]) ELSE 212 END [SourceID],                        
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
@@ -126,7 +111,7 @@ SELECT DISTINCT LOWER(cs.CSR_EMPID)	[FormName],
 		 THEN @strIAEPretext + '<br />' + EC.fn_nvcHtmlEncode(cs.TextDescription) + '<br />' + cs.CD1 + '<br />' + cs.CD2
 		 WHEN cs.Report_Code LIKE 'IAT%' 
 		 THEN @strIATPretext + '<br />' + EC.fn_nvcHtmlEncode(cs.TextDescription) + '<br />' + cs.CD1 + '<br />' + cs.CD2
-		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription)END		[Description],
+		 ELSE  EC.fn_nvcHtmlEncode(cs.TextDescription) END		[Description],
 	      cs.Submitted_Date			SubmittedDate,
 		  		 cs.Start_Date				[StartDate],
 		 0        				    [isCSRAcknowledged],
@@ -165,6 +150,7 @@ WAITFOR DELAY '00:00:00:02';  -- Wait for 2 ms
 		WHEN (cf.strReportCode like 'BRN%' OR cf.strReportCode like 'BRL%') 
 		THEN 56 
 		WHEN cf.strReportCode like 'MSR%' THEN 5
+		WHEN cf.strReportCode like 'WCP%' THEN 4
 		ELSE 9
      END,
            [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
@@ -176,7 +162,7 @@ WAITFOR DELAY '00:00:00:02';  -- Wait for 2 ms
     WHERE cr.[CoachingID] IS NULL; 
  
   -- Truncate Staging Table
-TRUNCATE TABLE [EC].[Outlier_Coaching_Stage];
+--TRUNCATE TABLE [EC].[Outlier_Coaching_Stage];
 
 CLOSE SYMMETRIC KEY [CoachingKey];   
                   
@@ -211,5 +197,7 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Outlier
 GO
+
+
 
 
