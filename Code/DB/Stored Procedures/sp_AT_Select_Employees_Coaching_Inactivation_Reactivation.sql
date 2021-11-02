@@ -1,18 +1,3 @@
-/*
-sp_AT_Select_Employees_Coaching_Inactivation_Reactivation(04).sql
-Last Modified Date: 10/23/2017
-Last Modified By: Susmitha Palacherla
-
-Version 04: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
-Version 03: additional chnanges per requirements update.
-Allow for Inactivation of completed logs from admin tool - TFS 7152 -  7/7/2017
-
-Version 02: Allow for Inactivation of completed logs from admin tool - TFS 7152 - 6/30/2017
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
 
 IF EXISTS (
   SELECT * 
@@ -23,12 +8,12 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_AT_Select_Employees_Coaching_Inactivation_Reactivation]
 GO
 
+
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -42,8 +27,9 @@ GO
 --  Updated to add Employees in Leave status for Inactivation, TFS 3441 - 09/07/2016
 --  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 06/30/2017
 --  Modified to support Encryption of sensitive data (Open keys and use employee View for emp attributes. TFS 7856 - 10/23/2017
+--  Modified to support cross site access for Virtual East Managers. TFS 23378 - 10/29/2021 
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_AT_Select_Employees_Coaching_Inactivation_Reactivation] 
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Employees_Coaching_Inactivation_Reactivation] 
 
 @strRequesterLanId nvarchar(30),@strActionin nvarchar(10), @intModulein int
 AS
@@ -87,7 +73,7 @@ IF @strActionin = N'Inactivate'
 			 AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
 			 AND Fact.EmpID <> ''999999''
 			 AND Emp.Active NOT IN  (''T'',''D'')
-			 AND [EC].[fn_strEmpLanIDFromEmpID](Fact.EmpID) <> '''+@strRequesterLanId+''' 
+			 AND Fact.EmpID <> '''+@strRequesterId+''' 
 			 ORDER BY VEH.Emp_Name'
       END
       
@@ -106,8 +92,11 @@ IF @strActionin = N'Inactivate'
 			 AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
 			 AND Fact.EmpID <> ''999999''
 			 AND Emp.Active NOT IN  (''T'',''D'')
-			 AND Fact.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+'''
-			 AND [EC].[fn_strEmpLanIDFromEmpID](Fact.EmpID) <> '''+@strRequesterLanId+''' 
+			  AND 
+			 (Fact.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+'''
+		      OR
+			 (Emp.Sup_ID =  '''+@strRequesterId+'''  OR Emp.Mgr_ID = '''+@strRequesterId+''' ))
+			 AND Fact.EmpID <> '''+@strRequesterId+''' 
 			 ORDER BY VEH.Emp_Name'
 	 END 
 END
@@ -133,13 +122,12 @@ ELSE
 		 ORDER BY VEH.Emp_Name'
     END
     
---Print @nvcSQL
+Print @nvcSQL
 
 EXEC (@nvcSQL)	
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Employees_Coaching_Inactivation_Reactivation
 
-
-
 GO
+
 

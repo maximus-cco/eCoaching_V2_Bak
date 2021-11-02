@@ -8,12 +8,12 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -28,6 +28,7 @@ GO
 -- Modified to support Encryption of sensitive data - Open key and use employee View for emp attributes. TFS 7856 - 12/01/2017
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- Modified during changes to QN Workflow. TFS 22187 - 09/20/2021
+-- Modified to support cross site access for Virtual East Managers. TFS 23378 - 10/29/2021 
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users] 
 @strRequesterin nvarchar(30), @intModuleIdin INT, @intStatusIdin INT
@@ -42,7 +43,8 @@ DECLARE
 @strConditionalSelect nvarchar(100),
 @strConditionalSite nvarchar(100),
 @strConditionalRestrict nvarchar(100),
-@dtmDate datetime
+@dtmDate datetime,
+@NewLineChar nvarchar(2)
 
 
 OPEN SYMMETRIC KEY [CoachingKey]  
@@ -52,6 +54,7 @@ SET @dtmDate  = GETDATE()
 SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate)
 SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@nvcRequesterID)
 SET @strATAdminUser = EC.fn_strCheckIfATSysAdmin(@nvcRequesterID) 
+SET @NewLineChar = CHAR(13) + CHAR(10)
 
 IF ((@intStatusIdin IN (6,8,10,11,12) AND @intModuleIdin NOT in (-1,2))
 OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
@@ -67,14 +70,16 @@ OR (@intStatusIdin = 7 AND @intModuleIdin = 2))
 
 BEGIN
 SET @strConditionalSelect = N'SELECT DISTINCT eh.MGR_ID UserID, veh.MGR_Name UserName '
-SET @strConditionalRestrict = N'AND eh.MGR_ID <> '''+@nvcRequesterID+''''
+SET @strConditionalRestrict = N' AND eh.MGR_ID <> '''+@nvcRequesterID+''''
 END
 		
 SET @strConditionalSite = ' '
 IF @strATAdminUser <> 'YES'
 
+print @nvcRequesterID ;
+
 BEGIN
-	SET @strConditionalSite = ' AND cl.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+''' '
+	SET @strConditionalSite = N'AND (cl.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+''' OR eh.Mgr_ID = '''+@nvcRequesterID+''' )'
 END			 
 
 -- Non reassigned and Non LCS eCLs
@@ -90,9 +95,9 @@ ON cl.EmpID = eh.Emp_ID
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
 AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND CL.ReassignCount = 0
-AND NOT (CL.statusid = 5 AND ISNULL(CL.strReportCode,'' '') like ''LCS%'')'
-+ @strConditionalSite 
-+ @strConditionalRestrict
+AND NOT (CL.statusid = 5 AND ISNULL(CL.strReportCode,'' '') like ''LCS%'') '  +  @NewLineChar 
++ @strConditionalSite  +  @NewLineChar 
++ @strConditionalRestrict  +  @NewLineChar 
 + 'AND (veh.SUP_Name is NOT NULL AND veh.MGR_Name is NOT NULL)
 AND eh.Active NOT IN  (''T'',''D'')
 
@@ -108,10 +113,10 @@ WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
 AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND cl.ReassignedToID is not NULL 
 AND (cl.ReassignCount < 2 and cl.ReassignCount <> 0)
-AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')'
-+ @strConditionalSite 
-+ 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' 
-AND eh.Active NOT IN  (''T'',''D'')
+AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')' +  @NewLineChar 
++ @strConditionalSite +  @NewLineChar 
++ 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' ' +  @NewLineChar +
+'AND eh.Active NOT IN  (''T'',''D'')
 
 UNION 
 
@@ -125,13 +130,13 @@ AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
 AND cl.MgrID is not NULL
 AND cl.strReportCode like ''LCS%''
 AND CL.ReassignCount = 0
-AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')'
-+ @strConditionalSite 
-+ 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' 
-AND eh.Active NOT IN  (''T'',''D'')
+AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')' +  @NewLineChar 
++ @strConditionalSite +  @NewLineChar 
++ 'AND rm.Emp_ID <> '''+@nvcRequesterID+''' ' +  @NewLineChar +
+'AND eh.Active NOT IN  (''T'',''D'')
 Order By UserName'
 
---PRINT @nvcSQL	
+PRINT @nvcSQL	
 EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 
@@ -141,5 +146,6 @@ EXEC (@nvcSQL)
 
 End --sp_AT_Select_ReassignFrom_Users
 GO
+
 
 

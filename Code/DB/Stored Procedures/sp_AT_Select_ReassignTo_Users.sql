@@ -27,6 +27,7 @@ GO
 --  Modified to support Encryption of sensitive data - Open key and use employee View for emp attributes. TFS 7856 - 12/01/2017
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- Modified during changes to QN Workflow. TFS 22187 - 09/20/2021
+-- Modified to support cross site access for Virtual East Managers. TFS 23378 - 10/29/2021 
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_ReassignTo_Users] 
 @strRequesterin nvarchar(30),@strFromUserIdin nvarchar(10), @intModuleIdin INT, @intStatusIdin INT
@@ -39,7 +40,8 @@ DECLARE
 @intRequesterSiteID int,
 @intFromUserSiteID int,
 @strSelect nvarchar(1000),
-@dtmDate datetime
+@dtmDate datetime,
+@NewLineChar nvarchar(2)
 
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert]
@@ -49,6 +51,7 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
 SET @dtmDate  = GETDATE()   
 SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate)
 SET @intFromUserSiteID = EC.fn_intSiteIDFromEmpID(@strFromUserIdin)
+SET @NewLineChar = CHAR(13) + CHAR(10)
 
 IF ((@intStatusIdin IN (6,8,10, 11,12) AND @intModuleIdin IN (1,3,4,5))
 OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
@@ -60,7 +63,7 @@ FROM [EC].[Employee_Hierarchy]eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy]sh
 ON eh.SUP_ID = sh.EMP_ID JOIN [EC].[View_Employee_Hierarchy] vsh
 ON sh.Emp_ID = vsh.Emp_ID 
-WHERE cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+'''
+WHERE (cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+''' OR eh.Mgr_ID = '''+@nvcRequesterID+''' )
 AND (vsh.Emp_Name is NOT NULL AND vsh.Emp_Name <> ''Unknown'')
 AND eh.SUP_ID <> '''+@strFromUserIdin+''' 
 AND eh.Active NOT IN (''T'',''D'')
@@ -79,7 +82,7 @@ FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON
 cl.EmpID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy]mh
 ON eh.MGR_ID = mh.EMP_ID JOIN [EC].[View_Employee_Hierarchy] vmh
 ON mh.Emp_ID = vmh.Emp_ID 
-WHERE cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+'''
+WHERE (cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+''' OR eh.Mgr_ID = '''+@nvcRequesterID+''' )
 AND (vmh.Emp_Name is NOT NULL AND vmh.Emp_Name <> ''Unknown'')
 AND eh.MGR_ID <> '''+@strFromUserIdin+'''
 AND eh.Active NOT IN (''T'',''D'')
@@ -88,7 +91,7 @@ Order By UserName'
 END
 			 
 
---PRINT @nvcSQL		
+PRINT @nvcSQL		
 EXEC (@nvcSQL)
 
 CLOSE SYMMETRIC KEY [CoachingKey]  
