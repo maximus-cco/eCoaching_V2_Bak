@@ -155,6 +155,9 @@
     <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Models\Common\Behavior.cs" />
+    <Compile Include="Models\Common\MailInfo.cs" />
+    <Compile Include="Models\Common\MailParameter.cs" />
+    <Compile Include="Models\Common\MailResult.cs" />
     <Compile Include="Models\Common\TextValue.cs" />
     <Compile Include="Models\Common\LogBase.cs" />
     <Compile Include="Models\Common\LogCount.cs" />

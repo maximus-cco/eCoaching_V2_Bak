@@ -8,12 +8,11 @@ namespace eCoachingLog.Repository
 {
     public interface INewSubmissionRepository
     {
-        int GetLogStatusToSet(int moduleId, int sourceId, bool isCse);
-        // Save Coaching Log to database
-        string SaveCoachingLog(NewSubmission newSubmission, User user);
-        // Save Warning Log to database
-        string SaveWarningLog(NewSubmission newSubmission, User user, out bool isDuplicate);
-        List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect);
         Tuple<string, string, bool, string, string> GetEmailRecipientsTitlesAndBodyText(int moduleId, int sourceId, bool isCse);
+        int GetLogStatusToSet(int moduleId, int sourceId, bool isCse);
+        List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect);
+        string SaveCoachingLog(NewSubmission newSubmission, User user);
+        string SaveWarningLog(NewSubmission newSubmission, User user, out bool isDuplicate);
+        List<MailResult> SaveNotificationStatus(List<MailResult> mailResults);
     }
 }

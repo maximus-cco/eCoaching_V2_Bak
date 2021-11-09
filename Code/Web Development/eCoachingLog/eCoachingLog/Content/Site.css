@@ -5,6 +5,7 @@ body {
   line-height: 1.42857143;
   color: #333;
   background-color: #fff;
+  padding-right: 0 !important;
 }
 .form-control {
   display: block;
@@ -53,6 +54,12 @@ body {
 .panel-body {
   padding: 5px;
 }
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 10px;
+}
+
 /* end - overwrite bootstrap */
 
 html {
@@ -136,7 +143,7 @@ table.mytable td {
     background-position: 50% 30%;
     background-repeat:no-repeat;
     background-color: #FAFAFA;
-    z-index: 600 !important;
+    z-index: 1080 !important;
     opacity: 0.7;
     overflow: hidden;
 }
@@ -164,19 +171,23 @@ ul.navbar-nav {
 }
 
 #modal-container .modal-body {
-    max-height: 70vh;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+#modal-container-overlay .modal-body {
+    max-height: 60vh;
     overflow-y: auto;
 }
 #modal-container .modal-content {
 	width: 90vw;
 	margin: auto;
 }
-#modal-container .modal-body textarea.form-control {
-    max-width: 100%;
-}
 #modal-container-overlay .modal-content {
 	width: 92vw;
 	margin: auto;
+}
+#modal-container .modal-body textarea.form-control {
+    max-width: 100%;
 }
 
 .vertical-align {
@@ -738,7 +749,6 @@ input[type=radio].errorClass {
 
 .instruction-text {
 	color: #FF5733;
-	/*font-weight: bold;*/
 }
 
 input {
@@ -772,25 +782,12 @@ input {
 
 .table-wrapper {
   margin: 1em;
-  /*border: 1px solid grey;*/
-  /*display: flex;*/
-  /*max-height: 20vh;*/
-  /*overflow: auto;*/
 }
 
 .table-wrapper table {
   position: relative;
   width: 100%;
-  /*overflow-x: scroll;*/
-  /*padding: 0;
-  margin: 0;
-  border-spacing: 0;*/
 }
-
-/*.table-wrapper table thead tr th {
-  position: sticky;
-  top: 0;
-}*/
 
 .table-wrapper table tr, .table-wrapper table th, .table-wrapper table td
 {
@@ -798,9 +795,3 @@ input {
   background-color: #FFF;
   padding: 4px;
 }
-
-
-
-
-
-

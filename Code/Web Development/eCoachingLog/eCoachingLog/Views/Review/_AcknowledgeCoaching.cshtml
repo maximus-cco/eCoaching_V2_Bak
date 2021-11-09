@@ -76,7 +76,7 @@
 
 	<div class='form-group mt-2 @(Model.ShowCommentDdl ? "show" : "hide")' style="margin-bottom:50px;">
 		<label for="EmployeeCommentsDdl" class="required">Please select one of the comments below for the log:</label>
-		@Html.DropDownListFor(m => m.Comment, Model.EmployeeCommentsDdlList, new { @class = "form-control test", style = "width: 350px;" })
+		@Html.DropDownListFor(m => m.Comment, Model.EmployeeCommentsDdlList, new { @class = "form-control", style = "width: 350px;" })
 		@Html.ValidationMessageFor(m => m.Comment)
 	</div>
 }

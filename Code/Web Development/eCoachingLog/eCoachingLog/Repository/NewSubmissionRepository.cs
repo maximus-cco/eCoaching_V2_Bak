@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace eCoachingLog.Repository
 {
@@ -165,7 +164,6 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@bitisCSRAcknowledged", null);
                 command.Parameters.AddWithValueSafe("@dtmCSRReviewAutoDate", null);
                 command.Parameters.AddWithValueSafe("@nvcCSRComments", null);
-                command.Parameters.AddWithValueSafe("@bitEmailSent", "True");
                 command.Parameters.AddWithValueSafe("@ModuleID", submission.ModuleId);
 				command.Parameters.AddWithValueSafe("@bitisFollowupRequired", submission.IsFollowupRequired);
 				command.Parameters.AddWithValueSafe("@dtmFollowupDueDate", submission.FollowupDueDate);
@@ -328,6 +326,36 @@ namespace eCoachingLog.Repository
                 }
             }
             return logStatusId;
+        }
+
+        // Save mail sent result
+        public List<MailResult> SaveNotificationStatus(List<MailResult> mailResults)
+        {
+            var resultsSaved = new List<MailResult>();
+
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand comm = new SqlCommand("[EC].[sp_InsertInto_Email_Notifications_History]", connection))
+            {
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                comm.Parameters.AddMailHistoryTableType("@tableRecs", mailResults);
+                connection.Open();
+
+                using (SqlDataReader dataReader = comm.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        var logName = (string)dataReader["FormName"];
+                        var to = (string)dataReader["To"];
+                        var cc = (string)dataReader["Cc"];
+                        var sentDate = (string)dataReader["SendattemptDate"];
+                        var success = (bool)dataReader["Success"];
+                        resultsSaved.Add(new MailResult(logName, to, cc, sentDate, success));
+                    }
+                }
+            }
+
+            return resultsSaved;
         }
     }
 }

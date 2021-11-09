@@ -92,5 +92,25 @@ namespace eCoachingLog.Extensions
 
 			return sqlParameter;
 		}
-	}
+
+        public static SqlParameter AddMailHistoryTableType(this SqlParameterCollection target, string name, IList<MailResult> mailResults)
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("FormName", typeof(string));
+            dataTable.Columns.Add("To", typeof(string));
+            dataTable.Columns.Add("Cc", typeof(string));
+            dataTable.Columns.Add("SendAttemptDate", typeof(string));
+            dataTable.Columns.Add("Success", typeof(bool));
+
+            foreach (var mr in mailResults)
+            {
+                dataTable.Rows.Add(mr.LogName, mr.To, mr.Cc, mr.SentDateTime, mr.Success);
+            }
+            SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
+            sqlParameter.SqlDbType = SqlDbType.Structured;
+            sqlParameter.TypeName = "EC.MailHistoryTableType"; // User Defined Type name in DB
+
+            return sqlParameter;
+        }
+    }
 }

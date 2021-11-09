@@ -72,6 +72,8 @@ namespace eCoachingLog.ViewModels
         public DateTime? PfdCompletedDate { get; set; }
         public bool ShowPfdCompletedDate { get; set; }
 
+        public List<Employee> Employees { get; set; }
+
         public NewSubmissionViewModel() : base()
         {
             this.ModuleId = -1;
@@ -85,6 +87,7 @@ namespace eCoachingLog.ViewModels
             this.CallTypeSelectList = new List<SelectListItem>();
 
             this.Employee = new Employee();
+            this.Employees = new List<Employee>();
             this.CoachingReasons = new List<CoachingReason>();
 
             this.ShowWarningChoice = false;
@@ -273,7 +276,8 @@ namespace eCoachingLog.ViewModels
 				ModuleId = vm.ModuleId,
 				SiteId = vm.SiteId,
 				Employee = vm.Employee,
-				ProgramId = vm.ProgramId,
+                Employees = vm.Employees,
+                ProgramId = vm.ProgramId,
 				ProgramName = vm.ProgramName,
 				BehaviorId = vm.BehaviorId,
 				BehaviorName = vm.BehaviorName, 

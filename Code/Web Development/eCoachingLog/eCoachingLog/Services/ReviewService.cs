@@ -334,7 +334,7 @@ namespace eCoachingLog.Services
                             && review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW
                             && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT)
                     {
-                        if (!this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName, "Quality Now Follow-up Completed"))
+                        if (!this.emailService.SendComment(review.LogDetail, review.Comment, emailTempFileName, "Quality Now Follow-up Completed"))
                         {
                             logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
                         }
@@ -383,7 +383,7 @@ namespace eCoachingLog.Services
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.WarningLogDetail.EmployeeId == user.EmployeeId)
 			{
-				if (!this.emailService.SendComments(review.WarningLogDetail, review.Comment, emailTempFileName, subject))
+				if (!this.emailService.SendComment(review.WarningLogDetail, review.Comment, emailTempFileName, subject))
 				{
 					logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
 				}
@@ -477,7 +477,7 @@ namespace eCoachingLog.Services
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.LogDetail.EmployeeId == user.EmployeeId)
 			{
-				if(!this.emailService.SendComments(review.LogDetail, review.Comment, emailTempFileName, "eCoaching Log Completed"))
+				if(!this.emailService.SendComment(review.LogDetail, review.Comment, emailTempFileName, "eCoaching Log Completed"))
 				{
 					logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
 				}

@@ -37,7 +37,6 @@
 	var logFilter = @Html.Raw(Json.Encode(Model));
 	var supId = '@Html.Raw(Model.SupervisorId)';
     var loadDataUrl = '@Url.Action("LoadData")';
-    var test = '@Html.Raw(Model.IsBothQnNonQn)';
     if ('@Html.Raw(Model.IsBothQnNonQn)' === 'True') {
         loadDataUrl = '@Url.Action("LoadDataAll")';
     }

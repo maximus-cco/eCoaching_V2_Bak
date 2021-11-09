@@ -4,8 +4,8 @@ using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
 using eCoachingLog.Utils;
 using log4net;
+using System;
 using System.Collections.Generic;
-using System.Web;
 
 namespace eCoachingLog.Services
 {
@@ -44,5 +44,36 @@ namespace eCoachingLog.Services
         {
             return newSubmissionRepository.GetSourceListByModuleId(moduleId, directOrIndirect);
         }
-    }
+
+        public Tuple<string, string, bool, string, string> GetEmailRecipientsTitlesAndBodyText(int moduleId, int sourceId, bool isCse)
+        {
+            return this.newSubmissionRepository.GetEmailRecipientsTitlesAndBodyText(moduleId, sourceId, isCse);
+        }
+
+        public void SaveNotificationStatus(List<MailResult> mailResults)
+        {
+            var updateStatus = newSubmissionRepository.SaveNotificationStatus(mailResults);
+            foreach (var m in mailResults)
+            {
+                var found = false;
+                foreach (var u in updateStatus)
+                {
+                    if (m.LogName == u.LogName)
+                    {
+                        found = true;
+                        if (m.Success != u.Success)
+                        {
+                            logger.Error($"Failed to save mail sent result {m.LogName}: mail sent {m.Success}");
+                        }
+                    }
+                } // end foreach (var u in updateResults)
+
+                if (!found)
+                {
+                    logger.Error($"Missing to save mail sent result {m.LogName}: mail sent {m.Success}");
+                }
+            } // end  foreach (var m in mailResults)
+        }
+
+    } // end public class NewSubmissionService : INewSubmissionService
 }

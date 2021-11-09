@@ -65,105 +65,116 @@ namespace eCoachingLog.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Save(NewSubmissionViewModel vm)
         {
-			logger.Debug("Entered Save ...");
+            logger.Debug("Entered Save ...");
 
-			if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                bool isDuplicate = false;
-				string logNameSaved = null;
-
-                string failMsg = "Failed to save your submission. Please ensure you have entered all required fields.";
-				string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
-				try
-				{
-					var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
-					// For some reason, when a log is NOT required follow-up, a follow-up is still passed back from page (even though not entered)
-					if (vm.IsFollowupRequired.HasValue && !vm.IsFollowupRequired.Value )
-					{
-						vm.FollowupDueDate = null;
-					}
-
-					if (vm.IsWorkAtHomeReturnSite)
-					{
-						vm.BehaviorDetail = String.Format(Constants.RETURN_TO_SITE_1 +
-						Constants.RETURN_TO_SITE_2 + "{0}" + 
-						Constants.RETURN_TO_SITE_2_1 + "{1}" +
-						Constants.RETURN_TO_SITE_2_2 + 
-						Constants.RETURN_TO_SITE_2_3 + "{2}" +
-						Constants.RETURN_TO_SITE_2_4 +
-						Constants.RETURN_TO_SITE_2_5 +
-						Constants.RETURN_TO_SITE_3 +
-						Constants.RETURN_TO_SITE_4 + "{3}" +
-						Constants.RETURN_TO_SITE_4_1,
-						vm.ReturnToSiteDate, vm.ReturnToSite, vm.ReturnToSupervisor, vm.ReturnToSite);
-					}
-
-					logNameSaved = this.newSubmissionService.Save(vm, GetUserFromSession(), out isDuplicate);
-					if (string.IsNullOrEmpty(logNameSaved))
-					{
-						throw new Exception("Failed to save submission.");
-					}
-                    TempData["ShowSuccessMessage"] = true;
-                    TempData["ShowFailMessage"] = false;
-                    TempData["SuccessMessage"] = string.Format("Your submission {0} was saved successfully.", logNameSaved);
-					
-					// send email
-					// work around to get email attributes for direct
-					// direct [101, 200);
-					// indirect [201, 300); 
-					if (vm.IsWorkAtHomeReturnSite && vm.SourceId > 200)
-					{
-						vm.SourceId -= 100;
-					}
-					vmInSession.SourceId = vm.SourceId;
-					vmInSession.IsCse = vm.IsCse;
-					if (!SendEmail(logNameSaved)) // Failed to send email
-					{
-						var user = GetUserFromSession();
-						var userId = user == null ? "usernull" : user.EmployeeId;
-						StringBuilder msg = new StringBuilder("Failed to send email: ");
-						msg.Append("[").Append(userId).Append("]")
-							.Append("|logname[").Append(logNameSaved).Append("]");
-
-						logger.Warn(msg);
-					};
-				}
-				catch (Exception ex)
-				{
-					logger.Warn("Exception: " + ex);
-
-					if (string.IsNullOrEmpty(logNameSaved)) // Failed to save
-					{
-						TempData["ShowSuccessMessage"] = false;
-                        TempData["ShowFailMessage"] = true;
-						if (isDuplicate) // Same log already exists
-						{
-                            TempData["FailMessage"] = duplicateMsg;
-						}
-						else
-						{
-                            TempData["FailMessage"] = failMsg;
-						}
-					}
-					return StayOnThisPage(vm);
-				}
-                return RedirectToAction("Index");
+                TempData["ShowSuccessMessage"] = false;
+                TempData["ShowFailMessage"] = true;
+                TempData["FailMessage"] = "Please correct all errors indicated in red to proceed.";
+                ViewBag.ClientValidateCoachingReasons = true;
+                ViewBag.ValidationError = true;
+                return StayOnThisPage(vm);
             }
 
-            TempData["ShowSuccessMessage"] = false;
-            TempData["ShowFailMessage"] = true;
-            TempData["FailMessage"] = "Please correct all errors indicated in red to proceed.";
-            ViewBag.ClientValidateCoachingReasons = true;
-			ViewBag.ValidationError = true;
-            return StayOnThisPage(vm);
+            bool isDuplicate = false;
+            string logNameSaved = null;
+
+            string failMsg = "Failed to save your submission.";
+            string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
+            var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+            // 1. save submission to db
+            try
+            {
+                // For some reason, when a log is NOT required follow-up, a follow-up is still passed back from page (even though not entered)
+                if (vm.IsFollowupRequired.HasValue && !vm.IsFollowupRequired.Value)
+                {
+                    vm.FollowupDueDate = null;
+                }
+
+                if (vm.IsWorkAtHomeReturnSite)
+                {
+                    vm.BehaviorDetail = String.Format(Constants.RETURN_TO_SITE_1 +
+                    Constants.RETURN_TO_SITE_2 + "{0}" +
+                    Constants.RETURN_TO_SITE_2_1 + "{1}" +
+                    Constants.RETURN_TO_SITE_2_2 +
+                    Constants.RETURN_TO_SITE_2_3 + "{2}" +
+                    Constants.RETURN_TO_SITE_2_4 +
+                    Constants.RETURN_TO_SITE_2_5 +
+                    Constants.RETURN_TO_SITE_3 +
+                    Constants.RETURN_TO_SITE_4 + "{3}" +
+                    Constants.RETURN_TO_SITE_4_1,
+                    vm.ReturnToSiteDate, vm.ReturnToSite, vm.ReturnToSupervisor, vm.ReturnToSite);
+                }
+
+                // vmInsession.Employee has all the employee information, including emails...
+                vm.Employees.Add(vmInSession.Employee);
+                // todo: remove
+                //for (int i = 0; i < 50; i++)
+                //{
+                //    vm.Employees.Add(vmInSession.Employee);
+                //}
+
+                logNameSaved = this.newSubmissionService.Save(vm, GetUserFromSession(), out isDuplicate);
+                if (string.IsNullOrEmpty(logNameSaved))
+                {
+                    throw new Exception("Failed to save submission.");
+                }
+
+                TempData["ShowSuccessMessage"] = true;
+                TempData["ShowFailMessage"] = false;
+                TempData["SuccessMessage"] = string.Format("Your submission {0} was saved successfully.", logNameSaved);
+            }
+            catch (Exception ex)
+            {
+                logger.Warn("Exception: " + ex);
+
+                if (string.IsNullOrEmpty(logNameSaved)) // Failed to save
+                {
+                    TempData["ShowSuccessMessage"] = false;
+                    TempData["ShowFailMessage"] = true;
+                    if (isDuplicate) // Same log already exists
+                    {
+                        TempData["FailMessage"] = duplicateMsg;
+                    }
+                    else
+                    {
+                        TempData["FailMessage"] = failMsg;
+                    }
+                }
+                return StayOnThisPage(vm);
+            } // end try - 1. save submission to db
+
+            // 2. send notification email
+            var sourceId = vm.SourceId;
+            // work around to get email attributes for direct: direct [101, 200), indirect [201, 300)
+            if (vm.IsWorkAtHomeReturnSite && vm.SourceId > 200)
+            {
+                sourceId  -= 100;
+            }
+            // associate log name with employee
+            // todo: insert log sp should return employeeid, logname, so repository (or service) will get this assocociation done
+            // each employee's log name SHOULD BE UNIQUE!!!
+            // logname format: eCL-M-employeeid-logid 
+            foreach (var e in vm.Employees)
+            {
+                e.LogName = logNameSaved;
+                break;
+            }
+            SendEmail(vm.Employees, vm.ModuleId, sourceId, vm.IsWarning, vm.IsCse);
+
+            return RedirectToAction("Index");
         }
 
-        private bool SendEmail(string logName)
+        private void SendEmail(List<Employee> employees, int moduleId, int sourceId, bool? isWarning, bool? isCse)
         {
-            var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
-            var template = (vm.IsWarning == null || !vm.IsWarning.Value) ? 
-					Server.MapPath("~/EmailTemplates/NewSubmissionCoaching.html") : Server.MapPath("~/EmailTemplates/NewSubmissionWarning.html");
-            return this.emailService.Send(vm, template, logName);
+            bool bIsCse = isCse != null ? isCse.Value : false;
+            bool bIsWarning = isWarning != null && isWarning.Value;
+            int iSourceId = bIsWarning ? Constants.WARNING_SOURCE_ID : sourceId;
+            var template = (isWarning == null || !isWarning.Value) ?
+                    Server.MapPath("~/EmailTemplates/NewSubmissionCoaching.html") : Server.MapPath("~/EmailTemplates/NewSubmissionWarning.html");
+
+            this.emailService.SendNotification(new MailParameter(employees, moduleId, bIsWarning, bIsCse, iSourceId, template, true));
         }
 
         private ActionResult StayOnThisPage(NewSubmissionViewModel vm)

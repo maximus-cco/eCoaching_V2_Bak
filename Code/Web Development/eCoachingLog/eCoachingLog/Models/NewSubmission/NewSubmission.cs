@@ -10,6 +10,9 @@ namespace eCoachingLog.Models
 
         public int? SiteId { get; set; }
         public Employee Employee { get; set; }
+        // one submission for multiple employees
+        public List<Employee> Employees { get; set; }
+
         public int? ProgramId { get; set; }
 		public string ProgramName { get; set; }
         public int? BehaviorId { get; set; }
