@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Log_Tables_Create.sql(08).sql
+CCO_eCoaching_Log_Tables_Create.sql(09).sql
 
-Last Modified Date: 10/6/2021
+Last Modified Date: 11/9/2021
 Last Modified By: Susmitha Palacherla
 
+Version 09: Updated to suport email process change in user interface. TFS 23389 - 11/08/2021
 Version 08: Updated to support New Coaching Reason for Quality - 23051 - 10/6/2021
 Version 07: Quality Now workflow enhancement. TFS 22187 - 09/15/2021
 Version 06: Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  09/09/2019
@@ -27,7 +28,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 1. [EC].[Coaching_Log]
 2. [EC].[Coaching_Log_Reason]
 3. [EC].[Coaching_Log_Quality_Now_Summary]
-
+4. [EC].[Email_Notifications_History]
 
 
 **************************************************************
@@ -241,9 +242,40 @@ GO
 --**************************************************************
 
 
+--4. Create Table [EC].[Email_Notifications_History]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Email_Notifications_History](
+	[MailID] [bigint] IDENTITY(1,1) NOT NULL,
+	[MailType] [nvarchar](50) NOT NULL,
+	[CoachingID] [bigint] NULL,
+	[FormName] [nvarchar](50) NOT NULL,
+	[To] [varbinary](256) NULL,
+	[Cc] [varbinary](256) NULL,
+	[SendAttemptDate] [datetime] NOT NULL,
+	[Success] [bit] NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+	[CreateUserID] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MailID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_History] ADD  CONSTRAINT [DF_Email_Notifications_History_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_History] ADD  CONSTRAINT [DF_Email_Notifications_History_CreateUserID]  DEFAULT (suser_sname()) FOR [CreateUserID]
+GO
 
 
-
+--**************************************************************
 
 
 

@@ -1,0 +1,80 @@
+/*
+TFS 23389  - Update email process in user interface
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Create Table [EC].[Email_Notifications_History]
+2. Create Table Type [EC].[MailHistoryTableType]
+
+
+
+-- Test
+select * from [EC].[Email_Notifications_History]
+
+*/
+
+
+
+-- Details
+--1. Create Table [EC].[Email_Notifications_History]
+
+CREATE TABLE [EC].[Email_Notifications_History](
+	[MailID] [bigint] IDENTITY(1,1) NOT NULL,
+	[MailType] [nvarchar](50) NOT NULL,
+	[CoachingID] [bigint] NULL,
+	[FormName] [nvarchar](50) NOT NULL,
+	[To] [varbinary](256) NULL,
+	[Cc] [varbinary](256) NULL,
+	[SendAttemptDate] [datetime] NOT NULL,
+	[Success] [bit] NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+	[CreateUserID] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MailId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+ALTER TABLE [EC].[Email_Notifications_History] ADD  CONSTRAINT [DF_Email_Notifications_History_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_History] ADD  CONSTRAINT [DF_Email_Notifications_History_CreateUserID]  DEFAULT (suser_sname()) FOR [CreateUserID]
+GO
+
+
+--*******************************************************
+
+-- Create Table Type [EC].[MailHistoryTableType]
+
+ CREATE TYPE [EC].[MailHistoryTableType] AS TABLE(
+	[FormName] [nvarchar](50) NOT NULL,
+	[To] [nvarchar](4000) NULL,
+	[Cc] [nvarchar](4000) NULL,
+	[SendAttemptDate] [datetime] NOT NULL,
+	[Success] [bit] NOT NULL
+)
+GO
+
+
+
+--*******************************************************
+
+
+
+--*******************************************************
+
+
+
+--*******************************************************
+
+
+
+--*******************************************************

@@ -7,12 +7,14 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
 GO
 
-
+	
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 --    ====================================================================
 --    Author:           Susmitha Palacherla
@@ -28,7 +30,8 @@ GO
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- Updated to support special handling for WAH- Return to Site - TFS 18255 - 08/27/2020
--- Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
+-- Updated to support New Coaching Reason for Quality - TFS 23051 - 09/29/2021
+-- Updated to remove EmailSent parameter. TFS 23389 - 11/08/2021
 --    =====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
 (     @nvcEmpID Nvarchar(10),
@@ -95,7 +98,6 @@ CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
       @bitisCSRAcknowledged bit,
       @dtmCSRReviewAutoDate datetime,
       @nvcCSRComments Nvarchar(3000),
-      @bitEmailSent bit,
       @ModuleID INT,
       @Behaviour Nvarchar(30),
 	  @bitisFollowupRequired bit,
@@ -170,7 +172,6 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
            ,[isCSRAcknowledged]
            ,[CSRReviewAutoDate]
            ,[CSRComments]
-           ,[EmailSent]
            ,[ModuleID]
            ,[SupID]
            ,[MgrID]
@@ -209,7 +210,6 @@ DECRYPTION BY CERTIFICATE [CoachingCert]
 		   ,@bitisCSRAcknowledged 
 		   ,@dtmCSRReviewAutoDate 
 		   ,@nvcCSRComments
-		   ,@bitEmailSent
 		   ,@ModuleID
 		   ,ISNULL(@nvcSupID,'999999')
 		   ,ISNULL(@nvcMgrID,'999999')
@@ -548,6 +548,8 @@ END TRY
   END CATCH  
 
   END -- sp_InsertInto_Coaching_Log
-  GO
+GO
+
+
 
 
