@@ -107,14 +107,7 @@ namespace eCoachingLog.Controllers
                     vm.ReturnToSiteDate, vm.ReturnToSite, vm.ReturnToSupervisor, vm.ReturnToSite);
                 }
 
-                // vmInsession.Employee has all the employee information, including emails...
-                vm.Employees.Add(vmInSession.Employee);
-                // todo: remove
-                //for (int i = 0; i < 50; i++)
-                //{
-                //    vm.Employees.Add(vmInSession.Employee);
-                //}
-
+                vm.Employees.Add(vmInSession.Employee); // vmInsession.Employee has all the employee information, including email ...
                 logNameSaved = this.newSubmissionService.Save(vm, GetUserFromSession(), out isDuplicate);
                 if (string.IsNullOrEmpty(logNameSaved))
                 {
