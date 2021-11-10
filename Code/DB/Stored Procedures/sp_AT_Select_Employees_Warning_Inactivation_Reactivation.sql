@@ -1,13 +1,3 @@
-/*
-sp_AT_Select_Employees_Warning_Inactivation_Reactivation(03).sql
-Last Modified Date: 05/01/2020
-Last Modified By: Susmitha Palacherla
-
-Version 03: Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
-Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
 
 IF EXISTS (
   SELECT * 
@@ -18,10 +8,14 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_AT_Select_Employees_Warning_Inactivation_Reactivation]
 GO
 
+
+
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -35,9 +29,9 @@ GO
 --  Updated to add Employees in Leave status for Inactivation, TFS 3441 - 09/07/2016
 --  Modified to support Encryption of sensitive data (Open key and use employee View for emp attributes. TFS 7856 - 10/23/2017
 --  Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
- 
+--  Modified to allow lastknownstatus 4 warning log to be reactivated. TFS TFS 23378 - 11/9/2021
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_AT_Select_Employees_Warning_Inactivation_Reactivation] 
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Employees_Warning_Inactivation_Reactivation] 
 
 @strRequesterLanId nvarchar(30),@strActionin nvarchar(10), @intModulein int
 AS
@@ -80,7 +74,7 @@ SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,VEH.Emp_Name
  ON VEH.Emp_ID = Emp.Emp_ID JOIN [EC].[Warning_Log] Fact WITH(NOLOCK)
  ON Emp.Emp_ID = Fact.EmpID JOIN (Select * FROM
  [EC].[AT_Warning_Inactivate_Reactivate_Audit]
- WHERE LastKnownStatus = 1) Aud
+ WHERE LastKnownStatus in (1,4)) Aud
  ON Aud.FormName = Fact.Formname
  WHERE Fact.StatusID = 2
  AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
@@ -96,6 +90,5 @@ CLOSE SYMMETRIC KEY [CoachingKey]
 END --sp_AT_Select_Employees_Warning_Inactivation_Reactivation
 
 GO
-
 
 
