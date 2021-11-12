@@ -47,8 +47,11 @@ namespace eCoachingLog.Controllers
             try
 			{
 				var vm = Init(user, currentPage, logDetail, isCoaching, action);
-                // further set QN fields
-                vm = SetQnProperties(vm, (CoachingLogDetail)logDetail, action, user);
+                if (isCoaching)
+                {
+                    // further set QN fields
+                    vm = SetQnProperties(vm, (CoachingLogDetail)logDetail, action, user);
+                }
  
                 return PartialView(vm.ReviewPageName, vm);
 			}
