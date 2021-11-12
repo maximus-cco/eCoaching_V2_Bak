@@ -37,7 +37,7 @@
                 type: 'POST',
                 url: getLogDetailsUrl,
                 dataType: 'html',
-                data: { logId: $(this).data("log-id"), isCoaching: $(this).data("is-coaching"), action: "followupView" },
+                data: { logId: $(this).data("log-id"), isCoaching: $(this).data("is-coaching"), action: $(this).data("action") },
                 success: function (data) {
                     $('#modal-container-overlay .modal-content').html(data);
                     $('#modal-container-overlay').modal();

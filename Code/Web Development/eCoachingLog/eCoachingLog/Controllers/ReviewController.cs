@@ -195,6 +195,12 @@ namespace eCoachingLog.Controllers
                 return true;
             }
 
+            // Pending Followup-up Coaching: view additional QNS log with CSRs during coaching session
+            if (action == "followupCoachView")
+            {
+                return false;
+            }
+
             if (statusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
             {
                 return String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase)
