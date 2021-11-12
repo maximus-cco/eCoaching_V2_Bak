@@ -195,6 +195,12 @@ namespace eCoachingLog.Controllers
                 return true;
             }
 
+            // Pending Followup-up Preparation: supervisor tries to link QNs log(s) - additional mornitoring
+            if (action == "followupView")
+            {
+                return true;
+            }
+
             // Pending Followup-up Coaching: view additional QNS log with CSRs during coaching session
             if (action == "followupCoachView")
             {
@@ -203,8 +209,8 @@ namespace eCoachingLog.Controllers
 
             if (statusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
             {
-                return String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase)
-                    || String.Equals(action, "followupView", StringComparison.OrdinalIgnoreCase);
+                return String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase);
+                    //|| String.Equals(action, "followupView", StringComparison.OrdinalIgnoreCase);
             }
 
             if (statusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_COACHING)
