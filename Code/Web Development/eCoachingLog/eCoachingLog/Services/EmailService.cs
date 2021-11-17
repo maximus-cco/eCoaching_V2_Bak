@@ -42,6 +42,7 @@ namespace eCoachingLog.Services
             try
             {
                 // generate mail
+                mailMessage = new MailMessage();
                 if (!string.IsNullOrEmpty(log.SupervisorEmail))
                 {
                     mailMessage.To.Add(log.SupervisorEmail);
