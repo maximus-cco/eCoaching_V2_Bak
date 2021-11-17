@@ -26,7 +26,8 @@ GO
 --    =====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Email_Notifications_History]
 (     @tableRecs MailHistoryTableType READONLY,
-      @nvcMailType Nvarchar(50) = N'UI-Submissions'
+      @nvcMailType Nvarchar(50) = N'UI-Submissions',
+	  @nvcUserID Nvarchar(10)
 )
    
 AS
@@ -56,12 +57,13 @@ DECLARE @inserted AS TABLE (CoachingID bigint);
            ,[Cc]
            ,[SendAttemptDate]
            ,[Success]
+		   ,[CreateUserID]
       )
 	 OUTPUT inserted.CoachingID INTO @inserted
      SELECT @nvcMailType, CL.CoachingID, RECS.FormName,
 	 EncryptByKey(Key_GUID('CoachingKey'), RECS.[To]),
 	 EncryptByKey(Key_GUID('CoachingKey'), RECS.[Cc]), 
-	 RECS.SendAttemptDate, RECS.Success
+	 RECS.SendAttemptDate, RECS.Success, @nvcUserID
 	 FROM [EC].[Coaching_Log] CL JOIN @tableRecs RECS ON
      CL.FormName = RECS.FormName;
 
@@ -131,9 +133,5 @@ END TRY
 
   END -- sp_InsertInto_Email_Notifications_History
 GO
-
-
-
-
 
 

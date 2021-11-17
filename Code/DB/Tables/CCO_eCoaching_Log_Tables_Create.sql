@@ -271,8 +271,7 @@ GO
 ALTER TABLE [EC].[Email_Notifications_History] ADD  CONSTRAINT [DF_Email_Notifications_History_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
 GO
 
-ALTER TABLE [EC].[Email_Notifications_History] ADD  CONSTRAINT [DF_Email_Notifications_History_CreateUserID]  DEFAULT (suser_sname()) FOR [CreateUserID]
-GO
+
 
 
 --**************************************************************
