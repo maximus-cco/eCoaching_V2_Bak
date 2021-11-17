@@ -47,9 +47,10 @@ namespace eCoachingLog.Controllers
 
 			Session["newSubmissionVM"] = InitNewSubmissionViewModel(Constants.MODULE_UNKNOWN);
 			ViewBag.ValidationError = false;
-			return View((NewSubmissionViewModel)Session["newSubmissionVM"]);
-        }
 
+            return View((NewSubmissionViewModel)Session["newSubmissionVM"]);
+        }
+        
         private IEnumerable<SelectListItem> GetSources(bool isCoachingByYou)
         {
             var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
@@ -83,6 +84,7 @@ namespace eCoachingLog.Controllers
             string failMsg = "Failed to save your submission.";
             string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
             var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+            var user = GetUserFromSession();
             // 1. save submission to db
             try
             {
@@ -108,7 +110,7 @@ namespace eCoachingLog.Controllers
                 }
 
                 vm.Employees.Add(vmInSession.Employee); // vmInsession.Employee has all the employee information, including email ...
-                logNameSaved = this.newSubmissionService.Save(vm, GetUserFromSession(), out isDuplicate);
+                logNameSaved = this.newSubmissionService.Save(vm, user, out isDuplicate);
                 if (string.IsNullOrEmpty(logNameSaved))
                 {
                     throw new Exception("Failed to save submission.");
@@ -154,12 +156,12 @@ namespace eCoachingLog.Controllers
                 e.LogName = logNameSaved;
                 break;
             }
-            SendEmail(vm.Employees, vm.ModuleId, sourceId, vm.IsWarning, vm.IsCse);
+            SendEmail(vm.Employees, vm.ModuleId, sourceId, vm.IsWarning, vm.IsCse, user.EmployeeId);
 
             return RedirectToAction("Index");
         }
 
-        private void SendEmail(List<Employee> employees, int moduleId, int sourceId, bool? isWarning, bool? isCse)
+        private void SendEmail(List<Employee> employees, int moduleId, int sourceId, bool? isWarning, bool? isCse, string userId)
         {
             bool bIsCse = isCse != null ? isCse.Value : false;
             bool bIsWarning = isWarning != null && isWarning.Value;
@@ -167,7 +169,7 @@ namespace eCoachingLog.Controllers
             var template = (isWarning == null || !isWarning.Value) ?
                     Server.MapPath("~/EmailTemplates/NewSubmissionCoaching.html") : Server.MapPath("~/EmailTemplates/NewSubmissionWarning.html");
 
-            this.emailService.SendNotification(new MailParameter(employees, moduleId, bIsWarning, bIsCse, iSourceId, template, true));
+            this.emailService.SendNotification(new MailParameter(employees, moduleId, bIsWarning, bIsCse, iSourceId, template, true, userId));
         }
 
         private ActionResult StayOnThisPage(NewSubmissionViewModel vm)

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 namespace eCoachingLog.Models.Common
 {
     public class MailParameter
@@ -13,8 +12,9 @@ namespace eCoachingLog.Models.Common
         public string TemplateFileName { get; set; }
 
         public bool SaveMailStatus { get; set; }
+        public string UserId { get; set; } // person id sending the mail
 
-        public MailParameter(List<Employee> employees, int moduleId, bool isWarning, bool isCse, int sourceId, string templateFileName, bool saveMailStatus)
+        public MailParameter(List<Employee> employees, int moduleId, bool isWarning, bool isCse, int sourceId, string templateFileName, bool saveMailStatus, string userId)
         {
             Employees = employees;
             ModuleId = moduleId;
@@ -23,6 +23,7 @@ namespace eCoachingLog.Models.Common
             SourceId = sourceId;
             TemplateFileName = templateFileName;
             SaveMailStatus = saveMailStatus;
+            UserId = userId;
         }
     }
 }

@@ -26,60 +26,68 @@ namespace eCoachingLog.Services
             this.newSubmissionService = newSubmissionService;
         }
 
-		public bool SendComment(BaseLogDetail log, string comments, string emailTempFileName, string subject)
-		{
+        public bool SendComment(BaseLogDetail log, string comments, string emailTempFileName, string subject)
+        {
+            logger.Debug("Entered SendComment...");
+
             if (String.IsNullOrEmpty(log.SupervisorEmail) && String.IsNullOrEmpty(log.ManagerEmail))
             {
                 logger.Warn("Not able to send employee comments[" + log.LogId + "]: Both supervisor and manager emails are not available.");
                 return false;
             }
 
-            bool success = true;
-            using (var smtpClient = new SmtpClient())
-            using (var message = CreateMailMessage(log, comments, emailTempFileName, subject))
+            bool success = false;
+            SmtpClient smtpClient = null;
+            MailMessage mailMessage = null;
+            try
             {
-                try
+                // generate mail
+                if (!string.IsNullOrEmpty(log.SupervisorEmail))
                 {
-                    smtpClient.Send(message);
+                    mailMessage.To.Add(log.SupervisorEmail);
                 }
-                catch (Exception ex)
+                if (!string.IsNullOrEmpty(log.ManagerEmail))
                 {
-                    success = false;
-                    LogEmailException(ex, message, log.FormName);
+                    mailMessage.To.Add(log.ManagerEmail);
+                }
+                string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
+                string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
+                string bodyText = FileUtil.ReadFile(emailTempFileName);
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = bodyText.Replace("{formName}", log.FormName);
+                mailMessage.Body = mailMessage.Body.Replace("{comments}", comments);
+                mailMessage.From = new MailAddress(fromAddress, fromDisplayName);
+                mailMessage.Subject = subject + " (" + log.EmployeeName + ")";
+                // send mail
+                smtpClient = new SmtpClient();
+                smtpClient.Send(mailMessage);
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                LogEmailException(ex, mailMessage, log.FormName, false);
+            }
+            finally
+            {
+                if (mailMessage != null)
+                {
+                    mailMessage.Dispose();
+                }
+                if (smtpClient != null)
+                {
+                    smtpClient.Dispose();
                 }
             }
 
+            logger.Debug($"Csr comments sent [{log.FormName}]: {success}");
             return success;
-		}
-
-        private MailMessage CreateMailMessage(BaseLogDetail log, string text, string emailTempFileName, string subject)
-        {
-            var message = new MailMessage();
-            if (!string.IsNullOrEmpty(log.SupervisorEmail))
-            {
-                message.To.Add(log.SupervisorEmail);
-            }
-            if (!string.IsNullOrEmpty(log.ManagerEmail))
-            {
-                message.To.Add(log.ManagerEmail);
-            }
-
-            string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
-            string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
-            string bodyText = FileUtil.ReadFile(emailTempFileName);
-            message.IsBodyHtml = true;
-            message.Body = bodyText.Replace("{formName}", log.FormName);
-            message.Body = message.Body.Replace("{comments}", text);
-            message.From = new MailAddress(fromAddress, fromDisplayName);
-            message.Subject = subject + " (" + log.EmployeeName + ")";
-
-            return message;
         }
 
-        private void LogEmailException(Exception ex, MailMessage message, string logName)
+        private void LogEmailException(Exception ex, MailMessage message, string logName, bool isNewSubmission)
         {
             StringBuilder info = new StringBuilder();
-            info.Append($"Failed to send email [{logName}]: ")
+            var whatMail = isNewSubmission ? "New Submission" : "Csr Comments";
+            info.Append($"Failed to send {whatMail} email [{logName}]: ")
                 .Append(ex.Message)
                 .Append(Environment.NewLine)
                 .Append(ex.StackTrace);
@@ -152,22 +160,29 @@ namespace eCoachingLog.Services
                     {
                         message = CreateMailMessage(mailInfo, mParameter.TemplateFileName, employee.LogName, mParameter.IsWarning, employee.Name);
                         smtpClient.Send(message);
-                        // claim to be success if no exception thrown even though the email address doesn't exists (in this case, no exception thrown :-( )
+                        // claim to be successful if no exception thrown even though the email address doesn't exists (in this case, no exception thrown)
                         success = true;
                     }
                     catch (Exception ex)
                     {
-                        logger.Debug($"Failed to send email [{employee.LogName}] to [{mailInfo.To}]: {ex.Message}. Resend in 5 seconds.");                    
-                        try
+                        if (message != null)
                         {
-                            Thread.Sleep(5000);
-                            logger.Debug("Resending...");
-                            smtpClient.Send(message);
-                            success = true;
+                            logger.Debug($"Failed to send email [{employee.LogName}] to [{mailInfo.To}]: {ex.Message}. Resend in 5 seconds.");
+                            try
+                            {
+                                Thread.Sleep(5000);
+                                logger.Debug("Resending...");
+                                smtpClient.Send(message);
+                                success = true;
+                            }
+                            catch (Exception exResend)
+                            {
+                                LogEmailException(exResend, message, employee.LogName, true);
+                            }
                         }
-                        catch (Exception exResend)
+                        else
                         {
-                            LogEmailException(exResend, message, employee.LogName);
+                            LogEmailException(ex, message, employee.LogName, true);
                         }
                     }
                     finally
@@ -200,7 +215,8 @@ namespace eCoachingLog.Services
             // record mail result (success/fail) in db
             if (mParameter.SaveMailStatus)
             {
-                this.newSubmissionService.SaveNotificationStatus(mailResults);
+                this.newSubmissionService.SaveNotificationStatus(mailResults, mParameter.UserId);
+                logger.Debug("############Done with SaveNotificationStatus");
             }
         }
 
@@ -289,29 +305,16 @@ namespace eCoachingLog.Services
 
             //msg.DeliveryNotificationOptions = System.Net.Mail.DeliveryNotificationOptions.OnFailure;
             //msg.Headers.Add("Disposition-Notification-To", "lilihuang@maximus.com");
-            try
+
+            if (mailInfo.To != null)
             {
-                if (mailInfo.To != null)
-                {
-                    msg.To.Add(mailInfo.To);
-                }
-                if (mailInfo.Cc != null)
-                {
-                    msg.Bcc.Add(mailInfo.Cc);
-                }
-                msg.From = new MailAddress(fromAddress, fromDisplayName);
+                msg.To.Add(mailInfo.To);
             }
-            //catch (FormatException fe)
-            //{
-            //    logger.Warn(fe);
-            //    logger.Warn($"Exception [{mailInfo.To}]: {fe.Message}");
-            //}
-            catch (Exception ex)
+            if (mailInfo.Cc != null)
             {
-                logger.Warn(ex);
-                logger.Warn("Failed to create mail message:" + ex.Message);
-                throw ex;
+                msg.Bcc.Add(mailInfo.Cc);
             }
+            msg.From = new MailAddress(fromAddress, fromDisplayName);
 
 			return msg;
 		}

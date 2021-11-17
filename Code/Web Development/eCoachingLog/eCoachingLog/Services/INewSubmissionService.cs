@@ -13,6 +13,6 @@ namespace eCoachingLog.Services
         // Get source list by module id
         List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect);
         Tuple<string, string, bool, string, string> GetEmailRecipientsTitlesAndBodyText(int moduleId, int sourceId, bool isCse);
-        void SaveNotificationStatus(List<MailResult> mailResults);
+        void SaveNotificationStatus(List<MailResult> mailResults, string userId);
     }
 }

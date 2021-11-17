@@ -50,9 +50,18 @@ namespace eCoachingLog.Services
             return this.newSubmissionRepository.GetEmailRecipientsTitlesAndBodyText(moduleId, sourceId, isCse);
         }
 
-        public void SaveNotificationStatus(List<MailResult> mailResults)
+        public void SaveNotificationStatus(List<MailResult> mailResults, string userId)
         {
-            var updateStatus = newSubmissionRepository.SaveNotificationStatus(mailResults);
+            var updateStatus = new List<MailResult>();
+            try
+            {
+                updateStatus = newSubmissionRepository.SaveNotificationStatus(mailResults, userId);
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex);
+            }
+
             foreach (var m in mailResults)
             {
                 var found = false;
@@ -63,14 +72,14 @@ namespace eCoachingLog.Services
                         found = true;
                         if (m.Success != u.Success)
                         {
-                            logger.Error($"Failed to save mail sent result {m.LogName}: mail sent {m.Success}");
+                            logger.Error($"Failed to save mail sent result [{m.LogName}]: mail sent [{m.Success}]");
                         }
                     }
                 } // end foreach (var u in updateResults)
 
                 if (!found)
                 {
-                    logger.Error($"Missing to save mail sent result {m.LogName}: mail sent {m.Success}");
+                    logger.Error($"Missing to save mail sent result [{m.LogName}]: mail sent [{m.Success}]");
                 }
             } // end  foreach (var m in mailResults)
         }

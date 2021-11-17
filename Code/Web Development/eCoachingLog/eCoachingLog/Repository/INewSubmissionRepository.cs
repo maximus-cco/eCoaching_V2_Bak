@@ -13,6 +13,6 @@ namespace eCoachingLog.Repository
         List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect);
         string SaveCoachingLog(NewSubmission newSubmission, User user);
         string SaveWarningLog(NewSubmission newSubmission, User user, out bool isDuplicate);
-        List<MailResult> SaveNotificationStatus(List<MailResult> mailResults);
+        List<MailResult> SaveNotificationStatus(List<MailResult> mailResults, string userId);
     }
 }
