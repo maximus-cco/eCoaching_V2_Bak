@@ -129,7 +129,7 @@ namespace eCoachingLog.Controllers
                 vm.ShowCoachingNotes = true;
                 vm.ReviewPageName = "_QnFollowupReview";
             }
-            // view linked log
+            // supervisor view linked log without csr
             else if (String.Equals(action, "followupView", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = true;
@@ -155,6 +155,11 @@ namespace eCoachingLog.Controllers
                     vm.ShowSupervisorReviewInfo = false;
                     vm.ShowEmployeeReviewInfo = false;
                 }
+            }
+            // csr or supervisor with csr view linked logs 
+            else if (String.Equals(action, "followupCoachView", StringComparison.OrdinalIgnoreCase))
+            {
+                vm.IsReadOnly = true;
             }
 
             if (action == "view")
@@ -199,6 +204,7 @@ namespace eCoachingLog.Controllers
             }
 
             // Pending Followup-up Preparation: supervisor tries to link QNs log(s) - additional mornitoring
+            // Pending Followup-up Coching: Prepare - supervisor tries to view the linked additional monitoring
             if (action == "followupView")
             {
                 return true;
