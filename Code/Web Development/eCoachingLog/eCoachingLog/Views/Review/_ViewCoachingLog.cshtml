@@ -37,7 +37,7 @@
                         {
                             for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
                             {
-                                <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true">&nbsp;@Model.AdditionalActivityLogs[i].Text</a>
+                                <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true" data-action="viewLinkedLog">&nbsp;@Model.AdditionalActivityLogs[i].Text</a>
                                 <br />
                             }
                         }
@@ -50,8 +50,11 @@
                         }
                     }
 
-                    <div class="text-primary" style="margin-top: 8px;"><strong><mark>Evaluation Summary:</mark></strong></div>
-                    <div class="text-info">@Html.Raw(Model.QnSummaryAll)</div>
+                    if (Model.LogDetail.IsQn)
+                    {
+                        <div class="text-primary" style="margin-top: 8px;"><strong><mark>Evaluation Summary:</mark></strong></div>
+                        <div class="text-info">@Html.Raw(Model.QnSummaryAll)</div>
+                    }
                 }
 
 				@if (Model.LogDetail.IsOmrShortCall)
@@ -65,7 +68,10 @@
 				<div class='mt-2 @(Model.ShowConfirmedNonCseText ? "show" : "hide")'>
 					<strong><mark>Coaching Opportunity was not a confirmed Customer Service Escalation.</mark></strong><br />
 				</div>
-				@{ Html.RenderPartial("_ReviewInfo"); }
+                @if (Model.LogDetail.IsQn)
+                {
+				    Html.RenderPartial("_ReviewInfo");
+                }
 
                 @if (Model.ShowFollowupInfo)
                 {

@@ -161,6 +161,11 @@ namespace eCoachingLog.Controllers
             {
                 vm.IsReadOnly = true;
             }
+            // view linked logs on read only review page (which means original log is completed)
+            else if (action == "viewLinkedLog")
+            {
+                vm.IsReadOnly = true;
+            }
 
             if (action == "view")
             {
@@ -201,6 +206,12 @@ namespace eCoachingLog.Controllers
             if (user.IsSupervisor && action == "view")
             {
                 return true;
+            }
+
+            // view linked logs on read only review page (which means original log is completed)
+            if (action == "viewLinkedLog")
+            {
+                return !user.IsCsr;
             }
 
             // Pending Followup-up Preparation: supervisor tries to link QNs log(s) - additional mornitoring
