@@ -33,6 +33,14 @@
 	    saveSummary(qnSaveSummaryUrl);
 	});
 
+	$('body').on('change keyup paste mouseup', '#summary', function (e) {
+        if ($('#summary').val().trim().length > 0)
+        {
+            $('#summary').removeClass("errorClass");
+            $('#validation-summary').addClass("hide");
+        }
+    })
+    
 	$('body').on('click', '#btn-submit', function (e) {
 	    e.preventDefault();
 	    $(this).prop('disabled', true);
@@ -94,7 +102,18 @@
 	}
 
 	function saveSummary(url) {
-	    var request = $.ajax({
+	    if ($('#summary').val().trim().length == 0)
+	    {
+	        $('#summary').addClass("errorClass");
+	        $('#validation-summary').removeClass("hide");
+	        $('#btn-save-summary').prop('disabled', false);
+	        return false;
+	    }
+
+	    $('#summary').removeClass("errorClass");
+	    $('#validation-summary').addClass("hide");
+
+        var request = $.ajax({
 	        type: 'POST',
 	        url: url,
 	        data: { logId: $('#logId').val(), summary: $('#summary').val() },

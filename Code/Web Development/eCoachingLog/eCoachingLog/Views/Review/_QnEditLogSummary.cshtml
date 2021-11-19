@@ -64,10 +64,11 @@
                             }
 
                             <div class="text-primary text-medium required" style="margin-top: 8px;"><strong>Please enter evaluation summary to be used for coaching:</strong></div>
-                            @Html.TextAreaFor(m => m.QnSummaryEditable, new { @id = "summary", @class = "form-control remaining", @rows = "10", maxlength = 3000 })
+                            @Html.TextAreaFor(m => m.QnSummaryEditable, new { id = "summary", @class = "form-control remaining", @rows = "10", maxlength = 3000 })
                             <div class="help-block">
                                 <span class="pull-right"><span class="remaining-count">@remaining</span> remaining</span>
                             </div>
+                            <span id="validation-summary" class="field-validation-error hide">Evaluation summary is required.</span>
                         </form>
                     </div>
 					<br />

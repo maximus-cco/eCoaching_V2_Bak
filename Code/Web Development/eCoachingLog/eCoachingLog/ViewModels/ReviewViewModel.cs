@@ -48,22 +48,6 @@ namespace eCoachingLog.ViewModels
 		[AllowHtml]
 		public string Comment { get; set; }
 
-        //public bool ShowLogLinkInfo 
-        //{
-        //    get
-        //    {
-        //        bool show = false;
-        //        if (this.LogDetail.IsQnSupervisor && this.LogDetail.StatusId == 6) // pending supervisor review
-        //        {
-        //            show = true;
-        //        }
-
-        //        return true;
-        //    }
-        //}
-
-        // public int LogIdLinkedTo { get; set; }
-        // todo
         // a list of CheckBox
         public List<TextValue> AdditionalActivityLogs { get; set; } // link to the log used to listen to additional call
         public bool HasAdditionalActivityLogs

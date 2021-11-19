@@ -232,13 +232,6 @@
 		}
 	});
 
-    //// TODO: check why i need this here??
-	//$('body').on('click', '#btn-save-summary', function (e) {
-	//    e.preventDefault();
-	//    $(this).prop('disabled', true);
-	//    saveSummary(qnSaveSummaryUrl);
-	//});
-
 	$('body').on('click', 'input[type=radio][name=IsFollowupRequired]', function (e) {
 	    //alert($(this).val());
 	    if ($(this).val() === 'True') {
@@ -248,9 +241,6 @@
 	        $('#div-followup-deadline').removeClass('show');
 	        $('#div-followup-deadline').addClass('hide');
 	    }
-	    //var dueDate = new Date(); 
-	    //dueDate.setDate(dueDate.getDate() + 7);
-	    //$('#followup-due-date').text(dueDate.format('MM/DD/YYYY'));
 	})
 
 });
