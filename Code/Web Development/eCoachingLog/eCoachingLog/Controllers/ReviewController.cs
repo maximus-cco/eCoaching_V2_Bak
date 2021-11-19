@@ -198,26 +198,26 @@ namespace eCoachingLog.Controllers
                 return true;
             }
 
-            if (user.IsSupervisor && action == "view")
+            if (user.IsSupervisor && String.Equals(action, "view", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            // view linked QNS on read only review page (which means original log is completed)
-            if (action == "viewLinkedQns")
+            // My Pending Followup-up Preparation: supervisor tries to link QNS log - additional mornitoring
+            if (String.Equals(action, "viewQnsToLink", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            // My Pending Followup-up Coching: Prepare - supervisor views the linked QNS
+            // My Pending (csr: Pending Follow-up Review) - csr views the linked QNS
+            if (String.Equals(action, "viewLinkedQns", StringComparison.OrdinalIgnoreCase))
             {
                 return !user.IsCsr;
             }
 
-            // Pending Followup-up Preparation: supervisor tries to link QNs log(s) - additional mornitoring
-            // Pending Followup-up Coching: Prepare - supervisor tries to view the linked additional monitoring
-            if (action == "viewQnsToLink" || action == "viewLinkedQns")
-            {
-                return true;
-            }
-
-            // Pending Followup-up Coaching: view additional QNS log with CSRs during coaching session
-            if (action == "viewLinkedQnsInCoachingSession")
+            // Pending Followup-up Coaching: Coach - supervisor views linked QNS log with CSR during coaching session
+            if (String.Equals(action, "viewLinkedQnsInCoachingSession", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
