@@ -84,7 +84,8 @@ namespace eCoachingLog.Controllers
             vm.QnSummaryReadOnly = GetQnSummary(logDetail.QnSummaryList, true);
 
             // Supervisor edit quality now log summary
-            // My Pending Follow-up Coaching - Prepare
+            // My Pending Review - Prepare - add/edit log summary
+            // My Pending Follow-up Coaching - Prepare - edit log summary
             if (String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = false;
@@ -92,6 +93,7 @@ namespace eCoachingLog.Controllers
                 vm.ReviewPageName = "_QnEditLogSummary";
             }
             // Supervisor coach (csr) quliaty now log
+            // My Pending Review - Coach
             // My Pending Follow-up Coaching - Coach
             else if (String.Equals(action, "coach", StringComparison.OrdinalIgnoreCase))
             {
@@ -115,7 +117,7 @@ namespace eCoachingLog.Controllers
 
                 vm.ReviewPageName = "_QnCoach";
             }
-            // csr acks/reviews
+            // CSR "My Pending" - Review
             else if (String.Equals(action, "csrReview", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = false;
@@ -188,61 +190,23 @@ namespace eCoachingLog.Controllers
 
         private bool ShowQnEvalDetail(int statusId, string action, User user)
         {
+            // do not show detail to csr
             if (user.IsCsr)
             {
                 return false;
             }
 
-            if (user.IsManager || user.IsDirector || user.IsHr || user.IsAnalyst)
+            if (user.IsSupervisor)
             {
-                return true;
+                // My Pending: Coach - csr is in coaching session with supervisor
+                // My Pending Followup-up Coaching: Coach - supervisor views linked QNS log with CSR during follow up coaching session
+                return (!String.Equals(action, "coach", StringComparison.OrdinalIgnoreCase) 
+                    && !String.Equals(action, "viewLinkedQnsInCoachingSession", StringComparison.OrdinalIgnoreCase));
             }
-
-            if (user.IsSupervisor && String.Equals(action, "view", StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
-            // My Pending Followup-up Preparation: supervisor tries to link QNS log - additional mornitoring
-            if (String.Equals(action, "viewQnsToLink", StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
-            // My Pending Followup-up Coching: Prepare - supervisor views the linked QNS
-            // My Pending (csr: Pending Follow-up Review) - csr views the linked QNS
-            if (String.Equals(action, "viewLinkedQns", StringComparison.OrdinalIgnoreCase))
-            {
-                return !user.IsCsr;
-            }
-
-            // Pending Followup-up Coaching: Coach - supervisor views linked QNS log with CSR during coaching session
-            if (String.Equals(action, "viewLinkedQnsInCoachingSession", StringComparison.OrdinalIgnoreCase))
+            else
             {
                 return false;
             }
-
-            if (statusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
-            {
-                return String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (statusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_COACHING)
-            {
-                return String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (statusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION)
-            {
-                return String.Equals(action, "followupReview", StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (statusId == Constants.LOG_STATUS_COMPLETED)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private string GetQnSummary(List<LogSummary> summaryList, bool isReadOnly)
