@@ -39,7 +39,7 @@
                     <div class="text-primary" style="margin-top: 8px;"><strong><mark>Additonal Monitoring:</mark></strong></div>
                     for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
                     {
-                        <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true" data-action="followupCoachView">&nbsp;@Model.AdditionalActivityLogs[i].Text</a>
+                        <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true" data-action="viewLinkedQnsInCoachingSession">&nbsp;@Model.AdditionalActivityLogs[i].Text</a>
                             <br />
                     }
                 }

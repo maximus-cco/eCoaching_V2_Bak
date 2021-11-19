@@ -33,7 +33,7 @@
                     {
                         for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
                         {
-                            <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true" data-action="followupView">&nbsp;@Model.AdditionalActivityLogs[i].Text</a>
+                            <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true" data-action="viewLinkedQns">&nbsp;@Model.AdditionalActivityLogs[i].Text</a>
                             <br />
                         }
                     }
@@ -50,8 +50,11 @@
                     @Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
                 </div>
 
-                @{ Html.RenderPartial("_SupervisorReviewInfo"); }
-                @{ Html.RenderPartial("_EmployeeReviewInfo"); }
+               @if (Model.LogDetail.IsQn)
+               {
+                   Html.RenderPartial("_SupervisorReviewInfo");
+                   Html.RenderPartial("_SupervisorReviewInfo");
+               }
 
             </div>
             <!-- /.modal-body -->

@@ -49,7 +49,7 @@
                             @:<label class="checkbox-inline">
                                 @Html.CheckBoxFor(m => m.AdditionalActivityLogs[i].IsSelected, new { value = Model.AdditionalActivityLogs[i].Value, @class = "logselection" })@Model.AdditionalActivityLogs[i].Text
                             @:&nbsp;</label>
-                            <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true" data-action="followupView">View</a>
+                            <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true" data-action="viewQnsToLink">View</a>
                             <br />
                         }
                     </div>

@@ -84,6 +84,7 @@ namespace eCoachingLog.Controllers
             vm.QnSummaryReadOnly = GetQnSummary(logDetail.QnSummaryList, true);
 
             // Supervisor edit quality now log summary
+            // My Pending Follow-up Coaching - Prepare
             if (String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = false;
@@ -91,6 +92,7 @@ namespace eCoachingLog.Controllers
                 vm.ReviewPageName = "_QnEditLogSummary";
             }
             // Supervisor coach (csr) quliaty now log
+            // My Pending Follow-up Coaching - Coach
             else if (String.Equals(action, "coach", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = false;
@@ -121,6 +123,7 @@ namespace eCoachingLog.Controllers
                 vm.ShowCoachingNotes = true;
             }
             // supervisor has listened to additional call(s), comes here to decide if more coaching is needed.
+            // My Pending Follow-up Preparation - Review
             else if (String.Equals(action, "followupReview", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = false;
@@ -129,12 +132,14 @@ namespace eCoachingLog.Controllers
                 vm.ShowCoachingNotes = true;
                 vm.ReviewPageName = "_QnFollowupReview";
             }
-            // supervisor view linked log without csr
-            else if (String.Equals(action, "followupView", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(action, "viewLinkedQnsInCoachingSession", StringComparison.OrdinalIgnoreCase)
+                    || String.Equals(action, "viewLinkedQns", StringComparison.OrdinalIgnoreCase) 
+                    || String.Equals(action, "viewQnsToLink", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = true;
-                vm.ShowEvalSummary = true;
-                vm.ShowCoachingNotes = true;
+                // QNS is loaded to db as completed, so no eval summary and no coaching
+                vm.ShowEvalSummary = false;
+                vm.ShowCoachingNotes = false;
                 vm.ReviewPageName = "_QnFollowupView";
             }
             else if (String.Equals(action, "view", StringComparison.OrdinalIgnoreCase))
@@ -155,16 +160,6 @@ namespace eCoachingLog.Controllers
                     vm.ShowSupervisorReviewInfo = false;
                     vm.ShowEmployeeReviewInfo = false;
                 }
-            }
-            // csr or supervisor with csr view linked logs 
-            else if (String.Equals(action, "followupCoachView", StringComparison.OrdinalIgnoreCase))
-            {
-                vm.IsReadOnly = true;
-            }
-            // view linked logs on read only review page (which means original log is completed)
-            else if (action == "viewLinkedLog")
-            {
-                vm.IsReadOnly = true;
             }
 
             if (action == "view")
@@ -208,21 +203,21 @@ namespace eCoachingLog.Controllers
                 return true;
             }
 
-            // view linked logs on read only review page (which means original log is completed)
-            if (action == "viewLinkedLog")
+            // view linked QNS on read only review page (which means original log is completed)
+            if (action == "viewLinkedQns")
             {
                 return !user.IsCsr;
             }
 
             // Pending Followup-up Preparation: supervisor tries to link QNs log(s) - additional mornitoring
             // Pending Followup-up Coching: Prepare - supervisor tries to view the linked additional monitoring
-            if (action == "followupView")
+            if (action == "viewQnsToLink" || action == "viewLinkedQns")
             {
                 return true;
             }
 
             // Pending Followup-up Coaching: view additional QNS log with CSRs during coaching session
-            if (action == "followupCoachView")
+            if (action == "viewLinkedQnsInCoachingSession")
             {
                 return false;
             }
@@ -230,7 +225,6 @@ namespace eCoachingLog.Controllers
             if (statusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
             {
                 return String.Equals(action, "editSummary", StringComparison.OrdinalIgnoreCase);
-                    //|| String.Equals(action, "followupView", StringComparison.OrdinalIgnoreCase);
             }
 
             if (statusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_COACHING)
