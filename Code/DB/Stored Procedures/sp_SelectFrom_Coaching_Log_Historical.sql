@@ -7,14 +7,11 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical]
 GO
 
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -28,7 +25,7 @@ GO
 --  Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
 --  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
 --	=====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
+CREATE OR ALTER  PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
@@ -318,6 +315,7 @@ UNION
     ,''NA'' SupervisorFollowupReviewCoachingNotes
     ,''NA'' FollowupReviewMonitoredLogs
     ,''NA'' FollowupReviewSupervisorID 
+	,'''' PFDCompletedDate
 	,''ok2'' orderkey
   FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
   JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
@@ -386,5 +384,7 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- SelectFrom_Coaching_Log_Historical
 GO
+
+
 
 
