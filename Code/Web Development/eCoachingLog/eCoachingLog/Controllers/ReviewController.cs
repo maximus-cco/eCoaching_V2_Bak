@@ -1013,12 +1013,11 @@ namespace eCoachingLog.Controllers
 
 			if (vm.IsRegularPendingForm)
 			{
-				// if Pending Supervisor Review - Only Supervisor or reassigned to can enter data on review page
+				// CSR module (log was submitted for a CSR) - if Pending Supervisor Review - Only Supervisor or reassigned to can enter data on review page
+                // Supervisor module (log was submitted for a supervisor) - if Pending Manager Review - Only Manager or reassigned to can enter data on review page
 				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
 				{
-					//if(user.EmployeeId == vm.LogDetail.SupervisorEmpId
-					//	|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
-                    if (user.IsSupervisor)
+					if(user.EmployeeId == vm.LogDetail.SupervisorEmpId) // for supervisor module, SupervisorEmpId is actually manager id since manager is the supervisor for whome this log was submitted
 					{
 						readOnly = false;
 					}
