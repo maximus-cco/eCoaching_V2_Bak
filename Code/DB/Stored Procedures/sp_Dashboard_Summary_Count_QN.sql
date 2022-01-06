@@ -1,10 +1,19 @@
+
+IF EXISTS (
+  SELECT * 
+    FROM INFORMATION_SCHEMA.ROUTINES 
+   WHERE SPECIFIC_SCHEMA = N'EC'
+     AND SPECIFIC_NAME = N'sp_Dashboard_Summary_Count_QN' 
+)
+   DROP PROCEDURE [EC].[sp_Dashboard_Summary_Count_QN]
+GO
+
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -12,6 +21,7 @@ GO
 --  Description: Retrieves Count of QN Logs based on user Job Role.
 --  on the MyDashboard Page.
 --  Initial Revision. Quality Now workflow enhancement - TFS 22187 - 8/3/2021
+--  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count_QN] 
 @nvcEmpID nvarchar(10)
@@ -91,7 +101,7 @@ END
 
 END
 
-print @SelectList;
+--print @SelectList;
 
 IF @bitMyPendingFollowupPrepQN = 1
 
@@ -139,35 +149,16 @@ END
 
 IF @bitMyTeamPendingQN = 1
 BEGIN
-
-IF @nvcEmpRole  = 'Supervisor'
-BEGIN
 SET @intMyTeamPendingQN = (SELECT COUNT(cl.CoachingID)
 						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 						 ON cl.EmpID = eh.Emp_ID  
-						 WHERE cl.StatusID IN (4,13)
+						 WHERE cl.StatusID NOT IN (1,2)
 						 AND SourceID IN (235)
-						 AND eh.Sup_ID = @nvcEmpID)
+						 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
 
 
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPendingQN)+ ''' AS LogCount'
-END
-
-IF @nvcEmpRole  = 'Manager'
-BEGIN
-SET @intMyTeamPendingQN = (SELECT COUNT(cl.CoachingID)
-						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
-						 ON cl.EmpID = eh.Emp_ID  
-						 WHERE cl.StatusID IN (4,6,11,12,13)
-						 AND SourceID IN (235)
-						 AND (eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
-
-
-SET @SelectList = @SelectList + ' UNION
-SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPendingQN)+ ''' AS LogCount'
-END
-
 END
 
 
@@ -253,5 +244,6 @@ EXEC (@nvcSQL)
 END -- sp_Dashboard_Summary_Count_QN
 
 GO
+
 
 

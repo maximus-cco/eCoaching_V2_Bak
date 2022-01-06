@@ -24,6 +24,7 @@ GO
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamPending] 
@@ -45,7 +46,6 @@ SET NOCOUNT ON
 
 DECLARE	
 @nvcSubSource nvarchar(100),
-@nvcEmpRole nvarchar(40),
 @nvcSQL nvarchar(max),
 @UpperBand int,
 @LowerBand int,
@@ -70,27 +70,9 @@ SET  @SortExpression = @sortBy +  @SortOrder
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
-SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
-
-IF @nvcEmpRole NOT IN ('Manager','Supervisor' )
-RETURN 1
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE cl.[SourceID] not in (235, 236) '
-
-IF @nvcEmpRole = 'Supervisor'
-BEGIN
-SET @where = @where + ' AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] IN (4,5,10) ' 
-END
-
-
-IF @nvcEmpRole = 'Manager'
-BEGIN
-SET @where = @where + ' AND (eh.[Mgr_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + ''' )' +  @NewLineChar +
-                      ' AND cl.[StatusID] IN (3,4,6,8,10) ' 
-END
-
-
+SET @where = 'WHERE [cl].[StatusID] NOT IN (1,2) AND [cl].[SourceID] NOT IN (235,236) '
 
 IF @intSourceIdin  <> -1
 BEGIN
@@ -185,7 +167,6 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 END -- sp_SelectFrom_Coaching_Log_MyTeamPending
 
 GO
-
 
 
 

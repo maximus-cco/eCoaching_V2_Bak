@@ -8,11 +8,14 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Dashboard_Summary_Count]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -25,6 +28,7 @@ GO
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
@@ -55,10 +59,8 @@ DECLARE
 
 
 
-
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID);
-
 
 
 SET @bitMyPending = (SELECT [MyPending] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
@@ -162,38 +164,19 @@ END
 
 IF @bitMyTeamPending = 1
 BEGIN
-
-IF @nvcEmpRole  = 'Supervisor'
-	BEGIN
-	SET @intMyTeamPending = (SELECT COUNT(cl.CoachingID)
-							 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
-							 ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
-							 ON cl.StatusID = s.StatusID 
-							 WHERE cl.[SourceID] NOT IN (235, 236) 
-							 AND cl.StatusID IN (4,5,10)
-						     AND eh.Sup_ID = @nvcEmpID);
+SET @intMyTeamPending = (SELECT COUNT(cl.CoachingID)
+						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
+						 ON cl.EmpID = eh.Emp_ID JOIN [EC].[DIM_Status] s
+						 ON cl.StatusID = s.StatusID 
+						 WHERE cl.[SourceID] NOT IN (235, 236) 
+						 AND s.Status like 'Pending%'
+						 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID));
 
 
-	SET @SelectList = @SelectList + ' UNION
-	SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPending)+ ''' AS LogCount';
-	END
-
-
-IF @nvcEmpRole  = 'Manager'
-	BEGIN
-	SET @intMyTeamPending = (SELECT COUNT(cl.CoachingID)
-							FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
-							ON cl.EmpID = eh.Emp_ID  
-							WHERE cl.StatusID IN (3,4,6,8,10)
-							AND SourceID NOT IN (235,236)
-							AND (eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
-
-
-	SET @SelectList = @SelectList + ' UNION
-	SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPending)+ ''' AS LogCount'
-	END
-
+SET @SelectList = @SelectList + ' UNION
+SELECT ''My Team''''s Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeamPending)+ ''' AS LogCount';
 END
+
 
 IF @bitMyTeamCompleted = 1
 BEGIN

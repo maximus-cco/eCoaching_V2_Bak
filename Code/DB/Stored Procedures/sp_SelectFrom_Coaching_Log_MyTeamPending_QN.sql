@@ -1,16 +1,15 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/03/2021
 --	Description: *	This procedure returns the pending QN logs for employees reporting to the logged in user.
 --  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
+--  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamPending_QN] 
@@ -32,7 +31,6 @@ SET NOCOUNT ON
 
 DECLARE	
 @nvcSQL nvarchar(max),
-@nvcEmpRole nvarchar(40),
 @UpperBand int,
 @LowerBand int,
 @SortExpression nvarchar(100),
@@ -55,27 +53,9 @@ SET  @SortExpression = @sortBy +  @SortOrder
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
-SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE cl.[SourceID] in (235) '
-
-IF @nvcEmpRole NOT IN ('Manager','Supervisor' )
-RETURN 1
-
-
-IF @nvcEmpRole = 'Supervisor'
-BEGIN
-SET @where = @where + ' AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] IN (4,13) ' 
-END
-
-
-IF @nvcEmpRole = 'Manager'
-BEGIN
-SET @where = @where + ' AND (eh.[Mgr_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + '''  OR eh.[SrMgrLvl1_ID] = ''' + @nvcUserIdin + ''' )' +  @NewLineChar +
-                      ' AND cl.[StatusID] IN (4,6,11,12,13) ' 
-END
-
+SET @where = 'WHERE [cl].[StatusID] NOT IN (1,2) AND [cl].[SourceID] IN (235) '
 
 
 IF @intStatusIdin  <> -1
@@ -131,7 +111,8 @@ AS
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
 	 @where + ' ' + '
-	 GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status]
+	AND (eh.Sup_ID = ''' + @nvcUserIdin + ''' OR eh.Mgr_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''')
+    GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status]
 	, [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate]
 
   ) x 
@@ -168,5 +149,6 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 END -- sp_SelectFrom_Coaching_Log_MyTeamPending_QN
 
 GO
+
 
 
