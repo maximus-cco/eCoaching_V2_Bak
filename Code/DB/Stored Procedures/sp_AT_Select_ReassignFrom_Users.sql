@@ -8,6 +8,8 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users]
 GO
 
+
+
 SET ANSI_NULLS ON
 GO
 
@@ -29,6 +31,7 @@ GO
 -- Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- Modified during changes to QN Workflow. TFS 22187 - 09/20/2021
 -- Modified to support cross site access for Virtual East Managers. TFS 23378 - 10/29/2021 
+-- Modified to remove uncommented debug stm. TFS 23919 - 01/26/2022
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users] 
 @strRequesterin nvarchar(30), @intModuleIdin INT, @intStatusIdin INT
@@ -75,8 +78,6 @@ END
 		
 SET @strConditionalSite = ' '
 IF @strATAdminUser <> 'YES'
-
-print @nvcRequesterID ;
 
 BEGIN
 	SET @strConditionalSite = N'AND (cl.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+''' OR eh.Mgr_ID = '''+@nvcRequesterID+''' )'
@@ -136,13 +137,9 @@ AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')' +  @NewLineChar
 'AND eh.Active NOT IN  (''T'',''D'')
 Order By UserName'
 
-PRINT @nvcSQL	
+--PRINT @nvcSQL	
 EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
-
-	
-EXEC (@nvcSQL)
-
 
 End --sp_AT_Select_ReassignFrom_Users
 GO

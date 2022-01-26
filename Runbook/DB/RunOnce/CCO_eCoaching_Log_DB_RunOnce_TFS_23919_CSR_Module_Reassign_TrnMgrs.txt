@@ -1,0 +1,39 @@
+/*
+TFS 23919  - eCL-Allow Training Managers to Reassign CSR Module logs in Admin Tool
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Add row to Table [EC].[AT_Module_Access]
+
+- Test
+SELECT * FROM [EC].[AT_Module_Access]
+WHERE [JobCode]= 'WTTR50' AND [ModuleId] = 1;
+
+*/
+
+
+
+-- Details
+--1. Add row to Table [EC].[AT_Module_Access]
+
+INSERT INTO [EC].[AT_Module_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[ModuleId]
+           ,[Module]
+           ,[isActive])
+     VALUES
+           ('WTTR50', 'Manager, Training', 5, 'Training', 1)
+GO
+
+
+
+
+--*******************************************************
