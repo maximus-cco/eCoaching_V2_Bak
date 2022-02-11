@@ -10,8 +10,6 @@ namespace eCoachingLog.Models.User
         public string Name { get; set; }
 		public string JobCode { get; set; }
         public string Role { get; set;}
-        // Indicates whether this user is a CSR's supervisor, managager, etc.
-        public bool IsCsrRelated { get; set; }
 		// Be able to view all logs on Historical Dashboard if true 
 		public bool IsEcl { get; set; }
 		// Whether the user is allowed to access New Submission page
@@ -23,43 +21,7 @@ namespace eCoachingLog.Models.User
 		// Whether the user is allowed to export data to excel on Historical Dashboard page
 		public bool IsExportExcel { get; set; }
 		// Whether to display follow up information on dashboards
-		public bool ShowFollowup
-        {
-            get
-            {
-                return this.IsSupervisor;
-            }
-            set
-            {
-                // todo:
-            }
-        }
-
-        public string Title
-        {
-            get
-            {
-                if (this.IsCsr)
-                {
-                    return "CSR";
-                }
-
-                if (this.IsSupervisor)
-                {
-                    return "Supervisor";
-                }
-
-                return "";
-            }
-        }
-
-        public bool IsAnalyst
-        {
-            get
-            {
-                return string.Equals(this.Role, Constants.USER_ROLE_ANALYST, StringComparison.OrdinalIgnoreCase);
-            }
-        }
+		public bool ShowFollowup { get; set; }
 
         public bool IsArc
         {
@@ -77,15 +39,7 @@ namespace eCoachingLog.Models.User
 			}
 		}
 
-        public bool IsEmployee
-        {
-            get
-            {
-                return string.Equals(this.Role, Constants.USER_ROLE_EMPLOYEE, StringComparison.OrdinalIgnoreCase);
-            }
-        }
-
-        public bool IsSupervisor
+		public bool IsSupervisor
 		{
 			get
 			{
@@ -93,31 +47,7 @@ namespace eCoachingLog.Models.User
 			}
 		}
 
-        public bool IsManager
-        {
-            get
-            {
-                return string.Equals(this.Role, Constants.USER_ROLE_MANAGER, StringComparison.OrdinalIgnoreCase);
-            }
-        }
-
-        public bool IsDirector
-        {
-            get
-            {
-                return string.Equals(this.Role, Constants.USER_ROLE_DIRECTOR, StringComparison.OrdinalIgnoreCase);
-            }
-        }
-
-        public bool IsHr
-        {
-            get
-            {
-                return string.Equals(this.Role, Constants.USER_ROLE_HR, StringComparison.OrdinalIgnoreCase);
-            }
-        }
-
-        public User()
+		public User()
         {
             this.EmployeeId = "-1";
 			this.LanId = string.Empty;
