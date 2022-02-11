@@ -30,7 +30,7 @@ INSERT INTO [EC].[AT_Module_Access]
            ,[Module]
            ,[isActive])
      VALUES
-           ('WTTR50', 'Manager, Training', 5, 'Training', 1)
+            ('WTTR50', 'Manager, Training', 1, 'CSR', 1)
 GO
 
 
