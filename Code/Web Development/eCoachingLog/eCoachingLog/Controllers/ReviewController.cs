@@ -1026,8 +1026,10 @@ namespace eCoachingLog.Controllers
                 // Supervisor module (log was submitted for a supervisor) - if Pending Manager Review - Only Manager or reassigned to can enter data on review page
 				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
 				{
-					if(user.EmployeeId == vm.LogDetail.SupervisorEmpId) // for supervisor module, SupervisorEmpId is actually manager id since manager is the supervisor for whome this log was submitted
-					{
+                    // for supervisor module, SupervisorEmpId is actually manager id since manager is the supervisor for whome this log was submitted
+                    if (user.EmployeeId == vm.LogDetail.SupervisorEmpId
+                        || user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+                    {
 						readOnly = false;
 					}
 				}
