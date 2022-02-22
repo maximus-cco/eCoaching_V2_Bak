@@ -172,7 +172,7 @@ namespace eCoachingLog.Controllers
                 }
             }
 
-            vm.ShowEvalDetail = ShowQnEvalDetail(logDetail.StatusId, action, GetUserFromSession());
+            vm.ShowEvalDetail = ShowQnEvalDetail(logDetail, action, GetUserFromSession());
 
             // supervisor links followup log(s) to the original QN log
             if (logDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION)
@@ -188,10 +188,19 @@ namespace eCoachingLog.Controllers
             return vm;
         }
 
-        private bool ShowQnEvalDetail(int statusId, string action, User user)
+        private bool ShowQnEvalDetail(CoachingLogDetail logDetail, string action, User user)
         {
-            // do not show detail to csr
-            if (user.IsCsr)
+            // do not show detail to csr and arc
+            if (user.IsCsr || user.IsArc)
+            {
+                return false;
+            }
+
+            var userEmployeeId = user.EmployeeId == null ? "" : user.EmployeeId.Trim().ToLower();
+            var logEmployeeId = logDetail.EmployeeId == null ? "" : logDetail.EmployeeId.Trim().ToLower();
+
+            // do not show detail to the employee of the log
+            if (userEmployeeId == logEmployeeId)
             {
                 return false;
             }
@@ -203,9 +212,9 @@ namespace eCoachingLog.Controllers
                 return (!String.Equals(action, "coach", StringComparison.OrdinalIgnoreCase) 
                     && !String.Equals(action, "viewLinkedQnsInCoachingSession", StringComparison.OrdinalIgnoreCase));
             }
-            else
+            else // for all other users, show evaluation detail
             {
-                return false;
+                return true;
             }
         }
 

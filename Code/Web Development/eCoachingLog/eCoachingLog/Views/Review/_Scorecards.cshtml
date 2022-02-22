@@ -1,18 +1,21 @@
 ﻿@using eCoachingLog.Models.User
 @using eCoachingLog.Models.Common
+@model eCoachingLog.ViewModels.ReviewViewModel
+
 @{
     var user = ((User)Session["AuthenticatedUser"]);
     const string WebChat = "Web Chat";
     const string WrittenCorrespondence = "Written Correspondence";
-    var userEmployeeId = user.EmployeeId == null ? "userEmployeeId" : user.EmployeeId.Trim().ToLower();
-    var logEmployeeId = Model.LogDetail.EmployeeId == null ? "logEmployeeId" : Model.LogDetail.EmployeeId.Trim().ToLower();
 }
 <br />
+@*Read Only? @Model.IsReadOnly
+<br /> 
+Page Name: @Model.ReviewPageName*@ 
 @foreach (Scorecard s in Model.LogDetail.Scorecards)
 {
 	<div class="panel-group" id="accordion-@s.EvalId">
 		<div class="panel panel-maximus-color">
-			<div class="panel-heading-thin panel-heading-collapse" data-toggle="collapse" data-parent="#accordion-@s.EvalId" data-target="#@s.EvalId">
+			<div class="panel-heading-thin panel-heading-collape" data-toggle="collapse" data-parent="#accordion-@s.EvalId" data-target="#@s.EvalId">
 				<p class="panel-title-small accordion-toggle">
 					&nbsp; @s.EvalName
 					<span class="glyphicon glyphicon-plus pull-right">&nbsp;</span>
@@ -34,9 +37,7 @@
 					<p><strong>Program:</strong> @s.Program</p>
 					<p><strong>Date Of Event:</strong> @s.DateOfEvent</p>
 					<p><strong>Submitter:</strong> @s.SubmitterName</p>
-
-                    @*make sure csrs and arc csrs not seeing details*@
-                    @if (!user.IsCsr && !user.IsArc && userEmployeeId != logEmployeeId)
+					@if (Model.ShowEvalDetail)
                     {
                         // default to Phone
                         var issueResolutionLabel = "Issue Resolution";
@@ -55,18 +56,68 @@
                             issueResolutionLabel = "Business Correspondence";
                             communicationLabel = "";
                         }
-                        <p><strong>Contact Reason:</strong> @Html.Raw(s.ContactReason)</p>
-						<p><strong>Business Process:</strong> @Html.Raw(s.BusinessProcess)</p>
-						<p><strong>Information Accuracy:</strong> @Html.Raw(s.InfoAccuracy)</p>
-						<p><strong>Privacy Disclaimers:</strong> @Html.Raw(s.PrivacyDisclaimers)</p>
-						<p><strong>@issueResolutionLabel:</strong> @Html.Raw(s.IssueResolution)</p>
+						<p><strong>Business Process:</strong> @Html.Raw(s.BusinessProcess)<br />
+                            <strong>Comments:</strong>
+                            <span id="bp_comments_@s.EvalId"> @Html.Raw(s.BusinessProcessComment)</span> 
+                            @if (Model.AllowCopy && !String.IsNullOrEmpty(s.BusinessProcessComment))
+                            {
+                                <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>  
+                            }
+                        </p>
+
+						<p><strong>Information Accuracy:</strong> @Html.Raw(s.InfoAccuracy)<br />
+                            <strong>Comments:</strong>
+                            <span id="ia_comments_@s.EvalId"> @Html.Raw(s.InfoAccuracyComment)</span>
+                            @if (Model.AllowCopy && !String.IsNullOrEmpty(s.InfoAccuracyComment))
+                            {
+                                <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
+                            }  
+                        </p>
+
+						<p><strong>Privacy Disclaimers:</strong> @Html.Raw(s.PrivacyDisclaimers)<br />
+                            <strong>Comments:</strong>
+                            <span id="pd_comments_@s.EvalId"> @Html.Raw(s.PrivacyDisclaimersComment)</span>
+                            @if (Model.AllowCopy && !String.IsNullOrEmpty(s.PrivacyDisclaimersComment))
+                            {
+                                <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
+                            }
+                        </p>
+
+                        <p><strong>@issueResolutionLabel:</strong> @Html.Raw(s.IssueResolution)</p>
                         if (!String.Equals(s.Channel, WrittenCorrespondence, StringComparison.OrdinalIgnoreCase))
                         {
-                            <p><strong>@efficiencyLabel:</strong> @Html.Raw(s.CallEfficiency)</p>
-     						<p><strong>@issueDiagnosisLabel:</strong> @Html.Raw(s.ActiveListening)</p>
-						    <p><strong>@communicationLabel:</strong> @Html.Raw(s.PersonalityFlexing)</p>
-						    <p><strong>Start Temperature:</strong> @Html.Raw(s.StartTemperature)</p>
-						    <p><strong>End Temperature:</strong> @Html.Raw(s.EndTemperature)</p>
+                            <p><strong>@efficiencyLabel:</strong> @Html.Raw(s.CallEfficiency) <br />
+                                <strong>Comments:</strong>
+                                <span id="ce_comments_@s.EvalId"> @Html.Raw(s.CallEfficiencyComment)</span>
+                                @if (Model.AllowCopy && !String.IsNullOrEmpty(s.CallEfficiencyComment))
+                                {
+                                    <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
+                                }
+                            </p>
+     						<p><strong>@issueDiagnosisLabel:</strong> @Html.Raw(s.ActiveListening)<br />
+                                <strong>Comments:</strong>
+                                <span id="al_comments_@s.EvalId"> @Html.Raw(s.ActiveListeningComment)</span>
+                                @if (Model.AllowCopy && !String.IsNullOrEmpty(s.ActiveListeningComment))
+                                {
+                                    <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
+                                }
+                            </p>
+						    <p><strong>@communicationLabel:</strong> @Html.Raw(s.PersonalityFlexing)<br />
+                                <strong>Comments:</strong>
+                                <span id="pf_comments_@s.EvalId"> @Html.Raw(s.PersonalityFlexingComment)</span>
+                                @if (Model.AllowCopy && !String.IsNullOrEmpty(s.PersonalityFlexingComment))
+                                {
+                                    <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
+                                }
+                            </p>
+						    <p><strong>Start Temperature:</strong> @Html.Raw(s.StartTemperature)<br />
+                                <strong>Comments:</strong>
+                                <span> @Html.Raw(s.StartTemperatureComment)</span>
+                            </p>
+						    <p><strong>End Temperature:</strong> @Html.Raw(s.EndTemperature)<br />
+                                <strong>Comments:</strong>
+                                <span> @Html.Raw(s.EndTemperatureComment)</span>
+                            </p>
                         }
                     }
 				</div>
@@ -81,13 +132,24 @@
 </div>
 
 <script>
-	$(function () {
-		$('body').on('shown.bs.collapse', '.collapse', function () {
-			$(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-		});
+    $(function () {
+        $("a[name=copy]").on("click", function (e) {
+            var textToCopyId = $(this).prev("span").attr("id");
+            var element = document.getElementById(textToCopyId);
+            var range = document.createRange();
+            range.selectNodeContents(element);
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('copy');
 
-		$('body').on('hidden.bs.collapse', '.collapse', function () {
-			$(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
-		});
-	});
+            $('a[name=copy]:contains("Copied")').text('Copy');
+            $(this).text("Copied");
+
+            return false;
+        });
+
+    })
 </script>
+
+
