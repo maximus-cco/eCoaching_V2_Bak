@@ -72,9 +72,9 @@ namespace eCoachingLog.Repository
                         logDetail.Status = dataReader["strFormStatus"].ToString();
 						logDetail.StatusId = Convert.ToInt16(dataReader["strStatusID"].ToString());
 						logDetail.Type = dataReader["strFormType"].ToString();
-                        logDetail.CreatedDate = EclUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
-                        logDetail.CoachingDate = EclUtil.AppendPdt(dataReader["CoachingDate"].ToString());
-                        logDetail.EventDate = EclUtil.AppendPdt(dataReader["EventDate"].ToString());
+                        logDetail.CreatedDate = EclUtil.AppendTimeZone(dataReader["SubmittedDate"].ToString());
+                        logDetail.CoachingDate = EclUtil.AppendTimeZone(dataReader["CoachingDate"].ToString());
+                        logDetail.EventDate = EclUtil.AppendTimeZone(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString().Trim();
 						logDetail.SubmitterEmpId = dataReader["strSubmitterID"].ToString().Trim().ToUpper();
                         logDetail.EmployeeName = dataReader["strEmpName"].ToString().Trim();
@@ -102,9 +102,9 @@ namespace eCoachingLog.Repository
 						logDetail.Behavior = dataReader["txtDescription"].ToString();
 						logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
                         logDetail.Comment = dataReader["txtCSRComments"].ToString();
-                        logDetail.EmployeeReviewDate = EclUtil.AppendPdt(dataReader["CSRReviewAutoDate"].ToString());
-                        logDetail.SupReviewedAutoDate = EclUtil.AppendPdt(dataReader["SupReviewedAutoDate"].ToString());
-                        logDetail.MgrReviewAutoDate = EclUtil.AppendPdt(dataReader["MgrReviewAutoDate"].ToString());
+                        logDetail.EmployeeReviewDate = EclUtil.AppendTimeZone(dataReader["CSRReviewAutoDate"].ToString());
+                        logDetail.SupReviewedAutoDate = EclUtil.AppendTimeZone(dataReader["SupReviewedAutoDate"].ToString());
+                        logDetail.MgrReviewAutoDate = EclUtil.AppendTimeZone(dataReader["MgrReviewAutoDate"].ToString());
 						logDetail.ReviewedSupervisorName = dataReader["strReviewSupervisor"].ToString();
 						logDetail.ReviewedManagerName = dataReader["strReviewManager"].ToString();
 						logDetail.IsConfirmedCse = Convert.IsDBNull(dataReader["ConfirmedCSE"]) ? null : (bool?)dataReader["ConfirmedCSE"];
@@ -171,18 +171,18 @@ namespace eCoachingLog.Repository
 						if (logDetail.IsFollowupRequired || logDetail.IsQn)
 						{
 							logDetail.FollowupSupName = dataReader["strFollowupSupervisor"].ToString();
-							logDetail.FollowupSupAutoDate = EclUtil.AppendPdt(dataReader["SupFollowupAutoDate"].ToString());
-							logDetail.FollowupDueDate = EclUtil.AppendPdt(dataReader["FollowupDueDate"].ToString());
-							logDetail.FollowupActualDate = EclUtil.AppendPdt(dataReader["FollowupActualDate"].ToString());
+							logDetail.FollowupSupAutoDate = EclUtil.AppendTimeZone(dataReader["SupFollowupAutoDate"].ToString());
+							logDetail.FollowupDueDate = EclUtil.AppendTimeZone(dataReader["FollowupDueDate"].ToString());
+							logDetail.FollowupActualDate = EclUtil.AppendTimeZone(dataReader["FollowupActualDate"].ToString());
 							logDetail.FollowupDetails = dataReader["SupFollowupCoachingNotes"].ToString();
 
-							logDetail.FollowupEmpAutoDate = EclUtil.AppendPdt(dataReader["EmpAckFollowupAutoDate"].ToString());
+							logDetail.FollowupEmpAutoDate = EclUtil.AppendTimeZone(dataReader["EmpAckFollowupAutoDate"].ToString());
 							logDetail.FollowupEmpComments = dataReader["EmpAckFollowupComments"].ToString();
 						}
 
                         logDetail.FollowupDecisionComments = dataReader["SupFollowupReviewCoachingNotes"].ToString();
 
-                        logDetail.PfdCompletedDate = EclUtil.AppendPdt(dataReader["PFDCompletedDate"].ToString());
+                        logDetail.PfdCompletedDate = EclUtil.AppendTimeZone(dataReader["PFDCompletedDate"].ToString());
 
                         // directors and senior managers
                         logDetail.SrMgrLevelOneEmpId = dataReader["strEmpSrMgrLvl1ID"].ToString().Trim().ToUpper();
@@ -267,8 +267,8 @@ namespace eCoachingLog.Repository
                         logDetail.Status = dataReader["strFormStatus"].ToString();
 						logDetail.StatusId = (int)dataReader["StatusId"];
 						logDetail.Type = dataReader["strFormType"].ToString();
-                        logDetail.CreatedDate = EclUtil.AppendPdt(dataReader["SubmittedDate"].ToString());
-                        logDetail.EventDate = EclUtil.AppendPdt(dataReader["EventDate"].ToString());
+                        logDetail.CreatedDate = EclUtil.AppendTimeZone(dataReader["SubmittedDate"].ToString());
+                        logDetail.EventDate = EclUtil.AppendTimeZone(dataReader["EventDate"].ToString());
                         logDetail.SubmitterName = dataReader["strSubmitterName"].ToString();
 						logDetail.SubmitterEmpId = dataReader["strSubmitterID"].ToString().Trim().ToUpper();
 						logDetail.EmployeeName = dataReader["strEmpName"].ToString().Trim();
@@ -286,7 +286,7 @@ namespace eCoachingLog.Repository
 						logDetail.IsFormalAttendanceHours = dataReader["FC/ ATTH"].ToString() == "0" ? false : true;
 						logDetail.IsFormalAttendanceTrends = dataReader["FC / ATTT"].ToString() == "0" ? false : true;
 						logDetail.InstructionText = dataReader["strStaticText"].ToString();
-						logDetail.EmployeeReviewDate = EclUtil.AppendPdt(dataReader["CSRReviewAutoDate"].ToString());
+						logDetail.EmployeeReviewDate = EclUtil.AppendTimeZone(dataReader["CSRReviewAutoDate"].ToString());
 						logDetail.Comment = dataReader["CSRComments"].ToString();
 
 						// directors and senior managers

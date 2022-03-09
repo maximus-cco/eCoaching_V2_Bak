@@ -10,14 +10,14 @@ namespace eCoachingLog.Utils
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static string AppendPdt(string str)
+        public static string AppendTimeZone(string str)
         {
             if (String.IsNullOrWhiteSpace(str))
             {
                 return str;
             }
 
-            return str + " PDT";
+            return str + " " + Constants.TIMEZONE;
         }
 
 		public static string CleanInput(string strIn)

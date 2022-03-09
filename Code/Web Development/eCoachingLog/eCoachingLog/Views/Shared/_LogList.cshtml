@@ -1,7 +1,10 @@
 ﻿@model eCoachingLog.Models.Common.LogFilter
+@using eCoachingLog.Utils
+
 @{
 	Layout = null;
 }
+
 @Html.HiddenFor(m => m.PageSize)
 
 <div class="panel panel-default">
@@ -21,8 +24,8 @@
                         <th>Coaching Reason</th>
                         <th>Sub-coaching Reason</th>
                         <th>Value</th>
-                        <th>Created Date (PDT)</th>
-						<th>Follow-up Date (PDT)</th>
+                        <th>Created Date (@Constants.TIMEZONE)</th>
+						<th>Follow-up Date (@Constants.TIMEZONE)</th>
                     </tr>
                 </thead>
             </table>

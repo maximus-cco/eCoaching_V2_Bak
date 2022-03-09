@@ -6,6 +6,8 @@ namespace eCoachingLog.Utils
 {
 	public static class Constants
 	{
+        public const string TIMEZONE = "EST";
+
 		public const string MAINTENANCE_PAGE = "~/index.html";
 
 		public const string NEW_SBUMISSION = "NewSubmission";

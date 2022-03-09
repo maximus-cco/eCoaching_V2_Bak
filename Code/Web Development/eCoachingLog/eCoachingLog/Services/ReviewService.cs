@@ -509,11 +509,11 @@ namespace eCoachingLog.Services
 			notes += user.Name;
 			if (review.DateCoached.HasValue && review.DateCoached.Value != null)
 			{
-				notes += " (" + DateTime.Now + " PDT) - " + review.DateCoached.Value.ToString("MM/dd/yyyy");
-			}
+                notes += " (" + DateTime.Now + " " + Constants.TIMEZONE + ") - " + review.DateCoached.Value.ToString("MM/dd/yyyy");
+            }
 			else
 			{
-				notes += " (" + DateTime.Now + " PDT) - " + review.DateCoached;
+				notes += " (" + DateTime.Now + " " + Constants.TIMEZONE + ") - " + review.DateCoached;
 			}
 
 			if (!string.IsNullOrEmpty(review.DetailReasonNotCoachable))

@@ -1,5 +1,6 @@
 ﻿using eCoachingLog.Models.Common;
 using eCoachingLog.Models.Review;
+using eCoachingLog.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -148,7 +149,7 @@ namespace eCoachingLog.ViewModels
 			{
 				if (!string.IsNullOrEmpty(this.LogDetail.FollowupDueDate))
 				{
-					return DateTime.Parse(this.LogDetail.FollowupDueDate.Replace("PDT", "")).ToString("MM/dd/yyyy");
+					return DateTime.Parse(this.LogDetail.FollowupDueDate.Replace(Constants.TIMEZONE, "")).ToString("MM/dd/yyyy");
 				}
 
 				return string.Empty;

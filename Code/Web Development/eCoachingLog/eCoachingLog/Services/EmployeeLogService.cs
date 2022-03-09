@@ -127,7 +127,7 @@ namespace eCoachingLog.Services
 						log.LogNewText += "&nbsp;<span class='glyphicon glyphicon-bell'></span>";
 
 						var today = DateTime.Now;
-						var followupDueDate = DateTime.Parse(log.FollowupDueDate.Replace("PDT", ""));
+						var followupDueDate = DateTime.Parse(log.FollowupDueDate.Replace(Constants.TIMEZONE, ""));
 						// Log NOT Completed && Follow-up has not happened yet
 						if (!string.Equals(log.Status.Trim(), Constants.LOG_STATUS_COMPLETED_TEXT, StringComparison.OrdinalIgnoreCase)
 								&& !log.HasFollowupHappened)
@@ -153,8 +153,8 @@ namespace eCoachingLog.Services
 					logger.Debug("Error converting createdate to datetime: " + ex.Message);
 				}
 
-				// Created Date displays PDT
-				// log.CreatedDate = eCoachingLogUtil.AppendPdt(log.CreatedDate);
+				// Created Date displays timezone
+				log.CreatedDate = EclUtil.AppendTimeZone(log.CreatedDate);
 				// Reasons
 				log.Reasons = log.Reasons.Replace("|", "<br />");
 				log.SubReasons = log.SubReasons.Replace("|", "<br />");
@@ -186,8 +186,8 @@ namespace eCoachingLog.Services
                     logger.Debug("Error converting createdate to datetime: " + ex.Message);
                 }
 
-                // Created Date displays PDT
-                // log.CreatedDate = eCoachingLogUtil.AppendPdt(log.CreatedDate);
+                // Created Date displays timezone
+                log.CreatedDate = EclUtil.AppendTimeZone(log.CreatedDate);
                 // Reasons
                 log.Reasons = log.Reasons.Replace("|", "<br />");
                 log.SubReasons = log.SubReasons.Replace("|", "<br />");

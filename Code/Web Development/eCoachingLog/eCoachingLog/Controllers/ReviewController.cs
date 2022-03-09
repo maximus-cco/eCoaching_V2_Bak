@@ -1242,7 +1242,7 @@ namespace eCoachingLog.Controllers
 			}
 
 			var today = DateTime.Now;
-			var followupDueDate = DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace("PDT", ""));
+			var followupDueDate = DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace(Constants.TIMEZONE, ""));
 			return today.Date == followupDueDate.Date ;
 		}
 
@@ -1261,7 +1261,7 @@ namespace eCoachingLog.Controllers
             }
 
 			var today = DateTime.Now;
-			var followupDueDate = DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace("PDT", ""));
+			var followupDueDate = DateTime.Parse(vm.LogDetail.FollowupDueDate.Replace(Constants.TIMEZONE, ""));
 			return today.Date > followupDueDate.Date;
 		}
 	}
