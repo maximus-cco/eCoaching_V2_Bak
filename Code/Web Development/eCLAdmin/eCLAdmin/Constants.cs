@@ -63,15 +63,6 @@ namespace eCLAdmin
 		public const string ADMIN_ACTIVITY_REPORT_NAME = "AdminActivitySummary";
 		public const string ADMIN_ACTIVITY_REPORT_DESCRIPTION = "Admin Activity Summary";
 
-		// eCL site usage counts
-		public const string BY_HOUR = "H";
-		public const string BY_DAY = "D";
-		public const string BY_WEEK = "W";
-		public const string BY_MONTH = "M";
-		public const string MMDDYYYY = "MM/dd/yyyy";
-		public const string MMDD = "MM/dd";
-		public const string MMYYYY = "MM/yyyy";
-
 		// For eCoaching Access Control
 		// Role ECL
 		public const string ECOACHING_ACCESS_ROLE_ECL = "ECL";

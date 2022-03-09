@@ -70,21 +70,6 @@ namespace eCLAdmin
                         "~/Scripts/eCLAdmin/eCoachingAccessControlAdd.js");
             bundles.Add(eCoachingAccessControlAddScriptBundle);
 
-			// javascript bundle for ecl site usage
-			var eclSiteUsageScriptBundle = new ScriptBundle("~/bundles/scripts/eclSiteUsage");
-			eclSiteUsageScriptBundle.Orderer = new EclBundleOrderer();
-			eclSiteUsageScriptBundle.Include(
-						"~/Scripts/eCLAdmin/eclSiteUsage.js",
-						"~/Scripts/eCLAdmin/dateTimePicker.js");
-			bundles.Add(eclSiteUsageScriptBundle);
-			// javascript bundle for ecl site usage chart
-			var eclSiteUsageChartScriptBundle = new ScriptBundle("~/bundles/scripts/eclSiteUsageChart");
-			eclSiteUsageChartScriptBundle.Orderer = new EclBundleOrderer();
-			eclSiteUsageChartScriptBundle.Include(
-						"~/Scripts/morris.js",
-						"~/Scripts/eCLAdmin/eclSiteUsageChart.js");
-			bundles.Add(eclSiteUsageChartScriptBundle);
-
 			// css across web app
 			bundles.Add(new StyleBundle("~/Content/css").Include(
 					   "~/Content/*.css"));

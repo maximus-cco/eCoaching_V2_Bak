@@ -158,7 +158,6 @@
     <Compile Include="App_Start\EclBundleOrderer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\EclSiteUsageController.cs" />
     <Compile Include="Controllers\EmployeeLogBaseController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -170,7 +169,6 @@
     <Compile Include="Filters\EclAuthorizeAttribute.cs" />
     <Compile Include="Filters\EclExceptionAttribute.cs" />
     <Compile Include="Filters\SessionCheckAttribute.cs" />
-    <Compile Include="Models\EclSiteUsage\Statistic.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\EmployeeLog\CoachingLogDetail.cs" />
     <Compile Include="Models\EmployeeLog\LogDetailBase.cs" />
@@ -204,15 +202,11 @@
     <Compile Include="Reports\ReportTemplate.aspx.designer.cs">
       <DependentUpon>ReportTemplate.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Repository\EclSiteUsageRepository.cs" />
-    <Compile Include="Repository\IEclSiteUsageRepository.cs" />
     <Compile Include="Repository\ISiteRepository.cs" />
     <Compile Include="Repository\IUserRepository.cs" />
     <Compile Include="Repository\SiteRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
-    <Compile Include="Services\EclSiteUsageService.cs" />
     <Compile Include="Services\EmailService.cs" />
-    <Compile Include="Services\IEclSiteUsageService.cs" />
     <Compile Include="Services\IEmailService.cs" />
     <Compile Include="Services\ISiteService.cs" />
     <Compile Include="Services\IUserService.cs" />
@@ -221,7 +215,6 @@
     <Compile Include="Utilities\EclAdminUtil.cs" />
     <Compile Include="Utilities\EmailUtil.cs" />
     <Compile Include="Utilities\FileUtil.cs" />
-    <Compile Include="ViewModels\EclSiteUsageViewModel.cs" />
     <Compile Include="ViewModels\eCoachingAccessControlAddViewModel.cs" />
     <Compile Include="ViewModels\eCoachingAccessControlViewModel.cs" />
     <Compile Include="ViewModels\EmployeeLogSelectEditorViewModel.cs" />
@@ -270,8 +263,6 @@
     <None Include="Properties\PublishProfiles\Test.pubxml" />
     <Content Include="Scripts\dataTables.bootstrap.js" />
     <Content Include="Scripts\eCLAdmin\dateTimePicker.js" />
-    <Content Include="Scripts\eCLAdmin\eclSiteUsage.js" />
-    <Content Include="Scripts\eCLAdmin\eclSiteUsageChart.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlAdd.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlDelete.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlList.js" />
@@ -336,12 +327,6 @@
     <Content Include="Views\User\_AddEcoachingAccessControl.cshtml" />
     <Content Include="Views\User\_DeleteEcoachingAccessControl.cshtml" />
     <Content Include="Views\User\_EditEcoachingAccessControl.cshtml" />
-    <Content Include="Views\EclSiteUsage\Index.cshtml" />
-    <Content Include="Views\EclSiteUsage\_DateRangeByDay.cshtml" />
-    <Content Include="Views\EclSiteUsage\_DateRangeByHour.cshtml" />
-    <Content Include="Views\EclSiteUsage\_DateRangeByMonth.cshtml" />
-    <Content Include="Views\EclSiteUsage\_DateRangeByWeek.cshtml" />
-    <Content Include="Views\EclSiteUsage\_Statistics.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
