@@ -82,7 +82,7 @@ namespace eCoachingLog.Repository
 						shortCall.IsValidBehavior = (dataReader["valid"] != DBNull.Value && Convert.ToInt16(dataReader["valid"]) == 1) ? true : false;
 						shortCall.SelectedBehaviorText = dataReader["Behavior"].ToString();
 						shortCall.ActionsString = dataReader["Action"].ToString();
-						shortCall.CoachingNotes = dataReader["CoachingNotes"].ToString();
+						shortCall.CoachingNotes = UpdatePdtToEst(dataReader["CoachingNotes"].ToString());
 						shortCall.IsLsaInformed = (dataReader["LSAInformed"] != DBNull.Value && Convert.ToInt16(dataReader["LSAInformed"]) == 1) ? true : false;
 						shortCallList.Add(shortCall);
 					}
@@ -90,6 +90,16 @@ namespace eCoachingLog.Repository
 			}
 			return shortCallList;
 		}
+
+        private string UpdatePdtToEst(string str)
+        {
+            if (String.IsNullOrEmpty(str))
+            {
+                return str;
+            }
+
+            return str.Replace("PDT", Constants.TIMEZONE);
+        }
 
 		public IList<ShortCall> GetShortCallCompletedEvalList(long logId)
 		{
@@ -110,7 +120,7 @@ namespace eCoachingLog.Repository
 						shortCall.IsValidBehavior = (dataReader["valid"] != DBNull.Value && Convert.ToInt16(dataReader["valid"]) == 1) ? true : false;
 						shortCall.SelectedBehaviorText = dataReader["Behavior"].ToString();
 						shortCall.ActionsString = dataReader["Action"].ToString();
-						shortCall.CoachingNotes = dataReader["CoachingNotes"].ToString();
+						shortCall.CoachingNotes = UpdatePdtToEst(dataReader["CoachingNotes"].ToString());
 						shortCall.IsLsaInformed = (dataReader["LSAInformed"] != DBNull.Value && Convert.ToInt16(dataReader["LSAInformed"]) == 1) ? true : false;
 
 						shortCall.IsManagerAgreed = (dataReader["MgrAgreed"] != DBNull.Value && Convert.ToInt16(dataReader["MgrAgreed"]) == 1) ? true : false;

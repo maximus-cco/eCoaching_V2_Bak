@@ -98,7 +98,7 @@ namespace eCoachingLog.Repository
 						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString().Trim().ToUpper();
 						logDetail.LogManagerEmpId = dataReader["strCLMgrID"].ToString().Trim().ToUpper();
                         logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
-                        logDetail.CoachingNotes = dataReader["txtCoachingNotes"].ToString();
+                        logDetail.CoachingNotes = UpdatePdtToEst(dataReader["txtCoachingNotes"].ToString());;
 						logDetail.Behavior = dataReader["txtDescription"].ToString();
 						logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
                         logDetail.Comment = dataReader["txtCSRComments"].ToString();
@@ -1194,6 +1194,16 @@ namespace eCoachingLog.Repository
                 }
             }
             return statistics;
+        }
+
+        private string UpdatePdtToEst(string str)
+        {
+            if (String.IsNullOrEmpty(str))
+            {
+                return str;
+            }
+
+            return str.Replace("PDT", Constants.TIMEZONE);
         }
 
     }
