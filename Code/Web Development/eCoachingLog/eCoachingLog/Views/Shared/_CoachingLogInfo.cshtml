@@ -6,7 +6,7 @@
 {
 	<b>Date of Coaching:</b> @Model.LogDetail.CoachingDate<br />
 }
-else if (!Model.LogDetail.IsQn)
+else if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor)
 { 
 	<b>Date Of Event:</b> @Model.LogDetail.EventDate<br />
 }
@@ -19,26 +19,26 @@ else if (!Model.LogDetail.IsQn)
 <b>Source:</b> @Model.LogDetail.Source<br />
 <b>Site:</b> @Model.LogDetail.EmployeeSite<br />
 <br />
-@if (!Model.LogDetail.IsQn && Model.LogDetail.IsVerintMonitor )
+@if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor && Model.LogDetail.IsVerintMonitor )
 {
 	<b>Verint ID:</b> @Model.LogDetail.VerintId<br />
 		<b>Scorecard Name:</b> @Model.LogDetail.VerintFormName<br />
 		<b>Coaching Monitor:</b> @Model.LogDetail.CoachingMonitor<br />
 }
-@if (!Model.LogDetail.IsQn && Model.LogDetail.IsBehaviorAnalyticsMonitor)
+@if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor && Model.LogDetail.IsBehaviorAnalyticsMonitor)
 {
 	<b>Avoke ID:</b> @Model.LogDetail.BehaviorAnalyticsId<br />
 }
-@if (!Model.LogDetail.IsQn && Model.LogDetail.IsNgdActivityId)
+@if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor && Model.LogDetail.IsNgdActivityId)
 {
 	<b>NGD Activity ID:</b> @Model.LogDetail.NgdActivityId<br />
 }
-@if (!Model.LogDetail.IsQn && Model.LogDetail.IsUcId)
+@if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor && Model.LogDetail.IsUcId)
 {
 	<b>Universal CallID:</b> @Model.LogDetail.UcId<br />
 }
 
-@if (Model.LogDetail.IsQn)
+@if (Model.LogDetail.IsQn || Model.LogDetail.IsQnSupervisor)
 {
 	<b>Batch ID:</b> @Model.LogDetail.BatchId<br />
 }
