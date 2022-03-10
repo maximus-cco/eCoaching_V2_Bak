@@ -1198,12 +1198,12 @@ namespace eCoachingLog.Repository
 
         private string UpdatePdtToEst(string str)
         {
-            if (String.IsNullOrEmpty(str))
+            if (String.IsNullOrEmpty(str) || str.IndexOf("PDT)") < 0)
             {
                 return str;
             }
 
-            return str.Replace("PDT", Constants.TIMEZONE);
+            return str.Replace("PDT)", Constants.TIMEZONE + ")");
         }
 
     }

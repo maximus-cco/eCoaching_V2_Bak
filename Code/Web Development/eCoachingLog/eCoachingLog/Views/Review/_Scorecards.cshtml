@@ -49,13 +49,15 @@ Page Name: @Model.ReviewPageName*@
                             efficiencyLabel = "Chat Efficiency";
                             issueDiagnosisLabel = "Issue Diagnosis";
                             communicationLabel = "Professional Communication";
-                        } else if (String.Equals(s.Channel, WrittenCorrespondence, StringComparison.OrdinalIgnoreCase))
+                        }
+                        else if (String.Equals(s.Channel, WrittenCorrespondence, StringComparison.OrdinalIgnoreCase))
                         {
                             efficiencyLabel = "";
                             issueDiagnosisLabel = "";
                             issueResolutionLabel = "Business Correspondence";
                             communicationLabel = "";
                         }
+                        <p><strong>Contact Reason:</strong> @Html.Raw(s.ContactReason)</p>
 						<p><strong>Business Process:</strong> @Html.Raw(s.BusinessProcess)<br />
                             <strong>Comments:</strong>
                             <span id="bp_comments_@s.EvalId"> @Html.Raw(s.BusinessProcessComment)</span> 
@@ -83,7 +85,15 @@ Page Name: @Model.ReviewPageName*@
                             }
                         </p>
 
-                        <p><strong>@issueResolutionLabel:</strong> @Html.Raw(s.IssueResolution)</p>
+                        <p><strong>@issueResolutionLabel:</strong> @Html.Raw(s.IssueResolution)<br />
+                            <strong>Comments:</strong>
+                            <span id="ir_comments_@s.EvalId"> @Html.Raw(s.IssueResolutionComment)</span>
+                            @if (Model.AllowCopy && !String.IsNullOrEmpty(s.IssueResolutionComment))
+                            {
+                                <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
+                            }                            
+                        </p>
+
                         if (!String.Equals(s.Channel, WrittenCorrespondence, StringComparison.OrdinalIgnoreCase))
                         {
                             <p><strong>@efficiencyLabel:</strong> @Html.Raw(s.CallEfficiency) <br />

@@ -154,7 +154,7 @@ namespace eCoachingLog.Services
 				}
 
 				// Created Date displays timezone
-				log.CreatedDate = EclUtil.AppendTimeZone(log.CreatedDate);
+				// log.CreatedDate = EclUtil.AppendTimeZone(log.CreatedDate);
 				// Reasons
 				log.Reasons = log.Reasons.Replace("|", "<br />");
 				log.SubReasons = log.SubReasons.Replace("|", "<br />");
@@ -187,7 +187,7 @@ namespace eCoachingLog.Services
                 }
 
                 // Created Date displays timezone
-                log.CreatedDate = EclUtil.AppendTimeZone(log.CreatedDate);
+                // log.CreatedDate = EclUtil.AppendTimeZone(log.CreatedDate);
                 // Reasons
                 log.Reasons = log.Reasons.Replace("|", "<br />");
                 log.SubReasons = log.SubReasons.Replace("|", "<br />");

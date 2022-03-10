@@ -1,4 +1,6 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardQnViewModel
+@using eCoachingLog.Utils
+
 @{
 	Layout = null;
 }
@@ -19,8 +21,8 @@
                         <th>Status</th>
                         <th>Coaching Reason</th>
                         <th>Sub-coaching Reason</th>
-                        <th>Created Date</th>
-                        <th>Follow-up Due Date</th>
+                        <th>Created Date (@Constants.TIMEZONE)</th>
+                        <th>Follow-up Due Date (@Constants.TIMEZONE)</th>
                     </tr>
                 </thead>
             </table>

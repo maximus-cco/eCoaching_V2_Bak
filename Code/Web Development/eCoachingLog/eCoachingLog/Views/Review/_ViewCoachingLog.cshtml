@@ -68,10 +68,8 @@
 				<div class='mt-2 @(Model.ShowConfirmedNonCseText ? "show" : "hide")'>
 					<strong><mark>Coaching Opportunity was not a confirmed Customer Service Escalation.</mark></strong><br />
 				</div>
-                @if (Model.LogDetail.IsQn)
-                {
-				    Html.RenderPartial("_ReviewInfo");
-                }
+
+                @{ Html.RenderPartial("_ReviewInfo"); }
 
                 @if (Model.ShowFollowupInfo)
                 {

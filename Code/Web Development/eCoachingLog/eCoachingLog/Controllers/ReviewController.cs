@@ -166,7 +166,7 @@ namespace eCoachingLog.Controllers
 
             if (action == "view")
             {
-                if (!user.IsCsr && (vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED || vm.LogDetail.StatusId > Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION))
+                if (!logDetail.IsQnSupervisor && !user.IsCsr && (vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED || vm.LogDetail.StatusId > Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION))
                 {
                     vm.ShowFollowupDecisionComments = true;
                 }
