@@ -48,7 +48,7 @@ else if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor)
 <b>Reassigned Supervisor:</b> @Model.LogDetail.ReassignedSupervisorName<br />
 <b>Manager:</b> @Model.LogDetail.ManagerName<br />
 <b>Reassigned Manager:</b> @Model.LogDetail.ReassignedManagerName<br />
-@if (!Model.LogDetail.IsQn)
+@if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor)
 {
 	<b>Submitter:</b> @Model.LogDetail.SubmitterName<br />
 }
