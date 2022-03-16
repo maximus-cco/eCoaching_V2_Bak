@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Maintenance_Tables_Create.(10).sql
-Last Modified Date:10/6/2021
+CCO_eCoaching_Maintenance_Tables_Create.(11).sql
+Last Modified Date:03/15/2022
 Last Modified By: Susmitha Palacherla
 
-Version 10: Updated to support New Coaching Reason for Quality - 23051 - 10/6/2021
+Version 11: Updated to add new table Feed_Contacts to support sending alerts if xlsx files staged -  TFS 23967 - 03/15/2022
+Version 10: Updated to support New Coaching Reason for Quality - TFS 23051 - 10/6/2021
 Version 09: Quality Now workflow enhancement. TFS 22187 - 09/15/2021
 Version 08: TFS 21493 - Written Corr Bingo records in bingo feeds
 Version 07: TFS 21276 - Update QN Alt Channels compliance and mastery levels 
@@ -30,6 +31,9 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 5. Create Table [EC].[ShortCalls_Evaluations_Archive]
 6. Create Table [EC].[Coaching_Log_Bingo_Archive]
 7. Create Table [EC].[Coaching_Log_Quality_Now_Summary_Archive]
+8. Create Table [EC].[Feed_Contacts]
+
+
 **************************************************************
 
 --Table creates
@@ -342,3 +346,23 @@ GO
 ALTER TABLE [EC].[Coaching_Log_Quality_Now_Summary_Archive] ADD  DEFAULT ('Manual') FOR [ArchivedBy]
 GO
 
+--*************************************************
+
+--8. Create Table [EC].[Feed_Contacts]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Feed_Contacts](
+	[Category] [nvarchar](30) NULL,
+	[ReportCode] [nvarchar](6) NULL,
+	[ReportDescription] [nvarchar](100) NULL,
+	[PrimaryPOC] [nvarchar](200) NULL,
+	[SecondaryPOC] [nvarchar](200) NULL
+) ON [PRIMARY]
+GO
+
+--*************************************************

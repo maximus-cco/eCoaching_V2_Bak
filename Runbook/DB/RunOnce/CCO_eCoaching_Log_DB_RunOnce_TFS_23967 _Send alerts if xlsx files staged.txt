@@ -1,0 +1,78 @@
+/*
+TFS 23967 - Send alerts if xlsx files staged
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Create Table [EC].[Feed_Contacts]
+2. Add rows to Table [EC].[Feed_Contacts]
+
+
+*/
+
+
+
+-- Details
+--1. Create Table [EC].[Feed_Contacts]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Feed_Contacts](
+	[Category] [nvarchar](30) NULL,
+	[ReportCode] [nvarchar](6) NULL,
+	[ReportDescription] [nvarchar](100) NULL,
+	[PrimaryPOC] [nvarchar](200) NULL,
+	[SecondaryPOC] [nvarchar](200) NULL
+) ON [PRIMARY]
+GO
+
+--**********************
+
+--2. Add rows to Table [EC].[Feed_Contacts]
+
+INSERT INTO [EC].[Feed_Contacts]
+           ([Category]
+           ,[ReportCode]
+           ,[ReportDescription]
+           ,[PrimaryPOC]
+           ,[SecondaryPOC])
+     VALUES
+           ('Generic', 'SEAA', 'Seasonal Employee Attendance Opportunity', 'Shelly J Encke', 'CCO BSA Team'),
+		   ('Generic', 'SEAR', 'Seasonal Employee Attendance Re-Inforcement', 'Shelly J Encke', 'CCO BSA Team'),
+		   ('Generic', 'APS', 'Attendance Perfect Shift', 'Lex Mishra', 'DL-CCOENGEASE'),
+		   ('Generic', 'APW', 'Attendance perfect Weeks', 'Lex Mishra', 'DL-CCOENGEASE'),
+		   ('Generic', 'AED', 'Attendance Earn Back Day', 'Lex Mishra', 'DL-CCOENGEASE'),
+
+		   ('Outliers', 'BRL', 'Exceed Break Length', 'Thias Mercer', 'James P Allen Johns'),
+		   ('Outliers', 'BRN', 'Exceed Number of Breaks', 'Thias Mercer', 'James P Allen Johns'),
+		   ('Outliers', 'IAE', 'Inappropriate ARC Escalation', 'Analytics Team', 'NA'),
+		   ('Outliers', 'IAEF', 'Inappropriate ARC Escalation FFM', 'Analytics Team', 'NA'),
+		   ('Outliers', 'ISQ', 'Inappropriate Short Calls', 'Eric Losby', 'Analytics Team'),
+		   ('Outliers', 'LCS', 'Low CSAT', 'Jennifer G Foster', 'Sue Rager'),
+		   ('Outliers', 'WCP', 'Written Correspondence Process', 'Barbara Kitchen-Powell, Kevin Burchette', 'Analytics Team'),
+
+		   ('Quality ', 'IQS_QN', 'Quality Now', 'Dave Hinman', 'Leslie Keune'),
+
+		
+		   ('Quality Other', 'KUD', 'Kudos', 'Jennifer G Foster', 'Sue Rager'),
+		   ('Quality Other', 'HFC', 'High Five CSAT','Shelly J Encke', 'CCO BSA Team'),
+		   ('Quality Other', 'BQN', 'QN Bingo CSR', 'Eric Losby', 'Analytics Team'),
+		   ('Quality Other', 'BQNS', 'QM Bingo Supervisor', 'Eric Losby', 'Analytics Team'),
+		 
+		   ('Employee Info', 'NA', 'Employee File From IQS', 'Dave Hinman', 'Leslie Keune'),
+		   ('Employee Info', 'NA', 'Employee File From Aspect', 'Susmitha Palacherla', 'Aspect WFM Support')
+
+		   
+GO
+
+--*******************************************************
