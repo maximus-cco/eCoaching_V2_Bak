@@ -1,14 +1,3 @@
-/*
-sp_InactivateCoachingLogsForTerms(04).sql
-Last Modified Date: 6/21/2021
-Last Modified By: Susmitha Palacherla
-
-Version 04: Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
-Version 03: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
-Version 02: Modified to support Encryption of sensitive data -Removed joins on LanID - TFS 7856 - 10/23/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
 
 IF EXISTS (
   SELECT * 
@@ -19,13 +8,12 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms]
 GO
 
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -40,8 +28,10 @@ GO
 --  Modified to support Encryption of sensitive data. Removed joins on LanID. TFS 7856 - 10/23/2017
 -- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
+-- Updated survey expiration timeframe. TFS 24201 - 03/09/2022
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
+
 AS
 BEGIN
 
@@ -117,13 +107,13 @@ AND [InactivationReason] IS NULL;
  WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
 
- -- Inactivate Expired Survey records (5 days after creation date)
+ -- Inactivate Expired Survey records (7 days after creation date)
  
 UPDATE [EC].[Survey_Response_Header]
 SET [Status] = 'Inactive'
 ,[InactivationDate] = GETDATE()
 ,[InactivationReason] = 'Survey Expired'
-WHERE DATEDIFF(DAY, [CreatedDate],  GETDATE())>= 5
+WHERE DATEDIFF(DAY, [CreatedDate],  GETDATE())>= 7
 AND [Status]  = 'Open'
 AND [InactivationReason] IS NULL;
 
@@ -223,6 +213,5 @@ END TRY
 
 END  -- [EC].[sp_InactivateCoachingLogsForTerms]
 GO
-
 
 

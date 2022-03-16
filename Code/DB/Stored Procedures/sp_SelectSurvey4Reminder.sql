@@ -11,14 +11,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --	====================================================================
 --	Author:		       Susmitha Palacherla
 --	Create Date:	   2/25/2016
 --	Description: This procedure queries db for surveys active after 48 hrs to send reminders.
 --  Created  per TFS 2052 to setup reminders for CSR survey.
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
+--  Updated survey reminder timeframe. TFS 24201 - 03/09/2022
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectSurvey4Reminder]
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectSurvey4Reminder]
 AS
 
 BEGIN
@@ -30,7 +33,7 @@ DECLARE
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
-SET @intHrs = 48;
+SET @intHrs = 72;
  
 SET @nvcSQL = '
 SELECT srh.SurveyID	SurveyID	
@@ -39,7 +42,7 @@ SELECT srh.SurveyID	SurveyID
   ,veh.Emp_Email EmpEmail
   ,veh.Emp_Name EmpName
   ,srh.CreatedDate CreatedDate
-  ,CONVERT(VARCHAR(10), DATEADD(dd, 5, srh.CreatedDate), 101) ExpiryDate
+  ,CONVERT(VARCHAR(10), DATEADD(dd, 7, srh.CreatedDate), 101) ExpiryDate
   ,srh.EmailSent EmailSent
 FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
 JOIN [EC].[Survey_Response_Header] srh WITH (NOLOCK) ON veh.Emp_ID = srh.EmpID
@@ -54,3 +57,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectSurvey4Reminder
 GO
+
+
