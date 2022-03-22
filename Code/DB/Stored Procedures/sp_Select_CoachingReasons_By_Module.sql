@@ -1,8 +1,9 @@
 /*
-sp_Select_CoachingReasons_By_Module(05).sql
-Last Modified Date: 11/21/2019
+sp_Select_CoachingReasons_By_Module(06).sql
+Last Modified Date: 03/18/2022
 Last Modified By: Susmitha Palacherla
 
+Version 06: Updated to support Coaching and SubCoaching Reason changes for LSA Module - TFS 24083 - 03/19/2022
 Version 05: Updated to support changes to warnings workflow. TFS 15803 - 11/21/2019
 Version 04: Modified to support updated requirements to replace ETS with Deltek - TFS 15144 - 08/21/2019
 Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
@@ -20,13 +21,12 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module]
 GO
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -40,6 +40,7 @@ GO
 -- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 -- Modified to add Deltek as a Coaching Reason. TFS 15144 - 08/19/2019
 -- Updated to support changes to warnings workflow. TFS 15803 - 11/21/2019
+-- Updated to support Coaching and SubCoaching Reason changes for LSA Module - TFS 24083 - 03/19/2022
 --	=====================================================================
 CREATE PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module] 
 @intModuleIDin INT, @strSourcein nvarchar(30), @isSplReason BIT, @splReasonPrty INT, @strEmpIDin nvarchar(10), @strSubmitterIDin nvarchar(10)
@@ -111,7 +112,7 @@ Where ' + @strModulein +' = 1 and
 IsActive = 1 
 AND ' + @strSourcein +' = 1
 AND [splReason] = 0
-AND [CoachingReasonID] <> 59 
+AND [CoachingReasonID] NOT IN (59,70) 
 Order by  [CoachingReason]'
 
 --Print @nvcSQL
@@ -119,6 +120,7 @@ Order by  [CoachingReason]'
 EXEC (@nvcSQL)	
 END -- sp_Select_CoachingReasons_By_Module
 GO
+
 
 
 

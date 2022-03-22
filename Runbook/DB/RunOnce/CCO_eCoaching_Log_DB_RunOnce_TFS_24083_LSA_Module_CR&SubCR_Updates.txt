@@ -1,0 +1,175 @@
+/*
+TFS 24083 - Updates to LSA Module Coaching abd SubCoaching Reasons
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Add row to Table [EC].[DIM_Coaching_Reason]
+2. Add row to Table [EC].[DIM_SubCoaching_Reason]
+3. Remove No longer needed CRs for LSAs in [EC].[Coaching_Reason_Selection]
+4. Add new rows to [EC].[Coaching_Reason_Selection]
+
+*/
+
+-- Details
+--1. Add row to Table [EC].[DIM_Coaching_Reason]
+
+PRINT ('  Starting record insert to DIM_Coaching_Reason...');
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReason])
+     VALUES
+          ('Flag Entries'),
+		  ('Lead Tasks'),
+		  ('Shift Watch'),
+		  ('Special Projects'),
+		  ('Tickets'),
+		  ('Timekeeping'),
+		  ('Training'),
+		  ('UAT')
+ GO
+
+PRINT (' Insert to DIM_Coaching_Reason Completed...');
+
+WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+--*******************************************************
+
+
+--2. Add record(s) to TABLE [EC].[DIM_SubCoaching_Reason]
+
+PRINT ('  Starting record insert to DIM_SubCoaching_Reason...');
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+('Asset Management'),
+('C3 Ticket Updates'),
+('Cherwell Tickets'),
+('D3 Tasks'),
+('E-Mail Support'),
+('F3 Tasks'),
+('Feedback Audits'),
+('Feedback Trends'),
+('Hours'),
+('Minimum'),
+('Occurrences'),
+('Status Reports'),
+('Tardies'),
+('Training Reminders'),
+('UAT Reminders')
+ GO
+     
+PRINT (' Insert to DIM_SubCoaching_Reason Completed...');
+
+WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+
+
+--*******************************************************
+
+-----Updates to [EC].[Coaching_Reason_Selection]---------
+
+--*******************************************************
+
+--3. Remove No longer needed CRs for LSAs in [EC].[Coaching_Reason_Selection]
+--Corporate / Program Initiatives, Deltek, Quality, Weekly Productivity
+
+PRINT ('  Starting updates to Coaching_Reason_Selection...');
+
+UPDATE [EC].[Coaching_Reason_Selection]
+SET LSA = 0
+WHERE [CoachingReasonID] in (17, 59,10, 20)
+GO
+
+WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+
+UPDATE [EC].[Coaching_Reason_Selection]
+SET LSA = 1
+WHERE CoachingReasonID = 7 AND SubCoachingReasonID = 42
+GO
+
+WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+
+UPDATE [EC].[Coaching_Reason_Selection]
+SET LSA = 0
+WHERE CoachingReasonID = 13 AND SubCoachingReasonID = 76
+GO
+
+PRINT (' Updates to Coaching_Reason_Selection Completed...');
+
+WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+
+
+--*******************************************************
+
+
+--4. Add new rows to [EC].[Coaching_Reason_Selection]
+
+PRINT ('  Starting inserts to Coaching_Reason_Selection...');
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+	 -- Attendance
+	         (3, 'Attendance',291,'Hours',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (3, 'Attendance',293,'Occurrences',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (3, 'Attendance',295,'Tardies',1,1,1,1,1,0,0,0,0,0,1,0),
+	  --Training
+	         (71, 'Training',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,0,0,0,0,1,0),
+	  --Timekeeping
+	         (70, 'Timekeeping',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,0,0,0,0,1,0),
+ 	 -- Feedback
+            (7, 'Feedback',292,'Minimum',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (7, 'Feedback',264,'Quality',1,1,1,1,1,0,0,0,0,0,1,0),
+	  -- Shift Watch
+	         (67, 'Shift Watch',113,'DCF',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (67, 'Shift Watch',287,'E-Mail Support',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (67, 'Shift Watch',290,'Feedback Trends',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (67, 'Shift Watch',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,0,0,0,0,1,0),
+	  --Flag Entries
+	         (65, 'Flag Entries',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,0,0,0,0,1,0),
+      --Tickets
+	         (69, 'Tickets',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,0,0,0,0,1,0),
+	 --UAT
+	         (72, 'UAT',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,0,0,0,0,1,0),
+	  --Other
+	         (14, 'Other',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (14, 'Other',284,'C3 Ticket Updates',1,1,1,1,1,0,0,0,0,0,1,0),
+	   --Lead Tasks
+	         (66, 'Lead Tasks',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (66, 'Lead Tasks',285,'Cherwell Tickets',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (66, 'Lead Tasks',286,'D3 Tasks',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (66, 'Lead Tasks',288,'F3 Tasks',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (66, 'Lead Tasks',294,'Status Reports',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (66, 'Lead Tasks',296,'Training Reminders',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (66, 'Lead Tasks',297,'UAT Reminders',1,1,1,1,1,0,0,0,0,0,1,0),
+	 -- Special Projects
+	                 (68, 'Special Projects',289,'Feedback Audits',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (68, 'Special Projects',283,'Asset Management',1,1,1,1,1,0,0,0,0,0,1,0),
+			 (68, 'Special Projects',42,'Other: Specify reason under coaching details.',1,1,1,1,1,0,0,0,0,0,1,0)
+
+ GO
+
+PRINT (' Inserts to Coaching_Reason_Selection Completed...');
+
+
