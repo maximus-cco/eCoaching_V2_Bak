@@ -39,7 +39,7 @@ namespace eCoachingLog.Controllers
 			}
 
 			int currentPage = (int)Session["currentPage"];
-            action = Constants.PAGE_HISTORICAL_DASHBOARD == currentPage ? "view" : action;
+            action = Constants.PAGE_HISTORICAL_DASHBOARD == currentPage || Constants.PAGE_SURVEY == currentPage ? "view" : action;
 
 			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
 			// Get coaching reasons for this log

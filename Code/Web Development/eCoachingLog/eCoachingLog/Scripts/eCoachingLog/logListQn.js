@@ -1,6 +1,5 @@
 ﻿var myTable;
 $(document).ready(function () {
-    //console.log('read');
 	var length = $('#PageSize').val();
 	// Initialize datatable
 	$(".please-wait").slideDown(500);
@@ -40,20 +39,21 @@ $(document).ready(function () {
                         
 
                         if (showCsrReviewLink === 'True') {
-                            var csrReview = '<a href="#"' + 'data-action="csrReview"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                                'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Review</b></a>';
+                            var csrReview = '<a href="#"' + ' data-action="csrReview"' + ' data-log-id="' + data + '" ' + ' data-is-coaching="' + row["IsCoaching"] + '"' +
+                                ' class="modal-link-qn"' + ' style="border-bottom: blue 0.125em solid;">' + '<b>Review</b></a>';
                             return csrReview;
                         }
 
                         // decide if additional coaching (followup coaching is needed)
                         if (showFollowupReviewLink === 'True') {
-                            var followup = '<a href="#"' + 'data-action="followupReview"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                                'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Review</b></a>';
+                            var followup = '<a href="#"' + ' data-action="followupReview"' + ' data-log-id="' + data + '" ' + ' data-is-coaching="' + row["IsCoaching"] + '"' +
+                                ' class="modal-link-qn"' + ' style="border-bottom: blue 0.125em solid;">' + '<b>Review</b></a>';
                             return followup;
                         }
 
-                        var view = '<a href="#"' + 'data-action="view"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                                'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>View</b></a>';
+                        var view = '<a href="#"' + 'data-action="view"' + ' data-log-id="' + data + '" ' + ' data-is-coaching="' + row["IsCoaching"] + '"' +
+                                ' class="modal-link-qn"' + ' style="border-bottom: blue 0.125em solid;">' + '<b>View</b></a>';
+
                         return view;
                 }
             },

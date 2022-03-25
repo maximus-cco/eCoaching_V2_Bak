@@ -33,8 +33,10 @@ namespace eCoachingLog.Controllers
 				return new FilePathResult(System.Web.Hosting.HostingEnvironment.MapPath(Constants.MAINTENANCE_PAGE), "text/html");
 			}
 
-			string userLanId = User.Identity.Name;
-			userLanId = userLanId.Replace(@"AD\", "");
+            Session["currentPage"] = Constants.PAGE_SURVEY;
+
+            string userLanId = User.Identity.Name;
+            userLanId = userLanId.Replace(@"AD\", "");
 			User user = this.userService.GetUserByLanId(userLanId);
 			if (user == null)
 			{
@@ -51,18 +53,18 @@ namespace eCoachingLog.Controllers
 				isSurveyValid = false;
 				ViewBag.Message = "You are not authorized for this survey.";
 			}
-			else if (String.Equals(Constants.LOG_STATUS_COMPLETED_TEXT, survey.Status, StringComparison.OrdinalIgnoreCase))
-			{
-				isSurveyValid = false;
-				ViewBag.Message = "You have already completed this survey.";
-			}
-			else if (String.Equals(Constants.LOG_STATUS_INACTIVE_TEXT, survey.Status, StringComparison.OrdinalIgnoreCase))
-			{
-				isSurveyValid = false;
-				ViewBag.Message = "This survey has expired.";
-			}
+            else if (String.Equals(Constants.LOG_STATUS_COMPLETED_TEXT, survey.Status, StringComparison.OrdinalIgnoreCase))
+            {
+                isSurveyValid = false;
+                ViewBag.Message = "You have already completed this survey.";
+            }
+            else if (String.Equals(Constants.LOG_STATUS_INACTIVE_TEXT, survey.Status, StringComparison.OrdinalIgnoreCase))
+            {
+                isSurveyValid = false;
+                ViewBag.Message = "This survey has expired.";
+            }
 
-			Session["currentPage"] = Constants.PAGE_SURVEY;
+            Session["currentPage"] = Constants.PAGE_SURVEY;
 
 			if (!isSurveyValid)
 			{

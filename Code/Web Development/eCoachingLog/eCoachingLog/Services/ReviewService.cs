@@ -101,6 +101,11 @@ namespace eCoachingLog.Services
 		{
 			var log = review.LogDetail;
 
+            if (log.IsSurvey && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW && user.IsSupervisor)
+            {
+                return Constants.SURVEY;
+            }
+
 			if (user.EmployeeId == log.ManagerEmpId
 				|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId)
 				|| user.EmployeeId == log.ReassignedToEmpId)
@@ -545,6 +550,11 @@ namespace eCoachingLog.Services
 
 		private string GetNextStatus(Review review, User user)
 		{
+            if (review.LogDetail.IsSurvey)
+            {
+                return Constants.WORKFLOW_SURVEY[review.LogDetail.StatusId];
+            }
+
 			string nextStatus = Constants.LOG_STATUS_UNKNOWN_TEXT;
 			int moduleId = review.LogDetail.ModuleId;
 			// Positive (reinforced, met goal) Ack form

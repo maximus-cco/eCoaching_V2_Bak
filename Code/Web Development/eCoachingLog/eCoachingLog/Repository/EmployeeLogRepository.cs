@@ -151,7 +151,9 @@ namespace eCoachingLog.Repository
 						logDetail.IsMsr = Convert.ToInt16(dataReader["PSC / MSR"]) == 0 ? false : true;
 						logDetail.IsMsrs = Convert.ToInt16(dataReader["PSC / MSRS"]) == 0 ? false : true;
 
-						logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
+                        logDetail.IsSurvey = Convert.ToInt16(dataReader["OTH / SUR"]) == 0 ? false : true;
+
+                        logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
 						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
 
 						logDetail.IsQn = Convert.ToInt16(dataReader["isIQSQN"]) == 1 ? true : false;

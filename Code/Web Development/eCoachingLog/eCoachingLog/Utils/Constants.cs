@@ -145,6 +145,15 @@ namespace eCoachingLog.Utils
         public static readonly List<string> EXCEL_SHEET_NAMES =
             new List<string>() { "eCL", "Short Call eCL", "Quality Now eCL", "Quality Now WebChat", "Quality Now Written Corr" };
 
+        // Start - Workflow section:
+        // survey logs - work flow - < current status, next status>
+        public static readonly Dictionary<int, string> WORKFLOW_SURVEY = new Dictionary<int, string>
+        {
+            { LOG_STATUS_PENDING_SUPERVISOR_REVIEW, LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT },
+            { LOG_STATUS_PENDING_EMPLOYEE_REVIEW, LOG_STATUS_COMPLETED_TEXT }
+        };
+
+        // End - Workflow section
 
         public static readonly Dictionary<string, string> LogTypeToPageName = new Dictionary<string, string>
 		{
@@ -333,6 +342,9 @@ namespace eCoachingLog.Utils
 		public const string RETURN_TO_SITE_3 = "<p>Any equipment you have received for the Work at Home assignment should be returned to your supervisor on your first day of reporting to the site.</p>";
 		public const string RETURN_TO_SITE_4 = "<p>Maximus anticipates that a mutually beneficial employment relationship will continue as you work at the ";
 		public const string RETURN_TO_SITE_4_1 = " site.</p>";
+
+        // Survey
+        public const string SURVEY = "Please contact your survey point of contact and/or manager with any questions.";
 	}
 
 	public enum EmployeeLogType

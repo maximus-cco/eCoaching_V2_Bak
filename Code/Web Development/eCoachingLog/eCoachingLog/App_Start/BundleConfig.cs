@@ -111,7 +111,8 @@ namespace eCoachingLog
 			var surveyScriptBundle = new ScriptBundle("~/bundles/scripts/survey");
 			surveyScriptBundle.Orderer = new EclBundleOrderer();
 			surveyScriptBundle.Include(
-						"~/Scripts/eCoachingLog/survey.js");
+						"~/Scripts/eCoachingLog/survey.js",
+                        "~/Scripts/eCoachingLog/dashboardCommon.js");
 			bundles.Add(surveyScriptBundle);
 
 			// css across web app

@@ -1,6 +1,6 @@
 ﻿@model eCoachingLog.ViewModels.SurveyViewModel
 @using eCoachingLog.Models.Survey
-<div class="containter-fluid" style="padding-bottom: 50px; ">
+<div class="containter-fluid" style="padding-bottom: 50px; padding-left: 20px; padding-right: 10px;">
 	<div class="row" style="padding-bottom: 20px; ">
 		The CCO Leadership team is asking for your help in providing feedback on your coaching experience. Please take a few minutes to complete this survey. The details from the surveys will be used to improve the effectiveness, content and delivery of discussions regarding your performance. Your comments and feedback will be anonymous and will not be attributed directly to your individual survey.
 		This survey is for <a href="#" class="modal-link" data-log-id="@Model.Survey.LogId" data-is-coaching="true">@Model.Survey.LogName</a>.
@@ -53,5 +53,9 @@
 	</div>
 }
 </div>
+
+<script>
+    var getLogDetailsUrl = '@Url.Action("Index", "Review")';
+</script>
 
 @Scripts.Render("~/bundles/scripts/survey")
