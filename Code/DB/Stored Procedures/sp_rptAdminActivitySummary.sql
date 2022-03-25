@@ -20,18 +20,11 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_rptAdminActivitySummary]
 GO
 
-
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
@@ -42,14 +35,16 @@ GO
 --  Revision History:
 --  Initial Revision - TFS 5621 - 4/10/2017
 --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
+--  Modified to add new Search paramter. TFS 24056 - 03/23/2022
  *******************************************************************************/
-CREATE PROCEDURE [EC].[sp_rptAdminActivitySummary] 
+CREATE OR ALTER PROCEDURE [EC].[sp_rptAdminActivitySummary] 
 (
 @strTypein nvarchar(10),
 @strActivityin nvarchar(20),
-@strFormin nvarchar(50),
-@strSDatein datetime,
-@strEDatein datetime,
+@strFormin nvarchar(50)= '',
+@strSDatein datetime = '',
+@strEDatein datetime = '',
+@strSearchin nvarchar(50),
 
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
@@ -81,11 +76,13 @@ SET NOCOUNT ON
 
 DECLARE	
 @strSDate nvarchar(10),
-@strEDate nvarchar(10)
+@strEDate nvarchar(10),
+@strSearch nvarchar(52)
+
 
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 SET @strEDate = convert(varchar(8),@strEDatein,112)
-
+SET @strSearch = '%' + @strSearchin + '%'
 
 -- Open Symmetric Key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
@@ -118,9 +115,11 @@ FROM [EC].[AT_Coaching_Inactivate_Reactivate_Audit]cira JOIN [EC].[Coaching_Log]
   ON cira.CoachingID = cl.CoachingID JOIN [EC].[DIM_Module] dm
   ON cl.ModuleID = dm.ModuleID JOIN [EC].[DIM_Status]ds
   ON cira.LastKnownStatus = ds.StatusID LEFT OUTER JOIN [EC].[Employee_Hierarchy]rh
-  ON cira.RequesterID = rh.Emp_ID
-WHERE convert(varchar(8),cira.ActionTimestamp,112) >= @strSDate
-AND convert(varchar(8),cira.ActionTimestamp,112) <= @strEDate
+  ON cira.RequesterID = rh.Emp_ID LEFT OUTER JOIN [EC].[Employee_Hierarchy] eh
+  ON cl.EmpID = eh.Emp_ID
+WHERE (convert(varchar(8),cira.ActionTimestamp,112) >= @strSDate
+AND convert(varchar(8),cira.ActionTimestamp,112) <= @strEDate)
+AND (CONVERT(nvarchar(50),DecryptByKey(eh.Emp_Name)) LIKE @strSearch OR cira.FormName LIKE @strSearch)
 
 UNION
 
@@ -137,10 +136,12 @@ FROM [EC].[AT_Coaching_Reassign_Audit]cra JOIN [EC].[Coaching_Log]cl
   ON cra.CoachingID = cl.CoachingID JOIN [EC].[DIM_Module] dm
   ON cl.ModuleID = dm.ModuleID JOIN [EC].[DIM_Status]ds
   ON cra.LastKnownStatus = ds.StatusID LEFT OUTER JOIN [EC].[Employee_Hierarchy]rh
-  ON cra.RequesterID = rh.Emp_ID LEFT OUTER JOIN [EC].[Employee_Hierarchy]ah
-  ON cra.AssignedToID = ah.Emp_ID
-WHERE convert(varchar(8),cra.ActionTimestamp,112) >= @strSDate
-AND convert(varchar(8),cra.ActionTimestamp,112) <= @strEDate
+  ON cra.RequesterID = rh.Emp_ID  LEFT OUTER JOIN [EC].[Employee_Hierarchy]ah
+  ON cra.AssignedToID = ah.Emp_ID LEFT OUTER JOIN [EC].[Employee_Hierarchy] eh
+  ON cl.EmpID = eh.Emp_ID
+WHERE (convert(varchar(8),cra.ActionTimestamp,112) >= @strSDate
+AND convert(varchar(8),cra.ActionTimestamp,112) <= @strEDate)
+AND (CONVERT(nvarchar(50),DecryptByKey(eh.Emp_Name)) LIKE @strSearch OR cra.FormName LIKE @strSearch)
 )
 
 END
@@ -174,9 +175,11 @@ FROM [EC].[AT_Warning_Inactivate_Reactivate_Audit]wira JOIN [EC].[Warning_Log]wl
   ON wira.WarningID = wl.WarningID JOIN [EC].[DIM_Module] dm
   ON wl.ModuleID = dm.ModuleID JOIN [EC].[DIM_Status]ds
   ON wira.LastKnownStatus = ds.StatusID LEFT OUTER JOIN [EC].[Employee_Hierarchy]rh
-  ON wira.RequesterID = rh.Emp_ID
-WHERE convert(varchar(8),wira.ActionTimestamp,112) >= @strSDate
-AND convert(varchar(8),wira.ActionTimestamp,112) <= @strEDate
+  ON wira.RequesterID = rh.Emp_ID LEFT OUTER JOIN [EC].[Employee_Hierarchy] eh
+  ON wl.EmpID = eh.Emp_ID
+WHERE (convert(varchar(8),wira.ActionTimestamp,112) >= @strSDate
+AND convert(varchar(8),wira.ActionTimestamp,112) <= @strEDate)
+AND (CONVERT(nvarchar(50),DecryptByKey(eh.Emp_Name)) LIKE @strSearch OR wira.FormName LIKE @strSearch)
 )
 END
 
