@@ -37,8 +37,9 @@ GO
 -- TFS 18154 - To add IDD - 09/15/2020
 -- TFS 19502  - To add AED - 11/30/2020
 -- TFS 23048 - To add WCP - 10/4/2021
+-- TFS 24347 - To add SUR - 03/22/2022
 -- =============================================
-CREATE OR ALTER FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
+CREATE OR ALTER   FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
 )
 RETURNS INT
@@ -91,6 +92,7 @@ BEGIN
 			WHEN N'AED' THEN 282
 			WHEN N'IDD' THEN 281
 			WHEN N'WCP' THEN 42
+			WHEN N'SUR' THEN 42
         ELSE -1
       END;
     ELSE
@@ -100,5 +102,6 @@ RETURN @intSubCoachReasonID
 
 END  -- fn_intSubCoachReasonIDFromRptCode()
 GO
+
 
 

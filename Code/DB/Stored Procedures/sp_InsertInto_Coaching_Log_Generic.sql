@@ -1,18 +1,3 @@
-/*
-sp_InsertInto_Coaching_Log_Generic(06).sql
-Last Modified Date:  11/30/2020
-Last Modified By: Susmitha Palacherla
-
-Version 06: Modified to support ATT AED feed. TFS 19502  - 11/30/2020
-Version 05: Modified to support ATT AP% feeds. TFS 15095  - 08/27/2019
-Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
-Version 03: Modified to support Encryption of sensitive data. Open Key and Removed LanID- TFS 7856 - 10/23/2017
-Version 02: Updated to support DTT feed - TFS 7646 -  9/1/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -21,7 +6,6 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic]
 GO
-
 
 SET ANSI_NULLS ON
 GO
@@ -40,8 +24,9 @@ GO
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Modified to support ATT AP% feeds. TFS 15095  - 8/27/2019
 -- Modified to support AED feed. TFS 19502  - 11/30/2020
+-- Modified to support SUR feed. TFS 24347  - 03/25/2022
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
 @Count INT OUTPUT
 
 AS
@@ -192,8 +177,8 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     SELECT cf.[CoachingID],
     
   CASE 
-		 WHEN cs.[Report_Code] like 'OTH%' 
-		 THEN cs.CoachingReason_ID	
+		 WHEN cs.[Report_Code] like 'OTH%' THEN cs.CoachingReason_ID	
+		 WHEN cs.[Report_Code] like 'SUR%' THEN 5	
 		 ELSE 3	
  END [CoachingReasonID],
  
@@ -254,4 +239,6 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Generic
 GO
+
+
 

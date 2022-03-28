@@ -8,6 +8,7 @@ GO
 
 
 
+
 SET ANSI_NULLS ON
 GO
 
@@ -28,10 +29,11 @@ GO
 --  Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 --  Changes to support AED feed. TFS 19502  - 11/30/2020
 --  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
--- Updated to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
+--  Updated to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
+--  Changes to support SUR feed. TFS 24347  - 03/25/2022
 --	=====================================================================
 
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
+CREATE OR ALTER   PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
 AS
 
 BEGIN
@@ -179,6 +181,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   CASE WHEN (cc.KUD IS NOT NULL AND cl.strReportCode LIKE ''KUD%'') THEN 1 ELSE 0 END "Quality / KUD",
   CASE WHEN (cc.OTA IS NOT NULL AND cl.strReportCode LIKE ''OTA%'') THEN 1 ELSE 0 END "Quality / OTA",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''NPN%'') THEN 1 ELSE 0 END "Quality / NPN",
+  CASE WHEN (cc.SUR IS NOT NULL AND cl.strReportCode LIKE ''SUR%'') THEN 1 ELSE 0 END "OTH / SUR",
   CASE WHEN (cc.SEA IS NOT NULL AND cl.strReportCode LIKE ''SEA%'') THEN 1 ELSE 0 END "OTH / SEA",
   CASE WHEN (cc.DTT IS NOT NULL AND cl.strReportCode LIKE ''DTT%'') THEN 1 ELSE 0 END "OTH / DTT",
   CASE WHEN (cc.ATTAP IS NOT NULL AND cl.strReportCode LIKE ''APW%'') THEN 1 ELSE 0 END "OTH / APW",
@@ -254,6 +257,7 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 282) THEN [clr].[Value] ELSE NULL END) AED,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 252) THEN [clr].[Value] ELSE NULL END) ATTAP,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SUR,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 63) THEN [clr].[Value] ELSE NULL END)	WAH_RTS
   FROM [EC].[Coaching_Log_Reason] clr  WITH (NOLOCK),
     [EC].[DIM_Coaching_Reason] cr,
