@@ -51,7 +51,7 @@ $(document).ready(function () {
                             return followup;
                         }
 
-                        var view = '<a href="#"' + 'data-action="view"' + ' data-log-id="' + data + '" ' + ' data-is-coaching="' + row["IsCoaching"] + '"' +
+                        var view = '<a href="#"' + ' data-action="view"' + ' data-log-id="' + data + '"' + ' data-is-coaching="' + row["IsCoaching"] + '"' +
                                 ' class="modal-link-qn"' + ' style="border-bottom: blue 0.125em solid;">' + '<b>View</b></a>';
 
                         return view;

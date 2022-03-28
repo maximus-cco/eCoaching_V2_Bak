@@ -101,7 +101,9 @@ namespace eCoachingLog.Services
 		{
 			var log = review.LogDetail;
 
-            if (log.IsSurvey && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW && user.IsSupervisor)
+            if (log.IsSurvey 
+                && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW 
+                && (user.IsSupervisor|| log.ReassignedToEmpId == user.EmployeeId))
             {
                 return Constants.SURVEY;
             }
