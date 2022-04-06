@@ -1,17 +1,3 @@
-/*
-sp_Update_Coaching_Log_Quality_Now(07).sql
-Last Modified Date: 6/8/2021
-Last Modified By: Susmitha Palacherla
-
-Version 07: Updated to support special characters in description texts in IQS feeds. TFS 21496 - 6/8/2021
-Version 06: Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
-Version 05: Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
-Version 04: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
-Version 03: Fix bug with updates to QNStrengthsOpportunities  - TFS 14555 - 06/03/2019
-Version 02: Updates from Unit and System testing - TFS 13332 - 04/20/2019
-Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
-*/
-
 
 IF EXISTS (
   SELECT * 
@@ -22,11 +8,14 @@ IF EXISTS (
    DROP PROCEDURE [EC].[sp_Update_Coaching_Log_Quality_Now]
 GO
 
+
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --    ===========================================================================================
 -- Author:           Susmitha Palacherla
@@ -38,9 +27,9 @@ GO
 -- Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- Updated to support special characters in description texts in IQS feeds. TFS 21496 - 6/8/2021
-
+-- Updated to reconcile partial batches. TFS 24460 - 04/06/2022
 --    ===========================================================================================
-CREATE PROCEDURE [EC].[sp_Update_Coaching_Log_Quality_Now] AS
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Coaching_Log_Quality_Now] AS
 BEGIN
 
 SET NOCOUNT ON;
@@ -290,6 +279,58 @@ CONCAT(cqe.[EvalStatus] , '|'
 	AND qne.QNBatchID = temp.QNBatchID
 	AND qne.Eval_ID = temp.EvalID ;
 
+	  -- Insert Missing Evaluation details for Existing logs into Evaluations table
+
+	  INSERT INTO [EC].[Coaching_Log_Quality_Now_Evaluations]
+       SELECT DISTINCT
+	    qcs.[QN_Batch_ID]
+	   ,cl.[CoachingID]
+	   ,qcs.[Eval_ID]
+      ,qcs.[Eval_Date]
+      ,qcs.[Evaluator_ID]
+      ,qcs.[Call_Date]
+      ,qcs.[Journal_ID]
+      ,qcs.[EvalStatus]
+     ,'NA'
+      ,qcs.[Program]
+      ,qcs.[VerintFormName]
+      ,qcs.[isCoachingMonitor]
+      ,qcs.[Business_Process]
+      ,qcs.[Business_Process_Reason]
+      ,qcs.[Business_Process_Comment]
+      ,qcs.[Info_Accuracy]
+      ,qcs.[Info_Accuracy_Reason]
+      ,qcs.[Info_Accuracy_Comment]
+      ,qcs.[Privacy_Disclaimers]
+      ,qcs.[Privacy_Disclaimers_Reason]
+      ,qcs.[Privacy_Disclaimers_Comment]
+      ,qcs.[Issue_Resolution]
+      ,qcs.[Issue_Resolution_Comment]
+      ,qcs.[Call_Efficiency]
+      ,qcs.[Call_Efficiency_Comment]
+      ,qcs.[Active_Listening]
+      ,qcs.[Active_Listening_Comment]
+      ,qcs.[Personality_Flexing]
+      ,qcs.[Personality_Flexing_Comment]
+      ,qcs.[Customer_Temp_Start]
+      ,qcs.[Customer_Temp_Start_Comment]
+      ,qcs.[Customer_Temp_End]
+      ,qcs.[Customer_Temp_End_Comment]
+	  ,GetDate()
+	  ,GetDate()
+	  ,qcs.[Channel]
+      ,qcs.[ActivityID]
+      ,qcs.[DCN]
+      ,qcs.[CaseNumber]
+	  ,qcs.[Reason_For_Contact]
+      ,qcs.[Contact_Reason_Comment]
+	  FROM EC.Quality_Now_Coaching_Stage qcs 
+	  INNER JOIN EC.Coaching_Log cl WITH (NOLOCK) ON qcs.QN_Batch_ID = cl.QNBatchID
+	  LEFT JOIN [EC].[Coaching_Log_Quality_Now_Evaluations] qe 
+	  ON (qcs.QN_Batch_ID = qe.QNBatchID AND qcs.Eval_ID = qe.Eval_ID)
+	  WHERE (qe.Eval_ID IS NULL AND cl.statusid NOT IN (1,2) AND qcs.QN_Batch_Status = 'Active' AND qcs.[EvalStatus]= 'Active');
+
+
   COMMIT TRANSACTION
 END TRY
 BEGIN CATCH
@@ -307,7 +348,6 @@ END CATCH
 END -- [EC].[sp_Update_Coaching_Log_Quality_Now]
 
 GO
-
 
 
 
