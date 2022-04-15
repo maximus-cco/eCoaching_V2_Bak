@@ -1,0 +1,33 @@
+/*
+TFS 24519 - Bingo logs upload to SharePoint for any given month
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Create Table [EC].[Bingo_Upload_Dates]
+
+
+
+*/
+-- Details
+--1. Create Table [EC].[Bingo_Upload_Dates]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Bingo_Upload_Dates](
+	[BeginDate] [datetime] NULL,
+	[EndDate] [datetime] NULL
+) ON [PRIMARY]
+GO
+
+--**********************

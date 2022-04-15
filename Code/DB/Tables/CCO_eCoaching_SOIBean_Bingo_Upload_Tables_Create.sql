@@ -1,20 +1,24 @@
 /*
-Last Modified Date: 12/21/2020
+Last Modified Date: 04/14/2022
 Last Modified By: Susmitha Palacherla
 
+Version 03: Modified to support upload for any given month. TFS 24519 - 04/14/2022
 Version 02: Updated to remove CoachingLogID - TFS 19526 - 12/21/2020
 Version 01: Document Initial Revision - TFS 19526 - 12/15/2020
 
 
 **************************************************************
 
---Table list
+--Table and Table Typelist
 
 **************************************************************
 
-
+--Tables
 1. CREATE TABLE EC.Coaching_Log_Bingo_SharePoint_Uploads
-2. CREATE TABLE TYPE EC.SharepointUploadBingoTableType
+2. CREATE TABLE [EC].[Bingo_Upload_Dates]
+
+--Table Types
+1. CREATE TABLE TYPE EC.SharepointUploadBingoTableType
 
 
 **************************************************************
@@ -56,7 +60,24 @@ CREATE TABLE [EC].[Coaching_Log_Bingo_SharePoint_Uploads](
 ) ON [PRIMARY]
 GO
 
+-- 2. EC.Bingo_Upload_Dates
 
+IF  EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[EC].[Bingo_Upload_Dates]') AND type in (N'U'))
+DROP Table [EC].[Bingo_Upload_Dates]
+*/
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Bingo_Upload_Dates](
+	[BeginDate] [datetime] NULL,
+	[EndDate] [datetime] NULL
+) ON [PRIMARY]
+GO
 
 --******************************
 
@@ -80,6 +101,6 @@ GO
 
 
 
-
+--******************************
 
 	    

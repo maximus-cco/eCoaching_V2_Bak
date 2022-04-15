@@ -1,7 +1,8 @@
 /*
-Last Modified Date: 12/21/2020
+Last Modified Date: 04/14/2022
 Last Modified By: Susmitha Palacherla
 
+Version 02: Modified to support upload for any given month. TFS 24519 - 04/14/2022
 Version 01: Initial Revision - Extract bingo logs from ecl and post to share point sites. TFS 19526 - 12/8/2020
 */
 
@@ -24,8 +25,12 @@ GO
 CREATE VIEW [EC].[View_Coaching_Log_Bingo_Upload_Dates]
 AS  
 
-SELECT BeginDate =  DATEADD(DD,1,EOMONTH(Getdate(),-2)), -- For First day of previous month use -2
-       EndDate = EOMONTH(Getdate(), -1); --For Last Day of previous month use -1
+SELECT TOP 1 BeginDate, EndDate FROM
+(SELECT BeginDate,EndDate, 1 AS Sortorder FROM [EC].[Bingo_Upload_Dates]
+UNION ALL
+-- For First day of previous month use -2 & For Last Day of previous month use -1
+SELECT DATEADD(DD,1,EOMONTH(Getdate(),-2)) AS BeginDate, EOMONTH(Getdate(), -1) AS EndDate , 2 AS Sortorder) dates 
+ORDER BY Sortorder
 
 GO
 
