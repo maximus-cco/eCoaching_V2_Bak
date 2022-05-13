@@ -2,7 +2,7 @@
 
 ' Begin - Environment Related
 Const dbConnStr = "Provider=SQLOLEDB;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=eCoaching;Data Source=UVAAPADSQL50CCO"
-Const eCoachingUrl = "https://uvaapadweb50cco.ad.local/ecl_Prod/Survey"
+Const eCoachingUrl = "https://uvaapadweb50cco.ad.local/ecl/Survey"
 Const fromAddress = "eCoachingProd@maximus.com"
 Const imgPath = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\images\BCC-eCL-LOGO-10142011-185x40.png"
 Const strLogFile = "\\UVAAPADSQL50CCO.ad.local\ssis\coaching\Notifications\Logs\Reminders_Survey_Prod.log"
