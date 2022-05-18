@@ -1,0 +1,14 @@
+﻿<div class="mt-2">
+	<strong>Employee Review Information:</strong><br />
+	<div class='@(string.IsNullOrEmpty(Model.LogDetail.EmployeeReviewDate) ? "hide" : "show")'>
+		@Model.LogDetail.EmployeeName<br />
+		@Model.LogDetail.EmployeeReviewLabel @Model.LogDetail.EmployeeReviewDate
+	</div>
+</div>
+
+<div class="mt-2" style="padding-bottom: 5px;">
+	<strong>Employee Comments/Feedback:</strong><br />
+	@Model.LogDetail.Comment
+</div>
+
+

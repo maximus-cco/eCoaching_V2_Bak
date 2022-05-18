@@ -1,0 +1,21 @@
+﻿<div class="ecl-page-header">Historical Dashboard</div>
+<div id="div-historical-index">
+	<div id="div-search">
+		@{ Html.RenderPartial("_Search"); }
+	</div>
+
+	<div id="div-search-result" class="hide">
+		<div class='pull-right @(@Model.IsExportExcel ? "show" : "hide")'>
+			<button class="btn btn-link " type="submit" id="btn-export-excel">
+				<span class="glyphicon glyphicon-export"></span>&nbsp;Export to Excel
+			</button>
+		</div>
+		<br /><br />
+		<div id="div-log-list"></div>
+	</div>
+</div>
+<script>
+    var getLogDetailsUrl = '@Url.Action("Index", "Review")';
+</script>
+
+@Scripts.Render("~/bundles/scripts/historicalDashboard")

@@ -1,0 +1,20 @@
+﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+<!-- Warning question, this is for direct report only -->
+<div id="div-warning-choice" class='@(@Model.ShowWarningChoice ? "show" : "hide")'>
+    <input type="hidden" id="hdIsWarning" />
+    <div class="form-group">
+        <label for="module" class="col-sm-3 control-label required">Do you need to submit a progressive disciplinary coaching (WARNING)?</label>
+        <div class="col-sm-4">
+            <div class="radio">
+                <div class="col-sm-2">
+                    @Html.RadioButtonFor(m => m.IsWarning, "true") Yes
+                </div>
+                <div class="col-sm-2">
+                    @Html.RadioButtonFor(m => m.IsWarning, "false") No
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of div-warning-choice -->

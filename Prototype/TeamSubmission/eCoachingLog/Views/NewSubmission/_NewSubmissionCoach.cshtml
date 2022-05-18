@@ -1,0 +1,177 @@
+﻿@using eCoachingLog.Utils
+@model eCoachingLog.ViewModels.NewSubmissionViewModel
+@{
+	var dateLabel = "Select the date of event:";
+	if (Model.IsCoachingByYou.HasValue && Model.IsCoachingByYou.Value)
+	{
+		dateLabel = "Select the date of coaching:";
+	}
+}
+
+<div class="form-group">
+	<label for="coaching-date" class="col-sm-3 control-label required" id="label-coaching-date">@dateLabel</label>
+    <div class="col-sm-2">
+        <div class="input-group">
+            @Html.TextBoxFor(m => m.CoachingDate, new { @class = "form-control date-no-manual-input", @id = "coaching-date", @placeholder = "MM/DD/YYYY" })
+        </div>
+        @Html.ValidationMessageFor(m => m.CoachingDate)
+    </div>
+</div>
+
+<div class='form-group @(@Model.ShowIsCseChoice ? "show" : "hide")'>
+    <label class="col-sm-3 control-label required">Is this a Customer Service Escalation (CSE)?</label>
+    <div class="col-sm-4">
+        <div class="radio">
+            <div class="col-sm-2">
+                @Html.RadioButtonFor(m => m.IsCse, "true") Yes
+            </div>
+            <div class="col-sm-2">
+                @Html.RadioButtonFor(m => m.IsCse, "false") No
+            </div>
+        </div>
+        @Html.ValidationMessageFor(m => m.IsCse)
+    </div>
+</div>
+
+<!-- Coaching Reasons/SubReasons -->
+<div id="div-coach-reasons">
+    <div class="form-group">
+        <label for="CoachingReason" class="col-sm-3 control-label required">Select the Type of Coaching from the Categories:</label>
+        <div class="col-sm-9">
+            <div style="padding: 10px 15px 10px 0px;" id="collapse-accordion">
+                <a href="#coaching-reasons" data-toggle="collapse" data-parent="#collapse-accordion" >
+                    Coaching Reasons
+                </a>
+                @{Html.RenderPartial("_NewSubmissionCoachingReasons"); }
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class='form-group @(@Model.ShowPfdCompletedDate ? "show" : "hide")' id='div-pfd-compmlete-date'>
+    <label for="pfd-complete-date" class="col-sm-3 control-label required" id="label-pfd-complete-date">Select the date the PFD was completed:</label>
+    <div class="col-sm-2">
+        <div class="input-group">
+            @Html.TextBoxFor(m => m.PfdCompletedDate, new { @class = "form-control date-no-manual-input", @id = "pfd-complete-date", @placeholder = "MM/DD/YYYY" })
+        </div>
+        @Html.ValidationMessageFor(m => m.PfdCompletedDate)
+    </div>
+</div>
+
+<div class='form-group @(@Model.IsWorkAtHomeReturnSite ? "show" : "hide")' id='div-wah-behavior'>
+	<label for="BehaviorDetail" class="col-sm-3 control-label required">Provide details of the behavior to be coached:</label>
+	<div class="col-sm-8">
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_1))
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2)) 
+
+		<label class="required"></label>@Html.TextBoxFor(m => m.ReturnToSiteDate, new { @placeholder = "MM/DD/YYYY" }) 
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2_1)) 
+		
+		<label class="required"></label>
+		@*@Html.TextBoxFor(m => m.ReturnToSite, new { @placeholder = "site" })*@ 
+		@Html.DropDownListFor(m => m.ReturnToSite, Model.SiteNameSelectList)
+		
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2_2))
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2_3)) 
+
+		<label class="required"></label>
+		@Html.TextBoxFor(m => m.ReturnToSupervisor, new { @placeholder = "supervisor" })
+		
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2_4))
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_2_5))
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_3))
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_4)) 
+		<label class="required"></label><input type="text" id="input-return-site-readonly" readonly/> 
+		@Html.Raw(WebUtility.HtmlDecode(@Constants.RETURN_TO_SITE_4_1))
+
+
+		@Html.ValidationMessageFor(m => m.ReturnToSiteDate)
+		@Html.ValidationMessageFor(m => m.ReturnToSite)
+		@Html.ValidationMessageFor(m => m.ReturnToSupervisor)
+	</div>
+</div>
+
+<div class='form-group @(@Model.IsWorkAtHomeReturnSite ? "hide" : "show")' id="div-none-wah-behavior">
+	<label for="BehaviorDetail" class="col-sm-3 control-label required">Provide details of the behavior to be coached:</label>
+	<div class="col-sm-7">
+		@Html.TextAreaFor(m => m.BehaviorDetail, new { @class = "form-control", @rows = "5", id = "textarea-behavior-detail", maxlength = 3000 })
+		<div class="help-block">
+			Provide as much detail as possible and include all the items from the coaching category.
+			<span id="behavior-detail-remaining" class="pull-right">3000 remaining</span>
+		</div>
+		@Html.ValidationMessageFor(model => model.BehaviorDetail)
+	</div>
+</div>
+
+<div class='form-group @(@Model.ShowActionTextBox ? "show" : "hide")' id="div-action-plans">
+	<label for="ActionPlans" class="col-sm-3 control-label required">Provide the details from the coaching session including action plans developed:</label>
+	<div class="col-sm-7">
+		@Html.TextAreaFor(m => m.ActionPlans, new { @class = "form-control", @rows = "5", id = "textarea-action-plan", maxlength = 3000 })
+		<div class="help-block">
+			Provide as much detail as possible.
+			<span id="action-plan-remaining" class="pull-right">3000 remaining</span>
+		</div>
+		@Html.ValidationMessageFor(model => model.ActionPlans)
+	</div>
+</div>
+
+<div class='form-group @(@Model.ShowFollowup ? "show" : "hide")'>
+	<label class="col-sm-3 control-label required">Is follow-up required?</label>
+	<div class="col-sm-4">
+		<div class="radio">
+			<div class="col-sm-2">
+				@Html.RadioButtonFor(m => m.IsFollowupRequired, true) Yes
+			</div>
+			<div class="col-sm-2">
+				@Html.RadioButtonFor(m => m.IsFollowupRequired, false) No
+			</div>
+		</div>
+		@Html.ValidationMessageFor(m => m.IsFollowupRequired)
+	</div>
+</div>
+
+<div class='form-group @(Model.IsFollowupRequired.HasValue && Model.IsFollowupRequired.Value ? "show" : "hide")' id="div-is-followup-required">
+	<label for="followup-date" class="col-sm-3 control-label required" id="label-followup-date">Select the date of follow-up:</label>
+	<div class="col-sm-2">
+		<div class="input-group">
+			@Html.TextBoxFor(m => m.FollowupDueDate, new { @class = "form-control date-no-manual-input-followup-date", @id = "followup-date", @placeholder = "MM/DD/YYYY" })
+		</div>
+		@Html.ValidationMessageFor(m => m.FollowupDueDate)
+	</div>
+</div>
+
+<div id="div-source" class="form-group">
+	<label for="SourceId" class="col-sm-3 control-label required">How was the coaching opportunity identified?</label>
+	<div class="col-sm-3">
+		@Html.DropDownListFor(m => m.SourceId, Model.SourceSelectList, new { @class = "form-control", id = "select-source" })
+		@Html.ValidationMessageFor(model => model.SourceId)
+	</div>
+</div>
+
+<div class="form-group @(@Model.ShowCallTypeChoice ? "show" : "hide")">
+	<label class="col-sm-3 control-label required">Is there a Call Record associated with the coaching?</label>
+	<div class="col-sm-4">
+		<div class="radio">
+			<div class="col-sm-2">
+				@Html.RadioButtonFor(m => m.IsCallAssociated, "true") Yes
+			</div>
+			<div class="col-sm-2">
+				@Html.RadioButtonFor(m => m.IsCallAssociated, "false") No
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='form-group @(@Model.IsCallAssociated ? "show" : "hide")' id="div-is-call-related">
+	<div class="col-sm-3 col-sm-offset-3">
+		<div class="input-group">
+			@Html.DropDownListFor(m => m.CallTypeName, Model.CallTypeSelectList, new { @class = "form-control", id = "select-call-id-type" })
+			<span class="input-group-addon" style="width:0px; padding-left:0px; padding-right:0px; border:none;"></span>
+			@Html.TextBoxFor(m => m.CallId, new { @class = "form-control" })
+		</div>
+		@Html.ValidationMessageFor(model => model.CallId)
+	</div>
+</div>
+
+<script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>

@@ -1,0 +1,32 @@
+﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+<!-- Warning detail, shows only if the answer to the above question is Yes -->
+<div class="form-group">
+    <label for="select-warning-type" class="col-sm-3 control-label required">Please select type of warning:</label>
+    <div class="col-sm-2">
+        @Html.DropDownListFor(m => m.WarningTypeId , Model.WarningTypeSelectList, new { @class = "form-control", id = "select-warning-type" })
+        @Html.ValidationMessageFor(m => m.WarningTypeId)
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="select-warning-reason" class="col-sm-3 control-label required">Please select warning reason:</label>
+    <div class="col-sm-2">
+        @Html.DropDownListFor(m => m.WarningReasonId, Model.WarningReasonSelectList, new { @class = "form-control", id = "select-warning-reason" })
+        @Html.ValidationMessageFor(m => m.WarningReasonId)
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="warning-date" class="col-sm-3 control-label required">Select the date the warning was issued:</label>
+    <div class="col-sm-2">
+        <div class="input-group">
+            @Html.TextBoxFor(m => m.WarningDate, new { @class = "form-control  date-no-manual-input", @placeholder = "MM/DD/YYYY" })
+        </div>
+        @Html.ValidationMessageFor(m => m.WarningDate)
+    </div>
+</div>
+<!-- end of div-warning-detail -->
+
+@*<script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>*@
+

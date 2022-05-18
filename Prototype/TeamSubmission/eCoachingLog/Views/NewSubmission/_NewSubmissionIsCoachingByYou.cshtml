@@ -1,0 +1,17 @@
+﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+<hr>
+<div class="form-group">
+    <label class="col-sm-3 control-label required">Will you be delivering the coaching session?</label>
+    <div class="col-sm-8">
+        <div class="radio">
+            <div class="col-sm-1">
+                @Html.RadioButtonFor(m => m.IsCoachingByYou, "true") Yes
+            </div>
+            <div class="col-sm-7">
+                @Html.RadioButtonFor(m => m.IsCoachingByYou, "false") No, I will not be delivering the coaching session.
+            </div>
+        </div>
+        @Html.ValidationMessageFor(m => m.IsCoachingByYou)
+    </div>
+</div>

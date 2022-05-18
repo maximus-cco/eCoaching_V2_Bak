@@ -1,0 +1,49 @@
+﻿@using eCoachingLog.Utils
+<div class="row">
+	<div class="col-xs-9">
+		<div class="panel panel-default">
+			@if (Model.LogCountForSiteList.Count > 7)
+			{
+				<div class="chart-container-big">
+					<canvas id="myBar"></canvas>
+				</div>
+			}
+			else if (Model.LogCountForSiteList.Count <4)
+			{
+				<div class="chart-container-medium">
+					<canvas id="myBar"></canvas>
+				</div>
+			}
+			else
+			{
+				<div class="chart-container">
+					<canvas id="myBar"></canvas>
+				</div>
+			}
+		</div>
+	</div>
+
+	<div class="col-xs-3">
+		<div class="panel panel-default">
+			@{ Html.RenderPartial("_CountBySite"); }
+		</div>
+	</div>
+</div>
+
+<!-- Log List -->
+<div id="div-search-result-director" class="hide">
+	<div class='pull-right @(@Model.Search.LogType == Constants.LOG_SEARCH_TYPE_MY_SITE_WARNING ? "hide" : "show")'>
+		<button class="btn btn-link " type="submit" id="btn-export-excel-director">
+			<span class="glyphicon glyphicon-export"></span>&nbsp;Export to Excel
+		</button>
+	</div>
+	<br />
+	<div id="div-log-list"></div>
+</div>
+
+<script>
+	var exportToExcelUrl = '@Url.Action("ExportToExcelDirector", "MyDashboard")';
+	var downloadExcelUrl = '@Url.Action("Download", "MyDashboard")';
+</script>
+
+@Scripts.Render("~/bundles/scripts/eclChart")

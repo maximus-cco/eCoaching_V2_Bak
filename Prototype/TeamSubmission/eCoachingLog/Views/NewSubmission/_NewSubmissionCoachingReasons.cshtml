@@ -1,0 +1,27 @@
+﻿@model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+@Html.ValidationMessageFor(m => m.CoachingReasons)
+<div id="coaching-reasons" class="panel-collapse collapse in">
+    @for (var i = 0; i < Model.CoachingReasons.Count; i++)
+	{
+		var rowNumber = i;
+		var reasonDivId = "reasonDivId" + i;
+		if (i == 0 || i % 3 == 0)
+		{
+	@:<div class="row">
+		}
+		<div class="coaching-reason">
+			@Html.HiddenFor(m => m.CoachingReasons[i].ID, new { @class = "reason-id" })
+			<div class="col-sm-4" id=@reasonDivId>
+				@{Html.RenderPartial("_NewSubmissionCoachingReason",
+							Model.CoachingReasons[i],
+							new ViewDataDictionary { { "index", i} }); }
+
+			</div>
+		</div>
+		if (i % 3 == 2)
+		{
+	@:</div>
+		}
+	} <!-- end of for loop -->
+</div>
