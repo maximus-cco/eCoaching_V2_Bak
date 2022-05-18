@@ -121,7 +121,7 @@ SET @mainJobId = @jobId
 ------------------------------------------------------------------------------------
 DECLARE @proxyName nvarchar(50) = N'ECLProxy'
 
-DECLARE @totalSteps int = 12
+DECLARE @totalSteps int = 11
 DECLARE @stepId int = 0
 DECLARE @stepName nvarchar(100)
 DECLARE @stepDescr nvarchar(500)
@@ -216,7 +216,7 @@ IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 
 
 -------------------------------------------------------------------
--- Uploads for each site. 11 Total.
+-- Uploads for each site. 10 Total.
 -------------------------------------------------------------------
 
 -------------------------------------------------------------------
@@ -818,78 +818,7 @@ IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 
 
 -------------------------------------------------------------------
--- Object 10:  Step [Upload Sandy Bingo Logs.]
--------------------------------------------------------------------
-SET @siteConfig = N' config\ecl_bingo_sandy.config'
-SET @exeCommand = N'cmd /c pushd "' + @exePath + N'" && SOIBean.exe config\ecl.config config\' + @environConfig + @siteConfig +' && popd'
-SET @stepName = N'Upload Sandy Bingo Logs'
-SET @stepDescr = N'Uploads the Sandy Bingo logs to the SharePoint site.'
-SET @jobId = @mainJobId
-SET @stepId = @stepID + 1
-SET @successAction = CASE @stepId WHEN @totalSteps THEN @QUIT_REPORTING_SUCCESS -- quit reporting success
-								  ELSE @GO_TO_NEXT_STEP END -- go to next step
-SET @failureAction = CASE @stepId WHEN @totalSteps THEN @QUIT_REPORTING_FAILURE -- quit reporting failure
-								  ELSE @GO_TO_NEXT_STEP END -- go to next step
-EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=@stepName, 
-		@step_id=@stepId, 
-		@cmdexec_success_code=0, 
-		@on_success_action=@successAction,
-		@on_success_step_id=0, 
-		@on_fail_action=@failureAction,
-		@on_fail_step_id=0, 
-		@retry_attempts=0, 
-		@retry_interval=0, 
-		@os_run_priority=0, @subsystem=N'CmdExec', 
-		@command=@exeCommand, 
-		@flags=0, 
-		@proxy_name=@proxyName
-IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-
-		-- Create a separate single-step job with this step
-		SET @jobId = NULL
-		SET @jobNameStep = CONCAT(@jobNameStepBase,RIGHT(N'00' + CAST(@stepId AS nvarchar(10)),2),' (Sandy Bingo Upload)')
-
-		-------------------------------------------------------------------
-		--BEGIN TRY
-		--	EXEC msdb.dbo.sp_delete_job @job_name = @jobNameStep, @delete_unused_schedule=1
-		--END TRY
-		--BEGIN CATCH
-		--	PRINT('WARNING: Could not delete job ' + @jobNameStep + '. Job may not exist.')
-		--END CATCH
-
-		EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=@jobNameStep, 
-				@enabled=1, 
-				@notify_level_eventlog=0, 
-				@notify_level_email=0, 
-				@notify_level_netsend=0, 
-				@notify_level_page=0, 
-				@delete_level=0, 
-				@description=@stepDescr, 
-				@category_name=@jobCategory, 
-				@owner_login_name=@jobOwner, @job_id = @jobId OUTPUT
-		IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-
-		EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=@stepName, 
-				@step_id=1, -- always 1 step 
-				@cmdexec_success_code=0, 
-				@on_success_action=@QUIT_REPORTING_SUCCESS, -- quit reporting success
-				@on_success_step_id=0, 
-				@on_fail_action=@QUIT_REPORTING_FAILURE, 
-				@on_fail_step_id=0, 
-				@retry_attempts=0, 
-				@retry_interval=0, 
-				@os_run_priority=0, @subsystem=N'CmdExec', 
-				@command=@exeCommand, 
-				@flags=0, 
-				@proxy_name=@proxyName
-		IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-		
-		EXEC @ReturnCode = msdb.dbo.sp_add_jobserver @job_id = @jobId, @server_name = N'(local)'
-		IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-
-
-------------------------------------------------------------------
--- Object 11:  Step [Upload Tampa Bingo Logs.]
+-- Object 10:  Step [Upload Tampa Bingo Logs.]
 -------------------------------------------------------------------
 
 
@@ -961,7 +890,7 @@ IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 		IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 
 ------------------------------------------------------------------
--- Object 12:  Step [Upload Winchester Bingo Logs.]
+-- Object 11:  Step [Upload Winchester Bingo Logs.]
 -------------------------------------------------------------------
 
 
