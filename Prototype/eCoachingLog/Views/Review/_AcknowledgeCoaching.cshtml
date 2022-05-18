@@ -1,0 +1,86 @@
+﻿@model eCoachingLog.ViewModels.ReviewViewModel
+
+<div class='mt-2 @(@Model.ShowManagerNotes ? "show" : "hide")'>
+	<strong>Notes from Manager:</strong>
+	<br />
+	@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.MgrNotes))
+</div>
+<div class='mt-2 @(@Model.ShowCoachingNotes ? "show" : "hide")'>
+	<strong>Coaching Notes:</strong>
+	<br />
+	@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
+</div>
+
+@if (Model.LogDetail.IsQn)
+{
+    Html.RenderPartial("_SupervisorReviewInfo");
+}
+
+@if (!string.IsNullOrEmpty(Model.LogDetail.EmployeeReviewDate))
+{
+    Html.RenderPartial("_EmployeeReviewInfo");
+}
+
+@if (Model.ShowFollowupInfo)
+{
+    if (Model.LogDetail.IsQn)
+    {
+        { Html.RenderPartial("_QnFollowupInfo"); }
+    }
+    else
+    {
+        { Html.RenderPartial("_FollowupInfo"); }
+    }
+}
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
+{
+	@Html.HiddenFor(m => m.IsAcknowledgeForm)
+	@Html.HiddenFor(m => m.IsMoreReviewRequired)
+	@Html.HiddenFor(m => m.IsAckOverTurnedAppeal)
+	@Html.HiddenFor(m => m.IsFollowupPendingCsrForm)
+	@Html.HiddenFor(m => m.LogDetail.IsFollowupRequired)
+	@Html.HiddenFor(m => m.LogDetail.LogId)
+	@Html.HiddenFor(m => m.LogDetail.EmployeeId)
+	@Html.HiddenFor(m => m.LogDetail.ModuleId)
+	@Html.HiddenFor(m => m.LogDetail.StatusId)
+	@Html.HiddenFor(m => m.LogDetail.CoachingNotes)
+	@Html.HiddenFor(m => m.LogDetail.HasSupAcknowledged)
+    @Html.HiddenFor(m => m.LogDetail.HasEmpAcknowledged)
+	@Html.HiddenFor(m => m.LogDetail.SupervisorEmail)
+	@Html.HiddenFor(m => m.LogDetail.ManagerEmail)
+	@Html.HiddenFor(m => m.LogDetail.FormName)
+	@Html.HiddenFor(m => m.LogDetail.EmployeeName)
+	@Html.HiddenFor(m => m.LogDetail.IsBqns)
+	@Html.HiddenFor(m => m.LogDetail.IsBqm)
+	@Html.HiddenFor(m => m.LogDetail.IsBqms)
+    @Html.HiddenFor(m => m.LogDetail.IsQn)
+
+	<div class='form-group mt-2'>
+		<label for="AcknowledgeCheckBox" class="required">@Model.AckCheckboxTitle</label><br />
+		<label class="checkbox-inline">
+			@Html.CheckBoxFor(m => m.Acknowledge)@Model.AckCheckboxText
+		</label>
+		@Html.ValidationMessageFor(m => m.Acknowledge)
+	</div>
+
+	<div class='form-group mt-2 @(Model.ShowCommentTextBox ? "show" : "hide")'>
+		<label for="EmployeeCommentsTextBox" class='@Model.IsAckOverTurnedAppeal ? "required" : ""'>@Model.CommentTextboxLabel</label>
+		@Html.TextAreaFor(m => m.Comment, new { @class = "form-control remaining", @rows = "5", id = "textarea-employee-comments", maxlength = 3000 })
+		<div class="help-block">
+			Provide as much detail as possible.
+            <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.Comment)
+	</div>
+
+	<div class='form-group mt-2 @(Model.ShowCommentDdl ? "show" : "hide")' style="margin-bottom:50px;">
+		<label for="EmployeeCommentsDdl" class="required">Please select one of the comments below for the log:</label>
+		@Html.DropDownListFor(m => m.Comment, Model.EmployeeCommentsDdlList, new { @class = "form-control", style = "width: 350px;" })
+		@Html.ValidationMessageFor(m => m.Comment)
+	</div>
+}
+
+@Scripts.Render("~/bundles/scripts/review")
+
+

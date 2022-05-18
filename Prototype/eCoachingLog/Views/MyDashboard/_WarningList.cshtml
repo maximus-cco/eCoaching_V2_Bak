@@ -1,0 +1,43 @@
+﻿@model eCoachingLog.Models.Common.LogFilter
+@using eCoachingLog.Utils
+
+@{
+	Layout = null;
+}
+@Html.HiddenFor(m => m.PageSize)
+<div class="panel panel-default">
+	<!-- /.panel-heading -->
+	<div class="panel-body">
+		<div class="dataTable_wrapper">
+			<table class="tables mytable table-hover table-bordered" id="dataTables-warning-log-list" style="width:100%">
+				<thead>
+					<tr>
+						@*hidden column*@
+						<th>FormID</th>
+						<th>Form Name</th>
+						<th>Employee</th>
+						<th>Supervisor</th>
+						<th>Manager</th>
+						<th>Warning Type</th>
+						<th>Warning Reason(s)</th>
+						<th>Created Date (@Constants.TIMEZONE)</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<!-- /.dataTable_wrapper -->
+	</div>
+	<!-- /.panel-body -->
+</div>
+<!-- /.panel -->
+
+@*@Model.Search.SupervisorId*@
+<script>
+	var myDashboardSearch = @Html.Raw(Json.Encode(Model));
+	var supId = '@Html.Raw(Model.SupervisorId)';
+	@*var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';*@
+	var loadDataUrl = '@Url.Action("LoadData")';
+	var getLogDetailsUrl = '@Url.Action("Index", "Review")';
+</script>
+
+@Scripts.Render("~/bundles/scripts/warningList")

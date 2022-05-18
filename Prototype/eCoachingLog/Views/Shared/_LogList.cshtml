@@ -1,0 +1,50 @@
+﻿@model eCoachingLog.Models.Common.LogFilter
+@using eCoachingLog.Utils
+
+@{
+	Layout = null;
+}
+
+@Html.HiddenFor(m => m.PageSize)
+
+<div class="panel panel-default">
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+        <div class="dataTable_wrapper">
+            <table class="tables mytable table-hover table-bordered" id="dataTables-coaching-log-list" style="width:100%">
+                <thead>
+                    <tr>
+                        @*hidden column*@
+                        <th>FormID</th>
+                        <th>Form Name</th>
+                        <th>Employee</th>
+						<th>Supervisor</th>
+						<th>Manager</th>
+                        <th>Status</th>
+                        <th>Coaching Reason</th>
+                        <th>Sub-coaching Reason</th>
+                        <th>Value</th>
+                        <th>Created Date (@Constants.TIMEZONE)</th>
+						<th>Follow-up Date (@Constants.TIMEZONE)</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <!-- /.dataTable_wrapper -->
+    </div>
+    <!-- /.panel-body -->
+</div>
+<!-- /.panel -->
+
+<script>
+	var logFilter = @Html.Raw(Json.Encode(Model));
+	var supId = '@Html.Raw(Model.SupervisorId)';
+    var loadDataUrl = '@Url.Action("LoadData")';
+    if ('@Html.Raw(Model.IsBothQnNonQn)' === 'True') {
+        loadDataUrl = '@Url.Action("LoadDataAll")';
+    }
+	var showSupervisorColumn = '@Html.Raw(Model.ShowSupNameColumn)';
+	var showFollowupDateColumn = '@Html.Raw(Model.ShowFollowupDateColumn)';
+</script>
+
+@Scripts.Render("~/bundles/scripts/logList")

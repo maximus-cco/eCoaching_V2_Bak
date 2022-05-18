@@ -1,0 +1,22 @@
+﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
+
+<div class="panel panel-default filterable" id="coaching-log-list">
+	<div class="panel-heading">
+		<strong> Site: @Model.Search.SiteName </strong>
+		<div class="pull-right">
+			<a href="#" id="a-close" style="color: black;">X</a>
+		</div>
+	</div>
+	<!-- /.panel-heading -->
+	<div class="panel-body">
+		<div id="div-my-site-search">
+			@{ Html.RenderPartial("_MySiteLogSearch"); }
+		</div>
+		<div id="div-search-result">
+			@{Html.RenderPartial("_LogList", Model.Search); }
+		</div>
+	</div>
+	<!-- /.panel-body -->
+</div>
+<!-- /.panel -->
+

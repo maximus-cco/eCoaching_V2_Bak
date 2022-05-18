@@ -1,0 +1,20 @@
+﻿@model eCoachingLog.ViewModels.MyDashboardQnViewModel
+
+<div class="panel panel-default filterable" id="coaching-log-list">
+	<div class="panel-heading">
+		<i class="fa fa-list-alt"></i><span id="title"><strong> My Submitted eCoaching Logs </strong></span>
+		<div class="pull-right">
+			<a href="#" id="a-close" style="color: black;">X</a>
+		</div>
+	</div>
+	<!-- /.panel-heading -->
+	<div class="panel-body">
+		@{ Html.RenderPartial("_MySubmissionSearch"); }
+		<div id="div-search-result">
+			@{Html.RenderPartial("_LogListQn", Model); }
+		</div>
+	</div>
+	<!-- /.panel-body -->
+</div>
+<!-- /.panel -->
+

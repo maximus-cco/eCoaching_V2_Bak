@@ -1,0 +1,8 @@
+﻿<div class="mt-2">
+	<strong>Supervisor Review Information:</strong><br />
+	<div class='@(string.IsNullOrEmpty(Model.LogDetail.SupReviewedAutoDate) ? "hide" : "show")'>
+		@Model.LogDetail.ReviewedSupervisorName<br />
+		@Model.LogDetail.EmployeeReviewLabel @Model.LogDetail.SupReviewedAutoDate
+	</div>
+</div>
+

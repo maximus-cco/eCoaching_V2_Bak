@@ -1,0 +1,21 @@
+﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
+<div class="panel panel-default filterable" id="coaching-log-list">
+	<div class="panel-heading">
+		<i class="fa fa-list-alt"></i><span id="title"><strong> My Team's Warning eCoaching Logs </strong></span>
+		<div class="pull-right">
+			<a href="#" id="a-close" style="color: black;">X</a>
+		</div>
+	</div>
+	<!-- /.panel-heading -->
+	<div class="panel-body">
+		<div id="div-my-team-warning-search">
+			@{ Html.RenderPartial("_MyTeamWarningSearch"); }
+		</div>
+		<div id="div-search-result">
+			@{Html.RenderPartial("_WarningList", Model.Search); }
+		</div>
+	</div>
+	<!-- /.panel-body -->
+</div>
+<!-- /.panel -->
+

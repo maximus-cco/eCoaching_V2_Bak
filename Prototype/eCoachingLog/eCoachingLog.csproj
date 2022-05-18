@@ -1,0 +1,492 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9F005FE5-95A0-4D6E-ABF0-B2C201C99F07}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>eCoachingLog</RootNamespace>
+    <AssemblyName>eCoachingLog</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort>
+    </IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EPPlus, Version=4.5.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.1\lib\net40\EPPlus.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="SimpleInjector, Version=3.1.3.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.3.1.3\lib\net45\SimpleInjector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.Web, Version=3.1.3.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.3.1.3\lib\net40\SimpleInjector.Integration.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.Web.Mvc, Version=3.1.3.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.Mvc.3.1.3\lib\net40\SimpleInjector.Integration.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Linq.Dynamic, Version=1.0.5840.25917, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.6\lib\net40\System.Linq.Dynamic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.0.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.1\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Views\Help\" />
+    <Folder Include="Views\Login\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\EclBundleOrderer.cs" />
+    <Compile Include="Controllers\HelpController.cs" />
+    <Compile Include="Controllers\HistoricalDashboardController.cs" />
+    <Compile Include="Controllers\LoadTestController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\LogoutController.cs" />
+    <Compile Include="Controllers\MyDashboardQnController.cs" />
+    <Compile Include="Controllers\ReviewController.cs" />
+    <Compile Include="Controllers\SurveyController.cs" />
+    <Compile Include="Models\Common\Behavior.cs" />
+    <Compile Include="Models\Common\MailInfo.cs" />
+    <Compile Include="Models\Common\MailParameter.cs" />
+    <Compile Include="Models\Common\MailResult.cs" />
+    <Compile Include="Models\Common\TextValue.cs" />
+    <Compile Include="Models\Common\LogBase.cs" />
+    <Compile Include="Models\Common\LogCount.cs" />
+    <Compile Include="Models\Common\LogCountForSite.cs" />
+    <Compile Include="Models\Common\LogState.cs" />
+    <Compile Include="Models\Common\LogCountByStatusForSite.cs" />
+    <Compile Include="Models\Common\LogSummary.cs" />
+    <Compile Include="Models\Common\LogValue.cs" />
+    <Compile Include="Models\Common\Scorecard.cs" />
+    <Compile Include="Models\Common\ShortCall.cs" />
+    <Compile Include="Models\MyDashboard\ChartData.cs" />
+    <Compile Include="Models\MyDashboard\ChartDataset.cs" />
+    <Compile Include="Models\MyDashboard\QnStatistic.cs" />
+    <Compile Include="Models\NewSubmission\NewSubmissionResult.cs" />
+    <Compile Include="Models\Review\Review.cs" />
+    <Compile Include="Models\Survey\Question.cs" />
+    <Compile Include="Models\Survey\SingleChoice.cs" />
+    <Compile Include="Models\Survey\Survey.cs" />
+    <Compile Include="Repository\IProgramRepository.cs" />
+    <Compile Include="Repository\IReviewRepository.cs" />
+    <Compile Include="Repository\ISiteRepository.cs" />
+    <Compile Include="Repository\ISurveyRepository.cs" />
+    <Compile Include="Repository\ProgramRepository.cs" />
+    <Compile Include="Repository\ReviewRepository.cs" />
+    <Compile Include="Repository\SiteRepository.cs" />
+    <Compile Include="Repository\SurveyRepository.cs" />
+    <Compile Include="Services\IProgramService.cs" />
+    <Compile Include="Services\IReviewService.cs" />
+    <Compile Include="Services\ISiteService.cs" />
+    <Compile Include="Services\ISurveyService.cs" />
+    <Compile Include="Services\ProgramService.cs" />
+    <Compile Include="Services\ReviewService.cs" />
+    <Compile Include="Services\SiteService.cs" />
+    <Compile Include="Services\SurveyService.cs" />
+    <Compile Include="Utils\Constants.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\LogBaseController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\MyDashboardController.cs" />
+    <Compile Include="Controllers\NewSubmissionController.cs" />
+    <Compile Include="Extensions\EclExtension.cs" />
+    <Compile Include="Extensions\EclHtmlHelper.cs" />
+    <Compile Include="Extensions\EnumExtension.cs" />
+    <Compile Include="Extensions\SqlExtension.cs" />
+    <Compile Include="Filters\EclAuthorizeAttribute.cs" />
+    <Compile Include="Filters\EclExceptionAttribute.cs" />
+    <Compile Include="Filters\NoCacheAttribute.cs" />
+    <Compile Include="Filters\SessionCheckAttribute.cs" />
+    <Compile Include="Models\Common\CoachingReason.cs" />
+    <Compile Include="Models\Common\CoachingSubReason.cs" />
+    <Compile Include="Models\Common\CoachingLogDetail.cs" />
+    <Compile Include="Models\Common\BaseLogDetail.cs" />
+    <Compile Include="Models\Common\Module.cs" />
+    <Compile Include="Models\Common\LogReason.cs" />
+    <Compile Include="Models\Common\LogStatus.cs" />
+    <Compile Include="Models\Common\LogType.cs" />
+    <Compile Include="Models\Common\WarningLogDetail.cs" />
+    <Compile Include="Models\Common\LogFilter.cs" />
+    <Compile Include="Models\NewSubmission\NewSubmission.cs" />
+    <Compile Include="Models\Common\Program.cs" />
+    <Compile Include="Models\Common\Site.cs" />
+    <Compile Include="Models\Common\LogSource.cs" />
+    <Compile Include="Models\User\Role.cs" />
+    <Compile Include="Models\User\User.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UnauthorizedController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Common\WarningReason.cs" />
+    <Compile Include="Models\Common\WarningType.cs" />
+    <Compile Include="Repository\INewSubmissionRepository.cs" />
+    <Compile Include="Repository\IUserRepository.cs" />
+    <Compile Include="Repository\NewSubmissionRepository.cs" />
+    <Compile Include="Repository\UserRepository.cs" />
+    <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\IEmailService.cs" />
+    <Compile Include="Services\INewSubmissionService.cs" />
+    <Compile Include="Services\IUserService.cs" />
+    <Compile Include="Services\NewSubmissionService.cs" />
+    <Compile Include="Services\UserService.cs" />
+    <Compile Include="Utils\EclUtil.cs" />
+    <Compile Include="Utils\FileUtil.cs" />
+    <Compile Include="ViewModels\AcknowledgeViewModel.cs" />
+    <Compile Include="Models\Common\Employee.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\EmployeeLogRepository.cs" />
+    <Compile Include="Repository\EmployeeRepository.cs" />
+    <Compile Include="Repository\IEmployeeLogRepository.cs" />
+    <Compile Include="Repository\IEmployeeRepository.cs" />
+    <Compile Include="Services\EmployeeLogService.cs" />
+    <Compile Include="Services\EmployeeService.cs" />
+    <Compile Include="Services\IEmployeeLogService.cs" />
+    <Compile Include="Services\IEmployeeService.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\HistoricalDashboardViewModel.cs" />
+    <Compile Include="ViewModels\MyDashboardQnViewModel.cs" />
+    <Compile Include="ViewModels\MyDashboardViewModel.cs" />
+    <Compile Include="ViewModels\NewSubmissionViewModel.cs" />
+    <Compile Include="ViewModels\ReviewViewModel.cs" />
+    <Compile Include="Models\NewSubmission\CallType.cs" />
+    <Compile Include="ViewModels\SurveyViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\animate.css" />
+    <Content Include="Content\bootstrap-datetimepicker.min.css" />
+    <Content Include="Content\bootstrap-duallistbox.css" />
+    <Content Include="Content\bootstrap-multiselect.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrapValidator.css" />
+    <Content Include="Content\dataTables.bootstrap.css" />
+    <Content Include="Content\dataTables.responsive.css" />
+    <Content Include="Content\Images\ajax-loader.gif" />
+    <Content Include="Content\Images\ajax-spinner.gif" />
+    <Content Include="Content\Images\aw_snap.png" />
+    <Content Include="Content\Images\cco-logo.jpg" />
+    <Content Include="Content\Images\ecl-logo-small.png" />
+    <Content Include="Content\Images\ecl-logo.png" />
+    <Content Include="Content\Images\sort_asc.png" />
+    <Content Include="Content\Images\sort_asc_disabled.png" />
+    <Content Include="Content\Images\sort_both.png" />
+    <Content Include="Content\Images\sort_desc.png" />
+    <Content Include="Content\Images\sort_desc_disabled.png" />
+    <Content Include="Content\sb-admin-2.css" />
+    <Content Include="EmailTemplates\CoachingLogCompleted.html" />
+    <Content Include="EmailTemplates\NewSubmissionCoaching.html" />
+    <Content Include="EmailTemplates\NewSubmissionWarning.html" />
+    <Content Include="EmailTemplates\WarningLogCompleted.html" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\bootstrap-datetimepicker.js" />
+    <Content Include="Scripts\bootstrap-multiselect-collapsible-groups.js" />
+    <Content Include="Scripts\bootstrap-multiselect.js" />
+    <Content Include="Scripts\bootstrap-notify.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <None Include="Properties\PublishProfiles\publish.pubxml" />
+    <None Include="Properties\PublishProfiles\Test.pubxml" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\Chart.min.js" />
+    <Content Include="Scripts\dataTables.responsive.js" />
+    <Content Include="Scripts\eCoachingLog\common.js" />
+    <Content Include="Scripts\eCoachingLog\dashboardCommon.js" />
+    <Content Include="Scripts\eCoachingLog\logListQn.js" />
+    <Content Include="Scripts\eCoachingLog\myDashboard.js" />
+    <Content Include="Scripts\dataTables.bootstrap.js" />
+    <Content Include="Scripts\eCoachingLog\dateTimePicker.js" />
+    <Content Include="Scripts\eCoachingLog\eclChart.js" />
+    <Content Include="Scripts\eCoachingLog\historicalDashboard.js" />
+    <Content Include="Scripts\eCoachingLog\logList.js" />
+    <Content Include="Scripts\eCoachingLog\myDashboardQn.js" />
+    <Content Include="Scripts\eCoachingLog\warningList.js" />
+    <Content Include="Scripts\eCoachingLog\newSubmission.js" />
+    <Content Include="Scripts\eCoachingLog\review.js" />
+    <Content Include="Scripts\eCoachingLog\survey.js" />
+    <Content Include="Scripts\jquery.bootstrap-duallistbox.js" />
+    <Content Include="Scripts\jquery.js" />
+    <Content Include="Scripts\jquery.dataTables.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.userTimeout.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\moment-with-locales.js" />
+    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\raphael.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\eCoachingLog\global.js" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Unauthorized\Index.cshtml" />
+    <Content Include="Views\Error\Index.cshtml" />
+    <Content Include="Views\Shared\SessionExpired.cshtml" />
+    <Content Include="Views\Shared\Index.cshtml" />
+    <Content Include="Views\NewSubmission\Index.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmission.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmissionBottom.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmissionTop.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmissionCoach.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmissionWarning.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmissionCoachingReasons.cshtml" />
+    <Content Include="Views\MyDashboard\_MyTeamPending.cshtml" />
+    <Content Include="Views\MyDashboard\_MyTeamCompleted.cshtml" />
+    <Content Include="Views\MyDashboard\_MyCompleted.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmissionIsCoachingByYou.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmissionWarningChoice.cshtml" />
+    <Content Include="Views\Logout\Index.cshtml" />
+    <Content Include="Views\MyDashboard\_MyPending.cshtml" />
+    <Content Include="Views\Shared\_LogList.cshtml" />
+    <Content Include="Views\MyDashboard\_MyPendingMgrSearch.cshtml" />
+    <Content Include="Views\MyDashboard\_MyTeamCompletedSearch.cshtml" />
+    <Content Include="Views\Review\_ReviewCoachingHome.cshtml" />
+    <Content Include="Views\Review\_ReviewCoachingPending.cshtml" />
+    <Content Include="Views\Shared\_CoachingLogInfo.cshtml" />
+    <Content Include="Views\Review\_AcknowledgeCoaching.cshtml" />
+    <Content Include="Views\Review\_ReviewCoachingResearch.cshtml" />
+    <Content Include="Views\Review\_ReviewCoachingCse.cshtml" />
+    <Content Include="Views\Review\_ReviewCoaching.cshtml" />
+    <Content Include="Views\MyDashboard\_MyTeamPendingMgrSearch.cshtml" />
+    <Content Include="Views\MyDashboard\_MyTeamPendingSupSearch.cshtml" />
+    <Content Include="Views\MyDashboard\_MyTeamWarning.cshtml" />
+    <Content Include="Views\MyDashboard\_MyTeamWarningSearch.cshtml" />
+    <Content Include="Views\MyDashboard\_WarningList.cshtml" />
+    <Content Include="Views\MyDashboard\_MySubmission.cshtml" />
+    <Content Include="Views\Shared\_WarningLogInfo.cshtml" />
+    <Content Include="Views\MyDashboard\_Default.cshtml" />
+    <Content Include="Views\MyDashboard\_DefaultDirector.cshtml" />
+    <Content Include="Views\HistoricalDashboard\Index.cshtml" />
+    <Content Include="Views\MyDashboard\_MySiteLogs.cshtml" />
+    <Content Include="Views\MyDashboard\_MySiteLogSearch.cshtml" />
+    <Content Include="Views\Review\_ViewCoachingLog.cshtml" />
+    <Content Include="Views\MyDashboard\_CountBySite.cshtml" />
+    <Content Include="Views\MyDashboard\_CountByStatus.cshtml" />
+    <Content Include="Views\HistoricalDashboard\_Search.cshtml" />
+    <Content Include="Views\Review\_ViewWarningLog.cshtml" />
+    <Content Include="Views\Survey\Index.cshtml" />
+    <Content Include="Views\Survey\_Result.cshtml" />
+    <Content Include="Views\Review\_Unauthorized.cshtml" />
+    <Content Include="Views\MyDashboard\_DefaultDirectorBottom.cshtml" />
+    <Content Include="Views\MyDashboard\_MyCompletedSearch.cshtml" />
+    <Content Include="Views\MyDashboard\_MySubmissionSearch.cshtml" />
+    <Content Include="Views\NewSubmission\_NewSubmissionCoachingReason.cshtml" />
+    <Content Include="Views\Review\_Error.cshtml" />
+    <Content Include="maintenance.html" />
+    <Content Include="Views\LoadTest\Index.cshtml" />
+    <Content Include="Views\Review\_Scorecards.cshtml" />
+    <Content Include="Views\Review\_ReviewShortCalls.cshtml" />
+    <Content Include="Views\Review\_ShortCalls.cshtml" />
+    <Content Include="Views\Review\_ReviewInfo.cshtml" />
+    <Content Include="Views\Review\_Reasons.cshtml" />
+    <Content Include="Views\Review\_EmployeeReviewInfo.cshtml" />
+    <Content Include="Views\Review\_ManagerReviewInfo.cshtml" />
+    <Content Include="Views\Review\_SupervisorReviewInfo.cshtml" />
+    <Content Include="Views\Review\_ConfirmReviewShortCalls.cshtml" />
+    <Content Include="Views\Review\_FollowupInfo.cshtml" />
+    <Content Include="Views\Review\_ReviewFollowup.cshtml" />
+    <Content Include="Views\MyDashboard\_MyFollowup.cshtml" />
+    <Content Include="Views\Review\_ReviewWarningHome.cshtml" />
+    <Content Include="Views\Review\_EmployeeWarningReviewInfo.cshtml" />
+    <Content Include="Views\MyDashboardQn\_CountByStatus.cshtml" />
+    <Content Include="Views\MyDashboardQn\_Default.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyCompleted.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyPendingFollowupCoaching.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyPendingFollowupPrepare.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyPendingReview.cshtml" />
+    <Content Include="Views\Review\_QnCoach.cshtml" />
+    <Content Include="Views\Review\_QnEditLogSummary.cshtml" />
+    <Content Include="Views\Review\_QnFollowupReview.cshtml" />
+    <Content Include="Views\Review\_QnFollowupView.cshtml" />
+    <Content Include="Views\Shared\_LogListQn.cshtml" />
+    <Content Include="Views\Shared\_MenuBar.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamPending.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamPendingMgrSearch.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamPendingSupSearch.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamCompleted.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamCompletedSearch.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyCompletedSearch.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyTeamStatistic.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MyStatistic.cshtml" />
+    <Content Include="Views\MyDashboardQn\_StatisticTable.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MySubmission.cshtml" />
+    <Content Include="Views\MyDashboardQn\_MySubmissionSearch.cshtml" />
+    <Content Include="Views\Review\_QnFollowupInfo.cshtml" />
+    <Content Include="Views\Review\_QnFollowupDecisionComments.cshtml" />
+    <Content Include="Views\NewSubmission\_AddEmployee.cshtml" />
+    <Content Include="Views\NewSubmission\_EmployeeDualListbox.cshtml" />
+    <Content Include="Views\NewSubmission\_EmployeeSelection.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>55137</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:55130/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

@@ -1,0 +1,37 @@
+﻿<div class='mt-2 @(@Model.ShowManagerNotes ? "show" : "hide")'>
+	<strong>Notes from Manager:</strong>
+	<br />
+	@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.MgrNotes))
+</div>
+<div class='mt-2 @(Model.ShowCoachingNotes ? "show" : "hide")'>
+	<strong>Coaching Notes:</strong>
+	<br />
+	@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.CoachingNotes))
+</div>
+@if (Model.IsRegularPendingForm)
+{
+	Html.RenderPartial("_ReviewCoachingPending");
+}
+else if (Model.IsResearchPendingForm)
+{
+	Html.RenderPartial("_ReviewCoachingResearch");
+}
+else if (Model.IsCsePendingForm)
+{
+	Html.RenderPartial("_ReviewCoachingCse");
+}
+else if (Model.IsShortCallPendingSupervisorForm)
+{
+	Html.RenderPartial("_ReviewShortCalls");
+}
+else if (Model.IsShortCallPendingManagerForm)
+{
+	Html.RenderPartial("_ConfirmReviewShortCalls");
+}
+else if (Model.IsFollowupPendingSupervisorForm)
+{
+	{ Html.RenderPartial("_ReviewFollowup"); }
+}
+
+@Scripts.Render("~/bundles/scripts/review")
+<script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>

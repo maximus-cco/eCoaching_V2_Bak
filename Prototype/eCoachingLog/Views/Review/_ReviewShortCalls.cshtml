@@ -1,0 +1,71 @@
+﻿@model eCoachingLog.ViewModels.ReviewViewModel
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-mydashboard-review-pending" }))
+{
+	@Html.HiddenFor(m => m.LogDetail.LogId)
+	@Html.HiddenFor(m => m.IsShortCallPendingSupervisorForm)
+
+	<table class="table mt-2 table-condensed" id="tbl-review-short-call">
+		<thead>
+			<tr>
+				<th class="text-center" width="7%">Verint ID</th>
+				<th class="required text-center" width="3%">Valid</th>
+				<th class="required" width="22%">Behavior</th>
+				<th class="" width="20%">Action</th>
+				<th class="required" width="45%">Coaching Notes <span class="text-muted small"><em>(Maximum characters: 3000)</em></span></th>
+				<th class="required text-center" width="3%">LSA Informed</th>
+			</tr>
+		</thead>
+
+		@for (int i = 0; i < Model.ShortCallList.Count; i++)
+		{
+			@Html.HiddenFor(m => m.ShortCallList[i].VerintId)
+			<tr>
+				<td>@Html.DisplayTextFor(m => m.ShortCallList[i].VerintId)</td>
+				<td class="text-center">@Html.CheckBoxFor(m => m.ShortCallList[i].IsValidBehavior, new { @class = "largeCheckBox", data_verintid = Model.ShortCallList[i].VerintId })
+				</td>
+				<td>
+					@Html.DropDownListFor(m => m.ShortCallList[i].SelectedBehaviorId, Model.ShortCallList[i].SelectListBehaviors, new { @class = "form-control" })
+					@Html.ValidationMessageFor(m => m.ShortCallList[i].SelectedBehaviorId)
+				</td>
+				<td>
+					<div>@Html.Raw(Model.ShortCallList[i].ActionsString)</div>
+					@Html.HiddenFor(m => m.ShortCallList[i].ActionsString)
+				</td>
+				<td>
+					@Html.TextAreaFor(m => m.ShortCallList[i].CoachingNotes, new { @class = "form-control", placeholder = "Enter coaching notes ...", maxlength = 3000 })
+					@Html.ValidationMessageFor(m => m.ShortCallList[i].CoachingNotes)
+				</td>
+				<td class="text-center">@Html.CheckBoxFor(m => m.ShortCallList[i].IsLsaInformed, new { @class = "largeCheckBox" })</td>
+			</tr>
+		}
+	</table>
+
+	<div class='form-group mt-2' id='div-date-coached'>
+		<label for="DateCoached" id="label-date-coached" class="required">Enter the date of coaching:</label>
+		<div class="col-xs-4 input-group date">
+			@Html.TextBoxFor(m => m.DateCoached, new { @class = "form-control" })
+			<span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DateCoached)
+	</div>
+
+	<div class='form-group mt-2' id='div-coaching-detail'>
+		<label for="DetailsCoached" class="required">Provide the details from the coaching session including action plans developed:</label>
+		@Html.TextAreaFor(m => m.DetailsCoached, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
+		<div class="help-block">
+			Provide as much detail as possible.
+            <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
+		</div>
+		@Html.ValidationMessageFor(m => m.DetailsCoached)
+	</div>
+}
+
+<script>
+	var initShortCallBehaviors = '@Url.Action("InitShortCallBehaviors", "Review")';
+	var getEclAction = '@Url.Action("GetEclAction", "Review")';
+	var logId = '@Model.LogDetail.LogId';
+	var employeeId = '@Model.LogDetail.EmployeeId';
+</script>

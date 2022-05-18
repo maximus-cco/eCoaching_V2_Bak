@@ -1,0 +1,77 @@
+﻿
+@*https://codepen.io/jaredbell/pen/OejgMe*@
+@using eCoachingLog.Utils
+@model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+<div class="row">
+    <div class="col-sm-6">
+        <a href="#" style="color: #337ab7" id="a-add-employee"><b>Add</b></a>
+    </div>
+    <div class="col-sm-6">
+        <p class="help-block" style="color: cadetblue;"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Max number of employees can be included in one submission: @Constants.MAX_NUMBER_OF_EMPLOYEES_PER_SUBMISSION</p>
+    </div>
+</div>
+
+<div id="div-employee-listbox" class="hide">
+    <select multiple="multiple" size="10" name="duallistbox_employee" title="duallistbox_employee">
+        @if (Model.EmployeeList != null) {
+            foreach (var m in Model.EmployeeList) { 
+                <option value="@m.Value" selected="@m.IsSelected">@m.Text</option>
+            }
+        }
+    </select>
+</div>
+
+<script>
+    var dlEmployee;
+    $(function () {
+        $("#bootstrap-duallistbox-selected-list_duallistbox_employeeaa").after("<div>test</div>");
+
+        $('#div-employee-listbox').removeClass('hide');
+
+        dlEmployee = $('select[name="duallistbox_employee"]').bootstrapDualListbox({
+            nonSelectedListLabel: 'Not Selected ',
+            selectedListLabel: 'Selected ',
+            preserveSelectionOnMove: 'moved'
+        });
+
+        $("#bootstrap-duallistbox-selected-list_duallistbox_employee, #bootstrap-duallistbox-nonselected-list_duallistbox_employee").change(function () {
+            handleEmployeeChange()
+        });
+
+        // todo: add '.removeall' click, hide page middle
+        $(".removeall").click(function () {
+            showHideNewSubmissionMiddle(false);
+            $('#EmployeeIds').val('');
+        });
+
+        $(".moveall").click(function () {
+            showHideNewSubmissionMiddle(true);
+            $('#EmployeeIds').val($('[name="duallistbox_employee"]').val());
+        });
+
+        function handleEmployeeChange() {
+            var selected = $('[name="duallistbox_employee"]').val();
+            showHideNewSubmissionMiddle(selected.length > 0);
+            $('#EmployeeIds').val(selected);
+        }
+
+        function showHideNewSubmissionMiddle(show)
+        {
+            if (show === true) {
+                $("#bootstrap-duallistbox-selected-list_duallistbox_employee").css('border-color', '');
+                $('#div-new-submission-middle').removeClass('hide');
+                $('#div-new-submission-middle').addClass('show');
+            } else {
+                $("#bootstrap-duallistbox-selected-list_duallistbox_employee").css('border-color', 'red');
+                //resetIsCoachingByYou();
+                //$('#div-new-submission-middle').removeClass('hide');
+                //$('#div-new-submission-middle').addClass('show');
+                //// Empty page bottom
+                //$('#div-new-submission-bottom').empty();
+            }
+        }
+
+    });
+
+</script>
