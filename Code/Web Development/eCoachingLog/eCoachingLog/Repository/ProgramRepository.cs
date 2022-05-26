@@ -33,6 +33,8 @@ namespace eCoachingLog.Repository
                         program.Name = dataReader["Program"].ToString();
                         programs.Add(program);
                     } // end while
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
 

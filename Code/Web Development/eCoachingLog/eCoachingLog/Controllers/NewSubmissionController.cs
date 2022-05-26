@@ -74,17 +74,24 @@ namespace eCoachingLog.Controllers
                 TempData["ShowFailMessage"] = true;
                 TempData["FailMessage"] = "Please correct all errors indicated in red to proceed.";
                 ViewBag.ClientValidateCoachingReasons = true;
+                ViewBag.ClientValidateEmployee = vm.ModuleId == Constants.MODULE_CSR;
                 ViewBag.ValidationError = true;
                 return StayOnThisPage(vm);
             }
 
-            bool isDuplicate = false;
-            string logNameSaved = null;
+            // Non-CSR moudles: single employee select 
+            if (Constants.MODULE_CSR != vm.ModuleId)
+            {
+                vm.EmployeeIds = vm.Employee.Id;
+            }
 
+            //bool isDuplicate = false;
             string failMsg = "Failed to save your submission.";
-            string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
+            //string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
             var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
             var user = GetUserFromSession();
+            IList<NewSubmissionResult> submissionResults = new List<NewSubmissionResult>();
+            var successfulSubmissions = new List<NewSubmissionResult>();
             // 1. save submission to db
             try
             {
@@ -109,34 +116,53 @@ namespace eCoachingLog.Controllers
                     vm.ReturnToSiteDate, vm.ReturnToSite, vm.ReturnToSupervisor, vm.ReturnToSite);
                 }
 
-                vm.Employees.Add(vmInSession.Employee); // vmInsession.Employee has all the employee information, including email ...
-                logNameSaved = this.newSubmissionService.Save(vm, user, out isDuplicate);
-                if (string.IsNullOrEmpty(logNameSaved))
-                {
-                    throw new Exception("Failed to save submission.");
-                }
+                //vm.EmployeeIds = "1,1,2,2,3,5,5,5,6";
+                vm.EmployeeIdList = EclUtil.ConvertToList(vm.EmployeeIds, ",");
+                submissionResults = this.newSubmissionService.Save(vm, GetUserFromSession());
 
-                TempData["ShowSuccessMessage"] = true;
-                TempData["ShowFailMessage"] = false;
-                TempData["SuccessMessage"] = string.Format("Your submission {0} was saved successfully.", logNameSaved);
+                //successfulSubmission = submissionResults.Where(x => !String.IsNullOrEmpty(x.LogName)) // x.Error is null or empty
+                //        .Select(o =>
+                //                new Employee
+                //                {
+                //                    Id = o.Employee.Id,
+                //                    Name = o.Employee.Name,
+                //                    LogName = o.LogName,
+                //                    Email = o.Employee.Email,
+                //                    SupervisorEmail = o.Employee.SupervisorEmail,
+                //                    ManagerEmail = o.Employee.ManagerEmail
+                //                }).ToList();
+
+                successfulSubmissions = submissionResults.Where(x => !String.IsNullOrEmpty(x.LogName)).ToList();
+
+                if (successfulSubmissions.Count == vm.EmployeeIdList.Count)
+                {
+                    TempData["ShowSuccessMessage"] = true;
+                    TempData["ShowFailMessage"] = false;
+                    TempData["SuccessMessage"] = "Success! Your submission has been saved!";
+                }
+                else
+                {
+                    TempData["ShowSuccessMessage"] = false;
+                    TempData["ShowFailMessage"] = true;
+                    if (successfulSubmissions.Count == 0)
+                    {
+                        TempData["FailMessage"] = "Error! Failed to save your submission!";
+                        return StayOnThisPage(vm);
+                    }
+                    else
+                    {
+                        var failedEmployees = submissionResults.Where(x => String.IsNullOrEmpty(x.LogName)).Select(y => y.Employee.Name).ToList();
+                        TempData["FailMessage"] = "Error! Failed to save your submission for: " + EclUtil.ConvertToString(failedEmployees, "; ");
+                    }
+                }
             }
             catch (Exception ex)
             {
                 logger.Warn("Exception: " + ex);
 
-                if (string.IsNullOrEmpty(logNameSaved)) // Failed to save
-                {
-                    TempData["ShowSuccessMessage"] = false;
-                    TempData["ShowFailMessage"] = true;
-                    if (isDuplicate) // Same log already exists
-                    {
-                        TempData["FailMessage"] = duplicateMsg;
-                    }
-                    else
-                    {
-                        TempData["FailMessage"] = failMsg;
-                    }
-                }
+                TempData["ShowSuccessMessage"] = false;
+                TempData["ShowFailMessage"] = true;
+                TempData["FailMessage"] = failMsg + ex.Message;
                 return StayOnThisPage(vm);
             } // end try - 1. save submission to db
 
@@ -147,21 +173,17 @@ namespace eCoachingLog.Controllers
             {
                 sourceId  -= 100;
             }
-            // associate log name with employee
-            // todo: insert log sp should return employeeid, logname, so repository (or service) will get this assocociation done
-            // each employee's log name SHOULD BE UNIQUE!!!
-            // logname format: eCL-M-employeeid-logid 
-            foreach (var e in vm.Employees)
+
+            // send email for SUCCESSFUL submissions
+            if (successfulSubmissions.Count > 0)
             {
-                e.LogName = logNameSaved;
-                break;
+                StoreEmail(successfulSubmissions, vm.ModuleId, sourceId, vm.IsWarning, vm.IsCse, user.EmployeeId);
             }
-            SendEmail(vm.Employees, vm.ModuleId, sourceId, vm.IsWarning, vm.IsCse, user.EmployeeId);
 
             return RedirectToAction("Index");
         }
 
-        private void SendEmail(List<Employee> employees, int moduleId, int sourceId, bool? isWarning, bool? isCse, string userId)
+        private void StoreEmail(List<NewSubmissionResult> newSubmissionResult, int moduleId, int sourceId, bool? isWarning, bool? isCse, string userId)
         {
             bool bIsCse = isCse != null ? isCse.Value : false;
             bool bIsWarning = isWarning != null && isWarning.Value;
@@ -169,17 +191,18 @@ namespace eCoachingLog.Controllers
             var template = (isWarning == null || !isWarning.Value) ?
                     Server.MapPath("~/EmailTemplates/NewSubmissionCoaching.html") : Server.MapPath("~/EmailTemplates/NewSubmissionWarning.html");
 
-            this.emailService.SendNotification(new MailParameter(employees, moduleId, bIsWarning, bIsCse, iSourceId, template, true, userId));
+            this.emailService.StoreNotification(new MailParameter(newSubmissionResult, moduleId, bIsWarning, bIsCse, iSourceId, template, true, userId));
         }
 
         private ActionResult StayOnThisPage(NewSubmissionViewModel vm)
         {
-			// Repopluate vm from data stored in session so it will be displayed on the page
-			var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
-			vm.ModuleSelectList = vmInSession.ModuleSelectList;
+            // Repopluate vm from data stored in session so it will be displayed on the page
+            var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+            vm.ModuleSelectList = vmInSession.ModuleSelectList;
             vm.SiteSelectList = vmInSession.SiteSelectList;
-			vm.SiteNameSelectList = vmInSession.SiteNameSelectList;
+            vm.SiteNameSelectList = vmInSession.SiteNameSelectList;
             vm.EmployeeSelectList = vmInSession.EmployeeSelectList;
+            vm.EmployeeList = vmInSession.EmployeeList; // dual listbox
             vm.ProgramSelectList = vmInSession.ProgramSelectList;
             vm.BehaviorSelectList = vmInSession.BehaviorSelectList;
             vm.Employee = vmInSession.Employee;
@@ -200,6 +223,7 @@ namespace eCoachingLog.Controllers
 
             vm.ShowSiteDropdown = ShowSiteDropdown(vm);
             vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm);
+            vm.ShowEmployeeDualListbox = ShowEmployeeDualListbox(vm);
             vm.ShowProgramDropdown = ShowProgramDropdown(vm);
 			vm.ShowMgtInfo = true;
             vm.ShowBehaviorDropdown = ShowBehaviorDropdown(vm);
@@ -213,40 +237,60 @@ namespace eCoachingLog.Controllers
 			vm.ShowFollowup = vmInSession.ShowFollowup;
             vm.ShowPfdCompletedDate = vm.IsPfd;
 
+            var selectedEmployeeIds = EclUtil.ConvertToList(vm.EmployeeIds, ",");
+            foreach (var el in vm.EmployeeList)
+            {
+                if (selectedEmployeeIds.Contains(el.Value))
+                {
+                    el.IsSelected = true;
+                }
+                else
+                {
+                    el.IsSelected = false;
+                }
+            }
             return View("Index", vm);
         }
 
         [HttpPost]
-        public ActionResult HandleSiteChanged(int siteIdSelected)
+        // only csr module has site dropdown, so this must be csr module. 
+        // For csr module, display dual listbox instead of dropdown for Employee selection.
+        public ActionResult HandleSiteChanged(int siteIdSelected, int programIdSelected, string programName)
         {
             NewSubmissionViewModel vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
-			vmInSession.SiteId = siteIdSelected;
+            vmInSession.SiteId = siteIdSelected;
+            vmInSession.ProgramId = programIdSelected;
             GetEmployeesByModuleToSession(vmInSession.ModuleId, siteIdSelected);
-			// Since user has selected a different site, reset partial page, 
-			var vm = InitNewSubmissionViewModel(vmInSession.ModuleId);
-			vm.ModuleSelectList = vmInSession.ModuleSelectList;
-			vm.ModuleId = vmInSession.ModuleId;
-			vm.SiteSelectList = vmInSession.SiteSelectList;
-			vm.SiteId = siteIdSelected;
-			vm.ShowSiteDropdown = true;
-			vm.EmployeeSelectList = vmInSession.EmployeeSelectList;
-			vm.EmployeeList = vmInSession.EmployeeList;
-			vm.ShowEmployeeDropdown = true;
-			vm.ProgramSelectList = vmInSession.ProgramSelectList;
-			vm.ShowProgramDropdown = true;
-			vm.CallTypeSelectList = vmInSession.CallTypeSelectList;
+            // Since user has selected a different site, reset partial page, 
+            var vm = InitNewSubmissionViewModel(vmInSession.ModuleId);
+            vm.ModuleSelectList = vmInSession.ModuleSelectList;
+            vm.ModuleId = vmInSession.ModuleId;
+            vm.SiteSelectList = vmInSession.SiteSelectList;
+            vm.SiteId = siteIdSelected;
+            vm.ShowSiteDropdown = true;
+            vm.EmployeeSelectList = vmInSession.EmployeeSelectList;
+            vm.EmployeeList = vmInSession.EmployeeList;
+            // CSR - use dual listbox
+            //vm.ShowEmployeeDropdown = true;
+            vm.ShowEmployeeDualListbox = true;
+            vm.ProgramSelectList = vmInSession.ProgramSelectList;
+            vm.ProgramId = programIdSelected;
+            vm.ProgramName = programName;
+            vm.ShowProgramDropdown = true;
+            vm.CallTypeSelectList = vmInSession.CallTypeSelectList;
 
-			return PartialView("_NewSubmission", vm);
+            return PartialView("_NewSubmission", vm);
 		}
 
-		private void GetEmployeesByModuleToSession(int moduleId, int siteId)
+        private void GetEmployeesByModuleToSession(int moduleId, int siteId)
         {
-            IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession().EmployeeId);
-            employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
-            IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
             var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
-			vmInSession.EmployeeSelectList = employees;
-            vmInSession.EmployeeList = employeeList;
+            IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession().EmployeeId);
+            //employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
+            List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();
+            employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
+            vmInSession.EmployeeSelectList = employees;
+            vmInSession.EmployeeList = employeeList.Select(e => new TextValue(e.Name + " (Supervisor: " + e.SupervisorName + ")", e.Id)).ToList<TextValue>();
         }
 
         [HttpPost]
@@ -411,11 +455,11 @@ namespace eCoachingLog.Controllers
             else 
             {
                 IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, Constants.ALL_SITES, GetUserFromSession().EmployeeId);
-                employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
-                IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
+                List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();
+                employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
                 vm.EmployeeSelectList = employees;
-                vm.EmployeeList = employeeList;
-            }
+                vm.EmployeeList = employeeList.Select(e => new TextValue(e.Name, e.Id)).ToList<TextValue>();
+           }
 
             // Program Dropdown
             if (moduleId != Constants.MODULE_TRAINING)
@@ -435,6 +479,7 @@ namespace eCoachingLog.Controllers
 
             vm.ShowSiteDropdown = ShowSiteDropdown(vm);
             vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm);
+            vm.ShowEmployeeDualListbox = ShowEmployeeDualListbox(vm);
             vm.ShowProgramDropdown = ShowProgramDropdown(vm);
             vm.ShowBehaviorDropdown = ShowBehaviorDropdown(vm);
 
@@ -625,25 +670,33 @@ namespace eCoachingLog.Controllers
         private bool ShowEmployeeDropdown(NewSubmissionViewModel vm)
         {
             // No module selected
-            if (vm.ModuleId == -2)
+            if (vm.ModuleId == -2 || vm.ModuleId == Constants.MODULE_CSR)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        private bool ShowEmployeeDualListbox(NewSubmissionViewModel vm)
+        {
+            // No module selected
+            if (vm.ModuleId == -2 || vm.ModuleId != Constants.MODULE_CSR)
             {
                 return false;
             }
 
-            if (vm.ModuleId == Constants.MODULE_CSR)
-            {
-                return vm.SiteId.HasValue && vm.SiteId > 0;
-            }
+            // csr module
+            return vm.SiteId.HasValue && vm.SiteId > 0;
 
-            return true;
-        }
+        }        
 
         private bool ShowProgramDropdown(NewSubmissionViewModel vm)
         {
             // Only display program dropdown for non-traning modules
             if (vm.ModuleId == Constants.MODULE_CSR)
             {
-                return vm.SiteId.HasValue && vm.SiteId.Value > 0;
+            	return true;
             }
             else
             {
@@ -673,5 +726,41 @@ namespace eCoachingLog.Controllers
 		{
 			return vm.ModuleId != Constants.MODULE_LSA;
 		}
-	}
+
+        // Add employee to the unselected employee dual-listbox
+        [HttpPost]
+        public ActionResult InitAddEmployee(string excludeSiteId)
+        {
+            var vm = new NewSubmissionViewModel();
+            NewSubmissionViewModel vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+            vm.SiteSelectList = vmInSession.SiteSelectList.Where(x => x.Value != excludeSiteId);
+            return PartialView("_AddEmployee", vm);
+        }
+        
+        public JsonResult GetEmployees(int siteId)
+        {
+            NewSubmissionViewModel vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+            int moduleId = vmInSession.ModuleId;
+            var userEmpId = GetUserFromSession().EmployeeId;
+            var empList = this.employeeService.GetEmployeesByModule(moduleId, siteId, userEmpId);
+            empList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
+            IEnumerable<SelectListItem> employees = new SelectList(empList, "Id", "Name");
+            JsonResult result = Json(employees);
+            result.MaxJsonLength = Int32.MaxValue;
+            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return result;
+        }
+
+        [HttpPost]
+        public JsonResult AddEmployeeToSession(string employeeId, string employeeName, string siteName)
+        {
+            var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+            var employee = new TextValue(employeeName + "(" + siteName + ")", employeeId);
+            vmInSession.EmployeeList.Add(employee);
+
+            return Json(new EmptyResult(), JsonRequestBehavior.AllowGet);
+        }
+   
+    }
+
 }

@@ -23,6 +23,7 @@ namespace eCoachingLog
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-datetimepicker.js",
                         "~/Scripts/bootstrap-multiselect.js",
+                        "~/Scripts/jquery.bootstrap-duallistbox.js",
                         "~/Scripts/dataTables.bootstrap.js",
 						"~/Scripts/dataTables.responsive.js",
 						"~/Scripts/respond.js",
@@ -118,6 +119,7 @@ namespace eCoachingLog
 			// css across web app
 			bundles.Add(new StyleBundle("~/Content/css").Include(
 					   "~/Content/bootstrap.css",
+					   "~/Content/bootstrap-duallistbox.css",
 					   "~/Content/animate.css",
 					   "~/Content/bootstrap-datetimepicker.min.css",
                        "~/Content/bootstrap-multiselect.css",

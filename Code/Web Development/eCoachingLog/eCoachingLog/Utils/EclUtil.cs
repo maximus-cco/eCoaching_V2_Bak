@@ -1,6 +1,8 @@
 ﻿using eCoachingLog.Extensions;
 using log4net;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -34,6 +36,31 @@ namespace eCoachingLog.Utils
             }
 
             return str.Replace(token, "");
+        }
+        
+        public static List<string> ConvertToList(string str, string delimiter)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return new List<string>();
+            }
+
+            return str.Split(',').ToList<string>();
+        }
+
+        public static string ConvertToString(List<string> list, string delimiter)
+        {
+            if (list == null || list.Count == 0)
+            {
+                return "";
+            }
+
+            if (String.IsNullOrEmpty(delimiter))
+            {
+                delimiter = ", ";
+            }
+
+            return String.Join<string>(delimiter, list);
         }
     }
 }

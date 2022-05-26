@@ -155,7 +155,7 @@
     <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Models\Common\Behavior.cs" />
-    <Compile Include="Models\Common\MailInfo.cs" />
+    <Compile Include="Models\Common\Mail.cs" />
     <Compile Include="Models\Common\MailParameter.cs" />
     <Compile Include="Models\Common\MailResult.cs" />
     <Compile Include="Models\Common\TextValue.cs" />
@@ -171,10 +171,13 @@
     <Compile Include="Models\MyDashboard\ChartData.cs" />
     <Compile Include="Models\MyDashboard\ChartDataset.cs" />
     <Compile Include="Models\MyDashboard\QnStatistic.cs" />
+    <Compile Include="Models\NewSubmission\NewSubmissionResult.cs" />
     <Compile Include="Models\Review\Review.cs" />
     <Compile Include="Models\Survey\Question.cs" />
     <Compile Include="Models\Survey\SingleChoice.cs" />
     <Compile Include="Models\Survey\Survey.cs" />
+    <Compile Include="Repository\EmailRepository.cs" />
+    <Compile Include="Repository\IEmailRepository.cs" />
     <Compile Include="Repository\IProgramRepository.cs" />
     <Compile Include="Repository\IReviewRepository.cs" />
     <Compile Include="Repository\ISiteRepository.cs" />
@@ -266,6 +269,7 @@
   <ItemGroup>
     <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap-datetimepicker.min.css" />
+    <Content Include="Content\bootstrap-duallistbox.css" />
     <Content Include="Content\bootstrap-multiselect.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrapValidator.css" />
@@ -318,6 +322,7 @@
     <Content Include="Scripts\eCoachingLog\newSubmission.js" />
     <Content Include="Scripts\eCoachingLog\review.js" />
     <Content Include="Scripts\eCoachingLog\survey.js" />
+    <Content Include="Scripts\jquery.bootstrap-duallistbox.js" />
     <Content Include="Scripts\jquery.js" />
     <Content Include="Scripts\jquery.dataTables.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
@@ -439,6 +444,9 @@
     <Content Include="Views\MyDashboardQn\_MySubmissionSearch.cshtml" />
     <Content Include="Views\Review\_QnFollowupInfo.cshtml" />
     <Content Include="Views\Review\_QnFollowupDecisionComments.cshtml" />
+    <Content Include="Views\NewSubmission\_AddEmployee.cshtml" />
+    <Content Include="Views\NewSubmission\_EmployeeDualListbox.cshtml" />
+    <Content Include="Views\NewSubmission\_EmployeeSelection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

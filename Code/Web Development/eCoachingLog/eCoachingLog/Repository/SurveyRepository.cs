@@ -38,7 +38,9 @@ namespace eCoachingLog.Repository
 						bool.TryParse(dataReader["hasHotTopic"].ToString(), out hasHotTopic);
 						survey.HasHotTopic = hasHotTopic;
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return survey;
 		}
@@ -70,7 +72,9 @@ namespace eCoachingLog.Repository
 
 						questions.Add(q);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return questions;
 		}
@@ -98,7 +102,9 @@ namespace eCoachingLog.Repository
 
 						singleChoices.Add(sc);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return singleChoices;
 		}

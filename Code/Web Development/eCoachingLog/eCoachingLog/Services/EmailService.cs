@@ -1,4 +1,6 @@
-﻿using eCoachingLog.Models.Common;
+﻿using eCoachingLog.Models;
+using eCoachingLog.Models.Common;
+using eCoachingLog.Repository;
 using eCoachingLog.Utils;
 using log4net;
 using System;
@@ -17,13 +19,15 @@ namespace eCoachingLog.Services
         private readonly IEmployeeService employeeService;
         private readonly IEmployeeLogService employeeLogService;
         private readonly INewSubmissionService newSubmissionService;
+        private readonly IEmailRepository emailRepository;
 
         public EmailService(IEmployeeService employeeService, IEmployeeLogService employeeLogService,
-            INewSubmissionService newSubmissionService)
+            INewSubmissionService newSubmissionService, IEmailRepository emailRepository)
         {
             this.employeeService = employeeService;
             this.employeeLogService = employeeLogService;
             this.newSubmissionService = newSubmissionService;
+            this.emailRepository = emailRepository;
         }
 
         public bool SendComment(BaseLogDetail log, string comments, string emailTempFileName, string subject)
@@ -118,119 +122,71 @@ namespace eCoachingLog.Services
             logger.Warn(message.Body);
         }
 
-        // send mail in a seperate thread, so it will not freeze UI in case of sending large number of mail
+        // In a seperate thread for better user experence
         // https://docs.microsoft.com/en-us/dotnet/standard/threading/creating-threads-and-passing-data-at-start-time
-        public void SendNotification(MailParameter mailParameter)
+        public void StoreNotification(MailParameter mailParameter)
         {
-            Thread thread = new Thread(new ParameterizedThreadStart(Send));
+            Thread thread = new Thread(new ParameterizedThreadStart(Store));
             thread.IsBackground = true;
             // The Start method returns immediately, often before the new thread has actually started. 
             thread.Start(mailParameter);
         }
 
-        // send submission notification email, and save sent result in db if indicated to do so (MailParameter.SaveMailResult is true)
+        // Store emails to be sent in database, a backend process will pick them up and send...
         // one submission creates one log for each selected employees
         // moduleId: for which module is this submission
         // isWarning: is this submission warning?
         // isCse: is this submission Cse?
         // templateFileName: email tempmlate file name
-        private void Send(Object mailParamter)
+        private void Store(Object mailParamter)
         {
             MailParameter mParameter = (MailParameter)mailParamter;
-            var mailResults = InitMailResults(mParameter.Employees);
+            var mailResults = InitMailResults(mParameter.NewSubmissionResult);
             if (mailResults.Count == 0)
             {
                 return;
             }
 
-            SmtpClient smtpClient = new SmtpClient();
+            logger.Debug($"####### Start storing email [total: {mParameter.NewSubmissionResult.Count}");
             try
-            {
+            { 
                 var mailInfo = GetMailInfo(mParameter.ModuleId, mParameter.IsCse, mParameter.SourceId);
-                foreach (var employee in mParameter.Employees)
+                var mailList = new List<Mail>();
+                foreach (var newSubmissionResult in mParameter.NewSubmissionResult)
                 {
-                    SetMailToCcAddress(mailInfo, employee);
-                    var success = false;
-                    MailMessage message = null;
-                    if (mailResults.Where(x => x.LogName == employee.LogName).First().Success)
+                    SetMailToCcAddress(mailInfo, newSubmissionResult.Employee);
+                    if (mailResults.Where(x => x.LogName == newSubmissionResult.LogName).First().Success)
                     {
-                       continue;
+                        continue;
                     }
 
-                    try
-                    {
-                        message = CreateMailMessage(mailInfo, mParameter.TemplateFileName, employee.LogName, mParameter.IsWarning, employee.Name);
-                        smtpClient.Send(message);
-                        // claim to be successful if no exception thrown even though the email address doesn't exists (in this case, no exception thrown)
-                        success = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        if (message != null)
-                        {
-                            logger.Debug($"Failed to send email [{employee.LogName}] to [{mailInfo.To}]: {ex.Message}. Resend in 5 seconds.");
-                            try
-                            {
-                                Thread.Sleep(5000);
-                                logger.Debug("Resending...");
-                                smtpClient.Send(message);
-                                success = true;
-                            }
-                            catch (Exception exResend)
-                            {
-                                LogEmailException(exResend, message, employee.LogName, true);
-                            }
-                        }
-                        else
-                        {
-                            LogEmailException(ex, message, employee.LogName, true);
-                        }
-                    }
-                    finally
-                    {
-                        if (message != null)
-                        {
-                            message.Dispose();
-                        }
+                    // TODO: pass "CreateDateTime" passed back from database to CreateMailMessage(...)
+                    var mail = CreateMail(mailInfo, mParameter.TemplateFileName, newSubmissionResult.LogName, mParameter.IsWarning, "lili");// newSubmissionResult.Employee.Name);
+                    mailList.Add(mail);
 
-                        var mailResult = mailResults.Where(x => x.LogName == employee.LogName).First();
-                        mailResult.To = mailInfo.To;
-                        mailResult.Cc = mailInfo.Cc;
-                        mailResult.SentDateTime = DateTime.Now.ToString();
-                        mailResult.Success = success;
-                    } // end try smtpClient.send
-                } // end foreach (var employee in employees)        
+                    //logger.Debug(mail.Body);
+                }
+
+                this.emailRepository.Store(mailList);
             }
             catch (Exception ex)
             {
-                logger.Warn(ex);
-            }
-            finally
-            {
-                if (smtpClient != null)
-                {
-                    smtpClient.Dispose();
-                }
+                logger.Error("Failed to store email.", ex);
             }
 
-            // record mail result (success/fail) in db
-            if (mParameter.SaveMailStatus)
-            {
-                this.newSubmissionService.SaveNotificationStatus(mailResults, mParameter.UserId);
-                logger.Debug("############Done with SaveNotificationStatus");
-            }
+            logger.Debug($"####### End storing email [total: {mParameter.NewSubmissionResult.Count}");
         }
 
-        private List<MailResult> InitMailResults(List<Employee> employees)
+        private List<MailResult> InitMailResults(List<NewSubmissionResult> newSubmissionResults)
         {
             var mailResults = new List<MailResult>();
-            if (employees == null)
+            if (newSubmissionResults == null)
             {
                 return mailResults;
             }
-            foreach (var e in employees)
+            foreach (var x in newSubmissionResults)
             {
-                var m = new MailResult(e.LogName, false);
+                var m = new MailResult(x.LogName, false);
                 mailResults.Add(m);
             }
 
@@ -243,64 +199,68 @@ namespace eCoachingLog.Services
             return mailResults;
         }
 
-        private void SetMailToCcAddress(MailInfo mailInfo, Employee employee)
+        private void SetMailToCcAddress(Mail mailInfo, Employee employee)
         {
-            if (mailInfo == null)
-            {
-                return;
-            }
+            mailInfo.To = "lilihuang@maximus.com";
+            mailInfo.Cc = "lilihuang@maximus.com";
 
-            if (mailInfo.To == "Manager")
-            {
-                mailInfo.To = employee.ManagerEmail;
-            }
-            else if (mailInfo.To == "Supervisor")
-            {
-                mailInfo.To = employee.SupervisorEmail;
-            }
-            else if (mailInfo.To == "Employee")
-            {
-                mailInfo.To = employee.Email;
-            }
-            else
-            {
-                mailInfo.To = null;
-            }
+            //if (mailInfo == null)
+            //{
+            //    return;
+            //}
 
-            if (mailInfo.Cc == "Manager")
-            {
-                mailInfo.Cc = employee.ManagerEmail;
-            }
-            else if (mailInfo.Cc == "Supervisor")
-            {
-                mailInfo.Cc = employee.SupervisorEmail;
-            }
-            else if (mailInfo.Cc == "Employee")
-            {
-                mailInfo.Cc = employee.Email;
-            }
-            else
-            {
-                mailInfo.Cc = null;
-            }
+            //if (mailInfo.To == "Manager")
+            //{
+            //    mailInfo.To = employee.ManagerEmail;
+            //}
+            //else if (mailInfo.To == "Supervisor")
+            //{
+            //    mailInfo.To = employee.SupervisorEmail;
+            //}
+            //else if (mailInfo.To == "Employee")
+            //{
+            //    mailInfo.To = employee.Email;
+            //}
+            //else
+            //{
+            //    mailInfo.To = null;
+            //}
+
+            //if (mailInfo.Cc == "Manager")
+            //{
+            //    mailInfo.Cc = employee.ManagerEmail;
+            //}
+            //else if (mailInfo.Cc == "Supervisor")
+            //{
+            //    mailInfo.Cc = employee.SupervisorEmail;
+            //}
+            //else if (mailInfo.Cc == "Employee")
+            //{
+            //    mailInfo.Cc = employee.Email;
+            //}
+            //else
+            //{
+            //    mailInfo.Cc = null;
+            //}
         }
 
-		private MailMessage CreateMailMessage(MailInfo mailInfo, string templateFileName, string logName, bool isWarning, string employeeName)
+		private Mail CreateMail(Mail mailInfo, string templateFileName, string logName, bool isWarning, string employeeName)
 		{
             string subject = isWarning ? "Warning Log: " : "eCL: ";
             string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
             string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
 			string eCoachingUrl = System.Configuration.ConfigurationManager.AppSettings["App.Url"];
             string status = mailInfo.LogStatus;
-            string txtFromDb = mailInfo.BodyText;
+            string txtFromDb = mailInfo.Body;
+            // TODO: time should be CreatedDateTime in database, should return this 
             txtFromDb = txtFromDb.Replace("strPerson", employeeName)
                 .Replace("strDateTime", DateTime.Now.ToString());
 
-            MailMessage msg = new MailMessage();
-            msg.Subject = subject + status + String.Format(" ({0})", employeeName);
-            msg.IsBodyHtml = true;
-            msg.Body = FileUtil.ReadFile(templateFileName);
-            msg.Body = msg.Body.Replace("{eCoachingUrl}", eCoachingUrl)
+            var mail = new Mail();
+            mail.Subject = subject + status + String.Format(" ({0})", employeeName);
+            mail.IsBodyHtml = true;
+            mail.Body = FileUtil.ReadFile(templateFileName);
+            mail.Body = mail.Body.Replace("{eCoachingUrl}", eCoachingUrl)
                 .Replace("{textFromDb}", txtFromDb)
                 .Replace("{formName}", logName);
 
@@ -309,23 +269,23 @@ namespace eCoachingLog.Services
 
             if (mailInfo.To != null)
             {
-                msg.To.Add(mailInfo.To);
+                mail.To = mailInfo.To;
             }
             if (mailInfo.Cc != null)
             {
-                msg.Bcc.Add(mailInfo.Cc);
+                mail.Cc = mailInfo.Cc;
             }
-            msg.From = new MailAddress(fromAddress, fromDisplayName);
+            mail.From = fromAddress;
 
-			return msg;
+			return mail;
 		}
 
-		private MailInfo GetMailInfo(int moduleId, bool isCse, int sourceId)
+		private Mail GetMailInfo(int moduleId, bool isCse, int sourceId)
         {
             // Get email recipients titles
             Tuple<string, string, bool, string, string> recipientsTitlesAndText = this.newSubmissionService.GetEmailRecipientsTitlesAndBodyText(moduleId, sourceId, isCse);
 
-            return new MailInfo(recipientsTitlesAndText.Item1, recipientsTitlesAndText.Item2, recipientsTitlesAndText.Item4, recipientsTitlesAndText.Item5);
+            return new Mail(recipientsTitlesAndText.Item1, recipientsTitlesAndText.Item2, recipientsTitlesAndText.Item4, recipientsTitlesAndText.Item5);
         }
     }
 }

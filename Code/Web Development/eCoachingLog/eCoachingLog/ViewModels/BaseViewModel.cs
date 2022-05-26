@@ -21,7 +21,9 @@ namespace eCoachingLog.ViewModels
 
 		public Employee Employee { get; set; }
 		public IEnumerable<SelectListItem> EmployeeSelectList { get; set; }
-		public IEnumerable<Employee> EmployeeList { get; set; }
+		//public IEnumerable<Employee> EmployeeList { get; set; }
+        // dual listbox
+        public List<TextValue> EmployeeList { get; set; }
 
 		public Employee Submitter { get; set; }
 		public IEnumerable<SelectListItem> SubmitterSelectList { get; set; }

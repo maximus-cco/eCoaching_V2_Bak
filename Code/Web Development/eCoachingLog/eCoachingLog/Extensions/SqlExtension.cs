@@ -30,7 +30,24 @@ namespace eCoachingLog.Extensions
 			return sqlParameter;
 		}
 
-		public static SqlParameter AddSurveyResponseTableType(this SqlParameterCollection target, string name, Survey survey)
+        // this is for new submission - pass in employee ids
+        public static SqlParameter AddStringTableType(this SqlParameterCollection target, string name, List<string> values)
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("ID", typeof(string));
+            foreach (var value in values)
+            {
+                dataTable.Rows.Add(value);
+            }
+
+            SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
+            sqlParameter.SqlDbType = SqlDbType.Structured;
+            sqlParameter.TypeName = "EC.EmpIdsTableType";
+
+            return sqlParameter;
+        }
+
+        public static SqlParameter AddSurveyResponseTableType(this SqlParameterCollection target, string name, Survey survey)
 		{
 			DataTable dataTable = new DataTable();
 			dataTable.Columns.Add("QuestionID", typeof(int));
@@ -109,6 +126,38 @@ namespace eCoachingLog.Extensions
             SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
             sqlParameter.SqlDbType = SqlDbType.Structured;
             sqlParameter.TypeName = "EC.MailHistoryTableType"; // User Defined Type name in DB
+
+            return sqlParameter;
+        }
+
+        // todo: check db when the table is ready
+        public static SqlParameter AddMailTableType(this SqlParameterCollection target, string name, IList<Mail> mailList)
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("FormId", typeof(long));
+            dataTable.Columns.Add("FormName", typeof(string));
+            dataTable.Columns.Add("To", typeof(string));
+            dataTable.Columns.Add("Cc", typeof(string));
+            dataTable.Columns.Add("From", typeof(string));
+            dataTable.Columns.Add("Subject", typeof(string));
+            dataTable.Columns.Add("Body", typeof(string));
+            dataTable.Columns.Add("IsHtml", typeof(bool));
+
+            foreach (var m in mailList)
+            {
+                dataTable.Rows.Add(m.LogId, 
+                    m.LogName,
+                    m.To, 
+                    m.Cc,
+                    m.From,
+                    m.Subject,
+                    m.Body,
+                    m.IsBodyHtml
+               );
+            }
+            SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
+            sqlParameter.SqlDbType = SqlDbType.Structured;
+            sqlParameter.TypeName = "EC.MailTableType"; // User Defined Type name in DB
 
             return sqlParameter;
         }

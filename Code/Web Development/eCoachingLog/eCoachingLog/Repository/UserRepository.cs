@@ -42,6 +42,8 @@ namespace eCoachingLog.Repository
 						user.IsExportExcel = (dataReader["ExcelExport"] == DBNull.Value) ? false : (bool)dataReader["ExcelExport"];
 						user.ShowFollowup = (dataReader["FollowupDisplay"] == DBNull.Value) ? false : (bool)dataReader["FollowupDisplay"];
 					}
+
+                    dataReader.Close();
                 }
             }
 			return user;
@@ -71,7 +73,9 @@ namespace eCoachingLog.Repository
 						user.Role = dataReader["Role"].ToString();
 						users.Add(user);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return users;
 		}

@@ -42,6 +42,9 @@ namespace eCoachingLog.Repository
 						module.Name = dataReader["Module"].ToString();
 						modules.Add(module);
                     }
+
+                    // https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqldatareader.close?view=netframework-4.8
+                    dataReader.Close();
                 }
             }
             return modules;
@@ -203,9 +206,10 @@ namespace eCoachingLog.Repository
                             linkedLogs.Add(temp);
                         }
                         logDetail.LinkedLogs = linkedLogs;
-
                         break;
                     } // End while
+
+                    dataReader.Close();
                 } // End using SqlDataReader
             } // End using SqlCommand
             return logDetail;
@@ -241,7 +245,9 @@ namespace eCoachingLog.Repository
 
 						reasons.Add(reason);
 					} // end while
-				} // end using SqlDataReader
+
+                    dataReader.Close();
+                } // end using SqlDataReader
 			} // end using SqlCommand
 
 			return reasons;
@@ -298,6 +304,8 @@ namespace eCoachingLog.Repository
 
 						break;
                     }
+
+                    dataReader.Close();
                 }
             }
             return logDetail;
@@ -325,6 +333,8 @@ namespace eCoachingLog.Repository
 
                         callTypes.Add(callType);
                     }
+
+                    dataReader.Close();
                 }
             }
             return callTypes;
@@ -357,6 +367,8 @@ namespace eCoachingLog.Repository
 
                         warningTypes.Add(wt);
                     } // end while
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
 
@@ -388,6 +400,8 @@ namespace eCoachingLog.Repository
 
                         warningReasons.Add(wr);
                     } // end while
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
             return warningReasons;
@@ -422,6 +436,8 @@ namespace eCoachingLog.Repository
                         coachingReasons.Add(cr);
 						index++;
                     } // end while
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
 
@@ -449,6 +465,8 @@ namespace eCoachingLog.Repository
                         string valueOption = dataReader["Value"].ToString();
                         valueOptions.Add(valueOption);
                     } // end while
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
 
@@ -480,6 +498,8 @@ namespace eCoachingLog.Repository
 
                         subReasons.Add(csr);
                     } // end while
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
             return subReasons;
@@ -506,6 +526,8 @@ namespace eCoachingLog.Repository
 
                         behaviors.Add(behavior);
                     } // end while
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
 
@@ -573,8 +595,10 @@ namespace eCoachingLog.Repository
 						}
 
 						logs.Add(log);
-					}
-				}
+					} // end while
+
+                    dataReader.Close();
+                }
 			}
 			return logs;
 		}
@@ -705,7 +729,9 @@ namespace eCoachingLog.Repository
                         }
 
                         logs.Add(log);
-                    }
+                    } // end while
+
+                    dataReader.Close();
                 }
             }
             return logs;
@@ -777,7 +803,9 @@ namespace eCoachingLog.Repository
 						status.Description = dataReader["Status"].ToString();
 						statuses.Add(status);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return statuses;
 		}
@@ -801,7 +829,9 @@ namespace eCoachingLog.Repository
 						source.Name = dataReader["Source"].ToString();
 						sources.Add(source);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return sources;
 		}
@@ -824,7 +854,9 @@ namespace eCoachingLog.Repository
 						logValue.Description = dataReader["Value"].ToString();
 						logValues.Add(logValue);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return logValues;
 		}
@@ -965,7 +997,9 @@ namespace eCoachingLog.Repository
 						state.Name = dataReader["StateText"].ToString();
 						logStates.Add(state);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return logStates;
 		}
@@ -989,7 +1023,9 @@ namespace eCoachingLog.Repository
 						lc.Count = Convert.ToInt32(dataReader["LogCount"]);
 						logCounts.Add(lc);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return logCounts;
 		}
@@ -1018,7 +1054,9 @@ namespace eCoachingLog.Repository
 						logCountForSite.TotalWarning = Convert.ToInt32(dataReader["WarningCount"]);
 						logCountsForSites.Add(logCountForSite);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return logCountsForSites;
 		}
@@ -1042,6 +1080,8 @@ namespace eCoachingLog.Repository
                         lc.Count = Convert.ToInt32(dataReader["LogCount"]);
                         logCounts.Add(lc);
                     }
+
+                    dataReader.Close();
                 }
             }
             return logCounts;
@@ -1066,7 +1106,9 @@ namespace eCoachingLog.Repository
 						cds.data.Add(Convert.ToInt32(dataReader["LogCount"]));
 						chartDatasets.Add(cds);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 
 			return chartDatasets;
@@ -1094,7 +1136,9 @@ namespace eCoachingLog.Repository
 						lcs.Count = Convert.ToInt32(dataReader["LogCount"]);
 						logCountByStatusForSites.Add(lcs);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return logCountByStatusForSites;
 		}
@@ -1160,6 +1204,7 @@ namespace eCoachingLog.Repository
                         summaryList.Add(temp);
                     }
 
+                    dataReader.Close();
                 }
             }
 
@@ -1193,6 +1238,8 @@ namespace eCoachingLog.Repository
 
                         statistics.Add(temp);
                     }
+
+                    dataReader.Close();
                 }
             }
             return statistics;

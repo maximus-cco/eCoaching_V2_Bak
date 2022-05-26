@@ -85,8 +85,8 @@ namespace eCoachingLog.Utils
 		public const string LOG_REPORT_CODE_OMRIAE = "OMR/IAE";
 		public const string LOG_REPORT_CODE_OTHDTT = "OTH/DTT";
 
-		public const int MAX_NUMBER_OF_COACHING_REASONS = 12;
-
+        public const int MAX_NUMBER_OF_EMPLOYEES_PER_SUBMISSION = 5000;
+        public const int MAX_NUMBER_OF_COACHING_REASONS = 12;
 		public const int WARNING_SOURCE_ID = 120;
 
 		// ec.dim_module table

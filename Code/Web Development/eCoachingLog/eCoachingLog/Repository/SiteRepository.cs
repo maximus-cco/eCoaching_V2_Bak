@@ -9,7 +9,7 @@ namespace eCoachingLog.Repository
 {
 	public class SiteRepository : ISiteRepository
     {
-        string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
+        private static string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
         public IList<Site> GetAllSites()
         {
@@ -30,6 +30,8 @@ namespace eCoachingLog.Repository
                         site.Name = dataReader["Site"].ToString();
                         sites.Add(site);
                     } // end while
+
+                    dataReader.Close();
                 } // end SqlDataReader
             } // end SqlCommand
             return sites;
@@ -54,7 +56,9 @@ namespace eCoachingLog.Repository
 						site.Name = dataReader["City"].ToString();
 						sites.Add(site);
 					} // end while
-				} // end using SqlDataReader
+
+                    dataReader.Close();
+                } // end using SqlDataReader
 			} // end SqlCommand
 			return sites;
 		}

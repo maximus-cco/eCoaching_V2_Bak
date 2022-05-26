@@ -18,7 +18,7 @@ namespace eCoachingLog.Repository
         {
             var employees = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Employees_By_Module_And_Site]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_Select_Employees_By_Module_And_Site]", connection))
             {
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
@@ -33,9 +33,13 @@ namespace eCoachingLog.Repository
                         Employee emp = new Employee();
                         emp.Id = dataReader["Emp_ID"].ToString().Trim().ToUpper();
                         emp.Name = dataReader["Emp_Name"].ToString();
+                        emp.SupervisorId = dataReader["sup_id"].ToString();
+                        emp.SupervisorName = dataReader["sup_name"].ToString();
 
                         employees.Add(emp);
                     }
+
+                    dataReader.Close();
                 }
             }
 
@@ -69,6 +73,8 @@ namespace eCoachingLog.Repository
 
                         break;
                     }
+
+                    dataReader.Close();
                 }
             }
             return employee;
@@ -94,7 +100,9 @@ namespace eCoachingLog.Repository
 						manager.Name = dataReader["Manager"].ToString();
 						managers.Add(manager);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return managers;
 		}
@@ -119,7 +127,9 @@ namespace eCoachingLog.Repository
 						supervisor.Name = dataReader["Supervisor"].ToString();
 						supervisors.Add(supervisor);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return supervisors;
 		}
@@ -147,7 +157,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["Employee"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -171,7 +183,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["Submitter"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -195,7 +209,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["SUPText"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -219,7 +235,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -243,7 +261,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -267,7 +287,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["SUPText"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -291,7 +313,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -315,7 +339,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["MgrText"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -339,7 +365,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -363,7 +391,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["SUPText"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -387,7 +417,9 @@ namespace eCoachingLog.Repository
 						employee.Name = dataReader["EmpText"].ToString();
 						employees.Add(employee);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return employees;
 		}
@@ -412,7 +444,9 @@ namespace eCoachingLog.Repository
 						emp.Name = dataReader["Name"].ToString();
 						filters.Add(emp);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return filters;
 		}

@@ -54,7 +54,7 @@ body {
 .panel-body {
   padding: 5px;
 }
-.modal-dialog {
+#modal-container .modal-dialog {
   position: relative;
   width: auto;
   margin: 10px;
@@ -170,14 +170,18 @@ ul.navbar-nav {
     margin-top: 5%;
 }
 
-#modal-container .modal-body {
+.modal .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+/*#modal-container-overlay .modal-body {
     max-height: 60vh;
     overflow-y: auto;
 }
-#modal-container-overlay .modal-body {
-    max-height: 60vh;
+#modal-confirm-container .modal-body {
+    max-height: 70vh;
     overflow-y: auto;
-}
+}*/
 #modal-container .modal-content {
 	width: 90vw;
 	margin: auto;
@@ -794,4 +798,40 @@ input {
   border: 1px solid #DDD;
   background-color: #FFF;
   padding: 4px;
+}
+
+.dual-list .list-group {
+    margin-top: 8px;
+}
+.list-left li, .list-right li {
+    cursor: pointer;
+}
+.list-arrows {
+    padding-top: 100px;
+}
+.list-arrows button {
+    margin-bottom: 20px;
+}
+.moveall, 
+.removeall {
+  border: 1px solid #ccc !important;
+}
+/*Only included because button labels aren't showing*/ 
+.moveall::after {
+  content: attr(title);
+  
+}
+.removeall::after {
+  content: attr(title);
+}
+/*Custom styling form*/
+.form-control option {
+    padding: 10px;
+    border-bottom: 1px solid #efefef;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }

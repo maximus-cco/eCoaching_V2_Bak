@@ -6,6 +6,7 @@ using eCoachingLog.Utils;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace eCoachingLog.Services
 {
@@ -20,16 +21,15 @@ namespace eCoachingLog.Services
             this.newSubmissionRepository = nsr;
         }
 
-        public string Save(NewSubmission submission, User user, out bool isDuplicate)
+        public IList<NewSubmissionResult> Save(NewSubmission submission, User user)
         {
-			bool isWarning = submission.IsWarning.HasValue && submission.IsWarning.Value;
-            isDuplicate = false;
-			if (isWarning)
+            if (submission.IsWarning != null && submission.IsWarning.Value)
             {
-				// No text input on warning page, we are safe.
-                return newSubmissionRepository.SaveWarningLog(submission, user, out isDuplicate);
+                return newSubmissionRepository.SaveWarningLog(submission, user);
             }
 
+            // Make sure ids in submission.EmployeeIdList are unique
+            submission.EmployeeIdList = submission.EmployeeIdList.Distinct().ToList();
 			// Strip potential harmful characters entered by the user
 			submission.BehaviorDetail = EclUtil.CleanInput(submission.BehaviorDetail);
 			submission.Plans = EclUtil.CleanInput(submission.Plans);

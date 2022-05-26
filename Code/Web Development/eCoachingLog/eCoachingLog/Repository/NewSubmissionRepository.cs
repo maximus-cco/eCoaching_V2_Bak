@@ -40,42 +40,65 @@ namespace eCoachingLog.Repository
 
                         sourceList.Add(source);
                     }
+
+                    dataReader.Close();
                 }
             }
             return sourceList;
         }
 
-        // Return the log name saved 
-        public string SaveCoachingLog(NewSubmission submission, User user)
+        public IList<NewSubmissionResult> SaveCoachingLog(NewSubmission submission, User user)
         {
-            logger.Debug("Entered SaveCoachingLog ...");
-            string logNameSaved = null;
+            var empIds = submission.EmployeeIdList;
+            int total = empIds.Count;
 
+            logger.Debug("Entered SaveCoachingLog ...");
+
+            var ret = new List<NewSubmissionResult>();
+            //for (int i = 0; i < total; i++)
+            //{
+            //    var a = new NewSubmissionResult();
+            //    var e = new Employee();
+            //    e.Id = i + "";
+            //    e.Name = "employee" + i;
+            //    a.LogName = "log" + i;
+            //    a.Error = null;
+            //    e.Email = "lilihuang@maximus.com";
+            //    e.SupervisorEmail = "lilihuang@maximus.com";
+            //    e.ManagerEmail = "lilihuang@maximus.com";
+            //    temp.Add(a);
+            //}
+            //return temp;
+
+
+            // multi logs per submission - return "employee id, employee name, log name, create date, error"; 
+            // log name will be null if failed so the page will display those failed employee names 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_InsertInto_Coaching_Log]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-				command.Parameters.AddWithValueSafe("@nvcEmpID", submission.Employee.Id);
-				// Should be no program for LSA module
-				if (submission.ModuleId == Constants.MODULE_LSA)
-				{
-					submission.ProgramName = "NA";
-				}
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                // TODO: submission.EmployeeIdList as user defined table type
+                command.Parameters.AddStringTableType("@tableEmpIDs", submission.EmployeeIdList); 
+                // Should be no program for LSA module
+                if (submission.ModuleId == Constants.MODULE_LSA)
+                {
+                    submission.ProgramName = "NA";
+                }
                 command.Parameters.AddWithValueSafe("@nvcProgramName", submission.ProgramName);
                 command.Parameters.AddWithValueSafe("@Behaviour", submission.BehaviorName); 
                 command.Parameters.AddWithValueSafe("@intSourceID", submission.SourceId); // How was the coaching identifed?
-				if (submission.ModuleId == Constants.MODULE_CSR)
-				{
-					command.Parameters.AddWithValueSafe("@SiteID", submission.SiteId);
-				}
-				else
-				{
-					command.Parameters.AddWithValueSafe("@SiteID", null); // Modules other than CSR have no site selection
-				}
+                if (submission.ModuleId == Constants.MODULE_CSR)
+                {
+                    command.Parameters.AddWithValueSafe("@SiteID", submission.SiteId);
+                }
+                else
+                {
+                    command.Parameters.AddWithValueSafe("@SiteID", null); // Modules other than CSR have no site selection
+                }
                 command.Parameters.AddWithValueSafe("@nvcSubmitterID", user.EmployeeId);
 
-				var startDate = submission.CoachingDate;
+                var startDate = submission.CoachingDate;
                 if (submission.IsDirect.HasValue && submission.IsDirect.Value)
                 {
                     command.Parameters.AddWithValueSafe("@dtmEventDate", null);
@@ -85,8 +108,8 @@ namespace eCoachingLog.Repository
                 {
                     command.Parameters.AddWithValueSafe("@dtmEventDate", submission.CoachingDate);
                     command.Parameters.AddWithValueSafe("@dtmCoachingDate", null);
-					startDate = submission.CoachingDate;
-				}
+                    startDate = submission.CoachingDate;
+                }
 
                 command.Parameters.AddWithValueSafe("@dtmPFDCompletedDate", submission.PfdCompletedDate); 
 
@@ -99,28 +122,28 @@ namespace eCoachingLog.Repository
                 string ucId = null;
                 bool isNgdId = false;
                 string ngdId = null;
-				if (submission.IsCallAssociated)
-				{
-					switch (submission.CallTypeName)
-					{ 
-						case Constants.CALL_TYPE_AVOKE:
-							isAvokeId = true;
-							avokeId = submission.CallId;
-							break;
-						case Constants.CALL_TYPE_VERINT:
-							isVerintId = true;
-							verintId = submission.CallId;
-							break;
-						case Constants.CALL_TYPE_UCID:
-							isUcId = true;
-							ucId = submission.CallId;
-							break;
-						case Constants.CALL_TYPE_NGDID:
-							isNgdId = true;
-							ngdId = submission.CallId;
-							break;
-					}
-				}
+                if (submission.IsCallAssociated)
+                {
+                    switch (submission.CallTypeName)
+                    { 
+                        case Constants.CALL_TYPE_AVOKE:
+                            isAvokeId = true;
+                            avokeId = submission.CallId;
+                            break;
+                        case Constants.CALL_TYPE_VERINT:
+                            isVerintId = true;
+                            verintId = submission.CallId;
+                            break;
+                        case Constants.CALL_TYPE_UCID:
+                            isUcId = true;
+                            ucId = submission.CallId;
+                            break;
+                        case Constants.CALL_TYPE_NGDID:
+                            isNgdId = true;
+                            ngdId = submission.CallId;
+                            break;
+                    }
+                }
                 command.Parameters.AddWithValueSafe("@bitisAvokeID", isAvokeId);
                 command.Parameters.AddWithValueSafe("@nvcAvokeID", avokeId);
                 command.Parameters.AddWithValueSafe("@bitisVerintID", isVerintId);
@@ -143,7 +166,7 @@ namespace eCoachingLog.Repository
                     // Conconcate all sub reason ids using ","
                     command.Parameters.AddWithValueSafe("@nvcSubCoachReasonID" + count, String.Join(",", cr.SubReasonIds));
                 }
-				// Maximum number of reasons is 12. 
+                // Maximum number of reasons is 12. 
                 for (int i = count + 1; i <= Constants.MAX_NUMBER_OF_COACHING_REASONS; i++)
                 {
                     command.Parameters.AddWithValueSafe("@intCoachReasonID" + i,  "");
@@ -165,45 +188,63 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@dtmCSRReviewAutoDate", null);
                 command.Parameters.AddWithValueSafe("@nvcCSRComments", null);
                 command.Parameters.AddWithValueSafe("@ModuleID", submission.ModuleId);
-				command.Parameters.AddWithValueSafe("@bitisFollowupRequired", submission.IsFollowupRequired);
-				command.Parameters.AddWithValueSafe("@dtmFollowupDueDate", submission.FollowupDueDate);
+                command.Parameters.AddWithValueSafe("@bitisFollowupRequired", submission.IsFollowupRequired);
+                command.Parameters.AddWithValueSafe("@dtmFollowupDueDate", submission.FollowupDueDate);
 
-                // Output parameter
-                SqlParameter newFormNameParam = command.Parameters.Add("@nvcNewFormName", SqlDbType.VarChar, 30);
-                newFormNameParam.Direction = ParameterDirection.Output;
-				// Return Value
-                SqlParameter returnParam = command.Parameters.Add("@return_value", SqlDbType.Int);
-                returnParam.Direction = ParameterDirection.ReturnValue;
+                //// Output parameter
+                //SqlParameter newFormNameParam = command.Parameters.Add("@nvcNewFormName", SqlDbType.VarChar, 30);
+                //newFormNameParam.Direction = ParameterDirection.Output;
+                //// Return Value
+                //SqlParameter returnParam = command.Parameters.Add("@return_value", SqlDbType.Int);
+                //returnParam.Direction = ParameterDirection.ReturnValue;
                 try
                 {
                     connection.Open();
-                    command.ExecuteNonQuery();
-
-                    int returnValue = -1;
-                    returnValue = (int)returnParam.Value;
-
-                    if (returnValue != 0)
+                    using (SqlDataReader dataReader = command.ExecuteReader())
                     {
-                        throw new Exception("Failed to save new submission.");
-                    }
+                        while (dataReader.Read())
+                        {
+                            var r = new NewSubmissionResult();
+                            r.LogName = dataReader["FormName"].ToString();
 
-                    logNameSaved = (string)newFormNameParam.Value;
+                            ret.Add(r);
+                        } // end while
+
+                        dataReader.Close();
+                    } // end SqlDataReader
+
+
+
+                    //command.ExecuteNonQuery();
+
+                    //int returnValue = -1;
+                    //returnValue = (int)returnParam.Value;
+
+                    //if (returnValue != 0)
+                    //{
+                    //    throw new Exception("Failed to save new submission.");
+                    //}
+
+                    //logNameSaved = (string)newFormNameParam.Value;
                 }
                 catch (Exception ex)
                 {
                     logger.Error("Failed to save coaching log: " + ex.Message);
-					throw new Exception(ex.Message);
+                    throw new Exception(ex.Message);
                 }
             } // end Using 
 
-            return logNameSaved;
+            return ret;
         }
 
-        // Return the log name saved 
-        public string SaveWarningLog(NewSubmission ns, User user, out bool isDuplicate)
+        public IList<NewSubmissionResult> SaveWarningLog(NewSubmission ns, User user)
         {
+            var ret = new List<NewSubmissionResult>();
+            // only one employee per submission 
+            var employeeId = ns.EmployeeIdList[0];
+
             string logNameSaved = "";
-            isDuplicate = false;
+            //isDuplicate = false;
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_InsertInto_Warning_Log]", connection))
@@ -220,7 +261,7 @@ namespace eCoachingLog.Repository
 				{
 					command.Parameters.AddWithValueSafe("@SiteID", null); // Modules other than CSR have no site selection
 				}
-				command.Parameters.AddWithValueSafe("@nvcSubmitterID", user.EmployeeId);
+				command.Parameters.AddWithValueSafe("@nvcSubmitterID", employeeId);
                 command.Parameters.AddWithValueSafe("@dtmEventDate", ns.WarningDate);
                 command.Parameters.AddWithValueSafe("@intCoachReasonID1", ns.WarningTypeId);
                 command.Parameters.AddWithValueSafe("@nvcSubCoachReasonID1", ns.WarningReasonId);
@@ -244,16 +285,16 @@ namespace eCoachingLog.Repository
 
                     int returnValue = -1;
                     returnValue = (int)returnParam.Value;
-					isDuplicate = (bool)isDupParam.Value;
-					if (returnValue != 0 || isDuplicate)
-                    {
-						string msg = "The warning log you are trying to submit already exists.";
-						if (returnValue != 0)
-						{
-							msg = "Return value from sp_InsertInto_Warning_Log: " + returnValue;
-						}
-						throw new Exception(msg);
-                    }
+					//isDuplicate = (bool)isDupParam.Value;
+					//if (returnValue != 0 || isDuplicate)
+     //               {
+					//	string msg = "The warning log you are trying to submit already exists.";
+					//	if (returnValue != 0)
+					//	{
+					//		msg = "Return value from sp_InsertInto_Warning_Log: " + returnValue;
+					//	}
+					//	throw new Exception(msg);
+     //               }
 
                     logNameSaved = (string)newFormNameParam.Value;
                 }
@@ -264,7 +305,7 @@ namespace eCoachingLog.Repository
 				}
             } // end Using 
 
-            return logNameSaved;
+            return ret;
         }
 
         public Tuple<string, string, bool, string, string> GetEmailRecipientsTitlesAndBodyText(int moduleId, int sourceId, bool isCse)
@@ -296,6 +337,8 @@ namespace eCoachingLog.Repository
                         status = (string)dataReader["StatusName"];
                         break;
                     }
+
+                    dataReader.Close();
                 }
             }
 
@@ -323,6 +366,8 @@ namespace eCoachingLog.Repository
                         logStatusId = (int)dataReader["StatusID"];
                         break;
                     }
+
+                    dataReader.Close();
                 }
             }
             return logStatusId;
@@ -355,6 +400,8 @@ namespace eCoachingLog.Repository
                             (temp == "1" || temp == "true") ? true : false)
                         );
                     } // end while
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
 

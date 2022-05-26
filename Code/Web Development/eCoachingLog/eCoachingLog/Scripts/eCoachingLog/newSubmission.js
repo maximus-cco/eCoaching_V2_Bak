@@ -4,12 +4,6 @@
 	var showWorkAtHomeBehaviorDiv = false;
 	var pfdChecked = false;
 
-	if (showSuccessMessage === 'True') {
-	    $('#success-message').removeClass('hide');
-	} else if (showFailMessage === 'True') {
-	    $('#fail-message').removeClass('hide');
-	}
-
 	// Check unsaved data
     $('#new-submission-form').data('serialize', $('#new-submission-form').serialize());
     $(window).on('beforeunload', function (e) {
@@ -24,6 +18,10 @@
     	}
     });
 
+    if ($('#select-employee').val() > 0) {
+        DisplayMgtInfo($('#select-employee').val());
+    }
+
     const textAreaMaxLength = 3000;
     if ($('#textarea-behavior-detail').is(':visible')) {
         var textLength = textAreaMaxLength - $('#textarea-behavior-detail').val().length;
@@ -35,6 +33,13 @@
         $('#action-plan-remaining').html(textLength + ' remaining');
     }
 
+
+    if (clientValidateEmployee === 'True') {
+        if ($('[name="duallistbox_employee"]').val().length < 1) {
+            $("#bootstrap-duallistbox-selected-list_duallistbox_employee").css('border-color', 'red');
+        }
+    }
+    
     if (clientValidateCoachingReasons === 'True') {
         validateCoachingReasons();
     }
@@ -154,28 +159,25 @@
     // Also need to reset page (except for the module dropdown, 
     // since at this time, module has been selected)
     $('body').on('change', '#select-site', function () {
-		// Show spinner
+        // Show spinner
     	$(".please-wait").slideDown(500);
 
     	$("#SiteName").val($("#select-site option:selected").text());
-
-        $('#flash-message').empty();
-
         $.ajax({
             type: 'POST',
             url: handleSiteChangedUrl,
-            data: { siteIdSelected: $(this).val() },
+            data: { siteIdSelected: $(this).val(), programIdSelected: $('#select-program').val(), programName: $('#ProgramName').val() },
 
             success: function (result) {
                 $(".please-wait").slideUp(500);
+                $('#success-message').empty();
+                $('#fail-message').empty();
                 $('#div-new-submission-main').html(result);
             }
         });
     });
 
     $('body').on('change', '#select-employee', function () {
-        // Reset flash message
-        $('#flash-message').empty();
         // Display Supervisor and Manger names
         DisplayMgtInfo($(this).val());
 
@@ -208,7 +210,7 @@
     $('body').on('change', '#select-program', function () {
     	// Set hidden field ProgramName
     	$("#ProgramName").val($(this).find("option:selected").text());
-        if ($('#select-employee').val() !== "-2") {
+        if ($('#select-employee').val() && $('#select-employee').val() !== "-2") {
             $('#div-new-submission-middle').removeClass('hide');
             $('#div-new-submission-middle').addClass('show');
         }
@@ -237,8 +239,6 @@
     function resetPageBottom(isCoachingByYou, isCse, isWarning) {
         var employeeId = $('#select-employee').val();
         var programId = $('#select-program').val();
-
-        $('#flash-message').empty();
         $.ajax({
             type: 'POST',
             url: resetPageBottomUrl,
@@ -397,24 +397,55 @@
         });
     }
 
-    $('body').on('submit', '#new-submission-form', function (e) {
-		// Just in case to prevent multiple submits
-    	$('#btn-submit').prop('disabled', true);
+    $('body').on('click', '#btn-submit', function (e) {
+        e.preventDefault();
 
+        $('#btn-submit').prop('disabled', true);
         $('#new-submission-form').data('serialize', $('#new-submission-form').serialize());
         // Remove the beforeunload event
         $(window).off('beforeunload');
 
-        $(".please-wait").slideDown(500);
-        var isWarningLog = $('#hdIsWarning').val();
-        if (isWarningLog === 'true') {
-            // validation is done on server side
-            return true;
+        var employees = "";
+        var total = 0;
+        $("#bootstrap-duallistbox-selected-list_duallistbox_employee option").each(function () {
+            employees += $(this).text() + "<br />";
+            total++;
+        });
+
+        var body = "";
+        var footer = "";
+        if (total > 0) {
+            //if (total <= maxEmployeesPerSubmission) {
+                var log = $('input[name=IsWarning]:checked').val() === "true" ? "<font color='red'> warning log </font>" : "<font color='green'> coaching log </font>";
+                body = "<b>A new" + log + "will be created for each of the following:</b><br />" + employees + "<br /><b>Do you wish to continue?</b>";
+                footer = '<button type="button" class="btn btn-primary" id="btn-modal-yes">Yes</button>' + 
+                    '<button type="button" class="btn btn-default" data-dismiss="modal">No</button>';
+            //}
+            /*else {
+                body = "You selected " + total + " employees.<br/>The max number of employees can be included in one submission is " + maxEmployeesPerSubmission + ".";
+                footer = '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
+            }*/
+
+            $('#btn-submit').prop('disabled', false);
+            $('#modal-confirm-container .modal-content').html(
+            '<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">New Submission</h4></div>' +
+            '<div class="modal-body"><p>' + body + '</p></div>' +
+            '<div class="modal-footer">' + footer + '</div>');
+            $('#modal-confirm-container').modal();
+            return;
         }
 
-        return true;
+        $(".please-wait").slideDown(500);
+        $('#new-submission-form').submit();
     });
 
+    $('body').on('click', '#btn-modal-yes', function (e) {
+        $('#modal-confirm-container').modal('hide');
+        //$('#new-submission-form').data('serialize', $('#new-submission-form').serialize());
+        //$(window).off('beforeunload');
+        $(".please-wait").slideDown(500);
+        $('#new-submission-form').submit();
+    })
     $('body').on('click', '#btn-cancel', function (e) {
     	if (confirm("Are you sure you want to cancel this submission?\nIf you select OK, you will loose all your entries.")) {
     		cancelBtnClicked = true;
@@ -427,6 +458,64 @@
             return false;
         }
     });
+
+    $('body').on('click', '#a-add-employee', function (e) {
+        e.preventDefault();
+
+        //alert('hii');
+
+        if (e.handled !== true) {
+            e.handled = true;
+            $(".please-wait").slideDown(500);
+            $.ajax({
+                type: 'POST',
+                url: initAddEmployeeUrl,
+                dataType: 'html',
+                data: { excludeSiteId: $('#select-site').val() },
+                success: function (data) {
+                    $('#modal-container .modal-content').html(data);
+                    $('#modal-container').modal();
+                    $('#modal-container').modal('handleUpdate');
+                },
+                complete: function () {
+                    $(".please-wait").slideUp(500);
+                }
+            });
+        }
+    });
+    
+    $('body').on('change', '#add-employee-select-site', function () {
+        if ($(this).val() != -2) {
+            $(this).css('border-color', '');
+        }
+        ReloadEmployees($('#add-employee-select-employee'));
+    });
+
+    $('body').on('change', '#add-employee-select-employee', function () {
+        if ($(this).val() != -2) {
+            $(this).css('border-color', '');
+        }
+    });
+
+    function ReloadEmployees(employeeDropdown) {
+        employeeDropdown.addClass('loadinggif');
+        $.getJSON(getEmployeesUrl, {
+            siteId: $('#add-employee-select-site').val()
+        })
+		.done(function (employees) {
+		    var options = [];
+		    $.each(employees, function (i, employee) {
+		        options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
+		    });
+		    employeeDropdown.html(options.join(''));
+		})
+		.fail(function () {
+		    employeeDropdown.html('<option value="">error ...&nbsp;&nbsp;</option>');
+		})
+		.always(function () {
+		    employeeDropdown.removeClass('loadinggif')
+		});
+    }
 
     function validateCoachingReasons() {
         var coachingReasons = $('#coaching-reasons').find('.reason-checkbox:checkbox');

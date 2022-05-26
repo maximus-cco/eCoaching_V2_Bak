@@ -11,8 +11,8 @@ namespace eCoachingLog.Repository
         Tuple<string, string, bool, string, string> GetEmailRecipientsTitlesAndBodyText(int moduleId, int sourceId, bool isCse);
         int GetLogStatusToSet(int moduleId, int sourceId, bool isCse);
         List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect);
-        string SaveCoachingLog(NewSubmission newSubmission, User user);
-        string SaveWarningLog(NewSubmission newSubmission, User user, out bool isDuplicate);
+        IList<NewSubmissionResult> SaveCoachingLog(NewSubmission newSubmission, User user);
+        IList<NewSubmissionResult> SaveWarningLog(NewSubmission newSubmission, User user);
         List<MailResult> SaveNotificationStatus(List<MailResult> mailResults, string userId);
     }
 }

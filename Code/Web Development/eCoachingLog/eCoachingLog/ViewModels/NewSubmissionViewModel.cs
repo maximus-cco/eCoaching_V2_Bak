@@ -56,6 +56,7 @@ namespace eCoachingLog.ViewModels
         public IEnumerable<SelectListItem> SourceSelectList { get; set; }
         public bool ShowSiteDropdown { get; set; }
         public bool ShowEmployeeDropdown { get; set; }
+        public bool ShowEmployeeDualListbox { get; set; }
         public bool ShowProgramDropdown { get; set; }
         public bool ShowBehaviorDropdown { get; set; }
         public bool ShowIsCoachingByYou { get; set; }
@@ -72,6 +73,10 @@ namespace eCoachingLog.ViewModels
         public DateTime? PfdCompletedDate { get; set; }
         public bool ShowPfdCompletedDate { get; set; }
 
+        // selected employee ids, separated by comma, returned from page
+        public string EmployeeIds { get; set; }
+        public List<string> EmployeeIdList { get; set; }
+        // submit one log for multiple employees
         public List<Employee> Employees { get; set; }
 
         public NewSubmissionViewModel() : base()
@@ -104,6 +109,14 @@ namespace eCoachingLog.ViewModels
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (this.ModuleId == Constants.MODULE_CSR || this.ModuleId == Constants.MODULE_SUPERVISOR || this.ModuleId == Constants.MODULE_QUALITY)
+            {
+                if (this.ProgramId < 1)
+                {
+                    var progam = new[] { "ProgramId" };
+                    yield return new ValidationResult("Please select a program.", progam);
+                }
+            }
             if (IsPfd)
             {
                 if (!this.PfdCompletedDate.HasValue)
@@ -276,7 +289,9 @@ namespace eCoachingLog.ViewModels
 				ModuleId = vm.ModuleId,
 				SiteId = vm.SiteId,
 				Employee = vm.Employee,
-                Employees = vm.Employees,
+                // TODO: maybe change to employee ids
+                //Employees = vm.Employees,
+                EmployeeIdList = vm.EmployeeIdList,
                 ProgramId = vm.ProgramId,
 				ProgramName = vm.ProgramName,
 				BehaviorId = vm.BehaviorId,

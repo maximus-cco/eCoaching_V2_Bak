@@ -43,6 +43,39 @@
 			$(this).css('border-color', '');
 		}
 
+	    $.ajax({
+	        type: 'POST',
+	        url: getManagersUrl,
+	        dataType: 'json',
+	        data: { siteId: siteSelected }
+	    })
+        .done(function (data) {
+              // Reload managers
+              var options = [];
+              $.each(data.managers, function (i, manager) {
+                  options.push('<option value="', manager.Value, '">' + manager.Text + '</option>');
+              });
+              $("#select-manager").html(options.join(''));
+              // Reload supervisors
+              options = [];
+              $.each(data.supervisors, function (i, supervisor) {
+                  options.push('<option value="', supervisor.Value, '">' + supervisor.Text + '</option>');
+              });
+              $("#select-supervisor").html(options.join(''));
+              // Reload employees
+              options = [];
+              $.each(data.employees, function (i, employee) {
+                  options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
+              });
+              $("#select-employee").html(options.join(''));
+        })
+		.fail(function () {
+		    $('#select-manager').html('<option value="">error ...&nbsp;&nbsp;</option>');
+		})
+		.always(function () {
+		    $('#select-manager').removeClass('loadinggif')
+		});
+/*
 		$.getJSON(getManagersUrl, { siteId: siteSelected })
 		.done(function (data) {
 			// Reload managers
@@ -70,6 +103,7 @@
 		.always(function () {
 			$('#select-manager').removeClass('loadinggif')
 		});
+        */
 	});
 
 	$('body').on('change', '#select-manager', function () {
@@ -78,7 +112,35 @@
 		if (mgrSelected != -2) {
 			$(this).css('border-color', '');
 		}
-		$.getJSON(getSupervisorsUrl, { mgrId: mgrSelected })
+
+		$.ajax({
+		    type: 'POST',
+		    url: getSupervisorsUrl,
+		    dataType: 'json',
+		    data: { mgrId: mgrSelected }
+		})
+        .done(function (data) {
+            // Load supervisor dropdown
+            var options = [];
+            $.each(data.supervisors, function (i, supervisor) {
+                options.push('<option value="', supervisor.Value, '">' + supervisor.Text + '</option>');
+            });
+            $("#select-supervisor").html(options.join(''));
+            // Load Employee dropdown
+            options = [];
+            $.each(data.employees, function (i, employee) {
+                options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
+            });
+            $("#select-employee").html(options.join(''));
+        })
+		.fail(function () {
+		    $('#select-supervisor').html('<option value="">error ...&nbsp;&nbsp;</option>');
+		})
+		.always(function () {
+		    $('#select-supervisor').removeClass('loadinggif')
+		});
+/*
+	    $.getJSON(getSupervisorsUrl, { mgrId: mgrSelected })
 		.done(function (data) {
 			// Load supervisor dropdown
 			var options = [];
@@ -99,6 +161,7 @@
 		.always(function () {
 			$('#select-supervisor').removeClass('loadinggif')
 		});
+*/
 	});
 
 	$('body').on('change', '#select-supervisor', function () {
@@ -116,8 +179,34 @@
 
 	function ReloadEmployees()
 	{
-		$('#select-employee').addClass('loadinggif');
-		$.getJSON(getEmployeesUrl, {
+	    $('#select-employee').addClass('loadinggif');
+
+	    $.ajax({
+	        type: 'POST',
+	        url: getEmployeesUrl,
+	        dataType: 'json',
+	        data: {
+	            siteId: $('#select-site').val(),
+	            mgrId: $('#select-manager').val(),
+	            supId: $('#select-supervisor').val(),
+	            employeeStatus: $('input:radio[name="Search.ActiveEmployee"]:checked').val()
+	        }
+	    })
+        .done(function (employees) {
+        	var options = [];
+        	$.each(employees, function (i, employee) {
+        		options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
+        	});
+        	$("#select-employee").html(options.join(''));
+        })
+		.fail(function () {
+		    $('#select-employee').html('<option value="">error ...&nbsp;&nbsp;</option>');
+		})
+		.always(function () {
+		    $('#select-employee').removeClass('loadinggif')
+		});
+/*
+	    $.getJSON(getEmployeesUrl, {
 					siteId: $('#select-site').val(),
 					mgrId: $('#select-manager').val(),
 					supId: $('#select-supervisor').val(),
@@ -136,6 +225,7 @@
 		.always(function () {
 			$('#select-employee').removeClass('loadinggif')
 		});
+*/
 	}
 
 	$('body').on('click', '#btn-reset', function (e) {

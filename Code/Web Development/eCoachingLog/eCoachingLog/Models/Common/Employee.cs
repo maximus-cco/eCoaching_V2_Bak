@@ -17,7 +17,7 @@
         public string ManagerJobDesc { get; set; }
         public string ManagerEmail { get; set; }
 
-        // used to send email (one log per employee)
-        public string LogName { get; set; }
+        //// used to send email (one log per employee)
+        //public string LogName { get; set; }
     }
 }

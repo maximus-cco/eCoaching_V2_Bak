@@ -33,7 +33,9 @@ namespace eCoachingLog.Repository
 					{
 						reasons.Add(dataReader["Reason"].ToString());
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return reasons;
 		}
@@ -57,7 +59,9 @@ namespace eCoachingLog.Repository
 						var action = dataReader["ActionText"].ToString().Trim();
 						actions.Add(action);
 					}
-				} // end using SqlDataReader
+
+                    dataReader.Close();
+                } // end using SqlDataReader
 			} // end using SqlCommand
 
 			return actions;
@@ -66,28 +70,31 @@ namespace eCoachingLog.Repository
 		public IList<ShortCall> GetShortCallEvalList(long logId)
 		{
 			var shortCallList = new List<ShortCall>();
-			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_ShortCalls_Get_SupReviewDetails]", connection))
-			{
-				command.CommandType = CommandType.StoredProcedure;
-				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-				command.Parameters.AddWithValueSafe("@intLogId", logId);
-				connection.Open();
-				using (SqlDataReader dataReader = command.ExecuteReader())
-				{
-					while (dataReader.Read())
-					{
-						ShortCall shortCall = new ShortCall();
-						shortCall.VerintId = dataReader["VerintCallID"].ToString();
-						shortCall.IsValidBehavior = (dataReader["valid"] != DBNull.Value && Convert.ToInt16(dataReader["valid"]) == 1) ? true : false;
-						shortCall.SelectedBehaviorText = dataReader["Behavior"].ToString();
-						shortCall.ActionsString = dataReader["Action"].ToString();
-						shortCall.CoachingNotes = UpdatePdtToEst(dataReader["CoachingNotes"].ToString());
-						shortCall.IsLsaInformed = (dataReader["LSAInformed"] != DBNull.Value && Convert.ToInt16(dataReader["LSAInformed"]) == 1) ? true : false;
-						shortCallList.Add(shortCall);
-					}
-				}
-			}
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_ShortCalls_Get_SupReviewDetails]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@intLogId", logId);
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        ShortCall shortCall = new ShortCall();
+                        shortCall.VerintId = dataReader["VerintCallID"].ToString();
+                        shortCall.IsValidBehavior = (dataReader["valid"] != DBNull.Value && Convert.ToInt16(dataReader["valid"]) == 1) ? true : false;
+                        shortCall.SelectedBehaviorText = dataReader["Behavior"].ToString();
+                        shortCall.ActionsString = dataReader["Action"].ToString();
+                        shortCall.CoachingNotes = UpdatePdtToEst(dataReader["CoachingNotes"].ToString());
+                        shortCall.IsLsaInformed = (dataReader["LSAInformed"] != DBNull.Value && Convert.ToInt16(dataReader["LSAInformed"]) == 1) ? true : false;
+                        shortCallList.Add(shortCall);
+                    }
+
+                    dataReader.Close();
+                }
+            }
+
 			return shortCallList;
 		}
 
@@ -128,7 +135,9 @@ namespace eCoachingLog.Repository
 
 						shortCallList.Add(shortCall);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return shortCallList;
 		}
@@ -151,7 +160,9 @@ namespace eCoachingLog.Repository
 						shortCall.VerintId = dataReader["VerintId"].ToString();
 						shortCallList.Add(shortCall);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return shortCallList;
 		}
@@ -175,7 +186,9 @@ namespace eCoachingLog.Repository
 						behavior.Text = dataReader["BehaviorText"].ToString();
 						behaviorList.Add(behavior);
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return behaviorList;
 		}
@@ -197,7 +210,9 @@ namespace eCoachingLog.Repository
 					{
 						action = string.IsNullOrEmpty(action) ? dataReader["ActionText"].ToString().Trim() : "; " + dataReader["ActionText"].ToString().Trim();
 					}
-				}
+
+                    dataReader.Close();
+                }
 			}
 			return action;
 		}
@@ -691,6 +706,8 @@ namespace eCoachingLog.Repository
                         var idName = new TextValue(name, id);
                         logIdNameList.Add(idName);
                     }
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
 
