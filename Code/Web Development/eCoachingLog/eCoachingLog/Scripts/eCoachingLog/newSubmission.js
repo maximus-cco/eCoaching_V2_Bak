@@ -258,15 +258,22 @@
     }
 
     $('body').on('change', '#IsWarning', function () {
-    	$('#IsWorkAtHomeReturnSite').val(false);
+        $('#IsWorkAtHomeReturnSite').val(false);
 
-        var isCoachingByYou = $("input[name='IsCoachingByYou']:checked").val()
-        if ($(this).val() === 'true') {
-            resetPageBottom(isCoachingByYou, false, true);
+        if ($("input[name='IsWarning']:checked").val() === 'true') {
+            $('#WarningYesNo').val('yes');
+            if ($('[name="duallistbox_employee"]').val().length > 1) {
+                $('#div-max-warning').removeClass('hide');
+            } else {
+                $('#div-max-warning').addClass('hide');
+            }
+        } else {
+            $('#WarningYesNo').val('no');
+            $('#div-max-warning').addClass('hide');
         }
-        else {
-            resetPageBottom(isCoachingByYou, false, false);
-        }
+
+    	var isCoachingByYou = $("input[name='IsCoachingByYou']:checked").val()
+    	resetPageBottom(isCoachingByYou, false, $(this).val());
     });
 
     $('body').on('change', "#select-warning-type", function () {
@@ -415,16 +422,19 @@
         var body = "";
         var footer = "";
         if (total > 0) {
-            //if (total <= maxEmployeesPerSubmission) {
-                var log = $('input[name=IsWarning]:checked').val() === "true" ? "<font color='red'> warning log </font>" : "<font color='green'> coaching log </font>";
-                body = "<b>A new" + log + "will be created for each of the following:</b><br />" + employees + "<br /><b>Do you wish to continue?</b>";
-                footer = '<button type="button" class="btn btn-primary" id="btn-modal-yes">Yes</button>' + 
-                    '<button type="button" class="btn btn-default" data-dismiss="modal">No</button>';
-            //}
-            /*else {
-                body = "You selected " + total + " employees.<br/>The max number of employees can be included in one submission is " + maxEmployeesPerSubmission + ".";
+            if ($('input[name=IsWarning]:checked').val() === "true" && total > maxEmployeesWarningPerSubmission) {
+                body = "You selected " + total + " employees.<br/>The max number of employees for warning log can be included in one submission is " + maxEmployeesWarningPerSubmission + ".";
                 footer = '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
-            }*/
+            } else {
+                var log = $('input[name=IsWarning]:checked').val() === "true" ? "<font color='red'> warning log </font>" : "<font color='green'> coaching log </font>";
+                if ($('input[name=IsWarning]:checked').val() === "true") {
+                    body = "<b>A new" + log + "will be created for</b> " + employees + "<br /><b>Do you wish to continue?</b>";
+                } else {
+                    body = "<b>A new" + log + "will be created for each of the following:</b><br />" + employees + "<br /><b>Do you wish to continue?</b>";
+                }
+                footer = '<button type="button" class="btn btn-primary" id="btn-modal-yes">Yes</button>' +
+                    '<button type="button" class="btn btn-default" data-dismiss="modal">No</button>';
+            }
 
             $('#btn-submit').prop('disabled', false);
             $('#modal-confirm-container .modal-content').html(
@@ -461,8 +471,6 @@
 
     $('body').on('click', '#a-add-employee', function (e) {
         e.preventDefault();
-
-        //alert('hii');
 
         if (e.handled !== true) {
             e.handled = true;

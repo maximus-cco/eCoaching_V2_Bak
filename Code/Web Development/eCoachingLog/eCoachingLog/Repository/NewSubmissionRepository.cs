@@ -78,7 +78,6 @@ namespace eCoachingLog.Repository
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-                // TODO: submission.EmployeeIdList as user defined table type
                 command.Parameters.AddStringTableType("@tableEmpIDs", submission.EmployeeIdList); 
                 // Should be no program for LSA module
                 if (submission.ModuleId == Constants.MODULE_LSA)
@@ -241,18 +240,15 @@ namespace eCoachingLog.Repository
         {
             var ret = new List<NewSubmissionResult>();
             // only one employee per submission 
-            var employeeId = ns.EmployeeIdList[0];
-
-            string logNameSaved = "";
-            //isDuplicate = false;
+            var employeeId = ns.EmployeeIdList.First();
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_InsertInto_Warning_Log]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-				command.Parameters.AddWithValueSafe("@nvcEmpID", ns.Employee.Id);
-				command.Parameters.AddWithValueSafe("@nvcProgramName", ns.ProgramName);
+                command.Parameters.AddStringTableType("@tableEmpIDs", ns.EmployeeIdList);
+                command.Parameters.AddWithValueSafe("@nvcProgramName", ns.ProgramName);
 				if (ns.ModuleId == Constants.MODULE_CSR)
 				{
 					command.Parameters.AddWithValueSafe("@SiteID", ns.SiteId);
@@ -269,34 +265,27 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@ModuleID", ns.ModuleId);
                 command.Parameters.AddWithValueSafe("@nvcBehavior", ns.BehaviorName);
 
-                // Output parameters
-                SqlParameter isDupParam = command.Parameters.Add("@isDup", SqlDbType.Bit);
-                isDupParam.Direction = ParameterDirection.Output;
-                SqlParameter newFormNameParam = command.Parameters.Add("@nvcNewFormName", SqlDbType.VarChar, 30);
-                newFormNameParam.Direction = ParameterDirection.Output;
-				// Return value
-                SqlParameter returnParam = command.Parameters.Add("@return_value", SqlDbType.Int);
-                returnParam.Direction = ParameterDirection.ReturnValue;
-
                 try
                 {
                     connection.Open();
-                    command.ExecuteNonQuery();
+                    using (SqlDataReader dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var r = new NewSubmissionResult();
+                            r.LogId = dataReader["LogId"].ToString();
+                            r.LogName = dataReader["LogName"].ToString();
+                            r.Employee.Name = dataReader["EmployeeName"].ToString();
+                            r.CreateDateTime = dataReader["CreateDateTime"].ToString();
+                            r.Error = dataReader["ErrorReason"].ToString();
 
-                    int returnValue = -1;
-                    returnValue = (int)returnParam.Value;
-					//isDuplicate = (bool)isDupParam.Value;
-					//if (returnValue != 0 || isDuplicate)
-     //               {
-					//	string msg = "The warning log you are trying to submit already exists.";
-					//	if (returnValue != 0)
-					//	{
-					//		msg = "Return value from sp_InsertInto_Warning_Log: " + returnValue;
-					//	}
-					//	throw new Exception(msg);
-     //               }
+                            ret.Add(r);
+                            break; // one warning log per submission
+                        } // end while
 
-                    logNameSaved = (string)newFormNameParam.Value;
+                        dataReader.Close();
+                    } // end SqlDataReader
+
                 }
                 catch (Exception ex)
                 {

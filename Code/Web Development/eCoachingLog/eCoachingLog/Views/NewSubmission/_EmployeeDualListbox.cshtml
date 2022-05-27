@@ -1,15 +1,15 @@
 ﻿
-@*https://codepen.io/jaredbell/pen/OejgMe*@
-@using eCoachingLog.Utils
 @model eCoachingLog.ViewModels.NewSubmissionViewModel
+
+<input type="hidden" id="WarningYesNo" />
 
 <div class="row">
     <div class="col-sm-6">
         <a href="#" style="color: #337ab7" id="a-add-employee"><b>Add</b></a>
     </div>
-    @*<div class="col-sm-6">
-        <p class="help-block" style="color: cadetblue;"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;Max number of employees can be included in one submission: @Constants.MAX_NUMBER_OF_EMPLOYEES_PER_SUBMISSION</p>
-    </div>*@
+    <div class="col-sm-6 hide" id="div-max-warning">
+        <p class="text-danger" ><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>You can only submit a warning log for ONE employee per submission.</b></p>
+    </div>
 </div>
 
 <div id="div-employee-listbox" class="hide">
@@ -41,29 +41,47 @@
 
         // todo: add '.removeall' click, hide page middle
         $(".removeall").click(function () {
+            showHideMaxNumberEmployeeMessage();
             showHideNewSubmissionMiddle(false);
             $('#EmployeeIds').val('');
         });
 
         $(".moveall").click(function () {
+            showHideMaxNumberEmployeeMessage();
             showHideNewSubmissionMiddle(true);
             $('#EmployeeIds').val($('[name="duallistbox_employee"]').val());
         });
 
         function handleEmployeeChange() {
             var selected = $('[name="duallistbox_employee"]').val();
+
+            showHideMaxNumberEmployeeMessage();
             showHideNewSubmissionMiddle(selected.length > 0);
             $('#EmployeeIds').val(selected);
+        }
+
+        function showHideMaxNumberEmployeeMessage()
+        {
+            var selected = $('[name="duallistbox_employee"]').val();
+            
+            if ($('#WarningYesNo').val() === 'yes') {
+                if (selected.length > 1) {
+                    $('#div-max-warning').removeClass('hide');
+                } else {
+                    $('#div-max-warning').addClass('hide');
+                }
+            } else if ($('#WarningYesNo').val() === 'no') {
+                $('#div-max-warning').addClass('hide');
+            }
         }
 
         function showHideNewSubmissionMiddle(show)
         {
             if (show === true) {
-                $("#bootstrap-duallistbox-selected-list_duallistbox_employee").css('border-color', '');
                 $('#div-new-submission-middle').removeClass('hide');
                 $('#div-new-submission-middle').addClass('show');
             } else {
-                $("#bootstrap-duallistbox-selected-list_duallistbox_employee").css('border-color', 'red');
+                //$("#bootstrap-duallistbox-selected-list_duallistbox_employee").css('border-color', 'red');
                 //resetIsCoachingByYou();
                 //$('#div-new-submission-middle').removeClass('hide');
                 //$('#div-new-submission-middle').addClass('show');

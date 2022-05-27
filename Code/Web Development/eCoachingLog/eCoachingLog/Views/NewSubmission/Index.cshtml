@@ -19,7 +19,7 @@
 {
     <div id="fail-message" class="alert alert-danger alert-dismissible">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <span class="glyphicon glyphicon-alert"></span>&nbsp;@TempData["FailMessage"]
+        <span class="glyphicon glyphicon-alert"></span>&nbsp;&nbsp;@TempData["FailMessage"]
 </div>
 }
 
@@ -45,7 +45,8 @@
 <!-- end of Html.Beginform-->
 
 <script>
-    const maxEmployeesPerSubmission = @Constants.MAX_NUMBER_OF_EMPLOYEES_PER_SUBMISSION;
+    const maxEmployeesCoachingPerSubmission = @Constants.MAX_NUMBER_OF_EMPLOYEES_COACHING_PER_SUBMISSION;
+    const maxEmployeesWarningPerSubmission = @Constants.MAX_NUMBER_OF_EMPLOYEES_WARNING_PER_SUBMISSION;
 	const MODULE_LSA = @Constants.MODULE_LSA;
     //const successMessage = '@Html.Raw(TempData["SuccessMessage"])';
     //const showSuccessMessage = '@Html.Raw(TempData["ShowSuccessMessage"])'

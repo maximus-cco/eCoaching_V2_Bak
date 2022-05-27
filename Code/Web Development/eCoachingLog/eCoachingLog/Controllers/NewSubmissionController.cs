@@ -132,7 +132,7 @@ namespace eCoachingLog.Controllers
                 //                    ManagerEmail = o.Employee.ManagerEmail
                 //                }).ToList();
 
-                successfulSubmissions = submissionResults.Where(x => !String.IsNullOrEmpty(x.LogName)).ToList();
+                successfulSubmissions = submissionResults.Where(x => x.LogId != "-1").ToList();
 
                 if (successfulSubmissions.Count == vm.EmployeeIdList.Count)
                 {
@@ -147,6 +147,10 @@ namespace eCoachingLog.Controllers
                     if (successfulSubmissions.Count == 0)
                     {
                         TempData["FailMessage"] = "Error! Failed to save your submission!";
+                        if (vm.IsWarning != null && vm.IsWarning.Value)
+                        {
+                            TempData["FailMessage"] = submissionResults.First().Error;
+                        }
                         return StayOnThisPage(vm);
                     }
                     else
@@ -290,7 +294,7 @@ namespace eCoachingLog.Controllers
             List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();
             employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
             vmInSession.EmployeeSelectList = employees;
-            vmInSession.EmployeeList = employeeList.Select(e => new TextValue(e.Name + " (Supervisor: " + e.SupervisorName + ")", e.Id)).ToList<TextValue>();
+            vmInSession.EmployeeList = employeeList.Select(e => new TextValue(e.Name + " (Supervisor: " + e.SupervisorName.Trim() + ")", e.Id)).ToList<TextValue>();
         }
 
         [HttpPost]
@@ -346,11 +350,11 @@ namespace eCoachingLog.Controllers
 
         private bool ShowWarningChoice(NewSubmissionViewModel vm)
         {
-			return vm.IsCoachingByYou.HasValue
-				&& vm.IsCoachingByYou.Value
-				&& ((vm.Employee.SupervisorId != null && vm.Employee.SupervisorId == vm.UserId) ||
-						(vm.Employee.ManagerId != null && vm.Employee.ManagerId == vm.UserId));
-		}
+            return vm.IsCoachingByYou.HasValue
+                && vm.IsCoachingByYou.Value
+                && ((vm.Employee.SupervisorId != null && vm.Employee.SupervisorId == vm.UserId) ||
+                        (vm.Employee.ManagerId != null && vm.Employee.ManagerId == vm.UserId));
+        }
 
         private Employee GetSelectedEmployee()
         {
