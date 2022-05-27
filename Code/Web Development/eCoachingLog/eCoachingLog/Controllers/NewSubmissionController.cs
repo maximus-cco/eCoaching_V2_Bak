@@ -155,7 +155,7 @@ namespace eCoachingLog.Controllers
                     }
                     else
                     {
-                        var failedEmployees = submissionResults.Where(x => String.IsNullOrEmpty(x.LogName)).Select(y => y.Employee.Name).ToList();
+                        var failedEmployees = submissionResults.Where(x => x.LogName == "-1").Select(y => y.Employee.Name.Trim()).ToList();
                         TempData["FailMessage"] = "Error! Failed to save your submission for: " + EclUtil.ConvertToString(failedEmployees, "; ");
                     }
                 }
