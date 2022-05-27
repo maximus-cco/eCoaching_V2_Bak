@@ -50,27 +50,7 @@ namespace eCoachingLog.Repository
 
         public IList<NewSubmissionResult> SaveCoachingLog(NewSubmission submission, User user)
         {
-            var empIds = submission.EmployeeIdList;
-            int total = empIds.Count;
-
-            logger.Debug("Entered SaveCoachingLog ...");
-
             var ret = new List<NewSubmissionResult>();
-            //for (int i = 0; i < total; i++)
-            //{
-            //    var a = new NewSubmissionResult();
-            //    var e = new Employee();
-            //    e.Id = i + "";
-            //    e.Name = "employee" + i;
-            //    a.LogName = "log" + i;
-            //    a.Error = null;
-            //    e.Email = "lilihuang@maximus.com";
-            //    e.SupervisorEmail = "lilihuang@maximus.com";
-            //    e.ManagerEmail = "lilihuang@maximus.com";
-            //    temp.Add(a);
-            //}
-            //return temp;
-
 
             // multi logs per submission - return "employee id, employee name, log name, create date, error"; 
             // log name will be null if failed so the page will display those failed employee names 
@@ -191,12 +171,6 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@bitisFollowupRequired", submission.IsFollowupRequired);
                 command.Parameters.AddWithValueSafe("@dtmFollowupDueDate", submission.FollowupDueDate);
 
-                //// Output parameter
-                //SqlParameter newFormNameParam = command.Parameters.Add("@nvcNewFormName", SqlDbType.VarChar, 30);
-                //newFormNameParam.Direction = ParameterDirection.Output;
-                //// Return Value
-                //SqlParameter returnParam = command.Parameters.Add("@return_value", SqlDbType.Int);
-                //returnParam.Direction = ParameterDirection.ReturnValue;
                 try
                 {
                     connection.Open();
@@ -205,27 +179,17 @@ namespace eCoachingLog.Repository
                         while (dataReader.Read())
                         {
                             var r = new NewSubmissionResult();
-                            r.LogName = dataReader["FormName"].ToString();
+                            r.LogId = dataReader["LogId"].ToString();
+                            r.LogName = dataReader["LogName"].ToString();
+                            r.Employee.Name = dataReader["EmployeeName"].ToString();
+                            r.CreateDateTime = dataReader["CreateDateTime"].ToString();
+                            r.Error = dataReader["ErrorReason"].ToString();
 
                             ret.Add(r);
                         } // end while
 
                         dataReader.Close();
-                    } // end SqlDataReader
-
-
-
-                    //command.ExecuteNonQuery();
-
-                    //int returnValue = -1;
-                    //returnValue = (int)returnParam.Value;
-
-                    //if (returnValue != 0)
-                    //{
-                    //    throw new Exception("Failed to save new submission.");
-                    //}
-
-                    //logNameSaved = (string)newFormNameParam.Value;
+                    }
                 }
                 catch (Exception ex)
                 {
