@@ -45,8 +45,13 @@ namespace eCoachingLog.Controllers
             var sessionId = Session == null ? null : Session.SessionID;
             logger.Debug("?????????SessionID=" + sessionId);
 
-			Session["newSubmissionVM"] = InitNewSubmissionViewModel(Constants.MODULE_UNKNOWN);
-			ViewBag.ValidationError = false;
+            var vm = InitNewSubmissionViewModel(Constants.MODULE_UNKNOWN);
+            vm.IsSuccess = TempData["IsSuccess"] as bool? ?? null;
+            vm.IsPartialFail = TempData["IsPartialFail"] as bool? ?? null;
+            vm.ErrorList = TempData["ErrorList"] as List<Error>;
+            Session["newSubmissionVM"] = vm;
+
+            ViewBag.ValidationError = false;
 
             return View((NewSubmissionViewModel)Session["newSubmissionVM"]);
         }
@@ -70,9 +75,8 @@ namespace eCoachingLog.Controllers
 
             if (!ModelState.IsValid)
             {
-                TempData["ShowSuccessMessage"] = false;
-                TempData["ShowFailMessage"] = true;
-                TempData["FailMessage"] = "Please correct all errors indicated in red to proceed.";
+                vm.IsSuccess = false;
+                vm.IsValidationError = true;
                 ViewBag.ClientValidateCoachingReasons = true;
                 ViewBag.ClientValidateEmployee = vm.ModuleId == Constants.MODULE_CSR;
                 ViewBag.ValidationError = true;
@@ -85,9 +89,6 @@ namespace eCoachingLog.Controllers
                 vm.EmployeeIds = vm.Employee.Id;
             }
 
-            //bool isDuplicate = false;
-            string failMsg = "Failed to save your submission.";
-            //string duplicateMsg = "A warning with the same category and type already exists. Please review your warning section on My Dashboard page for details.";
             var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
             var user = GetUserFromSession();
             IList<NewSubmissionResult> submissionResults = new List<NewSubmissionResult>();
@@ -136,27 +137,25 @@ namespace eCoachingLog.Controllers
 
                 if (successfulSubmissions.Count == vm.EmployeeIdList.Count)
                 {
-                    TempData["ShowSuccessMessage"] = true;
-                    TempData["ShowFailMessage"] = false;
-                    TempData["SuccessMessage"] = "Success! Your submission has been saved!";
+                    TempData["IsSuccess"] = true;
                 }
                 else
                 {
-                    TempData["ShowSuccessMessage"] = false;
-                    TempData["ShowFailMessage"] = true;
-                    if (successfulSubmissions.Count == 0)
+                    TempData["IsSuccess"] = false;
+                    vm.IsSuccess = false;
+                    vm.IsPartialFail = (vm.IsWarning != null && vm.IsWarning.Value) ? true : successfulSubmissions.Count > 0;
+
+                    if (vm.IsPartialFail != null && vm.IsPartialFail.Value)
                     {
-                        TempData["FailMessage"] = "Error! Failed to save your submission!";
-                        if (vm.IsWarning != null && vm.IsWarning.Value)
-                        {
-                            TempData["FailMessage"] = submissionResults.First().Error;
-                        }
-                        return StayOnThisPage(vm);
-                    }
-                    else
-                    {
-                        var failedEmployees = submissionResults.Where(x => x.LogName == "-1").Select(y => y.Employee.Name.Trim()).ToList();
-                        TempData["FailMessage"] = "Error! Failed to save your submission for: " + EclUtil.ConvertToString(failedEmployees, "; ");
+                        TempData["IsPartialFail"] = true; 
+                        // populate ErrorList
+                        var errorList = submissionResults.Where(x => x.LogName == "-1").Select(o =>
+                                new Error
+                                {
+                                    Key = o.Employee.Name,
+                                    Value = o.Error
+                                }).ToList<Error>();
+                        TempData["ErrorList"] = errorList;
                     }
                 }
             }
@@ -164,9 +163,6 @@ namespace eCoachingLog.Controllers
             {
                 logger.Warn("Exception: " + ex);
 
-                TempData["ShowSuccessMessage"] = false;
-                TempData["ShowFailMessage"] = true;
-                TempData["FailMessage"] = failMsg + ex.Message;
                 return StayOnThisPage(vm);
             } // end try - 1. save submission to db
 

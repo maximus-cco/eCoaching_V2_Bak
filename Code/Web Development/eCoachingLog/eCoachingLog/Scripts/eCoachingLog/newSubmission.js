@@ -262,10 +262,12 @@
 
         if ($("input[name='IsWarning']:checked").val() === 'true') {
             $('#WarningYesNo').val('yes');
-            if ($('[name="duallistbox_employee"]').val().length > 1) {
-                $('#div-max-warning').removeClass('hide');
-            } else {
-                $('#div-max-warning').addClass('hide');
+            if ($('[name="duallistbox_employee"]').length > 0) {
+                if ($('[name="duallistbox_employee"]').val().length > 1) {
+                    $('#div-max-warning').removeClass('hide');
+                } else {
+                    $('#div-max-warning').addClass('hide');
+                }
             }
         } else {
             $('#WarningYesNo').val('no');

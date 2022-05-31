@@ -79,6 +79,12 @@ namespace eCoachingLog.ViewModels
         // submit one log for multiple employees
         public List<Employee> Employees { get; set; }
 
+        // submission successfully saved in database
+        // if null, it means this is initial page display
+        public bool? IsSuccess { get; set; }
+        public bool? IsValidationError { get; set; }
+        public bool? IsPartialFail { get; set; }
+
         public NewSubmissionViewModel() : base()
         {
             this.ModuleId = -1;

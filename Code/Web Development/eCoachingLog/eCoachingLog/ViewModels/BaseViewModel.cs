@@ -43,7 +43,9 @@ namespace eCoachingLog.ViewModels
 
 		public LogFilter Search { get; set; }
 
-		public BaseViewModel()
+        public List<Error> ErrorList { get; set; }
+
+        public BaseViewModel()
 		{
 			this.SiteId = -2;
 			this.SiteSelectList = new List<SelectListItem>();
@@ -63,6 +65,7 @@ namespace eCoachingLog.ViewModels
 			this.LogValue = new LogValue();
 			this.LogValueSelectList = new List<SelectListItem>();
 			this.Search = new LogFilter();
+            this.ErrorList = new List<Error>();
 		}
 	}
 }

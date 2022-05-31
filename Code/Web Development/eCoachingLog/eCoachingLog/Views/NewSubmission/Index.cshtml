@@ -2,26 +2,10 @@
 @model eCoachingLog.ViewModels.NewSubmissionViewModel
 @{
     ViewBag.Title = "New Submission";
-    var showSuccessMsg = TempData["ShowSuccessMessage"] as bool? ?? false;
-    var showFailMsg = TempData["ShowFailMessage"] as bool? ?? false;
 }
 
 <div class="ecl-page-header">New Submission<span class="danger" style="float: right; font-size: 75%;"><i>Please do NOT include PII or PHI in the log entry.</i></span></div>
-@if (showSuccessMsg)
-{
-    <div id="success-message" class="alert alert-success">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;@TempData["SuccessMessage"]
-    </div>
-}
-
-@if (showFailMsg)
-{
-    <div id="fail-message" class="alert alert-danger alert-dismissible">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <span class="glyphicon glyphicon-alert"></span>&nbsp;&nbsp;<b>@TempData["FailMessage"]</b>
-</div>
-}
+@{ Html.RenderPartial("_Message", Model); }
 
 @using (Html.BeginForm("Save", "NewSubmission", FormMethod.Post,
 				new { id = "new-submission-form", @class = "form-horizontal" }))
@@ -48,9 +32,6 @@
     const maxEmployeesCoachingPerSubmission = @Constants.MAX_NUMBER_OF_EMPLOYEES_COACHING_PER_SUBMISSION;
     const maxEmployeesWarningPerSubmission = @Constants.MAX_NUMBER_OF_EMPLOYEES_WARNING_PER_SUBMISSION;
 	const MODULE_LSA = @Constants.MODULE_LSA;
-    //const successMessage = '@Html.Raw(TempData["SuccessMessage"])';
-    //const showSuccessMessage = '@Html.Raw(TempData["ShowSuccessMessage"])'
-    //const showFailMessage = '@Html.Raw(TempData["ShowFailMessage"])'
 
     var clientValidateCoachingReasons = '@Html.Raw(ViewBag.ClientValidateCoachingReasons)';
     var clientValidateEmployee = '@Html.Raw(ViewBag.ClientValidateEmployee)';
