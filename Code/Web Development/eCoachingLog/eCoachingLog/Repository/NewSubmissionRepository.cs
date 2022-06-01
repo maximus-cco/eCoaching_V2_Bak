@@ -68,14 +68,6 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@nvcProgramName", submission.ProgramName);
                 command.Parameters.AddWithValueSafe("@Behaviour", submission.BehaviorName); 
                 command.Parameters.AddWithValueSafe("@intSourceID", submission.SourceId); // How was the coaching identifed?
-                if (submission.ModuleId == Constants.MODULE_CSR)
-                {
-                    command.Parameters.AddWithValueSafe("@SiteID", submission.SiteId);
-                }
-                else
-                {
-                    command.Parameters.AddWithValueSafe("@SiteID", null); // Modules other than CSR have no site selection
-                }
                 command.Parameters.AddWithValueSafe("@nvcSubmitterID", user.EmployeeId);
 
                 var startDate = submission.CoachingDate;
@@ -146,7 +138,7 @@ namespace eCoachingLog.Repository
                     // Conconcate all sub reason ids using ","
                     command.Parameters.AddWithValueSafe("@nvcSubCoachReasonID" + count, String.Join(",", cr.SubReasonIds));
                 }
-                // Maximum number of reasons is 12. 
+                // Maximum number of reasons is 12.                 
                 for (int i = count + 1; i <= Constants.MAX_NUMBER_OF_COACHING_REASONS; i++)
                 {
                     command.Parameters.AddWithValueSafe("@intCoachReasonID" + i,  "");
@@ -159,14 +151,7 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@bitisVerified", true);
                 command.Parameters.AddWithValueSafe("@dtmSubmittedDate", DateTime.Now);
                 command.Parameters.AddWithValueSafe("@dtmStartDate", startDate);
-                command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", null);
                 command.Parameters.AddWithValueSafe("@bitisCSE", submission.IsCse);
-                command.Parameters.AddWithValueSafe("@dtmMgrReviewManualDate", null);
-                command.Parameters.AddWithValueSafe("@dtmMgrReviewAutoDate", null);
-                command.Parameters.AddWithValueSafe("@nvcMgrNotes", null);
-                command.Parameters.AddWithValueSafe("@bitisCSRAcknowledged", null);
-                command.Parameters.AddWithValueSafe("@dtmCSRReviewAutoDate", null);
-                command.Parameters.AddWithValueSafe("@nvcCSRComments", null);
                 command.Parameters.AddWithValueSafe("@ModuleID", submission.ModuleId);
                 command.Parameters.AddWithValueSafe("@bitisFollowupRequired", submission.IsFollowupRequired);
                 command.Parameters.AddWithValueSafe("@dtmFollowupDueDate", submission.FollowupDueDate);
