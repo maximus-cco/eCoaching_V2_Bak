@@ -82,8 +82,8 @@ namespace eCoachingLog.Controllers
                 return StayOnThisPage(vm);
             }
 
-            // Non-CSR moudles: single employee select 
-            if (Constants.MODULE_CSR != vm.ModuleId)
+            // single employee select dropdown 
+            if (String.IsNullOrEmpty(vm.EmployeeIds))
             {
                 vm.EmployeeIds = vm.Employee.Id;
             }
@@ -231,7 +231,7 @@ namespace eCoachingLog.Controllers
 
         [HttpPost]
         // only csr module has site dropdown, so this must be csr module. 
-        // For csr module, display dual listbox instead of dropdown for Employee selection.
+        // For csr module, display dual listbox instead of dropdown for Employee selection, BUT this is for specific users ONLY.
         public ActionResult HandleSiteChanged(int siteIdSelected, int programIdSelected, string programName)
         {
             NewSubmissionViewModel vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
@@ -247,9 +247,10 @@ namespace eCoachingLog.Controllers
             vm.ShowSiteDropdown = true;
             vm.EmployeeSelectList = vmInSession.EmployeeSelectList;
             vm.EmployeeList = vmInSession.EmployeeList;
-            // CSR - use dual listbox
-            //vm.ShowEmployeeDropdown = true;
-            vm.ShowEmployeeDualListbox = true;
+            // CSR - use dual listbox for users with job codes of WACS40, WACS50, WACS60
+            vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm);
+            vm.ShowEmployeeDualListbox = ShowEmployeeDualListbox(vm);
+
             vm.ProgramSelectList = vmInSession.ProgramSelectList;
             vm.ProgramId = programIdSelected;
             vm.ProgramName = programName;
@@ -646,26 +647,44 @@ namespace eCoachingLog.Controllers
 
         private bool ShowEmployeeDropdown(NewSubmissionViewModel vm)
         {
-            // No module selected
-            if (vm.ModuleId == -2 || vm.ModuleId == Constants.MODULE_CSR)
+            // No module selected or allow team submit for CSR module
+            if (vm.ModuleId == -2 || (vm.ModuleId == Constants.MODULE_CSR && AllowTeamSubmissionForCSR()))
             {
                 return false;
             }
-            
+
             return true;
+        }
+
+        private bool AllowTeamSubmissionForCSR()
+        {
+            var userJobCode = GetUserFromSession().JobCode;
+            if (String.IsNullOrEmpty(userJobCode))
+            {
+                return false;
+            }
+
+            userJobCode = userJobCode.Trim().ToUpper();
+            return "WACS40".Equals(userJobCode) || "WACS50".Equals(userJobCode) || "WACS60".Equals(userJobCode);
         }
         
         private bool ShowEmployeeDualListbox(NewSubmissionViewModel vm)
         {
-            // No module selected
+            // No module selected Or module selected is other than CSR module
             if (vm.ModuleId == -2 || vm.ModuleId != Constants.MODULE_CSR)
             {
                 return false;
             }
 
-            // csr module
-            return vm.SiteId.HasValue && vm.SiteId > 0;
+            // if it gets to here, it means CSR module is selected
+            // csr module only for users with job codes WACS40 WACS50 WACS60
+            // show dual list box only if site is selected, so it knows what employees to display in the dual list box
+            if (vm.SiteId != null && vm.SiteId > 0 && AllowTeamSubmissionForCSR())
+            {
+                return true;
+            }
 
+            return false;
         }        
 
         private bool ShowProgramDropdown(NewSubmissionViewModel vm)
