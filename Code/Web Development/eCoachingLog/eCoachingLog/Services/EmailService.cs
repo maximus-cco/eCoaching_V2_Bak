@@ -132,8 +132,8 @@ namespace eCoachingLog.Services
             thread.Start(mailParameter);
         }
 
-        // Store emails to be sent in database, a backend process will pick them up and send...
-        // one submission creates one log for each selected employees
+        // Store emails in database, a backend process will pick them up and send...
+        // one submission creates one log for each of the selected employees
         // moduleId: for which module is this submission
         // isWarning: is this submission warning?
         // isCse: is this submission Cse?

@@ -47,7 +47,6 @@ namespace eCoachingLog.Controllers
 
             var vm = InitNewSubmissionViewModel(Constants.MODULE_UNKNOWN);
             vm.IsSuccess = TempData["IsSuccess"] as bool? ?? null;
-            vm.IsPartialFail = TempData["IsPartialFail"] as bool? ?? null;
             vm.ErrorList = TempData["ErrorList"] as List<Error>;
             Session["newSubmissionVM"] = vm;
 
@@ -117,22 +116,8 @@ namespace eCoachingLog.Controllers
                     vm.ReturnToSiteDate, vm.ReturnToSite, vm.ReturnToSupervisor, vm.ReturnToSite);
                 }
 
-                //vm.EmployeeIds = "1,1,2,2,3,5,5,5,6";
                 vm.EmployeeIdList = EclUtil.ConvertToList(vm.EmployeeIds, ",");
                 submissionResults = this.newSubmissionService.Save(vm, GetUserFromSession());
-
-                //successfulSubmission = submissionResults.Where(x => !String.IsNullOrEmpty(x.LogName)) // x.Error is null or empty
-                //        .Select(o =>
-                //                new Employee
-                //                {
-                //                    Id = o.Employee.Id,
-                //                    Name = o.Employee.Name,
-                //                    LogName = o.LogName,
-                //                    Email = o.Employee.Email,
-                //                    SupervisorEmail = o.Employee.SupervisorEmail,
-                //                    ManagerEmail = o.Employee.ManagerEmail
-                //                }).ToList();
-
                 successfulSubmissions = submissionResults.Where(x => x.LogId != "-1").ToList();
 
                 if (successfulSubmissions.Count == vm.EmployeeIdList.Count)
@@ -142,21 +127,13 @@ namespace eCoachingLog.Controllers
                 else
                 {
                     TempData["IsSuccess"] = false;
-                    vm.IsSuccess = false;
-                    vm.IsPartialFail = (vm.IsWarning != null && vm.IsWarning.Value) ? true : successfulSubmissions.Count > 0;
-
-                    if (vm.IsPartialFail != null && vm.IsPartialFail.Value)
-                    {
-                        TempData["IsPartialFail"] = true; 
-                        // populate ErrorList
-                        var errorList = submissionResults.Where(x => x.LogName == "-1").Select(o =>
-                                new Error
-                                {
-                                    Key = o.Employee.Name,
-                                    Value = o.Error
-                                }).ToList<Error>();
-                        TempData["ErrorList"] = errorList;
-                    }
+                    TempData["ErrorList"] = submissionResults.Where(x => x.LogName == "-1").Select(o =>
+                                                new Error
+                                                {
+                                                    Key = o.Employee.Name,
+                                                    Value = o.Error
+                                                }
+                                            ).ToList<Error>();
                 }
             }
             catch (Exception ex)

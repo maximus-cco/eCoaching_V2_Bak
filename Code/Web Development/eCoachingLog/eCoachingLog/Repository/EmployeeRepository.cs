@@ -18,7 +18,7 @@ namespace eCoachingLog.Repository
         {
             var employees = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_Select_Employees_By_Module_And_Site]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Employees_By_Module_And_Site]", connection))
             {
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
