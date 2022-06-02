@@ -45,9 +45,9 @@ namespace eCoachingLog.Services
             return newSubmissionRepository.GetSourceListByModuleId(moduleId, directOrIndirect);
         }
 
-        public Tuple<string, string, bool, string, string> GetEmailRecipientsTitlesAndBodyText(int moduleId, int sourceId, bool isCse)
+        public MailMetaData GetMailMetaData(int moduleId, int sourceId, bool isCse)
         {
-            return this.newSubmissionRepository.GetEmailRecipientsTitlesAndBodyText(moduleId, sourceId, isCse);
+            return this.newSubmissionRepository.GetMailMetaData(moduleId, sourceId, isCse);
         }
 
         public void SaveNotificationStatus(List<MailResult> mailResults, string userId)

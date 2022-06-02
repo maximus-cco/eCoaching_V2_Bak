@@ -168,6 +168,9 @@ namespace eCoachingLog.Repository
                             r.LogName = dataReader["LogName"].ToString();
                             r.Employee.Name = dataReader["EmployeeName"].ToString();
                             r.CreateDateTime = dataReader["CreateDateTime"].ToString();
+                            r.Employee.Email = dataReader["EmpEmail"].ToString();
+                            r.Employee.SupervisorEmail = dataReader["SupEmail"].ToString();
+                            r.Employee.ManagerEmail = dataReader["MgrEmail"].ToString();
                             r.Error = dataReader["ErrorReason"].ToString();
 
                             ret.Add(r);
@@ -247,13 +250,9 @@ namespace eCoachingLog.Repository
             return ret;
         }
 
-        public Tuple<string, string, bool, string, string> GetEmailRecipientsTitlesAndBodyText(int moduleId, int sourceId, bool isCse)
+        public MailMetaData GetMailMetaData(int moduleId, int sourceId, bool isCse)
         {
-            string toRecipientTitle = "";
-            string ccRecipientTitle = "";
-            string text = "";
-            bool isCc = false;
-            string status = "";
+            var mailMetaData = new MailMetaData();
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Email_Attributes]", connection))
@@ -269,11 +268,11 @@ namespace eCoachingLog.Repository
                 {
                     while (dataReader.Read())
                     {
-                        toRecipientTitle = (string)dataReader["Receiver"];
-                        ccRecipientTitle = (string)dataReader["CCReceiver"];
-                        isCc = (bool)dataReader["isCCReceiver"];
-                        text = (string)dataReader["EmailText"];
-                        status = (string)dataReader["StatusName"];
+                        mailMetaData.ToTitle = (string)dataReader["Receiver"];
+                        mailMetaData.CcTitle = (string)dataReader["CCReceiver"];
+                        mailMetaData.IsCc = (bool)dataReader["isCCReceiver"];
+                        mailMetaData.PartialBody = (string)dataReader["EmailText"];
+                        mailMetaData.LogStatus = (string)dataReader["StatusName"];
                         break;
                     }
 
@@ -281,7 +280,7 @@ namespace eCoachingLog.Repository
                 }
             }
 
-            return new Tuple<string, string, bool, string, string>(toRecipientTitle, ccRecipientTitle, isCc, text, status);
+            return mailMetaData;
         }
 
         public int GetLogStatusToSet(int moduleId, int sourceId, bool isCse)

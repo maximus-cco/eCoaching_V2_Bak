@@ -157,6 +157,7 @@
     <Compile Include="Models\Common\Behavior.cs" />
     <Compile Include="Models\Common\Error.cs" />
     <Compile Include="Models\Common\Mail.cs" />
+    <Compile Include="Models\Common\MailMetaData.cs" />
     <Compile Include="Models\Common\MailParameter.cs" />
     <Compile Include="Models\Common\MailResult.cs" />
     <Compile Include="Models\Common\TextValue.cs" />

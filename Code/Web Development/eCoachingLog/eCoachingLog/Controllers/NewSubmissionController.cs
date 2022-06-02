@@ -140,6 +140,17 @@ namespace eCoachingLog.Controllers
             {
                 logger.Warn("Exception: " + ex);
 
+                vm.IsSuccess = false;
+                vm.IsFailAll = true;
+                vm.ErrorList = new List<Error>()
+                {
+                    new Error()
+                    {
+                        Key = "Error",
+                        Value = ex.Message
+                    }
+                };
+
                 return StayOnThisPage(vm);
             } // end try - 1. save submission to db
 
@@ -226,6 +237,7 @@ namespace eCoachingLog.Controllers
                     el.IsSelected = false;
                 }
             }
+
             return View("Index", vm);
         }
 

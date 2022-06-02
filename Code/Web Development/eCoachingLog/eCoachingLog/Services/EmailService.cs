@@ -150,24 +150,22 @@ namespace eCoachingLog.Services
             logger.Debug($"####### Start storing email [total: {mParameter.NewSubmissionResult.Count}");
             try
             { 
-                var mailInfo = GetMailInfo(mParameter.ModuleId, mParameter.IsCse, mParameter.SourceId);
+                var mailMetaData = GetMailMetaData(mParameter.ModuleId, mParameter.IsCse, mParameter.SourceId);
                 var mailList = new List<Mail>();
-                foreach (var newSubmissionResult in mParameter.NewSubmissionResult)
+                foreach (var sr in mParameter.NewSubmissionResult)
                 {
-                    SetMailToCcAddress(mailInfo, newSubmissionResult.Employee);
-                    if (mailResults.Where(x => x.LogName == newSubmissionResult.LogName).First().Success)
+                    if (mailResults.Where(x => x.LogName == sr.LogName).First().Success)
                     {
                         continue;
                     }
 
-                    // TODO: pass "CreateDateTime" passed back from database to CreateMailMessage(...)
-                    var mail = CreateMail(mailInfo, mParameter.TemplateFileName, newSubmissionResult.LogName, mParameter.IsWarning, "lili");// newSubmissionResult.Employee.Name);
+                    var mail = GenerateMail(mailMetaData, mParameter, sr);
                     mailList.Add(mail);
 
                     //logger.Debug(mail.Body);
                 }
 
-                this.emailRepository.Store(mailList);
+                this.emailRepository.Store(mailList, mParameter.UserId);
             }
             catch (Exception ex)
             {
@@ -199,93 +197,81 @@ namespace eCoachingLog.Services
             return mailResults;
         }
 
-        private void SetMailToCcAddress(Mail mailInfo, Employee employee)
+        private Mail InitMail(MailMetaData metaData, Employee employee)
         {
-            mailInfo.To = "lilihuang@maximus.com";
-            mailInfo.Cc = "lilihuang@maximus.com";
+            var mail = new Mail();
 
-            //if (mailInfo == null)
-            //{
-            //    return;
-            //}
+            if (metaData == null)
+            {
+                return mail;
+            }
 
-            //if (mailInfo.To == "Manager")
-            //{
-            //    mailInfo.To = employee.ManagerEmail;
-            //}
-            //else if (mailInfo.To == "Supervisor")
-            //{
-            //    mailInfo.To = employee.SupervisorEmail;
-            //}
-            //else if (mailInfo.To == "Employee")
-            //{
-            //    mailInfo.To = employee.Email;
-            //}
-            //else
-            //{
-            //    mailInfo.To = null;
-            //}
+            if (metaData.ToTitle == "Manager")
+            {
+                mail.To = employee.ManagerEmail;
+            }
+            else if (metaData.ToTitle == "Supervisor")
+            {
+                mail.To = employee.SupervisorEmail;
+            }
+            else if (metaData.To == "Employee")
+            {
+                mail.To = employee.Email;
+            }
+            else
+            {
+                mail.To = null;
+            }
 
-            //if (mailInfo.Cc == "Manager")
-            //{
-            //    mailInfo.Cc = employee.ManagerEmail;
-            //}
-            //else if (mailInfo.Cc == "Supervisor")
-            //{
-            //    mailInfo.Cc = employee.SupervisorEmail;
-            //}
-            //else if (mailInfo.Cc == "Employee")
-            //{
-            //    mailInfo.Cc = employee.Email;
-            //}
-            //else
-            //{
-            //    mailInfo.Cc = null;
-            //}
+            if (metaData.Cc == "Manager")
+            {
+                mail.Cc = employee.ManagerEmail;
+            }
+            else if (metaData.Cc == "Supervisor")
+            {
+                mail.Cc = employee.SupervisorEmail;
+            }
+            else if (metaData.Cc == "Employee")
+            {
+                mail.Cc = employee.Email;
+            }
+            else
+            {
+                metaData.Cc = null;
+            }
+
+            mail.From = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
+
+            return mail;
         }
 
-		private Mail CreateMail(Mail mailInfo, string templateFileName, string logName, bool isWarning, string employeeName)
-		{
-            string subject = isWarning ? "Warning Log: " : "eCL: ";
-            string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
-            string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
-			string eCoachingUrl = System.Configuration.ConfigurationManager.AppSettings["App.Url"];
-            string status = mailInfo.LogStatus;
-            string txtFromDb = mailInfo.Body;
-            // TODO: time should be CreatedDateTime in database, should return this 
-            txtFromDb = txtFromDb.Replace("strPerson", employeeName)
-                .Replace("strDateTime", DateTime.Now.ToString());
+        private Mail GenerateMail(MailMetaData mailMetaData, MailParameter mailParameter, NewSubmissionResult nsResult)
+        {
+            var subject = mailParameter.IsWarning ? "Warning Log: " : "eCL: ";
+            var partialBodyFromDb = mailMetaData.PartialBody.Replace("strPerson", nsResult.Employee.Name)
+                .Replace("strDateTime", nsResult.CreateDateTime);
 
-            var mail = new Mail();
-            mail.Subject = subject + status + String.Format(" ({0})", employeeName);
+            var mail = InitMail(mailMetaData, nsResult.Employee);
+            mail.Subject = subject + mailMetaData.LogStatus + String.Format(" ({0})", nsResult.Employee.Name);
             mail.IsBodyHtml = true;
-            mail.Body = FileUtil.ReadFile(templateFileName);
-            mail.Body = mail.Body.Replace("{eCoachingUrl}", eCoachingUrl)
-                .Replace("{textFromDb}", txtFromDb)
-                .Replace("{formName}", logName);
+            mail.Body = FileUtil.ReadFile(mailParameter.TemplateFileName);
+            mail.Body = mail.Body.Replace("{eCoachingUrl}", System.Configuration.ConfigurationManager.AppSettings["App.Url"])
+                .Replace("{textFromDb}", partialBodyFromDb)
+                .Replace("{formName}", nsResult.LogName);
 
             //msg.DeliveryNotificationOptions = System.Net.Mail.DeliveryNotificationOptions.OnFailure;
             //msg.Headers.Add("Disposition-Notification-To", "lilihuang@maximus.com");
 
-            if (mailInfo.To != null)
-            {
-                mail.To = mailInfo.To;
-            }
-            if (mailInfo.Cc != null)
-            {
-                mail.Cc = mailInfo.Cc;
-            }
-            mail.From = fromAddress;
+            mail.LogId = nsResult.LogId;
+            mail.LogName = nsResult.LogName;
 
 			return mail;
 		}
 
-		private Mail GetMailInfo(int moduleId, bool isCse, int sourceId)
+		private MailMetaData GetMailMetaData(int moduleId, bool isCse, int sourceId)
         {
             // Get email recipients titles
-            Tuple<string, string, bool, string, string> recipientsTitlesAndText = this.newSubmissionService.GetEmailRecipientsTitlesAndBodyText(moduleId, sourceId, isCse);
-
-            return new Mail(recipientsTitlesAndText.Item1, recipientsTitlesAndText.Item2, recipientsTitlesAndText.Item4, recipientsTitlesAndText.Item5);
+            return this.newSubmissionService.GetMailMetaData(moduleId, sourceId, isCse);
         }
     }
 }

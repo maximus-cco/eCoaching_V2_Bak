@@ -13,15 +13,17 @@ namespace eCoachingLog.Repository
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly string connString = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
-        public void Store(List<Mail> mailList)
+        public void Store(List<Mail> mailList, string userId)
         {
             using (SqlConnection conn = new SqlConnection(connString))
-            using (SqlCommand comm = new SqlCommand("[EC].[sp_SaveEmail]", conn)) // todo: check sp name
+            using (SqlCommand comm = new SqlCommand("[EC].[sp_InsertInto_Email_Notifications_Stage]", conn))
             {
                 comm.CommandType = CommandType.StoredProcedure;
                 comm.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-                // todo: add input parameters
-                comm.Parameters.AddMailTableType("@table", mailList); // todo: when sp is ready, check parameter name
+                comm.Parameters.AddMailStageTableType("@tableRecs", mailList);
+                comm.Parameters.AddWithValueSafe("@nvcMailType", "UI-Submissions");
+                comm.Parameters.AddWithValueSafe("@nvcUserID", userId);
+
 
                 conn.Open();
                 comm.ExecuteNonQuery();

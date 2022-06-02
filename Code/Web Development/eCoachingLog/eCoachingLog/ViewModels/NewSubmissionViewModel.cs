@@ -83,6 +83,7 @@ namespace eCoachingLog.ViewModels
         // if null, it means this is initial page display
         public bool? IsSuccess { get; set; }
         public bool? IsValidationError { get; set; }
+        public bool? IsFailAll { get; set; }
 
         public NewSubmissionViewModel() : base()
         {

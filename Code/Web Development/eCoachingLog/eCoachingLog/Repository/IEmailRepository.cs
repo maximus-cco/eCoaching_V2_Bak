@@ -5,6 +5,6 @@ namespace eCoachingLog.Repository
 {
     public interface IEmailRepository
     {
-        void Store(List<Mail> mailList);
+        void Store(List<Mail> mailList, string userId);
     }
 }

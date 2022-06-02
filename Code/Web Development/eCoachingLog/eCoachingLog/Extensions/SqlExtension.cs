@@ -130,12 +130,12 @@ namespace eCoachingLog.Extensions
             return sqlParameter;
         }
 
-        // todo: check db when the table is ready
-        public static SqlParameter AddMailTableType(this SqlParameterCollection target, string name, IList<Mail> mailList)
+        // MailStageTableType
+        public static SqlParameter AddMailStageTableType(this SqlParameterCollection target, string name, IList<Mail> mailList)
         {
             DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("FormId", typeof(long));
-            dataTable.Columns.Add("FormName", typeof(string));
+            dataTable.Columns.Add("LogID", typeof(long));
+            dataTable.Columns.Add("LogName", typeof(string));
             dataTable.Columns.Add("To", typeof(string));
             dataTable.Columns.Add("Cc", typeof(string));
             dataTable.Columns.Add("From", typeof(string));
@@ -145,9 +145,10 @@ namespace eCoachingLog.Extensions
 
             foreach (var m in mailList)
             {
-                dataTable.Rows.Add(m.LogId, 
+                dataTable.Rows.Add(
+                    m.LogId,
                     m.LogName,
-                    m.To, 
+                    m.To,
                     m.Cc,
                     m.From,
                     m.Subject,
@@ -157,7 +158,7 @@ namespace eCoachingLog.Extensions
             }
             SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
             sqlParameter.SqlDbType = SqlDbType.Structured;
-            sqlParameter.TypeName = "EC.MailTableType"; // User Defined Type name in DB
+            sqlParameter.TypeName = "EC.MailStageTableType"; 
 
             return sqlParameter;
         }

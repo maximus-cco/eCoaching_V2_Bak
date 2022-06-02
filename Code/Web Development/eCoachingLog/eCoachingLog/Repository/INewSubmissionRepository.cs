@@ -8,7 +8,7 @@ namespace eCoachingLog.Repository
 {
     public interface INewSubmissionRepository
     {
-        Tuple<string, string, bool, string, string> GetEmailRecipientsTitlesAndBodyText(int moduleId, int sourceId, bool isCse);
+        MailMetaData GetMailMetaData(int moduleId, int sourceId, bool isCse);
         int GetLogStatusToSet(int moduleId, int sourceId, bool isCse);
         List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect);
         IList<NewSubmissionResult> SaveCoachingLog(NewSubmission newSubmission, User user);

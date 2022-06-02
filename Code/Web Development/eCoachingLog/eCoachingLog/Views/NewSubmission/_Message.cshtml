@@ -19,6 +19,15 @@
             <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;<b>Please correct all errors in red to proceed.</b>
         </div>
     }
+    else if (Model.IsFailAll != null && Model.IsFailAll.Value)
+    {
+        <div id="fail-message" class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;<b>Failed to save your submission!</b>
+            <br />
+            @{ Html.RenderPartial("_Error", Model); }
+        </div>
+    }
     else
     {
         <div id="fail-message" class="alert alert-info alert-dismissible">
