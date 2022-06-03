@@ -13,6 +13,7 @@
         public string Source { get; set; }
         public string Status { get; set; }
         public string CreatedDate { get; set; }
+        public string WarningDate { get; set; }
         public bool IsFollowupRequired { get; set; }
         public string FollowupDueDate { get; set; }
         public bool HasFollowupHappened { get; set; }

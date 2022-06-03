@@ -13,6 +13,5 @@ namespace eCoachingLog.Repository
         List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect);
         IList<NewSubmissionResult> SaveCoachingLog(NewSubmission newSubmission, User user);
         IList<NewSubmissionResult> SaveWarningLog(NewSubmission newSubmission, User user);
-        List<MailResult> SaveNotificationStatus(List<MailResult> mailResults, string userId);
     }
 }

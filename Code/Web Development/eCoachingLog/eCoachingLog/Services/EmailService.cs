@@ -21,6 +21,9 @@ namespace eCoachingLog.Services
         private readonly INewSubmissionService newSubmissionService;
         private readonly IEmailRepository emailRepository;
 
+        private string from = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
+        private string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
+
         public EmailService(IEmployeeService employeeService, IEmployeeLogService employeeLogService,
             INewSubmissionService newSubmissionService, IEmailRepository emailRepository)
         {
@@ -55,13 +58,12 @@ namespace eCoachingLog.Services
                 {
                     mailMessage.To.Add(log.ManagerEmail);
                 }
-                string fromAddress = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
-                string fromDisplayName = System.Configuration.ConfigurationManager.AppSettings["Email.From.DisplayName"];
+
                 string bodyText = FileUtil.ReadFile(emailTempFileName);
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = bodyText.Replace("{formName}", log.FormName);
                 mailMessage.Body = mailMessage.Body.Replace("{comments}", comments);
-                mailMessage.From = new MailAddress(fromAddress, fromDisplayName);
+                mailMessage.From = new MailAddress(from, fromDisplayName);
                 mailMessage.Subject = subject + " (" + log.EmployeeName + ")";
                 // send mail
                 smtpClient = new SmtpClient();
@@ -240,7 +242,8 @@ namespace eCoachingLog.Services
                 metaData.Cc = null;
             }
 
-            mail.From = System.Configuration.ConfigurationManager.AppSettings["Email.From.Address"];
+            mail.From = from;
+            mail.FromDisplayName = fromDisplayName;
 
             return mail;
         }

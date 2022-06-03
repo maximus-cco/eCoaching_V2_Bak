@@ -582,9 +582,14 @@ namespace eCoachingLog.Repository
 						log.CreatedDate = dataReader["SubmittedDate"].ToString();
 						log.IsCoaching = !string.IsNullOrEmpty(log.Source) && log.Source != "Warning" ? true : false;
 
-						// the sp to return my team's warning is not returning these 3 fields
-						// the sp to return log list for Director Dashboard is not returing these 3 fields
-						if (logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING
+                        if (logFilter.LogType == Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING)
+                        {
+                            log.WarningDate = dataReader["WarningGivenDate"].ToString();
+                        }
+
+                        // the sp to return my team's warning is not returning these 3 fields
+                        // the sp to return log list for Director Dashboard is not returing these 3 fields
+                            if (logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_TEAM_WARNING
 							&& logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_SITE_PENDING
 							&& logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_SITE_WARNING
 							&& logFilter.LogType != Constants.LOG_SEARCH_TYPE_MY_SITE_COMPLETED)

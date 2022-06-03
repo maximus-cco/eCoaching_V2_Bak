@@ -311,40 +311,5 @@ namespace eCoachingLog.Repository
             return logStatusId;
         }
 
-        // Save mail sent result
-        public List<MailResult> SaveNotificationStatus(List<MailResult> mailResults, string userId)
-        {
-            logger.Debug("Entered SaveNotificationStatus...");
-
-            var resultsSaved = new List<MailResult>();
-            using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand comm = new SqlCommand("[EC].[sp_InsertInto_Email_Notifications_History]", connection))
-            {
-                comm.CommandType = CommandType.StoredProcedure;
-                comm.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-                comm.Parameters.AddMailHistoryTableType("@tableRecs", mailResults);
-                comm.Parameters.AddWithValueSafe("@nvcUserID", userId);
-                connection.Open();
-                using (SqlDataReader dataReader = comm.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        var temp = dataReader["Success"].ToString().ToLower();
-                        resultsSaved.Add(new MailResult(
-                            dataReader["FormName"].ToString(),
-                            dataReader["To"].ToString(),
-                            dataReader["Cc"].ToString(),
-                            dataReader["SendattemptDate"].ToString(),
-                            (temp == "1" || temp == "true") ? true : false)
-                        );
-                    } // end while
-
-                    dataReader.Close();
-                } // end using SqlDataReader
-            } // end using SqlCommand
-
-            logger.Debug("Leaving SaveNotificationStatus...");
-            return resultsSaved;
-        }
     }
 }
