@@ -139,10 +139,10 @@ namespace eCoachingLog.Extensions
             dataTable.Columns.Add("To", typeof(string));
             dataTable.Columns.Add("Cc", typeof(string));
             dataTable.Columns.Add("From", typeof(string));
+            dataTable.Columns.Add("FromDisplayName", typeof(string));
             dataTable.Columns.Add("Subject", typeof(string));
             dataTable.Columns.Add("Body", typeof(string));
             dataTable.Columns.Add("IsHtml", typeof(bool));
-            dataTable.Columns.Add("FromDisplayName", typeof(string));
 
             foreach (var m in mailList)
             {
@@ -152,10 +152,10 @@ namespace eCoachingLog.Extensions
                     m.To,
                     m.Cc,
                     m.From,
+                    m.FromDisplayName,
                     m.Subject,
                     m.Body,
-                    m.IsBodyHtml,
-                    m.FromDisplayName
+                    m.IsBodyHtml
                );
             }
             SqlParameter sqlParameter = target.AddWithValue(name, dataTable);

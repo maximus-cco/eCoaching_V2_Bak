@@ -263,8 +263,9 @@
         if ($("input[name='IsWarning']:checked").val() === 'true') {
             $('#WarningYesNo').val('yes');
             if ($('[name="duallistbox_employee"]').length > 0) {
-                if ($('[name="duallistbox_employee"]').val().length > 1) {
+                if ($('[name="duallistbox_employee"]').val().length > maxEmployeesWarningPerSubmission) {
                     $('#div-max-warning').removeClass('hide');
+                    $('#div-max-coaching').addClass('hide');
                 } else {
                     $('#div-max-warning').addClass('hide');
                 }
@@ -272,6 +273,11 @@
         } else {
             $('#WarningYesNo').val('no');
             $('#div-max-warning').addClass('hide');
+            if ($('[name="duallistbox_employee"]').val().length > maxEmployeesCoachingPerSubmission) {
+                $('#div-max-coaching').removeClass('hide');
+            } else {
+                $('#div-max-warning').addClass('hide');
+            }
         }
 
     	var isCoachingByYou = $("input[name='IsCoachingByYou']:checked").val()
@@ -424,12 +430,20 @@
         var body = "";
         var footer = "";
         if (total > 0) {
-            if ($('input[name=IsWarning]:checked').val() === "true" && total > maxEmployeesWarningPerSubmission) {
-                body = "You selected " + total + " employees.<br/>The max number of employees for warning log can be included in one submission is " + maxEmployeesWarningPerSubmission + ".";
+            var max = maxEmployeesCoachingPerSubmission;
+            var log = "<font color='green'> coaching log </font>";
+            var isWarning = false;
+            if ($('input[name=IsWarning]:checked').val() === "true") {
+                max = maxEmployeesWarningPerSubmission;
+                log = "<font color='red'> warning log </font>";
+                isWarning = true;
+            }
+
+            if (total > max) {
+                body = "You selected " + total + " employees.<br/>The maximum number of employee for " + log + " in one submission is " + max + ".";
                 footer = '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
             } else {
-                var log = $('input[name=IsWarning]:checked').val() === "true" ? "<font color='red'> warning log </font>" : "<font color='green'> coaching log </font>";
-                if ($('input[name=IsWarning]:checked').val() === "true") {
+                if (isWarning === true) {
                     body = "<b>A new" + log + "will be created for</b> " + employees + "<br /><b>Do you wish to continue?</b>";
                 } else {
                     body = "<b>A new" + log + "will be created for each of the following:</b><br />" + employees + "<br /><b>Do you wish to continue?</b>";

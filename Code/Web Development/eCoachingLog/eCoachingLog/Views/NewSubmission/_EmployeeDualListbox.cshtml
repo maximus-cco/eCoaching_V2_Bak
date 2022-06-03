@@ -1,4 +1,4 @@
-﻿
+﻿@using eCoachingLog.Utils
 @model eCoachingLog.ViewModels.NewSubmissionViewModel
 
 <input type="hidden" id="WarningYesNo" />
@@ -8,7 +8,10 @@
         <a href="#" style="color: #337ab7" id="a-add-employee"><b>Add</b></a>
     </div>
     <div class="col-sm-6 hide" id="div-max-warning">
-        <p class="text-danger" ><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>You can only submit a warning log for ONE employee per submission.</b></p>
+        <p class="text-danger" ><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>The maximum number of employee in a Warning Submssion is @Constants.MAX_NUMBER_OF_EMPLOYEES_WARNING_PER_SUBMISSION.</b></p>
+    </div>
+    <div class="col-sm-6 hide" id="div-max-coaching">
+        <p class="text-danger"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>The maximum number of employee in a coaching submission is @Constants.MAX_NUMBER_OF_EMPLOYEES_COACHING_PER_SUBMISSION.</b></p>
     </div>
 </div>
 
@@ -63,15 +66,24 @@
         function showHideMaxNumberEmployeeMessage()
         {
             var selected = $('[name="duallistbox_employee"]').val();
-            
+
             if ($('#WarningYesNo').val() === 'yes') {
-                if (selected.length > 1) {
+                // check if max (1) reached for warning log
+                if (selected.length > maxEmployeesWarningPerSubmission) { // 1
                     $('#div-max-warning').removeClass('hide');
+                    $('#div-max-coaching').addClass('hide');
                 } else {
                     $('#div-max-warning').addClass('hide');
                 }
-            } else if ($('#WarningYesNo').val() === 'no') {
+            } else {
                 $('#div-max-warning').addClass('hide');
+                // check if max (100) reached for coaching log
+                if (selected.length > maxEmployeesCoachingPerSubmission) { // 100
+                    $('#div-max-coaching').removeClass('hide');
+                    $('#div-max-warning').addClass('hide');
+                } else {
+                    $('#div-max-coaching').addClass('hide');
+                }
             }
         }
 
