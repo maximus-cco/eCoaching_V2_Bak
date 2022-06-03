@@ -1,14 +1,3 @@
-/*
-sp_SelectFrom_Warning_Log_MyTeamWarning(02).sql
-Last Modified Date: 11/18/2019
-Last Modified By: Susmitha Palacherla
-
-Version 02: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -17,11 +6,13 @@ IF EXISTS (
 )
    DROP PROCEDURE [EC].[sp_SelectFrom_Warning_Log_MyTeamWarning]
 GO
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -31,8 +22,9 @@ GO
 --	Description: *	This procedure returns the Active Warning logs for Employees reporting to the logged in user.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+--  Updated to add Warning Given date. TFS 24715 - 06/02/2022
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Warning_Log_MyTeamWarning] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Warning_Log_MyTeamWarning] 
 @nvcUserIdin nvarchar(10),
 @intStatusIdin int = -1,
 @strSDatein datetime,
@@ -91,6 +83,7 @@ AS
 				,x.strFormStatus
 				,x.strSource
 				,x.SubmittedDate
+				,x.WarningGivenDate
 				,x.strSubmitterName
 				,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
   FROM 
@@ -103,6 +96,7 @@ AS
 	  ,[s].[Status] strFormStatus
 	  ,[so].[SubCoachingSource]	strSource
 	  ,[wl].[SubmittedDate]	SubmittedDate
+	  ,[wl].[WarningGivenDate] WarningGivenDate
 	  ,[vehs].[Emp_Name] strSubmitterName
     FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 	JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
@@ -116,7 +110,7 @@ AS
 	AND (eh.Sup_ID = ''' + @nvcUserIdin + ''' OR eh.Mgr_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl1_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''')
 	AND convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-	GROUP BY [wl].[FormName], [wl].[WarningID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [wl].[SubmittedDate], [vehs].[Emp_Name]
+	GROUP BY [wl].[FormName], [wl].[WarningID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [wl].[SubmittedDate],[wl].[WarningGivenDate], [vehs].[Emp_Name]
   ) x 
 )
 
@@ -128,6 +122,7 @@ SELECT strLogID,
   ,strFormStatus
   ,strSource
   ,SubmittedDate
+  ,WarningGivenDate
   ,strSubmitterName
   ,[EC].[fn_strCoachingReasonFromWarningID](T.strLogID) strCoachingReason
   ,[EC].[fn_strSubCoachingReasonFromWarningID](T.strLogID) strSubCoachingReason
@@ -147,6 +142,4 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Warning_Log_MyTeamWarning
 GO
-
-
 
