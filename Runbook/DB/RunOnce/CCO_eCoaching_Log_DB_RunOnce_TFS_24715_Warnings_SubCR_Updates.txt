@@ -12,7 +12,7 @@ Summary
 
 
 1. Add row(s) to Table [EC].[DIM_SubCoaching_Reason]
-2. Inactivate Quality SubCR in [EC].[Coaching_Reason_Selection]
+2. Inactivate Quality SubCR in [EC].[Coaching_Reason_Selection]for CSR Module
 3. Add new rows to [EC].[Coaching_Reason_Selection]
 
 */
@@ -39,18 +39,18 @@ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 --*******************************************************
 
 
---2. Inactivate Quality SubCR in [EC].[Coaching_Reason_Selection]
+--2. Inactivate Quality SubCR in [EC].[Coaching_Reason_Selection]for CSR Module
 
 PRINT ('  Inactivating Quality SubCR in [EC].[Coaching_Reason_Selection...');
 
+
 Update [EC].[Coaching_Reason_Selection]
-SET isActive = 0
+SET CSR = 0
 WHERE ([CoachingReason] like '%Warning%' OR [CoachingReason] like  'Formal Coaching')
-AND isActive = 1
 AND SubCoachingReason = 'Quality'
 GO
      
-PRINT (' Inactivate Quality SubCR in [EC].[Coaching_Reason_Selection] Completed...');
+PRINT (' Inactivated Quality SubCR for CSR Module in [EC].[Coaching_Reason_Selection] Completed...');
 
 WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
@@ -84,22 +84,22 @@ INSERT INTO [EC].[Coaching_Reason_Selection]
            ,[Training])
      VALUES
 	 -- Verbal Warning
-	         (28, 'Verbal Warning',298,'Quality-Business Process',1,1,0,1,0,1,1,1,1,1,1,1),
-			 (28, 'Verbal Warning',300,'Quality-Information Accuracy',1,1,0,1,0,1,1,1,1,1,1,1),
-			 (28, 'Verbal Warning',301,'Quality-Privacy and Disclaimers',1,1,0,1,0,1,1,1,1,1,1,1),
+	         (28, 'Verbal Warning',298,'Quality-Business Process',1,1,0,1,0,1,0,0,1,1,0,0),
+			 (28, 'Verbal Warning',300,'Quality-Information Accuracy',1,1,0,1,0,1,0,0,1,1,0,0),
+			 (28, 'Verbal Warning',301,'Quality-Privacy and Disclaimers',1,1,0,1,0,1,0,0,1,1,0,0),
 		-- Written Warning
-	         (29, 'Written Warning',298,'Quality-Business Process',1,1,0,1,0,1,1,1,1,1,1,1),
-			 (29, 'Written Warning',299,'Quality-Critical error',1,1,0,1,0,1,1,1,1,1,1,1),
-			 (29, 'Written Warning',300,'Quality-Information Accuracy',1,1,0,1,0,1,1,1,1,1,1,1),
-			 (29, 'Written Warning',301,'Quality-Privacy and Disclaimers',1,1,0,1,0,1,1,1,1,1,1,1),
+	         (29, 'Written Warning',298,'Quality-Business Process',1,1,0,1,0,1,0,0,1,1,0,0),
+			 (29, 'Written Warning',299,'Quality-Critical error',1,1,0,1,0,1,0,0,1,1,0,0),
+			 (29, 'Written Warning',300,'Quality-Information Accuracy',1,1,0,1,0,1,0,0,1,1,0,0),
+			 (29, 'Written Warning',301,'Quality-Privacy and Disclaimers',1,1,0,1,0,1,0,0,1,1,0,0),
 		-- Final Written Warning
-	         (30, 'Final Written Warning',298,'Quality-Business Process',1,1,0,1,0,1,1,1,1,1,1,1),
-			 (30, 'Final Written Warning',299,'Quality-Critical error',1,1,0,1,0,1,1,1,1,1,1,1),
-			 (30, 'Final Written Warning',300,'Quality-Information Accuracy',1,1,0,1,0,1,1,1,1,1,1,1),
-			 (30, 'Final Written Warning',301,'Quality-Privacy and Disclaimers',1,1,0,1,0,1,1,1,1,1,1,1),
+	         (30, 'Final Written Warning',298,'Quality-Business Process',1,1,0,1,0,1,0,0,1,1,0,0),
+			 (30, 'Final Written Warning',299,'Quality-Critical error',1,1,0,1,0,1,0,0,1,1,0,0),
+			 (30, 'Final Written Warning',300,'Quality-Information Accuracy',1,1,0,1,0,1,0,0,1,1,0,0),
+			 (30, 'Final Written Warning',301,'Quality-Privacy and Disclaimers',1,1,0,1,0,1,0,0,1,1,0,0),
 		-- Final Written Warning
-	         (60, 'Formal Coaching',298,'Quality-Business Process',1,1,0,1,0,1,1,1,1,1,1,1),
-			 (60, 'Formal Coaching',300,'Quality-Information Accuracy',1,1,0,1,0,1,1,1,1,1,1,1)
+	         (60, 'Formal Coaching',298,'Quality-Business Process',1,1,0,1,0,1,0,0,1,1,0,0),
+			 (60, 'Formal Coaching',300,'Quality-Information Accuracy',1,1,0,1,0,1,0,0,1,1,0,0)
  GO
 
 PRINT (' Inserts to Coaching_Reason_Selection Completed...');
