@@ -1,0 +1,79 @@
+/*
+TFS 24711 - Update site to include Netpark and remove Coralville
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+--select * from [EC].[DIM_Site]
+--select * from [EC].[Survey_Sites]
+--select * from [EC].[Employee_Hierarchy] where emp_site = 'Riverview'
+
+Summary
+
+1. Inactivate Coralville and add Tampa Netpark in DIM_Site Table
+2. Inactivate Coralville and add Tampa Netpark in Survey_Sites Table
+3. Update existing Riverview records to Tampa Riverview
+
+*/
+
+-- Details
+--1. Inactivate Coralville and add Tampa Netpark in DIM_Site Table
+
+UPDATE [EC].[DIM_Site]
+SET [isActive] = 0
+WHERE [City]= N'Coralville';
+GO
+
+UPDATE [EC].[DIM_Site]
+SET [City] = N'Tampa Riverview'
+,[StateCity] = 'FL - Tampa Riverview'
+WHERE [City]= 'Riverview'
+GO
+
+INSERT INTO [EC].[DIM_Site]
+           ([City]
+           ,[State]
+           ,[StateCity]
+           ,[isActive])
+     VALUES
+           (N'Tampa Netpark', N'FL', N'FL - Tampa Netpark', 1)
+GO
+
+
+--2. Inactivate Coralville and add Tampa Netpark in Survey_Sites Table
+
+
+UPDATE [EC].[Survey_Sites]
+SET [isActive] = 0
+,[isPilot] = 0
+WHERE [City] = N'Coralville';
+
+UPDATE [EC].[Survey_Sites]
+SET [City] = N'Tampa Riverview'
+WHERE [City]= 'Riverview'
+GO
+
+INSERT INTO [EC].[Survey_Sites]
+           ([City]
+           ,[isActive]
+           ,[isPilot]
+           ,[isHotTopic])
+     VALUES
+ (N'Tampa Netpark', 1,1,0)
+GO
+
+--3. Update existing Riverview records to Tampa Riverview
+
+
+UPDATE [EC].[Employee_Hierarchy]
+SET emp_site = 'Tampa Riverview'
+WHERE emp_site = 'Riverview'
+GO
+
+--******************************
+
+--**********************

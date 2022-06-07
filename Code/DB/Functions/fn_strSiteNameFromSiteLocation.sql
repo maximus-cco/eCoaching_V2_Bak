@@ -1,18 +1,3 @@
-/*
-fn_strSiteNameFromSiteLocation(05).sql
-Last Modified Date: 10/29/2019
-Last Modified By: Susmitha Palacherla
-
-Version 05:  Updated to map Riverview back to Riverview. TFS 15450 - 10/29/2019
-Version 04:  Updated to Integrate Brownsville and map Riverview to Tampa. TFS 15450 - 09/23/2019
-Version 03:  Updated to add wildcards to accommodate new maximus location values- TFS 13168 - 01/08/2019
-Version 02: Added mapping for new Phoenix office - TFS 12063 - 09/11/2018
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-
-*/
-
-
 IF EXISTS (
   SELECT * 
     FROM INFORMATION_SCHEMA.ROUTINES 
@@ -28,6 +13,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         07/25/2013
@@ -38,8 +24,9 @@ GO
 -- Added mapping for new Phoenix office - TFS 12063 - 09/11/2018
 -- Updated to add wildcards to accommodate new maximus location values- TFS 13168 - 01/08/2019
 -- Integrate Brownsville into eCL. TFS 15450 - 09/23/2019
+-- Modified to Support changes to Tampa Sites. TFS 24711 - 06/03/2022
 -- =============================================
-CREATE FUNCTION [EC].[fn_strSiteNameFromSiteLocation] (
+CREATE OR ALTER FUNCTION [EC].[fn_strSiteNameFromSiteLocation] (
   @strSiteLocation NVARCHAR(50)
 )
 RETURNS NVARCHAR(20)
@@ -51,7 +38,7 @@ BEGIN
     SET @strSiteName =
     (SELECT CASE 
 	        WHEN (@strSiteLocation lIKE N'%Bogalusa%')    THEN N'Bogalusa'
-		    WHEN (@strSiteLocation lIKE N'%Chester%' and @strSiteLocation NOT lIKE N'%Winchester%')      THEN N'Chester'
+		    WHEN (@strSiteLocation lIKE N'%Chester%' and @strSiteLocation NOT lIKE N'%Winchester%')  THEN N'Chester'
 	        WHEN (@strSiteLocation lIKE N'%Coralville%')       THEN N'Coralville'
             WHEN (@strSiteLocation lIKE N'%Corbin%')      THEN N'Corbin'
 		    WHEN (@strSiteLocation lIKE N'%Hattiesburg%')    THEN N'Hattiesburg'
@@ -63,7 +50,8 @@ BEGIN
 			WHEN (@strSiteLocation lIKE N'%Lynn Haven%')     THEN N'Lynn Haven'
 		    WHEN (@strSiteLocation lIKE N'%Phoenix%') THEN N'Phoenix'
 		    WHEN (@strSiteLocation lIKE N'%Sandy%')      THEN N'Sandy'
-            WHEN (@strSiteLocation lIKE N'%Riverview%')      THEN N'Riverview'    
+            WHEN (@strSiteLocation lIKE N'%Riverview%')      THEN N'Tampa Riverview'  
+		    WHEN (@strSiteLocation lIKE N'%Netpark%')      THEN N'Tampa Netpark'  
 		    WHEN (@strSiteLocation lIKE N'%Waco%')       THEN N'Waco'  
 			WHEN (@strSiteLocation lIKE N'%Brownsville%')       THEN N'Brownsville' 
             WHEN (@strSiteLocation lIKE N'%Winchester%')   THEN N'Winchester'
@@ -74,5 +62,4 @@ BEGIN
   RETURN @strSiteName  
 END  -- fn_strSiteNameFromSiteLocation()
 GO
-
 

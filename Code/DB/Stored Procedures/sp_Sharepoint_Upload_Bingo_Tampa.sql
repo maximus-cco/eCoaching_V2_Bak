@@ -27,8 +27,9 @@ GO
 --	Description:    Extracts previous month Tampa Bingo logs for upload to Sharepoint
 -- Initial Revision. Extract bingo logs from ecl and post to share point sites. TFS 19526 - 12/8/2020
 -- Updated to roll up competencies across programs for Employee. TFS 19526 - 12/21/2020
+-- Modified to support changes to Tampa site. TFS 24711 - 06/06/2022
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Sharepoint_Upload_Bingo_Tampa] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Sharepoint_Upload_Bingo_Tampa] 
 AS
 
 SET NOCOUNT ON;
@@ -54,7 +55,7 @@ BEGIN TRY
 	-- *** BEGIN: INSERT CUSTOM CODE HERE ***
 	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 
-	  DECLARE @EmployeeSite nvarchar(30) = 'Riverview',
+	  DECLARE @EmployeeSite nvarchar(30) = 'Tampa Riverview',
               @BingoType nvarchar(2) = N'QN',
 	          @BeginDate datetime = (SELECT BeginDate FROM [EC].[View_Coaching_Log_Bingo_Upload_Dates]),
               @EndDate datetime = (SELECT EndDate FROM [EC].[View_Coaching_Log_Bingo_Upload_Dates]);
