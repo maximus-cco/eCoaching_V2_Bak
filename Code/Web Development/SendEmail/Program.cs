@@ -11,6 +11,7 @@ namespace SendEmail
 
         static void Main(string[] args)
         {
+            logger.Debug("SendEmail started...");
             var service = new EmailService();
             var emailsToSend = service.GetEmailList().ToList<Email>();
             if (emailsToSend.Count > 0)
@@ -19,6 +20,7 @@ namespace SendEmail
                 service.SaveResult(results);
             }
 
+            logger.Debug("SendEmail stopped...");
             System.Environment.Exit(0);
         }
 
