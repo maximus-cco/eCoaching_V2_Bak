@@ -14,14 +14,14 @@ Production – UVAAPADSQL50CCO  – eCoaching
 
 Summary
 
-1. Inactivate Coralville and add Tampa Netpark in DIM_Site Table
-2. Inactivate Coralville and add Tampa Netpark in Survey_Sites Table
+1. Inactivate Coralville and Activate Tampa Netpark in DIM_Site Table
+2. Inactivate Coralville and Activate Tampa Netpark in Survey_Sites Table
 3. Update existing Riverview records to Tampa Riverview
 
 */
 
 -- Details
---1. Inactivate Coralville and add Tampa Netpark in DIM_Site Table
+--1. Inactivate Coralville and Activate Tampa Netpark in DIM_Site Table
 
 UPDATE [EC].[DIM_Site]
 SET [isActive] = 0
@@ -30,48 +30,44 @@ GO
 
 UPDATE [EC].[DIM_Site]
 SET [City] = N'Tampa Riverview'
-,[StateCity] = 'FL - Tampa Riverview'
-WHERE [City]= 'Riverview'
+,[StateCity] = N'FL - Tampa Riverview'
+WHERE [City]= N'Riverview'
 GO
 
-INSERT INTO [EC].[DIM_Site]
-           ([City]
-           ,[State]
-           ,[StateCity]
-           ,[isActive])
-     VALUES
-           (N'Tampa Netpark', N'FL', N'FL - Tampa Netpark', 1)
+UPDATE [EC].[DIM_Site]
+SET [isActive] = 0
+WHERE [City] = N'Tampa Netpark'
 GO
 
 
---2. Inactivate Coralville and add Tampa Netpark in Survey_Sites Table
+--2. Inactivate Coralville and Activate Tampa Netpark in Survey_Sites Table
 
 
 UPDATE [EC].[Survey_Sites]
 SET [isActive] = 0
 ,[isPilot] = 0
-WHERE [City] = N'Coralville';
+WHERE [City] = N'Coralville'
+GO
 
 UPDATE [EC].[Survey_Sites]
 SET [City] = N'Tampa Riverview'
-WHERE [City]= 'Riverview'
+WHERE [City]= N'Riverview'
 GO
 
-INSERT INTO [EC].[Survey_Sites]
-           ([City]
-           ,[isActive]
-           ,[isPilot]
-           ,[isHotTopic])
-     VALUES
- (N'Tampa Netpark', 1,1,0)
+
+UPDATE [EC].[Survey_Sites]
+SET [isActive] = 1
+,[isPilot] = 1
+WHERE [City] = N'Tampa Netpark'
 GO
+
 
 --3. Update existing Riverview records to Tampa Riverview
 
 
 UPDATE [EC].[Employee_Hierarchy]
-SET emp_site = 'Tampa Riverview'
-WHERE emp_site = 'Riverview'
+SET emp_site = N'Tampa Riverview'
+WHERE emp_site = N'Riverview'
 GO
 
 --******************************
