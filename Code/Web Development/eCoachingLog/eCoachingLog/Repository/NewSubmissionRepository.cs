@@ -202,14 +202,6 @@ namespace eCoachingLog.Repository
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
                 command.Parameters.AddStringTableType("@tableEmpIDs", ns.EmployeeIdList);
                 command.Parameters.AddWithValueSafe("@nvcProgramName", ns.ProgramName);
-				if (ns.ModuleId == Constants.MODULE_CSR)
-				{
-					command.Parameters.AddWithValueSafe("@SiteID", ns.SiteId);
-				}
-				else
-				{
-					command.Parameters.AddWithValueSafe("@SiteID", null); // Modules other than CSR have no site selection
-				}
 				command.Parameters.AddWithValueSafe("@nvcSubmitterID", employeeId);
                 command.Parameters.AddWithValueSafe("@dtmEventDate", ns.WarningDate);
                 command.Parameters.AddWithValueSafe("@intCoachReasonID1", ns.WarningTypeId);
