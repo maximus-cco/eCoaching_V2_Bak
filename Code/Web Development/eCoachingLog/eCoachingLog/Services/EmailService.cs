@@ -216,7 +216,7 @@ namespace eCoachingLog.Services
             {
                 mail.To = employee.SupervisorEmail;
             }
-            else if (metaData.To == "Employee")
+            else if (metaData.ToTitle == "Employee")
             {
                 mail.To = employee.Email;
             }
@@ -225,15 +225,15 @@ namespace eCoachingLog.Services
                 mail.To = null;
             }
 
-            if (metaData.Cc == "Manager")
+            if (metaData.CcTitle == "Manager")
             {
                 mail.Cc = employee.ManagerEmail;
             }
-            else if (metaData.Cc == "Supervisor")
+            else if (metaData.CcTitle == "Supervisor")
             {
                 mail.Cc = employee.SupervisorEmail;
             }
-            else if (metaData.Cc == "Employee")
+            else if (metaData.CcTitle == "Employee")
             {
                 mail.Cc = employee.Email;
             }

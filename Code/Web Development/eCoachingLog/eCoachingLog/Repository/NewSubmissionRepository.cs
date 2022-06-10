@@ -223,6 +223,9 @@ namespace eCoachingLog.Repository
                             r.Employee.Name = dataReader["EmployeeName"].ToString();
                             r.CreateDateTime = dataReader["CreateDateTime"].ToString();
                             r.Error = dataReader["ErrorReason"].ToString();
+                            r.Employee.Email = dataReader["EmpEmail"].ToString();
+                            r.Employee.SupervisorEmail = dataReader["SupEmail"].ToString();
+                            r.Employee.ManagerEmail = dataReader["MgrEmail"].ToString();
 
                             ret.Add(r);
                             break; // one warning log per submission
