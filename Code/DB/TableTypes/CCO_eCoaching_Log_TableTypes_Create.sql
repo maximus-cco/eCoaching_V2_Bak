@@ -1,21 +1,41 @@
-
+--IdsTableType
 CREATE TYPE [EC].[IdsTableType] AS TABLE(
 	[ID] [bigint] NOT NULL
 )
 GO
 
+--****************************************
 
+--MailHistoryTableType
 CREATE TYPE [EC].[MailHistoryTableType] AS TABLE(
-	[FormName] [nvarchar](50) NOT NULL,
-	[To] [nvarchar](4000) NULL,
-	[Cc] [nvarchar](4000) NULL,
+	[LogID] [bigint] NOT NULL,
+	[LogName] [nvarchar](50) NOT NULL,
+	[To] [nvarchar](400) NULL,
+	[Cc] [nvarchar](400) NULL,
 	[SendAttemptDate] [datetime] NOT NULL,
 	[Success] [bit] NOT NULL
 )
 GO
 
+--****************************************
 
+--MailStageTableType
+CREATE TYPE [EC].[MailStageTableType] AS TABLE(
+	[LogID] [bigint] NOT NULL,
+	[LogName] [nvarchar](50) NOT NULL,
+	[To] [nvarchar](400) NULL,
+	[Cc] [nvarchar](400) NULL,
+	[From] [nvarchar](400) NOT NULL,
+	[FromDisplayName] [nvarchar](100) NULL,
+	[Subject] [nvarchar](500) NOT NULL,
+	[Body] [nvarchar](max) NOT NULL,
+	[IsHtml] [bit] NOT NULL
+)
+GO
 
+--****************************************
+
+--ResponsesTableType
 CREATE TYPE [EC].[ResponsesTableType] AS TABLE(
 	[QuestionID] [int] NOT NULL,
 	[ResponseID] [int] NOT NULL,
@@ -23,7 +43,10 @@ CREATE TYPE [EC].[ResponsesTableType] AS TABLE(
 )
 GO
 
+--****************************************
 
+
+--SCMgrReviewTableType
 CREATE TYPE [EC].[SCMgrReviewTableType] AS TABLE(
 	[VerintCallID] [nvarchar](30) NOT NULL,
 	[MgrAgreed] [nvarchar](3) NULL,
@@ -31,8 +54,10 @@ CREATE TYPE [EC].[SCMgrReviewTableType] AS TABLE(
 )
 GO
 
+--****************************************
 
 
+--SCSupReviewTableType
 CREATE TYPE [EC].[SCSupReviewTableType] AS TABLE(
 	[VerintCallID] [nvarchar](30) NOT NULL,
 	[Valid] [nvarchar](3) NULL,
@@ -43,8 +68,10 @@ CREATE TYPE [EC].[SCSupReviewTableType] AS TABLE(
 )
 GO
 
+--****************************************
 
 
+--SharepointUploadBingoTableType
 CREATE TYPE [EC].[SharepointUploadBingoTableType] AS TABLE(
 	[Title] [nvarchar](50) NOT NULL,
 	[Employee_Name] [nvarchar](50) NOT NULL,
@@ -56,3 +83,5 @@ CREATE TYPE [EC].[SharepointUploadBingoTableType] AS TABLE(
 	[Upload_Status] [nvarchar](50) NULL
 )
 GO
+
+--****************************************

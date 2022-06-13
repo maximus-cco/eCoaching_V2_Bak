@@ -1,3 +1,4 @@
+
 SET ANSI_NULLS ON
 GO
 
@@ -6,18 +7,14 @@ GO
 
 --    ====================================================================
 --    Author:           Susmitha Palacherla
---    Create Date:      11/08/2021
---    Description:     This procedure inserts a record for each Notification attempt made from UI.
---    The mailTypem To, Cc, Success Flag and Attempt DateTime are captured for each log.
---    History 
+--    Create Date:      05/31/2022
+--    Description:     This procedure is used by the Notifications app to query the staged Notifications for 
+--                     actually sending them out.
+--    History:
 --    Initial Revision. Team Coaching Log Submission. TFS 23273 - 05/31/2022
 
 --    =====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Email_Notifications_History]
-(     @tableRecs MailHistoryTableType READONLY,
-      @nvcMailType Nvarchar(50) = N'UI-Submissions',
-	  @nvcUserID Nvarchar(10)
-)
+CREATE OR ALTER PROCEDURE [EC].[sp_Get_Staged_Notifications]
    
 AS
 BEGIN
@@ -29,16 +26,21 @@ RETRY: -- Label RETRY
 
 
 BEGIN TRANSACTION
-BEGIN TRY  
+BEGIN TRY 
 
-OPEN SYMMETRIC KEY [CoachingKey]  
-DECRYPTION BY CERTIFICATE [CoachingCert];
+-- Get Notifications with Missing attributes
+       IF OBJECT_ID(N'tempdb..#move') IS NOT NULL
+		BEGIN
+		DROP TABLE #move;
+		END
+		
+		CREATE TABLE #move (MailID int primary key);
+		INSERT INTO #move
+		SELECT [MailID] from [EC].[Email_Notifications_Stage]
+		WHERE ISNULL([To], '') = '';
 
-DECLARE @inserted AS TABLE (LogID bigint);
-
--- Log the results of the Notification attempts
- 
-         INSERT INTO [EC].[Email_Notifications_History]
+-- Record Notifications with missing attributes in Mail History Table
+		 INSERT INTO [EC].[Email_Notifications_History]
             ([MailType]
            ,[LogID]
            ,[LogName]
@@ -48,44 +50,51 @@ DECLARE @inserted AS TABLE (LogID bigint);
            ,[Success]
 		   ,[CreateUserID]
       )
-	 OUTPUT inserted.LogID INTO @inserted
-     SELECT @nvcMailType, RECS.LogID, RECS.LogName,
-	 RECS.[To],
-	 RECS.[Cc], 
-	 RECS.SendAttemptDate, RECS.Success, @nvcUserID
-	 FROM @tableRecs RECS;
+			 SELECT [MailType],[LogID],[LogName],[To],[Cc],GetDate() ,0,'999999'
+			 FROM [EC].[Email_Notifications_Stage]
+			 WHERE [MailID] IN (SELECT MailID FROM #move);
 
- -- Update SendAttemptDate,SendAttemptCount and InProcess flag in Staging table
-
- 	 UPDATE [EC].[Email_Notifications_Stage]
-	 SET SendAttemptDate = RECS.SendAttemptDate
-	 ,[SendAttemptCount] = [SendAttemptCount] + 1
-	 ,[InProcess] = 0
-	 ,LastModifyDate = GetDate()
-	 ,LastModifyUserID =  @nvcUserID 
-	 FROM [EC].[Email_Notifications_Stage] es INNER JOIN @tableRecs RECS ON
-     es.LogID = RECS.LogID AND es.LogName = RECS.LogName;
-
-	-- Delete Successfully Sent Emails and those Exceeding an Attempt Count of 3
-
+-- Delete Notifications with missing attributes
 	DELETE ens
 	FROM [EC].[Email_Notifications_Stage] ens INNER JOIN [EC].[Email_Notifications_History] ehs
-	ON ens.LogID = ehs.LogID AND ens.SendAttemptDate = ehs.SendAttemptDate
-	WHERE (ens.SendAttemptCount >= 3  OR ehs.Success = 1 OR ISNULL(ens.[To],'') = '');
+	ON ens.LogID = ehs.LogID 
+	WHERE ISNULL(ens.[To],'') = '' AND ens.MailID IN (SELECT MailID FROM #move);
 
+-- Get Top 100 Open Notifications
+       IF OBJECT_ID(N'tempdb..#open') IS NOT NULL
+		BEGIN
+		DROP TABLE #open;
+		END
+		
+		CREATE TABLE #open (MailID int primary key)
 
- -- Return the list of logged Notification attempts for the transaction
-          
- Select mh.[LogID], mh.[LogName], 
-        mh.[To],
-		mh.[Cc],
-		mh.[SendAttemptDate],
-		mh.[Success]
- FROM [EC].[Email_Notifications_History]  mh INNER JOIN  @inserted i
- ON mh.LogID = i.LogID;
+		INSERT INTO #open
+		SELECT TOP 100 [MailID] from [EC].[Email_Notifications_Stage]
+		 WHERE [InProcess] = 0
+		 AND [SendAttemptCount] <= 3
+		
 
+   --Return Open Notifications for app to send
+ 
+        SELECT [MailID]
+		      ,[LogID]
+              ,[LogName]
+			  ,[To]
+			  ,[Cc] 
+			  ,[From]
+			  ,[FromDisplayName]
+		      ,[Subject]
+			  ,[Body]
+			  ,[IsHtml]
+	  FROM [EC].[Email_Notifications_Stage]
+	  WHERE [MailID] IN (SELECT MailID FROM #open)
+	  ORDER BY [CreateDate];
 
- CLOSE SYMMETRIC KEY [CoachingKey];
+	  --Set selected Notifications to processing
+
+	  UPDATE [EC].[Email_Notifications_Stage]
+	  SET [InProcess] = 1
+	  WHERE [MailID] IN (SELECT MailID FROM #open);
 
 COMMIT TRANSACTION
 END TRY
@@ -138,7 +147,7 @@ END TRY
    END
   END CATCH  
 
-  END -- sp_InsertInto_Email_Notifications_History
+  END -- sp_Get_Staged_Notifications
 GO
 
 

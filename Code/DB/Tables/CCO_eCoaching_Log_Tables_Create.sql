@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Log_Tables_Create.sql(09).sql
+CCO_eCoaching_Log_Tables_Create.sql(10).sql
 
-Last Modified Date: 11/9/2021
+Last Modified Date: 06/07/2022
 Last Modified By: Susmitha Palacherla
 
+Version 10: Updated to Support Team Submission. TFS 23273 - 06/07/2022
 Version 09: Updated to suport email process change in user interface. TFS 23389 - 11/08/2021
 Version 08: Updated to support New Coaching Reason for Quality - 23051 - 10/6/2021
 Version 07: Quality Now workflow enhancement. TFS 22187 - 09/15/2021
@@ -29,6 +30,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 2. [EC].[Coaching_Log_Reason]
 3. [EC].[Coaching_Log_Quality_Now_Summary]
 4. [EC].[Email_Notifications_History]
+5. [EC].[Email_Notifications_Stage]
 
 
 **************************************************************
@@ -253,10 +255,10 @@ GO
 CREATE TABLE [EC].[Email_Notifications_History](
 	[MailID] [bigint] IDENTITY(1,1) NOT NULL,
 	[MailType] [nvarchar](50) NOT NULL,
-	[CoachingID] [bigint] NULL,
-	[FormName] [nvarchar](50) NOT NULL,
-	[To] [varbinary](256) NULL,
-	[Cc] [varbinary](256) NULL,
+	[LogID] [bigint] NULL,
+	[LogName] [nvarchar](50) NOT NULL,
+	[To] [nvarchar](400) NULL,
+	[Cc] [nvarchar](400) NULL,
 	[SendAttemptDate] [datetime] NOT NULL,
 	[Success] [bit] NOT NULL,
 	[CreateDate] [datetime] NOT NULL,
@@ -271,10 +273,53 @@ GO
 ALTER TABLE [EC].[Email_Notifications_History] ADD  CONSTRAINT [DF_Email_Notifications_History_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
 GO
 
-
-
-
 --**************************************************************
 
 
+--5. Create Table [EC].[Email_Notifications_Stage]
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Email_Notifications_Stage](
+	[MailID] [bigint] IDENTITY(1,1) NOT NULL,
+	[MailType] [nvarchar](50) NOT NULL,
+	[LogID] [bigint] NOT NULL,
+	[LogName] [nvarchar](50) NOT NULL,
+	[To] [nvarchar](400) NULL,
+	[Cc] [nvarchar](400) NULL,
+	[From] [nvarchar](400) NULL,
+	[Subject] [nvarchar](500) NOT NULL,
+	[Body] [nvarchar](max) NOT NULL,
+	[isHtml] [bit] NOT NULL,
+	[SendAttemptDate] [datetime] NULL,
+	[SendAttemptCount] [smallint] NULL,
+	[InProcess] [bit] NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+	[CreateUserID] [nvarchar](50) NOT NULL,
+	[LastModifyDate] [datetime] NOT NULL,
+	[LastModifyUserID] [nvarchar](50) NOT NULL,
+	[FromDisplayName] [nvarchar](100) NULL,
+ CONSTRAINT [PK_Email_Notifications_Stage] PRIMARY KEY CLUSTERED 
+(
+	[MailID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_Stage] ADD  CONSTRAINT [DF_ENS_SendAttemptCount]  DEFAULT ((0)) FOR [SendAttemptCount]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_Stage] ADD  CONSTRAINT [DF_ENS_Inprocess]  DEFAULT ((0)) FOR [InProcess]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_Stage] ADD  CONSTRAINT [DF_ENS_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_Stage] ADD  CONSTRAINT [DF_ENS_LastModifyDate]  DEFAULT (getdate()) FOR [LastModifyDate]
+GO
+
+--**************************************************************
 

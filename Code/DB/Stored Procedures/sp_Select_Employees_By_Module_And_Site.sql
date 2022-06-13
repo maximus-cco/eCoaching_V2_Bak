@@ -1,23 +1,3 @@
-/*
-sp_Select_Employees_By_Module_And_Site(03).sql
-Last Modified Date: 5/11/2021
-Last Modified By: Susmitha Palacherla
-
-Version 03: Fix ambiguous column reference during employee selection in submission page. TFS 21223 - 5/11/2021
-Version 02: Submissions move to new architecture. Additional changes from V&V feedback - TFS 7136 - 04/30/2018
-Version 01: Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Select_Employees_By_Module_And_Site' 
-)
-   DROP PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site]
-GO
 
 SET ANSI_NULLS ON
 GO
@@ -31,10 +11,10 @@ GO
 --	Description: *	This procedure takes a ModuleID and SiteID and returns Employees.
 --  Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/30/2018 
 --  Fix ambiguous column reference during employee selection in submission page. TFS 21223 - 5/11/2021
+--  Updated to Support Team Submission. TFS 23273 - 06/07/2022
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site] 
 @intModuleIDin INT, @intSiteIDin INT = -1, @nvcUserEmpIDin  nvarchar(10)
-
 
 AS
 
@@ -66,6 +46,8 @@ WHERE Emp_ID = @nvcUserEmpIDin)
 
 SET @nvcSQL01 = 'SELECT EH.Emp_ID
 				,VEH.[Emp_Name] 
+				,VEH.[Sup_ID]
+				,VEH.[Sup_Name]
  FROM [EC].[View_Employee_Hierarchy] VEH  WITH (NOLOCK)  JOIN  [EC].[Employee_Hierarchy]EH WITH (NOLOCK) 
  ON VEH.[Emp_ID]= EH.[Emp_ID] JOIN [EC].[Employee_Selection]
  ON EH.[Emp_Job_Code]= [EC].[Employee_Selection].[Job_Code] JOIN [EC].[DIM_Site]S
@@ -94,7 +76,7 @@ SET @nvcSQL = @nvcSQL01 + @nvcSQL02 + @nvcSQL03
 ELSE
 SET @nvcSQL = @nvcSQL01 + @nvcSQL03
 
-Print @nvcSQL
+--Print @nvcSQL
 
 EXEC (@nvcSQL)	
 
@@ -102,4 +84,5 @@ CLOSE SYMMETRIC KEY [CoachingKey]
 END --sp_Select_Employees_By_Module
 
 GO
+
 

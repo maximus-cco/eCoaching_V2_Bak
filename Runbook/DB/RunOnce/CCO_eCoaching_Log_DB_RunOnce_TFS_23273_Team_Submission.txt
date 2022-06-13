@@ -1,0 +1,140 @@
+/*
+TFS 23273 - Team Coaching Log Submission
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+
+Summary
+
+1. Drop Procedure sp_InsertInto_Email_Notifications_History
+2. Drop and Recreate Table Type MailHistoryTableType
+3. Create Table Type MailStageTableType
+4. Create Table Type EmpIdsTableType
+5. Updates to Table Email_Notifications_History
+6. Create Table Email_Notifications_Stage
+
+
+*/
+
+-- Details
+
+--1. Drop Procedure sp_InsertInto_Email_Notifications_History
+
+DROP PROCEDURE [EC].[sp_InsertInto_Email_Notifications_History]
+GO
+
+--**************************************************************
+
+--2. Drop and Recreate Table Type MailHistoryTableType
+
+DROP TYPE [EC].[MailHistoryTableType]
+GO
+
+
+CREATE TYPE [EC].[MailHistoryTableType] AS TABLE(
+	[LogID] [bigint] NOT NULL,
+	[LogName] [nvarchar](50) NOT NULL,
+	[To] [nvarchar](400) NULL,
+	[Cc] [nvarchar](400) NULL,
+	[SendAttemptDate] [datetime] NOT NULL,
+	[Success] [bit] NOT NULL
+)
+GO
+
+--**************************************************************
+
+--3. Create Table Type MailStageTableType
+
+CREATE TYPE [EC].[MailStageTableType] AS TABLE(
+	[LogID] [bigint] NOT NULL,
+	[LogName] [nvarchar](50) NOT NULL,
+	[To] [nvarchar](400) NULL,
+	[Cc] [nvarchar](400) NULL,
+	[From] [nvarchar](400) NOT NULL,
+	[FromDisplayName] [nvarchar](100) NULL,
+	[Subject] [nvarchar](500) NOT NULL,
+	[Body] [nvarchar](max) NOT NULL,
+	[IsHtml] [bit] NOT NULL
+)
+GO
+
+
+--**************************************************************
+
+--4. Create Table Type EmpIdsTableType
+
+CREATE TYPE [EC].[EmpIdsTableType] AS TABLE(
+	[EmpID] [nvarchar](10) NOT NULL
+)
+GO
+
+
+--**************************************************************
+
+
+--5. Updates to Table Email_Notifications_History
+
+EXEC sp_RENAME 'EC.Email_Notifications_History.CoachingID', 'LogID', 'COLUMN'
+EXEC sp_RENAME 'EC.Email_Notifications_History.FormName', 'LogName', 'COLUMN'
+
+ALTER TABLE [EC].[Email_Notifications_History] ALTER COLUMN [To] [nvarchar](400) NULL
+ALTER TABLE [EC].[Email_Notifications_History] ALTER COLUMN [Cc] [nvarchar](400) NULL
+
+--**************************************************************
+
+--6. Create Table Email_Notifications_Stage
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Email_Notifications_Stage](
+	[MailID] [bigint] IDENTITY(1,1) NOT NULL,
+	[MailType] [nvarchar](50) NOT NULL,
+	[LogID] [bigint] NOT NULL,
+	[LogName] [nvarchar](50) NOT NULL,
+	[To] [nvarchar](400) NULL,
+	[Cc] [nvarchar](400) NULL,
+	[From] [nvarchar](400) NULL,
+	[Subject] [nvarchar](500) NOT NULL,
+	[Body] [nvarchar](max) NOT NULL,
+	[isHtml] [bit] NOT NULL,
+	[SendAttemptDate] [datetime] NULL,
+	[SendAttemptCount] [smallint] NULL,
+	[InProcess] [bit] NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+	[CreateUserID] [nvarchar](50) NOT NULL,
+	[LastModifyDate] [datetime] NOT NULL,
+	[LastModifyUserID] [nvarchar](50) NOT NULL,
+	[FromDisplayName] [nvarchar](100) NULL,
+ CONSTRAINT [PK_Email_Notifications_Stage] PRIMARY KEY CLUSTERED 
+(
+	[MailID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_Stage] ADD  CONSTRAINT [DF_ENS_SendAttemptCount]  DEFAULT ((0)) FOR [SendAttemptCount]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_Stage] ADD  CONSTRAINT [DF_ENS_Inprocess]  DEFAULT ((0)) FOR [InProcess]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_Stage] ADD  CONSTRAINT [DF_ENS_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
+GO
+
+ALTER TABLE [EC].[Email_Notifications_Stage] ADD  CONSTRAINT [DF_ENS_LastModifyDate]  DEFAULT (getdate()) FOR [LastModifyDate]
+GO
+
+
+
+--**************************************************************
+
+

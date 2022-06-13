@@ -4,24 +4,24 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
---    Create Date:      11/08/2021
---    Description:     This procedure inserts a record for each Notification attempt made from UI.
---    The mailTypem To, Cc, Success Flag and Attempt DateTime are captured for each log.
---    History 
+--    Create Date:      05/31/2022
+--    Description:     This procedure stages a record for each new submission notification.
+--    The mailType To, Cc, Subject and Body are captured for each log.
 --    Initial Revision. Team Coaching Log Submission. TFS 23273 - 05/31/2022
-
 --    =====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Email_Notifications_History]
-(     @tableRecs MailHistoryTableType READONLY,
+CREATE OR ALTER  PROCEDURE [EC].[sp_InsertInto_Email_Notifications_Stage]
+(     @tableRecs MailStageTableType READONLY,
       @nvcMailType Nvarchar(50) = N'UI-Submissions',
 	  @nvcUserID Nvarchar(10)
 )
    
 AS
 BEGIN
-   
+
 DECLARE @RetryCounter INT
 SET @RetryCounter = 1
 
@@ -31,61 +31,36 @@ RETRY: -- Label RETRY
 BEGIN TRANSACTION
 BEGIN TRY  
 
-OPEN SYMMETRIC KEY [CoachingKey]  
-DECRYPTION BY CERTIFICATE [CoachingCert];
-
-DECLARE @inserted AS TABLE (LogID bigint);
-
--- Log the results of the Notification attempts
+-- Stage the Notifications to be sent
  
-         INSERT INTO [EC].[Email_Notifications_History]
+         INSERT INTO [EC].[Email_Notifications_Stage]
             ([MailType]
            ,[LogID]
            ,[LogName]
            ,[To]
            ,[Cc]
-           ,[SendAttemptDate]
-           ,[Success]
+		   ,[From]
+		   ,[FromDisplayName]
+		   ,[Subject]
+           ,[Body]
+		   ,[IsHtml]
 		   ,[CreateUserID]
+		   ,[LastModifyUserID]
       )
-	 OUTPUT inserted.LogID INTO @inserted
-     SELECT @nvcMailType, RECS.LogID, RECS.LogName,
+SELECT @nvcMailType,
+     RECS.LogID, 
+	 RECS.LogName,
 	 RECS.[To],
-	 RECS.[Cc], 
-	 RECS.SendAttemptDate, RECS.Success, @nvcUserID
-	 FROM @tableRecs RECS;
-
- -- Update SendAttemptDate,SendAttemptCount and InProcess flag in Staging table
-
- 	 UPDATE [EC].[Email_Notifications_Stage]
-	 SET SendAttemptDate = RECS.SendAttemptDate
-	 ,[SendAttemptCount] = [SendAttemptCount] + 1
-	 ,[InProcess] = 0
-	 ,LastModifyDate = GetDate()
-	 ,LastModifyUserID =  @nvcUserID 
-	 FROM [EC].[Email_Notifications_Stage] es INNER JOIN @tableRecs RECS ON
-     es.LogID = RECS.LogID AND es.LogName = RECS.LogName;
-
-	-- Delete Successfully Sent Emails and those Exceeding an Attempt Count of 3
-
-	DELETE ens
-	FROM [EC].[Email_Notifications_Stage] ens INNER JOIN [EC].[Email_Notifications_History] ehs
-	ON ens.LogID = ehs.LogID AND ens.SendAttemptDate = ehs.SendAttemptDate
-	WHERE (ens.SendAttemptCount >= 3  OR ehs.Success = 1 OR ISNULL(ens.[To],'') = '');
-
-
- -- Return the list of logged Notification attempts for the transaction
-          
- Select mh.[LogID], mh.[LogName], 
-        mh.[To],
-		mh.[Cc],
-		mh.[SendAttemptDate],
-		mh.[Success]
- FROM [EC].[Email_Notifications_History]  mh INNER JOIN  @inserted i
- ON mh.LogID = i.LogID;
-
-
- CLOSE SYMMETRIC KEY [CoachingKey];
+	  RECS.[Cc], 
+	  RECS.[From],
+	  RECS.[FromDisplayName],
+	 RECS.[Subject],
+	 RECS.[Body],
+	 RECS.[IsHtml],
+	 @nvcUserID,
+	 @nvcUserID
+	 FROM  @tableRecs RECS;
+	 	 
 
 COMMIT TRANSACTION
 END TRY
@@ -138,7 +113,7 @@ END TRY
    END
   END CATCH  
 
-  END -- sp_InsertInto_Email_Notifications_History
+  END -- sp_InsertInto_Email_Notifications_Stage
 GO
 
 

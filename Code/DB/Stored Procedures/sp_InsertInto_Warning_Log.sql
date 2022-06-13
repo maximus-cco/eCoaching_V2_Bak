@@ -1,31 +1,9 @@
-/*
-sp_InsertInto_Warning_Log(05).sql
-Last Modified Date: 11/18/2019
-Last Modified By: Susmitha Palacherla
-
-Version 05: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
-Version 04: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
-Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
-Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Warning_Log' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Warning_Log]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      10/03/2014
@@ -39,20 +17,18 @@ GO
  -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 06/20/2019
  -- Initial Revision. Created during changes to Warnings workflow. TFS 15803 - 10/17/2019
  -- Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
+ -- Updated to Support Team Submission. TFS 23273 - 06/07/2022
 --    =====================================================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Warning_Log]
-(     @nvcEmpID Nvarchar(10),
+CREATE OR ALTER   PROCEDURE [EC].[sp_InsertInto_Warning_Log]
+(     @tableEmpIDs EmpIdsTableType readonly,
       @nvcProgramName Nvarchar(50),
-      @SiteID INT,
       @nvcSubmitterID Nvarchar(10),
       @dtmEventDate datetime,
       @intCoachReasonID1 INT,
       @nvcSubCoachReasonID1 Nvarchar(255),
       @dtmSubmittedDate datetime ,
       @ModuleID INT,
-      @nvcBehavior Nvarchar(30),
-      @isDup BIT OUTPUT,
-      @nvcNewFormName Nvarchar(50) OUTPUT
+      @nvcBehavior Nvarchar(30)
       )
    
 AS
@@ -67,35 +43,45 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
       
-    --	Fetch the Employee ID of the current User (@nvcCSR) and Employee ID of the Submitter (@nvcSubmitter).
-
-	DECLARE 
-	        --@nvcSubmitterID	Nvarchar(10),
-	        @nvcSupID nvarchar(10),
+	DECLARE @nvcSupID nvarchar(10),
 	        @nvcMgrID nvarchar(10),
-	        @nvcNotPassedSiteID INT,
-	        --@dtmDate datetime,
-	        @intWarnIDExists BIGINT
+	        --@nvcNotPassedSiteID INT,
+	        @intWarnIDExists BIGINT;
+
+	DECLARE	@inserted AS TABLE (WarningID bigint);
 	        
 	OPEN SYMMETRIC KEY [CoachingKey]  
-    DECRYPTION BY CERTIFICATE [CoachingCert]    
-	 	        
+    DECRYPTION BY CERTIFICATE [CoachingCert];   
 
-	--SET @nvcSubmitterID = EC.fn_nvcGetEmpIdFromLanID(@nvcSubmitter,@dtmDate)
-	SET @nvcSupID = (Select Sup_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)
-	SET @nvcMgrID = (Select Mgr_ID from EC.Employee_Hierarchy Where Emp_ID = @nvcEmpID)  
-	SET @nvcNotPassedSiteID = EC.fn_intSiteIDFromEmpID(@nvcEmpID)
-	SET @isDup = 1
-	
+DROP TABLE IF EXISTS #tEmpRecs;
+SELECT * INTO #tEmpRecs FROM @tableEmpIDs;
+
+ALTER TABLE  #tEmpRecs
+ADD EmpSiteID int
+    ,SupID Nvarchar(10)
+	,MgrID Nvarchar(10)
+	,ErrorReason Nvarchar(1000);
+
+-- Populate Supervisor and Manager Information
+UPDATE t
+SET EmpSiteID = EC.fn_intSiteIDFromEmpID(t.EmpID)
+    ,SupID = eh.Sup_ID
+	,MgrID = eh.Mgr_ID
+FROM #tEmpRecs t INNER JOIN EC.Employee_Hierarchy eh
+ON t.EmpID = eh.Emp_ID;
+
+-- Perform Validations
+/* Add Validations here*/    
+
+
 SET @intWarnIDExists = (SELECT WL.WarningID
-FROM [EC].[Warning_Log]WL join [EC].[Warning_Log_Reason]WLR
+FROM #tEmpRecs T INNER JOIN [EC].[Warning_Log]WL 
+ON T.EmpID = WL.EmpID INNER JOIN [EC].[Warning_Log_Reason]WLR
 ON WL.WarningID = WLR.WarningID
-WHERE WL.[EmpID]= @nvcEmpID
-AND WL.[WarningGivenDate]= @dtmEventDate 
+WHERE WL.[WarningGivenDate]= @dtmEventDate 
 AND WLR.[CoachingReasonID] = @intCoachReasonID1
 AND WLR.[SubCoachingReasonID]= @nvcSubCoachReasonID1
-AND [Active] = 1)
-
+AND [Active] = 1);
 
 IF @intWarnIDExists IS NULL 
         
@@ -114,40 +100,36 @@ IF @intWarnIDExists IS NULL
            ,[SubmittedDate]
            ,[ModuleID]
            ,[Behavior])
-     VALUES
-           (@nvcEmpID 
+		   OUTPUT inserted.WarningID INTO @inserted
+     SELECT t.EmpID
            ,@nvcProgramName 
            ,120
            ,4
-           ,ISNULL(@SiteID,@nvcNotPassedSiteID)
-           ,@nvcEmpID 
+           ,t.EmpSiteID
+           , t.EmpID
            ,@nvcSubmitterID
-           ,@nvcSupID
-           ,@nvcMgrID
+     	   ,ISNULL(t.SupID,'999999')
+		   ,ISNULL(t.MgrID,'999999')
            ,@dtmEventDate 
 	       ,@dtmSubmittedDate 
 		   ,@ModuleID
-		   ,@nvcBehavior)
+		   ,@nvcBehavior
+		   	FROM #tEmpRecs t ;
             
-  CLOSE SYMMETRIC KEY [CoachingKey] 
+  --WAITFOR DELAY '00:00:00:01'  -- Wait for 1 ms       
      
-     --PRINT 'STEP1'
-            
-    SELECT @@IDENTITY AS 'Identity';
-    --PRINT @@IDENTITY
-    
-    DECLARE @I BIGINT = @@IDENTITY,
-            @MaxSubReasonRowID INT,
-            @SubReasonRowID INT
-    
 UPDATE [EC].[Warning_Log]
-SET [FormName] = 'eCL-M-'+[FormName] +'-'+ convert(varchar,WarningID)
-where [WarningID] = @I  AND [FormName] not like 'eCL%'    
-OPTION (MAXDOP 1)
+SET [FormName] = 'eCL-M-'+[FormName] +'-'+ convert(varchar,w.WarningID)
+FROM EC.Warning_Log w INNER JOIN @inserted i
+ON w.WarningID = i.WarningID
+WHERE [FormName] not like 'eCL%' ;
 
-WAITFOR DELAY '00:00:00:01'  -- Wait for 5 ms
+ --WAITFOR DELAY '00:00:00:01'  -- Wait for 1 ms     
 
-SET @nvcNewFormName = (SELECT [FormName] FROM  [EC].[Warning_Log] WHERE [WarningID] = @I)
+ -- Warning Log Reason table Inserts 
+
+    DECLARE @MaxSubReasonRowID INT,
+            @SubReasonRowID INT;
 
 
  IF NOT @intCoachReasonID1 IS NULL
@@ -163,17 +145,50 @@ While @SubReasonRowID <= @MaxSubReasonRowID
    
 		INSERT INTO [EC].[Warning_Log_Reason]
             ([WarningID],[CoachingReasonID],[SubCoachingReasonID],[Value])
-             VALUES (@I, @intCoachReasonID1,
+             SELECT WarningID, @intCoachReasonID1,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID1, ',')where Rowid = @SubReasonRowID ),
-             'Opportunity')       
+             'Opportunity'
+			 FROM  @inserted;         
              
-		SET @SubReasonRowID = @SubReasonRowID + 1
+		SET @SubReasonRowID = @SubReasonRowID + 1;
 
      END           
   END
+
+   --WAITFOR DELAY '00:00:00:01'  -- Wait for 1 ms
+
+-- Return Inserted Row
+SELECT w.[WarningID] LogID,
+       w.[FormName] LogName,
+	   w.EmpID EmployeeID,
+       veh.Emp_Name EmployeeName,
+	   FORMAT (w.[SubmittedDate], 'MM/dd/yyyy hh:mm:ss tt') + N' EST' CreateDateTime,
+	   veh.Emp_Email EmpEmail,
+		veh.Sup_Email SupEmail,
+		veh.Mgr_Email MgrEmail,
+	   '' ErrorReason
+FROM EC.Warning_Log w INNER JOIN @inserted i
+ON w.WarningID = i.WarningID INNER JOIN EC.Employee_Hierarchy eh
+ON w.EmpID = eh.Emp_ID INNER JOIN EC.View_Employee_Hierarchy veh
+ON eh.Emp_ID = veh.Emp_ID;
+
+ END 
  
- SET @isDup = 0
- END       
+ ELSE
+
+ -- Return Not Inserted Row
+ BEGIN
+ SELECT '-1' LogID, '-1' LogName, t.EmpID EmployeeID,
+ eh.Emp_Name EmployeeName, '' CreateDateTime,
+ 	   	'' EmpEmail,
+		'' SupEmail,
+		'' MgrEmail,
+ 'An Active Warning Log for the Given Warning Reason Exists for Employee ' + t.EmpID + ' (' + eh.Emp_Name + ').'  AS ErrorReason
+ FROM #tEmpRecs t INNER JOIN EC.View_Employee_Hierarchy eh
+ON t.EmpID = eh.Emp_ID;
+END
+
+ CLOSE SYMMETRIC KEY [CoachingKey] ;
 
 COMMIT TRANSACTION
 
@@ -229,8 +244,6 @@ END TRY
   END CATCH  
 
   END -- sp_InsertInto_Warning_Log
-  GO
-
-
+GO
 
 
