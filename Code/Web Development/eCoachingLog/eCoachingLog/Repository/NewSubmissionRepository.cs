@@ -192,8 +192,6 @@ namespace eCoachingLog.Repository
         public IList<NewSubmissionResult> SaveWarningLog(NewSubmission ns, User user)
         {
             var ret = new List<NewSubmissionResult>();
-            // only one employee per submission 
-            var employeeId = ns.EmployeeIdList.First();
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_InsertInto_Warning_Log]", connection))
@@ -202,7 +200,7 @@ namespace eCoachingLog.Repository
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
                 command.Parameters.AddStringTableType("@tableEmpIDs", ns.EmployeeIdList);
                 command.Parameters.AddWithValueSafe("@nvcProgramName", ns.ProgramName);
-				command.Parameters.AddWithValueSafe("@nvcSubmitterID", employeeId);
+				command.Parameters.AddWithValueSafe("@nvcSubmitterID", user.EmployeeId);
                 command.Parameters.AddWithValueSafe("@dtmEventDate", ns.WarningDate);
                 command.Parameters.AddWithValueSafe("@intCoachReasonID1", ns.WarningTypeId);
                 command.Parameters.AddWithValueSafe("@nvcSubCoachReasonID1", ns.WarningReasonId);
