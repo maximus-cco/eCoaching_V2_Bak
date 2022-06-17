@@ -35,7 +35,7 @@ WHERE [City]= N'Riverview'
 GO
 
 UPDATE [EC].[DIM_Site]
-SET [isActive] = 0
+SET [isActive] = 1
 WHERE [City] = N'Tampa Netpark'
 GO
 
