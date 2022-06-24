@@ -42,11 +42,11 @@
 
 
     if (clientValidateEmployee === 'True') {
-        if ($('[name="duallistbox_employee"]').val().length < 1) {
+        if ($('[name="duallistbox_employee"]').length > 0 && $('[name="duallistbox_employee"]').val().length < 1) {
             $("#bootstrap-duallistbox-selected-list_duallistbox_employee").css('border-color', 'red');
         }
     }
-    
+
     if (clientValidateCoachingReasons === 'True') {
         validateCoachingReasons();
     }
