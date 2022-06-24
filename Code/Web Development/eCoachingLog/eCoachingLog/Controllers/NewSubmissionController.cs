@@ -116,7 +116,7 @@ namespace eCoachingLog.Controllers
                     vm.ReturnToSiteDate, vm.ReturnToSite, vm.ReturnToSupervisor, vm.ReturnToSite);
                 }
 
-                vm.EmployeeIdList = EclUtil.ConvertToList(vm.EmployeeIds, ",");
+                vm.EmployeeIdList = EclUtil.ConvertToList(vm.EmployeeIds, ",").Distinct().ToList();
                 submissionResults = this.newSubmissionService.Save(vm, GetUserFromSession());
                 successfulSubmissions = submissionResults.Where(x => x.LogId != "-1").ToList();
 
@@ -750,7 +750,10 @@ namespace eCoachingLog.Controllers
             NewSubmissionViewModel vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
             int moduleId = vmInSession.ModuleId;
             var userEmpId = GetUserFromSession().EmployeeId;
-            var empList = this.employeeService.GetEmployeesByModule(moduleId, siteId, userEmpId);
+            var empList = this.employeeService.GetEmployeesByModule(moduleId, siteId, userEmpId).ToList<Employee>();
+            // exclude employee(s) added to the left dual list box from Add (other sites)
+            empList = empList.Where(x => vmInSession.EmployeeList.All(y => y.Value != x.Id)).ToList<Employee>();
+
             empList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
             IEnumerable<SelectListItem> employees = new SelectList(empList, "Id", "NamePlusSupervisorName");
 
@@ -759,13 +762,17 @@ namespace eCoachingLog.Controllers
             result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
             return result;
         }
-
+        
         [HttpPost]
         public JsonResult AddEmployeeToSession(string employeeId, string employeeName, string siteName)
         {
             var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
-            var employee = new TextValue(employeeName + "(" + siteName + ")", employeeId);
-            vmInSession.EmployeeList.Add(employee);
+            var employeeFound = vmInSession.EmployeeList.Where(x => x.Value == employeeId).FirstOrDefault();
+            if (employeeFound == null)
+            {
+                var employee = new TextValue(employeeName + "(" + siteName + ")", employeeId);
+                vmInSession.EmployeeList.Add(employee);
+            }
 
             return Json(new EmptyResult(), JsonRequestBehavior.AllowGet);
         }
