@@ -8,10 +8,10 @@
         <a href="#" style="color: #337ab7" id="a-add-employee"><b>Add</b></a>
     </div>
     <div class="col-sm-6 hide" id="div-max-warning">
-        <p class="text-danger" ><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>The maximum number of employee in a Warning Submssion is @Constants.MAX_NUMBER_OF_EMPLOYEES_WARNING_PER_SUBMISSION.</b></p>
+        <p class="text-danger" ><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>The maximum number of employees in a Warning Submssion is @Constants.MAX_NUMBER_OF_EMPLOYEES_WARNING_PER_SUBMISSION.</b></p>
     </div>
     <div class="col-sm-6 hide" id="div-max-coaching">
-        <p class="text-danger"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>The maximum number of employee in a coaching submission is @Constants.MAX_NUMBER_OF_EMPLOYEES_COACHING_PER_SUBMISSION.</b></p>
+        <p class="text-danger"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>The maximum number of employees in a coaching submission is @Constants.MAX_NUMBER_OF_EMPLOYEES_COACHING_PER_SUBMISSION.</b></p>
     </div>
 </div>
 
@@ -35,7 +35,8 @@
         dlEmployee = $('select[name="duallistbox_employee"]').bootstrapDualListbox({
             nonSelectedListLabel: 'Not Selected ',
             selectedListLabel: 'Selected ',
-            preserveSelectionOnMove: 'moved'
+            preserveSelectionOnMove: 'moved',
+            moveOnSelect: true
         });
 
         $("#bootstrap-duallistbox-selected-list_duallistbox_employee, #bootstrap-duallistbox-nonselected-list_duallistbox_employee").change(function () {

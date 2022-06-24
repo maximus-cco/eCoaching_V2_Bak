@@ -4,6 +4,13 @@
 	var showWorkAtHomeBehaviorDiv = false;
 	var pfdChecked = false;
 
+    // https://github.com/istvan-ujjmeszaros/bootstrap-duallistbox/issues/110
+	$(document).on('keyup', ".bootstrap-duallistbox-container .filter", function () {
+	    //console.log('keyup');
+	    $(this).blur();
+	    $(this).focus();
+	});
+
 	// Check unsaved data
     $('#new-submission-form').data('serialize', $('#new-submission-form').serialize());
     $(window).on('beforeunload', function (e) {
@@ -440,7 +447,7 @@
             }
 
             if (total > max) {
-                body = "You selected " + total + " employees.<br/>The maximum number of employee for " + log + " in one submission is " + max + ".";
+                body = "You selected " + total + " employees.<br/>The maximum number of employees for " + log + " in one submission is " + max + ".";
                 footer = '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
             } else {
                 if (isWarning === true) {

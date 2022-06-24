@@ -21,6 +21,14 @@ $(function () {
 		}
 	});
 
+    // prevent to submit form when hitting Enter 
+	$(window).keydown(function (event) {
+	    var key = event.charCode || event.keyCode || event.which || 0; 
+	    if (key === 13 && $(event.target)[0] != $("textarea")[0]) {
+	        event.preventDefault();
+	    }
+	});
+
     // stacked modals: https://jsfiddle.net/d16b5aoe/
 	$(document).on('show.bs.modal', '.modal', function (event) {
 	    var zIndex = 1040 + (10 * $('.modal:visible').length);

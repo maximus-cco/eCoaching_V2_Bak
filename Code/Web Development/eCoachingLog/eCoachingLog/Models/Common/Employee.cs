@@ -16,8 +16,16 @@
         public string ManagerLanId { get; set; }
         public string ManagerJobDesc { get; set; }
         public string ManagerEmail { get; set; }
-
-        //// used to send email (one log per employee)
-        //public string LogName { get; set; }
+        public string NamePlusSupervisorName
+        {
+            get
+            {
+                if (Id == "-2")
+                {
+                    return "-- Select an Employee --";
+                }
+                return Name + "(Supervisor: " + SupervisorName + ")";
+            }
+        }
     }
 }
