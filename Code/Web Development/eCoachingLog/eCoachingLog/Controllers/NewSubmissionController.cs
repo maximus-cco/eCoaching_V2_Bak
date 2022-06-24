@@ -752,7 +752,8 @@ namespace eCoachingLog.Controllers
             var userEmpId = GetUserFromSession().EmployeeId;
             var empList = this.employeeService.GetEmployeesByModule(moduleId, siteId, userEmpId);
             empList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
-            IEnumerable<SelectListItem> employees = new SelectList(empList, "Id", "Name");
+            IEnumerable<SelectListItem> employees = new SelectList(empList, "Id", "NamePlusSupervisorName");
+
             JsonResult result = Json(employees);
             result.MaxJsonLength = Int32.MaxValue;
             result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
