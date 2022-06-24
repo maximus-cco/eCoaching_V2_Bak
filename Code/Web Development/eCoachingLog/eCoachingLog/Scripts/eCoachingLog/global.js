@@ -22,9 +22,9 @@ $(function () {
 	});
 
     // prevent to submit form when hitting Enter 
-	$(window).keydown(function (event) {
-	    var key = event.charCode || event.keyCode || event.which || 0; 
-	    if (key === 13 && $(event.target)[0] != $("textarea")[0]) {
+	$(document).on("keydown", ":input:not(textarea)", function (event) {
+	    console.log(event.key);
+	    if (event.key === "Enter") {
 	        event.preventDefault();
 	    }
 	});
