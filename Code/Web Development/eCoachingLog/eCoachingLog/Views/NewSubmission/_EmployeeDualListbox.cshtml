@@ -96,10 +96,19 @@
             } else {
                 //$("#bootstrap-duallistbox-selected-list_duallistbox_employee").css('border-color', 'red');
                 //resetIsCoachingByYou();
-                //$('#div-new-submission-middle').removeClass('hide');
-                //$('#div-new-submission-middle').addClass('show');
-                //// Empty page bottom
-                //$('#div-new-submission-bottom').empty();
+                $.ajax({
+                    type: 'POST',
+                    url: resetIsCoachingByYouUrl,
+                    data: {},
+                    success: function (result) {
+                        $('#div-new-submission-middle').html(result);
+                    }
+                });
+
+                $('#div-new-submission-middle').removeClass('hide');
+                $('#div-new-submission-middle').addClass('show');
+                // Empty page bottom
+                $('#div-new-submission-bottom').empty();
             }
         }
 

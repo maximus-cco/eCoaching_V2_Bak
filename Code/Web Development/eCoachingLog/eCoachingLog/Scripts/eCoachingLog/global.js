@@ -23,7 +23,7 @@ $(function () {
 
     // prevent to submit form when hitting Enter 
 	$(document).on("keydown", ":input:not(textarea)", function (event) {
-	    console.log(event.key);
+	    //console.log(event.key);
 	    if (event.key === "Enter") {
 	        event.preventDefault();
 	    }

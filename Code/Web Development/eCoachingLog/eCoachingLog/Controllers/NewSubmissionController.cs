@@ -303,12 +303,18 @@ namespace eCoachingLog.Controllers
 
         [HttpPost]
         public ActionResult ResetPageBottom(//string employeeId, int? programId, 
-            bool isCoachingByYou, bool? isCse, bool? isWarning)
+            bool isCoachingByYou, bool? isCse, bool? isWarning, string employeeIds)
         {
             NewSubmissionViewModel vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
             vm.IsCoachingByYou = isCoachingByYou;
             vm.IsCse = isCse;
             vm.IsWarning = isWarning;
+            vm.EmployeeIds = employeeIds;
+            if (!String.IsNullOrEmpty(employeeIds))
+            {
+                // remove employee stored in session
+                vm.Employee = null;
+            }
 			vm.ShowIsCoachingByYou = true;
             vm.ShowCoachWarningDiv = true;
             vm.ShowWarningChoice = ShowWarningChoice(vm);
@@ -336,6 +342,18 @@ namespace eCoachingLog.Controllers
 
         private bool ShowWarningChoice(NewSubmissionViewModel vm)
         {
+            // employee selected in dual list box
+            if (vm.Employee == null)
+            {
+                var empIds = vm.EmployeeIds;
+                var empIdList = EclUtil.ConvertToList(vm.EmployeeIds, ",").Distinct().ToList();
+                if (empIdList.Count != 1)
+                {
+                    return false;
+                }
+                vm.Employee = this.employeeService.GetEmployee(empIdList.First());
+            }
+
             return vm.IsCoachingByYou.HasValue
                 && vm.IsCoachingByYou.Value
                 && ((vm.Employee.SupervisorId != null && vm.Employee.SupervisorId == vm.UserId) ||

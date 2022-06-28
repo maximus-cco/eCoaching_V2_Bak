@@ -254,7 +254,8 @@
                 //programId: programId,
                 isCoachingByYou: isCoachingByYou,
                 isCse: isCse,
-                isWarning: isWarning
+                isWarning: isWarning,
+                employeeIds: $("#EmployeeIds").val()
             },
             success: function (result) {
                 $('#div-new-submission-bottom').removeClass('hide');
