@@ -1,17 +1,17 @@
-﻿using eCoachingLog.Models.Common;
-using eCoachingLog.Models.MyDashboard;
+﻿using eCoachingLog.Filters;
+using eCoachingLog.Models.Common;
 using eCoachingLog.Services;
 using eCoachingLog.Utils;
 using eCoachingLog.ViewModels;
 using log4net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
+    [EclAuthorize]
+    [SessionCheck]
     public class MyDashboardQnController : LogBaseController
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

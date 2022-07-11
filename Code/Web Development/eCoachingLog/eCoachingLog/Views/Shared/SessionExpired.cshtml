@@ -2,6 +2,8 @@
     Layout = null;
 }
 
+@using eCoachingLog.Utils
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +26,7 @@
         <div class="row ">
             <div class="col-md-12 col-md-offset-0">
                 <span class="icon-big glyphicon glyphicon-time"></span>
-                <h4>Your session has expired.</h4>
+                <h4>Your session has expired. Please click <a href="@Constants.APP_URL">here</a> to login.</h4>
             </div>
         </div>
     </div>

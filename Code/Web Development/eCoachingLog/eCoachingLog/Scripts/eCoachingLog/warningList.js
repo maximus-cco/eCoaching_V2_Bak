@@ -40,8 +40,8 @@ $(document).ready(function () {
 			{ "data": "ManagerName", "name": "strEmpMgrName" },
             { "data": "Reasons", "name": "strCoachingReason", "orderable": false },
             { "data": "SubReasons", "name": "strSubCoachingReason", "orderable": false },
-            { "data": "CreatedDate", "name": "SubmittedDate" },
-            { "data": "WarningDate", "name": "WarningGivenDate"}
+            { "data": "WarningDate", "name": "WarningGivenDate"},
+            { "data": "CreatedDate", "name": "SubmittedDate" }
 		],
 
 		"initComplete": function (settings, json) {

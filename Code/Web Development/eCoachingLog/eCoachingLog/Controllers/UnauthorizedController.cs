@@ -2,7 +2,7 @@
 
 namespace eCoachingLog.Controllers
 {
-    public class UnauthorizedController : BaseController
+    public class UnauthorizedController : Controller
     {
         //
         // GET: /Unauthorized/

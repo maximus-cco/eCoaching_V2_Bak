@@ -54,12 +54,6 @@ body {
 .panel-body {
   padding: 5px;
 }
-#modal-container .modal-dialog {
-  position: relative;
-  width: auto;
-  margin: 10px;
-}
-
 /* end - overwrite bootstrap */
 
 html {
@@ -168,6 +162,18 @@ ul.navbar-nav {
 
 #modal-container, #modal-container-overlay {
     margin-top: 5%;
+}
+
+#modal-container .modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 10px;
+}
+
+#modal-container-overlay .modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 5px;
 }
 
 .modal .modal-body {

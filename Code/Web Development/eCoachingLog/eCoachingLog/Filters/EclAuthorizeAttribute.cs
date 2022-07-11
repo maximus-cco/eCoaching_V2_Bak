@@ -36,7 +36,8 @@ namespace eCoachingLog.Filters
 			{
 				isAccessAllowed = user.IsAccessNewSubmission;
 			}
-			else if ("MyDashboard" == controllerName)
+            // My Dashboard - qn and non-qn
+            else if ("MyDashboard" == controllerName || "MyDashboardQn" == controllerName)
 			{
 				isAccessAllowed = user.IsAccessMyDashboard;
 			}

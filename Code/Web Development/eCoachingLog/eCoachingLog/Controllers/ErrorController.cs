@@ -3,7 +3,7 @@ using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
-    public class ErrorController : BaseController
+    public class ErrorController : Controller
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 

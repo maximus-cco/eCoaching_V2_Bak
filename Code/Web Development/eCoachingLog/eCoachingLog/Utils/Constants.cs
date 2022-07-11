@@ -8,7 +8,9 @@ namespace eCoachingLog.Utils
 	{
         public const string TIMEZONE = "EST";
 
-		public const string MAINTENANCE_PAGE = "~/index.html";
+        public static readonly string APP_URL = System.Configuration.ConfigurationManager.AppSettings["App.Url"];
+
+        public const string MAINTENANCE_PAGE = "~/index.html";
 
 		public const string NEW_SBUMISSION = "NewSubmission";
 		public const string MY_DASHBOARD = "MyDashboard";

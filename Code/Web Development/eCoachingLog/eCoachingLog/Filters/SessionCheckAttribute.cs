@@ -20,6 +20,12 @@ namespace eCoachingLog.Filters
 			User user = (User)session["AuthenticatedUser"];
 			if (session.IsNewSession || user == null) // To be safe, check user in session null as well
             {
+                logger.Debug("###IsNewSession=" + session.IsNewSession);
+                if (user == null)
+                {
+                    logger.Debug("### user is NULL!!!!!!!!!!");
+                }
+
                 // session has expired, redirect to session expired page
                 if (filterContext.HttpContext.Request.IsAjaxRequest())
                 {
