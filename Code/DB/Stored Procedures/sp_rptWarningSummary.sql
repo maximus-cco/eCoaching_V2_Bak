@@ -1,34 +1,9 @@
-/*
-sp_rptWarningSummary(05).sql
-Last Modified Date: 03/24/2020
-Last Modified By: Susmitha Palacherla
-
-Version 05: Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
-Version 04: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/20174
-Version 03: Updated Joins to use left join - Suzy -  TFS 5621 - 04/19/2017
-Version 02: Added State - TFS 5621 - 04/10/2017
-Version 01: Document Initial Revision - Suzy Palacherla -  TFS 5621 - 03/27/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_rptWarningSummary' 
-)
-   DROP PROCEDURE [EC].[sp_rptWarningSummary]
-GO
 
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
@@ -40,9 +15,10 @@ GO
 --  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/19/2017)
 --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 --  Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
+--  Updated to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
  *******************************************************************************/
 
-CREATE PROCEDURE [EC].[sp_rptWarningSummary] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_rptWarningSummary] 
 (
 @intModulein int = -1,
 @intStatusin int = -1, 
@@ -53,6 +29,7 @@ CREATE PROCEDURE [EC].[sp_rptWarningSummary]
 @strActive nvarchar(3) = '-1',
 @strSDatein datetime,
 @strEDatein datetime,
+@strHDatein datetime = NULL,
 
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
@@ -82,14 +59,16 @@ SET NOCOUNT ON
 
 DECLARE	
 @strSDate nvarchar(10),
-@strEDate nvarchar(10)
+@strEDate nvarchar(10),
+@strHDate nvarchar(10);
 
-SET @strSDate = convert(varchar(8),@strSDatein,112)
-SET @strEDate = convert(varchar(8),@strEDatein,112)
+SET @strSDate = convert(varchar(8),@strSDatein,112);
+SET @strEDate = convert(varchar(8),@strEDatein,112);
+SET @strHDate = convert(varchar(8),@strHDatein,112);
 
 
 -- Open Symmetric Key
-OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
 
   SELECT p.ModuleID AS [Module ID]
@@ -99,6 +78,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 			  ,w.Status
 			  ,p.EmpID AS [Employee ID]
     	      ,CONVERT(nvarchar(50),DecryptByKey(w.EmpName)) AS [Employee Name]
+			  ,FORMAT(cast(w.EmpHireDate as datetime), 'MM/dd/yyyy')  AS [Employee Hire Date]
     	      ,w.Site
     	      ,ISNULL(w.LogSupID,'-') AS [Supervisor Employee ID]
 			  ,CASE WHEN w.LogSupID IS NULL THEN '-'
@@ -133,6 +113,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 			  ,[s].[Status]	Status
 			  ,[wl].[EmpID]	EmpID
     	      ,[eh].[Emp_Name]	EmpName
+			  ,[eh].[Hire_Date] EmpHireDate
     	      ,[si].[City]	Site
     	      ,[wl].[SupID]	LogSupID
 			  ,[suph].[Emp_Name]	LogSupName
@@ -176,15 +157,16 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		AND (CONVERT(NVARCHAR,[wl].[Active]) = (@strActive)or @strActive = '-1')
 	    AND  ([wlr].[CoachingReasonID] = (@intWarnReasonin) or @intWarnReasonin = -1) 
         AND  ([wlr].[SubCoachingReasonID] = (@intSubWarnReasonin)or @intSubWarnReasonin = -1)
-        AND ([wl].[EmpID]= (@strEmpin)or @strEmpin = '-1'))
+        AND ([wl].[EmpID]= (@strEmpin)or @strEmpin = '-1')
+		AND (eh.Hire_Date = (@strHDate) or ISNULL(@strHDatein, '') = ''))
 		)w
 		ON p.WarningID = w.WarningID
-        ORDER BY p.SubmittedDate DESC
+        ORDER BY p.SubmittedDate DESC;
 
 
 
   -- Clode Symmetric Key
-  CLOSE SYMMETRIC KEY [CoachingKey] 
+  CLOSE SYMMETRIC KEY [CoachingKey];
   	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------

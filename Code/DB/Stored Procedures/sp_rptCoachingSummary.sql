@@ -1,13 +1,4 @@
 
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_rptCoachingSummary' 
-)
-   DROP PROCEDURE [EC].[sp_rptCoachingSummary]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -27,6 +18,7 @@ GO
 --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 --  Modified to support Quality Now. TFS 13333 - 04/02/2019
 --  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
+--  Updated to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
  *******************************************************************************/
 
 CREATE OR ALTER PROCEDURE [EC].[sp_rptCoachingSummary] 
@@ -39,6 +31,7 @@ CREATE OR ALTER PROCEDURE [EC].[sp_rptCoachingSummary]
 @intSubCoachReasonin int = -1,
 @strSDatein datetime,
 @strEDatein datetime,
+@strHDatein datetime = NULL,
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
    @returnCode int OUTPUT,
@@ -67,13 +60,15 @@ SET NOCOUNT ON
 
 DECLARE	
 @strSDate nvarchar(10),
-@strEDate nvarchar(10)
+@strEDate nvarchar(10),
+@strHDate nvarchar(10);
 
-SET @strSDate = convert(varchar(8),@strSDatein,112)
-SET @strEDate = convert(varchar(8),@strEDatein,112)
+SET @strSDate = convert(varchar(8),@strSDatein,112);
+SET @strEDate = convert(varchar(8),@strEDatein,112);
+SET @strHDate = convert(varchar(8),@strHDatein,112);
 
 -- Open Symmetric Key
-OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] ; 
 
   SELECT DISTINCT p.ModuleID AS [Module ID]
               ,c.Module AS [Module Name]
@@ -82,7 +77,8 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 			  ,c.Status
 			  ,p.EmpID AS [Employee ID]
     	      ,CONVERT(nvarchar(50),DecryptByKey(c.EmpName)) AS [Employee Name]
-    	      ,c.Site
+			  ,FORMAT(cast(c.EmpHireDate as datetime), 'MM/dd/yyyy')  AS [Employee Hire Date]
+		     ,c.Site
     	      ,ISNULL(c.LogSupID,'-') AS [Supervisor Employee ID]
 			  ,CASE WHEN c.LogSupID IS NULL THEN '-'
 			   ELSE CONVERT(nvarchar(50),DecryptByKey(c.LogSupName)) END AS [Supervisor Name]
@@ -134,6 +130,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 			  ,[s].[Status]	Status
 			  ,[cl].[EmpID]	EmpID
     	      ,[eh].[Emp_Name]	EmpName
+			  ,[eh].[Hire_Date] EmpHireDate
     	      ,[si].[City]	Site
     	      ,[cl].[SupID]	LogSupID
 			  ,[suph].[Emp_Name]	LogSupName
@@ -177,18 +174,20 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		AND  ([cl].[SiteID] =(@intSitein) or @intSitein = -1) 
         AND  ([clr].[CoachingReasonID] = (@intCoachReasonin) or @intCoachReasonin = -1) 
         AND  ([clr].[SubCoachingReasonID] = (@intSubCoachReasonin)or @intSubCoachReasonin = -1)
-        AND ([cl].[EmpID]= (@strEmpin)or @strEmpin = '-1'))
+        AND ([cl].[EmpID]= (@strEmpin)or @strEmpin = '-1')
+		AND (eh.Hire_Date = (@strHDate) or ISNULL(@strHDatein, '') = '')
+		)
             GROUP BY [cl].[ModuleID],[mo].[Module],[cl].[CoachingID],[cl].[FormName],[s].[Status]	
 			  ,[cl].[EmpID],[eh].[Emp_Name],[si].[City],[cl].[SupID],[suph].[Emp_Name],[cl].[MgrID]	
-			  ,[mgrh].[Emp_Name],[eh].[Sup_ID],[eh].[Sup_Name] ,[eh].[Mgr_ID],[eh].[Mgr_Name]	
+			  ,[mgrh].[Emp_Name],[eh].[Hire_date],[eh].[Sup_ID],[eh].[Sup_Name] ,[eh].[Mgr_ID],[eh].[Mgr_Name]	
 		      ,[cl].[Review_SupID],[rsuph].[Emp_Name],[cl].[Review_MgrID],[rmgrh].[Emp_Name]	
 		      ,[so].[CoachingSource],[so].[SubCoachingSource],[dcr].[CoachingReason]
 		      ,[dscr].[SubCoachingReason],[clr].[Value],[cl].[SubmitterID],[sh].[Emp_Name])c
 		ON p.CoachingID = c.CoachingID
-        ORDER BY [Submitted Date] DESC
+        ORDER BY [Submitted Date] DESC;
 
   -- Clode Symmetric Key
-  CLOSE SYMMETRIC KEY [CoachingKey] 
+  CLOSE SYMMETRIC KEY [CoachingKey];
   
   	    
 -- *** END: INSERT CUSTOM CODE HERE ***
@@ -215,6 +214,8 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
+
+
 GO
 
 

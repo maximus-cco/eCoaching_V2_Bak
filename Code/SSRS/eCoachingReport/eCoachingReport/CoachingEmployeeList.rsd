@@ -18,6 +18,12 @@
           <OmitFromQuery>false</OmitFromQuery>
           <rd:DbType>Int32</rd:DbType>
         </DataSetParameter>
+        <DataSetParameter Name="@strHDatein">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>true</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>DateTime</rd:DbType>
+        </DataSetParameter>
         <DataSetParameter Name="@returnCode">
           <DefaultValue>0</DefaultValue>
           <ReadOnly>false</ReadOnly>

@@ -1,34 +1,10 @@
-/*
-sp_Populate_Employee_Hierarchy(08).sql
-Last Modified Date: 6/21/2021
-Last Modified By: Susmitha Palacherla
-
-Version 08: Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
-Version 07: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
-Version 06:  Cross check employees on Leave against Aspect data - TFS 13074 - 12/21/2018
-Version 05:  Updated to support Encryption of sensitive data - TFS 7856 - 11/17/2017
-Version 04:  Updated to add two new columns from People Soft feed - TFS 8974  - 11/10/2017
-Version 03: Updated to populate preferred name and Hire date attributes. TFS 8228 - 09/21/2017
-Version 02: Change how email addresses with apostrophes are stored - TFS 6614 - 5/17/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Populate_Employee_Hierarchy' 
-)
-   DROP PROCEDURE [EC].[sp_Populate_Employee_Hierarchy]
-GO
-
 
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -44,8 +20,9 @@ GO
 -- Updated to cross check employees on Leave against Aspect data - TFS 13074 - 12/21/2018
 -- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
+-- Update to populate ELS Role records in ACL Table. TFS 24924 - 7/11/2022
 -- =============================================
-CREATE PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
 BEGIN
 
@@ -226,12 +203,76 @@ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 	             ,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
 	FROM [EC].[Employee_Hierarchy]H;
 
+	-- ELS ROle for Early Worklife Supervisors in ACL Table
+
+IF OBJECT_ID(N'tempdb..#ELSACL') IS NOT NULL
+BEGIN
+DROP TABLE #ELSACL;
+END
+ 
+CREATE TABLE #ELSACL
+(
+ [Row_ID] int,
+ [Role] nvarchar(30), 
+ [End_Date]  nvarchar(10),
+ [User_ID] nvarchar(10)
+);
+
+INSERT INTO #ELSACL
+SELECT [Row_ID]
+      ,[Role]
+      ,[End_Date]
+      ,EC.fn_nvcGetEmpIdFromLanId(CONVERT(nvarchar(30),DecryptByKey([User_LanID])), getdate())
+	   FROM [EC].[Historical_Dashboard_ACL]
+   WHERE Role = 'ELS';
+
+ --SELECT * FROM #ELSACL
+
+declare @UpdateBy nvarchar(50) = 'EmployeeLoad';
+
+
+-- Inactivate ELS Role when record not in feed file
+
+	UPDATE [EC].[Historical_Dashboard_ACL] 
+	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
+    ,[Updated_By]= EncryptByKey(Key_GUID('CoachingKey'), @UpdateBy)
+	 FROM #ELSACL elst INNER JOIN [EC].[Historical_Dashboard_ACL] acl  
+	 ON elst.Row_ID = acl.Row_ID 
+	 WHERE elst.End_Date = 99991231
+	 AND elst.[User_ID] NOT IN (Select Emp_ID from EC.ELS_Hierarchy_Stage);
+	
+
+-- Reactivate ELS Role when record in file and Inactivated record exists
+
+	UPDATE [EC].[Historical_Dashboard_ACL] 
+	SET [END_DATE] = '99991231'
+    ,[Updated_By]= EncryptByKey(Key_GUID('CoachingKey'), @UpdateBy)
+	 FROM #ELSACL elst INNER JOIN [EC].[Historical_Dashboard_ACL] acl  
+	 ON elst.Row_ID = acl.Row_ID 
+	 WHERE elst.End_Date <> 99991231
+	 AND elst.[User_ID] IN (Select Emp_ID from EC.ELS_Hierarchy_Stage);
+
+
+-- Insert new records for ELS Role in ACL Table
+
+	  INSERT INTO EC.Historical_Dashboard_ACL 
+			(   [Role]
+               ,[End_Date]
+               ,[IsAdmin]
+			   ,[User_LanID]
+               ,[User_Name]
+			   ,[Updated_By])
+
+	  SELECT 'ELS', '99991231', N'N', EH.Emp_LanID, EH.Emp_Name,EncryptByKey(Key_GUID('CoachingKey'), @UpdateBy)
+				  		  FROM [EC].[ELS_Hierarchy_Stage] els INNER JOIN [EC].[Employee_Hierarchy] eh
+						  ON els.Emp_ID = eh.Emp_ID  LEFT OUTER JOIN #ELSACL elst 
+						  ON els.Emp_ID = elst.[User_ID]
+					      WHERE elst.[User_ID] IS NULL ;
+
  -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];	 
 
 END --sp_Populate_Employee_Hierarchy
 GO
-
-
 
 

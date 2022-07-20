@@ -17,14 +17,17 @@
           <QueryParameter Name="@intModulein">
             <Value>=Parameters!intModulein.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@intStatusin">
-            <Value>=Parameters!intStatusin.Value</Value>
-          </QueryParameter>
           <QueryParameter Name="@intSitein">
             <Value>=Parameters!intSitein.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@strHDatein">
+            <Value>=Parameters!strHDatein.Value</Value>
+          </QueryParameter>
           <QueryParameter Name="@strEmpin">
             <Value>=Parameters!strEmpin.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@intStatusin">
+            <Value>=Parameters!intStatusin.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@intWarnReasonin">
             <Value>=Parameters!intWarnReasonin.Value</Value>
@@ -79,6 +82,10 @@
         </Field>
         <Field Name="Employee_Name">
           <DataField>Employee Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Employee_Hire_Date">
+          <DataField>Employee Hire Date</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Site">
@@ -209,6 +216,10 @@
           <QueryParameter Name="@intSitein">
             <Value>=Parameters!intSitein.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@strHDatein">
+            <Value>=Parameters!strHDatein.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
         </QueryParameters>
       </SharedDataSet>
       <Fields>
@@ -322,6 +333,29 @@
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="SiteRef">
+      <SharedDataSet>
+        <SharedDataSetReference>SiteList</SharedDataSetReference>
+        <QueryParameters>
+          <QueryParameter Name="@LanID">
+            <Value>=Parameters!LanID.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@intModulein">
+            <Value>=Parameters!intModulein.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </SharedDataSet>
+      <Fields>
+        <Field Name="SiteID">
+          <DataField>SiteID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Site">
+          <DataField>Site</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -341,6 +375,9 @@
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -759,6 +796,58 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox98</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <BackgroundColor>LightSteelBlue</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Employee Hire Date</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -2390,6 +2479,55 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Employee_Hire_Date">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Employee_Hire_Date.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Employee_Hire_Date</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Site">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -3601,6 +3739,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -3614,10 +3753,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <FixedColumnHeaders>true</FixedColumnHeaders>
+            <FixedRowHeaders>true</FixedRowHeaders>
             <DataSetName>WarningSummary</DataSetName>
             <Top>0.04167in</Top>
             <Height>0.5in</Height>
-            <Width>34.63333in</Width>
+            <Width>35.63333in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3628,7 +3768,7 @@
         <Height>1.27167in</Height>
         <Style />
       </Body>
-      <Width>34.63333in</Width>
+      <Width>35.63333in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
@@ -3649,14 +3789,6 @@
       <Prompt>Lan ID</Prompt>
       <Hidden>true</Hidden>
     </ReportParameter>
-    <ReportParameter Name="strSDatein">
-      <DataType>DateTime</DataType>
-      <Prompt>Start Date</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="strEDatein">
-      <DataType>DateTime</DataType>
-      <Prompt>End Date</Prompt>
-    </ReportParameter>
     <ReportParameter Name="intModulein">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -3673,21 +3805,55 @@
         </DataSetReference>
       </ValidValues>
     </ReportParameter>
-    <ReportParameter Name="strActive">
-      <DataType>String</DataType>
+    <ReportParameter Name="intSitein">
+      <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Prompt>State</Prompt>
+      <Prompt>Site</Prompt>
       <ValidValues>
         <DataSetReference>
-          <DataSetName>WarningActiveRef</DataSetName>
-          <ValueField>Activebit</ValueField>
-          <LabelField>ActiveValue</LabelField>
+          <DataSetName>SiteRef</DataSetName>
+          <ValueField>SiteID</ValueField>
+          <LabelField>Site</LabelField>
         </DataSetReference>
       </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="strHDatein">
+      <DataType>DateTime</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Hire Date</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="strEmpin">
+      <DataType>String</DataType>
+      <Prompt>Employees</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>WarningEmployeeRef</DataSetName>
+          <ValueField>EmpID</ValueField>
+          <LabelField>EmpName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="strSDatein">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=DateAdd("d",-30,Today)</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Start Date</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="strEDatein">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=Today</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>End Date</Prompt>
     </ReportParameter>
     <ReportParameter Name="intStatusin">
       <DataType>Integer</DataType>
@@ -3705,30 +3871,19 @@
         </DataSetReference>
       </ValidValues>
     </ReportParameter>
-    <ReportParameter Name="intSitein">
-      <DataType>Integer</DataType>
+    <ReportParameter Name="strActive">
+      <DataType>String</DataType>
       <DefaultValue>
         <Values>
           <Value>-1</Value>
         </Values>
       </DefaultValue>
-      <Prompt>Site</Prompt>
+      <Prompt>State</Prompt>
       <ValidValues>
         <DataSetReference>
-          <DataSetName>WarningSiteRef</DataSetName>
-          <ValueField>SiteID</ValueField>
-          <LabelField>Site</LabelField>
-        </DataSetReference>
-      </ValidValues>
-    </ReportParameter>
-    <ReportParameter Name="strEmpin">
-      <DataType>String</DataType>
-      <Prompt>Employees</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>WarningEmployeeRef</DataSetName>
-          <ValueField>EmpID</ValueField>
-          <LabelField>EmpName</LabelField>
+          <DataSetName>WarningActiveRef</DataSetName>
+          <ValueField>Activebit</ValueField>
+          <LabelField>ActiveValue</LabelField>
         </DataSetReference>
       </ValidValues>
     </ReportParameter>
@@ -3768,7 +3923,7 @@
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>3</NumberOfColumns>
-      <NumberOfRows>5</NumberOfRows>
+      <NumberOfRows>6</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -3776,49 +3931,54 @@
           <ParameterName>LanID</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>2</RowIndex>
-          <ParameterName>strActive</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>2</RowIndex>
-          <ParameterName>intStatusin</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>3</RowIndex>
-          <ParameterName>intSitein</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>3</RowIndex>
           <ParameterName>strEmpin</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
-          <RowIndex>4</RowIndex>
-          <ParameterName>intWarnReasonin</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>4</RowIndex>
-          <ParameterName>intSubWarnReasonin</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>2</ColumnIndex>
-          <RowIndex>1</RowIndex>
-          <ParameterName>intModulein</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>1</RowIndex>
+          <RowIndex>3</RowIndex>
           <ParameterName>strSDatein</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
-          <RowIndex>1</RowIndex>
+          <RowIndex>3</RowIndex>
           <ParameterName>strEDatein</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>4</RowIndex>
+          <ParameterName>intStatusin</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>4</RowIndex>
+          <ParameterName>strActive</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>5</RowIndex>
+          <ParameterName>intWarnReasonin</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>strHDatein</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>intModulein</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>intSitein</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>5</RowIndex>
+          <ParameterName>intSubWarnReasonin</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

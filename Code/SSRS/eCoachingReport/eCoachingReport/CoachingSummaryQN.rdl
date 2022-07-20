@@ -458,6 +458,10 @@
           <QueryParameter Name="@intSitein">
             <Value>=Parameters!intSitein.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@strHDatein">
+            <Value>=Parameters!strHDatein.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
         </QueryParameters>
       </SharedDataSet>
       <Fields>
@@ -8330,7 +8334,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -10356,6 +10359,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <FixedColumnHeaders>true</FixedColumnHeaders>
+            <FixedRowHeaders>true</FixedRowHeaders>
             <DataSetName>CoachingSummaryQN</DataSetName>
             <Top>0.03in</Top>
             <Height>0.5in</Height>
@@ -10435,16 +10439,6 @@
       <Prompt>Lan ID</Prompt>
       <Hidden>true</Hidden>
     </ReportParameter>
-    <ReportParameter Name="strSDatein">
-      <DataType>DateTime</DataType>
-      <Prompt>Start Date</Prompt>
-      <UsedInQuery>False</UsedInQuery>
-    </ReportParameter>
-    <ReportParameter Name="strEDatein">
-      <DataType>DateTime</DataType>
-      <Prompt>End Date</Prompt>
-      <UsedInQuery>False</UsedInQuery>
-    </ReportParameter>
     <ReportParameter Name="intModulein">
       <DataType>String</DataType>
       <DefaultValue>
@@ -10461,23 +10455,6 @@
         </DataSetReference>
       </ValidValues>
       <UsedInQuery>True</UsedInQuery>
-    </ReportParameter>
-    <ReportParameter Name="intStatusin">
-      <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>-1</Value>
-        </Values>
-      </DefaultValue>
-      <Prompt>Status</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>CoachingStatusRef</DataSetName>
-          <ValueField>StatusID</ValueField>
-          <LabelField>Status</LabelField>
-        </DataSetReference>
-      </ValidValues>
-      <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="intSitein">
       <DataType>String</DataType>
@@ -10496,6 +10473,12 @@
       </ValidValues>
       <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
+    <ReportParameter Name="strHDatein">
+      <DataType>DateTime</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Hire Date</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
     <ReportParameter Name="strEmpin">
       <DataType>String</DataType>
       <Prompt>Employee</Prompt>
@@ -10506,6 +10489,43 @@
           <LabelField>EmpName</LabelField>
         </DataSetReference>
       </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
+    </ReportParameter>
+    <ReportParameter Name="intStatusin">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Status</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>CoachingStatusRef</DataSetName>
+          <ValueField>StatusID</ValueField>
+          <LabelField>Status</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
+    </ReportParameter>
+    <ReportParameter Name="strSDatein">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=DateAdd("d",-30,Today)</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Start Date</Prompt>
+      <UsedInQuery>False</UsedInQuery>
+    </ReportParameter>
+    <ReportParameter Name="strEDatein">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=Today</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>End Date</Prompt>
       <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="intCoachReasonin">
@@ -10547,28 +10567,28 @@
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
-      <NumberOfColumns>2</NumberOfColumns>
+      <NumberOfColumns>3</NumberOfColumns>
       <NumberOfRows>9</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>1</RowIndex>
-          <ParameterName>strSDatein</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>1</RowIndex>
-          <ParameterName>strEDatein</ParameterName>
-        </CellDefinition>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>2</RowIndex>
           <ParameterName>intModulein</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>intSitein</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>strHDatein</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
           <RowIndex>2</RowIndex>
-          <ParameterName>intStatusin</ParameterName>
+          <ParameterName>strEmpin</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -10578,12 +10598,17 @@
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>3</RowIndex>
-          <ParameterName>intSitein</ParameterName>
+          <ParameterName>strSDatein</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>3</RowIndex>
-          <ParameterName>strEmpin</ParameterName>
+          <ParameterName>strEDatein</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>intStatusin</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>

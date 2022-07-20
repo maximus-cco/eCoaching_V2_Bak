@@ -1,28 +1,31 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 /******************************************************************************* 
+
 --	Author:			Susmitha Palacherla
---	Create Date:	01/19/2018
---	Description: Selects list of Employees having Coaching logs for selected site and module combination
---  Last Modified: 
---  Last Modified By:
+--	Create Date:	7/8/2022
+--	Description: *	This procedure returns the list of Sites(s) for the logged in user. 
+--  for users with ELS Role, only their site is returned. All sites returned for Other users.
+--  Last Modified By: 
 --  Revision History:
---  Initial Revision - Encryption of sensitive data.TFS 7856 - 01/19/2018
---  Updated to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
+--  Initial Revision. Report access for Early Worklife Supervisors. TFS 24924 - 7/8/2022
+
  *******************************************************************************/
-CREATE OR ALTER PROCEDURE [EC].[sp_rptCoachingEmployeesBySiteAndModule] 
+CREATE OR ALTER PROCEDURE [EC].[sp_rptSitesByRole] 
 (
-@intModulein INT= NULL,
-@intSitein INT = NULL,
-@strHDatein datetime = NULL,
+@LanID nvarchar(30),
+@intModulein int = 1,
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
-   @returnCode int OUTPUT,
-   @returnMessage varchar(80) OUTPUT
+   @returnCode int = NULL OUTPUT ,
+   @returnMessage nvarchar(80)= NULL OUTPUT 
 )
 AS
    DECLARE @storedProcedureName varchar(80)
@@ -45,29 +48,52 @@ AS
 SET NOCOUNT ON
 
 DECLARE	
-@strHireDate nvarchar(10);
-SET @strHireDate = convert(varchar(8),@strHDatein,112);
+
+	@nvcEmpID nvarchar(10),
+	@dtmDate datetime,
+	@intELSRowID int;
 
 -- Open Symmetric Key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
-	SELECT s.EmpID, s.EmpName
-	FROM (Select '-1' as EmpID, 'All' as EmpName
-	UNION
-	SELECT DISTINCT CL.EmpID EmpID, CONVERT(nvarchar(70),DecryptByKey(Emp_Name)) AS EmpName 
-	FROM  EC.Coaching_Log AS cl JOIN  EC.Employee_Hierarchy eh
-	ON cl.EmpID = eh.Emp_ID
-	WHERE 
-	 (@intModulein IS NULL OR cl.ModuleID = @intModulein) AND
-	 (@intSitein IS NULL OR  cl.SiteID = @intSitein) AND
-	 (@strHDatein IS NULL OR eh.Hire_Date = @strHireDate)
-	)as S
-	ORDER BY CASE WHEN EmpID = '-1' THEN 0 ELSE 1 END, EmpName;
-	
 
- 
+SET @dtmDate  = GETDATE();  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@LanID,@dtmDate);
+--print @nvcEmpID 
+SET @intELSRowID = (SELECT TOP 1 [Row_ID] FROM [EC].[Historical_Dashboard_ACL] WITH(NOLOCK)
+WHERE Role = 'ELS'
+AND End_Date = 99991231 
+AND (CONVERT(nvarchar(30),DecryptByKey([User_LanID])) =  @LanID
+OR EC.fn_nvcGetEmpIdFromLanId(CONVERT(nvarchar(30),DecryptByKey([User_LanID])), getdate()) = @nvcEmpID));
+
+
+IF ISNULL(@intELSRowID, '') = ''
+
+
+SELECT SiteID, Site
+FROM  (
+SELECT -1 AS SiteID, 'All' AS Site
+UNION
+SELECT DISTINCT cl.SiteID, cs.City AS Site
+FROM EC.Coaching_Log cl WITH(NOLOCK) INNER JOIN EC.DIM_Site cs
+ON cl.SiteID = cs.SiteID
+WHERE  (cl.ModuleID =(@intModulein) or @intModulein = -1)
+and cs.City <> 'Unknown'
+UNION
+SELECT DISTINCT wl.SiteID, cs.City AS Site
+FROM     EC.Warning_Log wl WITH(NOLOCK) INNER JOIN EC.DIM_Site cs
+ON wl.SiteID = cs.SiteID
+WHERE  (wl.ModuleID =(@intModulein) or @intModulein = -1)
+and cs.City <> 'Unknown'
+)AS S
+ORDER BY CASE WHEN SiteID = - 1 THEN 0 ELSE 1 END, Site
+ELSE
+SELECT SiteID, [City] AS Site 
+FROM EC.Employee_Hierarchy eh INNER JOIN EC.DIM_Site s ON eh.Emp_Site = s.City WHERE Emp_ID = @nvcEmpID;
+
+		                    
   -- Clode Symmetric Key
-  CLOSE SYMMETRIC KEY [CoachingKey]; 
+  CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -93,6 +119,7 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
+
 
 GO
 

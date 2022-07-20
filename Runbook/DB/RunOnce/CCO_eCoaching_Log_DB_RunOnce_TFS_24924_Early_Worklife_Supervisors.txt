@@ -1,0 +1,124 @@
+/*
+TFS 24924- Report access for Early Work Life Supervisors
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+--select * from [EC].[DIM_Site]
+--select * from [EC].[Survey_Sites]
+--select * from [EC].[Employee_Hierarchy] where emp_site = 'Riverview'
+
+Summary
+
+1. Add row(s) to [EC].[AT_Module_Access]
+2. Add row(s) to [EC].[AT_Role_Access]
+3. Add row(s) to [EC].[AT_Role_Entitlement_Link]
+4.  Add row(s) to [EC].[DIM_Sub_Coaching_Reason]
+5.  Add row(s) to [EC].[Coaching_Reason_Selection]
+*/
+
+-- Details
+--1. Add row(s) to [EC].[AT_Module_Access]
+
+INSERT INTO [EC].[AT_Module_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[ModuleId]
+           ,[Module]
+           ,[isActive])
+     VALUES
+           ('WACS40' ,'Supervisor, Customer Service', 1, 'CSR', 1)
+GO
+
+
+--2. Add row(s) to [EC].[AT_Role_Access]
+
+ALTER TABLE [EC].[AT_Role_Access]
+ALTER COLUMN [RoleDescription] nvarchar(40) NOT NULL;
+
+INSERT INTO [EC].[AT_Role_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[RoleId]
+           ,[RoleDescription]
+           ,[AddToUser]
+           ,[isActive])
+     VALUES
+           ('WACS40',   'Supervisor, Customer Service', 108, 'ReportCoachingCSRUser', 0,1),
+           ('WACS50',   'Manager, Customer Service', 108, 'ReportCoachingCSRUser', 0,1)
+
+GO
+
+
+--3. Add row(s) to [EC].[AT_Role_Entitlement_Link]
+
+DELETE FROM [EC].[AT_Role_Entitlement_Link]
+WHERE [RoleId] = 108 AND [EntitlementId]= 217;
+
+GO
+
+
+INSERT INTO [EC].[AT_Role_Entitlement_Link]
+           ([RoleId]
+           ,[EntitlementId])
+     VALUES
+
+		  (108, 211)
+GO
+
+
+--4. Add row(s) to [EC].[DIM_Sub_Coaching_Reason]
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+           ('Early Work Life placeholder')
+GO
+
+
+--5. Add row(s) to [EC].[Coaching_Reason_Selection]
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+(2,'ARC Issue',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(3,'Attendance',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(4,'CCO Processes and Procedures',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(5,'Current Coaching Initiative',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(6,'Customer Service Escalation',302,'Early Work Life placeholder',1,1,1,1,0,1,0,0,0,0,0,0),
+(7,'Feedback',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(8,'HR Guideline Issues',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(9,'OMR / Exceptions',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(10,'Quality',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(11,'Recognition',302,'Early Work Life placeholder',1,1,1,0,1,1,0,0,0,0,0,0),
+(12,'Schedule Adherence',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(13,'Secure Floor Violations',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(55,'Call Efficiency',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(61,'Security & Privacy',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(62,'Work at Home',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0),
+(63,'Work at Home (Return to Site Only)',302,'Early Work Life placeholder',1,1,1,1,1,1,0,0,0,0,0,0)
+
+GO
+
+--******************************
+
+

@@ -17,27 +17,30 @@
           <QueryParameter Name="@intModulein">
             <Value>=Parameters!intModulein.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@intStatusin">
-            <Value>=Parameters!intStatusin.Value</Value>
-          </QueryParameter>
           <QueryParameter Name="@intSitein">
             <Value>=Parameters!intSitein.Value</Value>
             <rd:UserDefined>true</rd:UserDefined>
           </QueryParameter>
+          <QueryParameter Name="@strHDatein">
+            <Value>=Parameters!strHDatein.Value</Value>
+          </QueryParameter>
           <QueryParameter Name="@strEmpin">
             <Value>=Parameters!strEmpin.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="@intCoachReasonin">
-            <Value>=Parameters!intCoachReasonin.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="@intSubCoachReasonin">
-            <Value>=Parameters!intSubCoachReasonin.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@strSDatein">
             <Value>=Parameters!strSDatein.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@strEDatein">
             <Value>=Parameters!strEDatein.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@intStatusin">
+            <Value>=Parameters!intStatusin.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@intCoachReasonin">
+            <Value>=Parameters!intCoachReasonin.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@intSubCoachReasonin">
+            <Value>=Parameters!intSubCoachReasonin.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@returnCode">
             <Value>0</Value>
@@ -78,6 +81,10 @@
         </Field>
         <Field Name="Employee_Name">
           <DataField>Employee Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Employee_Hire_Date">
+          <DataField>Employee Hire Date</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Site">
@@ -266,6 +273,10 @@
           <QueryParameter Name="@intSitein">
             <Value>=Parameters!intSitein.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@strHDatein">
+            <Value>=Parameters!strHDatein.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
         </QueryParameters>
       </SharedDataSet>
       <Fields>
@@ -361,6 +372,30 @@
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="SiteRef">
+      <SharedDataSet>
+        <SharedDataSetReference>SiteList</SharedDataSetReference>
+        <QueryParameters>
+          <QueryParameter Name="@LanID">
+            <Value>=Parameters!LanID.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@intModulein">
+            <Value>=Parameters!intModulein.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+        </QueryParameters>
+      </SharedDataSet>
+      <Fields>
+        <Field Name="SiteID">
+          <DataField>SiteID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Site">
+          <DataField>Site</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -380,6 +415,9 @@
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -840,6 +878,58 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox14</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <BackgroundColor>LightSteelBlue</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Employee Hire Date</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -3199,6 +3289,55 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Employee_Hire_Date">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Employee_Hire_Date.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Employee_Hire_Date</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <LeftBorder>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </LeftBorder>
+                            <RightBorder>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </RightBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Site">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -5110,6 +5249,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -5123,10 +5263,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <FixedColumnHeaders>true</FixedColumnHeaders>
+            <FixedRowHeaders>true</FixedRowHeaders>
             <DataSetName>CoachingSummary</DataSetName>
             <Top>0.03in</Top>
             <Height>0.5in</Height>
-            <Width>55.24584in</Width>
+            <Width>56.24584in</Width>
             <Style>
               <Border>
                 <Style>Solid</Style>
@@ -5181,7 +5322,7 @@
           </RightBorder>
         </Style>
       </Body>
-      <Width>55.24584in</Width>
+      <Width>56.24584in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
@@ -5202,16 +5343,6 @@
       <Prompt>Lan ID</Prompt>
       <Hidden>true</Hidden>
     </ReportParameter>
-    <ReportParameter Name="strSDatein">
-      <DataType>DateTime</DataType>
-      <Prompt>Start Date</Prompt>
-      <UsedInQuery>False</UsedInQuery>
-    </ReportParameter>
-    <ReportParameter Name="strEDatein">
-      <DataType>DateTime</DataType>
-      <Prompt>End Date</Prompt>
-      <UsedInQuery>False</UsedInQuery>
-    </ReportParameter>
     <ReportParameter Name="intModulein">
       <DataType>String</DataType>
       <DefaultValue>
@@ -5229,38 +5360,28 @@
       </ValidValues>
       <UsedInQuery>True</UsedInQuery>
     </ReportParameter>
-    <ReportParameter Name="intStatusin">
-      <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>-1</Value>
-        </Values>
-      </DefaultValue>
-      <Prompt>Status</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>CoachingStatusRef</DataSetName>
-          <ValueField>StatusID</ValueField>
-          <LabelField>Status</LabelField>
-        </DataSetReference>
-      </ValidValues>
-      <UsedInQuery>False</UsedInQuery>
-    </ReportParameter>
     <ReportParameter Name="intSitein">
       <DataType>String</DataType>
       <DefaultValue>
-        <Values>
-          <Value>-1</Value>
-        </Values>
+        <DataSetReference>
+          <DataSetName>SiteRef</DataSetName>
+          <ValueField>SiteID</ValueField>
+        </DataSetReference>
       </DefaultValue>
       <Prompt>Site</Prompt>
       <ValidValues>
         <DataSetReference>
-          <DataSetName>CoachingSiteRef</DataSetName>
+          <DataSetName>SiteRef</DataSetName>
           <ValueField>SiteID</ValueField>
           <LabelField>Site</LabelField>
         </DataSetReference>
       </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
+    </ReportParameter>
+    <ReportParameter Name="strHDatein">
+      <DataType>DateTime</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Hire Date</Prompt>
       <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="strEmpin">
@@ -5273,6 +5394,26 @@
           <LabelField>EmpName</LabelField>
         </DataSetReference>
       </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
+    </ReportParameter>
+    <ReportParameter Name="strSDatein">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=DateAdd("d",-30,Today)</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Start Date</Prompt>
+      <UsedInQuery>False</UsedInQuery>
+    </ReportParameter>
+    <ReportParameter Name="strEDatein">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=Today</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>End Date</Prompt>
       <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
     <ReportParameter Name="intCoachReasonin">
@@ -5311,30 +5452,47 @@
       </ValidValues>
       <UsedInQuery>False</UsedInQuery>
     </ReportParameter>
+    <ReportParameter Name="intStatusin">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Status</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>CoachingStatusRef</DataSetName>
+          <ValueField>StatusID</ValueField>
+          <LabelField>Status</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <UsedInQuery>False</UsedInQuery>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>2</NumberOfColumns>
-      <NumberOfRows>9</NumberOfRows>
+      <NumberOfRows>10</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
-          <RowIndex>1</RowIndex>
+          <RowIndex>3</RowIndex>
           <ParameterName>strSDatein</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
-          <RowIndex>1</RowIndex>
+          <RowIndex>3</RowIndex>
           <ParameterName>strEDatein</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
-          <RowIndex>2</RowIndex>
+          <RowIndex>1</RowIndex>
           <ParameterName>intModulein</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>1</ColumnIndex>
-          <RowIndex>2</RowIndex>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>5</RowIndex>
           <ParameterName>intStatusin</ParameterName>
         </CellDefinition>
         <CellDefinition>
@@ -5343,13 +5501,13 @@
           <ParameterName>LanID</ParameterName>
         </CellDefinition>
         <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>3</RowIndex>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
           <ParameterName>intSitein</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
-          <RowIndex>3</RowIndex>
+          <RowIndex>2</RowIndex>
           <ParameterName>strEmpin</ParameterName>
         </CellDefinition>
         <CellDefinition>
@@ -5361,6 +5519,11 @@
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>4</RowIndex>
           <ParameterName>intSubCoachReasonin</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>strHDatein</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

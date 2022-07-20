@@ -91,6 +91,7 @@
     <DataSet Include="ModuleList.rsd" />
     <DataSet Include="Modules.rsd" />
     <DataSet Include="SiteList.rsd" />
+    <DataSet Include="SiteListx.rsd" />
     <DataSet Include="StatusList.rsd" />
     <DataSet Include="SubCoachingReasonList.rsd" />
     <DataSet Include="WarningActiveList.rsd" />

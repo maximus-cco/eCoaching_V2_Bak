@@ -1,34 +1,9 @@
-/*
-sp_rptWarningEmployeesBySiteAndModule(01).sql
-Last Modified Date: 01/18/2017
-Last Modified By: Susmitha Palacherla
-
-
-Version 01:  Initial Revision - Created during encryption of secure data. TFF 7856 - 01/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_rptWarningEmployeesBySiteAndModule' 
-)
-   DROP PROCEDURE [EC].[sp_rptWarningEmployeesBySiteAndModule]
-GO
-
 
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
@@ -38,11 +13,13 @@ GO
 --  Last Modified By:
 --  Revision History:
 --  Initial Revision - Encryption of sensitive data.TFS 7856 - 01/19/2018
+--  Updated to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
  *******************************************************************************/
-CREATE PROCEDURE [EC].[sp_rptWarningEmployeesBySiteAndModule] 
+CREATE OR ALTER         PROCEDURE [EC].[sp_rptWarningEmployeesBySiteAndModule] 
 (
 @intModulein INT= NULL,
 @intSitein INT = NULL,
+@strHDatein datetime = NULL,
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
    @returnCode int OUTPUT,
@@ -68,28 +45,30 @@ AS
 -- *** BEGIN: INSERT CUSTOM CODE HERE ***
 SET NOCOUNT ON
 
+DECLARE	
+@strHireDate nvarchar(10);
+SET @strHireDate = convert(varchar(8),@strHDatein,112);
 
 
 -- Open Symmetric Key
-OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] ;
 
-	
+	SELECT s.EmpID, s.EmpName
+	FROM (Select '-1' as EmpID, 'All' as EmpName
+	UNION
+	SELECT DISTINCT WL.EmpID EmpID, CONVERT(nvarchar(70),DecryptByKey(Emp_Name)) AS EmpName 
+	FROM  EC.Warning_Log AS wl JOIN  EC.Employee_Hierarchy eh
+	ON wl.EmpID = eh.Emp_ID
+	WHERE 
+	 (@intModulein IS NULL OR wl.ModuleID = @intModulein) AND
+	 (@intSitein IS NULL OR  wl.SiteID = @intSitein) AND
+	 (@strHDatein IS NULL OR eh.Hire_Date = @strHireDate)
+	)as S
+	ORDER BY CASE WHEN EmpID = '-1' THEN 0 ELSE 1 END, EmpName;
 
-SELECT s.EmpID, s.EmpName
-FROM (Select '-1' as EmpID, 'All' as EmpName
-UNION
-SELECT DISTINCT WL.EmpID EmpID, CONVERT(nvarchar(70),DecryptByKey(Emp_Name)) AS EmpName 
-FROM  EC.Warning_Log AS wl JOIN  EC.Employee_Hierarchy eh
-ON wl.EmpID = eh.Emp_ID
-WHERE  (wl.ModuleID =(@intModulein) or @intModulein = -1) 
-and  (wl.SiteID =(@intSitein) or @intSitein = -1) 
-)as S
-ORDER BY CASE WHEN EmpID = '-1' THEN 0 ELSE 1 END, EmpName
 
-
- 
   -- Clode Symmetric Key
-  CLOSE SYMMETRIC KEY [CoachingKey] 
+  CLOSE SYMMETRIC KEY [CoachingKey]; 
 	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -115,9 +94,6 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
-
-
-
 GO
 
 
