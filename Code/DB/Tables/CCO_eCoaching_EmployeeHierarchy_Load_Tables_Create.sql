@@ -1,7 +1,10 @@
 /*
-File: eCoaching_EmployeeHierarchy_Load_Tables_Create(07).sql 
-Last Modified Date: 05/22/2019
+File: eCoaching_EmployeeHierarchy_Load_Tables_Create(08).sql 
+Last Modified Date: 07/22/2022
 Last Modified By: Susmitha Palacherla
+
+Version 08: TFS 24924 - Report access for Early Work Life Supervisors
+Added Table [EC].[ELS_Hierarchy_Stage]
 
 Version 07: Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 1. [EC].[Employee_Hierarchy_Stage] -- Added Legacy_Emp_ID Renamed Emp_ID_Prefix to PS_Emp_ID_Prefix 
@@ -45,7 +48,8 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 5. [EC].[CSR_Hierarchy]
 6. [EC].[HR_Hierarchy_Stage]
 7. [EC].[HR_Access]-- Obsolete
-8. [EC].[Employee_Ids_With_Prefixes]
+8. [EC].[Employee_Ids_With_Prefixes]-- Obsolete
+9. [EC].[ELS_Hierarchy_Stage]
 
 **************************************************************
 
@@ -423,7 +427,22 @@ CREATE TABLE [EC].[Employee_Ids_With_Prefixes](
 
 GO
 
-SET ANSI_PADDING OFF
+
+--******************************************************
+
+--9. Create Table [EC].[ELS_Hierarchy_Stage]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[ELS_Hierarchy_Stage](
+	[Emp_ID] [nvarchar](10) NOT NULL,
+	[Emp_Name] [nvarchar](70) NULL,
+	[Emp_Job_Code] [nvarchar](20) NULL
+) ON [PRIMARY]
 GO
 
 
