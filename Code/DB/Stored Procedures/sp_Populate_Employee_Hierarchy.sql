@@ -1,4 +1,3 @@
-
 SET ANSI_NULLS ON
 GO
 
@@ -203,11 +202,11 @@ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 	             ,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
 	FROM [EC].[Employee_Hierarchy]H;
 
-	-- ELS ROle for Early Worklife Supervisors in ACL Table
+	-- Maintain ELS ROle for Early Life Supervisors in ACL Table
 
 IF OBJECT_ID(N'tempdb..#ELSACL') IS NOT NULL
 BEGIN
-DROP TABLE #ELSACL;
+DROP TABLE #ELSACL
 END
  
 CREATE TABLE #ELSACL
@@ -216,7 +215,7 @@ CREATE TABLE #ELSACL
  [Role] nvarchar(30), 
  [End_Date]  nvarchar(10),
  [User_ID] nvarchar(10)
-);
+)
 
 INSERT INTO #ELSACL
 SELECT [Row_ID]
@@ -231,15 +230,18 @@ SELECT [Row_ID]
 declare @UpdateBy nvarchar(50) = 'EmployeeLoad';
 
 
--- Inactivate ELS Role when record not in feed file
+-- Inactivate ELS Role when record not in feed file or Emp Job code not WACS40 or WACS50
 
 	UPDATE [EC].[Historical_Dashboard_ACL] 
 	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
     ,[Updated_By]= EncryptByKey(Key_GUID('CoachingKey'), @UpdateBy)
 	 FROM #ELSACL elst INNER JOIN [EC].[Historical_Dashboard_ACL] acl  
-	 ON elst.Row_ID = acl.Row_ID 
+	 ON elst.Row_ID = acl.Row_ID INNER JOIN EC.Employee_Hierarchy eh
+	 ON elst.[User_ID] = eh.Emp_ID
 	 WHERE elst.End_Date = 99991231
-	 AND elst.[User_ID] NOT IN (Select Emp_ID from EC.ELS_Hierarchy_Stage);
+    AND (elst.[User_ID] NOT IN (Select Emp_ID from EC.ELS_Hierarchy_Stage) OR
+	 eh.Emp_Job_Code NOT IN ('WACS40', 'WACS50', 'WACS60') OR
+	 eh.Active IN ('T','D'));
 	
 
 -- Reactivate ELS Role when record in file and Inactivated record exists
@@ -248,9 +250,12 @@ declare @UpdateBy nvarchar(50) = 'EmployeeLoad';
 	SET [END_DATE] = '99991231'
     ,[Updated_By]= EncryptByKey(Key_GUID('CoachingKey'), @UpdateBy)
 	 FROM #ELSACL elst INNER JOIN [EC].[Historical_Dashboard_ACL] acl  
-	 ON elst.Row_ID = acl.Row_ID 
+	 ON elst.Row_ID = acl.Row_ID INNER JOIN EC.Employee_Hierarchy eh
+	 ON elst.[User_ID] = eh.Emp_ID
 	 WHERE elst.End_Date <> 99991231
-	 AND elst.[User_ID] IN (Select Emp_ID from EC.ELS_Hierarchy_Stage);
+	 AND elst.[User_ID] IN (Select Emp_ID from EC.ELS_Hierarchy_Stage)
+	 AND eh.Emp_Job_Code IN ('WACS40', 'WACS50', 'WACS60')
+	 AND eh.Active NOT IN ('T','D');
 
 
 -- Insert new records for ELS Role in ACL Table
@@ -267,7 +272,9 @@ declare @UpdateBy nvarchar(50) = 'EmployeeLoad';
 				  		  FROM [EC].[ELS_Hierarchy_Stage] els INNER JOIN [EC].[Employee_Hierarchy] eh
 						  ON els.Emp_ID = eh.Emp_ID  LEFT OUTER JOIN #ELSACL elst 
 						  ON els.Emp_ID = elst.[User_ID]
-					      WHERE elst.[User_ID] IS NULL ;
+					      WHERE elst.[User_ID] IS NULL
+						  AND eh.Emp_Job_Code IN ('WACS40', 'WACS50', 'WACS60')
+						  AND eh.Active NOT IN ('T','D');
 
  -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];	 

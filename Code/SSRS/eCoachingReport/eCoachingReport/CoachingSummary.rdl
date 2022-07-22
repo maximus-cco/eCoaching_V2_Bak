@@ -5400,7 +5400,7 @@
       <DataType>DateTime</DataType>
       <DefaultValue>
         <Values>
-          <Value>=DateAdd("d",-30,Today)</Value>
+          <Value>=DateAdd("d",-7,Today)</Value>
         </Values>
       </DefaultValue>
       <Prompt>Start Date</Prompt>

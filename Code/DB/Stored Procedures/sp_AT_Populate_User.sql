@@ -1,3 +1,4 @@
+
 SET ANSI_NULLS ON
 GO
 
@@ -16,7 +17,7 @@ GO
 --  Update admin job code, TFS 3416 - 7/26/2016
 --  Updated logic for role assignment for job code change within allowed job codes during TFS 3027 - 11/28/2016
 --  Update lanid if diffrent from employee table - TFS 16529 - 03/10/2020
---  Update to Support Report access for Early Worklife Supervisors. TFS 24924 - 7/11/2022
+--  Update to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
 -- =============================================
 CREATE OR ALTER   PROCEDURE [EC].[sp_AT_Populate_User] 
 AS
@@ -78,12 +79,14 @@ UPDATE [EC].[AT_User]
 -- Reactivate User Records for ELS Role Supervisors where ELS Role is Active in ACL Table
 
 UPDATE [EC].[AT_User] 
-	SET [Active] = 1
-	FROM [EC].[AT_User]  U INNER JOIN
+	SET [Active] = 1,
+	EmpJobCode = E.Emp_Job_Code 
+	FROM [EC].[AT_User] U INNER JOIN [EC].[Employee_Hierarchy] E
+	ON E.Emp_ID = U.UserId INNER JOIN
 	(SELECT EC.fn_nvcGetEmpIdFromLanId(CONVERT(nvarchar(30),DecryptByKey([User_LanID])), getdate()) AS Emp_ID
 	FROM [EC].[Historical_Dashboard_ACL] WHERE Role = 'ELS'  AND End_Date = 99991231) ELS
 	ON ELS.Emp_ID = U.UserId 
-    WHERE U.EmpJobCode = 'WACS40'
+    WHERE U.EmpJobCode IN ( 'WACS40', 'WACS50', 'WACS60')
     AND U.Active = 0;
 
 -- Update lanid for users if different from employee table
