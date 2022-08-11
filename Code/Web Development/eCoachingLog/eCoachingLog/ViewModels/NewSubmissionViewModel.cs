@@ -85,6 +85,9 @@ namespace eCoachingLog.ViewModels
         public bool? IsValidationError { get; set; }
         public bool? IsFailAll { get; set; }
 
+        // log name saved
+        public string LogName { get; set; }
+
         public NewSubmissionViewModel() : base()
         {
             this.ModuleId = -1;

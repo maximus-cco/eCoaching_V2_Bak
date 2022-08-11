@@ -48,6 +48,7 @@ namespace eCoachingLog.Controllers
             var vm = InitNewSubmissionViewModel(Constants.MODULE_UNKNOWN);
             vm.IsSuccess = TempData["IsSuccess"] as bool? ?? null;
             vm.ErrorList = TempData["ErrorList"] as List<Error>;
+            vm.LogName = TempData["LogName"] == null ? "" : TempData["LogName"] as string;
             Session["newSubmissionVM"] = vm;
 
             ViewBag.ValidationError = false;
@@ -123,6 +124,11 @@ namespace eCoachingLog.Controllers
                 if (successfulSubmissions.Count == vm.EmployeeIdList.Count)
                 {
                     TempData["IsSuccess"] = true;
+                    // single submission - need to show user the log name
+                    if (vm.EmployeeIdList.Count == 1)
+                    {
+                        TempData["LogName"] = successfulSubmissions[0].LogName;
+                    }
                 }
                 else
                 {
