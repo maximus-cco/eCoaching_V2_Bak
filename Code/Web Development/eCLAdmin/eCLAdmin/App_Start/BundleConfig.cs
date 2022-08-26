@@ -13,7 +13,7 @@ namespace eCLAdmin
             scriptBundle.Orderer = new EclBundleOrderer();
             scriptBundle.Include(
                         "~/Scripts/modernizr-*",
-                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/jquery.js",
                          "~/Scripts/select2.js",
                         "~/Scripts/jquery.validate.js",
                         "~/Scripts/jquery.validate.unobtrusive.js",

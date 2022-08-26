@@ -12,7 +12,7 @@
 				height: 100%; 
 			}
 		</style>
-        <script src="../Scripts/jquery-2.2.0.js"></script>
+        <script src="../Scripts/jquery.js"></script>
     </head>
     <body style="margin: 0px; padding: 0px;">
         <form id="form1" runat="server">

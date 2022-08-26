@@ -55,12 +55,22 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchForInactivate(int module, int logType, string employee)
+        public ActionResult SearchForInactivate(string searchOption, int module, int logType, string employee, int logTypeSearchByLogName, string logName)
         {
             logger.Debug("Entered SearchForInactivate [post]...");
 
-            Session["LogType"] = logType;
-            List<EmployeeLog> employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
+            List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
+
+            if ("default" == searchOption)
+            {
+                Session["LogType"] = logType;
+                employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
+                return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
+            } 
+
+            // "logname" == searchOption
+            Session["LogType"] = logTypeSearchByLogName;
+            employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 

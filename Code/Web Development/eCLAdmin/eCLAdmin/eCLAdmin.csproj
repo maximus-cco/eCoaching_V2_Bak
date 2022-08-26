@@ -271,7 +271,7 @@
     <Content Include="Scripts\eCLAdmin\logSearchForDelete.js" />
     <Content Include="Scripts\eCLAdmin\logSearchForInactivate.js" />
     <Content Include="Scripts\eCLAdmin\report.js" />
-    <Content Include="Scripts\jquery-2.2.0.js" />
+    <Content Include="Scripts\jquery.js" />
     <Content Include="Scripts\jquery.dataTables.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -279,7 +279,6 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\morris.js" />
     <Content Include="Scripts\raphael.js" />
@@ -327,6 +326,8 @@
     <Content Include="Views\User\_AddEcoachingAccessControl.cshtml" />
     <Content Include="Views\User\_DeleteEcoachingAccessControl.cshtml" />
     <Content Include="Views\User\_EditEcoachingAccessControl.cshtml" />
+    <Content Include="Views\EmployeeLog\_SearchByLogName.cshtml" />
+    <Content Include="Views\EmployeeLog\_SearchOption.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

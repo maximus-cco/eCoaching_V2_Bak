@@ -3,38 +3,39 @@
 }
 
 <h3>@ViewBag.SubTitle</h3>
-<br />
 
 <!-- Search Form -->
 @using (Ajax.BeginForm("SearchForInactivate", "EmployeeLog", FormMethod.Post,
-                                new AjaxOptions
-                                {
-                                    InsertionMode = InsertionMode.Replace,
-                                    HttpMethod = "POST",
-                                    UpdateTargetId = "search-result",
-                                    OnBegin = "processSearchOnBegin",
-                                    OnComplete = "processSearchOnComplete"
-                                },
-                                new { id = "search-form", @class = "form-horizontal" }
-                                ))
+                new AjaxOptions
+                {
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "POST",
+                    UpdateTargetId = "search-result",
+                    OnBegin = "processSearchOnBegin",
+                    OnComplete = "processSearchOnComplete"
+                },
+                new { id = "search-form", @class = "form-horizontal" }
+                ))
 {
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="logType">Type:</label>
+
+    { Html.RenderPartial("_SearchOption"); }
+
+    <div class="" id="div-search-by-default">
+        <fieldset class="border">
+        <br />
         <div class="col-sm-3">
             @Html.DropDownList(
-             "logType",
-             (SelectList)ViewBag.LogTypes,
-             new
-             {
-                 @class = "form-control"
-             }
+                "logType",
+                (SelectList)ViewBag.LogTypes,
+                new
+                {
+                    @class = "form-control"
+                }
             )
+    
+            <div id="type-error-msg" class="field-validation-error"></div>
         </div>
-        <div id="type-error-msg" class="col-sm-offset-2 field-validation-error"></div>
-    </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="module">Employee Level:</label>
         <div class="col-sm-3">
             @Html.DropDownList(
                 "module",
@@ -44,36 +45,34 @@
                     @class = "form-control"
                 }
             )
-        </div>
-        <div id="module-error-msg" class="col-sm-offset-2 field-validation-error"></div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="employee">Employee:</label>
         
+            <div id="module-error-msg" class="field-validation-error"></div>
+        </div>
+
         <div class="col-sm-3">
             @Html.DropDownList(
-             "employee",
-             (SelectList)ViewBag.Employees,
-             new {
-                @class = "form-control"
-             }
+                "employee",
+                (SelectList)ViewBag.Employees,
+                new
+                {
+                    @class = "form-control"
+                }
             )
-        </div>
+        
+            <div id="employee-error-msg" class="field-validation-error"></div>
+            </div>
 
-        <div id="employee-error-msg" class="col-sm-offset-2 field-validation-error"></div>
-    </div> 
-    
-    @*<div class="form-group">
-        <input type="text" id="fromDate" class="datepicker" />
-    </div>*@
-    
-    <div class="form-group"> 
-        <div class="col-sm-offset-2 col-sm-10">
-            <button class="btn btn-primary" type="submit" id="btn-search">
-                <span class="glyphicon glyphicon-search"></span>&nbsp;Search
-            </button>
-        </div>
+            <div>
+                <button class="btn btn-primary" type="submit" id="btn-search">
+                    <span class="glyphicon glyphicon-search"></span>&nbsp;Search
+                </button>
+            </div>
+
+        </fieldset>
+    </div>
+
+    <div class="hidden" id="div-search-by-logname">
+        @{Html.RenderPartial("_SearchByLogName");}
     </div>
 }
 

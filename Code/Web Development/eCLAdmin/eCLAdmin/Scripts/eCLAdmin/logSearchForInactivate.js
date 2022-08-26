@@ -120,6 +120,34 @@
         $('#lk-inactivate').slideUp(500);
     })
 
+    $('body').on('change', '#radio-search-option-default', function () {
+        var selected = $(this).is(':checked');
+        if (selected === true) {
+            $('#div-search-by-default').removeClass('hidden');
+            $('#div-search-by-logname').addClass('hidden');
+        } else {
+            $('#div-search-by-default').addClass('hidden');
+            $('#div-search-by-logname').removeClass('hidden');
+        }
+
+        $("#search-result").slideUp(500);
+        $('#lk-inactivate').slideUp(500);
+    })
+
+    $('body').on('change', '#radio-search-option-logname', function () {
+        var selected = $(this).is(':checked');
+        if (selected === true) {
+            $('#div-search-by-logname').removeClass('hidden');
+            $('#div-search-by-default').addClass('hidden');
+        } else {
+            $('#div-search-by-logname').addClass('hidden');
+            $('#div-search-by-default').removeClass('hidden');
+        }
+
+        $("#search-result").slideUp(500);
+        $('#lk-inactivate').slideUp(500);
+    })
+
 });
 
 function initPage() {

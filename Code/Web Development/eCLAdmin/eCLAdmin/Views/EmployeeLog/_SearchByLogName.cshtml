@@ -1,0 +1,22 @@
+﻿<fieldset class="border">
+    <br />
+    <div class="col-sm-3">
+        @Html.DropDownList(
+             "logTypeSearchByLogName",
+             (SelectList)ViewBag.LogTypes,
+             new
+             {
+                 @class = "form-control"
+             }
+            )
+        <div id="type-error-msg" class="field-validation-error"></div>
+    </div>
+    <div class="col-sm-3">
+        <input type="text" class="form-control" id="input-logname" name="logName" placeholder="Enter log name">
+    </div>
+    <div>
+        <button class="btn btn-primary" type="submit" id="btn-search">
+            <span class="glyphicon glyphicon-search"></span>&nbsp;Search
+        </button>
+    </div>
+</fieldset>
