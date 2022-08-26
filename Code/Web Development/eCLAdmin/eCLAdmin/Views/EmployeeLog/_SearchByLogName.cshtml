@@ -19,3 +19,19 @@
         </button>
     </div>
 </fieldset>
+
+<script>
+    $(function () {
+        $("#logTypeSearchByLogName").on("change", function () {
+            if ($(this).val() !== -1) {
+                $("#logTypeSearchByLogName").removeClass("input-validation-error");
+            }
+        })
+
+        $("#input-logname").on("change", function () {
+            if ($(this).val() !== '') {
+                $("#input-logname").removeClass("input-validation-error");
+            }
+        })
+    })
+</script>
