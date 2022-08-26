@@ -121,6 +121,51 @@ namespace eCLAdmin.Repository
             return employeeLogs;
         }
 
+        public EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId)
+        {
+            string logType = EclAdminUtil.GetLogTypeNameById(logTypeId);
+            EmployeeLog employeeLog = new EmployeeLog();
+
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_Logs_Inactivation_Reactivation]", connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandTimeout = 300;
+                //command.Parameters.AddWithValue("@intModuleIdin", moduleId);
+                command.Parameters.AddWithValue("@strTypein", logType);
+                command.Parameters.AddWithValue("@strActionin", action);
+                //command.Parameters.AddWithValue("@strEmployeein", employeeId);
+                command.Parameters.AddWithValue("@strRequesterLanId", userLanId);
+
+                connection.Open();
+
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        employeeLog.ID = (long)dataReader["LogID"];
+                        employeeLog.FormName = dataReader["strFormName"].ToString();
+                        employeeLog.EmployeeName = dataReader["strEmpName"].ToString();
+                        employeeLog.SupervisorName = dataReader["strSupName"].ToString();
+                        employeeLog.ManagerName = dataReader["strMgrName"].ToString();
+                        employeeLog.Status = dataReader["Status"].ToString();
+                        employeeLog.SubmitterName = dataReader["strSubmitter"].ToString();
+                        //cl.StatusId = (int)dataReader["StatusID"];
+                        if (string.Equals(action, Constants.LOG_ACTION_REACTIVATE, StringComparison.OrdinalIgnoreCase))
+                        {
+                            employeeLog.PreviousStatusId = (int)dataReader["LastKnownStatus"];
+                            employeeLog.Status = dataReader["LKStatus"].ToString();
+                        }
+                        employeeLog.CreatedDate = dataReader["strCreatedDate"].ToString();
+
+                        break;
+                    }
+                }
+            }
+
+            return employeeLog;
+        }
+
         public List<EmployeeLog> GetPendingLogsByReviewerEmpId(int moduleId, int statusId, string reviewerEmpId)
         {
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();

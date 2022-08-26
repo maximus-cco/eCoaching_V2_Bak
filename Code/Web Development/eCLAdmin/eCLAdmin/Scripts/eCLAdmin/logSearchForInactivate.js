@@ -148,6 +148,18 @@
         $('#lk-inactivate').slideUp(500);
     })
 
+    $("#logTypeSearchByLogName").on("change", function () {
+        if ($(this).val() !== -1) {
+            $("#logTypeSearchByLogName").removeClass("input-validation-error");
+        }
+    })
+
+    $("#input-logname").on("change", function () {
+        if ($(this).val() !== '') {
+            $("#input-logname").removeClass("input-validation-error");
+        }
+    })
+
 });
 
 function initPage() {
@@ -171,19 +183,36 @@ function initPage() {
 
 function validateForm() {
     var isFormValid = true;
-    if ($('#logType').val() == -1) {
-        $('#logType').addClass("input-validation-error");
-        $('#type-error-msg').html('Please select a type');
+
+    var searchByDefault = $('#radio-search-option-default').is(':checked');
+    if (searchByDefault === true) {
+        if ($('#logType').val() == -1) {
+            $('#logType').addClass("input-validation-error");
+            //$('#type-error-msg').html('Please select a type');
+            isFormValid = false;
+        }
+        if ($('#module').val() == -1) {
+            $('#module').addClass("input-validation-error");
+            //$('#module-error-msg').html('Please select Employee Level');
+            isFormValid = false;
+        }
+        if ($('#employee').val() == -1) {
+            $('#employee').addClass("input-validation-error");
+            //$('#employee-error-msg').html('Please select an employee');
+            isFormValid = false;
+        }
+
+        return isFormValid;
+    }
+
+    // search by log name
+    if ($('#logTypeSearchByLogName').val() == -1) {
+        $('#logTypeSearchByLogName').addClass("input-validation-error");
+        //$('#type-error-msg').html('Please select a type');
         isFormValid = false;
     }
-    if ($('#module').val() == -1) {
-        $('#module').addClass("input-validation-error");
-        $('#module-error-msg').html('Please select Employee Level');
-        isFormValid = false;
-    }
-    if ($('#employee').val() == -1) {
-        $('#employee').addClass("input-validation-error");
-        $('#employee-error-msg').html('Please select an employee');
+    if ($('#input-logname').val() == '') {
+        $('#input-logname').addClass("input-validation-error");
         isFormValid = false;
     }
     return isFormValid;

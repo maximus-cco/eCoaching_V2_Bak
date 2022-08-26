@@ -70,7 +70,8 @@ namespace eCLAdmin.Controllers
 
             // "logname" == searchOption
             Session["LogType"] = logTypeSearchByLogName;
-            employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
+            var employeeLog = employeeLogService.GetLogByLogName(logType, logName, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
+            employeeLogs.Add(employeeLog);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 

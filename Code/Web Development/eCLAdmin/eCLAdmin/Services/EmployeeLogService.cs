@@ -78,6 +78,11 @@ namespace eCLAdmin.Services
             return employeeLogRepository.GetLogsByEmpIdAndAction(moduleId, logTypeId, employeeId, action, userLanId);
         }
 
+        public EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId)
+        {
+            return employeeLogRepository.GetLogByLogName(logTypeId, logName, action, userLanId);
+        }
+
         public List<EmployeeLog> GetPendingLogsByReviewerEmpId(int moduleId, int statusId, string reviewerEmpId)
         {
             return employeeLogRepository.GetPendingLogsByReviewerEmpId(moduleId, statusId, reviewerEmpId);

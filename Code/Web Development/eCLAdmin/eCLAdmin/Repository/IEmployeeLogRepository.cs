@@ -9,6 +9,8 @@ namespace eCLAdmin.Repository
 
         List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action, string userLanId);
 
+        EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId);
+
         List<EmployeeLog> GetPendingLogsByReviewerEmpId(int moduleId, int statusId, string reviewerEmpId);
 
         List<Status> GetPendingStatuses(int moduleId);
