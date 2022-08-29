@@ -6,60 +6,34 @@
 
 <!-- Search Form -->
 @using (Ajax.BeginForm("SearchForInactivate", "EmployeeLog", FormMethod.Post,
-                new AjaxOptions
-                {
+                new AjaxOptions {
                     InsertionMode = InsertionMode.Replace,
                     HttpMethod = "POST",
                     UpdateTargetId = "search-result",
                     OnBegin = "processSearchOnBegin",
-                    OnComplete = "processSearchOnComplete"
-                },
+                    OnComplete = "processSearchOnComplete" },
                 new { id = "search-form", @class = "form-horizontal" }
-                ))
+            ))
 {
 
     { Html.RenderPartial("_SearchOption"); }
 
     <div class="" id="div-search-by-default">
         <fieldset class="border">
-        <br />
-        <div class="col-sm-3">
-            @Html.DropDownList(
-                "logType",
-                (SelectList)ViewBag.LogTypes,
-                new
-                {
-                    @class = "form-control"
-                }
-            )
-    
-            <div id="type-error-msg" class="field-validation-error"></div>
-        </div>
+            <br />
+            <div class="col-sm-3">
+                @Html.DropDownList( "logType", (SelectList)ViewBag.LogTypes, new { @class = "form-control" })
+                <div id="type-error-msg" class="field-validation-error"></div>
+            </div>
 
-        <div class="col-sm-3">
-            @Html.DropDownList(
-                "module",
-                (SelectList)ViewBag.Modules,
-                new
-                {
-                    @class = "form-control"
-                }
-            )
-        
-            <div id="module-error-msg" class="field-validation-error"></div>
-        </div>
+            <div class="col-sm-3">
+                @Html.DropDownList( "module", (SelectList)ViewBag.Modules, new { @class = "form-control" })
+                <div id="module-error-msg" class="field-validation-error"></div>
+            </div>
 
-        <div class="col-sm-3">
-            @Html.DropDownList(
-                "employee",
-                (SelectList)ViewBag.Employees,
-                new
-                {
-                    @class = "form-control"
-                }
-            )
-        
-            <div id="employee-error-msg" class="field-validation-error"></div>
+            <div class="col-sm-3">
+                @Html.DropDownList( "employee", (SelectList)ViewBag.Employees, new { @class = "form-control" })
+                <div id="employee-error-msg" class="field-validation-error"></div>
             </div>
 
             <div>
@@ -67,7 +41,7 @@
                     <span class="glyphicon glyphicon-search"></span>&nbsp;Search
                 </button>
             </div>
-
+         
         </fieldset>
     </div>
 
@@ -84,8 +58,7 @@
         @Html.ActionLink("Inactivate ", // Link Text
                 "InitInactivateModal", // Action Method Name
                 "EmployeeLog", // Controller Name
-                new
-                {
+                new {
                     @class = "modal-link btn btn-primary",
                     @style = "display: none;",
                     id = "lk-inactivate"

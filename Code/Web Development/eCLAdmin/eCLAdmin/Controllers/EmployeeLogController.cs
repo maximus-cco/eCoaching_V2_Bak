@@ -193,16 +193,23 @@ namespace eCLAdmin.Controllers
             return View();
         }
 
-        [HttpPost]
-        public ActionResult SearchForReactivate(int module, int logType, string employee)
+        public ActionResult SearchForReactivate(string searchOption, int module, int logType, string employee, int logTypeSearchByLogName, string logName)
         {
             logger.Debug("Entered SearchForReactivate [post]...");
-            logger.Debug("module=" + module + ", logType=" + logType + ", employee=" + employee);
 
-            ViewBag.Action = Constants.LOG_ACTION_REACTIVATE;
+            List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
 
-            Session["LogType"] = logType;
-            List<EmployeeLog> employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_REACTIVATE, GetUserFromSession().LanId);
+            if ("default" == searchOption)
+            {
+                Session["LogType"] = logType;
+                employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
+                return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
+            }
+
+            // "logname" == searchOption
+            Session["LogType"] = logTypeSearchByLogName;
+            var employeeLog = employeeLogService.GetLogByLogName(logType, logName, Constants.LOG_ACTION_REACTIVATE, GetUserFromSession().LanId);
+            employeeLogs.Add(employeeLog);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 
