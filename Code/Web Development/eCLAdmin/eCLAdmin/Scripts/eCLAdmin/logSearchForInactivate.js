@@ -139,6 +139,9 @@ function initPage() {
     // Reset Module dropdown.
 	// Remove all in Module dropdown except for the first default item "Please select Employee Level"
     resetModuleDropdown();
+    // Reset Search By Log Name
+    $("#logTypeSearchByLogName").val(-1);
+    $("#input-logname").val("");
 }
 
 function validateForm() {

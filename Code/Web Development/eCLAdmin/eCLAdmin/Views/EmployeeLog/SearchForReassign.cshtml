@@ -7,70 +7,51 @@
 
 <!-- Search Form -->
 @using (Ajax.BeginForm("SearchForReassign", "EmployeeLog", FormMethod.Post,
-                    new AjaxOptions
-                    {
-                        InsertionMode = InsertionMode.Replace,
-                        HttpMethod = "POST",
-                        UpdateTargetId = "search-result",
-                        OnBegin = "processSearchOnBegin",
-                        OnComplete = "processSearchOnComplete"
-                    },
-                    new { @class = "form-horizontal" }
-                    ))
-{    
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="module">Employee Level:</label>
-        <div class="col-sm-3">
-            @Html.DropDownList(
-                "module",
-                (SelectList)ViewBag.Modules,
-                new
-                {
-                    @class = "form-control"
-                }
-            )
-        </div>
-        <div id="module-error-msg" class="col-sm-offset-2 field-validation-error"></div>
+                                new AjaxOptions
+                                {
+                                    InsertionMode = InsertionMode.Replace,
+                                    HttpMethod = "POST",
+                                    UpdateTargetId = "search-result",
+                                    OnBegin = "processSearchOnBegin",
+                                    OnComplete = "processSearchOnComplete"
+                                },
+                                new { @class = "form-horizontal" }
+                                ))
+{
+
+    { Html.RenderPartial("_SearchOption", "Search by Employee Level, Log Status, and Reviewer"); }
+
+    <div class="" id="div-search-by-default">
+        <fieldset class="border">
+            <br />
+            <div class="col-sm-3">
+                @Html.DropDownList("module", (SelectList)ViewBag.Modules, new { @class = "form-control" })
+                <div id="employee-error-msg" class="field-validation-error"></div>
+            </div>
+
+            <div class="col-sm-3">
+                @Html.DropDownList("employeeLogStatus", (SelectList)ViewBag.Statuses, new { @class = "form-control" })
+                <div id="type-error-msg" class="field-validation-error"></div>
+            </div>
+
+            <div class="col-sm-3">
+                @Html.DropDownList("reviewer", (SelectList)ViewBag.Reviewers, new { @class = "form-control" })
+                <div id="module-error-msg" class="field-validation-error"></div>
+            </div>
+
+            <div>
+                <button class="btn btn-primary" type="submit" id="btn-search">
+                    <span class="glyphicon glyphicon-search"></span>&nbsp;Search
+                </button>
+            </div>
+
+        </fieldset>
     </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="employeeLogStatus">Status:</label>
-        <div class="col-sm-3">
-            @Html.DropDownList(
-             "employeeLogStatus",
-             (SelectList)ViewBag.Statuses, 
-             new {
-                @class = "form-control"
-             }
-            )
-        </div>
-        <div id="status-error-msg" class="col-sm-offset-2 field-validation-error"></div>
+    <div class="hidden" id="div-search-by-logname">
+        @{Html.RenderPartial("_SearchByLogName");}
     </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-2" id="reviewer-label" for="reviewer">Pending Reviewer:</label>
-        <div class="col-sm-3">
-            @Html.DropDownList(
-             "reviewer",
-             (SelectList)ViewBag.Reviewers,
-             new
-             {
-                 @class = "form-control",
-                 id = "reviewer-dropdown"
-             }
-            )
-        </div>
-        <div id="reviewer-error-msg" class="col-sm-offset-2 field-validation-error"></div>
-    </div>
-       
-    <div class="form-group"> 
-        <div class="col-sm-offset-2 col-sm-10">
-            <button class="btn btn-primary" type="submit" id="btn-search">
-                <span class="glyphicon glyphicon-search"></span>&nbsp;Search
-            </button>
-        </div>
-    </div>
- 
 }
 
 <div id="message"></div>

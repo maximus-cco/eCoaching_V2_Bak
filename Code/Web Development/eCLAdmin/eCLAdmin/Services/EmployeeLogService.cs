@@ -73,9 +73,19 @@ namespace eCLAdmin.Services
             return types;
         }
 
-        public List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action, string userLanId)
+        public List<EmployeeLog> SearchLog(bool searchByLogName, int moduleId, int logTypeId, string employeeId, string logName, string action, string userLanId)
         {
-            return employeeLogRepository.GetLogsByEmpIdAndAction(moduleId, logTypeId, employeeId, action, userLanId);
+            if (searchByLogName)
+            {
+                moduleId = -1;
+                employeeId = null;
+            }
+            else
+            {
+                logName = null;
+            }
+
+            return employeeLogRepository.SearchLog(moduleId, logTypeId, employeeId, logName?.Trim(), action, userLanId);
         }
 
         public EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId)

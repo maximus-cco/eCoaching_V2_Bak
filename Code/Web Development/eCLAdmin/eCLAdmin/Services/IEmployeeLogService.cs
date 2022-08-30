@@ -10,7 +10,7 @@ namespace eCLAdmin.Services
 
         List<Models.EmployeeLog.Type> GetTypes(User user, string action);
 
-        List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action, string userLanId);
+        List<EmployeeLog> SearchLog(bool searchByLogName, int moduleId, int logTypeId, string employeeId, string logName, string action, string userLanId);
 
         EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId);
 

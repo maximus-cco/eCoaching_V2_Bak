@@ -7,7 +7,7 @@ namespace eCLAdmin.Repository
     {
         List<Module> GetModules(string userLanId, int logTypeId);
 
-        List<EmployeeLog> GetLogsByEmpIdAndAction(int moduleId, int logTypeId, string employeeId, string action, string userLanId);
+        List<EmployeeLog> SearchLog(int moduleId, int logTypeId, string employeeId, string logName, string action, string userLanId);
 
         EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId);
 

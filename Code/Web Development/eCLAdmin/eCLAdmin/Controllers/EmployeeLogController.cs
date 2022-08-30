@@ -60,18 +60,19 @@ namespace eCLAdmin.Controllers
             logger.Debug("Entered SearchForInactivate [post]...");
 
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
+            var searchByLogName = false;
 
             if ("default" == searchOption)
             {
                 Session["LogType"] = logType;
-                employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
-                return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
-            } 
+            }
+            else
+            {
+                Session["LogType"] = logTypeSearchByLogName;
+                searchByLogName = true;
+            }
 
-            // "logname" == searchOption
-            Session["LogType"] = logTypeSearchByLogName;
-            var employeeLog = employeeLogService.GetLogByLogName(logType, logName, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
-            employeeLogs.Add(employeeLog);
+            employeeLogs = employeeLogService.SearchLog(searchByLogName, module, (int)Session["LogType"], employee, logName, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 
@@ -104,6 +105,8 @@ namespace eCLAdmin.Controllers
 
             ViewBag.SubTitle = "Reassign Employee Logs";
             ViewBag.Modules = GetModules(Constants.MODULE_UNKNOWN);
+
+            ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REASSIGN);
 
             List<Status> statusList = new List<Status>();
             statusList.Insert(0, new Status { Id = -1, Description = "Please select a status" });
@@ -198,18 +201,19 @@ namespace eCLAdmin.Controllers
             logger.Debug("Entered SearchForReactivate [post]...");
 
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
+            var searchByLogName = false;
 
             if ("default" == searchOption)
             {
                 Session["LogType"] = logType;
-                employeeLogs = employeeLogService.GetLogsByEmpIdAndAction(module, logType, employee, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
-                return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
+            }
+            else
+            {
+                Session["LogType"] = logTypeSearchByLogName;
+                searchByLogName = true;
             }
 
-            // "logname" == searchOption
-            Session["LogType"] = logTypeSearchByLogName;
-            var employeeLog = employeeLogService.GetLogByLogName(logType, logName, Constants.LOG_ACTION_REACTIVATE, GetUserFromSession().LanId);
-            employeeLogs.Add(employeeLog);
+            employeeLogs = employeeLogService.SearchLog(searchByLogName, module, logType, employee, logName, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 
