@@ -1,13 +1,3 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'fn_strSubCoachingReasonFromCoachingID' 
-)
-   DROP FUNCTION [EC].[fn_strSubCoachingReasonFromCoachingID]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
@@ -20,15 +10,16 @@ GO
 -- Description:	        Given a CoachingID returns the Sub Coaching Reasons concatenated as a single string 
 -- of values separated by a '|'
 --  Modified to use string_agg fn during qn workflow updates. TFS 22187 - 08/30/2021
+--  Updated to increase field size for @strSubCoachingReason to 2000. TFS 25250 - 8/29/2022
 -- =============================================
 
-CREATE OR ALTER FUNCTION [EC].[fn_strSubCoachingReasonFromCoachingID] (
+ CREATE OR ALTER FUNCTION [EC].[fn_strSubCoachingReasonFromCoachingID] (
   @bigintCoachingID bigint
 )
-RETURNS NVARCHAR(1000)
+RETURNS NVARCHAR(2000)
 AS
 BEGIN
-  DECLARE @strSubCoachingReason NVARCHAR(1000)
+  DECLARE @strSubCoachingReason NVARCHAR(2000)
   
   IF @bigintCoachingID IS NOT NULL
   BEGIN
@@ -45,4 +36,6 @@ RETURN @strSubCoachingReason
 END  -- fn_strSubCoachingReasonFromCoachingID
 
 GO
+
+
 

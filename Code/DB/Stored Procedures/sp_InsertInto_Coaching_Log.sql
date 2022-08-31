@@ -4,6 +4,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      02/03/2014
@@ -21,6 +23,7 @@ GO
 -- Updated to support New Coaching Reason for Quality - TFS 23051 - 09/29/2021
 -- Updated to remove EmailSent parameter. TFS 23389 - 11/08/2021
 -- Updated to Support Team Submission. TFS 23273 - 06/07/2022
+-- Updated to fix Value Translation bug for Quality Subcoaching Reason. TFS 25250 - 8/29/2022
 --    =====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log]
 (     @tableEmpIDs EmpIdsTableType readonly,
@@ -269,8 +272,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID2,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID2, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID2 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID2 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID2 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID2 = 10 AND @nvcValue2 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID2 = 10 AND @nvcValue2 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue2 END FROM  @inserted;     
          
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -292,8 +295,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID3,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID3, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID3 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID3 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID3 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID3 = 10 AND @nvcValue3 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID3 = 10 AND @nvcValue3 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue3 END FROM  @inserted;      
              
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -316,8 +319,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID4,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID4, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID4 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID4 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID4 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID4 = 10 AND @nvcValue4 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID4 = 10 AND @nvcValue4 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue4 END FROM  @inserted;       
              
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -340,8 +343,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID5,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID5, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID5 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID5 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID5 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID5 = 10 AND @nvcValue5 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID5 = 10 AND @nvcValue5 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue5 END FROM  @inserted;     
              
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -364,8 +367,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID6,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID6, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID6 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID6 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID6 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID6 = 10 AND @nvcValue6 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID6 = 10 AND @nvcValue6 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue6 END FROM  @inserted; 
                     
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -388,8 +391,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID7,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID7, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID7 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID7 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID7 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID7 = 10 AND @nvcValue7 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID7 = 10 AND @nvcValue7 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue7 END FROM  @inserted;    
              
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -412,8 +415,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID8,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID8, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID8 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID8 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID8 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID8 = 10 AND @nvcValue8 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID8 = 10 AND @nvcValue8 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue8 END FROM  @inserted;     
              
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -436,8 +439,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID9,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID9, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID9 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID9 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID9 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID9 = 10 AND @nvcValue9 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID9 = 10 AND @nvcValue9 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue9 END FROM  @inserted;        
              
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -460,8 +463,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID10,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID10, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID10 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID10 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID10 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID10 = 10 AND @nvcValue10 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID10 = 10 AND @nvcValue10 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue10 END FROM  @inserted;     
              
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -485,8 +488,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID11,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID11, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID11 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID11 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID11 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID11 = 10 AND @nvcValue11 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID11 = 10 AND @nvcValue11 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue11 END FROM  @inserted; 
 
       	SET @SubReasonRowID = @SubReasonRowID + 1
@@ -509,8 +512,8 @@ While @SubReasonRowID <= @MaxSubReasonRowID
              SELECT CoachingID, @intCoachReasonID12,
             (Select Item FROM [EC].[fnSplit_WithRowID]( @nvcSubCoachReasonID12, ',')where Rowid = @SubReasonRowID ),
              CASE WHEN @intCoachReasonID12 = 6 THEN 'Opportunity'
-                 WHEN (@intCoachReasonID12 = 10 AND @nvcValue1 = 'Opportunity') THEN 'Did Not Meet Goal'
-                 WHEN (@intCoachReasonID12 = 10 AND @nvcValue1 = 'Reinforcement') THEN 'Met Goal'
+                 WHEN (@intCoachReasonID12 = 10 AND @nvcValue12 = 'Opportunity') THEN 'Did Not Meet Goal'
+                 WHEN (@intCoachReasonID12 = 10 AND @nvcValue12 = 'Reinforcement') THEN 'Met Goal'
              ELSE @nvcValue12 END FROM  @inserted; 
              
       	SET @SubReasonRowID = @SubReasonRowID + 1
