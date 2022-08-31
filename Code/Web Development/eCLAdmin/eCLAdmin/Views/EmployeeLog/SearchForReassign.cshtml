@@ -35,7 +35,7 @@
             </div>
 
             <div class="col-sm-3">
-                @Html.DropDownList("reviewer", (SelectList)ViewBag.Reviewers, new { @class = "form-control" })
+                @Html.DropDownList("reviewer", (SelectList)ViewBag.Reviewers, new { @class = "form-control", id = "reviewer-dropdown" })
                 <div id="module-error-msg" class="field-validation-error"></div>
             </div>
 
@@ -245,6 +245,10 @@
             // Reset Pending Reviewer dropdown.
             // Remove all in Pending Reviewer dropdown except for the first default item "Please select a reviewer"
             $('#reviewer-dropdown').find('option:gt(0)').remove()
+
+            // Reset Search By Log Name
+            $("#logTypeSearchByLogName").val(-1);
+            $("#input-logname").val("");
         }
 
         function hideShowReassignLink() {
@@ -261,22 +265,30 @@
 
         function validateForm() {
             var isFormValid = true;
-            if ($('#module').val() == -1) {
-                $('#module').addClass("input-validation-error");
-                $('#module-error-msg').html('Please select Employee Level');
-                isFormValid = false;
+            var searchByDefault = $('#radio-search-option-default').is(':checked');
+            if (searchByDefault === true) {
+                if ($('#module').val() == -1) {
+                    $('#module').addClass("input-validation-error");
+                    $('#reviewer').addClass("input-validation-error");
+                    //$('#module-error-msg').html('Please select Employee Level');
+                    isFormValid = false;
+                }
+                if ($('#employeeLogStatus').val() == -1) {
+                    $('#employeeLogStatus').addClass("input-validation-error");
+                    //$('#status-error-msg').html('Please select a status');
+                    isFormValid = false;
+                }
+                if ($('#reviewer-dropdown').val() == -1) {
+                    $('#reviewer-dropdown').addClass("input-validation-error");
+                    //$('#reviewer-error-msg').html('Please select a reviewer');
+                    isFormValid = false;
+                }
+
+                return isFormValid;
             }
-            if ($('#employeeLogStatus').val() == -1) {
-                $('#employeeLogStatus').addClass("input-validation-error");
-                $('#status-error-msg').html('Please select a status');
-                isFormValid = false;
-            }
-            if ($('#reviewer-dropdown').val() == -1) {
-                $('#reviewer-dropdown').addClass("input-validation-error");
-                $('#reviewer-error-msg').html('Please select a reviewer');
-                isFormValid = false;
-            }
-            return isFormValid;
+
+            // search by log name
+            return validateSearchByLogNameForm();
         }
 
         function processSearchOnBegin() {

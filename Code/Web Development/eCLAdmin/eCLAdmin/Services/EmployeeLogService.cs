@@ -100,7 +100,9 @@ namespace eCLAdmin.Services
 
         public List<Status> GetPendingStatuses(int moduleId)
         {
-            return employeeLogRepository.GetPendingStatuses(moduleId);
+            var statusList = employeeLogRepository.GetPendingStatuses(moduleId);
+            statusList.Insert(0, new Status { Id = -2, Description = "All" });
+            return statusList;
         }
 
         public List<Reason> GetReasons(int logTypeId, string action)

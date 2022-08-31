@@ -169,16 +169,7 @@ function validateForm() {
     }
 
     // search by log name
-    if ($('#logTypeSearchByLogName').val() == -1) {
-        $('#logTypeSearchByLogName').addClass("input-validation-error");
-        //$('#type-error-msg').html('Please select a type');
-        isFormValid = false;
-    }
-    if ($('#input-logname').val().trim() === '') {
-        $('#input-logname').addClass("input-validation-error");
-        isFormValid = false;
-    }
-    return isFormValid;
+    return validateSearchByLogNameForm();
 }
 
 function processSearchOnBegin() {
