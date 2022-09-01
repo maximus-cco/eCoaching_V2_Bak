@@ -246,9 +246,7 @@
             // Remove all in Pending Reviewer dropdown except for the first default item "Please select a reviewer"
             $('#reviewer-dropdown').find('option:gt(0)').remove()
 
-            // Reset Search By Log Name
-            $("#logTypeSearchByLogName").val(-1);
-            $("#input-logname").val("");
+            resetSearchByLogName();
         }
 
         function hideShowReassignLink() {
