@@ -123,16 +123,27 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchForReassign(int module, int employeeLogStatus, string reviewer)
+        public ActionResult SearchForReassign(string searchOption, int module, int employeeLogStatus, string reviewer, int logTypeSearchByLogName, string logName)
         {
             logger.Debug("Entered SearchForInactivate [post]...");
 
-            // Save for later use in Reassignment
-            Session["ModuleId"] = module;
-            Session["LogStatus"] = employeeLogStatus;
-            Session["OriginalReviewer"] = reviewer;
+            List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
+            var searchByLogName = false;
 
-            List<EmployeeLog> EmployeeLogs = employeeLogService.GetPendingLogsByReviewerEmpId(module, employeeLogStatus, reviewer);
+            if ("default" == searchOption)
+            {
+                // Save for later use in Reassignment
+                Session["ModuleId"] = module;
+                Session["LogStatus"] = employeeLogStatus;
+                Session["OriginalReviewer"] = reviewer;
+            }
+            else
+            {
+                Session["LogType"] = logTypeSearchByLogName;
+                searchByLogName = true;
+            }
+
+            List<EmployeeLog> EmployeeLogs = employeeLogService.SearchLogForReassign(searchByLogName, module, employeeLogStatus, reviewer, logName);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(EmployeeLogs));
         }
 

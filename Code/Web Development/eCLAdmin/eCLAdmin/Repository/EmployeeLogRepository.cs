@@ -167,7 +167,7 @@ namespace eCLAdmin.Repository
             return employeeLog;
         }
 
-        public List<EmployeeLog> GetPendingLogsByReviewerEmpId(int moduleId, int statusId, string reviewerEmpId)
+        public List<EmployeeLog> SearchLogForReassign(int moduleId, int statusId, string reviewerEmpId, string logName)
         {
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
 
@@ -179,6 +179,7 @@ namespace eCLAdmin.Repository
                 command.Parameters.AddWithValue("@intModuleIdin", moduleId);
                 command.Parameters.AddWithValue("@istrOwnerin", reviewerEmpId);
                 command.Parameters.AddWithValue("@intStatusIdin", statusId);
+                command.Parameters.AddWithValue("@strFormName", logName);
 
                 connection.Open();
 

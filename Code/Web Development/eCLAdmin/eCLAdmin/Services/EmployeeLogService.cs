@@ -93,9 +93,21 @@ namespace eCLAdmin.Services
             return employeeLogRepository.GetLogByLogName(logTypeId, logName, action, userLanId);
         }
 
-        public List<EmployeeLog> GetPendingLogsByReviewerEmpId(int moduleId, int statusId, string reviewerEmpId)
+        public List<EmployeeLog> SearchLogForReassign(bool searchByLogName, int moduleId, int statusId, string reviewerEmpId, string logName)
         {
-            return employeeLogRepository.GetPendingLogsByReviewerEmpId(moduleId, statusId, reviewerEmpId);
+            if (searchByLogName)
+            {
+                moduleId = -1;
+                statusId = -1;
+                reviewerEmpId = null;
+            }
+            else
+            {
+                logName = null;
+            }
+
+            return employeeLogRepository.SearchLogForReassign(moduleId, statusId, reviewerEmpId, logName);
+
         }
 
         public List<Status> GetPendingStatuses(int moduleId)

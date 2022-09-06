@@ -10,11 +10,13 @@ namespace eCLAdmin.Services
 
         List<Models.EmployeeLog.Type> GetTypes(User user, string action);
 
+        // search log for inactivate/reactivate
         List<EmployeeLog> SearchLog(bool searchByLogName, int moduleId, int logTypeId, string employeeId, string logName, string action, string userLanId);
 
         EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId);
 
-        List<EmployeeLog> GetPendingLogsByReviewerEmpId(int moduleId, int statusId, string reviewerEmpId);
+        // search log for reassign
+        List<EmployeeLog> SearchLogForReassign(bool searchByLogName, int moduleId, int statusId, string reviewerEmpId, string logName);
 
         List<Status> GetPendingStatuses(int moduleId);
 
