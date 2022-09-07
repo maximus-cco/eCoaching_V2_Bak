@@ -30,6 +30,17 @@ namespace eCLAdmin.Services
             List<Models.EmployeeLog.Type> types = new List<Models.EmployeeLog.Type>();
             List<Entitlement> entitlements = user.Entitlements;
 
+            // reassign - only return coaching
+            if (Constants.LOG_ACTION_REASSIGN.Equals(action))
+            {
+                Models.EmployeeLog.Type type = new Models.EmployeeLog.Type();
+                type.Id = (int)EmployeeLogType.Coaching;
+                type.Description = EmployeeLogType.Coaching.ToDescription();
+                types.Add(type);
+
+                return types;
+            }
+
             foreach (Entitlement entitlement in entitlements)
             {
                 if (Constants.LOG_ACTION_REACTIVATE.Equals(action))
