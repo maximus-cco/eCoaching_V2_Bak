@@ -224,7 +224,7 @@ namespace eCLAdmin.Controllers
                 searchByLogName = true;
             }
 
-            employeeLogs = employeeLogService.SearchLog(searchByLogName, module, logType, employee, logName, Constants.LOG_ACTION_REACTIVATE, GetUserFromSession().LanId);
+            employeeLogs = employeeLogService.SearchLog(searchByLogName, module, (int)Session["LogType"], employee, logName, Constants.LOG_ACTION_REACTIVATE, GetUserFromSession().LanId);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 
