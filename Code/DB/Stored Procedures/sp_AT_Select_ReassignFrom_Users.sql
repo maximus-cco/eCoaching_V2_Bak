@@ -1,21 +1,9 @@
 
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_AT_Select_ReassignFrom_Users' 
-)
-   DROP PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users]
-GO
-
-
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -32,6 +20,7 @@ GO
 -- Modified during changes to QN Workflow. TFS 22187 - 09/20/2021
 -- Modified to support cross site access for Virtual East Managers. TFS 23378 - 10/29/2021 
 -- Modified to remove uncommented debug stm. TFS 23919 - 01/26/2022
+-- Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users] 
 @strRequesterin nvarchar(30), @intModuleIdin INT, @intStatusIdin INT
@@ -45,22 +34,25 @@ DECLARE
 @strATAdminUser nvarchar(10),
 @strConditionalSelect nvarchar(100),
 @strConditionalSite nvarchar(100),
+@strConditionalStatus nvarchar(100),
 @strConditionalRestrict nvarchar(100),
 @dtmDate datetime,
-@NewLineChar nvarchar(2)
+@NewLineChar nvarchar(2);
 
 
 OPEN SYMMETRIC KEY [CoachingKey]  
-DECRYPTION BY CERTIFICATE [CoachingCert]
+DECRYPTION BY CERTIFICATE [CoachingCert];
 
-SET @dtmDate  = GETDATE()   
-SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate)
-SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@nvcRequesterID)
-SET @strATAdminUser = EC.fn_strCheckIfATSysAdmin(@nvcRequesterID) 
-SET @NewLineChar = CHAR(13) + CHAR(10)
+SET @dtmDate  = GETDATE();   
+SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate);
+SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@nvcRequesterID);
+SET @strATAdminUser = EC.fn_strCheckIfATSysAdmin(@nvcRequesterID) ;
+SET @NewLineChar = CHAR(13) + CHAR(10);
 
-IF ((@intStatusIdin IN (6,8,10,11,12) AND @intModuleIdin NOT in (-1,2))
-OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
+-- Determine whether to fetch Supervisor or Manager depending on Status and Module combination
+
+IF ((@intStatusIdin IN (6,8,10,11,12,-2) AND @intModuleIdin NOT IN (-1,2))
+OR (@intStatusIdin IN (-2,5) AND @intModuleIdin = 2))
 
 BEGIN
 SET @strConditionalSelect = N'SELECT DISTINCT eh.SUP_ID UserID, veh.SUP_Name UserName '
@@ -75,6 +67,23 @@ BEGIN
 SET @strConditionalSelect = N'SELECT DISTINCT eh.MGR_ID UserID, veh.MGR_Name UserName '
 SET @strConditionalRestrict = N' AND eh.MGR_ID <> '''+@nvcRequesterID+''''
 END
+
+-- Check for a specific Status or All possible Statuses dpending on Sttaus param passed. 
+-- StatusID param value of -2 indicates All
+
+SET @strConditionalStatus = '';
+IF @intStatusIdin = -2
+BEGIN
+SET @strConditionalStatus = N'AND cl.StatusId IN (5,6,7,8,10,11,12) '
+END
+
+ELSE 
+BEGIN
+SET @strConditionalStatus = N'AND cl.StatusId = '''+CONVERT(NVARCHAR,@intStatusIdin)+''' '
+END
+
+-- For non Admins limit records to user site.
+-- Site restiction does not apply to Admins.
 		
 SET @strConditionalSite = ' '
 IF @strATAdminUser <> 'YES'
@@ -83,19 +92,23 @@ BEGIN
 	SET @strConditionalSite = N'AND (cl.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+''' OR eh.Mgr_ID = '''+@nvcRequesterID+''' )'
 END			 
 
--- Non reassigned and Non LCS eCLs
+-- Final results are the combined results from these 3 data sets.
+
+-- 1. Non reassigned and Non LCS eCLs
 -- UNION
--- Reassigned ecls
+-- 2. Reassigned ecls
 -- UNION
--- Non reassigned LCS ecls
+-- 3. Non reassigned LCS ecls
+
+
 
 SET @nvcSQL = @strConditionalSelect +
 'FROM [EC].[View_Employee_Hierarchy] veh JOIN [EC].[Employee_Hierarchy] eh
 ON veh.Emp_ID = eh.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.EmpID = eh.Emp_ID 
-WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
-AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
-AND CL.ReassignCount = 0
+WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+''' ' +  @NewLineChar 
++ @strConditionalStatus +  @NewLineChar 
++ ' AND CL.ReassignCount = 0
 AND NOT (CL.statusid = 5 AND ISNULL(CL.strReportCode,'' '') like ''LCS%'') '  +  @NewLineChar 
 + @strConditionalSite  +  @NewLineChar 
 + @strConditionalRestrict  +  @NewLineChar 
@@ -104,15 +117,14 @@ AND eh.Active NOT IN  (''T'',''D'')
 
 UNION 
 
-
 SELECT DISTINCT rm.Emp_ID UserID, vrm.Emp_Name UserName
 FROM [EC].[View_Employee_Hierarchy]vrm JOIN [EC].[Employee_Hierarchy] rm 
 ON vrm.Emp_ID = rm.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.ReassignedToID = rm.Emp_ID JOIN [EC].[Employee_Hierarchy] eh
 ON eh.Emp_ID = cl.EmpID
-WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
-AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
-AND cl.ReassignedToID is not NULL 
+WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+''' ' +  @NewLineChar 
++ @strConditionalStatus +  @NewLineChar 
++ ' AND cl.ReassignedToID is not NULL 
 AND (cl.ReassignCount < 2 and cl.ReassignCount <> 0)
 AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')' +  @NewLineChar 
 + @strConditionalSite +  @NewLineChar 
@@ -126,9 +138,9 @@ FROM [EC].[View_Employee_Hierarchy]vrm JOIN [EC].[Employee_Hierarchy] rm
 ON vrm.Emp_ID = rm.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.MgrID = rm.Emp_ID JOIN [EC].[Employee_Hierarchy] eh
 ON eh.Emp_ID = cl.EmpID
-WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
-AND cl.StatusId= '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
-AND cl.MgrID is not NULL
+WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+''' ' +  @NewLineChar 
++ @strConditionalStatus +  @NewLineChar 
++ ' AND cl.MgrID is not NULL
 AND cl.strReportCode like ''LCS%''
 AND CL.ReassignCount = 0
 AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')' +  @NewLineChar 
@@ -143,6 +155,5 @@ CLOSE SYMMETRIC KEY [CoachingKey]
 
 End --sp_AT_Select_ReassignFrom_Users
 GO
-
 
 

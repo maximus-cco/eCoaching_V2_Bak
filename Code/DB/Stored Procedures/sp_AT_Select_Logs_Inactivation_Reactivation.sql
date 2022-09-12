@@ -1,35 +1,10 @@
-/*
-sp_AT_Select_Logs_Inactivation_Reactivation(05).sql
-Last Modified Date: 10/23/2017
-Last Modified By: Susmitha Palacherla
-
-Version 05: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
-Version 04: additional changes per requirements update.
-Remove 3 month restriction for warning logs - TFS 7152 -  7/12/2017
-
-Version 03: additional changes per requirements update.
-Allow for Inactivation of completed logs from admin tool - TFS 7152 -  7/7/2017
-
-Version 02: Allow for Inactivation of completed logs from admin tool - TFS 7152 - 6/30/2017
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_AT_Select_Logs_Inactivation_Reactivation' 
-)
-   DROP PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation]
-GO
 
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -42,21 +17,29 @@ GO
 --  Initial Revision. Admin tool setup, TFS 1709- 4/2/12016
 --  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 06/30/2017
 --  Modified to support Encryption of sensitive data - Open key and use employee View for emp attributes. TFS 7856 - 10/23/2017
+--  Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
-@strRequesterLanId nvarchar(30),@strTypein nvarchar(10)= NULL, @strActionin nvarchar(10), @strEmployeein nvarchar(10),  @intModuleIdin INT
+@strRequesterLanId nvarchar(30),
+@strTypein nvarchar(10) = NULL, 
+@strActionin nvarchar(10), 
+@strEmployeein nvarchar(10) = NULL,
+@intModuleIdin INT = NULL, 
+@strFormName nvarchar(50) = NULL
+
 AS
 
 BEGIN
 DECLARE	
 @nvcTableName nvarchar(500),
-@nvcWhere nvarchar(200),
+@nvcWhere nvarchar(300),
 @strRequesterID nvarchar(10),
 @strATCoachAdminUser nvarchar(10),
 @dtmDate datetime,
-@nvcSQL nvarchar(max),
-@strID nvarchar(30)
+@strID nvarchar(30),
+@nvcSQL nvarchar(max)
+
 
 
 OPEN SYMMETRIC KEY [CoachingKey]  
@@ -121,6 +104,20 @@ ELSE
 IF @strTypein = N'Warning' AND @strActionin = 'Inactivate'
 SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 
+-- If Formane is not passed, then apply other Filters
+-- If Formname is passed then Filter for that Form name only
+
+IF COALESCE(@strFormName,'') = ''
+BEGIN
+SET @nvcWhere = @nvcWhere  + ' AND [Fact].EmpID =  ''' + @strEmployeein  + '''
+                               AND [Fact].[ModuleId] = ''' + CONVERT(nvarchar,@intModuleIdin) + '''' 
+END
+
+ELSE
+
+BEGIN
+SET @nvcWhere = @nvcWhere  + ' AND [Fact].[Formname] = ''' + @strFormName   + ''''
+END
 
  SET @nvcSQL = 'SELECT DISTINCT '+@strID+' 
         fact.FormName strFormName,
@@ -140,9 +137,7 @@ SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 	 ON [Fact].[SubmitterID] = [sh].[Emp_ID] JOIN [EC].[DIM_Status] s
 	 ON [Fact].[StatusID] = [s].[StatusID] '+
  @nvcWhere +
- 'AND EmpID = '''+@strEmployeein+'''
-  AND [Fact].[ModuleId] = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
-  ORDER BY Fact.FormName DESC'
+ ' ORDER BY Fact.FormName DESC'
 
 
 --Print @nvcSQL
@@ -153,3 +148,5 @@ END --sp_AT_Select_Logs_Inactivation_Reactivation
 
 
 GO
+
+

@@ -1,13 +1,3 @@
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_AT_Select_Logs_Reassign' 
-)
-   DROP PROCEDURE [EC].[sp_AT_Select_Logs_Reassign]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -27,33 +17,82 @@ GO
 --  Modified to support Encryption of sensitive data (Open key and use employee View for emp attributes. TFS 7856 - 10/23/2017
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- Modified during changes to QN Workflow. TFS 22187 - 09/20/2021
+-- Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Logs_Reassign] 
-@istrOwnerin nvarchar(10), @intStatusIdin INT, @intModuleIdin INT
+@strTypein nvarchar(10) = NULL,
+@istrOwnerin nvarchar(10) = NULL,
+@intStatusIdin INT = NULL, 
+@intModuleIdin INT = NULL,
+@strFormName nvarchar(50) = NULL
+
 AS
 
 BEGIN
 DECLARE	
 @strConditionalWhere nvarchar(100),
-@nvcSQL nvarchar(max)
+@nvcSQL nvarchar(max),
+@nvcConditionalStatus nvarchar(100);
+
 
 OPEN SYMMETRIC KEY [CoachingKey]  
-DECRYPTION BY CERTIFICATE [CoachingCert]
+DECRYPTION BY CERTIFICATE [CoachingCert];
 
+IF COALESCE(@strFormName,'') <> '' 
+BEGIN
 
-IF ((@intStatusIdin IN (6,8,10,11,12) AND @intModuleIdin IN (1,3,4,5))
-OR (@intStatusIdin = 5 AND @intModuleIdin = 2))
+SET @nvcSQL = 'SELECT cfact.CoachingID,  
+        cfact.FormName strFormName,
+		veh.Emp_Name	strEmpName,
+		veh.Sup_Name	strSupName,
+	    CASE
+		 WHEN cfact.[strReportCode] like ''LCS%'' AND cfact.[MgrID] <> eh.[Mgr_ID]
+		 THEN [EC].[fn_strEmpNameFromEmpID](cfact.[MgrID])+ '' (Assigned Reviewer)''
+		 ELSE veh.Mgr_Name END strMgrName,
+		 sh.Emp_Name strSubmitter,
+		s.Status,
+		cfact.SubmittedDate strCreatedDate 
+     FROM [EC].[Coaching_Log]cfact WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh
+	 ON [cfact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[View_Employee_Hierarchy] veh
+     ON VEH.Emp_ID = Eh.Emp_ID JOIN [EC].[View_Employee_Hierarchy] sh
+	 ON [cfact].[SubmitterID] = [sh].[Emp_ID]JOIN [EC].[DIM_Status] s
+	 ON [cfact].[StatusID] = [s].[StatusID]
+	 
+	WHERE eh.Active NOT IN  (''T'',''D'') 
+	AND cfact.ReassignCount < 2
+	AND	cfact.StatusID IN (5,6,7,8,10,11,12)
+	AND cfact.[Formname] = ''' + @strFormName + '''';
+END
+
+IF COALESCE(@strFormName,'') = '' AND @intStatusIdin  IS NOT NULL AND @intModuleIdin IS NOT NULL 
+BEGIN
+
+IF ((@intStatusIdin IN (6,8,10,11,12,-2) AND @intModuleIdin IN (1,3,4,5))
+OR (@intStatusIdin in (5, -2) AND @intModuleIdin = 2))
 
 BEGIN
 SET @strConditionalWhere = ' WHERE EH.Sup_ID = '''+@istrOwnerin+''' '
 END
 
 ELSE IF 
-((@intStatusIdin = 5 AND @intModuleIdin IN (1,3,4,5))
-OR (@intStatusIdin = 7 AND @intModuleIdin = 2))
+((@intStatusIdin in (5, -2) AND @intModuleIdin IN (1,3,4,5))
+OR (@intStatusIdin in (7,-2)AND @intModuleIdin = 2))
 
 BEGIN
 SET @strConditionalWhere = ' WHERE EH.Mgr_ID = '''+@istrOwnerin+''' '
+END
+
+--print @strConditionalWhere 
+
+
+IF @intStatusIdin  = -2 -- All Statuses
+BEGIN
+SET @nvcConditionalStatus = ' AND cfact.StatusId IN (5,6,7,8,10,11,12) '
+END
+
+ELSE 
+BEGIN
+SET @nvcConditionalStatus = ' AND cfact.StatusId = '''+CONVERT(NVARCHAR,@intStatusIdin)+''''
 END
 
 -- Check for 3 scenarios
@@ -108,10 +147,13 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 	 ON [cfact].[SubmitterID] = [sh].[Emp_ID]JOIN [EC].[DIM_Status] s
 	 ON [cfact].[StatusID] = [s].[StatusID]
 	 
-	WHERE cfact.StatusId = '''+CONVERT(NVARCHAR,@intStatusIdin)+'''
-	AND cfact.Moduleid = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
+	WHERE 1 = 1 '
+	+ @nvcConditionalStatus +
+	' AND cfact.Moduleid = '''+CONVERT(NVARCHAR,@intModuleIdin)+'''
   	AND eh.Active NOT IN  (''T'',''D'') 
-   ORDER BY cfact.FormName DESC'
+   ORDER BY cfact.FormName DESC';
+
+END
    
 --Print @nvcSQL
 
@@ -119,5 +161,6 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Logs_Reassign
 GO
+
 
 
