@@ -1,8 +1,11 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -29,15 +32,11 @@ DECLARE
 @nvcRequesterID nvarchar(10),
 @intRequesterSiteID int,
 @intFromUserSiteID int,
-@strConditionalSelect nvarchar(100),
-@strConditionalRestrict nvarchar(100),
 @strConditionalStatus nvarchar(100),
 @dtmDate datetime,
 @NewLineChar nvarchar(2)
-
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert]
-
 
 
 SET @dtmDate  = GETDATE()   
@@ -45,27 +44,6 @@ SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate)
 SET @intFromUserSiteID = EC.fn_intSiteIDFromEmpID(@strFromUserIdin)
 SET @NewLineChar = CHAR(13) + CHAR(10)
 
--- Determine whether to fetch Supervisor or Manager depending on Status and Module combination
-
-IF ((@intStatusIdin IN (6,8,10,11,12,-2) AND @intModuleIdin NOT IN (-1,2))
-OR (@intStatusIdin IN (-2,5) AND @intModuleIdin = 2))
-
-BEGIN
-SET @strConditionalSelect = N'SELECT DISTINCT eh.SUP_ID UserID, veh.SUP_Name UserName '
-SET @strConditionalRestrict = N'AND eh.SUP_ID <> '''+@nvcRequesterID+''' AND eh.SUP_ID <> '''+@strFromUserIdin+''' ' 
-END
-
-ELSE IF 
-((@intStatusIdin = 5 AND @intModuleIdin NOT in (-1,2))
-OR (@intStatusIdin = 7 AND @intModuleIdin = 2))
-
-BEGIN
-SET @strConditionalSelect = N'SELECT DISTINCT eh.MGR_ID UserID, veh.MGR_Name UserName '
-SET @strConditionalRestrict = N' AND eh.MGR_ID <> '''+@nvcRequesterID+'''AND eh.MGR_ID <> '''+@strFromUserIdin+''''
-END
-
--- Check for a specific Status or All possible Statuses dpending on Status param passed. 
--- StatusID param value of -2 indicates All
 
 SET @strConditionalStatus = '';
 IF @intStatusIdin = -2
@@ -81,18 +59,33 @@ SET @strConditionalStatus = N'AND cl.StatusId = '''+CONVERT(NVARCHAR,@intStatusI
 END
 
 
-SET @nvcSQL = @strConditionalSelect +
-'FROM [EC].[View_Employee_Hierarchy] veh JOIN [EC].[Employee_Hierarchy] eh
+SET @nvcSQL = N'SELECT DISTINCT eh.SUP_ID UserID, veh.SUP_Name UserName
+FROM [EC].[View_Employee_Hierarchy] veh JOIN [EC].[Employee_Hierarchy] eh
 ON veh.Emp_ID = eh.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.EmpID = eh.Emp_ID 
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+''' ' +  @NewLineChar 
 + @strConditionalStatus +  @NewLineChar 
-+ ' AND (cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+''' OR eh.Mgr_ID = '''+@nvcRequesterID+''' ) ' +  @NewLineChar 
-+ @strConditionalRestrict  +  @NewLineChar 
-+ ' AND (veh.Sup_Name is NOT NULL AND veh.Mgr_Name is NOT NULL)
++' AND ((cl.ModuleID <> 2 AND cl.StatusId IN (6,8,10,11,12)) OR (cl.ModuleID = 2 AND cl.StatusId = 5))
+ AND (cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+''' OR eh.Mgr_ID = '''+@nvcRequesterID+''' ) 
+AND eh.SUP_ID <> '''+@nvcRequesterID+''' AND eh.SUP_ID <> '''+@strFromUserIdin+'''
+AND veh.Sup_Name is NOT NULL 
 AND eh.Active NOT IN (''T'',''D'')
-Order By UserName'
-		 
+
+
+UNION
+
+SELECT DISTINCT eh.MGR_ID UserID, veh.MGR_Name UserName
+FROM [EC].[View_Employee_Hierarchy] veh JOIN [EC].[Employee_Hierarchy] eh
+ON veh.Emp_ID = eh.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
+ON cl.EmpID = eh.Emp_ID 
+WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+''' ' +  @NewLineChar 
++ @strConditionalStatus +  @NewLineChar 
++' AND ((cl.ModuleID <> 2 AND cl.StatusId = 5) OR (cl.ModuleID = 2 AND cl.StatusId = 7))
+ AND (cl.SiteID = '''+CONVERT(NVARCHAR,@intFromUserSiteID)+''' OR eh.Mgr_ID = '''+@nvcRequesterID+''' ) 
+AND eh.MGR_ID <> '''+@nvcRequesterID+''' AND eh.MGR_ID <> '''+@strFromUserIdin+'''
+AND  veh.Mgr_Name is NOT NULL
+AND eh.Active NOT IN (''T'',''D'')
+Order By UserName' 
 
 --PRINT @nvcSQL		
 EXEC (@nvcSQL)
