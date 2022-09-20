@@ -121,7 +121,7 @@ namespace eCLAdmin.Repository
             return employees;
         }
 
-        public List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer)
+        public List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer, string logName)
         {
             var employees = new List<Employee>();
 
@@ -134,6 +134,7 @@ namespace eCLAdmin.Repository
                 command.Parameters.AddWithValue("@intModuleIdin", moduleId);
                 command.Parameters.AddWithValue("@intStatusIdin", logStatusId);
                 command.Parameters.AddWithValue("@strFromUserIdin", originalReviewer);
+                command.Parameters.AddWithValue("@strFormName", logName);
 
                 connection.Open();
 

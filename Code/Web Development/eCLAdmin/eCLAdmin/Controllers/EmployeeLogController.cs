@@ -129,6 +129,7 @@ namespace eCLAdmin.Controllers
 
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
             var searchByLogName = false;
+            Session["SearchBy"] = searchOption;
 
             if ("default" == searchOption)
             {
@@ -136,10 +137,13 @@ namespace eCLAdmin.Controllers
                 Session["ModuleId"] = module;
                 Session["LogStatus"] = employeeLogStatus;
                 Session["OriginalReviewer"] = reviewer;
+                Session["LogName"] = null;
             }
             else
             {
+                Session["ModuleId"] = module;
                 Session["LogType"] = logTypeSearchByLogName;
+                Session["LogName"] = logName;
                 searchByLogName = true;
             }
 
@@ -383,10 +387,20 @@ namespace eCLAdmin.Controllers
 
             // Load assignTo list
             string userLanId = GetUserFromSession().LanId;
-            string originalReviewer = (string)Session["OriginalReviewer"];
-            int moduleId = (int)Session["ModuleId"];
-            int logStatusId = (int)Session["LogStatus"];
-            List<Employee> assignToList = employeeService.GetAssignToList(userLanId, moduleId, logStatusId, originalReviewer);
+            string searchBy = (string)Session["SearchBy"];
+            int moduleId = -1; 
+            int logStatusId = -2;
+            string originalReviewer = null;
+            string logName = (string)Session["LogName"];
+
+            if ("default" == searchBy)
+            {
+                originalReviewer = (string)Session["OriginalReviewer"];
+                logStatusId = (int)Session["LogStatus"];
+                moduleId = (int)Session["ModuleId"];
+            }
+
+            List<Employee> assignToList = employeeService.GetAssignToList(userLanId, moduleId, logStatusId, originalReviewer, logName);
             assignToList.Insert(0, new Employee { Id = "-1", Name = "Please select a person" });
             IEnumerable<SelectListItem> employees = new SelectList(assignToList, "Id", "Name");
             ViewBag.AssignTo = employees;

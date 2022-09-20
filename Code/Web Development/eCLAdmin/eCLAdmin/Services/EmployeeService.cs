@@ -28,9 +28,9 @@ namespace eCLAdmin.Services
             return employeeRepository.GetPendingReviewers(userLanId, moduleId, logStatusId);
         }
 
-        public List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer)
+        public List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer, string logName)
         {
-            return employeeRepository.GetAssignToList(userLanId, moduleId, logStatusId, originalReviewer);
+            return employeeRepository.GetAssignToList(userLanId, moduleId, logStatusId, originalReviewer, logName);
         }
     }
 }

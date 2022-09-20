@@ -109,7 +109,7 @@ namespace eCLAdmin.Services
             if (searchByLogName)
             {
                 moduleId = -1;
-                statusId = -1;
+                statusId = -2;
                 reviewerEmpId = null;
             }
             else

@@ -11,6 +11,6 @@ namespace eCLAdmin.Services
 
         List<Employee> GetPendingReviewers(string userLanId, int moduleId, int logStatusId);
 
-        List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer);
+        List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer, string logName);
     }
 }
