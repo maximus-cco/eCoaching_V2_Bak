@@ -21,7 +21,7 @@ namespace eCLAdmin.Repository
             using (SqlCommand command = new SqlCommand(query, connection))
             {
 				command.CommandType = System.Data.CommandType.StoredProcedure;
-				command.Parameters.AddWithValue("employeeId", employeeId);
+				command.Parameters.AddWithValue("@EmployeeId", employeeId);
                 connection.Open();
                 using (SqlDataReader dataReader = command.ExecuteReader())
                 {

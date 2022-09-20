@@ -131,19 +131,23 @@ namespace eCLAdmin.Controllers
             var searchByLogName = false;
             Session["SearchBy"] = searchOption;
 
+            // Save for later use in Reassignment
             if ("default" == searchOption)
             {
-                // Save for later use in Reassignment
                 Session["ModuleId"] = module;
                 Session["LogStatus"] = employeeLogStatus;
                 Session["OriginalReviewer"] = reviewer;
+                Session["LogType"] = 1;              // coaching log only for reassign
                 Session["LogName"] = null;
             }
             else
             {
-                Session["ModuleId"] = module;
-                Session["LogType"] = logTypeSearchByLogName;
-                Session["LogName"] = logName;
+                Session["ModuleId"] = -1;             // all modules
+                Session["LogStatus"] = -2;            // all status
+                Session["OriginalReviewer"] = null;   // no original reviewer on page selected
+                Session["LogType"] = 1;               // coaching log only for reassign
+                Session["LogName"] = logName;         // log name entered on page
+
                 searchByLogName = true;
             }
 
@@ -184,7 +188,7 @@ namespace eCLAdmin.Controllers
 				}
 				catch (Exception ex)
 				{
-					logger.Warn(string.Format("Failed to send email: {0}, {1}", ex.InnerException.Message, ex.StackTrace));
+					logger.Warn(string.Format("Failed to send email: {0}, {1}", ex.Message, ex.StackTrace));
 				}
 			}
 
@@ -387,18 +391,10 @@ namespace eCLAdmin.Controllers
 
             // Load assignTo list
             string userLanId = GetUserFromSession().LanId;
-            string searchBy = (string)Session["SearchBy"];
-            int moduleId = -1; 
-            int logStatusId = -2;
-            string originalReviewer = null;
+            int moduleId = (int)Session["ModuleId"]; 
+            int logStatusId = (int)Session["LogStatus"];
+            string originalReviewer = (string)Session["OriginalReviewer"];
             string logName = (string)Session["LogName"];
-
-            if ("default" == searchBy)
-            {
-                originalReviewer = (string)Session["OriginalReviewer"];
-                logStatusId = (int)Session["LogStatus"];
-                moduleId = (int)Session["ModuleId"];
-            }
 
             List<Employee> assignToList = employeeService.GetAssignToList(userLanId, moduleId, logStatusId, originalReviewer, logName);
             assignToList.Insert(0, new Employee { Id = "-1", Name = "Please select a person" });
