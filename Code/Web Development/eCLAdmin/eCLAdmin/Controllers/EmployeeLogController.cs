@@ -132,7 +132,7 @@ namespace eCLAdmin.Controllers
             Session["SearchBy"] = searchOption;
 
             // Save for later use in Reassignment
-            if ("default" == searchOption)
+            if ("default" == searchOption) // search by module, log status, and reviewer
             {
                 Session["ModuleId"] = module;
                 Session["LogStatus"] = employeeLogStatus;
@@ -140,7 +140,7 @@ namespace eCLAdmin.Controllers
                 Session["LogType"] = 1;              // coaching log only for reassign
                 Session["LogName"] = null;
             }
-            else
+            else // search by log name only
             {
                 Session["ModuleId"] = -1;             // all modules
                 Session["LogStatus"] = -2;            // all status
@@ -151,8 +151,16 @@ namespace eCLAdmin.Controllers
                 searchByLogName = true;
             }
 
-            List<EmployeeLog> EmployeeLogs = employeeLogService.SearchLogForReassign(searchByLogName, module, employeeLogStatus, reviewer, logName);
-            return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(EmployeeLogs));
+            employeeLogs = employeeLogService.SearchLogForReassign(searchByLogName, module, employeeLogStatus, reviewer, logName);
+            // Search by Log Name - a messy way to get the orginal reviewer email, and employee id
+            if (searchByLogName && employeeLogs.Count > 0) // max return one log, because log name is unique
+            {
+                var log = employeeLogs[0];
+                Session["OriginalReviewer"] = log.ReviewerId;
+                Session["OriginalReviewerEmail"] = log.ReviewerEmail;
+            }
+
+            return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 
 		[HttpPost]
@@ -179,9 +187,18 @@ namespace eCLAdmin.Controllers
 				{
 					// Send email
 					Employee reviewer = employeeService.GetEmployee(assignTo);
-					Employee originalReviewer = employeeService.GetEmployee((string)Session["OriginalReviewer"]);
+                    Employee originalReviewer = null;
+                    var originalReviewerEmail = (string)Session["OriginalReviewerEmail"];
+
+                    if (string.IsNullOrEmpty(originalReviewerEmail))
+                    {
+                        // get email from database
+                        originalReviewer = employeeService.GetEmployee((string)Session["OriginalReviewer"]);
+                        originalReviewerEmail = originalReviewer.Email;
+                    }
+
 					List<string> to = new List<string> { reviewer.Email };
-					List<string> cc = new List<string> { originalReviewer.Email };
+					List<string> cc = new List<string> { originalReviewerEmail };
 					SendEmail(EmailType.Reassignment, to, cc, model.GetSelectedLogNames());
 
 					emailSent = true;

@@ -31,5 +31,8 @@ namespace eCLAdmin.Models.EmployeeLog
         public string Value { get; set; }
 
         public bool IsCoaching { get; set; }
+
+        public string ReviewerId { get; set; }
+        public string ReviewerEmail { get; set; }
     }
 }

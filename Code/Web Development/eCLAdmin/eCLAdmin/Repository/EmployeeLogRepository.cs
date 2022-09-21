@@ -197,6 +197,8 @@ namespace eCLAdmin.Repository
                         cl.Status = dataReader["Status"].ToString();
                         //cl.StatusId = (int)dataReader["StatusID"];
                         cl.CreatedDate = dataReader["strCreatedDate"].ToString();
+                        cl.ReviewerId = dataReader["strReassignFrom"].ToString();
+                        cl.ReviewerEmail = dataReader["strReassignFromEmail"].ToString();
 
                         employeeLogs.Add(cl);
                     }
