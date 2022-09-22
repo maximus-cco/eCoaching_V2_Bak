@@ -1,9 +1,9 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -38,8 +38,22 @@ DECLARE
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert];
 
+-- Lookup the Module and Status, and Reassigned From when searched by Formname
+
 IF COALESCE(@strFormName,'') <> '' 
 BEGIN
+
+SET @intModuleIdin = (SELECT ModuleID from EC.Coaching_log WHERE FormName = @strFormName);
+SET @intStatusIdin = (SELECT StatusID from EC.Coaching_log WHERE FormName = @strFormName);
+
+SET @istrOwnerin = (SELECT CASE 
+WHEN cl.ReassignCount = 1 and ISNULL(cl.ReassignedToID, '') <> '' THEN cl.ReassignedToID
+WHEN cl.strReportCode like 'LCS%' AND cl.ReassignCount = 0 THEN cl.MgrID
+WHEN (cl.ModuleID <> 2 AND cl.StatusId IN (6,8,10,11,12)) OR (cl.ModuleID = 2 AND cl.StatusId = 5) AND cl.ReassignCount = 0 THEN eh.Sup_ID
+WHEN (cl.ModuleID <> 2 AND cl.StatusId = 5) OR (cl.ModuleID = 2 AND cl.StatusId = 7) AND cl.ReassignCount = 0 THEN eh.Mgr_ID END 
+FROM EC.Coaching_Log cl  INNER JOIN EC.Employee_Hierarchy eh
+ON cl.EmpID = eh.Emp_ID
+WHERE cl.Formname = @strFormName);
 
 SET @nvcSQL = 'SELECT cfact.CoachingID,  
         cfact.FormName strFormName,
@@ -51,7 +65,10 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 		 ELSE veh.Mgr_Name END strMgrName,
 		 sh.Emp_Name strSubmitter,
 		s.Status,
-		cfact.SubmittedDate strCreatedDate 
+		cfact.SubmittedDate strCreatedDate,
+		''' + @istrOwnerin + ''' strReassignFrom,
+		[EC].[fn_strEmpEmailFromEmpID](''' + @istrOwnerin + ''') strReassignFromEmail
+		
      FROM [EC].[Coaching_Log]cfact WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh
 	 ON [cfact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[View_Employee_Hierarchy] veh
      ON VEH.Emp_ID = Eh.Emp_ID JOIN [EC].[View_Employee_Hierarchy] sh
@@ -110,7 +127,9 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 		 ELSE veh.Mgr_Name END strMgrName,
 		 sh.Emp_Name strSubmitter,
 		s.Status,
-		cfact.SubmittedDate strCreatedDate 
+		cfact.SubmittedDate strCreatedDate,
+	   ''' + @istrOwnerin + ''' strReassignFrom,
+		[EC].[fn_strEmpEmailFromEmpID](''' + @istrOwnerin + ''') strReassignFromEmail
      FROM [EC].[Coaching_Log]cfact WITH(NOLOCK) JOIN 
      
      (SELECT fact.CoachingID
@@ -161,6 +180,5 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Logs_Reassign
 GO
-
 
 

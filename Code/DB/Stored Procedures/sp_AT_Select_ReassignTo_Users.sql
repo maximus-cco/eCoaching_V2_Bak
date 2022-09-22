@@ -6,7 +6,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/28/2016
@@ -23,27 +22,41 @@ GO
 -- Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_ReassignTo_Users] 
-@strRequesterin nvarchar(30),@strFromUserIdin nvarchar(10), @intModuleIdin INT, @intStatusIdin INT
+@strFormName nvarchar(50) = NULL,
+@strRequesterin nvarchar(30),
+@strFromUserIdin nvarchar(10)= NULL, 
+@intModuleIdin INT,
+@intStatusIdin INT
+
 AS
 
 BEGIN
 DECLARE	
 @nvcSQL nvarchar(max),
 @nvcRequesterID nvarchar(10),
-@intRequesterSiteID int,
 @intFromUserSiteID int,
 @strConditionalStatus nvarchar(100),
 @dtmDate datetime,
-@NewLineChar nvarchar(2)
+@NewLineChar nvarchar(2);
+
 OPEN SYMMETRIC KEY [CoachingKey]  
-DECRYPTION BY CERTIFICATE [CoachingCert]
+DECRYPTION BY CERTIFICATE [CoachingCert];
 
 
-SET @dtmDate  = GETDATE()   
-SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate)
-SET @intFromUserSiteID = EC.fn_intSiteIDFromEmpID(@strFromUserIdin)
-SET @NewLineChar = CHAR(13) + CHAR(10)
+SET @dtmDate  = GETDATE();   
+SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate);
+SET @intFromUserSiteID = EC.fn_intSiteIDFromEmpID(@strFromUserIdin);
+SET @NewLineChar = CHAR(13) + CHAR(10);
 
+-- Lookup the Module and Status when searched by Formname
+
+IF COALESCE(@strFormName,'') <> '' 
+BEGIN
+
+SET @intModuleIdin = (SELECT ModuleID from EC.Coaching_log WHERE FormName = @strFormName);
+SET @intStatusIdin = (SELECT StatusID from EC.Coaching_log WHERE FormName = @strFormName);
+
+END
 
 SET @strConditionalStatus = '';
 IF @intStatusIdin = -2
@@ -93,5 +106,4 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 End --sp_AT_Select_ReassignTo_Users
 GO
-
 
