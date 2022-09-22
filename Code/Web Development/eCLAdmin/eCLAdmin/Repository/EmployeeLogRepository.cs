@@ -205,6 +205,13 @@ namespace eCLAdmin.Repository
                 }
             }
 
+            if (logName != null && employeeLogs.Count > 0)
+            {
+                logger.Debug("@@@@@@@@logName=" + logName);
+                logger.Debug("@@@@@@@@originalId=" + employeeLogs[0].ReviewerId);
+                logger.Debug("@@@@@@@@originalEmail=" + employeeLogs[0].ReviewerEmail);
+            }
+
             return employeeLogs;
         }
 

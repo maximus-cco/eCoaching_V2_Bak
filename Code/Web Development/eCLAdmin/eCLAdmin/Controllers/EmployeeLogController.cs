@@ -137,6 +137,7 @@ namespace eCLAdmin.Controllers
                 Session["ModuleId"] = module;
                 Session["LogStatus"] = employeeLogStatus;
                 Session["OriginalReviewer"] = reviewer;
+                Session["OriginalReviewerEmail"] = null;
                 Session["LogType"] = 1;              // coaching log only for reassign
                 Session["LogName"] = null;
             }
@@ -158,6 +159,10 @@ namespace eCLAdmin.Controllers
                 var log = employeeLogs[0];
                 Session["OriginalReviewer"] = log.ReviewerId;
                 Session["OriginalReviewerEmail"] = log.ReviewerEmail;
+
+                logger.Debug("########### original=" + log.ReviewerId);
+                logger.Debug("########### original email=" + log.ReviewerEmail);
+                logger.Debug("########### logname=" + log.FormName);
             }
 
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
@@ -195,6 +200,7 @@ namespace eCLAdmin.Controllers
                         // get email from database
                         originalReviewer = employeeService.GetEmployee((string)Session["OriginalReviewer"]);
                         originalReviewerEmail = originalReviewer.Email;
+                        logger.Debug("^^^^^^^^^originalEmail=" + originalReviewerEmail);
                     }
 
 					List<string> to = new List<string> { reviewer.Email };
@@ -412,6 +418,8 @@ namespace eCLAdmin.Controllers
             int logStatusId = (int)Session["LogStatus"];
             string originalReviewer = (string)Session["OriginalReviewer"];
             string logName = (string)Session["LogName"];
+
+            logger.Debug("********** Current=" + originalReviewer + "************");
 
             List<Employee> assignToList = employeeService.GetAssignToList(userLanId, moduleId, logStatusId, originalReviewer, logName);
             assignToList.Insert(0, new Employee { Id = "-1", Name = "Please select a person" });
