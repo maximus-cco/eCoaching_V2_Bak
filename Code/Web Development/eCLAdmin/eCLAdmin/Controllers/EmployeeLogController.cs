@@ -129,40 +129,41 @@ namespace eCLAdmin.Controllers
 
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
             var searchByLogName = false;
-            Session["SearchBy"] = searchOption;
+            Session["SearchBy"] = searchOption;         // "default" or "logname"
 
             // Save for later use in Reassignment
-            if ("default" == searchOption) // search by module, log status, and reviewer
+            Session["LogType"] = 1;                     // coaching log only for reassign
+            if ("default" == searchOption)              // search by module, log status, and reviewer
             {
                 Session["ModuleId"] = module;
                 Session["LogStatus"] = employeeLogStatus;
-                Session["OriginalReviewer"] = reviewer;
-                Session["OriginalReviewerEmail"] = null;
-                Session["LogType"] = 1;              // coaching log only for reassign
-                Session["LogName"] = null;
+                Session["CurrentReviewerId"] = reviewer;
+                Session["LogName"] = null;              // no log name passed back
             }
-            else // search by log name only
+            else // search by log name 
             {
-                Session["ModuleId"] = -1;             // all modules
-                Session["LogStatus"] = -2;            // all status
-                Session["OriginalReviewer"] = null;   // no original reviewer on page selected
-                Session["LogType"] = 1;               // coaching log only for reassign
-                Session["LogName"] = logName;         // log name entered on page
+                Session["ModuleId"] = -1;               // all modules
+                Session["LogStatus"] = -2;              // all status
+                Session["CurrentReviewerId"] = null;    // no current reviewer info on page
+                Session["LogName"] = logName;           // log name entered on page
 
                 searchByLogName = true;
+                reviewer = null;                        // at this time, reviewer is unknown, so set to null                
             }
 
             employeeLogs = employeeLogService.SearchLogForReassign(searchByLogName, module, employeeLogStatus, reviewer, logName);
-            // Search by Log Name - a messy way to get the orginal reviewer email, and employee id
-            if (searchByLogName && employeeLogs.Count > 0) // max return one log, because log name is unique
+            
+            if (employeeLogs.Count > 0)
             {
                 var log = employeeLogs[0];
-                Session["OriginalReviewer"] = log.ReviewerId;
-                Session["OriginalReviewerEmail"] = log.ReviewerEmail;
-
-                logger.Debug("########### original=" + log.ReviewerId);
-                logger.Debug("########### original email=" + log.ReviewerEmail);
-                logger.Debug("########### logname=" + log.FormName);
+                // when not searching by log name, current reviewer id is passed back from the search page, so we can just use that id
+                // when searching by log name, get the current reviewer id from database (sp_AT_Select_Logs_Reassign - returns the log with the given log name, the returned log has the current reviewer info)
+                if (searchByLogName)
+                {
+                    Session["CurrentReviewerId"] = log.CurrentReviewerId;
+                }
+                // get Current Reviewer Name to be displayed on the reassign popup
+                Session["CurrentReviewerName"] = log.CurrentReviewerName;
             }
 
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
@@ -191,23 +192,25 @@ namespace eCLAdmin.Controllers
 				try
 				{
 					// Send email
-					Employee reviewer = employeeService.GetEmployee(assignTo);
-                    Employee originalReviewer = null;
-                    var originalReviewerEmail = (string)Session["OriginalReviewerEmail"];
+                    var currentReviewerEmailList = model.GetCurrentReviewerEmailList(); // Current reviewer email passed back from page
+                    var currentReviewerEmail = currentReviewerEmailList.Count > 0 ? currentReviewerEmailList[0] : null;
+                    currentReviewerEmail = null;
 
-                    if (string.IsNullOrEmpty(originalReviewerEmail))
+                    var reassignToReviewer = employeeService.GetEmployee(assignTo);     // new reviewer
+
+                    List<string> to = new List<string> { reassignToReviewer.Email };
+                    List<string> cc = null;
+                    if (!string.IsNullOrEmpty(currentReviewerEmail))
                     {
-                        // get email from database
-                        originalReviewer = employeeService.GetEmployee((string)Session["OriginalReviewer"]);
-                        originalReviewerEmail = originalReviewer.Email;
-                        logger.Debug("^^^^^^^^^originalEmail=" + originalReviewerEmail);
+                        new List<string> { currentReviewerEmail };
+                    }
+                    else
+                    {
+                        logger.Debug("********Orignial reviewer[" + (string)Session["CurrentReviewerName"] + "] email is not available.");
                     }
 
-					List<string> to = new List<string> { reviewer.Email };
-					List<string> cc = new List<string> { originalReviewerEmail };
 					SendEmail(EmailType.Reassignment, to, cc, model.GetSelectedLogNames());
-
-					emailSent = true;
+                    emailSent = true;
 				}
 				catch (Exception ex)
 				{
@@ -416,15 +419,17 @@ namespace eCLAdmin.Controllers
             string userLanId = GetUserFromSession().LanId;
             int moduleId = (int)Session["ModuleId"]; 
             int logStatusId = (int)Session["LogStatus"];
-            string originalReviewer = (string)Session["OriginalReviewer"];
+            string currentReviewerId = (string)Session["CurrentReviewerId"];
             string logName = (string)Session["LogName"];
 
-            logger.Debug("********** Current=" + originalReviewer + "************");
+            logger.Debug("********** Current=" + currentReviewerId + "************");
 
-            List<Employee> assignToList = employeeService.GetAssignToList(userLanId, moduleId, logStatusId, originalReviewer, logName);
+            List<Employee> assignToList = employeeService.GetAssignToList(userLanId, moduleId, logStatusId, currentReviewerId, logName);
             assignToList.Insert(0, new Employee { Id = "-1", Name = "Please select a person" });
             IEnumerable<SelectListItem> employees = new SelectList(assignToList, "Id", "Name");
             ViewBag.AssignTo = employees;
+            // display current reviewer name on reassign popup
+            ViewBag.CurrentReviewerName = (string)Session["CurrentReviewerName"];
 
             return PartialView("_ReassignPartial");
         }

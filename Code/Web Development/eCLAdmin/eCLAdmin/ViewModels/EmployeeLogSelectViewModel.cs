@@ -26,5 +26,12 @@ namespace eCLAdmin.ViewModels
         {
             return (from employeeLogs in this.EmployeeLogs where employeeLogs.Selected select employeeLogs).ToList();
         }
+
+        // reassigned from 
+        public List<string> GetCurrentReviewerEmailList()
+        {
+            return (from employeeLogs in this.EmployeeLogs where employeeLogs.Selected select employeeLogs.CurrentReviewerEmail).ToList();
+        }
+
     }
 }

@@ -197,19 +197,13 @@ namespace eCLAdmin.Repository
                         cl.Status = dataReader["Status"].ToString();
                         //cl.StatusId = (int)dataReader["StatusID"];
                         cl.CreatedDate = dataReader["strCreatedDate"].ToString();
-                        cl.ReviewerId = dataReader["strReassignFrom"].ToString();
-                        cl.ReviewerEmail = dataReader["strReassignFromEmail"].ToString();
+                        cl.CurrentReviewerId = dataReader["strReassignFrom"].ToString();
+                        cl.CurrentReviewerName = dataReader["strReassignFromName"].ToString(); 
+                        cl.CurrentReviewerEmail = dataReader["strReassignFromEmail"].ToString();
 
                         employeeLogs.Add(cl);
                     }
                 }
-            }
-
-            if (logName != null && employeeLogs.Count > 0)
-            {
-                logger.Debug("@@@@@@@@logName=" + logName);
-                logger.Debug("@@@@@@@@originalId=" + employeeLogs[0].ReviewerId);
-                logger.Debug("@@@@@@@@originalEmail=" + employeeLogs[0].ReviewerEmail);
             }
 
             return employeeLogs;

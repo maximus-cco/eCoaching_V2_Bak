@@ -16,6 +16,9 @@ namespace eCLAdmin.ViewModels
         public int PreviousStatusId { get; set; }
         public string CreatedDate { get; set; }
 
+        public string CurrentReviewerId { get; set; }
+        public string CurrentReviewerEmail { get; set; }
+
         public EmployeeLogSelectEditorViewModel()
         {
             Selected = false;
@@ -29,6 +32,9 @@ namespace eCLAdmin.ViewModels
             StatusId = -1;
             PreviousStatusId = -1;
             CreatedDate = null;
+
+            CurrentReviewerId = null;
+            CurrentReviewerEmail = null;
         }
 
         public EmployeeLogSelectEditorViewModel(EmployeeLog employeeLog)
@@ -43,6 +49,9 @@ namespace eCLAdmin.ViewModels
             StatusId = employeeLog.StatusId;
             PreviousStatusId = employeeLog.PreviousStatusId;
             CreatedDate = employeeLog.CreatedDate;
+
+            CurrentReviewerId = employeeLog.CurrentReviewerId;
+            CurrentReviewerEmail = employeeLog.CurrentReviewerEmail;
         }
     }
 }
