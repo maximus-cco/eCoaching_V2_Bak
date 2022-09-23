@@ -201,7 +201,7 @@ namespace eCLAdmin.Controllers
                     List<string> cc = null;
                     if (!string.IsNullOrEmpty(currentReviewerEmail))
                     {
-                        new List<string> { currentReviewerEmail };
+                        cc = new List<string> { currentReviewerEmail };
                     }
                     else
                     {
