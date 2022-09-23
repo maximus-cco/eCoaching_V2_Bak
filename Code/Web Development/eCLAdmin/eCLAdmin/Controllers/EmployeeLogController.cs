@@ -194,7 +194,6 @@ namespace eCLAdmin.Controllers
 					// Send email
                     var currentReviewerEmailList = model.GetCurrentReviewerEmailList(); // Current reviewer email passed back from page
                     var currentReviewerEmail = currentReviewerEmailList.Count > 0 ? currentReviewerEmailList[0] : null;
-                    currentReviewerEmail = null;
 
                     var reassignToReviewer = employeeService.GetEmployee(assignTo);     // new reviewer
 
