@@ -5,6 +5,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -67,6 +68,7 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 		s.Status,
 		cfact.SubmittedDate strCreatedDate,
 		''' + @istrOwnerin + ''' strReassignFrom,
+		[EC].[fn_strEmpNameFromEmpID](''' + @istrOwnerin + ''') strReassignFromName,
 		[EC].[fn_strEmpEmailFromEmpID](''' + @istrOwnerin + ''') strReassignFromEmail
 		
      FROM [EC].[Coaching_Log]cfact WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh
@@ -129,6 +131,7 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 		s.Status,
 		cfact.SubmittedDate strCreatedDate,
 	   ''' + @istrOwnerin + ''' strReassignFrom,
+	   [EC].[fn_strEmpNameFromEmpID](''' + @istrOwnerin + ''') strReassignFromName,
 		[EC].[fn_strEmpEmailFromEmpID](''' + @istrOwnerin + ''') strReassignFromEmail
      FROM [EC].[Coaching_Log]cfact WITH(NOLOCK) JOIN 
      
@@ -180,5 +183,4 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Logs_Reassign
 GO
-
 
