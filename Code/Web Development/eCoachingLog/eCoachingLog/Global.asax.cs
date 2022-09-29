@@ -40,6 +40,8 @@ namespace eCoachingLog
             container.Register<IUserService, UserService>(Lifestyle.Scoped);
             container.Register<ISiteService, SiteService>(Lifestyle.Scoped);
             container.Register<IProgramService, ProgramService>(Lifestyle.Scoped);
+            container.Register<IStaticDataService, StaticDataService>(Lifestyle.Scoped);
+
             container.Register<IProgramRepository, ProgramRepository>(Lifestyle.Scoped);
             container.Register<INewSubmissionService, NewSubmissionService>(Lifestyle.Scoped);
             container.Register<INewSubmissionRepository, NewSubmissionRepository>(Lifestyle.Scoped);
@@ -48,6 +50,7 @@ namespace eCoachingLog
 			container.Register<IReviewRepository, ReviewRepository>(Lifestyle.Scoped);
 			container.Register<IReviewService, ReviewService>(Lifestyle.Scoped);
             container.Register<IEmailRepository, EmailRepository>(Lifestyle.Scoped);
+            container.Register<IStaticDataRepository, StaticDataRepository>(Lifestyle.Scoped);
 
             // 3. Optionally verify the container's configuration
             container.Verify();
