@@ -1,18 +1,30 @@
-﻿using System.Web.Mvc;
+﻿using eCLAdmin.Services;
+using log4net;
+using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
 {
     public class HelpController : Controller
     {
+        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private readonly IStaticDataService staticDataService;
+
+        public HelpController(IStaticDataService staticDataService)
+        {
+            logger.Debug("Entered HelpController(IStaticDataService)");
+            this.staticDataService = staticDataService;
+        }
+
         // GET: Help
         public ActionResult Index()
         {
             return View();
         }
 
-		public ActionResult ReportIssue()
-		{
-			return Redirect(Constants.REPORT_ISSUE_URL);
-		}
+        public ActionResult SubmitTicket()
+        {
+            return Redirect(this.staticDataService.GetData("SubmitTicket")[0]);
+        }
     }
 }

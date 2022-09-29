@@ -6,9 +6,9 @@ namespace eCLAdmin
 	{
 		public const string MAINTENANCE_PAGE = "~/index.html";
 
-		public const string REPORT_ISSUE_URL = "https://maximus365.sharepoint.com/sites/CCO/Resources/eCoaching/QSS/SitePages/Issue%20Tracker.aspx";
+        public const string SUBMIT_TICKET_URL = "https://itservicedesk.maximus.com/CherwellPortal/IT?_=43e741d7#0";
 
-		public const int MODULE_UNKNOWN = -1;
+        public const int MODULE_UNKNOWN = -1;
 		public const int MODULE_CSR = 1;
 		public const int MODULE_SUPERVISOR = 2;
 		public const int MODULE_QUALITY = 3;

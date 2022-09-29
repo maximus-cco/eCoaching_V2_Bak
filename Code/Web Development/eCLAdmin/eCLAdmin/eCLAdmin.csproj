@@ -203,14 +203,18 @@
       <DependentUpon>ReportTemplate.aspx</DependentUpon>
     </Compile>
     <Compile Include="Repository\ISiteRepository.cs" />
+    <Compile Include="Repository\IStaticDataRepository.cs" />
     <Compile Include="Repository\IUserRepository.cs" />
     <Compile Include="Repository\SiteRepository.cs" />
+    <Compile Include="Repository\StaticDataRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\IEmailService.cs" />
     <Compile Include="Services\ISiteService.cs" />
+    <Compile Include="Services\IStaticDataService.cs" />
     <Compile Include="Services\IUserService.cs" />
     <Compile Include="Services\SiteService.cs" />
+    <Compile Include="Services\StaticDataService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Utilities\EclAdminUtil.cs" />
     <Compile Include="Utilities\EmailUtil.cs" />

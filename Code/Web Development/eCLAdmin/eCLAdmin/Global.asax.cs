@@ -41,9 +41,11 @@ namespace eCLAdmin
             container.Register<IEmailService, EmailService>(Lifestyle.Scoped);
             container.Register<IUserService, UserService>(Lifestyle.Scoped);
             container.Register<ISiteService, SiteService>(Lifestyle.Scoped);
+            container.Register<IStaticDataService, StaticDataService>(Lifestyle.Scoped);
+            container.Register<IStaticDataRepository, StaticDataRepository>(Lifestyle.Scoped);
 
-			// 3. Optionally verify the container's configuration
-			container.Verify();
+            // 3. Optionally verify the container's configuration
+            container.Verify();
 
             // 4. Store the container for use by the application
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
