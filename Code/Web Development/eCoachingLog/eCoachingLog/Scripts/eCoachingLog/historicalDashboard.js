@@ -254,38 +254,36 @@
 	function validateSearch()
 	{
 		var valid = true;
-		//var $summaryUl = $('.validation-summary-valid').find('ul');
-		//$summaryUl.empty();
 		var siteSelected = $('#select-site').val();
 		var mgrSelected = $('#select-manager').val();
 		var supSelected = $('#select-supervisor').val();
 		var empSelected = $('#select-employee').val();
+
 		if (siteSelected == -2)
 		{
-			//$summaryUl.append($('<li>').text('Please select a site.'));
 			$('#select-site').css('border-color', 'red');
 			valid = false;
 		}
 		if (mgrSelected == -2)
 		{
-			//$summaryUl.append($('<li>').text('Please select a manager.'));
 			$('#select-manager').css('border-color', 'red');
 			valid = false;
 		}
 		if (supSelected == -2)
 		{
-			//$summaryUl.append($('<li>').text('Please select a supervisor.'));
 			$('#select-supervisor').css('border-color', 'red');
 			valid = false;
 		}
 		if (empSelected == -2)
 		{
-			//$summaryUl.append($('<li>').text('Please select an employee.'));
 			$('#select-employee').css('border-color', 'red');
 			valid = false;
 		}
-		//$('.validation-summary-valid').css('display', 'block');
-		//$('.validation-summary-valid').css('color', 'red');
+		if (empSelected == -2) {
+		    $('#select-employee').css('border-color', 'red');
+		    valid = false;
+		}
+
 		return valid;
 	}
 

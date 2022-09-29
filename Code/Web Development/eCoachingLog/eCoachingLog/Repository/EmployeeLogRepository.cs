@@ -1303,8 +1303,11 @@ namespace eCoachingLog.Repository
                 reasons.Add(r0);
                 reasons.Add(r1);
                 reasons.Add(r2);
-                reasons.Add(r3);
-                reasons.Add(r4);
+                if (user.IsHr)
+                {
+                    reasons.Add(r3);
+                    reasons.Add(r4);
+                }
             }
 
             return reasons;

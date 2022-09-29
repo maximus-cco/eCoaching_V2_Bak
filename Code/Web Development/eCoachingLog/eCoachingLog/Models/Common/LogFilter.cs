@@ -57,7 +57,7 @@ namespace eCoachingLog.Models.Common
 			this.ShowFollowupDateColumn = false;
 			this.PageSize = 25;
 
-            this.ReasonId = -2;
+            this.ReasonId = -1;
             this.SubReasonId = -1;
 		}
 	}

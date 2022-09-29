@@ -77,7 +77,6 @@ namespace eCoachingLog.Controllers
         public JsonResult GetReasons(int sourceId)
         {
             var reasonList = this.empLogService.GetReasons(sourceId, GetUserFromSession());
-            reasonList.Insert(0, new TextValue ("-- Select a Reason --" , "-2"));
             IEnumerable<SelectListItem> reasons = new SelectList(reasonList, "Value", "Text");
             return Json(new { reasons = reasons }, JsonRequestBehavior.AllowGet);
         }
@@ -178,7 +177,6 @@ namespace eCoachingLog.Controllers
 
             // Reason
             var reasonList = this.empLogService.GetReasons(-1, user);
-            reasonList.Insert(0, new TextValue("-- Select a Reason --", "-2" ));
             IEnumerable<SelectListItem> reasons = new SelectList(reasonList, "Value", "Text");
             vm.ReasonSelectList = reasons;
 
