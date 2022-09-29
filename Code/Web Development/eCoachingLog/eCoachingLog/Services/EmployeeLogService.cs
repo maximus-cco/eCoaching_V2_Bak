@@ -304,5 +304,15 @@ namespace eCoachingLog.Services
             return employeeLogRepository.GetPast3MonthStatisticQn(user);
         }
 
+        public IList<TextValue> GetReasons(int sourceId, User user)
+        {
+            return employeeLogRepository.GetReasons(sourceId, user);
+        }
+
+        public IList<TextValue> GetSubReasons(int sourceId, User user)
+        {
+            return employeeLogRepository.GetSubReasons(sourceId, user);
+        }
+
     }
 }

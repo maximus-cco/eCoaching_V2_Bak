@@ -74,7 +74,15 @@ namespace eCoachingLog.Controllers
 			return result;
 		}
 
-		private IEnumerable<SelectListItem> ResetSupervisors()
+        public JsonResult GetReasons(int sourceId)
+        {
+            var reasonList = this.empLogService.GetReasons(sourceId, GetUserFromSession());
+            reasonList.Insert(0, new TextValue ("-- Select a Reason --" , "-2"));
+            IEnumerable<SelectListItem> reasons = new SelectList(reasonList, "Value", "Text");
+            return Json(new { reasons = reasons }, JsonRequestBehavior.AllowGet);
+        }
+
+        private IEnumerable<SelectListItem> ResetSupervisors()
 		{
 			var supervisorList = new List<Employee>();
 			supervisorList.Insert(0, new Employee { Id = "-2", Name = "-- Select a Supervisor --" });
@@ -129,6 +137,7 @@ namespace eCoachingLog.Controllers
 		{
 			User user = GetUserFromSession();
 			HistoricalDashboardViewModel vm = new HistoricalDashboardViewModel();
+            vm.AllowSearchWarning = user.IsHr;
 			vm.IsExportExcel = user.IsExportExcel;
 			// Site
 			var siteList = this.siteService.GetAllSites();
@@ -167,7 +176,18 @@ namespace eCoachingLog.Controllers
 			IEnumerable<SelectListItem> values = new SelectList(valueList, "Id", "Description");
 			vm.LogValueSelectList = values;
 
-			return vm;
+            // Reason
+            var reasonList = this.empLogService.GetReasons(-1, user);
+            reasonList.Insert(0, new TextValue("-- Select a Reason --", "-2" ));
+            IEnumerable<SelectListItem> reasons = new SelectList(reasonList, "Value", "Text");
+            vm.ReasonSelectList = reasons;
+
+            // Sub Reason
+            var subReasonList = this.empLogService.GetSubReasons(-1, user);
+            IEnumerable<SelectListItem> subReasons = new SelectList(subReasonList, "Value", "Text");
+            vm.SubReasonSelectList = subReasons;
+
+            return vm;
 		}
 	}
 }

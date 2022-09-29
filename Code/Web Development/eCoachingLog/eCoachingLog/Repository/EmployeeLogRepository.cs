@@ -1250,6 +1250,104 @@ namespace eCoachingLog.Repository
             return statistics;
         }
 
+        public IList<TextValue> GetReasons(int sourceId, User user)
+        {
+            var reasons = new List<TextValue>();
+
+            //using (SqlConnection connection = new SqlConnection(conn))
+            //using (SqlCommand command = new SqlCommand("[EC].[sp_GetReasons]", connection))
+            //{
+            //    command.CommandType = CommandType.StoredProcedure;
+            //    command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+            //    command.Parameters.AddWithValueSafe("@intSourceID", sourceId);
+
+            //    connection.Open();
+
+            //    using (SqlDataReader dataReader = command.ExecuteReader())
+            //    {
+            //        while (dataReader.Read())
+            //        {
+            //            var value = dataReader["Value"].ToString();
+            //            var text = dataReader["Text"].ToString();
+            //            var reason = new TextValue(value, text);
+            //            reasons.Add(reason);
+            //        }
+
+            //        dataReader.Close();
+            //    }
+            //}
+
+            var r0 = new TextValue("All Reasons", "-1");
+            var r1 = new TextValue("Reason 1", "1");
+            var r2 = new TextValue("Reason 2", "2");
+          
+
+            if (sourceId == 120)
+            {
+                r1 = new TextValue("Warning 1", "1");
+                r2 = new TextValue("Warning 2", "2");
+            }
+
+            if (sourceId != -1)
+            {
+                reasons.Add(r0);
+                reasons.Add(r1);
+                reasons.Add(r2);
+            }
+
+
+            if (sourceId == -1)
+            {
+                var r3 = new TextValue("Warning 1", "1");
+                var r4 = new TextValue("Warning 2", "2");
+                reasons.Add(r0);
+                reasons.Add(r1);
+                reasons.Add(r2);
+                reasons.Add(r3);
+                reasons.Add(r4);
+            }
+
+            return reasons;
+        }
+
+        public IList<TextValue> GetSubReasons(int sourceId, User user)
+        {
+            var reasons = new List<TextValue>();
+
+            //using (SqlConnection connection = new SqlConnection(conn))
+            //using (SqlCommand command = new SqlCommand("[EC].[sp_GetSubReasons]", connection))
+            //{
+            //    command.CommandType = CommandType.StoredProcedure;
+            //    command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+            //    command.Parameters.AddWithValueSafe("@intSourceID", sourceId);
+
+            //    connection.Open();
+
+            //    using (SqlDataReader dataReader = command.ExecuteReader())
+            //    {
+            //        while (dataReader.Read())
+            //        {
+            //            var value = dataReader["Value"].ToString();
+            //            var text = dataReader["Text"].ToString();
+            //            var reason = new TextValue(value, text);
+            //            reasons.Add(reason);
+            //        }
+
+            //        dataReader.Close();
+            //    }
+            //}
+
+            var r0 = new TextValue("All Sub-Reasons", "-1");
+            var r1 = new TextValue("Sub Reason 1", "1");
+            var r2 = new TextValue("Sub Reason 2", "2");
+
+            reasons.Add(r0);
+            reasons.Add(r1);
+            reasons.Add(r2);
+
+            return reasons;
+        }
+
         private string UpdatePdtToEst(string str)
         {
             if (String.IsNullOrEmpty(str) || str.IndexOf("PDT)") < 0)

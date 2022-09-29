@@ -1,5 +1,9 @@
 ﻿@model eCoachingLog.ViewModels.HistoricalDashboardViewModel
 @*@Html.ValidationSummary()*@
+
+@Html.HiddenFor(m => m.AllowSearchWarning)
+<input type="hidden" name="sourceSelected" id="sourceSelected" value="-1">
+
 <fieldset class="scheduler-border">
 	<form class="form-inline"  id="form-search-historical">
 		<div class="form-group">
@@ -61,6 +65,14 @@
 		<div class="form-group">
 			@Html.DropDownListFor(m => m.Search.SourceId, Model.LogSourceSelectList, new { id = "select-source", @class = "form-control reset-search-result" })
 		</div>
+
+        <div class="form-group">
+            @Html.DropDownListFor(m => m.Search.ReasonId, Model.ReasonSelectList, new { id = "select-reason", @class = "form-control reset-search-result" })
+        </div>
+        <div class="form-group">
+            @Html.DropDownListFor(m => m.Search.SubReasonId, Model.SubReasonSelectList, new { id = "select-subreason", @class = "form-control reset-search-result" })
+        </div>
+
 		<div class="form-group">
 			@Html.DropDownListFor(m => m.Search.ValueId, Model.LogValueSelectList, new { id = "select-value", @class = "form-control reset-search-result" })
 		</div>
@@ -82,7 +94,9 @@
 	var getEmployeesUrl = '@Url.Action("GetEmployeesBySup", "HistoricalDashboard")';
 	var resetPageUrl = '@Url.Action("ResetPage", "HistoricalDashboard")';
 	var exportToExcelUrl = '@Url.Action("ExportToExcel", "HistoricalDashboard")';
-	var downloadExcelUrl = '@Url.Action("Download", "HistoricalDashboard")';
+    var downloadExcelUrl = '@Url.Action("Download", "HistoricalDashboard")';
+
+    var getReaonsUrl = '@Url.Action("GetReasons", "HistoricalDashboard")';
 </script>
 
 <script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>

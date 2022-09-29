@@ -19,6 +19,8 @@ namespace eCoachingLog.Models.Common
 		public string SubmitterId { get; set; }
 		public int StatusId { get; set; }
         public int SourceId { get; set; }
+        public int ReasonId { get; set; }
+        public int SubReasonId { get; set; }
 		public string ValueId { get; set; }
 		// Warning specific
 		public bool IsActive { get; set; }
@@ -54,6 +56,9 @@ namespace eCoachingLog.Models.Common
 			// since under a supervisor pending list, there might be CSR logs and the supervisor's own logs;
 			this.ShowFollowupDateColumn = false;
 			this.PageSize = 25;
+
+            this.ReasonId = -2;
+            this.SubReasonId = -1;
 		}
 	}
 }

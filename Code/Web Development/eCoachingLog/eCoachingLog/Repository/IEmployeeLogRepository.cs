@@ -53,5 +53,9 @@ namespace eCoachingLog.Repository
         CoachingLogDetail GetScorecardsAndSummary(long logId);
 
         IList<QnStatistic> GetPast3MonthStatisticQn(User user);
+
+        IList<TextValue> GetReasons(int sourceId, User user);
+        IList<TextValue> GetSubReasons(int sourceId, User user);
+
     }
 }

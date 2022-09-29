@@ -35,11 +35,19 @@ namespace eCoachingLog.ViewModels
 
 		public LogSource LogSource { get; set; }
 		public IEnumerable<SelectListItem> LogSourceSelectList { get; set; }
-		public IEnumerable<LogStatus> LogSourceList { get; set; }
+		public IEnumerable<LogSource> LogSourceList { get; set; }
 
-		public LogValue LogValue { get; set; }
+        public TextValue Reason { get; set; }
+        public IEnumerable<SelectListItem> ReasonSelectList { get; set; }
+        public IEnumerable<TextValue> ReasonList { get; set; }
+
+        public TextValue SubReason { get; set; }
+        public IEnumerable<SelectListItem> SubReasonSelectList { get; set; }
+        public IEnumerable<TextValue> SubReasonList { get; set; }
+
+        public LogValue LogValue { get; set; }
 		public IEnumerable<SelectListItem> LogValueSelectList { get; set; }
-		public IEnumerable<LogStatus> LogValueList { get; set; }
+		public IEnumerable<LogValue> LogValueList { get; set; }
 
 		public LogFilter Search { get; set; }
 

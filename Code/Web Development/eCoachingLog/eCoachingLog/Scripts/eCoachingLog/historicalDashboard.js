@@ -75,35 +75,6 @@
 		.always(function () {
 		    $('#select-manager').removeClass('loadinggif')
 		});
-/*
-		$.getJSON(getManagersUrl, { siteId: siteSelected })
-		.done(function (data) {
-			// Reload managers
-			var options = [];
-			$.each(data.managers, function (i, manager) {
-				options.push('<option value="', manager.Value, '">' + manager.Text + '</option>');
-			});
-			$("#select-manager").html(options.join(''));
-			// Reload supervisors
-			options = [];
-			$.each(data.supervisors, function (i, supervisor) {
-				options.push('<option value="', supervisor.Value, '">' + supervisor.Text + '</option>');
-			});
-			$("#select-supervisor").html(options.join(''));
-			// Reload employees
-			options = [];
-			$.each(data.employees, function (i, employee) {
-				options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
-			});
-			$("#select-employee").html(options.join(''));
-		})
-		.fail(function () {
-			$('#select-manager').html('<option value="">error ...&nbsp;&nbsp;</option>');
-		})
-		.always(function () {
-			$('#select-manager').removeClass('loadinggif')
-		});
-        */
 	});
 
 	$('body').on('change', '#select-manager', function () {
@@ -139,29 +110,6 @@
 		.always(function () {
 		    $('#select-supervisor').removeClass('loadinggif')
 		});
-/*
-	    $.getJSON(getSupervisorsUrl, { mgrId: mgrSelected })
-		.done(function (data) {
-			// Load supervisor dropdown
-			var options = [];
-			$.each(data.supervisors, function (i, supervisor) {
-				options.push('<option value="', supervisor.Value, '">' + supervisor.Text + '</option>');
-			});
-			$("#select-supervisor").html(options.join(''));
-			// Load Employee dropdown
-			options = [];
-			$.each(data.employees, function (i, employee) {
-				options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
-			});
-			$("#select-employee").html(options.join(''));
-		})
-		.fail(function () {
-			$('#select-supervisor').html('<option value="">error ...&nbsp;&nbsp;</option>');
-		})
-		.always(function () {
-			$('#select-supervisor').removeClass('loadinggif')
-		});
-*/
 	});
 
 	$('body').on('change', '#select-supervisor', function () {
@@ -176,6 +124,51 @@
 			$(this).css('border-color', '');
 		}
 	});
+
+	$('body').on('change', '#select-source', function () {
+        // coaching reason list is the same for all sources for non hr users.
+	    if ($("#AllowSearchWarning").val() !== "True") {
+	        return;
+	    }
+
+	    let prev = $("#sourceSelected").val();
+        let curr = $(this).val();
+        // save in hidden
+        $("#sourceSelected").val(curr);
+
+        // hr users - reload coaching reasons if warning or all changed
+        if (curr === "120" || prev === "120") { // 120: warning
+            loadReasons(curr);
+        } else if (curr === "-1" || prev === "-1") { // -1: ALL
+            loadReasons(curr);
+        }
+    });
+
+	function loadReasons(sourceSelected)
+	{
+	    $('#select-reason').addClass('loadinggif');
+
+	    $.ajax({
+	        type: 'POST',
+	        url: getReaonsUrl,
+	        dataType: 'json',
+	        data: { sourceId: sourceSelected }
+	    })
+	    .done(function (data) {
+	        // Reload reasons
+	        var options = [];
+	        $.each(data.reasons, function (i, reason) {
+	            options.push('<option value="', reason.Value, '">' + reason.Text + '</option>');
+	        });
+	        $("#select-reason").html(options.join(''));
+	    })
+	    .fail(function () {
+	        $('#select-reason').html('<option value="">error ...&nbsp;&nbsp;</option>');
+	    })
+	    .always(function () {
+	        $('#select-reason').removeClass('loadinggif')
+	    });
+	}
 
 	function ReloadEmployees()
 	{
@@ -205,27 +198,6 @@
 		.always(function () {
 		    $('#select-employee').removeClass('loadinggif')
 		});
-/*
-	    $.getJSON(getEmployeesUrl, {
-					siteId: $('#select-site').val(),
-					mgrId: $('#select-manager').val(),
-					supId: $('#select-supervisor').val(),
-					employeeStatus: $('input:radio[name="Search.ActiveEmployee"]:checked').val()
-		})
-		.done(function (employees) {
-			var options = [];
-			$.each(employees, function (i, employee) {
-				options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
-			});
-			$("#select-employee").html(options.join(''));
-		})
-		.fail(function () {
-			$('#select-employee').html('<option value="">error ...&nbsp;&nbsp;</option>');
-		})
-		.always(function () {
-			$('#select-employee').removeClass('loadinggif')
-		});
-*/
 	}
 
 	$('body').on('click', '#btn-reset', function (e) {

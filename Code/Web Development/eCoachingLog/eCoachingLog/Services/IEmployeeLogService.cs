@@ -53,5 +53,8 @@ namespace eCoachingLog.Services
 
         IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end);
 		IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end);
-	}
+
+        IList<TextValue> GetReasons(int sourceId, User user);
+        IList<TextValue> GetSubReasons(int sourceId, User user);
+    }
 }
