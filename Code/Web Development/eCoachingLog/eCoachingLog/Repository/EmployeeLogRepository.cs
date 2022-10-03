@@ -1264,7 +1264,7 @@ namespace eCoachingLog.Repository
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-                command.Parameters.AddWithValueSafe("@nvcEmpID", sourceId);
+                command.Parameters.AddWithValueSafe("@nvcEmpID", user.EmployeeId);
                 command.Parameters.AddWithValueSafe("@intSourceIdin", sourceId);
 
                 connection.Open();
