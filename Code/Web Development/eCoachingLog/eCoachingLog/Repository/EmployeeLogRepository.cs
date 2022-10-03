@@ -560,7 +560,10 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@sortASC", sortDirection);
 				command.Parameters.AddWithValueSafe("@nvcSearch", search);
                 command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
-				connection.Open();
+                command.Parameters.AddWithValueSafe("@intCoachingReasonIdin", logFilter.ReasonId);
+                command.Parameters.AddWithValueSafe("@intSubCoachingReasonIdin", logFilter.SubReasonId);
+
+                connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{
@@ -630,8 +633,10 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
 				command.Parameters.AddWithValueSafe("@nvcSearch", search);
 				command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
+                command.Parameters.AddWithValueSafe("@intCoachingReasonIdin", logFilter.ReasonId);
+                command.Parameters.AddWithValueSafe("@intSubCoachingReasonIdin", logFilter.SubReasonId);
 
-				try
+                try
 				{
 					connection.Open();
 					count = (int)command.ExecuteScalar();
@@ -1254,59 +1259,27 @@ namespace eCoachingLog.Repository
         {
             var reasons = new List<TextValue>();
 
-            //using (SqlConnection connection = new SqlConnection(conn))
-            //using (SqlCommand command = new SqlCommand("[EC].[sp_GetReasons]", connection))
-            //{
-            //    command.CommandType = CommandType.StoredProcedure;
-            //    command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-            //    command.Parameters.AddWithValueSafe("@intSourceID", sourceId);
-
-            //    connection.Open();
-
-            //    using (SqlDataReader dataReader = command.ExecuteReader())
-            //    {
-            //        while (dataReader.Read())
-            //        {
-            //            var value = dataReader["Value"].ToString();
-            //            var text = dataReader["Text"].ToString();
-            //            var reason = new TextValue(value, text);
-            //            reasons.Add(reason);
-            //        }
-
-            //        dataReader.Close();
-            //    }
-            //}
-
-            var r0 = new TextValue("All Reasons", "-1");
-            var r1 = new TextValue("Reason 1", "1");
-            var r2 = new TextValue("Reason 2", "2");
-          
-
-            if (sourceId == 120)
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Select_CoachingReasons_For_Dashboard]", connection))
             {
-                r1 = new TextValue("Warning 1", "1");
-                r2 = new TextValue("Warning 2", "2");
-            }
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvcEmpID", sourceId);
+                command.Parameters.AddWithValueSafe("@intSourceIdin", sourceId);
 
-            if (sourceId != -1)
-            {
-                reasons.Add(r0);
-                reasons.Add(r1);
-                reasons.Add(r2);
-            }
+                connection.Open();
 
-
-            if (sourceId == -1)
-            {
-                var r3 = new TextValue("Warning 1", "1");
-                var r4 = new TextValue("Warning 2", "2");
-                reasons.Add(r0);
-                reasons.Add(r1);
-                reasons.Add(r2);
-                if (user.IsHr)
+                using (SqlDataReader dataReader = command.ExecuteReader())
                 {
-                    reasons.Add(r3);
-                    reasons.Add(r4);
+                    while (dataReader.Read())
+                    {
+                        var value = dataReader["CoachingReasonId"].ToString();
+                        var text = dataReader["CoachingReason"].ToString();
+                        var reason = new TextValue(text, value);
+                        reasons.Add(reason);
+                    }
+
+                    dataReader.Close();
                 }
             }
 
@@ -1317,36 +1290,28 @@ namespace eCoachingLog.Repository
         {
             var reasons = new List<TextValue>();
 
-            //using (SqlConnection connection = new SqlConnection(conn))
-            //using (SqlCommand command = new SqlCommand("[EC].[sp_GetSubReasons]", connection))
-            //{
-            //    command.CommandType = CommandType.StoredProcedure;
-            //    command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-            //    command.Parameters.AddWithValueSafe("@intSourceID", sourceId);
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SubCoachingReasons_For_Dashboard]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvcEmpID", sourceId);
 
-            //    connection.Open();
+                connection.Open();
 
-            //    using (SqlDataReader dataReader = command.ExecuteReader())
-            //    {
-            //        while (dataReader.Read())
-            //        {
-            //            var value = dataReader["Value"].ToString();
-            //            var text = dataReader["Text"].ToString();
-            //            var reason = new TextValue(value, text);
-            //            reasons.Add(reason);
-            //        }
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        var value = dataReader["SubCoachingReasonId"].ToString();
+                        var text = dataReader["SubCoachingReason"].ToString();
+                        var reason = new TextValue(text, value);
+                        reasons.Add(reason);
+                    }
 
-            //        dataReader.Close();
-            //    }
-            //}
-
-            var r0 = new TextValue("All Sub-Reasons", "-1");
-            var r1 = new TextValue("Sub Reason 1", "1");
-            var r2 = new TextValue("Sub Reason 2", "2");
-
-            reasons.Add(r0);
-            reasons.Add(r1);
-            reasons.Add(r2);
+                    dataReader.Close();
+                }
+            }
 
             return reasons;
         }
