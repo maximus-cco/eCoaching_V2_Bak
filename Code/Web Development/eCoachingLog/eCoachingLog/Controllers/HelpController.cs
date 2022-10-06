@@ -24,7 +24,12 @@ namespace eCoachingLog.Controllers
 
 		public ActionResult SubmitTicket()
 		{
-			return Redirect(this.staticDataService.GetData("SubmitTicket")[0]);
+            if (Session["SubmitTicketUrl"] == null)
+            {
+                Session["SubmitTicketUrl"] = this.staticDataService.Get("Submit Ticket");
+            } 
+
+			return Redirect((string)Session["SubmitTicketUrl"]);
 		}
 	}
 }

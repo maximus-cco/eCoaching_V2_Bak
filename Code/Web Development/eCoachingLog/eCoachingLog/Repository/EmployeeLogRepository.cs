@@ -580,7 +580,7 @@ namespace eCoachingLog.Repository
 						log.SubmitterName = dataReader["strSubmitterName"].ToString();
 						log.Source = dataReader["strSource"].ToString();
 						log.Reasons = dataReader["strCoachingReason"].ToString();
-						log.SubReasons = dataReader["strSubCoachingReason"].ToString();
+                        log.SubReasons = dataReader["strSubCoachingReason"].ToString();
 						log.Value = dataReader["strValue"].ToString();
 						log.CreatedDate = dataReader["SubmittedDate"].ToString();
 						log.IsCoaching = !string.IsNullOrEmpty(log.Source) && log.Source != "Warning" ? true : false;
@@ -892,8 +892,10 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
 				command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
 				command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
+                command.Parameters.AddWithValueSafe("@intCoachingReasonIdin", logFilter.ReasonId);
+                command.Parameters.AddWithValueSafe("@intSubCoachingReasonIdin", logFilter.SubReasonId);
 
-				using (SqlDataAdapter sda = new SqlDataAdapter(command))
+                using (SqlDataAdapter sda = new SqlDataAdapter(command))
 				{
 					sda.Fill(dataSet);
 				}
@@ -922,8 +924,10 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@nvcValue", logFilter.ValueId);
 				command.Parameters.AddWithValueSafe("@intStatusIdin", logFilter.StatusId);
 				command.Parameters.AddWithValueSafe("@intEmpActive", logFilter.ActiveEmployee);
+                command.Parameters.AddWithValueSafe("@intCoachingReasonIdin", logFilter.ReasonId);
+                command.Parameters.AddWithValueSafe("@intSubCoachingReasonIdin", logFilter.SubReasonId);
 
-				try
+                try
 				{
 					connection.Open();
 					count = (int)(command.ExecuteScalar());

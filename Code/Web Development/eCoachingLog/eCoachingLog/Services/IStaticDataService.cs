@@ -4,6 +4,6 @@ namespace eCoachingLog.Services
 {
     public interface IStaticDataService
     {
-        IList<string> GetData(string data);
+        string Get(string key);
     }
 }

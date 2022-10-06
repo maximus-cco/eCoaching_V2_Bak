@@ -11,13 +11,13 @@ namespace eCoachingLog.Services
 
         private IStaticDataRepository repository = new StaticDataRepository();
 
-        public IList<string> GetData(string key)
+        public string Get(string key)
         {
             var data = new List<String>();
 
             if (string.IsNullOrEmpty(key))
             {
-                return data;
+                return null;
             }
 
             return repository.GetData(key);

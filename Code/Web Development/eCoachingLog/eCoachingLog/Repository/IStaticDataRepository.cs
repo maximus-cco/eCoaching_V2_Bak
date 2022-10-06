@@ -4,6 +4,6 @@ namespace eCoachingLog.Repository
 {
     public interface IStaticDataRepository
     {
-        IList<string> GetData(string key);
+        string GetData(string key);
     }
 }

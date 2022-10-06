@@ -1,4 +1,5 @@
-﻿using eCoachingLog.Utils;
+﻿using eCoachingLog.Extensions;
+using eCoachingLog.Utils;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -10,28 +11,28 @@ namespace eCoachingLog.Repository
     {
         private static string conn = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
-        public IList<string> GetData(string key)
+        public string GetData(string key)
         {
-            var data = new List<string>();
+            string data = null;
 
-            //using (SqlConnection connection = new SqlConnection(conn))
-            //using (SqlCommand command = new SqlCommand("[EC].[sp_Select_StaticData]", connection))
-            //{
-            //    command.CommandType = CommandType.StoredProcedure;
-            //    command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-            //    connection.Open();
-            //    using (SqlDataReader dataReader = command.ExecuteReader())
-            //    {
-            //        while (dataReader.Read())
-            //        {
-            //            data.Add(dataReader["data"].ToString());
-            //        }
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectRequestedUrl]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@strName", key);
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        data = dataReader["url"].ToString();
+                        break;
+                    }
 
-            //        dataReader.Close();
-            //    }
-            //}
-
-            data.Add(Constants.SUBMIT_TICKET_URL);
+                    dataReader.Close();
+                }
+            }
 
             return data;
         }
