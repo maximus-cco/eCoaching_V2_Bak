@@ -1,5 +1,9 @@
-﻿using log4net;
-using System.Collections.Generic;
+﻿using eCLAdmin.Extensions;
+using eCLAdmin.Models.EmployeeLog;
+using eCLAdmin.Utilities;
+using log4net;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace eCLAdmin.Repository
 {
@@ -8,28 +12,28 @@ namespace eCLAdmin.Repository
         readonly ILog logger = LogManager.GetLogger(typeof(EmployeeRepository));
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
-        public IList<string> GetData(string key)
+        public string Get(string key)
         {
-            var data = new List<string>();
+            string data = null;
 
-            //using (SqlConnection connection = new SqlConnection(conn))
-            //using (SqlCommand command = new SqlCommand("[EC].[sp_Select_StaticData]", connection))
-            //{B
-            //    command.CommandType = CommandType.StoredProcedure;
-            //    command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-            //    connection.Open();
-            //    using (SqlDataReader dataReader = command.ExecuteReader())
-            //    {
-            //        while (dataReader.Read())B
-            //        {
-            //            data.Add(dataReader["data"].ToString());
-            //        }
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectRequestedUrl]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = 300;
+                command.Parameters.AddWithValue("@strName", key);
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        data = dataReader["url"].ToString();
+                        break;
+                    }
 
-            //        dataReader.Close();
-            //    }
-            //}
-
-            data.Add(Constants.SUBMIT_TICKET_URL);
+                    dataReader.Close();
+                }
+            }
 
             return data;
         }

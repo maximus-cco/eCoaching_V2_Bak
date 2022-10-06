@@ -1,7 +1,5 @@
 ﻿using eCLAdmin.Repository;
 using log4net;
-using System;
-using System.Collections.Generic;
 
 namespace eCLAdmin.Services
 {
@@ -16,16 +14,14 @@ namespace eCLAdmin.Services
             this.repository = repository;
         }
 
-        public IList<string> GetData(string key)
+        public string Get(string key)
         {
-            var data = new List<String>();
-
             if (string.IsNullOrEmpty(key))
             {
-                return data;
+                return null;
             }
 
-            return repository.GetData(key);
+            return repository.Get(key);
         }
     }
 }
