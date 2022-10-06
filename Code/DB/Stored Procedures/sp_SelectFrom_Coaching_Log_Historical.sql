@@ -1,11 +1,3 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Historical' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical]
-GO
 
 SET ANSI_NULLS ON
 GO
@@ -24,8 +16,9 @@ GO
 --  Update to fix HC users receiving error on Historical Dashboard - TFS 15974
 --  Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
 --  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
+-- Modified to add Coaching and Sub Coaching Reason filters. TFS 25387 - 09/26/2022
 --	=====================================================================
-CREATE OR ALTER  PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
@@ -37,6 +30,8 @@ CREATE OR ALTER  PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical]
 @strSDatein datetime,
 @strEDatein datetime,
 @intStatusIdin int, 
+@intCoachingReasonIdin int,
+@intSubCoachingReasonIdin int,
 @nvcValue  nvarchar(30),
 @nvcSearch nvarchar(50),
 @intEmpActive int,
@@ -106,6 +101,16 @@ END
 IF @intStatusIdin  <> -1
 BEGIN
 	SET @where = @where + @NewLineChar + 'AND  [cl].[StatusID] = ''' + CONVERT(nvarchar,@intStatusIdin) + ''''
+END
+
+IF @intCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [clr].[CoachingReasonId] = ''' + CONVERT(nvarchar,@intCoachingReasonIdin) + ''''
+END
+
+IF @intSubCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [clr].[SubCoachingReasonId] = ''' + CONVERT(nvarchar,@intSubCoachingReasonIdin) + ''''
 END
 
 IF @nvcValue   <> '-1'
@@ -251,6 +256,17 @@ BEGIN
 	SET @where = @where + @NewLineChar + 'AND  [wl].[StatusID] = ''' + CONVERT(nvarchar,@intStatusIdin) + ''''
 END
 
+IF @intCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [wlr].[CoachingReasonId] = ''' + CONVERT(nvarchar,@intCoachingReasonIdin) + ''''
+END
+
+IF @intSubCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [wlr].[SubCoachingReasonId] = ''' + CONVERT(nvarchar,@intSubCoachingReasonIdin) + ''''
+END
+
+
 IF @nvcValue   <> '-1'
 BEGIN
 	SET @where = @where + @NewLineChar + ' AND [wlr].[value] = ''' + @nvcValue   + ''''
@@ -384,7 +400,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- SelectFrom_Coaching_Log_Historical
 GO
-
-
 
 

@@ -1,17 +1,9 @@
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Historical_Export' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export]
-GO
-
 
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -29,6 +21,7 @@ GO
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
 -- Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
+-- Modified to add Coaching and Sub Coaching Reason filters. TFS 25387 - 09/26/2022
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export] 
 
@@ -42,6 +35,8 @@ CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export]
 @strSDatein datetime,
 @strEDatein datetime,
 @intStatusIdin int, 
+@intCoachingReasonIdin int,
+@intSubCoachingReasonIdin int,
 @nvcValue  nvarchar(30),
 @intEmpActive int
 
@@ -98,6 +93,16 @@ END
 IF @intStatusIdin  <> -1
 BEGIN
 	SET @where = @where + @NewLineChar + 'AND  [cl].[StatusID] = ''' + CONVERT(nvarchar,@intStatusIdin) + ''''
+END
+
+IF @intCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [clr].[CoachingReasonId] = ''' + CONVERT(nvarchar,@intCoachingReasonIdin) + ''''
+END
+
+IF @intSubCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [clr].[SubCoachingReasonId] = ''' + CONVERT(nvarchar,@intSubCoachingReasonIdin) + ''''
 END
 
 IF @nvcValue   <> '-1'
@@ -467,6 +472,5 @@ EXEC (@nvcSQL2AllWrittenCorr);
 CLOSE SYMMETRIC KEY [CoachingKey];		    
 END -- sp_SelectFrom_Coaching_Log_Historical_Export
 GO
-
 
 

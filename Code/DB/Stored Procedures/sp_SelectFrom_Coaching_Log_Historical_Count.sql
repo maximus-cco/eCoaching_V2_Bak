@@ -1,24 +1,3 @@
-/*
-sp_SelectFrom_Coaching_Log_Historical_Count(01).sql
-Last Modified Date: 04/30/2018
-Last Modified By: Susmitha Palacherla
-
-
-Version 01: Document Initial Revision created during hist dashboard redesign.  TFS 7138 - 04/30/2018
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Historical_Count' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Count]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
@@ -31,8 +10,9 @@ GO
 --	Description: *	This procedure returns the count of e-Coaching  records that will be 
 --  displayed for the selected criteria on the  historical dashboard page.
 --  Created during Hist dashboard move to new architecture - TFS 7138 - 04/24/2018
+-- Modified to add Coaching and Sub Coaching Reason filters. TFS 25387 - 09/26/2022
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Count] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Count] 
 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
@@ -44,6 +24,8 @@ CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Count]
 @strSDatein datetime,
 @strEDatein datetime,
 @intStatusIdin int, 
+@intCoachingReasonIdin int,
+@intSubCoachingReasonIdin int,
 @nvcValue  nvarchar(30),
 @nvcSearch nvarchar(50),
 @intEmpActive int
@@ -102,6 +84,16 @@ END
 IF @intStatusIdin  <> -1
 BEGIN
 	SET @where = @where + @NewLineChar + 'AND  [cl].[StatusID] = ''' + CONVERT(nvarchar,@intStatusIdin) + ''''
+END
+
+IF @intCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [clr].[CoachingReasonId] = ''' + CONVERT(nvarchar,@intCoachingReasonIdin) + ''''
+END
+
+IF @intSubCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [clr].[SubCoachingReasonId] = ''' + CONVERT(nvarchar,@intSubCoachingReasonIdin) + ''''
 END
 
 IF @nvcValue   <> '-1'
@@ -186,6 +178,16 @@ BEGIN
 	SET @where = @where + @NewLineChar + 'AND  [wl].[StatusID] = ''' + CONVERT(nvarchar,@intStatusIdin) + ''''
 END
 
+IF @intCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [wlr].[CoachingReasonId] = ''' + CONVERT(nvarchar,@intCoachingReasonIdin) + ''''
+END
+
+IF @intSubCoachingReasonIdin    <> '-1'
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [wlr].[SubCoachingReasonId] = ''' + CONVERT(nvarchar,@intSubCoachingReasonIdin) + ''''
+END
+
 IF @nvcValue   <> '-1'
 BEGIN
 	SET @where = @where + @NewLineChar + ' AND [wlr].[value] = ''' + @nvcValue   + ''''
@@ -253,8 +255,6 @@ EXEC (@nvcSQL);
 CLOSE SYMMETRIC KEY [CoachingKey] 	 
     
 END; -- sp_SelectFrom_Coaching_Log_Historical_Count
-
 GO
-
 
 

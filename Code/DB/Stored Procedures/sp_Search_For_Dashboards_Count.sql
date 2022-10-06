@@ -1,23 +1,3 @@
-/*
-sp_Search_For_Dashboards_Count(02).sql
-Last Modified Date: 09/17/2019
-Last Modified By: Susmitha Palacherla
-
-Version 02: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
-Version 01: Document Initial Revision created during hist dashboard redesign.  TFS 7138 - 05/08/2018
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Search_For_Dashboards_Count' 
-)
-   DROP PROCEDURE [EC].[sp_Search_For_Dashboards_Count]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -32,8 +12,9 @@ GO
 --  for the selected criteria for the requested dashboard page.
 --  Created during Hist dashboard move to new architecture - TFS 7138 - 04/24/2018
 -- Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
+-- Modified to add Coaching and Sub Coaching Reason filters. TFS 25387 - 09/26/2022
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Search_For_Dashboards_Count] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Search_For_Dashboards_Count] 
 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int = NULL,
@@ -45,6 +26,8 @@ CREATE PROCEDURE [EC].[sp_Search_For_Dashboards_Count]
 @strSDatein datetime = NULL,
 @strEDatein datetime = NULL,
 @intStatusIdin int = NULL, 
+@intCoachingReasonIdin int = NULL,
+@intSubCoachingReasonIdin int = NULL,
 @nvcValue  nvarchar(30) = NULL,
 @nvcSearch nvarchar(50) = NULL,
 @intEmpActive int = NULL,
@@ -57,7 +40,7 @@ BEGIN
 IF @nvcWhichDashboard = N'Historical'
 BEGIN 
 EXEC [EC].[sp_SelectFrom_Coaching_Log_Historical_Count] @nvcUserIdin, @intSourceIdin, @intSiteIdin, @nvcEmpIdin, @nvcSupIdin,
-@nvcMgrIdin, @nvcSubmitterIdin, @strSDatein, @strEDatein, @intStatusIdin, @nvcValue, @nvcSearch, @intEmpActive
+@nvcMgrIdin, @nvcSubmitterIdin, @strSDatein, @strEDatein, @intStatusIdin, @intCoachingReasonIdin, @intSubCoachingReasonIdin, @nvcValue, @nvcSearch, @intEmpActive
 END
 
 IF @nvcWhichDashboard = N'MyPending'
