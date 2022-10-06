@@ -69,9 +69,12 @@
         <div class="form-group">
             @Html.DropDownListFor(m => m.Search.ReasonId, Model.ReasonSelectList, new { id = "select-reason", @class = "form-control reset-search-result" })
         </div>
+        @Html.HiddenFor(m => m.Search.ReasonText)
+
         <div class="form-group">
             @Html.DropDownListFor(m => m.Search.SubReasonId, Model.SubReasonSelectList, new { id = "select-subreason", @class = "form-control reset-search-result" })
         </div>
+        @Html.HiddenFor(m => m.Search.SubReasonText)
 
 		<div class="form-group">
 			@Html.DropDownListFor(m => m.Search.ValueId, Model.LogValueSelectList, new { id = "select-value", @class = "form-control reset-search-result" })

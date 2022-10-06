@@ -20,7 +20,9 @@ namespace eCoachingLog.Models.Common
 		public int StatusId { get; set; }
         public int SourceId { get; set; }
         public int ReasonId { get; set; }
+        public string ReasonText { get; set; }
         public int SubReasonId { get; set; }
+        public string SubReasonText { get; set; }
 		public string ValueId { get; set; }
 		// Warning specific
 		public bool IsActive { get; set; }

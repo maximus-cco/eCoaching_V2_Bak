@@ -159,7 +159,18 @@ namespace eCoachingLog.Services
 				log.Reasons = log.Reasons.Replace("|", "<br />");
 				log.SubReasons = log.SubReasons.Replace("|", "<br />");
 				log.Value = log.Value.Replace("|", "<br />");
-			}
+
+                // if search by reason and sub reason, bold the selected reason and sub reason if not ALL
+                if (logFilter.ReasonId != -1 && !string.IsNullOrEmpty(logFilter.ReasonText))
+                {
+                    log.Reasons = log.Reasons.Replace(logFilter.ReasonText, "<b>" + logFilter.ReasonText + "</b>");
+                }
+
+                if (logFilter.SubReasonId != -1 && !string.IsNullOrEmpty(logFilter.SubReasonText))
+                {
+                    log.SubReasons = log.SubReasons.Replace(logFilter.SubReasonText, "<b>" + logFilter.SubReasonText + "</b>");
+                }
+            }
 
 			return logs;
 		}

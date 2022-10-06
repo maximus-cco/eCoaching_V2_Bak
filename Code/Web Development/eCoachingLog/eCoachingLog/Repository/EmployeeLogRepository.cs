@@ -579,7 +579,7 @@ namespace eCoachingLog.Repository
 						log.Status = dataReader["strFormStatus"].ToString();
 						log.SubmitterName = dataReader["strSubmitterName"].ToString();
 						log.Source = dataReader["strSource"].ToString();
-						log.Reasons = dataReader["strCoachingReason"].ToString();
+                        log.Reasons = dataReader["strCoachingReason"].ToString();
                         log.SubReasons = dataReader["strSubCoachingReason"].ToString();
 						log.Value = dataReader["strValue"].ToString();
 						log.CreatedDate = dataReader["SubmittedDate"].ToString();

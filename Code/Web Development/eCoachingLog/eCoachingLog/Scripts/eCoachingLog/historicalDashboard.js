@@ -232,6 +232,9 @@
 			return;
 		}
 
+		$("#Search_ReasonText").val($("#select-reason").find("option:selected").text());
+		$("#Search_SubReasonText").val($("#select-subreason").find("option:selected").text());
+
 		if (e.handled !== true) {
 			e.handled = true;
 			$(".please-wait").slideDown(500);
