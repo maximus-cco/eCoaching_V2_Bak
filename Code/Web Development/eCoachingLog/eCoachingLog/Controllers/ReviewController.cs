@@ -41,9 +41,12 @@ namespace eCoachingLog.Controllers
 			int currentPage = (int)Session["currentPage"];
             action = Constants.PAGE_HISTORICAL_DASHBOARD == currentPage || Constants.PAGE_SURVEY == currentPage ? "view" : action;
 
-			BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
+            string selectedReasonText = Session["SelectedReason"] == null ? null : (string)Session["SelectedReason"];
+            string selectedSubReasonText = Session["SelectedSubReason"] == null ? null : (string)Session["SelectedSubReason"];
+
+            BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
 			// Get coaching reasons for this log
-			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching);
+			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching, selectedReasonText, selectedSubReasonText);
             try
 			{
 				var vm = Init(user, currentPage, logDetail, isCoaching, action);

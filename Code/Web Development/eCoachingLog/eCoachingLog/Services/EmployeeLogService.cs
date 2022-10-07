@@ -85,7 +85,7 @@ namespace eCoachingLog.Services
             return employeeLogRepository.GetBehaviors(moduleId);
         }
 
-		public List<LogReason> GetReasonsByLogId(long logId, bool isCoaching)
+		public List<LogReason> GetReasonsByLogId(long logId, bool isCoaching, string selectedReasonText, string selectedSubReasonText)
 		{
 			List<LogReason> reasons = new List<LogReason>();
 			var reasonTuples = employeeLogRepository.GetReasonsByLogId(logId, isCoaching);
@@ -98,7 +98,23 @@ namespace eCoachingLog.Services
 				reason.SubReasons = reasonTuples.Where(x => x.Item1 == distinctReason).Select(x => x.Item2).ToList();
 				reason.Value = reasonTuples.Where(x => x.Item1 == distinctReason).Select(x => x.Item3).First();
 
-				reasons.Add(reason);
+                if (!string.IsNullOrEmpty(selectedReasonText) && reason.Description == selectedReasonText)
+                {
+                    reason.Description = EclUtil.BoldSubstring(reason.Description, reason.Description);
+                }
+
+                if (!string.IsNullOrEmpty(selectedSubReasonText))
+                {
+                    for (int i = 0; i < reason.SubReasons.Count(); i++)
+                    {
+                        if (reason.SubReasons[i] == selectedSubReasonText)
+                        {
+                            reason.SubReasons[i] = EclUtil.BoldSubstring(reason.SubReasons[i], reason.SubReasons[i]);
+                        }
+                    }
+                }
+
+                reasons.Add(reason);
 			}
 
 			return reasons;
@@ -163,12 +179,12 @@ namespace eCoachingLog.Services
                 // if search by reason and sub reason, bold the selected reason and sub reason if not ALL
                 if (logFilter.ReasonId != -1 && !string.IsNullOrEmpty(logFilter.ReasonText))
                 {
-                    log.Reasons = log.Reasons.Replace(logFilter.ReasonText, "<b>" + logFilter.ReasonText + "</b>");
+                    log.Reasons = EclUtil.BoldSubstring(log.Reasons, logFilter.ReasonText);
                 }
 
                 if (logFilter.SubReasonId != -1 && !string.IsNullOrEmpty(logFilter.SubReasonText))
                 {
-                    log.SubReasons = log.SubReasons.Replace(logFilter.SubReasonText, "<b>" + logFilter.SubReasonText + "</b>");
+                    log.SubReasons = EclUtil.BoldSubstring(log.SubReasons, logFilter.SubReasonText);
                 }
             }
 

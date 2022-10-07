@@ -101,7 +101,11 @@ namespace eCoachingLog.Controllers
 		public ActionResult Search(HistoricalDashboardViewModel vm)
 		{
 			logger.Debug("Entered Search...");
-			vm.Search.LogType = Constants.LOG_SEARCH_TYPE_HISTORICAL;
+
+            Session["SelectedReason"] = vm.Search.ReasonText;
+            Session["SelectedSubReason"] = vm.Search.SubReasonText;
+
+            vm.Search.LogType = Constants.LOG_SEARCH_TYPE_HISTORICAL;
             vm.Search.IsBothQnNonQn = true;
 			return PartialView("_LogList", vm.Search);
 		}

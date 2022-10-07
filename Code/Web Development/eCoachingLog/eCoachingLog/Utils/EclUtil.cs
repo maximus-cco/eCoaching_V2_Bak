@@ -62,5 +62,15 @@ namespace eCoachingLog.Utils
 
             return String.Join<string>(delimiter, list);
         }
+
+        public static string BoldSubstring(string str, string subStr)
+        {
+            if (String.IsNullOrEmpty(str) || String.IsNullOrEmpty(subStr))
+            {
+                return str;
+            }
+
+            return str.Replace(subStr, "<b>" + subStr + "</b>");
+        }
     }
 }

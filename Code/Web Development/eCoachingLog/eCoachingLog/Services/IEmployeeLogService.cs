@@ -22,7 +22,7 @@ namespace eCoachingLog.Services
         List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId);
         List<Behavior> GetBehaviors(int moduleId);
         List<string> GetValues(int reasonId, string directOrIndirect, int moduleId);
-		List<LogReason> GetReasonsByLogId(long logId, bool isCoaching);
+		List<LogReason> GetReasonsByLogId(long logId, bool isCoaching, string selectedReasonText, string selectedSubReasonText);
 		IList<LogStatus> GetAllLogStatuses();
         IList<LogStatus> GetQnLogPendingStatuses();
         IList<LogSource> GetAllLogSources(string userEmpId);

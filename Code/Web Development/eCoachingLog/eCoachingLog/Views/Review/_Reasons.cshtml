@@ -5,11 +5,11 @@
 		@foreach (var reason in Model)
 		{
 			<tr>
-				<td>@reason.Description</td>
+                <td>@Html.Raw(WebUtility.HtmlDecode(@reason.Description))</td>
 				<td>
 					@foreach (var sub in reason.SubReasons)
-					{
-						@sub <br />
+                    {
+                        @Html.Raw(WebUtility.HtmlDecode(@sub)) <br />
 					}
 				</td>
 				<td>@reason.Value</td>
