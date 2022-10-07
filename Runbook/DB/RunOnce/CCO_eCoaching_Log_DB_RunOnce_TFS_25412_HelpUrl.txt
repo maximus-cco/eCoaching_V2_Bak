@@ -1,0 +1,60 @@
+/*
+TFS 25412 - eCL-Update Help dropdown link to report issues
+
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+--select * FROM [EC].[Coaching_Support_Urls]
+
+
+Summary
+1. Create Table [EC].[Coaching_Support_Urls]
+2. Add row(s) to [EC].[Coaching_Support_Urls]
+
+*/
+
+-- Details
+
+--1. Create Table [EC].[Coaching_Support_Urls]
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Support_Urls](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[Description] [nvarchar](250) NOT NULL,
+	[Value] [nvarchar](300) NOT NULL,
+	[isActive] [bit] NULL,
+ CONSTRAINT [ID] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+--2. Add row(s) to [EC].[Coaching_Support_Urls]
+
+INSERT INTO [EC].[Coaching_Support_Urls]
+           ([Name]
+           ,[Description]
+           ,[Value]
+           ,[isActive])
+     VALUES
+           ('Submit Ticket',
+           'Directs user to Cherwell to submit a ticket through Help menu.',
+           'https://itservicedesk.maximus.com/CherwellPortal/IT?',
+           1)
+GO
+
+
+
+

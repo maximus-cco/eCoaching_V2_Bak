@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Maintenance_Tables_Create.(11).sql
-Last Modified Date:03/15/2022
+CCO_eCoaching_Maintenance_Tables_Create.(12).sql
+Last Modified Date:10/07/2022
 Last Modified By: Susmitha Palacherla
 
+Version 12: Updated to add new table Coaching_Support_Urls for storing urls for links displayed in UI. -  TFS 25412 - 10/07/2022
 Version 11: Updated to add new table Feed_Contacts to support sending alerts if xlsx files staged -  TFS 23967 - 03/15/2022
 Version 10: Updated to support New Coaching Reason for Quality - TFS 23051 - 10/6/2021
 Version 09: Quality Now workflow enhancement. TFS 22187 - 09/15/2021
@@ -32,6 +33,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 6. Create Table [EC].[Coaching_Log_Bingo_Archive]
 7. Create Table [EC].[Coaching_Log_Quality_Now_Summary_Archive]
 8. Create Table [EC].[Feed_Contacts]
+9. Create Table [EC].[Coaching_Support_Urls]
 
 
 **************************************************************
@@ -364,5 +366,29 @@ CREATE TABLE [EC].[Feed_Contacts](
 	[SecondaryPOC] [nvarchar](200) NULL
 ) ON [PRIMARY]
 GO
+
+--*************************************************
+
+--9. Create Table [EC].[Coaching_Support_Urls]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Support_Urls](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[Description] [nvarchar](250) NOT NULL,
+	[Value] [nvarchar](300) NOT NULL,
+	[isActive] [bit] NULL,
+ CONSTRAINT [ID] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
 
 --*************************************************
