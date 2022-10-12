@@ -1,20 +1,8 @@
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Dashboard_Summary_Count' 
-)
-   DROP PROCEDURE [EC].[sp_Dashboard_Summary_Count]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 
 --	====================================================================
@@ -29,8 +17,9 @@ GO
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
+--  Modified to include statusid 4 warnings for Managers during TFS 25387 - 09/26/2022
 --	=====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
 
 AS
@@ -118,7 +107,7 @@ END
 
 IF @nvcEmpRole = 'Manager'
 BEGIN
-SET @intMyPending = (SELECT COUNT(cl.CoachingID)
+SET @intMyPendingCoaching = (SELECT COUNT(cl.CoachingID)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON cl.EmpID = eh.Emp_ID
                  WHERE cl.[SourceID] NOT IN (235, 236) AND
@@ -127,6 +116,13 @@ SET @intMyPending = (SELECT COUNT(cl.CoachingID)
 			     OR (ISNULL([cl].[strReportCode], ' ') NOT LIKE 'LCS%' AND cl.ReassignCount= 0 AND  eh.Mgr_ID =  @nvcEmpID  AND cl.[StatusID] in (5,7,9)) 
 			     OR ([cl].[strReportCode] LIKE 'LCS%' AND [ReassignCount] = 0 AND cl.[MgrID] = @nvcEmpID AND [cl].[StatusID]= 5) )
 			     OR (cl.ReassignCount <> 0 AND cl.ReassignedToID =  @nvcEmpID AND  cl.[StatusID] in (5,7,9))))
+
+SET @intMyPendingWarning = (SELECT COALESCE(COUNT(wl.WarningID),0)
+                 FROM EC.Warning_Log wl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
+				 ON wl.EmpID = eh.Emp_ID
+                 WHERE wl.EmpID = @nvcEmpID  AND StatusID = 4);
+
+SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning;
 
 END
 
