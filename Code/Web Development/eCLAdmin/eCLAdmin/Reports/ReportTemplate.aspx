@@ -17,10 +17,11 @@
     <body style="margin: 0px; padding: 0px;">
         <form id="form1" runat="server">
             <div id="div-reportviewer">
-                <asp:ScriptManager ID="scriptManagerReport" AsyncPostBackTimeOut="0" runat="server">
-                </asp:ScriptManager>
-                <rsweb:ReportViewer  id="rvSiteMapping" runat ="server" AsyncRendering="false" KeepSessionAlive="true" ShowPrintButton="false"  ZoomMode="Percent" Width="100%" Height="100%" SizeToReportContent="false" > 
-                </rsweb:ReportViewer> 
+                <asp:ScriptManager ID="scriptManagerReport" AsyncPostBackTimeOut="0" runat="server"></asp:ScriptManager>
+                <%--Fix [Possible] Cross-site Request Forgery--%>
+                <asp:HiddenField ID="forgeryToken" runat="server"/>
+
+                <rsweb:ReportViewer  id="rvSiteMapping" runat ="server" AsyncRendering="false" KeepSessionAlive="true" ShowPrintButton="false"  ZoomMode="Percent" Width="100%" Height="100%" SizeToReportContent="false" ></rsweb:ReportViewer> 
             </div>
         </form>
     </body>

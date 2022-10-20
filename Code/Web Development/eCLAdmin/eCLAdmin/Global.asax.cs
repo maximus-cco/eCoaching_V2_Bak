@@ -72,7 +72,7 @@ namespace eCLAdmin
             Server.ClearError();
 
             logger.Debug("Redirect to error");
-            Response.Redirect("/Error/Index");
+            Response.Redirect("~/Error");
         }
 
     }

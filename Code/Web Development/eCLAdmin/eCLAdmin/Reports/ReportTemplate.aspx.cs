@@ -2,6 +2,7 @@
 using log4net;
 using System;
 using System.Web.UI.WebControls;
+using System.Web.UI;
 
 namespace eCLAdmin.Reports
 {
@@ -14,6 +15,9 @@ namespace eCLAdmin.Reports
         {
             logger.Debug("Inside Page_Load");
             string reportName = String.Empty;
+
+            // Fix [Possible] Cross-site Request Forgery
+            ValidateForgeryToken(this.Page, forgeryToken);
 
             if (!IsPostBack)
             {
@@ -48,5 +52,26 @@ namespace eCLAdmin.Reports
             logger.Debug("Leaving page_load");
 
         }
+
+        public static void ValidateForgeryToken(Page page, HiddenField forgeryToken)
+        {
+            if (!page.IsPostBack)
+            {
+                Guid antiforgeryToken = Guid.NewGuid();
+                page.Session["AntiforgeryToken"] = antiforgeryToken;
+                forgeryToken.Value = antiforgeryToken.ToString();
+            }
+            else
+            {
+                Guid stored = (Guid)page.Session["AntiforgeryToken"];
+                Guid sent = new Guid(forgeryToken.Value);
+                if (sent != stored)
+                {
+                    page.Session.Abandon();
+                    page.Response.Redirect("~/Error");
+                }
+            }
+        }
+
     }
 }
