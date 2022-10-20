@@ -72,5 +72,18 @@ namespace eCoachingLog.Utils
 
             return str.Replace(subStr, "<b>" + subStr + "</b>");
         }
+
+        public static string Sanitize(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return str;
+            }
+
+            var retStr = Regex.Replace(str, "&lt;script", "&lt; script", RegexOptions.IgnoreCase);
+            retStr = Regex.Replace(retStr, "&lt;form", "&lt; form", RegexOptions.IgnoreCase);
+
+            return retStr;
+        }
     }
 }

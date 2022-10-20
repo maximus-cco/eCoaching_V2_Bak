@@ -78,7 +78,7 @@ namespace eCoachingLog
 				{
 					exMsg = ex.Message;
 				}
-				logger.Debug("ex: " + exMsg +
+				logger.Debug("############ex: " + exMsg +
 					Environment.NewLine + ex.StackTrace);
 			}
             else
@@ -96,7 +96,7 @@ namespace eCoachingLog
 			}
 			else
 			{
-				Response.Redirect("../Error/Index", false);
+				Response.Redirect("~/Error/Index", true);
 			}
         }
 

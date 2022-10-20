@@ -101,9 +101,9 @@ namespace eCoachingLog.Repository
 						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString().Trim().ToUpper();
 						logDetail.LogManagerEmpId = dataReader["strCLMgrID"].ToString().Trim().ToUpper();
                         logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
-                        logDetail.CoachingNotes = UpdatePdtToEst(dataReader["txtCoachingNotes"].ToString());;
-						logDetail.Behavior = dataReader["txtDescription"].ToString();
-						logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
+                        logDetail.CoachingNotes = UpdatePdtToEst(dataReader["txtCoachingNotes"].ToString());
+						logDetail.Behavior = EclUtil.Sanitize(dataReader["txtDescription"].ToString());
+                        logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
                         logDetail.Comment = dataReader["txtCSRComments"].ToString();
                         logDetail.EmployeeReviewDate = EclUtil.AppendTimeZone(dataReader["CSRReviewAutoDate"].ToString());
                         logDetail.SupReviewedAutoDate = EclUtil.AppendTimeZone(dataReader["SupReviewedAutoDate"].ToString());
