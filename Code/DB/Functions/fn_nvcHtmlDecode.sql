@@ -1,41 +1,17 @@
-﻿/*
-fn_nvcHtmlDecode(01).sql
-Last Modified Date: 08/20/2019
-Last Modified By: Susmitha Palacherla
-
-
-
-Version 01: Document Initial Revision - TFS 15063 - 08/20/2019
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'fn_nvcHtmlDecode' 
-)
-   DROP FUNCTION [EC].[fn_nvcHtmlDecode]
-GO
-
-
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================
 -- Author:		    Susmitha Palacherla
 -- Create date:     08/20/2019
 -- Decodes html characters for Export to Excel
 -- Description:   Initial revision. TFS 15063 - 08/20/2019
-
+-- Modified to sanitize data before displaying. TFS 25634 - 10/21/2022
 -- =============================================
-CREATE FUNCTION [EC].[fn_nvcHtmlDecode] 
+CREATE OR ALTER   FUNCTION [EC].[fn_nvcHtmlDecode] 
 ( 
     @Encoded as nvarchar(max) 
 ) 
@@ -58,7 +34,11 @@ BEGIN
 	   Replace( 
 	   Replace( 
 	   Replace( 
+	   Replace( 
+	   Replace( 
 	   Replace(@Encoded,'&amp;','&'), 
+	   '&lt; script', '<script'), 
+	   '&lt; form', '<form'),
       '&lt;', '<'), 
       '&gt;', '>'), 
 	  '&#39;','`'), 
@@ -74,8 +54,4 @@ BEGIN
     RETURN @Decoded 
  
 END --fn_nvcHtmlDecode
-
 GO
-
-
-
