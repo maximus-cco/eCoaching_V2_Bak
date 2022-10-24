@@ -1,0 +1,59 @@
+/* 
+
+TFS 25490 - Employee Load into eCL Failing due to lengthy Email Address
+
+CCO_eCoaching_Log_DB_RunOnce_TFS_25490_Email_Field_Sizes.txt
+
+
+
+-- Run with nothing selected.
+
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. DDL Updates
+2. Drop View
+
+*/
+
+
+
+
+--*****************
+
+ALTER TABLE EC.Employee_Hierarchy_Stage
+ALTER COLUMN Emp_Email nvarchar(250);
+GO
+
+ALTER TABLE EC.Employee_Hierarchy_Stage
+ALTER COLUMN Sup_Email nvarchar(250);
+GO
+
+ALTER TABLE EC.Employee_Hierarchy_Stage
+ALTER COLUMN Mgr_Email nvarchar(250);
+GO
+
+
+ALTER TABLE EC.HR_Hierarchy_Stage
+ALTER COLUMN Emp_Email nvarchar(250);
+GO
+
+ALTER TABLE EC.HR_Hierarchy_Stage
+ALTER COLUMN Sup_Email nvarchar(250);
+GO
+
+ALTER TABLE EC.HR_Hierarchy_Stage
+ALTER COLUMN Mgr_Email nvarchar(250);
+GO
+
+
+--*****************
+
+DROP VIEW [EC].[View_Employee_Hierarchy]
+
+--*****************
