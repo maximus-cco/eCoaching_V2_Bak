@@ -119,9 +119,9 @@ namespace eCoachingLog.Controllers
 
                 vm.EmployeeIdList = EclUtil.ConvertToList(vm.EmployeeIds, ",").Distinct().ToList();
                 submissionResults = this.newSubmissionService.Save(vm, GetUserFromSession());
-                successfulSubmissions = submissionResults.Where(x => x.LogId != "-1").ToList();
+                successfulSubmissions = submissionResults.Where(x => !string.IsNullOrWhiteSpace(x.LogId) && x.LogId != "-1").ToList();
 
-                if (successfulSubmissions.Count == vm.EmployeeIdList.Count)
+                if (successfulSubmissions.Count != 0 && successfulSubmissions.Count == vm.EmployeeIdList.Count)
                 {
                     TempData["IsSuccess"] = true;
                     // single submission - need to show user the log name
