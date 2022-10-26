@@ -1,0 +1,37 @@
+/*
+TFS 25626 - Removal of Winchester from eCoaching log
+
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+--select * from [EC].[DIM_Site]
+--select * from [EC].[Survey_Sites]
+
+
+Summary
+
+1. Inactivate Sandy in DIM_Site Table
+2. Inactivate Sandy in Survey_Sites Table
+
+*/
+
+-- Details
+--1. Inactivate Sandy in DIM_Site Table
+
+UPDATE [EC].[DIM_Site]
+SET [isActive] = 0
+WHERE [City]= 'Winchester';
+
+--2. Inactivate Sandy in Survey_Sites Table
+
+UPDATE [EC].[Survey_Sites]
+SET [isActive] = 0
+,[isPilot] = 0
+WHERE [City] = 'Winchester';
+
+--**********************
