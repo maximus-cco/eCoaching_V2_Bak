@@ -1,7 +1,10 @@
 /*
-File: eCoaching_EmployeeHierarchy_Load_Tables_Create(08).sql 
-Last Modified Date: 07/22/2022
+File: eCoaching_EmployeeHierarchy_Load_Tables_Create(09).sql 
+Last Modified Date: 10/22/2022
 Last Modified By: Susmitha Palacherla
+
+Version 09: Employee Load into eCL Failing due to lengthy Email Address. TFS 25490 - 10/22/2022
+Altered size for Email column to 250
 
 Version 08: TFS 24924 - Report access for Early Work Life Supervisors
 Added Table [EC].[ELS_Hierarchy_Stage]
@@ -78,7 +81,7 @@ GO
 CREATE TABLE [EC].[Employee_Hierarchy_Stage](
 	[Emp_ID] [nvarchar](10) NOT NULL,
 	[Emp_Name] [nvarchar](70) NULL,
-	[Emp_Email] [nvarchar](50) NULL,
+	[Emp_Email] [nvarchar](250) NULL,
 	[Emp_Site] [nvarchar](50) NULL,
 	[Emp_Job_Code] [nvarchar](20) NULL,
 	[Emp_Job_Description] [nvarchar](50) NULL,
@@ -86,13 +89,13 @@ CREATE TABLE [EC].[Employee_Hierarchy_Stage](
 	[Emp_Program] [nvarchar](20) NULL,
 	[Sup_Emp_ID] [nvarchar](10) NULL,
 	[Sup_Name] [nvarchar](70) NULL,
-	[Sup_Email] [nvarchar](50) NULL,
+	[Sup_Email] [nvarchar](250) NULL,
 	[Sup_Job_Code] [nvarchar](50) NULL,
 	[Sup_Job_Description] [nvarchar](50) NULL,
 	[Sup_LanID] [nvarchar](30) NULL,
 	[Mgr_Emp_ID] [nvarchar](10) NULL,
 	[Mgr_Name] [nvarchar](70) NULL,
-	[Mgr_Email] [nvarchar](50) NULL,
+	[Mgr_Email] [nvarchar](250) NULL,
 	[Mgr_Job_Code] [nvarchar](50) NULL,
 	[Mgr_Job_Description] [nvarchar](50) NULL,
 	[Mgr_LanID] [nvarchar](30) NULL,
@@ -332,7 +335,7 @@ GO
 CREATE TABLE [EC].[HR_Hierarchy_Stage](
 	[Emp_ID] [nvarchar](10) NOT NULL,
 	[Emp_Name] [nvarchar](70) NULL,
-	[Emp_Email] [nvarchar](50) NULL,
+	[Emp_Email] [nvarchar](250) NULL,
 	[Emp_Site] [nvarchar](50) NULL,
 	[Emp_Job_Code] [nvarchar](20) NULL,
 	[Emp_Job_Description] [nvarchar](50) NULL,
@@ -340,13 +343,13 @@ CREATE TABLE [EC].[HR_Hierarchy_Stage](
 	[Emp_Program] [nvarchar](20) NULL,
 	[Sup_Emp_ID] [nvarchar](10) NULL,
 	[Sup_Name] [nvarchar](70) NULL,
-	[Sup_Email] [nvarchar](50) NULL,
+	[Sup_Email] [nvarchar](250) NULL,
 	[Sup_Job_Code] [nvarchar](50) NULL,
 	[Sup_Job_Description] [nvarchar](50) NULL,
 	[Sup_LanID] [nvarchar](30) NULL,
 	[Mgr_Emp_ID] [nvarchar](10) NULL,
 	[Mgr_Name] [nvarchar](70) NULL,
-	[Mgr_Email] [nvarchar](50) NULL,
+	[Mgr_Email] [nvarchar](250) NULL,
 	[Mgr_Job_Code] [nvarchar](50) NULL,
 	[Mgr_Job_Description] [nvarchar](50) NULL,
 	[Mgr_LanID] [nvarchar](30) NULL,
