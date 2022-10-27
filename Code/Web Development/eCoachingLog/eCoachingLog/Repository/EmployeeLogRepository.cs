@@ -101,10 +101,10 @@ namespace eCoachingLog.Repository
 						logDetail.ManagerEmpId = dataReader["strEmpMgrID"].ToString().Trim().ToUpper();
 						logDetail.LogManagerEmpId = dataReader["strCLMgrID"].ToString().Trim().ToUpper();
                         logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
-                        logDetail.CoachingNotes = UpdatePdtToEst(dataReader["txtCoachingNotes"].ToString());
-						logDetail.Behavior = EclUtil.Sanitize(dataReader["txtDescription"].ToString());
-                        logDetail.MgrNotes = dataReader["txtMgrNotes"].ToString();
-                        logDetail.Comment = dataReader["txtCSRComments"].ToString();
+                        logDetail.CoachingNotes = EclUtil.Sanitize(UpdatePdtToEst(dataReader["txtCoachingNotes"].ToString()));
+                        logDetail.Behavior = EclUtil.Sanitize(dataReader["txtDescription"].ToString());
+                        logDetail.MgrNotes = EclUtil.Sanitize(dataReader["txtMgrNotes"].ToString());
+                        logDetail.Comment = EclUtil.Sanitize(dataReader["txtCSRComments"].ToString());
                         logDetail.EmployeeReviewDate = EclUtil.AppendTimeZone(dataReader["CSRReviewAutoDate"].ToString());
                         logDetail.SupReviewedAutoDate = EclUtil.AppendTimeZone(dataReader["SupReviewedAutoDate"].ToString());
                         logDetail.MgrReviewAutoDate = EclUtil.AppendTimeZone(dataReader["MgrReviewAutoDate"].ToString());
@@ -179,13 +179,13 @@ namespace eCoachingLog.Repository
 							logDetail.FollowupSupAutoDate = EclUtil.AppendTimeZone(dataReader["SupFollowupAutoDate"].ToString());
 							logDetail.FollowupDueDate = EclUtil.AppendTimeZone(dataReader["FollowupDueDate"].ToString());
 							logDetail.FollowupActualDate = EclUtil.AppendTimeZone(dataReader["FollowupActualDate"].ToString());
-							logDetail.FollowupDetails = dataReader["SupFollowupCoachingNotes"].ToString();
+							logDetail.FollowupDetails = EclUtil.Sanitize(dataReader["SupFollowupCoachingNotes"].ToString());
 
 							logDetail.FollowupEmpAutoDate = EclUtil.AppendTimeZone(dataReader["EmpAckFollowupAutoDate"].ToString());
-							logDetail.FollowupEmpComments = dataReader["EmpAckFollowupComments"].ToString();
+							logDetail.FollowupEmpComments = EclUtil.Sanitize(dataReader["EmpAckFollowupComments"].ToString());
 						}
 
-                        logDetail.FollowupDecisionComments = dataReader["SupFollowupReviewCoachingNotes"].ToString();
+                        logDetail.FollowupDecisionComments = EclUtil.Sanitize(dataReader["SupFollowupReviewCoachingNotes"].ToString());
 
                         logDetail.PfdCompletedDate = EclUtil.AppendTimeZone(dataReader["PFDCompletedDate"].ToString());
 
@@ -295,7 +295,7 @@ namespace eCoachingLog.Repository
 						logDetail.IsFormalAttendanceTrends = dataReader["FC / ATTT"].ToString() == "0" ? false : true;
 						logDetail.InstructionText = dataReader["strStaticText"].ToString();
 						logDetail.EmployeeReviewDate = EclUtil.AppendTimeZone(dataReader["CSRReviewAutoDate"].ToString());
-						logDetail.Comment = dataReader["CSRComments"].ToString();
+						logDetail.Comment = EclUtil.Sanitize(dataReader["CSRComments"].ToString());
 
 						// directors and senior managers
 						logDetail.SrMgrLevelOneEmpId = dataReader["strEmpSrMgrLvl1ID"].ToString().Trim().ToUpper();
@@ -1184,26 +1184,26 @@ namespace eCoachingLog.Repository
                         sc.Program = dataReader["strProgram"].ToString();
                         sc.SubmitterName = dataReader["Submitter"].ToString();
                         sc.BusinessProcess = dataReader["Business Process"].ToString().Replace("<br />", "");
-                        sc.BusinessProcessComment = dataReader["Business Process Comments"].ToString();
+                        sc.BusinessProcessComment = EclUtil.Sanitize(dataReader["Business Process Comments"].ToString());
                         sc.InfoAccuracy = dataReader["Info Accuracy"].ToString().Replace("<br />", ""); ;
-                        sc.InfoAccuracyComment = dataReader["Info Accuracy Comments"].ToString();
+                        sc.InfoAccuracyComment = EclUtil.Sanitize(dataReader["Info Accuracy Comments"].ToString());
                         sc.PrivacyDisclaimers = dataReader["Privacy Disclaimers"].ToString().Replace("<br />", ""); ;
-                        sc.PrivacyDisclaimersComment = dataReader["Privacy Disclaimers Comments"].ToString();
+                        sc.PrivacyDisclaimersComment = EclUtil.Sanitize(dataReader["Privacy Disclaimers Comments"].ToString());
                         sc.IssueResolution = dataReader["Issue Resolution"].ToString().Replace("<br />", ""); ;
-                        sc.IssueResolutionComment = dataReader["Issue Resolution Comments"].ToString();
+                        sc.IssueResolutionComment = EclUtil.Sanitize(dataReader["Issue Resolution Comments"].ToString());
                         sc.CallEfficiency = dataReader["Call Efficiency"].ToString().Replace("<br />", ""); ;
-                        sc.CallEfficiencyComment = dataReader["Call Efficiency Comments"].ToString();
+                        sc.CallEfficiencyComment = EclUtil.Sanitize(dataReader["Call Efficiency Comments"].ToString());
                         sc.ActiveListening = dataReader["Active Listening"].ToString().Replace("<br />", ""); ;
-                        sc.ActiveListeningComment = dataReader["Active Listening Comments"].ToString();
+                        sc.ActiveListeningComment = EclUtil.Sanitize(dataReader["Active Listening Comments"].ToString());
                         sc.PersonalityFlexing = dataReader["Personality Flexing"].ToString().Replace("<br />", ""); ;
-                        sc.PersonalityFlexingComment = dataReader["Personality Flexing Comments"].ToString();
+                        sc.PersonalityFlexingComment = EclUtil.Sanitize(dataReader["Personality Flexing Comments"].ToString());
                         sc.StartTemperature = dataReader["Start Temperature"].ToString().Replace("<br />", ""); ;
-                        sc.StartTemperatureComment = dataReader["Start Temperature Comments"].ToString();
+                        sc.StartTemperatureComment = EclUtil.Sanitize(dataReader["Start Temperature Comments"].ToString());
                         sc.EndTemperature = dataReader["End Temperature"].ToString().Replace("<br />", ""); ;
-                        sc.EndTemperatureComment = dataReader["End Temperature Comments"].ToString();
+                        sc.EndTemperatureComment = EclUtil.Sanitize(dataReader["End Temperature Comments"].ToString());
                         sc.Channel = dataReader["Channel"].ToString();
                         sc.ActivityId = dataReader["Activity ID"].ToString();
-                        sc.ContactReason = dataReader["Reason For Contact"].ToString();
+                        sc.ContactReason = EclUtil.Sanitize(dataReader["Reason For Contact"].ToString());
 
                         scList.Add(sc);
                     }
@@ -1213,7 +1213,7 @@ namespace eCoachingLog.Repository
                     while (dataReader.Read())
                     {
                         var temp = new LogSummary();
-                        temp.Summary = dataReader["EvalSummaryNotes"].ToString();
+                        temp.Summary = EclUtil.Sanitize(dataReader["EvalSummaryNotes"].ToString());
                         temp.IsReadOnly = dataReader["IsReadOnly"] == DBNull.Value ? false : (bool)dataReader["IsReadOnly"];
                         summaryList.Add(temp);
                     }

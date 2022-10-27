@@ -33,7 +33,7 @@ namespace eCoachingLog.Services
 			// Strip potential harmful characters entered by the user
 			submission.BehaviorDetail = EclUtil.CleanInput(submission.BehaviorDetail);
 			submission.Plans = EclUtil.CleanInput(submission.Plans);
-
+            
 			List<CoachingReason> crs = submission.CoachingReasons;
 			// We only care about the selected reasons
 			submission.CoachingReasons = crs.FindAll(x => x.IsChecked == true);

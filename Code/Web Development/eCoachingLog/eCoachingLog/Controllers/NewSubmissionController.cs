@@ -89,7 +89,7 @@ namespace eCoachingLog.Controllers
                 vm.EmployeeIds = vm.Employee.Id;
             }
 
-            var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
+            //var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
             var user = GetUserFromSession();
             IList<NewSubmissionResult> submissionResults = new List<NewSubmissionResult>();
             var successfulSubmissions = new List<NewSubmissionResult>();
@@ -133,7 +133,7 @@ namespace eCoachingLog.Controllers
                 else
                 {
                     TempData["IsSuccess"] = false;
-                    TempData["ErrorList"] = submissionResults.Where(x => x.LogName == "-1").Select(o =>
+                    TempData["ErrorList"] = submissionResults.Where(x => (string.IsNullOrWhiteSpace(x.LogId) || x.LogName == "-1")).Select(o =>
                                                 new Error
                                                 {
                                                     Key = o.Employee.Name,

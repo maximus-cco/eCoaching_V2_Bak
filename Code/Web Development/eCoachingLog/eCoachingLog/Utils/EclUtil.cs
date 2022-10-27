@@ -12,6 +12,19 @@ namespace eCoachingLog.Utils
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public static HashSet<string> WhiteList = new HashSet<string>()
+        {
+            { "a" },            // a
+            { "/a&gt;" },       // /a>
+            { "b&gt;" },        // b>
+            {"/b&gt;" },        // /b>
+            { "br&gt;" },       // br>
+            { "br/&gt;" },      // br/>
+            { "br /&gt;" },     // br />
+            { "p&gt;" },        // p>
+            { "/p&gt;" }        // /p>
+        };
+
         public static string AppendTimeZone(string str)
         {
             if (String.IsNullOrWhiteSpace(str))
@@ -24,8 +37,13 @@ namespace eCoachingLog.Utils
 
 		public static string CleanInput(string strIn)
 		{
+            if (string.IsNullOrWhiteSpace(strIn))
+            {
+                return strIn;
+            }
+
 			string strOut = HttpUtility.HtmlEncode(strIn);
-			return strOut;
+			return Sanitize(strOut);
 		}
 
         public static string RemoveToken(string str, string token)
@@ -80,8 +98,15 @@ namespace eCoachingLog.Utils
                 return str;
             }
 
-            var retStr = Regex.Replace(str, "&lt;script", "&lt; script", RegexOptions.IgnoreCase);
-            retStr = Regex.Replace(retStr, "&lt;form", "&lt; form", RegexOptions.IgnoreCase);
+            var retStr = str;
+            // "<" followed by space(s)
+            var pattern = @"&lt;\s+"; 
+            //retStr = Regex.Replace(retStr, pattern, "&lt;", RegexOptions.IgnoreCase);     // remove space(s) following "<"
+            retStr = Regex.Replace(retStr, "&lt;", "&lt; ", RegexOptions.IgnoreCase);       // replace "<" with "< "
+            foreach (string item in WhiteList)
+            {
+                retStr = Regex.Replace(retStr, pattern + item, "&lt;" + item, RegexOptions.IgnoreCase);
+            }
 
             return retStr;
         }
