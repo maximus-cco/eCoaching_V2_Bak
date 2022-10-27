@@ -1,36 +1,8 @@
-/*
-sp_InsertInto_Survey_Response_Header(04).sql
-Last Modified Date: 02/25/2018
-Last Modified By: Susmitha Palacherla
-
-Version 04: Modified to increase surveys for London. TFS 13334 - 02/20/2019
-
-Version 03: Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
-
-Version 02: Modified during Encryption of sensitive data. Used Emp LanID from Emp table. TFS 7856 - 10/23/2017
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Survey_Response_Header' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 
 -- =============================================
@@ -47,8 +19,9 @@ GO
 -- Modified during Encryption of sensitive data. Used Emp LanID from Emp table. TFS 7856 - 10/23/2017
 -- Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 -- Modified to increase surveys for London. TFS 13334 - 02/20/2019
+-- Modified during Removal of Winchester to restrict Surveys for Inactive Sites. TFS 25626 - 10/26/2022
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header]
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header]
 AS
 BEGIN
 
@@ -94,7 +67,7 @@ BEGIN TRY
   SET @StartOfPilotDate1 = (SELECT [StartOfPilotDate1] FROM [EC].[Survey_Pilot_Date])
   SET @EndOfPilotDate1 = (SELECT [EndOfPilotDate1] FROM [EC].[Survey_Pilot_Date])
   SET @StartOfPilotDate2 = (SELECT [StartOfPilotDate2] FROM [EC].[Survey_Pilot_Date])
-  SET @EndOfPilotDate2 = (SELECT [EndOfPilotDate2 ] FROM [EC].[Survey_Pilot_Date])
+  SET @EndOfPilotDate2 = (SELECT [EndOfPilotDate2] FROM [EC].[Survey_Pilot_Date])
 
 
  --PRINT @StartOfPeriod
@@ -189,6 +162,7 @@ BEGIN
   ON CL.EmpID = EH.Emp_ID
   WHERE Statusid = 1 -- Completed
   AND ModuleID = @ModuleID -- Each Module 
+   AND SiteID IN (SELECT SiteID FROM EC.Survey_Sites WHERE isACtive = 1)
   AND ((SiteID IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) AND SourceID NOT IN (123, 130, 135,136, 223, 224,230, 235, 236 )) -- Exclude all Verint for Pilot site(s)
   OR (SiteID NOT IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) AND SourceID <> 224)) -- Exclude Verint-TQC for Non Pilot site(s)
     AND isCSRAcknowledged = 1
@@ -267,6 +241,7 @@ WHERE (SRH.[SurveyTypeID] IS NULL AND SRH.EmpID is NULL AND SRH.MonthOfYear IS N
   ON CL.EmpID = EH.Emp_ID
   WHERE Statusid = 1 -- Completed
   AND ModuleID = @ModuleID -- Each Module 
+   AND SiteID IN (SELECT SiteID FROM EC.Survey_Sites WHERE isACtive = 1)
   AND SiteID IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) -- Include sites with Pilot Survey here
   AND ((SourceID IN (123, 130, 223, 230) AND DATEADD(day, DATEDIFF(DD, 0, GetDate()),0)  between @StartOfPilotDate1 and @EndOfPilotDate1) -- Quality
   OR (SourceID IN (135, 136, 235, 236) AND DATEADD(day, DATEDIFF(DD, 0, GetDate()),0)   between @StartOfPilotDate2 and @EndOfPilotDate2))  -- QualityNow
@@ -381,11 +356,6 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Survey_Response_Header
-
-
-
-
-
 GO
 
 
