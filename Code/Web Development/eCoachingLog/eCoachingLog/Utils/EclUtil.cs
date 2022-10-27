@@ -14,7 +14,7 @@ namespace eCoachingLog.Utils
 
         public static HashSet<string> WhiteList = new HashSet<string>()
         {
-            { "a" },            // a
+            { "a " },            // a followed by a space
             { "/a&gt;" },       // /a>
             { "b&gt;" },        // b>
             {"/b&gt;" },        // /b>
