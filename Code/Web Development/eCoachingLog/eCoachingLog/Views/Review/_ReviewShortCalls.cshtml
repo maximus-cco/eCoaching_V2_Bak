@@ -29,7 +29,7 @@
 					@Html.ValidationMessageFor(m => m.ShortCallList[i].SelectedBehaviorId)
 				</td>
 				<td>
-					<div>@Html.Raw(Model.ShortCallList[i].ActionsString)</div>
+					<div>@Html.Raw(WebUtility.HtmlDecode(Model.ShortCallList[i].ActionsString))</div>
 					@Html.HiddenFor(m => m.ShortCallList[i].ActionsString)
 				</td>
 				<td>

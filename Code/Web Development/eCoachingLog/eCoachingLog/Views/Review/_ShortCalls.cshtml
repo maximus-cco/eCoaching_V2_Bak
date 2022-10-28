@@ -28,12 +28,12 @@
 	{
 		@Html.HiddenFor(m => m.ShortCallList[index].VerintId)
 	<tr>
-		<td class="">@Html.Raw(sc.VerintId)</td>
-		<td class="" align="center">@Html.Raw(sc.IsValidBehaviorText)</td>
-		<td class="">@Html.Raw(sc.SelectedBehaviorText)</td>
-		<td class="">@Html.Raw(sc.ActionsString)</td>
-		<td class="">@Html.Raw(sc.CoachingNotes)</td>
-		<td class="" align="center">@Html.Raw(sc.IsLsaInformedText)</td>
+		<td class="">@Html.Raw(WebUtility.HtmlDecode(sc.VerintId))</td>
+		<td class="" align="center">@Html.Raw(WebUtility.HtmlDecode(sc.IsValidBehaviorText))</td>
+		<td class="">@Html.Raw(WebUtility.HtmlDecode(sc.SelectedBehaviorText))</td>
+		<td class="">@Html.Raw(WebUtility.HtmlDecode(sc.ActionsString))</td>
+		<td class="">@Html.Raw(WebUtility.HtmlDecode(sc.CoachingNotes))</td>
+		<td class="" align="center">@Html.Raw(WebUtility.HtmlDecode(sc.IsLsaInformedText))</td>
 		<td>
 			@if (!Model.IsReadOnly)
 			{
@@ -48,9 +48,9 @@
 			}
 			else
 			{
-				@Html.Raw(sc.ManagerAgreedText)
+				@Html.Raw(WebUtility.HtmlDecode(sc.ManagerAgreedText))
 				<br />
-				@Html.Raw(sc.Comments)
+				@Html.Raw(WebUtility.HtmlDecode(sc.Comments))
 			}
 		</td>
 	</tr>

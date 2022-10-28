@@ -15,7 +15,7 @@
 			</div>
 
 			<div class="mt-2 instruction-text @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")">
-				@Html.Raw(Model.InstructionText)
+				@Html.Raw(WebUtility.HtmlDecode(Model.InstructionText))
 			</div>
 
 			@{ Html.RenderPartial("_EmployeeWarningReviewInfo"); }

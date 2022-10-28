@@ -53,7 +53,7 @@
 				<div class="text-info">
                     @if (Model.IsReadyToCoach)
                     {
-                        @Html.Raw(Model.QnSummaryAll)
+                        @Html.Raw(WebUtility.HtmlDecode(Model.QnSummaryAll))
                     }
                     else
                     {

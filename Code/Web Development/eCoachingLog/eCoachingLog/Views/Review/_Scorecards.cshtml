@@ -57,37 +57,37 @@ Page Name: @Model.ReviewPageName*@
                             issueResolutionLabel = "Business Correspondence";
                             communicationLabel = "";
                         }
-                        <p><strong>Contact Reason:</strong> @Html.Raw(s.ContactReason)</p>
-						<p><strong>Business Process:</strong> @Html.Raw(s.BusinessProcess)<br />
+                        <p><strong>Contact Reason:</strong> @Html.Raw(WebUtility.HtmlDecode(s.ContactReason))</p>
+						<p><strong>Business Process:</strong> @Html.Raw(WebUtility.HtmlDecode(s.BusinessProcess))<br />
                             <strong>Comments:</strong>
-                            <span id="bp_comments_@s.EvalId"> @Html.Raw(s.BusinessProcessComment)</span> 
+                            <span id="bp_comments_@s.EvalId"> @Html.Raw(WebUtility.HtmlDecode(s.BusinessProcessComment))</span> 
                             @if (Model.AllowCopy && !String.IsNullOrEmpty(s.BusinessProcessComment))
                             {
                                 <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>  
                             }
                         </p>
 
-						<p><strong>Information Accuracy:</strong> @Html.Raw(s.InfoAccuracy)<br />
+						<p><strong>Information Accuracy:</strong> @Html.Raw(WebUtility.HtmlDecode(s.InfoAccuracy))<br />
                             <strong>Comments:</strong>
-                            <span id="ia_comments_@s.EvalId"> @Html.Raw(s.InfoAccuracyComment)</span>
-                            @if (Model.AllowCopy && !String.IsNullOrEmpty(s.InfoAccuracyComment))
+                            <span id="ia_comments_@s.EvalId"> @Html.Raw(WebUtility.HtmlDecode(s.InfoAccuracyComment))</span>
+                            @if (Model.AllowCopy && !String.IsNullOrEmpty(WebUtility.HtmlDecode(s.InfoAccuracyComment)))
                             {
                                 <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
                             }  
                         </p>
 
-						<p><strong>Privacy Disclaimers:</strong> @Html.Raw(s.PrivacyDisclaimers)<br />
+						<p><strong>Privacy Disclaimers:</strong> @Html.Raw(WebUtility.HtmlDecode(s.PrivacyDisclaimers))<br />
                             <strong>Comments:</strong>
-                            <span id="pd_comments_@s.EvalId"> @Html.Raw(s.PrivacyDisclaimersComment)</span>
+                            <span id="pd_comments_@s.EvalId"> @Html.Raw(WebUtility.HtmlDecode(s.PrivacyDisclaimersComment))</span>
                             @if (Model.AllowCopy && !String.IsNullOrEmpty(s.PrivacyDisclaimersComment))
                             {
                                 <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
                             }
                         </p>
 
-                        <p><strong>@issueResolutionLabel:</strong> @Html.Raw(s.IssueResolution)<br />
+                        <p><strong>@issueResolutionLabel:</strong> @Html.Raw(WebUtility.HtmlDecode(s.IssueResolution))<br />
                             <strong>Comments:</strong>
-                            <span id="ir_comments_@s.EvalId"> @Html.Raw(s.IssueResolutionComment)</span>
+                            <span id="ir_comments_@s.EvalId"> @Html.Raw(WebUtility.HtmlDecode(s.IssueResolutionComment))</span>
                             @if (Model.AllowCopy && !String.IsNullOrEmpty(s.IssueResolutionComment))
                             {
                                 <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
@@ -96,37 +96,37 @@ Page Name: @Model.ReviewPageName*@
 
                         if (!String.Equals(s.Channel, WrittenCorrespondence, StringComparison.OrdinalIgnoreCase))
                         {
-                            <p><strong>@efficiencyLabel:</strong> @Html.Raw(s.CallEfficiency) <br />
+                            <p><strong>@efficiencyLabel:</strong> @Html.Raw(WebUtility.HtmlDecode(s.CallEfficiency)) <br />
                                 <strong>Comments:</strong>
-                                <span id="ce_comments_@s.EvalId"> @Html.Raw(s.CallEfficiencyComment)</span>
+                                <span id="ce_comments_@s.EvalId"> @Html.Raw(WebUtility.HtmlDecode(s.CallEfficiencyComment))</span>
                                 @if (Model.AllowCopy && !String.IsNullOrEmpty(s.CallEfficiencyComment))
                                 {
                                     <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
                                 }
                             </p>
-     						<p><strong>@issueDiagnosisLabel:</strong> @Html.Raw(s.ActiveListening)<br />
+     						<p><strong>@issueDiagnosisLabel:</strong> @Html.Raw(WebUtility.HtmlDecode(s.ActiveListening))<br />
                                 <strong>Comments:</strong>
-                                <span id="al_comments_@s.EvalId"> @Html.Raw(s.ActiveListeningComment)</span>
+                                <span id="al_comments_@s.EvalId"> @Html.Raw(WebUtility.HtmlDecode(s.ActiveListeningComment))</span>
                                 @if (Model.AllowCopy && !String.IsNullOrEmpty(s.ActiveListeningComment))
                                 {
                                     <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
                                 }
                             </p>
-						    <p><strong>@communicationLabel:</strong> @Html.Raw(s.PersonalityFlexing)<br />
+						    <p><strong>@communicationLabel:</strong> @Html.Raw(WebUtility.HtmlDecode(s.PersonalityFlexing))<br />
                                 <strong>Comments:</strong>
-                                <span id="pf_comments_@s.EvalId"> @Html.Raw(s.PersonalityFlexingComment)</span>
+                                <span id="pf_comments_@s.EvalId"> @Html.Raw(WebUtility.HtmlDecode(s.PersonalityFlexingComment))</span>
                                 @if (Model.AllowCopy && !String.IsNullOrEmpty(s.PersonalityFlexingComment))
                                 {
                                     <a href="#" name="copy" class="glyphicon glyphicon-copy">Copy</a>
                                 }
                             </p>
-						    <p><strong>Start Temperature:</strong> @Html.Raw(s.StartTemperature)<br />
+						    <p><strong>Start Temperature:</strong> @Html.Raw(WebUtility.HtmlDecode(s.StartTemperature))<br />
                                 <strong>Comments:</strong>
-                                <span> @Html.Raw(s.StartTemperatureComment)</span>
+                                <span> @Html.Raw(WebUtility.HtmlDecode(s.StartTemperatureComment))</span>
                             </p>
-						    <p><strong>End Temperature:</strong> @Html.Raw(s.EndTemperature)<br />
+						    <p><strong>End Temperature:</strong> @Html.Raw(WebUtility.HtmlDecode(s.EndTemperature))<br />
                                 <strong>Comments:</strong>
-                                <span> @Html.Raw(s.EndTemperatureComment)</span>
+                                <span> @Html.Raw(WebUtility.HtmlDecode(s.EndTemperatureComment))</span>
                             </p>
                         }
                     }

@@ -53,7 +53,7 @@
                     if (Model.LogDetail.IsQn)
                     {
                         <div class="text-primary" style="margin-top: 8px;"><strong><mark>Evaluation Summary:</mark></strong></div>
-                        <div class="text-info">@Html.Raw(Model.QnSummaryAll)</div>
+                        <div class="text-info">@Html.Raw(WebUtility.HtmlDecode(Model.QnSummaryAll))</div>
                     }
                 }
 
