@@ -1,17 +1,8 @@
-
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_Update_Review_Coaching_Log_Manager_Pending_Research' 
-)
-   DROP PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_Research]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
@@ -27,8 +18,8 @@ GO
 --    TFS 7856 encryption/decryption - emp name, emp lanid, email
 --    TFS 7137 move my dashboard to new architecture - 06/12/2018
 --    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
+--    Modified to write non coachable inactivated logs to audit table. TFS 25731 - 11/18/2022
 --    =====================================================================
-
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_Research]
 (
   @nvcFormID BIGINT,
@@ -60,7 +51,8 @@ DECLARE
 SET @nvcCat = (SELECT RTRIM(LEFT(strReportCode, LEN(strReportCode) - 8)) FROM EC.Coaching_Log WHERE CoachingID = @nvcFormID) 
 
 IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN', 'IAEF')
-BEGIN      
+BEGIN  
+
   UPDATE EC.Coaching_Log
   SET 
     StatusID = (SELECT StatusID FROM EC.DIM_Status WHERE status = @nvcFormStatus),
@@ -72,8 +64,8 @@ BEGIN
     CoachingNotes = @nvcReviewerNotes,		   
     txtReasonNotCoachable = @nvctxtReasonNotCoachable,
     ReassignCount = 0 
-  WHERE CoachingID = @nvcFormID
-  OPTION (MAXDOP 1);
+  WHERE CoachingID = @nvcFormID;
+
   
   UPDATE EC.Coaching_Log_Reason
   SET 
@@ -81,9 +73,9 @@ BEGIN
   FROM EC.Coaching_Log cl 
   INNER JOIN EC.Coaching_Log_Reason clr ON cl.CoachingID = clr.CoachingID
   WHERE cl.CoachingID = @nvcFormID
-    AND clr.SubCoachingReasonID IN (120, 121, 29, 231, 232, 233, 238, 239)
-  OPTION (MAXDOP 1);
-END
+    AND clr.SubCoachingReasonID IN (120, 121, 29, 231, 232, 233, 238, 239);
+
+END -- End IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN')
 
 ELSE
 BEGIN
@@ -101,8 +93,8 @@ BEGIN
     ReminderDate = NULL,
     ReminderCount = 0,
     ReassignCount = 0 
-  WHERE CoachingID = @nvcFormID
-  OPTION (MAXDOP 1);
+  WHERE CoachingID = @nvcFormID;
+
 
   UPDATE EC.Coaching_Log_Reason
     SET 
@@ -111,9 +103,23 @@ BEGIN
   INNER JOIN EC.Coaching_Log_Reason clr ON cl.CoachingID = clr.CoachingID
   INNER JOIN EC.DIM_Coaching_Reason cr ON cr.CoachingReasonID = clr.CoachingReasonID
   WHERE cl.CoachingID = @nvcFormID
-    AND cr.CoachingReason IN ('OMR / Exceptions', 'Current Coaching Initiative')
-  OPTION (MAXDOP 1);
-END -- End IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN')
+    AND cr.CoachingReason IN ('OMR / Exceptions', 'Current Coaching Initiative');
+
+END -- End IF NOT @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN')
+
+
+	INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+    ([CoachingID],[FormName],[LastKnownStatus],[Action],[ActionTimestamp] ,[RequesterID] ,[Reason],[RequesterComments])
+      SELECT @nvcFormID,
+	          Formname,
+			  2, -- Inactive
+		      'Inactivate',
+		       GetDate(),
+		      '999998',
+		 'Other - Coaching not required',
+		 'For Audit only. Cannot reactivate.'
+	     FROM EC.Coaching_Log
+         WHERE (CoachingID = @nvcFormID AND StatusID = 2 and  isCoachingRequired = 0) ;
 	
 COMMIT TRANSACTION;
 END TRY
@@ -159,11 +165,6 @@ BEGIN CATCH
 END CATCH;
 
 END --sp_Update_Review_Coaching_Log_Manager_Pending_Research
-
-
-
-
-
 GO
 
 
