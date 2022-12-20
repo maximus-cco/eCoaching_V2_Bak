@@ -1,14 +1,3 @@
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_AT_Select_Employees_Coaching_Inactivation_Reactivation' 
-)
-   DROP PROCEDURE [EC].[sp_AT_Select_Employees_Coaching_Inactivation_Reactivation]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
@@ -28,6 +17,7 @@ GO
 --  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 06/30/2017
 --  Modified to support Encryption of sensitive data (Open keys and use employee View for emp attributes. TFS 7856 - 10/23/2017
 --  Modified to support cross site access for Virtual East Managers. TFS 23378 - 10/29/2021 
+--  Modified to support Reactivation by Managers. TFS 25961- 12/16/2022
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Employees_Coaching_Inactivation_Reactivation] 
 
@@ -81,7 +71,7 @@ IF @strActionin = N'Inactivate'
          
   --For Non Coaching Admins(Regular users like supervisors and Managers)
   --Do not display usesr with completed logs
-  --Display only users with Coaching logs at the same site as the logged in user
+  --Display only users with Coaching logs at the same site as the logged in user or in their Hierarchy
        
        BEGIN
 			 SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,VEH.Emp_Name 
@@ -101,12 +91,15 @@ IF @strActionin = N'Inactivate'
 	 END 
 END
 
-ELSE 
+ELSE  -- If Action is Reactivation
+ BEGIN
+	  IF @strATCoachAdminUser = 'YES'
 
+--Special conditions for Coaching Admins 
+--No site Restriction
 
--- If Action is Reactivation
-
-     BEGIN
+	  
+  BEGIN
 		SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,VEH.Emp_Name 
 			 FROM [EC].[Employee_Hierarchy] Emp JOIN [EC].[Coaching_Log] Fact WITH(NOLOCK)
 			 ON Emp.Emp_ID = Fact.EmpID  JOIN [EC].[View_Employee_Hierarchy] VEH 
@@ -121,13 +114,36 @@ ELSE
 		 AND [EC].[fn_strEmpLanIDFromEmpID](Fact.EmpID) <> '''+@strRequesterLanId+''' 
 		 ORDER BY VEH.Emp_Name'
     END
-    
-Print @nvcSQL
+
+ ELSE
+
+   --For Non Coaching Admins(Regular users like supervisors and Managers)
+  --Display only users with Coaching logs at the same site as the logged in user or in their Hierarchy
+
+   BEGIN
+		SET @nvcSQL = 'SELECT DISTINCT Emp.Emp_ID,VEH.Emp_Name 
+			 FROM [EC].[Employee_Hierarchy] Emp JOIN [EC].[Coaching_Log] Fact WITH(NOLOCK)
+			 ON Emp.Emp_ID = Fact.EmpID  JOIN [EC].[View_Employee_Hierarchy] VEH 
+			 ON VEH.Emp_ID = Emp.Emp_ID JOIN (Select * FROM
+		 [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
+		 WHERE LastKnownStatus <> 2) Aud
+		 ON Aud.FormName = Fact.Formname
+		 WHERE Fact.StatusID = 2
+		 AND Fact.ModuleId = '''+CONVERT(NVARCHAR,@intModulein)+'''
+		 AND Fact.EmpID <> ''999999''
+		 AND Emp.Active = ''A''
+		  AND (Fact.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+'''  OR
+			 (Emp.Sup_ID =  '''+@strRequesterId+'''  OR Emp.Mgr_ID = '''+@strRequesterId+''' ))
+		 AND [EC].[fn_strEmpLanIDFromEmpID](Fact.EmpID) <> '''+@strRequesterLanId+''' 
+		 ORDER BY VEH.Emp_Name'
+    END
+  END   
+
+--Print @nvcSQL
 
 EXEC (@nvcSQL)	
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Employees_Coaching_Inactivation_Reactivation
-
 GO
 
 

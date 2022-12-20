@@ -1,4 +1,3 @@
-
 SET ANSI_NULLS ON
 GO
 
@@ -18,6 +17,7 @@ GO
 --  Updated to allow for Inactivation of completed logs from admin tool - TFS 7152 - 06/30/2017
 --  Modified to support Encryption of sensitive data - Open key and use employee View for emp attributes. TFS 7856 - 10/23/2017
 --  Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
+--  Modified to support Reactivation by Managers. TFS 25961- 12/16/2022
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
@@ -36,19 +36,22 @@ DECLARE
 @nvcWhere nvarchar(300),
 @strRequesterID nvarchar(10),
 @strATCoachAdminUser nvarchar(10),
+@intRequesterSiteID int,
 @dtmDate datetime,
 @strID nvarchar(30),
-@nvcSQL nvarchar(max)
+@nvcSQL nvarchar(max);
 
 
 
 OPEN SYMMETRIC KEY [CoachingKey]  
-DECRYPTION BY CERTIFICATE [CoachingCert]
+DECRYPTION BY CERTIFICATE [CoachingCert];
 
 
-SET @dtmDate  = GETDATE()   
-SET @strRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterLanId,@dtmDate)
-SET @strATCoachAdminUser = EC.fn_strCheckIfATCoachingAdmin(@strRequesterID) 
+SET @dtmDate  = GETDATE();   
+SET @strRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterLanId,@dtmDate);
+SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@strRequesterID);
+SET @strATCoachAdminUser = EC.fn_strCheckIfATCoachingAdmin(@strRequesterID);
+
 
 IF @strTypein = N'Coaching' 
 SET @strID = 'Fact.CoachingID LogID, '
@@ -104,7 +107,7 @@ ELSE
 IF @strTypein = N'Warning' AND @strActionin = 'Inactivate'
 SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 
--- If Formane is not passed, then apply other Filters
+-- If Formname is not passed, then apply other Filters
 -- If Formname is passed then Filter for that Form name only
 
 IF COALESCE(@strFormName,'') = ''
@@ -117,6 +120,14 @@ ELSE
 
 BEGIN
 SET @nvcWhere = @nvcWhere  + ' AND [Fact].[Formname] = ''' + @strFormName   + ''''
+
+--Restriction for Non Coaching Admins
+
+IF @strActionin = N'Reactivate' AND @strATCoachAdminUser = 'NO'
+SET @nvcWhere = @nvcWhere  + ' AND 
+			 (Fact.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+'''
+		      OR
+			 (veh.Sup_ID =  '''+@strRequesterId+'''  OR veh.Mgr_ID = '''+@strRequesterId+''' ))'
 END
 
  SET @nvcSQL = 'SELECT DISTINCT '+@strID+' 
@@ -148,5 +159,4 @@ END --sp_AT_Select_Logs_Inactivation_Reactivation
 
 
 GO
-
 

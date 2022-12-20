@@ -1,0 +1,30 @@
+/*
+TFS 25961- Update Manager permissions to reactivate Coaching Logs
+
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+
+
+Summary
+
+1. Insert records in [EC].[AT_Role_Entitlement_Link] Table
+
+
+*/
+
+-- Details
+--1. Insert records in [EC].[AT_Role_Entitlement_Link] Table
+
+INSERT INTO [EC].[AT_Role_Entitlement_Link]
+           ([RoleId]
+           ,[EntitlementId])
+     VALUES (102,203),
+            (102,206)
+         
+GO
