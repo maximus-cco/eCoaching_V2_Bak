@@ -13,7 +13,7 @@ namespace eCoachingLog.Repository
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly string connString = System.Configuration.ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
 
-        public void Store(List<Mail> mailList, string userId)
+        public void Store(List<Mail> mailList, string userId, string mailSource)
         {
             using (SqlConnection conn = new SqlConnection(connString))
             using (SqlCommand comm = new SqlCommand("[EC].[sp_InsertInto_Email_Notifications_Stage]", conn))
@@ -21,7 +21,7 @@ namespace eCoachingLog.Repository
                 comm.CommandType = CommandType.StoredProcedure;
                 comm.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
                 comm.Parameters.AddMailStageTableType("@tableRecs", mailList);
-                comm.Parameters.AddWithValueSafe("@nvcMailType", "UI-Submissions");
+                comm.Parameters.AddWithValueSafe("@nvcMailType", mailSource);
                 comm.Parameters.AddWithValueSafe("@nvcUserID", userId);
 
 

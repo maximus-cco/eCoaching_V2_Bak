@@ -33,62 +33,6 @@ namespace eCoachingLog.Services
             this.emailRepository = emailRepository;
         }
 
-        public bool SendComment(BaseLogDetail log, string comments, string emailTempFileName, string subject)
-        {
-            logger.Debug("Entered SendComment...");
-
-            if (String.IsNullOrEmpty(log.SupervisorEmail) && String.IsNullOrEmpty(log.ManagerEmail))
-            {
-                logger.Warn("Not able to send employee comments[" + log.LogId + "]: Both supervisor and manager emails are not available.");
-                return false;
-            }
-
-            bool success = false;
-            SmtpClient smtpClient = null;
-            MailMessage mailMessage = null;
-            try
-            {
-                // generate mail
-                mailMessage = new MailMessage();
-                if (!string.IsNullOrEmpty(log.SupervisorEmail))
-                {
-                    mailMessage.To.Add(log.SupervisorEmail);
-                }
-                if (!string.IsNullOrEmpty(log.ManagerEmail))
-                {
-                    mailMessage.To.Add(log.ManagerEmail);
-                }
-
-                string bodyText = FileUtil.ReadFile(emailTempFileName);
-                mailMessage.IsBodyHtml = true;
-                mailMessage.Body = bodyText.Replace("{formName}", log.FormName);
-                mailMessage.Body = mailMessage.Body.Replace("{comments}", comments);
-                mailMessage.From = new MailAddress(from, fromDisplayName);
-                mailMessage.Subject = subject + " (" + log.EmployeeName + ")";
-                // send mail
-                smtpClient = new SmtpClient();
-                smtpClient.Send(mailMessage);
-                success = true;
-            }
-            catch (Exception ex)
-            {
-                LogEmailException(ex, mailMessage, log.FormName, false);
-            }
-            finally
-            {
-                if (mailMessage != null)
-                {
-                    mailMessage.Dispose();
-                }
-                if (smtpClient != null)
-                {
-                    smtpClient.Dispose();
-                }
-            }
-
-            logger.Debug($"Csr comments sent [{log.FormName}]: {success}");
-            return success;
-        }
 
         private void LogEmailException(Exception ex, MailMessage message, string logName, bool isNewSubmission)
         {
@@ -143,15 +87,28 @@ namespace eCoachingLog.Services
         private void Store(Object mailParamter)
         {
             MailParameter mParameter = (MailParameter)mailParamter;
+
+            if ("UI-Submissions" == mParameter.MailSource)
+            {
+                StoreNewSubmissionEmail(mParameter);
+            }
+            else
+            {
+                StoreCommentsEmail(mParameter);
+            }
+        }
+
+        private void StoreNewSubmissionEmail(MailParameter mParameter)
+        {
             var mailResults = InitMailResults(mParameter.NewSubmissionResult);
             if (mailResults.Count == 0)
             {
                 return;
             }
 
-            logger.Debug($"####### Start storing email [total: {mParameter.NewSubmissionResult.Count}");
+            logger.Debug($"####### Start storing new submission email [total: {mParameter.NewSubmissionResult.Count}");
             try
-            { 
+            {
                 var mailMetaData = GetMailMetaData(mParameter.ModuleId, mParameter.IsCse, mParameter.SourceId);
                 var mailList = new List<Mail>();
                 foreach (var sr in mParameter.NewSubmissionResult)
@@ -167,14 +124,61 @@ namespace eCoachingLog.Services
                     //logger.Debug(mail.Body);
                 }
 
-                this.emailRepository.Store(mailList, mParameter.UserId);
+                this.emailRepository.Store(mailList, mParameter.UserId, mParameter.MailSource);
             }
             catch (Exception ex)
             {
-                logger.Error("Failed to store email.", ex);
+                logger.Error("Failed to store new submission email. [" + mParameter.UserId + "]", ex);
             }
 
             logger.Debug($"####### End storing email [total: {mParameter.NewSubmissionResult.Count}");
+        }
+
+        private void StoreCommentsEmail(MailParameter mailParameter)
+        {
+            logger.Debug("Entered StoreCommentsEmail...");
+
+            var log = mailParameter.LogDetail;
+
+            if (String.IsNullOrEmpty(log.SupervisorEmail) && String.IsNullOrEmpty(log.ManagerEmail))
+            {
+                logger.Warn("Not able to store email for employee comments[" + log.LogId + "]: Both supervisor and manager emails are not available.");
+                return;
+            }
+
+            try
+            {
+                // generate mail
+                var mail = new Mail();
+                if (!string.IsNullOrEmpty(log.SupervisorEmail))
+                {
+                    mail.To = log.SupervisorEmail;
+                }
+                if (!string.IsNullOrEmpty(log.ManagerEmail))
+                {
+                    mail.To = log.ManagerEmail;
+                }
+
+                string bodyText = FileUtil.ReadFile(mailParameter.TemplateFileName);
+                mail.IsBodyHtml = true;
+                mail.Body = bodyText.Replace("{formName}", log.FormName);
+                mail.Body = mail.Body.Replace("{comments}", mailParameter.Comments);
+                mail.From = from;
+                mail.FromDisplayName = fromDisplayName;
+                mail.Subject = mailParameter.Subject + " (" + log.EmployeeName + ")";
+                mail.LogId = mailParameter.LogDetail.LogId.ToString();
+                mail.LogName = mailParameter.LogDetail.FormName;
+
+                var mailList = new List<Mail>();
+                mailList.Add(mail);
+
+                this.emailRepository.Store(mailList, mailParameter.UserId, mailParameter.MailSource);
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Failed to store comments email. [" + log.LogId + "]", ex);
+            }
         }
 
         private List<MailResult> InitMailResults(List<NewSubmissionResult> newSubmissionResults)

@@ -3,6 +3,8 @@ namespace eCoachingLog.Models.Common
 {
     public class MailParameter
     {
+        public string MailSource { get; set; }
+
         //List<Employee> employees, int moduleId, bool isWarning, bool isCse, int sourceId, string templateFileName
         public List<NewSubmissionResult> NewSubmissionResult { get; set; }
         public int ModuleId { get; set; }
@@ -14,8 +16,14 @@ namespace eCoachingLog.Models.Common
         public bool SaveMailStatus { get; set; }
         public string UserId { get; set; } // person id sending the mail
 
+        // Review Comments
+        public BaseLogDetail LogDetail { get; set; }
+        public string Comments { get; set; }
+        public string Subject { get; set; }
+
         public MailParameter(List<NewSubmissionResult> newSubmissionResult, int moduleId, bool isWarning, bool isCse, int sourceId, string templateFileName, bool saveMailStatus, string userId)
         {
+            MailSource = "UI-Submissions";
             NewSubmissionResult = newSubmissionResult;
             ModuleId = moduleId;
             IsWarning = isWarning;
@@ -23,6 +31,16 @@ namespace eCoachingLog.Models.Common
             SourceId = sourceId;
             TemplateFileName = templateFileName;
             SaveMailStatus = saveMailStatus;
+            UserId = userId;
+        }
+
+        public MailParameter(BaseLogDetail logDetail, string comments, string subject, string templateFileName, string userId)
+        {
+            MailSource = "UI-Comments";
+            LogDetail = logDetail;
+            Comments = comments;
+            Subject = subject;
+            TemplateFileName = templateFileName;
             UserId = userId;
         }
     }

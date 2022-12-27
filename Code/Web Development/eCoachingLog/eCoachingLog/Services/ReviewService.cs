@@ -341,10 +341,8 @@ namespace eCoachingLog.Services
                             && review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW
                             && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT)
                     {
-                        if (!this.emailService.SendComment(review.LogDetail, review.Comment, emailTempFileName, "Quality Now Follow-up Completed"))
-                        {
-                            logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
-                        }
+                        var mailParameter = new MailParameter(review.LogDetail, review.Comment, "Quality Now Follow-up Completed", emailTempFileName, user.EmployeeId);
+                        this.emailService.StoreNotification(mailParameter);
                     }
 
                     return success;
@@ -390,11 +388,9 @@ namespace eCoachingLog.Services
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.WarningLogDetail.EmployeeId == user.EmployeeId)
 			{
-				if (!this.emailService.SendComment(review.WarningLogDetail, review.Comment, emailTempFileName, subject))
-				{
-					logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
-				}
-			}
+                var mailParameter = new MailParameter(review.WarningLogDetail, review.Comment, subject, emailTempFileName, user.EmployeeId);
+                this.emailService.StoreNotification(mailParameter);
+            }
 
 			return success;
 		}
@@ -417,7 +413,7 @@ namespace eCoachingLog.Services
 			bool success = false;
 			string nextStatus = string.Empty;
 
-			if (review.IsAckOverTurnedAppeal)
+            if (review.IsAckOverTurnedAppeal)
 			{
 				nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
 				return reviewRepository.CompleteSupAckReview(review.LogDetail.LogId, nextStatus, FormatCoachingNotes(review, user), user);
@@ -484,10 +480,8 @@ namespace eCoachingLog.Services
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.LogDetail.EmployeeId == user.EmployeeId)
 			{
-				if(!this.emailService.SendComment(review.LogDetail, review.Comment, emailTempFileName, "eCoaching Log Completed"))
-				{
-					logger.Info("Failed to send employee comments: " + review.LogDetail.LogId);
-				}
+                var mailParameter = new MailParameter(review.LogDetail, review.Comment, "eCoaching Log Completed", emailTempFileName, user.EmployeeId);
+                this.emailService.StoreNotification(mailParameter);
 			}
 			return success;
 		}
