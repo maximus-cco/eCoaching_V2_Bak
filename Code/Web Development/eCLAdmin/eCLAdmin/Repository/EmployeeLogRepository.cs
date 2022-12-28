@@ -40,6 +40,9 @@ namespace eCLAdmin.Repository
 
                         modules.Add(module);
                     }
+
+                    // https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqldatareader.close?view=netframework-4.8
+                    dataReader.Close();
                 }
             }
 
@@ -69,6 +72,8 @@ namespace eCLAdmin.Repository
 
                         statuses.Add(status);
                     }
+
+                    dataReader.Close();
                 }
             }
 
@@ -116,6 +121,8 @@ namespace eCLAdmin.Repository
 
                         employeeLogs.Add(cl);
                     }
+
+                    dataReader.Close();
                 }
             }
             
@@ -161,6 +168,8 @@ namespace eCLAdmin.Repository
 
                         break;
                     }
+
+                    dataReader.Close();
                 }
             }
 
@@ -203,6 +212,8 @@ namespace eCLAdmin.Repository
 
                         employeeLogs.Add(cl);
                     }
+
+                    dataReader.Close();
                 }
             }
 
@@ -234,6 +245,8 @@ namespace eCLAdmin.Repository
 
                         reasons.Add(reason);
                     }
+
+                    dataReader.Close();
                 }
             }
   
@@ -362,6 +375,8 @@ namespace eCLAdmin.Repository
 
                         employeeLogs.Add(cl);
                     } // end while
+
+                    dataReader.Close();
                 } // end using SqlDataReader
             } // end using SqlCommand
 
@@ -436,6 +451,8 @@ namespace eCLAdmin.Repository
                         logDetail.ReviewedManagerName = dataReader["strreviewmgr"].ToString();
                         break;
                     }
+
+                    dataReader.Close();
                 }
             }
 
@@ -480,6 +497,8 @@ namespace eCLAdmin.Repository
 
                         break;
                     }
+
+                    dataReader.Close();
                 }
             }
 

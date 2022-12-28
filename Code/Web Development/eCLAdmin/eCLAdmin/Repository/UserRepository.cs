@@ -44,6 +44,8 @@ namespace eCLAdmin.Repository
 
                             entitlements.Add(entitlement);
                         }
+
+                        dataReader.Close();
                     }
                 }
             }
@@ -79,6 +81,8 @@ namespace eCLAdmin.Repository
                             user.Name = dataReader["UserName"].ToString();
                             user.JobCode = dataReader["EmpJobCode"].ToString();
                         }
+
+                        dataReader.Close();
                     }
                 }
             }
@@ -115,6 +119,8 @@ namespace eCLAdmin.Repository
 
                             users.Add(user);
                         } // end while
+
+                        dataReader.Close();
                     } // end using SqlDataReader
                 } // end using SqlCommand
             }
@@ -149,6 +155,8 @@ namespace eCLAdmin.Repository
 
                             users.Add(user);
                         } // end while
+
+                        dataReader.Close();
                     } // end using SqlDataReader
                 } // end using SqlCommand
             }
@@ -214,6 +222,8 @@ namespace eCLAdmin.Repository
                             user.Name = dataReader["User_Name"].ToString();
                             user.Role = dataReader["Role"].ToString();
                         } // end while
+
+                        dataReader.Close();
                     } // end using SqlDataReader
                 } // end using SqlCommand
             }

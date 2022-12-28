@@ -208,7 +208,7 @@ namespace eCLAdmin.Controllers
                         logger.Debug("********Orignial reviewer[" + (string)Session["CurrentReviewerName"] + "] email is not available.");
                     }
 
-					SendEmail(EmailType.Reassignment, to, cc, model.GetSelectedLogNames());
+					StoreEmail(EmailType.Reassignment, to, cc, model.GetSelectedLogNames(), "UI-Reassign");
                     emailSent = true;
 				}
 				catch (Exception ex)
@@ -217,7 +217,7 @@ namespace eCLAdmin.Controllers
 				}
 			}
 
-            return Json(new { success = success, emailsent = emailSent });
+            return Json(new { success = success });
         }
 
         [HttpGet]
@@ -281,7 +281,6 @@ namespace eCLAdmin.Controllers
                                                 HttpUtility.HtmlEncode(comment)
                                              );
 
-			bool emailSent = false;
 			// Send email notification for Coaching logs Reactivation
 			// Do not cc to anyone.
 			if (success && (int)EmployeeLogType.Coaching == logType)
@@ -295,10 +294,8 @@ namespace eCLAdmin.Controllers
 					{
 						emailTo = EmailUtil.GetEmailTo(module, key, employeeInfo);
 						List<string> logNames = dict[key];
-						SendEmail(EmailType.Reactivation, new List<string> { emailTo }, null, logNames);
+						StoreEmail(EmailType.Reactivation, new List<string> { emailTo }, null, logNames, "UI-Reactivate");
 					}
-
-					emailSent = true;
 				}
 				catch (Exception ex)
 				{
@@ -306,7 +303,7 @@ namespace eCLAdmin.Controllers
 				}
 			}
 
-            return Json(new { success = success, emailsent = emailSent });
+            return Json(new { success = success });
         }
 
         // Get employee log modules (csr, training, ...)
@@ -445,7 +442,7 @@ namespace eCLAdmin.Controllers
             return model;
         }
 
-        private void SendEmail(EmailType emailType, List<string> to, List<string> cc, List<string> logNames)
+        private void StoreEmail(EmailType emailType, List<string> to, List<string> cc, List<string> logNames, string emailSource)
         {
             Email email = new Email();
             email.To = to;
@@ -454,7 +451,7 @@ namespace eCLAdmin.Controllers
             email.Subject = EmailUtil.GetSubject(emailType);
             email.Body = FileUtil.ReadFile(Server.MapPath("~/EmailTemplates/") + EmailUtil.GetTemplateFileName(emailType));
 
-            emailService.Send(email, logNames, Request.ServerVariables["SERVER_NAME"].ToLower());
+            emailService.StoreEmail(email, logNames, Request.ServerVariables["SERVER_NAME"].ToLower(), emailSource, GetUserFromSession().EmployeeId);
         }
         
         private IEnumerable<SelectListItem> GetEmptyModuleList()

@@ -58,6 +58,41 @@ namespace eCLAdmin.Extensions
             return sqlParameter;
         }
 
+        // MailStageTableType
+        public static SqlParameter AddMailStageTableType(this SqlParameterCollection target, string name, IList<Email> mailList)
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("LogID", typeof(long));
+            dataTable.Columns.Add("LogName", typeof(string));
+            dataTable.Columns.Add("To", typeof(string));
+            dataTable.Columns.Add("Cc", typeof(string));
+            dataTable.Columns.Add("From", typeof(string));
+            dataTable.Columns.Add("FromDisplayName", typeof(string));
+            dataTable.Columns.Add("Subject", typeof(string));
+            dataTable.Columns.Add("Body", typeof(string));
+            dataTable.Columns.Add("IsHtml", typeof(bool));
+
+            foreach (var m in mailList)
+            {
+                dataTable.Rows.Add(
+                    m.LogId,
+                    m.LogName,
+                    m.StrTo,
+                    m.StrCc,
+                    m.From,
+                    m.FromDisplayName,
+                    m.Subject,
+                    m.Body,
+                    m.IsBodyHtml
+               );
+            }
+            SqlParameter sqlParameter = target.AddWithValue(name, dataTable);
+            sqlParameter.SqlDbType = SqlDbType.Structured;
+            sqlParameter.TypeName = "EC.MailStageTableType";
+
+            return sqlParameter;
+        }
+
         public static IEnumerable<SelectListItem> ToSelectListItems(this IEnumerable<eCoachingAccessControlRole> roles, string selectedValue)
         {
             return

@@ -80,9 +80,6 @@
 
                 if (msg.success == true) {
                 	var info = 'Successfully reassigned the selected log(s).';
-                	if (msg.emailsent == false) {
-                		info += ' Notification email was not sent.';
-                	}
                     $("#message").html('<div class="alert alert-success"><button type="button" class="close">x</button>' + info + '</div>');
                 } else {
                     var info = 'Failed to reassign the selected log(s).';

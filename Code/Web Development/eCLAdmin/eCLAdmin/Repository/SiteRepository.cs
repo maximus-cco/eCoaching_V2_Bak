@@ -26,6 +26,8 @@ namespace eCLAdmin.Repository
 
                         sites.Add(site);
                     }
+
+                    dataReader.Close();
                 }
             }
 

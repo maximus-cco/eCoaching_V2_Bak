@@ -37,6 +37,8 @@ namespace eCLAdmin.Repository
 
                         break;
                     }
+
+                    dataReader.Close();
                 }
             }
 
@@ -84,6 +86,8 @@ namespace eCLAdmin.Repository
 
                         employees.Add(employee);
                     }
+
+                    dataReader.Close();
                 }
             }
 
@@ -115,6 +119,8 @@ namespace eCLAdmin.Repository
 
                         employees.Add(employee);
                     }
+
+                    dataReader.Close();
                 }
             }
 
@@ -148,6 +154,8 @@ namespace eCLAdmin.Repository
 
                         employees.Add(employee);
                     }
+
+                    dataReader.Close();
                 }
             }
 

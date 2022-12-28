@@ -1,8 +1,8 @@
 ﻿using eCLAdmin.Models;
+using eCLAdmin.Repository;
 using log4net;
 using System;
 using System.Collections.Generic;
-using System.Net.Mail;
 using System.Text;
 
 namespace eCLAdmin.Services
@@ -14,13 +14,16 @@ namespace eCLAdmin.Services
         private readonly IEmployeeService employeeService;
         private readonly IEmployeeLogService employeeLogService;
 
-        public EmailService(IEmployeeService employeeService, IEmployeeLogService employeeLogService)
+        private readonly IEmailRepository emailRepository;
+
+        public EmailService(IEmployeeService employeeService, IEmployeeLogService employeeLogService, IEmailRepository emailRepository)
         {
             this.employeeService = employeeService;
             this.employeeLogService = employeeLogService;
+            this.emailRepository = emailRepository;
         }
 
-        public void Send(Email email, List<string> logNames, string webServerName)
+        public void StoreEmail(Email email, List<string> logNames, string webServerName, string emailSource, string userId)
         {
             // Replace {eCoachingUrl} based on environment
             string eCoachingUrl = Constants.ECOACHING_URL_DEV;
@@ -40,78 +43,18 @@ namespace eCLAdmin.Services
 			}
 
             email.Body = email.Body.Replace("{eCoachingUrl}", eCoachingUrl);
-
             // Replace {LogNameList} with the passed in values
-            StringBuilder sbLogNames = new StringBuilder();
-            foreach (string logName in logNames)
-            {
-                sbLogNames.Append(logName)
-                        .Append("<br />");
-            }
-            email.Body = email.Body.Replace("{LogNameList}", sbLogNames.ToString());
+            email.Body = email.Body.Replace("{LogNameList}", String.Join("<br />", logNames));
+            email.From = Constants.EMAIL_FROM;
+            email.FromDisplayName = Constants.EMAIL_FROM_DISPLAY_NAME;
+            email.StrTo = email.To != null && email.To.Count > 0 ? String.Join(" ", email.To) : "";
+            email.StrCc = email.CC != null && email.CC.Count > 0 ? String.Join(" ", email.CC) : "";
+            email.IsBodyHtml = true;
+            // TODO: leave them as NULL, and set these 2 nullable in db table
+            email.LogId = "-1";
+            email.LogName = "na";
 
-            this.Send(email);
-        }
-
-        public void Send(Email email)
-        {
-            logger.Debug("Entered Send...");
-
-            if (email == null || email.Body == null)
-            {
-                logger.Debug("Email is null or body is null. Failed to send email.");
-                return;
-            }
-
-            var smtpClient = new SmtpClient();
-            MailMessage mailMessage = new MailMessage();
-            try
-			{
-				// https://msdn.microsoft.com/en-us/library/k1c4h6e2(v=vs.110).aspx
-				// Initializes a new instance of the SmtpClient class by using configuration file settings.
-				mailMessage.Subject = email.Subject;
-				mailMessage.From = new MailAddress(email.From, "eCoaching Log Admin");
-
-				foreach (string to in email.To)
-				{
-					mailMessage.To.Add(new MailAddress(to));
-				}
-
-				if (email.CC != null)
-				{
-					foreach (string cc in email.CC)
-					{
-						mailMessage.CC.Add(new MailAddress(cc));
-					}
-				}
-
-				mailMessage.Body = email.Body;
-				mailMessage.IsBodyHtml = true;
-
-				smtpClient.Send(mailMessage);
-			}
-			catch (Exception ex)
-			{
-				StringBuilder info = new StringBuilder();
-				info.Append("Failed to send email: ")
-					.Append(ex.Message)
-					.Append(Environment.NewLine)
-					.Append(ex.StackTrace);
-
-				logger.Warn(info);
-			}
-            finally
-            {
-                if (mailMessage != null)
-                {
-                    mailMessage.Dispose();
-                }
-
-                if (smtpClient != null)
-                {
-                    smtpClient.Dispose();
-                }
-            }
+            this.emailRepository.Store(new List<Email> { email }, emailSource, userId);
         }
     }
 }

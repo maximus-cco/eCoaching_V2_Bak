@@ -202,6 +202,8 @@
     <Compile Include="Reports\ReportTemplate.aspx.designer.cs">
       <DependentUpon>ReportTemplate.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Repository\EmailRepository.cs" />
+    <Compile Include="Repository\IEmailRepository.cs" />
     <Compile Include="Repository\ISiteRepository.cs" />
     <Compile Include="Repository\IStaticDataRepository.cs" />
     <Compile Include="Repository\IUserRepository.cs" />

@@ -36,8 +36,9 @@ namespace eCLAdmin
 		public const string EMAIL_SUBJECT_REACTIVATION = "eCoaching Log(s) Reactivated";
 		public const string EMAIL_SUBJECT_REASSIGNMENT = "eCoaching Log(s) Reassigned";
 		public const string EMAIL_FROM = "ecl.admin@maximus.com";
+        public const string EMAIL_FROM_DISPLAY_NAME = "eCoaching Log Admin";
 
-		public const int USER_ROLE_ADMIN = 101;
+        public const int USER_ROLE_ADMIN = 101;
 		public const int USER_ROLE_MANAGER = 102;
 
 		public const string ENTITLEMENT_MANAGE_COACHING_LOGS = "ManageCoachingLogs";
