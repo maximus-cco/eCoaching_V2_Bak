@@ -1,0 +1,39 @@
+/*
+TFS 25964 - Move the UI email notifications to the background process
+
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+
+
+Summary
+
+1. Drop dependant SP, TableType and Recreate TableType
+
+
+*/
+
+-- Details
+--1. Drop dependant SP, TableType and Recreate TableType
+
+DROP PROCEDURE [EC].[sp_InsertInto_Email_Notifications_History]
+GO
+
+DROP TYPE [EC].[MailHistoryTableType]
+GO
+
+CREATE TYPE [EC].[MailHistoryTableType] AS TABLE(
+    [MailType] [nvarchar](50) NOT NULL,
+	[LogID] [bigint] NOT NULL,
+	[LogName] [nvarchar](50) NOT NULL,
+	[To] [nvarchar](400) NULL,
+	[Cc] [nvarchar](400) NULL,
+	[SendAttemptDate] [datetime] NOT NULL,
+	[Success] [bit] NOT NULL
+)
+GO

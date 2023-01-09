@@ -4,7 +4,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      05/31/2022
@@ -12,7 +11,7 @@ GO
 --                     actually sending them out.
 --    History:
 --    Initial Revision. Team Coaching Log Submission. TFS 23273 - 05/31/2022
-
+--    Updated to add MailType to the Return. TFS 25964 - 01/03/2023
 --    =====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Get_Staged_Notifications]
    
@@ -77,6 +76,7 @@ BEGIN TRY
    --Return Open Notifications for app to send
  
         SELECT [MailID]
+			  ,[MailType]
 		      ,[LogID]
               ,[LogName]
 			  ,[To]
@@ -86,6 +86,7 @@ BEGIN TRY
 		      ,[Subject]
 			  ,[Body]
 			  ,[IsHtml]
+			  ,[MailType]
 	  FROM [EC].[Email_Notifications_Stage]
 	  WHERE [MailID] IN (SELECT MailID FROM #open)
 	  ORDER BY [CreateDate];

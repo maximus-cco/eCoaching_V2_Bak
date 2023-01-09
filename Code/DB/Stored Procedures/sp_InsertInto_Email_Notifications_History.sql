@@ -4,6 +4,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --    ====================================================================
 --    Author:           Susmitha Palacherla
 --    Create Date:      11/08/2021
@@ -11,11 +12,10 @@ GO
 --    The mailTypem To, Cc, Success Flag and Attempt DateTime are captured for each log.
 --    History 
 --    Initial Revision. Team Coaching Log Submission. TFS 23273 - 05/31/2022
-
+--    Modified to remove MailType param and use value from tabletype. TFS 25964 - 01/03/2023
 --    =====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Email_Notifications_History]
 (     @tableRecs MailHistoryTableType READONLY,
-      @nvcMailType Nvarchar(50) = N'UI-Submissions',
 	  @nvcUserID Nvarchar(10)
 )
    
@@ -49,7 +49,7 @@ DECLARE @inserted AS TABLE (LogID bigint);
 		   ,[CreateUserID]
       )
 	 OUTPUT inserted.LogID INTO @inserted
-     SELECT @nvcMailType, RECS.LogID, RECS.LogName,
+     SELECT RECS.MailType, RECS.LogID, RECS.LogName,
 	 RECS.[To],
 	 RECS.[Cc], 
 	 RECS.SendAttemptDate, RECS.Success, @nvcUserID

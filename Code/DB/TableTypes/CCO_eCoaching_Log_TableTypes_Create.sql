@@ -8,6 +8,7 @@ GO
 
 --MailHistoryTableType
 CREATE TYPE [EC].[MailHistoryTableType] AS TABLE(
+    [MailType] [nvarchar](50) NOT NULL,
 	[LogID] [bigint] NOT NULL,
 	[LogName] [nvarchar](50) NOT NULL,
 	[To] [nvarchar](400) NULL,

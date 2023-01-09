@@ -1,9 +1,9 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 
 --    ====================================================================
@@ -12,13 +12,14 @@ GO
 --    Description:     This procedure stages a record for each new submission notification.
 --    The mailType To, Cc, Subject and Body are captured for each log.
 --    Initial Revision. Team Coaching Log Submission. TFS 23273 - 05/31/2022
+--    Modified to remove default value for MailType param. TFS 25964 - 01/03/2023
 --    =====================================================================
-CREATE OR ALTER  PROCEDURE [EC].[sp_InsertInto_Email_Notifications_Stage]
+CREATE OR ALTER   PROCEDURE [EC].[sp_InsertInto_Email_Notifications_Stage]
 (     @tableRecs MailStageTableType READONLY,
-      @nvcMailType Nvarchar(50) = N'UI-Submissions',
+      @nvcMailType Nvarchar(50),
 	  @nvcUserID Nvarchar(10)
 )
-   
+
 AS
 BEGIN
 
