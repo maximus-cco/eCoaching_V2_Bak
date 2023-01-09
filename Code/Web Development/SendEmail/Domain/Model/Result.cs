@@ -4,6 +4,7 @@ namespace SendEmail.Domain.Model
 {
     public class Result
     {
+        public string MailType { get; set; }
         public string LogId { get; set; }
         public string LogName { get; set; }
         public string To { get; set; }

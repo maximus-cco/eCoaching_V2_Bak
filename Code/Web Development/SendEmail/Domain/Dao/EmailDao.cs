@@ -35,6 +35,7 @@ namespace SendEmail.Domain.Dao
                     {
                         var temp = new Email();
                         temp.MailId = dataReader["MailID"].ToString();
+                        temp.MailType = dataReader["MailType"].ToString();
                         temp.LogId = dataReader["LogID"].ToString();
                         temp.LogName = dataReader["LogName"].ToString();
                         temp.From = dataReader["From"].ToString();

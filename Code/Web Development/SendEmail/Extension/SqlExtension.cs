@@ -21,6 +21,7 @@ namespace SendEmail.Extension
             logger.Debug("Entered AddMailHistoryTableType... " + mailResults.Count);
 
             DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("MailType", typeof(string));
             dataTable.Columns.Add("LogId", typeof(int));
             dataTable.Columns.Add("LogName", typeof(string));
             dataTable.Columns.Add("To", typeof(string));
@@ -30,7 +31,7 @@ namespace SendEmail.Extension
 
             foreach (var mr in mailResults)
             {
-                dataTable.Rows.Add(mr.LogId, mr.LogName, mr.To, mr.Cc, mr.SentDateTime, mr.IsSuccess);
+                dataTable.Rows.Add(mr.MailType, mr.LogId, mr.LogName, mr.To, mr.Cc, mr.SentDateTime, mr.IsSuccess);
             }
 
             //foreach (DataRow row in dataTable.Rows)

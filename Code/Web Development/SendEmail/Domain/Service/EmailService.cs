@@ -75,6 +75,7 @@ namespace SendEmail.Domain.Service
                             msg.Dispose();
                         }
 
+                        result.MailType = email.MailType;
                         result.LogId = email.LogId;
                         result.LogName = email.LogName;
                         result.To = email.To;

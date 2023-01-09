@@ -3,6 +3,7 @@
     class Email
     {
         public string MailId { get; set; }
+        public string MailType { get; set; }
         public string LogId { get; set; }
         public string LogName { get; set; }
         public string To { get; set; }
