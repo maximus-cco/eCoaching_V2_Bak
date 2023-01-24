@@ -1,9 +1,9 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -18,6 +18,7 @@ GO
 --  Modified to support Encryption of sensitive data - Open key and use employee View for emp attributes. TFS 7856 - 10/23/2017
 --  Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
 --  Modified to support Reactivation by Managers. TFS 25961- 12/16/2022
+--  Modified to only display latest last known status when Reactivating log. TFS 26048 - 01/20/2023
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
@@ -32,7 +33,7 @@ AS
 
 BEGIN
 DECLARE	
-@nvcTableName nvarchar(500),
+@nvcTableName nvarchar(1000),
 @nvcWhere nvarchar(300),
 @strRequesterID nvarchar(10),
 @strATCoachAdminUser nvarchar(10),
@@ -64,21 +65,37 @@ SET @nvcTableName = ' FROM [EC].[Coaching_Log] Fact WITH(NOLOCK) '
 IF @strTypein = N'Warning' AND @strActionin = 'Inactivate'
 SET @nvcTableName = ' FROM [EC].[Warning_Log] Fact WITH(NOLOCK) '
 
+
+
 IF @strTypein = N'Coaching' AND @strActionin = 'Reactivate'
 SET @nvcTableName = ',Aud.LastKnownStatus, [EC].[fn_strStatusFromStatusID](Aud.LastKnownStatus)LKStatus
- FROM [EC].[Coaching_Log] Fact WITH(NOLOCK) JOIN (Select * FROM
- [EC].[AT_Coaching_Inactivate_Reactivate_Audit] WHERE LastKnownStatus <> 2) Aud
+ FROM [EC].[Coaching_Log] Fact WITH(NOLOCK) JOIN (
+Select a.* FROM
+ [EC].[AT_Coaching_Inactivate_Reactivate_Audit] a  JOIN
+ (Select CoachingID, MAX([ActionTimestamp]) as latest
+ FROM  [EC].[AT_Coaching_Inactivate_Reactivate_Audit] 
+ WHERE LastKnownStatus <> 2
+ GROUP BY CoachingID) l
+ ON a.CoachingID = l.CoachingID and a.ActionTimestamp = l.latest
+ WHERE a.LastKnownStatus <> 2
+ ) Aud
  ON Aud.FormName = Fact.Formname '
 
 IF @strTypein = N'Warning' AND @strActionin = 'Reactivate'
 SET @nvcTableName = ',Aud.LastKnownStatus, [EC].[fn_strStatusFromStatusID](Aud.LastKnownStatus)LKStatus 
- FROM [EC].[Warning_Log] Fact WITH(NOLOCK) JOIN (Select * FROM
- [EC].[AT_Warning_Inactivate_Reactivate_Audit] WHERE LastKnownStatus <> 2) Aud
+ FROM [EC].[Warning_Log] Fact WITH(NOLOCK) JOIN (
+Select a.* FROM
+ [EC].[AT_Warning_Inactivate_Reactivate_Audit] a  JOIN
+ (Select WarningID, MAX([ActionTimestamp]) as latest
+ FROM  [EC].[AT_Warning_Inactivate_Reactivate_Audit] 
+ WHERE LastKnownStatus <> 2
+ GROUP BY WarningID) l
+ ON a.WarningID = l.WarningID and a.ActionTimestamp = l.latest
+ WHERE a.LastKnownStatus <> 2
+ ) Aud
  ON Aud.FormName = Fact.Formname '
 
-
-
--- If Action is Reactivation: 
+ -- If Action is Reactivation: 
 -- Display Inactive logs
 
 IF @strActionin = N'Reactivate'
@@ -157,6 +174,6 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Logs_Inactivation_Reactivation
 
-
 GO
+
 
