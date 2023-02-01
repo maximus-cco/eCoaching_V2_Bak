@@ -704,6 +704,8 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@sortASC", sortDirection);
                 command.Parameters.AddWithValueSafe("@nvcSearch", search);
                 command.Parameters.AddWithValueSafe("@nvcWhichDashboard", logFilter.LogType);
+
+                // todo: add QnQns - pass in QN or QNS
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())

@@ -9,12 +9,32 @@
         </div>
     </div>
 
+    <input type="hidden" name="pageSizeSelected" id="pageSizeSelected" />
+
     <!-- /.panel-heading -->
     <div class="panel-body">
-		<div id="div-search-result">
-			@{Html.RenderPartial("_LogListQn"); }
-		</div>
-	</div>
+        @if (Model.Search.ShowQnOrQnsChoice)
+        {
+            <form class="form-inline pull-right ">
+                <div class="form-group">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(m => m.Search.QnOrQns, Constants.QN, new { @class = "rd-qn-qns" })QN &nbsp;&nbsp;
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(m => m.Search.QnOrQns, Constants.QNS, new { @class = "rd-qn-qns" })QN Supervisor
+                    </label>
+                </div>
+            </form>
+        }
+
+        <div class="clearfix"></div>
+
+        <div id="div-search-result">
+            @{Html.RenderPartial("_LogListQn"); }
+        </div>
+        </div>
     <!-- /.panel-body -->
 </div>
 <!-- /.panel -->

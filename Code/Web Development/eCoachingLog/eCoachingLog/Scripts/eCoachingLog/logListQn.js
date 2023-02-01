@@ -1,8 +1,9 @@
 ﻿var myTable;
 $(document).ready(function () {
-	var length = $('#PageSize').val();
+    var length = $('#PageSize').val();
 	// Initialize datatable
-	$(".please-wait").slideDown(500);
+    $(".please-wait").slideDown(500);
+    const qnOrQns = $('.rd-qn-qns').val();
     myTable = $('#dataTables-coaching-log-list').DataTable({
     	renderer: "bootstrap",
 		autowidth: false,
@@ -29,6 +30,12 @@ $(document).ready(function () {
                 orderable: false,
                 render:
                     function (data, type, row, meta) {
+                        if (showPrepareLink === 'False' && showCoachLink === 'True') {
+                            var coach = '<a href="#"' + 'data-action="coach"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
+                                'class="modal-link-qn"' + 'style="color: green; border-bottom: blue 0.125em solid;">' + '<b>Coach</b></a>';
+                            return coach;
+                        }
+
                         if (showPrepareLink === 'True' && showCoachLink === 'True') {
                             var prepare = '<a href="#"' + 'data-action="editSummary"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
                             'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Prepare</b></a>';
@@ -36,7 +43,6 @@ $(document).ready(function () {
                                 'class="modal-link-qn"' + 'style="color: green; border-bottom: blue 0.125em solid;">' + '<b>Coach</b></a>';
                             return prepare + '&nbsp;&nbsp;' + coach;
                         }
-                        
 
                         if (showCsrReviewLink === 'True') {
                             var csrReview = '<a href="#"' + ' data-action="csrReview"' + ' data-log-id="' + data + '" ' + ' data-is-coaching="' + row["IsCoaching"] + '"' +
@@ -79,12 +85,12 @@ $(document).ready(function () {
 
     }); // myTable
 
-	// Set page length
+    // Set page length
     myTable.page.len(length);
 
     $('#dataTables-coaching-log-list').on('length.dt', function (e, settings, len) {
     	$('input[name=pageSizeSelected').val(len);
-	});
+    });
 
 	// Dynamically hide column(s)
     if (showSupervisorColumn === 'False') {
@@ -97,5 +103,5 @@ $(document).ready(function () {
 	else
 	{
 		myTable.column('FollowupDueDate:name').visible(false);
-	}
+    }
 });

@@ -4,7 +4,7 @@
 @{
 	Layout = null;
 }
-@Html.HiddenFor(m => m.Search.PageSize)
+@Html.HiddenFor(m => m.Search.PageSize, new { @id = "PageSize" })
 
 <div class="panel panel-default">
     <!-- /.panel-heading -->

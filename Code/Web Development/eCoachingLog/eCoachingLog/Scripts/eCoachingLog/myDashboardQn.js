@@ -27,6 +27,23 @@
 		}
 	});
 
+	$('body').on('click', '.rd-qn-qns', function (e) {
+	    if (e.handled !== true) {
+	        e.handled = true;
+	        $(".please-wait").slideDown(500);
+
+	        $.ajax({
+	            type: 'POST',
+	            url: filterByQnOrQnsUrl,
+	            data: { qnOrQns: $(this).val(), pageSize: $('input[name=pageSizeSelected').val() },
+	            success: function (data) {
+	                $('#div-search-result').html(data);
+	            }
+	        }); // end $.ajax
+	    } // end  if (e.handled !== true) 
+
+	});
+
 	$('body').on('click', '#btn-save-summary', function (e) {
 	    e.preventDefault();
 	    $(this).prop('disabled', true);

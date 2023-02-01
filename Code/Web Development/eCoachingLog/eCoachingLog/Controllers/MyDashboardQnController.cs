@@ -66,10 +66,10 @@ namespace eCoachingLog.Controllers
         public ActionResult GetLogsQn(string whatLog, int? siteId, string siteName, string month)
         {
             logger.Debug("Entered GetLogsQn");
-            return PartialView(whatLog, InitViewModelByLogType(whatLog, siteId, siteName, month));
+            return PartialView(whatLog, InitViewModelByLogType(whatLog, siteId, siteName, month, true));
         }
 
-        private MyDashboardQnViewModel InitViewModelByLogType(string whatLog, int? siteId, string siteName, string month)
+        private MyDashboardQnViewModel InitViewModelByLogType(string whatLog, int? siteId, string siteName, string month, bool isQn)
         {
             var user = GetUserFromSession();
             var vm = new MyDashboardQnViewModel(user);
@@ -81,8 +81,10 @@ namespace eCoachingLog.Controllers
             vm.Search.SiteName = siteName;
             // Default to MyDashboard
             Session["currentPage"] = Constants.PAGE_MY_DASHBOARD_QN;
+            // Default to QN logs
+            vm.Search.QnOrQns = Constants.QN;
 
-            if (user.ShowFollowup)
+            if (user.ShowFollowup && vm.Search.QnOrQns == Constants.QN)
             {
                 vm.Search.ShowFollowupDateColumn = true;
             }
@@ -120,7 +122,7 @@ namespace eCoachingLog.Controllers
                     {
                         if (whatLog == "_MyPendingReview" || whatLog == "_MyPendingFollowupCoaching")
                         {
-                            vm.AllowCreateEditSummary = true;
+                            vm.AllowCreateEditSummary = isQn;
                             vm.AllowCoach = true;
                         }
                         else
@@ -203,6 +205,8 @@ namespace eCoachingLog.Controllers
                     break;
             }
 
+            vm.Search.ShowQnOrQnsChoice = whatLog == "_MyPendingReview" && user.IsSupervisor;
+
             return vm;
         }
 
@@ -212,6 +216,20 @@ namespace eCoachingLog.Controllers
             logger.Debug("Entered Search...");
             logger.Debug("pageSizeSelected = " + pageSizeSelected);
             vm.Search.PageSize = pageSizeSelected.HasValue ? pageSizeSelected.Value : 25; // Default to 25
+
+            return PartialView("_LogListQn", vm);
+        }
+
+        [HttpPost]
+        public ActionResult FilterByQnOrQns(int qnOrQns, int? pageSize)
+        {
+            logger.Debug("Entered FilterByQnOrQnsUrl...");
+            logger.Debug("pageSizeSelected = " + pageSize);
+            var vm = InitViewModelByLogType("_MyPendingReview", null, null, null, qnOrQns == Constants.QN);
+            vm.Search.PageSize = pageSize.HasValue ? pageSize.Value : 25; // Default to 25
+            vm.Search.QnOrQns = qnOrQns;
+            vm.Search.ShowFollowupDateColumn = qnOrQns == Constants.QN;
+            vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING_REVIEW;
 
             return PartialView("_LogListQn", vm);
         }

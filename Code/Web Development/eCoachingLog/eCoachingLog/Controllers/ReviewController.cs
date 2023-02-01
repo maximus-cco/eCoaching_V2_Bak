@@ -45,6 +45,9 @@ namespace eCoachingLog.Controllers
             string selectedSubReasonText = Session["SelectedSubReason"] == null ? null : (string)Session["SelectedSubReason"];
 
             BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
+            
+            // todo: empLogService.GetLogDetail(logId, isCoaching) returns whether it is qn or qns as well, maybe it is also there isQn, isQnSupervisor 
+
 			// Get coaching reasons for this log
 			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching, selectedReasonText, selectedSubReasonText);
             try
@@ -76,9 +79,45 @@ namespace eCoachingLog.Controllers
 				return PartialView("_Error");
 			}
         }
+
         private ReviewViewModel SetQnProperties(ReviewViewModel vm, CoachingLogDetail logDetail, string action, User user)
         {
             if (!logDetail.IsQn && !logDetail.IsQnSupervisor)
+            {
+                return vm;
+            }
+
+            // qns
+            // todo: db returns indicator qn or qns
+            logDetail.IsQn = false;
+            logDetail.IsQnSupervisor = true;
+
+            if (logDetail.IsQn)
+            {
+                return HandleQn(vm, logDetail, action, user);
+            }
+
+            // Qns
+            if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+            {
+                vm.IsRegularPendingForm = true;
+                vm.ShowCoachingNotes = false;
+                vm.ShowEmployeeReviewInfo = false;
+                vm.ReviewPageName = "_QnsCoach";
+            }
+            else if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
+            {
+                vm.IsAcknowledgeForm = true;
+                vm.IsReadOnly = false;
+                vm.ShowCoachingNotes = true;
+            }
+
+            return vm;
+        }
+
+        private ReviewViewModel HandleQn(ReviewViewModel vm, CoachingLogDetail logDetail, string action, User user)
+        {
+            if (!logDetail.IsQn)
             {
                 return vm;
             }
@@ -101,7 +140,7 @@ namespace eCoachingLog.Controllers
             else if (String.Equals(action, "coach", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = false;
-                 if (logDetail.IsQnSupervisor || logDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW) // status id 6: first round coaching, not notes yet
+                if (logDetail.IsQnSupervisor || logDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW) // status id 6: first round coaching, not notes yet
                 {
                     vm.ShowCoachingNotes = false;
                 }
@@ -138,7 +177,7 @@ namespace eCoachingLog.Controllers
                 vm.ReviewPageName = "_QnFollowupReview";
             }
             else if (String.Equals(action, "viewLinkedQnsInCoachingSession", StringComparison.OrdinalIgnoreCase)
-                    || String.Equals(action, "viewLinkedQns", StringComparison.OrdinalIgnoreCase) 
+                    || String.Equals(action, "viewLinkedQns", StringComparison.OrdinalIgnoreCase)
                     || String.Equals(action, "viewQnsToLink", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = true;
