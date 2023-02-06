@@ -1,0 +1,65 @@
+/*
+TFS 26109 - Update SSL cert on the DB servers
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Prep
+Download files from $\eCoaching_V2\Security\SSLCert\2023
+
+Summary for Database Encryption
+
+1. Copy cert onto server
+2. Start cmd prompt as admin and then launch mmc from there
+3. Import cert to personal cert store (you will need pwd from info.txt)
+4. Assign permisison to cert to 'NT Service\MSSQLSERVER' (Right click cert --> Details --> Manage cert and give full control permission to this accout from local machine
+5. Add certificate Thumbprint in Registry to use in encrypting database connections
+
+Summary for binding cert in SSRS
+
+*/
+
+-- Details for Database Encryption
+
+1. Copy cert onto server
+Copy the cert file (.pfx) downloaded from TFS to a share on the respective DB server (\\UVAAPADSQL50CCO.ad.local\Apps\Software\Cert2023 for prod)
+
+2. Start cmd prompt as admin and then launch mmc from there
+Add the Certificates snap-in for the computer 
+
+3. Import cert to personal cert store (you will need pwd from info.txt)
+Right Click Certificates
+All tasks
+Import
+Next
+Browse to the public key certificate received from the CA and click Next
+Choose the option to place the certificate in the personal store
+Click Next and Finish
+Certificate should appear in the certificate store, with a Key on the top left corner of the icon and is avilable for use at this point
+
+4. Assign permisison to cert to 'NT Service\MSSQLSERVER' 
+Right click cert --> Details --> Manage cert and give full control permission to this accout from local machine
+
+5. Add certificate Thumbprint in Registry to use in encrypting database connections (Thumbprint in info.txt in TFS)
+
+Open up the registry (regedit) and navigate to the SQL Server instance hive. The default location for SQL Server would be:
+Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server\MSSQL15.MSSQL\MSSQLServer\SuperSocketNetLib
+If your SQL instance is not using the default name, then MSSQL11.MSSQLSERVER would instead be replaced with MSSQL11.<Instance Name>.
+Create a string value “Certificate” on the above location or modify the already-created value and paste the copied thumbprint value into it.
+At the same registry location, change the “ForceEncryption” value to “1” to have SQL Server force encryption.
+Once completed, have the DBA restart the SQL Server services to load the SSL Certificate and make the changes take effect
+
+
+
+-- Details for binding cert in SSRS
+
+
+---**Bind the cert to SSRS website*---
+1. Under Web Service url , Go to advanced tab and removed the bindings for 443
+2. Under Web portal URL , Go to advanced tab and removed the bindings for 443
+3. Go to advanced tab in Under Web Service url and use the new cert binding for all IP4 and IP6 addresses (*.ad.local)
+4. Go to to advanced tab in Under Web portal URL and use the new cert binding for all IP4 and IP6 addresses(*.ad.local)
