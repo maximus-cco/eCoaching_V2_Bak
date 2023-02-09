@@ -144,6 +144,8 @@ namespace eCoachingLog.Utils
 
         // ec.dim_source table
         public const int SOURCE_INTERNAL_CCO_REPORTING = 218;
+        public const int SOURCE_QN = 235;
+        public const int SOURCE_QNS = 236;
 
         public static readonly List<string> EXCEL_SHEET_NAMES =
             new List<string>() { "eCL", "Short Call eCL", "Quality Now eCL", "Quality Now WebChat", "Quality Now Written Corr" };
