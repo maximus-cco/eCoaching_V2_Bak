@@ -46,8 +46,6 @@ namespace eCoachingLog.Controllers
 
             BaseLogDetail logDetail = empLogService.GetLogDetail(logId, isCoaching);
             
-            // todo: empLogService.GetLogDetail(logId, isCoaching) returns whether it is qn or qns as well, maybe it is also there isQn, isQnSupervisor 
-
 			// Get coaching reasons for this log
 			logDetail.Reasons = empLogService.GetReasonsByLogId(logId, isCoaching, selectedReasonText, selectedSubReasonText);
             try
@@ -92,7 +90,15 @@ namespace eCoachingLog.Controllers
                 return HandleQn(vm, logDetail, action, user);
             }
 
-            // Qns
+            // Qns - view
+            if (action != null && action == "viewQnsToLink") // view only
+            {
+                vm.IsReadOnly = true;
+                vm.ReviewPageName = "_ViewCoachingLog";
+                return vm;
+            }
+
+            // Qns - Coach
             if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
             {
                 vm.IsRegularPendingForm = true;
@@ -100,10 +106,10 @@ namespace eCoachingLog.Controllers
                 vm.ShowEmployeeReviewInfo = false;
                 vm.ReviewPageName = "_QnsCoach";
             }
+            // Qns - csr review/ack
             else if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
             {
                 vm.IsAcknowledgeForm = true;
-                //vm.IsReadOnly = false;
                 vm.ShowCoachingNotes = true;
             }
 
@@ -569,7 +575,7 @@ namespace eCoachingLog.Controllers
 
             // Init Acknowledge partial
             //if ((String.IsNullOrEmpty(action) || action == "csrReview") && IsAcknowledgeForm(vm))
-            if (IsAcknowledgeForm(vm))
+            if ((String.IsNullOrEmpty(action) || action != "viewQnsToLink") && IsAcknowledgeForm(vm))
             {
 				vm.IsAcknowledgeForm = true;
 				return InitAckForm(vm, user, isCoaching);
