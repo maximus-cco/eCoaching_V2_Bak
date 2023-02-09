@@ -38,11 +38,7 @@ namespace eCoachingLog.Models.Common
 		public string EmployeeReviewDate { get; set; }
 		public string Comment { get; set; }
 
-        // TODO: move to CoachingLogQn?
-        // Quality Now (submitted by quality specialist)
-        public bool IsQn{ get; set; }
-        // this is the followup qn log
-        //public bool IsQnFollowup { get; set; }
+        public bool IsQn{ get; set; } // submitted by quality specialist
         public bool IsQnSupervisor { get; set; } // submitted by supervisor
 
         public string BatchId { get; set; }

@@ -66,6 +66,7 @@ namespace eCoachingLog.Controllers
         public ActionResult GetLogsQn(string whatLog, int? siteId, string siteName, string month)
         {
             logger.Debug("Entered GetLogsQn");
+            // On page intial display, default to get QN logs
             return PartialView(whatLog, InitViewModelByLogType(whatLog, siteId, siteName, month, true));
         }
 
@@ -81,8 +82,8 @@ namespace eCoachingLog.Controllers
             vm.Search.SiteName = siteName;
             // Default to MyDashboard
             Session["currentPage"] = Constants.PAGE_MY_DASHBOARD_QN;
-            // Default to QN logs
-            vm.Search.QnOrQns = Constants.QN;
+            vm.Search.QnOrQns = isQn ? Constants.QN : Constants.QNS;
+            vm.Search.SourceId = isQn ? Constants.SOURCE_QN : Constants.SOURCE_QNS;
 
             if (user.ShowFollowup && vm.Search.QnOrQns == Constants.QN)
             {
@@ -221,6 +222,7 @@ namespace eCoachingLog.Controllers
         }
 
         [HttpPost]
+        // qn: 1; qns: 2
         public ActionResult FilterByQnOrQns(int qnOrQns, int? pageSize)
         {
             logger.Debug("Entered FilterByQnOrQnsUrl...");
@@ -228,6 +230,9 @@ namespace eCoachingLog.Controllers
             var vm = InitViewModelByLogType("_MyPendingReview", null, null, null, qnOrQns == Constants.QN);
             vm.Search.PageSize = pageSize.HasValue ? pageSize.Value : 25; // Default to 25
             vm.Search.QnOrQns = qnOrQns;
+
+            vm.Search.SourceId = qnOrQns == Constants.QN ? Constants.SOURCE_QN : Constants.SOURCE_QNS;
+
             vm.Search.ShowFollowupDateColumn = qnOrQns == Constants.QN;
             vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING_REVIEW;
 

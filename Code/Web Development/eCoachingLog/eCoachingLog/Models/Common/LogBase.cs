@@ -24,16 +24,5 @@
         public string WarningReasons { get; set; }
         public bool IsCoaching { get; set; }
 
-        // TODO: remove
-        public string QnBatchNumber { get; set; }
-        public string ComplianceCategory { get; set; }
-        public string NoncompliantBehavior { get; set; }
-        public string CoachingDate { get; set; }
-        public string BehaviorRolloffDate { get; set; }
-        public string CoachingWarningLevel { get; set; }
-
-        // prototype
-        public bool IsFiveEvalLog { get; set; }
-        public bool IsOneEvalLog { get; set; }
     }
 }

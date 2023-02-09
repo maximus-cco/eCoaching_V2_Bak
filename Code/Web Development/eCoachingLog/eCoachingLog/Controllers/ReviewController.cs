@@ -87,11 +87,6 @@ namespace eCoachingLog.Controllers
                 return vm;
             }
 
-            // qns
-            // todo: db returns indicator qn or qns
-            logDetail.IsQn = false;
-            logDetail.IsQnSupervisor = true;
-
             if (logDetail.IsQn)
             {
                 return HandleQn(vm, logDetail, action, user);
@@ -108,7 +103,7 @@ namespace eCoachingLog.Controllers
             else if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
             {
                 vm.IsAcknowledgeForm = true;
-                vm.IsReadOnly = false;
+                //vm.IsReadOnly = false;
                 vm.ShowCoachingNotes = true;
             }
 
