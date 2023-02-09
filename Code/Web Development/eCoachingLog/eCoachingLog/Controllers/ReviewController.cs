@@ -91,7 +91,7 @@ namespace eCoachingLog.Controllers
             }
 
             // Qns - view
-            if (action != null && action == "viewQnsToLink") // view only
+            if (action == "view" || action == "viewQnsToLink") // view only
             {
                 vm.IsReadOnly = true;
                 vm.ReviewPageName = "_ViewCoachingLog";
