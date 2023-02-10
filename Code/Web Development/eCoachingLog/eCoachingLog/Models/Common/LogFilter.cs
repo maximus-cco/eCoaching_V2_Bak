@@ -28,8 +28,6 @@ namespace eCoachingLog.Models.Common
 		public bool IsActive { get; set; }
 
         // Quality Now, Quality Now Supervisor
-        // 1 - Qn, 2 - Qns
-        public int QnOrQns { get; set; }
         public bool ShowQnOrQnsChoice { get; set; }
 
 		// Get employees who is active or inactive, or both

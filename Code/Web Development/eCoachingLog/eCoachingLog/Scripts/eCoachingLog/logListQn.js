@@ -3,7 +3,7 @@ $(document).ready(function () {
     var length = $('#PageSize').val();
 	// Initialize datatable
     $(".please-wait").slideDown(500);
-    const qnOrQns = $('.rd-qn-qns').val();
+    const sourceId = $('.rd-qn-qns').val();
     myTable = $('#dataTables-coaching-log-list').DataTable({
     	renderer: "bootstrap",
 		autowidth: false,

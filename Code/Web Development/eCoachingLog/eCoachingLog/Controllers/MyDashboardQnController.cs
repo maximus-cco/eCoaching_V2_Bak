@@ -67,10 +67,10 @@ namespace eCoachingLog.Controllers
         {
             logger.Debug("Entered GetLogsQn");
             // On page intial display, default to get QN logs
-            return PartialView(whatLog, InitViewModelByLogType(whatLog, siteId, siteName, month, true));
+            return PartialView(whatLog, InitViewModelByLogType(whatLog, siteId, siteName, month, Constants.SOURCE_QN));
         }
 
-        private MyDashboardQnViewModel InitViewModelByLogType(string whatLog, int? siteId, string siteName, string month, bool isQn)
+        private MyDashboardQnViewModel InitViewModelByLogType(string whatLog, int? siteId, string siteName, string month, int sourceId)
         {
             var user = GetUserFromSession();
             var vm = new MyDashboardQnViewModel(user);
@@ -82,10 +82,9 @@ namespace eCoachingLog.Controllers
             vm.Search.SiteName = siteName;
             // Default to MyDashboard
             Session["currentPage"] = Constants.PAGE_MY_DASHBOARD_QN;
-            vm.Search.QnOrQns = isQn ? Constants.QN : Constants.QNS;
-            vm.Search.SourceId = isQn ? Constants.SOURCE_QN : Constants.SOURCE_QNS;
+            vm.Search.SourceId = sourceId;
 
-            if (user.ShowFollowup && vm.Search.QnOrQns == Constants.QN)
+            if (user.ShowFollowup && vm.Search.SourceId == Constants.SOURCE_QN)
             {
                 vm.Search.ShowFollowupDateColumn = true;
             }
@@ -123,7 +122,7 @@ namespace eCoachingLog.Controllers
                     {
                         if (whatLog == "_MyPendingReview" || whatLog == "_MyPendingFollowupCoaching")
                         {
-                            vm.AllowCreateEditSummary = isQn;
+                            vm.AllowCreateEditSummary = sourceId == Constants.SOURCE_QN;
                             vm.AllowCoach = true;
                         }
                         else
@@ -222,18 +221,15 @@ namespace eCoachingLog.Controllers
         }
 
         [HttpPost]
-        // qn: 1; qns: 2
-        public ActionResult FilterByQnOrQns(int qnOrQns, int? pageSize)
+        // qn: 235; qns: 236
+        public ActionResult FilterByQnOrQns(int sourceId, int? pageSize)
         {
             logger.Debug("Entered FilterByQnOrQnsUrl...");
             logger.Debug("pageSizeSelected = " + pageSize);
-            var vm = InitViewModelByLogType("_MyPendingReview", null, null, null, qnOrQns == Constants.QN);
+            var vm = InitViewModelByLogType("_MyPendingReview", null, null, null, sourceId);
             vm.Search.PageSize = pageSize.HasValue ? pageSize.Value : 25; // Default to 25
-            vm.Search.QnOrQns = qnOrQns;
-
-            vm.Search.SourceId = qnOrQns == Constants.QN ? Constants.SOURCE_QN : Constants.SOURCE_QNS;
-
-            vm.Search.ShowFollowupDateColumn = qnOrQns == Constants.QN;
+            vm.Search.SourceId = sourceId;
+            vm.Search.ShowFollowupDateColumn = sourceId == Constants.SOURCE_QN;
             vm.Search.LogType = Constants.LOG_SEARCH_TYPE_MY_PENDING_REVIEW;
 
             return PartialView("_LogListQn", vm);

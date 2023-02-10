@@ -247,9 +247,6 @@ namespace eCoachingLog.Utils
 			{ new Tuple<int, int>(MODULE_PRODUCTION_PLANNING, LOG_STATUS_PENDING_SUPERVISOR_REVIEW), LOG_STATUS_LEVEL_2 }
 		};
 
-        // Radio button value
-        public const int QN = 1;
-        public const int QNS = 2;
 
 		// TODO: move to resource file or database
 		public const string REVIEW_OTH_APS_TEXT = "Your CSR has reached a major attendance milestone with 11 perfect shifts.You are encouraged to validate that the CSR indeed earned perfect attendance and verify that the hours have been removed in the Attendance Tracking Tool. And of course, please say thank you to your CSR for a job well done. This notification is for your CSR and does not apply to your personal attendance. Please refer to the name listed beside the 'employee' field to determine the employee who is receiving this message.";

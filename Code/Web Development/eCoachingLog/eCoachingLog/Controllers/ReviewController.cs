@@ -182,9 +182,8 @@ namespace eCoachingLog.Controllers
                     || String.Equals(action, "viewQnsToLink", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = true;
-                // QNS is loaded to db as completed, so no eval summary and no coaching
-                vm.ShowEvalSummary = false;
-                vm.ShowCoachingNotes = false;
+                vm.ShowEvalSummary = false; // no supervisor entered summary for qns
+                vm.ShowCoachingNotes = true;
                 vm.ReviewPageName = "_QnFollowupView";
             }
             else if (String.Equals(action, "view", StringComparison.OrdinalIgnoreCase))

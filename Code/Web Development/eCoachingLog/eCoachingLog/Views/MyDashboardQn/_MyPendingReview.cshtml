@@ -18,12 +18,12 @@
             <form class="form-inline pull-right ">
                 <div class="form-group">
                     <label class="radio-inline">
-                        @Html.RadioButtonFor(m => m.Search.QnOrQns, Constants.QN, new { @class = "rd-qn-qns" })QN &nbsp;&nbsp;
+                        @Html.RadioButtonFor(m => m.Search.SourceId, Constants.SOURCE_QN, new { @class = "rd-qn-qns" })QN &nbsp;&nbsp;
                     </label>
                 </div>
                 <div class="form-group">
                     <label class="radio-inline">
-                        @Html.RadioButtonFor(m => m.Search.QnOrQns, Constants.QNS, new { @class = "rd-qn-qns" })QN Supervisor
+                        @Html.RadioButtonFor(m => m.Search.SourceId, Constants.SOURCE_QNS, new { @class = "rd-qn-qns" })QN Supervisor
                     </label>
                 </div>
             </form>
