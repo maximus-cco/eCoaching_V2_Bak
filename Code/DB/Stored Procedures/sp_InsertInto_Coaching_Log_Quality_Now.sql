@@ -1,14 +1,3 @@
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Quality_Now' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
@@ -28,6 +17,7 @@ GO
 -- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- Updated to support Quality Now workflow enhancement. TFS 22187 - 09/27/2021
+-- Updated to support QN Supervisor evaluation changes. TFS 26002 - 02/02/2023
 --    =======================================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Now]
@@ -87,7 +77,7 @@ BEGIN
 	   ,qcs.QN_Batch_Status
       ,eh.Emp_Program
 	  ,EC.fn_intSourceIDFromSource('Indirect' , qcs.QN_Source) -- SourceID
-	  ,CASE WHEN qcs.[QN_Source] = N'Verint-CCO' THEN 6 ELSE 1 END -- StatusID
+	  ,6 -- StatusID (Pending Supervisor Review)
       ,EC.fn_intSiteIDFromEmpID(LTRIM(RTRIM(qcs.User_EMPID)))  -- SiteID
 	  ,qcs.User_EMPID    -- EmpID
 	  ,'999999'  -- SubmitterID
@@ -155,12 +145,6 @@ BEGIN
 	  FROM @logsInserted 
 	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted WHERE SourceID = 235);  
 
-	  -- Populate Coaching Notes for Verint-CCO Supervisor logs
-
-	  UPDATE EC.Coaching_Log 
-	  SET CoachingNotes = N'Log automatically set to Completed status as part of Quality Now coaching process.'
-	  FROM @logsInserted 
-	  WHERE CoachingID IN (SELECT CoachingLogID FROM @logsInserted WHERE SourceID = 236);  
 	
 	  -- Insert Evaluation details for each batch into Evaluations table
 

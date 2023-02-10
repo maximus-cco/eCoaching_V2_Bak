@@ -1,14 +1,3 @@
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Dashboard_Summary_Count_QN' 
-)
-   DROP PROCEDURE [EC].[sp_Dashboard_Summary_Count_QN]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
@@ -22,6 +11,7 @@ GO
 --  on the MyDashboard Page.
 --  Initial Revision. Quality Now workflow enhancement - TFS 22187 - 8/3/2021
 --  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
+--  Updated to support QN Supervisor evaluation changes. TFS 26002 - 02/02/2023
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count_QN] 
 @nvcEmpID nvarchar(10)
@@ -80,7 +70,7 @@ SET @intMyPendingQN = (SELECT COALESCE(COUNT(cl.CoachingID),0)
                  FROM EC.Coaching_Log cl 
                  WHERE cl.EmpID = @nvcEmpID  
 				 AND StatusID in (4,13)
-				 AND SourceID IN (235));
+				 AND SourceID IN (235,236));
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Pending'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPendingQN)+ ''' AS LogCount'
 END
@@ -93,7 +83,7 @@ SET @intMyPendingQN = (SELECT COUNT(cl.CoachingID)
 				 ON cl.EmpID = eh.Emp_ID
                  WHERE ((cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND StatusID = 6) 
 				 OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = @nvcEmpID AND  StatusID = 6))
-				 AND SourceID IN (235));
+				 AND SourceID IN (235,236));
 
 SET @SelectList = @SelectList + ' UNION
 SELECT ''My Pending Review'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyPendingQN)+ ''' AS LogCount'		
@@ -153,7 +143,7 @@ SET @intMyTeamPendingQN = (SELECT COUNT(cl.CoachingID)
 						 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Coaching_Log] cl WITH (NOLOCK)
 						 ON cl.EmpID = eh.Emp_ID  
 						 WHERE cl.StatusID NOT IN (1,2)
-						 AND SourceID IN (235)
+						 AND SourceID IN (235,236)
 						 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID))
 
 
@@ -242,8 +232,6 @@ EXEC (@nvcSQL)
 	
 -- Close Symmetric key
 END -- sp_Dashboard_Summary_Count_QN
-
 GO
-
 
 

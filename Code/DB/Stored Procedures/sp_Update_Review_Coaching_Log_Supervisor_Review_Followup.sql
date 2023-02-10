@@ -1,16 +1,15 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      08/31/2021
 --    Description: *    This procedure allows supervisors to update the QN ecls with review info. 
 --    Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/30/2021
+--    Updated to support QN Supervisor evaluation changes. TFS 26002 - 02/02/2023
 --    =====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Review_Followup]
 (
@@ -26,6 +25,7 @@ AS
 BEGIN
 
 DECLARE  @MonitoredLogs nvarchar(200),
+         @FormName nvarchar(50),
          @RetryCounter INT;
 SET @RetryCounter = 1;
 
@@ -36,8 +36,11 @@ BEGIN TRANSACTION;
 
 BEGIN TRY
 
+SET @FormName  = (SELECT Formname from EC.Coaching_Log WHERE CoachingID = @nvcFormID)
 
-CREATE TABLE #mlogs (ID bigint, ReviewMonitoredLogs nvarchar(200)); -- QN Supervisor logs to tie to original Coaching log
+--CREATE TABLE #mlogs (ID bigint, ReviewMonitoredLogs nvarchar(200)); -- QN Supervisor logs to tie to original Coaching log
+
+CREATE TABLE #mlogs (ID bigint); -- QN Supervisor logs to tie to original Coaching log
 
 INSERT INTO #mlogs (ID)
 SELECT ID
@@ -63,9 +66,17 @@ WHERE CoachingID = @nvcFormID;
 IF @bitIsFollowUp = 0
 BEGIN
 UPDATE [EC].[Coaching_Log]
-SET CoachingNotes = coachingNotes +  '<br />' + [EC].[fn_strEmpNameFromEmpID](@nvcFollowupReviewSupID) + ' (' + convert(varchar, GetDate(),22) + ')' + N' No additional coaching is needed for this log.  Please acknowledge and enter comments.'
+SET CoachingNotes = coachingNotes +  '<br />' + [EC].[fn_strEmpNameFromEmpID](@nvcFollowupReviewSupID) + ' (' + convert(varchar, GetDate(),22) + ')' + N' No additional coaching is needed for this log.  Please acknowledge and enter comments'
 WHERE CoachingID = @nvcFormID;
 END
+
+UPDATE [EC].[Coaching_Log]
+SET 
+  StatusID = 1,
+  CoachingNotes = N'Log has been attached to QN log ' + @FormName  + ' and no additional Coaching required.'
+  FROM [EC].[Coaching_Log] cl JOIN #mlogs a
+  ON cl.CoachingID = a.ID
+  WHERE (cl.SourceID = 236 AND cl.StatusID = 6);
 
 CLOSE SYMMETRIC KEY [CoachingKey];  
 	

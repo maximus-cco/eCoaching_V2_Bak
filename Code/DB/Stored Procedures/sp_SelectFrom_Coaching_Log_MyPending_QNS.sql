@@ -1,3 +1,4 @@
+
 SET ANSI_NULLS ON
 GO
 
@@ -6,19 +7,19 @@ GO
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
---	Create Date:	08/03/2021
---	Description: *	This procedure returns the Pending Review QN logs for logged in user.
---  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
---  Updated to support QN Supervisor evaluation changes. TFS 26002 - 02/02/2023
+--	Create Date:	02/08/2023
+--	Description: *	This procedure returns the Pending Review QNS logs for logged in user.
+--  Initial Revision. QN Supervisor evaluation changes. TFS 26002 - 02/08/2023
 --	=====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_QN] 
+
+CREATE OR ALTER  PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_QNS] 
 @nvcUserIdin nvarchar(10),
+@intSourceIdin int,
 @PageSize int,
 @startRowIndex int, 
 @sortBy nvarchar(100),
 @sortASC nvarchar(1)
 AS
-
 
 BEGIN
 
@@ -56,18 +57,28 @@ SET @SortExpression =  @sortBy +  @SortOrder
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
-
-SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE cl.[SourceID] in (235, 236) '
-
-
-IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'EMPLOYEE' )
+IF @nvcEmpRole NOT IN ('Supervisor' ) OR @intSourceIdin NOT IN (235,236)
 RETURN 1
 
-IF @nvcEmpRole in ('CSR', 'ARC', 'EMPLOYEE')
+
+SET @NewLineChar = CHAR(13) + CHAR(10)
+
+IF @intSourceIdin = 236
+	BEGIN
+	SET @where = 'WHERE cl.[SourceID] in (236) '
+	END
+ELSE
+	BEGIN
+	SET @where = 'WHERE cl.[SourceID] in (235) '
+	END
+
+
+IF @nvcEmpRole = 'Supervisor'
 BEGIN
-SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (4,13))'
+SET @where = @where + ' AND ((cl.[ReassignCount]= 0 AND eh.[Sup_ID] = ''' + @nvcUserIdin + ''' AND cl.[StatusID] = 6 )' +  @NewLineChar +
+		       ' OR (cl.[ReassignedToId] = ''' + @nvcUserIdin + '''  AND [ReassignCount] <> 0 AND cl.[StatusID] = 6 ))'
 END
+
 
 SET @nvcSQL1 = 'WITH TempMain 
 AS 
@@ -142,7 +153,7 @@ EXEC (@nvcSQL)
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 	    
-END -- sp_SelectFrom_Coaching_Log_MyPending_QN
+END -- sp_SelectFrom_Coaching_Log_MyPending_QNS
 GO
 
 

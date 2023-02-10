@@ -3,13 +3,13 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/03/2021
 --	Description: *	This procedure returns the pending QN logs for employees reporting to the logged in user.
 --  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
+--  Updated to support QN Supervisor evaluation changes. TFS 26002 - 02/02/2023
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyTeamPending_QN] 
@@ -55,7 +55,7 @@ SET  @SortExpression = @sortBy +  @SortOrder
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE [cl].[StatusID] NOT IN (1,2) AND [cl].[SourceID] IN (235) '
+SET @where = 'WHERE [cl].[StatusID] NOT IN (1,2) AND [cl].[SourceID] IN (235,236) '
 
 
 IF @intStatusIdin  <> -1
@@ -149,6 +149,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 END -- sp_SelectFrom_Coaching_Log_MyTeamPending_QN
 
 GO
-
 
 
