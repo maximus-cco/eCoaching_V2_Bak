@@ -94,6 +94,7 @@ namespace eCoachingLog.Controllers
             if (action == "view" || action == "viewQnsToLink") // view only
             {
                 vm.IsReadOnly = true;
+                vm.ShowEvalDetail = !user.IsCsr;
                 vm.ReviewPageName = "_ViewCoachingLog";
                 return vm;
             }
