@@ -94,7 +94,7 @@ namespace eCoachingLog.Controllers
             vm.ShowEvalDetail = ShowQnEvalDetail(logDetail, action, GetUserFromSession());
 
             // Qns - view
-            if (action == "view" || action == "viewQnsToLink") // view only
+            if (action == "view" || action == "viewQnsToLink" || action == "viewLinkedQns" || action == "viewLinkedQnsInCoachingSession") // view only
             {
                 vm.IsReadOnly = true;
                 vm.ReviewPageName = "_ViewCoachingLog";
