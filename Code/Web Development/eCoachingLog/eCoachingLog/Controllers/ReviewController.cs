@@ -90,11 +90,13 @@ namespace eCoachingLog.Controllers
                 return HandleQn(vm, logDetail, action, user);
             }
 
+            // Qns
+            vm.ShowEvalDetail = ShowQnEvalDetail(logDetail, action, GetUserFromSession());
+
             // Qns - view
             if (action == "view" || action == "viewQnsToLink") // view only
             {
                 vm.IsReadOnly = true;
-                vm.ShowEvalDetail = !user.IsCsr;
                 vm.ReviewPageName = "_ViewCoachingLog";
                 return vm;
             }
