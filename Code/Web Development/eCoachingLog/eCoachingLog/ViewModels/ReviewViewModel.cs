@@ -170,6 +170,8 @@ namespace eCoachingLog.ViewModels
         // quality pfd date
         public bool ShowPfdDate { get; set; }
 
+        public string Action { get; set; }
+
 		public ReviewViewModel()
 		{
 			this.LogDetail = new CoachingLogDetail();

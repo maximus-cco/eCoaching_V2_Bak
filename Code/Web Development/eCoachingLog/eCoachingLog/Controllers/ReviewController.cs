@@ -51,10 +51,11 @@ namespace eCoachingLog.Controllers
             try
 			{
 				var vm = Init(user, currentPage, logDetail, isCoaching, action);
+                vm.Action = action;
                 if (isCoaching)
                 {
                     // further set QN fields
-                    vm = SetQnProperties(vm, (CoachingLogDetail)logDetail, action, user);
+                    vm = SetQnProperties(vm, (CoachingLogDetail)logDetail, user);
                 }
  
                 return PartialView(vm.ReviewPageName, vm);
@@ -78,7 +79,7 @@ namespace eCoachingLog.Controllers
 			}
         }
 
-        private ReviewViewModel SetQnProperties(ReviewViewModel vm, CoachingLogDetail logDetail, string action, User user)
+        private ReviewViewModel SetQnProperties(ReviewViewModel vm, CoachingLogDetail logDetail, User user)
         {
             if (!logDetail.IsQn && !logDetail.IsQnSupervisor)
             {
@@ -87,14 +88,14 @@ namespace eCoachingLog.Controllers
 
             if (logDetail.IsQn)
             {
-                return HandleQn(vm, logDetail, action, user);
+                return HandleQn(vm, logDetail, user);
             }
 
             // Qns
-            vm.ShowEvalDetail = ShowQnEvalDetail(logDetail, action, GetUserFromSession());
-
+            vm.ShowEvalDetail = ShowQnEvalDetail(logDetail, vm.Action, GetUserFromSession());
+ 
             // Qns - view
-            if (action == "view" || action == "viewQnsToLink" || action == "viewLinkedQns" || action == "viewLinkedQnsInCoachingSession") // view only
+            if (IsReadOnly(vm, user))
             {
                 vm.IsReadOnly = true;
                 vm.ReviewPageName = "_ViewCoachingLog";
@@ -119,7 +120,7 @@ namespace eCoachingLog.Controllers
             return vm;
         }
 
-        private ReviewViewModel HandleQn(ReviewViewModel vm, CoachingLogDetail logDetail, string action, User user)
+        private ReviewViewModel HandleQn(ReviewViewModel vm, CoachingLogDetail logDetail, User user)
         {
             if (!logDetail.IsQn)
             {
@@ -128,6 +129,8 @@ namespace eCoachingLog.Controllers
 
             vm.QnSummaryEditable = GetQnSummary(logDetail.QnSummaryList, false);
             vm.QnSummaryReadOnly = GetQnSummary(logDetail.QnSummaryList, true);
+
+            var action = vm.Action;
 
             // Supervisor edit quality now log summary
             // My Pending Review - Prepare - add/edit log summary
@@ -180,15 +183,15 @@ namespace eCoachingLog.Controllers
                 vm.ShowCoachingNotes = true;
                 vm.ReviewPageName = "_QnFollowupReview";
             }
-            else if (String.Equals(action, "viewLinkedQnsInCoachingSession", StringComparison.OrdinalIgnoreCase)
-                    || String.Equals(action, "viewLinkedQns", StringComparison.OrdinalIgnoreCase)
-                    || String.Equals(action, "viewQnsToLink", StringComparison.OrdinalIgnoreCase))
-            {
-                vm.IsReadOnly = true;
-                vm.ShowEvalSummary = false; // no supervisor entered summary for qns
-                vm.ShowCoachingNotes = true;
-                vm.ReviewPageName = "_QnFollowupView";
-            }
+            //else if (String.Equals(action, "viewLinkedQnsInCoachingSession", StringComparison.OrdinalIgnoreCase)
+            //        || String.Equals(action, "viewLinkedQns", StringComparison.OrdinalIgnoreCase)
+            //        || String.Equals(action, "viewQnsToLink", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    vm.IsReadOnly = true;
+            //    vm.ShowEvalSummary = false; // supervisors do NOT enter summary for qns
+            //    vm.ShowCoachingNotes = true;
+            //    vm.ReviewPageName = "_QnFollowupView";
+            //}
             else if (String.Equals(action, "view", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = true;
@@ -374,7 +377,7 @@ namespace eCoachingLog.Controllers
             return Json(new
             {
                 success = success,
-                successMsg = success ? "Log summary has been successfully saved." : "Failed to save log summary."
+                successMsg = success ? "Log [" + logId + "] summary has been successfully saved." : "Failed to save log summary."
             });
         }
 
@@ -403,7 +406,7 @@ namespace eCoachingLog.Controllers
             return Json(new
             {
                 success = success,
-                successMsg = success ? "Log has been successfully updated." : "Failed to update the log."
+                successMsg = success ? "Log [" + logId + "] has been successfully updated." : "Failed to update log [" + logId + "]."
             });
         }
 
@@ -458,8 +461,8 @@ namespace eCoachingLog.Controllers
 				return Json(new
 				{
 					success = success,
-					successMsg = "The log [" + logId + "] has been successfully updated.",
-					errorMsg = "Failed to update the log [" + logId + "]."
+					successMsg = "Log [" + logId + "] has been successfully updated.",
+					errorMsg = "Failed to update log [" + logId + "]."
 				});
 			}
 
@@ -996,9 +999,20 @@ namespace eCoachingLog.Controllers
 
 		private bool IsReadOnly(ReviewViewModel vm, User user)
 		{
-			bool readOnly = true;
+            // HR and Director do NOT coach, so display as read only.
+            if (user.IsDirector || user.IsHr)
+            {
+                return true;
+            }
 
-			if (vm.IsFollowupPendingSupervisorForm)
+            var action = vm.Action;
+            if (action == "view" || action == "viewQnsToLink" || action == "viewLinkedQns" || action == "viewLinkedQnsInCoachingSession") // view only
+            {
+                return true;
+            }
+
+            bool readOnly = true;
+            if (vm.IsFollowupPendingSupervisorForm)
 			{
 				if (user.EmployeeId == vm.LogDetail.SupervisorEmpId
 					|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
