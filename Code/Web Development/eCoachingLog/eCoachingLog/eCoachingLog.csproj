@@ -434,7 +434,6 @@
     <Content Include="Views\Review\_QnCoach.cshtml" />
     <Content Include="Views\Review\_QnEditLogSummary.cshtml" />
     <Content Include="Views\Review\_QnFollowupReview.cshtml" />
-    <Content Include="Views\Review\_QnFollowupView.cshtml" />
     <Content Include="Views\Shared\_LogListQn.cshtml" />
     <Content Include="Views\Shared\_MenuBar.cshtml" />
     <Content Include="Views\MyDashboardQn\_MyTeamPending.cshtml" />
