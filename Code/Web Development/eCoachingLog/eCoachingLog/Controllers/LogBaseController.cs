@@ -19,6 +19,11 @@ namespace eCoachingLog.Controllers
 		protected readonly IEmployeeService employeeService;
 		protected readonly IEmployeeLogService empLogService;
 
+        public LogBaseController()
+        {
+
+        }
+
 		public LogBaseController(ISiteService siteService, IEmployeeService employeeService, IEmployeeLogService empLogService)
 		{
 			logger.Debug("Entered LogBaseController(ISiteService, IEmployeeService, IEmployeeLogService)");

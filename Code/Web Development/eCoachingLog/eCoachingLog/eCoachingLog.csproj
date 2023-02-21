@@ -151,6 +151,7 @@
     <Compile Include="Controllers\LoadTestController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
+    <Compile Include="Controllers\MyDashboardHomeController.cs" />
     <Compile Include="Controllers\MyDashboardQnController.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />

@@ -225,7 +225,10 @@ namespace eCoachingLog.Controllers
             // supervisor links followup log(s) to the original QN log
             if (logDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION)
             {
-                vm.AdditionalActivityLogs = GetPotentialFollowupMonitorLogsQn(vm.LogDetail.LogId);
+                if (user.IsSupervisor)
+                {
+                    vm.AdditionalActivityLogs = GetPotentialFollowupMonitorLogsQn(vm.LogDetail.LogId);
+                }
             }
             // followup logs are linked to the original QN log, since the orginal QN log is completed or pending followup coaching/pending followup employee review
             else if (logDetail.StatusId > Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION || logDetail.StatusId == Constants.LOG_STATUS_COMPLETED)
