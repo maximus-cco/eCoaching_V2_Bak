@@ -1,33 +1,28 @@
 ﻿@using eCoachingLog.Utils
 @{
-	Layout = null;
+    Layout = null;
 }
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Unauthorized - eCoaching Log</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	@Styles.Render("~/Content/css")
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Unauthorized - eCoaching Log</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @Styles.Render("~/Content/css")
 </head>
 <body>
-	<div class="container-fluid" id="banner">
-		<div class="row  ecl-logo">
-			<img alt="CCO logo" src="~/Content/Images/cco-logo.jpg">
-			<span style="float: right;"><img alt="eCL logo" src="~/Content/Images/eCL-logo.png"></span>
-		</div>
-	</div>
-	<hr>
-	<div class="body-content">
-		<div class="row ">
-			<span class="icon-big glyphicon glyphicon-ban-circle"></span>
-			<h4>
-				You are not authorized to access this page.
-			</h4>
-		</div>
-	</div>
+    <div class="container-fluid" id="banner">
+        <div class="row  ecl-logo">
+            <img alt="CCO logo" src="~/Content/Images/cco-logo.jpg">
+            <span style="float: right;"><img alt="eCL logo" src="~/Content/Images/eCL-logo.png"></span>
+        </div>
+    </div>
+    <hr>
+    <div class="body-content">
+        <h2>Access Denied.</h2>
+        <h4>You do not have access to eCL.</h4>
+    </div>
 </body>
 </html>
-
 

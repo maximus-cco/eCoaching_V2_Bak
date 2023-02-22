@@ -24,7 +24,7 @@ namespace eCoachingLog.Services
 
 		public string DetermineLandingPage(User user)
 		{
-			if (user == null)
+			if (user == null || user.Name == "Unknown")
 			{
 				return Constants.UNAUTHORIZED;
 			}
