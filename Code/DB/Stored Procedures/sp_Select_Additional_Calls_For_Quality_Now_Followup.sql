@@ -1,3 +1,4 @@
+
 SET ANSI_NULLS ON
 GO
 
@@ -13,7 +14,7 @@ GO
 --  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --  Updated to support QN Supervisor evaluation changes. TFS 26002 - 02/02/2023
 --	=====================================================================
-CREATE OR ALTER     PROCEDURE [EC].[sp_Select_Additional_Calls_For_Quality_Now_Followup] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Select_Additional_Calls_For_Quality_Now_Followup] 
 @nvFormID BIGINT
 
 AS
@@ -30,8 +31,9 @@ SELECT cl.[CoachingID], cl.[FormName]
 FROM  [EC].[Coaching_Log] cl  WITH (NOLOCK) INNER JOIN olog o
 ON cl.[EMPID] = o.[EmpID]
 WHERE cl.[SourceID] = 236
-AND cl.[SubmittedDate]> o.[SupReviewedAutoDate];
-
+AND cl.[SubmittedDate]> o.[SupReviewedAutoDate]
+AND cl.[StatusID] <> 2
+ORDER BY cl.[SubmittedDate];
     
 END -- sp_Select_Additional_Calls_For_Quality_Now_Followup
 GO

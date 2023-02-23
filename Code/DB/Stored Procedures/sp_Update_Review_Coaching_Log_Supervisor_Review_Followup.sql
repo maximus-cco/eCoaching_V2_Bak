@@ -73,10 +73,10 @@ END
 UPDATE [EC].[Coaching_Log]
 SET 
   StatusID = 1,
-  CoachingNotes = N'Log has been attached to QN log ' + @FormName  + ' and no additional Coaching required.'
+  CoachingNotes = ISNULL(CoachingNotes,'') + N' Log has been attached to QN log ' + @FormName  + ' and no additional Coaching required.'
   FROM [EC].[Coaching_Log] cl JOIN #mlogs a
   ON cl.CoachingID = a.ID
-  WHERE (cl.SourceID = 236 AND cl.StatusID = 6);
+  WHERE (cl.SourceID = 236 AND cl.StatusID <> 1);
 
 CLOSE SYMMETRIC KEY [CoachingKey];  
 	
