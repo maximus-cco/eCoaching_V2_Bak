@@ -1,14 +1,3 @@
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InactivateCoachingLogsForTerms' 
-)
-   DROP PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
@@ -29,8 +18,10 @@ GO
 -- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
 -- Updated survey expiration timeframe. TFS 24201 - 03/09/2022
+-- Updated to remove lanid check for EA inactivations. TFS 26268 - 03/07/2023 
+
 -- =============================================
-CREATE OR ALTER   PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
+CREATE OR ALTER PROCEDURE [EC].[sp_InactivateCoachingLogsForTerms] 
 
 AS
 BEGIN
@@ -188,7 +179,6 @@ INSERT INTO [EC].[AT_Coaching_Inactivate_Reactivate_Audit]
 FROM [EC].[Coaching_Log] C JOIN [EC].[EmpID_To_SupID_Stage]H
 ON C.[EmpID] = LTRIM(H.[Emp_ID])
 WHERE H.[Emp_Status]= 'EA'
-AND H.[Emp_LanID] IS NOT NULL
 AND C.[StatusID] not in (1,2);
 
  WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
@@ -200,7 +190,6 @@ SET [StatusID] = 2
 FROM [EC].[Coaching_Log] C JOIN [EC].[EmpID_To_SupID_Stage]H
 ON C.[EmpID] = LTRIM(H.[Emp_ID])
 WHERE H.[Emp_Status]= 'EA'
-AND H.[Emp_LanID] IS NOT NULL
 AND C.[StatusID] not in (1,2);
 
 
