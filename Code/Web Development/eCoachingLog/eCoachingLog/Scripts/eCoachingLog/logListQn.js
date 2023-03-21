@@ -30,6 +30,8 @@ $(document).ready(function () {
                 orderable: false,
                 render:
                     function (data, type, row, meta) {
+                        // console.log(data);
+
                         if (showPrepareLink === 'False' && showCoachLink === 'True') {
                             var coach = '<a href="#"' + 'data-action="coach"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
                                 'class="modal-link-qn"' + 'style="color: green; border-bottom: blue 0.125em solid;">' + '<b>Coach</b></a>';
@@ -37,10 +39,20 @@ $(document).ready(function () {
                         }
 
                         if (showPrepareLink === 'True' && showCoachLink === 'True') {
-                            var prepare = '<a href="#"' + 'data-action="editSummary"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                            'class="modal-link-qn"' + 'style="border-bottom: blue 0.125em solid;">' + '<b>Prepare</b></a>';
-                            var coach = '<a href="#"' + 'data-action="coach"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
-                                'class="modal-link-qn"' + 'style="color: green; border-bottom: blue 0.125em solid;">' + '<b>Coach</b></a>';
+                            if (row['SummaryNotesExists'] === true) {
+                                prepareLinkColor = 'grey';
+                                coachLinkColor = 'green';
+                            } else {
+                                prepareLinkColor = 'green';
+                                coachLinkColor = 'grey';
+                            }
+
+                            var prepare = '<a href="#" id="p' + data + '" data-action="editSummary"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
+                            'class="modal-link-qn"' + 'style="color: ' + prepareLinkColor + '; border-bottom: blue 0.125em solid;">' + '<b>Prepare</b></a>';
+                            
+
+                            var coach = '<a href="#" id="c' + data + '" data-action="coach"' + 'data-log-id="' + data + '" ' + 'data-is-coaching="' + row["IsCoaching"] + '"' +
+                                'class="modal-link-qn"' + 'style="color: ' + coachLinkColor + '; border-bottom: blue 0.125em solid;">' + '<b>Coach</b></a>';
                             return prepare + '&nbsp;&nbsp;' + coach;
                         }
 
@@ -65,7 +77,7 @@ $(document).ready(function () {
             },
             {
                 data: "FormName", name: "strFormID", render: function (data, type, row, meta) {
-                    return data + '</a>&nbsp;<font color="red">' + row['LogNewText'] + '</font>';
+                    return data + '&nbsp;<font color="red">' + row['LogNewText'] + '</font>';
                 }
             },
             { data: "EmployeeName", name: "strEMPName" },

@@ -207,6 +207,13 @@ namespace eCoachingLog.Services
                     {
                         log.LogNewText = string.Empty;
                     }
+
+                    // QN log: Prepare and Coach link colors
+                    //if (log.Source == "Verint-CCO" && )
+                    //{
+
+                    //}
+
                 }
                 catch (Exception ex)
                 {

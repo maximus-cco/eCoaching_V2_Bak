@@ -740,6 +740,15 @@ namespace eCoachingLog.Repository
                             log.HasFollowupHappened = dataReader["IsFollowupCompleted"].ToString().ToLower().Equals("yes") ? true : false;
                         }
 
+                        try
+                        {
+                            log.SummaryNotesExists = Convert.ToInt16(dataReader["SummaryExists"]) == 0 ? false : true;
+                        }
+                        catch (Exception ex)
+                        {
+                            // ignore
+                        }
+
                         logs.Add(log);
                     } // end while
 

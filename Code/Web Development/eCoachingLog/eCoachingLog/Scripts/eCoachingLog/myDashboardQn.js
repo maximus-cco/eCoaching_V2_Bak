@@ -106,12 +106,10 @@
 	                tableToRefresh.ajax.reload();
 	                //// Update count display
 	                //$countToUpdate.html(data.count);
-	                // Display success message
 	                showNotification(data.successMsg, "glyphicon glyphicon-saved", "success");
 	            }
 	            else {
 	                $('#modal-container').modal('hide');
-	                // Display error message
 	                showNotification(data.errorMsg, "glyphicon glyphicon-warning-sign", "danger");
 	            }
 	        }
@@ -130,10 +128,12 @@
 	    $('#summary').removeClass("errorClass");
 	    $('#validation-summary').addClass("hide");
 
+
+	    var logId = $('#logId').val();
         var request = $.ajax({
 	        type: 'POST',
 	        url: url,
-	        data: { logId: $('#logId').val(), summary: $('#summary').val() },
+	        data: { logId: logId, summary: $('#summary').val() },
 	        dataType: 'json'
 	    });
 
@@ -144,14 +144,14 @@
 	    request.done(function (data) {
 	        if (data.success === true) {
 	            $('#modal-container').modal('hide');
-	            // Display success message
 	            showNotification(data.successMsg, "glyphicon glyphicon-saved", "success");
-	        } // end success
-	        else {
+	            // Display "Prepare" in grey, "Coach" in green
+	            $('#p' + logId).css('color', 'grey');
+	            $('#c' + logId).css('color', 'green');
+	        } else {
 	            $('#modal-container').modal('hide');
-	            // Display error message
 	            showNotification(data.errorMsg, "glyphicon glyphicon-warning-sign", "danger");
-	        } // end else
+	        } // end if
 	    }); // end request.done
     } // end function saveSummary
 

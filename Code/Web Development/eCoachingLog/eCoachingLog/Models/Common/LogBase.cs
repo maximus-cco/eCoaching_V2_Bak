@@ -24,5 +24,7 @@
         public string WarningReasons { get; set; }
         public bool IsCoaching { get; set; }
 
+        public bool SummaryNotesExists { get; set; }
+
     }
 }
