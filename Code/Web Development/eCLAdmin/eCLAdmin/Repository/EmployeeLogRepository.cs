@@ -209,6 +209,8 @@ namespace eCLAdmin.Repository
                         cl.CurrentReviewerId = dataReader["strReassignFrom"].ToString();
                         cl.CurrentReviewerName = dataReader["strReassignFromName"].ToString(); 
                         cl.CurrentReviewerEmail = dataReader["strReassignFromEmail"].ToString();
+                        cl.CurrentReviewerSiteId = (int)dataReader["intReviewerSiteID"];
+                        cl.CurrentReviewerSiteName = dataReader["strReviewerSite"].ToString();
 
                         employeeLogs.Add(cl);
                     }

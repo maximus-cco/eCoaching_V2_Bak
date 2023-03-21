@@ -35,5 +35,7 @@ namespace eCLAdmin.Models.EmployeeLog
         public string CurrentReviewerId { get; set; }
         public string CurrentReviewerName { get; set; }
         public string CurrentReviewerEmail { get; set; }
+        public int CurrentReviewerSiteId { get; set; }
+        public string CurrentReviewerSiteName { get; set; }
     }
 }

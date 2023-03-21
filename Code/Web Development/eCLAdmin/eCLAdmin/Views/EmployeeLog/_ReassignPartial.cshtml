@@ -1,8 +1,8 @@
 ﻿<div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <div class="modal-title">
-        <span style="font-size: 18px;">Reassign Employee Logs</span>
-        <span style="font-size: 12px; font-style: italic; color: green;">&nbsp;(from @ViewBag.CurrentReviewerName)</span>
+        <span style="font-size: 18px;">Reassign Employee Logs&nbsp;</span>
+        <mark><span style="font-size: 12px; font-style: italic; ">(from @ViewBag.CurrentReviewerName - <b>@ViewBag.CurrentReviewerSiteName</b>)</span></mark>
     </div>
 </div>
 
@@ -10,6 +10,19 @@
     @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-assign-to" }))
     {
         Html.RenderPartial("_ReasonPartial");
+
+        <div class="form-group">
+            <label for="site">Site:&nbsp;&nbsp;</label>
+            <div id="site-error-msg" class="field-validation-error"></div>
+            @Html.DropDownList(
+                "site",
+                (SelectList)ViewBag.Sites,
+                new
+                {
+                    @class = "form-control"
+                }
+            )
+        </div>
 
         <div class="form-group">
             <label for="assignTo">Reassign to:&nbsp;&nbsp;</label>
@@ -36,23 +49,46 @@
 
 <script type="text/javascript">
     $(function () {
+        $('#site').on('change', function () {
+            $("#assignTo").empty().append('<option value="">Loading...</option>');
+            $("#assignTo").addClass('loadinggif');
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetReviewersBySite", "EmployeeLog")',
+                dataType: 'json',
+                data: { siteId: $("#site").val() },
+
+                success: function (modules) {
+                    $("#assignTo").empty();
+                    var options = [];
+                    $.each(modules, function (i, reviewer) {
+                        options.push('<option value="', reviewer.Value, '">' + reviewer.Text + '</option>');
+                    });
+
+                    $("#assignTo").html(options.join(''));
+                    $("#assignTo").removeClass('loadinggif');
+                }
+            });
+
+            return false;
+        });
+
         // Display validation error msg when nothing selected
         // remove otherwise
         $('#assignTo').on("change", function () {
-            if ($('#assignTo').val() != -1)
-            {
+            if ($('#assignTo').val() != -1) {
                 removeReassignToError();
             }
             else {
                 displayReassignToError();
             }
-        })
+        });
 
         $('#btn-submit-reassign').on('click', function (event) {
             event.preventDefault();
 
-            if (!validatePage())
-            {
+            if (!validatePage()) {
                 return false;
             }
 
@@ -79,7 +115,7 @@
                 hideSpinner();
 
                 if (msg.success == true) {
-                	var info = 'Successfully reassigned the selected log(s).';
+                    var info = 'Successfully reassigned the selected log(s).';
                     $("#message").html('<div class="alert alert-success"><button type="button" class="close">x</button>' + info + '</div>');
                 } else {
                     var info = 'Failed to reassign the selected log(s).';
@@ -93,43 +129,40 @@
                 }, 3000);
             });
 
-        }) // end of $('#btn-submit-reassign').on('click', function ()
+        }); // end of $('#btn-submit-reassign').on('click', function ()
 
     });
 
-    function validatePage()
-    {
-        var isReasonSelected = validateReason();
-        var isReassignToSelected = validateAssignTo();
-        var isCommentEntered = validateComment();
+        function validatePage() {
+            var isReasonSelected = validateReason();
+            var isReassignToSelected = validateAssignTo();
+            var isCommentEntered = validateComment();
 
-        return isReasonSelected && isReassignToSelected && isCommentEntered;
-    }
-
-    // Validate select - assignTo
-    function validateAssignTo() {
-        var isValid = false;
-        if ($('#assignTo').val() == -1) {
-            displayReassignToError();
+            return isReasonSelected && isReassignToSelected && isCommentEntered;
         }
-        else {
-            removeReassignToError();
-            isValid = true;
+
+        // Validate select - assignTo
+        function validateAssignTo() {
+            var isValid = false;
+            if ($('#assignTo').val() == -1) {
+                displayReassignToError();
+            }
+            else {
+                removeReassignToError();
+                isValid = true;
+            }
+            return isValid;
         }
-        return isValid;
-    }
 
-    function displayReassignToError()
-    {
-        $('#assignTo').addClass("input-validation-error");
-        $('#reassign-to-error-msg').html('Please make a selection');
-    }
+        function displayReassignToError() {
+            $('#assignTo').addClass("input-validation-error");
+            $('#reassign-to-error-msg').html('Please make a selection');
+        }
 
-    function removeReassignToError()
-    {
-        $('#assignTo').removeClass("input-validation-error");
-        $('#reassign-to-error-msg').html('');
-    }
+        function removeReassignToError() {
+            $('#assignTo').removeClass("input-validation-error");
+            $('#reassign-to-error-msg').html('');
+        }
 
 </script>
 

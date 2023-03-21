@@ -1,5 +1,6 @@
 ﻿using eCLAdmin.Models;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace eCLAdmin.Repository
@@ -23,6 +24,34 @@ namespace eCLAdmin.Repository
                         Site site = new Site();
                         site.Id = dataReader["SiteID"].ToString();
                         site.Name = dataReader["City"].ToString();
+
+                        sites.Add(site);
+                    }
+                }
+            }
+
+            return sites;
+        }
+
+        public List<Site> GetSites(string userId)
+        {
+            var sites = new List<Site>();
+
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_Sites_By_User]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = 300;
+                command.Parameters.AddWithValue("@nvcEmpLanIDin", userId);
+                connection.Open();
+
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        Site site = new Site();
+                        site.Id = dataReader["SiteID"].ToString();
+                        site.Name = dataReader["Site"].ToString();
 
                         sites.Add(site);
                     }

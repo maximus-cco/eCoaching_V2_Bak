@@ -9,5 +9,6 @@ namespace eCLAdmin.Services
     public interface ISiteService
     {
         List<Site> GetSites();
+        List<Site> GetSites(string userId);
     }
 }

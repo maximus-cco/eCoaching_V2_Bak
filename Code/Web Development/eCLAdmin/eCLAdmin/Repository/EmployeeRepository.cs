@@ -127,20 +127,16 @@ namespace eCLAdmin.Repository
             return employees;
         }
 
-        public List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer, string logName)
+        public List<Employee> GetReviewersBySite(int siteId)
         {
-            var employees = new List<Employee>();
+            var reviewers = new List<Employee>();
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_AT_Select_ReassignTo_Users]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
-                command.Parameters.AddWithValue("@strRequesterin", userLanId);
-                command.Parameters.AddWithValue("@intModuleIdin", moduleId);
-                command.Parameters.AddWithValue("@intStatusIdin", logStatusId);
-                command.Parameters.AddWithValue("@strFromUserIdin", originalReviewer);
-                command.Parameters.AddWithValue("@strFormName", logName);
+                command.Parameters.AddWithValue("@intSiteIDin", siteId);
 
                 connection.Open();
 
@@ -151,15 +147,16 @@ namespace eCLAdmin.Repository
                         Employee employee = new Employee();
                         employee.Id = dataReader["UserID"].ToString();
                         employee.Name = dataReader["UserName"].ToString();
+                        employee.SiteName = dataReader["UserSite"].ToString();
 
-                        employees.Add(employee);
+                        reviewers.Add(employee);
                     }
 
                     dataReader.Close();
                 }
             }
 
-            return employees;
+            return reviewers;
         }
 
     }

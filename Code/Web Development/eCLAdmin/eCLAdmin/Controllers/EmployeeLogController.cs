@@ -20,13 +20,15 @@ namespace eCLAdmin.Controllers
 
         private readonly IEmployeeService employeeService;
         private readonly IEmailService emailService;
+        private readonly ISiteService siteService;
 
-        public EmployeeLogController(IEmployeeService employeeService, IEmployeeLogService employeeLogService, IEmailService emailService)
+        public EmployeeLogController(IEmployeeService employeeService, IEmployeeLogService employeeLogService, IEmailService emailService, ISiteService siteService)
             : base(employeeLogService)
         {
-            logger.Debug("Entered EmployeeLogController(IEmployeeService, IEmployeeLogService, EMailService)");
+            logger.Debug("%%%%%%%%%%%%%%%%%%Entered EmployeeLogController(IEmployeeService, IEmployeeLogService, EMailService)");
             this.employeeService = employeeService;
             this.emailService = emailService;
+            this.siteService = siteService;
         }
 
         public ActionResult Index()
@@ -125,45 +127,22 @@ namespace eCLAdmin.Controllers
         [HttpPost]
         public ActionResult SearchForReassign(string searchOption, int module, int employeeLogStatus, string reviewer, int logTypeSearchByLogName, string logName)
         {
-            logger.Debug("Entered SearchForInactivate [post]...");
+            logger.Debug("Entered SearchForReassign [post]...");
 
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
-            var searchByLogName = false;
+            var searchByLogName = "logname" == searchOption;
+
             Session["SearchBy"] = searchOption;         // "default" or "logname"
-
-            // Save for later use in Reassignment
             Session["LogType"] = 1;                     // coaching log only for reassign
-            if ("default" == searchOption)              // search by module, log status, and reviewer
-            {
-                Session["ModuleId"] = module;
-                Session["LogStatus"] = employeeLogStatus;
-                Session["CurrentReviewerId"] = reviewer;
-                Session["LogName"] = null;              // no log name passed back
-            }
-            else // search by log name 
-            {
-                Session["ModuleId"] = -1;               // all modules
-                Session["LogStatus"] = -2;              // all status
-                Session["CurrentReviewerId"] = null;    // no current reviewer info on page
-                Session["LogName"] = logName;           // log name entered on page
 
-                searchByLogName = true;
-                reviewer = null;                        // at this time, reviewer is unknown, so set to null                
-            }
-
+            // TODO: sp returns current reviewer site id and site name
             employeeLogs = employeeLogService.SearchLogForReassign(searchByLogName, module, employeeLogStatus, reviewer, logName);
             
             if (employeeLogs.Count > 0)
             {
+                // employeeLogs: this is the log list for the given reviewer, so we can get reviewer information from any log in the list
                 var log = employeeLogs[0];
-                // when not searching by log name, current reviewer id is passed back from the search page, so we can just use that id
-                // when searching by log name, get the current reviewer id from database (sp_AT_Select_Logs_Reassign - returns the log with the given log name, the returned log has the current reviewer info)
-                if (searchByLogName)
-                {
-                    Session["CurrentReviewerId"] = log.CurrentReviewerId;
-                }
-                // get Current Reviewer Name to be displayed on the reassign popup
-                Session["CurrentReviewerName"] = log.CurrentReviewerName;
+                Session["CurrentReviewer"] = new Employee(log.CurrentReviewerId, log.CurrentReviewerName, log.CurrentReviewerSiteId, log.CurrentReviewerSiteName);
             }
 
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
@@ -186,7 +165,6 @@ namespace eCLAdmin.Controllers
 												HttpUtility.HtmlEncode(comment)
 											 );
 
-			bool emailSent = false;
 			if (success)
 			{
 				try
@@ -205,11 +183,10 @@ namespace eCLAdmin.Controllers
                     }
                     else
                     {
-                        logger.Debug("********Orignial reviewer[" + (string)Session["CurrentReviewerName"] + "] email is not available.");
+                        logger.Debug("********Orignial reviewer[" + ((Employee)Session["CurrentReviewerName"]).Name + "] email is not available.");
                     }
 
 					StoreEmail(EmailType.Reassignment, to, cc, model.GetSelectedLogNames(), "UI-Reassign");
-                    emailSent = true;
 				}
 				catch (Exception ex)
 				{
@@ -369,6 +346,30 @@ namespace eCLAdmin.Controllers
             return Json(new SelectList(reviewers, "Value", "Text"));
         }
 
+        // Get reviewers for the given site.
+        public JsonResult GetReviewersBySite(int siteId)
+        {
+            Employee currentReviewer = (Employee)Session["CurrentReviewer"];
+            IEnumerable<SelectListItem> reviewers = new SelectList(GetReviewers(siteId, currentReviewer.Id), "Id", "Name");
+
+            return Json(new SelectList(reviewers, "Value", "Text"));
+        }
+
+        private List<Employee> GetReviewers(int siteId, string excludeReviewerId)
+        {
+            List<Employee> reviewers = employeeService.GetReviewersBySite(siteId, excludeReviewerId);
+            if (reviewers.Count > 0)
+            {
+                reviewers.Insert(0, new Employee { Id = "-1", Name = "Please select a reviewer" });
+            }
+            else
+            {
+                reviewers.Insert(0, new Employee { Id = "-1", Name = "No reviewers found" });
+            }
+
+            return reviewers;
+        }
+
         // Browser caches the response. So the second time when you send the request browser will not forward it to the server 
         // because the same request was sent to the server before and the browser will return the cached response to the page.
         // Decorate the action method not to cache the response in between.
@@ -411,21 +412,18 @@ namespace eCLAdmin.Controllers
             IEnumerable<SelectListItem> reasons = new SelectList(reasonList, "Id", "Description");
             ViewBag.Reasons = reasons;
 
-            // Load assignTo list
-            string userLanId = GetUserFromSession().LanId;
-            int moduleId = (int)Session["ModuleId"]; 
-            int logStatusId = (int)Session["LogStatus"];
-            string currentReviewerId = (string)Session["CurrentReviewerId"];
-            string logName = (string)Session["LogName"];
+            Employee currentReviewer = (Employee)Session["CurrentReviewer"];
+            List<Site> siteList = siteService.GetSites(GetUserFromSession().EmployeeId);
+            // default to current reviewer's site 
+            IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name", currentReviewer.SiteId);
+            ViewBag.Sites = sites;
 
-            logger.Debug("********** Current=" + currentReviewerId + "************");
-
-            List<Employee> assignToList = employeeService.GetAssignToList(userLanId, moduleId, logStatusId, currentReviewerId, logName);
-            assignToList.Insert(0, new Employee { Id = "-1", Name = "Please select a person" });
-            IEnumerable<SelectListItem> employees = new SelectList(assignToList, "Id", "Name");
-            ViewBag.AssignTo = employees;
-            // display current reviewer name on reassign popup
-            ViewBag.CurrentReviewerName = (string)Session["CurrentReviewerName"];
+            logger.Debug("********** Current Reviewer: " + currentReviewer.Id + "************");
+            IEnumerable<SelectListItem> reviewers = new SelectList(GetReviewers(currentReviewer.SiteId, currentReviewer.Id), "Id", "Name");
+            ViewBag.AssignTo = reviewers;
+            // display current reviewer name and site name on reassign popup
+            ViewBag.CurrentReviewerName = currentReviewer.Name;
+            ViewBag.CurrentReviewerSiteName = currentReviewer.SiteName;
 
             return PartialView("_ReassignPartial");
         }

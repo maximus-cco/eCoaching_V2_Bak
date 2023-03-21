@@ -1,6 +1,8 @@
 ﻿using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Repository;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace eCLAdmin.Services
 {
@@ -28,9 +30,23 @@ namespace eCLAdmin.Services
             return employeeRepository.GetPendingReviewers(userLanId, moduleId, logStatusId);
         }
 
-        public List<Employee> GetAssignToList(string userLanId, int moduleId, int logStatusId, string originalReviewer, string logName)
+        public List<Employee> GetReviewersBySite(int siteId, string excludeReviewerId)
         {
-            return employeeRepository.GetAssignToList(userLanId, moduleId, logStatusId, originalReviewer, logName);
+            var reviewers = employeeRepository.GetReviewersBySite(siteId);
+            if (!String.IsNullOrEmpty(excludeReviewerId))
+            {
+                reviewers = reviewers.Where(r => !r.Id.Equals(excludeReviewerId, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (siteId == -1)
+            {
+                foreach (var r in reviewers)
+                {
+                    r.Name = r.Name + " (" + r.SiteName + ")";
+                }
+            }
+
+            return reviewers;
         }
     }
 }
