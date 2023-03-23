@@ -1,4 +1,3 @@
-
 SET ANSI_NULLS ON
 GO
 
@@ -10,6 +9,7 @@ GO
 --	Create Date:	08/03/2021
 --	Description: *	This procedure returns the Pending Followup Coaching QN logs for logged in user.
 --  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
+--  Updated to support the highlighting of the Prepare or Coach links. TFS 26382 - 03/21/2023
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_FollowupCoach_QN] 
@@ -88,6 +88,7 @@ AS
 				,x.IsFollowupRequired
 				,x.FollowupDueDate
 				,x.IsFollowupCompleted
+				,CASE WHEN x.SummaryID > 0 THEN 1 ELSE 0 END SummaryExists 
 			  ,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
   FROM 
   (
@@ -103,22 +104,24 @@ AS
 	  ,CASE WHEN [cl].[IsFollowupRequired] = 1 THEN ''Yes'' ELSE ''No'' END IsFollowupRequired
      ,[cl].[FollowupDueDate] FollowupDueDate
 	 ,CASE WHEN [cl].[IsFollowupRequired] = 1 AND [cl].[FollowupActualDate] IS NOT NULL THEN ''Yes'' ELSE ''No'' END IsFollowupCompleted
+    ,COUNT(sid.SummaryID) SummaryID
   	FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 	JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
 	JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON cl.EmpID = eh.Emp_ID 
 	LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
-	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
+	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
+	LEFT JOIN [EC].[Coaching_Log_Quality_Now_Summary] sid ON cl.CoachingID = sid.CoachingID '+ @NewLineChar +
 	@where + ' ' + '
 	GROUP BY [cl].[FormName], [cl].[CoachingID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status],
-	 [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate] '
+	 [so].[SubCoachingSource], [cl].[SubmittedDate], [vehs].[Emp_Name], [cl].[IsFollowupRequired], [cl].[FollowupDueDate],[cl].[FollowupActualDate], sid.SummaryID '
 
 
 SET @nvcSQL2 = ' 
   ) x 
 )
 
-SELECT strLogID,
+SELECT DISTINCT strLogID,
    strFormID
   ,strEmpName
   ,strEmpSupName
@@ -130,6 +133,7 @@ SELECT strLogID,
   ,IsFollowupRequired
   ,FollowupDueDate
   ,IsFollowupCompleted
+  ,SummaryExists
   ,[EC].[fn_strCoachingReasonFromCoachingID](T.strLogID) strCoachingReason
   ,[EC].[fn_strSubCoachingReasonFromCoachingID](T.strLogID) strSubCoachingReason
  , '''' strValue

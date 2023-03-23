@@ -1,4 +1,3 @@
-
 SET ANSI_NULLS ON
 GO
 
@@ -10,8 +9,9 @@ GO
 --	Create Date:	02/08/2023
 --	Description: *	This procedure returns the Pending Review QNS log counts for logged in user.
 --  Initial Revision. QN Supervisor evaluation changes. TFS 26002 - 02/08/2023
+--  Updated to support the highlighting of the Prepare or Coach links. TFS 26382 - 03/21/2023
 --	=====================================================================
-CREATE OR ALTER       PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_Count_QNS] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_Count_QNS] 
 @nvcUserIdin nvarchar(10), @intSourceIdin int
 
 AS
@@ -64,7 +64,8 @@ AS
 	JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON cl.EmpID = eh.Emp_ID 
 	LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
-	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
+	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID 
+	LEFT JOIN [EC].[Coaching_Log_Quality_Now_Summary] sid ON cl.CoachingID = sid.CoachingID '+ @NewLineChar +
 	@where + ' ' + @NewLineChar +
 	' ) x 
 )

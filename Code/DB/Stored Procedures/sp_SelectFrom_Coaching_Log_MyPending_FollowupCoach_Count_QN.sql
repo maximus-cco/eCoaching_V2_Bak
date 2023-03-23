@@ -1,23 +1,19 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/03/2021
 --	Description: *	This procedure returns the Pending Followup Coaching  QN log counts for logged in user.
 --  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 08/03/2021
+--  Updated to support the highlighting of the Prepare or Coach links. TFS 26382 - 03/21/2023
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_FollowupCoach_Count_QN] 
 @nvcUserIdin nvarchar(10)
-
 
 AS
 BEGIN
@@ -64,7 +60,7 @@ AS
 	JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) ON cl.EmpID = eh.Emp_ID 
 	LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON cl.SubmitterID = vehs.EMP_ID 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
-	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID '+ @NewLineChar +
+	LEFT JOIN [EC].[Coaching_Log_Quality_Now_Summary] sid ON cl.CoachingID = sid.CoachingID '+ @NewLineChar +
 	@where + ' ' + @NewLineChar +
 	' ) x 
 )
