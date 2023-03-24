@@ -1,10 +1,8 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -19,6 +17,7 @@ GO
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 -- Modified during changes to QN Workflow. TFS 22187 - 09/20/2021
 -- Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
+-- Modified to expand Reassign To Supervisor list. TFS 26216 - 03/20/2023
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Logs_Reassign] 
 @strTypein nvarchar(10) = NULL,
@@ -33,8 +32,10 @@ BEGIN
 DECLARE	
 @strConditionalWhere nvarchar(100),
 @nvcSQL nvarchar(max),
-@nvcConditionalStatus nvarchar(100);
+@nvcConditionalStatus nvarchar(100),
+@strOwnerSite nvarchar(50);
 
+SET @strOwnerSite =  (SELECT Emp_Site from EC.Employee_Hierarchy WHERE EMP_ID = @istrOwnerin);
 
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert];
@@ -47,6 +48,7 @@ BEGIN
 SET @intModuleIdin = (SELECT ModuleID from EC.Coaching_log WHERE FormName = @strFormName);
 SET @intStatusIdin = (SELECT StatusID from EC.Coaching_log WHERE FormName = @strFormName);
 
+
 SET @istrOwnerin = (SELECT CASE 
 WHEN cl.ReassignCount = 1 and ISNULL(cl.ReassignedToID, '') <> '' THEN cl.ReassignedToID
 WHEN cl.strReportCode like 'LCS%' AND cl.ReassignCount = 0 THEN cl.MgrID
@@ -55,6 +57,8 @@ WHEN (cl.ModuleID <> 2 AND cl.StatusId = 5) OR (cl.ModuleID = 2 AND cl.StatusId 
 FROM EC.Coaching_Log cl  INNER JOIN EC.Employee_Hierarchy eh
 ON cl.EmpID = eh.Emp_ID
 WHERE cl.Formname = @strFormName);
+
+SET @strOwnerSite =  (SELECT Emp_Site from EC.Employee_Hierarchy WHERE EMP_ID = @istrOwnerin);
 
 SET @nvcSQL = 'SELECT cfact.CoachingID,  
         cfact.FormName strFormName,
@@ -69,8 +73,9 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 		cfact.SubmittedDate strCreatedDate,
 		''' + @istrOwnerin + ''' strReassignFrom,
 		[EC].[fn_strEmpNameFromEmpID](''' + @istrOwnerin + ''') strReassignFromName,
-		[EC].[fn_strEmpEmailFromEmpID](''' + @istrOwnerin + ''') strReassignFromEmail
-		
+		[EC].[fn_strEmpEmailFromEmpID](''' + @istrOwnerin + ''') strReassignFromEmail,
+		''' + @strOwnerSite + ''' strReviewerSite,
+		[EC].[fn_intSiteIDFromSite](''' + @strOwnerSite + ''') intReviewerSiteID
      FROM [EC].[Coaching_Log]cfact WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh
 	 ON [cfact].[EMPID] = [eh].[Emp_ID] JOIN [EC].[View_Employee_Hierarchy] veh
      ON VEH.Emp_ID = Eh.Emp_ID JOIN [EC].[View_Employee_Hierarchy] sh
@@ -132,7 +137,9 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 		cfact.SubmittedDate strCreatedDate,
 	   ''' + @istrOwnerin + ''' strReassignFrom,
 	   [EC].[fn_strEmpNameFromEmpID](''' + @istrOwnerin + ''') strReassignFromName,
-		[EC].[fn_strEmpEmailFromEmpID](''' + @istrOwnerin + ''') strReassignFromEmail
+		[EC].[fn_strEmpEmailFromEmpID](''' + @istrOwnerin + ''') strReassignFromEmail,
+		''' + @strOwnerSite + ''' strReviewerSite,
+		[EC].[fn_intSiteIDFromSite](''' + @strOwnerSite + ''') intReviewerSiteID
      FROM [EC].[Coaching_Log]cfact WITH(NOLOCK) JOIN 
      
      (SELECT fact.CoachingID
@@ -183,4 +190,5 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_Logs_Reassign
 GO
+
 

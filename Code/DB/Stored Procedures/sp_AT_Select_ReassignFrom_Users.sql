@@ -1,11 +1,8 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -23,6 +20,7 @@ GO
 -- Modified to support cross site access for Virtual East Managers. TFS 23378 - 10/29/2021 
 -- Modified to remove uncommented debug stm. TFS 23919 - 01/26/2022
 -- Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
+-- Modified to expand Reassign To Supervisor list. TFS 26216 - 03/20/2023
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users] 
 @strRequesterin nvarchar(30), @intModuleIdin INT, @intStatusIdin INT
