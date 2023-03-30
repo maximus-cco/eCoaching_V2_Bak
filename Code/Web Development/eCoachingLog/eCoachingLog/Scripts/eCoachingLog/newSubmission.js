@@ -3,6 +3,9 @@
 	var workAtHomeChecked = false;
 	var showWorkAtHomeBehaviorDiv = false;
 	var pfdChecked = false;
+	var claimsViewChecked = false;
+
+	const claimsViewErrMsg = '"Claims View" is for Medicare only. You selected a non-medicare program.';
 
     // https://github.com/istvan-ujjmeszaros/bootstrap-duallistbox/issues/110
 	$(document).on('keyup', ".bootstrap-duallistbox-container .filter", function () {
@@ -58,6 +61,21 @@
     	$('#input-return-site-readonly').val($('#ReturnToSite').val());
     }
 
+    $('body').on('change', '#select-program', function () {
+        // handle program related reasons
+        var programId = $(this).val();
+        if (claimsViewChecked) {
+            let reasonValErrorSpan = $('span[data-valmsg-for="CoachingReasons"');
+            if (programId == 4 || programId == 2) { // 4: Dual; 2: Medicare
+                reasonValErrorSpan.addClass('field-validation-valid').removeClass('field-validation-error').text('');
+                $('#btn-submit').removeAttr('disabled');
+            } else {
+                reasonValErrorSpan.addClass('field-validation-error').removeClass('field-validation-valid').text(claimsViewErrMsg);
+                $('#btn-submit').attr('disabled', 'disabled');
+            }
+        }
+    });
+
     $('body').on('change', '.reason-checkbox', function () {
         var reasonId = $(this).closest('.coaching-reason').find('input:hidden.reason-id').val();
         var isChecked = $(this).is(':checked');
@@ -108,6 +126,22 @@
         else 
         {
         	showBehaviorEditable();
+        }
+
+        // Claims View (Medicare Only)
+        // id: TBD, for now use 55 as testing
+        if (reasonId == 55) {
+            claimsViewChecked = isChecked;
+        }
+        let reasonValErrorSpan = $('span[data-valmsg-for="CoachingReasons"');
+        // Invalid if reason 'Claims View' is selected, program 'Marketplace' (1) or 'NA' (3) is selected.
+        let isInvalidReason = reasonId == 55 && claimsViewChecked && ($('#select-program').val() == 1 || $('#select-program').val() == 3);
+        if (isInvalidReason) {
+            reasonValErrorSpan.addClass('field-validation-error').removeClass('field-validation-valid').text(claimsViewErrMsg);
+            $('#btn-submit').attr('disabled', 'disabled');
+        } else if (!claimsViewChecked) {
+            reasonValErrorSpan.addClass('field-validation-valid').removeClass('field-validation-error').text('');
+            $('#btn-submit').removeAttr('disabled');
         }
     });
 
@@ -556,14 +590,15 @@
             return true;
         }
         var errorMessage = 'At least one coaching reason must be selected.';
-        var errorElement = $('span[data-valmsg-for="CoachingReasons"');
+        var reasonValErrorSpan = $('span[data-valmsg-for="CoachingReasons"');
         var selectedCoachingReasons = coachingReasons.filter(':checked');
+
     	// reason-checkbox
         var isValid = selectedCoachingReasons.length >= 1;
         if (!isValid) {
-            errorElement.addClass('field-validation-error').removeClass('field-validation-valid').text(errorMessage);
+            reasonValErrorSpan.addClass('field-validation-error').removeClass('field-validation-valid').text(errorMessage);
         } else {
-            errorElement.addClass('field-validation-valid').removeClass('field-validation-error').text('');
+            reasonValErrorSpan.addClass('field-validation-valid').removeClass('field-validation-error').text('');
             selectedCoachingReasons.each(function () {
                 // validate associated radio buttons (opportunity, enhancement), and multiselect (sub reasons)
                 var isValidOpp = validateOpportunity($(this));
@@ -573,7 +608,7 @@
 
             if (selectedCoachingReasons.length > 12) {
             	errorMessage = 'Maximum number of selected coaching reasons is 12.';
-            	errorElement.addClass('field-validation-error').removeClass('field-validation-valid').text(errorMessage);
+            	reasonValErrorSpan.addClass('field-validation-error').removeClass('field-validation-valid').text(errorMessage);
             }
         }
         return isValid;
