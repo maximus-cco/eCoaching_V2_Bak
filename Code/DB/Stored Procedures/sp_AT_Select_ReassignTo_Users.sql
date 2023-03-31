@@ -4,7 +4,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/28/2016
@@ -21,7 +20,7 @@ GO
 -- Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
 -- Modified to expand Reassign To Supervisor list. TFS 26216 - 03/20/2023
 --	=====================================================================
-CREATE OR ALTER   PROCEDURE [EC].[sp_AT_Select_ReassignTo_Users] 
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_ReassignTo_Users] 
 @intSiteIDin INT
 
 AS
@@ -57,7 +56,7 @@ FROM [EC].[Coaching_Log] cl WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh
 ON cl.EmpID = eh.Emp_ID JOIN [EC].[View_Employee_Hierarchy] veh
 ON eh.Emp_ID = veh.Emp_ID JOIN [EC].[View_Employee_Hierarchy] vehSup
 ON eh.Sup_ID = [vehSup].[Emp_ID] 
-WHERE ((cl.ModuleID <> 2 AND cl.StatusId IN (6,8,10,11,12)) OR (cl.ModuleID = 2 AND cl.StatusId = 5)) ' +  @NewLineChar 
+WHERE 1 = 1 ' +  @NewLineChar 
 + @strConditionalSupSite +  @NewLineChar 
 +' AND vehSup.Emp_Name is NOT NULL 
 AND eh.Active NOT IN (''T'',''D'')
@@ -70,7 +69,7 @@ FROM [EC].[Coaching_Log] cl WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh
 ON cl.EmpID = eh.Emp_ID JOIN [EC].[View_Employee_Hierarchy]veh
 ON eh.Emp_ID = veh.Emp_ID JOIN [EC].[View_Employee_Hierarchy] vehMgr
 ON eh.Mgr_ID = [vehMgr].[Emp_ID] 
-WHERE ((cl.ModuleID <> 2 AND cl.StatusId = 5) OR (cl.ModuleID = 2 AND cl.StatusId = 7)) ' +  @NewLineChar 
+WHERE 1 = 1 ' +  @NewLineChar 
 + @strConditionalMgrSite +  @NewLineChar 
 + ' AND  vehMgr.Emp_Name is NOT NULL
 AND eh.Active NOT IN (''T'',''D'')

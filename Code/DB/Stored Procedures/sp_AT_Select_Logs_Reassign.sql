@@ -30,7 +30,7 @@ AS
 
 BEGIN
 DECLARE	
-@strConditionalWhere nvarchar(100),
+@strConditionalWhere nvarchar(200),
 @nvcSQL nvarchar(max),
 @nvcConditionalStatus nvarchar(100),
 @strOwnerSite nvarchar(50);
@@ -43,11 +43,12 @@ DECRYPTION BY CERTIFICATE [CoachingCert];
 -- Lookup the Module and Status, and Reassigned From when searched by Formname
 
 IF COALESCE(@strFormName,'') <> '' 
-BEGIN
+BEGIN -- Processing for Formname search
 
 SET @intModuleIdin = (SELECT ModuleID from EC.Coaching_log WHERE FormName = @strFormName);
 SET @intStatusIdin = (SELECT StatusID from EC.Coaching_log WHERE FormName = @strFormName);
 
+-- Determine current owner of log 
 
 SET @istrOwnerin = (SELECT CASE 
 WHEN cl.ReassignCount = 1 and ISNULL(cl.ReassignedToID, '') <> '' THEN cl.ReassignedToID
@@ -86,24 +87,43 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 	AND cfact.ReassignCount < 2
 	AND	cfact.StatusID IN (5,6,7,8,10,11,12)
 	AND cfact.[Formname] = ''' + @strFormName + '''';
-END
+
+END -- Processing for Formname search
 
 IF COALESCE(@strFormName,'') = '' AND @intStatusIdin  IS NOT NULL AND @intModuleIdin IS NOT NULL 
-BEGIN
+BEGIN  -- Processing for detail search
 
-IF ((@intStatusIdin IN (6,8,10,11,12,-2) AND @intModuleIdin IN (1,3,4,5))
-OR (@intStatusIdin in (5, -2) AND @intModuleIdin = 2))
+-- Determine whether to look for sup or manager depending on module and status combo
+
+-- conditions when a specific status is passed 
+IF ((@intStatusIdin IN (6,8,10,11,12) AND @intModuleIdin IN (1,3,4,5))
+OR (@intStatusIdin in (5) AND @intModuleIdin = 2))
 
 BEGIN
 SET @strConditionalWhere = ' WHERE EH.Sup_ID = '''+@istrOwnerin+''' '
 END
 
 ELSE IF 
-((@intStatusIdin in (5, -2) AND @intModuleIdin IN (1,3,4,5))
-OR (@intStatusIdin in (7,-2)AND @intModuleIdin = 2))
+((@intStatusIdin in (5) AND @intModuleIdin IN (1,3,4,5))
+OR (@intStatusIdin in (7)AND @intModuleIdin = 2))
 
 BEGIN
 SET @strConditionalWhere = ' WHERE EH.Mgr_ID = '''+@istrOwnerin+''' '
+END
+
+-- conditions when 'All' is passed for status 
+ELSE IF 
+@intStatusIdin = -2 AND @intModuleIdin <> 2 -- modules other tan supervisor module
+
+BEGIN
+SET @strConditionalWhere = ' WHERE (fact.statusid IN (6,7,8,10,11,12) AND (EH.Sup_ID = '''+@istrOwnerin+''') OR (fact.statusid = 5 AND EH.Mgr_ID = '''+@istrOwnerin+''')) '
+END
+
+ELSE IF 
+@intStatusIdin = -2 AND @intModuleIdin = 2 -- supervisor module
+
+BEGIN
+SET @strConditionalWhere = ' WHERE (fact.statusid = 5) AND (EH.Sup_ID = '''+@istrOwnerin+''') OR (fact.statusid = 7 AND EH.Mgr_ID = '''+@istrOwnerin+''')) '
 END
 
 --print @strConditionalWhere 
@@ -119,6 +139,9 @@ BEGIN
 SET @nvcConditionalStatus = ' AND cfact.StatusId = '''+CONVERT(NVARCHAR,@intStatusIdin)+''''
 END
 
+--print @nvcConditionalStatus
+
+-- select log details.
 -- Check for 3 scenarios
 --1. Original hierarchy owner
 --2. Reassigned owner
