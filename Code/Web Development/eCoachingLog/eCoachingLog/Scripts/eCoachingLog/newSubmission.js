@@ -4,6 +4,7 @@
 	var showWorkAtHomeBehaviorDiv = false;
 	var pfdChecked = false;
 	var claimsViewChecked = false;
+	const CLAIMS_VIEW_ID = 73;
 
 	const claimsViewErrMsg = '"Claims View" is for Medicare only. You selected a non-medicare program.';
 
@@ -129,13 +130,12 @@
         }
 
         // Claims View (Medicare Only)
-        // id: TBD, for now use 55 as testing
-        if (reasonId == 55) {
+        if (reasonId == CLAIMS_VIEW_ID) {
             claimsViewChecked = isChecked;
         }
         let reasonValErrorSpan = $('span[data-valmsg-for="CoachingReasons"');
         // Invalid if reason 'Claims View' is selected, program 'Marketplace' (1) or 'NA' (3) is selected.
-        let isInvalidReason = reasonId == 55 && claimsViewChecked && ($('#select-program').val() == 1 || $('#select-program').val() == 3);
+        let isInvalidReason = reasonId == CLAIMS_VIEW_ID && claimsViewChecked && ($('#select-program').val() == 1 || $('#select-program').val() == 3);
         if (isInvalidReason) {
             reasonValErrorSpan.addClass('field-validation-error').removeClass('field-validation-valid').text(claimsViewErrMsg);
             $('#btn-submit').attr('disabled', 'disabled');
