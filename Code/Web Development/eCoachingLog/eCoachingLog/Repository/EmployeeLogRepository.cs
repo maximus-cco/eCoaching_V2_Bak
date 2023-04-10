@@ -118,7 +118,9 @@ namespace eCoachingLog.Repository
 						logDetail.IsOmrIaef = Convert.ToInt16(dataReader["OMR / IAEF"]) == 0 ? false : true;
 						logDetail.IsOmrIat = Convert.ToInt16(dataReader["OMR / IAT"]) == 0 ? false : true;
 						logDetail.IsOmrException = Convert.ToInt16(dataReader["OMR / Exceptions"]) == 0 ? false : true;
-						logDetail.IsBrl = Convert.ToInt16(dataReader["OMR / BRL"]) == 0 ? false : true;
+                        logDetail.IsOmrAudio = Convert.ToInt16(dataReader["OMR / AUD"]) == 0 ? false : true;
+
+                        logDetail.IsBrl = Convert.ToInt16(dataReader["OMR / BRL"]) == 0 ? false : true;
 						logDetail.IsBrn = Convert.ToInt16(dataReader["OMR / BRN"]) == 0 ? false : true;
 						logDetail.IsPbh = Convert.ToInt16(dataReader["OMR / PBH"]) == 0 ? false : true;
 						logDetail.IsIdd = Convert.ToInt16(dataReader["OMR / IDD"]) == 0 ? false : true;
@@ -164,7 +166,9 @@ namespace eCoachingLog.Repository
                         logDetail.BatchId = dataReader["strQNBatchId"].ToString();
 						logDetail.StrengthOpportunity = dataReader["strQNStrengthsOpportunities"].ToString();
 
-						if (string.IsNullOrEmpty(dataReader["IsFollowupRequired"].ToString()))
+                        logDetail.InstructionText = dataReader["strStaticText"].ToString(); 
+
+                        if (string.IsNullOrEmpty(dataReader["IsFollowupRequired"].ToString()))
 						{
 							logDetail.IsFollowupRequired = false;
 						}

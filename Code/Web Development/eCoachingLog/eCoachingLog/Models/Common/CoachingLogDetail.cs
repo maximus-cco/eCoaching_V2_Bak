@@ -54,6 +54,7 @@ namespace eCoachingLog.Models.Common
 		public bool IsOthApw { get; set; } // Attendance Policy Earback
 		public bool IsIdd { get; set; } // incentives data feed
         public bool IsSurvey { get; set; } // survey from analytic team
+        public bool IsOmrAudio { get; set; }
 
 		public bool HasEmpAcknowledged { get; set; }
 		public bool HasSupAcknowledged { get; set; }

@@ -101,6 +101,13 @@ namespace eCoachingLog.Services
 		{
 			var log = review.LogDetail;
 
+            if (log.IsOmrAudio
+                && user.EmployeeId == log.SupervisorEmpId
+                && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+            {
+                return log.InstructionText;
+            }
+
             if (log.IsSurvey 
                 && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW 
                 && (user.IsSupervisor|| log.ReassignedToEmpId == user.EmployeeId))
