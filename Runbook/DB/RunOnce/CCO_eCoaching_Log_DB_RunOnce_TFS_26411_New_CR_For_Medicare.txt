@@ -1,0 +1,120 @@
+/*
+TFS 26411 - New coaching reason for Claims View (Medicare Only)
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Add record(s) to TABLE [EC].[DIM_Coaching_Reason]
+2. Add record(s) to TABLE [EC].[DIM_Sub_Coaching_Reason]
+3. Add record(s) to TABLE [EC].[Coaching_Reason_Selection]
+
+
+-- Test
+select * from ec.DIM_Coaching_Reason
+where coachingreason = 'Claims View (Medicare Only)'
+--73
+
+select * from ec.DIM_Sub_Coaching_Reason
+where Subcoachingreason in  
+(
+'Old View',
+'Claim Header',
+'Claim Summary',
+'Crossover',
+'Patient Responsibility',
+'Preventive Service Pop-Up',
+'Benefit Period Pop-Up',
+'Check Research',
+'Provider Information',
+'Undeliverable Address indicator',
+'Claim Status',
+'Other: Specify reason under coaching details.'
+)
+--303-313+42
+
+select * from ec.Coaching_Reason_Selection
+where coachingreasonid = 73
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+-- step 1: add coaching reason
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReason])
+     VALUES ('Claims View (Medicare Only)')
+GO
+
+
+
+--****************************************************
+
+-- step 2: add sub coaching reasons
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES 
+('Old View'),
+('Claim Header'),
+('Claim Summary'),
+('Crossover'),
+('Patient Responsibility'),
+('Preventive Service Pop-Up'),
+('Benefit Period Pop-Up'),
+('Check Research'),
+('Provider Information'),
+('Undeliverable Address indicator'),
+('Claim Status')
+GO
+
+
+
+
+--****************************************************
+
+--step 3: add into coaching reason selection
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+	         (73, 'Claims View (Medicare Only)',303,'Old View',1,1,1,1,1,1,0,0,0,0,0,0),
+             (73, 'Claims View (Medicare Only)',304,'Claim Header',1,1,1,1,1,1,0,0,0,0,0,0),
+			 (73, 'Claims View (Medicare Only)',305,'Claim Summary',1,1,1,1,1,1,0,0,0,0,0,0),
+             (73, 'Claims View (Medicare Only)',306,'Crossover',1,1,1,1,1,1,0,0,0,0,0,0),
+			 (73, 'Claims View (Medicare Only)',307,'Patient Responsibility',1,1,1,1,1,1,0,0,0,0,0,0),
+             (73, 'Claims View (Medicare Only)',308,'Preventive Service Pop-Up',1,1,1,1,1,1,0,0,0,0,0,0),
+			 (73, 'Claims View (Medicare Only)',309,'Benefit Period Pop-Up',1,1,1,1,1,1,0,0,0,0,0,0),
+             (73, 'Claims View (Medicare Only)',310,'Check Research',1,1,1,1,1,1,0,0,0,0,0,0),
+			 (73, 'Claims View (Medicare Only)',311,'Provider Information',1,1,1,1,1,1,0,0,0,0,0,0),
+             (73, 'Claims View (Medicare Only)',312,'Undeliverable Address indicator',1,1,1,1,1,1,0,0,0,0,0,0),
+			 (73, 'Claims View (Medicare Only)',313,'Claim Status',1,1,1,1,1,1,0,0,0,0,0,0),
+			 (73, 'Claims View (Medicare Only)',42,'Other: Specify reason under coaching details.',1,1,1,1,1,1,0,0,0,0,0,0)
+            
+GO
+
+
+
+--****************************************************
+
