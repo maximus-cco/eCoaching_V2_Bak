@@ -1,13 +1,3 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Outlier' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
-GO
-
-
 
 SET ANSI_NULLS ON
 GO
@@ -32,6 +22,7 @@ GO
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 -- Changes to suppport New Written Corr feed- TFS 23048  - 10/4/2021
+-- Changes to suppport AUD feed- TFS 26432  - 04/03/2023
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 @Count INT OUTPUT
@@ -154,7 +145,7 @@ WAITFOR DELAY '00:00:00:02';  -- Wait for 2 ms
 		ELSE 9
      END,
            [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
-           os.[CoachReason_Current_Coaching_Initiatives]
+           COALESCE(os.[CoachReason_Current_Coaching_Initiatives], N'NA')
     FROM [EC].[Outlier_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
     ON os.[Report_ID] = cf.[numReportID] AND  os.[Report_Code] = cf.[strReportCode]
     LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
@@ -197,7 +188,5 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Outlier
 GO
-
-
 
 

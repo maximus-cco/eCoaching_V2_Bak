@@ -1,14 +1,3 @@
-
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Coaching_Log' 
-)
-   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log]
-GO
-
-
-
-
 SET ANSI_NULLS ON
 GO
 
@@ -30,10 +19,11 @@ GO
 --  Changes to support AED feed. TFS 19502  - 11/30/2020
 --  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 --  Updated to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
---  Changes to support SUR feed. TFS 24347  - 03/25/2022
+--  Changes to support SUR feed. TFS 23347  - 03/25/2022
+--  Changes to suppport AUD feed- TFS 26432  - 04/03/2023
 --	=====================================================================
 
-CREATE OR ALTER   PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
 AS
 
 BEGIN
@@ -172,7 +162,8 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   CASE WHEN (cc.OMRIAE IS NOT NULL AND cl.strReportCode LIKE ''IAEF%'') THEN 1 ELSE 0 END "OMR / IAEF",
   CASE WHEN (cc.OMRIAT IS NOT NULL AND cl.strReportCode LIKE ''IAT%'') THEN 1 ELSE 0 END "OMR / IAT",
   CASE WHEN (cc.OMRISQ IS NOT NULL AND cl.strReportCode LIKE ''ISQ%'') THEN 1 ELSE 0 END "OMR / ISQ",
-   CASE WHEN (cc.OMRIDD IS NOT NULL AND cl.strReportCode LIKE ''IDD%'') THEN 1 ELSE 0 END "OMR / IDD",
+  CASE WHEN (cc.OMRIDD IS NOT NULL AND cl.strReportCode LIKE ''IDD%'') THEN 1 ELSE 0 END "OMR / IDD",
+  CASE WHEN (cc.OMRAUD IS NOT NULL AND cl.strReportCode LIKE ''AUD%'') THEN 1 ELSE 0 END "OMR / AUD",
    CASE WHEN (cc.LCS IS NOT NULL AND cl.strReportCode LIKE ''LCS%'') THEN 1 ELSE 0 END "LCS",
   CASE WHEN (cc.SDR IS NOT NULL AND cl.strReportCode LIKE ''SDR%'') THEN 1 ELSE 0 END "Training / SDR",
   CASE WHEN (cc.ODT IS NOT NULL AND cl.strReportCode LIKE ''ODT%'') THEN 1 ELSE 0 END "Training / ODT",
@@ -223,7 +214,8 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   cl.EmpAckFollowupComments,
   cl.SupFollowupReviewCoachingNotes,
   cl.PFDCompletedDate,
-  ''Coaching'' strLogType
+  ''Coaching'' strLogType,
+  cc.strStaticText
 FROM [EC].[Coaching_Log] cl  WITH (NOLOCK) ';
 	    
 SET @nvcSQL3 = @nvcSQL3 + N' JOIN 
@@ -244,6 +236,7 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 34 THEN [clr].[Value] ELSE NULL END) LCS,
 	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END) OMRISQ,
 	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 281 THEN [clr].[Value] ELSE NULL END) OMRIDD,
+	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 314 THEN [clr].[Value] ELSE NULL END) OMRAUD,
 	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END) SDR,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END) ODT,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END) CTC,
@@ -258,14 +251,15 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 3 AND [clr].[SubCoachingReasonID] = 252) THEN [clr].[Value] ELSE NULL END) ATTAP,
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SUR,
-	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 63) THEN [clr].[Value] ELSE NULL END)	WAH_RTS
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 63) THEN [clr].[Value] ELSE NULL END)	WAH_RTS,
+	[EC].[fn_strCoachingLogStatictext]([ccl].[CoachingID]) strStaticText
   FROM [EC].[Coaching_Log_Reason] clr  WITH (NOLOCK),
     [EC].[DIM_Coaching_Reason] cr,
 	[EC].[Coaching_Log] ccl  WITH (NOLOCK) 
   WHERE [ccl].[CoachingID] = ''' + CONVERT(NVARCHAR, @intLogId) + '''
     AND [clr].[CoachingReasonID] = [cr].[CoachingReasonID]
     AND [ccl].[CoachingID] = [clr].[CoachingID] 
-  GROUP BY ccl.FormName 
+  GROUP BY ccl.FormName, ccl.CoachingID
 ) cc ON [cl].[FormName] = [cc].[FormName]
 JOIN [EC].[Employee_Hierarchy] eh  WITH (NOLOCK) ON [cl].[EMPID] = [eh].[Emp_ID] 
 JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) ON [veh].[Emp_ID] = [eh].[Emp_ID]

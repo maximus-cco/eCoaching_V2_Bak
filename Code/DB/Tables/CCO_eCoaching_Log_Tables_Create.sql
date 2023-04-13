@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Log_Tables_Create.sql(10).sql
+CCO_eCoaching_Log_Tables_Create.sql(11).sql
 
-Last Modified Date: 06/07/2022
+Last Modified Date: 04/10/2023
 Last Modified By: Susmitha Palacherla
 
+Version 11: Updated to Support Coaching Static Text during work for OMR Aud Feed. TFS 26432 - 04/10/2023
 Version 10: Updated to Support Team Submission. TFS 23273 - 06/07/2022
 Version 09: Updated to suport email process change in user interface. TFS 23389 - 11/08/2021
 Version 08: Updated to support New Coaching Reason for Quality - 23051 - 10/6/2021
@@ -31,7 +32,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 3. [EC].[Coaching_Log_Quality_Now_Summary]
 4. [EC].[Email_Notifications_History]
 5. [EC].[Email_Notifications_Stage]
-
+6. [EC].[Coaching_Log_StaticText]
 
 **************************************************************
 
@@ -320,6 +321,34 @@ GO
 
 ALTER TABLE [EC].[Email_Notifications_Stage] ADD  CONSTRAINT [DF_ENS_LastModifyDate]  DEFAULT (getdate()) FOR [LastModifyDate]
 GO
+
+
+--**************************************************************
+
+--6. Create Table[EC].[Coaching_Log_StaticText]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_StaticText](
+	[TextID] [int] NOT NULL,
+	[TextDescription] [nvarchar](4000) NOT NULL,
+	[Active] [bit] NOT NULL,
+	[CoachingReasonID] [int] NOT NULL,
+	[SubCoachingReasonID] [int] NOT NULL,
+	[CSR] [bit] NULL,
+	[Supervisor] [bit] NULL,
+	[Quality] [bit] NULL,
+	[LSA] [bit] NULL,
+	[Training] [bit] NULL,
+	[StartDate] [int] NOT NULL,
+	[EndDate] [int] NOT NULL
+) ON [PRIMARY]
+GO
+
 
 --**************************************************************
 

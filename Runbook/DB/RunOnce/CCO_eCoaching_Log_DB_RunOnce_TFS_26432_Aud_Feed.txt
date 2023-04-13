@@ -1,0 +1,90 @@
+/*
+TFS 26432 - Audio issues in the eCoaching Log
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Create TABLE [EC].[Coaching_Log_StaticText]
+2. Add Record to [EC].[Coaching_Log_StaticText]
+3. Add record to [EC].[DIM_Sub_Coaching_Reason]
+
+-- Test
+
+
+select * from ec.DIM_Sub_Coaching_Reason
+where Subcoachingreason in  
+('Speech Analytics Audio Issues')
+--314
+
+select * from ec.Coaching_Log_StaticText
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+-- step 1: Create TABLE [EC].[Coaching_Log_StaticText]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_StaticText](
+	[TextID] [int] NOT NULL,
+	[TextDescription] [nvarchar](4000) NOT NULL,
+	[Active] [bit] NOT NULL,
+	[CoachingReasonID] [int] NOT NULL,
+	[SubCoachingReasonID] [int] NOT NULL,
+	[CSR] [bit] NULL,
+	[Supervisor] [bit] NULL,
+	[Quality] [bit] NULL,
+	[LSA] [bit] NULL,
+	[Training] [bit] NULL,
+	[StartDate] [int] NOT NULL,
+	[EndDate] [int] NOT NULL
+) ON [PRIMARY]
+GO
+
+
+--****************************************************
+
+-- step 2: Add Record to [EC].[Coaching_Log_StaticText]
+
+INSERT INTO [EC].[Coaching_Log_StaticText]
+           ([TextID]
+           ,[TextDescription]
+           ,[Active]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+           ,[Training]
+           ,[StartDate]
+           ,[EndDate])
+     VALUES
+           (101, '<p>Please work with your employee to determine if there are any issues that need to be resolved.</p>', 1, 9, 314, 1, 0, 0, 0, 0, 20230401, 99991231)
+    
+GO
+
+
+--****************************************************
+
+--step 3: Add record to [EC].[DIM_Sub_Coaching_Reason]
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+([SubCoachingReason])
+ VALUES 
+('OMR: Speech Analytics Audio Issues')
+
+--****************************************************
+
