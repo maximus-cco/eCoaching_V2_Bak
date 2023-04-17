@@ -1,13 +1,3 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'fn_strSiteNameFromSiteLocation' 
-)
-   DROP FUNCTION [EC].[fn_strSiteNameFromSiteLocation]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
@@ -25,8 +15,9 @@ GO
 -- Updated to add wildcards to accommodate new maximus location values- TFS 13168 - 01/08/2019
 -- Integrate Brownsville into eCL. TFS 15450 - 09/23/2019
 -- Modified to Support changes to Tampa Sites. TFS 24711 - 06/03/2022
+-- Modified to Support El Paso and Remote East. TFS 25693 and 26354 - 04/12/2023
 -- =============================================
-CREATE OR ALTER FUNCTION [EC].[fn_strSiteNameFromSiteLocation] (
+CREATE OR ALTER   FUNCTION [EC].[fn_strSiteNameFromSiteLocation] (
   @strSiteLocation NVARCHAR(50)
 )
 RETURNS NVARCHAR(20)
@@ -55,6 +46,8 @@ BEGIN
 		    WHEN (@strSiteLocation lIKE N'%Waco%')       THEN N'Waco'  
 			WHEN (@strSiteLocation lIKE N'%Brownsville%')       THEN N'Brownsville' 
             WHEN (@strSiteLocation lIKE N'%Winchester%')   THEN N'Winchester'
+			WHEN (@strSiteLocation lIKE N'%El Paso%')   THEN N'El Paso'
+			WHEN (@strSiteLocation lIKE N'%Remote East%')   THEN N'Remote East'
        ELSE 'OTHER' END)
   
      
@@ -62,4 +55,5 @@ BEGIN
   RETURN @strSiteName  
 END  -- fn_strSiteNameFromSiteLocation()
 GO
+
 

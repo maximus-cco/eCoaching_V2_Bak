@@ -1,0 +1,52 @@
+/*
+TFS 26354 - Add Remote East site to eCoaching log
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+--select * from [EC].[DIM_Site]
+--select * from [EC].[Survey_Sites]
+
+
+Summary
+
+1. Add Remote East in DIM_Site Table
+2. Add Remote East in Survey_Sites Table
+3. Add tranlation for Remote East in fn fn_strSiteNameFromSiteLocation
+
+*/
+
+-- Details
+--1. Add Remote East in DIM_Site Table
+
+INSERT INTO [EC].[DIM_Site]
+           ([City]
+           ,[State]
+           ,[StateCity]
+           ,[isActive])
+     VALUES
+           ('Remote East', 'RE' , 'RE - Remote East', 1)
+    
+GO
+
+
+
+--2. Add Remote East in Survey_Sites Table
+
+INSERT INTO [EC].[Survey_Sites]
+           ([City]
+           ,[isActive]
+           ,[isPilot]
+           ,[isHotTopic])
+     VALUES
+    ('Remote East', 1, 1, 0)
+
+
+
+--******************************
+
+--**********************
