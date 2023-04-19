@@ -35,7 +35,7 @@
 	        $.ajax({
 	            type: 'POST',
 	            url: filterByQnOrQnsUrl,
-	            data: { sourceId: $(this).val(), pageSize: $('input[name=pageSizeSelected').val() },
+	            data: { sourceId: $(this).val(), pageSize: $("input[name='pageSizeSelected']").val() },
 	            success: function (data) {
 	                $('#div-search-result').html(data);
 	            }

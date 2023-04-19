@@ -82,7 +82,7 @@
 
 	$('body').on('change', '.log-type', function (e) {
 		var logType = $(this).val();
-		$('input[name=typeSelected').val(logType);
+		$("input[name='typeSelected']").val(logType);
 		//if (logType === 'MySiteWarning')
 		//{
 		//	$('#div-select-status').show();
@@ -91,35 +91,6 @@
 		//	$('#div-select-status').hide();
 		//}
 	});
-
-	//// Search log
-	//$('body').on('click', '#btn-search', function (e) {
-	//	e.preventDefault();
-	//	if (e.handled !== true) {
-	//		e.handled = true;
-	//		$(".please-wait").slideDown(500);
-	//		var pageSizeSelected = {
-	//			pageSizeSelected: $('input[name=pageSizeSelected').val()
-	//		};
-	//		$.ajax({
-	//			type: 'POST',
-	//			url: searchUrl,
-	//			data: $('#form-search-mydashboard').serialize() + '&' + $.param(pageSizeSelected),
-	//			success: function (data) {
-	//				// hide please-wait inside DataTables initComplete callback.
-	//				// Warning logs not allowed to export
-	//				if ($('input[name=typeSelected').val() === 'MySiteWarning')
-	//				{
-	//					$('#btn-export-excel-director').hide();
-	//				}
-	//				else {
-	//					$('#btn-export-excel-director').show();
-	//				}
-	//				$('#div-search-result').html(data);
-	//			}
-	//		});
-	//	}
-	//});
 
 	// Export to excel - my dashboard/director
 	$('body').on('click', '#btn-export-excel-director', function (e) {

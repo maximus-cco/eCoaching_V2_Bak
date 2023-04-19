@@ -475,7 +475,7 @@
             var max = maxEmployeesCoachingPerSubmission;
             var log = "<font color='green'> coaching log </font>";
             var isWarning = false;
-            if ($('input[name=IsWarning]:checked').val() === "true") {
+            if ($("input[name='IsWarning']:checked").val() === "true") {
                 max = maxEmployeesWarningPerSubmission;
                 log = "<font color='red'> warning log </font>";
                 isWarning = true;

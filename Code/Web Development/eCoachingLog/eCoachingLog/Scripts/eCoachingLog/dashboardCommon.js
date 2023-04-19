@@ -86,7 +86,7 @@
             e.handled = true;
             $(".please-wait").slideDown(500);
             var pageSizeSelected = {
-                pageSizeSelected: $('input[name=pageSizeSelected').val()
+                pageSizeSelected: $("input[name='pageSizeSelected']").val()
             };
 
             $.ajax({
@@ -96,7 +96,7 @@
                 success: function (data) {
                     // hide please-wait inside DataTables initComplete callback.
                     // Warning logs not allowed to export
-                    if ($('input[name=typeSelected').val() === 'MySiteWarning') {
+                    if ($("input[name='typeSelected']").val() === 'MySiteWarning') {
                         $('#btn-export-excel-director').hide();
                     }
                     else {

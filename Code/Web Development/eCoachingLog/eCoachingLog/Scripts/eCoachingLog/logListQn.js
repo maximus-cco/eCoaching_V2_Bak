@@ -101,7 +101,7 @@ $(document).ready(function () {
     myTable.page.len(length);
 
     $('#dataTables-coaching-log-list').on('length.dt', function (e, settings, len) {
-    	$('input[name=pageSizeSelected').val(len);
+        $("input[name='pageSizeSelected']").val(len);
     });
 
 	// Dynamically hide column(s)

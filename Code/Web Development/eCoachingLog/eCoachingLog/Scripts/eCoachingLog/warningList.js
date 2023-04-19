@@ -52,7 +52,7 @@ $(document).ready(function () {
 	warningTable.page.len(length);
 
 	$('#dataTables-warning-log-list').on('length.dt', function (e, settings, len) {
-		$('input[name=pageSizeSelected').val(len);
+	    $("input[name='pageSizeSelected']").val(len);
 	});
 
 	// Dynamically hide column(s)
