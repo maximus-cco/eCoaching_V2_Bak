@@ -1,10 +1,10 @@
-﻿$(function () {
+﻿const CLAIMS_VIEW_ID = 73;
+$(function () {
 	var cancelBtnClicked = false;
 	var workAtHomeChecked = false;
 	var showWorkAtHomeBehaviorDiv = false;
 	var pfdChecked = false;
-	var claimsViewChecked = false;
-	const CLAIMS_VIEW_ID = 73;
+	var claimsViewChecked = isClaimsViewReasonSelected();
 
 	const claimsViewErrMsg = '"Claims View" is for Medicare only. You selected a non-Medicare Program.';
 
@@ -418,8 +418,8 @@
 
     function resetPage(moduleId) {
     	$(".please-wait").slideDown(500);
-    	$('#success-message').empty();
-    	$('#fail-message').empty();
+    	$('#success-message').hide();
+    	$('#fail-message').hide();
         $.ajax({
             type: 'POST',
             url: resetPageUrl,
@@ -581,6 +581,20 @@
 		.always(function () {
 		    employeeDropdown.removeClass('loadinggif')
 		});
+    }
+
+    function isClaimsViewReasonSelected() {
+        var coachingReasons = $('#coaching-reasons').find('.reason-checkbox:checkbox');
+        var selectedCoachingReasons = coachingReasons.filter(':checked');
+        var isClaimsViewReasonSelected = false;
+        for (i = 0; i < selectedCoachingReasons.length; i++) {
+            let reasonId = $('#' + selectedCoachingReasons[i].id).closest('.coaching-reason').find('input:hidden.reason-id').val();
+            if (reasonId == CLAIMS_VIEW_ID) {
+                isClaimsViewReasonSelected = true;
+                break;
+            }
+        }
+        return isClaimsViewReasonSelected;
     }
 
     function validateCoachingReasons() {
