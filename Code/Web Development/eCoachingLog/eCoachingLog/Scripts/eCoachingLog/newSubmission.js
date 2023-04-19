@@ -6,7 +6,7 @@
 	var claimsViewChecked = false;
 	const CLAIMS_VIEW_ID = 73;
 
-	const claimsViewErrMsg = '"Claims View" is for Medicare only. You selected a non-medicare program.';
+	const claimsViewErrMsg = '"Claims View" is for Medicare only. You selected a non-Medicare Program.';
 
     // https://github.com/istvan-ujjmeszaros/bootstrap-duallistbox/issues/110
 	$(document).on('keyup', ".bootstrap-duallistbox-container .filter", function () {
