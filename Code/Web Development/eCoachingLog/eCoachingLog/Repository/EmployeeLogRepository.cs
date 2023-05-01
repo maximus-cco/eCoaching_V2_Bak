@@ -166,7 +166,7 @@ namespace eCoachingLog.Repository
                         logDetail.BatchId = dataReader["strQNBatchId"].ToString();
 						logDetail.StrengthOpportunity = dataReader["strQNStrengthsOpportunities"].ToString();
 
-                        logDetail.InstructionText = dataReader["strStaticText"].ToString(); 
+                        logDetail.AdditionalText = Constants.REVIEW_OMR_IDD; //dataReader["strStaticText"].ToString(); 
 
                         if (string.IsNullOrEmpty(dataReader["IsFollowupRequired"].ToString()))
 						{
@@ -297,7 +297,7 @@ namespace eCoachingLog.Repository
 
 						logDetail.IsFormalAttendanceHours = dataReader["FC/ ATTH"].ToString() == "0" ? false : true;
 						logDetail.IsFormalAttendanceTrends = dataReader["FC / ATTT"].ToString() == "0" ? false : true;
-						logDetail.InstructionText = dataReader["strStaticText"].ToString();
+						logDetail.AdditionalText = dataReader["strStaticText"].ToString();
 						logDetail.EmployeeReviewDate = EclUtil.AppendTimeZone(dataReader["CSRReviewAutoDate"].ToString());
 						logDetail.Comment = EclUtil.Sanitize(dataReader["CSRComments"].ToString());
 

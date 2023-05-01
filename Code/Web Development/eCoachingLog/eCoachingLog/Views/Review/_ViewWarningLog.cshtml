@@ -12,15 +12,11 @@
 
 			<div class="modal-body" style="font-size: small;">
 				@{ Html.RenderPartial("_Reasons", Model.WarningLogDetail.Reasons); }
+                @{ Html.RenderPartial("_AdditionalText", Model.AdditionalText); }
+                @{ Html.RenderPartial("_EmployeeWarningReviewInfo"); }
 			</div>
-
-			<div class="mt-2 instruction-text @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")">
-				@Html.Raw(WebUtility.HtmlDecode(Model.InstructionText))
-			</div>
-
-			@{ Html.RenderPartial("_EmployeeWarningReviewInfo"); }
-			
 			<!-- /.modal-body -->
+
 			<div class="modal-footer mt-2">
 				<div class="form-group">
 					<button class="btn btn-default float-right" id="btn-close" data-dismiss="modal">Close</button>

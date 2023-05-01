@@ -488,17 +488,19 @@ namespace eCoachingLog.Controllers
 		private ReviewViewModel Init(User user, int currentPage, BaseLogDetail logDetail, bool isCoaching, string action)
 		{
 			var vm = new ReviewViewModel();
+            vm.Action = action;
 			if (isCoaching)
 			{
 				vm.LogDetail = (CoachingLogDetail)logDetail;
 				vm.ShowConfirmedCseText = ShowConfirmedCseText(vm.LogDetail);
-				vm.ShowConfirmedNonCseText = ShowConfirmedNonCseText(vm.LogDetail);
-			}
+                vm.ShowConfirmedNonCseText = ShowConfirmedNonCseText(vm.LogDetail);
+                vm.AdditionalText = this.reviewService.GetAdditionalText(vm, user);
+            }
 			else
 			{
 				vm.WarningLogDetail = (WarningLogDetail)logDetail;
 				vm.IsWarning = true;
-				vm.InstructionText = logDetail.InstructionText;
+				vm.AdditionalText = logDetail.AdditionalText;
 				// User reviews warning log
 				if (user.EmployeeId == logDetail.EmployeeId && logDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
 				{
@@ -579,11 +581,9 @@ namespace eCoachingLog.Controllers
 
 			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
 			DetermineMgrSupNotesVisibility(vm);
-			vm.InstructionText = this.reviewService.GetInstructionText(vm, user);
 
             // Init Acknowledge partial
-            //if ((String.IsNullOrEmpty(action) || action == "csrReview") && IsAcknowledgeForm(vm))
-            if ((String.IsNullOrEmpty(action) || action != "viewQnsToLink") && IsAcknowledgeForm(vm))
+            if ((String.IsNullOrEmpty(action) || (action != "viewQnsToLink") && action != "view") && IsAcknowledgeForm(vm))
             {
 				vm.IsAcknowledgeForm = true;
 				return InitAckForm(vm, user, isCoaching);
@@ -768,7 +768,7 @@ namespace eCoachingLog.Controllers
 			if (IsCsePendingForm(vm))
 			{
 				vm.IsCsePendingForm = true;
-				vm.InstructionText = Constants.REVIEW_CSE;
+				vm.AdditionalText = Constants.REVIEW_CSE;
 				vm.IsReadOnly = IsReadOnly(vm, user);
 
 				vm.ReviewPageName = GetReviewPageName(vm.IsReadOnly, isCoaching);

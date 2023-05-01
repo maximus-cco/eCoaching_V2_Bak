@@ -28,6 +28,7 @@
 
 			<div class="modal-body" style="font-size: small;">
 				@{ Html.RenderPartial("_Reasons", Model.LogDetail.Reasons); }
+                @{ Html.RenderPartial("_AdditionalText", Model.AdditionalText); }
 
                 @if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor)
 				{
@@ -71,10 +72,6 @@
                         { Html.RenderPartial("_QnFollowupDecisionComments"); }
                     }
                 }
-
-				<div class="mt-2 instruction-text @(string.IsNullOrEmpty(@Model.InstructionText) ? "hide" : "show")">
-					@Html.Raw(WebUtility.HtmlDecode(Model.InstructionText))
-				</div>
 
 				<div class="mt-2">
 					@if (!Model.IsReadOnly && Model.IsAcknowledgeForm)

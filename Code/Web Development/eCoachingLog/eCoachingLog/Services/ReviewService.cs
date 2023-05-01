@@ -97,15 +97,26 @@ namespace eCoachingLog.Services
 			return false;
 		}
 
-		public string GetInstructionText(Review review, User user)
+		public string GetAdditionalText(Review review, User user)
 		{
 			var log = review.LogDetail;
+
+            if (log.IsQn 
+                && user.EmployeeId == log.SupervisorEmpId
+                && (log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW 
+                      || log.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION)
+               )
+            {
+                return log.AdditionalText;
+            }
+
+
 
             if (log.IsOmrAudio
                 && user.EmployeeId == log.SupervisorEmpId
                 && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
             {
-                return log.InstructionText;
+                return log.AdditionalText;
             }
 
             if (log.IsSurvey 
@@ -647,7 +658,7 @@ namespace eCoachingLog.Services
 				else if (moduleId == Constants.MODULE_QUALITY)
 				{
 					//if (log.IsCurrentCoachingInitiative || log.IsOmrException)
-					if (log.StatusId == Constants.LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW)
+					if (log.StatusId == Constants.LOG_STATUS_PENDING_DEPUTYPROGRAMMANAGER_REVIEW)
 					{
 						nextStatus = Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT;
 					}

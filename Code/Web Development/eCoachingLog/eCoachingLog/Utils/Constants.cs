@@ -114,7 +114,7 @@ namespace eCoachingLog.Utils
 		public const int LOG_STATUS_PENDING_SUPERVISOR_REVIEW = 6;
 		public const int LOG_STATUS_PENDING_SRMANAGER_REVIEW = 7;
 		public const int LOG_STATUS_PENDING_QUALITYLEAD_REVIEW = 8;
-		public const int LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW = 9;
+		public const int LOG_STATUS_PENDING_DEPUTYPROGRAMMANAGER_REVIEW = 9;
 		public const int LOG_STATUS_PENDING_FOLLOWUP = 10;
         public const int LOG_STATUS_PENDING_FOLLOWUP_PREPARATION = 11;
         public const int LOG_STATUS_PENDING_FOLLOWUP_COACHING = 12;
@@ -223,7 +223,7 @@ namespace eCoachingLog.Utils
 			// Quality
 			{ new Tuple<int, int>(MODULE_QUALITY, LOG_STATUS_PENDING_EMPLOYEE_REVIEW), LOG_STATUS_LEVEL_1 },
 			{ new Tuple<int, int>(MODULE_QUALITY, LOG_STATUS_PENDING_QUALITYLEAD_REVIEW), LOG_STATUS_LEVEL_2 },
-			{ new Tuple<int, int>(MODULE_QUALITY, LOG_STATUS_PENDINGDE_PUTYPROGRAMMANAGER_REVIEW), LOG_STATUS_LEVEL_3 },
+			{ new Tuple<int, int>(MODULE_QUALITY, LOG_STATUS_PENDING_DEPUTYPROGRAMMANAGER_REVIEW), LOG_STATUS_LEVEL_3 },
 			{ new Tuple<int, int>(MODULE_QUALITY, LOG_STATUS_PENDING_ACKNOWLEDGEMENT), LOG_STATUS_LEVEL_4 },
 			// LSA
 			{ new Tuple<int, int>(MODULE_LSA, LOG_STATUS_PENDING_EMPLOYEE_REVIEW), LOG_STATUS_LEVEL_1 },
@@ -351,6 +351,7 @@ namespace eCoachingLog.Utils
 
         // Survey
         public const string SURVEY = "Please contact your survey point of contact and/or manager with any questions.";
+        public const string TBD = "Additional text placeholder.";
 	}
 
 	public enum EmployeeLogType

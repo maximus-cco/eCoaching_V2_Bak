@@ -23,7 +23,9 @@
 
             <div class="modal-body" style="font-size: small;">
                 @{ Html.RenderPartial("_Reasons", Model.LogDetail.Reasons); }
+                @{ Html.RenderPartial("_AdditionalText", Model.AdditionalText); }
                 @{ Html.RenderPartial("_Scorecards"); }
+
                 @if (Model.ShowEvalSummary)
                 {
                     <div class="text-primary"><strong><mark>Evaluation Summary:</mark></strong></div>

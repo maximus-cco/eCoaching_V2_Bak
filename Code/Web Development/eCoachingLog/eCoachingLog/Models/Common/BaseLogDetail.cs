@@ -34,7 +34,7 @@ namespace eCoachingLog.Models.Common
 
 		public IList<LogReason> Reasons { get; set; }
 
-		public string InstructionText { get; set; }
+		public string AdditionalText { get; set; }
 		public string EmployeeReviewDate { get; set; }
 		public string Comment { get; set; }
 

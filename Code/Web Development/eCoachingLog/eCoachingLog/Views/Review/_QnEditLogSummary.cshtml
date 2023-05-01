@@ -34,44 +34,44 @@
 
 			<div class="modal-body" style="font-size: small;">
 				@{ Html.RenderPartial("_Reasons", Model.LogDetail.Reasons); }
+                @{ Html.RenderPartial("_AdditionalText", Model.AdditionalText); }
+                <!-- Display Quality NOW log -->
+                @{ Html.RenderPartial("_Scorecards"); }
 
-					<!-- Display Quality NOW log -->
-                    @{ Html.RenderPartial("_Scorecards"); }
-
-                    <!-- QN log submitted by quality specialist, which need to be followed up (monitoring additional activities) -->
-                    @if (Model.LogDetail.IsQn && Model.LogDetail.StatusId != 6 && Model.AdditionalActivityLogs != null && Model.AdditionalActivityLogs.Count > 0)
+                <!-- QN log submitted by quality specialist, which need to be followed up (monitoring additional activities) -->
+                @if (Model.LogDetail.IsQn && Model.LogDetail.StatusId != 6 && Model.AdditionalActivityLogs != null && Model.AdditionalActivityLogs.Count > 0)
+                {
+                    <div class="text-primary" style="margin-top: 8px;"><strong><mark>Additonal Monitoring:</mark></strong></div>
+                    for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
                     {
-                        <div class="text-primary" style="margin-top: 8px;"><strong><mark>Additonal Monitoring:</mark></strong></div>
-                        for (int i = 0; i < Model.AdditionalActivityLogs.Count; i++)
+                        <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true" data-action="viewLinkedQns">&nbsp;@Model.AdditionalActivityLogs[i].Text</a>
+                        <br />
+                    }
+                }
+
+                @if (Model.ShowFollowupDecisionComments)
+                {
+                    { Html.RenderPartial("_QnFollowupDecisionComments"); }
+                }
+
+				<div>
+                    <form id="form-qn-summary">
+                        @Html.HiddenFor(m => m.LogDetail.LogId, new { @id = "logId" })
+                        @if(Model.QnSummaryReadOnly != null && Model.QnSummaryReadOnly.Trim() != "")
                         {
-                            <a href="#" class="modal-link-overlay" data-log-id="@Model.AdditionalActivityLogs[i].Value" data-is-coaching="true" data-action="viewLinkedQns">&nbsp;@Model.AdditionalActivityLogs[i].Text</a>
-                            <br />
+                            <div style="margin-top: 8px;"><strong><mark>Past Evaluation Summary:</mark></strong></div>
+                            @Model.QnSummaryReadOnly
                         }
-                    }
 
-                    @if (Model.ShowFollowupDecisionComments)
-                    {
-                        { Html.RenderPartial("_QnFollowupDecisionComments"); }
-                    }
-
-					<div>
-                        <form id="form-qn-summary">
-                            @Html.HiddenFor(m => m.LogDetail.LogId, new { @id = "logId" })
-                            @if(Model.QnSummaryReadOnly != null && Model.QnSummaryReadOnly.Trim() != "")
-                            {
-                                <div style="margin-top: 8px;"><strong><mark>Past Evaluation Summary:</mark></strong></div>
-                                @Model.QnSummaryReadOnly
-                            }
-
-                            <div class="text-primary text-medium required" style="margin-top: 8px;"><strong>Please enter evaluation summary to be used for coaching:</strong></div>
-                            @Html.TextAreaFor(m => m.QnSummaryEditable, new { id = "summary", @class = "form-control remaining", @rows = "10", maxlength = 3000 })
-                            <div class="help-block">
-                                <span class="pull-right"><span class="remaining-count">@remaining</span> remaining</span>
-                            </div>
-                            <span id="validation-summary" class="field-validation-error hide">Evaluation summary is required.</span>
-                        </form>
-                    </div>
-					<br />
+                        <div class="text-primary text-medium required" style="margin-top: 8px;"><strong>Please enter evaluation summary to be used for coaching:</strong></div>
+                        @Html.TextAreaFor(m => m.QnSummaryEditable, new { id = "summary", @class = "form-control remaining", @rows = "10", maxlength = 3000 })
+                        <div class="help-block">
+                            <span class="pull-right"><span class="remaining-count">@remaining</span> remaining</span>
+                        </div>
+                        <span id="validation-summary" class="field-validation-error hide">Evaluation summary is required.</span>
+                    </form>
+                </div>
+				<br />
 			</div>
 			<!-- /.modal-body -->
 

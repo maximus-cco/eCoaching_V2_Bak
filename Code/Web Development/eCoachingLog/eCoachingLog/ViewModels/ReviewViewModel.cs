@@ -18,7 +18,7 @@ namespace eCoachingLog.ViewModels
 		public int LogStatusLevel { get; set; }
 
 		// Common
-		public string InstructionText { get; set; }
+		public string AdditionalText { get; set; }
 		public DateTime? DateCoached { get; set; }
 		[AllowHtml]
 		public string DetailsCoached { get; set; }

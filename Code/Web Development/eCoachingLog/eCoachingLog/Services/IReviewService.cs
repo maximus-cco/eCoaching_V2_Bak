@@ -8,7 +8,7 @@ namespace eCoachingLog.Services
 	public interface IReviewService
 	{
 		bool IsAccessAllowed(int currentPage, BaseLogDetail logDetail, bool isCoaching, User user);
-		string GetInstructionText(Review vm, User user);
+		string GetAdditionalText(Review vm, User user);
 		IList<string> GetReasonsToSelect(CoachingLogDetail log);
 		IList<ShortCall> GetShortCallList(long logId);
 		IList<ShortCall> GetShortCallEvalList(long logId);
