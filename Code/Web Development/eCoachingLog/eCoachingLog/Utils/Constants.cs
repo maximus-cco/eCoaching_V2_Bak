@@ -351,7 +351,9 @@ namespace eCoachingLog.Utils
 
         // Survey
         public const string SURVEY = "Please contact your survey point of contact and/or manager with any questions.";
-        public const string TBD = "Additional text placeholder.";
+        public const string QN_FEEDBACK = "There is no appeal process for Quality Now, but " +
+            "<a href='https://maximus365.sharepoint.com/sites/CCO/Support/QA-OPS/Leads/Lists/Quality_NOW_Feedback/NewForm.aspx?Source=https%3a%2f%2fmaximus365.sharepoint.com%2fsites%2fCCO%2fSupport%2fQA-OPS%2fLeads%2fLists%2fQuality_NOW_Feedback%2fMy_Items.aspx%3fviewid%3d9bec3890%252D53e3%252D40f9%252D8dc6%252Df8400e9a4f4d%26OR%3dTeams%252DHL%26CT%3d1681396370842%26clickparams%3deyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiIyNy8yMzAzMDUwMTExMCIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%253D%253D&ContentTypeId=0x0100E3688E643B7C874CAD85E7C0C4441EFE&RootFolder=%2fsites%2fCCO%2fSupport%2fQA-OPS%2fLeads%2fLists%2fQuality_NOW_Feedback' target='_blank'>feedback</a>" +
+            " for the Quality Team concerning this batch is welcomed. Please see SOP QA 33.0 for additional guidance.";
 	}
 
 	public enum EmployeeLogType

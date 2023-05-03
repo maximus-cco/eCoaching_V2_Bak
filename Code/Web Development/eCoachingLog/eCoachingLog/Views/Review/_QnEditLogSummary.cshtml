@@ -20,7 +20,7 @@
 				<h2 class="modal-title">Review - Edit Log Summary</h2>
                 @if (!String.IsNullOrEmpty(Model.LogDetail.FollowupDueDate))
                 {
-                    <div class="text-danger"><mark>Please complete follow-up by @Model.LogDetail.FollowupDueDate.</mark></div>
+                    <small><mark>Please complete follow-up by @Model.LogDetail.FollowupDueDate.</mark></small>
                 }
 				@if (!Model.IsReadOnly)
 				{
