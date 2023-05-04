@@ -156,7 +156,7 @@ namespace eCoachingLog.Services
                 }
                 if (!string.IsNullOrEmpty(log.ManagerEmail))
                 {
-                    mail.To = log.ManagerEmail;
+                    mail.Cc = log.ManagerEmail;
                 }
 
                 string bodyText = FileUtil.ReadFile(mailParameter.TemplateFileName);
