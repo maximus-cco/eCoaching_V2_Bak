@@ -1,12 +1,3 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectReviewFrom_Coaching_Log_Quality_Now' 
-)
-   DROP PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now]
-GO
-
 
 SET ANSI_NULLS ON
 GO
@@ -21,6 +12,7 @@ GO
 -- LAdded EvalID to the return. TFS 17030 - 04/20/2020
 -- Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 -- Modified to add QN Eval Summary. TFS 22187 - 08/13/2021
+-- Modified to add add static text. TFS 26536 - 05/03/2023
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log_Quality_Now] @intLogId BIGINT
 AS
@@ -63,9 +55,10 @@ BEGIN
 		,qne.[Personality_Flexing] [Personality Flexing]
 		,qne.[Personality_Flexing_Comment]  [Personality Flexing Comments]
 		,qne.[Customer_Temp_Start] [Start Temperature]
-		,qne.[Customer_Temp_Start_Comment] [Start Temperature Comments]
+		 ,qne.[Customer_Temp_Start_Comment] [Start Temperature Comments]
 		,qne.[Customer_Temp_End] [End Temperature]
 		,qne.[Customer_Temp_End_Comment] [End Temperature Comments]
+		,[EC].[fn_strCoachingLogStatictext](@intLogId) [strStaticText]
 	FROM [EC].[Coaching_Log_Quality_Now_Evaluations] qne  WITH (NOLOCK) 
 		JOIN [EC].[Coaching_Log] cl  WITH (NOLOCK) ON qne.CoachingID = cl.CoachingID 
 		LEFT JOIN EC.Employee_Hierarchy sub  WITH (NOLOCK) ON qne.Evaluator_ID = sub.Emp_ID

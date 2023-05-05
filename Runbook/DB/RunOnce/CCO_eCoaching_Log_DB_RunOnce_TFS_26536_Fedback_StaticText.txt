@@ -1,0 +1,50 @@
+/*
+TFS 26536 - Adding a link on the Quality Now eCLs to the Quality Now Feedback Form
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+--select * from [EC].[Coaching_Log_StaticText]
+Summary
+
+1. Add Record to [EC].[Coaching_Log_StaticText]
+
+*/
+
+-- Details
+--1. Add Record to [EC].[Coaching_Log_StaticText]
+
+INSERT INTO [EC].[Coaching_Log_StaticText]
+           ([TextID]
+           ,[TextDescription]
+           ,[Active]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+           ,[Training]
+           ,[StartDate]
+           ,[EndDate])
+     VALUES
+           (102
+           ,'There is no appeal process for Quality Now, but <a href=''https://maximus365.sharepoint.com/sites/CCO/Support/QA-OPS/Leads/Lists/Quality_NOW_Feedback/NewForm.aspx?Source=https%3a%2f%2fmaximus365.sharepoint.com%2fsites%2fCCO%2fSupport%2fQA-OPS%2fLeads%2fLists%2fQuality_NOW_Feedback%2fMy_Items.aspx%3fviewid%3d9bec3890%252D53e3%252D40f9%252D8dc6%252Df8400e9a4f4d%26OR%3dTeams%252DHL%26CT%3d1681396370842%26clickparams%3deyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiIyNy8yMzAzMDUwMTExMCIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%253D%253D&ContentTypeId=0x0100E3688E643B7C874CAD85E7C0C4441EFE&RootFolder=%2fsites%2fCCO%2fSupport%2fQA-OPS%2fLeads%2fLists%2fQuality_NOW_Feedback''target=''_blank''>feedback</a> for the Quality Team concerning this batch is welcomed. Please see SOP QA 33.0 for additional guidance. '
+	   ,1
+           ,57
+           ,42
+           ,1
+           ,0
+           ,0
+           ,0
+           ,0
+           ,20230501
+           ,99991231)
+GO
+
+
+--**********************
