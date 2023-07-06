@@ -48,6 +48,10 @@
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ReportViewer.2012.Runtime.11.0.3452.0\lib\Microsoft.ReportViewer.Common.dll</HintPath>
       <Private>True</Private>
@@ -58,6 +62,10 @@
     </Reference>
     <Reference Include="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ReportViewer.2012.Runtime.11.0.3452.0\lib\Microsoft.ReportViewer.WebForms.DLL</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ReportViewerForMvc, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -153,6 +161,10 @@
     <Folder Include="Views\EmployeeLogBase\" />
     <Folder Include="Views\Help\" />
     <Folder Include="Views\Home\" />
+    <Folder Include="Views\ReportCoaching\" />
+    <Folder Include="Views\ReportEmployeeHierarchy\" />
+    <Folder Include="Views\ReportQnCoaching\" />
+    <Folder Include="Views\ReportWarning\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\EclBundleOrderer.cs" />
@@ -161,7 +173,13 @@
     <Compile Include="Controllers\EmployeeLogBaseController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
+    <Compile Include="Controllers\ReportAdminActivityController.cs" />
+    <Compile Include="Controllers\ReportBaseController.cs" />
+    <Compile Include="Controllers\ReportCoachingController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\ReportEmployeeHierarchyController.cs" />
+    <Compile Include="Controllers\ReportQnCoachingController.cs" />
+    <Compile Include="Controllers\ReportWarningController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Extensions\EclExtensionMethods.cs" />
     <Compile Include="Extensions\EclHtmlHelper.cs" />
@@ -170,13 +188,16 @@
     <Compile Include="Filters\EclExceptionAttribute.cs" />
     <Compile Include="Filters\SessionCheckAttribute.cs" />
     <Compile Include="Models\Email.cs" />
+    <Compile Include="Models\EmployeeLog\Action.cs" />
     <Compile Include="Models\EmployeeLog\CoachingLogDetail.cs" />
     <Compile Include="Models\EmployeeLog\LogDetailBase.cs" />
     <Compile Include="Models\EmployeeLog\Module.cs" />
     <Compile Include="Models\EmployeeLog\Reason.cs" />
+    <Compile Include="Models\EmployeeLog\Startup1.cs" />
     <Compile Include="Models\EmployeeLog\Status.cs" />
     <Compile Include="Models\EmployeeLog\Type.cs" />
     <Compile Include="Models\EmployeeLog\WarningLogDetail.cs" />
+    <Compile Include="Models\Report\AdminActivity.cs" />
     <Compile Include="Models\Report\ReportInfo.cs" />
     <Compile Include="Models\Site.cs" />
     <Compile Include="Models\User\eCoachingAccessControl.cs" />
@@ -204,23 +225,28 @@
     </Compile>
     <Compile Include="Repository\EmailRepository.cs" />
     <Compile Include="Repository\IEmailRepository.cs" />
+    <Compile Include="Repository\IReportRepository.cs" />
     <Compile Include="Repository\ISiteRepository.cs" />
     <Compile Include="Repository\IStaticDataRepository.cs" />
     <Compile Include="Repository\IUserRepository.cs" />
+    <Compile Include="Repository\ReportRepository.cs" />
     <Compile Include="Repository\SiteRepository.cs" />
     <Compile Include="Repository\StaticDataRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\IEmailService.cs" />
+    <Compile Include="Services\IReportService.cs" />
     <Compile Include="Services\ISiteService.cs" />
     <Compile Include="Services\IStaticDataService.cs" />
     <Compile Include="Services\IUserService.cs" />
+    <Compile Include="Services\ReportService.cs" />
     <Compile Include="Services\SiteService.cs" />
     <Compile Include="Services\StaticDataService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Utilities\EclAdminUtil.cs" />
     <Compile Include="Utilities\EmailUtil.cs" />
     <Compile Include="Utilities\FileUtil.cs" />
+    <Compile Include="ViewModels\ReportBaseViewModel.cs" />
     <Compile Include="ViewModels\eCoachingAccessControlAddViewModel.cs" />
     <Compile Include="ViewModels\eCoachingAccessControlViewModel.cs" />
     <Compile Include="ViewModels\EmployeeLogSelectEditorViewModel.cs" />
@@ -235,6 +261,7 @@
     <Compile Include="Services\EmployeeService.cs" />
     <Compile Include="Services\IEmployeeLogService.cs" />
     <Compile Include="Services\IEmployeeService.cs" />
+    <Compile Include="ViewModels\Reports\AdminActivitySearchViewModel.cs" />
     <Compile Include="ViewModels\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +361,9 @@
     <Content Include="Views\User\_EditEcoachingAccessControl.cshtml" />
     <Content Include="Views\EmployeeLog\_SearchByLogName.cshtml" />
     <Content Include="Views\EmployeeLog\_SearchOption.cshtml" />
+    <Content Include="Views\ReportAdminActivity\Index.cshtml" />
+    <Content Include="Views\ReportAdminActivity\_Search.cshtml" />
+    <Content Include="Views\ReportAdminActivity\_Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

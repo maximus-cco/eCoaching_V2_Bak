@@ -33,6 +33,8 @@ namespace eCLAdmin
 		public const string LOG_ACTION_REASSIGN = "Reassign";
 		public const string LOG_ACTION_REACTIVATE = "Reactivate";
 
+        public const string ACTION_REPORT = "Report";
+
 		public const string EMAIL_SUBJECT_REACTIVATION = "eCoaching Log(s) Reactivated";
 		public const string EMAIL_SUBJECT_REASSIGNMENT = "eCoaching Log(s) Reassigned";
 		public const string EMAIL_FROM = "ecl.admin@maximus.com";

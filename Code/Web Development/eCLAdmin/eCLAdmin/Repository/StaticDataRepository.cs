@@ -9,7 +9,7 @@ namespace eCLAdmin.Repository
 {
     public class StaticDataRepository : IStaticDataRepository
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(EmployeeRepository));
+        readonly ILog logger = LogManager.GetLogger(typeof(StaticDataRepository));
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
         public string Get(string key)

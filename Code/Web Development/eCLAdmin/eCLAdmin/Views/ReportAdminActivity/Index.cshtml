@@ -1,0 +1,19 @@
+﻿<div class="page-header">
+    <h3>Admin Activity Summary</h3>
+</div>
+<div id="div-admin-activity-index">
+    <div id="div-search">
+        @{ Html.RenderPartial("_Search"); }
+    </div>
+
+    <br />
+    <br />
+    <div id="div-report"></div>
+</div>
+<script>
+    var generateReportUrl = '@Url.Action("Index", "ReportAdminActivity")';
+</script>
+
+
+
+

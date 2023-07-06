@@ -12,7 +12,6 @@ namespace eCLAdmin.Repository
     public class EmployeeLogRepository : IEmployeeLogRepository
     {
         readonly ILog logger = LogManager.GetLogger(typeof(EmployeeLogRepository));
-
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
         public List<Module> GetModules(string userLanId, int logTypeId)

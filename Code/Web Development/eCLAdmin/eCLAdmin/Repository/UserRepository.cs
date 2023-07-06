@@ -12,8 +12,6 @@ namespace eCLAdmin.Repository
         readonly ILog logger = LogManager.GetLogger(typeof(UserRepository));
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
-
-
         public List<User> GetAllUsers()
         {
             List<User> users = new List<User>();

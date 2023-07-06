@@ -25,7 +25,8 @@ namespace eCLAdmin
 						"~/Scripts/dataTables.bootstrap.js",
                         "~/Scripts/respond.js",
                         "~/Scripts/raphael.js",
-                        "~/Scripts/eCLAdmin/layout.js");
+                        "~/Scripts/eCLAdmin/layout.js",
+                        "~/Scripts/eCLAdmin/dateTimePicker.js");
             bundles.Add(scriptBundle);
 
             // javascript bundle for 'log search for delete'

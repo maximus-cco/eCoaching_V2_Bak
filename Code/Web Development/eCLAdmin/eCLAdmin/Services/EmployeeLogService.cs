@@ -30,13 +30,19 @@ namespace eCLAdmin.Services
             List<Models.EmployeeLog.Type> types = new List<Models.EmployeeLog.Type>();
             List<Entitlement> entitlements = user.Entitlements;
 
+            // report - return both Coaching and Warning
+            if (Constants.ACTION_REPORT.Equals(action))
+            {
+                types.Add(new Models.EmployeeLog.Type((int)EmployeeLogType.Coaching, EmployeeLogType.Coaching.ToDescription()));
+                types.Add(new Models.EmployeeLog.Type((int)EmployeeLogType.Warning, EmployeeLogType.Warning.ToDescription()));
+
+                return types;
+            }
+
             // reassign - only return coaching
             if (Constants.LOG_ACTION_REASSIGN.Equals(action))
             {
-                Models.EmployeeLog.Type type = new Models.EmployeeLog.Type();
-                type.Id = (int)EmployeeLogType.Coaching;
-                type.Description = EmployeeLogType.Coaching.ToDescription();
-                types.Add(type);
+                types.Add(new Models.EmployeeLog.Type((int)EmployeeLogType.Coaching, EmployeeLogType.Coaching.ToDescription()));
 
                 return types;
             }
@@ -47,18 +53,12 @@ namespace eCLAdmin.Services
                 {
                     if (entitlement.Name.Equals(Constants.ENTITLEMENT_REACTIVATE_COACHING_LOGS))
                     {
-                        Models.EmployeeLog.Type type = new Models.EmployeeLog.Type();
-                        type.Id = (int)EmployeeLogType.Coaching;
-                        type.Description = EmployeeLogType.Coaching.ToDescription();
-                        types.Add(type);
+                        types.Add(new Models.EmployeeLog.Type((int)EmployeeLogType.Coaching, EmployeeLogType.Coaching.ToDescription()));
                     }
 
                     if (entitlement.Name.Equals(Constants.ENTITLEMENT_REACTIVATE_WARNING_LOGS))
                     {
-                        Models.EmployeeLog.Type type = new Models.EmployeeLog.Type();
-                        type.Id = (int)EmployeeLogType.Warning;
-                        type.Description = EmployeeLogType.Warning.ToDescription();
-                        types.Add(type);
+                        types.Add(new Models.EmployeeLog.Type((int)EmployeeLogType.Warning, EmployeeLogType.Warning.ToDescription()));
                     }
 
                     continue;
@@ -66,18 +66,12 @@ namespace eCLAdmin.Services
 
                 if (entitlement.Name.Equals(Constants.ENTITLEMENT_MANAGE_COACHING_LOGS))
                 {
-                    Models.EmployeeLog.Type type = new Models.EmployeeLog.Type();
-                    type.Id = (int)EmployeeLogType.Coaching;
-                    type.Description = EmployeeLogType.Coaching.ToDescription();
-                    types.Add(type);
+                    types.Add(new Models.EmployeeLog.Type((int)EmployeeLogType.Coaching, EmployeeLogType.Coaching.ToDescription()));
                 }
 
                 if (entitlement.Name.Equals(Constants.ENTITLEMENT_MANAGE_WARNING_LOGS))
                 {
-                    Models.EmployeeLog.Type type = new Models.EmployeeLog.Type();
-                    type.Id = (int)EmployeeLogType.Warning;
-                    type.Description = EmployeeLogType.Warning.ToDescription();
-                    types.Add(type);
+                    types.Add(new Models.EmployeeLog.Type((int)EmployeeLogType.Warning, EmployeeLogType.Warning.ToDescription()));
                 }
             }
             

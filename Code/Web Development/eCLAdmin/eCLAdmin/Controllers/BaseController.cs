@@ -2,6 +2,7 @@
 using eCLAdmin.Services;
 using log4net;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
@@ -11,8 +12,17 @@ namespace eCLAdmin.Controllers
     public class BaseController : Controller
     {
         readonly ILog logger = LogManager.GetLogger(typeof(BaseController));
+        protected readonly IEmployeeLogService employeeLogService;
 
-		protected bool ShowMaintenancePage()
+        public BaseController() { }
+
+        public BaseController(IEmployeeLogService employeeLogService)
+        {
+            logger.Debug("Entered BaseController(IEmployeeLogService)");
+            this.employeeLogService = employeeLogService;
+        }
+
+        protected bool ShowMaintenancePage()
 		{
 			// Check if under maintenance
 			var maintenancePage = System.Web.Hosting.HostingEnvironment.MapPath(Constants.MAINTENANCE_PAGE);
@@ -49,5 +59,21 @@ namespace eCLAdmin.Controllers
             IUserService userService = new UserService();
             return userService.UserIsEntitled(user, entitlement);
         }
+
+        protected IEnumerable<SelectListItem> GetTypes(string action, bool includeAll)
+        {
+            User user = GetUserFromSession();
+            List<Models.EmployeeLog.Type> typeList = employeeLogService.GetTypes(user, action);
+            if (includeAll)
+            {
+                typeList.Insert(0, new Models.EmployeeLog.Type { Id = -1, Description = "All" });
+            }
+            typeList.Insert(0, new Models.EmployeeLog.Type { Id = -2, Description = "Select Log Type" });
+            IEnumerable<SelectListItem> types = new SelectList(typeList, "Id", "Description");
+
+            return types;
+        }
+
+
     }
 }

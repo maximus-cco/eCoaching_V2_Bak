@@ -2,8 +2,9 @@
     ViewBag.Title = "Manage Employee Logs";
 }
 
-<h3>@ViewBag.SubTitle</h3>
-<br />
+<div class="page-header">
+    <h3>@ViewBag.SubTitle</h3>
+</div>
 
 <!-- Search Form -->
 @using (Ajax.BeginForm("SearchForReactivate", "EmployeeLog", FormMethod.Post,

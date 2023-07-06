@@ -3,6 +3,7 @@ using eCLAdmin.ViewModels;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace eCLAdmin.Utilities
 {
@@ -33,17 +34,26 @@ namespace eCLAdmin.Utilities
 
         public static string GetLogTypeNameById(int logTypeId)
         {
-            string logType = null;
+            if (logTypeId == -1)
+            {
+                return "All";
+            }
 
-            // Set log type
-            if (logTypeId == (int)EmployeeLogType.Coaching)
+            if (logTypeId == -2)
             {
-                logType = EmployeeLogType.Coaching.ToDescription();
+                return "";
             }
-            else if (logTypeId == (int)EmployeeLogType.Warning)
-            {
-                logType = EmployeeLogType.Warning.ToDescription();
-            }
+
+            string logType = null;
+            var typeList = Enum.GetValues(typeof(EmployeeLogType))
+               .Cast<EmployeeLogType>()
+               .Select(t => new eCLAdmin.Models.EmployeeLog.Type
+               {
+                   Id = ((int)t),
+                   Description = t.ToString()
+               });
+
+            logType = typeList.Where(x => x.Id == logTypeId).Select(y => y.Description).First();
 
             return logType;
         }

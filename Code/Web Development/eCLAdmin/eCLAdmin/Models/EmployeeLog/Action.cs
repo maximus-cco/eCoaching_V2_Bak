@@ -1,12 +1,12 @@
 ﻿namespace eCLAdmin.Models.EmployeeLog
 {
-    public class Type
+    public class Action
     {
         public int Id { get; set; }
         public string Description { get; set; }
 
-        public Type() { }
-        public Type(int id, string description)
+        public Action() { }
+        public Action(int id, string description)
         {
             Id = id;
             Description = description;

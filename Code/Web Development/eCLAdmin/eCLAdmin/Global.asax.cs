@@ -44,6 +44,8 @@ namespace eCLAdmin
             container.Register<IStaticDataService, StaticDataService>(Lifestyle.Scoped);
             container.Register<IStaticDataRepository, StaticDataRepository>(Lifestyle.Scoped);
             container.Register<IEmailRepository, EmailRepository>(Lifestyle.Scoped);
+            container.Register<IReportService, ReportService>(Lifestyle.Scoped);
+            container.Register<IReportRepository, ReportRepository>(Lifestyle.Scoped);
 
             // 3. Optionally verify the container's configuration
             container.Verify();

@@ -83,7 +83,7 @@
                                 @if (ViewContext.Controller.IsEntitled("Report-RunHierarchySummary"))
                                 {
                                     <li role="presentation" class="divider"></li>
-                                    <li>@Html.ActionLink(Constants.ADMIN_ACTIVITY_REPORT_DESCRIPTION, "RunAdminActivitySummary", "Report")</li>
+                                    <li>@Html.ActionLink(Constants.ADMIN_ACTIVITY_REPORT_DESCRIPTION, "Index", "ReportAdminActivity")</li>
                                 }
                             </ul>
                         </li>
@@ -125,7 +125,7 @@
         </div>
     </div>
     
-    <div class="container body-content" id="div-body">
+    <div class="body-content" id="div-body">
         @RenderBody()
     </div>
 

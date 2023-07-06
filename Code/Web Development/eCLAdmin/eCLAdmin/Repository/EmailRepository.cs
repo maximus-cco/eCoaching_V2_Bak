@@ -9,7 +9,7 @@ namespace eCLAdmin.Repository
 {
     public class EmailRepository : IEmailRepository
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(EmployeeRepository));
+        readonly ILog logger = LogManager.GetLogger(typeof(EmailRepository));
         string connStr = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
         public void Store(List<Email> mailList, string mailSource, string userId)

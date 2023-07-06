@@ -42,6 +42,11 @@ namespace eCLAdmin.Extensions
             return retVal;
         }
 
+        public static SqlParameter AddWithValueSafe(this SqlParameterCollection parameters, string parameterName, object value)
+        {
+            return parameters.AddWithValue(parameterName, value ?? DBNull.Value);
+        }
+
         public static SqlParameter AddIdsTableType(this SqlParameterCollection target, string name, List<long> values)
         {
             DataTable dataTable = new DataTable();
@@ -127,6 +132,18 @@ namespace eCLAdmin.Extensions
                               Text = site.Name,
                               Value = site.Id
                           });
+        }
+
+        public static IDictionary<string, string> GetErrors(this ModelStateDictionary msDictionary)
+        {
+            var errors = new Dictionary<string, string>();
+
+            errors = msDictionary.Where(x => x.Value.Errors.Count > 0).ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).FirstOrDefault()
+                );
+
+            return errors;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿$(function () {
 	// date picker
-	$('.date').datetimepicker({
+	$('.mydate').datetimepicker({
 		allowInputToggle: true,
 		format: 'MM/DD/YYYY',
 		maxDate: 'now'

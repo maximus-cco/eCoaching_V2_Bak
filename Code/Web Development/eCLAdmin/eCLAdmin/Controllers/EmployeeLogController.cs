@@ -44,7 +44,7 @@ namespace eCLAdmin.Controllers
 
             ViewBag.SubTitle = "Inactivate Employee Logs";
             // Employee log types - coaching or warning
-            ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_INACTIVATE);
+            ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_INACTIVATE, false);
             // Empty module list
             ViewBag.Modules = GetEmptyModuleList();
             // Empty employee list
@@ -108,7 +108,7 @@ namespace eCLAdmin.Controllers
             ViewBag.SubTitle = "Reassign Employee Logs";
             ViewBag.Modules = GetModules(Constants.MODULE_UNKNOWN);
 
-            ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REASSIGN);
+            ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REASSIGN, false);
 
             List<Status> statusList = new List<Status>();
             statusList.Insert(0, new Status { Id = -1, Description = "Please select a status" });
@@ -207,7 +207,7 @@ namespace eCLAdmin.Controllers
             // Empty module list
             ViewBag.Modules = GetEmptyModuleList();
             // Employee log types - coaching or warning
-            ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REACTIVATE);
+            ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REACTIVATE, false);
             // Empty employee list
             List<Employee> employeeList = new List<Employee>();
             employeeList.Insert(0, new Employee { Id = "-1", Name = "Please select an employee" });
@@ -301,17 +301,6 @@ namespace eCLAdmin.Controllers
         {
             IEnumerable<SelectListItem> modules = GetModules(logTypeId);
             return Json(new SelectList(modules, "Value", "Text"));
-        }
-
-        // Get employee log types (coaching or warning)
-        private IEnumerable<SelectListItem> GetTypes(string action)
-        {
-            User user = GetUserFromSession();
-            List<Models.EmployeeLog.Type> typeList = employeeLogService.GetTypes(user, action);
-            typeList.Insert(0, new Models.EmployeeLog.Type { Id = -1, Description = "Please select a type" });
-            IEnumerable<SelectListItem> types = new SelectList(typeList, "Id", "Description");
-
-            return types;
         }
 
         // Get employees based on log type (coaching or warning), module (csr, training, ...), and action (inactivate or reactivate)
