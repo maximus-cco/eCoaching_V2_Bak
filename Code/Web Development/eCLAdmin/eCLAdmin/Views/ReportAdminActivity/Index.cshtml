@@ -1,18 +1,28 @@
 ﻿<div class="page-header">
     <h3>Admin Activity Summary</h3>
 </div>
-<div id="div-admin-activity-index">
-    <div id="div-search">
-        @{ Html.RenderPartial("_Search"); }
-    </div>
 
-    <br />
-    <br />
-    <div id="div-report"></div>
+<div id="div-search" style="margin-bottom: 20px;">
+    @{ Html.RenderPartial("_Search"); }
 </div>
-<script>
-    var generateReportUrl = '@Url.Action("Index", "ReportAdminActivity")';
-</script>
+
+<div class="hide" id="div-export-to-excel" style="margin-bottom: 5px;">
+    <button class="btn btn-success btn-sm" type="button" id="btn-export-excel">Export to Excel</button>
+</div>
+
+<div class="hide" id="div-report-header" style="font-size: 0.8em; margin-bottom: 5px;">
+    <u>
+        <strong>Start Date:</strong> <span id="StartDateTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>End Date:</strong> <span id="EndDateTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>Log Type:</strong> <span id="LogTypeTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>Action:</strong> <span id="ActionTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>Log Name:</strong> <span id="LogNameTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>Free Text Search:</strong> <span id="FreeText" class="text-primary"></span>
+    </u>
+    <p class="pull-right"><strong>Total Records Found:</strong><span id="TotalRecordsTxt" class="text-success" style="font-size: 1.5em;"></span></p> 
+</div>
+
+<div id="div-report"></div>
 
 
 

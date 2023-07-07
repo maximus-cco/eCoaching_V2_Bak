@@ -33,9 +33,12 @@
 <script>
 
     $(document).ready(function () {
+        $("#StartDate").change(function () {
+            alert('Input Value Changed!');
+        });
+
         $("#select-type").on("change", function () {
             $('#select-action').addClass('loadinggif')
-
             var logTypeSelected = $(this).val();
             $.ajax({
                 type: 'POST',
@@ -60,7 +63,6 @@
 
         $('#select-action').on('change', function () {
             $('#select-log').addClass('loadinggif')
-
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("GetLogNames")',
@@ -89,7 +91,7 @@
 
         $('#btn-generate-report').on('click', function (e) {
             e.preventDefault();
-
+            
             //if (!validate()) {
             //    return;
             //}
@@ -103,18 +105,14 @@
                     data: $('#form-search-activity').serialize(),
                     success: function (data) {
                         $('.required').css('border-color', '');
+                        resetReportDiv();
                         if (data.valid === false) {
                             $.each(data.validationErrors, function (key, value) {
                                 $('[name="' + key + '"').css('border-color', 'red');
                             });
-                            $('#div-report').html('');
                         } else {
-                            $('.required').css('border-color', '');
-                            $('#div-report').html(data);
+                             $('#div-report').html(data);
                         }
-                        /*$('#div-search-result').removeClass('hide');
-                        $('#div-search-result').addClass('show');
-                        $('#div-log-list').html(data);*/
                     }
                 }).always(function () {
                        $(".please-wait").slideUp(500);
@@ -152,6 +150,18 @@
             }
 
             return valid;
+        }
+
+        function resetReportDiv()
+        {
+            // hide search inputs
+            $('#div-report-header').removeClass('show');
+            $('#div-report-header').addClass('hide');
+            // hide export to excel link
+            $('#div-export-to-excel').removeClass('show');
+            $('#div-export-to-excel').addClass('hide');
+            // clean up report
+            $('#div-report').html('');
         }
 
     });

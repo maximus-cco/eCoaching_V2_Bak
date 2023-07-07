@@ -26,7 +26,7 @@ namespace eCLAdmin.ViewModels
             this.LogTypeSelectList = new List<SelectListItem>();
             this.ActionSelectList = new List<SelectListItem>();
             this.LogNameSelectList = new List<SelectListItem>();
-            this.PageSize = 25;
+            this.PageSize = 100;
         } 
     }
 }

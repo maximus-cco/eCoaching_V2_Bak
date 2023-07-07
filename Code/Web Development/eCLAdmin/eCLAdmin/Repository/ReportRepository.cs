@@ -100,7 +100,7 @@ namespace eCLAdmin.Repository
             int pageSize, int rowStartIndex, out int totalRows)
         {
             var activityList = new List<AdminActivity>();
-            totalRows = -1;
+            totalRows = 0;
             using (SqlConnection connection = new SqlConnection(connectionStr))
             using (SqlCommand command = new SqlCommand("[EC].[a_Lili_sp_rptAdminActivitySummary]", connection))
             {
