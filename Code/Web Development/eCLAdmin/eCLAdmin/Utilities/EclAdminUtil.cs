@@ -1,8 +1,10 @@
-﻿using eCLAdmin.Extensions;
-using eCLAdmin.ViewModels;
+﻿using eCLAdmin.ViewModels;
 using log4net;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 
 namespace eCLAdmin.Utilities
@@ -67,5 +69,36 @@ namespace eCLAdmin.Utilities
 
             return str + " PDT";
         }
+
+        public static MemoryStream GenerateExcelFile(DataSet dataSet, List<string> sheetNames)
+        {
+            ExcelPackage excelPackage;
+            MemoryStream memoryStream = new MemoryStream();
+            using (excelPackage = new ExcelPackage())
+            {
+                // Create sheet for each table contained in the dataset
+                for (var i = 0; i < dataSet.Tables.Count; i++)
+                {
+                    var sheetName = i < sheetNames.Count ? sheetNames[i] : "Sheet" + i;
+                    var ws = excelPackage.Workbook.Worksheets.Add(sheetName);
+                    var dataTable = dataSet.Tables[i];
+                    dataTable.Columns.Remove("RowNumber");
+                    dataTable.Columns.Remove("TotalRows");
+                    // Set date columns format				
+                    for (var j = 0; j < dataTable.Columns.Count; j++)
+                    {
+                        if (dataTable.Columns[j].DataType.Name.Equals("DateTime"))
+                        {
+                            ws.Column(j + 1).Style.Numberformat.Format = "yyyy-mm-dd hh:mm";
+                        } // end if
+                    } // end j
+                    ws.Cells["A1"].LoadFromDataTable(dataTable, true);
+                } // end i
+
+                excelPackage.SaveAs(memoryStream);
+            }
+            return memoryStream;
+        }
+
     }
 }

@@ -8,6 +8,8 @@ using System;
 using eCLAdmin.Models.User;
 using System.Collections.Generic;
 using eCLAdmin.Models.Report;
+using System.IO;
+using eCLAdmin.Utilities;
 
 namespace eCLAdmin.Controllers
 {
@@ -79,6 +81,60 @@ namespace eCLAdmin.Controllers
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult ExportToExcel(AdminActivitySearchViewModel vm)
+        {
+            logger.Debug("################ type=" + vm.SelectedTypeId + ", action=" + vm.SelectedAction + ", log=" + vm.SelectedLog);
+            if (!ModelState.IsValid)
+            {
+                return Json(new { valid = false, validationErrors = ModelState.GetErrors() });
+            }
+
+            try
+            {
+                var dataSet = reportService.GetActivityList(EclAdminUtil.GetLogTypeNameById(vm.SelectedTypeId),
+                        vm.SelectedAction, vm.SelectedLog, vm.StartDate, vm.EndDate, vm.FreeTextSearch);
+                MemoryStream ms = EclAdminUtil.GenerateExcelFile(dataSet, Constants.EXCEL_SHEET_NAMES);
+                Session["fileName"] = "AdminActivitySummary_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
+                Session["fileStream"] = ms;
+                return Json(new { result = "success" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                logger.Warn("Exception ExportToExcel: " + ex.Message);
+                return Json(new { result = "fail" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        // Download the generated excel file
+        public void Download()
+        {
+            string fileName = (string)Session["fileName"];
+            try
+            {
+                MemoryStream memoryStream = (MemoryStream)Session["fileStream"];
+                Response.Clear();
+                Response.Buffer = true;
+                Response.Charset = "UTF-8";
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                // Give user option to open or save the excel file
+                Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
+                memoryStream.WriteTo(Response.OutputStream);
+                Response.Flush();
+                Response.End();
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(string.Format("Failed to download excel file: {0}", fileName));
+                logger.Warn(string.Format("Exception message: {0}", ex.Message));
+            }
+            finally
+            {
+                // Clean up Session["fileStream"]
+                Session.Contents.Remove("fileStream");
             }
         }
     }

@@ -158,5 +158,38 @@ namespace eCLAdmin.Repository
 
             return activityList;
         }
+
+        public DataSet GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName)
+        {
+            DataSet dt = new DataSet();
+            using (SqlConnection connection = new SqlConnection(connectionStr))
+            using (SqlCommand command = new SqlCommand("[EC].[a_Lili_sp_rptAdminActivitySummary]", connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandTimeout = 300;
+                command.Parameters.AddWithValueSafe("@strTypein", logType);
+                command.Parameters.AddWithValueSafe("@strActivityin", action);
+                command.Parameters.AddWithValueSafe("@strFormin", logName);
+                command.Parameters.AddWithValueSafe("@strSearchin", logOrEmpName);
+                command.Parameters.AddWithValueSafe("@strSDatein", startDate);
+                command.Parameters.AddWithValueSafe("@strEDatein", endDate);
+                command.Parameters.AddWithValueSafe("@PageSize", Int32.MaxValue - 1);
+                command.Parameters.AddWithValueSafe("@startRowIndex", 1);
+                // output parameters
+                SqlParameter retCodeParam = command.Parameters.Add("@returnCode", SqlDbType.Int);
+                retCodeParam.Direction = ParameterDirection.Output;
+                SqlParameter retMsgParam = command.Parameters.Add("@returnMessage", SqlDbType.VarChar, 250);
+                retMsgParam.Direction = ParameterDirection.Output;
+
+                connection.Open();
+
+                using (SqlDataAdapter sda = new SqlDataAdapter(command))
+                {
+                    sda.Fill(dt);
+                }
+            }
+            return dt;
+        }
+
     }
 }

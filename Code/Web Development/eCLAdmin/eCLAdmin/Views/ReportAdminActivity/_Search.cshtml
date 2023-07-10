@@ -28,14 +28,8 @@
     <button type="button" class="btn btn-primary ml-1" id="btn-generate-report">Generate Report</button> 
 </form>
 
-<script src="@Url.Content("~/Scripts/eCLAdmin/dateTimePicker.js")"></script>
-
 <script>
-
     $(document).ready(function () {
-        $("#StartDate").change(function () {
-            alert('Input Value Changed!');
-        });
 
         $("#select-type").on("change", function () {
             $('#select-action').addClass('loadinggif')
@@ -92,9 +86,9 @@
         $('#btn-generate-report').on('click', function (e) {
             e.preventDefault();
             
-            //if (!validate()) {
-            //    return;
-            //}
+            if (!validate()) {
+                return;
+            }
 
             if (e.handled !== true) {
                 e.handled = true;
@@ -119,51 +113,48 @@
                    }) // end always
             } // end if e.handled
         });
-
-        function validate() {
-            var valid = true;
-            var startDate = $('#input-start-date').val();
-            var endDate = $('#input-end-date').val();
-            var typeSelected = $('#select-type').val();
-            var actionSelected = $('#select-action').val();
-            var logSelected = $('#select-log').val();
-
-            if (startDate == '') {
-                $('#input-start-date').css('border-color', 'red');
-                valid = false;
-            }
-            if (endDate == '') {
-                $('#input-end-date').css('border-color', 'red');
-                valid = false;
-            }
-            if (typeSelected == -2) {
-                $('#select-type').css('border-color', 'red');
-                valid = false;
-            }
-            if (actionSelected == 'Select Action') {
-                $('#select-action').css('border-color', 'red');
-                valid = false;
-            }
-            if (logSelected == 'Select Log') {
-                $('#select-log').css('border-color', 'red');
-                valid = false;
-            }
-
-            return valid;
-        }
-
-        function resetReportDiv()
-        {
-            // hide search inputs
-            $('#div-report-header').removeClass('show');
-            $('#div-report-header').addClass('hide');
-            // hide export to excel link
-            $('#div-export-to-excel').removeClass('show');
-            $('#div-export-to-excel').addClass('hide');
-            // clean up report
-            $('#div-report').html('');
-        }
-
     });
 
+    function validate() {
+        var valid = true;
+        var startDate = $('#input-start-date').val();
+        var endDate = $('#input-end-date').val();
+        var typeSelected = $('#select-type').val();
+        var actionSelected = $('#select-action').val();
+        var logSelected = $('#select-log').val();
+
+        if (startDate == '') {
+            $('#input-start-date').css('border-color', 'red');
+            valid = false;
+        }
+        if (endDate == '') {
+            $('#input-end-date').css('border-color', 'red');
+            valid = false;
+        }
+        if (typeSelected == -2) {
+            $('#select-type').css('border-color', 'red');
+            valid = false;
+        }
+        if (actionSelected == 'Select Action') {
+            $('#select-action').css('border-color', 'red');
+            valid = false;
+        }
+        if (logSelected == 'Select Log') {
+            $('#select-log').css('border-color', 'red');
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function resetReportDiv() {
+        // hide search inputs
+        $('#div-report-header').removeClass('show');
+        $('#div-report-header').addClass('hide');
+        // hide export to excel link
+        $('#div-export-to-excel').removeClass('show');
+        $('#div-export-to-excel').addClass('hide');
+        // clean up report
+        $('#div-report').html('');
+    }
 </script>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace eCLAdmin
 {
@@ -77,7 +78,10 @@ namespace eCLAdmin
 		public const int DUPLICATE_RECORD = -2627;
 		// End date 
 		public const string ECOACHING_ACCESS_END_DATE = "99991231";
-	}
+
+        public static readonly List<string> EXCEL_SHEET_NAMES =
+                new List<string>() { "sheet1" };
+            }
 
 	public enum EmployeeLogType
 	{

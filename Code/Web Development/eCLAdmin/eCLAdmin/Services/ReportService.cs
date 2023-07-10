@@ -3,7 +3,7 @@ using eCLAdmin.Repository;
 using eCLAdmin.Utilities;
 using log4net;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 
 namespace eCLAdmin.Services
 {
@@ -32,5 +32,13 @@ namespace eCLAdmin.Services
         {
             return this.rptRepository.GetActivityList(logType, action, logName, startDate, endDate, logOrEmpName, pageSize, rowStartIndex, out totalRows);
         }
+
+        public DataSet GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName)
+        {
+            var dataSet = this.rptRepository.GetActivityList(logType, action, logName, startDate, endDate, logOrEmpName);
+
+            return dataSet;
+        }
+
     }
 }
