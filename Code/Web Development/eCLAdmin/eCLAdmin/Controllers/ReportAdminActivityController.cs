@@ -5,7 +5,7 @@ using log4net;
 using System.Web.Mvc;
 using System.Linq;
 using System;
-using eCLAdmin.Models.User;
+
 using System.Collections.Generic;
 using eCLAdmin.Models.Report;
 using System.IO;
@@ -40,7 +40,6 @@ namespace eCLAdmin.Controllers
 
         public JsonResult GetActions(int logTypeId)
         {
-            //return Json(new SelectList(GetActions(logTypeId, false), "Value", "Text"));
             return Json(GetActions(logTypeId, false));
         }
 

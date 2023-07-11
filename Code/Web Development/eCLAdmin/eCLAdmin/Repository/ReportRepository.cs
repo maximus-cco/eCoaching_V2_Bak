@@ -137,9 +137,9 @@ namespace eCLAdmin.Repository
                         totalRows = (int)dataReader["TotalRows"];
 
                         var activity = new AdminActivity();
-                        activity.ModuleId = (int)dataReader["Module ID"];
+                        activity.ModuleId = (int)dataReader["Employee Level ID"];
                         activity.LogName = dataReader["Form Name"].ToString();
-                        activity.ModuleName = dataReader["Module Name"].ToString();
+                        activity.ModuleName = dataReader["Employee Level"].ToString();
                         activity.LastKnownStatus = dataReader["Last Known Status"].ToString();
                         activity.Action = dataReader["Action"].ToString();
                         activity.ActionDate = dataReader["Action Date"].ToString();
