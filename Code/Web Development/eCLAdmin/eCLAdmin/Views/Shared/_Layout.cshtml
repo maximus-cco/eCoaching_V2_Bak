@@ -78,9 +78,9 @@
                                 @if (ViewContext.Controller.IsEntitled("Report-RunHierarchySummary"))
                                 {
                                     <li role="presentation" class="divider"></li>
-                                    <li>@Html.ActionLink(Constants.HIERARCHY_SUMMARY_REPORT_DESCRIPTION, "RunHierarchySummary", "Report")</li>
+                                    <li>@Html.ActionLink(Constants.HIERARCHY_SUMMARY_REPORT_DESCRIPTION, "Index", "ReportEmployeeHierarchy")</li>
                                 }
-                                @if (ViewContext.Controller.IsEntitled("Report-RunHierarchySummary"))
+                                @if (ViewContext.Controller.IsEntitled("Report-RunAdminActivitySummary"))
                                 {
                                     <li role="presentation" class="divider"></li>
                                     <li>@Html.ActionLink(Constants.ADMIN_ACTIVITY_REPORT_DESCRIPTION, "Index", "ReportAdminActivity")</li>

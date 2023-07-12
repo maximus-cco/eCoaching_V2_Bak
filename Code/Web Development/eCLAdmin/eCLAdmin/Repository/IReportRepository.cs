@@ -8,8 +8,14 @@ namespace eCLAdmin.Repository
     {
         List<eCLAdmin.Models.EmployeeLog.Action> GetActions(string logType);
         List<string> GetLogNames(string logType, string action, string startDate, string endDate);
+        
+        // admin activity summary report
         List<AdminActivity> GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName,
             int pageSize, int rowStartIndex, out int totalRows);
         DataSet GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName);
+        
+        // employee hierarchy report
+        List<EmployeeHierarchy> GetEmployeeHierarchy(string site, string employeeId, int pageSize, int rowStartIndex, out int totalRows);
+        DataSet GetEmployeeHierarchy(string site, string employeeId);
     }
 }

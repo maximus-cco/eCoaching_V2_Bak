@@ -11,7 +11,12 @@ namespace eCLAdmin.Services
 
         // Admin Activity Report
         List<AdminActivity> GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName, int pageSize, int rowStartIndex, out int totalRows);
-        // Admin Activity Report - export to excel
+        // Export to excel
         DataSet GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName);
+
+        // Employee Hierarchy Report
+        List<EmployeeHierarchy> GetEmployeeHierarchy(string site, string employeeId, int pageSize, int rowStartIndex, out int totalRows);
+        // Export to excel
+        DataSet GetEmployeeHierarchy(string site, string employeeId);
     }
 }

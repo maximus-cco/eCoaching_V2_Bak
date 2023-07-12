@@ -48,5 +48,23 @@ namespace eCLAdmin.Services
 
             return reviewers;
         }
+
+        public List<Employee> GetEmployeesBySite(string site)
+        {
+            var employees = new List<Employee>();
+            if (site == "Select Site")
+            {
+                return employees;
+            }
+
+            employees = employeeRepository.GetEmployeesBySite(site);
+            if (employees.Count == 1 && employees[0].Id == "-1")
+            {
+                employees[0].Id = "No employee found";
+                employees[0].Name = "No employee found";
+            }
+
+            return employees;
+        }
     }
 }

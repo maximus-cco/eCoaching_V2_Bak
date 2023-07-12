@@ -36,7 +36,17 @@ namespace eCLAdmin.Services
         public DataSet GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName)
         {
             var dataSet = this.rptRepository.GetActivityList(logType, action, logName, startDate, endDate, logOrEmpName);
+            return dataSet;
+        }
 
+        public List<EmployeeHierarchy> GetEmployeeHierarchy(string site, string employeeId, int pageSize, int rowStartIndex, out int totalRows)
+        {
+            return this.rptRepository.GetEmployeeHierarchy(site, employeeId, pageSize, rowStartIndex, out totalRows);
+        }
+
+        public DataSet GetEmployeeHierarchy(string site, string employeeId)
+        {
+            var dataSet = this.rptRepository.GetEmployeeHierarchy(site, employeeId);
             return dataSet;
         }
 

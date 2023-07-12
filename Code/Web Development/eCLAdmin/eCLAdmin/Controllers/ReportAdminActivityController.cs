@@ -17,7 +17,7 @@ namespace eCLAdmin.Controllers
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public ReportAdminActivityController(IReportService reportService, IEmployeeLogService employeeLogService) : base(reportService, employeeLogService)
+        public ReportAdminActivityController(IReportService reportService, ISiteService siteService, IEmployeeLogService employeeLogService, IEmployeeService employeeService) : base(reportService, siteService, employeeLogService, employeeService)
         {
             logger.Debug("Entered ReportAdminActivityController(IReportService, IEmployeeLogService)");
         }
@@ -108,33 +108,5 @@ namespace eCLAdmin.Controllers
             }
         }
 
-        // Download the generated excel file
-        public void Download()
-        {
-            string fileName = (string)Session["fileName"];
-            try
-            {
-                MemoryStream memoryStream = (MemoryStream)Session["fileStream"];
-                Response.Clear();
-                Response.Buffer = true;
-                Response.Charset = "UTF-8";
-                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                // Give user option to open or save the excel file
-                Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
-                memoryStream.WriteTo(Response.OutputStream);
-                Response.Flush();
-                Response.End();
-            }
-            catch (Exception ex)
-            {
-                logger.Warn(string.Format("Failed to download excel file: {0}", fileName));
-                logger.Warn(string.Format("Exception message: {0}", ex.Message));
-            }
-            finally
-            {
-                // Clean up Session["fileStream"]
-                Session.Contents.Remove("fileStream");
-            }
-        }
     }
 }

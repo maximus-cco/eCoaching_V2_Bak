@@ -7,5 +7,6 @@ namespace eCLAdmin.Repository
     {
         List<Site> GetSites();
         List<Site> GetSites(string userId);
+        List<Site> GetSiteForHierarchyRpt();
     }
 }

@@ -1,17 +1,113 @@
-﻿using System;
+﻿using eCLAdmin.Extensions;
+using eCLAdmin.Models;
+using eCLAdmin.Models.Report;
+using eCLAdmin.Services;
+using eCLAdmin.Utilities;
+using eCLAdmin.ViewModels.Reports;
+using log4net;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
 {
-    public class ReportEmployeeHierarchyController : Controller
+    public class ReportEmployeeHierarchyController : ReportBaseController
     {
+        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public ReportEmployeeHierarchyController(IReportService reportService, IEmployeeLogService employeeLogService, IEmployeeService employeeService, ISiteService siteService) : base(reportService, siteService, employeeLogService, employeeService)
+        {
+            logger.Debug("Entered ReportEmployeeHierarchyController(IReportService, IEmployeeLogService, IEmployeeService, ISiteService)");
+        }
+
         // GET: ReportEmployeeHierarchy
         public ActionResult Index()
         {
-            return View();
+            return View(InitViewModel());
+        }
+
+        private EmployeeHierarchyViewModel InitViewModel()
+        {
+            var vm = new EmployeeHierarchyViewModel();
+            vm.SiteSelectList = GetSites();
+            vm.EmployeeSelectList = GetEmployeesBySite("Select Site");
+    
+            return vm;
+        }
+
+        private IEnumerable<SelectListItem> GetSites()
+        {
+            List<Site> siteList = siteService.GetSiteForHierarchyRpt();
+            siteList.Insert(0, new Site { Id = "Select Site", Name = "Select Site" });
+            IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name");
+
+            return sites;
+        }
+
+        public JsonResult GetEmployees(string site)
+        {
+            return Json(GetEmployeesBySite(site));
+        }
+
+        [HttpPost]
+        public ActionResult GenerateReport(EmployeeHierarchyViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                return PartialView("_Report", vm);
+            }
+
+            return Json(new { valid = false, validationErrors = ModelState.GetErrors() });
+        }
+
+        [HttpPost]
+        public ActionResult GetData(string siteName, string employeeId)
+        {
+            logger.Debug("Entered LoadData");
+
+            // Get Start (paging start index) and length (page size for paging)
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            int pageSize = length != null ? Convert.ToInt32(length) : 25;
+            int rowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
+            int totalRows = -1;
+            try
+            {
+                List<EmployeeHierarchy> employeeHierarchyList = this.reportService.GetEmployeeHierarchy(siteName, employeeId, pageSize, rowStartIndex, out totalRows);
+                return Json(new { draw = draw, recordsFiltered = totalRows, recordsTotal = totalRows, data = employeeHierarchyList }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.Message);
+                throw ex;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult ExportToExcel(EmployeeHierarchyViewModel vm)
+        {
+            logger.Debug("################ site=" + vm.SelectedSite + ", employee=" + vm.SelectedEmployee);
+            if (!ModelState.IsValid)
+            {
+                return Json(new { valid = false, validationErrors = ModelState.GetErrors() });
+            }
+
+            try
+            {
+                var dataSet = reportService.GetEmployeeHierarchy(vm.SelectedSite, vm.SelectedEmployee);
+                MemoryStream ms = EclAdminUtil.GenerateExcelFile(dataSet, Constants.EXCEL_SHEET_NAMES);
+                Session["fileName"] = "EmployeeHierarchySummary_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
+                Session["fileStream"] = ms;
+                return Json(new { result = "success" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                logger.Warn("Exception ExportToExcel: " + ex.Message);
+                return Json(new { result = "fail" }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

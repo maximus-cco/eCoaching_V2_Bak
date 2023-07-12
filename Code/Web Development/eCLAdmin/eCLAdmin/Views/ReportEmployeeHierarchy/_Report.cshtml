@@ -1,0 +1,111 @@
+﻿<table class="tables table-hover table-bordered" id="tbl-report" style="font-size: 0.8em; width:100%">
+    <thead>
+        <tr>
+            <th data-orderable="false">Employee ID</th>
+            <th data-orderable="false">Employee Name</th>
+            <th data-orderable="false">Site</th>
+            <th data-orderable="false">Employee Job Code </th>
+            <th data-orderable="false">Employee Job Description</th>
+            <th data-orderable="false">Program</th>
+            <th data-orderable="false">Supervisor Name</th>
+            <th data-orderable="false">Supervisor Employee ID </th>
+            <th data-orderable="false">Supervisor Job Code</th>
+            <th data-orderable="false">Supervisor Job Description</th>
+            <th data-orderable="false">Manager Employee ID</th>
+            <th data-orderable="false">Manager Name</th>
+            <th data-orderable="false">Manager Job Code</th>
+            <th data-orderable="false">Manager Job Description</th>
+            <th data-orderable="false">Start Date</th>
+            <th data-orderable="false">End Date</th>
+            <th data-orderable="false">Status</th>
+            <th data-orderable="false">Aspect Job Title</th>
+            <th data-orderable="false">Aspect Skill </th>
+            <th data-orderable="false">Aspect Status</th>
+        </tr>
+    </thead>
+</table>
+
+<script>
+    $(document).ready(function () {
+        var length = $('#PageSize').val();
+        $(".please-wait").slideDown(500);
+        var employeeHierarchyTbl = $('#tbl-report').DataTable({
+            //ordering: false,
+            renderer: "bootstrap",
+            autowidth: false,
+            language: {
+                processing: "<span>Loading...... Please wait...</span>",
+                emptyTable: "No data found."
+            },
+            processing: true,
+            serverSide: true,       // Process server side
+            filter: false,          // Disable filter (search box)
+            pageLength: length,
+            ajax: {
+                url: '@Url.Action("GetData")',
+                type: "POST",
+                datatype: "json",
+                data: {
+                    siteName:       $('#select-site').val(),
+                    employeeId:     $('#select-employee').val()
+                }
+            },
+            columns: [
+                { data: "EmployeeId" },
+                { data: "EmployeeName" },
+                { data: "SiteName" },
+                { data: "EmployeeJobCode" },
+                { data: "EmployeeJobDescription" },
+                { data: "Program" },
+                { data: "SupervisorEmployeeID" },
+                { data: "SupervisorName" },
+                { data: "SupervisorJobCode" },
+                { data: "SupervisorJobDescription" },
+                { data: "ManagerEmployeeID" },
+                { data: "ManagerName" },
+                { data: "ManagerJobCode" },
+                { data: "ManagerJobDescription" },
+                { data: "StartDate" },
+                { data: "EndDate" },
+                { data: "Status" },
+                { data: "AspectJobTitle" },
+                { data: "AspectSkill" },
+                { data: "AspectStatus" }
+            ],
+
+            initComplete: function (settings, json) {
+                $(".please-wait").slideUp(500);
+
+                let recordsTotal = employeeHierarchyTbl.page.info().recordsTotal;
+                if (recordsTotal > 0) {
+                    // show export to excel link
+                    $('#div-export-to-excel').removeClass('hide');
+                    $('#div-export-to-excel').addClass('show');
+                }
+
+                $('#total-records').removeClass('hide');
+                $('#total-records').addClass('show');
+                $('#TotalRecordsTxt').text(recordsTotal);
+
+                // show what have been entered in search boxes
+                $('#div-report-header').removeClass('hide');
+                $('#div-report-header').addClass('show');
+                $('#SiteTxt').text($('#select-site').val());
+                $('#EmployeeTxt').text($('#select-employee  option:selected').text());
+
+                $("th").removeClass('sorting_desc');
+                $("th").removeClass('sorting_asc');
+                $("th.sorting_desc, th.sorting_asc").css('cursor', 'default');
+            }
+
+        }); // logActivityTbl
+
+        // Set page length
+        employeeHierarchyTbl.page.len(length);
+
+        $('#tbl-report').on('length.dt', function (e, settings, len) {
+            $("input[name='pageSizeSelected']").val(len);
+        });
+
+    });
+</script>

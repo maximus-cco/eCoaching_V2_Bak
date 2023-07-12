@@ -159,5 +159,39 @@ namespace eCLAdmin.Repository
             return reviewers;
         }
 
+        public List<Employee> GetEmployeesBySite(string site)
+        {
+            var employees = new List<Employee>();
+
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptEmployeesBySite]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = 300;
+                command.Parameters.AddWithValue("@strEmpSitein", site);
+                // output parameters
+                SqlParameter retCodeParam = command.Parameters.Add("@returnCode", SqlDbType.Int);
+                retCodeParam.Direction = ParameterDirection.Output;
+                SqlParameter retMsgParam = command.Parameters.Add("@returnMessage", SqlDbType.VarChar, 250);
+                retMsgParam.Direction = ParameterDirection.Output;
+
+                connection.Open();
+
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        var employee = new Employee();
+                        employee.Id = dataReader["Emp_ID"].ToString();
+                        employee.Name = dataReader["Emp_Name"].ToString();
+                        employees.Add(employee);
+                    }
+                    dataReader.Close();
+                }
+            }
+
+            return employees;
+        }
+
     }
 }

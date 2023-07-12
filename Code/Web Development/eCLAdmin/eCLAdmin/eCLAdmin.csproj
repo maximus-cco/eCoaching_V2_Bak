@@ -160,7 +160,6 @@
     <Folder Include="Views\Help\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\ReportCoaching\" />
-    <Folder Include="Views\ReportEmployeeHierarchy\" />
     <Folder Include="Views\ReportQnCoaching\" />
     <Folder Include="Views\ReportWarning\" />
   </ItemGroup>
@@ -195,6 +194,7 @@
     <Compile Include="Models\EmployeeLog\Type.cs" />
     <Compile Include="Models\EmployeeLog\WarningLogDetail.cs" />
     <Compile Include="Models\Report\AdminActivity.cs" />
+    <Compile Include="Models\Report\EmployeeHierarchy.cs" />
     <Compile Include="Models\Report\ReportInfo.cs" />
     <Compile Include="Models\Site.cs" />
     <Compile Include="Models\User\eCoachingAccessControl.cs" />
@@ -259,6 +259,7 @@
     <Compile Include="Services\IEmployeeLogService.cs" />
     <Compile Include="Services\IEmployeeService.cs" />
     <Compile Include="ViewModels\Reports\AdminActivitySearchViewModel.cs" />
+    <Compile Include="ViewModels\Reports\EmployeeHierarchyViewModel.cs" />
     <Compile Include="ViewModels\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -361,6 +362,9 @@
     <Content Include="Views\ReportAdminActivity\Index.cshtml" />
     <Content Include="Views\ReportAdminActivity\_Search.cshtml" />
     <Content Include="Views\ReportAdminActivity\_Report.cshtml" />
+    <Content Include="Views\ReportEmployeeHierarchy\Index.cshtml" />
+    <Content Include="Views\ReportEmployeeHierarchy\_Search.cshtml" />
+    <Content Include="Views\ReportEmployeeHierarchy\_Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

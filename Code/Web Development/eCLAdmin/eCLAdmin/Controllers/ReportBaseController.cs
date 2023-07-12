@@ -1,4 +1,5 @@
-﻿using eCLAdmin.Models.User;
+﻿using eCLAdmin.Models;
+using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Services;
 using log4net;
 using System.Collections.Generic;
@@ -11,11 +12,15 @@ namespace eCLAdmin.Controllers
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         protected readonly IReportService reportService;
+        protected readonly ISiteService siteService;
+        protected readonly IEmployeeService employeeService;
 
-        public ReportBaseController(IReportService reportService, IEmployeeLogService employeeLogService) : base(employeeLogService)
+        public ReportBaseController(IReportService reportService, ISiteService siteService, IEmployeeLogService employeeLogService, IEmployeeService employeeService) : base(employeeLogService)
         {
-            logger.Debug("Entered ReportBaseController(ISiteService, IEmployeeService, IEmployeeLogService)");
+            logger.Debug("Entered ReportBaseController(IReportService, IEmployeeLogService)");
             this.reportService = reportService;
+            this.siteService = siteService;
+            this.employeeService = employeeService;
         }
 
         protected IEnumerable<SelectListItem> GetActions(int logTypeId, bool includeAll)
@@ -58,6 +63,17 @@ namespace eCLAdmin.Controllers
             return logNameList.Select(x => new SelectListItem() { Text = x, Value = x });
         }
 
+        protected IEnumerable<SelectListItem> GetEmployeesBySite(string site)
+        {
+            List<Employee> employeeList = new List<Employee>();
+            if (site != "Select Site")
+            {
+                employeeList = this.employeeService.GetEmployeesBySite(site);
+            }
+            employeeList.Insert(0, new Models.EmployeeLog.Employee { Id = "Select Employee", Name = "Select Employee" });
+
+            return employeeList.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id });
+        }
 
     }
 }

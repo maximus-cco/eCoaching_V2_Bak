@@ -22,5 +22,16 @@ namespace eCLAdmin.Services
         {
             return siteRepository.GetSites(userId);
         }
+
+        public List<Site> GetSiteForHierarchyRpt()
+        {
+            var sites = siteRepository.GetSiteForHierarchyRpt();
+            if (sites.Count > 0 && sites[0].Id == "All")
+            {
+                sites.RemoveAt(0);
+            }
+
+            return sites;
+        }
     }
 }

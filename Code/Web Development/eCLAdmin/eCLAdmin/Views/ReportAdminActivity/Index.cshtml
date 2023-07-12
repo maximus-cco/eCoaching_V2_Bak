@@ -10,23 +10,27 @@
     <button class="btn btn-success btn-sm" type="button" id="btn-export-excel">Export to Excel</button>
 </div>
 
-<div class="hide" id="div-report-header" style="font-size: 0.8em; margin-bottom: 5px;">
+<div class="hide text-success" id="div-report-header" style="font-size: 0.8em; margin-bottom: 5px;">
     <u>
-        <strong>Start Date:</strong> <span id="StartDateTxt" class="text-primary"></span>&nbsp;&nbsp;
-        <strong>End Date:</strong> <span id="EndDateTxt" class="text-primary"></span>&nbsp;&nbsp;
-        <strong>Log Type:</strong> <span id="LogTypeTxt" class="text-primary"></span>&nbsp;&nbsp;
-        <strong>Action:</strong> <span id="ActionTxt" class="text-primary"></span>&nbsp;&nbsp;
-        <strong>Log Name:</strong> <span id="LogNameTxt" class="text-primary"></span>&nbsp;&nbsp;
-        <strong>Free Text Search:</strong> <span id="FreeText" class="text-primary"></span>
+        <strong>Total Records Found: </strong><span id="TotalRecordsTxt" style="font-size: 1.5em;"></span>
     </u>
-    <p class="pull-right"><strong>Total Records Found:</strong><span id="TotalRecordsTxt" class="text-success" style="font-size: 1.5em;"></span></p> 
+    &nbsp;&nbsp;&nbsp;
+    <u>
+        <strong>Start Date: </strong> <span id="StartDateTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>End Date: </strong> <span id="EndDateTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>Log Type: </strong> <span id="LogTypeTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>Action: </strong> <span id="ActionTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>Log Name: </strong> <span id="LogNameTxt" class="text-primary"></span>&nbsp;&nbsp;
+        <strong>Free Text Search: </strong> <span id="FreeText" class="text-primary"></span>
+    </u>
 </div>
 
 <div id="div-report"></div>
 
 <script>
-    var exportToExcelUrl = '@Url.Action("ExportToExcel", "ReportAdminActivity")';
-    var downloadExcelUrl = '@Url.Action("Download", "ReportAdminActivity")';
+    const exportToExcelUrl = '@Url.Action("ExportToExcel", "ReportAdminActivity")';
+    const downloadExcelUrl = '@Url.Action("Download", "ReportAdminActivity")';
+    const generateReportUrl = '@Url.Action("GenerateReport", "ReportAdminActivity")';
 </script>
 
 <script src="@Url.Content("~/Scripts/eCLAdmin/dateTimePicker.js")"></script>

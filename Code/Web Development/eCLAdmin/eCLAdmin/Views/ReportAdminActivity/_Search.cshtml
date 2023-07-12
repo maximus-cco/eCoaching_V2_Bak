@@ -1,7 +1,7 @@
 ﻿@model eCLAdmin.ViewModels.Reports.AdminActivitySearchViewModel
 
 @Html.HiddenFor(m => m.PageSize)
-<form class="form-inline" id="form-search-activity">
+<form class="form-inline">
     <div class="form-group">
         <div class="input-group mydate">
             @Html.TextBoxFor(m =>m.StartDate, new { @class = "form-control required" })
@@ -83,36 +83,6 @@
             return false;
         })
 
-        $('#btn-generate-report').on('click', function (e) {
-            e.preventDefault();
-            
-            if (!validate()) {
-                return;
-            }
-
-            if (e.handled !== true) {
-                e.handled = true;
-                $(".please-wait").slideDown(500);
-                $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("GenerateReport")',
-                    data: $('#form-search-activity').serialize(),
-                    success: function (data) {
-                        $('.required').css('border-color', '');
-                        resetReportDiv();
-                        if (data.valid === false) {
-                            $.each(data.validationErrors, function (key, value) {
-                                $('[name="' + key + '"').css('border-color', 'red');
-                            });
-                        } else {
-                             $('#div-report').html(data);
-                        }
-                    }
-                }).always(function () {
-                       $(".please-wait").slideUp(500);
-                   }) // end always
-            } // end if e.handled
-        });
     });
 
     function validate() {

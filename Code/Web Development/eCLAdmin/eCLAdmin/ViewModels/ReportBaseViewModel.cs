@@ -9,13 +9,18 @@ namespace eCLAdmin.ViewModels
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string FreeTextSearch { get; set; }
+
         public IEnumerable<SelectListItem> LogTypeSelectList { get; set; }
         public IEnumerable<SelectListItem> ActionSelectList { get; set; }
         public IEnumerable<SelectListItem> LogNameSelectList { get; set; }
-
         public int SelectedTypeId { get; set; }
         public string SelectedAction { get; set; }
         public string SelectedLog { get; set; }
+
+        public IEnumerable<SelectListItem> SiteSelectList { get; set; }
+        public IEnumerable<SelectListItem> EmployeeSelectList { get; set; }
+        public string SelectedSite { get; set; }
+        public string SelectedEmployee { get; set; }
 
         public int PageSize { get; set; }
 
@@ -26,6 +31,8 @@ namespace eCLAdmin.ViewModels
             this.LogTypeSelectList = new List<SelectListItem>();
             this.ActionSelectList = new List<SelectListItem>();
             this.LogNameSelectList = new List<SelectListItem>();
+            this.SiteSelectList = new List<SelectListItem>();
+            this.EmployeeSelectList = new List<SelectListItem>();
             this.PageSize = 100;
         } 
     }

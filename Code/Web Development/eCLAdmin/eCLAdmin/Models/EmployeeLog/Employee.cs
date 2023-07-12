@@ -15,6 +15,12 @@
         public Employee()
         { }
 
+        public Employee(string id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
+
         public Employee(string id, string name, int siteId, string siteName)
         {
             Id = id;

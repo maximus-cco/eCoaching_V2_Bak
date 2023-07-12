@@ -10,5 +10,6 @@ namespace eCLAdmin.Services
     {
         List<Site> GetSites();
         List<Site> GetSites(string userId);
+        List<Site> GetSiteForHierarchyRpt();
     }
 }

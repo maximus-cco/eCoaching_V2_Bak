@@ -191,5 +191,99 @@ namespace eCLAdmin.Repository
             return dt;
         }
 
+        public List<EmployeeHierarchy> GetEmployeeHierarchy(string site, string employeeId, int pageSize, int rowStartIndex, out int totalRows)
+        {
+            var employeeHierarchyList = new List<EmployeeHierarchy>();
+            totalRows = 0;
+            using (SqlConnection connection = new SqlConnection(connectionStr))
+            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptHierarchySummary]", connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandTimeout = 300;
+                command.Parameters.AddWithValueSafe("@strEmpSitein", site);
+                command.Parameters.AddWithValueSafe("@strEmpin", employeeId);
+                command.Parameters.AddWithValueSafe("@PageSize", pageSize);
+                command.Parameters.AddWithValueSafe("@startRowIndex", rowStartIndex);
+                // output parameters
+                SqlParameter retCodeParam = command.Parameters.Add("@returnCode", SqlDbType.Int);
+                retCodeParam.Direction = ParameterDirection.Output;
+                SqlParameter retMsgParam = command.Parameters.Add("@returnMessage", SqlDbType.VarChar, 250);
+                retMsgParam.Direction = ParameterDirection.Output;
+
+                connection.Open();
+
+                int retCode = Convert.ToInt32(command.Parameters["@returnCode"].Value);
+                string retMessage = command.Parameters["@returnMessage"].Value == null ? "no return message" : command.Parameters["@returnMessage"].Value.ToString();
+
+                if (retCode != 0)
+                {
+                    throw new Exception("[a_lili_sp_rptHierarchySummary] failed to return data: " + retMessage);
+                }
+
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        totalRows = (int)dataReader["TotalRows"];
+
+                        var temp = new EmployeeHierarchy();
+                        temp.EmployeeId = dataReader["Employee ID"].ToString();
+                        temp.EmployeeName = dataReader["Employee Name"].ToString();
+                        temp.SiteName = dataReader["Site"].ToString();
+                        temp.EmployeeJobCode = dataReader["Employee Job Code"].ToString();
+                        temp.EmployeeJobDescription = dataReader["Employee Job Description"].ToString();
+                        temp.Program = dataReader["Program"].ToString();
+                        temp.SupervisorEmployeeID = dataReader["Supervisor Employee ID"].ToString();
+                        temp.SupervisorName = dataReader["Supervisor Name"].ToString();
+                        temp.SupervisorJobCode = dataReader["Supervisor Job Code"].ToString();
+                        temp.SupervisorJobDescription = dataReader["Supervisor Job Description"].ToString();
+                        temp.ManagerEmployeeID = dataReader["Manager Employee ID"].ToString();
+                        temp.ManagerName = dataReader["Manager Name"].ToString();
+                        temp.ManagerJobCode = dataReader["Manager Job Code"].ToString();
+                        temp.ManagerJobDescription = dataReader["Manager Job Description"].ToString();
+                        temp.StartDate = dataReader["Start Date"].ToString();
+                        temp.EndDate = dataReader["End Date"].ToString();
+                        temp.Status = dataReader["Status"].ToString();
+                        temp.AspectJobTitle = dataReader["Aspect Job Title"].ToString();
+                        temp.AspectSkill = dataReader["Aspect Skill"].ToString();
+                        temp.AspectStatus = dataReader["Aspect Status"].ToString();
+
+                        employeeHierarchyList.Add(temp);
+                    }
+                    dataReader.Close();
+                }
+            }
+
+            return employeeHierarchyList;
+        }
+
+        public DataSet GetEmployeeHierarchy(string site, string employeeId)
+        {
+            DataSet dt = new DataSet();
+            using (SqlConnection connection = new SqlConnection(connectionStr))
+            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptHierarchySummary]", connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandTimeout = 300;
+                command.Parameters.AddWithValueSafe("@strEmpSitein", site);
+                command.Parameters.AddWithValueSafe("@strEmpin", employeeId);
+                command.Parameters.AddWithValueSafe("@PageSize", Int32.MaxValue - 1);
+                command.Parameters.AddWithValueSafe("@startRowIndex", 1);
+                // output parameters
+                SqlParameter retCodeParam = command.Parameters.Add("@returnCode", SqlDbType.Int);
+                retCodeParam.Direction = ParameterDirection.Output;
+                SqlParameter retMsgParam = command.Parameters.Add("@returnMessage", SqlDbType.VarChar, 250);
+                retMsgParam.Direction = ParameterDirection.Output;
+
+                connection.Open();
+
+                using (SqlDataAdapter sda = new SqlDataAdapter(command))
+                {
+                    sda.Fill(dt);
+                }
+            }
+            return dt;
+        }
+
     }
 }
