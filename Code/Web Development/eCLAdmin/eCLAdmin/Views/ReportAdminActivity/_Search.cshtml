@@ -4,7 +4,7 @@
 <form class="form-inline">
     <div class="form-group">
         <div class="input-group mydate">
-            @Html.TextBoxFor(m =>m.StartDate, new { @class = "form-control required" })
+            @Html.TextBoxFor(m =>m.StartDate, new { placeholder = "Start Date", @class = "form-control required" })
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
@@ -13,7 +13,7 @@
 
     <div class="form-group">
         <div class="input-group mydate">
-            @Html.TextBoxFor(m => m.EndDate, new { @class = "form-control required" })
+            @Html.TextBoxFor(m => m.EndDate, new { placeholder = "End Date", @class = "form-control required" })
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
             </span>
@@ -85,46 +85,4 @@
 
     });
 
-    function validate() {
-        var valid = true;
-        var startDate = $('#input-start-date').val();
-        var endDate = $('#input-end-date').val();
-        var typeSelected = $('#select-type').val();
-        var actionSelected = $('#select-action').val();
-        var logSelected = $('#select-log').val();
-
-        if (startDate == '') {
-            $('#input-start-date').css('border-color', 'red');
-            valid = false;
-        }
-        if (endDate == '') {
-            $('#input-end-date').css('border-color', 'red');
-            valid = false;
-        }
-        if (typeSelected == -2) {
-            $('#select-type').css('border-color', 'red');
-            valid = false;
-        }
-        if (actionSelected == 'Select Action') {
-            $('#select-action').css('border-color', 'red');
-            valid = false;
-        }
-        if (logSelected == 'Select Log') {
-            $('#select-log').css('border-color', 'red');
-            valid = false;
-        }
-
-        return valid;
-    }
-
-    function resetReportDiv() {
-        // hide search inputs
-        $('#div-report-header').removeClass('show');
-        $('#div-report-header').addClass('hide');
-        // hide export to excel link
-        $('#div-export-to-excel').removeClass('show');
-        $('#div-export-to-excel').addClass('hide');
-        // clean up report
-        $('#div-report').html('');
-    }
 </script>

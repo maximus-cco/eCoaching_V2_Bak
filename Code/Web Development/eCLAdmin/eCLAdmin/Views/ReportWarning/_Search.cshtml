@@ -1,0 +1,65 @@
+﻿@model eCLAdmin.ViewModels.Reports.WarningSearchViewModel
+
+@Html.HiddenFor(m => m.PageSize)
+<form class="form-inline">
+    <div class="form-group">
+        <div class="input-group mydate">
+            @Html.TextBoxFor(m => m.StartDate, new { placeholder = "Start Date", @class = "form-control required" })
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="input-group mydate">
+            @Html.TextBoxFor(m => m.EndDate, new { placeholder = "End Date", @class = "form-control required" })
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.SelectedSite, Model.SiteSelectList, new { id = "select-site", @class = "form-control required" })
+    </div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.SelectedEmployeeLevel, Model.EmployeeLevelSelectList, new { id = "select-level", @class = "form-control required" })
+    </div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.SelectedEmployee, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control required" })
+    </div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.SelectedWarningReason, Model.CoachingReasonSelectList, new { id = "select-reason", @class = "form-control required" })
+    </div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.SelectedWarningSubReason, Model.CoachingSubReasonSelectList, new { id = "select-subreason", @class = "form-control required" })
+    </div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.SelectedLogStatus, Model.LogStatusSelectList, new { id = "select-logstatus", @class = "form-control required" })
+    </div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.SelectedLogState, Model.LogStateSelectList, new { id = "select-logstate", @class = "form-control required" })
+    </div>
+
+    <div class="form-group">
+        <div class="input-group mydate">
+            @Html.TextBoxFor(m => m.HireDate, new { placeholder = "Hire Date", @class = "form-control" })
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-primary ml-1" id="btn-generate-report">Generate Report</button>
+    </div>
+</form>
+
+

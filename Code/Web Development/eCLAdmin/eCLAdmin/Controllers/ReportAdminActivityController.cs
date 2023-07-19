@@ -28,7 +28,7 @@ namespace eCLAdmin.Controllers
             return View(InitViewModel());
         }
 
-        private AdminActivitySearchViewModel InitViewModel()
+        private new AdminActivitySearchViewModel InitViewModel()
         {
             var vm = new AdminActivitySearchViewModel();
             vm.LogTypeSelectList = GetTypes(Constants.ACTION_REPORT, true);
@@ -70,7 +70,7 @@ namespace eCLAdmin.Controllers
             var length = Request.Form.GetValues("length").FirstOrDefault();
             int pageSize = length != null ? Convert.ToInt32(length) : 25;
             int rowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
-            int totalRows = -1;
+            int totalRows = 0;
             try
             {
                 List<AdminActivity> logs = this.reportService.GetActivityList(type, action, log, startDate, endDate, logOrEmpName, pageSize, rowStartIndex, out totalRows);

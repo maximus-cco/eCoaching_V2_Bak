@@ -20,15 +20,13 @@ namespace eCLAdmin.Controllers
 
         private readonly IEmployeeService employeeService;
         private readonly IEmailService emailService;
-        private readonly ISiteService siteService;
 
         public EmployeeLogController(IEmployeeService employeeService, IEmployeeLogService employeeLogService, IEmailService emailService, ISiteService siteService)
-            : base(employeeLogService)
+            : base(employeeLogService, siteService)
         {
             logger.Debug("%%%%%%%%%%%%%%%%%%Entered EmployeeLogController(IEmployeeService, IEmployeeLogService, EMailService)");
             this.employeeService = employeeService;
             this.emailService = emailService;
-            this.siteService = siteService;
         }
 
         public ActionResult Index()

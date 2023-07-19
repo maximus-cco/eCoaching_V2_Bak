@@ -1,5 +1,6 @@
 ﻿using eCLAdmin.Extensions;
 using eCLAdmin.Models;
+using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.Report;
 using eCLAdmin.Services;
 using eCLAdmin.Utilities;
@@ -28,11 +29,11 @@ namespace eCLAdmin.Controllers
             return View(InitViewModel());
         }
 
-        private EmployeeHierarchyViewModel InitViewModel()
+        private new EmployeeHierarchySearchViewModel InitViewModel()
         {
-            var vm = new EmployeeHierarchyViewModel();
+            var vm = new EmployeeHierarchySearchViewModel();
             vm.SiteSelectList = GetSites();
-            vm.EmployeeSelectList = GetEmployeesBySite("Select Site");
+            vm.EmployeeSelectList = GetEmployees("Select Site");
     
             return vm;
         }
@@ -46,13 +47,25 @@ namespace eCLAdmin.Controllers
             return sites;
         }
 
-        public JsonResult GetEmployees(string site)
+        public JsonResult GetEmployeesBySiteName(string site)
         {
-            return Json(GetEmployeesBySite(site));
+            return Json(GetEmployees(site));
+        }
+
+        private IEnumerable<SelectListItem> GetEmployees(string site)
+        {
+            List<Employee> employeeList = new List<Employee>();
+            if (site != "Select Site")
+            {
+                employeeList = this.employeeService.GetEmployeesBySite(site);
+            }
+            employeeList.Insert(0, new Models.EmployeeLog.Employee { Id = "-2", Name = "Select Employee" });
+
+            return employeeList.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id });
         }
 
         [HttpPost]
-        public ActionResult GenerateReport(EmployeeHierarchyViewModel vm)
+        public ActionResult GenerateReport(EmployeeHierarchySearchViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +78,7 @@ namespace eCLAdmin.Controllers
         [HttpPost]
         public ActionResult GetData(string siteName, string employeeId)
         {
-            logger.Debug("Entered LoadData");
+            logger.Debug("Entered GetData");
 
             // Get Start (paging start index) and length (page size for paging)
             var draw = Request.Form.GetValues("draw").FirstOrDefault();
@@ -73,7 +86,7 @@ namespace eCLAdmin.Controllers
             var length = Request.Form.GetValues("length").FirstOrDefault();
             int pageSize = length != null ? Convert.ToInt32(length) : 25;
             int rowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
-            int totalRows = -1;
+            int totalRows = 0;
             try
             {
                 List<EmployeeHierarchy> employeeHierarchyList = this.reportService.GetEmployeeHierarchy(siteName, employeeId, pageSize, rowStartIndex, out totalRows);
@@ -87,7 +100,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public JsonResult ExportToExcel(EmployeeHierarchyViewModel vm)
+        public JsonResult ExportToExcel(EmployeeHierarchySearchViewModel vm)
         {
             logger.Debug("################ site=" + vm.SelectedSite + ", employee=" + vm.SelectedEmployee);
             if (!ModelState.IsValid)

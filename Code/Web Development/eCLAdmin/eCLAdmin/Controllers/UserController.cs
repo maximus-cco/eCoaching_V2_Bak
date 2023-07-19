@@ -15,13 +15,11 @@ namespace eCLAdmin.Controllers
         private readonly ILog logger = LogManager.GetLogger(typeof(UserController));
 
         private readonly IUserService userService;
-        private readonly ISiteService siteService;
 
-        public UserController(IUserService userService, ISiteService siteService)
+        public UserController(IUserService userService, ISiteService siteService) : base(siteService)
         {
             logger.Debug("Entered UserController(IUserService, ISiteService)");
             this.userService = userService;
-            this.siteService = siteService;
         }
 
         //

@@ -66,5 +66,24 @@ namespace eCLAdmin.Services
 
             return employees;
         }
+
+        public List<Employee> GetEmployeesBySiteAndModuleId(int moduleId, int siteId, string hireDate, bool isWarning)
+        {
+            var employees = new List<Employee>();
+            if (siteId == -2)
+            {
+                return employees;
+            }
+
+            employees = employeeRepository.GetEmployeesBySiteAndModule(moduleId, siteId, hireDate, isWarning);
+
+            if (employees.Count == 1 && employees[0].Id == "-1")
+            {
+                employees[0].Id = "No employee found";
+                employees[0].Name = "No employee found";
+            }
+
+            return employees;
+        }
     }
 }

@@ -1,9 +1,12 @@
-﻿using eCLAdmin.Models.Report;
+﻿using eCLAdmin.Models.EmployeeLog;
+using eCLAdmin.Models.Report;
 using eCLAdmin.Repository;
 using eCLAdmin.Utilities;
 using log4net;
 using System.Collections.Generic;
 using System.Data;
+using eCLAdmin.Models.User;
+using eCLAdmin.ViewModels.Reports;
 
 namespace eCLAdmin.Services
 {
@@ -48,6 +51,61 @@ namespace eCLAdmin.Services
         {
             var dataSet = this.rptRepository.GetEmployeeHierarchy(site, employeeId);
             return dataSet;
+        }
+
+        public List<Module> GetEmployeeLevels(User user)
+        {
+            return this.rptRepository.GetEmployeeLevels(user);
+        }
+
+        public List<Reason> GetReasonsByModuleId(int moduleId, bool isWarning)
+        {
+            return this.rptRepository.GetReasonsByModuleId(moduleId, isWarning);
+        }
+
+        public List<Reason> GetSubreasons(int reasonId, bool isWarning)
+        {
+            return this.rptRepository.GetSubreasons(reasonId, isWarning);
+        }
+
+        public List<Status> GetLogStatusList(int moduleId, bool isWarning)
+        {
+            return this.rptRepository.GetLogStatusList(moduleId, isWarning);
+        }
+
+        public List<CoachingLog> GetCoachingLogs(CoachingSearchViewModel search, out int totalRows)
+        {
+            return this.rptRepository.GetCoachingLogs(search, out totalRows);
+        }
+
+        public DataSet GetCoachingLogs(CoachingSearchViewModel search)
+        {
+            return this.rptRepository.GetCoachingLogs(search);
+        }
+
+        public List<CoachingLogQn> GetCoachingLogQns(QualityNowSearchViewModel search, out int totalRows)
+        {
+            return this.rptRepository.GetCoachingLogQns(search, out totalRows);
+        }
+
+        public DataSet GetCoachingLogQns(QualityNowSearchViewModel search)
+        {
+            return this.rptRepository.GetCoachingLogQns(search);
+        }
+
+        public List<Status> GetWarningLogStates()
+        {
+            return this.rptRepository.GetWarningLogStates();
+        }
+
+        public List<WarningLog> GetWarningLogs(WarningSearchViewModel search, out int totalRows)
+        {
+            return this.rptRepository.GetWarningLogs(search, out totalRows);
+        }
+
+        public DataSet GetWarningLogs(WarningSearchViewModel search)
+        {
+            return this.rptRepository.GetWarningLogs(search);
         }
 
     }

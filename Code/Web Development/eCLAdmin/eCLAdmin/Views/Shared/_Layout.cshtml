@@ -56,7 +56,6 @@
                         </li>
                     }
 
-@*Report*@
                     @if (ViewContext.Controller.IsEntitled("Reports"))
                     {
                         <li class="dropdown">
@@ -65,15 +64,15 @@
                             <ul class="dropdown-menu" role="menu">
                                 @if (ViewContext.Controller.IsEntitled("Report-RunCoachingSummary"))
                                 {
-                                    <li>@Html.ActionLink(Constants.COACHING_SUMMARY_REPORT_DESCRIPTION, "RunCoachingSummary", "Report")</li>
+                                    <li>@Html.ActionLink(Constants.COACHING_SUMMARY_REPORT_DESCRIPTION, "Index", "ReportCoaching")</li>
                                 }
 								@if (ViewContext.Controller.IsEntitled("Report-RunCoachingSummaryQN"))
 								{
-									<li>@Html.ActionLink(Constants.COACHING_QUALITY_NOW_SUMMARY_REPORT_DESCRIPTION, "RunCoachingSummaryQN", "Report")</li>
+									<li>@Html.ActionLink(Constants.COACHING_QUALITY_NOW_SUMMARY_REPORT_DESCRIPTION, "Index", "ReportCoachingQn")</li>
 								}
                                 @if (ViewContext.Controller.IsEntitled("Report-RunWarningSummary"))
                                 {
-                                    <li>@Html.ActionLink(Constants.WARNING_SUMMARY_REPORT_DESCRIPTION, "RunWarningSummary", "Report")</li>
+                                    <li>@Html.ActionLink(Constants.WARNING_SUMMARY_REPORT_DESCRIPTION, "Index", "ReportWarning")</li>
                                 }
                                 @if (ViewContext.Controller.IsEntitled("Report-RunHierarchySummary"))
                                 {
@@ -88,8 +87,6 @@
                             </ul>
                         </li>
                     }
-@*End Report*@
-
 
                     @if (ViewContext.Controller.IsEntitled("Users"))
                     { 

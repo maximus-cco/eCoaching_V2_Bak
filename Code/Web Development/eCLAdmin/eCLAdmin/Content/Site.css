@@ -210,3 +210,6 @@ table.dataTable td {
   padding: 2px;
 }
 
+.form-inline .form-group {
+  margin-bottom:5px;
+}

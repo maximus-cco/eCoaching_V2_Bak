@@ -8,9 +8,9 @@ namespace eCLAdmin.Controllers
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(EmployeeLogBaseController));
 
-        public EmployeeLogBaseController(IEmployeeLogService employeeLogService) : base(employeeLogService)
+        public EmployeeLogBaseController(IEmployeeLogService employeeLogService, ISiteService siteService) : base(employeeLogService, siteService)
         {
-            logger.Debug("Entered EmployeeLogBaseController(IEmployeeLogService)");
+            logger.Debug("Entered EmployeeLogBaseController(IEmployeeLogService, ISiteService)");
         }
 
         protected ActionResult GetLogDetail(int logId, bool isCoaching)

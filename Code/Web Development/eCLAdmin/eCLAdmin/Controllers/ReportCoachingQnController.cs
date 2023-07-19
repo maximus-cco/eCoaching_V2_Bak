@@ -3,35 +3,33 @@ using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.Report;
 using eCLAdmin.Services;
 using eCLAdmin.Utilities;
-using eCLAdmin.ViewModels;
 using eCLAdmin.ViewModels.Reports;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
 {
-    public class ReportCoachingController : ReportBaseController
+    public class ReportCoachingQnController : ReportBaseController
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public ReportCoachingController(IReportService reportService, IEmployeeLogService employeeLogService, IEmployeeService employeeService, ISiteService siteService) : base(reportService, siteService, employeeLogService, employeeService)
+        public ReportCoachingQnController(IReportService reportService, IEmployeeLogService employeeLogService, IEmployeeService employeeService, ISiteService siteService) : base(reportService, siteService, employeeLogService, employeeService)
         {
-            logger.Debug("Entered ReportCoachingController(IReportService, IEmployeeLogService, IEmployeeService, ISiteService)");
+            logger.Debug("Entered ReportCoachingQnController(IReportService, IEmployeeLogService, IEmployeeService, ISiteService)");
         }
 
-        // GET: ReportCoaching
+        // GET: ReportQnCoaching
         public ActionResult Index()
         {
             return View(InitViewModel());
         }
 
         [HttpPost]
-        public ActionResult GenerateReport(CoachingSearchViewModel vm)
+        public ActionResult GenerateReport(QualityNowSearchViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -42,7 +40,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetData(CoachingSearchViewModel vm)
+        public ActionResult GetData(QualityNowSearchViewModel vm)
         {
             logger.Debug("Entered GetData");
 
@@ -54,9 +52,9 @@ namespace eCLAdmin.Controllers
             vm.RowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
             try
             {
-                List<CoachingLog> coachingLogList = new List<CoachingLog>();//
-                coachingLogList = this.reportService.GetCoachingLogs(vm, out totalRows);
-                return Json(new { draw = draw, recordsFiltered = totalRows, recordsTotal = totalRows, data = coachingLogList }, JsonRequestBehavior.AllowGet);
+                List<CoachingLogQn> coachingLogQnList = new List<CoachingLogQn>();
+                coachingLogQnList = this.reportService.GetCoachingLogQns(vm, out totalRows);
+                return Json(new { draw = draw, recordsFiltered = totalRows, recordsTotal = totalRows, data = coachingLogQnList }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -66,9 +64,8 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public JsonResult ExportToExcel(CoachingSearchViewModel vm)
+        public JsonResult ExportToExcel(QualityNowSearchViewModel vm)
         {
-            logger.Debug("################ site=" + vm.SelectedSite + ", employee=" + vm.SelectedEmployee);
             if (!ModelState.IsValid)
             {
                 return Json(new { valid = false, validationErrors = ModelState.GetErrors() });
@@ -78,9 +75,9 @@ namespace eCLAdmin.Controllers
             {
                 vm.PageSize = Int32.MaxValue - 1;
                 vm.RowStartIndex = 1;
-                var dataSet = reportService.GetCoachingLogs(vm);
+                var dataSet = reportService.GetCoachingLogQns(vm);
                 MemoryStream ms = EclAdminUtil.GenerateExcelFile(dataSet, Constants.EXCEL_SHEET_NAMES);
-                Session["fileName"] = "CoachingLogSummary_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
+                Session["fileName"] = "QualityNowSummary_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".xlsx";
                 Session["fileStream"] = ms;
                 return Json(new { result = "success" }, JsonRequestBehavior.AllowGet);
             }
@@ -91,4 +88,5 @@ namespace eCLAdmin.Controllers
             }
         }
     }
+
 }

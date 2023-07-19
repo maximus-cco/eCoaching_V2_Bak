@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace eCLAdmin.ViewModels.Reports
 {
-    public class AdminActivitySearchViewModel : BaseViewModel, IValidatableObject
+    public class AdminActivitySearchViewModel : ReportBaseViewModel, IValidatableObject
     {
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

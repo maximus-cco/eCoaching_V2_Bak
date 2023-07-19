@@ -1,7 +1,21 @@
 ﻿$(function () {
+
+    $("#select-level, #select-site").on("change", function () {
+        LoadEmployees();
+    });
+
+    $("#select-level").on("change", function () {
+        LoadReasons();
+        LoadLogStatus();
+    });
+
+    $("#select-reason").on("change", function () {
+        LoadSubreasons();
+    });
+
     $('#btn-generate-report').on('click', function (e) {
         e.preventDefault();
-            
+
         if (!validate()) {
             return;
         }
@@ -59,5 +73,151 @@
             }); // $.ajax
         }
     }); // end Export to excel
-    
-})
+
+    $('.required').on('change', function (e) {
+        if ($(this).val() != -2) {
+            $(this).css('border-color', '');
+        } else {
+            $(this).css('border-color', 'red');
+        }
+    });
+
+    function validate() {
+        let valid = true;
+        $('.required').each(function () {
+            if ($(this).val() == undefined || $(this).val() == -2 || $(this).val() == '') {
+                $(this).css('border-color', 'red');
+                valid = false;
+            } else {
+                $(this).css('border-color', '');
+            }
+        });
+
+        return valid;
+    }
+
+    function resetReportDiv() {
+        // hide search inputs
+        $('#div-report-header').removeClass('show');
+        $('#div-report-header').addClass('hide');
+        // hide export to excel link
+        $('#div-export-to-excel').removeClass('show');
+        $('#div-export-to-excel').addClass('hide');
+        // clean up report
+        $('#div-report').html('');
+    }
+
+    function LoadLogStatus() {
+        let moduleSelected = $('#select-level').val();
+        if (moduleSelected == -2) {
+            $('#select-logstatus').find('option').not(':first').remove();
+            return;
+        }
+
+        $('#select-logstatus').addClass('loadinggif')
+        $.ajax({
+            type: 'POST',
+            url: getLogStatusListUrl,
+            dataType: 'json',
+            data: { moduleId: moduleSelected, isWarning: $('#isWarning').val() },
+
+            success: function (statuslist) {
+                $('#select-status').empty();
+                var options = [];
+                $.each(statuslist, function (i, status) {
+                    options.push('<option value="', status.Value, '">' + status.Text + '</option>');
+                });
+
+                $('#select-logstatus').html(options.join(''));
+                $('#select-logstatus').removeClass('loadinggif');
+            }
+        });
+        return false;
+    }
+
+    function LoadReasons() {
+        let moduleSelected = $('#select-level').val();
+        if (moduleSelected == -2) {
+            $('#select-reason').find('option').not(':first').remove();
+            return;
+        }
+
+        $('#select-reason').addClass('loadinggif')
+        $.ajax({
+            type: 'POST',
+            url: getReasonsUrl,
+            dataType: 'json',
+            data: { moduleId: moduleSelected, isWarning: $('#isWarning').val() },
+
+            success: function (reasons) {
+                $('#select-reason').empty();
+                var options = [];
+                $.each(reasons, function (i, reason) {
+                    options.push('<option value="', reason.Value, '">' + reason.Text + '</option>');
+                });
+
+                $('#select-reason').html(options.join(''));
+                $('#select-reason').removeClass('loadinggif');
+            }
+        });
+        return false;
+    }
+
+    function LoadSubreasons() {
+        let reasonSelected = $('#select-reason').val();
+        if (reasonSelected == -2) {
+            $('#select-subreason').find('option').not(':first').remove();
+            return;
+        }
+
+        $('#select-subreason').addClass('loadinggif')
+        $.ajax({
+            type: 'POST',
+            url: getSubreasonsUrl,
+            dataType: 'json',
+            data: { reasonId: reasonSelected, isWarning: $('#isWarning').val() },
+
+            success: function (subreasons) {
+                $('#select-subreason').empty();
+                var options = [];
+                $.each(subreasons, function (i, subreason) {
+                    options.push('<option value="', subreason.Value, '">' + subreason.Text + '</option>');
+                });
+
+                $('#select-subreason').html(options.join(''));
+                $('#select-subreason').removeClass('loadinggif');
+            }
+        });
+        return false;
+    }
+
+    function LoadEmployees() {
+        let siteSelected = $('#select-site').val();
+        let moduleSelected = $('#select-level').val();
+        if (siteSelected == -2 || moduleSelected == -2) {
+            $('#select-employee').find('option').not(':first').remove();
+            return;
+        }
+
+        $('#select-employee').addClass('loadinggif')
+        $.ajax({
+            type: 'POST',
+            url: getEmployeesUrl,
+            dataType: 'json',
+            data: { moduleId: moduleSelected, siteId: siteSelected, hireDate: $('#HireDate').val(), isWarning: $('#isWarning').val() },
+
+            success: function (employees) {
+                $('#select-employee').empty();
+                var options = [];
+                $.each(employees, function (i, employee) {
+                    options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
+                });
+
+                $('#select-employee').html(options.join(''));
+                $('#select-employee').removeClass('loadinggif');
+            }
+        });
+        return false;
+    }
+
+});

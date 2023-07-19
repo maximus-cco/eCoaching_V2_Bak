@@ -1,0 +1,46 @@
+﻿<div class="page-header">
+    <h3>Coaching Log Summary</h3>
+</div>
+
+<input type="hidden" id="isWarning" value="false" />
+<div id="div-search" style="margin-bottom: 20px;">
+    @{ Html.RenderPartial("_Search"); }
+</div>
+
+<div class="hide" id="div-export-to-excel" style="margin-bottom: 5px;">
+    <button class="btn btn-success btn-sm" type="button" id="btn-export-excel">Export to Excel</button>
+</div>
+
+<div class="hide text-success" id="div-report-header" style="font-size: 0.8em; margin-bottom: 5px;">
+    <u>
+        <strong>Total Records Found: </strong><span id="TotalRecordsTxt" style="font-size: 1.5em;"></span>
+    </u>
+    &nbsp;&nbsp;&nbsp;
+    <u>
+        <strong>StartDate: </strong> <span id="StartDateTxt" ></span>&nbsp;&nbsp;
+        <strong>End Date: </strong> <span id="EndDateTxt"></span>&nbsp;&nbsp;
+        <strong>Site: </strong> <span id="SiteTxt"></span>&nbsp;&nbsp;
+        <strong>Employee Level: </strong> <span id="EmployeeLevelTxt"></span>&nbsp;&nbsp;
+        <strong>Employee: </strong> <span id="EmployeeTxt"></span>&nbsp;&nbsp;
+        <strong>Coaching Reason: </strong> <span id="ReasonTxt"></span>&nbsp;&nbsp;
+        <strong>Coaching Subreason: </strong> <span id="SubReasonTxt" ></span>&nbsp;&nbsp;
+        <strong>Log Status: </strong> <span id="LogStatusTxt"></span>&nbsp;&nbsp;
+        <strong>Hire Date: </strong> <span id="HireDateTxt"></span>
+    </u>
+</div>
+
+<div id="div-report"></div>
+
+<script>
+    const exportToExcelUrl = '@Url.Action("ExportToExcel", "ReportCoaching")';
+    const downloadExcelUrl = '@Url.Action("Download", "ReportCoaching")';
+    const generateReportUrl = '@Url.Action("GenerateReport", "ReportCoaching")';
+    const getEmployeesUrl = '@Url.Action("GetEmployees", "ReportCoaching")';
+    const getSubreasonsUrl = '@Url.Action("GetSubreasons", "ReportCoaching")';
+    const getReasonsUrl = '@Url.Action("GetReasons", "ReportCoaching")';
+    const getLogStatusListUrl = '@Url.Action("GetLogStatusList", "ReportCoaching")';
+</script>
+
+<script src="@Url.Content("~/Scripts/eCLAdmin/dateTimePicker.js")"></script>
+<script src="@Url.Content("~/Scripts/eCLAdmin/report.js")"></script>
+

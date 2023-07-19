@@ -1,4 +1,7 @@
-﻿using eCLAdmin.Models.Report;
+﻿using eCLAdmin.Models.EmployeeLog;
+using eCLAdmin.Models.Report;
+using eCLAdmin.Models.User;
+using eCLAdmin.ViewModels.Reports;
 using System.Collections.Generic;
 using System.Data;
 
@@ -8,6 +11,11 @@ namespace eCLAdmin.Services
     {
         List<eCLAdmin.Models.EmployeeLog.Action> GetActions(int logTypeId);
         List<string> GetLogNames(string logType, string action, string startDate, string endDate);
+        List<Module> GetEmployeeLevels(User user);
+        List<Reason> GetReasonsByModuleId(int moduleId, bool isWarning);
+        List<Reason> GetSubreasons(int reasonId, bool isWarning);
+        List<Status> GetLogStatusList(int moduleId, bool isWarning);
+        List<Status> GetWarningLogStates(); // Active, Expired, All
 
         // Admin Activity Report
         List<AdminActivity> GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName, int pageSize, int rowStartIndex, out int totalRows);
@@ -18,5 +26,20 @@ namespace eCLAdmin.Services
         List<EmployeeHierarchy> GetEmployeeHierarchy(string site, string employeeId, int pageSize, int rowStartIndex, out int totalRows);
         // Export to excel
         DataSet GetEmployeeHierarchy(string site, string employeeId);
+
+        // Coaching Log Report
+        List<CoachingLog> GetCoachingLogs(CoachingSearchViewModel search, out int totalRows);
+        // Export to excel
+        DataSet GetCoachingLogs(CoachingSearchViewModel search);
+
+        // Coaching Log Qn Report
+        List<CoachingLogQn> GetCoachingLogQns(QualityNowSearchViewModel search, out int totalRows);
+        // Export to excel
+        DataSet GetCoachingLogQns(QualityNowSearchViewModel search);
+
+        // Warning Log Report
+        List<WarningLog> GetWarningLogs(WarningSearchViewModel search, out int totalRows);
+        // Export to excel
+        DataSet GetWarningLogs(WarningSearchViewModel search);
     }
 }

@@ -1,5 +1,4 @@
-﻿
-@model eCLAdmin.ViewModels.Reports.EmployeeHierarchyViewModel
+﻿@model eCLAdmin.ViewModels.Reports.EmployeeHierarchySearchViewModel
 
 @Html.HiddenFor(m => m.PageSize)
 <form class="form-inline">
@@ -10,83 +9,30 @@
 </form>
 
 <script>
-    $(document).ready(function () {
+$(document).ready(function () {
 
-        $("#select-site").on("change", function () {
-            $('#select-employee').addClass('loadinggif')
-            var siteSelected = $(this).val();
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("GetEmployees")',
-                dataType: 'json',
-                data: { site: siteSelected },
+    $("#select-site").on("change", function () {
+        $('#select-employee').addClass('loadinggif')
+        var siteSelected = $(this).val();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("GetEmployeesBySiteName")',
+            dataType: 'json',
+            data: { site: siteSelected },
 
-                success: function (employees) {
-                    var options = [];
-                    $.each(employees, function (i, employee) {
-                        options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
-                    });
+            success: function (employees) {
+                var options = [];
+                $.each(employees, function (i, employee) {
+                    options.push('<option value="', employee.Value, '">' + employee.Text + '</option>');
+                });
 
-                    $('#select-employee').html(options.join(''));
-                    $('#select-employee').removeClass('loadinggif');
-                }
-            });
-            return false;
-        });
-
-
-        $('#btn-generate-report').on('click', function (e) {
-            e.preventDefault();
-
-            if (!validate()) {
-                return;
+                $('#select-employee').html(options.join(''));
+                $('#select-employee').removeClass('loadinggif');
             }
-
-            if (e.handled !== true) {
-                e.handled = true;
-                $(".please-wait").slideDown(500);
-                $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("GenerateReport")',
-                    data: $('form').serialize(),
-                    success: function (data) {
-                        $('.required').css('border-color', '');
-                        resetReportDiv();
-                        if (data.valid === false) {
-                            $.each(data.validationErrors, function (key, value) {
-                                $('[name="' + key + '"').css('border-color', 'red');
-                            });
-                        } else {
-                             $('#div-report').html(data);
-                        }
-                    }
-                }).always(function () {
-                       $(".please-wait").slideUp(500);
-                   }) // end always
-            } // end if e.handled
         });
+        return false;
     });
 
-    function validate() {
-        var valid = true;
-        var siteSelected = $('#select-site').val();
+});
 
-        if (siteSelected == 'Select Site') {
-            $('#select-site').css('border-color', 'red');
-            valid = false;
-        }
-
-        return valid;
-    }
-
-    function resetReportDiv() {
-        // hide search inputs
-        $('#div-report-header').removeClass('show');
-        $('#div-report-header').addClass('hide');
-        // hide export to excel link
-        $('#div-export-to-excel').removeClass('show');
-        $('#div-export-to-excel').addClass('hide');
-        // clean up report
-        $('#div-report').html('');
-    }
 </script>

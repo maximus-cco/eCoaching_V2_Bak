@@ -1,4 +1,5 @@
-﻿using eCLAdmin.Models.User;
+﻿using eCLAdmin.Models;
+using eCLAdmin.Models.User;
 using eCLAdmin.Services;
 using log4net;
 using System;
@@ -14,13 +15,21 @@ namespace eCLAdmin.Controllers
     {
         readonly ILog logger = LogManager.GetLogger(typeof(BaseController));
         protected readonly IEmployeeLogService employeeLogService;
+        protected readonly ISiteService siteService;
 
         public BaseController() { }
 
-        public BaseController(IEmployeeLogService employeeLogService)
+        public BaseController(ISiteService siteService)
         {
             logger.Debug("Entered BaseController(IEmployeeLogService)");
+             this.siteService = siteService;
+        }
+
+        public BaseController(IEmployeeLogService employeeLogService, ISiteService siteService)
+        {
+            logger.Debug("Entered BaseController(IEmployeeLogService, ISiteService)");
             this.employeeLogService = employeeLogService;
+            this.siteService = siteService;
         }
 
         protected bool ShowMaintenancePage()
@@ -73,6 +82,16 @@ namespace eCLAdmin.Controllers
             IEnumerable<SelectListItem> types = new SelectList(typeList, "Id", "Description");
 
             return types;
+        }
+
+        protected IEnumerable<SelectListItem> GetSitesByUserRole()
+        {
+            User user = GetUserFromSession();
+            List<Site> siteList = this.siteService.GetSites(user.EmployeeId);
+            siteList.Insert(0, new Site { Id = "-2", Name = "Select Site" });
+            IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name");
+
+            return sites;
         }
 
         // Download the generated excel file

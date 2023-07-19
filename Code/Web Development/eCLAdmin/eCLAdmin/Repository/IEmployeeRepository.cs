@@ -10,5 +10,6 @@ namespace eCLAdmin.Repository
         List<Employee> GetPendingReviewers(string userLanId, int moduleId, int logStatusId);
         List<Employee> GetReviewersBySite(int siteId);
         List<Employee> GetEmployeesBySite(string site);
+        List<Employee> GetEmployeesBySiteAndModule(int moduleId, int siteId, string hireDate, bool isWarning);
     }
 }

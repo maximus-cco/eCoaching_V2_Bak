@@ -159,9 +159,6 @@
     <Folder Include="Views\EmployeeLogBase\" />
     <Folder Include="Views\Help\" />
     <Folder Include="Views\Home\" />
-    <Folder Include="Views\ReportCoaching\" />
-    <Folder Include="Views\ReportQnCoaching\" />
-    <Folder Include="Views\ReportWarning\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\EclBundleOrderer.cs" />
@@ -175,7 +172,7 @@
     <Compile Include="Controllers\ReportCoachingController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\ReportEmployeeHierarchyController.cs" />
-    <Compile Include="Controllers\ReportQnCoachingController.cs" />
+    <Compile Include="Controllers\ReportCoachingQnController.cs" />
     <Compile Include="Controllers\ReportWarningController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Extensions\EclExtensionMethods.cs" />
@@ -194,8 +191,11 @@
     <Compile Include="Models\EmployeeLog\Type.cs" />
     <Compile Include="Models\EmployeeLog\WarningLogDetail.cs" />
     <Compile Include="Models\Report\AdminActivity.cs" />
+    <Compile Include="Models\Report\CoachingLog.cs" />
+    <Compile Include="Models\Report\CoachingLogQn.cs" />
     <Compile Include="Models\Report\EmployeeHierarchy.cs" />
     <Compile Include="Models\Report\ReportInfo.cs" />
+    <Compile Include="Models\Report\WarningLog.cs" />
     <Compile Include="Models\Site.cs" />
     <Compile Include="Models\User\eCoachingAccessControl.cs" />
     <Compile Include="Models\User\eCoachingAccessControlRole.cs" />
@@ -259,7 +259,10 @@
     <Compile Include="Services\IEmployeeLogService.cs" />
     <Compile Include="Services\IEmployeeService.cs" />
     <Compile Include="ViewModels\Reports\AdminActivitySearchViewModel.cs" />
-    <Compile Include="ViewModels\Reports\EmployeeHierarchyViewModel.cs" />
+    <Compile Include="ViewModels\Reports\CoachingSearchViewModel.cs" />
+    <Compile Include="ViewModels\Reports\EmployeeHierarchySearchViewModel.cs" />
+    <Compile Include="ViewModels\Reports\QualityNowSearchViewModel.cs" />
+    <Compile Include="ViewModels\Reports\WarningSearchViewModel.cs" />
     <Compile Include="ViewModels\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -365,6 +368,15 @@
     <Content Include="Views\ReportEmployeeHierarchy\Index.cshtml" />
     <Content Include="Views\ReportEmployeeHierarchy\_Search.cshtml" />
     <Content Include="Views\ReportEmployeeHierarchy\_Report.cshtml" />
+    <Content Include="Views\ReportCoaching\Index.cshtml" />
+    <Content Include="Views\ReportCoaching\_Search.cshtml" />
+    <Content Include="Views\ReportCoaching\_Report.cshtml" />
+    <Content Include="Views\ReportCoachingQn\Index.cshtml" />
+    <Content Include="Views\ReportWarning\Index.cshtml" />
+    <Content Include="Views\ReportCoachingQn\_Search.cshtml" />
+    <Content Include="Views\ReportWarning\_Search.cshtml" />
+    <Content Include="Views\ReportCoachingQn\_Report.cshtml" />
+    <Content Include="Views\ReportWarning\_Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
