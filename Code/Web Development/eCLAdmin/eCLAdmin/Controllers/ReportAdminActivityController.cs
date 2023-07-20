@@ -33,7 +33,6 @@ namespace eCLAdmin.Controllers
             var vm = new AdminActivitySearchViewModel();
             vm.LogTypeSelectList = GetTypes(Constants.ACTION_REPORT, true);
             vm.ActionSelectList = GetActions(-2, false); // since sp already returns 'All' :-)
-            vm.LogNameSelectList = GetLogNames("-2", null, null, null, false);
 
             return vm;
         }
@@ -41,11 +40,6 @@ namespace eCLAdmin.Controllers
         public JsonResult GetActions(int logTypeId)
         {
             return Json(GetActions(logTypeId, false));
-        }
-
-        public JsonResult GetLogNames(string logType, string action, string startDate, string endDate)
-        {
-            return Json(GetLogNames(logType, action, startDate, endDate, false));
         }
 
         [HttpPost]

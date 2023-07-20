@@ -1,5 +1,6 @@
 ﻿using eCLAdmin.Models;
 using eCLAdmin.Models.EmployeeLog;
+using eCLAdmin.Models.User;
 using eCLAdmin.Services;
 using eCLAdmin.ViewModels;
 using log4net;
@@ -28,6 +29,12 @@ namespace eCLAdmin.Controllers
             logger.Debug("Entered GetEmployees...");
             logger.Debug("##########moduleId=" + moduleId + " siteId=" + siteId + " hireDate=" + hireDate + " isWarning=" + isWarning);
             return Json(GetEmployeesBySiteAndModule(moduleId, siteId, hireDate, isWarning));
+        }
+
+        [HttpPost]
+        public JsonResult GetSites(int moduleId)
+        {
+            return Json(GetSitesByUserAndModule(moduleId));
         }
 
         [HttpPost]
@@ -60,25 +67,42 @@ namespace eCLAdmin.Controllers
             // employee level dropdown
             vm.EmployeeLevelSelectList = GetEmployeeLevels();
             // site dropdown
-            vm.SiteSelectList = GetSitesByUserRole();
+            List<Site> siteList = new List<Site>();
+            siteList.Insert(0, new Site { Id = "-2", Name = "Select Site" });
+            vm.SiteSelectList = new SelectList(siteList, "Id", "Name");
+            //vm.SiteSelectList = GetSitesByUserAndModule(-1); // default to get sites for all modules
+
             // employee dropdown
             List<Employee> employeeList = new List<Employee>();
             employeeList.Insert(0, new Employee { Id = "-2", Name = "Select Employee" });
             vm.EmployeeSelectList = new SelectList(employeeList, "Id", "Name");
+
             // coaching reason dropdown
             List<Reason> reasonList = new List<Reason>();
             reasonList.Insert(0, new Reason { Id = -2, Description = "Select Coaching Reason" });
             vm.CoachingReasonSelectList = new SelectList(reasonList, "Id", "Description");
+
             // coaching subreason dropdown
             List<Reason> subreasonList = new List<Reason>();
             subreasonList.Insert(0, new Reason { Id = -2, Description = "Select Coaching Subreason" });
             vm.CoachingSubReasonSelectList = new SelectList(subreasonList, "Id", "Description");
+
             // log status dropdown
             List<Status> statusList = new List<Status>();
             statusList.Insert(0, new Status { Id = -2, Description = "Select Log Status" });
             vm.LogStatusSelectList = new SelectList(statusList, "Id", "Description");
 
             return vm;
+        }
+
+        protected IEnumerable<SelectListItem> GetSitesByUserAndModule(int moduleId)
+        {
+            User user = GetUserFromSession();
+            List<Site> siteList = this.siteService.GetSitesForReport(user.EmployeeId, moduleId);
+            siteList.Insert(0, new Site { Id = "-2", Name = "Select Site" });
+            IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name");
+
+            return sites;
         }
 
         protected IEnumerable<SelectListItem> GetActions(int logTypeId, bool includeAll)
@@ -99,26 +123,6 @@ namespace eCLAdmin.Controllers
             }
 
             return actionList.Select(x => new SelectListItem() { Text = x.Description, Value = x.Description });
-        }
-
-        protected IEnumerable<SelectListItem> GetLogNames(string logType, string action, string startDate, string endDate, bool includeAll)
-        {
-            List<string> logNameList = new List<string>();
-            if (logType == "-2")
-            {
-                logNameList.Add("Select Log");
-            }
-            else
-            {
-                logNameList = this.reportService.GetLogNames(logType, action, startDate, endDate);
-                if (includeAll)
-                {
-                    logNameList.Insert(0, "All");
-                }
-                logNameList.Insert(0, "Select Log");
-            }
-
-            return logNameList.Select(x => new SelectListItem() { Text = x, Value = x });
         }
 
         protected IEnumerable<SelectListItem> GetEmployeeLevels()
@@ -149,7 +153,13 @@ namespace eCLAdmin.Controllers
             {
                 reasonList = this.reportService.GetReasonsByModuleId(moduleId, isWarning);
             }
-            reasonList.Insert(0, new Reason { Id = -2, Description = "Select Coaching Reason" });
+            if (isWarning)
+            {
+                reasonList.Insert(0, new Reason { Id = -2, Description = "Select Warning Reason" });
+            } else
+            {
+                reasonList.Insert(0, new Reason { Id = -2, Description = "Select Coaching Reason" });
+            }
 
             return reasonList.Select(x => new SelectListItem() { Text = x.Description, Value = x.Id.ToString() });
         }
@@ -161,7 +171,14 @@ namespace eCLAdmin.Controllers
             {
                 subreasonList = this.reportService.GetSubreasons(reasonId, isWarning);
             }
-            subreasonList.Insert(0, new Reason { Id = -2, Description = "Select Subreason" });
+            if (isWarning)
+            {
+                subreasonList.Insert(0, new Reason { Id = -2, Description = "Select Warning Subreason" });
+            } else
+            {
+                subreasonList.Insert(0, new Reason { Id = -2, Description = "Select Coaching Subreason" });
+            }
+            
 
             return subreasonList.Select(x => new SelectListItem() { Text = x.Description, Value = x.Id.ToString() });
         }

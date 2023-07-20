@@ -46,7 +46,7 @@
                 type: "POST",
                 datatype: "json",
                 data: {
-                    siteName:       $('#select-site').val(),
+                    siteName:       $('#select-site-name').val(),
                     employeeId:     $('#select-employee').val()
                 }
             },
@@ -90,7 +90,7 @@
                 // show what have been entered in search boxes
                 $('#div-report-header').removeClass('hide');
                 $('#div-report-header').addClass('show');
-                $('#SiteTxt').text($('#select-site').val());
+                $('#SiteTxt').text($('#select-site-name').val());
                 $('#EmployeeTxt').text($('#select-employee  option:selected').text());
 
                 $("th").removeClass('sorting_desc');

@@ -1,16 +1,17 @@
 ﻿$(function () {
-
-    $("#select-level, #select-site").on("change", function () {
-        LoadEmployees();
+    $("#select-site").on("change", function () {
+        loadEmployees();
     });
 
     $("#select-level").on("change", function () {
-        LoadReasons();
-        LoadLogStatus();
+        resetEmployees();
+        loadSites();
+        loadReasons();
+        loadLogStatus();
     });
 
     $("#select-reason").on("change", function () {
-        LoadSubreasons();
+        loadSubreasons();
     });
 
     $('#btn-generate-report').on('click', function (e) {
@@ -85,7 +86,7 @@
     function validate() {
         let valid = true;
         $('.required').each(function () {
-            if ($(this).val() == undefined || $(this).val() == -2 || $(this).val() == '') {
+            if ($(this).val() == undefined || $(this).val() == -2 || $(this).val() == '' || $(this).val() == 'Select Action') {
                 $(this).css('border-color', 'red');
                 valid = false;
             } else {
@@ -94,6 +95,10 @@
         });
 
         return valid;
+    }
+    
+    function resetEmployees() {
+        $('#select-employee').find('option').not(':first').remove();
     }
 
     function resetReportDiv() {
@@ -107,7 +112,7 @@
         $('#div-report').html('');
     }
 
-    function LoadLogStatus() {
+    function loadLogStatus() {
         let moduleSelected = $('#select-level').val();
         if (moduleSelected == -2) {
             $('#select-logstatus').find('option').not(':first').remove();
@@ -135,7 +140,7 @@
         return false;
     }
 
-    function LoadReasons() {
+    function loadReasons() {
         let moduleSelected = $('#select-level').val();
         if (moduleSelected == -2) {
             $('#select-reason').find('option').not(':first').remove();
@@ -163,7 +168,7 @@
         return false;
     }
 
-    function LoadSubreasons() {
+    function loadSubreasons() {
         let reasonSelected = $('#select-reason').val();
         if (reasonSelected == -2) {
             $('#select-subreason').find('option').not(':first').remove();
@@ -191,7 +196,7 @@
         return false;
     }
 
-    function LoadEmployees() {
+    function loadEmployees() {
         let siteSelected = $('#select-site').val();
         let moduleSelected = $('#select-level').val();
         if (siteSelected == -2 || moduleSelected == -2) {
@@ -217,6 +222,35 @@
                 $('#select-employee').removeClass('loadinggif');
             }
         });
+        return false;
+    }
+
+    function loadSites() {
+        let moduleSelected = $('#select-level').val();
+        if (moduleSelected == -2) {
+            $('#select-site').find('option').not(':first').remove();
+            return;
+        }
+
+        $('#select-site').addClass('loadinggif')
+        $.ajax({
+            type: 'POST',
+            url: getSitesUrl,
+            dataType: 'json',
+            data: { moduleId: moduleSelected },
+
+            success: function (sites) {
+                $('#select-site').empty();
+                var options = [];
+                $.each(sites, function (i, site) {
+                    options.push('<option value="', site.Value, '">' + site.Text + '</option>');
+                });
+
+                $('#select-site').html(options.join(''));
+                $('#select-site').removeClass('loadinggif');
+            }
+        });
+
         return false;
     }
 

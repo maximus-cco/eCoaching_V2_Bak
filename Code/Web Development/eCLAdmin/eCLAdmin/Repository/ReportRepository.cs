@@ -130,12 +130,16 @@ namespace eCLAdmin.Repository
             var activityList = new List<AdminActivity>();
             totalRows = 0;
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_Lili_sp_rptAdminActivitySummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptAdminActivitySummary]", connection))
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
                 command.Parameters.AddWithValueSafe("@strTypein", logType);
                 command.Parameters.AddWithValueSafe("@strActivityin", action);
+                if (String.IsNullOrEmpty(logOrEmpName))
+                {
+                    logName = "All";
+                }
                 command.Parameters.AddWithValueSafe("@strFormin", logName);
                 command.Parameters.AddWithValueSafe("@strSearchin", logOrEmpName);
                 command.Parameters.AddWithValueSafe("@strSDatein", startDate);
@@ -191,7 +195,7 @@ namespace eCLAdmin.Repository
         {
             DataSet dt = new DataSet();
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_Lili_sp_rptAdminActivitySummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptAdminActivitySummary]", connection))
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -224,7 +228,7 @@ namespace eCLAdmin.Repository
             var employeeHierarchyList = new List<EmployeeHierarchy>();
             totalRows = 0;
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptHierarchySummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptHierarchySummary]", connection))
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -245,7 +249,7 @@ namespace eCLAdmin.Repository
 
                 if (retCode != 0)
                 {
-                    throw new Exception("[a_lili_sp_rptHierarchySummary] failed to return data: " + retMessage);
+                    throw new Exception("[sp_rptHierarchySummary] failed to return data: " + retMessage);
                 }
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -289,7 +293,7 @@ namespace eCLAdmin.Repository
         {
             DataSet dt = new DataSet();
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptHierarchySummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptHierarchySummary]", connection))
             {
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -356,7 +360,7 @@ namespace eCLAdmin.Repository
         public List<Reason> GetReasonsByModuleId(int moduleId, bool isWarning)
         {
             var reasons = new List<Reason>();
-            var storedProcedure = isWarning ? "[EC].[a_Lili_sp_rptWarningReasonByModuleId]" : "[EC].[a_Lili_sp_rptCoachingReasonByModuleId]";
+            var storedProcedure = isWarning ? "[EC].[sp_rptWarningReasonByModuleId]" : "[EC].[sp_rptCoachingReasonByModuleId]";
             using (SqlConnection connection = new SqlConnection(connectionStr))
             using (SqlCommand command = new SqlCommand(storedProcedure, connection))
             {
@@ -384,7 +388,7 @@ namespace eCLAdmin.Repository
         public List<Reason> GetSubreasons(int reasonId, bool isWarning)
         {
             var subreasons = new List<Reason>();
-            var storedProcedure = isWarning ? "[EC].[a_Lili_sp_rptWarningSubreason]" : "[EC].[a_Lili_sp_rptCoachingSubreason]";
+            var storedProcedure = isWarning ? "[EC].[sp_rptWarningSubreason]" : "[EC].[sp_rptCoachingSubreason]";
             using (SqlConnection connection = new SqlConnection(connectionStr))
             using (SqlCommand command = new SqlCommand(storedProcedure, connection))
             {
@@ -412,7 +416,7 @@ namespace eCLAdmin.Repository
         public List<Status> GetLogStatusList(int moduleId, bool isWarning)
         {
             var statusList = new List<Status>();
-            var storedProcedure = isWarning ? "[EC].[a_Lili_sp_rptWarningLogStatusByModuleId]" : "[EC].[a_Lili_sp_rptLogStatusByModuleId]";
+            var storedProcedure = isWarning ? "[EC].[sp_rptWarningLogStatusByModuleId]" : "[EC].[sp_rptLogStatusByModuleId]";
             using (SqlConnection connection = new SqlConnection(connectionStr))
             using (SqlCommand command = new SqlCommand(storedProcedure, connection))
             {
@@ -444,7 +448,7 @@ namespace eCLAdmin.Repository
             var logList = new List<CoachingLog>();
             totalRows = 0;
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptCoachingSummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptCoachingSummary]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -471,7 +475,7 @@ namespace eCLAdmin.Repository
                 string retMessage = command.Parameters["@returnMessage"].Value == null ? "no return message" : command.Parameters["@returnMessage"].Value.ToString();
                 if (retCode != 0)
                 {
-                    throw new Exception("[a_lili_sp_rptCoachingSummary] failed to return data: " + retMessage);
+                    throw new Exception("[sp_rptCoachingSummary] failed to return data: " + retMessage);
                 }
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -543,7 +547,7 @@ namespace eCLAdmin.Repository
         {
             DataSet dt = new DataSet();
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptCoachingSummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptCoachingSummary]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -580,7 +584,7 @@ namespace eCLAdmin.Repository
             var logQnList = new List<CoachingLogQn>();
             totalRows = 0;
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptQNCoachingSummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptQNCoachingSummary]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -605,7 +609,7 @@ namespace eCLAdmin.Repository
                 string retMessage = command.Parameters["@returnMessage"].Value == null ? "no return message" : command.Parameters["@returnMessage"].Value.ToString();
                 if (retCode != 0)
                 {
-                    throw new Exception("[a_lili_sp_rptQNCoachingSummary] failed to return data: " + retMessage);
+                    throw new Exception("[sp_rptQNCoachingSummary] failed to return data: " + retMessage);
                 }
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -724,7 +728,7 @@ namespace eCLAdmin.Repository
         {
             DataSet dt = new DataSet();
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptQNCoachingSummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptQNCoachingSummary]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -759,7 +763,7 @@ namespace eCLAdmin.Repository
             var logList = new List<WarningLog>();
             totalRows = 0;
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptWarningSummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptWarningSummary]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -787,7 +791,7 @@ namespace eCLAdmin.Repository
                 string retMessage = command.Parameters["@returnMessage"].Value == null ? "no return message" : command.Parameters["@returnMessage"].Value.ToString();
                 if (retCode != 0)
                 {
-                    throw new Exception("[a_lili_sp_rptWarningSummary] failed to return data: " + retMessage);
+                    throw new Exception("[sp_rptWarningSummary] failed to return data: " + retMessage);
                 }
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -845,7 +849,7 @@ namespace eCLAdmin.Repository
         {
             DataSet dt = new DataSet();
             using (SqlConnection connection = new SqlConnection(connectionStr))
-            using (SqlCommand command = new SqlCommand("[EC].[a_lili_sp_rptWarningSummary]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptWarningSummary]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = 300;

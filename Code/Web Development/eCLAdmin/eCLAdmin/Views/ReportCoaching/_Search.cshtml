@@ -19,15 +19,15 @@
             </span>
         </div>
     </div>
-    
-    <div class="form-group">
-        @Html.DropDownListFor(m => m.SelectedSite, Model.SiteSelectList, new { id = "select-site", @class = "form-control required" })
-    </div>
 
     <div class="form-group">
         @Html.DropDownListFor(m => m.SelectedEmployeeLevel, Model.EmployeeLevelSelectList, new { id = "select-level", @class = "form-control required" })
+    </div>    
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.SelectedSite, Model.SiteSelectList, new { id = "select-site", @class = "form-control required" })
     </div>
-    
+   
     <div class="form-group">
         @Html.DropDownListFor(m => m.SelectedEmployee, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control required" })
     </div> 

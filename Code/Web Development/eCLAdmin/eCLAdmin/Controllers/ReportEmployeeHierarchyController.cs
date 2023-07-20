@@ -41,7 +41,7 @@ namespace eCLAdmin.Controllers
         private IEnumerable<SelectListItem> GetSites()
         {
             List<Site> siteList = siteService.GetSiteForHierarchyRpt();
-            siteList.Insert(0, new Site { Id = "Select Site", Name = "Select Site" });
+            siteList.Insert(0, new Site { Id = "-2", Name = "Select Site" });
             IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name");
 
             return sites;

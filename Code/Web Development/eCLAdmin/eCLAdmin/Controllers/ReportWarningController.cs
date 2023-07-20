@@ -1,4 +1,5 @@
 ﻿using eCLAdmin.Extensions;
+using eCLAdmin.Models;
 using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.Report;
 using eCLAdmin.Services;
@@ -32,7 +33,11 @@ namespace eCLAdmin.Controllers
         {
             var vm = new WarningSearchViewModel();
             vm.EmployeeLevelSelectList = GetEmployeeLevels();
-            vm.SiteSelectList = GetSitesByUserRole();
+
+            // site dropdown
+            List<Site> siteList = new List<Site>();
+            siteList.Insert(0, new Site { Id = "-2", Name = "Select Site" });
+            vm.SiteSelectList = new SelectList(siteList, "Id", "Name");
 
             List<Employee> employeeList = new List<Employee>();
             employeeList.Insert(0, new Employee { Id = "-2", Name = "Select Employee" });

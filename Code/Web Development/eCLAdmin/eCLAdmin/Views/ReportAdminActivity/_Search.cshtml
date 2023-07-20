@@ -22,7 +22,6 @@
  
     @Html.DropDownListFor(m => m.SelectedTypeId, Model.LogTypeSelectList, new { id = "select-type", @class = "form-control required" })
     @Html.DropDownListFor(m => m.SelectedAction, Model.ActionSelectList, new { id = "select-action", @class = "form-control required" })
-    @Html.DropDownListFor(m => m.SelectedLog, Model.LogNameSelectList, new { id = "select-log", @class = "form-control required" })
     @Html.TextBoxFor(m => m.FreeTextSearch, new { id = "logname-empname", placeholder = "Log name, employee name ...", @class = "form-control"})
 
     <button type="button" class="btn btn-primary ml-1" id="btn-generate-report">Generate Report</button> 
@@ -54,34 +53,6 @@
             });
             return false;
         });
-
-        $('#select-action').on('change', function () {
-            $('#select-log').addClass('loadinggif')
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("GetLogNames")',
-                dataType: 'json',
-                data: {
-                    logType: $('#select-type option:selected').text(),
-                    action: $(this).val(),
-                    startDate: $('#StartDate').val(),
-                    endDate: $('#EndDate').val(),
-                    logOrEmpName: $('#logname-empname').val()
-                },
-
-                success: function (logNames) {
-                    $("#select-log").empty();
-                    var options = [];
-                    $.each(logNames, function (i, a) {
-                        options.push('<option value="', a.Value, '">' + a.Text + '</option>');
-                    });
-
-                    $('#select-log').html(options.join(''));
-                    $('#select-log').removeClass('loadinggif');
-                }
-            });
-            return false;
-        })
 
     });
 

@@ -8,5 +8,6 @@ namespace eCLAdmin.Repository
         List<Site> GetSites();
         List<Site> GetSites(string userId);
         List<Site> GetSiteForHierarchyRpt();
+        List<Site> GetSiteForReport(string userId, int moduleId);
     }
 }

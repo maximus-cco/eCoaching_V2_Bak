@@ -1,4 +1,5 @@
-﻿using eCLAdmin.Models;
+﻿using eCLAdmin.Extensions;
+using eCLAdmin.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -63,7 +64,7 @@ namespace eCLAdmin.Repository
         {
             var sites = new List<Site>();
             using (SqlConnection connection = new SqlConnection(conn))
-            using (SqlCommand command = new SqlCommand("[EC].[a_Lili_sp_rptHierarchySites]", connection))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptHierarchySites]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
@@ -75,6 +76,36 @@ namespace eCLAdmin.Repository
                     {
                         Site site = new Site();
                         site.Id = dataReader["Site"].ToString();
+                        site.Name = dataReader["Site"].ToString();
+
+                        sites.Add(site);
+                    }
+                    dataReader.Close();
+                }
+            }
+
+            return sites;
+        }
+
+        public List<Site> GetSiteForReport(string userId, int moduleId)
+        {
+            var sites = new List<Site>();
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_rptSitesByRole]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = 300;
+                command.Parameters.AddWithValueSafe("@LanID", userId);
+                command.Parameters.AddWithValueSafe("@intModulein", moduleId);
+
+                connection.Open();
+
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        Site site = new Site();
+                        site.Id = dataReader["SiteID"].ToString();
                         site.Name = dataReader["Site"].ToString();
 
                         sites.Add(site);

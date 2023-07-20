@@ -84,16 +84,6 @@ namespace eCLAdmin.Controllers
             return types;
         }
 
-        protected IEnumerable<SelectListItem> GetSitesByUserRole()
-        {
-            User user = GetUserFromSession();
-            List<Site> siteList = this.siteService.GetSites(user.EmployeeId);
-            siteList.Insert(0, new Site { Id = "-2", Name = "Select Site" });
-            IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name");
-
-            return sites;
-        }
-
         // Download the generated excel file
         public void Download()
         {
