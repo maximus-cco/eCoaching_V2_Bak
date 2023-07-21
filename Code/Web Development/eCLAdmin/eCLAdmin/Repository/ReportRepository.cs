@@ -136,14 +136,10 @@ namespace eCLAdmin.Repository
                 command.CommandTimeout = 300;
                 command.Parameters.AddWithValueSafe("@strTypein", logType);
                 command.Parameters.AddWithValueSafe("@strActivityin", action);
-                if (String.IsNullOrEmpty(logOrEmpName))
-                {
-                    logName = "All";
-                }
-                command.Parameters.AddWithValueSafe("@strFormin", logName);
-                command.Parameters.AddWithValueSafe("@strSearchin", logOrEmpName);
+                command.Parameters.AddWithValueSafe("@strFormin", "All"); // removed Log Name dropdown on the page, so pass "All" always
+                command.Parameters.AddWithValueSafe("@strSearchin", logOrEmpName == null ? "" : logOrEmpName);
                 command.Parameters.AddWithValueSafe("@strSDatein", startDate);
-                command.Parameters.AddWithValueSafe("@strEDatein", endDate);
+                command.Parameters.AddWithValueSafe("@strEDatein", endDate); 
                 command.Parameters.AddWithValueSafe("@PageSize", pageSize);
                 command.Parameters.AddWithValueSafe("@startRowIndex", rowStartIndex);
                 // output parameters
@@ -201,8 +197,8 @@ namespace eCLAdmin.Repository
                 command.CommandTimeout = 300;
                 command.Parameters.AddWithValueSafe("@strTypein", logType);
                 command.Parameters.AddWithValueSafe("@strActivityin", action);
-                command.Parameters.AddWithValueSafe("@strFormin", logName);
-                command.Parameters.AddWithValueSafe("@strSearchin", logOrEmpName);
+                command.Parameters.AddWithValueSafe("@strFormin", "All");
+                command.Parameters.AddWithValueSafe("@strSearchin", logOrEmpName == null ? "" : logOrEmpName);
                 command.Parameters.AddWithValueSafe("@strSDatein", startDate);
                 command.Parameters.AddWithValueSafe("@strEDatein", endDate);
                 command.Parameters.AddWithValueSafe("@PageSize", Int32.MaxValue - 1);
