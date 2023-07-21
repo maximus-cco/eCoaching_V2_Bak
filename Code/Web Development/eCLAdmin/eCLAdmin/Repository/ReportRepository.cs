@@ -166,7 +166,7 @@ namespace eCLAdmin.Repository
 
                         var activity = new AdminActivity();
                         activity.ModuleId = (int)dataReader["Employee Level ID"];
-                        activity.LogName = dataReader["Form Name"].ToString();
+                        activity.LogName = dataReader["Log Name"].ToString();
                         activity.ModuleName = dataReader["Employee Level"].ToString();
                         activity.LastKnownStatus = dataReader["Last Known Status"].ToString();
                         activity.Action = dataReader["Action"].ToString();
@@ -484,7 +484,7 @@ namespace eCLAdmin.Repository
                         }
                         var temp = new CoachingLog();
                         temp.ModuleId = dataReader["Employee Level ID"].ToString();
-                        temp.ModuleName = dataReader["Employee Level Name"].ToString();
+                        temp.ModuleName = dataReader["Employee Level"].ToString();
                         temp.CoachingID = dataReader["Coaching ID"].ToString();
                         temp.LogName = dataReader["Log Name"].ToString();
                         temp.LogStatus = dataReader["Status"].ToString();
@@ -618,7 +618,7 @@ namespace eCLAdmin.Repository
                         }
                         var temp = new CoachingLogQn();
                         temp.ModuleId = dataReader["Employee Level ID"].ToString();
-                        temp.ModuleName = dataReader["Employee Level Name"].ToString();
+                        temp.ModuleName = dataReader["Employee Level"].ToString();
                         temp.CoachingID = dataReader["Coaching ID"].ToString();
                         temp.LogName = dataReader["Log Name"].ToString();
                         temp.QualityNowBatchID = dataReader["Quality Now Batch ID"].ToString();
