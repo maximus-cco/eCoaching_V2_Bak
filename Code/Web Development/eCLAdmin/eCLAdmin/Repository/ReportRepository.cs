@@ -394,7 +394,7 @@ namespace eCLAdmin.Repository
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandTimeout = 300;
-                command.Parameters.AddWithValueSafe("@intCoachReasonId", reasonId);
+                command.Parameters.AddWithValueSafe("@intReasonId", reasonId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
