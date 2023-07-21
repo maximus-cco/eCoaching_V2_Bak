@@ -9,7 +9,7 @@ GO
 --  Initial Revision: Quality Now Initiative TFS 13333 -  03/27/2019
 --  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 --  Modified to support Quality Now workflow enhancement . TFS 22187 - 08/03/2021
---  Added paging. TFS 28619 - 07/18/2023 LH
+--  Added paging. TFS 26819 - 07/18/2023 LH
  *******************************************************************************/
 CREATE PROCEDURE [EC].[sp_rptQNCoachingSummary] 
 (
@@ -65,7 +65,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
  SELECT DISTINCT p.ModuleID AS [Employee Level ID]
                           ,c.Module AS [Employee Level Name]
               ,p.CoachingID AS [Coaching ID]
-			  ,p.FormName AS [Form Name]
+			  ,p.FormName AS [Log Name]
 			   ,p.QNBatchID [Quality Now Batch ID]
                ,p.QNBatchStatus [Quality Now Batch Status]
 			   ,c.Status

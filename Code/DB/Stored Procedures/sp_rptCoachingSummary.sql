@@ -14,7 +14,7 @@ GO
 --  Modified to support Quality Now. TFS 13333 - 04/02/2019
 --  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
 --  Updated to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
---  Updated to support paging. #28619 - 07/17/2023
+--  Updated to support paging. #26819 - 07/17/2023
  *******************************************************************************/
 
 CREATE   PROCEDURE [EC].[sp_rptCoachingSummary] 
@@ -69,10 +69,10 @@ SET @strHDate = convert(varchar(8),@strHDatein,112);
 -- Open Symmetric Key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
 ;with a as (
-  SELECT DISTINCT p.ModuleID AS [Module ID]
-              ,c.Module AS [Module Name]
+  SELECT DISTINCT p.ModuleID AS [Employee Level ID]
+              ,c.Module AS [Employee Level Name]
               ,p.CoachingID AS [Coaching ID]
-			  ,p.FormName AS [Form Name]
+			  ,p.FormName AS [Log Name]
 			  ,c.Status
 			  ,p.EmpID AS [Employee ID]
     	      ,CONVERT(nvarchar(50),DecryptByKey(c.EmpName)) AS [Employee Name]
