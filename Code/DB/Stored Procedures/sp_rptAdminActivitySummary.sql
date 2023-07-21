@@ -67,7 +67,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 
 -- Create a temp table to hold all Coaching admin activity logs for selected period
 
-CREATE TABLE #CoachingAdminActivity ([Employee Level Id] int, [Employee Level] nvarchar(20),[Form Name] nvarchar(50), [Last Known Status]nvarchar(100),
+CREATE TABLE #CoachingAdminActivity ([Employee Level Id] int, [Employee Level] nvarchar(20),[Log Name] nvarchar(50), [Last Known Status]nvarchar(100),
 [Action] nvarchar(20), [Action Date] datetime, [Requester ID] nvarchar(20), [Requester Name] nvarchar(50), [Assigned To ID] nvarchar(20),
 [Assigned To Name] nvarchar(50), [Reason] nvarchar(250), [Requester Comments] nvarchar(4000) )
 
@@ -78,11 +78,11 @@ BEGIN
 -- Insert logs from Coaching inactivation reactivation audit table
 
 INSERT INTO #CoachingAdminActivity 
-([Employee Level Id],[Employee Level], [Form Name], [Last Known Status],
+([Employee Level Id],[Employee Level], [Log Name], [Last Known Status],
 [Action], [Action Date], [Requester ID], [Requester Name], [Assigned To ID],
 [Assigned To Name], [Reason], [Requester Comments])
 (
-SELECT cl.ModuleID AS [Employee Level Id], dm.Module AS [Employee Level], cira.FormName AS [Form Name],
+SELECT cl.ModuleID AS [Employee Level Id], dm.Module AS [Employee Level], cira.FormName AS [Log Name],
 ds.Status AS [Last Known status], cira.Action AS [Action], cira.ActionTimestamp AS [action Date],
 cira.RequesterID AS [Requester ID], 
 CASE WHEN cira.RequesterID = '999998' 
@@ -103,7 +103,7 @@ UNION
 
 -- Insert logs from Coaching reassign audit table
 
-SELECT cl.ModuleID AS [Employee Level ID], dm.Module AS [Employee Level], cra.FormName AS [Form Name],
+SELECT cl.ModuleID AS [Employee Level ID], dm.Module AS [Employee Level], cra.FormName AS [Log Name],
 ds.Status AS [Last Known status], 'Reassign' AS [Action], cra.ActionTimestamp AS [action Date],
 cra.RequesterID AS [Requester ID],
 CASE WHEN cra.RequesterID = '999998' 
@@ -127,7 +127,7 @@ END
 -- Create a temp table to hold all Warning admin activity logs for selected period
 
 
-CREATE TABLE #WarningAdminActivity ([Employee Level Id] int, [Employee Level] nvarchar(20),[Form Name] nvarchar(50), [Last Known Status]nvarchar(100),
+CREATE TABLE #WarningAdminActivity ([Employee Level Id] int, [Employee Level] nvarchar(20),[Log Name] nvarchar(50), [Last Known Status]nvarchar(100),
 [Action] nvarchar(20), [Action Date] datetime, [Requester ID] nvarchar(20), [Requester Name] nvarchar(50), [Assigned To ID] nvarchar(20),
 [Assigned To Name] nvarchar(50), [Reason] nvarchar(250), [Requester Comments] nvarchar(4000) )
 
@@ -138,11 +138,11 @@ BEGIN
 -- Insert logs from warning Inactivation Reactivation audit table
 
 INSERT INTO #WarningAdminActivity 
-([Employee Level Id],[Employee Level], [Form Name], [Last Known Status],
+([Employee Level Id],[Employee Level], [Log Name], [Last Known Status],
 [Action], [Action Date], [Requester ID], [Requester Name], [Assigned To ID],
 [Assigned To Name], [Reason], [Requester Comments])
 (
-SELECT wl.ModuleID AS [Employee Level Id], dm.Module AS [Employee Level], wira.FormName AS [Form Name],
+SELECT wl.ModuleID AS [Employee Level Id], dm.Module AS [Employee Level], wira.FormName AS [Log Name],
 ds.Status AS [Last Known status], wira.Action AS [Action], wira.ActionTimestamp AS [action Date],
 wira.RequesterID AS [Requester ID], 
 CASE WHEN wira.RequesterID = '999998' 
@@ -167,7 +167,7 @@ begin
 	with temp as ( 
         select ROW_NUMBER() over (order by [Action Date]) as RowNumber, Count(*) over () as TotalRows, * 
         from #CoachingAdminActivity 
-		where ([Form Name] = @strFormin or @strFormin = 'All') and ([Action] = @strActivityin or @strActivityin = 'All')
+		where ([Log Name] = @strFormin or @strFormin = 'All') and ([Action] = @strActivityin or @strActivityin = 'All')
     ) 
 	select * from temp
     where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;
@@ -179,7 +179,7 @@ begin
 	with temp as (
         select ROW_NUMBER() over (order by [Action Date]) as RowNumber, Count(*) over () as TotalRows, * 
         from #WarningAdminActivity 
-		where ([Form Name] = @strFormin or @strFormin = 'All') and ([Action] = @strActivityin or @strActivityin = 'All') 
+		where ([Log Name] = @strFormin or @strFormin = 'All') and ([Action] = @strActivityin or @strActivityin = 'All') 
     ) 
 	select * from temp
     where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;
@@ -195,7 +195,7 @@ begin
 			union
 			select * from #WarningAdminActivity
 		) s
-		where ([Form Name] = @strFormin or @strFormin = 'All') and ([Action] = @strActivityin or @strActivityin = 'All') 
+		where ([Log Name] = @strFormin or @strFormin = 'All') and ([Action] = @strActivityin or @strActivityin = 'All') 
 	) 
 	select * from temp
     where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;

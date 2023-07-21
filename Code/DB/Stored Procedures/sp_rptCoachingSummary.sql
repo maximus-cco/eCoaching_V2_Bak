@@ -70,7 +70,7 @@ SET @strHDate = convert(varchar(8),@strHDatein,112);
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
 ;with a as (
   SELECT DISTINCT p.ModuleID AS [Employee Level ID]
-              ,c.Module AS [Employee Level Name]
+              ,c.Module AS [Employee Level]
               ,p.CoachingID AS [Coaching ID]
 			  ,p.FormName AS [Log Name]
 			  ,c.Status
