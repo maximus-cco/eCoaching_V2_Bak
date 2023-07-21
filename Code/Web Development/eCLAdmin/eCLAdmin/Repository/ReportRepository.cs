@@ -483,10 +483,10 @@ namespace eCLAdmin.Repository
                             totalRows = (int)dataReader["TotalRows"];
                         }
                         var temp = new CoachingLog();
-                        temp.ModuleId = dataReader["Module ID"].ToString();
-                        temp.ModuleName = dataReader["Module Name"].ToString();
+                        temp.ModuleId = dataReader["Employee Level ID"].ToString();
+                        temp.ModuleName = dataReader["Employee Level Name"].ToString();
                         temp.CoachingID = dataReader["Coaching ID"].ToString();
-                        temp.LogName = dataReader["Form Name"].ToString();
+                        temp.LogName = dataReader["Log Name"].ToString();
                         temp.LogStatus = dataReader["Status"].ToString();
                         temp.EmployeeId = dataReader["Employee ID"].ToString();
                         temp.EmployeeName = dataReader["Employee Name"].ToString();
@@ -620,7 +620,7 @@ namespace eCLAdmin.Repository
                         temp.ModuleId = dataReader["Employee Level ID"].ToString();
                         temp.ModuleName = dataReader["Employee Level Name"].ToString();
                         temp.CoachingID = dataReader["Coaching ID"].ToString();
-                        temp.LogName = dataReader["Form Name"].ToString();
+                        temp.LogName = dataReader["Log Name"].ToString();
                         temp.QualityNowBatchID = dataReader["Quality Now Batch ID"].ToString();
                         temp.QualityNowBatchStatus = dataReader["Quality Now Batch Status"].ToString();
                         temp.Status = dataReader["Status"].ToString();
