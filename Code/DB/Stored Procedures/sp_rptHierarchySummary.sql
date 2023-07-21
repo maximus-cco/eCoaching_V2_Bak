@@ -1,58 +1,24 @@
-/*
-sp_rptHierarchySummary(04).sql
-Last Modified Date: 11/28/2017
-Last Modified By: Susmitha Palacherla
-
-Version 04:  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
-
-Version 03: Added Aspect fields and removed Module name - TFS 5621 - 04/10/2017
-
-Version 02: Added Site filter - TFS 5621 - 03/31/2017
-
-Version 01: Document Initial Revision - Suzy Palacherla -  TFS 5621 - 03/29/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_rptHierarchySummary' 
-)
-   DROP PROCEDURE [EC].[sp_rptHierarchySummary]
+DROP PROCEDURE IF EXISTS [EC].[sp_rptHierarchySummary]; 
 GO
-
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
 
 /******************************************************************************* 
---	Author:			Susmitha Palacherla
---	Create Date:	3/27/2017
---	Description: Displays the hierarchy for a given employee.
---  Last Modified: 
---  Last Modified By:
+--	Author:			  Susmitha Palacherla
+--	Create Date:	  3/27/2017
+--	Description:      Displays the hierarchy for a given employee.
+--  Last Modified:    07/12/2023
+--  Last Modified By: LH
 --  Revision History:
 --  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/10/2017)
 --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
+--  Added paging. TFS 26819 - 07/12/2023
  *******************************************************************************/
 CREATE PROCEDURE [EC].[sp_rptHierarchySummary] 
 (
 @strEmpSitein nvarchar(20),
 @strEmpin nvarchar(10),
 
-
+@PageSize int,
+@startRowIndex int, 
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
    @returnCode int OUTPUT,
@@ -78,12 +44,12 @@ AS
 -- *** BEGIN: INSERT CUSTOM CODE HERE ***
 
 SET NOCOUNT ON
-
 -- Open Symmetric Key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
 
-
-       SELECT  eh.Emp_ID AS [Employee ID]
+;with temp as (
+	select ROW_NUMBER() over (order by eh.Emp_Name) as RowNumber, Count(*) over () as TotalRows 
+			  ,eh.Emp_ID AS [Employee ID]
               ,CONVERT(nvarchar(50),DecryptByKey(eh.Emp_Name)) AS [Employee Name]
               ,ISNULL(eh.Emp_Site,'Unknown') AS [Site]
               ,ISNULL(eh.Emp_Job_Code,'-') AS [Employee Job Code]
@@ -103,14 +69,16 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		      ,ISNULL(ess.Emp_Job_Code, '-') AS [Aspect Job Title]
 		      ,ISNULL(ess.Emp_Program, '-') AS [Aspect Skill]
 		      ,ISNULL(ess.Emp_Status, '-') AS [Aspect Status]
-        FROM [EC].[Employee_Hierarchy] eh LEFT OUTER JOIN [EC].[EmpID_To_SupID_Stage]ess
-        ON eh.Emp_ID = LTRIM(ess.Emp_ID)
-		WHERE ([eh].[Emp_ID]= (@strEmpin)or @strEmpin = '-1')
-		       AND ([eh].[Emp_Site] = (@strEmpSitein)or @strEmpSitein = 'All')
-        ORDER BY eh.Emp_Name
+        from [EC].[Employee_Hierarchy] eh 
+        left outer join [EC].[EmpID_To_SupID_Stage]ess on eh.Emp_ID = LTRIM(ess.Emp_ID)
+		where ([eh].[Emp_ID]= @strEmpin or @strEmpin = '-1')
+		       and ([eh].[Emp_Site] = @strEmpSitein or @strEmpSitein = 'All')
+)
+select * from temp
+where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;
 
-  -- Clode Symmetric Key
-  CLOSE SYMMETRIC KEY [CoachingKey] 
+-- Clode Symmetric Key
+CLOSE SYMMETRIC KEY [CoachingKey] 
 	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -136,11 +104,6 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
-
-
-
-
-
 
 GO
 

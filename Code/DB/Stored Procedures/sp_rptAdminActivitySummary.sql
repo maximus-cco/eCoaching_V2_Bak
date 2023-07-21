@@ -1,43 +1,19 @@
-/*
-sp_rptAdminActivitySummary(02).sql
-Last Modified Date: 11/28/2017
-Last Modified By: Susmitha Palacherla
-
-
-Version 02: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
-Version 01: Document Initial Revision - Suzy Palacherla -  TFS 5621 - 04/11/2017
-
-*/
-
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_rptAdminActivitySummary' 
-)
-   DROP PROCEDURE [EC].[sp_rptAdminActivitySummary]
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
+DROP PROCEDURE IF EXISTS [EC].[sp_rptAdminActivitySummary]; 
 GO
 
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2017
 --	Description: Displays the Admin Activity Logs for selected Type, Action and Date Range.
---  Last Modified: 
---  Last Modified By:
---  Revision History:
+--  Last Modified:    07/06/2023
+--  Last Modified By: LH
+--  Revision History: #26819 - Replace SSRS reports with datatables.
 --  Initial Revision - TFS 5621 - 4/10/2017
 --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 --  Modified to add new Search paramter. TFS 24056 - 03/23/2022
+--  Added paging. #26819 - 07/06/2023
  *******************************************************************************/
-CREATE OR ALTER PROCEDURE [EC].[sp_rptAdminActivitySummary] 
+CREATE PROCEDURE [EC].[sp_rptAdminActivitySummary] 
 (
 @strTypein nvarchar(10),
 @strActivityin nvarchar(20),
@@ -45,6 +21,9 @@ CREATE OR ALTER PROCEDURE [EC].[sp_rptAdminActivitySummary]
 @strSDatein datetime = '',
 @strEDatein datetime = '',
 @strSearchin nvarchar(50),
+
+@PageSize int,
+@startRowIndex int, 
 
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
@@ -79,7 +58,6 @@ DECLARE
 @strEDate nvarchar(10),
 @strSearch nvarchar(52)
 
-
 SET @strSDate = convert(varchar(8),@strSDatein,112)
 SET @strEDate = convert(varchar(8),@strEDatein,112)
 SET @strSearch = '%' + @strSearchin + '%'
@@ -89,7 +67,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 
 -- Create a temp table to hold all Coaching admin activity logs for selected period
 
-CREATE TABLE #CoachingAdminActivity ([Module Id] int, [Module Name] nvarchar(20),[Form Name] nvarchar(50), [Last Known Status]nvarchar(100),
+CREATE TABLE #CoachingAdminActivity ([Employee Level Id] int, [Employee Level] nvarchar(20),[Form Name] nvarchar(50), [Last Known Status]nvarchar(100),
 [Action] nvarchar(20), [Action Date] datetime, [Requester ID] nvarchar(20), [Requester Name] nvarchar(50), [Assigned To ID] nvarchar(20),
 [Assigned To Name] nvarchar(50), [Reason] nvarchar(250), [Requester Comments] nvarchar(4000) )
 
@@ -100,11 +78,11 @@ BEGIN
 -- Insert logs from Coaching inactivation reactivation audit table
 
 INSERT INTO #CoachingAdminActivity 
-([Module Id],[Module Name], [Form Name], [Last Known Status],
+([Employee Level Id],[Employee Level], [Form Name], [Last Known Status],
 [Action], [Action Date], [Requester ID], [Requester Name], [Assigned To ID],
 [Assigned To Name], [Reason], [Requester Comments])
 (
-SELECT cl.ModuleID AS [Module ID], dm.Module AS [Module Name], cira.FormName AS [Form Name],
+SELECT cl.ModuleID AS [Employee Level Id], dm.Module AS [Employee Level], cira.FormName AS [Form Name],
 ds.Status AS [Last Known status], cira.Action AS [Action], cira.ActionTimestamp AS [action Date],
 cira.RequesterID AS [Requester ID], 
 CASE WHEN cira.RequesterID = '999998' 
@@ -125,7 +103,7 @@ UNION
 
 -- Insert logs from Coaching reassign audit table
 
-SELECT cl.ModuleID AS [Module ID], dm.Module AS [Module Name], cra.FormName AS [Form Name],
+SELECT cl.ModuleID AS [Employee Level ID], dm.Module AS [Employee Level], cra.FormName AS [Form Name],
 ds.Status AS [Last Known status], 'Reassign' AS [Action], cra.ActionTimestamp AS [action Date],
 cra.RequesterID AS [Requester ID],
 CASE WHEN cra.RequesterID = '999998' 
@@ -149,7 +127,7 @@ END
 -- Create a temp table to hold all Warning admin activity logs for selected period
 
 
-CREATE TABLE #WarningAdminActivity ([Module Id] int, [Module Name] nvarchar(20),[Form Name] nvarchar(50), [Last Known Status]nvarchar(100),
+CREATE TABLE #WarningAdminActivity ([Employee Level Id] int, [Employee Level] nvarchar(20),[Form Name] nvarchar(50), [Last Known Status]nvarchar(100),
 [Action] nvarchar(20), [Action Date] datetime, [Requester ID] nvarchar(20), [Requester Name] nvarchar(50), [Assigned To ID] nvarchar(20),
 [Assigned To Name] nvarchar(50), [Reason] nvarchar(250), [Requester Comments] nvarchar(4000) )
 
@@ -160,11 +138,11 @@ BEGIN
 -- Insert logs from warning Inactivation Reactivation audit table
 
 INSERT INTO #WarningAdminActivity 
-([Module Id],[Module Name], [Form Name], [Last Known Status],
+([Employee Level Id],[Employee Level], [Form Name], [Last Known Status],
 [Action], [Action Date], [Requester ID], [Requester Name], [Assigned To ID],
 [Assigned To Name], [Reason], [Requester Comments])
 (
-SELECT wl.ModuleID AS [Module ID], dm.Module AS [Module Name], wira.FormName AS [Form Name],
+SELECT wl.ModuleID AS [Employee Level Id], dm.Module AS [Employee Level], wira.FormName AS [Form Name],
 ds.Status AS [Last Known status], wira.Action AS [Action], wira.ActionTimestamp AS [action Date],
 wira.RequesterID AS [Requester ID], 
 CASE WHEN wira.RequesterID = '999998' 
@@ -184,35 +162,44 @@ AND (CONVERT(nvarchar(50),DecryptByKey(eh.Emp_Name)) LIKE @strSearch OR wira.For
 END
 
 -- Display all selected coaching audit logs
-
 IF @strTypein = 'Coaching'
-
-SELECT * FROM #CoachingAdminActivity 
-WHERE ([Form Name] =(@strFormin) or @strFormin = 'All') 
-AND ([Action] =(@strActivityin) or @strActivityin = 'All') 
-ORDER BY [Action Date]
+begin
+	with temp as ( 
+        select ROW_NUMBER() over (order by [Action Date]) as RowNumber, Count(*) over () as TotalRows, * 
+        from #CoachingAdminActivity 
+		where ([Form Name] = @strFormin or @strFormin = 'All') and ([Action] = @strActivityin or @strActivityin = 'All')
+    ) 
+	select * from temp
+    where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;
+end
 
 -- Display all selected warning audit logs
-
 IF @strTypein = 'Warning'
-
-SELECT * FROM #WarningAdminActivity 
-WHERE ([Form Name] =(@strFormin) or @strFormin = 'All') 
-AND ([Action] =(@strActivityin) or @strActivityin = 'All') 
-ORDER BY [Action Date]
+begin
+	with temp as (
+        select ROW_NUMBER() over (order by [Action Date]) as RowNumber, Count(*) over () as TotalRows, * 
+        from #WarningAdminActivity 
+		where ([Form Name] = @strFormin or @strFormin = 'All') and ([Action] = @strActivityin or @strActivityin = 'All') 
+    ) 
+	select * from temp
+    where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;
+end
 
 -- Display all selected coaching and warning audit logs
-
 IF @strTypein = 'All'
-
-SELECT s.* FROM
-(SELECT * FROM #CoachingAdminActivity 
-UNION
-SELECT * FROM #WarningAdminActivity 
-)s
-WHERE ([Form Name] =(@strFormin) or @strFormin = 'All') 
-AND ([Action] =(@strActivityin) or @strActivityin = 'All') 
-ORDER BY [Action Date]
+begin
+	with temp as (
+		select ROW_NUMBER() over (order by [Action Date]) as RowNumber, Count(*) over () as TotalRows, *
+		from (
+			select * from #CoachingAdminActivity
+			union
+			select * from #WarningAdminActivity
+		) s
+		where ([Form Name] = @strFormin or @strFormin = 'All') and ([Action] = @strActivityin or @strActivityin = 'All') 
+	) 
+	select * from temp
+    where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;
+end
 
   -- Drop the temp tables
   
@@ -247,7 +234,5 @@ RETURN @returnCode
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
 
-
 GO
-
 

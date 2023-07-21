@@ -1,16 +1,4 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_rptQNCoachingSummary' 
-)
-   DROP PROCEDURE [EC].[sp_rptQNCoachingSummary]
-GO
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
+DROP PROCEDURE IF EXISTS [EC].[sp_rptQNCoachingSummary]; 
 GO
 
 /******************************************************************************* 
@@ -21,10 +9,9 @@ GO
 --  Initial Revision: Quality Now Initiative TFS 13333 -  03/27/2019
 --  Updated to support QN Alt Channels compliance and mastery levels. TFS 21276 - 5/19/2021
 --  Modified to support Quality Now workflow enhancement . TFS 22187 - 08/03/2021
-
+--  Added paging. TFS 28619 - 07/18/2023 LH
  *******************************************************************************/
-
-CREATE OR ALTER PROCEDURE [EC].[sp_rptQNCoachingSummary] 
+CREATE PROCEDURE [EC].[sp_rptQNCoachingSummary] 
 (
 @intModulein int = -1,
 @intStatusin int = -1, 
@@ -34,6 +21,9 @@ CREATE OR ALTER PROCEDURE [EC].[sp_rptQNCoachingSummary]
 @intSubCoachReasonin int = -1,
 @strSDatein datetime,
 @strEDatein datetime,
+
+@PageSize int,
+@startRowIndex int, 
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
    @returnCode int OUTPUT,
@@ -71,6 +61,7 @@ SET @strEDate = convert(varchar(8),@strEDatein,112)
 -- Open Symmetric Key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
 
+;with a as (
  SELECT DISTINCT p.ModuleID AS [Employee Level ID]
                           ,c.Module AS [Employee Level Name]
               ,p.CoachingID AS [Coaching ID]
@@ -231,7 +222,12 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 		ON p.CoachingID = q.CoachingID LEFT JOIN [EC].[Employee_Hierarchy] qs
 		ON q.Evaluator_ID = qs.EMP_ID 
         WHERE q.EvalStatus = 'Active'
-        ORDER BY [Submitted Date] DESC
+),
+b as (
+	select ROW_NUMBER() over (order by [Submitted Date] desc) as RowNumber, Count(*) over () as TotalRows, * from a
+)
+select * from b
+where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;
 
   -- Clode Symmetric Key
   CLOSE SYMMETRIC KEY [CoachingKey] 
@@ -261,6 +257,6 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
+
+
 GO
-
-

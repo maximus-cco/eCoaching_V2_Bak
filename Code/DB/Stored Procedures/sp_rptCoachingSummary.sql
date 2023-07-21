@@ -1,17 +1,12 @@
-
-SET ANSI_NULLS ON
+DROP PROCEDURE IF EXISTS [EC].[sp_rptCoachingSummary]; 
 GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
 
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/14/2017
 --	Description: Selects list of Coaching Log Attributes for Coaching Summary Report.
---  Last Modified: 
---  Last Modified By:
+--  Last Modified:  7/17/2023
+--  Last Modified By: LH
 --  Revision History:
 --  Initial Revision - TFS 5621 -  03/14/2017 (Modified 04/19/2017)
 --  Updated during 2012 upgrade to add distinct clause - TFS 7106 - 08/16/2017
@@ -19,9 +14,10 @@ GO
 --  Modified to support Quality Now. TFS 13333 - 04/02/2019
 --  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
 --  Updated to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
+--  Updated to support paging. #28619 - 07/17/2023
  *******************************************************************************/
 
-CREATE OR ALTER PROCEDURE [EC].[sp_rptCoachingSummary] 
+CREATE   PROCEDURE [EC].[sp_rptCoachingSummary] 
 (
 @intModulein int = -1,
 @intStatusin int = -1, 
@@ -32,6 +28,9 @@ CREATE OR ALTER PROCEDURE [EC].[sp_rptCoachingSummary]
 @strSDatein datetime,
 @strEDatein datetime,
 @strHDatein datetime = NULL,
+
+@PageSize int,
+@startRowIndex int, 
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
    @returnCode int OUTPUT,
@@ -68,8 +67,8 @@ SET @strEDate = convert(varchar(8),@strEDatein,112);
 SET @strHDate = convert(varchar(8),@strHDatein,112);
 
 -- Open Symmetric Key
-OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] ; 
-
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]  
+;with a as (
   SELECT DISTINCT p.ModuleID AS [Module ID]
               ,c.Module AS [Module Name]
               ,p.CoachingID AS [Coaching ID]
@@ -184,10 +183,15 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] ;
 		      ,[so].[CoachingSource],[so].[SubCoachingSource],[dcr].[CoachingReason]
 		      ,[dscr].[SubCoachingReason],[clr].[Value],[cl].[SubmitterID],[sh].[Emp_Name])c
 		ON p.CoachingID = c.CoachingID
-        ORDER BY [Submitted Date] DESC;
+),
+b as (
+	select ROW_NUMBER() over (order by [Submitted Date] desc) as RowNumber, Count(*) over () as TotalRows, * from a
+)
+select * from b
+where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;
 
   -- Clode Symmetric Key
-  CLOSE SYMMETRIC KEY [CoachingKey];
+  CLOSE SYMMETRIC KEY [CoachingKey]; 
   
   	    
 -- *** END: INSERT CUSTOM CODE HERE ***
@@ -215,7 +219,4 @@ RETURN @returnCode
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
 
-
 GO
-
-

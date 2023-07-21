@@ -1,24 +1,20 @@
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
+DROP PROCEDURE IF EXISTS [EC].[sp_rptWarningSummary]; 
 GO
 
 /******************************************************************************* 
 --	Author:			Susmitha Palacherla
 --	Create Date:	3/27/2017
 --	Description: Selects list of Warning Log Attributes for Warning Summary Report.
---  Last Modified: 
---  Last Modified By:
+--  Last Modified:  07/19/2023
+--  Last Modified By: LH
 --  Revision History:
 --  Initial Revision - TFS 5621 - 03/27/2017 (Modified 04/19/2017)
 --  Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
 --  Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
 --  Updated to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
+--  Added paging. #26819 - 7/19/23 LH
  *******************************************************************************/
-
-CREATE OR ALTER   PROCEDURE [EC].[sp_rptWarningSummary] 
+CREATE PROCEDURE [EC].[sp_rptWarningSummary] 
 (
 @intModulein int = -1,
 @intStatusin int = -1, 
@@ -31,6 +27,8 @@ CREATE OR ALTER   PROCEDURE [EC].[sp_rptWarningSummary]
 @strEDatein datetime,
 @strHDatein datetime = NULL,
 
+@PageSize int,
+@startRowIndex int,  
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
    @returnCode int OUTPUT,
@@ -68,45 +66,45 @@ SET @strHDate = convert(varchar(8),@strHDatein,112);
 
 
 -- Open Symmetric Key
-OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
 
-
-  SELECT p.ModuleID AS [Module ID]
-              ,w.Module AS [Module Name]
-              ,p.WarningID AS [Warning ID]
-			  ,p.FormName AS [Form Name]
-			  ,w.Status
-			  ,p.EmpID AS [Employee ID]
-    	      ,CONVERT(nvarchar(50),DecryptByKey(w.EmpName)) AS [Employee Name]
-			  ,FORMAT(cast(w.EmpHireDate as datetime), 'MM/dd/yyyy')  AS [Employee Hire Date]
-    	      ,w.Site
-    	      ,ISNULL(w.LogSupID,'-') AS [Supervisor Employee ID]
-			  ,CASE WHEN w.LogSupID IS NULL THEN '-'
-			   ELSE CONVERT(nvarchar(50),DecryptByKey(w.LogSupName)) END AS [Supervisor Name]
-			  ,ISNULL(w.LogMgrID,'-') AS [Manager Employee ID]
-			  ,CASE WHEN w.LogMgrID IS NULL THEN '-'
-			   ELSE CONVERT(nvarchar(50),DecryptByKey(w.LogMgrName)) END AS [Manager Name]
-			  ,ISNULL(w.HierarchySupID,'-') AS [Current Supervisor Employee ID]
-			  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.HierarchySupName)),'-')  AS [Current Supervisor Name]
-			  ,ISNULL(w.HierarchyMgrID,'-') AS [Current Manager Employee ID]
-			  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.HierarchyMgrName)),'-')  AS [Current Manager Name]
-		      ,ISNULL(CONVERT(varchar,w.WarningGivenDate,121),'-') AS [Warning given Date]
-              ,ISNULL(CONVERT(varchar,w.SubmittedDate,121),'-') AS [Submitted Date]
-			  ,p.CSRReviewAutoDate AS [CSR Review Date]
-			  ,CONVERT(nvarchar(3000), DecryptByKey(p.CSRComments)) AS [CSR Comments]
-              ,ISNULL(CONVERT(varchar,w.WarningExpiryDate,121),'-') AS [Expiration Date]
-		      ,w.Source AS [Warning Source]
-		      ,w.SubSource AS [Sub Warning Source]
-		      ,[EC].[fn_strCoachingReasonFromWarningID](w.WarningID) AS [Warning Reason]
-	          ,[EC].[fn_strSubCoachingReasonFromWarningID](w.WarningID)AS [Warning SubReason]
-	          ,[EC].[fn_strValueFromwarningID](w.WarningID)AS [Value]
-		      ,ISNULL(w.SubmitterID,'Unknown') AS [Submitter ID]
-		      ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.SubmitterName)),'Unknown') AS [Submitter Name]
-		      ,ISNULL(w.ProgramName,'-') AS [Program Name]
-              ,ISNULL(w.Behavior,'-')AS [Behavior]
-              ,ISNULL(w.[State],'-')AS [State]
+;with temp as (
+	select ROW_NUMBER() over (order by p.SubmittedDate desc) as RowNumber, Count(*) over () as TotalRows 
+	      ,w.Module AS [Module Name]
+	      ,p.WarningID AS [Warning ID]
+		  ,p.FormName AS [Form Name]
+		  ,w.Status
+		  ,p.EmpID AS [Employee ID]
+	      ,CONVERT(nvarchar(50),DecryptByKey(w.EmpName)) AS [Employee Name]
+		  ,FORMAT(cast(w.EmpHireDate as datetime), 'MM/dd/yyyy')  AS [Employee Hire Date]
+	      ,w.Site
+	      ,ISNULL(w.LogSupID,'-') AS [Supervisor Employee ID]
+		  ,CASE WHEN w.LogSupID IS NULL THEN '-'
+		   ELSE CONVERT(nvarchar(50),DecryptByKey(w.LogSupName)) END AS [Supervisor Name]
+		  ,ISNULL(w.LogMgrID,'-') AS [Manager Employee ID]
+		  ,CASE WHEN w.LogMgrID IS NULL THEN '-'
+		   ELSE CONVERT(nvarchar(50),DecryptByKey(w.LogMgrName)) END AS [Manager Name]
+		  ,ISNULL(w.HierarchySupID,'-') AS [Current Supervisor Employee ID]
+		  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.HierarchySupName)),'-')  AS [Current Supervisor Name]
+		  ,ISNULL(w.HierarchyMgrID,'-') AS [Current Manager Employee ID]
+		  ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.HierarchyMgrName)),'-')  AS [Current Manager Name]
+	      ,ISNULL(CONVERT(varchar,w.WarningGivenDate,121),'-') AS [Warning given Date]
+	      ,ISNULL(CONVERT(varchar,w.SubmittedDate,121),'-') AS [Submitted Date]
+		  ,p.CSRReviewAutoDate AS [CSR Review Date]
+		  ,CONVERT(nvarchar(3000), DecryptByKey(p.CSRComments)) AS [CSR Comments]
+	      ,ISNULL(CONVERT(varchar,w.WarningExpiryDate,121),'-') AS [Expiration Date]
+	      ,w.Source AS [Warning Source]
+	      ,w.SubSource AS [Sub Warning Source]
+	      ,[EC].[fn_strCoachingReasonFromWarningID](w.WarningID) AS [Warning Reason]
+	      ,[EC].[fn_strSubCoachingReasonFromWarningID](w.WarningID)AS [Warning SubReason]
+	      ,[EC].[fn_strValueFromwarningID](w.WarningID)AS [Value]
+	      ,ISNULL(w.SubmitterID,'Unknown') AS [Submitter ID]
+	      ,ISNULL(CONVERT(nvarchar(50),DecryptByKey(w.SubmitterName)),'Unknown') AS [Submitter Name]
+	      ,ISNULL(w.ProgramName,'-') AS [Program Name]
+	      ,ISNULL(w.Behavior,'-')AS [Behavior]
+	      ,ISNULL(w.[State],'-')AS [State]
       FROM [EC].[Warning_Log] p WITH(NOLOCK)
-      JOIN  (SELECT [wl].[ModuleID] ModuleID
+      JOIN (SELECT [wl].[ModuleID] ModuleID
               ,[mo].[Module]Module
               ,[wl].[WarningID] WarningID
 			  ,[wl].[FormName]	FormName
@@ -161,12 +159,12 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 		AND (eh.Hire_Date = (@strHDate) or ISNULL(@strHDatein, '') = ''))
 		)w
 		ON p.WarningID = w.WarningID
-        ORDER BY p.SubmittedDate DESC;
-
-
+)
+select * from temp
+where RowNumber between @startRowIndex and @startRowIndex + @PageSize - 1;
 
   -- Clode Symmetric Key
-  CLOSE SYMMETRIC KEY [CoachingKey];
+  CLOSE SYMMETRIC KEY [CoachingKey]; 
   	    
 -- *** END: INSERT CUSTOM CODE HERE ***
 -------------------------------------------------------------------------------------
@@ -192,6 +190,5 @@ RETURN @returnCode
 
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
+
 GO
-
-
