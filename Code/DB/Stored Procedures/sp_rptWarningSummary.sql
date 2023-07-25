@@ -70,9 +70,10 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 
 ;with temp as (
 	select ROW_NUMBER() over (order by p.SubmittedDate desc) as RowNumber, Count(*) over () as TotalRows 
-	      ,w.Module AS [Module Name]
+		  ,p.ModuleID AS [Employee Level ID]
+	      ,w.Module AS [Employee Level]
 	      ,p.WarningID AS [Warning ID]
-		  ,p.FormName AS [Form Name]
+		  ,p.FormName AS [Log Name]
 		  ,w.Status
 		  ,p.EmpID AS [Employee ID]
 	      ,CONVERT(nvarchar(50),DecryptByKey(w.EmpName)) AS [Employee Name]
