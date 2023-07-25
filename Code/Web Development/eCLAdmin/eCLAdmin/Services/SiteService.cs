@@ -36,13 +36,7 @@ namespace eCLAdmin.Services
 
         public List<Site> GetSitesForReport(string userId, int moduleId)
         {
-            var sites = siteRepository.GetSiteForReport(userId, moduleId);
-            if (sites.Count > 0 && sites[0].Id == "All" || sites[0].Id == "-1")
-            {
-                sites.RemoveAt(0);
-            }
-
-            return sites;
+            return siteRepository.GetSiteForReport(userId, moduleId);
         }
     }
 }

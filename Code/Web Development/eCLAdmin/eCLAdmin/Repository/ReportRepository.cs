@@ -523,7 +523,7 @@ namespace eCLAdmin.Repository
                         temp.ManagerNotes = dataReader["Manager Notes"].ToString();
                         temp.EmployeeReviewedDate = dataReader["Employee Reviewed Date"].ToString();
                         temp.EmployeeComments = dataReader["Employee Comments"].ToString();
-                        temp.ProgramName = dataReader["ProgramName"].ToString();
+                        temp.ProgramName = dataReader["Program Name"].ToString();
                         temp.Behavior = dataReader["Behavior"].ToString();
                         temp.ReportCode = dataReader["Report Code"].ToString();
                         temp.VerintID = dataReader["Verint ID"].ToString();
@@ -799,10 +799,10 @@ namespace eCLAdmin.Repository
                             totalRows = (int)dataReader["TotalRows"];
                         }
                         var temp = new WarningLog();
-                        temp.ModuleId = dataReader["Module ID"].ToString();
-                        temp.ModuleName = dataReader["Module Name"].ToString();
+                        temp.ModuleId = dataReader["Employee Level ID"].ToString();
+                        temp.ModuleName = dataReader["Employee Level"].ToString();
                         temp.WarningID = dataReader["Warning ID"].ToString();
-                        temp.LogName = dataReader["Form Name"].ToString();
+                        temp.LogName = dataReader["Log Name"].ToString();
                         temp.Status = dataReader["Status"].ToString();
                         temp.EmployeeID = dataReader["Employee ID"].ToString();
                         temp.EmployeeName = dataReader["Employee Name"].ToString();
