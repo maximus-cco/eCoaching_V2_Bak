@@ -49,7 +49,10 @@ namespace eCLAdmin.Controllers
 
         public JsonResult GetEmployeesBySiteName(string site)
         {
-            return Json(GetEmployees(site));
+            JsonResult result = Json(GetEmployees(site));
+            result.MaxJsonLength = Int32.MaxValue;
+
+            return result;
         }
 
         private IEnumerable<SelectListItem> GetEmployees(string site)

@@ -50,7 +50,7 @@ namespace eCLAdmin.Controllers
             var draw = Request.Form.GetValues("draw").FirstOrDefault();
             var start = Request.Form.GetValues("start").FirstOrDefault();
             var length = Request.Form.GetValues("length").FirstOrDefault();
-            vm.PageSize = length != null ? Convert.ToInt32(length) : 25;
+            vm.PageSize = length != null ? Convert.ToInt32(length) : 100;
             vm.RowStartIndex = start != null ? Convert.ToInt32(start) + 1 : 1;
             try
             {

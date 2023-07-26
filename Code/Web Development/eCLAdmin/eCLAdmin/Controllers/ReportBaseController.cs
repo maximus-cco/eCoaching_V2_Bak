@@ -4,6 +4,7 @@ using eCLAdmin.Models.User;
 using eCLAdmin.Services;
 using eCLAdmin.ViewModels;
 using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -28,7 +29,11 @@ namespace eCLAdmin.Controllers
         {
             logger.Debug("Entered GetEmployees...");
             logger.Debug("##########moduleId=" + moduleId + " siteId=" + siteId + " hireDate=" + hireDate + " isWarning=" + isWarning);
-            return Json(GetEmployeesBySiteAndModule(moduleId, siteId, hireDate, isWarning));
+
+            JsonResult result = Json(GetEmployeesBySiteAndModule(moduleId, siteId, hireDate, isWarning));
+            result.MaxJsonLength = Int32.MaxValue;
+
+            return result;
         }
 
         [HttpPost]
@@ -141,7 +146,11 @@ namespace eCLAdmin.Controllers
             {
                 employeeList = this.employeeService.GetEmployeesBySiteAndModuleId(moduleId, siteId, hireDate, isWarning);
             }
-            employeeList.Insert(0, new Models.EmployeeLog.Employee { Id = "-2", Name = "Select Employee" });
+
+            if (siteId != -1) // a specific site is selected, not "All" is selected
+            {
+                employeeList.Insert(0, new Models.EmployeeLog.Employee { Id = "-2", Name = "Select Employee" });
+            }
 
             return employeeList.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id });
         }

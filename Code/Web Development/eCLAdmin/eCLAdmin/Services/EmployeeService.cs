@@ -75,12 +75,17 @@ namespace eCLAdmin.Services
                 return employees;
             }
 
-            employees = employeeRepository.GetEmployeesBySiteAndModule(moduleId, siteId, hireDate, isWarning);
-
-            if (employees.Count == 1 && employees[0].Id == "-1")
+            if (siteId == -1) // "All Sites"
             {
-                employees[0].Id = "No employee found";
-                employees[0].Name = "No employee found";
+                employees.Add(new Employee("-1", "All Employees"));
+                return employees;
+            }
+
+            employees = employeeRepository.GetEmployeesBySiteAndModule(moduleId, siteId, hireDate, isWarning);
+            if ((employees.Count == 1 && employees[0].Id == "-1") || employees.Count == 0)
+            {
+                employees.Clear();
+                employees.Add(new Employee("No employee found", "No employee found"));
             }
 
             return employees;

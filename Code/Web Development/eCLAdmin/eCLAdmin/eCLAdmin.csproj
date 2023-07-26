@@ -170,7 +170,6 @@
     <Compile Include="Controllers\ReportAdminActivityController.cs" />
     <Compile Include="Controllers\ReportBaseController.cs" />
     <Compile Include="Controllers\ReportCoachingController.cs" />
-    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\ReportEmployeeHierarchyController.cs" />
     <Compile Include="Controllers\ReportCoachingQnController.cs" />
     <Compile Include="Controllers\ReportWarningController.cs" />
@@ -351,7 +350,6 @@
     <Content Include="Views\Shared\_CoachingDetail.cshtml" />
     <Content Include="Views\Shared\_WarningDetail.cshtml" />
     <Content Include="Views\Shared\Index.cshtml" />
-    <Content Include="Views\Report\ReportTemplate.cshtml" />
     <Content Include="Views\EmployeeLog\SearchForDelete.cshtml" />
     <Content Include="Views\EmployeeLog\_LogsForDeletePartial.cshtml" />
     <Content Include="Views\EmployeeLog\_Delete.cshtml" />

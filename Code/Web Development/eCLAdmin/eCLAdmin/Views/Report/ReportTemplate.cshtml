@@ -1,9 +1,0 @@
-﻿@{
-	ViewBag.Title = "Reporting";
-}
-<h3>@Model.ReportDescription</h3>
-<div class="embed-responsive embed-responsive-16by9">
-	<iframe id="frmReport" class="embed-responsive-item" src="@Url.Content(Model.ReportURL)" ></iframe>
-</div>
-
-<script src="@Url.Content("~/Scripts/eCLAdmin/report.js")"></script>

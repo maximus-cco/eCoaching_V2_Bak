@@ -98,7 +98,8 @@
     }
     
     function resetEmployees() {
-        $('#select-employee').find('option').not(':first').remove();
+        $('#select-employee').empty();
+        $('#select-employee').html('<option value="-2">Select Employee</option>');
     }
 
     function resetReportDiv() {
