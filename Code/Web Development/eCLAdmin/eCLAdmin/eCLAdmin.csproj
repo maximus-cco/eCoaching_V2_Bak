@@ -212,13 +212,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\EmployeeLog\EmployeeLog.cs" />
-    <Compile Include="Reports\ReportTemplate.aspx.cs">
-      <DependentUpon>ReportTemplate.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\ReportTemplate.aspx.designer.cs">
-      <DependentUpon>ReportTemplate.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Repository\EmailRepository.cs" />
     <Compile Include="Repository\IEmailRepository.cs" />
     <Compile Include="Repository\IReportRepository.cs" />
@@ -286,7 +279,6 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="maintenance.html" />
-    <Content Include="Reports\ReportTemplate.aspx" />
     <Content Include="Scripts\bootstrap-datetimepicker.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
