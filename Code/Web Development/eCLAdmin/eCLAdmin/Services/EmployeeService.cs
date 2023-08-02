@@ -75,13 +75,16 @@ namespace eCLAdmin.Services
                 return employees;
             }
 
-            if (siteId == -1) // "All Sites"
+            employees = employeeRepository.GetEmployeesBySiteAndModule(moduleId, siteId, hireDate, isWarning);
+            // "All Sites", there might be too many employees causing page to freeze, so return "All Employees" only
+            if (siteId == -1 && employees.Count > 1)
             {
+                employees.Clear();
                 employees.Add(new Employee("-1", "All Employees"));
+
                 return employees;
             }
 
-            employees = employeeRepository.GetEmployeesBySiteAndModule(moduleId, siteId, hireDate, isWarning);
             if ((employees.Count == 1 && employees[0].Id == "-1") || employees.Count == 0)
             {
                 employees.Clear();

@@ -2,15 +2,15 @@
 
 @Html.HiddenFor(m => m.PageSize)
 <form class="form-inline">
-    <div class="form-group">
+    <div class="form-group" data-toggle="tooltip" title="Log Type">
         @Html.DropDownListFor(m => m.SelectedTypeId, Model.LogTypeSelectList, new { id = "select-type", @class = "form-control required" })
     </div>
     
-    <div class="form-group">
+    <div class="form-group"  data-toggle="tooltip" title="Log Action">
         @Html.DropDownListFor(m => m.SelectedAction, Model.ActionSelectList, new { id = "select-action", @class = "form-control required" })
     </div>       
 
-    <div class="form-group">
+    <div class="form-group" data-toggle="tooltip" title="Activity Start Date">
         <div class="input-group mydate">
             @Html.TextBoxFor(m => m.StartDate, new { placeholder = "Activity Start Date", @class = "form-control required" })
             <span class="input-group-addon">
@@ -18,7 +18,7 @@
             </span>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" data-toggle="tooltip" title="Activity End Date">
         <div class="input-group mydate">
             @Html.TextBoxFor(m => m.EndDate, new { placeholder = "Activity End Date", @class = "form-control required" })
             <span class="input-group-addon">
@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group"  data-toggle="tooltip" title="Log Name or Employee Name">
         @Html.TextBoxFor(m => m.FreeTextSearch, new { id = "logname-empname", placeholder = "Log name, employee name ...", @class = "form-control" })
     </div>
 

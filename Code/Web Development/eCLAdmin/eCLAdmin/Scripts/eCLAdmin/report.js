@@ -1,4 +1,24 @@
 ﻿$(function () {
+    var previousDate = null; 
+    $('#div-hire-date').datetimepicker({
+        allowInputToggle: true,
+        // defaultDate: new Date(),
+        format: 'MM/DD/YYYY',
+        maxDate: 'now'
+    }).on('dp.change', function (e) { handleHireDateChange() });
+
+    function handleHireDateChange() {
+        // db.change fires 2 times initially
+        // only reload employee when a different hire date is selected
+        let currentDate = $('#HireDate').val();
+        if (previousDate && previousDate === currentDate) {
+            return;
+        } else {
+            previousDate = currentDate;
+            loadEmployees();
+        }
+    }
+
     $("#select-site").on("change", function () {
         loadEmployees();
     });

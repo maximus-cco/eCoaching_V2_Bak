@@ -2,8 +2,13 @@
 
 @Html.HiddenFor(m => m.PageSize)
 <form class="form-inline">
-    @Html.DropDownListFor(m => m.SelectedSite, Model.SiteSelectList, new { id = "select-site-name", @class = "form-control required" })
-    @Html.DropDownListFor(m => m.SelectedEmployee, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control required" })
+    <div class="form-group" data-toggle="tooltip" title="Site">
+        @Html.DropDownListFor(m => m.SelectedSite, Model.SiteSelectList, new { id = "select-site-name", @class = "form-control required" })
+    </div>
+
+    <div class="form-group" data-toggle="tooltip" title="Employee">
+        @Html.DropDownListFor(m => m.SelectedEmployee, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control required" })
+    </div>
 
     <button type="button" class="btn btn-primary ml-1" id="btn-generate-report">Generate Report</button>
 </form>

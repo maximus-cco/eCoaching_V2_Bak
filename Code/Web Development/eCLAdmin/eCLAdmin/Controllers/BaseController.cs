@@ -1,5 +1,4 @@
-﻿using eCLAdmin.Models;
-using eCLAdmin.Models.User;
+﻿using eCLAdmin.Models.User;
 using eCLAdmin.Services;
 using log4net;
 using System;

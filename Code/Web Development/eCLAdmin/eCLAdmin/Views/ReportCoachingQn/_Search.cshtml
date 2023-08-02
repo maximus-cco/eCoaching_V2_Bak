@@ -2,31 +2,31 @@
 
 @Html.HiddenFor(m => m.PageSize)
 <form class="form-inline">
-    <div class="form-group">
+    <div class="form-group"  data-toggle="tooltip" title="Employee Level">
         @Html.DropDownListFor(m => m.SelectedEmployeeLevel, Model.EmployeeLevelSelectList, new { id = "select-level", @class = "form-control required" })
     </div>
 
-    <div class="form-group">
+    <div class="form-group" data-toggle="tooltip" title="Site">
         @Html.DropDownListFor(m => m.SelectedSite, Model.SiteSelectList, new { id = "select-site", @class = "form-control required" })
     </div>
 
-    <div class="form-group">
+    <div class="form-group" data-toggle="tooltip" title="Employee">
         @Html.DropDownListFor(m => m.SelectedEmployee, Model.EmployeeSelectList, new { id = "select-employee", @class = "form-control required" })
     </div>
 
-    <div class="form-group">
+    <div class="form-group" data-toggle="tooltip" title="Coaching Reason">
         @Html.DropDownListFor(m => m.SelectedCoachingReason, Model.CoachingReasonSelectList, new { id = "select-reason", @class = "form-control required" })
     </div>
 
-    <div class="form-group">
+    <div class="form-group" data-toggle="tooltip" title="Coaching Subreason">
         @Html.DropDownListFor(m => m.SelectedCoachingSubReason, Model.CoachingSubReasonSelectList, new { id = "select-subreason", @class = "form-control required" })
     </div>
 
-    <div class="form-group">
+    <div class="form-group" data-toggle="tooltip" title="Log Status">
         @Html.DropDownListFor(m => m.SelectedLogStatus, Model.LogStatusSelectList, new { id = "select-logstatus", @class = "form-control required" })
     </div>
 
-    <div class="form-group">
+    <div class="form-group" data-toggle="tooltip" title="Submission Start Date">
         <div class="input-group mydate">
             @Html.TextBoxFor(m => m.StartDate, new { placeholder = "Submission Start Date", @class = "form-control required" })
             <span class="input-group-addon">
@@ -34,7 +34,8 @@
             </span>
         </div>
     </div>
-    <div class="form-group">
+
+    <div class="form-group" data-toggle="tooltip" title="Submission End Date">
         <div class="input-group mydate">
             @Html.TextBoxFor(m => m.EndDate, new { placeholder = "Submission End Date", @class = "form-control required" })
             <span class="input-group-addon">

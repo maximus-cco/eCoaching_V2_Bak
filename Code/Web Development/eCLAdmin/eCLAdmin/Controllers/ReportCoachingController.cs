@@ -1,16 +1,13 @@
 ﻿using eCLAdmin.Extensions;
-using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.Report;
 using eCLAdmin.Services;
 using eCLAdmin.Utilities;
-using eCLAdmin.ViewModels;
 using eCLAdmin.ViewModels.Reports;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
