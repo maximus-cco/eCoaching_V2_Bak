@@ -20,15 +20,26 @@
     }
 
     $("#select-site").on("change", function () {
+        $("#HireDate").attr("disabled", true);
         loadEmployees();
     });
 
+    var ajaxCompleted = 0;
     $("#select-level").on("change", function () {
+        $("#btn-generate-report").attr("disabled", true);
+        ajaxCompleted = 0;
         resetEmployees();
         loadSites();
         loadReasons();
         loadLogStatus();
     });
+
+    var amDone= function () {
+        ajaxCompleted++;
+        if (ajaxCompleted >= 3) {
+            $("#btn-generate-report").attr("disabled", false);
+        }
+    };
 
     $("#select-reason").on("change", function () {
         loadSubreasons();
@@ -146,7 +157,6 @@
             url: getLogStatusListUrl,
             dataType: 'json',
             data: { moduleId: moduleSelected, isWarning: $('#isWarning').val() },
-
             success: function (statuslist) {
                 $('#select-status').empty();
                 var options = [];
@@ -156,6 +166,9 @@
 
                 $('#select-logstatus').html(options.join(''));
                 $('#select-logstatus').removeClass('loadinggif');
+            },
+            complete: function () {
+                amDone();
             }
         });
         return false;
@@ -184,6 +197,9 @@
 
                 $('#select-reason').html(options.join(''));
                 $('#select-reason').removeClass('loadinggif');
+            },
+            complete: function () {
+                amDone();
             }
         });
         return false;
@@ -241,6 +257,9 @@
 
                 $('#select-employee').html(options.join(''));
                 $('#select-employee').removeClass('loadinggif');
+            },
+            complete: function () {
+                $("#HireDate").attr("disabled", false);
             }
         });
         return false;
@@ -269,6 +288,9 @@
 
                 $('#select-site').html(options.join(''));
                 $('#select-site').removeClass('loadinggif');
+            },
+            complete: function () {
+                amDone();
             }
         });
 
