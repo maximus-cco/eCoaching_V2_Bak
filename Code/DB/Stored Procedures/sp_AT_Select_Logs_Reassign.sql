@@ -123,7 +123,7 @@ ELSE IF
 @intStatusIdin = -2 AND @intModuleIdin = 2 -- supervisor module
 
 BEGIN
-SET @strConditionalWhere = ' WHERE (fact.statusid = 5) AND (EH.Sup_ID = '''+@istrOwnerin+''') OR (fact.statusid = 7 AND EH.Mgr_ID = '''+@istrOwnerin+''')) '
+SET @strConditionalWhere = ' WHERE ((fact.statusid = 5 AND EH.Sup_ID = '''+@istrOwnerin+''') OR (fact.statusid = 7 AND EH.Mgr_ID = '''+@istrOwnerin+''')) '
 END
 
 --print @strConditionalWhere 
