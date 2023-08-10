@@ -1,4 +1,4 @@
-﻿<table class="tables table-hover table-bordered" id="tbl-report" style="font-size: 0.8em; width:100%;">
+﻿<table class="tables table-hover table-bordered text-nowrap" id="tbl-report" style="font-size: 0.8em; width:100%;">
     <thead>
         <tr>
             <th data-orderable="false">Employee ID</th>
@@ -30,6 +30,9 @@
         var length = $('#PageSize').val();
         $(".please-wait").slideDown(500);
         var employeeHierarchyTbl = $('#tbl-report').DataTable({
+            columnDefs: [
+                { "width": "30%", "targets": [0] }
+            ],
             //ordering: false,
             renderer: "bootstrap",
             autowidth: false,
