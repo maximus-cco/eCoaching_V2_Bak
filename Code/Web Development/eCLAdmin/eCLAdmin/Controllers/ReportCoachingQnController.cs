@@ -1,4 +1,5 @@
 ﻿using eCLAdmin.Extensions;
+using eCLAdmin.Filters;
 using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.Report;
 using eCLAdmin.Services;
@@ -13,6 +14,7 @@ using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
 {
+    [SessionCheck]
     public class ReportCoachingQnController : ReportBaseController
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

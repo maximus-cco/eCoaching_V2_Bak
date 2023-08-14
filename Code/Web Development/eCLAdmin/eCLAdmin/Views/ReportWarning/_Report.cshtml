@@ -1,38 +1,38 @@
 ﻿<table class="tables table-hover table-bordered text-nowrap" id="tbl-report" style="font-size: 0.8em; width:100%;">
     <thead>
         <tr>
-            <th data-orderable="false">Employee Level ID</th>
-            <th data-orderable="false">Employee Level</th>
-            <th data-orderable="false">Warning ID</th>
-            <th data-orderable="false">Log Name</th>
-            <th data-orderable="false">Status</th>
-            <th data-orderable="false">Employee ID</th>
-            <th data-orderable="false">Employee Name</th>
-            <th data-orderable="false">Employee Hire Date</th>
-            <th data-orderable="false">Site</th>
-            <th data-orderable="false">Supervisor Employee ID</th>
-            <th data-orderable="false">Supervisor Name</th>
-            <th data-orderable="false">Manager Employee ID</th>
-            <th data-orderable="false">Manager Name</th>
-            <th data-orderable="false">Current Supervisor Employee ID</th>
-            <th data-orderable="false">Current Supervisor Name</th>
-            <th data-orderable="false">Current Manager Employee ID</th>
-            <th data-orderable="false">Current Manager Name</th>
-            <th data-orderable="false">Warning given Date</th>
-            <th data-orderable="false">Submitted Date</th>
-            <th data-orderable="false">CSR Review Date</th>
-            <th data-orderable="false">CSR Comments</th>
-            <th data-orderable="false">Expiration Date</th>
-            <th data-orderable="false">Warning Source</th>
-            <th data-orderable="false">Sub Warning Source</th>
-            <th data-orderable="false">Warning Reason</th>
-            <th data-orderable="false">Warning Sub Reason</th>
-            <th data-orderable="false">Value</th>
-            <th data-orderable="false">Submitter ID</th>
-            <th data-orderable="false">Submitter Name</th>
-            <th data-orderable="false">Program Name</th>
-            <th data-orderable="false">Behavior</th>
-            <th data-orderable="false">State</th>
+            <th>Employee Level ID</th>
+            <th>Employee Level</th>
+            <th>Warning ID</th>
+            <th>Log Name</th>
+            <th>Status</th>
+            <th>Employee ID</th>
+            <th>Employee Name</th>
+            <th>Employee Hire Date</th>
+            <th>Site</th>
+            <th>Supervisor Employee ID</th>
+            <th>Supervisor Name</th>
+            <th>Manager Employee ID</th>
+            <th>Manager Name</th>
+            <th>Current Supervisor Employee ID</th>
+            <th>Current Supervisor Name</th>
+            <th>Current Manager Employee ID</th>
+            <th>Current Manager Name</th>
+            <th>Warning given Date</th>
+            <th>Submitted Date</th>
+            <th>CSR Review Date</th>
+            <th>CSR Comments</th>
+            <th>Expiration Date</th>
+            <th>Warning Source</th>
+            <th>Sub Warning Source</th>
+            <th>Warning Reason</th>
+            <th>Warning Sub Reason</th>
+            <th>Value</th>
+            <th>Submitter ID</th>
+            <th>Submitter Name</th>
+            <th>Program Name</th>
+            <th>Behavior</th>
+            <th>State</th>
         </tr>
     </thead>
 </table>
@@ -43,6 +43,11 @@
         const viewModel = @Html.Raw(Json.Encode(Model));
         $(".please-wait").slideDown(500);
         var warningLogTbl = $('#tbl-report').DataTable({
+            columnDefs: [ {
+                targets: '_all',
+                render: DataTable.render.ellipsis( 80 ),
+                orderable: false
+            }],
             //ordering: false,
             renderer: "bootstrap",
             autowidth: false,

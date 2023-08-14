@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using eCLAdmin.Models.Report;
 using System.IO;
 using eCLAdmin.Utilities;
+using eCLAdmin.Filters;
 
 namespace eCLAdmin.Controllers
 {
+    [SessionCheck]
     public class ReportAdminActivityController : ReportBaseController
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

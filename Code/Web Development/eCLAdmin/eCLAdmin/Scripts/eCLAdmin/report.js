@@ -54,7 +54,6 @@
 
         if (e.handled !== true) {
             e.handled = true;
-            $('.please-wait').slideDown(500);
             $.ajax({
                 type: 'POST',
                 url: generateReportUrl,
@@ -71,7 +70,6 @@
                     }
                 }
             }).always(function () {
-                $('.please-wait').slideUp(500);
             });
         } // end if e.handled
     });

@@ -1,18 +1,18 @@
 ﻿<table class="tables table-hover table-bordered text-nowrap" id="tbl-report" style="font-size: 0.8em; width:100%;">
     <thead>
         <tr>
-            <th data-orderable="false">Employee Level ID</th> 
-            <th data-orderable="false">Employee Level</th>
-            <th data-orderable="false">Log Name</th>
-            <th data-orderable="false">Last Known Status</th>
-            <th data-orderable="false">Action</th>
-            <th data-orderable="false">Action Date</th>
-            <th data-orderable="false">Requester ID</th>
-            <th data-orderable="false">Requester Name</th>
-            <th data-orderable="false">Assigned To ID</th>
-            <th data-orderable="false">Assigned To Name</th>
-            <th data-orderable="false">Reason</th>
-            <th data-orderable="false">Requester Comments</th>
+            <th>Employee Level ID</th> 
+            <th>Employee Level</th>
+            <th>Log Name</th>
+            <th>Last Known Status</th>
+            <th>Action</th>
+            <th>Action Date</th>
+            <th>Requester ID</th>
+            <th>Requester Name</th>
+            <th>Assigned To ID</th>
+            <th>Assigned To Name</th>
+            <th>Reason</th>
+            <th>Requester Comments</th>
         </tr>
     </thead>
 </table>
@@ -22,6 +22,11 @@
         var length = $('#PageSize').val();
         $(".please-wait").slideDown(500);
         var logActivityTbl = $('#tbl-report').DataTable({
+            columnDefs: [{
+                targets: '_all',
+                render: DataTable.render.ellipsis(80),
+                orderable: false
+            }],
             //ordering: false,
             renderer: "bootstrap",
             autowidth: false,

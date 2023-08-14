@@ -1,11 +1,23 @@
-/*! DataTables 1.13.5
+/*
+ * This combined file was created by the DataTables downloader builder:
+ *   https://datatables.net/download
+ *
+ * To rebuild or modify this file with the latest versions of the included
+ * software please visit:
+ *   https://datatables.net/download/#dt/dt-1.13.6
+ *
+ * Included libraries:
+ *   DataTables 1.13.6
+ */
+
+/*! DataTables 1.13.6
  * ©2008-2023 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     DataTables
  * @description Paginate, search and order HTML tables
- * @version     1.13.4
+ * @version     1.13.6
  * @author      SpryMedia Ltd
  * @contact     www.datatables.net
  * @copyright   SpryMedia Ltd.
@@ -38,7 +50,7 @@
         // returns a factory function that expects the window object
         var jq = require('jquery');
 
-        if (typeof window !== 'undefined') {
+        if (typeof window === 'undefined') {
             module.exports = function (root, $) {
                 if (!root) {
                     // CommonJS environments without a window global must pass a
@@ -2277,6 +2289,12 @@
                 oCol.aDataSort = [oOptions.iDataSort];
             }
             _fnMap(oCol, oOptions, "aDataSort");
+
+            // Fall back to the aria-label attribute on the table header if no ariaTitle is
+            // provided.
+            if (!oCol.ariaTitle) {
+                oCol.ariaTitle = th.attr("aria-label");
+            }
         }
 
         /* Cache the data get and set functions for speed */
@@ -9468,7 +9486,7 @@
 	 *  @type string
 	 *  @default Version number
 	 */
-    DataTable.version = "1.13.5";
+    DataTable.version = "1.13.6";
 
     /**
 	 * Private data store, containing all of the settings objects that are
@@ -13889,7 +13907,7 @@
 		 *
 		 *  @type string
 		 */
-        builder: "-source-",
+        build: "dt/dt-1.13.6",
 
 
         /**
@@ -14530,7 +14548,7 @@
                 var btnDisplay, btnClass;
 
                 var attach = function (container, buttons) {
-                    var i, ien, node, button, tabIndex;
+                    var i, ien, node, button;
                     var disabledClass = classes.sPageButtonDisabled;
                     var clickHandler = function (e) {
                         _fnPageChange(settings, e.data.action, true);
@@ -14545,9 +14563,10 @@
                             attach(inner, button);
                         }
                         else {
+                            var disabled = false;
+
                             btnDisplay = null;
                             btnClass = button;
-                            tabIndex = settings.iTabIndex;
 
                             switch (button) {
                                 case 'ellipsis':
@@ -14558,8 +14577,7 @@
                                     btnDisplay = lang.sFirst;
 
                                     if (page === 0) {
-                                        tabIndex = -1;
-                                        btnClass += ' ' + disabledClass;
+                                        disabled = true;
                                     }
                                     break;
 
@@ -14567,8 +14585,7 @@
                                     btnDisplay = lang.sPrevious;
 
                                     if (page === 0) {
-                                        tabIndex = -1;
-                                        btnClass += ' ' + disabledClass;
+                                        disabled = true;
                                     }
                                     break;
 
@@ -14576,8 +14593,7 @@
                                     btnDisplay = lang.sNext;
 
                                     if (pages === 0 || page === pages - 1) {
-                                        tabIndex = -1;
-                                        btnClass += ' ' + disabledClass;
+                                        disabled = true;
                                     }
                                     break;
 
@@ -14585,8 +14601,7 @@
                                     btnDisplay = lang.sLast;
 
                                     if (pages === 0 || page === pages - 1) {
-                                        tabIndex = -1;
-                                        btnClass += ' ' + disabledClass;
+                                        disabled = true;
                                     }
                                     break;
 
@@ -14599,8 +14614,10 @@
 
                             if (btnDisplay !== null) {
                                 var tag = settings.oInit.pagingTag || 'a';
-                                var disabled = btnClass.indexOf(disabledClass) !== -1;
 
+                                if (disabled) {
+                                    btnClass += ' ' + disabledClass;
+                                }
 
                                 node = $('<' + tag + '>', {
                                     'class': classes.sPageButton + ' ' + btnClass,
@@ -14610,7 +14627,7 @@
                                     'role': 'link',
                                     'aria-current': btnClass === classes.sPageButtonActive ? 'page' : null,
                                     'data-dt-idx': button,
-                                    'tabindex': tabIndex,
+                                    'tabindex': disabled ? -1 : settings.iTabIndex,
                                     'id': idx === 0 && typeof button === 'string' ?
                                         settings.sTableId + '_' + button :
                                         null
@@ -15389,3 +15406,62 @@
 
     return DataTable;
 }));
+
+
+/*! DataTables styling integration
+ * ©2018 SpryMedia Ltd - datatables.net/license
+ */
+
+(function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['jquery', 'datatables.net'], function ($) {
+            return factory($, window, document);
+        });
+    }
+    else if (typeof exports === 'object') {
+        // CommonJS
+        var jq = require('jquery');
+        var cjsRequires = function (root, $) {
+            if (!$.fn.dataTable) {
+                require('datatables.net')(root, $);
+            }
+        };
+
+        if (typeof window === 'undefined') {
+            module.exports = function (root, $) {
+                if (!root) {
+                    // CommonJS environments without a window global must pass a
+                    // root. This will give an error otherwise
+                    root = window;
+                }
+
+                if (!$) {
+                    $ = jq(root);
+                }
+
+                cjsRequires(root, $);
+                return factory($, root, root.document);
+            };
+        }
+        else {
+            cjsRequires(window, jq);
+            module.exports = factory(jq, window, window.document);
+        }
+    }
+    else {
+        // Browser
+        factory(jQuery, window, document);
+    }
+}(function ($, window, document, undefined) {
+    'use strict';
+    var DataTable = $.fn.dataTable;
+
+
+
+
+
+    return DataTable;
+}));
+
+

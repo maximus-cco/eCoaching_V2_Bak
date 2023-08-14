@@ -206,10 +206,11 @@ legend.border {
   border-bottom: 2px solid #eee;
 }
 
-table.dataTable td {
-  padding: 2px;
+table.dataTable th, td {
+  padding: 4px;
 }
 
 .form-inline .form-group {
   margin-bottom:5px;
 }
+

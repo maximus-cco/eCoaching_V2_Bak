@@ -1,4 +1,5 @@
 ﻿using eCLAdmin.Extensions;
+using eCLAdmin.Filters;
 using eCLAdmin.Models;
 using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.Report;
@@ -14,6 +15,7 @@ using System.Web.Mvc;
 
 namespace eCLAdmin.Controllers
 {
+    [SessionCheck]
     public class ReportEmployeeHierarchyController : ReportBaseController
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);

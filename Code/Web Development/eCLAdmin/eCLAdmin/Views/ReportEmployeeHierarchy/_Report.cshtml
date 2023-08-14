@@ -1,38 +1,40 @@
 ﻿<table class="tables table-hover table-bordered text-nowrap" id="tbl-report" style="font-size: 0.8em; width:100%;">
     <thead>
         <tr>
-            <th data-orderable="false">Employee ID</th>
-            <th data-orderable="false">Employee Name</th>
-            <th data-orderable="false">Site</th>
-            <th data-orderable="false">Employee Job Code </th>
-            <th data-orderable="false">Employee Job Description</th>
-            <th data-orderable="false">Program</th>
-            <th data-orderable="false">Supervisor Employee ID </th>
-            <th data-orderable="false">Supervisor Name</th>
-            <th data-orderable="false">Supervisor Job Code</th>
-            <th data-orderable="false">Supervisor Job Description</th>
-            <th data-orderable="false">Manager Employee ID</th>
-            <th data-orderable="false">Manager Name</th>
-            <th data-orderable="false">Manager Job Code</th>
-            <th data-orderable="false">Manager Job Description</th>
-            <th data-orderable="false">Start Date</th>
-            <th data-orderable="false">End Date</th>
-            <th data-orderable="false">Status</th>
-            <th data-orderable="false">Aspect Job Title</th>
-            <th data-orderable="false">Aspect Skill </th>
-            <th data-orderable="false">Aspect Status</th>
+            <th>Employee ID</th>
+            <th>Employee Name</th>
+            <th>Site</th>
+            <th>Employee Job Code </th>
+            <th>Employee Job Description</th>
+            <th>Program</th>
+            <th>Supervisor Employee ID </th>
+            <th>Supervisor Name</th>
+            <th>Supervisor Job Code</th>
+            <th>Supervisor Job Description</th>
+            <th>Manager Employee ID</th>
+            <th>Manager Name</th>
+            <th>Manager Job Code</th>
+            <th>Manager Job Description</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Aspect Job Title</th>
+            <th>Aspect Skill </th>
+            <th>Aspect Status</th>
         </tr>
     </thead>
 </table>
 
 <script>
     $(document).ready(function () {
-        var length = $('#PageSize').val();
+        let length = $('#PageSize').val();
         $(".please-wait").slideDown(500);
-        var employeeHierarchyTbl = $('#tbl-report').DataTable({
-            columnDefs: [
-                { "width": "30%", "targets": [0] }
-            ],
+        let employeeHierarchyTbl = $('#tbl-report').DataTable({
+            columnDefs: [ {
+                targets: '_all',
+                render: DataTable.render.ellipsis(80),
+                orderable: false
+            }],
             //ordering: false,
             renderer: "bootstrap",
             autowidth: false,
