@@ -60,6 +60,9 @@ namespace eCLAdmin.Controllers
             // All, Active, Expired
             vm.LogStateSelectList = GetWarningLogStates();
 
+            vm.StartDate = DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy");
+            vm.EndDate = DateTime.Now.ToString("MM/dd/yyyy");
+
             return vm;
         }
 

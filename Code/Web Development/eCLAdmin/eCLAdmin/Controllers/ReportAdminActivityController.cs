@@ -35,6 +35,9 @@ namespace eCLAdmin.Controllers
             vm.LogTypeSelectList = GetTypes(Constants.ACTION_REPORT, true);
             vm.ActionSelectList = GetActions(-2, false); // since sp already returns 'All' :-)
 
+            vm.StartDate = DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy");
+            vm.EndDate = DateTime.Now.ToString("MM/dd/yyyy");
+
             return vm;
         }
 
