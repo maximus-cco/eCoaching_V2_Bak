@@ -99,6 +99,9 @@ namespace eCLAdmin.Controllers
             statusList.Insert(0, new Status { Id = -2, Description = "Select Log Status" });
             vm.LogStatusSelectList = new SelectList(statusList, "Id", "Description");
 
+            vm.StartDate = DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy");
+            vm.EndDate = DateTime.Now.ToString("MM/dd/yyyy");
+
             return vm;
         }
 
