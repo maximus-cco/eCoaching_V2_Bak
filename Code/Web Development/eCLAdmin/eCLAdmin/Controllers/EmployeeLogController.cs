@@ -55,12 +55,25 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchForInactivate(string searchOption, int module, int logType, string employee, int logTypeSearchByLogName, string logName)
+        public ActionResult SearchForInactivate(string searchOption, string module, string logType, string employee, string logTypeSearchByLogName, string logName)
         {
             logger.Debug("Entered SearchForInactivate [post]...");
 
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
             var searchByLogName = false;
+            // default to invalid module id and log type id
+            var moduleId = -3;
+            int logTypeId = -3;
+
+            try
+            {
+                moduleId = Int32.Parse(module);
+            }
+            catch (FormatException)
+            {
+                var error = String.Format("SearchForInactivate: user [{0}] invalid module selected {1}.", GetUserFromSession().EmployeeId, module);
+                logger.Error(error);
+            }
 
             if ("default" == searchOption)
             {
@@ -72,7 +85,19 @@ namespace eCLAdmin.Controllers
                 searchByLogName = true;
             }
 
-            employeeLogs = employeeLogService.SearchLog(searchByLogName, module, (int)Session["LogType"], employee, logName, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
+            var strLogType = (string)Session["LogType"];
+            try
+            {
+                logTypeId = Int32.Parse(strLogType);
+                Session["LogTypeId"] = logTypeId;
+            }
+            catch (FormatException)
+            {
+                var error = String.Format("SearchForInactivate: user [{0}] invalid log type selected {1}.", GetUserFromSession().EmployeeId, strLogType);
+                logger.Error(error);
+            }
+
+            employeeLogs = employeeLogService.SearchLog(searchByLogName, moduleId, logTypeId, employee, logName, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 
@@ -86,7 +111,7 @@ namespace eCLAdmin.Controllers
             bool success = employeeLogService.ProcessActivation(
                                                 GetUserFromSession().LanId,
                                                 Constants.LOG_ACTION_INACTIVATE,
-                                                (int)Session["LogType"],
+                                                (int)Session["LogTypeId"],
                                                 model.GetSelectedIds(),
                                                 reason,
                                                 // Sanitize user input
@@ -123,7 +148,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchForReassign(string searchOption, int module, int employeeLogStatus, string reviewer, int logTypeSearchByLogName, string logName)
+        public ActionResult SearchForReassign(string searchOption, int module, int employeeLogStatus, string reviewer, string logName)
         {
             logger.Debug("Entered SearchForReassign [post]...");
 
@@ -215,12 +240,25 @@ namespace eCLAdmin.Controllers
             return View();
         }
 
-        public ActionResult SearchForReactivate(string searchOption, int module, int logType, string employee, int logTypeSearchByLogName, string logName)
+        public ActionResult SearchForReactivate(string searchOption, string module, string logType, string employee, string logTypeSearchByLogName, string logName)
         {
             logger.Debug("Entered SearchForReactivate [post]...");
 
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
             var searchByLogName = false;
+            // default to invalid module id and log type id
+            var moduleId = -3;
+            int logTypeId = -3;
+
+            try
+            {
+                moduleId = Int32.Parse(module);
+            }
+            catch (FormatException)
+            {
+                var error = String.Format("SearchForReactivate: user [{0}] invalid module selected {1}.", GetUserFromSession().EmployeeId, module);
+                logger.Error(error);
+            }
 
             if ("default" == searchOption)
             {
@@ -232,7 +270,19 @@ namespace eCLAdmin.Controllers
                 searchByLogName = true;
             }
 
-            employeeLogs = employeeLogService.SearchLog(searchByLogName, module, (int)Session["LogType"], employee, logName, Constants.LOG_ACTION_REACTIVATE, GetUserFromSession().LanId);
+            var strLogType = (string)Session["LogType"];
+            try
+            {
+                logTypeId = Int32.Parse(strLogType);
+                Session["LogTypeId"] = logTypeId;
+            }
+            catch (FormatException)
+            {
+                var error = String.Format("SearchForReactivate: user [{0}] invalid log type selected {1}.", GetUserFromSession().EmployeeId, strLogType);
+                logger.Error(error);
+            }
+
+            employeeLogs = employeeLogService.SearchLog(searchByLogName, moduleId, logTypeId, employee, logName, Constants.LOG_ACTION_REACTIVATE, GetUserFromSession().LanId);
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
         }
 
@@ -248,7 +298,7 @@ namespace eCLAdmin.Controllers
             bool success = employeeLogService.ProcessActivation(
                                                 GetUserFromSession().LanId,
                                                 Constants.LOG_ACTION_REACTIVATE,
-                                                (int)Session["LogType"],
+                                                (int)Session["LogTypeId"],
                                                 model.GetSelectedIds(),
                                                 reason,
                                                 // Sanitize user input
@@ -365,7 +415,7 @@ namespace eCLAdmin.Controllers
         {
             logger.Debug("Entered InitInactivateModal ");
 
-            int logTypeId = (int)Session["LogType"];
+            int logTypeId = (int)Session["LogTypeId"];
             // Load inactivation reasons
             List<Reason> reasonList = employeeLogService.GetReasons(logTypeId, Constants.LOG_ACTION_INACTIVATE);
             reasonList.Insert(0, new Reason { Id = -1, Description = "Please select a reason" });
@@ -380,7 +430,7 @@ namespace eCLAdmin.Controllers
         {
             logger.Debug("Entered InitReactivateModal ");
 
-            int logTypeId = (int)Session["LogType"];
+            int logTypeId = (int)Session["LogTypeId"];
             // Load inactivation reasons
             List<Reason> reasonList = employeeLogService.GetReasons(logTypeId, Constants.LOG_ACTION_REACTIVATE);
             reasonList.Insert(0, new Reason { Id = -1, Description = "Please select a reason" });

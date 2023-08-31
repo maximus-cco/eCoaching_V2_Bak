@@ -25,7 +25,7 @@
 
         var logTypeSelected = $("#logType").val();
 
-        if (logTypeSelected == -1) {
+        if (logTypeSelected == -2) {
             initPage();
             return false;
         }
@@ -73,7 +73,7 @@
         //var action = "@Constants.LOG_ACTION_INACTIVATE";
 
         // if neither Module nor Type is selected
-        if (logTypeSelected == -1 || mouduleSelected == -1) {
+        if (logTypeSelected == -2 || mouduleSelected == -1) {
             resetEmployeeDropdown();
             return false;
         }
@@ -130,7 +130,7 @@ function initPage() {
     // Hide search result.
     $("#search-result").slideUp(1000);
     // Reset Type dropdown.
-    $('#logType').val(-1);
+    $('#logType').val(-2);
     // Reset Employee dropdown.
     // Remove all in Employee dropdown except for the first default item "Please select an employee"
     //$('#employee').find('option:gt(0)').remove();
@@ -148,7 +148,7 @@ function validateForm() {
 
     var searchByDefault = $('#radio-search-option-default').is(':checked');
     if (searchByDefault === true) {
-        if ($('#logType').val() == -1) {
+        if ($('#logType').val() == -2) {
             $('#logType').addClass("input-validation-error");
             //$('#type-error-msg').html('Please select a type');
             isFormValid = false;

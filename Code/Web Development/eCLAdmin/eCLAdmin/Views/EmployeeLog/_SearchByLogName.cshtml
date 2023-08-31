@@ -23,7 +23,7 @@
 <script>
     $(function () {
         $("#logTypeSearchByLogName").on("change", function () {
-            if ($(this).val() !== -1) {
+            if ($(this).val() !== -2) {
                 $("#logTypeSearchByLogName").removeClass("input-validation-error");
             }
         })
@@ -38,7 +38,7 @@
     function validateSearchByLogNameForm() {
         var isFormValid = true;
         // search by log name
-        if ($('#logTypeSearchByLogName').val() == -1) {
+        if ($('#logTypeSearchByLogName').val() == -2) {
             $('#logTypeSearchByLogName').addClass("input-validation-error");
             //$('#type-error-msg').html('Please select a type');
             isFormValid = false;
@@ -51,7 +51,7 @@
     }
 
     function resetSearchByLogName() {
-        $("#logTypeSearchByLogName").val(-1);
+        $("#logTypeSearchByLogName").val(-2);
         $("#input-logname").val("");
     }
 
