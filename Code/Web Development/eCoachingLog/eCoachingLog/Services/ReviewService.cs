@@ -102,7 +102,7 @@ namespace eCoachingLog.Services
 			var log = review.LogDetail;
 
             if (log.IsQn 
-                && user.EmployeeId == log.SupervisorEmpId
+                && (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
                 && (log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW 
                       || log.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION)
                )
