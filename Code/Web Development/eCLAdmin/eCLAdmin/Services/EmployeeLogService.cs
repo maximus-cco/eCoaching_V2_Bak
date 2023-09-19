@@ -2,6 +2,7 @@
 using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.User;
 using eCLAdmin.Repository;
+using eCLAdmin.Utilities;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,7 @@ namespace eCLAdmin.Services
 
         public List<EmployeeLog> SearchLog(bool searchByLogName, int moduleId, int logTypeId, string employeeId, string logName, string action, string userLanId)
         {
+            var logNameCleaned = logName == null ? "" : EclAdminUtil.RemoveNonAscii(logName).Replace("\r\n", "").Replace(" ", "").Replace("\t", "");
             if (searchByLogName)
             {
                 moduleId = -1;
@@ -87,10 +89,10 @@ namespace eCLAdmin.Services
             }
             else
             {
-                logName = null;
+                logNameCleaned = null;
             }
 
-            return employeeLogRepository.SearchLog(moduleId, logTypeId, employeeId, logName?.Trim(), action, userLanId);
+            return employeeLogRepository.SearchLog(moduleId, logTypeId, employeeId, logNameCleaned?.Trim(), action, userLanId);
         }
 
         public EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId)

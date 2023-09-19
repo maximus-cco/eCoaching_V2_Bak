@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace eCLAdmin.Utilities
 {
@@ -100,5 +101,11 @@ namespace eCLAdmin.Utilities
             return memoryStream;
         }
 
+        public static string RemoveNonAscii(string str)
+        {
+            string pattern = "[^ -~]+";
+            Regex reg_exp = new Regex(pattern);
+            return reg_exp.Replace(str, "");
+        }
     }
 }

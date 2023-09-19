@@ -16,9 +16,11 @@
             if (selected === true) {
                 $('#div-search-by-default').removeClass('hidden');
                 $('#div-search-by-logname').addClass('hidden');
+                $('#form-search').addClass('form-inline');
             } else {
                 $('#div-search-by-default').addClass('hidden');
                 $('#div-search-by-logname').removeClass('hidden');
+                $('#form-search').removeClass('form-inline');
             }
 
             $("#search-result, #lk-inactivate, #lk-reactivate, #lk-reassign").slideUp(500);
@@ -29,9 +31,11 @@
             if (selected === true) {
                 $('#div-search-by-logname').removeClass('hidden');
                 $('#div-search-by-default').addClass('hidden');
+                $('#form-search').removeClass('form-inline');
             } else {
                 $('#div-search-by-logname').addClass('hidden');
                 $('#div-search-by-default').removeClass('hidden');
+                $('#sform-search').addClass('form-inline');
             }
 
             $("#search-result, #lk-inactivate, #lk-reactivate, #lk-reassign").slideUp(500);
