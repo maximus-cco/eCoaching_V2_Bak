@@ -19,15 +19,16 @@ GO
 --  Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
 --  Modified to support Reactivation by Managers. TFS 25961- 12/16/2022
 --  Modified to only display latest last known status when Reactivating log. TFS 26048 - 01/20/2023
+--  Search by multiple log names. 09/08/2023
 --	=====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
+CREATE or ALTER   PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
 @strRequesterLanId nvarchar(30),
 @strTypein nvarchar(10) = NULL, 
 @strActionin nvarchar(10), 
 @strEmployeein nvarchar(10) = NULL,
 @intModuleIdin INT = NULL, 
-@strFormName nvarchar(50) = NULL
+@strFormName nvarchar(max) = NULL
 
 AS
 
@@ -127,16 +128,33 @@ SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
 -- If Formname is not passed, then apply other Filters
 -- If Formname is passed then Filter for that Form name only
 
+-- to be safe
+DROP TABLE IF EXISTS #LogNames;
+
 IF COALESCE(@strFormName,'') = ''
 BEGIN
 SET @nvcWhere = @nvcWhere  + ' AND [Fact].EmpID =  ''' + @strEmployeein  + '''
                                AND [Fact].[ModuleId] = ''' + CONVERT(nvarchar,@intModuleIdin) + '''' 
 END
-
-ELSE
-
+-- search by log name(s)
+ELSE 
 BEGIN
+-- multiple log names search
+IF @strActionin = N'Inactivate' 
+begin
+-- split log names and insert into temp table #LogNames
+CREATE TABLE #LogNames (LogName NVARCHAR(100));
+INSERT INTO #LogNames (LogName)
+    SELECT value FROM STRING_SPLIT(@strFormName, ',');
+-- update where statement
+SET @nvcWhere = @nvcWhere + ' AND [Fact].[Formname] IN (SELECT LogName FROM #LogNames) '
+end
+-- Reactivate, single log name search
+else 
+begin
 SET @nvcWhere = @nvcWhere  + ' AND [Fact].[Formname] = ''' + @strFormName   + ''''
+end
+
 
 --Restriction for Non Coaching Admins
 
@@ -145,7 +163,8 @@ SET @nvcWhere = @nvcWhere  + ' AND
 			 (Fact.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+'''
 		      OR
 			 (veh.Sup_ID =  '''+@strRequesterId+'''  OR veh.Mgr_ID = '''+@strRequesterId+''' ))'
-END
+END 
+-- end search by log name(s)
 
  SET @nvcSQL = 'SELECT DISTINCT '+@strID+' 
         fact.FormName strFormName,
