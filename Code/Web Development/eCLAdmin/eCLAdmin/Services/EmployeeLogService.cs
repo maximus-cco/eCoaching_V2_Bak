@@ -81,7 +81,9 @@ namespace eCLAdmin.Services
 
         public List<EmployeeLog> SearchLog(bool searchByLogName, int moduleId, int logTypeId, string employeeId, string logName, string action, string userLanId)
         {
-            var logNameCleaned = logName == null ? "" : EclAdminUtil.RemoveNonAscii(logName).Replace("\r\n", "").Replace(" ", "").Replace("\t", "");
+            var logNameCleaned = logName == null ? "" : EclAdminUtil.RemoveNonPrintableAscii(logName);
+            logger.Debug($"***LogName[{logNameCleaned}]");
+
             if (searchByLogName)
             {
                 moduleId = -1;

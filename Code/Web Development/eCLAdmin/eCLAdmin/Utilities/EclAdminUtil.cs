@@ -101,8 +101,10 @@ namespace eCLAdmin.Utilities
             return memoryStream;
         }
 
-        public static string RemoveNonAscii(string str)
+        // Remove non-printable ASCII characters
+        public static string RemoveNonPrintableAscii(string str)
         {
+            //https://www.ascii-code.com/
             string pattern = "[^ -~]+";
             Regex reg_exp = new Regex(pattern);
             return reg_exp.Replace(str, "");
