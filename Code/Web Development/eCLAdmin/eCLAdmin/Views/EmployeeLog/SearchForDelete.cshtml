@@ -19,7 +19,8 @@
                            HttpMethod = "POST",
                            UpdateTargetId = "search-result",
                            OnBegin = "processSearchOnBegin",
-                           OnComplete = "processSearchOnComplete"
+                           OnComplete = "processSearchOnComplete",
+                           OnFailure = "handleAjaxError"
                        },
                        new { id = "form-search", @class = "form-horizontal" }
     ))
