@@ -145,7 +145,7 @@ begin
 -- split log names and insert into temp table #LogNames
 CREATE TABLE #LogNames (LogName NVARCHAR(100));
 INSERT INTO #LogNames (LogName)
-    SELECT value FROM STRING_SPLIT(@strFormName, ',');
+    SELECT TRIM(value) FROM STRING_SPLIT(@strFormName, ',');
 -- update where statement
 SET @nvcWhere = @nvcWhere + ' AND [Fact].[Formname] IN (SELECT LogName FROM #LogNames) '
 end
