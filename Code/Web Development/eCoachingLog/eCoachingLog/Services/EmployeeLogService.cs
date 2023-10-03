@@ -36,11 +36,19 @@ namespace eCoachingLog.Services
             if (isCoaching)
             {
                 logDetail = employeeLogRepository.GetCoachingDetail(logId);
-				if (logDetail.IsQn || logDetail.IsQnSupervisor)
+                var coachingLogDetail = (CoachingLogDetail)logDetail;
+                if (logDetail.IsQn || logDetail.IsQnSupervisor)
 				{
                     var temp = employeeLogRepository.GetScorecardsAndSummary(logId);
-                    ((CoachingLogDetail)logDetail).Scorecards = temp.Scorecards;
-                    ((CoachingLogDetail)logDetail).QnSummaryList = temp.QnSummaryList;
+                    coachingLogDetail.Scorecards = temp.Scorecards;
+                    coachingLogDetail.QnSummaryList = temp.QnSummaryList;
+                } 
+                else if (coachingLogDetail.IsOmrAudio && logDetail.AdditionalText != null)
+                {
+                    logDetail.AdditionalText +=
+                            "<small>" +
+                                    coachingLogDetail.AudVerintIds +
+                            "</small>";
                 }
             }
             else

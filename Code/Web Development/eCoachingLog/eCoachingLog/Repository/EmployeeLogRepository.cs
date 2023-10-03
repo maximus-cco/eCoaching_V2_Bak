@@ -166,7 +166,8 @@ namespace eCoachingLog.Repository
                         logDetail.BatchId = dataReader["strQNBatchId"].ToString();
 						logDetail.StrengthOpportunity = dataReader["strQNStrengthsOpportunities"].ToString();
 
-                        logDetail.AdditionalText = dataReader["strStaticText"].ToString(); 
+                        logDetail.AdditionalText = dataReader["strStaticText"].ToString();
+                        logDetail.AudVerintIds = dataReader["AudVerintIds"].ToString();
 
                         if (string.IsNullOrEmpty(dataReader["IsFollowupRequired"].ToString()))
 						{

@@ -110,6 +110,8 @@ namespace eCoachingLog.Models.Common
         // quality pfd completed date
         public string PfdCompletedDate { get; set; }
 
+        public string AudVerintIds { get; set; }
+
         public CoachingLogDetail()
         {
             this.QnSummaryList = new List<LogSummary>();
