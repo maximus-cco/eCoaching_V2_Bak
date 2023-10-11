@@ -143,7 +143,7 @@ BEGIN
 IF @strActionin = N'Inactivate' 
 begin
 -- split log names and insert into temp table #LogNames
-CREATE TABLE #LogNames (LogName NVARCHAR(100));
+CREATE TABLE #LogNames (LogName NVARCHAR(max));
 INSERT INTO #LogNames (LogName)
     SELECT TRIM(value) FROM STRING_SPLIT(@strFormName, ',');
 -- update where statement
