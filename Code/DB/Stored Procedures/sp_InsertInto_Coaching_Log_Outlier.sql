@@ -1,9 +1,9 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 -- =============================================
 -- Author:		        Susmitha Palacherla
@@ -23,6 +23,7 @@ GO
 -- Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 -- Changes to suppport New Written Corr feed- TFS 23048  - 10/4/2021
 -- Changes to suppport AUD feed- TFS 26432  - 04/03/2023
+-- Updated to load Verint ID string for AUD Feed TFS 27135 - 10/2/2023
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 @Count INT OUTPUT
@@ -83,7 +84,7 @@ SELECT DISTINCT LOWER(cs.CSR_EMPID)	[FormName],
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
-        CASE WHEN (cs.Report_Code LIKE N'MSR%' OR cs.Report_Code LIKE N'IDD%' OR cs.Report_Code LIKE N'WCP%')
+        CASE WHEN (cs.Report_Code LIKE N'MSR%' OR cs.Report_Code LIKE N'IDD%' OR cs.Report_Code LIKE N'WCP%' OR cs.Report_Code LIKE N'AUD%')
         THEN  [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source]) ELSE 212 END [SourceID],                        
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
@@ -151,6 +152,21 @@ WAITFOR DELAY '00:00:00:02';  -- Wait for 2 ms
     LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
     ON cf.[CoachingID] = cr.[CoachingID]  
     WHERE cr.[CoachingID] IS NULL; 
+
+	
+ -- Inserts records into Audio_Issues_VerintIds table for each Audio Issues Outlier record inserted into Coaching_log table.
+
+  INSERT INTO [EC].[Audio_Issues_VerintIds]
+           ([CoachingID]
+           ,[VerintIds])      
+    SELECT cf.[CoachingID],
+    os.[Verint_ID]
+    FROM [EC].[Outlier_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
+    ON os.[Report_ID] = cf.[numReportID] AND  os.[Report_Code] = cf.[strReportCode]
+    LEFT OUTER JOIN  [EC].[Audio_Issues_VerintIds] av
+    ON cf.[CoachingID] = av.[CoachingID]  
+    WHERE av.[CoachingID] IS NULL
+	AND cf.strReportCode like 'AUD%'; 
  
   -- Truncate Staging Table
 --TRUNCATE TABLE [EC].[Outlier_Coaching_Stage];

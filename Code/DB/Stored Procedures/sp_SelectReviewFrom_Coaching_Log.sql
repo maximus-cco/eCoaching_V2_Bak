@@ -4,6 +4,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -21,6 +22,7 @@ GO
 --  Updated to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --  Changes to support SUR feed. TFS 23347  - 03/25/2022
 --  Changes to suppport AUD feed- TFS 26432  - 04/03/2023
+--  Updated to return Verint ID Strings for Aud feed records. TFS 27135 - 10/2/2023
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -215,7 +217,8 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   cl.SupFollowupReviewCoachingNotes,
   cl.PFDCompletedDate,
   ''Coaching'' strLogType,
-  cc.strStaticText
+  cc.strStaticText,
+ ''Verint ID: '' + REPLACE(av.VerintIds, '' |'', '','') AudVerintIds
 FROM [EC].[Coaching_Log] cl  WITH (NOLOCK) ';
 	    
 SET @nvcSQL3 = @nvcSQL3 + N' JOIN 
@@ -270,6 +273,7 @@ JOIN [EC].[DIM_Status] s ON [cl].[StatusID] = [s].[StatusID]
 JOIN [EC].[DIM_Source] sc ON [cl].[SourceID] = [sc].[SourceID] 
 JOIN [EC].[DIM_Site] st ON [cl].[SiteID] = [st].[SiteID] 
 JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
+LEFT JOIN [EC].[Audio_Issues_VerintIds] av ON av.[CoachingID] = cl.[CoachingID]  
 ORDER BY [cl].[FormName]';
 
 

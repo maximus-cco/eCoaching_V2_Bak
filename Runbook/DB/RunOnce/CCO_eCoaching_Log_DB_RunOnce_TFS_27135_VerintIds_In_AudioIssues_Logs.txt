@@ -1,0 +1,49 @@
+/*
+TFS 27135 - Add the Verint call id for eCL audio issues reported 
+
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Add Column for VerintIds to Outier Staging Table
+2. Create Table Audio_Issues_VerintIds
+
+*/
+
+-- Details
+
+--1. Add Column for VerintIds to Outier Staging Table
+
+ALTER TABLE EC.Outlier_Coaching_Stage
+ALTER COLUMN [Verint_ID] nvarchar(600);
+GO
+
+--2. Create Table Audio_Issues_VerintIds
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Audio_Issues_VerintIds](
+	[CoachingID] [bigint] NOT NULL,
+	[VerintIds] [nvarchar](600) NULL
+ ) ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Audio_Issues_VerintIds]  WITH NOCHECK ADD  CONSTRAINT [fkCoachingIDVerintIds] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log] ([CoachingID])
+GO
+
+ALTER TABLE [EC].[Audio_Issues_VerintIds] CHECK CONSTRAINT [fkCoachingIDVerintIds]
+GO
+
+
+

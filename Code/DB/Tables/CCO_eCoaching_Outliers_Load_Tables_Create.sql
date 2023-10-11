@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Outliers_Load_Tables_Create(06).sql
-Last Modified Date: 4/22/2021
+CCO_eCoaching_Outliers_Load_Tables_Create(07).sql
+Last Modified Date: 10/11/2023
 Last Modified By: Susmitha Palacherla
 
+Version 07: TFS 27135 - Add the Verint call id for eCL audio issues reported - 10/11/2023
 Version 06: TFS 20677 -  AD island to AD AWS environment changes - 4/22/2021
 Version 05: TFS 18833 -  Expand the site field size in feeds - 10/9/2020
 Version 04: New process for short calls. TFS 14108 - 07/08/2019
@@ -28,6 +29,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 5. Create Table [EC].[ShortCalls_Prescriptive_Actions]
 6. Create Table  [EC].[ShortCalls_Behavior_Action_Link]
 7. Create Table  [EC].[ShortCalls_Evaluations] 
+8. Create Table [EC].[Audio_Issues_VerintIds]
 
 **************************************************************
 
@@ -81,7 +83,7 @@ CREATE TABLE [EC].[Outlier_Coaching_Stage](
 	[Emp_Role] [nvarchar](3) NULL,
 	[Reject_Reason] [nvarchar](200) NULL,
 	[Emp_Active] [nvarchar](1) NULL,
-	[Verint_ID] [nvarchar](30) NULL
+	[Verint_ID] [nvarchar](600) NULL
 ) ON [PRIMARY]
 
 GO
@@ -367,6 +369,26 @@ GO
 
 --**************************************************************
 
+--8. Create Table [EC].[Audio_Issues_VerintIds]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Audio_Issues_VerintIds](
+	[CoachingID] [bigint] NOT NULL,
+	[VerintIds] [nvarchar](600) NULL
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Audio_Issues_VerintIds]  WITH NOCHECK ADD  CONSTRAINT [fkCoachingIDVerintIds] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log] ([CoachingID])
+GO
+
+ALTER TABLE [EC].[Audio_Issues_VerintIds] CHECK CONSTRAINT [fkCoachingIDVerintIds]
+GO
 
 
 **************************************************************
