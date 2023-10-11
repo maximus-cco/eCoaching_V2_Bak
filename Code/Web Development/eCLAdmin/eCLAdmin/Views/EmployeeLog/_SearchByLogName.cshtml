@@ -16,7 +16,8 @@
     }
     else
     {
-        <textarea class="form-control" maxlength="3000" id="input-logname" name="logName" rows = "5"  placeholder="Enter log name(s). Please separate each log name by comma."></textarea>
+        <textarea class="form-control remaining" maxlength="3000" id="input-logname" name="logName" rows="5"  placeholder="Enter log name(s). Please separate each log name by comma."></textarea>
+        <div class="help-block small">Characters left: <span id="remaining">3000</span></div>
     }
 </div>
 <div style="margin-bottom: 10px;">
@@ -38,6 +39,10 @@
                 $("#input-logname").removeClass("input-validation-error");
             }
         })
+
+        $(".remaining").on("keyup", function () {
+            $('#remaining').text(3000 - $(this).val().length);
+        });
     });
 
     function validateSearchByLogNameForm() {
