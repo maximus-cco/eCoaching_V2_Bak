@@ -489,10 +489,11 @@ namespace eCoachingLog.Controllers
 		{
 			var vm = new ReviewViewModel();
             vm.Action = action;
-			if (isCoaching)
+            vm.LogStatusLevel = GetLogStatusLevel(logDetail.ModuleId, logDetail.StatusId);
+            if (isCoaching)
 			{
 				vm.LogDetail = (CoachingLogDetail)logDetail;
-				vm.ShowConfirmedCseText = ShowConfirmedCseText(vm.LogDetail);
+                vm.ShowConfirmedCseText = ShowConfirmedCseText(vm.LogDetail);
                 vm.ShowConfirmedNonCseText = ShowConfirmedNonCseText(vm.LogDetail);
                 vm.AdditionalText = this.reviewService.GetAdditionalText(vm, user);
             }
@@ -579,7 +580,6 @@ namespace eCoachingLog.Controllers
 				return vm;
 			}
 
-			vm.LogStatusLevel = GetLogStatusLevel(vm.LogDetail.ModuleId, vm.LogDetail.StatusId);
 			DetermineMgrSupNotesVisibility(vm);
 
             // Init Acknowledge partial

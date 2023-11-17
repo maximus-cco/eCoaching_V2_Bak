@@ -88,7 +88,6 @@ namespace eCoachingLog.Models.Common
 
 		public bool IsCoachingRequired { get; set; }
 
-		public int ModuleId { get; set; }
 		public string ModuleName { get; set; }
 
 		// Follow-up

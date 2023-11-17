@@ -130,7 +130,7 @@ namespace eCoachingLog.Services
 				|| (log.IsLowCsat && user.EmployeeId == log.LogManagerEmpId)
 				|| user.EmployeeId == log.ReassignedToEmpId)
 			{
-				if (review.LogStatusLevel == 3)
+				if (review.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
 				{
 					// Don't display instruct text for manager since now the workflow is changed to 
 					// Pending Supervisor Review --> Pending Manager Review
@@ -190,7 +190,7 @@ namespace eCoachingLog.Services
 			// Display Review Static Text for Supervisors
 			// Note: if csr acks first, status will become "Pending Supervisor Review"
 			if ((user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
-					&& (review.LogStatusLevel == 4 || review.LogStatusLevel == 2))
+					&& (review.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4 || review.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2))
 			{
 				if (log.IsOthAps)
 				{

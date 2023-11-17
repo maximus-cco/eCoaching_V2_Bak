@@ -24,7 +24,9 @@ namespace eCoachingLog.Models.Common
         public string CreatedDate { get; set; }     // SubmittedDate
         public string EventDate { get; set; }       // Date happened
 
-		public string SupervisorEmpId { get; set; }
+        public int ModuleId { get; set; }
+
+        public string SupervisorEmpId { get; set; }
 		public string ManagerEmpId { get; set; }
 		public string LogManagerEmpId { get; set; } // Manager when the log was submitted
 
