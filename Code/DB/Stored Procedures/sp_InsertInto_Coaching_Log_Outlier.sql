@@ -4,7 +4,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
@@ -24,8 +23,9 @@ GO
 -- Changes to suppport New Written Corr feed- TFS 23048  - 10/4/2021
 -- Changes to suppport AUD feed- TFS 26432  - 04/03/2023
 -- Updated to load Verint ID string for AUD Feed TFS 27135 - 10/2/2023
+-- Changes to suppport NGD feed- TFS 27396  - 11/24/2023
 -- =============================================
-CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 @Count INT OUTPUT
 
 AS
@@ -84,7 +84,7 @@ SELECT DISTINCT LOWER(cs.CSR_EMPID)	[FormName],
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
-        CASE WHEN (cs.Report_Code LIKE N'MSR%' OR cs.Report_Code LIKE N'IDD%' OR cs.Report_Code LIKE N'WCP%' OR cs.Report_Code LIKE N'AUD%')
+        CASE WHEN (cs.Report_Code LIKE N'MSR%' OR cs.Report_Code LIKE N'IDD%' OR cs.Report_Code LIKE N'WCP%' OR cs.Report_Code LIKE N'AUD%' OR cs.Report_Code LIKE N'NGD%')
         THEN  [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source]) ELSE 212 END [SourceID],                        
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],

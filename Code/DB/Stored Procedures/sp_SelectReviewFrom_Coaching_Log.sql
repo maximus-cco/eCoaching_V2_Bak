@@ -4,7 +4,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -23,6 +22,7 @@ GO
 --  Changes to support SUR feed. TFS 23347  - 03/25/2022
 --  Changes to suppport AUD feed- TFS 26432  - 04/03/2023
 --  Updated to return Verint ID Strings for Aud feed records. TFS 27135 - 10/2/2023
+-- Changes to suppport NGD feed- TFS 27396  - 11/24/2023
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -166,6 +166,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   CASE WHEN (cc.OMRISQ IS NOT NULL AND cl.strReportCode LIKE ''ISQ%'') THEN 1 ELSE 0 END "OMR / ISQ",
   CASE WHEN (cc.OMRIDD IS NOT NULL AND cl.strReportCode LIKE ''IDD%'') THEN 1 ELSE 0 END "OMR / IDD",
   CASE WHEN (cc.OMRAUD IS NOT NULL AND cl.strReportCode LIKE ''AUD%'') THEN 1 ELSE 0 END "OMR / AUD",
+  CASE WHEN (cc.OMRNGD IS NOT NULL AND cl.strReportCode LIKE ''NGD%'') THEN 1 ELSE 0 END "OMR / NGD",
    CASE WHEN (cc.LCS IS NOT NULL AND cl.strReportCode LIKE ''LCS%'') THEN 1 ELSE 0 END "LCS",
   CASE WHEN (cc.SDR IS NOT NULL AND cl.strReportCode LIKE ''SDR%'') THEN 1 ELSE 0 END "Training / SDR",
   CASE WHEN (cc.ODT IS NOT NULL AND cl.strReportCode LIKE ''ODT%'') THEN 1 ELSE 0 END "Training / ODT",
@@ -240,6 +241,7 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
 	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 23 THEN [clr].[Value] ELSE NULL END) OMRISQ,
 	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 281 THEN [clr].[Value] ELSE NULL END) OMRIDD,
 	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 314 THEN [clr].[Value] ELSE NULL END) OMRAUD,
+	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 315 THEN [clr].[Value] ELSE NULL END) OMRNGD,
 	MAX(CASE WHEN [clr].[SubCoachingReasonID] = 232 THEN [clr].[Value] ELSE NULL END) SDR,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 233 THEN [clr].[Value] ELSE NULL END) ODT,
     MAX(CASE WHEN [clr].[SubCoachingReasonID] = 73 THEN [clr].[Value] ELSE NULL END) CTC,

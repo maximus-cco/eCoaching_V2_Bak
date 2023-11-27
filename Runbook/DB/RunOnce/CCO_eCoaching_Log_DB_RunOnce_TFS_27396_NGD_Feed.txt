@@ -1,0 +1,72 @@
+/*
+TFS 27396 - NGD login issues in the eCoaching Log
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+1. Add record to [EC].[DIM_Sub_Coaching_Reason]
+2. Add Record to [EC].[Coaching_Log_StaticText]
+
+-- Test
+
+select * from ec.DIM_Coaching_Reason 
+where coachingreason like'OMR%'
+order by CoachingReason
+--9
+
+select * from ec.DIM_Sub_Coaching_Reason
+where Subcoachingreason in  
+('OMR:NGD System Log In')
+--315
+
+select * from [EC].[Coaching_Log_StaticText]
+--103
+
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+-- step 1: Add record to [EC].[DIM_Sub_Coaching_Reason]
+
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+([SubCoachingReason])
+     VALUES 
+('OMR:NGD System Log In')
+
+
+--****************************************************
+
+-- step 2: Add Record to [EC].[Coaching_Log_StaticText]
+
+INSERT INTO [EC].[Coaching_Log_StaticText]
+           ([TextID]
+           ,[TextDescription]
+           ,[Active]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+           ,[Training]
+           ,[StartDate]
+           ,[EndDate])
+     VALUES
+           (103, '<p>Your CSR was logged in to NGD for more than 30 minutes outside their scheduled shift.  Please validate and ensure your CSR is fully aware of when they should and should not be logged in to the system, laptop, AWS, and NGD.</p>', 1, 9, 315, 1, 0, 0, 0, 0, 20231101, 99991231)
+    
+GO
+
+--****************************************************
+
+
+
+--****************************************************
+

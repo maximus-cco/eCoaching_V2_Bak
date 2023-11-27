@@ -29,8 +29,9 @@ GO
 -- TFS 23048 - To add WCP - 10/4/2021
 -- TFS 24256 - To add SUR - 03/22/2022
 -- TFS 26432 - To add AUD - 04/03/2023
+-- TFS 27396 - To add AUD - 11/24/2023
 -- =============================================
-CREATE OR ALTER FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
+ALTER FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
 )
 RETURNS INT
@@ -85,6 +86,7 @@ BEGIN
 			WHEN N'WCP' THEN 42
 			WHEN N'SUR' THEN 42
 			WHEN N'AUD' THEN 314
+			WHEN N'NGD' THEN 315
         ELSE -1
       END;
     ELSE
