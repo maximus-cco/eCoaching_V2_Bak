@@ -110,9 +110,7 @@ namespace eCoachingLog.Services
                 return log.AdditionalText;
             }
 
-
-
-            if (log.IsOmrAudio
+            if ((log.IsOmrAudio || log.IsNgdsLoginOutsideShift)
                 && (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
                 && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
             {
