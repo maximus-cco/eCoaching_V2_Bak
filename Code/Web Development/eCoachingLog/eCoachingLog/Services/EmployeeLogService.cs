@@ -46,6 +46,7 @@ namespace eCoachingLog.Services
                 else if (coachingLogDetail.IsOmrAudio && logDetail.AdditionalText != null)
                 {
                     logDetail.AdditionalText +=
+                            "<br>" +
                             "<small>" +
                                     coachingLogDetail.AudVerintIds +
                             "</small>";

@@ -114,7 +114,8 @@ namespace eCoachingLog.Services
                 && (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
                 && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
             {
-                return log.AdditionalText;
+                var additionalText = log.AdditionalText == null ? "" : log.AdditionalText.Replace("<p>", "").Replace("</p>","");
+                return additionalText;
             }
 
             if (log.IsSurvey 
