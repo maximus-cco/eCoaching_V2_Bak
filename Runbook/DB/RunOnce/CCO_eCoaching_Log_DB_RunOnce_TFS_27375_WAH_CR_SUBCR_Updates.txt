@@ -1,0 +1,135 @@
+/*
+TFS 27375 - Work at Home Category and Subcategory updates
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Rename Work at Home and Work at Home (Return to Site Only) Coaching Reasons to Work From Home and Work From Home (Return to Site Only).
+2. Add new Sub Coaching Reasons and Inactivate unwanted ones
+3. Update mappings in Coaching Reason Selection table
+
+
+-- Test
+select * from ec.DIM_Coaching_Reason
+where coachingreasonid in (62,63)
+
+
+select * from ec.DIM_Sub_Coaching_Reason
+order by SubCoachingReason
+
+select * from ec.DIM_Sub_Coaching_Reason
+where Subcoachingreason in  
+(
+'Technical Issues',
+'Holiday Reminder',
+'Workspace Audit/Violation',
+'Secure Floor',
+'Damaged Equipment',
+'Unacceptable Workspace',
+'Working from Unapproved Location',
+'Employee Requested to Return to the Site',
+'Security Issue/Breach',
+'Other WFH Agreement Violations: Specify reason under coaching details.',
+'Other: Specify reason under coaching details.'
+)
+
+
+SELECT * FROM [EC].[Coaching_Reason_Selection]
+  where [CoachingReasonID] in (62,63)
+GO
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+-- step 1: Rename Work at Home and Work at Home (Return to Site Only) Coaching Reasons to Work From Home and Work From Home (Return to Site Only).
+
+update ec.DIM_Coaching_Reason
+set CoachingReason = REPLACE (CoachingReason, 'Work at Home', 'Work From Home')
+where coachingreasonid in (62,63)
+GO
+
+
+--****************************************************
+
+-- step 2: Add new Sub Coaching Reasons 
+
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+('Damaged Equipment'),
+('Holiday Reminder'),
+('Other WFH Agreement Violations: Specify reason under coaching details.'),
+('Secure Floor'),
+('Security Issue/Breach'),
+('Technical Issues'),
+('Unacceptable Workspace'),
+('Working from Unapproved Location'),
+('Workspace Audit/Violation')
+
+GO
+
+
+--****************************************************
+
+--step 3: Update mappings in Coaching Reason Selection table
+
+--3a.
+update [EC].[Coaching_Reason_Selection]
+set CoachingReason = REPLACE (CoachingReason, 'Work at Home', 'Work From Home')
+where coachingreasonid in (62,63);
+
+--3b.
+update [EC].[Coaching_Reason_Selection]
+set isActive = 0
+where coachingreasonid in (62,63)
+and SubCoachingReasonID not in (42,280);
+
+--3c.
+update [EC].[Coaching_Reason_Selection]
+set [Quality] = 1
+where coachingreasonid  = 63 and SubCoachingReasonID = 280;
+
+--3d.
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training])
+     VALUES
+	         (62, 'Work From Home',321,'Technical Issues',1,1,1,1,1,1,1,0,0,0,0,0),
+             (62, 'Work From Home',317,'Holiday Reminder',1,1,1,1,1,1,1,0,0,0,0,0),
+			 (62, 'Work From Home',324,'Workspace Audit/Violation',1,1,1,1,1,1,1,0,0,0,0,0),
+             (62, 'Work From Home',319,'Secure Floor',1,1,1,1,1,1,1,0,0,0,0,0),
+
+	         (63, 'Work From Home (Return to Site Only)',321,'Technical Issues',1,1,1,1,1,1,1,0,0,0,0,0),
+             (63, 'Work From Home (Return to Site Only)',316,'Damaged Equipment',1,1,1,1,1,1,1,0,0,0,0,0),
+			 (63, 'Work From Home (Return to Site Only)',322,'Unacceptable Workspace',1,1,1,1,1,1,1,0,0,0,0,0),
+             (63, 'Work From Home (Return to Site Only)',323,'Working from Unapproved Location',1,1,1,1,1,1,1,0,0,0,0,0),
+			 (63, 'Work From Home (Return to Site Only)',320,'Security Issue/Breach',1,1,1,1,1,1,1,0,0,0,0,0),
+             (63, 'Work From Home (Return to Site Only)',318,'Other WFH Agreement Violations: Specify reason under coaching details.',1,1,1,1,1,1,1,0,0,0,0,0)
+            
+GO
+
+--****************************************************
+
