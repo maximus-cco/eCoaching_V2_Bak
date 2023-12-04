@@ -447,8 +447,9 @@ namespace eCoachingLog.Controllers
 
             var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
 			string directOrIndirect = (vmInSession.IsCoachingByYou.HasValue && vmInSession.IsCoachingByYou.Value) ? Constants.DIRECT : Constants.INDIRECT;
-            // Load Site dropdown for CSR
-            if (moduleId == Constants.MODULE_CSR)
+
+            // Load Site dropdown for CSR; Quality/WFH (Return to Site)
+            if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_QUALITY)
             {
                 // Site dropdown is static, so we can use the one in session if exists
                 if (vmInSession.SiteSelectList.Count() > 1)
@@ -463,8 +464,9 @@ namespace eCoachingLog.Controllers
 					vm.SiteNameSelectList = new SelectList(siteList, "Name", "Name");
 				}
             }
+
             // Load Employee dropdown for others
-            else 
+            if (moduleId != Constants.MODULE_CSR) 
             {
                 IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, Constants.ALL_SITES, GetUserFromSession().EmployeeId);
                 List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();

@@ -135,7 +135,7 @@ namespace eCoachingLog.ViewModels
                 }
             }
 
-			// validate Work At Home - Return to Site entries
+			// validate Work From Home - Return to Site entries
 			if (IsWorkAtHomeReturnSite)
 			{
 				if (String.IsNullOrWhiteSpace(this.ReturnToSiteDate))
