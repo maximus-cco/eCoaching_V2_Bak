@@ -1,23 +1,9 @@
-/*
-Last Modified Date: 08/08/2020
-Last Modified By: Susmitha Palacherla
-
-Version 02: Updated to support WAH return to Site - TFS 18255 - 08/26/2020
-Version 01: Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
-
-*/
-IF EXISTS (
-  SELECT * FROM INFORMATION_SCHEMA.ROUTINES 
-  WHERE SPECIFIC_SCHEMA = N'EC' AND SPECIFIC_NAME = N'sp_SelectCoaching4Reminder' 
-)
-   DROP PROCEDURE [EC].[sp_SelectCoaching4Reminder]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -36,8 +22,9 @@ GO
 --  TFS 7856 encryption/decryption - emp name, emp lanid, email
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 -- Updated to support WAH return to Site - TFS 18255 - 08/26/2020
+-- Updated to support New Coaching Reason and SubCoching Reasons for Work at Home - 27375 - 12/07/2023
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectCoaching4Reminder]
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectCoaching4Reminder]
 AS
 
 BEGIN
@@ -200,7 +187,7 @@ SET @nvcSQL2 = '
     JOIN [EC].[Coaching_Log_Reason] clr WITH (NOLOCK) ON cl.coachingid = clr.coachingid 
 	JOIN [EC].[DIM_Status] s ON cl.StatusID = s.StatusID 
 	JOIN [EC].[DIM_Source] so ON cl.SourceID = so.SourceID
-       WHERE clr.CoachingReasonID = 63 AND clr.SubCoachingreasonID IN (277, 278, 279, 280)
+       WHERE clr.CoachingReasonID = 63 AND clr.SubCoachingreasonID IN (280,316,318,320,321,322,323)
       AND cl.StatusID = 4
       AND cl.EmailSent = ''True''
       AND (
