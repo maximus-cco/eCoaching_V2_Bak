@@ -1,0 +1,32 @@
+/*
+TFS 27441 - Setup email alert when unexpected file staged
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+--SELECT * FROM [EC].[Feed_Contacts]
+*/
+
+-- Details
+--1. Add records to [EC].[Feed_Contacts] Table
+
+INSERT INTO [EC].[Feed_Contacts]
+           ([Category]
+           ,[ReportCode]
+           ,[ReportDescription]
+           ,[PrimaryPOC]
+           ,[SecondaryPOC])
+     VALUES
+        ('Outliers', 'NGDS', 'NGDS System Log In Outside Shift', 'Shelly J Encke', 'Analytics Team'),
+		('Outliers', 'AUD', 'Audio Issues Feed', 'Sara M Stonecipher', 'Analytics Team'),
+		('Generic', 'SUR', 'CSR Survey Coaching Initiative', 'Sara M Stonecipher', 'Analytics Team')
+GO
+
+
+
+--******************************
+
