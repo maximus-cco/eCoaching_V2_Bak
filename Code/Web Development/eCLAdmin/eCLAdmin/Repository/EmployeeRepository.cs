@@ -9,7 +9,7 @@ namespace eCLAdmin.Repository
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(EmployeeRepository));
+        private readonly ILog logger = LogManager.GetLogger(typeof(EmployeeRepository));
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
         public Employee GetEmployee(string employeeId)

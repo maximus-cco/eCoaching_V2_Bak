@@ -12,7 +12,7 @@ namespace eCLAdmin.Utilities
 {
     public static class EclAdminUtil
     {
-        static readonly ILog logger = LogManager.GetLogger(typeof(EclAdminUtil));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(EclAdminUtil));
 
         public static IDictionary<int, List<string>> BuildLogStatusNamesDictionary(List<EmployeeLogSelectEditorViewModel> logs)
         {

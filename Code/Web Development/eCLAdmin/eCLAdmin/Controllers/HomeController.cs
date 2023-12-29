@@ -7,7 +7,7 @@ namespace eCLAdmin.Controllers
 {
     public class HomeController : BaseController
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(HomeController));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(HomeController));
 
         private IUserService userService = new UserService();
 
@@ -15,7 +15,7 @@ namespace eCLAdmin.Controllers
         {
             logger.Debug("Entered HomeController.Index");
 
-			if (ShowMaintenancePage())
+            if (ShowMaintenancePage())
 			{
 				return new FilePathResult(System.Web.Hosting.HostingEnvironment.MapPath(Constants.MAINTENANCE_PAGE), "text/html");
 			}

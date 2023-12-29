@@ -11,7 +11,7 @@ namespace eCLAdmin.Repository
 {
     public class EmployeeLogRepository : IEmployeeLogRepository
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(EmployeeLogRepository));
+        private readonly ILog logger = LogManager.GetLogger(typeof(EmployeeLogRepository));
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
         public List<Module> GetModules(string userLanId, int logTypeId)
@@ -296,6 +296,7 @@ namespace eCLAdmin.Repository
                 }
                 catch (Exception ex)
                 {
+                    logger.Error(ex);
                     throw ex;
                 }
             }
@@ -336,6 +337,7 @@ namespace eCLAdmin.Repository
                 }
                 catch (Exception ex)
                 {
+                    logger.Error(ex);
                     throw ex;
                 }
             }
@@ -543,7 +545,7 @@ namespace eCLAdmin.Repository
             catch (Exception ex)
             {
                 string logType = isCoaching ? "Coaching" : "Warning";
-                logger.Info("Failed to delete " + logType + " log [" + logId + "]. Exception: " + ex.Message);
+                logger.Info("Failed to delete " + logType + " log [" + logId + "]. Exception: " + ex.Message, ex);
 
                 transaction.Rollback();
             }

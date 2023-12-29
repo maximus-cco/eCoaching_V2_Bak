@@ -1,4 +1,5 @@
-﻿using eCLAdmin.Models.EmployeeLog;
+﻿using eCLAdmin.Models.Common;
+using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.Report;
 using eCLAdmin.Models.User;
 using eCLAdmin.ViewModels.Reports;
@@ -16,6 +17,8 @@ namespace eCLAdmin.Services
         List<Reason> GetSubreasons(int reasonId, bool isWarning);
         List<Status> GetLogStatusList(int moduleId, bool isWarning);
         List<Status> GetWarningLogStates(); // Active, Expired, All
+        List<IdName> GetFeedCategories();
+        List<IdName> GetFeedReportCodes();
 
         // Admin Activity Report
         List<AdminActivity> GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName, int pageSize, int rowStartIndex, out int totalRows);
@@ -41,5 +44,10 @@ namespace eCLAdmin.Services
         List<WarningLog> GetWarningLogs(WarningSearchViewModel search, out int totalRows);
         // Export to excel
         DataSet GetWarningLogs(WarningSearchViewModel search);
+
+        // Feed Load History Report
+        List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, string category, string reportCode, int pageSize, int rowStartIndex, out int totalRows);
+        // Export to excel
+        DataSet GeFeedLoadHistory(string startDate, string endDate, string category, string reportCode);
     }
 }

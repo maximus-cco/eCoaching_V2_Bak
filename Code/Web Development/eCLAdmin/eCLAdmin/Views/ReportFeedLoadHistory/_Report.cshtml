@@ -1,0 +1,81 @@
+﻿<table class="tables table-hover table-bordered text-nowrap" id="tbl-report" style="font-size: 0.8em; width:100%;">
+    <thead>
+        <tr>
+            <th>Load Date</th> 
+            <th>Category</th>
+            <th>Report Code</th>
+            <th>Description</th>
+            <th>File Name</th>
+            <th>Total Staged</th>
+            <th>Total Loaded</th>
+            <th>Total Rejected</th>
+        </tr>
+    </thead>
+</table>
+
+<script>
+    $(document).ready(function () {
+        var length = $('#PageSize').val();
+        $(".please-wait").slideDown(500);
+        var feedLoadHistoryTbl = $('#tbl-report').DataTable({
+            columnDefs: [{
+                targets: '_all',
+                render: DataTable.render.ellipsis(80),
+                orderable: false
+            }],
+            //ordering: false,
+            renderer: "bootstrap",
+            autowidth: false,
+            language: {
+                processing: "<span>Loading...... Please wait...</span>",
+                emptyTable: "No data found."
+            },
+            processing: true,
+            serverSide: true,       // Process server side
+            filter: false,          // Disable filter (search box)
+            pageLength: length,
+            ajax: {
+                url: '@Url.Action("GetData")',
+                type: "POST",
+                datatype: "json",
+                data: {
+                    category:   $('#select-category option:selected').text(),
+                    reportCode: $('#select-report-code option:selected').text(),
+                    startDate:  $('#StartDate').val(),
+                    endDate:    $('#EndDate').val(),
+                }
+            },
+            columns: [
+                { data: "LoadDate" },
+                { data: "Category" },
+                { data: "Code" },
+                { data: "Description" },
+                { data: "FileName" },
+                { data: "TotalStaged" },
+                { data: "TotalLoaded" },
+                { data: "TotalRejected" }
+            ],
+
+            initComplete: function (settings, json) {
+                $(".please-wait").slideUp(500);
+
+                let recordsTotal = feedLoadHistoryTbl.page.info().recordsTotal;
+                if (recordsTotal > 0) {
+                    // show export to excel link
+                    $('#div-export-to-excel').removeClass('hide');
+                    $('#div-export-to-excel').addClass('show');
+                }
+            }
+
+        });
+
+        // Set page length
+        feedLoadHistoryTbl.page.len(length);
+
+        $('#tbl-report').on('length.dt', function (e, settings, len) {
+            $("input[name='pageSizeSelected']").val(len);
+        });
+
+    });
+</script>
+

@@ -13,7 +13,7 @@ namespace eCLAdmin.Repository
 {
     public class ReportRepository : IReportRepository
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(ReportRepository));
+        private readonly ILog logger = LogManager.GetLogger(typeof(ReportRepository));
         string connectionStr = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
         public List<Status> GetWarningLogStates()
@@ -876,6 +876,32 @@ namespace eCLAdmin.Repository
                 }
             }
             return dt;
+        }
+
+        public List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, string category, string reportCode, int pageSize, int rowStartIndex, out int totalRows)
+        {
+            logger.Debug($"#######StartDate: {startDate}, EndDate: {endDate}, Category: {category}, ReportCode: {reportCode}, PageSize: {pageSize}, StartIndex: {rowStartIndex}");
+            var list = new List<FeedLoadHistory>();
+            var l = new FeedLoadHistory();
+            l.LoadDate = "11/30/2023";
+            l.Category = "Outliers";
+            l.Code = "BRL";
+            l.Description = "Exceed Break Length";
+            l.FileName = "eCL_Outlier_Feed_BRL20231129.csv";
+            l.TotalStaged = 1000;
+            l.TotalLoaded = 900;
+            l.TotalRejected = 100;
+
+            list.Add(l);
+            totalRows = 1;
+            return list;
+
+        }
+
+        public DataSet GetFeedLoadHistoryDataSet(string startDate, string endDate, string category, string reportCode)
+        {
+            var dataSet = new DataSet();
+            return dataSet;
         }
 
     }

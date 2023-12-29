@@ -14,7 +14,7 @@ namespace eCLAdmin
 {
 	public class MvcApplication : System.Web.HttpApplication
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(MvcApplication));
+        private readonly ILog logger = LogManager.GetLogger(typeof(MvcApplication));
 
         protected void Application_Start()
         {

@@ -9,8 +9,8 @@ namespace eCLAdmin.Repository
 {
     public class UserRepository : IUserRepository
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(UserRepository));
-        string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
+        private readonly ILog logger = LogManager.GetLogger(typeof(UserRepository));
+        private string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
         public List<User> GetAllUsers()
         {
@@ -86,7 +86,7 @@ namespace eCLAdmin.Repository
             }
             catch (Exception ex)
             {
-                logger.Debug("Exception thrown: " + ex.Message);
+                logger.Debug(ex);
 
                 throw ex;
             }
@@ -124,7 +124,7 @@ namespace eCLAdmin.Repository
             }
             catch (Exception ex)
             {
-                logger.Debug("Exception thrown: " + ex.Message);
+                logger.Debug(ex);
                 throw ex;
             }
 
@@ -160,7 +160,7 @@ namespace eCLAdmin.Repository
             }
             catch (Exception ex)
             {
-                logger.Debug("Exception thrown: " + ex.Message);
+                logger.Debug(ex);
                 throw ex;
             }
 
@@ -191,7 +191,7 @@ namespace eCLAdmin.Repository
             }
             catch (Exception ex)
             {
-                logger.Debug("Exception thrown: " + ex.Message);
+                logger.Debug(ex);
                 throw ex;
             }
 
@@ -227,7 +227,7 @@ namespace eCLAdmin.Repository
             }
             catch (Exception ex)
             {
-                logger.Debug("Exception thrown: " + ex.Message);
+                logger.Debug(ex);
                 throw ex;
             }
 
@@ -259,7 +259,7 @@ namespace eCLAdmin.Repository
             }
             catch (Exception ex)
             {
-                logger.Debug("Exception thrown: " + ex.Message);
+                logger.Debug(ex);
                 throw ex;
             }
 
@@ -316,7 +316,7 @@ namespace eCLAdmin.Repository
             }
             catch (Exception ex)
             {
-                logger.Debug("Exception thrown: " + ex.Message);
+                logger.Debug(ex);
                 throw ex;
             }
 

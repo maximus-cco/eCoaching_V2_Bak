@@ -9,7 +9,7 @@ namespace eCLAdmin.Services
 {
     public class UserService : IUserService
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(UserService));
+        private readonly ILog logger = LogManager.GetLogger(typeof(UserService));
         private IUserRepository userRepository = new UserRepository();
 
         public List<User> GetAllUsers()

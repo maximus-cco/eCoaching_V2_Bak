@@ -6,7 +6,7 @@ namespace eCLAdmin.Filters
 {
     public class SessionCheckAttribute : ActionFilterAttribute
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(SessionCheckAttribute));
+        private readonly ILog logger = LogManager.GetLogger(typeof(SessionCheckAttribute));
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {

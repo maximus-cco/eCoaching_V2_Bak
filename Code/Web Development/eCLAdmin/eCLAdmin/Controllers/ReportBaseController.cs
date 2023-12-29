@@ -15,7 +15,7 @@ namespace eCLAdmin.Controllers
     [SessionCheck]
     public class ReportBaseController : BaseController
     {
-        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog logger = LogManager.GetLogger(typeof(ReportBaseController));
         protected readonly IReportService reportService;
         protected readonly IEmployeeService employeeService;
 

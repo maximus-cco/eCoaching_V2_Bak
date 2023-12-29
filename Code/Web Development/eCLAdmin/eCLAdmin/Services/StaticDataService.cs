@@ -5,7 +5,7 @@ namespace eCLAdmin.Services
 {
     public class StaticDataService : IStaticDataService
     {
-        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog logger = LogManager.GetLogger(typeof(StaticDataService));
 
         private readonly IStaticDataRepository repository;
 

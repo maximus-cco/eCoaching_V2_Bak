@@ -172,6 +172,7 @@
     <Compile Include="Controllers\ReportCoachingController.cs" />
     <Compile Include="Controllers\ReportEmployeeHierarchyController.cs" />
     <Compile Include="Controllers\ReportCoachingQnController.cs" />
+    <Compile Include="Controllers\ReportFeedLoadHistoryController.cs" />
     <Compile Include="Controllers\ReportWarningController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Extensions\EclExtensionMethods.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="Filters\EclAuthorizeAttribute.cs" />
     <Compile Include="Filters\EclExceptionAttribute.cs" />
     <Compile Include="Filters\SessionCheckAttribute.cs" />
+    <Compile Include="Models\Common\IdName.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\EmployeeLog\Action.cs" />
     <Compile Include="Models\EmployeeLog\CoachingLogDetail.cs" />
@@ -193,6 +195,7 @@
     <Compile Include="Models\Report\CoachingLog.cs" />
     <Compile Include="Models\Report\CoachingLogQn.cs" />
     <Compile Include="Models\Report\EmployeeHierarchy.cs" />
+    <Compile Include="Models\Report\FeedLoadHistory.cs" />
     <Compile Include="Models\Report\ReportInfo.cs" />
     <Compile Include="Models\Report\WarningLog.cs" />
     <Compile Include="Models\Site.cs" />
@@ -253,6 +256,7 @@
     <Compile Include="ViewModels\Reports\AdminActivitySearchViewModel.cs" />
     <Compile Include="ViewModels\Reports\CoachingSearchViewModel.cs" />
     <Compile Include="ViewModels\Reports\EmployeeHierarchySearchViewModel.cs" />
+    <Compile Include="ViewModels\Reports\FeedLoadHistorySearchViewModel.cs" />
     <Compile Include="ViewModels\Reports\QualityNowSearchViewModel.cs" />
     <Compile Include="ViewModels\Reports\WarningSearchViewModel.cs" />
     <Compile Include="ViewModels\UserViewModel.cs" />
@@ -368,6 +372,9 @@
     <Content Include="Views\ReportWarning\_Search.cshtml" />
     <Content Include="Views\ReportCoachingQn\_Report.cshtml" />
     <Content Include="Views\ReportWarning\_Report.cshtml" />
+    <Content Include="Views\ReportFeedLoadHistory\_Search.cshtml" />
+    <Content Include="Views\ReportFeedLoadHistory\Index.cshtml" />
+    <Content Include="Views\ReportFeedLoadHistory\_Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

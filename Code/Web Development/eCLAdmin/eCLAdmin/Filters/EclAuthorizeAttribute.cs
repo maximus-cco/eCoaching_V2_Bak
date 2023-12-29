@@ -10,7 +10,7 @@ namespace eCLAdmin.Filters
 {
     public class EclAuthorizeAttribute : AuthorizeAttribute
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(EclAuthorizeAttribute));
+        private readonly ILog logger = LogManager.GetLogger(typeof(EclAuthorizeAttribute));
 
         public override void OnAuthorization(AuthorizationContext filterContext)
         {

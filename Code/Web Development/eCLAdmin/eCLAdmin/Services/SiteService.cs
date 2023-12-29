@@ -10,7 +10,7 @@ namespace eCLAdmin.Services
 {
     public class SiteService : ISiteService 
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(SiteService));
+        private readonly ILog logger = LogManager.GetLogger(typeof(SiteService));
         private ISiteRepository siteRepository = new SiteRepository();
 
         public List<Site> GetSites()

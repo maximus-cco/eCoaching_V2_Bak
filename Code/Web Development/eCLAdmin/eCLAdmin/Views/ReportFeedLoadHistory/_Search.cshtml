@@ -1,0 +1,33 @@
+﻿@model eCLAdmin.ViewModels.Reports.FeedLoadHistorySearchViewModel
+
+@Html.HiddenFor(m => m.PageSize)
+<form class="form-inline">
+    <div class="form-group" data-toggle="tooltip" title="Start Date">
+        <div class="input-group mydate">
+            @Html.TextBoxFor(m => m.StartDate, new { placeholder = "Start Date", @class = "form-control required" })
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+    <div class="form-group" data-toggle="tooltip" title="End Date">
+        <div class="input-group mydate">
+            @Html.TextBoxFor(m => m.EndDate, new { placeholder = "End Date", @class = "form-control required" })
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="form-group" data-toggle="tooltip" title="Category">
+        @Html.DropDownListFor(m => m.SelectedCategory, Model.CategorySelectList, new { id = "select-category", @class = "form-control required" })
+    </div>
+
+    <div class="form-group" data-toggle="tooltip" title="Report Code">
+        @Html.DropDownListFor(m => m.SelectedReportCode, Model.ReportCodeSelectList, new { id = "select-report-code", @class = "form-control required" })
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-primary ml-1" id="btn-generate-report">Generate Report</button>
+    </div>
+</form>

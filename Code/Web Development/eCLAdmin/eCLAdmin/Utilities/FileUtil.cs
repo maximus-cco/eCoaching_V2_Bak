@@ -6,7 +6,7 @@ namespace eCLAdmin.Utilities
 {
     public class FileUtil
     {
-        static readonly ILog logger = LogManager.GetLogger(typeof(FileUtil));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(FileUtil));
 
         public static string ReadFile(string fileFullPath)
         {

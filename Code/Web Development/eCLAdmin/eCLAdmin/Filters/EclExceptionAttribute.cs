@@ -7,7 +7,7 @@ namespace eCLAdmin.Filters
 {
     public class EclExceptionAttribute : IExceptionFilter
     {
-        readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly log4net.ILog logger = log4net.LogManager.GetLogger(typeof(EclExceptionAttribute));
 
         public void OnException(ExceptionContext filterContext)
         {

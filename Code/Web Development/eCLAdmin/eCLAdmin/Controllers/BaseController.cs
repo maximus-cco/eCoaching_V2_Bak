@@ -12,7 +12,7 @@ namespace eCLAdmin.Controllers
 {
     public class BaseController : Controller
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(BaseController));
+        private static readonly ILog logger = LogManager.GetLogger(typeof(BaseController));
         protected readonly IEmployeeLogService employeeLogService;
         protected readonly ISiteService siteService;
 
@@ -103,7 +103,7 @@ namespace eCLAdmin.Controllers
             catch (Exception ex)
             {
                 logger.Warn(string.Format("Failed to download excel file: {0}", fileName));
-                logger.Warn(string.Format("Exception message: {0}", ex.Message));
+                logger.Warn(ex);
             }
             finally
             {

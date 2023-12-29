@@ -17,7 +17,7 @@ namespace eCLAdmin.Controllers
     [SessionCheck]
     public class ReportCoachingQnController : ReportBaseController
     {
-        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog logger = LogManager.GetLogger(typeof(ReportCoachingQnController));
 
         public ReportCoachingQnController(IReportService reportService, IEmployeeLogService employeeLogService, IEmployeeService employeeService, ISiteService siteService) : base(reportService, siteService, employeeLogService, employeeService)
         {
@@ -60,7 +60,7 @@ namespace eCLAdmin.Controllers
             }
             catch (Exception ex)
             {
-                logger.Error(ex.Message);
+                logger.Error(ex);
                 throw ex;
             }
         }
@@ -85,7 +85,7 @@ namespace eCLAdmin.Controllers
             }
             catch (Exception ex)
             {
-                logger.Warn("Exception ExportToExcel: " + ex.Message);
+                logger.Warn(ex);
                 return Json(new { result = "fail" }, JsonRequestBehavior.AllowGet);
             }
         }

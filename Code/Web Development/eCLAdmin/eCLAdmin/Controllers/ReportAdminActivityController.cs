@@ -16,7 +16,7 @@ namespace eCLAdmin.Controllers
     [SessionCheck]
     public class ReportAdminActivityController : ReportBaseController
     {
-        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog logger = LogManager.GetLogger(typeof(ReportAdminActivityController));
 
         public ReportAdminActivityController(IReportService reportService, ISiteService siteService, IEmployeeLogService employeeLogService, IEmployeeService employeeService) : base(reportService, siteService, employeeLogService, employeeService)
         {
@@ -77,6 +77,7 @@ namespace eCLAdmin.Controllers
             }
             catch (Exception ex)
             {
+                logger.Error(ex);
                 throw ex;
             }
         }
@@ -101,7 +102,7 @@ namespace eCLAdmin.Controllers
             }
             catch (Exception ex)
             {
-                logger.Warn("Exception ExportToExcel: " + ex.Message);
+                logger.Warn(ex);
                 return Json(new { result = "fail" }, JsonRequestBehavior.AllowGet);
             }
         }

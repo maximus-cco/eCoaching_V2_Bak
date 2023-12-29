@@ -69,10 +69,10 @@ namespace eCLAdmin.Controllers
             {
                 moduleId = Int32.Parse(module);
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
                 var error = String.Format("SearchForInactivate: user [{0}] invalid module selected {1}.", GetUserFromSession().EmployeeId, module);
-                logger.Error(error);
+                logger.Error(error, ex);
             }
 
             if ("default" == searchOption)
@@ -91,10 +91,10 @@ namespace eCLAdmin.Controllers
                 logTypeId = Int32.Parse(strLogType);
                 Session["LogTypeId"] = logTypeId;
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
                 var error = String.Format("SearchForInactivate: user [{0}] invalid log type selected {1}.", GetUserFromSession().EmployeeId, strLogType);
-                logger.Error(error);
+                logger.Error(error, ex);
             }
 
             employeeLogs = employeeLogService.SearchLog(searchByLogName, moduleId, logTypeId, employee, logName, Constants.LOG_ACTION_INACTIVATE, GetUserFromSession().LanId);
@@ -213,7 +213,7 @@ namespace eCLAdmin.Controllers
 				}
 				catch (Exception ex)
 				{
-					logger.Warn(string.Format("Failed to send email: {0}, {1}", ex.Message, ex.StackTrace));
+					logger.Warn(string.Format("Failed to send email.", ex));
 				}
 			}
 
@@ -254,10 +254,10 @@ namespace eCLAdmin.Controllers
             {
                 moduleId = Int32.Parse(module);
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
                 var error = String.Format("SearchForReactivate: user [{0}] invalid module selected {1}.", GetUserFromSession().EmployeeId, module);
-                logger.Error(error);
+                logger.Error(error, ex);
             }
 
             if ("default" == searchOption)
@@ -276,10 +276,10 @@ namespace eCLAdmin.Controllers
                 logTypeId = Int32.Parse(strLogType);
                 Session["LogTypeId"] = logTypeId;
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
                 var error = String.Format("SearchForReactivate: user [{0}] invalid log type selected {1}.", GetUserFromSession().EmployeeId, strLogType);
-                logger.Error(error);
+                logger.Error(error, ex);
             }
 
             employeeLogs = employeeLogService.SearchLog(searchByLogName, moduleId, logTypeId, employee, logName, Constants.LOG_ACTION_REACTIVATE, GetUserFromSession().LanId);
@@ -324,7 +324,7 @@ namespace eCLAdmin.Controllers
 				}
 				catch (Exception ex)
 				{
-					logger.Warn(string.Format("Failed to send email: {0}, {1}", ex.InnerException.Message, ex.StackTrace));
+					logger.Warn(string.Format("Failed to send email.", ex));
 				}
 			}
 

@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Reporting";
+}
+
+<div class="page-header">
+    <h3>Feed Load History</h3>
+</div>
+
+<div id="div-search" style="margin-bottom: 20px;">
+    @{ Html.RenderPartial("_Search"); }
+</div>
+
+<div class="hide" id="div-export-to-excel" style="margin-bottom: 5px;">
+    <button class="btn btn-success btn-sm" type="button" id="btn-export-excel">Export to Excel</button>
+</div>
+
+<div id="div-report"></div>
+
+<script>
+    const generateReportUrl = '@Url.Action("GenerateReport", "ReportFeedLoadHistory")';
+    const exportToExcelUrl = '@Url.Action("ExportToExcel", "ReportFeedLoadHistory")';
+    const downloadExcelUrl = '@Url.Action("Download", "ReportFeedLoadHistory")';
+</script>
+
+<script src="@Url.Content("~/Scripts/eCLAdmin/dateTimePicker.js")"></script>
+<script src="@Url.Content("~/Scripts/eCLAdmin/report.js")"></script>
+
+
+
+

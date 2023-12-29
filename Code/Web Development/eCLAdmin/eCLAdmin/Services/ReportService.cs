@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Data;
 using eCLAdmin.Models.User;
 using eCLAdmin.ViewModels.Reports;
+using eCLAdmin.Models.Common;
+using System.Web.Mvc;
 
 namespace eCLAdmin.Services
 {
@@ -106,6 +108,39 @@ namespace eCLAdmin.Services
         public DataSet GetWarningLogs(WarningSearchViewModel search)
         {
             return this.rptRepository.GetWarningLogs(search);
+        }
+
+        public List<IdName> GetFeedCategories()
+        {
+            var categoryList = new List<IdName>();
+            var c = new IdName();
+            c.Id = "Outliers";
+            c.Name = "Outliers";
+            categoryList.Add(c);
+
+            return categoryList;
+        }
+
+        public List<IdName> GetFeedReportCodes()
+        {
+            var list = new List<IdName>();
+            var c = new IdName();
+            c.Id = "BRL";
+            c.Name = "BRL";
+            list.Add(c);
+
+            return list;
+        }
+
+        public List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, string category, string reportCode, int pageSize, int rowStartIndex, out int totalRows)
+        {
+            return this.rptRepository.GetFeedLoadHistory(startDate, endDate, category, reportCode, pageSize, rowStartIndex, out totalRows);
+
+        }
+        // Export to excel
+        public DataSet GeFeedLoadHistory(string startDate, string endDate, string category, string reportCode)
+        {
+            return this.rptRepository.GetFeedLoadHistoryDataSet(startDate, endDate, category, reportCode);
         }
 
     }

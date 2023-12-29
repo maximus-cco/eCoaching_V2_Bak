@@ -32,5 +32,9 @@ namespace eCLAdmin.Repository
         // warning report
         List<WarningLog> GetWarningLogs(WarningSearchViewModel search, out int totalRows);
         DataSet GetWarningLogs(WarningSearchViewModel search);
+        // Feed Load History
+        List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, string category, string reportCode, int pageSize, int rowStartIndex, out int totalRows);
+        // Export to excel
+        DataSet GetFeedLoadHistoryDataSet(string startDate, string endDate, string category, string reportCode);
     }
 }

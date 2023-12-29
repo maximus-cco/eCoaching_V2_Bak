@@ -13,7 +13,7 @@ namespace eCLAdmin.Extensions
 {
     public static class EclExtensionMethods
     {
-        static ILog logger = LogManager.GetLogger(typeof(EclExtensionMethods));
+        private static ILog logger = LogManager.GetLogger(typeof(EclExtensionMethods));
 
         public static bool IsEntitled(this ControllerBase controller, string entitlementName)
         {

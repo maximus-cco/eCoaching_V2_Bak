@@ -6,7 +6,7 @@ namespace eCLAdmin.Controllers
 {
     public class HelpController : Controller
     {
-        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog logger = LogManager.GetLogger(typeof(HelpController));
 
         private readonly IStaticDataService staticDataService;
 

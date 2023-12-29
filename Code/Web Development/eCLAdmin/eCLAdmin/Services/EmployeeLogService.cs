@@ -11,7 +11,7 @@ namespace eCLAdmin.Services
 {
     public class EmployeeLogService : IEmployeeLogService 
     {
-        readonly ILog logger = LogManager.GetLogger(typeof(EmployeeLogService));
+        private readonly ILog logger = LogManager.GetLogger(typeof(EmployeeLogService));
 
         private readonly IEmployeeLogRepository employeeLogRepository;
 
