@@ -1,4 +1,5 @@
 ﻿using eCLAdmin.Extensions;
+using eCLAdmin.Models.Common;
 using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.Report;
 using eCLAdmin.Models.User;
@@ -878,30 +879,119 @@ namespace eCLAdmin.Repository
             return dt;
         }
 
-        public List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, string category, string reportCode, int pageSize, int rowStartIndex, out int totalRows)
+        public List<IdName> GetFeedCategories()
         {
-            logger.Debug($"#######StartDate: {startDate}, EndDate: {endDate}, Category: {category}, ReportCode: {reportCode}, PageSize: {pageSize}, StartIndex: {rowStartIndex}");
-            var list = new List<FeedLoadHistory>();
-            var l = new FeedLoadHistory();
-            l.LoadDate = "11/30/2023";
-            l.Category = "Outliers";
-            l.Code = "BRL";
-            l.Description = "Exceed Break Length";
-            l.FileName = "eCL_Outlier_Feed_BRL20231129.csv";
-            l.TotalStaged = 1000;
-            l.TotalLoaded = 900;
-            l.TotalRejected = 100;
+            var categories = new List<IdName>();
+            using (SqlConnection connection = new SqlConnection(connectionStr))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Report_Categories]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = 300;
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        IdName temp = new IdName(Convert.ToInt16(dataReader["CategoryID"]), dataReader["Category"].ToString());
+                        categories.Add(temp);
+                    }
+                    dataReader.Close();
+                }
+            }
 
-            list.Add(l);
-            totalRows = 1;
-            return list;
+            return categories;
+        }
+
+        public List<IdName> GetFeedReportCodes(int categoryId)
+        {
+            var rptCodes = new List<IdName>();
+            using (SqlConnection connection = new SqlConnection(connectionStr))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Report_Codes]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValueSafe("@intCategoryID", categoryId);
+                command.CommandTimeout = 300;
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        IdName temp = new IdName(Convert.ToInt16(dataReader["ReportID"]), dataReader["ReportCode"].ToString());
+                        rptCodes.Add(temp);
+                    }
+                    dataReader.Close();
+                }
+            }
+
+            return rptCodes;
+        }
+
+        public List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, int categoryId, int reportCodeId, int pageSize, int rowStartIndex, out int totalRows)
+        {
+            var history = new List<FeedLoadHistory>();
+            totalRows = 0;
+            using (SqlConnection connection = new SqlConnection(connectionStr))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Feed_Load_History]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValueSafe("@intCategoryID", categoryId);
+                command.Parameters.AddWithValueSafe("@intReportID", reportCodeId);
+                command.Parameters.AddWithValueSafe("@strSDatein", startDate);
+                command.Parameters.AddWithValueSafe("@strEDatein", endDate);
+                command.Parameters.AddWithValueSafe("@pageSize", pageSize);
+                command.Parameters.AddWithValueSafe("@startRowIndex", rowStartIndex);
+                command.CommandTimeout = 300;
+                connection.Open();
+                using (SqlDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        if (totalRows == 0)
+                        {
+                            totalRows = (int)dataReader["TotalRows"];
+                        }
+                        var temp = new FeedLoadHistory();
+                        temp.LoadDate = dataReader["Load Date"].ToString();
+                        temp.Category = dataReader["Category"].ToString();
+                        temp.Code = dataReader["Report Code"].ToString();
+                        temp.Description = dataReader["Description"].ToString();
+                        temp.FileName = dataReader["File Name"].ToString();
+                        temp.TotalStaged = Convert.ToInt16(dataReader["Total Staged"].ToString());
+                        temp.TotalLoaded = Convert.ToInt16(dataReader["Total Loaded"].ToString());
+                        temp.TotalRejected = Convert.ToInt16(dataReader["Total Rejected"].ToString());
+
+                        history.Add(temp);
+                    }
+                    dataReader.Close();
+                }
+            }
+
+            return history;
 
         }
 
-        public DataSet GetFeedLoadHistoryDataSet(string startDate, string endDate, string category, string reportCode)
+        public DataSet GetFeedLoadHistoryDataSet(string startDate, string endDate, int categoryId, int reportCodeId)
         {
-            var dataSet = new DataSet();
-            return dataSet;
+            var dt = new DataSet();
+            using (SqlConnection connection = new SqlConnection(connectionStr))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Feed_Load_History]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValueSafe("@intCategoryID", categoryId);
+                command.Parameters.AddWithValueSafe("@intReportID", reportCodeId);
+                command.Parameters.AddWithValueSafe("@strSDatein", startDate);
+                command.Parameters.AddWithValueSafe("@strEDatein", endDate);
+                command.Parameters.AddWithValueSafe("@pageSize", Int32.MaxValue - 1);
+                command.Parameters.AddWithValueSafe("@startRowIndex", 1);
+                command.CommandTimeout = 300;
+                connection.Open();
+                using (SqlDataAdapter sda = new SqlDataAdapter(command))
+                {
+                    sda.Fill(dt);
+                }
+            }
+
+            return dt;
         }
 
     }

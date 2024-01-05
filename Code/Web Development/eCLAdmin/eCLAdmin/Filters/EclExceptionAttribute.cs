@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eCLAdmin.Models.User;
+using System;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -11,21 +12,29 @@ namespace eCLAdmin.Filters
 
         public void OnException(ExceptionContext filterContext)
         {
-			StringBuilder error = new StringBuilder();
-			error.Append("Exception: ")
-				.Append(filterContext.Exception.Message)
-				.Append(Environment.NewLine)
-				.Append(filterContext.Exception.StackTrace);
-			logger.Error(error.ToString());
+            User user = (User)filterContext.HttpContext.Session["AuthenticatedUser"];
+            var userId = user == null ? "usernull" : user.EmployeeId;
+            logger.Error("[" + userId + "] " + filterContext.Exception);
 
-			filterContext.Result = new RedirectToRouteResult(
-				new RouteValueDictionary
-				{
-					{ "controller", "Error" },
-					{ "action", "Index" }
-				});
-	
-			filterContext.ExceptionHandled = true;
-		}
+            // Error, redirect to error page
+            if (filterContext.HttpContext.Request.IsAjaxRequest())
+            {
+                logger.Debug("!!!!!!!!!!ajax call exception thrown!");
+                // http://stackoverflow.com/questions/29414682/how-to-handle-ajax-beginform-onerror-onfailure-callback
+                filterContext.HttpContext.Response.TrySkipIisCustomErrors = true;
+
+                filterContext.Result = new HttpStatusCodeResult(404, "Error");
+            }
+            else
+            {
+                logger.Debug("!!!!!!!! regular call exception thrown!");
+                filterContext.Result = new RedirectToRouteResult(
+                            new RouteValueDictionary {
+                                                { "action", "Index" },
+                                                { "controller", "Error" } });
+            }
+
+            filterContext.ExceptionHandled = true;
+        }
 	}
 }

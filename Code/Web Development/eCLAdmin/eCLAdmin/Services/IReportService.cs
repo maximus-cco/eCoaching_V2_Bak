@@ -18,7 +18,7 @@ namespace eCLAdmin.Services
         List<Status> GetLogStatusList(int moduleId, bool isWarning);
         List<Status> GetWarningLogStates(); // Active, Expired, All
         List<IdName> GetFeedCategories();
-        List<IdName> GetFeedReportCodes();
+        List<IdName> GetFeedReportCodes(int category);
 
         // Admin Activity Report
         List<AdminActivity> GetActivityList(string logType, string action, string logName, string startDate, string endDate, string logOrEmpName, int pageSize, int rowStartIndex, out int totalRows);
@@ -46,8 +46,8 @@ namespace eCLAdmin.Services
         DataSet GetWarningLogs(WarningSearchViewModel search);
 
         // Feed Load History Report
-        List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, string category, string reportCode, int pageSize, int rowStartIndex, out int totalRows);
+        List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, int categoryId, int reportCodeId, int pageSize, int rowStartIndex, out int totalRows);
         // Export to excel
-        DataSet GeFeedLoadHistory(string startDate, string endDate, string category, string reportCode);
+        DataSet GeFeedLoadHistory(string startDate, string endDate, int categoryId, int reportCodeId);
     }
 }

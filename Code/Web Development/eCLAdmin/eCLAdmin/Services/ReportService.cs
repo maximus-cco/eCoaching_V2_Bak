@@ -112,35 +112,23 @@ namespace eCLAdmin.Services
 
         public List<IdName> GetFeedCategories()
         {
-            var categoryList = new List<IdName>();
-            var c = new IdName();
-            c.Id = "Outliers";
-            c.Name = "Outliers";
-            categoryList.Add(c);
-
-            return categoryList;
+            return this.rptRepository.GetFeedCategories();
         }
 
-        public List<IdName> GetFeedReportCodes()
+        public List<IdName> GetFeedReportCodes(int categoryId)
         {
-            var list = new List<IdName>();
-            var c = new IdName();
-            c.Id = "BRL";
-            c.Name = "BRL";
-            list.Add(c);
-
-            return list;
+            return this.rptRepository.GetFeedReportCodes(categoryId);
         }
 
-        public List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, string category, string reportCode, int pageSize, int rowStartIndex, out int totalRows)
+        public List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, int categoryId, int reportCodeId, int pageSize, int rowStartIndex, out int totalRows)
         {
-            return this.rptRepository.GetFeedLoadHistory(startDate, endDate, category, reportCode, pageSize, rowStartIndex, out totalRows);
+            return this.rptRepository.GetFeedLoadHistory(startDate, endDate, categoryId, reportCodeId, pageSize, rowStartIndex, out totalRows);
 
         }
         // Export to excel
-        public DataSet GeFeedLoadHistory(string startDate, string endDate, string category, string reportCode)
+        public DataSet GeFeedLoadHistory(string startDate, string endDate, int categoryId, int reportCodeId)
         {
-            return this.rptRepository.GetFeedLoadHistoryDataSet(startDate, endDate, category, reportCode);
+            return this.rptRepository.GetFeedLoadHistoryDataSet(startDate, endDate, categoryId, reportCodeId);
         }
 
     }

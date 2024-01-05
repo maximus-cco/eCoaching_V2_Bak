@@ -34,7 +34,7 @@ namespace eCLAdmin.Controllers
         {
             var vm = new FeedLoadHistorySearchViewModel();
             vm.CategorySelectList = GetFeedCategorySelectList();
-            vm.ReportCodeSelectList = GetFeedReportCodeSelectList();
+            vm.ReportCodeSelectList = GetFeedReportCodeSelectList(-2);
 
             vm.StartDate = DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy");
             vm.EndDate = DateTime.Now.ToString("MM/dd/yyyy");
@@ -51,25 +51,42 @@ namespace eCLAdmin.Controllers
         private IEnumerable<SelectListItem> GetFeedCategorySelectList()
         {
             var categoryList = reportService.GetFeedCategories();
-            categoryList.Insert(0, new IdName { Id = "-1", Name = "Select Category" });
+            categoryList.Insert(0, new IdName { Id = -2, Name = "Select Category" });
             IEnumerable<SelectListItem> categories = new SelectList(categoryList, "Id", "Name");
 
             return categories;
         }
 
-        private IEnumerable<SelectListItem> GetFeedReportCodeSelectList()
+        private IEnumerable<SelectListItem> GetFeedReportCodeSelectList(int categoryId)
         {
-            var codeList = reportService.GetFeedReportCodes();
-            codeList.Insert(0, new IdName { Id = "-1", Name = "Select Report Code" });
+            logger.Debug($"Entered GetFeedReportCodeSelectList({categoryId})");
+            var codeList = new List<IdName>();
+            if (categoryId != -2)
+            {
+                codeList = reportService.GetFeedReportCodes(categoryId);
+            }
+            codeList.Insert(0, new IdName { Id = -2, Name = "Select Report Code" });
             IEnumerable<SelectListItem> codes = new SelectList(codeList, "Id", "Name");
 
             return codes;
         }
+        
+        [HttpPost]
+        public JsonResult GetFeedReportCodes(int categoryId)
+        {
+            logger.Debug($"##########Entered GetFeedReportCodes({categoryId})");
+            var temp = GetFeedReportCodeSelectList(categoryId);
+            logger.Debug("@@@@@@@@@temp length= " + temp.Count());
+            JsonResult result = Json(temp);
+            result.MaxJsonLength = Int32.MaxValue;
+
+            return result;
+        }
 
         [HttpPost]
-        public ActionResult GetData(string category, string reportCode, string startDate, string endDate)
+        public ActionResult GetData(int categoryId, int reportCodeId, string startDate, string endDate)
         {
-            logger.Debug("Entered LoadData");
+            logger.Debug($"*********Entered LoadData {categoryId}, {reportCodeId}, {startDate}, {endDate}");
 
             // Get Start (paging start index) and length (page size for paging)
             var draw = Request.Form.GetValues("draw").FirstOrDefault();
@@ -80,7 +97,7 @@ namespace eCLAdmin.Controllers
             int totalRows = 1;
             try
             {
-                List<FeedLoadHistory> feedLoadHistory = this.reportService.GetFeedLoadHistory(startDate, endDate, category, reportCode, pageSize, rowStartIndex, out totalRows);
+                List<FeedLoadHistory> feedLoadHistory = this.reportService.GetFeedLoadHistory(startDate, endDate, categoryId, reportCodeId, pageSize, rowStartIndex, out totalRows);
                 return Json(new { draw = draw, recordsFiltered = totalRows, recordsTotal = totalRows, data = feedLoadHistory }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

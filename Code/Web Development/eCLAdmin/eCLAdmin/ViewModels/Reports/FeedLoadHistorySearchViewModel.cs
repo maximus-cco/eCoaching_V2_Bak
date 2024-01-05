@@ -11,8 +11,8 @@ namespace eCLAdmin.ViewModels.Reports
         public IEnumerable<SelectListItem> CategorySelectList { get; set; }
         public IEnumerable<SelectListItem> ReportCodeSelectList { get; set; }
 
-        public string SelectedCategory { get; set; }
-        public string SelectedReportCode { get; set; }
+        public int SelectedCategory { get; set; }
+        public int SelectedReportCode { get; set; }
 
         public FeedLoadHistorySearchViewModel() : base()
         {

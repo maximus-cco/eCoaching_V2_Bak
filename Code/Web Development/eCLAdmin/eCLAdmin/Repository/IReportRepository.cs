@@ -1,4 +1,5 @@
-﻿using eCLAdmin.Models.EmployeeLog;
+﻿using eCLAdmin.Models.Common;
+using eCLAdmin.Models.EmployeeLog;
 using eCLAdmin.Models.Report;
 using eCLAdmin.Models.User;
 using eCLAdmin.ViewModels.Reports;
@@ -33,8 +34,10 @@ namespace eCLAdmin.Repository
         List<WarningLog> GetWarningLogs(WarningSearchViewModel search, out int totalRows);
         DataSet GetWarningLogs(WarningSearchViewModel search);
         // Feed Load History
-        List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, string category, string reportCode, int pageSize, int rowStartIndex, out int totalRows);
+        List<FeedLoadHistory> GetFeedLoadHistory(string startDate, string endDate, int categoryId, int reportCodeId, int pageSize, int rowStartIndex, out int totalRows);
         // Export to excel
-        DataSet GetFeedLoadHistoryDataSet(string startDate, string endDate, string category, string reportCode);
+        DataSet GetFeedLoadHistoryDataSet(string startDate, string endDate, int category, int reportCodeId);
+        List<IdName> GetFeedCategories();
+        List<IdName> GetFeedReportCodes(int categoryId);
     }
 }

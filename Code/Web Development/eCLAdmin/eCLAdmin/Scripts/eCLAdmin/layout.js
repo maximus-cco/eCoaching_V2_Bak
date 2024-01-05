@@ -19,19 +19,18 @@
         $(this).removeData('bs.modal').find(".modal-content").empty();
     });
 
-    $.ajaxSetup(
-      {
-          // Global ajax error function
-          error: function (xhr, status, errorMsg) {
-              hideSpinner();
-              if (xhr.status === 403) {
-                  window.location = sessionExpiredUrl;
-              }
-              else {
-              	window.location = errorUrl;
-              }
-          }
-      });
+    $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+        hideSpinner();
+        if (jqxhr.status === 403) {
+            window.location = sessionExpiredUrl;
+        }
+        else {
+            window.location = errorUrl;
+        }
+    });
+
+    // https://datatables.net/reference/option/%24.fn.dataTable.ext.errMode
+    $.fn.dataTable.ext.errMode = 'none';
 });
 
 function showSpinner() {

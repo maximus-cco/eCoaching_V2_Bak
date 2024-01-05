@@ -2,11 +2,11 @@
 {
     public class IdName
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
 
         public IdName() { }
-        public IdName(string id, string name)
+        public IdName(int id, string name)
         {
             this.Id = id;
             this.Name = name;

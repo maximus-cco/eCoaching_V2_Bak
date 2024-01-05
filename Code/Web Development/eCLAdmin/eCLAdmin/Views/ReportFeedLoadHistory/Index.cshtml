@@ -20,6 +20,36 @@
     const generateReportUrl = '@Url.Action("GenerateReport", "ReportFeedLoadHistory")';
     const exportToExcelUrl = '@Url.Action("ExportToExcel", "ReportFeedLoadHistory")';
     const downloadExcelUrl = '@Url.Action("Download", "ReportFeedLoadHistory")';
+    const getReportCodesUrl = '@Url.Action("GetFeedReportCodes", "ReportFeedLoadHistory")';
+
+    $(function () {
+        $("#select-category").on("change", function () {
+            let categorySelected = $(this).val();
+            if (categorySelected === -2) {
+                $('#select-report-code').find('option').not(':first').remove();
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: getReportCodesUrl,
+                dataType: 'json',
+                data: { categoryId: categorySelected },
+
+                success: function (reportCodes) {
+                    $('#select-report-code').empty();
+                    var options = [];
+                    $.each(reportCodes, function (i, rc) {
+                        options.push('<option value="', rc.Value, '">' + rc.Text + '</option>');
+                    });
+
+                    $('#select-report-code').html(options.join(''));
+                },
+                complete: function () {}
+            });
+
+        });
+    });
 </script>
 
 <script src="@Url.Content("~/Scripts/eCLAdmin/dateTimePicker.js")"></script>

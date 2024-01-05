@@ -69,8 +69,7 @@
                         $('#div-report').html(data);
                     }
                 }
-            }).always(function () {
-            });
+            }).always(function () {});
         } // end if e.handled
     });
 
