@@ -4,6 +4,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
@@ -24,9 +25,10 @@ GO
 -- Changes to suppport AUD feed- TFS 26432  - 04/03/2023
 -- Updated to load Verint ID string for AUD Feed TFS 27135 - 10/2/2023
 -- Changes to suppport NGD feed- TFS 27396  - 11/24/2023
+-- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
 -- =============================================
-ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
-@Count INT OUTPUT
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+(@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
 
 AS
 BEGIN
@@ -121,6 +123,7 @@ LEFT OUTER JOIN EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Repor
 WHERE cf.numReportID is Null and cf.strReportCode is null;
 
 SELECT @Count = @@ROWCOUNT;
+SET @ReportCode =  (SELECT DISTINCT  LEFT(Report_Code , LEN(Report_Code)-8)  FROM  [EC].[Outlier_Coaching_Stage]);
 
 WAITFOR DELAY '00:00:00:02';  -- Wait for 2 ms
 

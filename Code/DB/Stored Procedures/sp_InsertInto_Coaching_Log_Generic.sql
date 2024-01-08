@@ -1,17 +1,10 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Generic' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 -- =============================================
 -- Author:		        Susmitha Palacherla
@@ -24,10 +17,11 @@ GO
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
 -- Modified to support ATT AP% feeds. TFS 15095  - 8/27/2019
 -- Modified to support AED feed. TFS 19502  - 11/30/2020
--- Modified to support SUR feed. TFS 24347  - 03/25/2022
+-- Modified to support SUR feed. TFS 23347  - 03/25/2022
+-- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
 -- =============================================
-CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
-@Count INT OUTPUT
+CREATE OR ALTER  PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
+(@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
 
 AS
 BEGIN
@@ -155,6 +149,8 @@ where cf.numReportID is Null and cf.strReportCode is null
 OPTION (MAXDOP 1)
 
 SELECT @Count =@@ROWCOUNT
+SET @ReportCode =  (SELECT DISTINCT  LEFT(Report_Code , LEN(Report_Code)-8)  FROM  [EC].[Generic_Coaching_Stage]);
+
 -- Updates the strFormID value
 
 WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
@@ -239,6 +235,5 @@ END TRY
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Generic
 GO
-
 
 

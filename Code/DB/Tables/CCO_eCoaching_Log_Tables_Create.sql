@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Log_Tables_Create.sql(11).sql
+CCO_eCoaching_Log_Tables_Create.sql(12).sql
 
-Last Modified Date: 04/10/2023
+Last Modified Date: 01/08/2024
 Last Modified By: Susmitha Palacherla
 
+Version 12: TFS 27523 - Dashboard to view the feed load history in the Admin Tool- 01/08/2024
 Version 11: Updated to Support Coaching Static Text during work for OMR Aud Feed. TFS 26432 - 04/10/2023
 Version 10: Updated to Support Team Submission. TFS 23273 - 06/07/2022
 Version 09: Updated to suport email process change in user interface. TFS 23389 - 11/08/2021
@@ -33,6 +34,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 4. [EC].[Email_Notifications_History]
 5. [EC].[Email_Notifications_Stage]
 6. [EC].[Coaching_Log_StaticText]
+7. [EC].[Feed_Load_History]
 
 **************************************************************
 
@@ -352,3 +354,27 @@ GO
 
 --**************************************************************
 
+--7. Create Table [EC].[Feed_Load_History]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Feed_Load_History](
+	[SeqNum] [int] IDENTITY(1,1) NOT NULL,
+	[FileName] [nvarchar](200) NULL,
+	[LoadDate] [datetime] NULL,
+	[LoadTime] [datetime] NULL,
+	[CountStaged] [int] NULL,
+	[CountLoaded] [int] NULL, 
+	[CountRejected] [int] NULL, 
+	[Category] [nvarchar](60) NULL,
+	[Code] [nvarchar](10) NULL,
+	[Description] [nvarchar](200) NULL,
+) ON [PRIMARY]
+GO
+
+
+--**************************************************************

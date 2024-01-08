@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Quality_Other_Load_Tables_Create(08).sql
-Last Modified Date: 6/9/2021
+CCO_eCoaching_Quality_Other_Load_Tables_Create(09).sql
+Last Modified Date: 01/08/2024
 Last Modified By: Susmitha Palacherla
 
+Version 09: TFS 27523 - Dashboard to view the feed load history in the Admin Tool- 01/08/2024
 Version 08: TFS 21493 - Written Corr Bingo records in bingo feeds
 Version 07: TFS 20677 -  AD island to AD AWS environment changes - 4/22/2021
 Version 06: TFS 18833 -  Expand the site field size in feeds - 10/9/2020
@@ -165,7 +166,9 @@ CREATE TABLE [EC].[Quality_Other_FileList](
 	[File_LoadDate] [datetime] NULL,
 	[Count_Staged] [int] NULL,
 	[Count_Loaded] [int] NULL,
-	[Count_Rejected] [int] NULL
+	[Count_Rejected] [int] NULL,
+	[Count_Rejected] [int] NULL,
+	[Category] [nvarchar](60) NULL,
 ) ON [PRIMARY]
 
 GO

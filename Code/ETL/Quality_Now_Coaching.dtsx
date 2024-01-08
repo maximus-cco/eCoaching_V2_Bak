@@ -8,13 +8,13 @@
   DTS:DTSID="{5F9AB496-3E14-4DEF-B66B-10C3CEE79E57}"
   DTS:EnableConfig="True"
   DTS:ExecutableType="Microsoft.Package"
-  DTS:LastModifiedProductVersion="15.0.2000.152"
+  DTS:LastModifiedProductVersion="15.0.2000.180"
   DTS:LocaleID="1033"
   DTS:ObjectName="Quality_Now_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="326"
-  DTS:VersionGUID="{FA8D811F-9912-48F9-ACAC-622E3E32FD14}">
+  DTS:VersionBuild="329"
+  DTS:VersionGUID="{661FAAB6-F63E-49D0-BE54-11781B570173}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -28,7 +28,7 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:FileUsageType="1"
-          DTS:ConnectionString="\\UVAADADSQL50CCO\data\Coaching\IQS\Decrypt_in\" />
+          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\Coaching\IQS\Decrypt_in\" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -38,7 +38,9 @@
       DTS:ObjectName="destnationdb">
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=UVAADADSQL50CCO;Initial Catalog=eCoachingDev;Provider=MSOLEDBSQL.1;Integrated Security=SSPI;Application Name=SSIS-Quality_Now_Coaching-{3AD1C6B2-3034-44AD-BF85-482D52D1AF4C}destnationdb;" />
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=UVAADADSQL50CCO.ad.local;Initial Catalog=eCoachingDev;Provider=MSOLEDBSQL.1;Integrated Security=SSPI;Application Name=SSIS-Quality_Now_Coaching-{3AD1C6B2-3034-44AD-BF85-482D52D1AF4C}destnationdb;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -53,7 +55,7 @@ Right("0" + (DT_STR,4,1252) DatePart("m",getdate()),2) +
 Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv.zip.encrypt"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="\\UVAADADSQL50CCO\data\Coaching\IQS\Encrypt_out\Dev_eCL_IQS_QN_Scorecard_20210623.csv.zip.encrypt" />
+          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\Coaching\IQS\Encrypt_out\Dev_eCL_IQS_QN_Scorecard_20240104.csv.zip.encrypt" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -76,7 +78,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
           DTS:AlwaysCheckForRowDelimiters="False"
-          DTS:ConnectionString="\\UVAADADSQL50CCO\data\Coaching\IQS\Decrypt_out\Dev_eCL_IQS_QN_Scorecard_20210623.csv">
+          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\Coaching\IQS\Decrypt_out\Dev_eCL_IQS_QN_Scorecard_20240104.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -516,7 +518,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Decrypt_In">
       <DTS:VariableValue
-        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Decrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO.ad.local\data\Coaching\IQS\Decrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -525,7 +527,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Decrypt_Out">
       <DTS:VariableValue
-        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Decrypt_out\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO.ad.local\data\Coaching\IQS\Decrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -536,7 +538,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="EncryptedFile">
       <DTS:VariableValue
-        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Encrypt_out\Dev_eCL_IQS_QN_Scorecard_20210623.csv.zip.encrypt</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO.ad.local\data\Coaching\IQS\Encrypt_out\Dev_eCL_IQS_QN_Scorecard_20240104.csv.zip.encrypt</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -554,7 +556,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Encrypt_In">
       <DTS:VariableValue
-        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Encrypt_in\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO.ad.local\data\Coaching\IQS\Encrypt_in\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -563,7 +565,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="Encrypt_Out">
       <DTS:VariableValue
-        DTS:DataType="8">\\UVAADADSQL50CCO\data\Coaching\IQS\Encrypt_out\</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO.ad.local\data\Coaching\IQS\Encrypt_out\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -574,7 +576,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
       DTS:Namespace="User"
       DTS:ObjectName="FileName">
       <DTS:VariableValue
-        DTS:DataType="8">Dev_eCL_IQS_QN_Scorecard_20210623.csv</DTS:VariableValue>
+        DTS:DataType="8">Dev_eCL_IQS_QN_Scorecard_20240104.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -679,6 +681,36 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
           Language="CSharp"
           ReadOnlyVariables="User::EncryptedFile"
           ReadWriteVariables="User::EncryptedFileExists">
+          <ProjectItem
+            Name="Properties\AssemblyInfo.cs"
+            Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.resx"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -798,35 +830,6 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+".csv"</DTS:PropertyExpre
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
-          <ProjectItem
-            Name="Properties\Settings.Designer.cs"
-            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties.Settings.get_Default():ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties.Sett" +
-    "ings")]
-
-namespace ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
           <ProjectItem
             Name="ScriptMain.cs"
             Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -969,35 +972,34 @@ namespace ST_c8c2463bd5c3454d9df6e94c8922f66f
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\AssemblyInfo.cs"
-            Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
+            Name="Properties\Settings.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
 
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_c8c2463bd5c3454d9df6e94c8922f66f")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties.Settings.get_Default():ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties.Sett" +
+    "ings")]
 
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+namespace ST_c8c2463bd5c3454d9df6e94c8922f66f.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
           <ProjectItem
             Name="ST_c8c2463bd5c3454d9df6e94c8922f66f.csproj"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -4813,7 +4815,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{3AD1C6B2-3034-44AD-BF85-482D52D1AF4C}"
-          SQLTask:SqlStatementSource="INSERT INTO [EC].[Quality_Now_FileList]&#xA;           ([File_Name]&#xA;           ,[File_LoadDate]&#xA;           ,[Count_Staged]&#xA;            ,[Count_Rejected]&#xA;             ,[Count_Loaded])&#xA;  VALUES (?,GetDate(), ?, ?,?);&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          SQLTask:SqlStatementSource="INSERT INTO [EC].[Quality_Now_FileList]&#xA;           ([File_Name]&#xA;           ,[File_LoadDate]&#xA;           ,[Count_Staged]&#xA;           ,[Count_Rejected]&#xA;           ,[Count_Loaded]&#xA;           ,[Category]&#xA;           ,[Code])&#xA;  VALUES (?,GetDate(), ?, ?,?, 'Quality', 'IQS_QN');" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
             SQLTask:DtsVariableName="User::FileName"
@@ -5063,14 +5065,34 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
   </resheader>
 </root>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\Settings.settings"
-            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+            Name="Properties\Settings.Designer.cs"
+            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_193e5478e5864ef598e1c7f28cb71fb9.Properties.Settings.get_Default():ST_193e5478e5864ef598e1c7f28cb71fb9.Properties.Sett" +
+    "ings")]
+
+namespace ST_193e5478e5864ef598e1c7f28cb71fb9.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
           <ProjectItem
             Name="ScriptMain.cs"
             Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -5209,35 +5231,6 @@ namespace ST_193e5478e5864ef598e1c7f28cb71fb9
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
           <ProjectItem
-            Name="Properties\Settings.Designer.cs"
-            Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_193e5478e5864ef598e1c7f28cb71fb9.Properties.Settings.get_Default():ST_193e5478e5864ef598e1c7f28cb71fb9.Properties.Sett" +
-    "ings")]
-
-namespace ST_193e5478e5864ef598e1c7f28cb71fb9.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
-          <ProjectItem
             Name="Properties\AssemblyInfo.cs"
             Encoding="UTF8"><![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -5267,6 +5260,15 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+          <ProjectItem
+            Name="Properties\Settings.settings"
+            Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
           <ProjectItem
             Name="Properties\Resources.Designer.cs"
             Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -5448,6 +5450,23 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
+      DTS:refId="Package\Populate Feed Load History"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Populate Feed Load History"
+      DTS:DTSID="{08CE7DCC-435F-4F0A-A1C4-54A9E78EC076}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Populate Feed Load History"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{3AD1C6B2-3034-44AD-BF85-482D52D1AF4C}"
+          SQLTask:SqlStatementSource="Exec [EC].[sp_InsertInto_Feed_Load_History]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
       DTS:refId="Package\Send Mail Task"
       DTS:CreationName="Microsoft.SendMailTask"
       DTS:Description="Send Mail Task"
@@ -5608,6 +5627,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:ObjectName="Constraint 6"
       DTS:To="Package\Load Coaching_Log" />
     <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
+      DTS:CreationName=""
+      DTS:DTSID="{358F227D-EC21-4279-A8A3-5D5D71886D2B}"
+      DTS:From="Package\Delete File"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 7"
+      DTS:To="Package\Populate Feed Load History"
+      DTS:Value="2" />
+    <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 9]"
       DTS:CreationName=""
       DTS:DTSID="{6E9BC466-2935-4252-A587-D2BDE58B4543}"
@@ -5671,7 +5699,7 @@ Error Description:                "+ (DT_STR, 2000,1252)  @[System::ErrorDescrip
               SendMailTask:To="susmithaCpalacherla@maximus.com"
               SendMailTask:CC="susmithaCpalacherla@maximus.com"
               SendMailTask:Subject="IQS QN Load failed in Dev"
-              SendMailTask:MessageSource="Package:                              Quality_Now_Coaching.&#xA;&#xA;Time:                                      6/23/2021 2:38:21 PM.&#xA;&#xA;Task:                                       .&#xA;&#xA;Error Description:                " xmlns:SendMailTask="www.microsoft.com/sqlserver/dts/tasks/sendmailtask" />
+              SendMailTask:MessageSource="Package:                              Quality_Now_Coaching.&#xA;&#xA;Time:                                      1/4/2024 4:18:27 PM.&#xA;&#xA;Task:                                       .&#xA;&#xA;Error Description:                " xmlns:SendMailTask="www.microsoft.com/sqlserver/dts/tasks/sendmailtask" />
           </DTS:ObjectData>
         </DTS:Executable>
       </DTS:Executables>
@@ -6023,6 +6051,34 @@ Error Description:                "+ (DT_STR, 2000,1252)  @[System::ErrorDescrip
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
               BoundingBox="-23.8666666666667,30.0976,16,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="168,41.6"
+          Id="Package\Populate Feed Load History"
+          TopLeft="441.923093132719,944.838704465455" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 7]"
+          TopLeft="389.9,966.969352232727">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="52.0230931327195,0"
+              Start="0,0"
+              End="44.5230931327195,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="44.5230931327195,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-3.04290655864025,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>

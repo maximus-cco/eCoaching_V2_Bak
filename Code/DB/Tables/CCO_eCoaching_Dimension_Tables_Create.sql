@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Dimension_Tables_Create(05).sql
-Last Modified Date: 09/15/2021
+CCO_eCoaching_Dimension_Tables_Create(06).sql
+Last Modified Date: 01/08/2024
 Last Modified By: Susmitha Palacherla
 
+Version 06: TFS 27523 - Dashboard to view the feed load history in the Admin Tool- 01/08/2024
 Version 05: Quality Now workflow enhancement. TFS 22187 - 09/15/2021
 Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 03: Modified to add Sort Order to DIM_Program - TFS 13643 - 03/07/2019
@@ -36,7 +37,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 16. [EC].[UI_Role_Page_Access] 
 17. [EC].[UI_Dashboard_Summary_Display]
 18. [EC].[Reasons_By_ReportCode]
-
+19. [EC].[DIM_Feed_List]
 
 
 
@@ -528,3 +529,25 @@ GO
 
 --****************************************************************************************
 
+
+--19. [EC].[DIM_Feed_List]
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[DIM_Feed_List](
+	[CategoryID] [int] NOT NULL,
+	[Category] [nvarchar](100) NOT NULL,
+	[ReportID] [int] NOT NULL,
+	[ReportCode] [nvarchar](10) NOT NULL,
+	[Description] [nvarchar](100) NOT NULL,
+    [isActive] [bit],
+PRIMARY KEY ([CategoryID], [ReportID]));
+GO
+
+
+--****************************************************************************************

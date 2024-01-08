@@ -1,39 +1,8 @@
-/*
-sp_InsertInto_Coaching_Log_Quality_Other(11).sql
-Last Modified Date: 06/08/2021
-Last Modified By: Susmitha Palacherla
-
-Version 11: Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
-Version 10: Updated to handle Bingo logs for diffrent Programs for employee in same month. TFS 19526 - 12/21/2020
-Version 09: Updated to support wild card bingo images. TFS 15465 - 09/30/2019
-Version 08: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
-Version 07: Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
-Version 06: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
-Version 05: Modified to support Quality OTA feed - TFS 12591 - 11/26/2018
-Version 04: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-Version 03: Add table [EC].[NPN_Description] to Get NPN Description from table. TFS 5649 - 02/20/2017
-Version 02: New quality NPN feed - TFS 5309 - 2/3/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Quality_Other' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 
 -- =============================================
@@ -52,9 +21,10 @@ GO
 -- Updated to support QM Bingo eCoaching logs. TFS 154653 - 09/23/2019
 -- Updated to handle Bingo logs for diffrent Programs for employee in same month. TFS 19526 - 12/21/2020
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
+-- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
-@Count INT OUTPUT
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
+(@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
 
 AS
 BEGIN
@@ -109,11 +79,11 @@ DECRYPTION BY CERTIFICATE [CoachingCert];
            ,[MgrID]
            )
 select  Distinct LOWER(cs.EMP_ID)	[FormName],
-        CASE cs.Program  
-        WHEN NULL THEN csr.Emp_Program
-        WHEN '' THEN csr.Emp_Program
-        ELSE cs.Program  END       [ProgramName],
-		--csr.Emp_Program [ProgramName],
+        --CASE cs.Program  
+        --WHEN NULL THEN csr.Emp_Program
+        --WHEN '' THEN csr.Emp_Program
+        --ELSE cs.Program  END       [ProgramName],
+		csr.Emp_Program [ProgramName],
         [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])[SourceID],
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.EMP_ID)[SiteID],
@@ -152,6 +122,7 @@ left outer join EC.Coaching_Log cf on cs.EMP_ID = cf.EmpID and cs.Report_Code = 
 where cf.EmpID is Null and cf.strReportCode is null;
 
   SELECT @Count = @@ROWCOUNT;
+  SET @ReportCode =  (SELECT DISTINCT  LEFT(Report_Code , LEN(Report_Code)-8)  FROM  [EC].[Quality_Other_Coaching_Stage]);
 
   WAITFOR DELAY '00:00:00:02'; -- Wait for 2 ms
 

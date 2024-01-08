@@ -1,23 +1,3 @@
-/*
-sp_InsertInto_Coaching_Log_Outlier_ShortCalls(01).sql
-Last Modified Date:  07/05/2019
-Last Modified By: Susmitha Palacherla
-
-
-
-Version 01: Document Initial Revision. New logic for handling Short calls - TFS 14108 - 07/05/2019
-
-*/
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Outlier_ShortCalls' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier_ShortCalls]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -29,9 +9,10 @@ GO
 -- Create date:        07/05/2019
 -- Loads short call records from [EC].[Outlier_Coaching_Stage]to [EC].[Coaching_Log]
 -- Initial Revision - TFS 14108 - 07/05/2019
+-- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier_ShortCalls]
-@Count INT OUTPUT
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier_ShortCalls]
+(@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
 
 AS
 BEGIN
@@ -40,7 +21,8 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
 
-DECLARE @dtmDate DATETIME
+      DECLARE @dtmDate DATETIME
+              
             
               
 OPEN SYMMETRIC KEY [CoachingKey]  
@@ -79,10 +61,7 @@ SET @dtmDate  = GETDATE()
            ,[MgrID]
            )
 select  Distinct LOWER(cs.CSR_EMPID)	[FormName],
-        CASE cs.Program  
-        WHEN NULL THEN csr.Emp_Program
-        WHEN '' THEN csr.Emp_Program
-        ELSE cs.Program  END       [ProgramName],
+        csr.Emp_Program [ProgramName],                  
         212  [SourceID],                        
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
@@ -111,7 +90,8 @@ where cs.Report_Code like 'ISQ%'
 and cf.EmpID is Null and cf.strReportCode is null
 OPTION (MAXDOP 1)
 
-SELECT @Count =@@ROWCOUNT
+SELECT @Count =@@ROWCOUNT;
+SET @ReportCode =  (SELECT DISTINCT  LEFT(Report_Code , LEN(Report_Code)-8)  FROM  [EC].[Outlier_Coaching_Stage]);
 
 -- Updates the strFormID value
 
@@ -205,8 +185,10 @@ END TRY
       RETURN 1
   END CATCH  
 END -- sp_InsertInto_Coaching_Log_Outlier
+
+
+
+
 GO
-
-
 
 

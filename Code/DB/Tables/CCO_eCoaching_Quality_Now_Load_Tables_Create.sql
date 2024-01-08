@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Quality_Now_Load_Tables_Create(04).sql
+CCO_eCoaching_Quality_Now_Load_Tables_Create(05).sql
 
-Last Modified Date: 5/19/2021
+Last Modified Date: 01/08/2024
 Last Modified By: Susmitha Palacherla
 
+Version 05: TFS 27523 - Dashboard to view the feed load history in the Admin Tool- 01/08/2024
 Version 04: TFS 21276 - Update QN Alt Channels compliance and mastery levels 
 Version 03: TFS 20677 -  AD island to AD AWS environment changes - 4/22/2021
 Version 02:Updated to change data type for Customer Temp Start and End to nvarchar. TFS 15058 - 08/07/2019
@@ -216,7 +217,9 @@ CREATE TABLE [EC].[Quality_Now_FileList](
 	[File_LoadDate] [datetime] NULL,
 	[Count_Staged] [int] NULL,
 	[Count_Loaded] [int] NULL,
-	[Count_Rejected] [int] NULL
+	[Count_Rejected] [int] NULL,
+	[Count_Rejected] [int] NULL,
+	[Category] [nvarchar](60) NULL,
 ) ON [PRIMARY]
 
 GO

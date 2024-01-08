@@ -1,0 +1,131 @@
+/*
+TFS 27523 - Dashboard to view the feed load history in the Admin Tool
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+--SELECT * FROM [EC].[DIM_Feed_List]
+
+
+-- Summary
+--1.Create Table to store Feed Load History
+--2. Add Additional Columns to File List Tables
+--3. Create DIM Table to Populate Feed List
+--4. Populate DIM Feed List Table 
+
+*/
+
+-- Details
+--1.Create Table to store Feed Load History
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Feed_Load_History](
+	[SeqNum] [int] IDENTITY(1,1) NOT NULL,
+	[FileName] [nvarchar](200) NULL,
+	[LoadDate] [datetime] NULL,
+	[LoadTime] [datetime] NULL,
+	[CountStaged] [int] NULL,
+	[CountLoaded] [int] NULL, 
+	[CountRejected] [int] NULL, 
+	[Category] [nvarchar](60) NULL,
+	[Code] [nvarchar](10) NULL,
+	[Description] [nvarchar](200) NULL,
+) ON [PRIMARY]
+GO
+
+--******************************
+
+--2. Add Additional Columns to File List Tables
+
+
+ALTER TABLE [EC].[OutLier_FileList]
+ADD [Category] [nvarchar](60)
+,[Code] [nvarchar](10) 
+GO
+
+ALTER TABLE [EC].[Generic_FileList]
+ADD [Category] [nvarchar](60)
+,[Code] [nvarchar](10) 
+GO
+
+
+ALTER TABLE [EC].[Quality_Other_FileList]
+ADD [Category] [nvarchar](60)
+,[Code] [nvarchar](10)
+GO
+
+ALTER TABLE [EC].[Quality_Now_FileList]
+ADD [Category] [nvarchar](60)
+,[Code] [nvarchar](10)
+GO
+
+--******************************
+
+
+--3. Create DIM Table to Populate Feed List
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[DIM_Feed_List](
+	[CategoryID] [int] NOT NULL,
+	[Category] [nvarchar](100) NOT NULL,
+	[ReportID] [int] NOT NULL,
+	[ReportCode] [nvarchar](10) NOT NULL,
+	[Description] [nvarchar](100) NOT NULL,
+    [isActive] [bit],
+PRIMARY KEY ([CategoryID], [ReportID]));
+GO
+
+
+
+--******************************
+
+--4. Populate DIM Feed List Table
+
+INSERT INTO [EC].[DIM_Feed_List]
+           ([CategoryID]
+           ,[Category]
+           ,[ReportID]
+           ,[ReportCode]
+           ,[Description]
+		   ,[isActive])
+     VALUES
+ (1, 'Generic',101,'AED','Attendance Earn Back Day',1 ),
+ (1, 'Generic',102,'APS','Attendance Perfect Shift', 1),
+ (1, 'Generic',103,'APW','Attendance perfect Weeks',1 ),
+ (1, 'Generic',104,'SEAA','Seasonal Employee Attendance Opportunity',1 ),
+ (1, 'Generic',105,'SEAR', 'Seasonal Employee Attendance Re-Inforcement',1),
+ (1, 'Generic',106,'SUR','CSR Survey Coaching Initiative', 1),
+ (2, 'Outliers',201,'AUD','Audio Issues Feed',1 ),
+ (2, 'Outliers',202,'BRL','Exceed Break Length',1 ),
+ (2, 'Outliers',203,'BRN','Exceed Number of Breaks',1 ),
+ (2, 'Outliers',204,'IAE','Inappropriate ARC Escalation',1 ),
+ (2, 'Outliers',205,'IAEF', 'Inappropriate ARC Escalation FFM',1),
+ (2, 'Outliers',206,'ISQ','Inappropriate Short Calls',1 ),
+  (2, 'Outliers',207,'LCS','Low CSAT', 1),
+ (2, 'Outliers',208,'NGDS', 'NGDS System Log In Outside Shift',1),
+ (2, 'Outliers',209,'WCP','Written Correspondence Process',1 ),
+ (3, 'Quality',301,'IQS_QN','Quality Now',1 ),
+ (4, 'Quality Other',401,'HFC','High Five CSAT',1 ),
+ (4, 'Quality Other',402,'KUD','Kudos',1 )
+GO
+
+--******************************
+
+
+
+--******************************
+
