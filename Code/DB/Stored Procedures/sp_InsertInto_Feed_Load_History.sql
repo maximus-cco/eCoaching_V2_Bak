@@ -19,9 +19,6 @@ BEGIN
 BEGIN TRANSACTION
 BEGIN TRY  
 
--- Log the results of the Notification attempts
- 
-
 
   WITH Selected AS (
   SELECT fl.[File_Name], CAST(fl.[File_LoadDate] AS DATE) AS LoadDate, fl.[File_LoadDate], fl.[Count_Staged], fl.[Count_Loaded], fl.[Count_Rejected], fl.[Category], fl.[Code]
@@ -68,8 +65,28 @@ BEGIN TRY
  UPDATE [EC].[Feed_Load_History]
 SET [Code] = fd.[Code], [Description] = fd.[Description]
 FROM [EC].[Feed_Load_History] fh OUTER APPLY [EC].[fn_GetFeedDetailsFromFileName] (fh.[FileName])fd
-WHERE (fh.[Code] is NULL OR fh.[Code] = '')
+WHERE (fh.[Code] IS NULL OR fh.[Code] = '');
 
+ UPDATE [EC].[OutLier_FileList]
+SET [Code] = fh.[Code]
+FROM [EC].[Feed_Load_History] fh JOIN [EC].[OutLier_FileList] fl 
+ON fh.[FileName] = fl.[File_Name] 
+WHERE fl.Count_Loaded = 0 
+AND (fl.[Code] IS NULL OR fl.[Code] = '');
+
+UPDATE [EC].[Generic_FileList]
+SET [Code] = fh.[Code]
+FROM [EC].[Feed_Load_History] fh JOIN [EC].[Generic_FileList] fl 
+ON fh.[FileName] = fl.[File_Name] 
+WHERE fl.Count_Loaded = 0 
+AND (fl.[Code] IS NULL OR fl.[Code] = '');
+
+UPDATE [EC].[Quality_Other_FileList]
+SET [Code] = fh.[Code]
+FROM [EC].[Feed_Load_History] fh JOIN [EC].[Quality_Other_FileList] fl 
+ON fh.[FileName] = fl.[File_Name] 
+WHERE fl.Count_Loaded = 0 
+AND (fl.[Code] IS NULL OR fl.[Code] = '');
  
 COMMIT TRANSACTION
 END TRY
