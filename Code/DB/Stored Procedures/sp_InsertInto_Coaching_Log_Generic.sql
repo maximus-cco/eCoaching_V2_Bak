@@ -6,6 +6,7 @@ GO
 
 
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/11/2016
@@ -19,8 +20,9 @@ GO
 -- Modified to support AED feed. TFS 19502  - 11/30/2020
 -- Modified to support SUR feed. TFS 23347  - 03/25/2022
 -- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
+-- Changes to support Promotions Feed - TFS 27634 - 01/19/2024
 -- =============================================
-CREATE OR ALTER  PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
+CREATE OR ALTER       PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
 (@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
 
 AS
@@ -175,6 +177,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
   CASE 
 		 WHEN cs.[Report_Code] like 'OTH%' THEN cs.CoachingReason_ID	
 		 WHEN cs.[Report_Code] like 'SUR%' THEN 5	
+		 WHEN cs.[Report_Code] like 'RES%' THEN 7	
 		 ELSE 3	
  END [CoachingReasonID],
  
