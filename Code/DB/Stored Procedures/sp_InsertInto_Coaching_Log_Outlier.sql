@@ -5,6 +5,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
@@ -26,8 +27,9 @@ GO
 -- Updated to load Verint ID string for AUD Feed TFS 27135 - 10/2/2023
 -- Changes to suppport NGD feed- TFS 27396  - 11/24/2023
 -- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
+-- Changes to suppport Wellbeing Breaks eCL data Feed- TFS - 27634 - 01/19/2024
 -- =============================================
-CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+CREATE OR ALTER      PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 (@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
 
 AS
@@ -86,7 +88,8 @@ SELECT DISTINCT LOWER(cs.CSR_EMPID)	[FormName],
         WHEN NULL THEN csr.Emp_Program
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
-        CASE WHEN (cs.Report_Code LIKE N'MSR%' OR cs.Report_Code LIKE N'IDD%' OR cs.Report_Code LIKE N'WCP%' OR cs.Report_Code LIKE N'AUD%' OR cs.Report_Code LIKE N'NGD%')
+        CASE WHEN (cs.Report_Code LIKE N'MSR%' OR cs.Report_Code LIKE N'IDD%' OR cs.Report_Code LIKE N'WCP%' OR cs.Report_Code LIKE N'AUD%'
+		OR cs.Report_Code LIKE N'NGD%' OR cs.Report_Code LIKE N'BRW%')
         THEN  [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source]) ELSE 212 END [SourceID],                        
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
@@ -142,8 +145,7 @@ WAITFOR DELAY '00:00:00:02';  -- Wait for 2 ms
            ,[Value])
     SELECT cf.[CoachingID],
     CASE 
-		WHEN (cf.strReportCode like 'BRN%' OR cf.strReportCode like 'BRL%') 
-		THEN 56 
+		WHEN (cf.strReportCode like 'BRN%' OR cf.strReportCode like 'BRL%' OR cf.strReportCode like 'BRW%') THEN 56 
 		WHEN cf.strReportCode like 'MSR%' THEN 5
 		WHEN cf.strReportCode like 'WCP%' THEN 4
 		ELSE 9

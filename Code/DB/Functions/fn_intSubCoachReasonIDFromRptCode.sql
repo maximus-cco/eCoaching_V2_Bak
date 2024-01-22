@@ -5,9 +5,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
@@ -35,8 +32,9 @@ GO
 -- TFS 26432 - To add AUD - 04/03/2023
 -- TFS 27396 - To add NGDS - 11/24/2023
 -- TFS 27634 - To add RES - 01/19/2024
+-- TFS 27638 - To add BRW - 01/19/2024
 -- =============================================
-CREATE OR ALTER   FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
+CREATE OR ALTER     FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
 )
 RETURNS INT
@@ -93,6 +91,7 @@ BEGIN
 			WHEN N'AUD' THEN 314
 			WHEN N'NGD' THEN 315
 			WHEN N'RES' THEN 211
+			WHEN N'BRW' THEN 325
         ELSE -1
       END;
     ELSE
