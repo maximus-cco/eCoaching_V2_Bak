@@ -1,24 +1,24 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardQnViewModel
 
 <div class="ecl-page-header">
-    @Html.ActionLink("My Dashboard", "Index", "MyDashboardHome") / <strong>Quality Now</strong>
+    @Html.ActionLink("My Dashboard", "Index", "MyDashboardHome") / Quality Now
 </div>
 
 <input type="hidden" name="whatlog" id="whatlog" />
-
-<div class="row">
-    <div class="col-xs-4">
-        <div class="panel panel-success">
-            <div class="panel-heading">
-                <strong>Click View to see log list&nbsp;</strong>
-            </div>
-            <div class="panel-body">
-                @{ Html.RenderPartial("_CountByStatus"); }
+<div style="padding-right: 10px; margin-right: auto; margin-left: auto;">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <strong>Click View to see log list&nbsp;</strong>
+                </div>
+                <div class="panel-body">
+                    @{ Html.RenderPartial("_CountByStatus"); }
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-xs-8">
+        <div class="col-lg-8">
             @if (Model.ShowMyTeamPerformance)
             {
                 @Html.Partial("_MyTeamStatistic", Model)
@@ -27,22 +27,23 @@
             {
                 @Html.Partial("_MyStatistic", Model)
             }
+        </div>
     </div>
 </div>
 
 <div id="div-log-list"></div>
 
 <script>
-    var totalPending = '@Model.MyTotalPending';
-    var showPendingText = totalPending > 0;
-    var getLogListUrl = '@Url.Action("GetLogsQn", "MyDashboardQn")';
-    var qnSaveSummaryUrl = '@Url.Action("SaveSummaryQn", "Review")';
-    var saveUrl = '@Url.Action("Save", "Review")';
-    var qnSubmitFollowupReviewUrl = '@Url.Action("SubmitFollowupReviewQn", "Review")';
+var totalPending = '@Model.MyTotalPending';
+var showPendingText = totalPending > 0;
+var getLogListUrl = '@Url.Action("GetLogsQn", "MyDashboardQn")';
+var qnSaveSummaryUrl = '@Url.Action("SaveSummaryQn", "Review")';
+var saveUrl = '@Url.Action("Save", "Review")';
+var qnSubmitFollowupReviewUrl = '@Url.Action("SubmitFollowupReviewQn", "Review")';
 
-    var getLogDetailsUrl = '@Url.Action("Index", "Review")';
-    var searchUrl = '@Url.Action("Search", "MyDashboardQn")';
-    var filterByQnOrQnsUrl = '@Url.Action("FilterByQnOrQns", "MyDashboardQn")';
+var getLogDetailsUrl = '@Url.Action("Index", "Review")';
+var searchUrl = '@Url.Action("Search", "MyDashboardQn")';
+var filterByQnOrQnsUrl = '@Url.Action("FilterByQnOrQns", "MyDashboardQn")';
 </script>
 
 @Scripts.Render("~/bundles/scripts/myDashboardQn")

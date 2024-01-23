@@ -14,13 +14,6 @@ $(function () {
 		modalBody: 'You\'re being timed out due to inactivity. Please choose to stay logged in or to logout. Otherwise, you will be logged out automatically.'
 	});
 
-	// Navbar sticks on top when scrolling down
-	$('#topnavbar').affix({
-		offset: {
-			top: $('#banner').outerHeight(true)
-		}
-	});
-
     // prevent to submit form when hitting Enter 
 	$(document).on("keydown", ":input:not(textarea)", function (event) {
 	    //console.log(event.key);

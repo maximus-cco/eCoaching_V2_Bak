@@ -18,7 +18,7 @@
 				},
 				offset: {
 					x: 10,
-					y: 100
+					y: 80
 				},
 				animate: {
 					enter: 'animated fadeInDown',

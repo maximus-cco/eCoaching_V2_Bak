@@ -1,47 +1,48 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
 
 <div class="ecl-page-header">
-    @Html.ActionLink("My Dashboard", "Index", "MyDashboardHome") / <strong>Non-Quality Now</strong>
+    @Html.ActionLink("My Dashboard", "Index", "MyDashboardHome") / Non-Quality Now
 </div>
 
 <input type="hidden" name="whatlog" id="whatlog" />
-
-<div class="row">
-    @if (!Model.User.IsAnalyst)
-    {
-	    <div class="col-xs-6">
-		    <div class="panel panel-default">
-			    @if (Model.LogCountList.Count > 7)
-                {
-				    <div class="chart-container-big">
-					    <canvas id="myBar"></canvas>
-				    </div>
-                }
-                else if (Model.LogCountList.Count < 4)
-                {
-				    <div class="chart-container-small">
-					    <canvas id="myBar"></canvas>
-				    </div>
-                }
-                else
-                {
-				    <div class="chart-container">
-					    <canvas id="myBar"></canvas>
-				    </div>
-                }
-		    </div>
-	    </div>
-    }
-	<div class="col-xs-3">
-		<div class="panel panel-green">
-			<div class="panel-heading">
-				<strong>Click View to see log list&nbsp;</strong>
-			</div>
-			<div class="panel-body">
-				@{ Html.RenderPartial("_CountByStatus"); }
-			</div>
-		</div>
-	</div>
+<div style="padding-right: 10px; margin-right: auto; margin-left: auto;">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <strong>Click View to see log list&nbsp;</strong>
+                </div>
+                <div class="panel-body">
+                    @{ Html.RenderPartial("_CountByStatus"); }
+                </div>
+            </div>
+        </div>
+        @if (!Model.User.IsAnalyst)
+        {
+	        <div class="col-lg-8">
+		        <div class="panel panel-default">
+			        @if (Model.LogCountList.Count > 7)
+                    {
+				        <div class="chart-container-big">
+					        <canvas id="myBar"></canvas>
+				        </div>
+                    }
+                    else if (Model.LogCountList.Count < 4)
+                    {
+				        <div class="chart-container-small">
+					        <canvas id="myBar"></canvas>
+				        </div>
+                    }
+                    else
+                    {
+				        <div class="chart-container">
+					        <canvas id="myBar"></canvas>
+				        </div>
+                    }
+		        </div>
+	        </div>
+        }
+    </div>
 </div>
 
 <div id="div-log-list">

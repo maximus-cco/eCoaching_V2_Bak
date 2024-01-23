@@ -11,12 +11,8 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/scripts")
 </head>
-<body>
-    <div class="ecl-logo" id="banner">
-        <img alt="CCO logo" src="~/Content/Images/cco-logo.jpg">
-        <span style="float: right;"><img alt="eCL logo" src="~/Content/Images/eCL-logo.png"></span>
-    </div>
 
+<body>
     @Html.Partial("_MenuBar")
 
     <div class="body-content">
@@ -55,6 +51,6 @@
         var keepSessionAliveUrl = '@Url.Action("KeepSessionAlive", "Home")';
     </script>
 
-    @RenderSection("scripts", required: false)
+        @RenderSection("scripts", required: false)
 </body>
 </html>

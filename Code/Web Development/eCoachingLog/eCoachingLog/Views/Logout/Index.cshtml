@@ -15,21 +15,14 @@
     @Styles.Render("~/Content/css")
 </head>
 <body>
-    <div class="container-fluid" id="banner">
-        <div class="row ecl-logo">
-            <img alt="CCO logo" src="~/Content/Images/cco-logo.jpg">
-            <span style="float: right;"><img alt="eCL logo" src="~/Content/Images/eCL-logo.png"></span>
-        </div>
-    </div>
-    <hr>
+    @Html.Partial("_Logo")
     <div class="body-content">
-        <br />
         <h4>You have been logged out. Please click <a href="@Constants.APP_URL">here</a> to login.</h4>
-	</div>
+    </div>
 
-	<script>
-		window.history.forward();
-	</script>
+    <script>
+        window.history.forward();
+    </script>
 </body>
 </html>
 

@@ -457,6 +457,7 @@
     <Content Include="Views\NewSubmission\_Message.cshtml" />
     <Content Include="Views\Review\_QnsCoach.cshtml" />
     <Content Include="Views\Review\_AdditionalText.cshtml" />
+    <Content Include="Views\Shared\_Logo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
