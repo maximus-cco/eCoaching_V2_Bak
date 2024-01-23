@@ -72,5 +72,33 @@ namespace eCLAdmin.Services
         {
             return userRepository.AddEcoachingAccessControl(user);
         }
+
+        public List<eCoachingAccessControlRole> GetEcoachingAccessControlRoles()
+        {
+            var roles = new List<eCoachingAccessControlRole>();
+            var r1 = new eCoachingAccessControlRole();
+            r1.Name = "ECL";
+            r1.Value = "ECL";
+            var r2 = new eCoachingAccessControlRole();
+            r2.Name = "ARC";
+            r2.Value = "ARC";
+            var r3 = new eCoachingAccessControlRole();
+            r3.Name = "Director";
+            r3.Value = "DIR";
+            var r4 = new eCoachingAccessControlRole();
+            r4.Name = "Partner Management";
+            r4.Value = "PM";
+            var r5 = new eCoachingAccessControlRole();
+            r5.Name = "Partner Management Advanced";
+            r5.Value = "PMA";
+
+            roles.Add(r2);
+            roles.Add(r1);
+            roles.Add(r3);
+            roles.Add(r4);
+            roles.Add(r5);
+
+            return roles;
+        }
     }
 }

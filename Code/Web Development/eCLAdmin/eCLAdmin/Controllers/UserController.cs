@@ -64,6 +64,7 @@ namespace eCLAdmin.Controllers
         public ActionResult InitEcoachingAccessControlEdit(int rowId)
         {
             eCoachingAccessControlViewModel userVM = userService.GetEcoachingAccessControl(rowId);
+            userVM.RoleList = userService.GetEcoachingAccessControlRoles().ToSelectListItems(userVM.Role);
             return PartialView("_EditEcoachingAccessControl", userVM);
         }
 
@@ -90,8 +91,10 @@ namespace eCLAdmin.Controllers
             eCoachingAccessControlAddViewModel userVM = new ViewModels.eCoachingAccessControlAddViewModel();
             var siteList = siteService.GetSites();
             var defaultSiteIdSelected = siteList[0].Id;
+            var roleList = userService.GetEcoachingAccessControlRoles();
             userVM.SiteList = (siteList).ToSelectListItems(defaultSiteIdSelected);
             userVM.NameList = (userService.GetEcoachingAccessControlsToAdd(defaultSiteIdSelected)).ToSelectListItems("");
+            userVM.RoleList = userService.GetEcoachingAccessControlRoles().ToSelectListItems(roleList[0].Value);
 
             return PartialView("_AddEcoachingAccessControl", userVM);
         }

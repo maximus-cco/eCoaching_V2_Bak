@@ -18,9 +18,8 @@ namespace eCLAdmin.ViewModels
 
         [Display(Name = "Role:")]
         [Required(ErrorMessage = "Role is required.")]
-        [AllowHtml]
         public string Role { get; set; }
-        //public IEnumerable<SelectListItem> RoleList { get; set; }
+        public IEnumerable<SelectListItem> RoleList { get; set; }
 
         [Display(Name = "Site:")]
         [Required(ErrorMessage = "Select a site.")]

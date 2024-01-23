@@ -5,6 +5,8 @@ namespace eCLAdmin.Services
 {
     public interface IUserService
     {
+        List<eCoachingAccessControlRole> GetEcoachingAccessControlRoles();
+
         List<User> GetAllUsers();
 
         User GetUserByLanId(string lanId);

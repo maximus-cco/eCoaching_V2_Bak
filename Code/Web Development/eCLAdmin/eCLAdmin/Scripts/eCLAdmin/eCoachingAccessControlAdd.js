@@ -4,8 +4,9 @@
     $('.modal-content').css('width', '35%');
 
     // Initialize dropdown select2
-    $('#dropdown-user-name').select2();
-    $('#dropdown-user-site').select2();
+    //$('#dropdown-user-name').select2();
+    //$('#dropdown-user-site').select2();
+    //$('#dropdown-user-role').select2();
 
     // Load potential users from the site selected
     $('body').on('change', '#dropdown-user-site', function () {

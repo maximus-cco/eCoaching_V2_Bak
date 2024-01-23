@@ -375,6 +375,7 @@
     <Content Include="Views\ReportFeedLoadHistory\_Search.cshtml" />
     <Content Include="Views\ReportFeedLoadHistory\Index.cshtml" />
     <Content Include="Views\ReportFeedLoadHistory\_Report.cshtml" />
+    <Content Include="Views\User\_EcoachingAccessControlRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
