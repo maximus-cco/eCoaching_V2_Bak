@@ -26,6 +26,8 @@ namespace eCLAdmin.ViewModels
 
         public IEnumerable<SelectListItem> RoleList { get; set; }
 
+        public string SubcontractorDataAccess { get; set; }
+
         public string UpdatedBy { get; set; }
 
 

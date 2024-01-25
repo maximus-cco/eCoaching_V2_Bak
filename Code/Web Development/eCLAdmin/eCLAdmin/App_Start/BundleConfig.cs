@@ -62,14 +62,16 @@ namespace eCLAdmin
             var eCoachingAccessControlUpdateScriptBundle = new ScriptBundle("~/bundles/scripts/eCoachingAccessControlUpdate");
             eCoachingAccessControlUpdateScriptBundle.Orderer = new EclBundleOrderer();
             eCoachingAccessControlUpdateScriptBundle.Include(
-                        "~/Scripts/eCLAdmin/eCoachingAccessControlUpdate.js");
+                        "~/Scripts/eCLAdmin/eCoachingAccessControlUpdate.js",
+                        "~/Scripts/eCLAdmin/eCoachingAccessControlCommon.js");
             bundles.Add(eCoachingAccessControlUpdateScriptBundle);
 
             // javascript bundle for eCoaching Access Control add
             var eCoachingAccessControlAddScriptBundle = new ScriptBundle("~/bundles/scripts/eCoachingAccessControlAdd");
             eCoachingAccessControlAddScriptBundle.Orderer = new EclBundleOrderer();
             eCoachingAccessControlAddScriptBundle.Include(
-                        "~/Scripts/eCLAdmin/eCoachingAccessControlAdd.js");
+                        "~/Scripts/eCLAdmin/eCoachingAccessControlAdd.js",
+                        "~/Scripts/eCLAdmin/eCoachingAccessControlCommon.js");
             bundles.Add(eCoachingAccessControlAddScriptBundle);
 
 			// css across web app

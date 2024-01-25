@@ -64,19 +64,41 @@ namespace eCLAdmin.Controllers
         public ActionResult InitEcoachingAccessControlEdit(int rowId)
         {
             eCoachingAccessControlViewModel userVM = userService.GetEcoachingAccessControl(rowId);
+            logger.Debug("**** role=" + userVM.Role);
+            if (userVM.Role == "DIRPM" || userVM.Role == "DIRPMA")
+            {
+                userVM.SubcontractorDataAccess = GetSubcontractorDataAccess(userVM.Role);
+                userVM.Role = "DIR"; // trick role dropdown to default to "Director"
+            }
             userVM.RoleList = userService.GetEcoachingAccessControlRoles().ToSelectListItems(userVM.Role);
             return PartialView("_EditEcoachingAccessControl", userVM);
+        }
+
+        private string GetSubcontractorDataAccess(string role)
+        {
+            var subcontractorDataAccess = "N";
+            if (role == "DIRPM")
+            {
+                subcontractorDataAccess = "V";
+            }
+            if (role == "DIRPMA")
+            {
+                subcontractorDataAccess = "SV";
+            }
+
+            return subcontractorDataAccess;
         }
 
         [HttpPost]
         public JsonResult UpdateEcoachingAccessControl(eCoachingAccessControlViewModel userVM)
         {
-            logger.Debug("%%%%%%%%%%%%%%%%%%%% Entered UpdateeCoachingAccessControl: " + userVM.LanId);
+            logger.Debug("%%%%%%%%%%%%%%%%%%%% Entered UpdateeCoachingAccessControl: " + userVM.LanId + "," + userVM.Role + "," + userVM.SubcontractorDataAccess);
 
             string result = "datainvalid";
             if (ModelState.IsValid)
             {
                 userVM.UpdatedBy = GetUserFromSession().LanId;
+                userVM.Role = GetRole(userVM.Role, userVM.SubcontractorDataAccess);
                 bool success = userService.UpdateEcoachingAccessControl(userVM);
                 result = success ? "success" : "fail";
             }
@@ -102,7 +124,7 @@ namespace eCLAdmin.Controllers
         [HttpPost]
         public JsonResult AddEcoachingAccessControl(eCoachingAccessControlAddViewModel userVM)
         {
-            logger.Debug("####################### Entered AddeCoachingAccessControl: " + userVM.LanId);
+            logger.Debug("####################### Entered AddeCoachingAccessControl: " + userVM.LanId + ", " + userVM.SubcontractorDataAccess + ", " + userVM.Role);
 
             string result = "datainvalid";
             string message = "";
@@ -110,8 +132,11 @@ namespace eCLAdmin.Controllers
             if (ModelState.IsValid)
             {
                 userVM.UpdatedBy = GetUserFromSession().LanId;
+                userVM.Role = GetRole(userVM.Role, userVM.SubcontractorDataAccess);
                 rowId = userService.AddEcoachingAccessControl(userVM);
                 userVM.RowId = rowId;
+
+                logger.Debug("%%%%%%%%%userVM.Role=" + userVM.Role);
 
                 if (rowId > 0)
                 {
@@ -147,6 +172,25 @@ namespace eCLAdmin.Controllers
 
             IEnumerable<SelectListItem> nameLanIds = userList.ToSelectListItems(userList[0].LanId);
             return Json(new SelectList(nameLanIds, "Value", "Text"));
+        }
+
+        private string GetRole(string role, string subcontractorDataAccess)
+        {
+            if (role != "DIR")
+            {
+                return role;
+            }
+
+            if (subcontractorDataAccess == "V")
+            {
+                role = "DIRPM";
+            }
+            else if (subcontractorDataAccess == "SV")
+            {
+                role = "DIRPMA";
+            }
+
+            return role;
         }
     }
 }

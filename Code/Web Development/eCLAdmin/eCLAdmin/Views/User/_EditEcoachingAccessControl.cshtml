@@ -5,6 +5,8 @@
     <h3 class="modal-title">Edit</h3>
 </div>
 
+@Html.HiddenFor(m => m.SubcontractorDataAccess)
+
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-edit-ecoaching-access-control" }))
 {
     @Html.HiddenFor(m => m.RowId)
@@ -30,6 +32,9 @@
             @Html.DropDownListFor(m => m.Role, Model.RoleList, new { @id = "dropdown-user-role", @class = "form-control" })
             @Html.HiddenFor(m => m.Role)
         </div>
+
+        @{ Html.RenderPartial("_SubcontractorDataAccess"); }
+
     </div>
 
     <div class="modal-footer">

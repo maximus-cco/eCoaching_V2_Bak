@@ -9,7 +9,8 @@
     //$('#dropdown-user-role').select2();
 
     // Load potential users from the site selected
-    $('body').on('change', '#dropdown-user-site', function () {
+    $('#dropdown-user-site').on('change', function () {
+        alert('site changed');
         var siteId = $("#dropdown-user-site option:selected").val();
 
         // Display "Loading..." with ajax loader gif
@@ -28,15 +29,14 @@
                 var options = [];
                 $.each(nameLanIds, function (i, nameLanIds) {
                     options.push('<option value="', nameLanIds.Value, '">' + nameLanIds.Text + '</option>');
-            });
+                });
 
-            $("#dropdown-user-name").html(options.join(''));
-            $("#div-loading").removeClass('loadinggif');
-        }
+                $("#dropdown-user-name").html(options.join(''));
+                $("#div-loading").removeClass('loadinggif');
+            }
         });
-
-
     });
+
 
     var form = $('#form-add-ecoaching-access-control');
     // Submit the form

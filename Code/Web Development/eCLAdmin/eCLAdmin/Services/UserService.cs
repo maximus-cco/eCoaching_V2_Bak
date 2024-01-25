@@ -86,17 +86,25 @@ namespace eCLAdmin.Services
             r3.Name = "Director";
             r3.Value = "DIR";
             var r4 = new eCoachingAccessControlRole();
-            r4.Name = "Partner Management";
-            r4.Value = "PM";
+            r4.Name = "Director Partner Management";
+            r4.Value = "DIRPM";
             var r5 = new eCoachingAccessControlRole();
-            r5.Name = "Partner Management Advanced";
-            r5.Value = "PMA";
+            r5.Name = "Director Partner Management Advanced";
+            r5.Value = "DIRPMA";
+            var r6 = new eCoachingAccessControlRole();
+            r6.Name = "Partner Management";
+            r6.Value = "PM";
+            var r7 = new eCoachingAccessControlRole();
+            r7.Name = "Partner Management Advanced";
+            r7.Value = "PMA";
 
             roles.Add(r2);
             roles.Add(r1);
             roles.Add(r3);
-            roles.Add(r4);
-            roles.Add(r5);
+            //roles.Add(r4);
+            //roles.Add(r5);
+            roles.Add(r6);
+            roles.Add(r7);
 
             return roles;
         }

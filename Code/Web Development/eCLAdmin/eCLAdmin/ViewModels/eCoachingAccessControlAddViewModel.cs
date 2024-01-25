@@ -28,6 +28,8 @@ namespace eCLAdmin.ViewModels
 
         public string UpdatedBy { get; set; }
 
+        public string SubcontractorDataAccess { get; set; }
+
         public static implicit operator eCoachingAccessControl(eCoachingAccessControlAddViewModel userVM)
         {
             return new eCoachingAccessControl

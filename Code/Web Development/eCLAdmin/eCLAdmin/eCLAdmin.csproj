@@ -294,6 +294,7 @@
     <Content Include="Scripts\dataTables.ellipsis.js" />
     <Content Include="Scripts\eCLAdmin\dateTimePicker.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlAdd.js" />
+    <Content Include="Scripts\eCLAdmin\eCoachingAccessControlCommon.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlDelete.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlList.js" />
     <Content Include="Scripts\eCLAdmin\eCoachingAccessControlUpdate.js" />
@@ -376,6 +377,7 @@
     <Content Include="Views\ReportFeedLoadHistory\Index.cshtml" />
     <Content Include="Views\ReportFeedLoadHistory\_Report.cshtml" />
     <Content Include="Views\User\_EcoachingAccessControlRole.cshtml" />
+    <Content Include="Views\User\_SubcontractorDataAccess.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
