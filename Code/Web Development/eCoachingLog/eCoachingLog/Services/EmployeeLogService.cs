@@ -329,17 +329,27 @@ namespace eCoachingLog.Services
 
         public IList<ChartDataset> GetChartDataSets(User user)
 		{
-			return employeeLogRepository.GetChartDataSets(user);
+            return employeeLogRepository.GetChartDataSets(user);
         }
 
         public IList<LogCountForSite> GetLogCountsForSites(User user, DateTime start, DateTime end)
 		{
-			return employeeLogRepository.GetLogCountsForSites(user, start, end);
+            var data = employeeLogRepository.GetLogCountsForSites(user, start, end);
+            if (!user.IsDirPm && !user.IsDirPma)
+            {
+                data = data.Where(x => !x.IsSubcontractorSite).ToList<LogCountForSite>();
+            }
+            return data;
 		}
 
 		public IList<LogCountByStatusForSite> GetLogCountByStatusForSites(User user, DateTime start, DateTime end)
-		{
-			return employeeLogRepository.GetLogCountByStatusForSites(user, start, end);
+        { 
+            var data = employeeLogRepository.GetLogCountByStatusForSites(user, start, end);
+            if (!user.IsDirPm && !user.IsDirPma)
+            {
+                data = data.Where(x => !x.IsSubcontractorSite).ToList<LogCountByStatusForSite>();
+            }
+            return data;
 		}
 
         public IList<QnStatistic> GetPast3MonthStatisticQn(User user)

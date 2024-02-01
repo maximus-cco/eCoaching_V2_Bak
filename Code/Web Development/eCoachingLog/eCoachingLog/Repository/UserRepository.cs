@@ -34,9 +34,16 @@ namespace eCoachingLog.Repository
                         user.Name = dataReader["Emp_Name"].ToString();
 						user.JobCode = dataReader["Emp_Job_Code"].ToString();
 						user.Role = dataReader["Role"].ToString();
+                        user.SiteId = Convert.ToInt32(dataReader["Emp_SiteID"]);
+                        user.SiteName = dataReader["Emp_Site"].ToString();
+                        user.IsSubcontractor = (dataReader["IsSub"] == DBNull.Value) ? false : (bool)dataReader["IsSub"];
                         user.IsCsrRelated = (dataReader["CSRRelated"] == DBNull.Value) ? false : (bool)dataReader["CSRRelated"];
                         user.IsEcl = (dataReader["ECLUser"] == DBNull.Value) ? false : (bool)dataReader["ECLUser"];
-						user.IsAccessNewSubmission = (dataReader["NewSubmission"] == DBNull.Value) ? false : (bool)dataReader["NewSubmission"];
+                        user.IsPm = (dataReader["PMUser"] == DBNull.Value) ? false : (bool)dataReader["PMUser"];
+                        user.IsPma = (dataReader["PMAUser"] == DBNull.Value) ? false : (bool)dataReader["PMAUser"];
+                        user.IsDirPm = (dataReader["DIRPMUser"] == DBNull.Value) ? false : (bool)dataReader["DIRPMUser"];
+                        user.IsDirPma = (dataReader["DIRPMAUser"] == DBNull.Value) ? false : (bool)dataReader["DIRPMAUser"];
+                        user.IsAccessNewSubmission = (dataReader["NewSubmission"] == DBNull.Value) ? false : (bool)dataReader["NewSubmission"];
 						user.IsAccessMyDashboard = (dataReader["MyDashboard"] == DBNull.Value) ? false : (bool)dataReader["MyDashboard"];
 						user.IsAccessHistoricalDashboard = (dataReader["HistoricalDashboard"] == DBNull.Value) ? false : (bool)dataReader["HistoricalDashboard"];
 						user.IsExportExcel = (dataReader["ExcelExport"] == DBNull.Value) ? false : (bool)dataReader["ExcelExport"];

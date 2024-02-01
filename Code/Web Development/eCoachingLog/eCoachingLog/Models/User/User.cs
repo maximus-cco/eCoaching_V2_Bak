@@ -10,20 +10,20 @@ namespace eCoachingLog.Models.User
         public string Name { get; set; }
         public string JobCode { get; set; }
         public string Role { get; set; }
-        // Indicates whether this user is a CSR's supervisor, managager, etc.
-        public bool IsCsrRelated { get; set; }
-        // Be able to view all logs on Historical Dashboard if true 
-        public bool IsEcl { get; set; }
-        // Whether the user is allowed to access New Submission page
-        public bool IsAccessNewSubmission { get; set; }
-        // Whether the user is allowed to access My Dashboard page
-        public bool IsAccessMyDashboard { get; set; }
-        // Whether the user is allowed to access Historical Dashboard page
-        public bool IsAccessHistoricalDashboard { get; set; }
-        // Whether the user is allowed to export data to excel on Historical Dashboard page
-        public bool IsExportExcel { get; set; }
-        // Whether to display follow up information on dashboards
-        public bool ShowFollowup
+        public int SiteId { get; set; }
+        public string SiteName { get; set; }
+        public bool IsSubcontractor { get; set; }
+        public bool IsCsrRelated { get; set; } // Indicates whether this user is a CSR's supervisor, managager, etc.
+        public bool IsEcl { get; set; }        // Be able to view all logs on Historical Dashboard
+        public bool IsPm { get; set; }         // Be able to view subcontractor logs
+        public bool IsPma { get; set; }        // Be able to view subcontractor logs + submit subcontractor logs 
+        public bool IsDirPm { get; set; }      // Be able to view subcontractor logs
+        public bool IsDirPma { get; set; }     // Be able to view subcontractor logs + submit subcontractor logs 
+        public bool IsAccessNewSubmission { get; set; } // Whether the user is allowed to access New Submission page
+        public bool IsAccessMyDashboard { get; set; }   // Whether the user is allowed to access My Dashboard page
+        public bool IsAccessHistoricalDashboard { get; set; } // Whether the user is allowed to access Historical Dashboard page
+        public bool IsExportExcel { get; set; } // Whether the user is allowed to export data to excel on Historical Dashboard page
+        public bool ShowFollowup // Whether to display follow up information on dashboards
         {
             get
             {
@@ -124,6 +124,7 @@ namespace eCoachingLog.Models.User
             this.Name = string.Empty;
             this.JobCode = string.Empty;
             this.Role = string.Empty;
+            this.IsSubcontractor = false;
             this.IsEcl = false;
             this.IsAccessNewSubmission = false;
             this.IsAccessMyDashboard = false;

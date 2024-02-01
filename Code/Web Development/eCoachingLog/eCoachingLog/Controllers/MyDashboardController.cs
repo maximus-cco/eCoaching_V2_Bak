@@ -33,6 +33,7 @@ namespace eCoachingLog.Controllers
 			Session["currentPage"] = Constants.PAGE_MY_DASHBOARD;
 
 			var vm = new MyDashboardViewModel();
+            logger.Debug("********user role=" + user.Role);
 			if (user.Role == Constants.USER_ROLE_DIRECTOR)
 			{
 				var selectedDate = Convert.ToDateTime(vm.SelectedMonthYear);
@@ -134,11 +135,6 @@ namespace eCoachingLog.Controllers
         {
             var user = GetUserFromSession();
             var vm = new MyDashboardViewModel(user);
-
-			//if (vm.Search.UserRole == Constants.USER_ROLE_CSR)
-			//{
-			//	vm.Search.ShowSupNameColumn = false;
-			//}
 
 			// Data to be displayed next to bar chart
 			if (user.Role == Constants.USER_ROLE_DIRECTOR)

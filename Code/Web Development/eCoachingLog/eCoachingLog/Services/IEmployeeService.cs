@@ -7,7 +7,7 @@ namespace eCoachingLog.Services
 	public interface IEmployeeService
     {
         Employee GetEmployee(string employeeId);
-        IList<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId);
+        IList<Employee> GetEmployeesByModule(int moduleId, int siteId, User user);
 		IList<Employee> GetAllSubmitters();
 		IList<Employee> GetManagersBySite(int siteId);
 		IList<Employee> GetSupervisorsByMgr(string mgrId);

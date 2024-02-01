@@ -143,7 +143,7 @@ namespace eCoachingLog.Controllers
             vm.AllowSearchWarning = user.IsHr;
 			vm.IsExportExcel = user.IsExportExcel;
 			// Site
-			var siteList = this.siteService.GetAllSites();
+			var siteList = this.siteService.GetAllSites(false, GetUserFromSession());
 			siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });
 			IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name");
 			vm.SiteSelectList = sites;

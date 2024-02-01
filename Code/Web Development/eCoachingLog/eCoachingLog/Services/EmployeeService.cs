@@ -18,9 +18,13 @@ namespace eCoachingLog.Services
             this.employeeRepository = employeeRepository;
         }
 
-        public IList<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
+        public IList<Employee> GetEmployeesByModule(int moduleId, int siteId, User user)
         {
-            return employeeRepository.GetEmployeesByModule(moduleId, siteId, userEmpId);
+            if (user.IsSubcontractor)
+            {
+                siteId = user.SiteId;
+            }
+            return employeeRepository.GetEmployeesByModule(moduleId, siteId, user.EmployeeId);
         }
 
         public Employee GetEmployee(string employeeId)

@@ -16,6 +16,7 @@ namespace eCoachingLog.Repository
 
         public IList<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
         {
+            logger.Debug("#########moduleId:" + moduleId + ", siteId:" + siteId);
             var employees = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Employees_By_Module_And_Site]", connection))

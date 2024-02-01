@@ -1083,6 +1083,7 @@ namespace eCoachingLog.Repository
 						logCountForSite.TotalPending = Convert.ToInt32(dataReader["PendingCount"]);
 						logCountForSite.TotalCompleted = Convert.ToInt32(dataReader["CompletedCount"]);
 						logCountForSite.TotalWarning = Convert.ToInt32(dataReader["WarningCount"]);
+                        logCountForSite.IsSubcontractorSite = (dataReader["isSub"] == DBNull.Value) ? false : (bool)dataReader["isSub"];
 						logCountsForSites.Add(logCountForSite);
 					}
 
@@ -1163,7 +1164,8 @@ namespace eCoachingLog.Repository
 					{
 						LogCountByStatusForSite lcs = new LogCountByStatusForSite();
 						lcs.SiteName = dataReader["Site"].ToString();
-						lcs.Status = dataReader["CountType"].ToString();
+                        lcs.IsSubcontractorSite = (dataReader["isSub"] == DBNull.Value) ? false : (bool)dataReader["isSub"];
+                        lcs.Status = dataReader["CountType"].ToString();
 						lcs.Count = Convert.ToInt32(dataReader["LogCount"]);
 						logCountByStatusForSites.Add(lcs);
 					}

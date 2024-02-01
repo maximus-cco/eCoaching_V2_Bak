@@ -281,7 +281,7 @@ namespace eCoachingLog.Controllers
         private void GetEmployeesByModuleToSession(int moduleId, int siteId)
         {
             var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
-            IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession().EmployeeId);
+            IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession());
             //employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
             List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();
             employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
@@ -458,7 +458,7 @@ namespace eCoachingLog.Controllers
                 }
                 else
                 {
-                    IList<Site> siteList = this.siteService.GetSites();
+                    IList<Site> siteList = this.siteService.GetSites(true, GetUserFromSession());
                     siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });
                     vm.SiteSelectList = new SelectList(siteList, "Id", "Name");
 					vm.SiteNameSelectList = new SelectList(siteList, "Name", "Name");
@@ -468,7 +468,7 @@ namespace eCoachingLog.Controllers
             // Load Employee dropdown for others
             if (moduleId != Constants.MODULE_CSR) 
             {
-                IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, Constants.ALL_SITES, GetUserFromSession().EmployeeId);
+                IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, Constants.ALL_SITES, GetUserFromSession());
                 List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();
                 employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
                 vm.EmployeeSelectList = employees;
@@ -664,6 +664,7 @@ namespace eCoachingLog.Controllers
         {
             User user = GetUserFromSession();
             NewSubmissionViewModel vm = new NewSubmissionViewModel(user.EmployeeId, user.LanId);
+            vm.IsSubcontractor = user.IsSubcontractor;
 			vm.ModuleId = moduleId;
 			vm.ShowFollowup = moduleId == Constants.MODULE_CSR;
 
@@ -774,7 +775,7 @@ namespace eCoachingLog.Controllers
             NewSubmissionViewModel vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
             int moduleId = vmInSession.ModuleId;
             var userEmpId = GetUserFromSession().EmployeeId;
-            var empList = this.employeeService.GetEmployeesByModule(moduleId, siteId, userEmpId).ToList<Employee>();
+            var empList = this.employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession()).ToList<Employee>();
             // exclude employee(s) added to the left dual list box from Add (other sites)
             empList = empList.Where(x => vmInSession.EmployeeList.All(y => y.Value != x.Id)).ToList<Employee>();
 

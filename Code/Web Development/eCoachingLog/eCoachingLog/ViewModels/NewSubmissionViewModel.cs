@@ -13,6 +13,7 @@ namespace eCoachingLog.ViewModels
 {
     public class NewSubmissionViewModel : BaseViewModel, IValidatableObject
     {
+        public bool IsSubcontractor { get; set; }
         public string UserId { get; set; }
         public string UserLanId { get; set; }
         public int StatusId { get; set; }

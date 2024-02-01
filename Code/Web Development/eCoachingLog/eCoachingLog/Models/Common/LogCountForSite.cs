@@ -4,6 +4,7 @@ namespace eCoachingLog.Models.Common
 {
 	public class LogCountForSite
 	{
+        public bool IsSubcontractorSite { get; set; }
 		public int SiteId { get; set; }
 		public string SiteName { get; set; }
 		public int TotalPending { get; set; }

@@ -28,6 +28,14 @@ namespace eCoachingLog.Repository
                         Site site = new Site();
                         site.Id = Convert.ToInt32(dataReader["SiteID"]);
                         site.Name = dataReader["Site"].ToString();
+                        if (dataReader["isSub"] == DBNull.Value || dataReader["isSub"].ToString() == "0")
+                        {
+                            site.IsSubcontractorSite = false;
+                        }
+                        else
+                        {
+                            site.IsSubcontractorSite = true;
+                        }
                         sites.Add(site);
                     } // end while
 
@@ -54,7 +62,8 @@ namespace eCoachingLog.Repository
 						Site site = new Site();
 						site.Id = Convert.ToInt32(dataReader["SiteID"]);
 						site.Name = dataReader["City"].ToString();
-						sites.Add(site);
+                        site.IsSubcontractorSite = (dataReader["isSub"] == DBNull.Value) ? false : (bool)dataReader["isSub"];
+                        sites.Add(site);
 					} // end while
 
                     dataReader.Close();
@@ -62,5 +71,5 @@ namespace eCoachingLog.Repository
 			} // end SqlCommand
 			return sites;
 		}
-	}
+    }
 }
