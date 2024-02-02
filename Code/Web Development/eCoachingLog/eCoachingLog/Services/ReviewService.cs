@@ -141,6 +141,10 @@ namespace eCoachingLog.Services
 							return Constants.REVIEW_LCSAT;
 						}
 						// General
+                        if (user.IsSubcontractor)
+                        {
+                            return Constants.REVIEW_OMR_SUBCONTRACTOR;
+                        }
 						return Constants.REVIEW_OMR;
 					}
 				}
@@ -156,16 +160,28 @@ namespace eCoachingLog.Services
 
 				if (log.IsOmrIae || log.IsOmrIaef || log.IsOmrIat)
 				{
+                    if (user.IsSubcontractor)
+                    {
+                        return Constants.REVIEW_OMR_SUBCONTRACTOR;
+                    }
 					return Constants.REVIEW_OMR;
 				}
 
 				if (log.IsEtsOae)
 				{
+                    if (user.IsSubcontractor)
+                    {
+                        return Constants.REVIEW_ETS_OAE_SUBCONTRACTOR;
+                    }
 					return Constants.REVIEW_ETS_OAE;
 				}
 
 				if (log.IsEtsOas)
 				{
+                    if (user.IsSubcontractor)
+                    {
+                        return Constants.REVIEW_ETS_OAE_SUBCONTRACTOR;
+                    }
 					return Constants.REVIEW_ETS_OAS;
 				}
 
@@ -181,6 +197,10 @@ namespace eCoachingLog.Services
 
 				if (log.IsBrl || log.IsBrn)
 				{
+                    if (user.IsSubcontractor)
+                    {
+                        return Constants.REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT_SUBCONTRACTOR;
+                    }
 					return Constants.REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT;
 				}
 			}
@@ -211,28 +231,40 @@ namespace eCoachingLog.Services
 			{
 				if (user.EmployeeId == log.EmployeeId)
 				{
+                    if (user.IsSubcontractor)
+                    {
+                        return Constants.REVIEW_QUALITY_KUDO_CSR_SUBCONTRACTOR;
+                    }
 					return Constants.REVIEW_QUALITY_KUDO_CSR;
 				}
 
-				return Constants.REVIEW_QUALITY_KUDO_SUPERVISOR;
+                if (user.IsSubcontractor)
+                {
+                    return Constants.REVIEW_QUALITY_KUDO_SUPERVISOR_SUBCONTRACTOR;
+                }
+                return Constants.REVIEW_QUALITY_KUDO_SUPERVISOR;
 			}
 
-			if (log.IsMsr)
-			{
-				if (Constants.SOURCE_INTERNAL_CCO_REPORTING == log.SourceId)
-				{
-					return Constants.REVIEW_MSR_INTERNAL_CCO_REPORTING;
-				}
-				return Constants.REVIEW_MSR_PSCORECARD;
-			}
+			//if (log.IsMsr)
+			//{
+			//	if (Constants.SOURCE_INTERNAL_CCO_REPORTING == log.SourceId)
+			//	{
+			//		return Constants.REVIEW_MSR_INTERNAL_CCO_REPORTING;
+			//	}
+			//	return Constants.REVIEW_MSR_PSCORECARD;
+			//}
 
-			if (log.IsMsrs)
-			{
-				return Constants.REVIEW_SCORECARD_MSRS;
-			}
+			//if (log.IsMsrs)
+			//{
+			//	return Constants.REVIEW_SCORECARD_MSRS;
+			//}
 
 			if ((log.IsEtsHnc || log.IsEtsIcc) && review.LogStatusLevel == 2)
 			{
+                if (user.IsSubcontractor)
+                {
+                    return Constants.REVIEW_HNC_ICC_SUBCONTRACTOR;
+                }
 				return Constants.REVIEW_HNC_ICC;
 			}
 
@@ -247,6 +279,10 @@ namespace eCoachingLog.Services
 			// Incentives data feed: comes in as Pending Employee Review --> Complete
 			if (log.IsIdd)
 			{
+                if (user.IsSubcontractor)
+                {
+                    return Constants.REVIEW_OMR_IDD_SUBCONTRACTOR;
+                }
 				return Constants.REVIEW_OMR_IDD;
 			}
 

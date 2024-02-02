@@ -26,8 +26,14 @@ namespace eCoachingLog.Services
 
         public List<Module> GetModules(User user)
         {
+            var modules = employeeLogRepository.GetModules(user);
 
-            return employeeLogRepository.GetModules(user);
+            if (user.IsSubcontractor)
+            {
+                return modules.Where(x => x.Id == Constants.MODULE_CSR || x.Id == Constants.MODULE_SUPERVISOR || x.Id == Constants.MODULE_TRAINING).ToList<Module>();
+            }
+
+            return modules;
         }
 
         public BaseLogDetail GetLogDetail(long logId, bool isCoaching)

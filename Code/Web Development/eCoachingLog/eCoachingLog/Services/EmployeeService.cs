@@ -24,6 +24,8 @@ namespace eCoachingLog.Services
             {
                 siteId = user.SiteId;
             }
+
+            logger.Debug("######********* moduleId=" + moduleId + ", siteId=" + siteId + ", userId=" + user.EmployeeId + ", isSub=" + user.IsSubcontractor);
             return employeeRepository.GetEmployeesByModule(moduleId, siteId, user.EmployeeId);
         }
 

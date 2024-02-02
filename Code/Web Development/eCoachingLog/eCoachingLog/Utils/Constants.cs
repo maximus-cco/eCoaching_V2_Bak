@@ -273,27 +273,24 @@ namespace eCoachingLog.Utils
 		public const string REVIEW_QUALITY_KUDO_CSR = "Congratulations - you received a Kudos! Click " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
 			"to take a listen to what a recent caller had to say about your customer service.";
+        public const string REVIEW_QUALITY_KUDO_CSR_SUBCONTRACTOR = "Congratulations - you received a Kudos! Click " +
+            "<a href='https://maximus365.sharepoint.com/sites/CCO/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
+            "to take a listen to what a recent caller had to say about your customer service.";
 
-		public const string REVIEW_QUALITY_KUDO_SUPERVISOR = "Click <a href='https://maximus365.sharepoint.com/sites/CCO/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
+        public const string REVIEW_QUALITY_KUDO_SUPERVISOR = "Click <a href='https://maximus365.sharepoint.com/sites/CCO/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
 			"to listen to CSR kudos.";
+        public const string REVIEW_QUALITY_KUDO_SUPERVISOR_SUBCONTRACTOR = "Click <a href='https://maximus365.sharepoint.com/sites/CCO/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
+            "to listen to CSR kudos.";
 
-		public const string REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT = "You are receiving this eCL record because an Employee on your team was identified in a Break Outlier Report. " +
+        public const string REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT = "You are receiving this eCL record because an Employee on your team was identified in a Break Outlier Report. " +
 			"Please review the <b><a href='https://maximus365.sharepoint.com/sites/CCO/bi/ReportsCatalog/CSRDashboard/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a>, " +
 			"the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below.";
+        public const string REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT_SUBCONTRACTOR = "You are receiving this eCL record because an Employee on your team was identified in a Break Outlier Report. " +
+            "Please review the <b><a href='https://maximus365.sharepoint.com/sites/CCO/bi/ReportsCatalog/CSRDashboard/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a>, " +
+            "the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below.";
 
-		// Performance Scorecard MSR and MSRS static text
-		public const string REVIEW_MSR_PSCORECARD = "To review your full details, please visit the " +
-			"<a href='https://f3420-mwbp11.ad.local/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
-			"If you have any questions, please see your supervisor.";
-		public const string REVIEW_SCORECARD_MSRS = "To review your full details, please visit the " +
-			"<a href='https://f3420-mwbp11.ad.local/scorecard/csrscorecard.aspx' target='_blank'>CCO Performance Scorecard</a>. " +
-			"If you have any questions, please " +
-			"<a href='https://maximus365.sharepoint.com/sites/CCO/Reports/Performance_Scorecard/Lists/Scorecard_Escalated_Issues_Log/NewIssue.aspx' target='_blank'>submit an escalation</a> via the " +
-			"<a href='https://maximus365.sharepoint.com/sites/CCO/Reports/Performance_Scorecard/default.aspx' target='_blank'>CCO Performance Scorecard Information Station</a> " +
-			"SharePoint site.";
-
-		// Internal CCO Reporting MSR static text
-		public const string REVIEW_MSR_INTERNAL_CCO_REPORTING = "To view in full detail, your Supervisor will review your Performance Dashboard with you during your next coaching session. An overview of your scores is also contained within the eCL.";
+        // Internal CCO Reporting MSR static text
+        public const string REVIEW_MSR_INTERNAL_CCO_REPORTING = "To view in full detail, your Supervisor will review your Performance Dashboard with you during your next coaching session. An overview of your scores is also contained within the eCL.";
 
 		// ETS/HNC ETS/ICC
 		// Currently this is only for CSRs. Data feeds loaded as Pending Supervisor Review.
@@ -301,20 +298,29 @@ namespace eCoachingLog.Utils
 		public const string REVIEW_HNC_ICC = "Click " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Initiatives/floorcheck/Timecard_Compliance_Reporting/Timcard%20Changes%20Reports/Forms/AllItems.aspx' target='_blank'>here</a>" +
 			" to view the report containing the details of these changes.";
+        public const string REVIEW_HNC_ICC_SUBCONTRACTOR = "Click " +
+            "<a href='https://maximus365.sharepoint.com/sites/CCO/Initiatives/floorcheck/Timecard_Compliance_Reporting/Timcard%20Changes%20Reports/Forms/AllItems.aspx' target='_blank'>here</a>" +
+            " to view the report containing the details of these changes.";
 
-		// CSE form
-		public const string REVIEW_CSE = "Review the submitted coaching opportunity and determine if it is a confirmed Customer Service Escalation (CSE).  If it is a CSE, setup a meeting with the Employee and Supervisor and report your coaching in the box below.  If it not a CSE, enter notes for the Supervisor to use to coach the Employee.";
+        // CSE form
+        public const string REVIEW_CSE = "Review the submitted coaching opportunity and determine if it is a confirmed Customer Service Escalation (CSE).  If it is a CSE, setup a meeting with the Employee and Supervisor and report your coaching in the box below.  If it not a CSE, enter notes for the Supervisor to use to coach the Employee.";
 
 		public const string REVIEW_OMR = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest <a href='https://maximus365.sharepoint.com/sites/CCO/Resources/SOP/Contact%20Center%20Operations/Forms/AllItems.aspx' target='_blank'>" +
 								"Contact Center Operations 46.0 Outlier Management Report (OMR): Outlier Research Process SOP</a> and provide the details in the record below.";
+        public const string REVIEW_OMR_SUBCONTRACTOR = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest <a href='https://maximus365.sharepoint.com/sites/CCO/Resources/SOP/Contact%20Center%20Operations/Forms/AllItems.aspx' target='_blank'>" +
+                                "Contact Center Operations 46.0 Outlier Management Report (OMR): Outlier Research Process SOP</a> and provide the details in the record below.";
 
-		public const string REVIEW_ETS_OAE = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did not complete their timecard before the deadline laid out in the latest " +
+        public const string REVIEW_ETS_OAE = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did not complete their timecard before the deadline laid out in the latest " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Resources/SOP/Contact%20Center%20Operations/Forms/AllItems.aspx' target='_blank'>Contact Center Operations 3.06 Timecard Audit SOP</a> and provide the details in the record below.";
+        public const string REVIEW_ETS_OAE_SUBCONTRACTOR = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did not complete their timecard before the deadline laid out in the latest " +
+            "<a href='https://maximus365.sharepoint.com/sites/CCO/Resources/SOP/Contact%20Center%20Operations/Forms/AllItems.aspx' target='_blank'>Contact Center Operations 3.06 Timecard Audit SOP</a> and provide the details in the record below.";
 
-		public const string REVIEW_ETS_OAS = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report(also known as the TC Compliance Action report).  Please research why the supervisor did not approve Or reject their CSR’s timecard before the deadline laid out in the latest " +
+        public const string REVIEW_ETS_OAS = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report(also known as the TC Compliance Action report).  Please research why the supervisor did not approve Or reject their CSR’s timecard before the deadline laid out in the latest " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Resources/SOP/Contact%20Center%20Operations/Forms/AllItems.aspx' target='_blank'>Contact Center Operations 3.06 Timecard Audit SOP</a> and provide the details in the record below.";
+        public const string REVIEW_ETS_OAS_SUBCONTRACTOR = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report(also known as the TC Compliance Action report).  Please research why the supervisor did not approve Or reject their CSR’s timecard before the deadline laid out in the latest " +
+            "<a href='https://maximus365.sharepoint.com/sites/CCO/Resources/SOP/Contact%20Center%20Operations/Forms/AllItems.aspx' target='_blank'>Contact Center Operations 3.06 Timecard Audit SOP</a> and provide the details in the record below.";
 
-		public const string REVIEW_OMR_PBH = "Be sure to check the Beneficiary Indicators applet on every call. If a message is on file, the CSR must follow protocol and review it to determine whether the information is applicable to the beneficiary’s reason for calling. However, the CSR must read and follow any messages related to the new Medicare card, regardless of the reason for the call. In addition to reading such messages, the CSR must be sure to log them as \"read\" to document that the information has been relayed to the caller." +  
+        public const string REVIEW_OMR_PBH = "Be sure to check the Beneficiary Indicators applet on every call. If a message is on file, the CSR must follow protocol and review it to determine whether the information is applicable to the beneficiary’s reason for calling. However, the CSR must read and follow any messages related to the new Medicare card, regardless of the reason for the call. In addition to reading such messages, the CSR must be sure to log them as \"read\" to document that the information has been relayed to the caller." +  
 			"<br /><br />" +
 			"Remember, it is critical that we follow through with the appropriate action(s) outlined in the CSR Notes portion of the Message Details applet. This includes checking and confirming whether the beneficiary’s correct mailing address is on file. Depending on whether the address is correct, the CSR will take one of the two following actions:" +
 			"<br />" +
@@ -326,8 +332,10 @@ namespace eCoachingLog.Utils
 
 		public const string REVIEW_OMR_IDD = "You are receiving this eCL record because there is a discrepancy in data associated with an employee on your team.  Please review this item in accordance with the latest Contact Center Operations " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/CCOps/Supervisor/Supervisor%20Job%20Aids/Forms/AllItems.aspx' target='_blank'>Job Aid CCO Incentive Data Discrepancy</a> and provide the details in the record below.";
+        public const string REVIEW_OMR_IDD_SUBCONTRACTOR = "You are receiving this eCL record because there is a discrepancy in data associated with an employee on your team.  Please review this item in accordance with the latest Contact Center Operations " +
+            "<a href='https://maximus365.sharepoint.com/sites/CCO/CCOps/Supervisor/Supervisor%20Job%20Aids/Forms/AllItems.aspx' target='_blank'>Job Aid CCO Incentive Data Discrepancy</a> and provide the details in the record below.";
 
-		public const string ACK_COMMENT_TEXTBOX_LABEL = "Provide any comments or feedback below:";
+        public const string ACK_COMMENT_TEXTBOX_LABEL = "Provide any comments or feedback below:";
 		public const string ACK_OTA_COMMENT_TEXTBOX_LABEL = "Provide the details from the coaching session including action plans developed:";
 		public const string ACK_CHECKBOX_TITLE_GENERAL = "Check the box below to acknowledge the coaching opportunity:";
 		public const string ACK_CHECKBOX_TITLE_MONITOR = "Check the box below to acknowledge the monitor:";
@@ -349,12 +357,15 @@ namespace eCoachingLog.Utils
 		public const string RETURN_TO_SITE_4 = "<p>Maximus anticipates that a mutually beneficial employment relationship will continue as you work at the ";
 		public const string RETURN_TO_SITE_4_1 = " site.</p>";
 
-        // Survey
         public const string SURVEY = "Please contact your survey point of contact and/or manager with any questions.";
+
         public const string QN_FEEDBACK = "There is no appeal process for Quality Now, but " +
             "<a href='https://maximus365.sharepoint.com/sites/CCO/Support/QA-OPS/Leads/Lists/Quality_NOW_Feedback/NewForm.aspx?Source=https%3a%2f%2fmaximus365.sharepoint.com%2fsites%2fCCO%2fSupport%2fQA-OPS%2fLeads%2fLists%2fQuality_NOW_Feedback%2fMy_Items.aspx%3fviewid%3d9bec3890%252D53e3%252D40f9%252D8dc6%252Df8400e9a4f4d%26OR%3dTeams%252DHL%26CT%3d1681396370842%26clickparams%3deyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiIyNy8yMzAzMDUwMTExMCIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%253D%253D&ContentTypeId=0x0100E3688E643B7C874CAD85E7C0C4441EFE&RootFolder=%2fsites%2fCCO%2fSupport%2fQA-OPS%2fLeads%2fLists%2fQuality_NOW_Feedback' target='_blank'>feedback</a>" +
             " for the Quality Team concerning this batch is welcomed. Please see SOP QA 33.0 for additional guidance.";
-	}
+        public const string QN_FEEDBACK_SUBCONTRACTOR = "There is no appeal process for Quality Now, but " +
+            "<a href='https://maximus365.sharepoint.com/sites/CCO/Support/QA-OPS/Leads/Lists/Quality_NOW_Feedback/NewForm.aspx?Source=https%3a%2f%2fmaximus365.sharepoint.com%2fsites%2fCCO%2fSupport%2fQA-OPS%2fLeads%2fLists%2fQuality_NOW_Feedback%2fMy_Items.aspx%3fviewid%3d9bec3890%252D53e3%252D40f9%252D8dc6%252Df8400e9a4f4d%26OR%3dTeams%252DHL%26CT%3d1681396370842%26clickparams%3deyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiIyNy8yMzAzMDUwMTExMCIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%253D%253D&ContentTypeId=0x0100E3688E643B7C874CAD85E7C0C4441EFE&RootFolder=%2fsites%2fCCO%2fSupport%2fQA-OPS%2fLeads%2fLists%2fQuality_NOW_Feedback' target='_blank'>feedback</a>" +
+            " for the Quality Team concerning this batch is welcomed. Please see SOP QA 33.0 for additional guidance.";
+    }
 
 	public enum EmployeeLogType
 	{
