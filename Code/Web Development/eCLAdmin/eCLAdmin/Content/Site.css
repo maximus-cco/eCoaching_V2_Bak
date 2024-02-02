@@ -139,7 +139,8 @@ input[type="checkbox"].input-validation-error {
 }
 
 .navbar {
-	border-top: 2px solid #F48028;
+	border-top: 2px solid #4c81b7 !important;
+    border-bottom: 1px solid #4c81b7 !important;
 }
 
 fieldset.border {
@@ -206,4 +207,5 @@ table.dataTable th, td {
 .form-inline .form-group {
   margin-bottom:5px;
 }
+
 
