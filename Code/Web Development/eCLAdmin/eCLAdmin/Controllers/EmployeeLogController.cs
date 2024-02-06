@@ -454,6 +454,7 @@ namespace eCLAdmin.Controllers
             // default to current reviewer's site 
             IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name", currentReviewer.SiteId);
             ViewBag.Sites = sites;
+            ViewBag.AllowSiteSelection = !GetUserFromSession().IsSubcontractor;
 
             logger.Debug("********** Current Reviewer: " + currentReviewer.Id + "************");
             IEnumerable<SelectListItem> reviewers = new SelectList(GetReviewers(currentReviewer.SiteId, currentReviewer.Id), "Id", "Name");

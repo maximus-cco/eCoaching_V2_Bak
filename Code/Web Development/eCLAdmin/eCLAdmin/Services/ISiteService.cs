@@ -8,7 +8,7 @@ namespace eCLAdmin.Services
 {
     public interface ISiteService
     {
-        List<Site> GetSites();
+        List<Site> GetAllActiveSites();
         List<Site> GetSites(string userId);
         List<Site> GetSiteForHierarchyRpt();
         List<Site> GetSitesForReport(string userId, int moduleId);

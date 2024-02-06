@@ -1,4 +1,5 @@
-﻿using eCLAdmin.Models.User;
+﻿using eCLAdmin.Models;
+using eCLAdmin.Models.User;
 using eCLAdmin.Services;
 using log4net;
 using System;
@@ -81,6 +82,18 @@ namespace eCLAdmin.Controllers
             IEnumerable<SelectListItem> types = new SelectList(typeList, "Id", "Description");
 
             return types;
+        }
+
+        protected List<Site> GetAllActiveSites()
+        {
+            var allActiveSites = (List<Site>)Session["AllActiveSites"];
+            if (allActiveSites == null)
+            {
+                allActiveSites = this.siteService.GetAllActiveSites();
+                Session["AllActiveSites"] = allActiveSites;
+            }
+
+            return allActiveSites;
         }
 
         // Download the generated excel file

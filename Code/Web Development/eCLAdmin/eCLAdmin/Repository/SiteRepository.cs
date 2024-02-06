@@ -10,7 +10,7 @@ namespace eCLAdmin.Repository
     {
         string conn = System.Configuration.ConfigurationManager.ConnectionStrings["CoachingConnectionString"].ConnectionString;
 
-        public List<Site> GetSites()
+        public List<Site> GetAllActiveSites()
         {
             var sites = new List<Site>();
             using (SqlConnection connection = new SqlConnection(conn))
@@ -24,6 +24,8 @@ namespace eCLAdmin.Repository
                         Site site = new Site();
                         site.Id = dataReader["SiteID"].ToString();
                         site.Name = dataReader["City"].ToString();
+                        site.IsSubcontractor = dataReader["isSub"].ToString() == "1";
+
                         sites.Add(site);
                     }
                 }

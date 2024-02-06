@@ -13,9 +13,9 @@ namespace eCLAdmin.Services
         private readonly ILog logger = LogManager.GetLogger(typeof(SiteService));
         private ISiteRepository siteRepository = new SiteRepository();
 
-        public List<Site> GetSites()
+        public List<Site> GetAllActiveSites()
         {
-            return siteRepository.GetSites();
+            return siteRepository.GetAllActiveSites();
         }
 
         public List<Site> GetSites(string userId)

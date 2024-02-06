@@ -5,7 +5,7 @@ namespace eCLAdmin.Repository
 {
     public interface ISiteRepository
     {
-        List<Site> GetSites();
+        List<Site> GetAllActiveSites();
         List<Site> GetSites(string userId);
         List<Site> GetSiteForHierarchyRpt();
         List<Site> GetSiteForReport(string userId, int moduleId);

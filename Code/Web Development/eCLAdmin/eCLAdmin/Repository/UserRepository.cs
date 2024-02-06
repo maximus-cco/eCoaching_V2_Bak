@@ -78,6 +78,7 @@ namespace eCLAdmin.Repository
                             user.LanId = dataReader["UserLanID"].ToString();
                             user.Name = dataReader["UserName"].ToString();
                             user.JobCode = dataReader["EmpJobCode"].ToString();
+                            user.IsSubcontractor = dataReader["isSub"].ToString().ToUpper() == "Y";
                         }
 
                         dataReader.Close();
