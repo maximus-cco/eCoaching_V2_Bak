@@ -5,6 +5,7 @@ namespace eCLAdmin.Models.EmployeeLog
 {
     public class EmployeeLog
     {
+        public bool IsSubcontractor { get; set; }
         public long ID { get; set; }
         public string FormType { get; set; }
         [Display(Name = "Log Name")]

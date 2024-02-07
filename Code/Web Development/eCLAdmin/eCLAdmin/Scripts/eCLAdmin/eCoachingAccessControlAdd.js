@@ -10,7 +10,6 @@
 
     // Load potential users from the site selected
     $('#dropdown-user-site').on('change', function () {
-        alert('site changed');
         var siteId = $("#dropdown-user-site option:selected").val();
 
         // Display "Loading..." with ajax loader gif

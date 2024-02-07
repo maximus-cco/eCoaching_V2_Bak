@@ -165,7 +165,7 @@ namespace eCLAdmin.Controllers
             {
                 // employeeLogs: this is the log list for the given reviewer, so we can get reviewer information from any log in the list
                 var log = employeeLogs[0];
-                Session["CurrentReviewer"] = new Employee(log.CurrentReviewerId, log.CurrentReviewerName, log.CurrentReviewerSiteId, log.CurrentReviewerSiteName);
+                Session["CurrentReviewer"] = new Employee(log.CurrentReviewerId, log.CurrentReviewerName, log.CurrentReviewerSiteId, log.CurrentReviewerSiteName, log.IsSubcontractor);
             }
 
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
@@ -454,7 +454,7 @@ namespace eCLAdmin.Controllers
             // default to current reviewer's site 
             IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name", currentReviewer.SiteId);
             ViewBag.Sites = sites;
-            ViewBag.AllowSiteSelection = !GetUserFromSession().IsSubcontractor;
+            ViewBag.AllowSiteSelection = !GetUserFromSession().IsSubcontractor && !currentReviewer.IsSubcontractor;
 
             logger.Debug("********** Current Reviewer: " + currentReviewer.Id + "************");
             IEnumerable<SelectListItem> reviewers = new SelectList(GetReviewers(currentReviewer.SiteId, currentReviewer.Id), "Id", "Name");

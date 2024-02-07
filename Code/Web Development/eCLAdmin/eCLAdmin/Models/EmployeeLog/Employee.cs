@@ -2,6 +2,7 @@
 {
     public class Employee
     {
+        public bool IsSubcontractor { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -21,12 +22,13 @@
             Name = name;
         }
 
-        public Employee(string id, string name, int siteId, string siteName)
+        public Employee(string id, string name, int siteId, string siteName, bool isSubcontractor)
         {
             Id = id;
             Name = name;
             SiteId = siteId;
             SiteName = siteName;
+            IsSubcontractor = isSubcontractor;
         }
     }
 }

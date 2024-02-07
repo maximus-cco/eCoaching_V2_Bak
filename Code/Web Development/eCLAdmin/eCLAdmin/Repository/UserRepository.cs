@@ -136,6 +136,7 @@ namespace eCLAdmin.Repository
         {
             List<NameLanId> users = new List<NameLanId>();
 			var sql = "[EC].[sp_Select_Employees_BySite_NotIn_Hist_ACL]";
+            logger.Debug("######## sp_Select_Employees_BySite_NotIn_Hist_ACL, siteId=" + siteId);
 			try
             {
                 using (SqlConnection connection = new SqlConnection(conn))

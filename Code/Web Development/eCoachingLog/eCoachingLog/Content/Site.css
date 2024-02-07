@@ -271,15 +271,13 @@ ul.navbar-nav {
 }
 
 .panel-default > .panel-heading-no-padding {
-  color: #333333;
-  background-color: #f5f5f5;
-  border-color: #337ab7;
+  color: #333333 !important;
+  background-color: #fbfbfb !important;
 }
 
 .panel-default > .panel-heading {
-  color: #333333;
-  background-color: #e6e6e6;
-  border-color: #337ab7;
+  color: #333333 !important;
+  background-color: #fbfbfb !important;
 }
 
 .panel-heading-clickable {

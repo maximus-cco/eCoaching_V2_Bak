@@ -210,6 +210,7 @@ namespace eCLAdmin.Repository
                         cl.CurrentReviewerEmail = dataReader["strReassignFromEmail"].ToString();
                         cl.CurrentReviewerSiteId = (int)dataReader["intReviewerSiteID"];
                         cl.CurrentReviewerSiteName = dataReader["strReviewerSite"].ToString();
+                        cl.IsSubcontractor = dataReader["isSub"].ToString().ToUpper() == "Y";
 
                         employeeLogs.Add(cl);
                     }
