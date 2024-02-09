@@ -44,9 +44,9 @@ namespace eCoachingLog.Services
 			return employeeRepository.GetManagersBySite(siteId);
 		}
 
-		public IList<Employee> GetSupervisorsByMgr(string mgrId)
+		public IList<Employee> GetSupervisorsByMgr(string mgrId, int siteId)
 		{
-			return employeeRepository.GetSupervisorsByMgr(mgrId);
+			return employeeRepository.GetSupervisorsByMgr(mgrId, siteId);
 		}
 
 		public IList<Employee> GetEmployeesBySup(int siteId, string mgrId, string supId, int empStatus)

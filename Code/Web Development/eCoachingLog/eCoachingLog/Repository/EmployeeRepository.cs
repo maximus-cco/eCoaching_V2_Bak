@@ -108,8 +108,9 @@ namespace eCoachingLog.Repository
 			return managers;
 		}
 
-		public IList<Employee> GetSupervisorsByMgr(string mgrId)
+		public IList<Employee> GetSupervisorsByMgr(string mgrId, int siteId)
 		{
+            logger.Debug("**********mgrId=" + mgrId + ", siteId=" + siteId);
 			var supervisors = new List<Employee>();
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Coaching_Log_Sup_ByMgr]", connection))
@@ -117,7 +118,8 @@ namespace eCoachingLog.Repository
 				command.CommandType = CommandType.StoredProcedure;
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@nvcMgrID", mgrId);
-				connection.Open();
+                command.Parameters.AddWithValueSafe("@intSiteID", siteId);
+                connection.Open();
 
 				using (SqlDataReader dataReader = command.ExecuteReader())
 				{

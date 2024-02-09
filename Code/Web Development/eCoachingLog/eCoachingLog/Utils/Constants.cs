@@ -67,6 +67,8 @@ namespace eCoachingLog.Utils
 		public const string MY_SUBMISSION_FILTER_EMPLOYEE = "Employee";
 
 		public const int ALL_SITES = -1;
+        public const int ALL_SITES_SUBCONTRACTOR = -3;
+        public const int ALL_SITES_CCO = -4;
         public const int ALL_STATUSES = -1;
 
 		public const string DIRECT = "Direct";

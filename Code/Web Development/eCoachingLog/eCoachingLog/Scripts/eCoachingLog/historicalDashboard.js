@@ -80,6 +80,7 @@
 	$('body').on('change', '#select-manager', function () {
 		$('#select-supervisor').addClass('loadinggif');
 		var mgrSelected = $('#select-manager').val();
+		var siteSelected = $('#select-site').val();
 		if (mgrSelected != -2) {
 			$(this).css('border-color', '');
 		}
@@ -88,7 +89,7 @@
 		    type: 'POST',
 		    url: getSupervisorsUrl,
 		    dataType: 'json',
-		    data: { mgrId: mgrSelected }
+		    data: { mgrId: mgrSelected, siteId: siteSelected }
 		})
         .done(function (data) {
             // Load supervisor dropdown

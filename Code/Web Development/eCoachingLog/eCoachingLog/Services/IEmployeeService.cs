@@ -10,7 +10,7 @@ namespace eCoachingLog.Services
         IList<Employee> GetEmployeesByModule(int moduleId, int siteId, User user);
 		IList<Employee> GetAllSubmitters();
 		IList<Employee> GetManagersBySite(int siteId);
-		IList<Employee> GetSupervisorsByMgr(string mgrId);
+		IList<Employee> GetSupervisorsByMgr(string mgrId, int siteId);
 		IList<Employee> GetEmployeesBySup(int siteId, string mgrId, string supId, int employeeStatus);
 
 		IList<Employee> GetSupsForMgrMyPending(User user);

@@ -468,7 +468,31 @@ namespace eCoachingLog.Controllers
             // Load Employee dropdown for others
             if (moduleId != Constants.MODULE_CSR) 
             {
-                IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, Constants.ALL_SITES, GetUserFromSession());
+                var siteId = 0;
+                var user = GetUserFromSession();
+                if (user.IsSubcontractor)
+                {
+                    siteId = user.SiteId; // subcontractor can submit logs for their own site only
+                }
+                // CCO user
+                else
+                {
+                    // regualr CCO users - can submit logs for CCO sites only
+                    if (!user.IsPma && !user.IsDirPma && !user.IsArc) // todo: add user.IsQuality
+                    {
+                        siteId = Constants.ALL_SITES_CCO;
+                    }
+                    // PMA, DIRPMA, ARC, Quality - can submit logs for CCO sites + subcontractor sites
+                    else
+                    {
+                        siteId = Constants.ALL_SITES;
+                    }
+                }
+
+                logger.Debug("&&&&&&&& siteID = " + siteId);
+
+                IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, user);
+
                 List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();
                 employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
                 vm.EmployeeSelectList = employees;

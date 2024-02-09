@@ -10,7 +10,7 @@ namespace eCoachingLog.Repository
         Employee GetEmployee(string employeeId);
 		IList<Employee> GetAllSubmitters();
 		IList<Employee> GetManagersBySite(int siteId);
-		IList<Employee> GetSupervisorsByMgr(string mgrId);
+		IList<Employee> GetSupervisorsByMgr(string mgrId, int siteId);
 		IList<Employee> GetEmployeesBySup(int siteId, string mgrId, string supId, int empStatus);
 
 		IList<Employee> GetSupsForMgrMyPending(User user);

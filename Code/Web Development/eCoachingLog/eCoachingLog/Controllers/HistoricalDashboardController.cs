@@ -52,10 +52,10 @@ namespace eCoachingLog.Controllers
 			return Json(new { managers = managers, supervisors = ResetSupervisors(), employees = ResetEmployees() }, JsonRequestBehavior.AllowGet );
 		}
 
-		public JsonResult GetSupervisorsByMgr(string mgrId)
+		public JsonResult GetSupervisorsByMgr(string mgrId, int siteId)
 		{
 			// Manager changed, reload supervisors and reset employees to empty
-			var supervisorList = this.employeeService.GetSupervisorsByMgr(mgrId);
+			var supervisorList = this.employeeService.GetSupervisorsByMgr(mgrId, siteId);
 			supervisorList.Insert(0, new Employee { Id = "-2", Name = "-- Select a Supervisor --" });
 			IEnumerable<SelectListItem> supervisors = new SelectList(supervisorList, "Id", "Name");
 			return Json(new { supervisors = supervisors, employees = ResetEmployees()}, JsonRequestBehavior.AllowGet);

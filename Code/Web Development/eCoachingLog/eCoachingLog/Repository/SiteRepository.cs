@@ -28,14 +28,8 @@ namespace eCoachingLog.Repository
                         Site site = new Site();
                         site.Id = Convert.ToInt32(dataReader["SiteID"]);
                         site.Name = dataReader["Site"].ToString();
-                        if (dataReader["isSub"] == DBNull.Value || dataReader["isSub"].ToString() == "0")
-                        {
-                            site.IsSubcontractorSite = false;
-                        }
-                        else
-                        {
-                            site.IsSubcontractorSite = true;
-                        }
+                        site.IsSubcontractorSite = dataReader["isSub"].ToString() == "1";
+
                         sites.Add(site);
                     } // end while
 
