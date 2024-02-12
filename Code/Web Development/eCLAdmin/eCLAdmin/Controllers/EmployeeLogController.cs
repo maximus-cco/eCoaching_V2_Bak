@@ -450,7 +450,9 @@ namespace eCLAdmin.Controllers
             ViewBag.Reasons = reasons;
 
             Employee currentReviewer = (Employee)Session["CurrentReviewer"];
-            List<Site> siteList = siteService.GetSites(GetUserFromSession().EmployeeId);
+            bool excludeSubSites = !currentReviewer.IsSubcontractor;
+            logger.Debug("########## excludeSubSites=" + excludeSubSites);
+            List <Site> siteList = siteService.GetSites(GetUserFromSession().EmployeeId, excludeSubSites);
             // default to current reviewer's site 
             IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name", currentReviewer.SiteId);
             ViewBag.Sites = sites;

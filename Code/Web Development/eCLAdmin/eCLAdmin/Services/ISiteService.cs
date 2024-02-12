@@ -9,7 +9,7 @@ namespace eCLAdmin.Services
     public interface ISiteService
     {
         List<Site> GetAllActiveSites();
-        List<Site> GetSites(string userId);
+        List<Site> GetSites(string userId, bool excludeSubcontractorSites);
         List<Site> GetSiteForHierarchyRpt();
         List<Site> GetSitesForReport(string userId, int moduleId);
     }

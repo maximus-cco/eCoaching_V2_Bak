@@ -53,6 +53,8 @@ namespace eCLAdmin.Repository
                         site.Id = dataReader["SiteID"].ToString();
                         site.Name = dataReader["Site"].ToString();
 
+                        // todo: return issubcontractor
+
                         sites.Add(site);
                     }
                     dataReader.Close();

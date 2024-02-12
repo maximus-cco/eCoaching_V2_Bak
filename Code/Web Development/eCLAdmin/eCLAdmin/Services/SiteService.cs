@@ -18,9 +18,14 @@ namespace eCLAdmin.Services
             return siteRepository.GetAllActiveSites();
         }
 
-        public List<Site> GetSites(string userId)
+        public List<Site> GetSites(string userId, bool excludeSubcontractorSites)
         {
-            return siteRepository.GetSites(userId);
+            var sites = siteRepository.GetSites(userId);
+            if (excludeSubcontractorSites)
+            {
+                sites = sites.Where(x => !x.IsSubcontractor).ToList<Site>();
+            }
+            return sites;
         }
 
         public List<Site> GetSiteForHierarchyRpt()
