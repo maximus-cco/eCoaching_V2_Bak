@@ -12,13 +12,17 @@
 <body>
     <div class="navbar navbar-default navbar-fixed-top">
         <div class="container">
+            <div class="please-wait" style="display: none;">
+            </div>
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("eCL Admin", null, null, null, new { @class = "navbar-brand" })>
+                <div class="navbar-brand">
+                    <img alt="eCL" src="~/Content/Images/eCL.png" style="height: 30px; margin-top: -5px">
+                </div>
             </div>
         </div>
     </div>

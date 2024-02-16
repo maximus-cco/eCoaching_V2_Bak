@@ -67,7 +67,7 @@ namespace eCLAdmin
 		public const string ADMIN_ACTIVITY_REPORT_NAME = "AdminActivitySummary";
 		public const string ADMIN_ACTIVITY_REPORT_DESCRIPTION = "Admin Activity Summary";
 
-		// For eCoaching Access Control
+		// For eCL Special Access
 		// Role ECL
 		public const string ECOACHING_ACCESS_ROLE_ECL = "ECL";
 		public const string ECOACHING_ACCESS_ROLE_ECL_DESCRIPTION = "ECL";

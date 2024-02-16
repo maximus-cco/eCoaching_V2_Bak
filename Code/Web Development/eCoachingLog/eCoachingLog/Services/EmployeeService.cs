@@ -25,7 +25,12 @@ namespace eCoachingLog.Services
                 siteId = user.SiteId;
             }
 
-            logger.Debug("######********* moduleId=" + moduleId + ", siteId=" + siteId + ", userId=" + user.EmployeeId + ", isSub=" + user.IsSubcontractor);
+            logger.Debug("###### moduleId=" + moduleId + ", siteId=" + siteId + ", userId=" + user.EmployeeId + ", user is Sub=" + user.IsSubcontractor);
+            if (moduleId == Constants.MODULE_LSA || moduleId == Constants.MODULE_QUALITY) // no LSA and quality modules logs
+            {
+                siteId = Constants.ALL_SITES_CCO;
+            }
+            logger.Debug("********* moduleId=" + moduleId + ", siteId=" + siteId + ", userId=" + user.EmployeeId + ", user is Sub=" + user.IsSubcontractor);
             return employeeRepository.GetEmployeesByModule(moduleId, siteId, user.EmployeeId);
         }
 
