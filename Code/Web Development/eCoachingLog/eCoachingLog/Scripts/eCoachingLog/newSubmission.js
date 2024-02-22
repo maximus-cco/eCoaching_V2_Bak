@@ -486,8 +486,16 @@ $(function () {
                 footer = '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
             } else {
                 if (isWarning === true) {
-                    body = "<b>A new" + log + "will be created for</b> " + employees + "<br /><b>Do you wish to continue?</b>";
-                } else {
+                    // check if user is the supervisor
+                    let supervisorId = $('#bootstrap-duallistbox-selected-list_duallistbox_employee option').first().data('supid');
+                    if (supervisorId != $('#UserId').val()) {
+                        $('#warning-log-error').html("You can only submit warning logs for your direct reports.");
+                        $('#btn-submit').prop('disabled', false);
+                        return;
+                    } else {
+                        body = "<b>A new" + log + "will be created for</b> " + employees + "<br /><b>Do you wish to continue?</b>";
+                    }
+                } else { // coaching
                     body = "<b>A new" + log + "will be created for each of the following:</b><br />" + employees + "<br /><b>Do you wish to continue?</b>";
                 }
                 footer = '<button type="button" class="btn btn-primary" id="btn-modal-yes">Yes</button>' +

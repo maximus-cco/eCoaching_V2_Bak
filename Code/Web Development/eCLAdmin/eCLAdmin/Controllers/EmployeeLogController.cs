@@ -159,7 +159,7 @@ namespace eCLAdmin.Controllers
             Session["LogType"] = 1;                     // coaching log only for reassign
 
             // TODO: sp returns current reviewer site id and site name
-            employeeLogs = employeeLogService.SearchLogForReassign(searchByLogName, module, employeeLogStatus, reviewer, logName);
+            employeeLogs = employeeLogService.SearchLogForReassign(searchByLogName, module, employeeLogStatus, reviewer, logName, GetUserFromSession());
             
             if (employeeLogs.Count > 0)
             {

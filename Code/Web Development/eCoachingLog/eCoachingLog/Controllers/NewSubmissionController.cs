@@ -286,7 +286,7 @@ namespace eCoachingLog.Controllers
             List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();
             employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
             vmInSession.EmployeeSelectList = employees;
-            vmInSession.EmployeeList = employeeList.Select(e => new TextValue(e.Name + " (Supervisor: " + e.SupervisorName.Trim() + ")", e.Id)).ToList<TextValue>();
+            vmInSession.EmployeeList = employeeList.Select(e => new TextValue(e.Name + " (Supervisor: " + e.SupervisorName.Trim() + ")", e.Id, e.SupervisorId)).ToList<TextValue>();
         }
 
         [HttpPost]
@@ -691,6 +691,7 @@ namespace eCoachingLog.Controllers
             vm.IsSubcontractor = user.IsSubcontractor;
 			vm.ModuleId = moduleId;
 			vm.ShowFollowup = moduleId == Constants.MODULE_CSR;
+            vm.UserId = user.EmployeeId;
 
             // Module Dropdown
             List<Module> moduleList = this.empLogService.GetModules(user);

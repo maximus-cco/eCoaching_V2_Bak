@@ -16,7 +16,7 @@ namespace eCLAdmin.Services
         EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId);
 
         // search log for reassign
-        List<EmployeeLog> SearchLogForReassign(bool searchByLogName, int moduleId, int statusId, string reviewerEmpId, string logName);
+        List<EmployeeLog> SearchLogForReassign(bool searchByLogName, int moduleId, int statusId, string reviewerEmpId, string logName, User user);
 
         List<Status> GetPendingStatuses(int moduleId);
 

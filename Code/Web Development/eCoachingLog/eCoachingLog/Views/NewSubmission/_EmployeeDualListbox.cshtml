@@ -2,18 +2,17 @@
 @model eCoachingLog.ViewModels.NewSubmissionViewModel
 
 <input type="hidden" id="WarningYesNo" />
-
 <div class="row">
     <div class="col-sm-6">
         @if(!Model.IsSubcontractor) {
             <a href="#" style="color: #337ab7" id="a-add-employee"><b>Add</b></a>
         }
     </div>
-    <div class="col-sm-6 hide" id="div-max-warning">
-        <p class="text-danger" ><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>The maximum number of employees in a Warning Submssion is @Constants.MAX_NUMBER_OF_EMPLOYEES_WARNING_PER_SUBMISSION.</b></p>
+    <div class="col-sm-6 hide danger" id="div-max-warning">
+        You can only submit one warning log in one submission.
     </div>
-    <div class="col-sm-6 hide" id="div-max-coaching">
-        <p class="text-danger"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;<b>The maximum number of employees in a coaching submission is @Constants.MAX_NUMBER_OF_EMPLOYEES_COACHING_PER_SUBMISSION.</b></p>
+    <div class="col-sm-6 hide danger" id="div-max-coaching">
+       You can only submit up to @Constants.MAX_NUMBER_OF_EMPLOYEES_COACHING_PER_SUBMISSION coaching logs in one submission.
     </div>
 </div>
 
@@ -21,10 +20,11 @@
     <select multiple="multiple" size="10" name="duallistbox_employee" title="duallistbox_employee">
         @if (Model.EmployeeList != null) {
             foreach (var m in Model.EmployeeList) { 
-                <option value="@m.Value" selected="@m.IsSelected">@m.Text</option>
+                <option value="@m.Value" selected="@m.IsSelected" data-supid="@m.Data">@m.Text</option>
             }
         }
     </select>
+    <div class="pull-right danger" id="warning-log-error"></div>
 </div>
 
 <script>

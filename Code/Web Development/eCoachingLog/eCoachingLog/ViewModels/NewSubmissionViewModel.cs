@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Models;
 using eCoachingLog.Models.Common;
 using eCoachingLog.Utils;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,6 +14,8 @@ namespace eCoachingLog.ViewModels
 {
     public class NewSubmissionViewModel : BaseViewModel, IValidatableObject
     {
+        private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public bool IsSubcontractor { get; set; }
         public string UserId { get; set; }
         public string UserLanId { get; set; }

@@ -1,5 +1,6 @@
 ﻿using eCLAdmin.Extensions;
 using eCLAdmin.Models.EmployeeLog;
+using eCLAdmin.Models.User;
 using eCLAdmin.Utilities;
 using log4net;
 using System;
@@ -175,7 +176,7 @@ namespace eCLAdmin.Repository
             return employeeLog;
         }
 
-        public List<EmployeeLog> SearchLogForReassign(int moduleId, int statusId, string reviewerEmpId, string logName)
+        public List<EmployeeLog> SearchLogForReassign(int moduleId, int statusId, string reviewerEmpId, string logName, User user)
         {
             List<EmployeeLog> employeeLogs = new List<EmployeeLog>();
 
@@ -188,6 +189,7 @@ namespace eCLAdmin.Repository
                 command.Parameters.AddWithValue("@istrOwnerin", reviewerEmpId);
                 command.Parameters.AddWithValue("@intStatusIdin", statusId);
                 command.Parameters.AddWithValue("@strFormName", logName);
+                command.Parameters.AddWithValue("@strRequesterin", user.EmployeeId);
 
                 connection.Open();
 

@@ -1,4 +1,5 @@
 ﻿using eCLAdmin.Models.EmployeeLog;
+using eCLAdmin.Models.User;
 using System.Collections.Generic;
 
 namespace eCLAdmin.Repository
@@ -10,7 +11,7 @@ namespace eCLAdmin.Repository
         List<EmployeeLog> SearchLog(int moduleId, int logTypeId, string employeeId, string logName, string action, string userLanId);
         EmployeeLog GetLogByLogName(int logTypeId, string logName, string action, string userLanId);
         // search log for reassign
-        List<EmployeeLog> SearchLogForReassign(int moduleId, int statusId, string reviewerEmpId, string logName);
+        List<EmployeeLog> SearchLogForReassign(int moduleId, int statusId, string reviewerEmpId, string logName, User user);
         List<Status> GetPendingStatuses(int moduleId);
         List<Reason> GetReasons(int logTypeId, string action);
         void ProcessActivation(string userLanId, string action, int employeeLogType, List<long> employeeLogIds, int reasonId, string otherReasonText, string comment);

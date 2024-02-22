@@ -102,7 +102,7 @@ namespace eCLAdmin.Services
             return employeeLogRepository.GetLogByLogName(logTypeId, logName, action, userLanId);
         }
 
-        public List<EmployeeLog> SearchLogForReassign(bool searchByLogName, int moduleId, int statusId, string reviewerEmpId, string logName)
+        public List<EmployeeLog> SearchLogForReassign(bool searchByLogName, int moduleId, int statusId, string reviewerEmpId, string logName, User user)
         {
             if (searchByLogName)
             {
@@ -115,7 +115,7 @@ namespace eCLAdmin.Services
                 logName = null;
             }
 
-            return employeeLogRepository.SearchLogForReassign(moduleId, statusId, reviewerEmpId, logName);
+            return employeeLogRepository.SearchLogForReassign(moduleId, statusId, reviewerEmpId, logName, user);
 
         }
 
