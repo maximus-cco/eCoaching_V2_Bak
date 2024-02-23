@@ -1,29 +1,8 @@
-/*
-sp_SelectFrom_Coaching_Log_Emp_BySup(01).sql
-Last Modified Date: 04/30/2018
-Last Modified By: Susmitha Palacherla
-
-
-Version 01: Document Initial Revision created during hist dashboard redesign.  TFS 7138 - 04/30/2018
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Emp_BySup' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Emp_BySup]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -32,8 +11,9 @@ GO
 --  as Supervisors during log submisison.
 -- This Procedure is only looking for Managers of non Inactive logs.
 -- Created during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Emp_BySup] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Emp_BySup] 
 @nvcSupID nvarchar(10), @intEmpActive int, @intSiteID INT, @nvcMgrID nvarchar(10)
 
 AS
@@ -50,15 +30,38 @@ SET @NewLineChar = CHAR(13) + CHAR(10)
 
 SET @where = ''
 
+/*
+-1 All Sites
+-3 Sub Sites
+-4 Maximus Sites
+*/
+
+IF @intSiteID NOT IN (-1,-3,-4)
+BEGIN
+	SET @where = @where + ' AND [cl].[SiteID] =   '''+CONVERT(NVARCHAR,@intSiteID)+'''';
+END
+
+IF @intSiteID = -3
+
+BEGIN
+	SET @where = @where + ' AND [eh].[isSub] =   ''Y''' ;
+END
+
+IF @intSiteID = -4
+
+BEGIN
+	SET @where = @where + ' AND [eh].[isSub] =   ''N''' ;
+END
+
 IF @nvcMgrID <> '-1'
 BEGIN
-	SET @where = @where + ' AND [eh].[Mgr_Id] =  '''+ @nvcMgrID + ''''
+	SET @where = @where + @NewLineChar + ' AND [eh].[Mgr_Id] =  '''+ @nvcMgrID + ''''
 END
 
 
 IF @nvcSupID <> '-1'
 BEGIN
-	SET @where = @where + ' AND [eh].[Sup_Id] =  '''+ @nvcSupID + ''''
+	SET @where = @where + @NewLineChar + ' AND [eh].[Sup_Id] =  '''+ @nvcSupID + ''''
 END
 
 -- 1 for Active 2 for Inactive 3 for All
@@ -81,8 +84,7 @@ FROM (
 	   ON cl.[EMPID] = eh.[EMP_ID] JOIN  [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) 
 	   ON eh.[EMP_ID] = veh.[EMP_ID] JOIN [EC].[DIM_Site]S
        ON S.City = EH.Emp_Site
-	   WHERE cl.StatusID <> 2 
-	   AND  (S.SiteID =('''+CONVERT(NVARCHAR,@intSiteID)+''') or '''+ CONVERT(NVARCHAR,@intSiteID) + ''' = -1)' +
+	   WHERE cl.StatusID <> 2 ' +
 	   @where + ' ' + '
 	     AND veh.Emp_Name IS NOT NULL 
 		 AND cl.EmpID  <> ''999999''
@@ -96,8 +98,6 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
 
 End --sp_SelectFrom_Coaching_Log_Emp_BySup
-
 GO
-
 
 

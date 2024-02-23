@@ -1,23 +1,3 @@
-/*
-sp_Dashboard_Director_Summary_Count_ByStatus(02).sql
-Last Modified Date: 05/01/2020
-Last Modified By: Susmitha Palacherla
-
-Version 02: Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Dashboard_Director_Summary_Count_ByStatus' 
-)
-   DROP PROCEDURE [EC].[sp_Dashboard_Director_Summary_Count_ByStatus]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -32,8 +12,9 @@ GO
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
+--  Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Dashboard_Director_Summary_Count_ByStatus] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Director_Summary_Count_ByStatus] 
 @nvcEmpID nvarchar(10),
 @strSDatein datetime,
 @strEDatein datetime
@@ -92,10 +73,10 @@ SET @nvcSQL = ';WITH IncludeStatus AS
 				 GROUP BY si.City, st.Status)
 
 
-				 SELECT DISTINCT site.City AS Site, 
+				 SELECT DISTINCT site.City AS Site, site.isSub,
 				 CASE WHEN st.status = ''Completed'' THEN ''Active Warnings'' ELSE st.status END AS CountType, COALESCE(wc.LogCount,0) AS LogCount
 				 FROM 
-				 (SELECT DISTINCT eh.Emp_Site City
+				 (SELECT DISTINCT eh.Emp_Site City, si.isSub
 		         FROM EC.Employee_Hierarchy eh JOIN EC.DIM_Site si
                  ON eh.Emp_Site = si.City
 		         WHERE (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + '''))  site CROSS JOIN IncludeStatus st LEFT JOIN Counts wc
@@ -123,6 +104,5 @@ END --sp_Dashboard_Director_Summary_Count_ByStatus
 
 
 GO
-
 
 

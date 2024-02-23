@@ -1,33 +1,9 @@
-/*
-fn_strGetUserRole(07).sql
-Last Modified Date: 8/18/2020
-Last Modified By: Susmitha Palacherla
-
-Revision 07: Removed references to SrMgr. TFS 18062 - 08/18/2020
-Revision 06: Added WPSM% to Mgr Role - TFS 16389 - 1/14/2020
-Revision 05: Added WPOP12 to Analyst Role - TFS 16261 - 12/12/2019
-Revision 04: Added WPOP12 to ARC Role - TFS 15859 - 10/28/2019
-Revision 03: Added logic for Manager role for WPPM job codes - TFS 12467 - 10/29/2018
-Revision 02: Added logic for Analyst Role . TFS 12316 - 10/11/2018
-Initial Revision:  Created during Mydashboard move to new architecture - TFS 7137 - 05/16/2018 
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'fn_strGetUserRole' 
-)
-   DROP FUNCTION [EC].[fn_strGetUserRole]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Susmitha Palacherla
 -- Create date:  5/16/2018
@@ -41,9 +17,10 @@ GO
 -- Moved WPOP12 to Analyst Role. TFS 16261 - 12/11/2019 
 -- Added logic for Manager role for WPSM job codes - TFS 16389 - 01/13/2020
 -- Removed references to SrMgr. TFS 18062 - 08/18/2020
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 -- =============================================
 
-CREATE FUNCTION [EC].[fn_strGetUserRole] 
+CREATE OR ALTER FUNCTION [EC].[fn_strGetUserRole] 
 (
 	@strEmpID nvarchar(10) 
 )
@@ -68,9 +45,9 @@ WHERE Emp_ID = @strEmpID);
  WHEN ((@strEmpJobCode LIKE 'WPPM%' OR @strEmpJobCode LIKE 'WPSM%' OR @strEmpJobCode LIKE 'WEEX%' OR @strEmpJobCode LIKE 'WISO%'
  OR @strEmpJobCode LIKE 'WISY%' OR  @strEmpJobCode = 'WPWL51' OR @strEmpJobCode LIKE 'WSTE%'
  OR @strEmpJobCode LIKE '%50' OR @strEmpJobCode LIKE '%60'  OR @strEmpJobCode LIKE '%70') 
- AND NOT([EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1)) 
+ AND NOT([EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1 OR [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIRPM') = 1  OR [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIRPMA') = 1)) 
  THEN 'Manager'
- WHEN  [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1 THEN 'Director'
+ WHEN  ([EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIR') = 1 OR [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIRPM') = 1  OR [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'DIRPMA') = 1) THEN 'Director'
  WHEN  @strEmpJobCode LIKE 'WPOP12' THEN 'Analyst'
  ELSE 'Restricted' END);
 
@@ -79,7 +56,5 @@ WHERE Emp_ID = @strEmpID);
 END --fn_strGetUserRole
 
 GO
-
-
 
 

@@ -1,33 +1,8 @@
-/*
-sp_SelectFrom_Coaching_Log_Sup_ByMgr(01).sql
-Last Modified Date: 04/30/2018
-Last Modified By: Susmitha Palacherla
-
-
-Version 01: Document Initial Revision created during hist dashboard redesign.  TFS 7138 - 04/30/2018
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_Sup_ByMgr' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Sup_ByMgr]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -36,26 +11,52 @@ GO
 --  as Supervisors during log submisison.
 -- This Procedure is only looking for Managers of non Inactive logs.
 -- Created during Hist dashboard move to new architecture - TFS 7138 - 04/20/2018
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
-CREATE  PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Sup_ByMgr] 
-@nvcMgrID nvarchar(10)
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Sup_ByMgr] 
+@nvcMgrID nvarchar(10), @intSiteID INT
 
 AS
 
 BEGIN
 DECLARE	
-@mgrwhere nvarchar(200),
+@conditionalwhere nvarchar(200),
+@NewLineChar nvarchar(2),
 @nvcSQL nvarchar(max);
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+SET @NewLineChar = CHAR(13) + CHAR(10);
 
-SET @mgrwhere = ''
-IF @nvcMgrID <> '-1'
+SET @conditionalwhere = '';
+/*
+-1 All Sites
+-3 Sub Sites
+-4 Maximus Sites
+*/
 
+IF @intSiteID NOT IN (-1,-3,-4)
+BEGIN
+	SET @conditionalwhere = @conditionalwhere + ' AND [cl].[SiteID] =   '''+CONVERT(NVARCHAR,@intSiteID)+'''';
+END
+
+IF @intSiteID = -3
 
 BEGIN
-	SET @mgrwhere = @mgrwhere + ' AND [sh].[Sup_Id] =  '''+ @nvcMgrID + ''''
+	SET @conditionalwhere = @conditionalwhere + ' AND [eh].[isSub] =   ''Y''' ;
+END
+
+IF @intSiteID = -4
+
+BEGIN
+	SET @conditionalwhere = @conditionalwhere + ' AND [eh].[isSub] =   ''N''' ;
+END
+
+
+IF @nvcMgrID <> '-1'
+
+BEGIN
+	SET @conditionalwhere = @conditionalwhere + @NewLineChar + ' AND [sh].[Sup_Id] =  '''+ @nvcMgrID + '''';
 END
 
 
@@ -72,7 +73,7 @@ FROM (
 	   JOIN [EC].[Employee_Hierarchy] mh 
 	   ON sh.[Sup_Id] = mh.[Emp_Id]
 	   WHERE cl.StatusID <> 2 ' +
-	   @mgrwhere + ' ' + '
+	   @conditionalwhere + ' ' + '
 	     AND vsh.Emp_Name IS NOT NULL 
 		 AND sh.Emp_Id  <> ''999999''
 ) X
@@ -86,6 +87,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 
 End --sp_SelectFrom_Coaching_Log_Sup_ByMgr
 GO
-
 
 

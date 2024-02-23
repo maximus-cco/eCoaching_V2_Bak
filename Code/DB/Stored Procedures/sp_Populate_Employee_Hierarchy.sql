@@ -4,7 +4,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
@@ -20,6 +19,7 @@ GO
 -- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
 -- Update to populate ELS Role records in ACL Table. TFS 24924 - 7/11/2022
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
@@ -72,7 +72,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 	   SET [Emp_Name] = EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Emp_Name],'''', ''))
 	      ,[Emp_Email] = EncryptByKey(Key_GUID('CoachingKey'), S.[Emp_Email])
 		  ,[Emp_LanID] = EncryptByKey(Key_GUID('CoachingKey'), S.Emp_LanID)
-		  ,[Emp_Site] =  [EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site)
+		  ,[Emp_Site] =  [EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site, S.isSub)
 		  ,[Emp_Job_Code] = S.Emp_Job_Code
 		  ,[Emp_Job_Description] = S.Emp_Job_Description
 		  ,[Emp_Program] = S.Emp_Program
@@ -97,6 +97,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 		  ,Full_Part_Time = S.Full_Part_Time
 		  ,Term_Date = CONVERT(nvarchar(8),S.[Term_Date],112)
 		  ,FLSA_Status = S.FLSA_Status
+		  ,isSub = COALESCE(NULLIF(S.isSub,''), 'N')
 	 FROM [EC].[Employee_Hierarchy]H JOIN [EC].[Employee_Hierarchy_Stage]S
 	 ON H.[Emp_ID] = S.[EMP_ID]
 	 WHERE H.[Emp_ID] is NOT NULL;
@@ -139,13 +140,14 @@ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 			   ,[Legacy_Emp_ID]
 			   ,[PS_Emp_ID_Prefix]
 			   ,[Emp_Pri_Name]
+			   ,[isSub]
 		   
 			  )
 							 SELECT DISTINCT S.[Emp_ID]
 						      ,EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Emp_Name],'''', ''))
                               ,EncryptByKey(Key_GUID('CoachingKey'), S.[Emp_Email])
 							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Emp_LanID)
-							  ,[EC].[fn_strSiteNameFromSiteLocation](S.[Emp_Site])
+							  ,[EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site, S.isSub)
 							  ,S.[Emp_Job_Code]
 							  ,S.[Emp_Job_Description]
 							  ,S.[Emp_Program]
@@ -173,6 +175,7 @@ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 							  ,S.[Legacy_Emp_ID]
 							  ,N'NA'
 							 ,EncryptByKey(Key_GUID('CoachingKey'), S.Emp_Pri_Name)
+							 , COALESCE(NULLIF(S.isSub,''), 'N')
 							 
 						  FROM [EC].[Employee_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy]H
 						  ON S.Emp_ID = H.Emp_ID
@@ -201,80 +204,6 @@ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 				 ,[SrMgrLvl2_ID]=	[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([H].[Emp_ID])	
 	             ,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
 	FROM [EC].[Employee_Hierarchy]H;
-
-	-- Maintain ELS ROle for Early Life Supervisors in ACL Table
-
-IF OBJECT_ID(N'tempdb..#ELSACL') IS NOT NULL
-BEGIN
-DROP TABLE #ELSACL
-END
- 
-CREATE TABLE #ELSACL
-(
- [Row_ID] int,
- [Role] nvarchar(30), 
- [End_Date]  nvarchar(10),
- [User_ID] nvarchar(10)
-)
-
-INSERT INTO #ELSACL
-SELECT [Row_ID]
-      ,[Role]
-      ,[End_Date]
-      ,EC.fn_nvcGetEmpIdFromLanId(CONVERT(nvarchar(30),DecryptByKey([User_LanID])), getdate())
-	   FROM [EC].[Historical_Dashboard_ACL]
-   WHERE Role = 'ELS';
-
- --SELECT * FROM #ELSACL
-
-declare @UpdateBy nvarchar(50) = 'EmployeeLoad';
-
-
--- Inactivate ELS Role when record not in feed file or Emp Job code not WACS40 or WACS50
-
-	UPDATE [EC].[Historical_Dashboard_ACL] 
-	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
-    ,[Updated_By]= EncryptByKey(Key_GUID('CoachingKey'), @UpdateBy)
-	 FROM #ELSACL elst INNER JOIN [EC].[Historical_Dashboard_ACL] acl  
-	 ON elst.Row_ID = acl.Row_ID INNER JOIN EC.Employee_Hierarchy eh
-	 ON elst.[User_ID] = eh.Emp_ID
-	 WHERE elst.End_Date = 99991231
-    AND (elst.[User_ID] NOT IN (Select Emp_ID from EC.ELS_Hierarchy_Stage) OR
-	 eh.Emp_Job_Code NOT IN ('WACS40', 'WACS50', 'WACS60') OR
-	 eh.Active IN ('T','D'));
-	
-
--- Reactivate ELS Role when record in file and Inactivated record exists
-
-	UPDATE [EC].[Historical_Dashboard_ACL] 
-	SET [END_DATE] = '99991231'
-    ,[Updated_By]= EncryptByKey(Key_GUID('CoachingKey'), @UpdateBy)
-	 FROM #ELSACL elst INNER JOIN [EC].[Historical_Dashboard_ACL] acl  
-	 ON elst.Row_ID = acl.Row_ID INNER JOIN EC.Employee_Hierarchy eh
-	 ON elst.[User_ID] = eh.Emp_ID
-	 WHERE elst.End_Date <> 99991231
-	 AND elst.[User_ID] IN (Select Emp_ID from EC.ELS_Hierarchy_Stage)
-	 AND eh.Emp_Job_Code IN ('WACS40', 'WACS50', 'WACS60')
-	 AND eh.Active NOT IN ('T','D');
-
-
--- Insert new records for ELS Role in ACL Table
-
-	  INSERT INTO EC.Historical_Dashboard_ACL 
-			(   [Role]
-               ,[End_Date]
-               ,[IsAdmin]
-			   ,[User_LanID]
-               ,[User_Name]
-			   ,[Updated_By])
-
-	  SELECT 'ELS', '99991231', N'N', EH.Emp_LanID, EH.Emp_Name,EncryptByKey(Key_GUID('CoachingKey'), @UpdateBy)
-				  		  FROM [EC].[ELS_Hierarchy_Stage] els INNER JOIN [EC].[Employee_Hierarchy] eh
-						  ON els.Emp_ID = eh.Emp_ID  LEFT OUTER JOIN #ELSACL elst 
-						  ON els.Emp_ID = elst.[User_ID]
-					      WHERE elst.[User_ID] IS NULL
-						  AND eh.Emp_Job_Code IN ('WACS40', 'WACS50', 'WACS60')
-						  AND eh.Active NOT IN ('T','D');
 
  -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];	 

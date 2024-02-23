@@ -1,4 +1,3 @@
-
 SET ANSI_NULLS ON
 GO
 
@@ -17,8 +16,9 @@ GO
 --  Modified to support Quality Now workflow enhancement . TFS 22187 - 09/22/2021
 --  Updated to support New Coaching Reason for Quality - 23051 - 09/29/2021
 -- Modified to add Coaching and Sub Coaching Reason filters. TFS 25387 - 09/26/2022
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
-CREATE OR ALTER   PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
+CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical] 
 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
@@ -91,6 +91,28 @@ BEGIN
 	SET @where = @where + @NewLineChar + ' AND [eh].[Active] IN (''T'',''D'')'
 END
 
+
+/*
+-1 All Sites
+-3 Sub Sites
+-4 Maximus Sites
+*/
+
+IF @intSiteIdin NOT IN (-1,-3,-4)
+BEGIN
+	SET @where = @where +  @NewLineChar + ' AND [cl].[SiteID] =   '''+CONVERT(NVARCHAR,@intSiteIdin)+'''';
+END
+
+IF @intSiteIdin = -3
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [eh].[isSub] =   ''Y''' ;
+END
+
+IF @intSiteIdin = -4
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [eh].[isSub] =   ''N''' ;
+END
+
 			 
 IF @intSourceIdin  <> -1
 BEGIN
@@ -138,10 +160,10 @@ BEGIN
 	SET @where = @where + @NewLineChar +  ' AND [cl].[SubmitterID] = ''' + @nvcSubmitterIdin  + '''' 
 END
 
-IF @intSiteIdin  <> -1
-BEGIN
-	SET @where = @where + @NewLineChar + ' AND [cl].[SiteID] = ''' + CONVERT(nvarchar, @intSiteIdin) + ''''
-END			 
+--IF @intSiteIdin  <> -1
+--BEGIN
+--	SET @where = @where + @NewLineChar + ' AND [cl].[SiteID] = ''' + CONVERT(nvarchar, @intSiteIdin) + ''''
+--END			 
 
 IF @nvcSearch   <> ' '
 BEGIN
@@ -243,7 +265,20 @@ BEGIN
 	SET @where = @where + @NewLineChar + ' AND [eh].[Active] IN (''T'',''D'')'
 END
 
+IF @intSiteIdin NOT IN (-1,-3,-4)
+BEGIN
+	SET @where = @where + @NewLineChar + 'AND [wl].[SiteID] = ''' + CONVERT(nvarchar,@intSiteIdin) + ''''
+END	
 
+IF @intSiteIdin = -3
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [eh].[isSub] =   ''Y''' ;
+END
+
+IF @intSiteIdin = -4
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [eh].[isSub] =   ''N''' ;
+END
 			 
 IF @intSourceIdin  <> -1
 BEGIN
@@ -265,7 +300,6 @@ IF @intSubCoachingReasonIdin    <> '-1'
 BEGIN
 	SET @where = @where + @NewLineChar + ' AND [wlr].[SubCoachingReasonId] = ''' + CONVERT(nvarchar,@intSubCoachingReasonIdin) + ''''
 END
-
 
 IF @nvcValue   <> '-1'
 BEGIN
@@ -291,11 +325,6 @@ IF @nvcSubmitterIdin  <> '-1'
 BEGIN
 	SET @where = @where + @NewLineChar + ' AND [wl].[SubmitterID] = ''' + @nvcSubmitterIdin  + '''' 
 END
-
-IF @intSiteIdin  <> -1
-BEGIN
-	SET @where = @where + @NewLineChar + 'AND [wl].[SiteID] = ''' + CONVERT(nvarchar,@intSiteIdin) + ''''
-END	
 
 IF @nvcSearch   <> ' '
 BEGIN

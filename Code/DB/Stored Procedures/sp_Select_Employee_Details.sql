@@ -1,15 +1,6 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Select_Employee_Details' 
-)
-   DROP PROCEDURE [EC].[sp_Select_Employee_Details]
-GO
-
-		
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -20,7 +11,8 @@ GO
 --  Initial Revision. Created during Submissions move to new architecture - TFS 7136 - 04/10/2018 
 --  Updated during My Dashboard move to new architecture - TFS 7137 - 05/16/2018 
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
---   Modified during changes to QN Workflow. TFS 22187 - 09/20/2021
+--  Modified during changes to QN Workflow. TFS 22187 - 09/20/2021
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Select_Employee_Details] 
 @nvcEmpLanin nvarchar(30)
@@ -53,22 +45,33 @@ SELECT EH.[Emp_ID]
 	            ,VEH.[Sup_Name]
 				,VEH.[Mgr_Name]
 				,EH.[Emp_Site] 
+				,COALESCE(DS.[SiteID], -1) Emp_SiteID
 				,EH.[Emp_Job_Code] 
+				,CASE WHEN VEH.[isSub] = ''Y'' THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END isSub 
 			    ,UR.[Role]
 				,RA.[NewSubmission]
 				,RA.[MyDashboard]
 				,RA.[HistoricalDashboard]
 				,[EC].[fn_strCheckIf_ExcelExport](EH.[Emp_ID],UR.[Role]) ExcelExport
 				,[EC].[fn_strCheckIf_ACLRole](EH.[Emp_ID], ''ECL'') ECLUser
+				,[EC].[fn_strCheckIf_ACLRole](EH.[Emp_ID], ''PM'') PMUser
+				,[EC].[fn_strCheckIf_ACLRole](EH.[Emp_ID], ''PMA'') PMAUser
+				,[EC].[fn_strCheckIf_ACLRole](EH.[Emp_ID], ''DIRPM'') DIRPMUser
+				,[EC].[fn_strCheckIf_ACLRole](EH.[Emp_ID], ''DIRPMA'') DIRPMAUser
+				,[EC].[fn_strCheckIf_ACLRole](EH.[Emp_ID], ''QAM'') QAMUser
 				,CASE WHEN EH.[Emp_Job_Code] LIKE ''WACS%'' THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END FollowupDisplay
 				,CASE WHEN EH.[Emp_Job_Code] LIKE ''WACS%'' THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END CSRRelated
  FROM [EC].[View_Employee_Hierarchy] VEH  WITH (NOLOCK)  JOIN  [EC].[Employee_Hierarchy]EH WITH (NOLOCK) 
- ON VEH.[Emp_ID]= EH.[Emp_ID] JOIN UserRole UR
+ ON VEH.[Emp_ID]= EH.[Emp_ID] LEFT JOIN EC.[Dim_Site] DS
+ ON DS.[City] = EH.[Emp_Site] JOIN  UserRole UR
  ON EH.[Emp_ID] = UR.[Emp_ID] JOIN [EC].[UI_Role_Page_Access] RA
  ON RA.RoleName = UR.Role
  WHERE EH.[Emp_ID] = '''+@nvcEmpID+ ''''
 
---Print @nvcSQL
+Print @nvcSQL
 
 EXEC (@nvcSQL)	
 END -- sp_Select_Employee_Details
+GO
+
+

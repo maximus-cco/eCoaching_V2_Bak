@@ -15,8 +15,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="Employee_Hierarchy"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="197"
-  DTS:VersionGUID="{60041A2B-1588-4D73-BA3D-3659F826443B}">
+  DTS:VersionBuild="200"
+  DTS:VersionGUID="{40E4DFF4-16B4-4E8A-B9D6-B85384592BA9}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -425,7 +425,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_ID"
-              DTS:DTSID="{9D3A3DB9-9EE0-49B2-A5E4-618B60E28BB5}"
+              DTS:DTSID="{A8902C5D-0DD8-4AF8-8FC8-03A567FC32A7}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -434,7 +434,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_LanID"
-              DTS:DTSID="{A48F3575-C466-4E13-9A4D-CACAEBA232E2}"
+              DTS:DTSID="{7CF0CF52-1F2E-49AB-B7CA-4DC41FB8194A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -443,7 +443,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_Name"
-              DTS:DTSID="{C886E715-9B7A-4751-BB26-9BDA429F3C69}"
+              DTS:DTSID="{AC58E246-BA08-42A7-AB82-ADEE75E942F4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -452,7 +452,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_Site"
-              DTS:DTSID="{7536629D-252D-4EB9-ADAC-A65F24C238C8}"
+              DTS:DTSID="{D528CBC4-D857-4971-A13E-4C763A31EFA8}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -461,7 +461,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_Email"
-              DTS:DTSID="{45782048-89B0-486C-BD6D-833724335406}"
+              DTS:DTSID="{58ABB211-ED29-4FAA-BBEE-0448D1F13227}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -470,7 +470,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_Job_Code"
-              DTS:DTSID="{421F4AB5-734E-4A99-BE6E-A49FF98D23A7}"
+              DTS:DTSID="{E6DA81E6-B74E-4C31-AB02-363BAAAD4ECA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -479,7 +479,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Emp_Job_Description"
-              DTS:DTSID="{E9FB265B-482F-4F18-B87D-D54F109BB9E8}"
+              DTS:DTSID="{1CC44C40-8B65-4540-A528-36AA9EFD0176}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -488,16 +488,25 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Legacy_Emp_ID"
-              DTS:DTSID="{92639CE5-E54E-46A2-A039-47BFA410AC46}"
+              DTS:DTSID="{41F3A139-807D-430E-9091-C2AECCA8A323}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
-              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:ColumnDelimiter="_x002C_"
               DTS:MaximumWidth="50"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Hire_Date"
-              DTS:DTSID="{819998C7-0300-4A95-8F9B-3B970F540F82}"
+              DTS:DTSID="{797207E6-328F-4CC6-9185-49AAE41BBC0E}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="1"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="SubCon"
+              DTS:DTSID="{FA835256-209A-42A7-884D-B963D9A25902}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -534,7 +543,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Decrypt_Out\PS_Employee_Information_10122022.csv">
+          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Decrypt_Out\PS_Employee_Information_02022024.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -543,7 +552,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="lanid"
-              DTS:DTSID="{57A5E2C5-0544-438F-9E22-9970767C7207}"
+              DTS:DTSID="{824DA19A-AF39-48E8-AB11-0FF11736A746}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -552,7 +561,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="emplid"
-              DTS:DTSID="{42ADA492-71FF-44DC-A99B-F97641A6C5EA}"
+              DTS:DTSID="{D57A7386-95ED-4E22-B5DC-70B5646F1B98}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -561,7 +570,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="first_name"
-              DTS:DTSID="{736ED94A-AD36-4F98-94BE-C8352169BDE0}"
+              DTS:DTSID="{6B8DF960-2EA1-4207-AF0A-CA42BFF18B38}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -570,7 +579,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="middle_name"
-              DTS:DTSID="{B8FFA27E-00C0-43B0-857A-0AA8204D772C}"
+              DTS:DTSID="{FCA40DF7-F402-45CD-AF15-319906A3FAF6}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -579,7 +588,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="last_name"
-              DTS:DTSID="{A04D829E-9CB3-4E06-A360-C6EFF5CCF7E3}"
+              DTS:DTSID="{BBA20022-8E8B-4D8E-AAE1-E502FF4FEB7F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -588,7 +597,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="locationid"
-              DTS:DTSID="{3D37CDC7-63FD-48EA-96D9-82F14A480671}"
+              DTS:DTSID="{A3B3A53D-25DB-4D10-B937-4AF32E305F8D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -597,7 +606,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="location"
-              DTS:DTSID="{71AECB80-2E5E-45B6-9BEB-79093E90F5DE}"
+              DTS:DTSID="{692C586E-6786-4708-9590-ECF3056C4B15}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -606,7 +615,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="supervisorid"
-              DTS:DTSID="{E7E879DC-8E0A-4D88-9320-AF77E904BD90}"
+              DTS:DTSID="{C6F84EB5-3A95-401C-9E4F-9398B17EDDA1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -615,7 +624,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="managerid"
-              DTS:DTSID="{074B9885-CD94-486C-9655-4B74674A28B2}"
+              DTS:DTSID="{DD90274D-D0AA-49AF-9D54-125CC7550B42}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -624,7 +633,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="jobcodeid"
-              DTS:DTSID="{22EB3B4D-05E1-4D68-B636-5AB84E57AF05}"
+              DTS:DTSID="{E56FA0C3-2127-4AF4-9DFC-D450C9A93614}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -633,7 +642,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="jobcode"
-              DTS:DTSID="{1F0FF84C-D7D9-487C-AFAB-B0012D6D3763}"
+              DTS:DTSID="{F9F20FCD-8E08-4A56-9E17-682DCE967E39}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -642,7 +651,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="email_addr"
-              DTS:DTSID="{657B46CA-8361-44FE-A297-99C2F9D1D4CD}"
+              DTS:DTSID="{90272DED-10B0-40E7-B0B7-7671323A33CE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -651,7 +660,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="empl_status"
-              DTS:DTSID="{60603C0B-3633-4028-9B27-51664D54CCAF}"
+              DTS:DTSID="{E48C7C23-6966-4391-860C-58BBBA8051D1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -660,7 +669,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="last_hire_dt"
-              DTS:DTSID="{FDD5253A-6DFE-4A63-8388-02EB669C3C00}"
+              DTS:DTSID="{82EBF4F2-2A92-4A3A-899D-A570C404D10A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -669,7 +678,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="hire_dt"
-              DTS:DTSID="{05EC20EC-DDE6-48E1-8DFA-D81AFEEABBB5}"
+              DTS:DTSID="{F8DA640D-4C9B-4F57-8EE0-60CF685423BF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -678,7 +687,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="deptid"
-              DTS:DTSID="{FF715FB3-2EBE-4C96-A916-A96AFED392C6}"
+              DTS:DTSID="{A4A81352-F30F-46C3-9734-BF75A215BB4E}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -687,7 +696,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="dept_desc"
-              DTS:DTSID="{CBB5D345-C42F-43B0-9315-10BA1333AB51}"
+              DTS:DTSID="{A99EB8C2-C229-42AC-BF3A-12284F783E29}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -696,7 +705,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="reg_temp"
-              DTS:DTSID="{DF775D86-92D7-4D99-B704-68FC69CEA91B}"
+              DTS:DTSID="{4BB47F5D-B8D3-4C27-BBDF-3CB08C193093}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -705,7 +714,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="full_part_time"
-              DTS:DTSID="{C89E09A8-4003-4408-B4C7-C1676B7AB9D9}"
+              DTS:DTSID="{32F49F7D-7DD4-4EFA-B6FF-BC47D776E305}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -714,7 +723,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="pref_name_first"
-              DTS:DTSID="{BE5CBE63-E10E-4437-95A8-D72B4718DD66}"
+              DTS:DTSID="{DF8C7A56-485B-4B6A-ACD2-A8FF8D454BDB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -723,7 +732,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="pref_name_mi"
-              DTS:DTSID="{C231F19B-560A-4500-A4C8-2F280271A056}"
+              DTS:DTSID="{B9A20D99-B7DD-4052-ABCA-ED032ECEED7D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -732,7 +741,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="pref_name_last"
-              DTS:DTSID="{F596E1B3-3BF6-4FD2-8E3B-BD89570EB115}"
+              DTS:DTSID="{4697387C-E238-43D4-A206-1CEE1D18C097}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -741,7 +750,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="termination_dt"
-              DTS:DTSID="{EBBA5391-4369-40DB-9629-073BA4EB4F47}"
+              DTS:DTSID="{4D8E29D1-94FD-4DF0-A148-B48EE78C7F03}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -750,16 +759,25 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="flsa_status"
-              DTS:DTSID="{ABEF14DD-9415-4EE9-9877-377B35992285}"
+              DTS:DTSID="{1CECF195-2281-4D18-BB67-955F8775439D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
-              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:ColumnDelimiter="_x002C_"
               DTS:MaximumWidth="50"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="legacy_emplid"
-              DTS:DTSID="{EFFD177B-0671-45A5-A5B9-84B3B04776EB}"
+              DTS:DTSID="{4FF801AF-9395-465F-A4FC-458E6D0D4513}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="1"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="subcon"
+              DTS:DTSID="{44029441-91ED-4F17-9521-634D650B4BB5}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -776,7 +794,7 @@ Right("0" + (DT_STR,4,1252) DatePart("m",getdate()),2) +
 Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart("yyyy",getdate())+".csv.zip.encrypt"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Encrypt_Out\PS_Employee_Information_10122022.csv.zip.encrypt" />
+          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Encrypt_Out\PS_Employee_Information_02022024.csv.zip.encrypt" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -873,7 +891,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart(
       DTS:Namespace="User"
       DTS:ObjectName="PSFile">
       <DTS:VariableValue
-        DTS:DataType="8">PS_Employee_Information_10122022.csv</DTS:VariableValue>
+        DTS:DataType="8">PS_Employee_Information_02022024.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -893,7 +911,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart(
       DTS:Namespace="User"
       DTS:ObjectName="PSFileName">
       <DTS:VariableValue
-        DTS:DataType="8">\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Decrypt_Out\PS_Employee_Information_10122022.csv</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Decrypt_Out\PS_Employee_Information_02022024.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -968,6 +986,23 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart(
             <SQLTask:SqlTaskData
               SQLTask:Connection="{8C9D8E50-CA64-4626-BDE7-AFEB8B227F24}"
               SQLTask:SqlStatementSource="Exec [EC].[sp_InactivateExpiredWarningLogs] " xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Process Employee Information\Populate ACL Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Populate ACL Table"
+          DTS:DTSID="{F3C9DA2C-1583-4105-9274-09D7020BCE1C}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Populate ACL Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{8C9D8E50-CA64-4626-BDE7-AFEB8B227F24}"
+              SQLTask:SqlStatementSource="Exec [EC].[sp_Populate_Historical_Dashboard_ACL] " xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
@@ -1090,11 +1125,11 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart(
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Process Employee Information.PrecedenceConstraints[Constraint 1]"
           DTS:CreationName=""
-          DTS:DTSID="{1F54039C-4C02-4019-81C5-7EB0C25529DB}"
+          DTS:DTSID="{68FC6A29-5495-4E14-9B9E-C363A27C8143}"
           DTS:From="Package\Process Employee Information\Populate Employee_Hierarchy Table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 1"
-          DTS:To="Package\Process Employee Information\Inactivate Coaching Logs for Terms" />
+          DTS:To="Package\Process Employee Information\Populate ACL Table" />
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Process Employee Information.PrecedenceConstraints[Constraint 2]"
           DTS:CreationName=""
@@ -1135,6 +1170,14 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart(
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 6"
           DTS:To="Package\Process Employee Information\Populate Admin Tool user table" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Process Employee Information.PrecedenceConstraints[Constraint 7]"
+          DTS:CreationName=""
+          DTS:DTSID="{C9055ED5-BD06-46A6-A870-3E6D60F63466}"
+          DTS:From="Package\Process Employee Information\Populate ACL Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 7"
+          DTS:To="Package\Process Employee Information\Inactivate Coaching Logs for Terms" />
       </DTS:PrecedenceConstraints>
     </DTS:Executable>
     <DTS:Executable
@@ -3397,15 +3440,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
-              <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -3524,6 +3558,35 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
+              <ProjectItem
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
+    "ings")]
+
+namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -3661,38 +3724,6 @@ namespace ST_d8a60736bf3c46679d4d2384db4c65d2
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
-    "ings")]
-
-namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
-              <ProjectItem
-                Name="ST_00892ed7eae74ad0a3cca7ebf8dabf49.csproj"
-                Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?><Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><PropertyGroup><ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration><Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform><ProductVersion>8.0.30703</ProductVersion><SchemaVersion>2.0</SchemaVersion><ProjectGuid>{42d15935-cdc8-467e-a8e0-f312bc0049c2}</ProjectGuid><OutputType>Library</OutputType><AppDesignerFolder>Properties</AppDesignerFolder><RootNamespace>ST_d8a60736bf3c46679d4d2384db4c65d2</RootNamespace><AssemblyName>ST_00892ed7eae74ad0a3cca7ebf8dabf49</AssemblyName><TargetFrameworkVersion>v4.7</TargetFrameworkVersion><FileAlignment>512</FileAlignment><ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch><TargetFrameworkProfile></TargetFrameworkProfile></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Debug' "><DebugSymbols>true</DebugSymbols><DebugType>full</DebugType><Optimize>false</Optimize><OutputPath>.\bin\Debug\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>DEBUG;TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Release' "><DebugSymbols>false</DebugSymbols><Optimize>true</Optimize><OutputPath>.\bin\Release\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><ItemGroup><Reference Include="System" /><Reference Include="System.Data" /><Reference Include="System.Windows.Forms" /><Reference Include="System.Xml" /><Reference Include="Microsoft.SqlServer.ManagedDTS, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" /><Reference Include="Microsoft.SqlServer.ScriptTask, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" /></ItemGroup><ItemGroup><AppDesigner Include="Properties\" /><Compile Include="Properties\AssemblyInfo.cs"><SubType>Code</SubType></Compile><EmbeddedResource Include="Properties\Resources.resx"><Generator>ResXFileCodeGenerator</Generator><LastGenOutput>Resources.Designer.cs</LastGenOutput></EmbeddedResource><Compile Include="Properties\Resources.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Resources.resx</DependentUpon></Compile><None Include="Properties\Settings.settings"><Generator>SettingsSingleFileGenerator</Generator><LastGenOutput>Settings.Designer.cs</LastGenOutput></None><Compile Include="Properties\Settings.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Settings.settings</DependentUpon></Compile><Compile Include="ScriptMain.cs"><SubType>Code</SubType></Compile></ItemGroup><!-- Include the build rules for a C# project.--><Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" /><ProjectExtensions><VisualStudio><FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}"><ProjectProperties HostName="ScriptTask" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" DebugInfoCommandLine="" DebugInfoWorkingDir="" IconImageList="" /><Host Name="ScriptTask" GeneratedNamespace="$safeprojectname" IconIndex=""></Host><ProjectClient><HostIdentifier>SSIS_ST150</HostIdentifier></ProjectClient></FlavorProperties></VisualStudio></ProjectExtensions></Project>]]></ProjectItem>
-              <ProjectItem
                 Name="Properties\AssemblyInfo.cs"
                 Encoding="UTF8"><![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -3722,6 +3753,18 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+              <ProjectItem
+                Name="ST_00892ed7eae74ad0a3cca7ebf8dabf49.csproj"
+                Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?><Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><PropertyGroup><ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration><Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform><ProductVersion>8.0.30703</ProductVersion><SchemaVersion>2.0</SchemaVersion><ProjectGuid>{42d15935-cdc8-467e-a8e0-f312bc0049c2}</ProjectGuid><OutputType>Library</OutputType><AppDesignerFolder>Properties</AppDesignerFolder><RootNamespace>ST_d8a60736bf3c46679d4d2384db4c65d2</RootNamespace><AssemblyName>ST_00892ed7eae74ad0a3cca7ebf8dabf49</AssemblyName><TargetFrameworkVersion>v4.7</TargetFrameworkVersion><FileAlignment>512</FileAlignment><ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch><TargetFrameworkProfile></TargetFrameworkProfile></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Debug' "><DebugSymbols>true</DebugSymbols><DebugType>full</DebugType><Optimize>false</Optimize><OutputPath>.\bin\Debug\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>DEBUG;TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Release' "><DebugSymbols>false</DebugSymbols><Optimize>true</Optimize><OutputPath>.\bin\Release\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><ItemGroup><Reference Include="System" /><Reference Include="System.Data" /><Reference Include="System.Windows.Forms" /><Reference Include="System.Xml" /><Reference Include="Microsoft.SqlServer.ManagedDTS, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" /><Reference Include="Microsoft.SqlServer.ScriptTask, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" /></ItemGroup><ItemGroup><AppDesigner Include="Properties\" /><Compile Include="Properties\AssemblyInfo.cs"><SubType>Code</SubType></Compile><EmbeddedResource Include="Properties\Resources.resx"><Generator>ResXFileCodeGenerator</Generator><LastGenOutput>Resources.Designer.cs</LastGenOutput></EmbeddedResource><Compile Include="Properties\Resources.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Resources.resx</DependentUpon></Compile><None Include="Properties\Settings.settings"><Generator>SettingsSingleFileGenerator</Generator><LastGenOutput>Settings.Designer.cs</LastGenOutput></None><Compile Include="Properties\Settings.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Settings.settings</DependentUpon></Compile><Compile Include="ScriptMain.cs"><SubType>Code</SubType></Compile></ItemGroup><!-- Include the build rules for a C# project.--><Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" /><ProjectExtensions><VisualStudio><FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}"><ProjectProperties HostName="ScriptTask" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" DebugInfoCommandLine="" DebugInfoWorkingDir="" IconImageList="" /><Host Name="ScriptTask" GeneratedNamespace="$safeprojectname" IconIndex=""></Host><ProjectClient><HostIdentifier>SSIS_ST150</HostIdentifier></ProjectClient></FlavorProperties></VisualStudio></ProjectExtensions></Project>]]></ProjectItem>
+              <ProjectItem
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -4162,6 +4205,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           cachedLength="50"
                           cachedName="Legacy_Emp_ID"
                           lineageId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Legacy_Emp_ID]" />
+                        <inputColumn
+                          refId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Data Conversion.Inputs[Data Conversion Input].Columns[SubCon]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="1"
+                          cachedName="SubCon"
+                          lineageId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[SubCon]" />
                       </inputColumns>
                       <externalMetadataColumns />
                     </input>
@@ -4355,6 +4405,27 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
                               name="SourceInputColumnLineageID">#{Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[Legacy_Emp_ID]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of SubCon]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="1"
+                          lineageId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of SubCon]"
+                          name="Copy of SubCon"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[SubCon]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -4691,6 +4762,28 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                               name="UseBinaryFormat">false</property>
                           </properties>
                         </outputColumn>
+                        <outputColumn
+                          refId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[SubCon]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[SubCon]"
+                          length="1"
+                          lineageId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].Columns[SubCon]"
+                          name="SubCon"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
                       </outputColumns>
                       <externalMetadataColumns
                         isUsed="True">
@@ -4748,6 +4841,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="str"
                           length="50"
                           name="Legacy_Emp_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[SubCon]"
+                          codePage="1252"
+                          dataType="str"
+                          length="1"
+                          name="SubCon" />
                       </externalMetadataColumns>
                     </output>
                     <output
@@ -4920,6 +5019,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           cachedName="Copy of Legacy_Emp_ID"
                           externalMetadataColumnId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].ExternalColumns[Legacy_Emp_ID]"
                           lineageId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Legacy_Emp_ID]" />
+                        <inputColumn
+                          refId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].Columns[Copy of SubCon]"
+                          cachedDataType="wstr"
+                          cachedLength="1"
+                          cachedName="Copy of SubCon"
+                          externalMetadataColumnId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].ExternalColumns[isSub]"
+                          lineageId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of SubCon]" />
                       </inputColumns>
                       <externalMetadataColumns
                         isUsed="True">
@@ -5041,6 +5147,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           length="10"
                           name="Legacy_Emp_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Stage HR Employee Info\Load HR Hierarchy Stage\HR Hierarchy Stage.Inputs[OLE DB Destination Input].ExternalColumns[isSub]"
+                          dataType="wstr"
+                          length="1"
+                          name="isSub" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -5158,6 +5269,36 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMajorVersion="15"
               VSTAMinorVersion="0"
               Language="CSharp">
+              <ProjectItem
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -5277,35 +5418,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
-    "ings")]
-
-namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
               <ProjectItem
                 Name="ST_de117d53b4ee4392a4a316adf04ecec9.csproj"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -5529,35 +5641,34 @@ namespace ST_d8a60736bf3c46679d4d2384db4c65d2
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
 
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
+    "ings")]
 
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Settings.settings"
                 Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
@@ -6103,6 +6214,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           cachedLength="50"
                           cachedName="legacy_emplid"
                           lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[legacy_emplid]" />
+                        <inputColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[subcon]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="1"
+                          cachedName="subcon"
+                          lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[subcon]" />
                       </inputColumns>
                       <externalMetadataColumns />
                     </input>
@@ -6630,6 +6748,27 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
                               name="SourceInputColumnLineageID">#{Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[legacy_emplid]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of subcon]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="1"
+                          lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of subcon]"
+                          name="Copy of subcon"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[subcon]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -7402,6 +7541,28 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                               name="UseBinaryFormat">false</property>
                           </properties>
                         </outputColumn>
+                        <outputColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[subcon]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[subcon]"
+                          length="1"
+                          lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[subcon]"
+                          name="subcon"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
                       </outputColumns>
                       <externalMetadataColumns
                         isUsed="True">
@@ -7555,6 +7716,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="str"
                           length="50"
                           name="legacy_emplid" />
+                        <externalMetadataColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[subcon]"
+                          codePage="1252"
+                          dataType="str"
+                          length="1"
+                          name="subcon" />
                       </externalMetadataColumns>
                     </output>
                     <output
@@ -7802,6 +7969,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           cachedName="Copy of legacy_emplid"
                           externalMetadataColumnId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Legacy_Emp_ID]"
                           lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of legacy_emplid]" />
+                        <inputColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of subcon]"
+                          cachedDataType="wstr"
+                          cachedLength="1"
+                          cachedName="Copy of subcon"
+                          externalMetadataColumnId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[isSub]"
+                          lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of subcon]" />
                       </inputColumns>
                       <externalMetadataColumns
                         isUsed="True">
@@ -7957,6 +8131,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           length="10"
                           name="Legacy_Emp_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[isSub]"
+                          dataType="wstr"
+                          length="1"
+                          name="isSub" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -8056,6 +8235,36 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMajorVersion="15"
               VSTAMinorVersion="0"
               Language="CSharp">
+              <ProjectItem
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -8175,35 +8384,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
-    "ings")]
-
-namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -8427,35 +8607,34 @@ namespace ST_d8a60736bf3c46679d4d2384db4c65d2
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
 
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
+    "ings")]
 
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Settings.settings"
                 Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
@@ -8691,6 +8870,36 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               ReadOnlyVariables="User::PSFileName"
               ReadWriteVariables="User::PSFileExists">
               <ProjectItem
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+              <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -8809,35 +9018,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Settings.get_Default():ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Sett" +
-    "ings")]
-
-namespace ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -8979,35 +9159,34 @@ namespace ST_3ab731b42c8f41cba6c9c5c98a48e559
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
 
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Settings.get_Default():ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Sett" +
+    "ings")]
 
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+namespace ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="ST_3ab731b42c8f41cba6c9c5c98a48e559.csproj"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -9466,95 +9645,61 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         <NodeLayout
           Size="160.8,47.2"
           Id="Package\Process Employee Information\Inactivate Coaching Logs for Terms"
-          TopLeft="29.5097168457532,157.413099364963" />
+          TopLeft="23.3558704661853,226.606646687735" />
         <NodeLayout
           Size="136,41.6"
           Id="Package\Process Employee Information\Inactivate Expired Warnings"
-          TopLeft="37.4827652077427,395.841065474217" />
+          TopLeft="25.1750724486067,451.195903332435" />
         <NodeLayout
           Size="164.8,44"
           Id="Package\Process Employee Information\Populate Admin Tool user table"
-          TopLeft="24.1490686609418,463.402441268103" />
+          TopLeft="16.841376085205,517.499214629543" />
         <NodeLayout
           Size="249.6,41.6"
           Id="Package\Process Employee Information\Populate Employee_Hierarchy Table"
-          TopLeft="28.9275056884155,77.449946565248" />
+          TopLeft="16.6198129292795,66.1273660942489" />
         <NodeLayout
           Size="194.4,41.6"
           Id="Package\Process Employee Information\Truncate Staging Tables"
-          TopLeft="13.9428615219738,546.023532637758" />
+          TopLeft="12.0197845283587,594.668693179828" />
         <NodeLayout
           Size="184,41.6"
           Id="Package\Process Employee Information\Update CSR Hierarchy"
-          TopLeft="16.5717137125944,243.715870868073" />
+          TopLeft="16.5717137125944,302.844902216624" />
         <NodeLayout
           Size="200,41.6"
           Id="Package\Process Employee Information\Update Emp ID to Lan ID"
-          TopLeft="23.04070587867,324.947390113849" />
+          TopLeft="16.117628701656,376.108679649475" />
         <NodeLayout
           Size="278.4,41.6"
           Id="Package\Process Employee Information\Update Employee Hierarchy Staging Table"
           TopLeft="5.5,5.5" />
         <EdgeLayout
           Id="Package\Process Employee Information.PrecedenceConstraints[Constraint]"
-          TopLeft="144.7,47.1">
+          TopLeft="283.9,26.3">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="9.02750568841552,30.349946565248"
+              EndConnector="-17.6801870707204,60.6273660942489"
               Start="0,0"
-              End="9.02750568841552,22.849946565248">
+              End="-10.1801870707204,60.6273660942489">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,11.174973282624" />
+                    End="18.5,0" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,11.174973282624"
-                    Point2="0,15.174973282624"
-                    Point3="4,15.174973282624" />
+                    Point1="18.5,0"
+                    Point2="22.5,0"
+                    Point3="22.5,4" />
                   <mssgle:LineSegment
-                    End="5.02750568841552,15.174973282624" />
+                    End="22.5,56.6273660942489" />
                   <mssgle:CubicBezierSegment
-                    Point1="5.02750568841552,15.174973282624"
-                    Point2="9.02750568841552,15.174973282624"
-                    Point3="9.02750568841552,19.174973282624" />
+                    Point1="22.5,56.6273660942489"
+                    Point2="22.5,60.6273660942489"
+                    Point3="18.5,60.6273660942489" />
                   <mssgle:LineSegment
-                    End="9.02750568841552,22.849946565248" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 1]"
-          TopLeft="153.727505688416,119.049946565248">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="-43.8177888426623,38.363152799715"
-              Start="0,0"
-              End="-43.8177888426623,30.863152799715">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,15.1815763998575" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,15.1815763998575"
-                    Point2="0,19.1815763998575"
-                    Point3="-4,19.1815763998575" />
-                  <mssgle:LineSegment
-                    End="-39.8177888426623,19.1815763998575" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-39.8177888426623,19.1815763998575"
-                    Point2="-43.8177888426623,19.1815763998575"
-                    Point3="-43.8177888426623,23.1815763998575" />
-                  <mssgle:LineSegment
-                    End="-43.8177888426623,30.863152799715" />
+                    End="-10.1801870707204,60.6273660942489" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -9565,18 +9710,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 2]"
-          TopLeft="109.240715279174,204.613099364963">
+          TopLeft="106.16379208939,273.806646687735">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,39.1027715031097"
+              EndConnector="0,29.0382555288885"
               Start="0,0"
-              End="0,31.6027715031097">
+              End="0,21.5382555288885">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,31.6027715031097" />
+                    End="0,21.5382555288885" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -9587,30 +9732,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 3]"
-          TopLeft="108.571713712594,285.315870868073">
+          TopLeft="112.344671207125,344.444902216624">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="14.4689921660756,39.6315192457756"
+              EndConnector="0,31.6637774328508"
               Start="0,0"
-              End="14.4689921660756,32.1315192457756">
+              End="0,24.1637774328508">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,15.8157596228878" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,15.8157596228878"
-                    Point2="0,19.8157596228878"
-                    Point3="4,19.8157596228878" />
-                  <mssgle:LineSegment
-                    End="10.4689921660756,19.8157596228878" />
-                  <mssgle:CubicBezierSegment
-                    Point1="10.4689921660756,19.8157596228878"
-                    Point2="14.4689921660756,19.8157596228878"
-                    Point3="14.4689921660756,23.8157596228878" />
-                  <mssgle:LineSegment
-                    End="14.4689921660756,32.1315192457756" />
+                    End="0,24.1637774328508" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -9621,18 +9754,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 4]"
-          TopLeft="108.845965091458,507.402441268103">
+          TopLeft="99.241376085205,561.499214629543">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,38.6210913696553"
+              EndConnector="9.97840844315378,33.169478550285"
               Start="0,0"
-              End="0,31.1210913696553">
+              End="9.97840844315378,25.669478550285">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,31.1210913696553" />
+                    End="0,12.5847392751425" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,12.5847392751425"
+                    Point2="0,16.5847392751425"
+                    Point3="4,16.5847392751425" />
+                  <mssgle:LineSegment
+                    End="5.97840844315378,16.5847392751425" />
+                  <mssgle:CubicBezierSegment
+                    Point1="5.97840844315378,16.5847392751425"
+                    Point2="9.97840844315378,16.5847392751425"
+                    Point3="9.97840844315378,20.5847392751425" />
+                  <mssgle:LineSegment
+                    End="9.97840844315378,25.669478550285" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -9643,30 +9788,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 5]"
-          TopLeft="123.04070587867,366.547390113849">
+          TopLeft="116.117628701656,417.708679649475">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-17.5579406709273,29.2936753603682"
+              EndConnector="-22.9425562530494,33.4872236829602"
               Start="0,0"
-              End="-17.5579406709273,21.7936753603682">
+              End="-22.9425562530494,25.9872236829602">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,10.6468376801841" />
+                    End="0,12.7436118414801" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,10.6468376801841"
-                    Point2="0,14.6468376801841"
-                    Point3="-4,14.6468376801841" />
+                    Point1="0,12.7436118414801"
+                    Point2="0,16.7436118414801"
+                    Point3="-4,16.7436118414801" />
                   <mssgle:LineSegment
-                    End="-13.5579406709273,14.6468376801841" />
+                    End="-18.9425562530494,16.7436118414801" />
                   <mssgle:CubicBezierSegment
-                    Point1="-13.5579406709273,14.6468376801841"
-                    Point2="-17.5579406709273,14.6468376801841"
-                    Point3="-17.5579406709273,18.6468376801841" />
+                    Point1="-18.9425562530494,16.7436118414801"
+                    Point2="-22.9425562530494,16.7436118414801"
+                    Point3="-22.9425562530494,20.7436118414801" />
                   <mssgle:LineSegment
-                    End="-17.5579406709273,21.7936753603682" />
+                    End="-22.9425562530494,25.9872236829602" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -9677,18 +9822,78 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 6]"
-          TopLeft="106.015916934342,437.441065474217">
+          TopLeft="96.2082242669058,492.795903332435">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,25.9613757938857"
+              EndConnector="0,24.7033112971084"
               Start="0,0"
-              End="0,18.4613757938857">
+              End="0,17.2033112971084">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,18.4613757938857" />
+                    End="0,17.2033112971084" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="168,41.6"
+          Id="Package\Process Employee Information\Populate ACL Table"
+          TopLeft="18.446170676531,141.677418529181" />
+        <EdgeLayout
+          Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 1]"
+          TopLeft="141.41981292928,107.727366094249">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-38.9736422527486,33.9500524349322"
+              Start="0,0"
+              End="-38.9736422527486,26.4500524349322">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,12.9750262174661" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,12.9750262174661"
+                    Point2="0,16.9750262174661"
+                    Point3="-4,16.9750262174661" />
+                  <mssgle:LineSegment
+                    End="-34.9736422527486,16.9750262174661" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-34.9736422527486,16.9750262174661"
+                    Point2="-38.9736422527486,16.9750262174661"
+                    Point3="-38.9736422527486,20.9750262174661" />
+                  <mssgle:LineSegment
+                    End="-38.9736422527486,26.4500524349322" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 7]"
+          TopLeft="103.101020571358,183.277418529181">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,43.3292281585544"
+              Start="0,0"
+              End="0,35.8292281585544">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,35.8292281585544" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -9701,7 +9906,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
           HeaderHeight="43"
           IsExpanded="True"
           PanelSize="404,712"
-          Size="404,755.2"
+          Size="404,755.6"
           Id="Package\Process Employee Information"
           TopLeft="1641.17143990474,52.984438978629" />
         <NodeLayout
@@ -10382,7 +10587,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
           Id="Package\Stage PeopleSoft Employee Info\Delete Decrypted PS File"
           TopLeft="25.8285767321685,423.529415067917" />
         <NodeLayout
-          Size="129.6,41.6"
+          Size="272,41.6"
           Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table"
           TopLeft="31.2614555548005,285.552945809546" />
         <NodeLayout
@@ -10455,18 +10660,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Stage PeopleSoft Employee Info.PrecedenceConstraints[Constraint 2]"
-          TopLeft="99.9450134868203,263.020091621557">
+          TopLeft="103.82857141884,263.020091621557">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,22.532854187989"
+              EndConnector="63.4328841359604,22.532854187989"
               Start="0,0"
-              End="0,15.032854187989">
+              End="63.4328841359604,15.032854187989">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,15.032854187989" />
+                    End="0,7.26642709399448" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,7.26642709399448"
+                    Point2="0,11.2664270939945"
+                    Point3="4,11.2664270939945" />
+                  <mssgle:LineSegment
+                    End="59.4328841359604,11.2664270939945" />
+                  <mssgle:CubicBezierSegment
+                    Point1="59.4328841359604,11.2664270939945"
+                    Point2="63.4328841359604,11.2664270939945"
+                    Point3="63.4328841359604,15.2664270939945" />
+                  <mssgle:LineSegment
+                    End="63.4328841359604,15.032854187989" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -10583,30 +10800,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Stage PeopleSoft Employee Info.PrecedenceConstraints[Constraint 6]"
-          TopLeft="96.0614555548005,327.152945809546">
+          TopLeft="167.261455554801,327.152945809546">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="32.7956926643277,27.3411740939921"
+              EndConnector="-38.4043073356723,27.341174093992"
               Start="0,0"
-              End="32.7956926643277,19.8411740939921">
+              End="-38.4043073356723,19.841174093992">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,9.67058704699605" />
+                    End="0,9.67058704699599" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,9.67058704699605"
+                    Point1="0,9.67058704699599"
                     Point2="0,13.670587046996"
-                    Point3="4,13.670587046996" />
+                    Point3="-4,13.670587046996" />
                   <mssgle:LineSegment
-                    End="28.7956926643277,13.670587046996" />
+                    End="-34.4043073356723,13.670587046996" />
                   <mssgle:CubicBezierSegment
-                    Point1="28.7956926643277,13.670587046996"
-                    Point2="32.7956926643277,13.670587046996"
-                    Point3="32.7956926643277,17.670587046996" />
+                    Point1="-34.4043073356723,13.670587046996"
+                    Point2="-38.4043073356723,13.670587046996"
+                    Point3="-38.4043073356723,17.670587046996" />
                   <mssgle:LineSegment
-                    End="32.7956926643277,19.8411740939921" />
+                    End="-38.4043073356723,19.841174093992" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -10756,26 +10973,26 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="139.41758435523,133.087665017297"
+              EndConnector="139.41758435523,133.287665017297"
               Start="0,0"
-              End="131.91758435523,133.087665017297">
+              End="131.91758435523,133.287665017297">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="65.7087921776149,0" />
+                    End="65.7087921776151,0" />
                   <mssgle:CubicBezierSegment
-                    Point1="65.7087921776149,0"
-                    Point2="69.7087921776149,0"
-                    Point3="69.7087921776149,4" />
+                    Point1="65.7087921776151,0"
+                    Point2="69.7087921776151,0"
+                    Point3="69.7087921776151,4" />
                   <mssgle:LineSegment
-                    End="69.7087921776149,129.087665017297" />
+                    End="69.7087921776151,129.287665017297" />
                   <mssgle:CubicBezierSegment
-                    Point1="69.7087921776149,129.087665017297"
-                    Point2="69.7087921776149,133.087665017297"
-                    Point3="73.7087921776149,133.087665017297" />
+                    Point1="69.7087921776151,129.287665017297"
+                    Point2="69.7087921776151,133.287665017297"
+                    Point3="73.7087921776151,133.287665017297" />
                   <mssgle:LineSegment
-                    End="131.91758435523,133.087665017297" />
+                    End="131.91758435523,133.287665017297" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

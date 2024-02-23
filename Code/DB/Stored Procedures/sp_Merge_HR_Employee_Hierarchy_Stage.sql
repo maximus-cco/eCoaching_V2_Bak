@@ -1,30 +1,9 @@
-/*
-sp_Merge_HR_Employee_Hierarchy_Stage(04).sql
-Last Modified Date: 05/22/2019
-Last Modified By: Susmitha Palacherla
-
-Version 04: pdated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
-Version 03: Updated to populate 'Exempt' in FLSA status - TFS 8974  - 11/15/2017
-Version 02:  Updated to populate Emp ID With Prefix and Hire date - TFS 8228 - 09/21/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Merge_HR_Employee_Hierarchy_Stage' 
-)
-   DROP PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage]
-GO
 
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -38,43 +17,42 @@ GO
 -- Updated to populate Emp ID With Prefix and Hire date - TFS 8228 - 09/21/2017
 -- Updated to populate 'Exempt' in FLSA status - TFS 8974  - 11/10/2017
 -- Modified to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 -- =============================================
-CREATE PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Merge_HR_Employee_Hierarchy_Stage] 
 AS
 BEGIN
 
 
 -- Updates Existing Records
-BEGIN
+
 	UPDATE [EC].[Employee_Hierarchy_Stage]
 	   SET [Emp_Job_Code] = S.[Emp_Job_Code]
 		  ,[Emp_Job_Description] = S.[Emp_Job_Description]
-		  FROM [EC].[Employee_Hierarchy_Stage]H JOIN [EC].[HR_Hierarchy_Stage]S
+    FROM [EC].[Employee_Hierarchy_Stage]H JOIN [EC].[HR_Hierarchy_Stage]S
 	 ON H.[Emp_ID] = S.[EMP_ID]
-	 WHERE H.[Emp_ID] is NOT NULL
-OPTION (MAXDOP 1)
-END
+	 WHERE H.[Emp_ID] is NOT NULL;
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
 
 -- Fetch Start date for existing records from employee Hierarchy Table
 -- and populate into HR staging table
 
-BEGIN
+
 	UPDATE [EC].[HR_Hierarchy_Stage]
 	   SET [Start_Date]= [EC].[fn_dtYYYYMMDD_to_Datetime] (EH.Start_Date)
 		  FROM [EC].[Employee_Hierarchy]EH JOIN [EC].[HR_Hierarchy_Stage]S
 	 ON EH.[Emp_ID] = S.[EMP_ID]
 	 WHERE EH.[Emp_ID] is NOT NULL
-	 AND EH.[Active]= 'A'
-OPTION (MAXDOP 1)
-END
+	 AND EH.[Active]= 'A';
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
+
+WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
     
 -- Inserts HR Records into Employee Hierarchy Staging Table
-BEGIN
+;
 	INSERT INTO [EC].[Employee_Hierarchy_Stage]
            ([Emp_ID]
            ,[Emp_Name]
@@ -95,7 +73,8 @@ BEGIN
            ,[Dept_Description]
            ,[Reg_Temp]
            ,[Full_Part_Time]
-		   ,[FLSA_Status])
+		   ,[FLSA_Status]
+		   ,[isSub])
 							 SELECT S.[Emp_ID]
 									  ,S.[Emp_Name]
 									  ,S.[Emp_Email]
@@ -116,17 +95,13 @@ BEGIN
 									  ,'NA'
 									  ,'NA'
 									  ,'Exempt'
+									  ,S.[isSub]
 						  FROM [EC].[HR_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy_Stage]H
 						  ON S.Emp_ID = H.Emp_ID
-						  WHERE H.EMP_ID IS NULL
-
-OPTION (MAXDOP 1)
-END
+						  WHERE H.EMP_ID IS NULL;
 
 
 END --sp_Merge_HR_Employee_Hierarchy_Stage
-
-
 GO
 
 

@@ -5,7 +5,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE VIEW [EC].[View_Employee_Hierarchy]
+
+CREATE OR ALTER VIEW [EC].[View_Employee_Hierarchy]
 AS  
 SELECT [Emp_ID]
       ,[Emp_Site]
@@ -15,6 +16,7 @@ SELECT [Emp_ID]
 	  ,CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Emp_LanID]
 	  ,[Emp_Job_Code]
 	  ,[Active]
+	  ,[isSub]
 	  ,[Sup_ID]
       ,CONVERT(nvarchar(70),DecryptByKey(Sup_Name)) AS [Sup_Name]
 	  ,CONVERT(nvarchar(250),DecryptByKey(Sup_Email)) AS [Sup_Email]
@@ -32,7 +34,8 @@ SELECT [Emp_ID]
 	  ,[SrMgrLvl3_ID]
 	  ,[EC].[fn_strEmpNameFromEmpID]([SrMgrLvl3_ID]) AS [SrMgrLvl3_Name]
 	  ,[EC].[fn_strEmpLanIDFromEmpID] ([SrMgrLvl3_ID]) AS [SrMgrLvl3_LanID]
-    FROM [EC].[Employee_Hierarchy]
+    FROM [EC].[Employee_Hierarchy];
 
 GO
+
 

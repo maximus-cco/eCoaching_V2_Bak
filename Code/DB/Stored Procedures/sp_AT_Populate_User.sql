@@ -1,10 +1,8 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -18,8 +16,9 @@ GO
 --  Updated logic for role assignment for job code change within allowed job codes during TFS 3027 - 11/28/2016
 --  Update lanid if diffrent from employee table - TFS 16529 - 03/10/2020
 --  Update to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
+--  Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 -- =============================================
-CREATE OR ALTER   PROCEDURE [EC].[sp_AT_Populate_User] 
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Populate_User] 
 AS
 BEGIN
 
@@ -86,7 +85,7 @@ UPDATE [EC].[AT_User]
 	(SELECT EC.fn_nvcGetEmpIdFromLanId(CONVERT(nvarchar(30),DecryptByKey([User_LanID])), getdate()) AS Emp_ID
 	FROM [EC].[Historical_Dashboard_ACL] WHERE Role = 'ELS'  AND End_Date = 99991231) ELS
 	ON ELS.Emp_ID = U.UserId 
-    WHERE U.EmpJobCode IN ( 'WACS40', 'WACS50', 'WACS60')
+    WHERE U.EmpJobCode IN ( 'WACS40', 'WACS50')
     AND U.Active = 0;
 
 -- Update lanid for users if different from employee table

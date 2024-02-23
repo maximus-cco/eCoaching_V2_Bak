@@ -1,0 +1,199 @@
+/*
+
+TFS 27527 - Create eCoaching Log for Subcontractors
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Add Records to [EC].[DIM_Site]
+2. Add isSub column to Tables
+3. Add records to [EC].[UI_User_Role]
+4. Add records to [EC].[UI_Role_Page_Access]
+5. Create and Insert records to table [EC].[Historical_Dashboard_ACL_Role]
+6. Insert record to table [EC].[AT_Role]
+7. Insert record to table [EC].[AT_Role_Entitlement_Link]
+
+-- Test
+
+1. SELECT *  FROM [EC].[DIM_Site] WHERE [SiteID] >= 23
+--23 to 28
+
+6. SELECT [RoleDescription] FROM [EC].[AT_Role] WHERE RoleID = 120
+GO
+--SubAdmin
+
+7. 
+SELECT * FROM [EC].[AT_Role_Entitlement_Link] WHERE RoleID = 120
+GO
+--201 to 204, 206
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+--1. Insert record to site table
+
+ALTER TABLE [EC].[DIM_Site] ADD [isSub] BIT NOT NULL DEFAULT 0
+GO
+
+INSERT INTO [EC].[DIM_Site]
+           ([City]
+           ,[State]
+           ,[StateCity]
+           ,[isActive]
+           ,[isSub])
+     VALUES
+           ('Bogalusa CBHS', 'LA', 'LA - Bogalusa CBHS', 1, 1),
+		   ('Chester TDB', 'VA' , 'VA - Chester TDB', 1,1),
+		   ('London Peckham', 'KY', 'KY - London Peckham', 1,1),
+		   ('Omaha NET', 'NE', 'NE - Omaha NET', 1,1),
+		   ('Tampa Kenific', 'FL', 'FL - Tampa Kenific', 1,1),
+		   ('Winchester Pearl', 'KY', 'KY - Winchester Pearl', 1, 1);
+         
+GO
+
+--****************************************************
+--2. Add isSib column to Tables
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD [isSub] NVARCHAR (1) NOT NULL DEFAULT 'N'
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy_Stage] ADD [isSub] NVARCHAR (1)
+GO
+
+ALTER TABLE [EC].[HR_Hierarchy_Stage] ADD [isSub] NVARCHAR (1)
+GO
+
+--****************************************************
+
+
+--3. Add records to [EC].[UI_User_Role]
+
+
+SET IDENTITY_INSERT [EC].[UI_User_Role] ON
+GO
+
+INSERT INTO [EC].[UI_User_Role]
+           ([RoleId], [RoleName]
+           ,[RoleDescription])
+     VALUES
+           (111, 'PM','PM in ACL'),
+           (112, 'PMA','PMA in ACL')
+GO
+
+SET IDENTITY_INSERT [EC].[UI_User_Role] OFF
+GO
+
+
+
+
+--****************************************************
+
+--4. Add records to [EC].[UI_Role_Page_Access]
+
+ALTER TABLE [EC].[UI_Role_Page_Access]
+ADD CONSTRAINT pk_Role_Page_Access PRIMARY KEY ([RoleID])
+GO
+
+INSERT INTO [EC].[UI_Role_Page_Access]
+           ([RoleID]
+           ,[RoleName]
+           ,[NewSubmission]
+           ,[MyDashboard]
+           ,[HistoricalDashboard])
+     VALUES
+           (111, 'PM', 0,0,1),
+           (112, 'PMA', 1,0,1)
+GO
+
+--****************************************************
+
+
+--5. Create and Insert records to table [EC].[Historical_Dashboard_ACL_Role]
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Historical_Dashboard_ACL_Role](
+	[RoleId] [int] NOT NULL,
+	[RoleValue] [nvarchar](40) NOT NULL,
+	[RoleDescription] [nvarchar](1000) NULL,
+	[SubDataView] [bit],
+	[SubDataSubmit] [bit]
+	PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+INSERT INTO [EC].[Historical_Dashboard_ACL_Role]
+           ([RoleId]
+           ,[RoleValue]
+           ,[RoleDescription]
+           ,[SubDataView]
+           ,[SubDataSubmit])
+     VALUES
+           (101, 'ARC' , 'ARC', 0, 1),
+           (102, 'ECL' , 'ECL', 0, 0),
+           (103, 'DIR' , 'Director', 0, 0),
+	       (104, 'DIRPA' , 'Director Partner Management', 1, 0),
+		   (105, 'DIRPMA' , 'Director Partner Management Advanced', 1, 1),
+		   (106, 'PM' , 'Partner Management', 1, 0),
+           (107, 'PMA' , 'Partner Management Advanced', 1, 1),
+           (108, 'QAM' , 'Quality Alignment Monitor', 0, 1)
+GO
+
+
+
+--****************************************************
+
+--6. Insert record to table [EC].[AT_Role]
+
+
+INSERT INTO [EC].[AT_Role]
+           ([RoleDescription]
+           ,[IsSysAdmin])
+     VALUES
+           ('SubAdmin', 0)
+GO
+
+--****************************************************
+
+--7. Insert record to table [EC].[AT_Role_Entitlement_Link]
+
+  INSERT INTO [EC].[AT_Role_Entitlement_Link]
+           ([RoleId]
+           ,[EntitlementId])
+     VALUES
+           (120, 201),
+           (120, 202),
+           (120, 203),
+           (120, 204),
+           (120, 206)
+          
+GO
+
+--****************************************************
+
+--8.
+
+
+--****************************************************
+
+
+
+
+--****************************************************

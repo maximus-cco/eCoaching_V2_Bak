@@ -1,34 +1,8 @@
-/*
-sp_AT_Select_User_Details(01).sql
-Last Modified Date: 01/18/2017
-Last Modified By: Susmitha Palacherla
-
-
-Version 01:  Initial Revision - Created during encryption of secure data. TFF 7856 - 01/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_AT_Select_User_Details' 
-)
-   DROP PROCEDURE [EC].[sp_AT_Select_User_Details]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 --	====================================================================
 --	Author:	Susmitha Palacherla
@@ -36,8 +10,9 @@ GO
 --	Description: Given a UserLanID and returns the User Details for Active users. 
 --  Revision History:    
 --  Initial Revision. Created to replace embedded sql in UI code during encryption of sensitive data. TFS 7856. 01/18/2018
+--  Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_AT_Select_User_Details]
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_User_Details]
 @userLanId nvarchar(30)
 
 AS
@@ -58,8 +33,10 @@ SET @nvcSQL = 'SELECT [UserId]
 					  ,CONVERT(nvarchar(30),DecryptByKey(UserLanID)) AS [UserLanID]
                       ,CONVERT(nvarchar(50),DecryptByKey(UserName))[UserName]
                       ,[EmpJobCode]
-                      ,[Active]
-               FROM [EC].[AT_User]u 
+                      ,u.[Active]
+					  ,[isSub]
+               FROM [EC].[AT_User] u INNER JOIN [EC].[Employee_Hierarchy]eh
+			   ON u.[UserId] = eh.[Emp_Id]
 		       WHERE u.UserID = '''+@nvcEmpID+'''
 			   AND u.Active = 1'
 
@@ -69,9 +46,6 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_AT_Select_User_Details
 
-
-
-
-
 GO
+
 

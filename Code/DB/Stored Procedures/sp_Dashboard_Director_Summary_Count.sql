@@ -1,23 +1,3 @@
-/*
-sp_Dashboard_Director_Summary_Count(02).sql
-Last Modified Date: 05/01/2020
-Last Modified By: Susmitha Palacherla
-
-Version 02: Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/20/2018
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Dashboard_Director_Summary_Count' 
-)
-   DROP PROCEDURE [EC].[sp_Dashboard_Director_Summary_Count]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -31,8 +11,9 @@ GO
 --  on the Director Dashboard.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
 --  Modified to support additional statuses for warnings. TFS 17102 - 5/1/2020 
+--  Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Dashboard_Director_Summary_Count] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Director_Summary_Count] 
 @nvcEmpID nvarchar(10),
 @strSDatein datetime,
 @strEDatein datetime
@@ -65,12 +46,12 @@ SET @nvcSQL = '
 	  -- WHERE isActive = 1 
 	  -- AND SiteID  <> -1) si
 
-	  	  SELECT si.siteid, si.City, 
+	  	  SELECT si.SiteID, si.City, si.isSub,
 				 COALESCE(b.PendingCount, 0 ) PendingCount,
 				 COALESCE(c.CompletedCount, 0 )CompletedCount,
 				 COALESCE(d.WarningCount, 0 ) WarningCount
 	    FROM 
-		(SELECT DISTINCT si.siteid, eh.Emp_Site City
+		(SELECT DISTINCT si.SiteID, eh.Emp_Site City, si.isSub
 		FROM EC.Employee_Hierarchy eh JOIN EC.DIM_Site si
         ON eh.Emp_Site = si.City
         WHERE (eh.SrMgrLvl1_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl2_ID = '''+ @nvcEmpID + ''' OR eh.SrMgrLvl3_ID = '''+ @nvcEmpID + ''')) si
@@ -132,7 +113,7 @@ Return(@@ERROR);
 CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_Dashboard_Director_Summary_Count
-GO
 
+GO
 
 

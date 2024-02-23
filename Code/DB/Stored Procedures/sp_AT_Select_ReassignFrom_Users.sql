@@ -20,7 +20,7 @@ GO
 -- Modified to support cross site access for Virtual East Managers. TFS 23378 - 10/29/2021 
 -- Modified to remove uncommented debug stm. TFS 23919 - 01/26/2022
 -- Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
--- Modified to expand Reassign To Supervisor list. TFS 26216 - 03/20/2023
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_ReassignFrom_Users] 
 @strRequesterin nvarchar(30), @intModuleIdin INT, @intStatusIdin INT
@@ -32,6 +32,7 @@ DECLARE
 @nvcRequesterID nvarchar(10),
 @intRequesterSiteID int,
 @strATAdminUser nvarchar(10),
+@strATSubAdmin nvarchar(10),
 @strConditionalSite nvarchar(100),
 @strConditionalStatus nvarchar(100),
 @dtmDate datetime,
@@ -45,6 +46,7 @@ SET @dtmDate  = GETDATE();
 SET @nvcRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterin,@dtmDate);
 SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@nvcRequesterID);
 SET @strATAdminUser = EC.fn_strCheckIfATSysAdmin(@nvcRequesterID) ;
+SET @strATSubAdmin = (SELECT CASE WHEN EXISTS ( SELECT 1 FROM [EC].[AT_User_Role_Link] WHERE [UserId] = @nvcRequesterID AND [RoleId] = 120) THEN 'YES' ELSE 'NO'END );
 SET @NewLineChar = CHAR(13) + CHAR(10);
 
 
@@ -71,11 +73,18 @@ END
 -- Site restiction does not apply to Admins.
 		
 SET @strConditionalSite = ' '
-IF @strATAdminUser <> 'YES'
+IF @strATAdminUser <> 'YES' AND @strATSubAdmin <> 'YES'
 
 BEGIN
 	SET @strConditionalSite = N'AND (cl.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+''' OR eh.Mgr_ID = '''+@nvcRequesterID+''' )'
 END			 
+
+
+IF @strATSubAdmin = 'YES'
+
+BEGIN
+	SET @strConditionalSite = N'AND eh.isSub = ''Y'''
+END	
 
 -- Final results are the combined results from these 3 data sets.
 
@@ -89,9 +98,10 @@ END
 
 
 
-SET @nvcSQL = N'SELECT DISTINCT eh.SUP_ID UserID, veh.SUP_Name UserName
+SET @nvcSQL = N'SELECT DISTINCT eh.SUP_ID UserID, veh.SUP_Name UserName, seh.IsSub
 FROM [EC].[View_Employee_Hierarchy] veh JOIN [EC].[Employee_Hierarchy] eh
-ON veh.Emp_ID = eh.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
+ON veh.Emp_ID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] seh
+ON eh.Sup_ID = seh.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.EmpID = eh.Emp_ID 
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+''' '+  @NewLineChar 
 + @strConditionalStatus +  @NewLineChar 
@@ -105,9 +115,10 @@ AND eh.Active NOT IN  (''T'',''D'')
 
 UNION 
 
-SELECT DISTINCT eh.MGR_ID UserID, veh.MGR_Name UserName
+SELECT DISTINCT eh.MGR_ID UserID, veh.MGR_Name UserName, meh.IsSub
 FROM [EC].[View_Employee_Hierarchy] veh JOIN [EC].[Employee_Hierarchy] eh
-ON veh.Emp_ID = eh.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
+ON veh.Emp_ID = eh.Emp_ID JOIN [EC].[Employee_Hierarchy] meh
+ON eh.Mgr_ID = meh.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.EmpID = eh.Emp_ID 
 WHERE cl.ModuleID = '''+CONVERT(NVARCHAR,@intModuleIdin)+''' ' +  @NewLineChar 
 + @strConditionalStatus +  @NewLineChar 
@@ -122,7 +133,7 @@ AND eh.Active NOT IN  (''T'',''D'')
 UNION
 
 
-SELECT DISTINCT rm.Emp_ID UserID, vrm.Emp_Name UserName
+SELECT DISTINCT rm.Emp_ID UserID, vrm.Emp_Name UserName, rm.isSub
 FROM [EC].[View_Employee_Hierarchy]vrm JOIN [EC].[Employee_Hierarchy] rm 
 ON vrm.Emp_ID = rm.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.ReassignedToID = rm.Emp_ID JOIN [EC].[Employee_Hierarchy] eh
@@ -138,7 +149,7 @@ AND (vrm.Emp_Name is NOT NULL AND vrm.Emp_Name <> ''Unknown'')' +  @NewLineChar
 
 UNION 
 
-SELECT DISTINCT rm.Emp_ID UserID, vrm.Emp_Name UserName
+SELECT DISTINCT rm.Emp_ID UserID, vrm.Emp_Name UserName, rm.isSub
 FROM [EC].[View_Employee_Hierarchy]vrm JOIN [EC].[Employee_Hierarchy] rm
 ON vrm.Emp_ID = rm.Emp_ID JOIN [EC].[Coaching_Log] cl WITH(NOLOCK) 
 ON cl.MgrID = rm.Emp_ID JOIN [EC].[Employee_Hierarchy] eh
