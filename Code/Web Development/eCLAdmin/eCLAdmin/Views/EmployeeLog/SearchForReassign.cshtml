@@ -245,7 +245,7 @@
             // Reset Status dropdown.
             $('#employeeLogStatus').val(-1);
             // Reset Pending Reviewer dropdown.
-            // Remove all in Pending Reviewer dropdown except for the first default item "Please select a reviewer"
+            // Remove all in Pending Reviewer dropdown except for the first default item "Select Reviewer"
             $('#reviewer-dropdown').find('option:gt(0)').remove()
 
             resetSearchByLogName();
@@ -270,17 +270,17 @@
                 if ($('#module').val() == -1) {
                     $('#module').addClass("input-validation-error");
                     $('#reviewer').addClass("input-validation-error");
-                    //$('#module-error-msg').html('Please select Employee Level');
+                    //$('#module-error-msg').html('Select Employee Level');
                     isFormValid = false;
                 }
                 if ($('#employeeLogStatus').val() == -1) {
                     $('#employeeLogStatus').addClass("input-validation-error");
-                    //$('#status-error-msg').html('Please select a status');
+                    //$('#status-error-msg').html('Select Status');
                     isFormValid = false;
                 }
                 if ($('#reviewer-dropdown').val() == -1) {
                     $('#reviewer-dropdown').addClass("input-validation-error");
-                    //$('#reviewer-error-msg').html('Please select a reviewer');
+                    //$('#reviewer-error-msg').html('Select Reviewer');
                     isFormValid = false;
                 }
 
@@ -293,15 +293,20 @@
 
         function processSearchOnBegin() {
             if (!validateForm()) {
-                return false;
+                //return false; not working
+                return;
             }
             showSpinner();
         }
 
         function processSearchOnComplete() {
-            hideSpinner();
-            $("#search-result").slideDown(500);
-            hideShowReassignLink();
+            if (validateForm()) { // check if form valid again - work around
+                hideSpinner();
+                $("#search-result").show();
+                hideShowReassignLink();
+            } else {
+                $("#search-result").hide();
+            }
         }
 
     </script>

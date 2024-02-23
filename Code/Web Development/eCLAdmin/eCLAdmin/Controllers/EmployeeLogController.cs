@@ -47,7 +47,7 @@ namespace eCLAdmin.Controllers
             ViewBag.Modules = GetEmptyModuleList();
             // Empty employee list
             List<Employee> employeeList = new List<Employee>();
-            employeeList.Insert(0, new Employee { Id = "-1", Name = "Please select an employee" });
+            employeeList.Insert(0, new Employee { Id = "-1", Name = "Select Employee" });
             IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
             ViewBag.Employees = employees;
 
@@ -134,13 +134,13 @@ namespace eCLAdmin.Controllers
             ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REASSIGN, false);
 
             List<Status> statusList = new List<Status>();
-            statusList.Insert(0, new Status { Id = -1, Description = "Please select a status" });
+            statusList.Insert(0, new Status { Id = -1, Description = "Select Status" });
             IEnumerable<SelectListItem> statuses = new SelectList(statusList, "Id", "Description");
             ViewBag.Statuses = statuses;
 
             // Empty reviewer list
             List<Employee> reviewerList = new List<Employee>();
-            reviewerList.Insert(0, new Employee { Id = "-1", Name = "Please select a reviewer" });
+            reviewerList.Insert(0, new Employee { Id = "-1", Name = "Select Reviewer" });
             IEnumerable<SelectListItem> reviewers = new SelectList(reviewerList, "Id", "Name");
             ViewBag.Reviewers = reviewers;
 
@@ -233,7 +233,7 @@ namespace eCLAdmin.Controllers
             ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_REACTIVATE, false);
             // Empty employee list
             List<Employee> employeeList = new List<Employee>();
-            employeeList.Insert(0, new Employee { Id = "-1", Name = "Please select an employee" });
+            employeeList.Insert(0, new Employee { Id = "-1", Name = "Select Employee" });
             IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
             ViewBag.Employees = employees;
 
@@ -338,7 +338,7 @@ namespace eCLAdmin.Controllers
 
             User user = GetUserFromSession();
             List<Module> moduleList = employeeLogService.GetModules(user.LanId, logTypeId);
-            moduleList.Insert(0, new Module { Id = -1, Name = "Please select Employee Level" });
+            moduleList.Insert(0, new Module { Id = -1, Name = "Select Employee Level" });
             IEnumerable<SelectListItem> modules = new SelectList(moduleList, "Id", "Name");
 
             return modules;
@@ -356,7 +356,7 @@ namespace eCLAdmin.Controllers
         {
             string userLanId = GetUserFromSession().LanId;
             List<Employee> employeeList = employeeService.GetEmployees(userLanId, logTypeId, moduleId, action);
-            employeeList.Insert(0, new Employee { Id = "-1", Name = "Please select an employee" });
+            employeeList.Insert(0, new Employee { Id = "-1", Name = "Select Employee" });
             IEnumerable<SelectListItem> employees = new SelectList(employeeList, "Id", "Name");
 
             return Json(new SelectList(employees, "Value", "Text"));
@@ -366,7 +366,7 @@ namespace eCLAdmin.Controllers
         public JsonResult GetPendingStatuses(int moduleId)
         {
             List<Status> statusList = employeeLogService.GetPendingStatuses(moduleId);
-            statusList.Insert(0, new Status { Id = -1, Description = "Please select a status" });
+            statusList.Insert(0, new Status { Id = -1, Description = "Select Status" });
             IEnumerable<SelectListItem> statuses = new SelectList(statusList, "Id", "Description");
 
             return Json(new SelectList(statuses, "Value", "Text"));
@@ -377,7 +377,7 @@ namespace eCLAdmin.Controllers
         {
             string userLanId = GetUserFromSession().LanId;
             List<Employee> reviewerList = employeeService.GetPendingReviewers(userLanId, moduleId, employeeLogStatusId);
-            reviewerList.Insert(0, new Employee { Id = "-1", Name = "Please select a reviewer" });
+            reviewerList.Insert(0, new Employee { Id = "-1", Name = "Select Reviewer" });
             IEnumerable<SelectListItem> reviewers = new SelectList(reviewerList, "Id", "Name");
 
             return Json(new SelectList(reviewers, "Value", "Text"));
@@ -397,7 +397,7 @@ namespace eCLAdmin.Controllers
             List<Employee> reviewers = employeeService.GetReviewersBySite(siteId, excludeReviewerId);
             if (reviewers.Count > 0)
             {
-                reviewers.Insert(0, new Employee { Id = "-1", Name = "Please select a reviewer" });
+                reviewers.Insert(0, new Employee { Id = "-1", Name = "Select Reviewer" });
             }
             else
             {
@@ -495,7 +495,7 @@ namespace eCLAdmin.Controllers
         private IEnumerable<SelectListItem> GetEmptyModuleList()
         {
             List<Module> moduleList = new List<Module>();
-            moduleList.Insert(0, new Module { Id = -1, Name = "Please select Employee Level" });
+            moduleList.Insert(0, new Module { Id = -1, Name = "Select Employee Level" });
             IEnumerable<SelectListItem> emptyModuleList = new SelectList(moduleList, "Id", "Name");
 
             return emptyModuleList;

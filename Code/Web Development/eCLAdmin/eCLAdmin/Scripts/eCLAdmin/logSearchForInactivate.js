@@ -132,12 +132,12 @@ function initPage() {
     // Reset Type dropdown.
     $('#logType').val(-2);
     // Reset Employee dropdown.
-    // Remove all in Employee dropdown except for the first default item "Please select an employee"
+    // Remove all in Employee dropdown except for the first default item "Select Employee"
     //$('#employee').find('option:gt(0)').remove();
     resetEmployeeDropdown();
 
     // Reset Module dropdown.
-	// Remove all in Module dropdown except for the first default item "Please select Employee Level"
+	// Remove all in Module dropdown except for the first default item "Select Employee Level"
     resetModuleDropdown();
 
     resetSearchByLogName();
@@ -155,12 +155,12 @@ function validateForm() {
         }
         if ($('#module').val() == -1) {
             $('#module').addClass("input-validation-error");
-            //$('#module-error-msg').html('Please select Employee Level');
+            //$('#module-error-msg').html('Select Employee Level');
             isFormValid = false;
         }
         if ($('#employee').val() == -1) {
             $('#employee').addClass("input-validation-error");
-            //$('#employee-error-msg').html('Please select an employee');
+            //$('#employee-error-msg').html('Select Employee');
             isFormValid = false;
         }
 
@@ -173,15 +173,20 @@ function validateForm() {
 
 function processSearchOnBegin() {
     if (!validateForm()) {
-        return false;
+        //return false; not working
+        return;
     }
     showSpinner();
 }
 
 function processSearchOnComplete() {
-    hideSpinner();
-    $("#search-result").show();
-    hideShowInativateLink();
+    if (validateForm()) { // check if form valid again - work around
+        hideSpinner();
+        $("#search-result").show();
+        hideShowInativateLink();
+    } else {
+        $("#search-result").hide();
+    }
 }
 
 function hideShowInativateLink() {

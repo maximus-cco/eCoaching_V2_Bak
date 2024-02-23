@@ -9,7 +9,7 @@ namespace eCLAdmin.Models.EmployeeLog
         public long ID { get; set; }
         public string FormType { get; set; }
         [Display(Name = "Log Name")]
-        [Required(ErrorMessage = "Please enter log name.")]
+        [Required(ErrorMessage = "Please enter log name")]
         [AllowHtml]
         public string FormName { get; set; }
         public string EmployeeName { get; set; }
