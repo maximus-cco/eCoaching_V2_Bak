@@ -7,6 +7,7 @@ namespace eCLAdmin.ViewModels
         public bool Selected { get; set; }
         public long ID { get; set; }
         public string FormName { get; set; }
+        public string SiteName { get; set; }
         public string EmployeeName { get; set; }
         public string SupervisorName { get; set; }
         public string ManagerName { get; set; }
@@ -41,6 +42,7 @@ namespace eCLAdmin.ViewModels
         {
             ID = employeeLog.ID;
             FormName = employeeLog.FormName;
+            SiteName = employeeLog.SiteName;
             EmployeeName = employeeLog.EmployeeName;
             SupervisorName = employeeLog.SupervisorName;
             ManagerName = employeeLog.ManagerName;

@@ -27,6 +27,8 @@ namespace eCLAdmin.Models.EmployeeLog
         public int PreviousStatusId { get; set; }
         public string CreatedDate { get; set; }
 
+        public string SiteName { get; set; }
+
         public string Reasons { get; set; }
         public string SubReasons { get; set; }
         public string Value { get; set; }

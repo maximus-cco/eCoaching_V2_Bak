@@ -106,6 +106,7 @@ namespace eCLAdmin.Repository
                         EmployeeLog cl = new EmployeeLog();
                         cl.ID = (long) dataReader["LogID"];
                         cl.FormName = dataReader["strFormName"].ToString();
+                        cl.SiteName = dataReader["strEmpSite"].ToString();
                         cl.EmployeeName = dataReader["strEmpName"].ToString();
                         cl.SupervisorName = dataReader["strSupName"].ToString();
                         cl.ManagerName = dataReader["strMgrName"].ToString();
@@ -153,6 +154,7 @@ namespace eCLAdmin.Repository
                     {
                         employeeLog.ID = (long)dataReader["LogID"];
                         employeeLog.FormName = dataReader["strFormName"].ToString();
+                        employeeLog.SiteName = dataReader["strEmpSite"].ToString();
                         employeeLog.EmployeeName = dataReader["strEmpName"].ToString();
                         employeeLog.SupervisorName = dataReader["strSupName"].ToString();
                         employeeLog.ManagerName = dataReader["strMgrName"].ToString();
@@ -200,6 +202,7 @@ namespace eCLAdmin.Repository
                         EmployeeLog cl = new EmployeeLog();
                         cl.ID = (long)dataReader["CoachingID"];
                         cl.FormName = dataReader["strFormName"].ToString();
+                        cl.SiteName = dataReader["strEmpSite"].ToString();
                         cl.EmployeeName = dataReader["strEmpName"].ToString();
                         cl.SupervisorName = dataReader["strSupName"].ToString();
                         cl.ManagerName = dataReader["strMgrName"].ToString();
