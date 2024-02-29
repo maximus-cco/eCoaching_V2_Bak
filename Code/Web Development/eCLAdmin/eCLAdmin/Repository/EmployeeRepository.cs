@@ -47,6 +47,7 @@ namespace eCLAdmin.Repository
 
         public List<Employee> GetEmployees(string userLanId, int logTypeId, int moduleId, string action)
         {
+            logger.Debug("######userLanId=" + userLanId + ", logTypeId=" + logTypeId + ", moduleId=" + moduleId + ", action=" + action);
             string logType = null;
             var employees = new List<Employee>();
 
@@ -129,6 +130,7 @@ namespace eCLAdmin.Repository
 
         public List<Employee> GetReviewersBySite(int siteId)
         {
+            logger.Debug("********* siteId=" + siteId);
             var reviewers = new List<Employee>();
 
             using (SqlConnection connection = new SqlConnection(conn))

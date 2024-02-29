@@ -96,6 +96,29 @@ namespace eCLAdmin.Controllers
             return allActiveSites;
         }
 
+        protected bool IsSubcontractorSite(int siteId)
+        {
+            logger.Debug("siteId='" + siteId + "'");
+            if (siteId < 0)
+            {
+                return false;
+            }
+
+            var allSites = GetAllActiveSites();
+            var strSiteId = siteId.ToString();
+            var isSubcontractorSite = false;
+            foreach (var s in allSites)
+            {
+                if (s.IsSubcontractor && s.Id == strSiteId)
+                {
+                    isSubcontractorSite = true;
+                    break;
+                }
+            }
+
+            return isSubcontractorSite;
+        }
+        
         // Download the generated excel file
         public void Download()
         {

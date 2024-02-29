@@ -1,5 +1,6 @@
 ﻿using eCLAdmin.Extensions;
 using eCLAdmin.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -24,7 +25,7 @@ namespace eCLAdmin.Repository
                         Site site = new Site();
                         site.Id = dataReader["SiteID"].ToString();
                         site.Name = dataReader["City"].ToString();
-                        site.IsSubcontractor = dataReader["isSub"].ToString() == "1";
+                        site.IsSubcontractor = dataReader["isSub"] == DBNull.Value ? false : (bool)dataReader["isSub"];
 
                         sites.Add(site);
                     }

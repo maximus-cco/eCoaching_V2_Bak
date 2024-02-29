@@ -6,7 +6,10 @@ namespace eCLAdmin.Models.User
     public class User
     {
         public bool IsSubcontractor { get; set; }
-        
+        public bool IsSystemAdmin { get; set; }
+        public bool IsSubcontractorAdmin { get; set; }
+        public int SiteId { get; set; }
+
         [Display(Name = "ID")]
         public string EmployeeId { get; set; }
 

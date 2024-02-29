@@ -165,7 +165,8 @@ namespace eCLAdmin.Controllers
             {
                 // employeeLogs: this is the log list for the given reviewer, so we can get reviewer information from any log in the list
                 var log = employeeLogs[0];
-                Session["CurrentReviewer"] = new Employee(log.CurrentReviewerId, log.CurrentReviewerName, log.CurrentReviewerSiteId, log.CurrentReviewerSiteName, log.IsSubcontractor);
+                logger.Debug("current reviewer site id=" + log.CurrentReviewerSiteId);
+                Session["CurrentReviewer"] = new Employee(log.CurrentReviewerId, log.CurrentReviewerName, log.CurrentReviewerSiteId, log.CurrentReviewerSiteName, IsSubcontractorSite(log.CurrentReviewerSiteId));
             }
 
             return PartialView("_SearchEmployeeLogResultPartial", CreateEmployeeLogSelectViewModel(employeeLogs));
@@ -450,16 +451,25 @@ namespace eCLAdmin.Controllers
             ViewBag.Reasons = reasons;
 
             Employee currentReviewer = (Employee)Session["CurrentReviewer"];
-            bool excludeSubSites = !currentReviewer.IsSubcontractor;
+            var user = GetUserFromSession();
+            bool excludeSubSites = !user.IsSubcontractor && !user.IsSubcontractorAdmin && !user.IsSystemAdmin;
+            bool excludeCcoSites = user.IsSubcontractorAdmin;
             logger.Debug("########## excludeSubSites=" + excludeSubSites);
-            List <Site> siteList = siteService.GetSites(GetUserFromSession().EmployeeId, excludeSubSites);
-            // default to current reviewer's site 
-            IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name", currentReviewer.SiteId);
+            List <Site> siteList = siteService.GetSites(GetUserFromSession().EmployeeId, excludeSubSites, excludeCcoSites);
+            // default to current reviewer's site
+            var defaultSiteId = currentReviewer.SiteId;
+            if (user.IsSubcontractor)
+            {
+                defaultSiteId = user.SiteId;
+            }
+            IEnumerable<SelectListItem> sites = new SelectList(siteList, "Id", "Name", defaultSiteId);
             ViewBag.Sites = sites;
+            logger.Debug("user is sub=" + GetUserFromSession().IsSubcontractor);
+            logger.Debug("current reviewer is sub=" + currentReviewer.IsSubcontractor);
             ViewBag.AllowSiteSelection = !GetUserFromSession().IsSubcontractor && !currentReviewer.IsSubcontractor;
 
             logger.Debug("********** Current Reviewer: " + currentReviewer.Id + "************");
-            IEnumerable<SelectListItem> reviewers = new SelectList(GetReviewers(currentReviewer.SiteId, currentReviewer.Id), "Id", "Name");
+            IEnumerable<SelectListItem> reviewers = new SelectList(GetReviewers(defaultSiteId, currentReviewer.Id), "Id", "Name");
             ViewBag.AssignTo = reviewers;
             // display current reviewer name and site name on reassign popup
             ViewBag.CurrentReviewerName = currentReviewer.Name;
