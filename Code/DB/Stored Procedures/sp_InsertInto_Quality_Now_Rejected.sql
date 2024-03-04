@@ -1,28 +1,9 @@
-/*
-sp_InsertInto_Quality_Now_Rejected(03).sql
-Last Modified Date: 06/11/2019
-Last Modified By: Susmitha Palacherla
-
-Version 03: Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
-Version 02: Updates from Unit and System testing - TFS 13332 - 04/20/2019
-Version 01: Document Initial Revision - TFS 13332 - 03/19/2019
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Quality_Now_Rejected' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Quality_Now_Rejected]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 -- =============================================
 -- Author:           Susmitha Palacherla
@@ -30,8 +11,9 @@ GO
 -- Description:     Determines rejection reason and rejects  logs.
 -- Initial revision. TFS 13332 -  03/01/2019
 -- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Quality_Now_Rejected] 
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Quality_Now_Rejected] 
 @Count INT OUTPUT
 
 AS
@@ -41,7 +23,6 @@ BEGIN
 BEGIN TRY
 
   -- Create table to hold latest QN_Strengths_Opportunities per batch
-
   CREATE TABLE #Temp_Latest_QN_Strengths_Opportunities (
   QN_Batch_ID nvarchar(20)
   ,QN_Strengths_Opportunities nvarchar(2000)
@@ -49,7 +30,6 @@ BEGIN TRY
 
 
   --Insert latest value of QN_Strengths_Opportunities per batch to temp table
-
   INSERT INTO #Temp_Latest_QN_Strengths_Opportunities
    SELECT s.QN_Batch_ID, 
   ISNULL([QN_Strengths_Opportunities], '') AS [QN_Strengths_Opportunities]
@@ -66,7 +46,6 @@ BEGIN TRY
 
 
   -- Create table to hold logs with non distinct parent attributres for rejection
-
   CREATE TABLE #Temp_Non_DISTINCT_QNLogs_To_Reject (
   QN_Batch_ID nvarchar(20)
   ,CountLogs int
@@ -74,7 +53,6 @@ BEGIN TRY
 
   
 -- Insert logs with Other non distinct values per batch to temp table for rejection
-
 	INSERT INTO #Temp_Non_DISTINCT_QNLogs_To_Reject
 	SELECT d.QN_Batch_ID, COUNT(*) as Log_Count FROM
 	(SELECT DISTINCT [QN_Batch_ID],[QN_Batch_Status],[User_EMPID],[SUP_EMPID],[MGR_EMPID],[QN_Source] 
@@ -86,7 +64,6 @@ BEGIN TRY
  BEGIN TRANSACTION
 
 -- Populate Role and Module
-
 UPDATE EC.Quality_Now_Coaching_Stage
 SET [Emp_Role]= 
     CASE WHEN EMP.[Emp_Job_Code]in ('WACS01', 'WACS02','WACS03', 'WACS04') THEN 'C'
@@ -100,26 +77,24 @@ FROM [EC].[Quality_Now_Coaching_Stage] STAGE JOIN [EC].[Employee_Hierarchy]EMP
 ON LTRIM(STAGE.User_EMPID) = LTRIM(EMP.Emp_ID);
 
 
-
 	-- Updates QN_Strengths_Opportunities in staging table with latest value for batch
-
      UPDATE EC.Quality_Now_Coaching_Stage
      SET [QN_Strengths_Opportunities] = temp.QN_Strengths_Opportunities
 	 FROM #Temp_Latest_QN_Strengths_Opportunities temp 
 	 JOIN EC.Quality_Now_Coaching_Stage s ON temp.QN_Batch_ID = s.QN_Batch_ID;
 
+-- Determine and populate Reject Reasons
 
--- Reject logs with non distinct other parent attributres
-
+-- Employee Site Inactive
 UPDATE [EC].[Quality_Now_Coaching_Stage]
-SET [Reject_Reason]= N'Log does not have distinct parent record values'
-FROM [EC].[Quality_Now_Coaching_Stage] s JOIN #Temp_Non_DISTINCT_QNLogs_To_Reject t
-ON s.[QN_Batch_ID]= t.[QN_Batch_ID]
-WHERE [Reject_Reason]is NULL;
-
+SET [Reject_Reason]= 'Employee Site Inactive.'
+FROM [EC].[Quality_Now_Coaching_Stage] qs JOIN [EC].[Employee_Hierarchy] eh 
+ON qs.User_EMPID = eh.Emp_ID JOIN [EC].[DIM_SITE] s
+ON eh.Emp_Site = s.[City]
+WHERE s.isActive = 0
+AND [Reject_Reason] is NULL;
 
 -- Reject Logs where Active Employee record does not exist
-
 UPDATE [EC].[Quality_Now_Coaching_Stage]
 SET [Reject_Reason]= N'Record does not belong to Active Employee.'
 WHERE (User_EMPID NOT IN 
@@ -129,7 +104,6 @@ WHERE (User_EMPID NOT IN
 AND [Reject_Reason]is NULL;
 	
 -- Reject Logs that are  for Quality Module and Employee does not have a Qualityjob code-(ATA)
-
 UPDATE [EC].[Quality_Now_Coaching_Stage]
 SET [Reject_Reason]= CASE WHEN [Module] = 3
 AND [Emp_Role] <> 'Q' THEN N'Employee does not have a Quality job code.'
@@ -137,12 +111,17 @@ ELSE NULL END
 WHERE [Emp_Role] <> 'Q' and [Reject_Reason]is NULL;
 
 -- Reject Logs that are for CSR Module and Employee does not have a CSR job code.(Non ATA)
-
 UPDATE [EC].[Quality_Now_Coaching_Stage]
 SET [Reject_Reason]= CASE WHEN [Module] = 1
 AND [Emp_Role] <> 'C' THEN N'Employee does not have a CSR job code.'
 ELSE NULL END
 WHERE [Emp_Role] <> 'C' AND [Reject_Reason]is NULL;
+-- Reject logs with non distinct other parent attributres
+UPDATE [EC].[Quality_Now_Coaching_Stage]
+SET [Reject_Reason]= N'Log does not have distinct parent record values'
+FROM [EC].[Quality_Now_Coaching_Stage] s JOIN #Temp_Non_DISTINCT_QNLogs_To_Reject t
+ON s.[QN_Batch_ID]= t.[QN_Batch_ID]
+WHERE [Reject_Reason]is NULL;
 
 
  -- Write rejected records to Rejected table.
@@ -208,6 +187,5 @@ END  -- [EC].[sp_InsertInto_Quality_Now_Rejected]
 
 
 GO
-
 
 

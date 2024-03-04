@@ -3,8 +3,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -48,8 +46,6 @@ DECLARE
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert];
 
-
-
 SET @strOwnerSite =  (SELECT Emp_Site from EC.Employee_Hierarchy WHERE EMP_ID = @istrOwnerin);
 
 SET @dtmDate  = GETDATE();   
@@ -83,11 +79,10 @@ END
 
 --print 'subadmin'  +  @strConditionalSite
 
--- When searched by Formname
--- Lookup the Module and Status, and Reassigned From 
+-- Lookup the Module and Status, and Reassigned From when searched by Formname
 
 IF COALESCE(@strFormName,'') <> '' 
-BEGIN
+BEGIN  -- Processing for Formname search
 --print 'formname ' + COALESCE(@strFormName,'')
 
 
@@ -109,6 +104,7 @@ SET @strOwnerSite =  (SELECT Emp_Site from EC.Employee_Hierarchy WHERE EMP_ID = 
 
 SET @nvcSQL = 'SELECT cfact.CoachingID,  
         cfact.FormName strFormName,
+		veh.Emp_Site strEmpSite,
 		veh.Emp_Name	strEmpName,
 		veh.Sup_Name	strSupName,
 	    CASE
@@ -134,14 +130,16 @@ SET @nvcSQL = 'SELECT cfact.CoachingID,
 AND	cfact.StatusID IN (5,6,7,8,10,11,12)'
 	+ @strConditionalSite +
 	' AND cfact.[Formname] = ''' + @strFormName + '''';
-END
+END -- Processing for Formname search
 
 
 -- When searched by Other Criteria
 
 IF COALESCE(@strFormName,'') = '' AND @intStatusIdin  IS NOT NULL AND @intModuleIdin IS NOT NULL 
-BEGIN
+BEGIN -- Processing for detail search
 
+-- Determine whether to look for sup or manager depending on module and status combo
+-- conditions when a specific status is passed 
 IF ((@intStatusIdin IN (6,8,10,11,12) AND @intModuleIdin IN (1,3,4,5))
 OR (@intStatusIdin in (5) AND @intModuleIdin = 2))
 
@@ -157,8 +155,9 @@ BEGIN
 SET @strConditionalWhere = @strConditionalWhere + ' WHERE EH.Mgr_ID = '''+@istrOwnerin+''' '
 END
 
+-- conditions when 'All' is passed for status 
 ELSE IF 
-@intStatusIdin = -2 AND @intModuleIdin <> 2
+@intStatusIdin = -2 AND @intModuleIdin <> 2 -- modules other than supervisor module
 
 
 BEGIN
@@ -166,12 +165,12 @@ SET @strConditionalWhere = @strConditionalWhere + ' WHERE (fact.statusid IN (6,7
 END
 
 ELSE IF 
-@intStatusIdin = -2 AND @intModuleIdin = 2
+@intStatusIdin = -2 AND @intModuleIdin = 2  -- supervisor module
 
 BEGIN
 SET @strConditionalWhere = @strConditionalWhere + ' WHERE ((fact.statusid = 5 AND EH.Sup_ID = '''+@istrOwnerin+''') OR (fact.statusid = 7 AND EH.Mgr_ID = '''+@istrOwnerin+''')) '
 END
-
+--print @strConditionalWhere 
 
 IF @intStatusIdin  = -2 -- All Statuses
 BEGIN
@@ -183,6 +182,10 @@ BEGIN
 SET @nvcConditionalStatus = ' AND cfact.StatusId = '''+CONVERT(NVARCHAR,@intStatusIdin)+''''
 END
 
+--print @nvcConditionalStatus
+
+
+-- Select log details.
 -- Check for 3 scenarios
 --1. Original hierarchy owner
 --2. Reassigned owner
@@ -190,6 +193,7 @@ END
 
 SET @nvcSQL = 'SELECT cfact.CoachingID,  
         cfact.FormName strFormName,
+		veh.Emp_Site strEmpSite,
 		veh.Emp_Name	strEmpName,
 		veh.Sup_Name	strSupName,
 	    CASE

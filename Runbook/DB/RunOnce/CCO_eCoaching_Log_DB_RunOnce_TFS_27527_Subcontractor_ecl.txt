@@ -17,6 +17,8 @@ Summary
 5. Create and Insert records to table [EC].[Historical_Dashboard_ACL_Role]
 6. Insert record to table [EC].[AT_Role]
 7. Insert record to table [EC].[AT_Role_Entitlement_Link]
+8. Add isSub to Dim_Module
+
 
 -- Test
 
@@ -30,7 +32,11 @@ GO
 7. 
 SELECT * FROM [EC].[AT_Role_Entitlement_Link] WHERE RoleID = 120
 GO
---201 to 204, 206
+--201 to 204, 206, 207
+
+8.
+SELECT * FROM [EC].[DIM_Module] WHERE [isSub] = 1
+--1,2,5
 
 */
 
@@ -55,7 +61,7 @@ INSERT INTO [EC].[DIM_Site]
 		   ('London Peckham', 'KY', 'KY - London Peckham', 1,1),
 		   ('Omaha NET', 'NE', 'NE - Omaha NET', 1,1),
 		   ('Tampa Kenific', 'FL', 'FL - Tampa Kenific', 1,1),
-		   ('Winchester Pearl', 'KY', 'KY - Winchester Pearl', 1, 1);
+		   ('Winchester Pearl', 'KY', 'KY - Winchester Pearl', 1, 1)
          
 GO
 
@@ -182,14 +188,23 @@ GO
            (120, 202),
            (120, 203),
            (120, 204),
-           (120, 206)
+           (120, 206),
+           (120, 205),
+           (120, 207)
           
 GO
 
 --****************************************************
 
---8.
+--8. Add isSub to Dim_Module
 
+ALTER TABLE [EC].[DIM_Module] ADD [isSub] BIT NOT NULL DEFAULT 0
+GO
+
+UPDATE [EC].[DIM_Module]
+SET [isSub] = 1
+WHERE Module IN ('CSR' , 'Supervisor' ,'Training')
+GO
 
 --****************************************************
 

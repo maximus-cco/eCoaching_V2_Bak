@@ -1,33 +1,8 @@
-/*
-sp_Update_Quality_Other_Coaching_Stage(06).sql
-Last Modified Date: 8/2/2021
-Last Modified By: Susmitha Palacherla
-
-Version 06: Updated to improve performance for Bingo upload job - TFS 22443 - 8/2/2021
-Version 05: Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
-Version 04: Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
-Version 03:  Modified to support QN Bingo eCoaching logs. TFS 15063 - 08/15/2019
-Version 02:  Modified to support OTA Report. TFS 12591 - 11/26/2018
-Version 01:  Initial Revision - Created during encryption of secure data. TFF 7856 - 11/27/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Update_Quality_Other_Coaching_Stage' 
-)
-   DROP PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -43,8 +18,9 @@ GO
 -- Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- Add trigger and review performance for Bingo upload job - TFS 22443 - 8/2/2021
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 -- =============================================
-CREATE PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
 @Count INT OUTPUT
 AS
 BEGIN
@@ -53,60 +29,59 @@ BEGIN
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
 -- For Files where EmpID sent in strCSR. Copy directly to EmpID (KUD)
-
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Emp_ID]=[Emp_LanID]
 WHERE NOT ISNULL([Emp_LANID],' ') like '%.%'
 AND [Emp_ID] IS NULL;
 
-
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
 -- For Files where Emp LanID sent in strCSR.
 -- Lookup Employee ID and Populate into (HFC)
-
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [EMP_ID]= [EC].[fn_nvcGetEmpIdFromLanId] ([EMP_LANID],[Submitted_Date])
 WHERE  ISNULL([Emp_LANID],' ') like '%.%'
 AND [Emp_ID] IS NULL;
-
  
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Replace unknown Employee Ids with ''
-
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [EMP_ID]= ''
 WHERE  [EMP_ID]='999999';
-
  
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Populate SubmitterID as 999999 where NULL
-
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Submitter_ID]= '999999'
 WHERE [Submitter_ID] IS NULL;
- 
-      
+       
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
  -- Populate Program Value from Employee table where missing
-
-UPDATE [EC].[Quality_Other_Coaching_Stage]
+ UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Program]= H.[Emp_Program]
 FROM [EC].[Quality_Other_Coaching_Stage]S JOIN [EC].[Employee_Hierarchy]H
 ON S.[EMP_ID]=H.[Emp_ID]
 WHERE ([Program] IS NULL OR [Program]= '');
-
  
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
-
 -- Determine and populate Reject Reasons
+
+-- Employee Site Inactive
+UPDATE [EC].[Quality_Other_Coaching_Stage]
+SET [Reject_Reason]= 'Employee Site Inactive.'
+FROM [EC].[Quality_Other_Coaching_Stage] qs JOIN [EC].[Employee_Hierarchy] eh 
+ON qs.EMP_ID = eh.Emp_ID JOIN [EC].[DIM_SITE] s
+ON eh.Emp_Site = s.[City]
+WHERE s.isActive = 0
+AND [Reject_Reason] is NULL;
+ 
+ WAITFOR DELAY '00:00:00.01' ;-- Wait for 1 ms
+
 -- Employee not an Active Supervisor (CTC and QNBS)
-
-
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Reject_Reason]= N'Record does not belong to an active Supervisor.'
 WHERE (EMP_ID = '' OR
@@ -117,45 +92,38 @@ EMP_ID NOT IN
  ))
 AND (Report_Code lIKE 'CTC%' OR Report_Code LIKE 'BQNS%' OR Report_Code LIKE 'BQMS%')
 AND [Reject_Reason]is NULL;
-	
-	
+		
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Employee not an Active CSR (HFC and KUD)
-
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Reject_Reason]= N'Record does not belong to an active CSR.'
 WHERE (EMP_ID = '' OR
 EMP_ID NOT IN 
 (SELECT DISTINCT EMP_ID FROM [EC].[Employee_Hierarchy]
  WHERE Emp_Job_Code IN ('WACS01', 'WACS02', 'WACS03')
- AND Active NOT IN ('T','D','P','L') 
+ AND Active = 'A'
  ))
  AND (Report_Code lIKE 'HFC%' OR Report_Code LIKE 'KUD%' OR Report_Code LIKE 'BQN2%' OR Report_Code LIKE 'BQM2%')
 AND [Reject_Reason]is NULL;
 
-
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Employee not an Active Quality Lead Specialist (OTA)
-
-
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Reject_Reason]= N'Record does not belong to an active Quality Specialist.'
 WHERE (EMP_ID = '' OR
 EMP_ID NOT IN 
 (SELECT DISTINCT EMP_ID FROM [EC].[Employee_Hierarchy]
  WHERE Emp_Job_Code in( 'WACQ12', 'WACQ02','WACQ03')
- AND Active NOT IN ('T','D','P','L') 
+ AND Active = 'A'
  ))
 AND Report_Code lIKE 'OTA%' 
 AND [Reject_Reason]is NULL;
  
-
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Reject BQN logs where an Employee does not have a valid set of QC competencies.
-
 DECLARE @ReportCode nvarchar(30);
 SET @ReportCode = (Select DISTINCT Report_Code FROM [EC].[Quality_Other_Coaching_Stage]);
 --SELECT  @ReportCode;
@@ -206,6 +174,7 @@ END;
 INSERT INTO [EC].[Quality_Other_Coaching_Rejected]
            ([Report_ID]
            ,[Report_Code]
+		   ,[EMP_ID]
            ,[Source]
            ,[Event_Date]
            ,[Submitted_Date]
@@ -215,6 +184,7 @@ INSERT INTO [EC].[Quality_Other_Coaching_Rejected]
        )
  SELECT S.[Report_ID]
       ,S.[Report_Code]
+	  ,S.[EMP_ID]
       ,S.[Source]
       ,S.[Event_Date]
       ,S.[Submitted_Date]

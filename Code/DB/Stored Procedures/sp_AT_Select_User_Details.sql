@@ -21,22 +21,30 @@ BEGIN
 
 	@nvcSQL nvarchar(max),
 	@nvcEmpID nvarchar(10),
-    @dtmDate datetime
+    @dtmDate datetime,
+	@strATCoachAdminUser nvarchar(10),
+    @strATSubAdmin nvarchar(10);
 
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert]
 
-SET @dtmDate  = GETDATE()  
-SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@userLanId,@dtmDate)
+SET @dtmDate  = GETDATE();  
+SET @nvcEmpID = EC.fn_nvcGetEmpIdFromLanID(@userLanId,@dtmDate);
+SET @strATCoachAdminUser = EC.fn_strCheckIfATCoachingAdmin(@nvcEmpID);
+SET @strATSubAdmin = (SELECT CASE WHEN EXISTS ( SELECT 1 FROM [EC].[AT_User_Role_Link] WHERE [UserId] = @nvcEmpID  AND [RoleId] = 120) THEN 'YES' ELSE 'NO'END );
 
 SET @nvcSQL = 'SELECT [UserId]
 					  ,CONVERT(nvarchar(30),DecryptByKey(UserLanID)) AS [UserLanID]
                       ,CONVERT(nvarchar(50),DecryptByKey(UserName))[UserName]
                       ,[EmpJobCode]
                       ,u.[Active]
-					  ,[isSub]
+					  ,eh.[isSub]
+					  ,s.[SiteID]
+					  ,'''+@strATCoachAdminUser+''' isSysAdmin
+					  ,'''+@strATSubAdmin+''' isSubAdmin
                FROM [EC].[AT_User] u INNER JOIN [EC].[Employee_Hierarchy]eh
-			   ON u.[UserId] = eh.[Emp_Id]
+			   ON u.[UserId] = eh.[Emp_Id] LEFT JOIN EC.DIM_SITE s 
+			   ON eh.[Emp_Site] = s.[City]
 		       WHERE u.UserID = '''+@nvcEmpID+'''
 			   AND u.Active = 1'
 

@@ -1,4 +1,3 @@
-
 SET ANSI_NULLS ON
 GO
 
@@ -20,8 +19,9 @@ GO
 --  Modified to support Reactivation by Managers. TFS 25961- 12/16/2022
 --  Modified to only display latest last known status when Reactivating log. TFS 26048 - 01/20/2023
 --  Search by multiple log names. 09/08/2023
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
-CREATE or ALTER   PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Logs_Inactivation_Reactivation] 
 
 @strRequesterLanId nvarchar(30),
 @strTypein nvarchar(10) = NULL, 
@@ -38,6 +38,7 @@ DECLARE
 @nvcWhere nvarchar(300),
 @strRequesterID nvarchar(10),
 @strATCoachAdminUser nvarchar(10),
+@strATSubAdmin nvarchar(10),
 @intRequesterSiteID int,
 @dtmDate datetime,
 @strID nvarchar(30),
@@ -53,7 +54,9 @@ SET @dtmDate  = GETDATE();
 SET @strRequesterID = EC.fn_nvcGetEmpIdFromLanID(@strRequesterLanId,@dtmDate);
 SET @intRequesterSiteID = EC.fn_intSiteIDFromEmpID(@strRequesterID);
 SET @strATCoachAdminUser = EC.fn_strCheckIfATCoachingAdmin(@strRequesterID);
+SET @strATSubAdmin = (SELECT CASE WHEN EXISTS ( SELECT 1 FROM [EC].[AT_User_Role_Link] WHERE [UserId] = @strRequesterID AND [RoleId] = 120) THEN 'YES' ELSE 'NO'END );
 
+-- Determine the ID column and table to pull from depending o Coaching or Warning log
 
 IF @strTypein = N'Coaching' 
 SET @strID = 'Fact.CoachingID LogID, '
@@ -65,7 +68,6 @@ SET @nvcTableName = ' FROM [EC].[Coaching_Log] Fact WITH(NOLOCK) '
 
 IF @strTypein = N'Warning' AND @strActionin = 'Inactivate'
 SET @nvcTableName = ' FROM [EC].[Warning_Log] Fact WITH(NOLOCK) '
-
 
 
 IF @strTypein = N'Coaching' AND @strActionin = 'Reactivate'
@@ -96,6 +98,7 @@ Select a.* FROM
  ) Aud
  ON Aud.FormName = Fact.Formname '
 
+ -- Status filter logic
  -- If Action is Reactivation: 
 -- Display Inactive logs
 
@@ -110,20 +113,21 @@ IF @strTypein = N'Coaching' AND @strActionin = 'Inactivate' AND @strATCoachAdmin
 SET @nvcWhere = ' WHERE Fact.StatusID NOT IN (1,2) '
 ELSE 
 
--- If Action is Inactivation and Coaching
---Special conditions for Coaching Admins 
+-- For Coaching Admins and Inactivation
+
+ IF @strTypein = N'Coaching'  AND @strActionin = 'Inactivate' AND @strATCoachAdminUser = 'YES'
+ --Special conditions for Coaching  
 --Display  Completed logs submitted in the last 3 months in addition to the other Active status logs
-
-IF @strTypein = N'Coaching' AND @strActionin = 'Inactivate' AND @strATCoachAdminUser = 'YES'
 SET @nvcWhere = ' WHERE (Fact.StatusID not in (1,2) 
-			 OR (Fact.StatusID = 1 AND Fact.SubmittedDate > DATEADD(MM,-3, GETDATE()))) '
-ELSE
+				 OR (Fact.StatusID = 1 AND Fact.SubmittedDate > DATEADD(MM,-3, GETDATE()))) '
 
--- If Action is Inactivation and Warning
--- Display all completed logs 
 
-IF @strTypein = N'Warning' AND @strActionin = 'Inactivate'
-SET @nvcWhere = ' WHERE Fact.StatusID <> 2 '
+-- For warnings display all Active logs
+IF @strTypein = N'Warning'  AND @strActionin = 'Inactivate'
+	BEGIN
+	SET @nvcWhere = ' WHERE Fact.StatusID <> 2 ';
+	END
+
 
 -- If Formname is not passed, then apply other Filters
 -- If Formname is passed then Filter for that Form name only
@@ -141,33 +145,40 @@ ELSE
 BEGIN
 -- multiple log names search
 IF @strActionin = N'Inactivate' 
-begin
+BEGIN
 -- split log names and insert into temp table #LogNames
 CREATE TABLE #LogNames (LogName NVARCHAR(max));
 INSERT INTO #LogNames (LogName)
     SELECT TRIM(value) FROM STRING_SPLIT(@strFormName, ',');
 -- update where statement
 SET @nvcWhere = @nvcWhere + ' AND [Fact].[Formname] IN (SELECT LogName FROM #LogNames) '
-end
+END
 -- Reactivate, single log name search
-else 
-begin
+ELSE
+BEGIN
 SET @nvcWhere = @nvcWhere  + ' AND [Fact].[Formname] = ''' + @strFormName   + ''''
-end
+END
 
 
---Restriction for Non Coaching Admins
+--Restriction for Non Coaching Admins and non Sub Admins
+IF  @strATCoachAdminUser = 'NO' AND @strATSubAdmin = 'NO'
 
-IF @strActionin = N'Reactivate' AND @strATCoachAdminUser = 'NO'
 SET @nvcWhere = @nvcWhere  + ' AND 
 			 (Fact.SiteID = '''+CONVERT(NVARCHAR,@intRequesterSiteID)+'''
 		      OR
 			 (veh.Sup_ID =  '''+@strRequesterId+'''  OR veh.Mgr_ID = '''+@strRequesterId+''' ))'
 END 
+
+IF @strATSubAdmin = 'YES'
+
+BEGIN
+	SET @nvcWhere = @nvcWhere  +  N'AND veh.isSub = ''Y'''
+END
 -- end search by log name(s)
 
  SET @nvcSQL = 'SELECT DISTINCT '+@strID+' 
         fact.FormName strFormName,
+		veh.Emp_Site strEmpSite,
 		veh.Emp_Name	strEmpName,
 		veh.Sup_Name	strSupName,
 	    CASE

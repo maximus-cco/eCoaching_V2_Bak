@@ -1,13 +1,3 @@
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Update_Employee_Hierarchy_Stage' 
-)
-   DROP PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -39,6 +29,7 @@ GO
 -- Modified to relax Deletes for missing Hierarchy - TFS 14249 - 04/29/2019
 -- Modified to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- Modified to remove duplicates from PS file -  TFS 23042 - 09/22/2021
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage] 
 AS
@@ -131,6 +122,15 @@ WHERE HS.[Emp_Job_Code] like 'WACS0%';
 
 WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
+-- Set Sup_Emp_ID  for Sub Sups from WFM
+
+UPDATE [EC].[Employee_Hierarchy_Stage]
+SET [Sup_Emp_ID] = [Sup_ID]
+FROM [EC].[EmpID_To_SupID_Stage] WFMSUP JOIN [EC].[Employee_Hierarchy_Stage]HS
+ON WFMSUP.Emp_ID = HS.Emp_ID
+WHERE WFMSUP.[Emp_Job_Code] <> 'CSC' AND WFMSUP.[Emp_Job_Code] like  '%SC'
+
+WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 
 -- Update Mgr_Emp_ID to be Supervisor's supervisor
 

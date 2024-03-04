@@ -1,33 +1,8 @@
-/*
-fn_nvcGetEmpIdFromLanId(03).sql
-Last Modified Date: 03/13/2020
-Last Modified By: Susmitha Palacherla
-
-Version 03: Modified to support Maxcorp ids - TFS 16529 - 03/13/2020
-Version 02: Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'fn_nvcGetEmpIdFromLanId' 
-)
-   DROP FUNCTION [EC].[fn_nvcGetEmpIdFromLanId]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 
 --	=============================================
 --	Author:		Susmitha Palacherla
@@ -39,8 +14,9 @@ GO
 -- Modified to fix the logic for looking up the Employee ID - SCR 12983 - 07/25/2014
 -- Modified to support Encrypted attributes. TFS 7856 - 11/01/2017
 -- Modified to support Maxcorp ids - TFS 16529 - 03/13/2020
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=============================================
-CREATE FUNCTION [EC].[fn_nvcGetEmpIdFromLanId] 
+CREATE OR ALTER FUNCTION [EC].[fn_nvcGetEmpIdFromLanId] 
 (
   @nvcLanID Nvarchar(30),
   @dtmDate Datetime
@@ -154,7 +130,7 @@ IF  @intehempid = 0
 		  (SELECT DISTINCT Emp_ID
 		  FROM EC.Employee_Hierarchy
 		  WHERE Emp_ID = @nvcLanIDX
-		  AND @intDate BETWEEN Start_Date AND End_Date
+		  AND @intDate > Start_Date
 		  )
      END
 
@@ -168,10 +144,6 @@ SET @nvcEmpID = '999999'
 RETURN 	@nvcEmpID
 
 END --fn_nvcGetEmpIdFromLanId
-
-
-
-
 GO
 
 
