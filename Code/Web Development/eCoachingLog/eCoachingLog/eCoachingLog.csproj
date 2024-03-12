@@ -156,6 +156,7 @@
     <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Models\Common\Behavior.cs" />
+    <Compile Include="Models\Common\DetailsOfBehavior.cs" />
     <Compile Include="Models\Common\Error.cs" />
     <Compile Include="Models\Common\Mail.cs" />
     <Compile Include="Models\Common\MailMetaData.cs" />
@@ -458,6 +459,7 @@
     <Content Include="Views\Review\_QnsCoach.cshtml" />
     <Content Include="Views\Review\_AdditionalText.cshtml" />
     <Content Include="Views\Shared\_Logo.cshtml" />
+    <Content Include="Views\Review\_DetailsOfBehavior.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
@@ -482,11 +484,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>55137</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:55130/</IISUrl>
+          <IISUrl>http://localhost:55138/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

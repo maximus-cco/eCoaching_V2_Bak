@@ -699,3 +699,7 @@ hr {
     background: #eee; 
 }
 
+p.clear {
+    clear:both;
+}
+

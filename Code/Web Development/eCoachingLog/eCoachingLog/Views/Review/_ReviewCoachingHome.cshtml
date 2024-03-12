@@ -33,11 +33,9 @@
                 @if (!Model.LogDetail.IsQn && !Model.LogDetail.IsQnSupervisor)
 				{
 				    <div class="mt-2">
-					    <strong>Details of the behavior being coached:</strong>
-					    <br />
-                        @Html.Raw(WebUtility.HtmlDecode(Model.LogDetail.Behavior))
+                        @{ Html.RenderPartial("_DetailsOfBehavior", Model.LogDetail.BehaviorDetails); }
 				    </div>
-
+                    <p class="clear"></p>
 					<div class='mt-2 @(Model.ShowConfirmedCseText ? "show" : "hide")'>
 						<strong><mark>Coaching Opportunity was a confirmed Customer Service Escalation.</mark></strong><br />
 					</div>

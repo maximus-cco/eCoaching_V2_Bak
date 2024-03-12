@@ -1,0 +1,12 @@
+﻿@model eCoachingLog.Models.Common.DetailsOfBehavior
+
+<strong>Details of the behavior being coached:</strong>
+<div>
+    @*@if (Model.IsGold)
+    {
+        <img src="~/Content/Images/gold.jpg" style="margin-top: 5px;">
+    }*@
+    <p style="margin-top: 10px;">
+        @Html.Raw(WebUtility.HtmlDecode(Model.Behavior))
+    </p>
+</div>

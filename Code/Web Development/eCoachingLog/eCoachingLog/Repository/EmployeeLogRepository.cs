@@ -102,7 +102,13 @@ namespace eCoachingLog.Repository
 						logDetail.LogManagerEmpId = dataReader["strCLMgrID"].ToString().Trim().ToUpper();
                         logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
                         logDetail.CoachingNotes = EclUtil.Sanitize(UpdatePdtToEst(dataReader["txtCoachingNotes"].ToString()));
-                        logDetail.Behavior = EclUtil.Sanitize(dataReader["txtDescription"].ToString());
+                        var behavior = EclUtil.Sanitize(dataReader["txtDescription"].ToString());
+                        var isGold = true;
+                        var isSilver = false;
+                        var isBronze = false;
+                        var isHonorMention = false;
+                        var isHeat = true;
+                        logDetail.BehaviorDetails = new DetailsOfBehavior(behavior, isGold, isSilver, isBronze, isHonorMention, isHeat);
                         logDetail.MgrNotes = EclUtil.Sanitize(dataReader["txtMgrNotes"].ToString());
                         logDetail.Comment = EclUtil.Sanitize(dataReader["txtCSRComments"].ToString());
                         logDetail.EmployeeReviewDate = EclUtil.AppendTimeZone(dataReader["CSRReviewAutoDate"].ToString());
