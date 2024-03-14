@@ -452,8 +452,8 @@ namespace eCLAdmin.Controllers
 
             Employee currentReviewer = (Employee)Session["CurrentReviewer"];
             var user = GetUserFromSession();
-            bool excludeSubSites = !user.IsSubcontractor && !user.IsSubcontractorAdmin && !user.IsSystemAdmin;
-            bool excludeCcoSites = user.IsSubcontractorAdmin;
+            bool excludeSubSites = ExcludeSubSites(user, currentReviewer); 
+            bool excludeCcoSites = ExcludeCcoSites(user, currentReviewer);
             logger.Debug("########## excludeSubSites=" + excludeSubSites);
             List <Site> siteList = siteService.GetSites(GetUserFromSession().EmployeeId, excludeSubSites, excludeCcoSites);
             // default to current reviewer's site
@@ -466,7 +466,8 @@ namespace eCLAdmin.Controllers
             ViewBag.Sites = sites;
             logger.Debug("user is sub=" + GetUserFromSession().IsSubcontractor);
             logger.Debug("current reviewer is sub=" + currentReviewer.IsSubcontractor);
-            ViewBag.AllowSiteSelection = !GetUserFromSession().IsSubcontractor && !currentReviewer.IsSubcontractor;
+            // allow cco users to reassign logs whose current reviewer is cco to any new reviewer of all cco sites
+            ViewBag.AllowSiteSelection = user.IsCco && currentReviewer.IsCco; 
 
             logger.Debug("********** Current Reviewer: " + currentReviewer.Id + "************");
             IEnumerable<SelectListItem> reviewers = new SelectList(GetReviewers(defaultSiteId, currentReviewer.Id), "Id", "Name");
@@ -476,6 +477,33 @@ namespace eCLAdmin.Controllers
             ViewBag.CurrentReviewerSiteName = currentReviewer.SiteName;
 
             return PartialView("_ReassignPartial");
+        }
+
+        private bool ExcludeSubSites(User user, Employee currentReviewer)
+        {
+            // CCO Program team - manage all cco + subcontractor sites
+            if (user.IsSystemAdmin) 
+            {
+                // depends on current reviewer site
+                return currentReviewer.IsCco;
+            }
+
+            // CCO PM team - manage all subcontractor sites
+            if (user.IsSubcontractorAdmin) 
+            {
+                // show subcontractor sites as selection
+                return false;
+            }
+
+            // CCO managers - do NOT show subcontractor sites as selection
+            return user.IsCco;
+
+        }
+
+        private bool ExcludeCcoSites(User user, Employee currentReviewer)
+        {
+            // subcontractor users and subcontractor admins (CCO PM Team) cannot have cco sites as selection
+            return user.IsSubcontractor || user.IsSubcontractorAdmin;
         }
 
         private EmployeeLogSelectViewModel CreateEmployeeLogSelectViewModel(List<EmployeeLog> employeeLogs)

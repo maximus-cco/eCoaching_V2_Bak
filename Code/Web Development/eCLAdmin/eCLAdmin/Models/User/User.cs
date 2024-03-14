@@ -26,6 +26,14 @@ namespace eCLAdmin.Models.User
 
         public List<Entitlement> Entitlements { get; set; }
 
+        public bool IsCco
+        {
+            get
+            {
+                return !IsSubcontractor;
+            }
+        }
+
         public User()
         {
             EmployeeId = "-1";
@@ -38,15 +46,15 @@ namespace eCLAdmin.Models.User
 
         public User(string name)
         {
-            this.Name = name;
+            Name = name;
         }
 
         public User(string employeeId, string lanId, string name, string jobCode)
         {
-            this.EmployeeId = employeeId;
-            this.LanId = lanId;
-            this.Name = name;
-            this.JobCode = jobCode;
+            EmployeeId = employeeId;
+            LanId = lanId;
+            Name = name;
+            JobCode = jobCode;
         }
     }
 }

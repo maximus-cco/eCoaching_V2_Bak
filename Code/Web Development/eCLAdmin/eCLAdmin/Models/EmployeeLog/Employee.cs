@@ -13,6 +13,14 @@
         public int SiteId { get; set; }
         public string SiteName { get; set; }
 
+        public bool IsCco
+        {
+            get
+            {
+                return !IsSubcontractor;
+            }
+        }
+
         public Employee()
         { }
 
