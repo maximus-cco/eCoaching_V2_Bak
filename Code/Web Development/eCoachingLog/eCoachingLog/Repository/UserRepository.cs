@@ -43,6 +43,7 @@ namespace eCoachingLog.Repository
                         user.IsPma = (dataReader["PMAUser"] == DBNull.Value) ? false : (bool)dataReader["PMAUser"];
                         user.IsDirPm = (dataReader["DIRPMUser"] == DBNull.Value) ? false : (bool)dataReader["DIRPMUser"];
                         user.IsDirPma = (dataReader["DIRPMAUser"] == DBNull.Value) ? false : (bool)dataReader["DIRPMAUser"];
+                        user.IsQam = (dataReader["QAMUser"] == DBNull.Value) ? false : (bool)dataReader["QAMUser"];
                         user.IsAccessNewSubmission = (dataReader["NewSubmission"] == DBNull.Value) ? false : (bool)dataReader["NewSubmission"];
 						user.IsAccessMyDashboard = (dataReader["MyDashboard"] == DBNull.Value) ? false : (bool)dataReader["MyDashboard"];
 						user.IsAccessHistoricalDashboard = (dataReader["HistoricalDashboard"] == DBNull.Value) ? false : (bool)dataReader["HistoricalDashboard"];

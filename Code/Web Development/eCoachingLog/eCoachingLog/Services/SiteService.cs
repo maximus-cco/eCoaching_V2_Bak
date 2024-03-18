@@ -44,10 +44,10 @@ namespace eCoachingLog.Services
             }
 
             // CCO users on New Submission page: 
-            // CCO users with roles other than PMA, DIRPMA, ARC, and QUALITY not able to submit subcontractor logs
+            // CCO users with roles other than PMA, DIRPMA, ARC, and QAM are not allowed to submit subcontractor logs
             if (isSubmission)
             {
-                if (!user.IsPma && !user.IsDirPma && !user.IsArc) // todo: add user.IsQuality
+                if (!user.IsPma && !user.IsDirPma && !user.IsArc && !user.IsQam)
                 {
                     return sites.Where(x => !x.IsSubcontractorSite).ToList<Site>();
                 }
@@ -55,8 +55,8 @@ namespace eCoachingLog.Services
             }
 
             // View subcontractor logs: 
-            // CCO user with roles other than PM, PMA, DIRPM, DIRPMA, ARC, and Quality not able to view subcontractor logs
-            if (!user.IsPm && !user.IsDirPm && !user.IsPma && !user.IsDirPma)// && !user.IsArc) // todo: add user.IsQuality - no need, this is historical page 
+            // CCO users with roles other than PM, PMA, DIRPM, DIRPMA are not allowed to view subcontractor logs
+            if (!user.IsPm && !user.IsDirPm && !user.IsPma && !user.IsDirPma)
             {
                 var nonSubcontractorSites = sites.Where(x => !x.IsSubcontractorSite).ToList<Site>();
                 // sp returns "-1 All Sites	0" - siteId siteName isSub

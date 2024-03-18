@@ -18,7 +18,8 @@ namespace eCoachingLog.Models.User
         public bool IsPm { get; set; }         // Be able to view subcontractor logs
         public bool IsPma { get; set; }        // Be able to view subcontractor logs + submit subcontractor logs 
         public bool IsDirPm { get; set; }      // Be able to view subcontractor logs
-        public bool IsDirPma { get; set; }     // Be able to view subcontractor logs + submit subcontractor logs 
+        public bool IsDirPma { get; set; }     // Be able to view subcontractor logs + submit subcontractor logs
+        public bool IsQam { get; set; } 
         public bool IsAccessNewSubmission { get; set; } // Whether the user is allowed to access New Submission page
         public bool IsAccessMyDashboard { get; set; }   // Whether the user is allowed to access My Dashboard page
         public bool IsAccessHistoricalDashboard { get; set; } // Whether the user is allowed to access Historical Dashboard page
