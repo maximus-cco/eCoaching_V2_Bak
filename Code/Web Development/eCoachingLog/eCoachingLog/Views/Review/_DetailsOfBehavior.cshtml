@@ -1,11 +1,55 @@
 ﻿@model eCoachingLog.Models.Common.DetailsOfBehavior
 
 <strong>Details of the behavior being coached:</strong>
-<div>
-    @*@if (Model.IsGold)
+<div style="overflow-x: hidden;">
+    <!-- medals-->
+    @if (Model.IsGold)
     {
-        <img src="~/Content/Images/gold.jpg" style="margin-top: 5px;">
-    }*@
+        <img src="~/Content/Images/gold.jpg" alt="Gold Medal" style="margin-top: 5px;">
+    }
+    else if (Model.IsSilver)
+    {
+        <img src="~/Content/Images/silver.jpg" alt="Silver Medal" style="margin-top: 5px;">
+    }
+    else if (Model.IsBronze)
+    {
+        <img src="~/Content/Images/bronze.jpg" alt="Bronze Medal" style="margin-top: 5px;">
+    }
+    else if (Model.IsHonorMention)
+    {
+        <img src="~/Content/Images/honorable_mention.jpg" alt="Honorable Mention" style="margin-top: 5px;">
+    }
+
+    <!-- badges (heating)-->
+    @if (Model.IsActiveListening)
+    {
+        <img src="~/Content/Images/active_listening.jpg" alt="Active Listening" style="margin-top: 5px;">
+    }
+    else if (Model.IsBusinessProcess)
+    {
+        <img src="~/Content/Images/business_process.jpg" alt="Business Process" style="margin-top: 5px;">
+    }
+    else if (Model.IsCallEfficiency)
+    {
+        <img src="~/Content/Images/call_efficiency.jpg" alt="Call Efficiency" style="margin-top: 5px;">
+    }
+    else if (Model.IsInfoAccuracy)
+    {
+        <img src="~/Content/Images/info_accuracy.jpg" alt="Info Accuracy" style="margin-top: 5px;">
+    }
+    else if (Model.IsIssueResolution)
+    {
+        <img src="~/Content/Images/.jpg" alt="" style="margin-top: 5px;">
+    }
+    else if (Model.IsPersonailityFlexing)
+    {
+        <img src="~/Content/Images/.jpg" alt="" style="margin-top: 5px;">
+    }
+    else if (Model.IsPrivacyDisclaimers)
+    {
+        <img src="~/Content/Images/.jpg" alt="" style="margin-top: 5px;">
+    }
+
     <p style="margin-top: 10px;">
         @Html.Raw(WebUtility.HtmlDecode(Model.Behavior))
     </p>
