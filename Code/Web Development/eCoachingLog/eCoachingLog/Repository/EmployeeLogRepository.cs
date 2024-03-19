@@ -102,13 +102,24 @@ namespace eCoachingLog.Repository
 						logDetail.LogManagerEmpId = dataReader["strCLMgrID"].ToString().Trim().ToUpper();
                         logDetail.ReassignedManagerName = dataReader["strReassignedMgrName"].ToString();
                         logDetail.CoachingNotes = EclUtil.Sanitize(UpdatePdtToEst(dataReader["txtCoachingNotes"].ToString()));
+
                         var behavior = EclUtil.Sanitize(dataReader["txtDescription"].ToString());
-                        var isGold = true;
+                        // medals
+                        var isGold = false;
                         var isSilver = false;
                         var isBronze = false;
                         var isHonorMention = false;
-                        var isHeat = true;
-                        logDetail.BehaviorDetails = new DetailsOfBehavior(behavior, isGold, isSilver, isBronze, isHonorMention, isHeat);
+                        // badges
+                        var isActiveListening = false;
+                        var isBusinessProcess = false;
+                        var isCallEfficiency = false;
+                        var isInfoAccuracy = false;
+                        var isIssueResolution = false;
+                        var isPersonailityFlexing = false;
+                        var isPrivacyDisclaimers = false;
+                        logDetail.BehaviorDetails = new DetailsOfBehavior(behavior, isGold, isSilver, isBronze, isHonorMention, isActiveListening, isBusinessProcess,
+                            isCallEfficiency, isInfoAccuracy, isIssueResolution, isPersonailityFlexing, isPrivacyDisclaimers);
+
                         logDetail.MgrNotes = EclUtil.Sanitize(dataReader["txtMgrNotes"].ToString());
                         logDetail.Comment = EclUtil.Sanitize(dataReader["txtCSRComments"].ToString());
                         logDetail.EmployeeReviewDate = EclUtil.AppendTimeZone(dataReader["CSRReviewAutoDate"].ToString());
