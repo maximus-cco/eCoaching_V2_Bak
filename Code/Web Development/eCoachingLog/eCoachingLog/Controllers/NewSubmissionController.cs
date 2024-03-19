@@ -477,12 +477,12 @@ namespace eCoachingLog.Controllers
                 // CCO user
                 else
                 {
-                    // regualr CCO users - can submit logs for CCO sites only
-                    if (!user.IsPma && !user.IsDirPma && !user.IsArc) // todo: add user.IsQuality
+                    // Regualr CCO users - can submit logs for CCO sites only
+                    if (!user.IsPma && !user.IsDirPma && !user.IsArc && !user.IsQam) 
                     {
                         siteId = Constants.ALL_SITES_CCO;
                     }
-                    // PMA, DIRPMA, ARC, Quality - can submit logs for CCO sites + subcontractor sites
+                    // PMA, DIRPMA, ARC, QAM - can submit logs for CCO sites + subcontractor sites
                     else
                     {
                         siteId = Constants.ALL_SITES;
