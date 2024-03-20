@@ -13,9 +13,15 @@ namespace eCLAdmin.Services
         private readonly ILog logger = LogManager.GetLogger(typeof(SiteService));
         private ISiteRepository siteRepository = new SiteRepository();
 
-        public List<Site> GetAllActiveSites()
+        public List<Site> GetAllActiveSites(bool includeSubcontractorSites)
         {
-            return siteRepository.GetAllActiveSites();
+            var sites = siteRepository.GetAllActiveSites();
+            if (!includeSubcontractorSites)
+            {
+                sites = sites.Where(x => !x.IsSubcontractor).ToList<Site>();
+            }
+
+            return sites;
         }
 
         public List<Site> GetSites(string userId, bool excludeSubcontractorSites, bool excludeCcoSites)

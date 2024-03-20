@@ -84,12 +84,12 @@ namespace eCLAdmin.Controllers
             return types;
         }
 
-        protected List<Site> GetAllActiveSites()
+        protected List<Site> GetAllActiveSites(bool includeSubcontractorSites)
         {
             var allActiveSites = (List<Site>)Session["AllActiveSites"];
             if (allActiveSites == null)
             {
-                allActiveSites = this.siteService.GetAllActiveSites();
+                allActiveSites = this.siteService.GetAllActiveSites(includeSubcontractorSites);
                 Session["AllActiveSites"] = allActiveSites;
             }
 
@@ -104,7 +104,7 @@ namespace eCLAdmin.Controllers
                 return false;
             }
 
-            var allSites = GetAllActiveSites();
+            var allSites = GetAllActiveSites(true); // include subcontractor sites
             var strSiteId = siteId.ToString();
             var isSubcontractorSite = false;
             foreach (var s in allSites)

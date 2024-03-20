@@ -111,7 +111,7 @@ namespace eCLAdmin.Controllers
         {
             logger.Debug("@@@@@@@@@@@@ Entered InitEcoachingAccessControlAdd: ");
             eCoachingAccessControlAddViewModel userVM = new ViewModels.eCoachingAccessControlAddViewModel();
-            var siteList = siteService.GetAllActiveSites();
+            var siteList = siteService.GetAllActiveSites(false); // do not inlcude subcontractor sites
             var defaultSiteIdSelected = siteList[0].Id;
             var roleList = userService.GetEcoachingAccessControlRoles();
             userVM.SiteList = (siteList).ToSelectListItems(defaultSiteIdSelected);
