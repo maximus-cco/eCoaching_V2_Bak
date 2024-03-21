@@ -104,22 +104,35 @@ namespace eCoachingLog.Repository
                         logDetail.CoachingNotes = EclUtil.Sanitize(UpdatePdtToEst(dataReader["txtCoachingNotes"].ToString()));
 
                         var behavior = EclUtil.Sanitize(dataReader["txtDescription"].ToString());
-
-                        var img = dataReader["strQORCompetency"].ToString().Trim().ToLower();
                         // medals
-                        var isGold = img == "gold";
-                        var isSilver = img == "silver";
-                        var isBronze = img == "bronze";
-                        var isHonorMention = img == "honorablemention";
+                        var isGold = false;
+                        var isSilver = false;
+                        var isBronze = false;
+                        var isHonorMention = false;
                         // badges
-                        var isActiveListening = img == "activelistening";
-                        var isBusinessCorrespondence = img == "businesscorr";
-                        var isBusinessProcess = img == "businessprocess";
-                        var isCallEfficiency = img == "callefficiency";
-                        var isInfoAccuracy = img == "infoaccuracy";
-                        var isIssueResolution = img == "issueresolution";
-                        var isPersonailityFlexing = img == "personailityflexing";
-                        var isPrivacyDisclaimers = img == "privacydisclaimers";
+                        var isActiveListening = false;
+                        var isBusinessCorrespondence = false;
+                        var isBusinessProcess = false;
+                        var isCallEfficiency = false;
+                        var isInfoAccuracy = false;
+                        var isIssueResolution = false;
+                        var isPersonailityFlexing = false;
+                        var isPrivacyDisclaimers = false;
+                        var img = dataReader["strQORCompetency"].ToString().Trim().ToLower();
+
+                        if (img == "gold") isGold = true;
+                        else if (img == "silver") isSilver = true;
+                        else if (img == "bronze") isBronze = true;
+                        else if (img == "honorablemention") isHonorMention = true;
+                        else if (img == "activelistening") isActiveListening = true;
+                        else if (img == "businesscorr") isBusinessCorrespondence = true;
+                        else if (img == "businessprocess") isBusinessProcess = true;
+                        else if (img == "callefficiency") isCallEfficiency = true;
+                        else if (img == "infoaccuracy") isInfoAccuracy = true;
+                        else if (img == "issueresolution") isIssueResolution = true;
+                        else if (img == "personailityflexing") isPersonailityFlexing = true;
+                        else if (img == "privacydisclaimers") isPrivacyDisclaimers = true;
+
                         logDetail.BehaviorDetails = new DetailsOfBehavior(behavior, isGold, isSilver, isBronze, isHonorMention, isActiveListening, isBusinessCorrespondence,
                             isBusinessProcess, isCallEfficiency, isInfoAccuracy, isIssueResolution, isPersonailityFlexing, isPrivacyDisclaimers);
 
