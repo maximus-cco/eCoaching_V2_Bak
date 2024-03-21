@@ -20,32 +20,43 @@
         <img src="~/Content/Images/honorable_mention.jpg" alt="Honorable Mention" style="margin-top: 10px;">
     }
 
-    <!-- badges (heating)-->
-    @if (Model.IsActiveListening)
+    <!-- skill badges -->
+    @if (Model.IsActiveListening) 
     {
         <img src="~/Content/Images/active_listening.jpg" alt="Active Listening" style="margin-top: 10px;">
     }
-    else if (Model.IsBusinessProcess)
+
+    @if (!Model.IsBusinessCorrespondence)
+    {
+        <img src="~/Content/Images/business_correspondence.jpg" alt="Business Correspondence" style="margin-top: 10px;">
+    }
+
+    @if (Model.IsBusinessProcess)
     {
         <img src="~/Content/Images/business_process.jpg" alt="Business Process" style="margin-top: 10px;">
     }
-    else if (Model.IsCallEfficiency)
+
+    @if (Model.IsCallEfficiency)
     {
         <img src="~/Content/Images/call_efficiency.jpg" alt="Call Efficiency" style="margin-top: 10px;">
     }
-    else if (Model.IsInfoAccuracy)
+
+    @if (Model.IsInfoAccuracy)
     {
         <img src="~/Content/Images/info_accuracy.jpg" alt="Info Accuracy" style="margin-top: 10px;">
     }
-    else if (Model.IsIssueResolution)
+
+    @if (Model.IsIssueResolution)
     {
         <img src="~/Content/Images/issue_resolution.jpg" alt="Issue Resolution" style="margin-top: 10px;">
     }
-    else if (Model.IsPersonailityFlexing)
+
+    @if (Model.IsPersonailityFlexing)
     {
         <img src="~/Content/Images/personaility_flexing.jpg" alt="Personaility Flexing" style="margin-top: 10px;">
     }
-    else if (Model.IsPrivacyDisclaimers)
+
+    @if (Model.IsPrivacyDisclaimers)
     {
         <img src="~/Content/Images/privacy_disclaimers.jpg" alt="Privacy Disclaimers" style="margin-top: 10px;">
     }

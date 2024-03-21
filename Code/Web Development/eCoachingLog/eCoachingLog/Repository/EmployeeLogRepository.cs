@@ -111,14 +111,15 @@ namespace eCoachingLog.Repository
                         var isHonorMention = false;
                         // badges
                         var isActiveListening = false;
+                        var isBusinessCorrespondence = false;
                         var isBusinessProcess = false;
                         var isCallEfficiency = false;
                         var isInfoAccuracy = false;
                         var isIssueResolution = false;
                         var isPersonailityFlexing = false;
                         var isPrivacyDisclaimers = false;
-                        logDetail.BehaviorDetails = new DetailsOfBehavior(behavior, isGold, isSilver, isBronze, isHonorMention, isActiveListening, isBusinessProcess,
-                            isCallEfficiency, isInfoAccuracy, isIssueResolution, isPersonailityFlexing, isPrivacyDisclaimers);
+                        logDetail.BehaviorDetails = new DetailsOfBehavior(behavior, isGold, isSilver, isBronze, isHonorMention, isActiveListening, isBusinessCorrespondence,
+                            isBusinessProcess, isCallEfficiency, isInfoAccuracy, isIssueResolution, isPersonailityFlexing, isPrivacyDisclaimers);
 
                         logDetail.MgrNotes = EclUtil.Sanitize(dataReader["txtMgrNotes"].ToString());
                         logDetail.Comment = EclUtil.Sanitize(dataReader["txtCSRComments"].ToString());

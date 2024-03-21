@@ -13,6 +13,7 @@
         public bool IsHonorMention { get; set; }
         // badges (heating)
         public bool IsActiveListening { get; set; }
+        public bool IsBusinessCorrespondence { get; set; }
         public bool IsBusinessProcess { get; set; }
         public bool IsCallEfficiency { get; set; }
         public bool IsInfoAccuracy { get; set; }
@@ -34,6 +35,7 @@
             bool isHonorMention, 
             // badges (heating)
             bool isActiveListening, 
+            bool isBusinessCorrespondence,
             bool isBusinessProcess, 
             bool isCallEfficiency, 
             bool isInfoAccuracy, 
@@ -47,6 +49,7 @@
             IsBronze = isBronze;
             IsHonorMention = isHonorMention;
             IsActiveListening = isActiveListening;
+            IsBusinessCorrespondence = isBusinessCorrespondence;
             IsBusinessProcess = isBusinessProcess;
             IsCallEfficiency = isCallEfficiency;
             IsInfoAccuracy = isInfoAccuracy;
