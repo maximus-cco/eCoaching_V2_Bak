@@ -104,20 +104,22 @@ namespace eCoachingLog.Repository
                         logDetail.CoachingNotes = EclUtil.Sanitize(UpdatePdtToEst(dataReader["txtCoachingNotes"].ToString()));
 
                         var behavior = EclUtil.Sanitize(dataReader["txtDescription"].ToString());
+
+                        var img = dataReader["strQORCompetency"].ToString().Trim().ToLower();
                         // medals
-                        var isGold = false;
-                        var isSilver = false;
-                        var isBronze = false;
-                        var isHonorMention = false;
+                        var isGold = img == "gold";
+                        var isSilver = img == "silver";
+                        var isBronze = img == "bronze";
+                        var isHonorMention = img == "honorablemention";
                         // badges
-                        var isActiveListening = false;
-                        var isBusinessCorrespondence = false;
-                        var isBusinessProcess = false;
-                        var isCallEfficiency = false;
-                        var isInfoAccuracy = false;
-                        var isIssueResolution = false;
-                        var isPersonailityFlexing = false;
-                        var isPrivacyDisclaimers = false;
+                        var isActiveListening = img == "activelistening";
+                        var isBusinessCorrespondence = img == "businesscorr";
+                        var isBusinessProcess = img == "businessprocess";
+                        var isCallEfficiency = img == "callefficiency";
+                        var isInfoAccuracy = img == "infoaccuracy";
+                        var isIssueResolution = img == "issueresolution";
+                        var isPersonailityFlexing = img == "personailityflexing";
+                        var isPrivacyDisclaimers = img == "privacydisclaimers";
                         logDetail.BehaviorDetails = new DetailsOfBehavior(behavior, isGold, isSilver, isBronze, isHonorMention, isActiveListening, isBusinessCorrespondence,
                             isBusinessProcess, isCallEfficiency, isInfoAccuracy, isIssueResolution, isPersonailityFlexing, isPrivacyDisclaimers);
 

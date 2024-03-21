@@ -99,7 +99,7 @@ namespace eCoachingLog.Services
 
 		public string GetAdditionalText(Review review, User user)
 		{
-			var log = review.LogDetail;
+            var log = review.LogDetail;
 
             if (log.IsQn 
                 && (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
@@ -140,6 +140,7 @@ namespace eCoachingLog.Services
 						{
 							return Constants.REVIEW_LCSAT;
 						}
+
 						// General
                         if (user.IsSubcontractor)
                         {
