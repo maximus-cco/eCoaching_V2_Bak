@@ -295,6 +295,7 @@
     <Content Include="Content\Images\ecl-logo-small.png" />
     <Content Include="Content\Images\ecl-logo.png" />
     <Content Include="Content\Images\gold.jpg" />
+    <Content Include="Content\Images\honorable_mention.jpg" />
     <Content Include="Content\Images\Info_accuracy.jpg" />
     <Content Include="Content\Images\issue_resolution.jpg" />
     <Content Include="Content\Images\personaility_flexing.jpg" />
