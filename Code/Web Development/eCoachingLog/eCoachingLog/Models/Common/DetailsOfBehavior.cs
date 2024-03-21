@@ -18,7 +18,7 @@
         public bool IsCallEfficiency { get; set; }
         public bool IsInfoAccuracy { get; set; }
         public bool IsIssueResolution { get; set; }
-        public bool IsPersonailityFlexing { get; set; }
+        public bool IsPersonalityFlexing { get; set; }
         public bool IsPrivacyDisclaimers { get; set; }
 
         public DetailsOfBehavior()
@@ -40,7 +40,7 @@
             bool isCallEfficiency, 
             bool isInfoAccuracy, 
             bool isIssueResolution,
-            bool isPersonailityFlexing, 
+            bool isPersonalityFlexing, 
             bool isPrivacyDisclaimers)
         {
             Behavior = behavior;
@@ -54,7 +54,7 @@
             IsCallEfficiency = isCallEfficiency;
             IsInfoAccuracy = isInfoAccuracy;
             IsIssueResolution = isIssueResolution;
-            IsPersonailityFlexing = isPersonailityFlexing;
+            IsPersonalityFlexing = isPersonalityFlexing;
             IsPrivacyDisclaimers = isPrivacyDisclaimers;
         }
     }

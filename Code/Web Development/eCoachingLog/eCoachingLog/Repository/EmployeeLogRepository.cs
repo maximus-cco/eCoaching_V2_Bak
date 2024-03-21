@@ -116,7 +116,7 @@ namespace eCoachingLog.Repository
                         var isCallEfficiency = false;
                         var isInfoAccuracy = false;
                         var isIssueResolution = false;
-                        var isPersonailityFlexing = false;
+                        var isPersonalityFlexing = false;
                         var isPrivacyDisclaimers = false;
                         var img = dataReader["strQORCompetency"].ToString().Trim().ToLower();
 
@@ -130,11 +130,11 @@ namespace eCoachingLog.Repository
                         else if (img == "callefficiency") isCallEfficiency = true;
                         else if (img == "infoaccuracy") isInfoAccuracy = true;
                         else if (img == "issueresolution") isIssueResolution = true;
-                        else if (img == "personailityflexing") isPersonailityFlexing = true;
+                        else if (img == "personalityflexing") isPersonalityFlexing = true;
                         else if (img == "privacydisclaimers") isPrivacyDisclaimers = true;
 
                         logDetail.BehaviorDetails = new DetailsOfBehavior(behavior, isGold, isSilver, isBronze, isHonorMention, isActiveListening, isBusinessCorrespondence,
-                            isBusinessProcess, isCallEfficiency, isInfoAccuracy, isIssueResolution, isPersonailityFlexing, isPrivacyDisclaimers);
+                            isBusinessProcess, isCallEfficiency, isInfoAccuracy, isIssueResolution, isPersonalityFlexing, isPrivacyDisclaimers);
 
                         logDetail.MgrNotes = EclUtil.Sanitize(dataReader["txtMgrNotes"].ToString());
                         logDetail.Comment = EclUtil.Sanitize(dataReader["txtCSRComments"].ToString());
