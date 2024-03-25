@@ -4,6 +4,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	=============================================
 --	Author:		Susmitha Palacherla
 --	Create Date: 02/05/2014
@@ -129,7 +130,7 @@ IF  @intehempid = 0
 	      SET @nvcEmpID = 
 		  (SELECT DISTINCT Emp_ID
 		  FROM EC.Employee_Hierarchy
-		  WHERE Emp_ID = @nvcLanIDX
+		  WHERE Emp_ID = @nvcLanIDX OR CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) = @nvcLanIDX
 		  AND @intDate > Start_Date
 		  )
      END

@@ -1,9 +1,10 @@
 /*
-CCO_eCoaching_Dimension_Tables_Create(06).sql
-Last Modified Date: 01/08/2024
+CCO_eCoaching_Dimension_Tables_Create(07).sql
+Last Modified Date: 03/01/2024
 Last Modified By: Susmitha Palacherla
 
-Version 06: TFS 27523 - Dashboard to view the feed load history in the Admin Tool- 01/08/2024
+Version 07: Create eCoaching Log for Subcontractors - TFS 27527 - 3/1/2024
+Version 06: Dashboard to view the feed load history in the Admin Tool - TFS 27523 - 01/08/2024
 Version 05: Quality Now workflow enhancement. TFS 22187 - 09/15/2021
 Version 04: Updated to display MyFollowup for CSRs. TFS 15621 - 09/17/2019
 Version 03: Modified to add Sort Order to DIM_Program - TFS 13643 - 03/07/2019
@@ -95,14 +96,17 @@ CREATE TABLE [EC].[DIM_Site](
 	[City] [nvarchar](20) NOT NULL,
 	[State] [nvarchar](20) NULL,
 	[StateCity] [nvarchar](30) NOT NULL,
+	[isActive] [bit] NULL,
+	[isSub] [bit] NOT NULL,
  CONSTRAINT [PK_Site_ID] PRIMARY KEY CLUSTERED 
 (
 	[SiteID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
 GO
 
+ALTER TABLE [EC].[DIM_Site] ADD  DEFAULT ((0)) FOR [isSub]
+GO
 
 --****************************************************************************************
 
@@ -238,12 +242,15 @@ CREATE TABLE [EC].[DIM_Module](
 	[isActive] [bit] NULL,
 	[ByProgram] [bit] NULL,
 	[ByBehavior] [bit] NULL,
+	[isSub] [bit] NOT NULL,
  CONSTRAINT [Module_ID] PRIMARY KEY CLUSTERED 
 (
 	[ModuleID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
 
+ALTER TABLE [EC].[DIM_Module] ADD  DEFAULT ((0)) FOR [isSub]
 GO
 
 
@@ -454,6 +461,7 @@ GO
 --****************************************************************************************
 
 --16. [EC].[UI_Role_Page_Access] 
+
 SET ANSI_NULLS ON
 GO
 
@@ -465,10 +473,16 @@ CREATE TABLE [EC].[UI_Role_Page_Access](
 	[RoleName] [nvarchar](40) NOT NULL,
 	[NewSubmission] [bit] NOT NULL,
 	[MyDashboard] [bit] NOT NULL,
-	[HistoricalDashboard] [bit] NOT NULL
-	) ON [PRIMARY]
-
+	[HistoricalDashboard] [bit] NOT NULL,
+ CONSTRAINT [pk_Role_Page_Access] PRIMARY KEY CLUSTERED 
+(
+	[RoleID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
 GO
+
+
+
 --****************************************************************************************
 
 

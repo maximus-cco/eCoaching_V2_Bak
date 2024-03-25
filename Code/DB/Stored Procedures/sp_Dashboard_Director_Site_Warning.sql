@@ -1,34 +1,8 @@
-/*
-sp_Dashboard_Director_Site_Warning(01).sql
-Last Modified Date: 05/28/2018
-Last Modified By: Susmitha Palacherla
-
-
-Version 01: Document Initial Revision created during My dashboard redesign.  TFS 7137 - 05/28/2018
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Dashboard_Director_Site_Warning' 
-)
-   DROP PROCEDURE [EC].[sp_Dashboard_Director_Site_Warning]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -36,8 +10,9 @@ GO
 --	Description: *	This procedure returns the Active Warning logs at a given site 
 --  For Employees within the Director's Hierarchy.
 --  Initial Revision created during MyDashboard redesign.  TFS 7137 - 05/22/2018
+-- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Dashboard_Director_Site_Warning] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Director_Site_Warning] 
 @intSiteIdin int,
 @nvcUserIdin nvarchar(10),
 @strSDatein datetime,
@@ -47,7 +22,6 @@ CREATE PROCEDURE [EC].[sp_Dashboard_Director_Site_Warning]
 @sortBy nvarchar(100),
 @sortASC nvarchar(1)
 AS
-
 
 BEGIN
 
@@ -73,12 +47,12 @@ SET @UpperBand  = @startRowIndex + @PageSize
 
 IF @sortASC = 'y' 
 SET @SortOrder = ' ASC' ELSE 
-SET @SortOrder = ' DESC' 
-SET  @SortExpression = @sortBy +  @SortOrder
+SET @SortOrder = ' DESC' ;
+SET  @SortExpression = @sortBy +  @SortOrder;
 --PRINT @SortExpression
 
-SET @strSDate = convert(varchar(8), @strSDatein,112)
-Set @strEDate = convert(varchar(8), @strEDatein,112)
+SET @strSDate = convert(varchar(8), @strSDatein,112);
+Set @strEDate = convert(varchar(8), @strEDatein,112);
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
@@ -94,6 +68,7 @@ AS
 				,x.strFormStatus
 				,x.strSource
 				,x.SubmittedDate
+				,x.WarningGivenDate
 				,x.strSubmitterName
 				,ROW_NUMBER() OVER (ORDER BY '+ @SortExpression +' ) AS RowNumber    
   FROM 
@@ -106,6 +81,7 @@ AS
 	  ,[s].[Status] strFormStatus
 	  ,[so].[SubCoachingSource]	strSource
 	  ,[wl].[SubmittedDate]	SubmittedDate
+	  ,[wl].[WarningGivenDate] WarningGivenDate
 	  ,[vehs].[Emp_Name] strSubmitterName
     FROM [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK)
 	JOIN [EC].[Employee_Hierarchy] eh ON eh.[EMP_ID] = veh.[EMP_ID]
@@ -113,14 +89,14 @@ AS
 	LEFT JOIN [EC].[View_Employee_Hierarchy] vehs WITH (NOLOCK) ON wl.SubmitterID = vehs.EMP_ID 
 	JOIN [EC].[DIM_Status] s ON wl.StatusID = s.StatusID 
 	JOIN [EC].[DIM_Source] so ON wl.SourceID = so.SourceID 
-	WHERE wl.StatusID = 1
+	WHERE wl.StatusID <> 2
 	AND wl.SiteID = '''+CONVERT(NVARCHAR,@intSiteIdin)+'''
 	AND wl.Active = 1
 	AND wl.siteID <> -1
 	AND (eh.SrMgrLvl1_ID = '''+ @nvcUserIdin+ ''' OR eh.SrMgrLvl2_ID = '''+ @nvcUserIdin +''' OR eh.SrMgrLvl3_ID = '''+ @nvcUserIdin +''')
 	AND convert(varchar(8), [wl].[SubmittedDate], 112) >= ''' + @strSDate + '''
     AND convert(varchar(8), [wl].[SubmittedDate], 112) <= ''' + @strEDate + '''
-	GROUP BY [wl].[FormName], [wl].[WarningID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [wl].[SubmittedDate], [vehs].[Emp_Name]
+	GROUP BY [wl].[FormName], [wl].[WarningID], [veh].[Emp_Name], [veh].[Sup_Name], [veh].[Mgr_Name], [s].[Status], [so].[SubCoachingSource], [wl].[SubmittedDate] ,[wl].[WarningGivenDate], [vehs].[Emp_Name]
   ) x 
 )
 
@@ -132,6 +108,7 @@ SELECT strLogID,
   ,strFormStatus
   ,strSource
   ,SubmittedDate
+  ,WarningGivenDate
   ,strSubmitterName
   ,[EC].[fn_strCoachingReasonFromWarningID](T.strLogID) strCoachingReason
   ,[EC].[fn_strSubCoachingReasonFromWarningID](T.strLogID) strSubCoachingReason
@@ -142,18 +119,13 @@ WHERE RowNumber >= ''' + CONVERT(VARCHAR, @LowerBand) + '''  AND RowNumber < '''
 ORDER BY ' + @SortExpression  
 
 
-
 EXEC (@nvcSQL)	
 --PRINT @nvcSQL
 
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey]; 	 
-	    
+	   
 END -- sp_Dashboard_Director_Site_Warning
-
 GO
-
-
-
 
 

@@ -1,7 +1,9 @@
 /*
-File: eCoaching_EmployeeHierarchy_Load_Tables_Create(09).sql 
+File: eCoaching_EmployeeHierarchy_Load_Tables_Create(10).sql 
 Last Modified Date: 10/22/2022
 Last Modified By: Susmitha Palacherla
+
+Version 10: Create eCoaching Log for Subcontractors - TFS 27527 - 3/1/2024
 
 Version 09: Employee Load into eCL Failing due to lengthy Email Address. TFS 25490 - 10/22/2022
 Altered size for Email column to 250
@@ -67,9 +69,7 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 -- Author: Susmitha Palacherla
 -- Create Date: 12/02/2013
 -- Description: Used to stage Automated Employee File from Peoplesoft.
--- Last Modified Date:05/22/2019
--- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
-
+-- Last Modified Date: 03/01/2024
 -- =============================================
 
 SET ANSI_NULLS ON
@@ -104,13 +104,27 @@ CREATE TABLE [EC].[Employee_Hierarchy_Stage](
 	[Legacy_Emp_ID] [nvarchar](10) NULL,
 	[Hire_Date] [datetime] NULL,
 	[Emp_Pri_Name] [nvarchar](70) NULL,
-	[Dept_ID] [nvarchar](30) NULL DEFAULT ('NA'),
-	[Dept_Description] [nvarchar](60) NULL DEFAULT ('NA'),
-	[Reg_Temp] [nvarchar](3) NULL DEFAULT ('NA'),
-	[Full_Part_Time] [nvarchar](3) NULL DEFAULT ('NA'),
-        [Term_Date] [datetime] NULL,
-        [FLSA_Status] [nvarchar](20) NULL
+	[Dept_ID] [nvarchar](30) NULL,
+	[Dept_Description] [nvarchar](60) NULL,
+	[Reg_Temp] [nvarchar](3) NULL,
+	[Full_Part_Time] [nvarchar](3) NULL,
+	[Term_Date] [datetime] NULL,
+	[FLSA_Status] [nvarchar](20) NULL,
+	[isSub] [nvarchar](1) NULL
 ) ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy_Stage] ADD  DEFAULT ('NA') FOR [Dept_ID]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy_Stage] ADD  DEFAULT ('NA') FOR [Dept_Description]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy_Stage] ADD  DEFAULT ('NA') FOR [Reg_Temp]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy_Stage] ADD  DEFAULT ('NA') FOR [Full_Part_Time]
+GO
 
 
 
@@ -121,19 +135,13 @@ CREATE TABLE [EC].[Employee_Hierarchy_Stage](
 -- Author: Susmitha Palacherla
 -- Create Date: 12/02/2013
 -- Description: Used to store the Employee Information to be used by the Coaching application.
--- Last Modified Date:05/22/2019
--- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
+-- Last Modified Date: 03/01/2024
 -- =============================================
-
-
 
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
-GO
-
-SET ANSI_PADDING ON
 GO
 
 CREATE TABLE [EC].[Employee_Hierarchy](
@@ -173,19 +181,31 @@ CREATE TABLE [EC].[Employee_Hierarchy](
 	[Legacy_Emp_ID] [nvarchar](10) NULL,
 	[PS_Emp_ID_Prefix] [nvarchar](10) NULL,
 	[Emp_Pri_Name] [varbinary](256) NULL,
+	[isSub] [nvarchar](1) NOT NULL,
  CONSTRAINT [PK_Emp_ID] PRIMARY KEY CLUSTERED 
 (
 	[Emp_ID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
 GO
 
-
-
-ALTER TABLE [EC].[Employee_Hierarchy] ADD  CONSTRAINT [DF__Employee___End_D__03317E3D]  DEFAULT ((99991231)) FOR [End_Date]
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ((99991231)) FOR [End_Date]
 GO
 
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ('NA') FOR [Dept_ID]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ('NA') FOR [Dept_Description]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ('NA') FOR [Reg_Temp]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ('NA') FOR [Full_Part_Time]
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD  DEFAULT ('N') FOR [isSub]
+GO
 
 
 
@@ -321,8 +341,7 @@ GO
 -- Author: Susmitha Palacherla
 -- Create Date: 04/12/2016
 -- Description: Used to stage HR employee records
--- Last Modified Date:05/22/2019
--- Updated to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
+-- Last Modified Date: 03/01/2024
 -- =============================================
 
 
@@ -356,9 +375,12 @@ CREATE TABLE [EC].[HR_Hierarchy_Stage](
 	[Start_Date] [datetime] NULL,
 	[Active] [nvarchar](1) NULL,
 	[Legacy_Emp_ID] [nvarchar](10) NULL,
-	[Hire_Date] [datetime] NULL
+	[Hire_Date] [datetime] NULL,
+	[isSub] [nvarchar](1) NULL
 ) ON [PRIMARY]
 GO
+
+
 
 --*****************************************************
 

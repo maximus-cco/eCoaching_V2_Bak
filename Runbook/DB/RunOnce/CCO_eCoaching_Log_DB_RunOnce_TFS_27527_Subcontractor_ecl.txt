@@ -18,7 +18,9 @@ Summary
 6. Insert record to table [EC].[AT_Role]
 7. Insert record to table [EC].[AT_Role_Entitlement_Link]
 8. Add isSub to Dim_Module
-
+9. Changes for static text for subs
+10. Add record to table [EC].[AT_Entitlement]
+11. Add record to table [EC].[AT_Role_Entitlement_Link]
 
 -- Test
 
@@ -66,7 +68,7 @@ INSERT INTO [EC].[DIM_Site]
 GO
 
 --****************************************************
---2. Add isSib column to Tables
+--2. Add isSub column to Tables
 
 ALTER TABLE [EC].[Employee_Hierarchy] ADD [isSub] NVARCHAR (1) NOT NULL DEFAULT 'N'
 GO
@@ -208,7 +210,60 @@ GO
 
 --****************************************************
 
+-- 9. Changes for static text for subs
 
+ALTER Table [EC].[Coaching_Log_StaticText]
+ADD [isSub] bit
+GO
+
+
+UPDATE  [EC].[Coaching_Log_StaticText]
+SET [isSub] = 0
+WHERE [TextID] in (101,102,103)
+GO
+
+
+
+INSERT INTO [EC].[Coaching_Log_StaticText]
+           ([TextID]
+           ,[TextDescription]
+           ,[Active]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+           ,[Training]
+           ,[StartDate]
+           ,[EndDate]
+           ,[isSub])
+     VALUES
+	 (201,'<p>Please work with your employee to determine if there are any issues that need to be resolved.</p>',1,9,314,1,0,0,0,0,20230401,99991231,1),
+	 (202,'<p>There is no appeal process for Quality Now, but feedback for the Quality Team concerning this batch is welcomed.  Please see <b>SOP QA 33.0</b> for additional guidance.</p>',1,57,42,1,0,0,0,0,20230401,99991231,1),
+	 (203,'<p>Your CSR was logged in to NGD for more than 30 minutes outside their scheduled shift.  Please validate and ensure your CSR is fully aware of when they should and should not be logged in to the system, laptop, AWS, and NGD.</p>',1,9,315,1,0,0,0,0,20230401,99991231,1)
+GO
+
+--****************************************************
+
+--10. Insert record to table [EC].[AT_Entitlement]
+
+INSERT INTO [EC].[AT_Entitlement]
+           ([EntitlementDescription])
+     VALUES ('Report-FeedLoadHistory')
+          
+GO
 
 
 --****************************************************
+
+--11. Insert record to table [EC].[AT_Role_Entitlement_Link]
+
+INSERT INTO [EC].[AT_Role_Entitlement_Link]
+           ([RoleId]
+           ,[EntitlementId])
+     VALUES (101, 218)
+GO
+
+
+
