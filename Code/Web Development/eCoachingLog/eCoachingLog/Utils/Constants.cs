@@ -304,8 +304,7 @@ namespace eCoachingLog.Utils
 
 		public const string REVIEW_OMR = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest <a href='https://maximus365.sharepoint.com/sites/CCO/Resources/SOP/Contact%20Center%20Operations/Forms/AllItems.aspx' target='_blank'>" +
 								"Contact Center Operations 46.0 Outlier Management Report (OMR): Outlier Research Process SOP</a> and provide the details in the record below.";
-        public const string REVIEW_OMR_SUBCONTRACTOR = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item in accordance with the latest " +
-                                "<strong>Contact Center Operations 46.0 Outlier Management Report (OMR): Outlier Research Process SOP</strong> and provide the details in the record below.";
+        public const string REVIEW_OMR_SUBCONTRACTOR = "You are receiving this eCL record because an Employee on your team was identified in an Outlier Management Report (OMR). Please research this item and provide the details in the record below.";
 
         public const string REVIEW_ETS_OAE = "You are receiving this eCL record because an Employee on your team was identified on the CCO TC Outstanding Actions report (also known as the TC Compliance Action report).  Please research why the employee did not complete their timecard before the deadline laid out in the latest " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Resources/SOP/Contact%20Center%20Operations/Forms/AllItems.aspx' target='_blank'>Contact Center Operations 3.06 Timecard Audit SOP</a> and provide the details in the record below.";
