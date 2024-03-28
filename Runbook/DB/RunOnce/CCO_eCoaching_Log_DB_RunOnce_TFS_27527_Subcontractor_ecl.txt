@@ -240,7 +240,7 @@ INSERT INTO [EC].[Coaching_Log_StaticText]
            ,[isSub])
      VALUES
 	 (201,'<p>Please work with your employee to determine if there are any issues that need to be resolved.</p>',1,9,314,1,0,0,0,0,20230401,99991231,1),
-	 (202,'<p>There is no appeal process for Quality Now, but feedback for the Quality Team concerning this batch is welcomed.  Please see <b>SOP QA 33.0</b> for additional guidance.</p>',1,57,42,1,0,0,0,0,20230401,99991231,1),
+	 (202,'<p>There is no appeal process for Quality Now, but feedback for the Quality Team concerning this batch is welcomed.  Please see <b>SOP QA 33.0 SUB and Peckham Quality Now Feedback</b> for additional guidance.</p>',1,57,42,1,0,0,0,0,20230401,99991231,1),
 	 (203,'<p>Your CSR was logged in to NGD for more than 30 minutes outside their scheduled shift.  Please validate and ensure your CSR is fully aware of when they should and should not be logged in to the system, laptop, AWS, and NGD.</p>',1,9,315,1,0,0,0,0,20230401,99991231,1)
 GO
 
