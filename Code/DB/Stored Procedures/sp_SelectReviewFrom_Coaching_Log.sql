@@ -1,8 +1,10 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -23,6 +25,7 @@ GO
 --  Changes to suppport AUD feed- TFS 26432  - 04/03/2023
 --  Updated to return Verint ID Strings for Aud feed records. TFS 27135 - 10/2/2023
 -- Changes to suppport NGD feed- TFS 27396  - 11/24/2023
+-- Updated to support QN Rewards eCoaching logs. TFS 27851 - 03/21/2024
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -185,8 +188,11 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSRS%'') THEN 1 ELSE 0 END "PSC / MSRS",
   CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQN2%'') THEN 1 ELSE 0 END "Quality / BQN",
   CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQNS%'') THEN 1 ELSE 0 END "Quality / BQNS",
-   CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQM2%'') THEN 1 ELSE 0 END "Quality / BQM",
+  CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQM2%'') THEN 1 ELSE 0 END "Quality / BQM",
   CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQMS%'') THEN 1 ELSE 0 END "Quality / BQMS",
+  CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQM2%'') THEN 1 ELSE 0 END "Quality / BQM",
+  CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQMS%'') THEN 1 ELSE 0 END "Quality / BQMS",
+  CASE WHEN (cc.QOR IS NOT NULL AND cl.strReportCode LIKE ''QR%'') THEN 1 ELSE 0 END "Quality / QOR",
   cc.WAH_RTS, 
   cl.Description txtDescription,
   cl.CoachingNotes txtCoachingNotes,
@@ -219,7 +225,8 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   cl.PFDCompletedDate,
   ''Coaching'' strLogType,
   cc.strStaticText,
- ''Verint ID: '' + REPLACE(av.VerintIds, '' |'', '','') AudVerintIds
+ ''Verint ID: '' + REPLACE(av.VerintIds, '' |'', '','') AudVerintIds,
+ qor.[Competency] strQORCompetency
 FROM [EC].[Coaching_Log] cl  WITH (NOLOCK) ';
 	    
 SET @nvcSQL3 = @nvcSQL3 + N' JOIN 
@@ -257,6 +264,7 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
     MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	NPN_PSC,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SUR,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 63) THEN [clr].[Value] ELSE NULL END)	WAH_RTS,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 326) THEN [clr].[Value] ELSE NULL END) QOR,
 	[EC].[fn_strCoachingLogStatictext]([ccl].[CoachingID]) strStaticText
   FROM [EC].[Coaching_Log_Reason] clr  WITH (NOLOCK),
     [EC].[DIM_Coaching_Reason] cr,
@@ -276,6 +284,7 @@ JOIN [EC].[DIM_Source] sc ON [cl].[SourceID] = [sc].[SourceID]
 JOIN [EC].[DIM_Site] st ON [cl].[SiteID] = [st].[SiteID] 
 JOIN [EC].[DIM_Module] m ON [cl].[ModuleID] = [m].[ModuleID]
 LEFT JOIN [EC].[Audio_Issues_VerintIds] av ON av.[CoachingID] = cl.[CoachingID]  
+LEFT JOIN [EC].[Coaching_Log_QNORewards]qor ON qor.[CoachingID] = cl.[CoachingID]  
 ORDER BY [cl].[FormName]';
 
 

@@ -1,8 +1,9 @@
 /*
-CCO_eCoaching_Quality_Other_Load_Tables_Create(09).sql
-Last Modified Date: 01/08/2024
+CCO_eCoaching_Quality_Other_Load_Tables_Create(10).sql
+Last Modified Date: 03/28/2024
 Last Modified By: Susmitha Palacherla
 
+Version 10: TFS 27851 - Quality Now Olympic Rewards Feed
 Version 09: TFS 27523 - Dashboard to view the feed load history in the Admin Tool- 01/08/2024
 Version 08: TFS 21493 - Written Corr Bingo records in bingo feeds
 Version 07: TFS 20677 -  AD island to AD AWS environment changes - 4/22/2021
@@ -28,6 +29,9 @@ Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
 5.[EC].[NPN_Description]
 6.[EC].[Coaching_Log_Bingo]
 7.[EC].[Bingo_Images]
+8.[EC].[QualityNow_Rewards_Images]
+9.[EC].[Coaching_Log_QNORewards]
+
 
 **************************************************************
 
@@ -315,3 +319,69 @@ GO
 
 --**********************************************************************************
 
+--8.[EC].[QualityNow_Rewards_Images]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[QualityNow_Rewards_Images](
+	[ImageID] [int] IDENTITY(1,1) NOT NULL,
+	[ImageName] [nvarchar](50) NOT NULL,
+	[Competency] [nvarchar](50) NOT NULL,
+	[RewardType] [nvarchar](30) NULL
+) ON [PRIMARY]
+GO
+
+INSERT INTO [EC].[QualityNow_Rewards_Images]
+           ([ImageName]
+           ,[Competency]
+           ,[RewardType])
+     VALUES
+          ('BusinessProcess','Smooth Sailor','Badge'),
+          ('InfoAccuracy','Accurate Archer','Badge'),
+          ('PrivacyDisclaimers','Defense Defender','Badge'),
+          ('IssueResolution','Hurdle Leaper','Badge'),
+	    ('PersonalityFlexing','Nimble Gymnast','Badge'),
+          ('CallEfficiency','Lightning Relayer','Badge'),
+          ('ActiveListening','Mindful Titlist','Badge'),
+          ('BusinessCorr','Correspondent Champion','Badge'),
+	    ('Gold','Gold','Medal'),
+          ('Silver','Silver','Medal'),
+          ('Bronze','Bronze','Medal'),
+          ('HonorableMention','Honorable Mention','Medal')
+GO
+
+
+
+--**********************************************************************************
+
+--9.[EC].[Coaching_Log_QNORewards]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_QNORewards](
+	[CoachingID] [bigint] NOT NULL,
+	[Competency] [nvarchar](30) NOT NULL,
+	[CompetencyImage] [nvarchar](50) NULL
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Coaching_Log_QNORewards]  WITH NOCHECK ADD  CONSTRAINT [fkQNORewardsCoachingID] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log] ([CoachingID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [EC].[Coaching_Log_QNORewards] CHECK CONSTRAINT [fkQNORewardsCoachingID]
+GO
+
+
+
+
+--**********************************************************************************

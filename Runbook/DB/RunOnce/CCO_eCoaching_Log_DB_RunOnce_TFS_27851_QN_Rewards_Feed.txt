@@ -1,0 +1,130 @@
+/*
+TFS 27851   - Quality Now Olympic Rewards Feed
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+1. Add record to [EC].[DIM_Sub_Coaching_Reason]
+2. Add Record to [EC].[Feed_Contacts]
+3. Add record to [EC].[DIM_Feed_List]
+
+-- Test
+
+SELECT *  FROM [EC].[DIM_Sub_Coaching_Reason]WHERE [SubCoachingReason] = 'QN Olympic Rewards'
+SELECT * FROM [EC].[Feed_Contacts] WHERE [Category]= 'Quality Other'
+SELECT * FROM  [EC].[DIM_Feed_List] WHERE [Category]= 'Quality Other'
+
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+
+--1. Insert record for Sub Coaching Reason
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+           ('QN Olympic Rewards')
+GO
+
+--****************************************************
+--2. Insert record in Feed contacts Table
+
+INSERT INTO [EC].[Feed_Contacts]
+           ([Category]
+           ,[ReportCode]
+           ,[ReportDescription]
+           ,[PrimaryPOC]
+           ,[SecondaryPOC])
+     VALUES
+		('Quality Other', 'QRB', 'QualityNow Rewards Badges', 'Robert O''Mahony', 'Analytics Team'),
+		('Quality Other', 'QRM', 'QualityNow Rewards Medals', 'Robert O''Mahony', 'Analytics Team')
+GO
+
+--****************************************************
+--3. Insert record in Feed list Table
+
+INSERT INTO [EC].[DIM_Feed_List]
+           ([CategoryID]
+           ,[Category]
+           ,[ReportID]
+           ,[ReportCode]
+           ,[Description]
+		   ,[isActive])
+     VALUES
+ (4, 'Quality Other',403,'QRB', 'QualityNow Rewards Badges', 1 ),
+ (4, 'Quality Other',404,'QRM', 'QualityNow Rewards Medals', 1 )
+
+GO
+
+
+--****************************************************
+
+--4. Create table [EC].[Coaching_Log_QNORewards]
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[Coaching_Log_QNORewards](
+	[CoachingID] [bigint] NOT NULL,
+	[Competency] [nvarchar](30) NOT NULL,
+      [CompetencyImage] nvarchar(50)
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [EC].[Coaching_Log_QNORewards]  WITH NOCHECK ADD  CONSTRAINT [fkQNORewardsCoachingID] FOREIGN KEY([CoachingID])
+REFERENCES [EC].[Coaching_Log] ([CoachingID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [EC].[Coaching_Log_QNORewards] CHECK CONSTRAINT [fkQNORewardsCoachingID]
+GO
+
+--****************************************************
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [EC].[QualityNow_Rewards_Images](
+	[ImageID] [int] IDENTITY(1,1) NOT NULL,
+	[ImageName] [nvarchar](50) NOT NULL,
+	[Competency] [nvarchar](50) NOT NULL,
+	[RewardType] [nvarchar](30) NULL
+) ON [PRIMARY]
+GO
+
+INSERT INTO [EC].[QualityNow_Rewards_Images]
+           ([ImageName]
+           ,[Competency]
+           ,[RewardType])
+     VALUES
+          ('BusinessProcess','Smooth Sailor','Badge'),
+          ('InfoAccuracy','Accurate Archer','Badge'),
+          ('PrivacyDisclaimers','Defense Defender','Badge'),
+          ('IssueResolution','Hurdle Leaper','Badge'),
+	    ('PersonalityFlexing','Nimble Gymnast','Badge'),
+          ('CallEfficiency','Lightning Relayer','Badge'),
+          ('ActiveListening','Mindful Titlist','Badge'),
+          ('BusinessCorr','Correspondent Champion','Badge'),
+	    ('Gold','Gold','Medal'),
+          ('Silver','Silver','Medal'),
+          ('Bronze','Bronze','Medal'),
+          ('HonorableMention','Honorable Mention','Medal')
+GO
+
+
+
+--****************************************************

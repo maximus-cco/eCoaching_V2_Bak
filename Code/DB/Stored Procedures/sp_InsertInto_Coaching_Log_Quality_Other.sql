@@ -1,3 +1,4 @@
+
 SET ANSI_NULLS ON
 GO
 
@@ -22,6 +23,7 @@ GO
 -- Updated to handle Bingo logs for diffrent Programs for employee in same month. TFS 19526 - 12/21/2020
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
+-- Updated to support QN Rewards eCoaching logs. TFS 27851 - 03/21/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 (@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
@@ -88,7 +90,7 @@ select  Distinct LOWER(cs.EMP_ID)	[FormName],
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.EMP_ID)[SiteID],
         cs.[EMP_ID]                   [EmpID],
-        cs.[Submitter_ID]              [Submitter_ID],
+        ISNULL(cs.[Submitter_ID], 999999)              [Submitter_ID],
 		cs.Event_Date			            [EventDate],
 		 0			[isAvokeID],
 		 0			[isNGDActivityID],
@@ -145,7 +147,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
            ,[Value])
     SELECT DISTINCT cf.[CoachingID],
            CASE WHEN cf.strReportCode like 'CTC%' THEN 21 
-           WHEN (cf.strReportCode like 'HFC%' OR cf.strReportCode like 'OTA%' OR cf.strReportCode like 'BQ%') THEN 10 
+           WHEN (cf.strReportCode like 'HFC%' OR cf.strReportCode like 'OTA%' OR cf.strReportCode like 'BQ%' OR cf.strReportCode like 'QR%') THEN 10 
            WHEN cf.strReportCode like 'KUD%' THEN 11
            WHEN cf.strReportCode like 'NPN%' THEN 5
 		   ELSE 14 END,
@@ -157,8 +159,25 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     ON cf.[CoachingID] = cr.[CoachingID]  
     WHERE cr.[CoachingID] IS NULL;
 
+	 WAITFOR DELAY '00:00:00:02'; -- Wait for 2 ms
 
-  WAITFOR DELAY '00:00:00:02'; -- Wait for 2 ms
+	 -- Insert QualityNow Olympic Rewards to the Rewards Table
+
+INSERT INTO [EC].[Coaching_Log_QNORewards]
+           ([CoachingID]
+           ,[Competency])    
+	SELECT DISTINCT cf.[CoachingID], qs.[Competency]
+	FROM [EC].[Quality_Other_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
+    ON qs.[EMP_ID] = cf.[EmpID] AND  qs.[Report_Code] = cf.[strReportCode]
+	LEFT OUTER JOIN  [EC].[Coaching_Log_QNORewards]cqr
+    ON cf.[CoachingID] = cqr.[CoachingID]  
+    WHERE qs.Report_Code LIKE 'QR%'
+	AND cqr.[CoachingID] IS NULL 
+	ORDER BY [CoachingID],[Competency];
+
+	-- Begin commenting out code relevant to Bingo
+	/* 
+	  WAITFOR DELAY '00:00:00:02'; -- Wait for 2 ms
 
 
   -- Insert  detail records into [EC].[Coaching_Log_Quality_Now_Bingo] Table
@@ -243,13 +262,14 @@ GROUP BY bl.CoachingID)
  ON cl.CoachingID = c.CoachingID;
 
  WAITFOR DELAY '00:00:00:02'; -- Wait for 2 ms
-
+ */
+ -- Begin commenting out code relevant to Bingo
 -- Close the symmetric key with which to encrypt the data.  
 CLOSE SYMMETRIC KEY [CoachingKey]  
 
 
 -- Truncate Staging Table
-Truncate Table [EC].[Quality_Other_Coaching_Stage]
+--Truncate Table [EC].[Quality_Other_Coaching_Stage]
 
                   
 COMMIT TRANSACTION

@@ -1,4 +1,3 @@
-
 SET ANSI_NULLS ON
 GO
 
@@ -33,8 +32,10 @@ GO
 -- TFS 27396 - To add NGDS - 11/24/2023
 -- TFS 27634 - To add RES - 01/19/2024
 -- TFS 27638 - To add BRW - 01/19/2024
+-- TFS 27851 - To add QRB and QRM Feeds - 03/21/2024
+
 -- =============================================
-CREATE OR ALTER     FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
+CREATE OR ALTER FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
 )
 RETURNS INT
@@ -92,6 +93,8 @@ BEGIN
 			WHEN N'NGD' THEN 315
 			WHEN N'RES' THEN 211
 			WHEN N'BRW' THEN 325
+			WHEN N'QRB' THEN 326
+			WHEN N'QRM' THEN 326
         ELSE -1
       END;
     ELSE

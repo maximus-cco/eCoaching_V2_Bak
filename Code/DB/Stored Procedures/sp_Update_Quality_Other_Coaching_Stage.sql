@@ -1,8 +1,10 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -95,7 +97,7 @@ AND [Reject_Reason]is NULL;
 		
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
--- Employee not an Active CSR (HFC and KUD)
+-- Employee not an Active CSR (HFC and KUD, QR, BQ)
 UPDATE [EC].[Quality_Other_Coaching_Stage]
 SET [Reject_Reason]= N'Record does not belong to an active CSR.'
 WHERE (EMP_ID = '' OR
@@ -104,7 +106,7 @@ EMP_ID NOT IN
  WHERE Emp_Job_Code IN ('WACS01', 'WACS02', 'WACS03')
  AND Active = 'A'
  ))
- AND (Report_Code lIKE 'HFC%' OR Report_Code LIKE 'KUD%' OR Report_Code LIKE 'BQN2%' OR Report_Code LIKE 'BQM2%')
+ AND (Report_Code lIKE 'HFC%' OR Report_Code LIKE 'KUD%' OR Report_Code LIKE 'QR%' OR Report_Code LIKE 'BQ%')
 AND [Reject_Reason]is NULL;
 
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
