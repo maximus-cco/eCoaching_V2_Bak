@@ -21,6 +21,7 @@ GO
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- Add trigger and review performance for Bingo upload job - TFS 22443 - 8/2/2021
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
+-- Updated to support QN Rewards eCoaching logs. TFS 27851 - 03/21/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
 @Count INT OUTPUT
