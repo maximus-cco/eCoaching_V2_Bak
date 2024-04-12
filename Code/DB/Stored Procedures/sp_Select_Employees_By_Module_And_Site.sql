@@ -4,6 +4,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	04/15/2018
@@ -24,7 +25,6 @@ DECLARE
 @nvcModulein nvarchar(30),
 @nvcEmpJobCode nvarchar(20),
 @nvcisSub nvarchar(1),
-@intSiteID int,
 @NewLineChar nvarchar(2),
 @dtmDate datetime,
 @conditionalsite nvarchar(100),
@@ -57,16 +57,16 @@ BEGIN
 	SET @conditionalsite = @conditionalsite + ' AND [s].[SiteID] =   '''+CONVERT(NVARCHAR,@intSiteIDin)+'''';
 END
 
-IF @intSiteID = -3
+IF @intSiteIDin = -3
 
 BEGIN
-	SET @conditionalsite = @conditionalsite + ' AND [s].[isSub] =   ''Y''' ;
+	SET @conditionalsite = @conditionalsite + ' AND [s].[isSub] = 1';
 END
 
-IF @intSiteID = -4
+IF @intSiteIDin = -4
 
 BEGIN
-	SET @conditionalsite = @conditionalsite + ' AND [s].[isSub] =   ''N''' ;
+	SET @conditionalsite = @conditionalsite + ' AND [s].[isSub] = 0' ;
 END
 
 
@@ -110,7 +110,7 @@ SET @nvcSQL = @nvcSQL01 + @nvcSQL02 + @nvcSQL03
 ELSE
 SET @nvcSQL = @nvcSQL01 + @nvcSQL03
 
-Print @nvcSQL
+--Print @nvcSQL
 
 EXEC (@nvcSQL)	
 

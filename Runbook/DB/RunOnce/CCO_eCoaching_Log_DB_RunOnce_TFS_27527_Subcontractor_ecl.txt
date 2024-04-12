@@ -248,12 +248,16 @@ GO
 
 --10. Insert record to table [EC].[AT_Entitlement]
 
+SET IDENTITY_INSERT [EC].[AT_Entitlement] ON
+
 INSERT INTO [EC].[AT_Entitlement]
-           ([EntitlementDescription])
-     VALUES ('Report-FeedLoadHistory')
+           ([EntitlementId],[EntitlementDescription])
+     VALUES (218,'Report-FeedLoadHistory')
           
 GO
 
+SET IDENTITY_INSERT [EC].[AT_Entitlement] OFF
+GO
 
 --****************************************************
 
