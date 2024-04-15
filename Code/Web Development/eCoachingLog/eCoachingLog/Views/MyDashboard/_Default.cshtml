@@ -1,7 +1,10 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
+@{ 
+    var title = Model.User.SiteId == 25 ? "" : " / Non - Quality Now";
+}
 
 <div class="ecl-page-header">
-    @Html.ActionLink("My Dashboard", "Index", "MyDashboardHome") / Non-Quality Now
+    @Html.ActionLink("My Dashboard", "Index", "MyDashboardHome") @title
 </div>
 
 <input type="hidden" name="whatlog" id="whatlog" />

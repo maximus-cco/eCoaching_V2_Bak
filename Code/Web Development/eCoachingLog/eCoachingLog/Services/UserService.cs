@@ -31,7 +31,7 @@ namespace eCoachingLog.Services
 
 			if (user.IsAccessMyDashboard)
 			{
-                if (!user.IsDirector && user.IsCsrRelated)
+                if (!user.IsDirector && user.IsCsrRelated && user.SiteId != 25) // 25: Peckham - NO QN
                 {
                     return Constants.MY_DASHBOARD_QN;
                 }
