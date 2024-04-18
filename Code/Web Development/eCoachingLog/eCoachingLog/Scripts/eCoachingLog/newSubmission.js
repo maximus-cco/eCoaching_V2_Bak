@@ -315,10 +315,12 @@ $(function () {
         } else {
             $('#WarningYesNo').val('no');
             $('#div-max-warning').addClass('hide');
-            if ($('[name="duallistbox_employee"]').val().length > maxEmployeesCoachingPerSubmission) {
-                $('#div-max-coaching').removeClass('hide');
-            } else {
-                $('#div-max-warning').addClass('hide');
+            if ($('[name="duallistbox_employee"]').length > 0) {
+                if ($('[name="duallistbox_employee"]').val().length > maxEmployeesCoachingPerSubmission) {
+                    $('#div-max-coaching').removeClass('hide');
+                } else {
+                    $('#div-max-warning').addClass('hide');
+                }
             }
         }
 
