@@ -1,7 +1,3 @@
-USE [eCoachingTest]
-GO
-
-/****** Object:  StoredProcedure [EC].[sp_InsertInto_Coaching_Log_Quality_Other]    Script Date: 4/22/2024 12:08:23 PM ******/
 SET ANSI_NULLS ON
 GO
 
