@@ -1,4 +1,3 @@
-
 SET ANSI_NULLS ON
 GO
 
@@ -226,7 +225,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   ''Coaching'' strLogType,
   cc.strStaticText,
  ''Verint ID: '' + REPLACE(av.VerintIds, '' |'', '','') AudVerintIds,
- qor.[Competency] strQORCompetency
+ qor.[CompetencyImage] strQORCompetency
 FROM [EC].[Coaching_Log] cl  WITH (NOLOCK) ';
 	    
 SET @nvcSQL3 = @nvcSQL3 + N' JOIN 

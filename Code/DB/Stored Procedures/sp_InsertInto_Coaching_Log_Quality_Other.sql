@@ -1,4 +1,7 @@
+USE [eCoachingTest]
+GO
 
+/****** Object:  StoredProcedure [EC].[sp_InsertInto_Coaching_Log_Quality_Other]    Script Date: 4/22/2024 12:08:23 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -81,10 +84,6 @@ DECRYPTION BY CERTIFICATE [CoachingCert];
            ,[MgrID]
            )
 select  Distinct LOWER(cs.EMP_ID)	[FormName],
-        --CASE cs.Program  
-        --WHEN NULL THEN csr.Emp_Program
-        --WHEN '' THEN csr.Emp_Program
-        --ELSE cs.Program  END       [ProgramName],
 		csr.Emp_Program [ProgramName],
         [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source])[SourceID],
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
@@ -174,6 +173,16 @@ INSERT INTO [EC].[Coaching_Log_QNORewards]
     WHERE qs.Report_Code LIKE 'QR%'
 	AND cqr.[CoachingID] IS NULL 
 	ORDER BY [CoachingID],[Competency];
+
+	 WAITFOR DELAY '00:00:00:02'; -- Wait for 2 ms
+
+	 -- Populate corresponding Image for the Competency
+
+  UPDATE [EC].[Coaching_Log_QNORewards]
+  SET [CompetencyImage]= COALESCE(i.[ImageName],q.Competency) 
+  FROM [EC].[Coaching_Log_QNORewards] q LEFT JOIN [EC].[QualityNow_Rewards_Images]i
+  ON q.Competency = i.[Competency]
+  WHERE [CompetencyImage] IS NULL;
 
 	-- Begin commenting out code relevant to Bingo
 	/* 
