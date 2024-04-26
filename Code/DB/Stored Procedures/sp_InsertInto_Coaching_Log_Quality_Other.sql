@@ -4,7 +4,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Last Modified Date: 09/16/2015
@@ -163,7 +162,7 @@ INSERT INTO [EC].[Coaching_Log_QNORewards]
            ,[Competency])    
 	SELECT DISTINCT cf.[CoachingID], qs.[Competency]
 	FROM [EC].[Quality_Other_Coaching_Stage] qs JOIN  [EC].[Coaching_Log] cf      
-    ON qs.[EMP_ID] = cf.[EmpID] AND  qs.[Report_Code] = cf.[strReportCode]
+    ON qs.[EMP_ID] = cf.[EmpID] AND  qs.[Report_Code] = cf.[strReportCode] AND qs.[Report_ID] = cf.[numReportID]
 	LEFT OUTER JOIN  [EC].[Coaching_Log_QNORewards]cqr
     ON cf.[CoachingID] = cqr.[CoachingID]  
     WHERE qs.Report_Code LIKE 'QR%'

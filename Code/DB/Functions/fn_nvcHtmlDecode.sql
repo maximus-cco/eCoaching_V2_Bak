@@ -10,8 +10,9 @@ GO
 -- Decodes html characters for Export to Excel
 -- Description:   Initial revision. TFS 15063 - 08/20/2019
 -- Modified to sanitize data before displaying. TFS 25634 - 10/21/2022
+-- Updated to add encoding for '–'. TFS 27851 - 03/21/2024
 -- =============================================
-CREATE OR ALTER   FUNCTION [EC].[fn_nvcHtmlDecode] 
+CREATE OR ALTER FUNCTION [EC].[fn_nvcHtmlDecode] 
 ( 
     @Encoded as nvarchar(max) 
 ) 
@@ -24,6 +25,7 @@ BEGIN
     -- Add the T-SQL statements to compute the return value here 
     SELECT @Decoded =  
          Replace( 
+		  Replace( 
          Replace( 
 	   Replace( 
 	   Replace( 
@@ -49,9 +51,12 @@ BEGIN
       '&Prime;','″'), 
       '&ldquo;','“'), 
 	  '&rdquo;','”'),
-	  '&ndash;','-')  
+	  '&ndash;','-'), 
+	  '&mdash;','–')
     -- Return the result of the function 
     RETURN @Decoded 
  
 END --fn_nvcHtmlDecode
 GO
+
+

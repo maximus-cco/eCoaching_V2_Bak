@@ -3,6 +3,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 -- =============================================
 -- Author:		    Susmitha Palacherla
 -- Create date:     06/08/2012
@@ -11,8 +13,9 @@ GO
 -- Last update:   09/22/2013  
 -- Description:   Modified per SCR 11115 to accept Summary of Caller issues upto 7000 chars. had to use nvarchar(max)
 -- Modified to sanitize data before displaying. TFS 25634 - 10/21/2022
+-- Updated to add encoding for '–'. TFS 27851 - 03/21/2024
 -- =============================================
-CREATE OR ALTER   FUNCTION [EC].[fn_nvcHtmlEncode] 
+CREATE OR ALTER FUNCTION [EC].[fn_nvcHtmlEncode] 
 ( 
     @UnEncoded as nvarchar(max) 
 ) 
@@ -25,6 +28,7 @@ BEGIN
     -- Add the T-SQL statements to compute the return value here 
     SELECT @Encoded =  
          Replace( 
+		  Replace( 
          Replace( 
 	   Replace( 
 	   Replace( 
@@ -50,7 +54,8 @@ BEGIN
        '″', '&Prime;'), 
        '“', '&ldquo;'), 
 	   '”', '&rdquo;'),
-	   '-', '&ndash;')   
+	   '-', '&ndash;'),
+	   '–', '&mdash;')
 
  
     -- Return the result of the function 
@@ -58,4 +63,5 @@ BEGIN
  
 END 
 GO
+
 
