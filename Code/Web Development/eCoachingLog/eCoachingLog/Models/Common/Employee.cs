@@ -16,6 +16,7 @@
         public string ManagerLanId { get; set; }
         public string ManagerJobDesc { get; set; }
         public string ManagerEmail { get; set; }
+        public bool IsSubcontractor { get; set; }
         public string NamePlusSupervisorName
         {
             get

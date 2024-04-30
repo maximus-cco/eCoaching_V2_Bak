@@ -147,7 +147,7 @@ var loggingOut = false;
 					if ($elapsedTime === $options.session) {
 						if ($options.notify === true) {
 							//console.log('focus');
-							$(window).focus();
+							window.focus();
 							modal();
 						} else {
 							logout();
@@ -363,9 +363,10 @@ var loggingOut = false;
 		/**
 		 * Initializes the plugin.
 		 */
-		return this.each(function () {
-			init();
-		});
+		//return this.each(function () {
+		//	init();
+	    //});
+		init();
 	};
 
 }(jQuery, document, window));
