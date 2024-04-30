@@ -23,17 +23,9 @@ namespace eCoachingLog.Services
 
         public IList<NewSubmissionResult> Save(NewSubmission submission, User user)
         {
-            logger.Debug("^^^^^^^^ empName=" + submission.Employee.Name);
-
             if (submission.IsWarning != null && submission.IsWarning.Value)
             {
-                var test = new List<NewSubmissionResult>();
-                var t = new NewSubmissionResult();
-                t.Error = "Tesging error";
-                test.Add(t);
-
-                return test;
-                //return newSubmissionRepository.SaveWarningLog(submission, user);
+                return newSubmissionRepository.SaveWarningLog(submission, user);
             }
 
             // Make sure ids in submission.EmployeeIdList are unique
