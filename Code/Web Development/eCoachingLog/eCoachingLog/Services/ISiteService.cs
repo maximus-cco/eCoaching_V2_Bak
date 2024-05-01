@@ -9,6 +9,6 @@ namespace eCoachingLog.Services
         IList<Site> GetAllSites();
         IList<Site> GetAllSites(bool IsSubmission, User user);
         IList<Site> GetSites();
-        IList<Site> GetSites(bool IsSubmission, User user);
+        IList<Site> GetSites(bool IsSubmission, User user, int moduleId);
     }
 }

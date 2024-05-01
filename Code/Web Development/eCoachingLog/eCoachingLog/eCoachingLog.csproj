@@ -18,8 +18,8 @@
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>
     </IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
-    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <SccProjectName>SAK</SccProjectName>
@@ -141,11 +141,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Dummy\" />
     <Folder Include="Views\Help\" />
     <Folder Include="Views\Login\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\EclBundleOrderer.cs" />
+    <Compile Include="Controllers\DummyController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HistoricalDashboardController.cs" />
     <Compile Include="Controllers\LoadTestController.cs" />
@@ -472,6 +474,7 @@
     <Content Include="Views\Review\_AdditionalText.cshtml" />
     <Content Include="Views\Shared\_Logo.cshtml" />
     <Content Include="Views\Review\_DetailsOfBehavior.cshtml" />
+    <Content Include="Views\Review\_ReviewModalHeaderCommon.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

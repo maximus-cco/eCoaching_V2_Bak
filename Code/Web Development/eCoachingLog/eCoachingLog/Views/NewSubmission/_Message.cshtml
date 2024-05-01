@@ -9,31 +9,28 @@
     {
         <div id="success-message" class="alert alert-success">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;Success! Your submission has been saved! <em>@Model.LogName</em>
+            <span class="glyphicon glyphicon-ok-sign"></span>&nbsp;Submission saved successfully. <em>@Model.LogName</em>
         </div>
     }
     else if (Model.IsValidationError != null && Model.IsValidationError.Value)
     {
         <div id="fail-message" class="alert alert-danger alert-dismissible">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;<b>Please correct all errors in red to proceed.</b>
+            <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Please correct all errors in red to proceed.
         </div>
     }
     else if (Model.IsFailAll != null && Model.IsFailAll.Value)
     {
         <div id="fail-message" class="alert alert-danger alert-dismissible">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;<b>Failed to save your submission!</b>
-            <br />
-            @{ Html.RenderPartial("_Error", Model); }
+            <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Submission Failed. Please try again later or submit a ticket by clicking Help | Submit a Ticket.
         </div>
     }
     else
     {
-        <div id="fail-message" class="alert alert-info alert-dismissible">
+        <div id="fail-message" class="alert alert-warning alert-dismissible">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;<b>Failed to create log for the following:</b>
-            <br />
+            Submission Failed.<br />
             @{ Html.RenderPartial("_Error", Model); }
         </div>
     }

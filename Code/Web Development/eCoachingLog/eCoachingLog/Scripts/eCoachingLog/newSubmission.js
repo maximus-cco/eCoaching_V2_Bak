@@ -170,7 +170,7 @@ $(function () {
     	}
 
     	var employeeSite = $('#SiteName').val();
-    	if (employeeSite && employeeSite !== returnSite)
+    	if (employeeSite && employeeSite !== 'All Sites' && employeeSite !== returnSite)
     	{
     		if (!confirm("You are selecting a return site that is different from the employee site. Would you like to proceed?"))
     		{

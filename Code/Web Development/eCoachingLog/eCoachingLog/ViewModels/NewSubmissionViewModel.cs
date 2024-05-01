@@ -122,7 +122,10 @@ namespace eCoachingLog.ViewModels
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (this.ModuleId == Constants.MODULE_CSR || this.ModuleId == Constants.MODULE_SUPERVISOR || this.ModuleId == Constants.MODULE_QUALITY)
+            if (this.ModuleId == Constants.MODULE_CSR 
+                    || this.ModuleId == Constants.MODULE_SUPERVISOR 
+                    || this.ModuleId == Constants.MODULE_QUALITY
+                    || this.ModuleId == Constants.MODULE_ISG)
             {
                 if (this.ProgramId < 1)
                 {

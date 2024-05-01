@@ -1,6 +1,7 @@
 ﻿using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
 using eCoachingLog.Repository;
+using eCoachingLog.Utils;
 using log4net;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +29,38 @@ namespace eCoachingLog.Services
             return FilterSites(GetAllSites(), IsSubmission, user);
         }
 
-        public IList<Site> GetSites(bool isSubmission, User user)
+        public IList<Site> GetSites(bool isSubmission, User user, int moduleId = -2)
         {
             logger.Debug("@@@@@@@@IsSubmission:" + isSubmission);
-            return FilterSites(GetSites(), isSubmission, user);
+
+            var sites = FilterSites(GetSites(), isSubmission, user);
+            // add All Sites for ISG, Quality, and Supervisor logs submission
+            if (isSubmission && !user.IsSubcontractor && // subcontractor user can only see its own site
+                        (moduleId == Constants.MODULE_ISG 
+                            || moduleId == Constants.MODULE_QUALITY
+                            || moduleId == Constants.MODULE_SUPERVISOR))
+            {
+                var allSiteId = Constants.ALL_SITES_CCO;
+                // QAM, PMA, and DIRPMA can submit all cco/subcontractor sites logs
+                if (user.IsQam || user.IsPma || user.IsDirPma)
+                {
+                    // No Quality for subcontractor
+                    if (moduleId == Constants.MODULE_QUALITY)
+                    {
+                        allSiteId = Constants.ALL_SITES_CCO;
+                        sites = sites.Where(x => !x.IsSubcontractorSite).ToList<Site>();
+                    }
+                    else
+                    {
+                        allSiteId = Constants.ALL_SITES; // cco + subcontractor
+                    }
+                    
+                }
+
+                sites.Insert(0, new Site { Id = allSiteId, Name = "All Sites" });
+            }
+
+            return sites;
         }
 
         private IList<Site> FilterSites(IList<Site> sites, bool isSubmission, User user)

@@ -4,7 +4,7 @@
 <input type="hidden" id="WarningYesNo" />
 <div class="row">
     <div class="col-sm-6">
-        @if(!Model.IsSubcontractor) {
+        @if(!Model.IsSubcontractor && Model.ModuleId == Constants.MODULE_CSR) {
             <a href="#" style="color: #337ab7" id="a-add-employee"><b>Add</b></a>
         }
     </div>

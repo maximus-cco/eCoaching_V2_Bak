@@ -4,7 +4,14 @@
     ViewBag.Title = "New Submission";
 }
 
-<div class="ecl-page-header">New Submission<span class="danger" style="float: right; font-size: 75%;"><i>Please do NOT include PII or PHI in the log entry.</i></span></div>
+<div class="ecl-page-header">New Submission 
+    <span style="float: right; font-size: 0.65em;">
+        <strong class="danger">Please do not include PII or PHI in the log entry.</strong><br />
+        <span style="font-size: 0.8em;" class="text-warning">Data entered will be lost if you're inactive for 30 miutes or longer.</span>
+    </span>
+</div>
+
+
 @{ Html.RenderPartial("_Message", Model); }
 
 @using (Html.BeginForm("Save", "NewSubmission", FormMethod.Post,

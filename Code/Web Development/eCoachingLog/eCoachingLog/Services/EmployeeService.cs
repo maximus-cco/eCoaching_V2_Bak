@@ -27,8 +27,8 @@ namespace eCoachingLog.Services
             // CCO users
             else
             {
-                // No LSA and Quality modules for Subcontractor
-                if (moduleId == Constants.MODULE_LSA || moduleId == Constants.MODULE_QUALITY) 
+                // No LSA and Quality modules for Subcontractor, but Quality module now has Site selection, so don't change the passed in siteId for Quality
+                if (moduleId == Constants.MODULE_LSA) 
                 {
                     siteId = Constants.ALL_SITES_CCO;
                 }

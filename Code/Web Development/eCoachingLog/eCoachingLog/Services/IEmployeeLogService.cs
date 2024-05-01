@@ -11,7 +11,7 @@ using System.Data;
 namespace eCoachingLog.Services
 {
 	public interface IEmployeeLogService
-    {
+    { 
         List<Module> GetModules(User user);
         BaseLogDetail GetLogDetail(long logId, bool isCoaching);
         // Get call record id and id format

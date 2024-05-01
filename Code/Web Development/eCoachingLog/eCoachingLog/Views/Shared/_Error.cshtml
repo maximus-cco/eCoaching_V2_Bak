@@ -3,13 +3,8 @@
     Layout = null;
 }
 
-<table class="table table-hover">
-    @foreach (var error in Model.ErrorList)
-    {
-        <tr>
-            <td>@error.Key</td>
-            <td>@error.Value</td>
-        </tr>
-    }
-</table>
-
+@foreach (var error in Model.ErrorList)
+{
+    @:&nbsp;
+    @error.Value
+}

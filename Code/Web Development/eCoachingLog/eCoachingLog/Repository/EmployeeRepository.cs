@@ -3,6 +3,7 @@ using eCoachingLog.Models.Common;
 using eCoachingLog.Models.User;
 using eCoachingLog.Utils;
 using log4net;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -16,7 +17,7 @@ namespace eCoachingLog.Repository
 
         public IList<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
         {
-            logger.Debug("#########moduleId:" + moduleId + ", siteId:" + siteId);
+            logger.Debug("$$$$$$$$#########moduleId:" + moduleId + ", siteId:" + siteId);
             var employees = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Employees_By_Module_And_Site]", connection))
@@ -62,6 +63,7 @@ namespace eCoachingLog.Repository
                     while (dataReader.Read())
                     {
                         employee.Id = dataReader["Emp_ID"].ToString().Trim().ToUpper();
+                        employee.IsSubcontractor = dataReader["IsSubcontractor"].ToString().Trim().ToUpper() == "Y"  ? true : false;
                         employee.Name = dataReader["Emp_Name"].ToString();
                         employee.Email = dataReader["Emp_Email"].ToString();
 						employee.LanId = dataReader["Emp_LanID"].ToString();

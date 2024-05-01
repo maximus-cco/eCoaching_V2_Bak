@@ -148,14 +148,6 @@ namespace eCoachingLog.Controllers
 
                 vm.IsSuccess = false;
                 vm.IsFailAll = true;
-                vm.ErrorList = new List<Error>()
-                {
-                    new Error()
-                    {
-                        Key = "Error",
-                        Value = ex.Message
-                    }
-                };
 
                 return StayOnThisPage(vm);
             } // end try - 1. save submission to db
@@ -216,7 +208,7 @@ namespace eCoachingLog.Controllers
             }
 
             vm.ShowSiteDropdown = ShowSiteDropdown(vm);
-            vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm);
+            vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm.ModuleId);
             vm.ShowEmployeeDualListbox = ShowEmployeeDualListbox(vm);
             vm.ShowProgramDropdown = ShowProgramDropdown(vm);
 			vm.ShowMgtInfo = true;
@@ -252,6 +244,7 @@ namespace eCoachingLog.Controllers
         // For csr module, display dual listbox instead of dropdown for Employee selection, BUT this is for specific users ONLY.
         public ActionResult HandleSiteChanged(int siteIdSelected, int programIdSelected, string programName)
         {
+            logger.Debug($"#######siteSelected={siteIdSelected}");
             NewSubmissionViewModel vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
             vmInSession.SiteId = siteIdSelected;
             vmInSession.ProgramId = programIdSelected;
@@ -266,7 +259,7 @@ namespace eCoachingLog.Controllers
             vm.EmployeeSelectList = vmInSession.EmployeeSelectList;
             vm.EmployeeList = vmInSession.EmployeeList;
             // CSR - use dual listbox for users with job codes of WACS40, WACS50, WACS60
-            vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm);
+            vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm.ModuleId);
             vm.ShowEmployeeDualListbox = ShowEmployeeDualListbox(vm);
 
             vm.ProgramSelectList = vmInSession.ProgramSelectList;
@@ -351,6 +344,7 @@ namespace eCoachingLog.Controllers
 
         private bool ShowWarningChoice(NewSubmissionViewModel vm)
         {
+
             // more than one selected in dual list box
             // One warning per submission
             if (vm.EmployeeIdList != null && vm.EmployeeIdList.Count > 1)
@@ -358,10 +352,12 @@ namespace eCoachingLog.Controllers
                 return false;
             }
 
+            // only one employee selected
+            // submitter is either the supervisor or manager, and submitter has chosen "coaching by you", and the selected employee is not subcontractor
             return vm.IsCoachingByYou.HasValue
                 && vm.IsCoachingByYou.Value
-                && ((vm.Employee.SupervisorId != null && vm.Employee.SupervisorId == vm.UserId) ||
-                        (vm.Employee.ManagerId != null && vm.Employee.ManagerId == vm.UserId));
+                && !vm.Employee.IsSubcontractor // no warning logs for subcontractors 
+                && (vm.Employee.SupervisorId == vm.UserId || vm.Employee.ManagerId == vm.UserId);
         }
 
         private Employee GetSelectedEmployee()
@@ -434,6 +430,7 @@ namespace eCoachingLog.Controllers
             return PartialView("_NewSubmissionCoach", (NewSubmissionViewModel)Session["newSubmissionVM"]);
         }
 
+        // User selects a different module
         [HttpPost]
         public ActionResult ResetPage(int moduleId)
         {
@@ -448,25 +445,31 @@ namespace eCoachingLog.Controllers
             var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
 			string directOrIndirect = (vmInSession.IsCoachingByYou.HasValue && vmInSession.IsCoachingByYou.Value) ? Constants.DIRECT : Constants.INDIRECT;
 
-            // Load Site dropdown for CSR; Quality/WFH (Return to Site)
-            if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_QUALITY)
+            // Load Site dropdown
+            if (moduleId == Constants.MODULE_CSR 
+                    || moduleId == Constants.MODULE_QUALITY
+                    || moduleId == Constants.MODULE_SUPERVISOR
+                    || moduleId == Constants.MODULE_ISG)
             {
-                // Site dropdown is static, so we can use the one in session if exists
-                if (vmInSession.SiteSelectList.Count() > 1)
+                IList<Site> siteList = this.siteService.GetSites(true, GetUserFromSession(), moduleId);
+                siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });
+                vm.SiteSelectList = new SelectList(siteList, "Id", "Name");
+
+                // Return to Site, remove "All Sites"
+                var returnToSiteList = new List<Site>();
+                foreach (var v in siteList)
                 {
-                    vm.SiteSelectList = vmInSession.SiteSelectList;
+                    returnToSiteList.Add((Site)v.Clone());
                 }
-                else
-                {
-                    IList<Site> siteList = this.siteService.GetSites(true, GetUserFromSession());
-                    siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });
-                    vm.SiteSelectList = new SelectList(siteList, "Id", "Name");
-					vm.SiteNameSelectList = new SelectList(siteList, "Name", "Name");
-				}
+                returnToSiteList.Remove(returnToSiteList.Where(x => x.Name == "All Sites").FirstOrDefault<Site>());
+                vm.SiteNameSelectList = new SelectList(returnToSiteList, "Name", "Name");
             }
 
             // Load Employee dropdown for others
-            if (moduleId != Constants.MODULE_CSR) 
+            if (moduleId != Constants.MODULE_CSR
+                    && (moduleId != Constants.MODULE_QUALITY || !AllowQualityTeamSubmission(Constants.MODULE_QUALITY))
+                    && (moduleId != Constants.MODULE_SUPERVISOR || !AllowSupervisorTeamSubmission(Constants.MODULE_SUPERVISOR))
+                    && moduleId != Constants.MODULE_ISG) 
             {
                 var siteId = 0;
                 var user = GetUserFromSession();
@@ -516,7 +519,7 @@ namespace eCoachingLog.Controllers
             }
 
             vm.ShowSiteDropdown = ShowSiteDropdown(vm);
-            vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm);
+            vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm.ModuleId);
             vm.ShowEmployeeDualListbox = ShowEmployeeDualListbox(vm);
             vm.ShowProgramDropdown = ShowProgramDropdown(vm);
             vm.ShowBehaviorDropdown = ShowBehaviorDropdown(vm);
@@ -704,13 +707,20 @@ namespace eCoachingLog.Controllers
 
         private bool ShowSiteDropdown(NewSubmissionViewModel vm)
         {
-            return vm.ModuleId == Constants.MODULE_CSR;
+            return vm.ModuleId == Constants.MODULE_CSR 
+                    || (vm.ModuleId == Constants.MODULE_SUPERVISOR && AllowSupervisorTeamSubmission(Constants.MODULE_SUPERVISOR))
+                    || (vm.ModuleId == Constants.MODULE_QUALITY && AllowQualityTeamSubmission(Constants.MODULE_QUALITY))
+                    || vm.ModuleId == Constants.MODULE_ISG;
         }
 
-        private bool ShowEmployeeDropdown(NewSubmissionViewModel vm)
+        private bool ShowEmployeeDropdown(int moduleId)
         {
-            // No module selected or allow team submit for CSR module
-            if (vm.ModuleId == -2 || (vm.ModuleId == Constants.MODULE_CSR && AllowTeamSubmissionForCSR()))
+             if (moduleId == -2 // No module selected
+                    // these are mass/team submission, show employees in dual select box instead of dropdown
+                    || AllowCsrTeamSubmission(moduleId)
+                    || AllowQualityTeamSubmission(moduleId)
+                    || AllowSupervisorTeamSubmission(moduleId)
+                    || moduleId == Constants.MODULE_ISG)
             {
                 return false;
             }
@@ -718,8 +728,13 @@ namespace eCoachingLog.Controllers
             return true;
         }
 
-        private bool AllowTeamSubmissionForCSR()
+        private bool AllowCsrTeamSubmission(int moduleId)
         {
+            if (moduleId != Constants.MODULE_CSR)
+            {
+                return false;
+            }
+
             var userJobCode = GetUserFromSession().JobCode;
             if (String.IsNullOrEmpty(userJobCode))
             {
@@ -729,29 +744,88 @@ namespace eCoachingLog.Controllers
             userJobCode = userJobCode.Trim().ToUpper();
             return "WACS40".Equals(userJobCode) || "WACS50".Equals(userJobCode) || "WACS60".Equals(userJobCode);
         }
-        
-        private bool ShowEmployeeDualListbox(NewSubmissionViewModel vm)
+
+        // Quality module team submission
+        private bool AllowQualityTeamSubmission(int moduleId)
         {
-            // No module selected Or module selected is other than CSR module
-            if (vm.ModuleId == -2 || vm.ModuleId != Constants.MODULE_CSR)
+            if (moduleId != Constants.MODULE_QUALITY)
             {
                 return false;
             }
 
-            // if it gets to here, it means CSR module is selected
-            // csr module only for users with job codes WACS40 WACS50 WACS60
-            // show dual list box only if site is selected, so it knows what employees to display in the dual list box
-            if (vm.SiteId != null && vm.SiteId > 0 && AllowTeamSubmissionForCSR())
+            // TODO: add check here who can 
+            return true;
+        }
+
+        // Supervisor module team submission
+        private bool AllowSupervisorTeamSubmission(int moduleId)
+        {
+            if (moduleId != Constants.MODULE_SUPERVISOR)
+            {
+                return false;
+            }
+
+            // TODO: add check here who can 
+            return false;
+        }
+
+        // ISG module team submission
+        private bool AllowIsgTeamSubmission(int moduleId)
+        {
+            logger.Debug($"%%%%%%%%moduleId={moduleId}");
+
+            if (moduleId != Constants.MODULE_ISG)
+            {
+                return false;
+            }
+
+            // TODO: add check here who can 
+            return true;
+        }
+
+        private bool ShowEmployeeDualListbox(NewSubmissionViewModel vm)
+        {
+            logger.Debug($"****######moduleId={vm.ModuleId}");
+            logger.Debug($"****######siteId={vm.SiteId}");
+
+            // No module selected
+            if (vm.ModuleId == -2 || vm.SiteId == -2)
+            {
+                return false;
+            }
+
+            // No mass/team submission for modules OTHER THAN csr, quality, and supervisor
+            if (vm.ModuleId != Constants.MODULE_CSR
+                    && vm.ModuleId != Constants.MODULE_QUALITY
+                    && vm.ModuleId != Constants.MODULE_SUPERVISOR
+                    && vm.ModuleId != Constants.MODULE_ISG)
+            {
+                return false;
+            }
+
+            // Show employee dual list box only if site is selected, so it knows what employees to display in the dual list box
+            if (vm.SiteId != null 
+                    && vm.SiteId > -5 
+                    && AllowTeamSubmission(vm.ModuleId))
             {
                 return true;
             }
 
             return false;
+        }
+        
+        private bool AllowTeamSubmission(int moduleId)
+        {
+            return AllowCsrTeamSubmission(moduleId)
+                    || AllowQualityTeamSubmission(moduleId)
+                    || AllowSupervisorTeamSubmission(moduleId)
+                    || AllowIsgTeamSubmission(moduleId);
         }        
 
         private bool ShowProgramDropdown(NewSubmissionViewModel vm)
         {
             // Only display program dropdown for non-traning modules
+            // todo: isg needs this one???????
             if (vm.ModuleId == Constants.MODULE_CSR)
             {
             	return true;

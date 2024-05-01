@@ -4,11 +4,11 @@ using System.Web.Mvc;
 
 namespace eCoachingLog.Controllers
 {
-	public class HomeController : BaseController
+    public class HomeController : BaseController
     {
         private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		public ActionResult Index()
+        public ActionResult Index()
         {
             logger.Debug("Entered HomeController.Index");
 
@@ -19,12 +19,6 @@ namespace eCoachingLog.Controllers
 
 			return RedirectToAction("Index", "Login");
 		}
-
-        public JsonResult KeepSessionAlive()
-        {
-            logger.Debug("KeepSessionAlive: id=" + Session.SessionID);
-            return Json(string.Empty, JsonRequestBehavior.AllowGet);
-        }
 
         public ActionResult SessionExpired()
         {

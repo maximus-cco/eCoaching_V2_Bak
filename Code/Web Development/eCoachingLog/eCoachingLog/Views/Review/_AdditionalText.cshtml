@@ -1,5 +1,5 @@
 ﻿@model string
 
-<div class="mt-2 additional-text @(string.IsNullOrEmpty(@Model) ? "hide" : "show")">
+<div class="mt-2 vertical @(string.IsNullOrEmpty(@Model) ? "hide" : "show")">
     @Html.Raw(WebUtility.HtmlDecode(Model))
 </div>

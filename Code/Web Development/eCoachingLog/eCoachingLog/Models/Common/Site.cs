@@ -1,14 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Web.Mvc;
+﻿using System;
 
 namespace eCoachingLog.Models.Common
 {
-    public class Site
+    public class Site : ICloneable
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public bool IsSubcontractorSite { get; set; }
 
-        public List<SelectListItem> Tests { get; set; }
+        // deep copy
+        public object Clone()
+        {
+            return new Site
+            {
+                Id = Id,
+                Name = Name,
+                IsSubcontractorSite = IsSubcontractorSite
+            };
+        }
     }
 }

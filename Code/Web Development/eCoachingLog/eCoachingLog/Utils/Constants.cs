@@ -105,6 +105,7 @@ namespace eCoachingLog.Utils
 		public const int MODULE_ANALYTICS_REPORTING = 7;
 		public const int MODULE_PRODUCTION_PLANNING = 8;
 		public const int MODULE_PROGRAM_ANALYST = 9;
+        public const int MODULE_ISG = 10;
 		// ec.dim_status table
 		// Status IDs
 		public const int LOG_STATUS_UNKNOWN = 99999;

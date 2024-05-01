@@ -3,6 +3,7 @@
     public class Employee
     {
         public string Id { get; set; }
+        public bool IsSubcontractor { get; set; }
         public string LanId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }

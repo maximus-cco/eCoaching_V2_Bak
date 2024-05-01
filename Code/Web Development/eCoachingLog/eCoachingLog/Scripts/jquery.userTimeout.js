@@ -56,26 +56,36 @@ var loggingOut = false;
 		 * @return {undefined}
 		 */
 		var init = function () {
-			if (!$options.logouturl || !$options.keepAliveUrl) {
-				if ($options.debug === true) {
-					window.alert('Please configure the userTimeout plugin!');
-				} else {
-					window.console.error('Please configure the userTimeout plugin!');
-				}
+		    if (!$options.logouturl || !$options.keepAliveUrl) {
+		        if ($options.debug === true) {
+		            window.alert('Please configure the userTimeout plugin!');
+		        } else {
+		            window.console.error('Please configure the userTimeout plugin!');
+		        }
 
-				return;
-			}
+		        return;
+		    }
 
-			if (uiCheck($options.ui) === false) {
-				return;
-			}
+		    if (uiCheck($options.ui) === false) {
+		        return;
+		    }
 
-			startTimer();
+		    startTimer();
 
-			$(document).on('click keypress', function () {
-				keepSessionAlive();
-				startTimer();
-			});
+		    $(document).on('click keypress', function () {
+		        keepSessionAlive();
+		        startTimer();
+		    });
+
+		    document.addEventListener("visibilitychange", () => {
+		        if (document.visibilityState === "visible") {
+		            console.log('visible');
+		            keepSessionAlive();
+		            startTimer();
+		        } else {
+		            // do nothing for now
+		        }
+		    });
 		};
 
 		/**
@@ -90,7 +100,6 @@ var loggingOut = false;
 		 * @return {undefined}
 		 */
 		var startTimer = function (type) {
-			//console.log("start timer");
 			clearTimeout($timeoutTimer);
 			clearTimeout($logoutTimer);
 
@@ -146,8 +155,6 @@ var loggingOut = false;
 				default:
 					if ($elapsedTime === $options.session) {
 						if ($options.notify === true) {
-							//console.log('focus');
-							$(window).focus();
 							modal();
 						} else {
 							logout();
@@ -243,8 +250,7 @@ var loggingOut = false;
 		var modal = function () {
 			startTimer('logout');
 
-			//$(document).on('click scroll keypress', function () {
-			//	console.log('modal: log out !!!!!!!!');
+			//$(document).on('focus click mousemove mousedown keyup scroll keypress', function () {
 			//	startTimer('logout');
 			//});
 
@@ -281,8 +287,7 @@ var loggingOut = false;
 					keepSessionAlive();
 					startTimer();
 
-					//$(document).on('click scroll keypress', function () {
-					//	console.log('hide.bs.modal focus... click:' + '!!!!!!');
+					//$(document).on('focus click mousemove mousedown keyup scroll keypress', function () {
 					//	startTimer();
 					//});
 				});
@@ -300,8 +305,7 @@ var loggingOut = false;
 					$jqueryLogout.dialog('close');
 					startTimer();
 
-					//$(document).on('click scroll keypress', function () {
-					//	console.log('jqueryui: !!!!!!!!!!')
+					//$(document).on('focus click mousemove mousedown keyup scroll keypress', function () {
 					//	startTimer();
 					//});
 				};
