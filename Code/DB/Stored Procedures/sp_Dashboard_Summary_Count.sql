@@ -3,8 +3,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -17,9 +15,9 @@ GO
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
---  Modified to include statusid 4 warnings for Managers during TFS 25387 - 09/26/2022
+--  Modified to Remove Warnings for Sub-contractors. TFS 28080 - 05/01/2024
 --	=====================================================================
-CREATE OR ALTER   PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
 
 AS
@@ -27,6 +25,7 @@ AS
 BEGIN
 DECLARE	
 @nvcEmpRole nvarchar(40),
+@isSub nvarchar(1),
 @bitMyPending bit,
 @bitMyFollowup bit,
 @bitMyCompleted bit,
@@ -50,7 +49,7 @@ DECLARE
 
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID);
-
+SET @isSub  = (SELECT isSub FROM EC.Employee_Hierarchy WHERE Emp_ID = @nvcEmpID);
 
 SET @bitMyPending = (SELECT [MyPending] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
 SET @bitMyFollowup = (SELECT [MyFollowup] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
@@ -59,7 +58,6 @@ SET @bitMyTeamPending = (SELECT [MyTeamPending] FROM [EC].[UI_Dashboard_Summary_
 SET @bitMyTeamCompleted = (SELECT [MyTeamcompleted] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
 SET @bitMyTeamWarning = (SELECT [MyTeamWarning] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
 SET @bitMySubmission = (SELECT [MySubmission] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
- 
 
 SET @SelectList = '';
 
@@ -79,7 +77,8 @@ SET @intMyPendingCoaching = (SELECT COALESCE(COUNT(cl.CoachingID),0)
 SET @intMyPendingWarning = (SELECT COALESCE(COUNT(wl.WarningID),0)
                  FROM EC.Warning_Log wl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON wl.EmpID = eh.Emp_ID
-                 WHERE wl.EmpID = @nvcEmpID  AND StatusID = 4);
+                 WHERE wl.EmpID = @nvcEmpID AND StatusID = 4
+				 AND eh.isSub = 'N');
 
 SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning;
 
@@ -99,7 +98,8 @@ SET @intMyPendingCoaching = (SELECT COUNT(cl.CoachingID)
 SET @intMyPendingWarning = (SELECT COALESCE(COUNT(wl.WarningID),0)
                  FROM EC.Warning_Log wl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON wl.EmpID = eh.Emp_ID
-                 WHERE wl.EmpID = @nvcEmpID  AND StatusID = 4);
+                 WHERE wl.EmpID = @nvcEmpID AND StatusID = 4
+				 AND eh.isSub = 'N');
 
 SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning;
 			
@@ -120,7 +120,8 @@ SET @intMyPendingCoaching = (SELECT COUNT(cl.CoachingID)
 SET @intMyPendingWarning = (SELECT COALESCE(COUNT(wl.WarningID),0)
                  FROM EC.Warning_Log wl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)
 				 ON wl.EmpID = eh.Emp_ID
-                 WHERE wl.EmpID = @nvcEmpID  AND StatusID = 4);
+                 WHERE wl.EmpID = @nvcEmpID  AND StatusID = 4
+				 AND eh.isSub = 'N');
 
 SET @intMyPending = @intMyPendingCoaching + @intMyPendingWarning;
 
@@ -190,13 +191,14 @@ SELECT ''My Team''''s Completed'' AS CountType, '''+ CONVERT(NVARCHAR,@intMyTeam
 END
 
 
-IF @bitMyTeamWarning = 1
+IF @bitMyTeamWarning = 1 
 BEGIN
 SET @intMyTeamWarning = (SELECT COUNT(wl.WarningID)
 					 FROM [EC].[Employee_Hierarchy] eh JOIN [EC].[Warning_Log] wl WITH (NOLOCK)
 					 ON wl.EmpID = eh.Emp_ID 
 					 WHERE wl.StatusID <> 2
 					 AND wl.siteID <> -1
+					 AND eh.isSub = 'N'
 					 AND (eh.Sup_ID = @nvcEmpID OR eh.Mgr_ID = @nvcEmpID OR eh.SrMgrLvl1_ID = @nvcEmpID OR eh.SrMgrLvl2_ID = @nvcEmpID)); 
 
 
@@ -247,7 +249,7 @@ UNION
 SELECT	CASE WHEN [MyTeamcompleted] = 1 THEN ''My Team''''s Completed'' ELSE NULL END CountType, 04 SortOrder
 FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = '''+ @nvcEmpRole+ '''
 UNION
-SELECT	CASE WHEN [MyTeamWarning] = 1 THEN ''My Team''''s Warnings'' ELSE NULL END CountType, 06 SortOrder
+SELECT CASE WHEN [MyTeamWarning] = 1 AND '''+@isSub+ ''' = ''N'' THEN ''My Team''''s Warnings'' ELSE NULL END CountType, 06 SortOrder
 FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = '''+ @nvcEmpRole+ '''
 UNION
 SELECT	CASE WHEN [MySubmission]= 1 THEN ''My Submissions'' ELSE NULL END CountType, 07 SortOrder
@@ -265,7 +267,6 @@ EXEC (@nvcSQL)
 	
 -- Close Symmetric key
 END -- sp_Dashboard_Summary_Count
-
 GO
 
 

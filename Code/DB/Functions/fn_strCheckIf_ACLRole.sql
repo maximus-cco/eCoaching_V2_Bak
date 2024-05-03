@@ -14,6 +14,7 @@ GO
 -- Initial Revision. Created during Mydashboard move to new architecture - TFS 7137 - 05/15/2018 
 -- Removed references to SrMgr. TFS 18062 - 08/18/2020
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
+-- Fixed Issue during removal of Warnings for Sub-contractors. TFS 28080 - 05/01/2024
 --	=============================================
 CREATE OR ALTER FUNCTION [EC].[fn_strCheckIf_ACLRole] 
 (
@@ -33,49 +34,49 @@ BEGIN
 	SET @nvcEmpLanID = (SELECT [EC].[fn_strEmpLanIDFromEmpID](@nvcEmpID))
 
 	IF @RoleCheck = 'ARC'
-	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+	SET @intACLRowID = (SELECT TOP 1 [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
 						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
 						  AND [Role] = 'ARC'
 						  AND [End_Date] = 99991231)
 
 IF @RoleCheck = 'ECL'
-	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+	SET @intACLRowID = (SELECT TOP 1 [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
 						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
 						  AND [Role] = 'ECL'
 						  AND [End_Date] = 99991231)
 
 	IF @RoleCheck = 'DIR'
-	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+	SET @intACLRowID = (SELECT TOP 1 [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
 						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
 						  AND [Role] = 'DIR'
 						  AND [End_Date] = 99991231)
 
 	IF @RoleCheck = 'PM'
-	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+	SET @intACLRowID = (SELECT TOP 1 [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
 						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
 						  AND [Role] = 'PM'
 						  AND [End_Date] = 99991231)
 						  
 	IF @RoleCheck = 'PMA'
-	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+	SET @intACLRowID = (SELECT TOP 1 [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
 						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
 						  AND [Role] = 'PMA'
 						  AND [End_Date] = 99991231)
 
 	IF @RoleCheck = 'DIRPM'
-	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+	SET @intACLRowID = (SELECT TOP 1 [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
 						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
 						  AND [Role] = 'DIRPM'
 						  AND [End_Date] = 99991231)
 						  
 	IF @RoleCheck = 'DIRPMA'
-	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+	SET @intACLRowID = (SELECT TOP 1 [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
 						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
 						  AND [Role] = 'DIRPMA'
 						  AND [End_Date] = 99991231)
 
 	IF @RoleCheck = 'QAM'
-	SET @intACLRowID = (SELECT [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
+	SET @intACLRowID = (SELECT TOP 1 [Row_ID] FROM [EC].[Historical_Dashboard_ACL]
 						  WHERE CONVERT(nvarchar(30),DecryptByKey(User_LanID))= @nvcEmpLanID 
 						  AND [Role] = 'QAM'
 						  AND [End_Date] = 99991231)

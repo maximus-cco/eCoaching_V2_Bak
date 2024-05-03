@@ -4,9 +4,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 --	====================================================================
 --	Author:	Susmitha Palacherla
 --	Create Date: 01/18/2018
@@ -16,6 +13,7 @@ GO
 --  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 --  Modified during Historical dashboard move to new architecture - TFS 7138 - 05/04/2018
 --  Modified to increase email param size to 250 chars. TFS 25490 - 10/19/2022
+--  Modified to add subcontractor flag. TFS 28080- 05/01/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Select_Rec_Employee_Hierarchy]
 @EmployeeId nvarchar(10)
@@ -32,6 +30,7 @@ SELECT [Emp_ID]
   	  ,CONVERT(nvarchar(70),DecryptByKey(Emp_Name)) AS [Emp_Name]
       ,CONVERT(nvarchar(250),DecryptByKey(Emp_Email)) AS [Emp_Email]
 	  ,CONVERT(nvarchar(30),DecryptByKey(Emp_LanID)) AS [Emp_LanID]
+	  ,[isSub] IsSubcontractor
 	  ,[Sup_ID]
       ,CONVERT(nvarchar(70),DecryptByKey(Sup_Name)) AS [Sup_Name]
 	  ,CONVERT(nvarchar(250),DecryptByKey(Sup_Email)) AS [Sup_Email]
@@ -45,6 +44,5 @@ SELECT [Emp_ID]
 CLOSE SYMMETRIC KEY [CoachingKey]      
 END --sp_Select_Rec_Employee_Hierarchy
 GO
-
 
 

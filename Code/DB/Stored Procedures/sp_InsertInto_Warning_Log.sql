@@ -18,8 +18,9 @@ GO
  -- Initial Revision. Created during changes to Warnings workflow. TFS 15803 - 10/17/2019
  -- Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
  -- Updated to Support Team Submission. TFS 23273 - 06/07/2022
+ -- Remove the Warning Modules for all Sub-contractors. TFS 28080 - 05/01/2024
 --    =====================================================================
-CREATE OR ALTER   PROCEDURE [EC].[sp_InsertInto_Warning_Log]
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Warning_Log]
 (     @tableEmpIDs EmpIdsTableType readonly,
       @nvcProgramName Nvarchar(50),
       @nvcSubmitterID Nvarchar(10),
@@ -46,7 +47,9 @@ BEGIN TRY
 	DECLARE @nvcSupID nvarchar(10),
 	        @nvcMgrID nvarchar(10),
 	        --@nvcNotPassedSiteID INT,
-	        @intWarnIDExists BIGINT;
+			@isSub nvarchar(1),
+	        @intWarnIDExists BIGINT,
+			@errorMsg nvarchar(200) = '';
 
 	DECLARE	@inserted AS TABLE (WarningID bigint);
 	        
@@ -60,6 +63,7 @@ ALTER TABLE  #tEmpRecs
 ADD EmpSiteID int
     ,SupID Nvarchar(10)
 	,MgrID Nvarchar(10)
+	,isSub nvarchar(1)
 	,ErrorReason Nvarchar(1000);
 
 -- Populate Supervisor and Manager Information
@@ -67,12 +71,19 @@ UPDATE t
 SET EmpSiteID = EC.fn_intSiteIDFromEmpID(t.EmpID)
     ,SupID = eh.Sup_ID
 	,MgrID = eh.Mgr_ID
+	,isSub = eh.isSub
 FROM #tEmpRecs t INNER JOIN EC.Employee_Hierarchy eh
 ON t.EmpID = eh.Emp_ID;
 
 -- Perform Validations
 /* Add Validations here*/    
 
+
+SET @isSub = (SELECT eh.isSub FROM 
+ #tEmpRecs t INNER JOIN EC.Employee_Hierarchy eh
+ ON t.EmpID = eh.Emp_ID);
+
+ SET @errorMsg = (@errorMsg + case when @isSub = 'Y' Then 'Warnings Submission not allowed for Non-Maximus Employee ' Else '' END);
 
 SET @intWarnIDExists = (SELECT WL.WarningID
 FROM #tEmpRecs T INNER JOIN [EC].[Warning_Log]WL 
@@ -83,7 +94,9 @@ AND WLR.[CoachingReasonID] = @intCoachReasonID1
 AND WLR.[SubCoachingReasonID]= @nvcSubCoachReasonID1
 AND [Active] = 1);
 
-IF @intWarnIDExists IS NULL 
+ SET @errorMsg = (@errorMsg + case when  @intWarnIDExists IS NOT NULL Then 'An Active Warning Log for the Given Warning Reason Exists for Employee  ' Else '' END);
+
+IF @intWarnIDExists IS NULL AND @isSub = 'N'
         
  BEGIN 
          INSERT INTO [EC].[Warning_Log]
@@ -183,7 +196,7 @@ ON eh.Emp_ID = veh.Emp_ID;
  	   	'' EmpEmail,
 		'' SupEmail,
 		'' MgrEmail,
- 'An Active Warning Log for the Given Warning Reason Exists for Employee ' + t.EmpID + ' (' + eh.Emp_Name + ').'  AS ErrorReason
+ @errorMsg  + t.EmpID + ' (' + eh.Emp_Name + ').'  AS ErrorReason
  FROM #tEmpRecs t INNER JOIN EC.View_Employee_Hierarchy eh
 ON t.EmpID = eh.Emp_ID;
 END
