@@ -7,11 +7,15 @@ $(function () {
 	var userTimeoutPlugin = $(document).userTimeout({
 		keepAliveUrl: keepSessionAliveUrl,
 		logouturl: logoutUrl,
-		session: 1500000, // Display modal dialog after user idles for 25 minutes (25*60*1,000 = 1500,000 milliseconds)
+	    session: 1500000, // Display modal dialog after user idles for 25 minutes (25*60*1,000 = 1500,000 milliseconds)
+        //session: 120000,
 		timer: false,
-		force: 240000, // Count down to 0, auto logout; set to 4 minutes (4*60*1,000 = 240,000 milliseconds)
+	    force: 240000, // Count down to 0, auto logout; set to 4 minutes (4*60*1,000 = 240,000 milliseconds)
+        //force: 60000,
 		ui: 'bootstrap',
-		modalBody: 'You\'re being timed out due to inactivity. Please choose to stay logged in or to logout. Otherwise, you will be logged out automatically.'
+		modalTitle: 'Are you still there?',    	// Modal Title
+	    // Modal body content
+		modalBody: '<h5>You\'re being timed out due to inactivity. To continue your session, select <b>Stay Logged In</b>.</h5>',
 	});
 
     // prevent to submit form when hitting Enter 

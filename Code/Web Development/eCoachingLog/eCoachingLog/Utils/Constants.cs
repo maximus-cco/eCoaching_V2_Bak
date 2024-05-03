@@ -69,6 +69,14 @@ namespace eCoachingLog.Utils
 		public const int ALL_SITES = -1;
         public const int ALL_SITES_SUBCONTRACTOR = -3;
         public const int ALL_SITES_CCO = -4;
+
+        public const string JOB_CODE_CSR_SUPERVISOR = "WACS40";
+        public const string JOB_CODE_CSR_MANAGER = "WACS50";
+        public const string JOB_CODE_CSR_SR_MANAGER = "WACS60";
+        public const string JOB_CODE_QUALITY_SR_SPECIALIST = "WACQ13";
+        public const string JOB_CODE_QUALITY_SUPERVISOR = "WACQ40";
+        public const string JOB_CODE_PROGRAM_SR_MANAGER = "WPPM50";
+
         public const int ALL_STATUSES = -1;
 
 		public const string DIRECT = "Direct";

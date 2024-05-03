@@ -79,7 +79,6 @@ var loggingOut = false;
 
 		    document.addEventListener("visibilitychange", () => {
 		        if (document.visibilityState === "visible") {
-		            console.log('visible');
 		            keepSessionAlive();
 		            startTimer();
 		        } else {
