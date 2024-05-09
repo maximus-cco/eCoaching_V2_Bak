@@ -438,7 +438,7 @@ namespace eCoachingLog.Services
 
 			// Email supervisor and/or manager upon CSR acknowledges the warning log
 			if (success
-					&& review.WarningLogDetail.ModuleId == Constants.MODULE_CSR
+					&& (review.WarningLogDetail.ModuleId == Constants.MODULE_CSR || review.WarningLogDetail.ModuleId == Constants.MODULE_ISG)
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.WarningLogDetail.EmployeeId == user.EmployeeId)
 			{
@@ -530,8 +530,8 @@ namespace eCoachingLog.Services
 
 			// Email CSR's comments to supervisor and/or manager 
 			if (success 
-					&& review.LogDetail.ModuleId == Constants.MODULE_CSR 
-					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
+					&& (review.LogDetail.ModuleId == Constants.MODULE_CSR || review.WarningLogDetail.ModuleId == Constants.MODULE_ISG)
+                    && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.LogDetail.EmployeeId == user.EmployeeId)
 			{
                 var mailParameter = new MailParameter(review.LogDetail, review.Comment, "eCoaching Log Completed", emailTempFileName, user.EmployeeId);
@@ -618,7 +618,7 @@ namespace eCoachingLog.Services
 					}
 					else
 					{
-						if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
+						if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_ISG || moduleId == Constants.MODULE_TRAINING)
 						{
 							nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW_TEXT;
 						}
@@ -661,7 +661,7 @@ namespace eCoachingLog.Services
 
 				// Coaching is required
 				var log = review.LogDetail;
-				if(moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
+				if(moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_ISG || moduleId == Constants.MODULE_TRAINING)
 				{
 					//if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat) // current Pending Manager Review to determine if coaching is required
 					if (log.StatusId == Constants.LOG_STATUS_PENDING_MANAGER_REVIEW)
@@ -714,7 +714,7 @@ namespace eCoachingLog.Services
 			// CSE form
 			if (review.IsCsePendingForm)
 			{
-				if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_TRAINING)
+				if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_ISG || moduleId == Constants.MODULE_TRAINING)
 				{
 					nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW_TEXT;
 				}
