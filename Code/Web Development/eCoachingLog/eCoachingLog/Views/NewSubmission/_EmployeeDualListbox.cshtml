@@ -20,7 +20,7 @@
     <select multiple="multiple" size="10" name="duallistbox_employee" title="duallistbox_employee">
         @if (Model.EmployeeList != null) {
             foreach (var m in Model.EmployeeList) { 
-                <option value="@m.Value" selected="@m.IsSelected" data-supid="@m.Data">@m.Text</option>
+                <option value="@m.Value" selected="@m.IsSelected" data-supidmgrid="@m.Data">@m.Text</option>
             }
         }
     </select>

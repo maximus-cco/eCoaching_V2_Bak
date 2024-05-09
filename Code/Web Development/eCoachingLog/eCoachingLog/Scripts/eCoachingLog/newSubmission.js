@@ -488,9 +488,9 @@ $(function () {
                 footer = '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
             } else {
                 if (isWarning === true) {
-                    // check if user is the supervisor
-                    let supervisorId = $('#bootstrap-duallistbox-selected-list_duallistbox_employee option').first().data('supid');
-                    if (supervisorId != $('#UserId').val()) {
+                    // check if user is the supervisor or manager
+                    let supIdMgrId = $('#bootstrap-duallistbox-selected-list_duallistbox_employee option').first().data('supidmgrid').split(',');;
+                    if (supIdMgrId[0] != $('#UserId').val() && supIdMgrId[1] != $('#UserId').val()) {
                         $('#warning-log-error').html("You can only submit warning logs for your direct reports.");
                         $('#btn-submit').prop('disabled', false);
                         return;

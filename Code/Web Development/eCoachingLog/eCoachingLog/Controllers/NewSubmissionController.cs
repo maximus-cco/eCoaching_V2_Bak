@@ -278,7 +278,7 @@ namespace eCoachingLog.Controllers
             List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();
             employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
             vmInSession.EmployeeSelectList = employees;
-            vmInSession.EmployeeList = employeeList.Select(e => new TextValue(e.Name + " (Supervisor: " + e.SupervisorName.Trim() + ")", e.Id, e.SupervisorId)).ToList<TextValue>();
+            vmInSession.EmployeeList = employeeList.Select(e => new TextValue(e.Name + " (Supervisor: " + e.SupervisorName.Trim() + ")", e.Id, e.SupervisorId + "," + e.ManagerId)).ToList<TextValue>();
         }
 
         [HttpPost]
@@ -791,15 +791,7 @@ namespace eCoachingLog.Controllers
         private bool ShowProgramDropdown(NewSubmissionViewModel vm)
         {
             // Only display program dropdown for non-traning modules
-            // todo: isg needs this one???????
-            if (vm.ModuleId == Constants.MODULE_CSR)
-            {
-            	return true;
-            }
-            else
-            {
-                return vm.ModuleId > 0 && vm.ModuleId != Constants.MODULE_TRAINING && vm.ModuleId != Constants.MODULE_LSA;
-            }
+            return vm.ModuleId > 0 && vm.ModuleId != Constants.MODULE_TRAINING && vm.ModuleId != Constants.MODULE_LSA;
         }
 
         private bool ShowBehaviorDropdown(NewSubmissionViewModel vm)

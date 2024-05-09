@@ -18,6 +18,7 @@ namespace eCoachingLog.Repository
         public IList<Employee> GetEmployeesByModule(int moduleId, int siteId, string userEmpId)
         {
             logger.Debug("$$$$$$$$#########moduleId:" + moduleId + ", siteId:" + siteId);
+
             var employees = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Employees_By_Module_And_Site]", connection))
@@ -37,6 +38,8 @@ namespace eCoachingLog.Repository
                         emp.Name = dataReader["Emp_Name"].ToString();
                         emp.SupervisorId = dataReader["sup_id"].ToString();
                         emp.SupervisorName = dataReader["sup_name"].ToString();
+                        emp.ManagerId = dataReader["mgr_id"].ToString();
+                        emp.ManagerName = dataReader["mgr_name"].ToString();
 
                         employees.Add(emp);
                     }

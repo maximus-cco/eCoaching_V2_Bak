@@ -33,12 +33,6 @@ namespace eCoachingLog.Services
                 return modules.Where(x => x.Id == Constants.MODULE_CSR || x.Id == Constants.MODULE_SUPERVISOR || x.Id == Constants.MODULE_TRAINING).ToList<Module>();
             }
 
-            // TODO: ISG
-            var m = new Module();
-            m.Id = Constants.MODULE_ISG;
-            m.Name = "ISG";
-            modules.Add(m);
-
             return modules;
         }
 

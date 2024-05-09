@@ -22,7 +22,7 @@ namespace eCoachingLog.Repository
         {
             var sourceList = new List<LogSource>();
 
-			using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Source_By_Module]", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
