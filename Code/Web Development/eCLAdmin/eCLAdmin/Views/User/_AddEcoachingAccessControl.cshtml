@@ -9,6 +9,8 @@
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-add-ecoaching-access-control" }))
 {
+    @Html.AntiForgeryToken()
+
     <div class="modal-body">
 
         <div id="validation-msg"></div>

@@ -9,35 +9,36 @@
 
 <!-- Search Form -->
 @using (Ajax.BeginForm("SearchForInactivate", "EmployeeLog", FormMethod.Post,
-    new AjaxOptions
-    {
-        InsertionMode = InsertionMode.Replace,
-        HttpMethod = "POST",
-        UpdateTargetId = "search-result",
-        OnBegin = "processSearchOnBegin",
-        OnComplete = "processSearchOnComplete",
-        OnFailure = "handleAjaxError"
-    },
-    new { id = "form-search", @class = "form-inline" }
-))
+                new AjaxOptions
+                {
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "POST",
+                    UpdateTargetId = "search-result",
+                    OnBegin = "processSearchOnBegin",
+                    OnComplete = "processSearchOnComplete",
+                    OnFailure = "handleAjaxError"
+                },
+                new { id = "form-search", @class = "form-inline" }
+            ))
 
 {
+    @Html.AntiForgeryToken()
 
     { Html.RenderPartial("_SearchOption", "Search by Log Type, Employee Level, and Employee"); }
     <br />
     <div class="" id="div-search-by-default">
         <div class="form-group">
-            @Html.DropDownList( "logType", (SelectList)ViewBag.LogTypes, new { @class = "form-control" })
+            @Html.DropDownList("logType", (SelectList)ViewBag.LogTypes, new { @class = "form-control" })
             <div id="type-error-msg" class="field-validation-error"></div>
         </div>
 
         <div class="form-group">
-            @Html.DropDownList( "module", (SelectList)ViewBag.Modules, new { @class = "form-control" })
+            @Html.DropDownList("module", (SelectList)ViewBag.Modules, new { @class = "form-control" })
             <div id="module-error-msg" class="field-validation-error"></div>
         </div>
 
         <div class="form-group">
-            @Html.DropDownList( "employee", (SelectList)ViewBag.Employees, new { @class = "form-control" })
+            @Html.DropDownList("employee", (SelectList)ViewBag.Employees, new { @class = "form-control" })
             <div id="employee-error-msg" class="field-validation-error"></div>
         </div>
 

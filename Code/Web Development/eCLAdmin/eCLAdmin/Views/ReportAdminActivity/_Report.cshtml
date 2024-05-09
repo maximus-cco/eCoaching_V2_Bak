@@ -20,6 +20,7 @@
 <script>
     $(document).ready(function () {
         var length = $('#PageSize').val();
+        const viewModel = @Html.Raw(Json.Encode(Model));
         $(".please-wait").slideDown(500);
         var logActivityTbl = $('#tbl-report').DataTable({
             columnDefs: [{
@@ -42,14 +43,7 @@
                 url: '@Url.Action("GetData")',
                 type: "POST",
                 datatype: "json",
-                data: {
-                    type:       $('#select-type option:selected').text(),
-                    action:     $('#select-action option:selected').text(),
-                    log:        $('#select-log option:selected').text(),
-                    startDate:  $('#StartDate').val(),
-                    endDate:    $('#EndDate').val(),
-                    logOrEmpName: $('#logname-empname').val()
-                }
+                data: viewModel
             },
             columns: [
                 { data: "ModuleId", width: "5%" },
@@ -71,7 +65,7 @@
 
                 let recordsTotal = logActivityTbl.page.info().recordsTotal;
                 if (recordsTotal > 0) {
-                    // show export to excel link 
+                    // show export to excel link
                     $('#div-export-to-excel').removeClass('hide');
                     $('#div-export-to-excel').addClass('show');
                 }

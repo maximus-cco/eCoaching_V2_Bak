@@ -7,6 +7,8 @@
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-delete-ecoaching-access-control" }))
 {
+    @Html.AntiForgeryToken()
+
     @Html.HiddenFor(m => m.RowId)
 
     <div class="modal-body">

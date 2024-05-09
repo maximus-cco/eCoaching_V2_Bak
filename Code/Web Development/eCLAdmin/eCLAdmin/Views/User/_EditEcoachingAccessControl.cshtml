@@ -9,6 +9,8 @@
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-edit-ecoaching-access-control" }))
 {
+    @Html.AntiForgeryToken()
+
     @Html.HiddenFor(m => m.RowId)
     @Html.HiddenFor(m => m.LanId)
     @Html.HiddenFor(m => m.Name)

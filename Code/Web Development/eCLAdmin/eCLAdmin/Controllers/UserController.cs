@@ -54,6 +54,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult DeleteEcoachingAccessControl(int rowId)
         {
             bool success = userService.DeleteEcoachingAccessControl(rowId, GetUserFromSession().LanId);
@@ -90,6 +91,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult UpdateEcoachingAccessControl(eCoachingAccessControlViewModel userVM)
         {
             logger.Debug("%%%%%%%%%%%%%%%%%%%% Entered UpdateeCoachingAccessControl: " + userVM.LanId + "," + userVM.Role + "," + userVM.SubcontractorDataAccess);
@@ -122,6 +124,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public JsonResult AddEcoachingAccessControl(eCoachingAccessControlAddViewModel userVM)
         {
             logger.Debug("####################### Entered AddeCoachingAccessControl: " + userVM.LanId + ", " + userVM.SubcontractorDataAccess + ", " + userVM.Role);

@@ -41,6 +41,7 @@ namespace eCLAdmin.Controllers
             logger.Debug("Entered SearchForInactivate [get]...");
 
             ViewBag.SubTitle = "Inactivate Employee Logs";
+
             // Employee log types - coaching or warning
             ViewBag.LogTypes = GetTypes(Constants.LOG_ACTION_INACTIVATE, false);
             // Empty module list
@@ -55,6 +56,8 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public ActionResult SearchForInactivate(string searchOption, string module, string logType, string employee, string logTypeSearchByLogName, string logName)
         {
             logger.Debug("Entered SearchForInactivate [post]...");
@@ -148,6 +151,8 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public ActionResult SearchForReassign(string searchOption, int module, int employeeLogStatus, string reviewer, string logName)
         {
             logger.Debug("Entered SearchForReassign [post]...");
@@ -241,6 +246,8 @@ namespace eCLAdmin.Controllers
             return View();
         }
 
+        [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public ActionResult SearchForReactivate(string searchOption, string module, string logType, string employee, string logTypeSearchByLogName, string logName)
         {
             logger.Debug("Entered SearchForReactivate [post]...");
@@ -412,6 +419,7 @@ namespace eCLAdmin.Controllers
         // because the same request was sent to the server before and the browser will return the cached response to the page.
         // Decorate the action method not to cache the response in between.
         [OutputCache(NoStore = true, Duration = 1, VaryByParam = "*")]
+        [ValidateAntiForgeryToken]
         public ActionResult InitInactivateModal()
         {
             logger.Debug("Entered InitInactivateModal ");
@@ -548,6 +556,8 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public ActionResult SearchForDelete(EmployeeLog logToDelete)
         {
             logger.Debug("Entered SearchForDelete [post]...");

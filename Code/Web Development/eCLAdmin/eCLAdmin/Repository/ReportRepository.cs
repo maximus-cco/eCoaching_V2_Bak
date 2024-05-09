@@ -930,6 +930,9 @@ namespace eCLAdmin.Repository
         {
             var history = new List<FeedLoadHistory>();
             totalRows = 0;
+
+            logger.Debug($"categoryId={categoryId}, reportCodeId={reportCodeId}, startDate={startDate}, endDate={endDate}, pageSize={pageSize}, rowStartIndex={rowStartIndex}");
+
             using (SqlConnection connection = new SqlConnection(connectionStr))
             using (SqlCommand command = new SqlCommand("[EC].[sp_SelectFrom_Feed_Load_History]", connection))
             {
@@ -956,9 +959,14 @@ namespace eCLAdmin.Repository
                         temp.Code = dataReader["Report Code"].ToString();
                         temp.Description = dataReader["Description"].ToString();
                         temp.FileName = dataReader["File Name"].ToString();
-                        temp.TotalStaged = Convert.ToInt16(dataReader["Total Staged"].ToString());
-                        temp.TotalLoaded = Convert.ToInt16(dataReader["Total Loaded"].ToString());
-                        temp.TotalRejected = Convert.ToInt16(dataReader["Total Rejected"].ToString());
+
+                        logger.Debug("TotalStaged=" + dataReader["Total Staged"].ToString());
+                        logger.Debug("TotalLoaded=" + dataReader["Total Loaded"].ToString());
+                        logger.Debug("TotalRejected=" + dataReader["Total Rejected"].ToString());
+
+                        temp.TotalStaged = Convert.ToInt32(dataReader["Total Staged"].ToString());
+                        temp.TotalLoaded = Convert.ToInt32(dataReader["Total Loaded"].ToString());
+                        temp.TotalRejected = Convert.ToInt32(dataReader["Total Rejected"].ToString());
 
                         history.Add(temp);
                     }

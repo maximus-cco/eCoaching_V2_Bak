@@ -58,10 +58,8 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetData(string type, string action, string log, string startDate, string endDate, string logOrEmpName)
+        public ActionResult GetData(AdminActivitySearchViewModel vm)
         {
-            logger.Debug("Entered LoadData");
-
             // Get Start (paging start index) and length (page size for paging)
             var draw = Request.Form.GetValues("draw").FirstOrDefault();
             var start = Request.Form.GetValues("start").FirstOrDefault();
@@ -71,7 +69,18 @@ namespace eCLAdmin.Controllers
             int totalRows = 0;
             try
             {
-                List<AdminActivity> logs = this.reportService.GetActivityList(type, action, log, startDate, endDate, logOrEmpName, pageSize, rowStartIndex, out totalRows);
+                List<AdminActivity> logs = this.reportService.GetActivityList(
+                                                    EclAdminUtil.GetLogTypeNameById(vm.SelectedTypeId), 
+                                                    vm.SelectedAction,
+                                                    vm.SelectedLog, 
+                                                    vm.StartDate, 
+                                                    vm.EndDate, 
+                                                    vm.FreeTextSearch, 
+                                                    pageSize, 
+                                                    rowStartIndex, 
+                                                    out totalRows
+                                            );
+
                 return Json(new { draw = draw, recordsFiltered = totalRows, recordsTotal = totalRows, data = logs }, JsonRequestBehavior.AllowGet);
 
             }

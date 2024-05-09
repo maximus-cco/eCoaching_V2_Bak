@@ -9,18 +9,19 @@
 
 <!-- Search Form -->
 @using (Ajax.BeginForm("SearchForReassign", "EmployeeLog", FormMethod.Post,
-        new AjaxOptions
-        {
-            InsertionMode = InsertionMode.Replace,
-            HttpMethod = "POST",
-            UpdateTargetId = "search-result",
-            OnBegin = "processSearchOnBegin",
-            OnComplete = "processSearchOnComplete",
-            OnFailure = "handleAjaxError"
-        },
-        new { id = "form-search", @class = "form-inline" }
-))
+                    new AjaxOptions
+                    {
+                        InsertionMode = InsertionMode.Replace,
+                        HttpMethod = "POST",
+                        UpdateTargetId = "search-result",
+                        OnBegin = "processSearchOnBegin",
+                        OnComplete = "processSearchOnComplete",
+                        OnFailure = "handleAjaxError"
+                    },
+                    new { id = "form-search", @class = "form-inline" }
+            ))
 {
+    @Html.AntiForgeryToken()
 
     { Html.RenderPartial("_SearchOption", "Search by Employee Level, Log Status, and Reviewer"); }
 

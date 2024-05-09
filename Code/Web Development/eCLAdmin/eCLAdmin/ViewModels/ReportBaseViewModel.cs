@@ -11,6 +11,7 @@ namespace eCLAdmin.ViewModels
 
         public string StartDate { get; set; }
         public string EndDate { get; set; }
+        [AllowHtml]
         public string FreeTextSearch { get; set; }
 
         public string HireDate{ get; set; }
