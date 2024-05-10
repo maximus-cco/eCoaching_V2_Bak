@@ -1,30 +1,8 @@
-/*
-sp_AT_Warning_Inactivation_Reactivation(02).sql
-Last Modified Date: 10/23/2017
-Last Modified By: Susmitha Palacherla
-
-Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_AT_Warning_Inactivation_Reactivation' 
-)
-   DROP PROCEDURE [EC].[sp_AT_Warning_Inactivation_Reactivation]
-GO
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
 
 ---------------------------------------------------------------------------------------------------------
 -- MULTIPLE ASTERISKS (***) DESIGNATE SECTIONS OF THE STORED PROCEDURE TEMPLATE THAT SHOULD BE CUSTOMIZED
@@ -35,7 +13,7 @@ GO
 -- The following 2 statements need to be executed when re-creating this stored procedure:
 -- drop procedure [EC].[sp_AT_Warning_Inactivation_Reactivation]
 -- go
-CREATE PROCEDURE [EC].[sp_AT_Warning_Inactivation_Reactivation] (
+CREATE OR ALTER PROCEDURE [EC].[sp_AT_Warning_Inactivation_Reactivation] (
   @strRequesterLanId NVARCHAR(50),
   @strAction NVARCHAR(30), 
   @tableIds IdsTableType READONLY,
@@ -69,6 +47,7 @@ as
 -------------------------------------------------------------------------------------
 -- Revision History:
 --  Modified to support Encryption of sensitive data - Open key -  TFS 7856 - 10/23/2017
+--  Modified to suuport changes to Warning Inactivation process. TFS 28097 - 05/01/2024
 -------------------------------------------------------------------------------------
 -- Notes: set @returnCode and @returnMessage as appropriate
 --        @returnCode defaults to '0',  @returnMessage defaults to 'ok'
@@ -114,16 +93,16 @@ END
       Getdate(), @strRequestrID, @strReason, @strComments 
       FROM  [EC].[Warning_Log]CL JOIN @tableIds ID ON
       CL.WarningID = ID.ID 
-
           
              
 WAITFOR DELAY '00:00:00:02'  -- Wait for 2 ms
     --PRINT 'STEP1'
 
-
 UPDATE [EC].[Warning_Log]
 SET StatusID = (SELECT  CASE @strAction
-WHEN 'Inactivate' THEN 2 ELSE 1 END)
+WHEN 'Inactivate' THEN 2 ELSE [EC].[fn_intLastKnownStatusForWarningID](CL.WarningID) END)
+,Active= (SELECT CASE @strAction
+WHEN 'Inactivate' THEN 0 ELSE 1 END)
 FROM [EC].[Warning_Log]CL JOIN @tableIds ID ON
 CL.WarningID = ID.ID						
 						
@@ -160,7 +139,6 @@ CLOSE SYMMETRIC KEY [CoachingKey]
    end
 return 0
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
-
-
-
 GO
+
+
