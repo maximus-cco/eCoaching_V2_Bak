@@ -30,7 +30,7 @@ namespace eCLAdmin.Controllers
             return View();
         }
 
-        [EclAuthorize]
+        //[EclAuthorize]
         public ActionResult eCoachingAccessControlList()
         {
             logger.Debug("Entered eCoachingAccessControlList");
@@ -47,6 +47,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult InitEcoachingAccessControlDelete(int rowId)
         {
             eCoachingAccessControlViewModel aclVM = userService.GetEcoachingAccessControl(rowId);
@@ -62,6 +63,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult InitEcoachingAccessControlEdit(int rowId)
         {
             eCoachingAccessControlViewModel userVM = userService.GetEcoachingAccessControl(rowId);
@@ -109,6 +111,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult InitEcoachingAccessControlAdd()
         {
             logger.Debug("@@@@@@@@@@@@ Entered InitEcoachingAccessControlAdd: ");

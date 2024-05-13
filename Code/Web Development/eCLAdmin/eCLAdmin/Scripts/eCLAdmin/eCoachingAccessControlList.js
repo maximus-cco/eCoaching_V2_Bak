@@ -60,6 +60,8 @@ $(document).ready(function () {
             rowSelected = $(this);
 
             var rowId = $(this).attr("rel");
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            //console.log("token=" + token);
             //console.log("%%%%%%rowId=" + rowId);
             var action = $(this).attr("action");
             var actionUrl = showEditUserUrl;
@@ -72,7 +74,10 @@ $(document).ready(function () {
             $.ajax({
                 type: 'POST',
                 url: actionUrl,
-                data: { rowId: rowId },
+                data: {
+                    __RequestVerificationToken: token,
+                    rowId: rowId
+                },
                 dataType: 'html',
 
                 success: function (data) {

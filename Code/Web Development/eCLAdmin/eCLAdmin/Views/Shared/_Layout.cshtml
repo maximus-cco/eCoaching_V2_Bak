@@ -126,10 +126,7 @@
     </div>
 
     <div class="body-content" id="div-body">
-        @*@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form-ajax-anti-forgery-token" }))
-        {
-            @Html.AntiForgeryToken()
-        }*@
+        @Html.AntiForgeryToken()
 
         @RenderBody()
     </div>

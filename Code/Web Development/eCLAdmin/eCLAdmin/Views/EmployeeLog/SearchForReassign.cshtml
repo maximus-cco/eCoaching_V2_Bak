@@ -21,7 +21,7 @@
                     new { id = "form-search", @class = "form-inline" }
             ))
 {
-    @Html.AntiForgeryToken()
+    @*@Html.AntiForgeryToken()*@
 
     { Html.RenderPartial("_SearchOption", "Search by Employee Level, Log Status, and Reviewer"); }
 

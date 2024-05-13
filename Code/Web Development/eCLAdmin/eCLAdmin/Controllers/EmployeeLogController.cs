@@ -56,7 +56,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         [ValidateInput(false)]
         public ActionResult SearchForInactivate(string searchOption, string module, string logType, string employee, string logTypeSearchByLogName, string logName)
         {
@@ -105,6 +105,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
+        //[ValidateAntiForgeryToken]
         [ValidateInput(false)]
         public ActionResult Inactivate(EmployeeLogSelectViewModel model, int reason, string otherReason, string comment)
         {
@@ -151,7 +152,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         [ValidateInput(false)]
         public ActionResult SearchForReassign(string searchOption, int module, int employeeLogStatus, string reviewer, string logName)
         {
@@ -246,7 +247,7 @@ namespace eCLAdmin.Controllers
             return View();
         }
 
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         [ValidateInput(false)]
         public ActionResult SearchForReactivate(string searchOption, string module, string logType, string employee, string logTypeSearchByLogName, string logName)
         {
@@ -419,7 +420,7 @@ namespace eCLAdmin.Controllers
         // because the same request was sent to the server before and the browser will return the cached response to the page.
         // Decorate the action method not to cache the response in between.
         [OutputCache(NoStore = true, Duration = 1, VaryByParam = "*")]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public ActionResult InitInactivateModal()
         {
             logger.Debug("Entered InitInactivateModal ");
@@ -556,7 +557,7 @@ namespace eCLAdmin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         [ValidateInput(false)]
         public ActionResult SearchForDelete(EmployeeLog logToDelete)
         {
