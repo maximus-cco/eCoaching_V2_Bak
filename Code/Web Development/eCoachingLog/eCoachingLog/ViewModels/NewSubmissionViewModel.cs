@@ -122,10 +122,10 @@ namespace eCoachingLog.ViewModels
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (this.ModuleId == Constants.MODULE_CSR 
-                    || this.ModuleId == Constants.MODULE_SUPERVISOR 
+            if (this.ModuleId == Constants.MODULE_CSR
+                    || this.ModuleId == Constants.MODULE_ISG
                     || this.ModuleId == Constants.MODULE_QUALITY
-                    || this.ModuleId == Constants.MODULE_ISG)
+                    || this.ModuleId == Constants.MODULE_SUPERVISOR)
             {
                 if (this.ProgramId < 1)
                 {
@@ -276,8 +276,8 @@ namespace eCoachingLog.ViewModels
                 }
             }
 
-			// Validate follow-up entries for CSR logs only
-			if (this.ModuleId == Constants.MODULE_CSR)
+			// Validate follow-up entries for CSR/ISG logs only
+			if (this.ModuleId == Constants.MODULE_CSR || this.ModuleId == Constants.MODULE_ISG)
 			{
 				// followup radio button
 				if (!this.IsFollowupRequired.HasValue)
@@ -295,7 +295,7 @@ namespace eCoachingLog.ViewModels
 						yield return new ValidationResult("Please select a follow-up date.", followupDueDate);
 					}
 				}
-			} // end if (this.ModuleId == Constants.MODULE_CSR)
+			} // end if (this.ModuleId == Constants.MODULE_CSR || this.ModuleId == Constants.MODULE_ISG)
 		}
 
         public static implicit operator NewSubmission(NewSubmissionViewModel vm)

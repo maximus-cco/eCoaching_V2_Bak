@@ -4,6 +4,7 @@
 <input type="hidden" id="WarningYesNo" />
 <div class="row">
     <div class="col-sm-6">
+        @*Show 'Add' only for CCO CSR module*@
         @if(!Model.IsSubcontractor && Model.ModuleId == Constants.MODULE_CSR) {
             <a href="#" style="color: #337ab7" id="a-add-employee"><b>Add</b></a>
         }
@@ -16,16 +17,21 @@
     </div>
 </div>
 
-<div id="div-employee-listbox" class="hide">
-    <select multiple="multiple" size="10" name="duallistbox_employee" title="duallistbox_employee">
-        @if (Model.EmployeeList != null) {
-            foreach (var m in Model.EmployeeList) { 
-                <option value="@m.Value" selected="@m.IsSelected" data-supidmgrid="@m.Data">@m.Text</option>
-            }
+@if (Model.EmployeeList != null && Model.EmployeeList.Count > 0)
+{
+    <div id="div-employee-listbox" class="hide">
+        <select multiple="multiple" size="10" name="duallistbox_employee" title="duallistbox_employee">
+        @foreach (var m in Model.EmployeeList)
+        {
+            <option value="@m.Value" selected="@m.IsSelected" data-supidmgrid="@m.Data">@m.Text</option>
         }
-    </select>
-    <div class="pull-right danger" id="warning-log-error"></div>
-</div>
+        </select>
+        <div class="pull-right danger" id="warning-log-error"></div>
+    </div>
+} else
+{
+    <p class="danger">No employee found for the selected Employee Level and the selected Site.</p>
+}
 
 <script>
     var dlEmployee;

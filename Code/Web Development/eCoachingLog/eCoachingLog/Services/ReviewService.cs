@@ -436,7 +436,7 @@ namespace eCoachingLog.Services
 			bool success = reviewRepository.CompleteAckRegularReview(review, nextStatus, user);
 			string subject = "Warning Log Completed";
 
-			// Email supervisor and/or manager upon CSR acknowledges the warning log
+			// Email supervisor and/or manager upon CSR/ISG acknowledges the warning log
 			if (success
 					&& (review.WarningLogDetail.ModuleId == Constants.MODULE_CSR || review.WarningLogDetail.ModuleId == Constants.MODULE_ISG)
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
@@ -528,7 +528,7 @@ namespace eCoachingLog.Services
 				}
 			}
 
-			// Email CSR's comments to supervisor and/or manager 
+			// Email CSR/ISG comments to supervisor and/or manager 
 			if (success 
 					&& (review.LogDetail.ModuleId == Constants.MODULE_CSR || review.WarningLogDetail.ModuleId == Constants.MODULE_ISG)
                     && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT

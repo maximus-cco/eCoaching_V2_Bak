@@ -78,7 +78,7 @@ namespace eCoachingLog.Controllers
                 vm.IsSuccess = false;
                 vm.IsValidationError = true;
                 ViewBag.ClientValidateCoachingReasons = true;
-                ViewBag.ClientValidateEmployee = vm.ModuleId == Constants.MODULE_CSR;
+                ViewBag.ClientValidateEmployee = vm.ModuleId == Constants.MODULE_CSR || vm.ModuleId == Constants.MODULE_ISG;
                 ViewBag.ValidationError = true;
                 return StayOnThisPage(vm);
             }
@@ -445,10 +445,10 @@ namespace eCoachingLog.Controllers
 			string directOrIndirect = (vmInSession.IsCoachingByYou.HasValue && vmInSession.IsCoachingByYou.Value) ? Constants.DIRECT : Constants.INDIRECT;
 
             // Load Site dropdown
-            if (moduleId == Constants.MODULE_CSR 
+            if (moduleId == Constants.MODULE_CSR
+                    || moduleId == Constants.MODULE_ISG
                     || moduleId == Constants.MODULE_QUALITY
-                    || moduleId == Constants.MODULE_SUPERVISOR
-                    || moduleId == Constants.MODULE_ISG)
+                    || moduleId == Constants.MODULE_SUPERVISOR)
             {
                 IList<Site> siteList = this.siteService.GetSites(true, GetUserFromSession(), moduleId);
                 siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });
@@ -465,8 +465,9 @@ namespace eCoachingLog.Controllers
             }
 
             // Load Employee dropdown for others
-            if (moduleId != Constants.MODULE_CSR
-                    && !AllowMassSubmission(moduleId))
+            //if (moduleId != Constants.MODULE_CSR
+            //        && !AllowMassSubmission(moduleId))
+            if (!AllowMassSubmission(moduleId))
             {
                 var siteId = 0;
                 var user = GetUserFromSession();
@@ -690,7 +691,7 @@ namespace eCoachingLog.Controllers
             NewSubmissionViewModel vm = new NewSubmissionViewModel(user.EmployeeId, user.LanId);
             vm.IsSubcontractor = user.IsSubcontractor;
 			vm.ModuleId = moduleId;
-			vm.ShowFollowup = moduleId == Constants.MODULE_CSR;
+			vm.ShowFollowup = moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_ISG;
             vm.UserId = user.EmployeeId;
 
             // Module Dropdown
@@ -705,6 +706,7 @@ namespace eCoachingLog.Controllers
         private bool ShowSiteDropdown(NewSubmissionViewModel vm)
         {
             return vm.ModuleId == Constants.MODULE_CSR
+                        || vm.ModuleId == Constants.MODULE_ISG
                         || AllowMassSubmission(vm.ModuleId);
         }
 
@@ -718,10 +720,10 @@ namespace eCoachingLog.Controllers
         //Quality - WACQ13, WACQ40, and WPPM50
         private bool AllowMassSubmission(int moduleId)
         {
-            if (moduleId != Constants.MODULE_CSR 
-                    && moduleId != Constants.MODULE_SUPERVISOR 
+            if (moduleId != Constants.MODULE_CSR
+                    && moduleId != Constants.MODULE_ISG
                     && moduleId != Constants.MODULE_QUALITY
-                    && moduleId != Constants.MODULE_ISG)
+                    && moduleId != Constants.MODULE_SUPERVISOR)
             {
                 return false;
             }
@@ -775,9 +777,9 @@ namespace eCoachingLog.Controllers
 
             // No mass/team submission for modules OTHER THAN csr, quality, ISG, and supervisor
             if (vm.ModuleId != Constants.MODULE_CSR
+                    && vm.ModuleId != Constants.MODULE_ISG
                     && vm.ModuleId != Constants.MODULE_QUALITY
-                    && vm.ModuleId != Constants.MODULE_SUPERVISOR
-                    && vm.ModuleId != Constants.MODULE_ISG)
+                    && vm.ModuleId != Constants.MODULE_SUPERVISOR)
             {
                 return false;
             }
@@ -802,9 +804,10 @@ namespace eCoachingLog.Controllers
 
         private bool ShowIsCseChoice(NewSubmissionViewModel vm)
         {
-            return vm.ModuleId == Constants.MODULE_CSR ||
-                vm.ModuleId == Constants.MODULE_SUPERVISOR ||
-                vm.ModuleId == Constants.MODULE_TRAINING;
+            return vm.ModuleId == Constants.MODULE_CSR 
+                        || vm.ModuleId == Constants.MODULE_ISG 
+                        || vm.ModuleId == Constants.MODULE_SUPERVISOR 
+                        || vm.ModuleId == Constants.MODULE_TRAINING;
         }
 
         public bool ShowActionTextbox(NewSubmissionViewModel vm)

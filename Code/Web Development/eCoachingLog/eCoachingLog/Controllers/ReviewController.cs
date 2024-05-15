@@ -1270,7 +1270,8 @@ namespace eCoachingLog.Controllers
 
 			var user = GetUserFromSession();
 
-			if (vm.LogDetail.ModuleId != Constants.MODULE_CSR || !vm.LogDetail.IsFollowupRequired)
+			if ((vm.LogDetail.ModuleId != Constants.MODULE_CSR && vm.LogDetail.ModuleId != Constants.MODULE_ISG)
+                    || !vm.LogDetail.IsFollowupRequired)
 			{
 				return false;
 			}
