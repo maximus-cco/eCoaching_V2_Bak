@@ -48,7 +48,7 @@ namespace eCoachingLog.Controllers
             vm.LogCountList = logCountList;
             Session["LogCountList"] = logCountList;
 
-            if (user.IsCsr || user.IsArc)
+            if (user.IsCsr || user.IsArc || user.IsIsg)
             {
                 vm.ShowMyPerformance = true;
                 vm.ShowMyTeamPerformance = false;
@@ -114,7 +114,7 @@ namespace eCoachingLog.Controllers
                     }
 
                     // Action link(s) on each row
-                    if (user.IsCsr || user.IsArc)
+                    if (user.IsCsr || user.IsArc || user.IsIsg)
                     {
                         vm.AllowCsrReview = true;
                     }

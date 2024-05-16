@@ -36,24 +36,6 @@ namespace eCoachingLog.Models.User
             }
         }
 
-        public string Title
-        {
-            get
-            {
-                if (this.IsCsr)
-                {
-                    return "CSR";
-                }
-
-                if (this.IsSupervisor)
-                {
-                    return "Supervisor";
-                }
-
-                return "";
-            }
-        }
-
         public bool IsAnalyst
         {
             get
@@ -67,6 +49,14 @@ namespace eCoachingLog.Models.User
             get
             {
                 return string.Equals(this.Role, Constants.USER_ROLE_ARC, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public bool IsIsg
+        {
+            get
+            {
+                return string.Equals(this.Role, Constants.USER_ROLE_ISG, StringComparison.OrdinalIgnoreCase);
             }
         }
 

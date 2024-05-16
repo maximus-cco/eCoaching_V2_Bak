@@ -28,6 +28,7 @@ namespace eCoachingLog.Utils
 
 		public const string USER_ROLE_CSR = "CSR";
 		public const string USER_ROLE_ARC = "ARC";
+        public const string USER_ROLE_ISG = "ISG";
 		//public const string USER_ROLE_RESTRICTED = "Restricted";
 		public const string USER_ROLE_SUPERVISOR = "Supervisor";
 		public const string USER_ROLE_MANAGER = "Manager";

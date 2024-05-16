@@ -214,7 +214,11 @@ namespace eCoachingLog.Controllers
 
             if (action == "view")
             {
-                if (!logDetail.IsQnSupervisor && !user.IsCsr && (vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED || vm.LogDetail.StatusId > Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION))
+                if (!logDetail.IsQnSupervisor 
+                    && !user.IsCsr 
+                    && !user.IsArc
+                    && !user.IsIsg
+                    && (vm.LogDetail.StatusId == Constants.LOG_STATUS_COMPLETED || vm.LogDetail.StatusId > Constants.LOG_STATUS_PENDING_FOLLOWUP_PREPARATION))
                 {
                     vm.ShowFollowupDecisionComments = true;
                 }
@@ -241,8 +245,8 @@ namespace eCoachingLog.Controllers
 
         private bool ShowQnEvalDetail(CoachingLogDetail logDetail, string action, User user)
         {
-            // do not show detail to csr and arc
-            if (user.IsCsr || user.IsArc)
+            // do not show detail to csr, arc, and isg
+            if (user.IsCsr || user.IsArc || user.IsIsg)
             {
                 return false;
             }
