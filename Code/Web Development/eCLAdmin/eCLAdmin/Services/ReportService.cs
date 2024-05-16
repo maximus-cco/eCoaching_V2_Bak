@@ -9,6 +9,7 @@ using eCLAdmin.Models.User;
 using eCLAdmin.ViewModels.Reports;
 using eCLAdmin.Models.Common;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace eCLAdmin.Services
 {
@@ -57,7 +58,7 @@ namespace eCLAdmin.Services
 
         public List<Module> GetEmployeeLevels(User user)
         {
-            return this.rptRepository.GetEmployeeLevels(user);
+            return this.rptRepository.GetEmployeeLevels(user).OrderBy(x => x.Name).ToList<Module>();
         }
 
         public List<Reason> GetReasonsByModuleId(int moduleId, bool isWarning)
