@@ -269,16 +269,16 @@ namespace eCoachingLog.Utils
 
 
 		// TODO: move to resource file or database
-		public const string REVIEW_OTH_APS_TEXT = "Your CSR has reached a major attendance milestone with 11 perfect shifts.You are encouraged to validate that the CSR indeed earned perfect attendance and verify that the hours have been removed in the Attendance Tracking Tool. And of course, please say thank you to your CSR for a job well done. This notification is for your CSR and does not apply to your personal attendance. Please refer to the name listed beside the 'employee' field to determine the employee who is receiving this message.";
-		public const string REVIEW_OTH_APW_TEXT = "Your CSR had perfect attendance during a recent critical week. You are encouraged to validate that the CSR indeed earned perfect attendance and verify that the hours have been removed in the Attendance Tracking Tool. And of course, please say thank you to your CSR for a job well done. This notification is for your CSR and does not apply to your personal attendance. Please refer to the name listed beside the 'employee' field to determine the employee who is receiving this message.";
+		public const string REVIEW_OTH_APS_TEXT = "Your agent has reached a major attendance milestone with 11 perfect shifts.You are encouraged to validate that the agent indeed earned perfect attendance and verify that the hours have been removed in the Attendance Tracking Tool. And of course, please say thank you to your agent for a job well done. This notification is for your agent and does not apply to your personal attendance. Please refer to the name listed beside the 'employee' field to determine the employee who is receiving this message.";
+		public const string REVIEW_OTH_APW_TEXT = "Your agent had perfect attendance during a recent critical week. You are encouraged to validate that the agent indeed earned perfect attendance and verify that the hours have been removed in the Attendance Tracking Tool. And of course, please say thank you to your agent for a job well done. This notification is for your agent and does not apply to your personal attendance. Please refer to the name listed beside the 'employee' field to determine the employee who is receiving this message.";
 
-		public const string REVIEW_OMR_SHORT_CALL_TEXT = "The CSR has multiple short calls that exceed the threshold. Please coach the behavior so the CSR has fewer short calls.";
+		public const string REVIEW_OMR_SHORT_CALL_TEXT = "The agent has multiple short calls that exceed the threshold. Please coach the behavior so the agent has fewer short calls.";
 
 		public const string REVIEW_LCSAT = "You are receiving this eCL because you have been assigned to listen to and provide feedback on a call that was identified as having low customer satisfaction. Please " +
-			"review the call from a PPoM perspective and provide details on the specific opportunities requiring coaching in the record below.";
+			"review the call from a perspective and provide details on the specific opportunities requiring coaching in the record below.";
 
 		public const string REVIEW_TRAINING_SHORT_DURATION_REPORT_TEXT =
-			"CSRs are scheduled for specific times in Empower to ensure understanding of training materials presented. " +
+			"Agents are scheduled for specific times in WFO to ensure understanding of training materials presented. " +
 			"It is important to utilize the timeframe allotted to successfully understand the training content. " +
 			"Please be aware that the scheduled timeframe is a metric which has been agreed upon by CCO and CMS. " +
 			"You should use all or the majority of the scheduled time to review each eLearning module assigned.";
@@ -297,7 +297,7 @@ namespace eCoachingLog.Utils
         public const string REVIEW_QUALITY_KUDO_CSR_SUBCONTRACTOR = ""; 
 
         public const string REVIEW_QUALITY_KUDO_SUPERVISOR = "Click <a href='https://maximus365.sharepoint.com/sites/CCO/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
-			"to listen to CSR kudos.";
+			"to listen to agent kudos.";
         // no text for subcontractor
         public const string REVIEW_QUALITY_KUDO_SUPERVISOR_SUBCONTRACTOR = ""; 
 
@@ -329,14 +329,14 @@ namespace eCoachingLog.Utils
         // no text for subcontractor
         public const string REVIEW_ETS_OAE_SUBCONTRACTOR = "";
 
-        public const string REVIEW_ETS_OAS = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report(also known as the TC Compliance Action report).  Please research why the supervisor did not approve Or reject their CSR’s timecard before the deadline laid out in the latest " +
+        public const string REVIEW_ETS_OAS = "You are receiving this eCL record because a Supervisor on your team was identified on the CCO TC Outstanding Actions report(also known as the TC Compliance Action report).  Please research why the supervisor did not approve Or reject their agent’s timecard before the deadline laid out in the latest " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Resources/SOP/Contact%20Center%20Operations/Forms/AllItems.aspx' target='_blank'>Contact Center Operations 3.06 Timecard Audit SOP</a> and provide the details in the record below.";
         // no text for subcontractor
         public const string REVIEW_ETS_OAS_SUBCONTRACTOR = "";
 
-        public const string REVIEW_OMR_PBH = "Be sure to check the Beneficiary Indicators applet on every call. If a message is on file, the CSR must follow protocol and review it to determine whether the information is applicable to the beneficiary’s reason for calling. However, the CSR must read and follow any messages related to the new Medicare card, regardless of the reason for the call. In addition to reading such messages, the CSR must be sure to log them as \"read\" to document that the information has been relayed to the caller." +  
+        public const string REVIEW_OMR_PBH = "Be sure to check the Beneficiary Indicators applet on every call. If a message is on file, the agent must follow protocol and review it to determine whether the information is applicable to the beneficiary’s reason for calling. However, the agent must read and follow any messages related to the new Medicare card, regardless of the reason for the call. In addition to reading such messages, the agent must be sure to log them as \"read\" to document that the information has been relayed to the caller." +  
 			"<br /><br />" +
-			"Remember, it is critical that we follow through with the appropriate action(s) outlined in the CSR Notes portion of the Message Details applet. This includes checking and confirming whether the beneficiary’s correct mailing address is on file. Depending on whether the address is correct, the CSR will take one of the two following actions:" +
+			"Remember, it is critical that we follow through with the appropriate action(s) outlined in the agent Notes portion of the Message Details applet. This includes checking and confirming whether the beneficiary’s correct mailing address is on file. Depending on whether the address is correct, the agent will take one of the two following actions:" +
 			"<br />" +
 			"- If the address is correct, you must order a replacement card for the beneficiary using the \"Medicare Card\" button (even if they don’t think they need one)." +
 			"<br />" +

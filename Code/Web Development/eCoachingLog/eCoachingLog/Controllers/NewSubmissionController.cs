@@ -274,9 +274,17 @@ namespace eCoachingLog.Controllers
         {
             var vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
             IList<Employee> employeeList = employeeService.GetEmployeesByModule(moduleId, siteId, GetUserFromSession());
-            //employeeList.Insert(0, new Employee { Id = "-2", Name = "-- Select an Employee --" });
             List<SelectListItem> employees = (new SelectList(employeeList, "Id", "Name")).ToList();
-            employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
+
+            if (employees.Count > 0)
+            {
+                employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- Select an Employee --" });
+            }
+            else
+            {
+                employees.Insert(0, new SelectListItem { Value = "-2", Text = "-- No employee found --" });
+            }
+
             vmInSession.EmployeeSelectList = employees;
             vmInSession.EmployeeList = employeeList.Select(e => new TextValue(e.Name + " (Supervisor: " + e.SupervisorName.Trim() + ")", e.Id, e.SupervisorId + "," + e.ManagerId)).ToList<TextValue>();
         }

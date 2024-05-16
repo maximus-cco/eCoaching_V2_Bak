@@ -16,7 +16,7 @@
                 <h2 class="modal-title">Follow-up Review</h2>
                 @if (!String.IsNullOrEmpty(Model.LogDetail.FollowupDueDate))
                 {
-                    <div class="text-danger"><mark>Please complete follow-up by @Model.LogDetail.FollowupDueDate.</mark></div>
+                    <span class="pull-left"><strong style="color: green;">Please complete follow-up by @Model.LogDetail.FollowupDueDate.</strong></span>
                 }
                 <div class="danger pull-right">Please do not include PII or PHI in the log entry.</div>
             </div>

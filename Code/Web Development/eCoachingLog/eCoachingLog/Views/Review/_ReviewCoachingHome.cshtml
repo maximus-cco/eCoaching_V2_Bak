@@ -13,7 +13,7 @@
                 {
                     if (!String.IsNullOrEmpty(Model.LogDetail.FollowupDueDate))
                     {
-                        <div class="text-danger"><mark>Please complete follow-up by @Model.LogDetail.FollowupDueDate.</mark></div>
+                        <span class="pull-left"><strong style="color: green;">Please complete follow-up by @Model.LogDetail.FollowupDueDate.</strong></span>
                     }
                 }
 				@if (!Model.IsReadOnly)

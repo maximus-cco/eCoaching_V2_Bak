@@ -44,8 +44,8 @@ namespace eCoachingLog.Services
                 // QAM, PMA, and DIRPMA can submit all cco/subcontractor sites logs
                 if (user.IsQam || user.IsPma || user.IsDirPma)
                 {
-                    // No Quality for subcontractor
-                    if (moduleId == Constants.MODULE_QUALITY)
+                    // No Quality and ISG for subcontractor
+                    if (moduleId == Constants.MODULE_QUALITY || moduleId == Constants.MODULE_ISG)
                     {
                         allSiteId = Constants.ALL_SITES_CCO;
                         sites = sites.Where(x => !x.IsSubcontractorSite).ToList<Site>();
