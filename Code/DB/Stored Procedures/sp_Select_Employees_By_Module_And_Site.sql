@@ -1,9 +1,9 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -13,6 +13,7 @@ GO
 --  Fix ambiguous column reference during employee selection in submission page. TFS 21223 - 5/11/2021
 --  Updated to Support Team Submission. TFS 23273 - 06/07/2022
 --  Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site] 
 @intModuleIDin INT, @intSiteIDin INT = -1, @nvcUserEmpIDin  nvarchar(10)
@@ -81,6 +82,8 @@ SET @nvcSQL01 = 'SELECT EH.Emp_ID
 				,VEH.[Emp_Name] 
 				,VEH.[Sup_ID]
 				,VEH.[Sup_Name]
+				,VEH.[Mgr_ID]
+				,VEH.[Mgr_Name]
  FROM [EC].[View_Employee_Hierarchy] VEH  WITH (NOLOCK)  JOIN  [EC].[Employee_Hierarchy]EH WITH (NOLOCK) 
  ON VEH.[Emp_ID]= EH.[Emp_ID] JOIN [EC].[Employee_Selection]
  ON EH.[Emp_Job_Code]= [EC].[Employee_Selection].[Job_Code] JOIN [EC].[DIM_Site]S

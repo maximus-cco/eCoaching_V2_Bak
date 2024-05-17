@@ -4,9 +4,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-CREATE OR ALTER VIEW [EC].[View_Employee_Hierarchy]
+CREATE OR ALTER     VIEW [EC].[View_Employee_Hierarchy]
 AS  
 SELECT [Emp_ID]
       ,[Emp_Site]
@@ -17,6 +15,7 @@ SELECT [Emp_ID]
 	  ,[Emp_Job_Code]
 	  ,[Active]
 	  ,[isSub]
+	  ,[isISG]
 	  ,[Sup_ID]
       ,CONVERT(nvarchar(70),DecryptByKey(Sup_Name)) AS [Sup_Name]
 	  ,CONVERT(nvarchar(250),DecryptByKey(Sup_Email)) AS [Sup_Email]
@@ -37,5 +36,3 @@ SELECT [Emp_ID]
     FROM [EC].[Employee_Hierarchy];
 
 GO
-
-

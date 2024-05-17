@@ -4,7 +4,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================
 -- Author:           Susmitha Palacherla
 -- Create Date:      03/01/2019
@@ -12,8 +11,9 @@ GO
 -- Initial revision. TFS 13332 -  03/01/2019
 -- Updated logic for handling multiple Strengths and Opportunities texts for QN batch. TFS 14631 - 06/10/2019
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
-CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Quality_Now_Rejected] 
+CREATE OR ALTER  PROCEDURE [EC].[sp_InsertInto_Quality_Now_Rejected] 
 @Count INT OUTPUT
 
 AS
@@ -67,12 +67,13 @@ BEGIN TRY
 UPDATE EC.Quality_Now_Coaching_Stage
 SET [Emp_Role]= 
     CASE WHEN EMP.[Emp_Job_Code]in ('WACS01', 'WACS02','WACS03', 'WACS04') THEN 'C'
+	WHEN EMP.[Emp_Job_Code] = 'WACS05' THEN 'I'
     WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
 	WHEN EMP.[Emp_Job_Code] IN ('WACQ02','WACQ03','WACQ12') THEN 'Q'
     WHEN EMP.[Emp_Job_Code] IN ('WIHD01','WIHD02','WIHD03','WIHD04') THEN 'L'
     WHEN EMP.[Emp_Job_Code] IN ('WTID13','WTTI02','WTTR12','WTTR13') THEN 'T'
     ELSE 'O' END
-, [Module] = CASE WHEN [VerintFormName] like '%ATA%' THEN 3 ELSE 1 END
+  ,[Module] =  [EC].[fn_intModuleIDFromEmpID](User_EMPID)  
 FROM [EC].[Quality_Now_Coaching_Stage] STAGE JOIN [EC].[Employee_Hierarchy]EMP
 ON LTRIM(STAGE.User_EMPID) = LTRIM(EMP.Emp_ID);
 
@@ -114,6 +115,8 @@ WHERE [Emp_Role] <> 'Q' and [Reject_Reason]is NULL;
 UPDATE [EC].[Quality_Now_Coaching_Stage]
 SET [Reject_Reason]= CASE WHEN [Module] = 1
 AND [Emp_Role] <> 'C' THEN N'Employee does not have a CSR job code.'
+WHEN [Module] = 13
+AND [Emp_Role] <> 'I' THEN N'Employee does not have an ISG job code.'
 ELSE NULL END
 WHERE [Emp_Role] <> 'C' AND [Reject_Reason]is NULL;
 -- Reject logs with non distinct other parent attributres

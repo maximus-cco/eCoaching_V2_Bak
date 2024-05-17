@@ -4,7 +4,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        8/21/2015
@@ -20,8 +19,9 @@ GO
 -- Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 -- Modified to increase surveys for London. TFS 13334 - 02/20/2019
 -- Modified during Removal of Winchester to restrict Surveys for Inactive Sites. TFS 25626 - 10/26/2022
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
-CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header]
+CREATE OR ALTER  PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header]
 AS
 BEGIN
 
@@ -93,6 +93,8 @@ SELECT DISTINCT X.ModuleID FROM
 (
 SELECT CASE WHEN [CSR]= 1 THEN 1 ELSE NULL END AS ModuleID FROM [EC].[Survey_DIM_Type] WHERE [SurveyTypeID]= @SurveyTypeID
 UNION 
+SELECT CASE WHEN [ISG] = 1 THEN 10 ELSE NULL END AS ModuleID FROM [EC].[Survey_DIM_Type] WHERE [SurveyTypeID]= @SurveyTypeID
+UNION 
 SELECT CASE WHEN [Supervisor]= 1 THEN 2 ELSE NULL END AS ModuleID FROM [EC].[Survey_DIM_Type] WHERE [SurveyTypeID]= @SurveyTypeID
 UNION 
 SELECT CASE WHEN [Quality]= 1 THEN 3 ELSE NULL END AS ModuleID FROM [EC].[Survey_DIM_Type] WHERE [SurveyTypeID]= @SurveyTypeID
@@ -126,6 +128,8 @@ BEGIN
 ---SP: Survey pool
 -- SRH: Survey Response Header
 
+IF OBJECT_ID('tempdb..#Temp_Logs_SelectedAll') IS NOT NULL
+DROP TABLE #Temp_Logs_SelectedAll;
 
   CREATE TABLE #Temp_Logs_SelectedAll (
    SurveyTypeID int,
@@ -207,7 +211,9 @@ WHERE (SRH.[SurveyTypeID] IS NULL AND SRH.EmpID is NULL AND SRH.MonthOfYear IS N
 ---SP: Survey pool
 -- SRH: Survey Response Header
 
- 
+IF OBJECT_ID('tempdb..#Temp_Logs_SelectedPilot') IS NOT NULL
+DROP TABLE #Temp_Logs_SelectedPilot;
+
   CREATE TABLE #Temp_Logs_SelectedPilot (
    SurveyTypeID int,
    CoachingID bigint,
@@ -279,10 +285,7 @@ WHERE (SRH.[CoachingID] IS NULL AND SRH.EmpID is NULL AND SRH.MonthOfYear IS NUL
 
 -- Insert both set of possible Surveys from temp tables into Survey header table 
  
-   
-
-
-INSERT INTO [EC].[Survey_Response_Header]
+   INSERT INTO [EC].[Survey_Response_Header]
            ([SurveyTypeID]
            ,[CoachingID]
            ,[FormName]
@@ -297,8 +300,6 @@ INSERT INTO [EC].[Survey_Response_Header]
            ,[Status]
          )
 
-
-
 SELECT * FROM #Temp_Logs_SelectedAll
 UNION
 SELECT * FROM #Temp_Logs_SelectedPilot
@@ -310,8 +311,6 @@ END
 
 SET @i = @i + 1
 END
-
-
 
 WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 

@@ -12,6 +12,7 @@ GO
 --  Initial Revision. Quality Now workflow enhancement - TFS 22187 - 8/3/2021
 --  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
 --  Updated to support QN Supervisor evaluation changes. TFS 26002 - 02/02/2023
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count_QN] 
 @nvcEmpID nvarchar(10)
@@ -64,7 +65,7 @@ SET @SelectList = ''
 IF @bitMyPendingQN = 1
 BEGIN
 
-IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
+IF @nvcEmpRole in ('CSR', 'ISG', 'ARC', 'Employee')
 BEGIN
 SET @intMyPendingQN = (SELECT COALESCE(COUNT(cl.CoachingID),0)
                  FROM EC.Coaching_Log cl 

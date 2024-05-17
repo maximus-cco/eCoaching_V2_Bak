@@ -1,12 +1,3 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyFollowup_Count' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyFollowup_Count]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -19,8 +10,8 @@ GO
 --	Description: *	This procedure returns the count of CSRs logs that are pending follow-up by the supervisor 
 --  Initial Revision. Display MyFollowup for CSRs. TFS 15621 - 09/17/2019 
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --	=====================================================================
-
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyFollowup_Count] 
 @nvcUserIdin nvarchar(10)
 
@@ -44,10 +35,10 @@ SET @where = 'WHERE 1 = 1 AND cl.[SourceID] NOT IN (235,236)'
 
 
 
-IF @nvcEmpRole NOT IN ('CSR', 'ARC')
+IF @nvcEmpRole NOT IN ('CSR','ISG', 'ARC')
 RETURN 1
 
-IF @nvcEmpRole in ('CSR', 'ARC')
+IF @nvcEmpRole in ('CSR','ISG', 'ARC')
 BEGIN
 SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] = 10)'
 END
@@ -84,6 +75,5 @@ END -- sp_SelectFrom_Coaching_Log_MyFollowup_Count
 
 
 GO
-
 
 

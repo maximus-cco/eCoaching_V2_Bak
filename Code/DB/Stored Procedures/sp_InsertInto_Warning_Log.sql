@@ -79,7 +79,7 @@ ON t.EmpID = eh.Emp_ID;
 /* Add Validations here*/    
 
 
-SET @isSub = (SELECT TOP1 eh.isSub FROM 
+SET @isSub = (SELECT TOP 1 eh.isSub FROM 
  #tEmpRecs t INNER JOIN EC.Employee_Hierarchy eh
  ON t.EmpID = eh.Emp_ID);
 

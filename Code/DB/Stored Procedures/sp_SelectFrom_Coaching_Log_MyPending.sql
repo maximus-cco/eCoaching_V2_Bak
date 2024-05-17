@@ -1,11 +1,3 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyPending' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending]
-GO
 
 SET ANSI_NULLS ON
 GO
@@ -26,8 +18,8 @@ GO
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --	=====================================================================
-
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending] 
 @nvcUserIdin nvarchar(10),
 @nvcEmpIdin nvarchar(10),
@@ -79,9 +71,10 @@ SET @SortExpression = @OrderKey + @sortBy +  @SortOrder
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserIdin)
 
+--print @nvcEmpRole
 
 SET @NewLineChar = CHAR(13) + CHAR(10)
-SET @where = 'WHERE [cl].[StatusID] <> 2 AND [cl].[SourceID] NOT IN (235,236) '
+SET @where = 'WHERE [cl].[StatusID] <> 2 AND [cl].[SourceID] NOT IN (235, 236) '
 
 
 IF @nvcSupIdin  <> '-1'
@@ -95,10 +88,10 @@ BEGIN
 END	
 
 
-IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'Employee','Supervisor', 'Manager' )
+IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'ISG', 'Employee','Supervisor', 'Manager' )
 RETURN 1
 
-IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
+IF @nvcEmpRole in ('CSR', 'ISG', 'ARC', 'Employee')
 BEGIN
 SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (3,4))'
 END
@@ -234,4 +227,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending
 GO
+
 

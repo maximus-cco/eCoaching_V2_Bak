@@ -1,38 +1,8 @@
-/*
-sp_InsertInto_Survey_Response_Header_Resend(04).sql
-Last Modified Date: 02/25/2018
-Last Modified By: Susmitha Palacherla
-
-Version 04: Modified to increase surveys for London. TFS 13334 - 02/20/2019
-
-Version 03: Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
-
-Version 02: Modified during Encryption of sensitive data. Used Emp LanID from Emp table. TFS 7856 - 10/23/2017
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Survey_Response_Header_Resend' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header_Resend]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
 
 -- =============================================
 -- Author:		        Susmitha Palacherla
@@ -47,8 +17,9 @@ GO
 -- Modified during Encryption of sensitive data. Used Emp LanID from Emp table. TFS 7856 - 10/23/2017
 -- Modified to incorporate Pilot Question. TFS 9511 - 01/23/2018
 -- Modified to increase surveys for London. TFS 13334 - 02/20/2019
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header_Resend]
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Survey_Response_Header_Resend]
 AS
 BEGIN
 
@@ -72,14 +43,7 @@ BEGIN TRY
       DECLARE @numjrows INT
     
   SET @EndOfPeriod  = DATEADD(day, DATEDIFF(DD, 0, GetDate()),0) 
-  -- For Start of Current Month
-  --SET @StartOfMonth = DATEADD(month, DATEDIFF(month, 0, GetDate()),0) 
-  -- For testing setting to beginning of year. 
-  --SET @StartOfMonth = DATEADD(year, DATEDIFF(year, 0, GetDate()),0) 
-  -- For n months in the past GetDate())-n
-    --SET @StartOfMonth = DATEADD(month, DATEDIFF(month, 0, GetDate())-4,0) 
-  -- For n days in the past GetDate())-n
-  SET @StartOfPeriod = DATEADD(day, DATEDIFF(DD, 0, GetDate())-7,0) -- 7 days for Production code
+  SET @StartOfPeriod = DATEADD(day, DATEDIFF(DD, 0, GetDate())-7,0) 
  
  --PRINT @StartOfPeriod
  --PRINT @EndOfPeriod 
@@ -106,6 +70,8 @@ SELECT DISTINCT X.ModuleID FROM
 (
 SELECT CASE WHEN [CSR]= 1 THEN 1 ELSE NULL END AS ModuleID FROM [EC].[Survey_DIM_Type] WHERE [SurveyTypeID]= @SurveyTypeID
 UNION 
+SELECT CASE WHEN [ISG] = 1 THEN 10 ELSE NULL END AS ModuleID FROM [EC].[Survey_DIM_Type] WHERE [SurveyTypeID]= @SurveyTypeID
+UNION 
 SELECT CASE WHEN [Supervisor]= 1 THEN 2 ELSE NULL END AS ModuleID FROM [EC].[Survey_DIM_Type] WHERE [SurveyTypeID]= @SurveyTypeID
 UNION 
 SELECT CASE WHEN [Quality]= 1 THEN 3 ELSE NULL END AS ModuleID FROM [EC].[Survey_DIM_Type] WHERE [SurveyTypeID]= @SurveyTypeID
@@ -129,8 +95,7 @@ BEGIN
  -- eCLs meeting criteria for Survey generation are first selected.
  -- Records for each employee are ordered by a new randomly generated ID.
  -- First row from the randomly ordered records is selected for each Employee.
- 
- BEGIN 
+
   ;WITH Selected AS
   (
   SELECT DISTINCT @SurveyTypeID SurveyTypeID, 
@@ -152,8 +117,6 @@ BEGIN
   ON CL.EmpID = EH.Emp_ID
   WHERE Statusid = 1 -- Completed
   AND ModuleID = @ModuleID -- Each Module 
-  AND ((SiteID IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) AND SourceID NOT IN (123, 130, 135,136, 223, 224,230, 235, 236 )) -- Exclude all Quality for Pilot site(s)
-  OR (SiteID NOT IN (SELECT SiteID FROM [EC].[Survey_Sites] WHERE isPilot = 1) AND SourceID <> 224)) -- Exclude Verint-TQC for Non Pilot site(s)
   AND isCSRAcknowledged = 1
   AND SurveySent = 0
   AND CSRReviewAutoDate BETWEEN @StartOfPeriod and @EndOfPeriod
@@ -172,9 +135,6 @@ BEGIN
 -- SCL: Selecetd Coaching logs
 ---SP: Survey pool
 -- SRH: Survey Response Header
-
-
-
 
 INSERT INTO [EC].[Survey_Response_Header]
            ([SurveyTypeID]
@@ -216,9 +176,8 @@ Having COUNT(*)= 1
   AND SCL.ModuleID = SRH.ModuleID
   AND SCL.MonthOfYear = SRH.MonthOfYear
   AND SCL.CalendarYear = SRH.CalendarYear 
-  AND SCL.[SurveyTypeID]= SRH.[SurveyTypeID]
-OPTION (MAXDOP 1)
-END
+  AND SCL.[SurveyTypeID]= SRH.[SurveyTypeID];
+
 
 SET @j = @j + 1
 END
@@ -227,18 +186,15 @@ SET @i = @i + 1
 END
 
 
+WAITFOR DELAY '00:00:00.05'; -- Wait for 5 ms
 
-WAITFOR DELAY '00:00:00.05' -- Wait for 5 ms
 
-BEGIN
 UPDATE [EC].[Coaching_Log]
 SET [SurveySent] = 1
 FROM [EC].[Survey_Response_Header]SRH JOIN [EC].[Coaching_Log] CL
 ON SRH.[CoachingID] = CL.[CoachingID]
 AND SRH.[Formname] = CL.[Formname]
-AND [SurveySent] = 0
-OPTION (MAXDOP 1)
-END
+AND [SurveySent] = 0;
 
              
 COMMIT TRANSACTION
@@ -273,6 +229,5 @@ END TRY
 END -- sp_InsertInto_Survey_Response_Header_Resend
 
 GO
-
 
 

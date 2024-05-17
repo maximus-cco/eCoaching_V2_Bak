@@ -1,13 +1,3 @@
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_SelectFrom_Coaching_Log_MyPending_Count' 
-)
-   DROP PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_Count]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -25,8 +15,8 @@ GO
 --  Updated to support changes to warnings workflow. TFS 15803 - 11/05/2019
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --	=====================================================================
-
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_MyPending_Count] 
 @nvcUserIdin nvarchar(10),
 @nvcEmpIdin nvarchar(10),
@@ -64,10 +54,10 @@ BEGIN
 END	
 
 
-IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'Employee','Supervisor', 'Manager' )
+IF @nvcEmpRole NOT IN ('CSR', 'ISG', 'ARC', 'Employee','Supervisor', 'Manager' )
 RETURN 1
 
-IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
+IF @nvcEmpRole in ('CSR', 'ARC', 'ISG', 'Employee')
 BEGIN
 SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (3,4))'
 END
@@ -133,4 +123,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END -- sp_SelectFrom_Coaching_Log_MyPending_Count
 GO
+
 

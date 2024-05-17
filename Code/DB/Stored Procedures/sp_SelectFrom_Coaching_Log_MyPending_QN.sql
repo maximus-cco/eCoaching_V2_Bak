@@ -61,10 +61,10 @@ SET @NewLineChar = CHAR(13) + CHAR(10)
 SET @where = 'WHERE cl.[SourceID] in (235, 236) '
 
 
-IF @nvcEmpRole NOT IN ('CSR', 'ARC', 'EMPLOYEE' )
+IF @nvcEmpRole NOT IN ('CSR','ISG', 'ARC', 'EMPLOYEE' )
 RETURN 1
 
-IF @nvcEmpRole in ('CSR', 'ARC', 'EMPLOYEE')
+IF @nvcEmpRole in ('CSR','ISG', 'ARC', 'EMPLOYEE')
 BEGIN
 SET @where = @where + ' AND (cl.[EmpID] = ''' + @nvcUserIdin + '''  AND cl.[StatusID] in (4,13))'
 END

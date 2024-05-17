@@ -1,35 +1,8 @@
-/*
-sp_Update_Outlier_Coaching_Stage(07).sql
-Last Modified Date: 09/15/2020
-Last Modified By: Susmitha Palacherla
-
-Version 07: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
-Version 06: Updated to support Maximus IDs - TFS 13777 - 05/29/2019
-Version 05: Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
-Version 04: Added Additional Job codes and Roles - TFS 8793 - 11/16/2017
-Version 03: Updated to fix typo in Missing Site and Comments - TFS 6147 - 06/02/2017
-Version 02: slight update to EmpID update logic - Suzy Palacherla -  TFS 6377 - 04/24/2017
-Version 01: Document Initial Revision - Suzy Palacherla -  TFS 6377 - 04/24/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Update_Outlier_Coaching_Stage' 
-)
-   DROP PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -45,8 +18,9 @@ GO
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- Updated to support Maximus IDs - TFS 13777 - 05/29/2019
 -- Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
-CREATE PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage] 
 @Count INT OUTPUT
 AS
 BEGIN
@@ -113,7 +87,8 @@ WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 -- Populate Roles AND Active
 UPDATE [EC].[Outlier_Coaching_Stage]
 SET [Emp_Role]= 
-    CASE WHEN EMP.[Emp_Job_Code] like 'WACS0%' THEN 'C'
+    CASE WHEN EMP.[Emp_Job_Code] IN ( 'WACS01', 'WACS02','WACS03') THEN 'C'
+	WHEN EMP.[Emp_Job_Code] = 'WACS05' THEN 'I'
     WHEN EMP.[Emp_Job_Code] = 'WACS40' THEN 'S'
 	WHEN EMP.[Emp_Job_Code] = 'WACS50' THEN 'M'
     WHEN  EMP.[Emp_Job_Code]in ('WACQ02', 'WACQ03','WACQ12') THEN 'Q'

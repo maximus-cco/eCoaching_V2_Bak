@@ -15,8 +15,8 @@
   DTS:MaxErrorCount="0"
   DTS:ObjectName="Employee_Hierarchy"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="200"
-  DTS:VersionGUID="{40E4DFF4-16B4-4E8A-B9D6-B85384592BA9}">
+  DTS:VersionBuild="202"
+  DTS:VersionGUID="{8440BBF5-CBAF-43B3-837F-06F12247C3DF}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -543,7 +543,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Decrypt_Out\PS_Employee_Information_02022024.csv">
+          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Decrypt_Out\PS_Employee_Information_05162024.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -552,7 +552,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="lanid"
-              DTS:DTSID="{824DA19A-AF39-48E8-AB11-0FF11736A746}"
+              DTS:DTSID="{5B15A7F8-AE12-4789-8364-63420FB921A5}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -561,7 +561,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="emplid"
-              DTS:DTSID="{D57A7386-95ED-4E22-B5DC-70B5646F1B98}"
+              DTS:DTSID="{39FBBB83-B17F-498C-8BF7-67C31E47E50A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -570,7 +570,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="first_name"
-              DTS:DTSID="{6B8DF960-2EA1-4207-AF0A-CA42BFF18B38}"
+              DTS:DTSID="{225D1F0B-D463-4A60-B396-B8ECF2AA5320}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -579,7 +579,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="middle_name"
-              DTS:DTSID="{FCA40DF7-F402-45CD-AF15-319906A3FAF6}"
+              DTS:DTSID="{10536477-2282-499E-9345-4FF243C896FF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -588,7 +588,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="last_name"
-              DTS:DTSID="{BBA20022-8E8B-4D8E-AAE1-E502FF4FEB7F}"
+              DTS:DTSID="{1174E198-AF02-4264-967D-9353196A3D15}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -597,7 +597,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="locationid"
-              DTS:DTSID="{A3B3A53D-25DB-4D10-B937-4AF32E305F8D}"
+              DTS:DTSID="{6F3D96B4-5562-40D5-AD45-95D155EAA0DB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -606,7 +606,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="location"
-              DTS:DTSID="{692C586E-6786-4708-9590-ECF3056C4B15}"
+              DTS:DTSID="{FC806697-332F-462A-BF85-3B89F3D4A102}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -615,7 +615,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="supervisorid"
-              DTS:DTSID="{C6F84EB5-3A95-401C-9E4F-9398B17EDDA1}"
+              DTS:DTSID="{6D1537F1-874D-4D34-840C-58E4A22ED9F4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -624,7 +624,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="managerid"
-              DTS:DTSID="{DD90274D-D0AA-49AF-9D54-125CC7550B42}"
+              DTS:DTSID="{C74E0AB9-4424-483E-AFB1-CA865C559A58}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -633,7 +633,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="jobcodeid"
-              DTS:DTSID="{E56FA0C3-2127-4AF4-9DFC-D450C9A93614}"
+              DTS:DTSID="{ACF6D445-8F4C-4DA9-8E17-A58FF558EF8A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -642,7 +642,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="jobcode"
-              DTS:DTSID="{F9F20FCD-8E08-4A56-9E17-682DCE967E39}"
+              DTS:DTSID="{F170566F-BBCD-4C52-BB1F-B196449EB617}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -651,7 +651,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="email_addr"
-              DTS:DTSID="{90272DED-10B0-40E7-B0B7-7671323A33CE}"
+              DTS:DTSID="{89FC5DFF-8C00-4BD5-90C7-1779E60BDA16}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -660,7 +660,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="empl_status"
-              DTS:DTSID="{E48C7C23-6966-4391-860C-58BBBA8051D1}"
+              DTS:DTSID="{FA71926B-1B70-4198-BDAA-DAB27D90594D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -669,7 +669,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="last_hire_dt"
-              DTS:DTSID="{82EBF4F2-2A92-4A3A-899D-A570C404D10A}"
+              DTS:DTSID="{EF93B9BF-35DB-44D0-A6A1-02A1F7362B56}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -678,7 +678,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="hire_dt"
-              DTS:DTSID="{F8DA640D-4C9B-4F57-8EE0-60CF685423BF}"
+              DTS:DTSID="{C5848B93-0BFD-4DEF-A3F7-2EF4AA843532}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -687,7 +687,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="deptid"
-              DTS:DTSID="{A4A81352-F30F-46C3-9734-BF75A215BB4E}"
+              DTS:DTSID="{D316C0E3-D653-47CD-8571-E83C47C9FA17}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -696,7 +696,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="dept_desc"
-              DTS:DTSID="{A99EB8C2-C229-42AC-BF3A-12284F783E29}"
+              DTS:DTSID="{FE5783AD-CF70-45C5-85E4-5C1D6AEBFF79}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -705,7 +705,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="reg_temp"
-              DTS:DTSID="{4BB47F5D-B8D3-4C27-BBDF-3CB08C193093}"
+              DTS:DTSID="{A4336213-D731-4FCC-A45E-58741DFD2456}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -714,7 +714,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="full_part_time"
-              DTS:DTSID="{32F49F7D-7DD4-4EFA-B6FF-BC47D776E305}"
+              DTS:DTSID="{C2AE158D-A7B2-43E7-AA99-1912796EB0CB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -723,7 +723,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="pref_name_first"
-              DTS:DTSID="{DF8C7A56-485B-4B6A-ACD2-A8FF8D454BDB}"
+              DTS:DTSID="{B3D34E84-C219-4322-976B-8791BB646CDF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -732,7 +732,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="pref_name_mi"
-              DTS:DTSID="{B9A20D99-B7DD-4052-ABCA-ED032ECEED7D}"
+              DTS:DTSID="{D237133D-5A3A-40FB-A131-ABA9E6E0726B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -741,7 +741,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="pref_name_last"
-              DTS:DTSID="{4697387C-E238-43D4-A206-1CEE1D18C097}"
+              DTS:DTSID="{9747424F-AAC1-495C-8F99-6ADFA47D40A7}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -750,7 +750,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="termination_dt"
-              DTS:DTSID="{4D8E29D1-94FD-4DF0-A148-B48EE78C7F03}"
+              DTS:DTSID="{CE94EE06-C200-427D-9070-904E9CAA7D9B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -759,7 +759,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="flsa_status"
-              DTS:DTSID="{1CECF195-2281-4D18-BB67-955F8775439D}"
+              DTS:DTSID="{99A21B78-63CE-490A-BAC5-F6FA6711CA71}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -768,16 +768,24 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2) +
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="legacy_emplid"
-              DTS:DTSID="{4FF801AF-9395-465F-A4FC-458E6D0D4513}"
+              DTS:DTSID="{FBF93327-9AF2-420C-8C5D-759B71AE6E59}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
-              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:ColumnDelimiter="_x002C_"
               DTS:MaximumWidth="1"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="subcon"
-              DTS:DTSID="{44029441-91ED-4F17-9521-634D650B4BB5}"
+              DTS:DTSID="{D40C17C9-1D1B-4722-AFFA-39104DD96161}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="isg"
+              DTS:DTSID="{86F557C0-2D58-48BA-9609-930FE3911746}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -794,7 +802,7 @@ Right("0" + (DT_STR,4,1252) DatePart("m",getdate()),2) +
 Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart("yyyy",getdate())+".csv.zip.encrypt"</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Encrypt_Out\PS_Employee_Information_02022024.csv.zip.encrypt" />
+          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Encrypt_Out\PS_Employee_Information_05162024.csv.zip.encrypt" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -891,7 +899,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart(
       DTS:Namespace="User"
       DTS:ObjectName="PSFile">
       <DTS:VariableValue
-        DTS:DataType="8">PS_Employee_Information_02022024.csv</DTS:VariableValue>
+        DTS:DataType="8">PS_Employee_Information_05162024.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -911,7 +919,7 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart(
       DTS:Namespace="User"
       DTS:ObjectName="PSFileName">
       <DTS:VariableValue
-        DTS:DataType="8">\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Decrypt_Out\PS_Employee_Information_02022024.csv</DTS:VariableValue>
+        DTS:DataType="8">\\UVAADADSQL50CCO.ad.local\data\coaching\HRInfo\Decrypt_Out\PS_Employee_Information_05162024.csv</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -1257,35 +1265,14 @@ Right("0" + (DT_STR,4,1252) DatePart("d",getdate()),2)+(DT_STR,4,1252) DatePart(
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -1406,91 +1393,34 @@ using System.Runtime.CompilerServices;
   </resheader>
 </root>]]></ProjectItem>
               <ProjectItem
-                Name="ST_d8a60736bf3c46679d4d2384db4c65d2.csproj"
-                Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{42d15935-cdc8-467e-a8e0-f312bc0049c2}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ST_d8a60736bf3c46679d4d2384db4c65d2</RootNamespace>
-    <AssemblyName>ST_d8a60736bf3c46679d4d2384db4c65d2</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
-    <TargetFrameworkProfile></TargetFrameworkProfile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>.\bin\Debug\</OutputPath>
-    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugSymbols>false</DebugSymbols>
-    <Optimize>true</Optimize>
-    <OutputPath>.\bin\Release\</OutputPath>
-    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.SqlServer.ManagedDTS, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" />
-    <Reference Include="Microsoft.SqlServer.ScriptTask, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" />
-  </ItemGroup>
-  <ItemGroup>
-    <AppDesigner Include="Properties\" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="ScriptMain.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <!-- Include the build rules for a C# project.-->
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}">
-        <ProjectProperties HostName="ScriptTask" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" DebugInfoCommandLine="" DebugInfoWorkingDir="" IconImageList="" />
-        <Host Name="ScriptTask" GeneratedNamespace="$safeprojectname" IconIndex=""></Host>
-        <ProjectClient>
-          <HostIdentifier>SSIS_ST150</HostIdentifier>
-        </ProjectClient>
-      </FlavorProperties>
-    </VisualStudio>
-  </ProjectExtensions>
-</Project>]]></ProjectItem>
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
+    "ings")]
+
+namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -1628,43 +1558,121 @@ namespace ST_d8a60736bf3c46679d4d2384db4c65d2
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
-    "ings")]
-
-namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
+                Name="ST_d8a60736bf3c46679d4d2384db4c65d2.csproj"
+                Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{42d15935-cdc8-467e-a8e0-f312bc0049c2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ST_d8a60736bf3c46679d4d2384db4c65d2</RootNamespace>
+    <AssemblyName>ST_d8a60736bf3c46679d4d2384db4c65d2</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
+    <TargetFrameworkProfile></TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.SqlServer.ManagedDTS, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" />
+    <Reference Include="Microsoft.SqlServer.ScriptTask, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ScriptMain.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <!-- Include the build rules for a C# project.-->
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}">
+        <ProjectProperties HostName="ScriptTask" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" DebugInfoCommandLine="" DebugInfoWorkingDir="" IconImageList="" />
+        <Host Name="ScriptTask" GeneratedNamespace="$safeprojectname" IconIndex=""></Host>
+        <ProjectClient>
+          <HostIdentifier>SSIS_ST150</HostIdentifier>
+        </ProjectClient>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -3440,6 +3448,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
+              <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -3558,35 +3575,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
-    "ings")]
-
-namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -3724,6 +3712,38 @@ namespace ST_d8a60736bf3c46679d4d2384db4c65d2
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
+    "ings")]
+
+namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
+              <ProjectItem
+                Name="ST_00892ed7eae74ad0a3cca7ebf8dabf49.csproj"
+                Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?><Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><PropertyGroup><ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration><Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform><ProductVersion>8.0.30703</ProductVersion><SchemaVersion>2.0</SchemaVersion><ProjectGuid>{42d15935-cdc8-467e-a8e0-f312bc0049c2}</ProjectGuid><OutputType>Library</OutputType><AppDesignerFolder>Properties</AppDesignerFolder><RootNamespace>ST_d8a60736bf3c46679d4d2384db4c65d2</RootNamespace><AssemblyName>ST_00892ed7eae74ad0a3cca7ebf8dabf49</AssemblyName><TargetFrameworkVersion>v4.7</TargetFrameworkVersion><FileAlignment>512</FileAlignment><ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch><TargetFrameworkProfile></TargetFrameworkProfile></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Debug' "><DebugSymbols>true</DebugSymbols><DebugType>full</DebugType><Optimize>false</Optimize><OutputPath>.\bin\Debug\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>DEBUG;TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Release' "><DebugSymbols>false</DebugSymbols><Optimize>true</Optimize><OutputPath>.\bin\Release\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><ItemGroup><Reference Include="System" /><Reference Include="System.Data" /><Reference Include="System.Windows.Forms" /><Reference Include="System.Xml" /><Reference Include="Microsoft.SqlServer.ManagedDTS, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" /><Reference Include="Microsoft.SqlServer.ScriptTask, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" /></ItemGroup><ItemGroup><AppDesigner Include="Properties\" /><Compile Include="Properties\AssemblyInfo.cs"><SubType>Code</SubType></Compile><EmbeddedResource Include="Properties\Resources.resx"><Generator>ResXFileCodeGenerator</Generator><LastGenOutput>Resources.Designer.cs</LastGenOutput></EmbeddedResource><Compile Include="Properties\Resources.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Resources.resx</DependentUpon></Compile><None Include="Properties\Settings.settings"><Generator>SettingsSingleFileGenerator</Generator><LastGenOutput>Settings.Designer.cs</LastGenOutput></None><Compile Include="Properties\Settings.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Settings.settings</DependentUpon></Compile><Compile Include="ScriptMain.cs"><SubType>Code</SubType></Compile></ItemGroup><!-- Include the build rules for a C# project.--><Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" /><ProjectExtensions><VisualStudio><FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}"><ProjectProperties HostName="ScriptTask" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" DebugInfoCommandLine="" DebugInfoWorkingDir="" IconImageList="" /><Host Name="ScriptTask" GeneratedNamespace="$safeprojectname" IconIndex=""></Host><ProjectClient><HostIdentifier>SSIS_ST150</HostIdentifier></ProjectClient></FlavorProperties></VisualStudio></ProjectExtensions></Project>]]></ProjectItem>
+              <ProjectItem
                 Name="Properties\AssemblyInfo.cs"
                 Encoding="UTF8"><![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -3753,18 +3773,6 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
-              <ProjectItem
-                Name="ST_00892ed7eae74ad0a3cca7ebf8dabf49.csproj"
-                Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?><Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><PropertyGroup><ProjectTypeGuids>{30D016F9-3734-4E33-A861-5E7D899E18F3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration><Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform><ProductVersion>8.0.30703</ProductVersion><SchemaVersion>2.0</SchemaVersion><ProjectGuid>{42d15935-cdc8-467e-a8e0-f312bc0049c2}</ProjectGuid><OutputType>Library</OutputType><AppDesignerFolder>Properties</AppDesignerFolder><RootNamespace>ST_d8a60736bf3c46679d4d2384db4c65d2</RootNamespace><AssemblyName>ST_00892ed7eae74ad0a3cca7ebf8dabf49</AssemblyName><TargetFrameworkVersion>v4.7</TargetFrameworkVersion><FileAlignment>512</FileAlignment><ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch><TargetFrameworkProfile></TargetFrameworkProfile></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Debug' "><DebugSymbols>true</DebugSymbols><DebugType>full</DebugType><Optimize>false</Optimize><OutputPath>.\bin\Debug\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>DEBUG;TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><PropertyGroup Condition=" '$(Configuration)' == 'Release' "><DebugSymbols>false</DebugSymbols><Optimize>true</Optimize><OutputPath>.\bin\Release\</OutputPath><EnableUnmanagedDebugging>false</EnableUnmanagedDebugging><DefineConstants>TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup><ItemGroup><Reference Include="System" /><Reference Include="System.Data" /><Reference Include="System.Windows.Forms" /><Reference Include="System.Xml" /><Reference Include="Microsoft.SqlServer.ManagedDTS, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" /><Reference Include="Microsoft.SqlServer.ScriptTask, Version=15.0.0.0, Culture=Neutral, PublicKeyToken=89845dcd8080cc91" /></ItemGroup><ItemGroup><AppDesigner Include="Properties\" /><Compile Include="Properties\AssemblyInfo.cs"><SubType>Code</SubType></Compile><EmbeddedResource Include="Properties\Resources.resx"><Generator>ResXFileCodeGenerator</Generator><LastGenOutput>Resources.Designer.cs</LastGenOutput></EmbeddedResource><Compile Include="Properties\Resources.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Resources.resx</DependentUpon></Compile><None Include="Properties\Settings.settings"><Generator>SettingsSingleFileGenerator</Generator><LastGenOutput>Settings.Designer.cs</LastGenOutput></None><Compile Include="Properties\Settings.Designer.cs"><AutoGen>True</AutoGen><DependentUpon>Settings.settings</DependentUpon></Compile><Compile Include="ScriptMain.cs"><SubType>Code</SubType></Compile></ItemGroup><!-- Include the build rules for a C# project.--><Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" /><ProjectExtensions><VisualStudio><FlavorProperties GUID="{30D016F9-3734-4E33-A861-5E7D899E18F3}"><ProjectProperties HostName="ScriptTask" HostPackage="{B3A685AA-7EAF-4BC6-9940-57959FA5AC07}" ApplicationType="usd" Language="cs" TemplatesPath="" DebugInfoCommandLine="" DebugInfoWorkingDir="" IconImageList="" /><Host Name="ScriptTask" GeneratedNamespace="$safeprojectname" IconIndex=""></Host><ProjectClient><HostIdentifier>SSIS_ST150</HostIdentifier></ProjectClient></FlavorProperties></VisualStudio></ProjectExtensions></Project>]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -4077,7 +4085,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           DTS:LocaleID="-1"
           DTS:ObjectName="Delete HR Employees from Staging Table"
           DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-          DTS:ThreadHint="0">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -4094,7 +4102,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           DTS:LocaleID="-1"
           DTS:ObjectName="HR File Empty"
           DTS:TaskContact="Send Mail Task; Microsoft Corporation; Microsoft SQL Server 2008; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-          DTS:ThreadHint="1">
+          DTS:ThreadHint="0">
           <DTS:Variables />
           <DTS:PropertyExpression
             DTS:Name="CCLine">@[User::CcEmail]</DTS:PropertyExpression>
@@ -5245,7 +5253,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           DTS:LocaleID="-1"
           DTS:ObjectName="Merge HR with Employee Hierarchy Stage"
           DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-          DTS:ThreadHint="0">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -5269,36 +5277,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMajorVersion="15"
               VSTAMinorVersion="0"
               Language="CSharp">
-              <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -5418,6 +5396,35 @@ using System.Runtime.CompilerServices;
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
+              <ProjectItem
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
+    "ings")]
+
+namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="ST_de117d53b4ee4392a4a316adf04ecec9.csproj"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -5641,34 +5648,35 @@ namespace ST_d8a60736bf3c46679d4d2384db4c65d2
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
 //
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
 
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
-    "ings")]
-
-namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Settings.settings"
                 Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
@@ -6221,6 +6229,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           cachedLength="1"
                           cachedName="subcon"
                           lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[subcon]" />
+                        <inputColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[isg]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="isg"
+                          lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[isg]" />
                       </inputColumns>
                       <externalMetadataColumns />
                     </input>
@@ -6769,6 +6784,27 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                               dataType="System.Int32"
                               description="Specifies the input column used as the source of data for the conversion."
                               name="SourceInputColumnLineageID">#{Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[subcon]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of isg]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="1"
+                          lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of isg]"
+                          name="Copy of isg"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[isg]}</property>
                             <property
                               dataType="System.Boolean"
                               description="Indicates whether the column uses the faster, locale-neutral parsing routines."
@@ -7563,6 +7599,28 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                               name="UseBinaryFormat">false</property>
                           </properties>
                         </outputColumn>
+                        <outputColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[isg]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[isg]"
+                          length="255"
+                          lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].Columns[isg]"
+                          name="isg"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
                       </outputColumns>
                       <externalMetadataColumns
                         isUsed="True">
@@ -7722,6 +7780,12 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="str"
                           length="1"
                           name="subcon" />
+                        <externalMetadataColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[isg]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="isg" />
                       </externalMetadataColumns>
                     </output>
                     <output
@@ -7976,6 +8040,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           cachedName="Copy of subcon"
                           externalMetadataColumnId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[isSub]"
                           lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of subcon]" />
+                        <inputColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of isg]"
+                          cachedDataType="wstr"
+                          cachedLength="1"
+                          cachedName="Copy of isg"
+                          externalMetadataColumnId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[isISG]"
+                          lineageId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of isg]" />
                       </inputColumns>
                       <externalMetadataColumns
                         isUsed="True">
@@ -8136,6 +8207,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           length="1"
                           name="isSub" />
+                        <externalMetadataColumn
+                          refId="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[isISG]"
+                          dataType="wstr"
+                          length="1"
+                          name="isISG" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -8235,36 +8311,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMajorVersion="15"
               VSTAMinorVersion="0"
               Language="CSharp">
-              <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -8384,6 +8430,35 @@ using System.Runtime.CompilerServices;
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
+              <ProjectItem
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
+    "ings")]
+
+namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -8607,34 +8682,35 @@ namespace ST_d8a60736bf3c46679d4d2384db4c65d2
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
 //
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_d8a60736bf3c46679d4d2384db4c65d2")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
 
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Settings.get_Default():ST_d8a60736bf3c46679d4d2384db4c65d2.Properties.Sett" +
-    "ings")]
-
-namespace ST_d8a60736bf3c46679d4d2384db4c65d2.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Settings.settings"
                 Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
@@ -8870,36 +8946,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               ReadOnlyVariables="User::PSFileName"
               ReadWriteVariables="User::PSFileExists">
               <ProjectItem
-                Name="Properties\AssemblyInfo.cs"
-                Encoding="UTF8"><![CDATA[using System.Reflection;
-using System.Runtime.CompilerServices;
-
-//
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-//
-[assembly: AssemblyTitle("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("General Dynamics IT")]
-[assembly: AssemblyProduct("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
-[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
-              <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -9018,6 +9064,35 @@ using System.Runtime.CompilerServices;
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
+              <ProjectItem
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Settings.get_Default():ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Sett" +
+    "ings")]
+
+namespace ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -9159,34 +9234,35 @@ namespace ST_3ab731b42c8f41cba6c9c5c98a48e559
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
+                Name="Properties\AssemblyInfo.cs"
+                Encoding="UTF8"><![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
 //
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+[assembly: AssemblyTitle("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("General Dynamics IT")]
+[assembly: AssemblyProduct("ST_3ab731b42c8f41cba6c9c5c98a48e559")]
+[assembly: AssemblyCopyright("Copyright @ General Dynamics IT 2017")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+//
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
 
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Settings.get_Default():ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties.Sett" +
-    "ings")]
-
-namespace ST_3ab731b42c8f41cba6c9c5c98a48e559.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
+[assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
               <ProjectItem
                 Name="ST_3ab731b42c8f41cba6c9c5c98a48e559.csproj"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
@@ -9651,6 +9727,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
           Id="Package\Process Employee Information\Inactivate Expired Warnings"
           TopLeft="25.1750724486067,451.195903332435" />
         <NodeLayout
+          Size="168,41.6"
+          Id="Package\Process Employee Information\Populate ACL Table"
+          TopLeft="18.446170676531,141.677418529181" />
+        <NodeLayout
           Size="164.8,44"
           Id="Package\Process Employee Information\Populate Admin Tool user table"
           TopLeft="16.841376085205,517.499214629543" />
@@ -9700,6 +9780,40 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
                     Point3="18.5,60.6273660942489" />
                   <mssgle:LineSegment
                     End="-10.1801870707204,60.6273660942489" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 1]"
+          TopLeft="141.41981292928,107.727366094249">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-38.9736422527486,33.9500524349322"
+              Start="0,0"
+              End="-38.9736422527486,26.4500524349322">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,12.9750262174661" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,12.9750262174661"
+                    Point2="0,16.9750262174661"
+                    Point3="-4,16.9750262174661" />
+                  <mssgle:LineSegment
+                    End="-34.9736422527486,16.9750262174661" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-34.9736422527486,16.9750262174661"
+                    Point2="-38.9736422527486,16.9750262174661"
+                    Point3="-38.9736422527486,20.9750262174661" />
+                  <mssgle:LineSegment
+                    End="-38.9736422527486,26.4500524349322" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -9842,44 +9956,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="168,41.6"
-          Id="Package\Process Employee Information\Populate ACL Table"
-          TopLeft="18.446170676531,141.677418529181" />
-        <EdgeLayout
-          Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 1]"
-          TopLeft="141.41981292928,107.727366094249">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="-38.9736422527486,33.9500524349322"
-              Start="0,0"
-              End="-38.9736422527486,26.4500524349322">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,12.9750262174661" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,12.9750262174661"
-                    Point2="0,16.9750262174661"
-                    Point3="-4,16.9750262174661" />
-                  <mssgle:LineSegment
-                    End="-34.9736422527486,16.9750262174661" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-34.9736422527486,16.9750262174661"
-                    Point2="-38.9736422527486,16.9750262174661"
-                    Point3="-38.9736422527486,20.9750262174661" />
-                  <mssgle:LineSegment
-                    End="-38.9736422527486,26.4500524349322" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
         <EdgeLayout
           Id="Package\Process Employee Information.PrecedenceConstraints[Constraint 7]"
           TopLeft="103.101020571358,183.277418529181">
@@ -9905,7 +9981,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="404,712"
+          PanelSize="404,712.8"
           Size="404,755.6"
           Id="Package\Process Employee Information"
           TopLeft="1641.17143990474,52.984438978629" />
@@ -11117,7 +11193,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
     design-time-name="Package\Stage ELS Employee Info\Load ELS Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="154.4,41.6"
           Id="Package\Stage ELS Employee Info\Load ELS Staging Table\Flat File Source"
@@ -11126,6 +11202,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
           Size="159.2,41.6"
           Id="Package\Stage ELS Employee Info\Load ELS Staging Table\Data Conversion"
           TopLeft="181.538468197253,170.677416729505" />
+        <NodeLayout
+          Size="175.2,41.6"
+          Id="Package\Stage ELS Employee Info\Load ELS Staging Table\OLE DB Destination"
+          TopLeft="183.846160589591,236.935480226463" />
         <EdgeLayout
           Id="Package\Stage ELS Employee Info\Load ELS Staging Table.Paths[Flat File Source Output]"
           TopLeft="259.361545099168,145.180643568029">
@@ -11145,13 +11225,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="175.2,41.6"
-          Id="Package\Stage ELS Employee Info\Load ELS Staging Table\OLE DB Destination"
-          TopLeft="183.846160589591,236.935480226463" />
         <EdgeLayout
           Id="Package\Stage ELS Employee Info\Load ELS Staging Table.Paths[Data Conversion Output]"
           TopLeft="261.138468197253,212.277416729505">
@@ -11183,7 +11261,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -11206,49 +11286,27 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
     design-time-name="Package\Stage HR Employee Info\Load HR Hierarchy Stage">
     <LayoutInfo>
       <GraphLayout
-        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="172,41.6"
-          Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage\HR Hierarchy Stage"
-          TopLeft="5.50000000000004,411.9" />
-        <NodeLayout
-          Size="152,41.6"
-          Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source"
-          TopLeft="15.5,5.49999999999995" />
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="154.4,41.6"
           Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Derived Column"
           TopLeft="14.3,208.7" />
         <NodeLayout
-          Size="131.2,41.6"
-          Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Row Count"
-          TopLeft="25.9,310.3" />
+          Size="152,41.6"
+          Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Flat File Source"
+          TopLeft="15.5,5.49999999999995" />
+        <NodeLayout
+          Size="172,41.6"
+          Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage\HR Hierarchy Stage"
+          TopLeft="5.50000000000004,411.9" />
         <NodeLayout
           Size="156.8,41.6"
           Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Data Conversion"
           TopLeft="13.1,107.1" />
-        <EdgeLayout
-          Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage.Paths[Data Conversion Output]"
-          TopLeft="91.5,148.7">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,59.9999999999999"
-              Start="0,0"
-              End="0,52.4999999999999">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.4999999999999" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
+        <NodeLayout
+          Size="131.2,41.6"
+          Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage\Row Count"
+          TopLeft="25.9,310.3" />
         <EdgeLayout
           Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage.Paths[Row Count Output 1]"
           TopLeft="91.5,351.9">
@@ -11268,7 +11326,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -11290,7 +11350,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -11312,7 +11374,33 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Stage HR Employee Info\Load HR Hierarchy Stage.Paths[Data Conversion Output]"
+          TopLeft="91.5,148.7">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,59.9999999999999"
+              Start="0,0"
+              End="0,52.4999999999999">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -11337,25 +11425,47 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
       <GraphLayout
         Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="152,41.6"
+          Size="154.4,41.6"
           Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Flat File Source"
           TopLeft="15.5,5.49999999999995" />
-        <NodeLayout
-          Size="154.4,41.6"
-          Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Derived Column"
-          TopLeft="14.3,208.7" />
-        <NodeLayout
-          Size="156.8,41.6"
-          Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion"
-          TopLeft="13.6714285811599,108.935294143386" />
         <NodeLayout
           Size="131.2,41.6"
           Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Row Count"
           TopLeft="25.9,310.3" />
         <NodeLayout
+          Size="154.4,41.6"
+          Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Derived Column"
+          TopLeft="14.3,208.7" />
+        <NodeLayout
           Size="172,41.6"
           Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\OLE DB Destination"
           TopLeft="5.50000000000004,411.288235285538" />
+        <NodeLayout
+          Size="156.8,41.6"
+          Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table\Data Conversion"
+          TopLeft="13.6714285811599,108.935294143386" />
+        <EdgeLayout
+          Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table.Paths[Data Conversion Output]"
+          TopLeft="91.78571429058,150.535294143386">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,58.1647058566135"
+              Start="0,0"
+              End="0,50.6647058566135">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,50.6647058566135" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
         <EdgeLayout
           Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table.Paths[Row Count Output 1]"
           TopLeft="91.5,351.9">
@@ -11380,18 +11490,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table.Paths[Flat File Source Output]"
-          TopLeft="91.78571429058,47.1">
+          TopLeft="92.38571429058,47.1">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,61.8352941433863"
+              EndConnector="0,61.8352941433861"
               Start="0,0"
-              End="0,54.3352941433863">
+              End="0,54.3352941433861">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,54.3352941433863" />
+                    End="0,54.3352941433861" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -11414,28 +11524,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</BinaryItem>
                   Capacity="5">
                   <mssgle:LineSegment
                     End="0,52.4999999999999" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Stage PeopleSoft Employee Info\Load Employee Hierarchy Staging Table.Paths[Data Conversion Output]"
-          TopLeft="91.78571429058,150.535294143386">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,58.1647058566135"
-              Start="0,0"
-              End="0,50.6647058566135">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,50.6647058566135" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

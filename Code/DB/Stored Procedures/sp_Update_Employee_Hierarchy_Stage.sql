@@ -4,6 +4,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/2/2013
@@ -30,6 +31,7 @@ GO
 -- Modified to support Legacy Ids to Maximus Ids - TFS 13777 - 05/22/2019
 -- Modified to remove duplicates from PS file -  TFS 23042 - 09/22/2021
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Employee_Hierarchy_Stage] 
 AS
@@ -172,6 +174,13 @@ UPDATE Emp
     [Mgr_LanID]= Mgr.[Emp_LanID]
     FROM [EC].[Employee_Hierarchy_Stage] as Emp Join [EC].[Employee_Hierarchy_Stage]as Mgr
     ON Emp.[Mgr_Emp_ID]= Mgr.[EMP_ID];
+
+-- Set Job Code for ISGs
+
+	UPDATE [EC].[Employee_Hierarchy_Stage]
+	SET Emp_Job_Code = 'WACS05'
+	WHERE [isISG] = 'Y';
+
 
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];	 

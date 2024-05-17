@@ -20,8 +20,9 @@ GO
 -- Updated to Revise stored procedures causing deadlocks. TFS 21713 - 6/17/2021
 -- Update to populate ELS Role records in ACL Table. TFS 24924 - 7/11/2022
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
-CREATE OR ALTER PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
 BEGIN
 
@@ -73,8 +74,8 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 	      ,[Emp_Email] = EncryptByKey(Key_GUID('CoachingKey'), S.[Emp_Email])
 		  ,[Emp_LanID] = EncryptByKey(Key_GUID('CoachingKey'), S.Emp_LanID)
 		  ,[Emp_Site] =  [EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site, S.isSub)
-		  ,[Emp_Job_Code] = S.Emp_Job_Code
-		  ,[Emp_Job_Description] = S.Emp_Job_Description
+		  ,[Emp_Job_Code] = CASE WHEN S.isISG = 'Y' THEN 'WACS05' ELSE S.Emp_Job_Code END
+		  ,[Emp_Job_Description] = CASE WHEN S.isISG = 'Y' THEN 'ISG Cust Svc' ELSE S.Emp_Job_Description END
 		  ,[Emp_Program] = S.Emp_Program
 		  ,[Sup_ID] = S.Sup_EMP_ID
 		  ,[Sup_Name] = EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Sup_Name],'''', ''))
@@ -98,6 +99,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 		  ,Term_Date = CONVERT(nvarchar(8),S.[Term_Date],112)
 		  ,FLSA_Status = S.FLSA_Status
 		  ,isSub = COALESCE(NULLIF(S.isSub,''), 'N')
+		  ,isISG = COALESCE(NULLIF(S.isISG,''), 'N')
 	 FROM [EC].[Employee_Hierarchy]H JOIN [EC].[Employee_Hierarchy_Stage]S
 	 ON H.[Emp_ID] = S.[EMP_ID]
 	 WHERE H.[Emp_ID] is NOT NULL;
@@ -141,15 +143,15 @@ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 			   ,[PS_Emp_ID_Prefix]
 			   ,[Emp_Pri_Name]
 			   ,[isSub]
-		   
+		       ,[isISG]
 			  )
 							 SELECT DISTINCT S.[Emp_ID]
 						      ,EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Emp_Name],'''', ''))
                               ,EncryptByKey(Key_GUID('CoachingKey'), S.[Emp_Email])
 							  ,EncryptByKey(Key_GUID('CoachingKey'), S.Emp_LanID)
 							  ,[EC].[fn_strSiteNameFromSiteLocation](S.Emp_Site, S.isSub)
-							  ,S.[Emp_Job_Code]
-							  ,S.[Emp_Job_Description]
+							  ,CASE WHEN S.isISG = 'Y' THEN 'WACS05' ELSE S.Emp_Job_Code END
+							  ,CASE WHEN S.isISG = 'Y' THEN 'ISG Cust Svc' ELSE S.Emp_Job_Description END
 							  ,S.[Emp_Program]
 							  ,S.[Active]
 							  ,CONVERT(nvarchar(8),S.[Hire_Date],112)
@@ -175,7 +177,8 @@ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 							  ,S.[Legacy_Emp_ID]
 							  ,N'NA'
 							 ,EncryptByKey(Key_GUID('CoachingKey'), S.Emp_Pri_Name)
-							 , COALESCE(NULLIF(S.isSub,''), 'N')
+							 ,COALESCE(NULLIF(S.isSub,''), 'N')
+							 ,COALESCE(NULLIF(S.isISG,''), 'N')
 							 
 						  FROM [EC].[Employee_Hierarchy_Stage]S Left outer Join [EC].[Employee_Hierarchy]H
 						  ON S.Emp_ID = H.Emp_ID

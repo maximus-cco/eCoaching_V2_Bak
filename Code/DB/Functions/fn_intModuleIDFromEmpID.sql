@@ -1,30 +1,9 @@
-/*
-fn_intModuleIDFromEmpID(03).sql
-Last Modified Date: 09/15/2020
-Last Modified By: Susmitha Palacherla
-
-Version 03: Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
-Version 02: Added Additional Modules and Job codes - TFS 8793 - 11/16/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'fn_intModuleIDFromEmpID' 
-)
-   DROP FUNCTION [EC].[fn_intModuleIDFromEmpID]
-GO
-
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Susmitha Palacherla
 -- Create date:  12/12/2016
@@ -34,8 +13,10 @@ GO
 --  Initial Revision - Created during setup of ad-hoc generic load - TFS 4916 - 12/12/2016
 --  Added Additional Modules and Job codes - TFS 8793 - 11/16/2017
 --  Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+
 -- =============================================
-CREATE FUNCTION [EC].[fn_intModuleIDFromEmpID] 
+CREATE OR ALTER FUNCTION [EC].[fn_intModuleIDFromEmpID] 
 (
 	@strEmpID nvarchar(10) 
 )
@@ -51,6 +32,7 @@ WHERE Emp_ID = @strEmpID)
 
 SET @intModuleID = (CASE
  WHEN (@strEmpJobCode IN ('WACS01', 'WACS02', 'WACS03')) THEN 1
+ WHEN (@strEmpJobCode IN ('WACS05')) THEN 10
  WHEN (@strEmpJobCode IN ('WACS40', 'WACS50')) THEN 2
  WHEN (@strEmpJobCode IN ('WACQ02','WACQ03','WACQ12', 'WACQ13')) THEN 3
  WHEN (@strEmpJobCode IN ('WIHD01','WIHD02','WIHD03','WIHD04', 'WABA11', 'WISA03','WIHD40', 'WPPT40')) THEN 4

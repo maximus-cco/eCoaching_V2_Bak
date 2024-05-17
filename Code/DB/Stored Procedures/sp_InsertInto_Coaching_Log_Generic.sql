@@ -5,8 +5,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/11/2016
@@ -21,8 +19,9 @@ GO
 -- Modified to support SUR feed. TFS 23347  - 03/25/2022
 -- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
 -- Changes to support Promotions Feed - TFS 27634 - 01/19/2024
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
-CREATE OR ALTER       PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
 (@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
 
 AS
@@ -130,18 +129,9 @@ CASE cs.Program
     END   [EmailSent],
 
 		 cs.Report_ID				[numReportID],
-		 cs.Report_Code				[strReportCode],
-		 
-CASE 
-		 WHEN cs.[Report_Code] like 'OTH%' 
-		 THEN cs.Module_ID
-		 WHEN cs.[Report_Code] like 'DTT%'
-		 THEN 2
-		 ELSE  1
- END		                      [ModuleID],
-  
-  
-		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
+		 cs.Report_Code				[strReportCode],	
+       [EC].[fn_intModuleIDFromEmpID](cs.CSR_EMPID)  [ModuleID],
+  		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
 		 ISNULL(csr.[Mgr_ID],'999999') [MgrID]
 	                   
 from [EC].[Generic_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR_EMPID = csr.Emp_ID

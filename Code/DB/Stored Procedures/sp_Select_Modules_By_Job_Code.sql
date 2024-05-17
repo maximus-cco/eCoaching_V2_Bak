@@ -1,25 +1,3 @@
-/*
-sp_Select_Modules_By_Job_Code(03).sql
-Last Modified Date: 04/10/2018
-Last Modified By: Susmitha Palacherla
-
-Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
-
-Version 02: Modified to support Encryption of sensitive data (Open key)- TFS 7856 - 10/23/2017
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Select_Modules_By_Job_Code' 
-)
-   DROP PROCEDURE [EC].[sp_Select_Modules_By_Job_Code]
-GO
 
 SET ANSI_NULLS ON
 GO
@@ -40,8 +18,9 @@ GO
 -- to allow LSA and Training submissions which their job code does not have access to - 09/21/2016
 --  Modified to support Encryption of sensitive data (Open key)- TFS 7856 - 10/23/2017
 -- Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Select_Modules_By_Job_Code] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Select_Modules_By_Job_Code] 
 @nvcEmpIDin nvarchar(10)
 
 AS
@@ -60,22 +39,28 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
 SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
 WHERE Emp_ID = @nvcEmpIDin)
 
-SET @nvcCSR = (SELECT CASE WHEN [CSR]= 1 THEN N'CSR' ELSE NULL END  as Module FROM [EC].[Module_Submission]
+--print @nvcEmpJobCode
+
+SET @nvcCSR = (SELECT CASE WHEN [CSR]= 1 THEN N'CSR'  ELSE NULL END  as Module FROM [EC].[Module_Submission]
 WHERE Job_Code = @nvcEmpJobCode)
 
 --print @nvcCSR
 
 if @nvcCSR is null
 
---'''+CONVERT(NVARCHAR,@intModuleIdin)+'''
-
 SET @nvcSQL = 'SELECT TOP 1 CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, 1 AS ModuleID 
+from [EC].[Module_Submission]
+UNION
+SELECT TOP 1 CASE WHEN [ISG]= 1 THEN N''ISG'' ELSE N''ISG'' END as Module, 10 AS ModuleID 
 from [EC].[Module_Submission]'
  
 ELSE
 
 SET @nvcSQL = 'SELECT Module, ModuleID FROM 
 (SELECT CASE WHEN [CSR]= 1 THEN N''CSR'' ELSE N''CSR'' END as Module, 1 AS ModuleID from [EC].[Module_Submission] 
+where Job_Code = '''+@nvcEmpJobCode+'''
+UNION
+SELECT CASE WHEN [ISG]= 1 THEN N''ISG'' ELSE N''ISG'' END as Module, 10 AS ModuleID from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+'''
 UNION
 SELECT CASE WHEN [Supervisor]= 1 THEN N''Supervisor'' ELSE NULL END as Module, 2 AS ModuleID from [EC].[Module_Submission] 
@@ -90,7 +75,7 @@ UNION
 SELECT CASE WHEN [Training]= 1 THEN N''Training'' ELSE NULL END as Module, 5 AS ModuleID from [EC].[Module_Submission] 
 where Job_Code = '''+@nvcEmpJobCode+''' OR '''+@nvcEmpIDin+''' in (''343549'',''408246''))AS Modulelist
 where Module is not Null '
---Print @nvcSQL
+Print @nvcSQL
 
 EXEC (@nvcSQL)	
 
@@ -100,6 +85,5 @@ EXEC (@nvcSQL)
 END --sp_Select_Modules_By_Job_Code
 
 GO
-
 
 

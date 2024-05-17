@@ -1,26 +1,3 @@
-/*
-sp_InsertInto_Coaching_Log_Training(03).sql
-Last Modified Date: 05/29/2019
-Last Modified By: Susmitha Palacherla
-
-Version 03: Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
-
-Version 02: Modified to support Encryption of sensitive data - Open key - TFS 7856 - 10/23/2017
-
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_InsertInto_Coaching_Log_Training' 
-)
-   DROP PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Training]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -33,8 +10,9 @@ GO
 --  Created per TFS 2283 to load the Training feed(s) SDR and ODT
 -- Modified to support Encryption of sensitive data. Opened Key and Removed LanID. TFS 7856 - 10/23/2017
 -- Updated to add 'M' to Formnames to indicate Maximus ID - TFS 13777 - 05/29/2019
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
-CREATE PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Training]
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Training]
 @Count INT OUTPUT
 
 AS
@@ -103,7 +81,7 @@ select  Distinct cs.CSR_EMPID	[FormName],
 		 0                          [EmailSent],
 		 cs.Report_ID				[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 1							[ModuleID],
+		[EC].[fn_intModuleIDFromEmpID](cs.CSR_EMPID)  [ModuleID],
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
 		 ISNULL(csr.[Mgr_ID],'999999') [MgrID]
 	                   

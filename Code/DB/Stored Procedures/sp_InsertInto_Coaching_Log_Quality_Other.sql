@@ -22,6 +22,7 @@ GO
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
 -- Updated to support QN Rewards eCoaching logs. TFS 27851 - 03/21/2024
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Quality_Other]
 (@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
@@ -107,9 +108,7 @@ select  Distinct LOWER(cs.EMP_ID)	[FormName],
 		 CASE WHEN (cs.Report_Code LIKE 'BQ%') THEN 1
 		 ELSE cs.Report_ID	 END		[numReportID],
 		 cs.Report_Code				[strReportCode],
-		 CASE WHEN (cs.Report_Code LIKE 'CTC%' OR cs.Report_Code LIKE 'BQ%S%') THEN 2	
-		 WHEN cs.Report_Code LIKE 'OTA%' THEN 3
-		 ELSE 1 END						[ModuleID],
+		 [EC].[fn_intModuleIDFromEmpID](csr.Emp_ID)  [ModuleID],
 		 ISNULL(csr.[Sup_ID],'999999')  [SupID],
 		 ISNULL(csr.[Mgr_ID],'999999') [MgrID]
 	                   

@@ -1,14 +1,6 @@
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Dashboard_Summary_Count_ByStatus' 
-)
-   DROP PROCEDURE [EC].[sp_Dashboard_Summary_Count_ByStatus]
-GO
-
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -21,6 +13,7 @@ GO
 --  Updated to incorporate a follow-up process for eCoaching submissions - TFS 13644 -  08/28/2019
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count_ByStatus] 
 @nvcEmpID nvarchar(10)
@@ -48,19 +41,26 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcEmpID)
 --9 - Pending Deputy Program Manager Review
 --10 - Pending Follow-up
 
---CASE WHEN StatusID = 10 Then ''My Follow-up'' ELSE Status END Status FROM EC.DIM_Status WHERE StatusID in (3,4,10)),
-IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
+
+IF @nvcEmpRole in ('CSR','ISG', 'ARC', 'Employee')
 
 SET @nvcSQL = ' ;WITH SelectedStatus AS
 				(SELECT StatusID, Status FROM EC.DIM_Status WHERE StatusID in (3,4)),
 			
                
 			    SelectedLogs AS
+				(SELECT i.StatusID, SUM(i.LogCount) LogCount FROM 
                 (SELECT StatusID, Count(cl.CoachingID) LogCount
 				FROM [EC].[Coaching_Log] cl WITH(NOLOCK)  
 			    WHERE   (cl.[EmpID] = ''' + @nvcEmpID + '''  AND cl.[StatusID] in (3,4))
 				AND cl.[SourceID] NOT IN (235, 236)
-		   	    GROUP BY [cl].[StatusID])
+		   	    GROUP BY [cl].[StatusID]
+				UNION
+				SELECT StatusID, Count(wl.WarningID) LogCount
+				FROM [EC].[Warning_Log] wl WITH(NOLOCK)  
+			    WHERE   (wl.[EmpID] = ''' + @nvcEmpID + '''  AND wl.[StatusID] = 4)
+				GROUP BY [wl].[StatusID])i
+				GROUP BY i.StatusID)
 
 				SELECT s.Status, COALESCE(cl.LogCount,0) AS LogCount
 				FROM SelectedStatus s left join SelectedLogs cl
@@ -128,3 +128,5 @@ ErrorHandler:
 	    
 END --sp_Dashboard_Summary_Count_ByStatus
 GO
+
+

@@ -3,6 +3,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	05/22/2018
@@ -16,8 +17,9 @@ GO
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
 --  Modified to Remove Warnings for Sub-contractors. TFS 28080 - 05/01/2024
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --	=====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
 
 AS
@@ -60,12 +62,12 @@ SET @bitMyTeamWarning = (SELECT [MyTeamWarning] FROM [EC].[UI_Dashboard_Summary_
 SET @bitMySubmission = (SELECT [MySubmission] FROM [EC].[UI_Dashboard_Summary_Display] WHERE [RoleName] = @nvcEmpRole);
 
 SET @SelectList = '';
-
+print @nvcEmpRole;
 
 IF @bitMyPending = 1
 BEGIN
 
-IF @nvcEmpRole in ('CSR', 'ARC', 'Employee')
+IF @nvcEmpRole in ('CSR','ISG', 'ARC', 'Employee')
 BEGIN
 SET @intMyPendingCoaching = (SELECT COALESCE(COUNT(cl.CoachingID),0)
                  FROM EC.Coaching_Log cl WITH (NOLOCK) JOIN EC.Employee_Hierarchy eh WITH (NOLOCK)

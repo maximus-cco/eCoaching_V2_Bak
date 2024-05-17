@@ -1,10 +1,8 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 -- =============================================
 -- Author:		   Susmitha Palacherla
@@ -20,8 +18,8 @@ GO
 -- Updated to support QM Bingo eCoaching logs. TFS 15465 - 09/23/2019
 -- Updated to support WC Bingo records in Bingo feeds. TFS 21493 - 6/8/2021
 -- Add trigger and review performance for Bingo upload job - TFS 22443 - 8/2/2021
--- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 -- Updated to support QN Rewards eCoaching logs. TFS 27851 - 03/21/2024
+--  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
 @Count INT OUTPUT
@@ -98,13 +96,13 @@ AND [Reject_Reason]is NULL;
 		
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
--- Employee not an Active CSR (HFC and KUD, QR, BQ)
+-- Employee not an Active CSR OR ISG (HFC and KUD, QR, BQ)
 UPDATE [EC].[Quality_Other_Coaching_Stage]
-SET [Reject_Reason]= N'Record does not belong to an active CSR.'
+SET [Reject_Reason]= N'Record does not belong to an active CSR OR ISG.'
 WHERE (EMP_ID = '' OR
 EMP_ID NOT IN 
 (SELECT DISTINCT EMP_ID FROM [EC].[Employee_Hierarchy]
- WHERE Emp_Job_Code IN ('WACS01', 'WACS02', 'WACS03')
+ WHERE Emp_Job_Code IN ('WACS01', 'WACS02', 'WACS03', 'WACS05')
  AND Active = 'A'
  ))
  AND (Report_Code lIKE 'HFC%' OR Report_Code LIKE 'KUD%' OR Report_Code LIKE 'QR%' OR Report_Code LIKE 'BQ%')

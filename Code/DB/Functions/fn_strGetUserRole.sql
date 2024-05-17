@@ -18,6 +18,7 @@ GO
 -- Added logic for Manager role for WPSM job codes - TFS 16389 - 01/13/2020
 -- Removed references to SrMgr. TFS 18062 - 08/18/2020
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
+-- Modified to Support ISG Alignment Project. TFS  28026 - 05/06/2024
 -- =============================================
 
 CREATE OR ALTER FUNCTION [EC].[fn_strGetUserRole] 
@@ -36,7 +37,8 @@ WHERE Emp_ID = @strEmpID);
 
  SET @strUserRole = 
  (SELECT CASE 
- WHEN (@strEmpJobCode LIKE 'WACS0%' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 0) THEN 'CSR'
+ WHEN (@strEmpJobCode LIKE 'WACS0%' AND @strEmpJobCode <> 'WACS05' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 0) THEN 'CSR'
+ WHEN (@strEmpJobCode = 'WACS05' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 0) THEN 'ISG'
  WHEN (@strEmpJobCode LIKE 'WACS0%' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 1) THEN 'ARC'
  WHEN (@strEmpJobCode LIKE 'WACQ0%' OR @strEmpJobCode LIKE 'WACQ12' OR @strEmpJobCode LIKE 'WIHD0%'
  OR  @strEmpJobCode LIKE 'WTTR1%' OR  @strEmpJobCode LIKE 'WTID%'  ) THEN 'Employee'

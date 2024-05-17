@@ -1,0 +1,352 @@
+/*
+
+Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+
+ TABLE [EC].[Employee_Hierarchy_Stage]
+ TABLE [EC].[Employee_Hierarchy]
+
+ TABLE [EC].[DIM_Module]
+ TABLE [EC].[CallID_Selection]
+ TABLE [EC].[Employee_Selection]
+ TABLE [EC].[Module_Submission]
+ TABLE [EC].[DIM_Source]
+ TABLE [EC].[Coaching_Reason_Selection]
+ TABLE [EC].[Email_Notifications]
+ TABLE [EC].[Coaching_Log_StaticText]
+
+ [EC].[AT_Module_Access]
+ [EC].[AT_Reassign_Status_For_Module]
+ [EC].[AT_Role_Access]
+ [EC].[AT_Role_Module_Link]
+
+  [EC].[Survey_DIM_Type]
+-- Test
+
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+--1. Add ISG flag to Employee Tables
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD [isISG] NVARCHAR (1) NOT NULL DEFAULT 'N'
+GO
+
+ALTER TABLE [EC].[Employee_Hierarchy_Stage] ADD [isISG] NVARCHAR (1)
+GO
+
+--****************************************************
+
+
+--2. TABLES [EC].[UI_User_Role], [EC].[UI_Role_Page_Access] and [EC].[UI_Dashboard_Summary_Display]
+
+UPDATE [EC].[UI_User_Role]
+SET RoleDescription = 'WACS01, WACS02, WACS03 and No ARC Role in ACL'
+WHERE RoleId = 101
+GO
+
+INSERT INTO [EC].[UI_User_Role]
+           ([RoleName]
+           ,[RoleDescription])
+ VALUES
+ ('ISG', 'WACS05 and No ARC Role in ACL')
+ GO
+
+
+INSERT INTO [EC].[UI_Role_Page_Access]
+           ([RoleID]
+           ,[RoleName]
+           ,[NewSubmission]
+           ,[MyDashboard]
+           ,[HistoricalDashboard])
+     VALUES  (113, 'ISG',0,1,0)
+GO
+
+
+INSERT INTO [EC].[UI_Dashboard_Summary_Display]
+           ([RoleId]
+           ,[RoleName]
+           ,[MyPending]
+           ,[MyCompleted]
+           ,[MyTeamPending]
+           ,[MyTeamcompleted]
+           ,[MyTeamWarning]
+           ,[MySubmission]
+           ,[MyFollowup]
+           ,[MyCompletedQN]
+           ,[MySubmissionQN]
+           ,[MyPendingQN]
+           ,[MyPendingFollowupPrepQN]
+           ,[MyPendingFollowupCoachQN]
+           ,[MyTeamPendingQN]
+           ,[MyTeamcompletedQN])
+     VALUES
+	 (113, 'ISG', 1,1,0,0,0,0,1,1,0,1,0,0,0,0)
+GO
+
+--****************************************************
+
+
+--3. TABLE [EC].[DIM_Module] 
+
+
+INSERT INTO [EC].[DIM_Module]
+           ([Module]
+           ,[BySite]
+           ,[isActive]
+           ,[ByProgram]
+           ,[ByBehavior]
+           ,[isSub])
+     VALUES
+           ('ISG', 1,1,1,0,0)
+GO
+
+
+--****************************************************
+
+--4. TABLE  [EC].[CallID_Selection]
+
+ALTER TABLE [EC].[CallID_Selection] ADD [ISG] BIT
+GO
+
+UPDATE [EC].[CallID_Selection]
+SET ISG = 1
+GO
+
+--****************************************************
+
+
+--5. TABLE [EC].[Employee_Selection]
+
+ALTER TABLE [EC].[Employee_Selection] ADD [isISG] BIT
+GO
+
+UPDATE [EC].[Employee_Selection] SET [isISG] = 0 WHERE [Job_Code] <> 'WACS05'
+GO
+
+
+INSERT INTO [EC].[Employee_Selection]
+           ([Job_Code]
+           ,[Job_Code_Description]
+           ,[isCSR]
+           ,[isSupervisor]
+           ,[isQuality]
+           ,[isLSA]
+           ,[isTraining]
+		   ,[isISG])
+     VALUES
+           ('WACS05', 'Internal Support Group', 0,0,0,0,0,1)
+	GO
+
+
+
+--****************************************************
+
+--6. TABLE [EC].[Module_Submission]
+
+
+ALTER TABLE [EC].[Module_Submission] ADD [ISG] BIT
+GO
+
+UPDATE [EC].[Module_Submission]
+SET ISG = 1
+GO 
+
+
+--****************************************************
+
+--7. TABLE [EC].[DIM_Source]
+
+ALTER TABLE [EC].[DIM_Source] ADD [ISG] BIT
+GO
+
+UPDATE [EC].[DIM_Source]
+SET ISG = 1
+ WHERE [CSR] = 1
+ GO
+
+
+--****************************************************
+
+--8. TABLE [EC].[Coaching_Reason_Selection]
+
+ALTER TABLE [EC].[Coaching_Reason_Selection] ADD [ISG] BIT DEFAULT (0)
+GO
+
+UPDATE [EC].[Coaching_Reason_Selection]
+SET [ISG] = 1
+WHERE [CSR] = 1
+GO
+
+UPDATE [EC].[Coaching_Reason_Selection]
+SET [ISG] = 0
+WHERE [CSR] = 0
+GO
+
+
+--****************************************************
+
+
+ --9. TABLE [EC].[Email_Notifications] 
+
+; WITH csrrecs AS
+(SELECT [Module]
+      ,[Submission]
+      ,[Source]
+      ,[SubSource]
+      ,[isCSE]
+      ,[Status]
+      ,[Recipient]
+      ,[Subject]
+      ,[Body]
+      ,[isCCRecipient]
+      ,[CCRecipient]
+  FROM [EC].[Email_Notifications]
+  WHERE [Module]= 'CSR')
+  INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+   SELECT 'ISG'
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient]
+    FROM csrrecs
+	GO
+
+
+UPDATE [EC].[Email_Notifications]
+SET [Subject]= 'eCL: Pending Employee Review'
+ WHERE [Status]= 'Pending Employee Review' AND [Subject]<> 'eCL: Pending Employee Review'
+GO
+
+
+--****************************************************
+
+--10. TABLE [EC].[Coaching_Log_StaticText]
+
+ALTER TABLE [EC].[Coaching_Log_StaticText] ADD [ISG] BIT
+GO
+
+UPDATE [EC].[Coaching_Log_StaticText]
+SET [ISG] = CASE WHEN [isSub]= 0 THEN 1 ELSE 0 END
+GO
+
+--****************************************************
+
+  --11. TABLE [EC].[AT_Module_Access] 
+
+;WITH csrrecs AS
+(
+SELECT [JobCode]
+      ,[JobCodeDescription]
+      ,[ModuleId]
+      ,[Module]
+      ,[isActive]
+  FROM [EC].[AT_Module_Access]
+  WHERE [Module] = 'CSR')
+
+  INSERT INTO [EC].[AT_Module_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[ModuleId]
+           ,[Module]
+           ,[isActive])
+SELECT [JobCode]
+      ,[JobCodeDescription]
+	  ,10
+	  ,'ISG'
+	  ,1
+FROM csrrecs
+GO
+
+--****************************************************
+
+ --12.  TABLE [EC].[AT_Reassign_Status_For_Module] 
+ 
+; WITH csrrecs AS 
+(
+SELECT [ModuleId]
+      ,[Module]
+      ,[StatusId]
+      ,[Status]
+      ,[isActive]
+  FROM [EC].[AT_Reassign_Status_For_Module]
+  WHERE Module = 'CSR')
+INSERT INTO [EC].[AT_Reassign_Status_For_Module]
+           ([ModuleId]
+           ,[Module]
+           ,[StatusId]
+           ,[Status]
+           ,[isActive])
+		   SELECT 10
+      ,'ISG'
+      ,[StatusId]
+      ,[Status]
+      ,[isActive]
+  FROM csrrecs
+  GO
+
+
+--****************************************************
+
+
+ -- 13.  TABLE [EC].[AT_Role_Module_Link]  
+
+INSERT INTO [EC].[AT_Role_Module_Link]
+           ([RoleId]
+           ,[ModuleId])
+     VALUES
+           (106,10),
+		   (107,10),
+		   (108,10),
+		   (109,10)
+GO
+
+
+
+--****************************************************
+
+--14. Surveys
+
+ALTER TABLE [EC].[Survey_DIM_Type]
+ADD [ISG] bit
+GO
+
+UPDATE [EC].[Survey_DIM_Type]
+SET [ISG] = 1 
+,[LastUpdateDate] = GetDate()
+WHERE [SurveyTypeID] = 1
+GO
+
+
+--****************************************************
+
+
+--****************************************************

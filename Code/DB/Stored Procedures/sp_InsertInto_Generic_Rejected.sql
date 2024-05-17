@@ -13,6 +13,7 @@ GO
 -- Initial Revision. DTT Feed - TFS 7646 - 08/31/2017
 -- Modified to support ATT AP% feeds. TFS 15095  - 8/27/2019
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Generic_Rejected] 
 
@@ -54,7 +55,7 @@ WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
 -- Reject Logs that are for CSR Module and Employee does not have a CSR job code.(SEA)
 UPDATE [EC].[Generic_Coaching_Stage]
 SET [Reject_Reason]= CASE WHEN ([Report_Code] not like 'DTT%' AND [Report_Code] not like 'OTH%' )
-AND [Emp_Role] <> 'C' THEN N'Employee does not have a CSR job code.'
+AND [Emp_Role] NOT IN ( 'C', 'I') THEN N'Employee does not have a CSR or ISG job code.'
 ELSE NULL END
 WHERE [Emp_Role] <> 'C' AND [Reject_Reason]is NULL;
       

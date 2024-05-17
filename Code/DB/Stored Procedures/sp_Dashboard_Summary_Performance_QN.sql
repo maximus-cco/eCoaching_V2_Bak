@@ -5,7 +5,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/03/2021
@@ -14,6 +13,7 @@ GO
 --                  and Managers can see their team performance.
 
 --  Initial Revision. Quality Now workflow enhancement. TFS 22187 - 09/03/2021
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Performance_QN] 
 @nvcUserId nvarchar(10)
@@ -40,7 +40,7 @@ SET @nvcEmpRole = [EC].[fn_strGetUserRole](@nvcUserId )
   ;with emp as
 (select distinct eh.emp_id as EmpID
 from ec.Employee_Hierarchy eh 
-where (@nvcEmpRole in ('CSR', 'ARC') and eh.emp_id = @nvcUserId)
+where (@nvcEmpRole in ('CSR','ISG', 'ARC') and eh.emp_id = @nvcUserId)
 or (@nvcEmpRole in ('Supervisor', 'Manager') and (eh.Emp_Job_Code like N'WACS0%')
 and (eh.Sup_ID = @nvcUserId OR eh.Mgr_ID = @nvcUserId OR eh.SrMgrLvl1_ID = @nvcUserId OR eh.SrMgrLvl2_ID = @nvcUserId))
 and Active = 'A'
