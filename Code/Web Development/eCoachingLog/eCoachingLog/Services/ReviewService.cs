@@ -208,7 +208,7 @@ namespace eCoachingLog.Services
 
 			// OTH/APS and OTH/APW logs come in as Pending Acknowledgement
 			// Display Review Static Text for Supervisors
-			// Note: if csr acks first, status will become "Pending Supervisor Review"
+			// Note: if csr/isg acks first, status will become "Pending Supervisor Review"
 			if ((user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
 					&& (review.LogStatusLevel == Constants.LOG_STATUS_LEVEL_4 || review.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2))
 			{
@@ -271,7 +271,7 @@ namespace eCoachingLog.Services
 
 			// PBH comes in as Pending Supervisor Review;
 			// It goes to Pending Employee Review after;
-			// Display for both Supervisors and CSRs
+			// Display for both Supervisors and CSRs/ISGs
 			if (log.IsPbh)
 			{
 				return Constants.REVIEW_OMR_PBH;
@@ -390,7 +390,7 @@ namespace eCoachingLog.Services
 					string nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
 					bool success = reviewRepository.CompleteEmployeeAckFollowup(review, nextStatus, user);
 
-                    // Email supervisor and/or manager upon CSR completes qn log (Pending employee followup review -> Completed)
+                    // Email supervisor and/or manager upon CSR/ISG completes qn log (Pending employee followup review -> Completed)
                     if (success
                             && review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW
                             && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT)
@@ -476,7 +476,7 @@ namespace eCoachingLog.Services
             // Followup required; 
  			if (review.LogDetail.IsFollowupRequired)
 			{
-				// CSR completes review, set status to Pending Supervisor Followup
+				// CSR/ISG completes review, set status to Pending Supervisor Followup
 				if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
 				{
 					nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT;
@@ -530,7 +530,7 @@ namespace eCoachingLog.Services
 
 			// Email CSR/ISG comments to supervisor and/or manager 
 			if (success 
-					&& (review.LogDetail.ModuleId == Constants.MODULE_CSR || review.WarningLogDetail.ModuleId == Constants.MODULE_ISG)
+					&& (review.LogDetail.ModuleId == Constants.MODULE_CSR || review.LogDetail.ModuleId == Constants.MODULE_ISG)
                     && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.LogDetail.EmployeeId == user.EmployeeId)
 			{

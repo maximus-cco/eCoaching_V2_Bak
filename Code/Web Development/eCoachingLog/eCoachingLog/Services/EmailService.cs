@@ -37,7 +37,7 @@ namespace eCoachingLog.Services
         private void LogEmailException(Exception ex, MailMessage message, string logName, bool isNewSubmission)
         {
             StringBuilder info = new StringBuilder();
-            var whatMail = isNewSubmission ? "New Submission" : "Csr Comments";
+            var whatMail = isNewSubmission ? "New Submission" : "Employee Comments"; // csr/isg comments
             info.Append($"Failed to send {whatMail} email [{logName}]: ")
                 .Append(ex.Message)
                 .Append(Environment.NewLine)
@@ -136,7 +136,7 @@ namespace eCoachingLog.Services
 
         private void StoreCommentsEmail(MailParameter mailParameter)
         {
-            logger.Debug("Entered StoreCommentsEmail...");
+            logger.Debug("##############Entered StoreCommentsEmail...");
 
             var log = mailParameter.LogDetail;
 

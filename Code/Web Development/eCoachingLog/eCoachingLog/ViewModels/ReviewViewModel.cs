@@ -114,7 +114,7 @@ namespace eCoachingLog.ViewModels
 		public bool IsShortCallPendingManagerForm { get; set; }
 		public bool IsAcknowledgeForm { get; set; }
 		public bool IsFollowupPendingSupervisorForm { get; set; }
-		public bool IsFollowupPendingCsrForm { get; set; }
+		public bool IsFollowupPendingCsrForm { get; set; } // pending follow-up employee review (csr or isg)
 		public bool IsMoreReviewRequired { get; set; }
 		public bool IsAckOverTurnedAppeal { get; set; }
 

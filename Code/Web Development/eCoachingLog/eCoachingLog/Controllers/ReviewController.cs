@@ -110,7 +110,7 @@ namespace eCoachingLog.Controllers
                 vm.ShowEmployeeReviewInfo = false;
                 vm.ReviewPageName = "_QnsCoach";
             }
-            // Qns - csr review/ack
+            // Qns - csr/isg review/ack
             else if (vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
             {
                 vm.IsAcknowledgeForm = true;
@@ -141,7 +141,7 @@ namespace eCoachingLog.Controllers
                 vm.AllowCopy = true;
                 vm.ReviewPageName = "_QnEditLogSummary";
             }
-            // Supervisor coach (csr) quliaty now log
+            // Supervisor coach (csr/isg) quliaty now log
             // My Pending Review - Coach
             // My Pending Follow-up Coaching - Coach
             else if (String.Equals(action, "coach", StringComparison.OrdinalIgnoreCase))
@@ -157,7 +157,7 @@ namespace eCoachingLog.Controllers
                     vm.ShowSupervisorReviewInfo = true;
                     vm.ShowEmployeeReviewInfo = true;
                 }
-                // first round coaching, neither supervisor nor csr has reviewed yet.
+                // first round coaching, neither supervisor nor csr/isg has reviewed yet.
                 else
                 {
                     vm.ShowSupervisorReviewInfo = false;
@@ -166,7 +166,7 @@ namespace eCoachingLog.Controllers
 
                 vm.ReviewPageName = "_QnCoach";
             }
-            // CSR "My Pending" - Review
+            // CSR/ISG "My Pending" - Review
             else if (String.Equals(action, "csrReview", StringComparison.OrdinalIgnoreCase))
             {
                 vm.IsReadOnly = false;
@@ -204,7 +204,7 @@ namespace eCoachingLog.Controllers
                     vm.ShowSupervisorReviewInfo = true;
                     vm.ShowEmployeeReviewInfo = true;
                 }
-                // first round coaching, neither supervisor nor csr has reviewed yet.
+                // first round coaching, neither supervisor nor csr/isg has reviewed yet.
                 else
                 {
                     vm.ShowSupervisorReviewInfo = false;
@@ -262,8 +262,8 @@ namespace eCoachingLog.Controllers
 
             if (user.IsSupervisor)
             {
-                // My Pending: Coach - csr is in coaching session with supervisor
-                // My Pending Followup-up Coaching: Coach - supervisor views linked QNS log with CSR during follow up coaching session
+                // My Pending: Coach - csr/isg is in coaching session with supervisor
+                // My Pending Followup-up Coaching: Coach - supervisor views linked QNS log with CSR/ISG during follow up coaching session
                 return (!String.Equals(action, "coach", StringComparison.OrdinalIgnoreCase) 
                     && !String.Equals(action, "viewLinkedQnsInCoachingSession", StringComparison.OrdinalIgnoreCase));
             }
@@ -524,7 +524,7 @@ namespace eCoachingLog.Controllers
 				vm.ShowFollowupInfo = ShowFollowupInfo(vm, currentPage);
 				// Completed by Supervisor
 				vm.IsFollowupCompleted = vm.LogDetail.IsFollowupRequired && !string.IsNullOrEmpty(vm.LogDetail.FollowupActualDate);
-				// After completed by supervisor, CSR has acknowledged
+				// After completed by supervisor, CSR/ISG has acknowledged
 				vm.IsFollowupAcknowledged = vm.LogDetail.IsFollowupRequired && !string.IsNullOrEmpty(vm.LogDetail.FollowupEmpAutoDate);
 				vm.IsFollowupDue = IsFollowupDue(vm);
 				vm.IsFollowupOverDue = IsFollowupOverDue(vm);
@@ -854,7 +854,7 @@ namespace eCoachingLog.Controllers
 			if (vm.LogDetail.IsBqns || vm.LogDetail.IsBqm || vm.LogDetail.IsBqms)
 			{
 				// log comes in as Pending Ack
-				// return true so that both sup and csr has an a chance to review
+				// return true so that both sup and csr/isg has an a chance to review
 				return true;
 			}
 
@@ -896,48 +896,49 @@ namespace eCoachingLog.Controllers
 			return false;
 		}
 
-		//private bool IsAckOpportunityLog(ReviewViewModel vm)
-		//{
-		//	var userEmployeeId = GetUserFromSession().EmployeeId;
+        //private bool IsAckOpportunityLog(ReviewViewModel vm)
+        //{
+        //	var userEmployeeId = GetUserFromSession().EmployeeId;
 
-		//	// User is the employee of the log
-		//	if (userEmployeeId == vm.LogDetail.EmployeeId)
-		//	{
-		//		if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
-		//		{
-		//			return (string.IsNullOrEmpty(vm.LogDetail.SupReviewedAutoDate)) ||
-		//				(!vm.LogDetail.IsIqs &&
-		//					!vm.LogDetail.IsCtc &&
-		//					!vm.LogDetail.IsHigh5Club &&
-		//					!vm.LogDetail.IsKudo &&
-		//					!vm.LogDetail.IsAttendance &&
-		//					!vm.LogDetail.IsMsr &&
-		//					!vm.LogDetail.IsMsrs);
-		//		}
-		//	}
+        //	// User is the employee of the log
+        //	if (userEmployeeId == vm.LogDetail.EmployeeId)
+        //	{
+        //		if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_1)
+        //		{
+        //			return (string.IsNullOrEmpty(vm.LogDetail.SupReviewedAutoDate)) ||
+        //				(!vm.LogDetail.IsIqs &&
+        //					!vm.LogDetail.IsCtc &&
+        //					!vm.LogDetail.IsHigh5Club &&
+        //					!vm.LogDetail.IsKudo &&
+        //					!vm.LogDetail.IsAttendance &&
+        //					!vm.LogDetail.IsMsr &&
+        //					!vm.LogDetail.IsMsrs);
+        //		}
+        //	}
 
-		//	return false;
-		//}
+        //	return false;
+        //}
 
-		//private bool IsReinforceLog(ReviewViewModel vm)
-		//{
-		//	bool retVal = true;
-		//	var reasons = vm.LogDetail.Reasons;
+        //private bool IsReinforceLog(ReviewViewModel vm)
+        //{
+        //	bool retVal = true;
+        //	var reasons = vm.LogDetail.Reasons;
 
-		//	foreach (var reason in reasons)
-		//	{
-		//		if (reason.Value.IndexOf("opportunity", StringComparison.OrdinalIgnoreCase) >= 0 
-		//			|| reason.Value.IndexOf("did not meet goal", StringComparison.OrdinalIgnoreCase) >= 0
-		//			|| reason.Value.IndexOf("research required", StringComparison.OrdinalIgnoreCase) >= 0
-		//			|| reason.Value.IndexOf("n/a", StringComparison.OrdinalIgnoreCase) >= 0)
-		//		{
-		//			retVal = false;
-		//		}
-		//	}
-		//	return retVal;
-		//}
+        //	foreach (var reason in reasons)
+        //	{
+        //		if (reason.Value.IndexOf("opportunity", StringComparison.OrdinalIgnoreCase) >= 0 
+        //			|| reason.Value.IndexOf("did not meet goal", StringComparison.OrdinalIgnoreCase) >= 0
+        //			|| reason.Value.IndexOf("research required", StringComparison.OrdinalIgnoreCase) >= 0
+        //			|| reason.Value.IndexOf("n/a", StringComparison.OrdinalIgnoreCase) >= 0)
+        //		{
+        //			retVal = false;
+        //		}
+        //	}
+        //	return retVal;
+        //}
 
-		private bool IsFollowupPendingCsr(ReviewViewModel vm)
+        // Pending follow-up CSR/ISG (Employee) review
+        private bool IsFollowupPendingCsr(ReviewViewModel vm)
 		{
 			var userEmployeeId = GetUserFromSession().EmployeeId;
             if (userEmployeeId == vm.LogDetail.EmployeeId 
@@ -1088,7 +1089,7 @@ namespace eCoachingLog.Controllers
 
 			if (vm.IsRegularPendingForm)
 			{
-				// CSR module (log was submitted for a CSR) - if Pending Supervisor Review - Only Supervisor or reassigned to can enter data on review page
+				// CSR/ISG module (log was submitted for a CSR/ISG) - if Pending Supervisor Review - Only Supervisor or reassigned to can enter data on review page
                 // Supervisor module (log was submitted for a supervisor) - if Pending Manager Review - Only Manager or reassigned to can enter data on review page
 				if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_2)
 				{

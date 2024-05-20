@@ -240,7 +240,6 @@ namespace eCoachingLog.Controllers
         }
 
         [HttpPost]
-        // only csr module has site dropdown, so this must be csr module. 
         // For csr module, display dual listbox instead of dropdown for Employee selection, BUT this is for specific users ONLY.
         public ActionResult HandleSiteChanged(int siteIdSelected, int programIdSelected, string programName)
         {
@@ -259,7 +258,7 @@ namespace eCoachingLog.Controllers
             vm.EmployeeSelectList = vmInSession.EmployeeSelectList;
             vm.EmployeeList = vmInSession.EmployeeList;
             vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm.ModuleId);
-            vm.ShowEmployeeDualListbox = ShowEmployeeDualListbox(vm);
+            vm.ShowEmployeeDualListbox = !vm.ShowEmployeeDropdown && ShowEmployeeDualListbox(vm);
 
             vm.ProgramSelectList = vmInSession.ProgramSelectList;
             vm.ProgramId = programIdSelected;
@@ -728,14 +727,6 @@ namespace eCoachingLog.Controllers
         //Quality - WACQ13, WACQ40, and WPPM50
         private bool AllowMassSubmission(int moduleId)
         {
-            if (moduleId != Constants.MODULE_CSR
-                    && moduleId != Constants.MODULE_ISG
-                    && moduleId != Constants.MODULE_QUALITY
-                    && moduleId != Constants.MODULE_SUPERVISOR)
-            {
-                return false;
-            }
-
             var userJobCode = GetUserFromSession().JobCode;
             if (String.IsNullOrEmpty(userJobCode))
             {
@@ -768,8 +759,14 @@ namespace eCoachingLog.Controllers
             }
 
             // ISG module
-            return Constants.JOB_CODE_CSR_MANAGER.Equals(userJobCode)
+            if (moduleId == Constants.MODULE_ISG)
+            {
+                return Constants.JOB_CODE_CSR_MANAGER.Equals(userJobCode)
                     || Constants.JOB_CODE_PROGRAM_SR_MANAGER.Equals(userJobCode);
+            }
+
+            // All other modules
+            return false;
         }
 
         private bool ShowEmployeeDualListbox(NewSubmissionViewModel vm)

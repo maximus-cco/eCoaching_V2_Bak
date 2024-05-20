@@ -13,10 +13,10 @@ namespace eCoachingLog.ViewModels
 
         // Supervisor creates/updates/ log summary
         public bool AllowCreateEditSummary { get; set; }
-        // Supervisor coaches csr/enters notes
+        // Supervisor coaches csr or isg/enters notes
         public bool AllowCoach { get; set; }
-        // Csr reviews/enters notes 
-        public bool AllowCsrReview { get; set; }
+        // Csr/Isg reviews/enters notes 
+        public bool AllowCsrReview { get; set; } // allow csr/isg review
         // Supervisor followup to determine if additional coaching needed
         public bool AllowFollowupReview { get; set; }
         public bool ReadOnly { get; set; }

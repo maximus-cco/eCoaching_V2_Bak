@@ -185,7 +185,7 @@ namespace eCoachingLog.Utils
 
         public static readonly Dictionary<string, string> QnLogTypeToPageName = new Dictionary<string, string>
         {
-            { "My Pending", "_MyPendingReview" }, // csr, status 4
+            { "My Pending", "_MyPendingReview" }, // csr/isg, status 4
             { "My Pending Review", "_MyPendingReview" }, // supervisor, status 6
             { "My Pending Follow-up Preparation", "_MyPendingFollowupPrepare" }, 
             { "My Pending Follow-up Coaching", "_MyPendingFollowupCoaching" }, 
@@ -291,7 +291,8 @@ namespace eCoachingLog.Utils
 			"Using a scale from one to five, callers are able to rate their overall satisfaction. Top box, or a rating of 5, indicates the caller was extremely satisfied!  " +
 			"Thank you for taking good care of your callers; you make a difference for each caller AND for the CCO!";
 
-		public const string REVIEW_QUALITY_KUDO_CSR = "Congratulations - you received a Kudos! Click " +
+        // KUDO for csr/isg
+        public const string REVIEW_QUALITY_KUDO_CSR = "Congratulations - you received a Kudos! Click " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
 			"to take a listen to what a recent caller had to say about your customer service.";
         // no text for subcontractor
@@ -311,7 +312,7 @@ namespace eCoachingLog.Utils
         public const string REVIEW_MSR_INTERNAL_CCO_REPORTING = "To view in full detail, your Supervisor will review your Performance Dashboard with you during your next coaching session. An overview of your scores is also contained within the eCL.";
 
 		// ETS/HNC ETS/ICC
-		// Currently this is only for CSRs. Data feeds loaded as Pending Supervisor Review.
+		// Currently this is only for CSRs/ISGs. Data feeds loaded as Pending Supervisor Review.
 		// Display this link only for Supervisors
 		public const string REVIEW_HNC_ICC = "Click " +
 			"<a href='https://maximus365.sharepoint.com/sites/CCO/Initiatives/floorcheck/Timecard_Compliance_Reporting/Timcard%20Changes%20Reports/Forms/AllItems.aspx' target='_blank'>here</a>" +

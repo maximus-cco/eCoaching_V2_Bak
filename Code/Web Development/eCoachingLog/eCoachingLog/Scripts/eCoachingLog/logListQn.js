@@ -56,6 +56,7 @@ $(document).ready(function () {
                             return prepare + '&nbsp;&nbsp;' + coach;
                         }
 
+                        // csr/isg
                         if (showCsrReviewLink === 'True') {
                             var csrReview = '<a href="#"' + ' data-action="csrReview"' + ' data-log-id="' + data + '" ' + ' data-is-coaching="' + row["IsCoaching"] + '"' +
                                 ' class="modal-link-qn"' + ' style="border-bottom: blue 0.125em solid;">' + '<b>Review</b></a>';

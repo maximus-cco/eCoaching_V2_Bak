@@ -39,7 +39,7 @@ namespace eCoachingLog.Models.Review
 		public bool IsShortCallPendingSupervisorForm { get; set; }
 		public bool IsShortCallPendingManagerForm { get; set; }
 		public bool IsFollowupPendingSupervisorForm { get; set; }
-		public bool IsFollowupPendingCsrForm { get; set; }
+		public bool IsFollowupPendingCsrForm { get; set; } // CSR/ISG
 
 		public bool IsAckOpportunity { get; set; }
 		public bool IsMoreReviewRequired { get; set; }
