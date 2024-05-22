@@ -1077,8 +1077,8 @@ namespace eCoachingLog.Controllers
 				else if (vm.LogStatusLevel == Constants.LOG_STATUS_LEVEL_3)
 				{
 
-					if ( user.EmployeeId == vm.LogDetail.ManagerEmpId
-						|| (vm.LogDetail.IsLowCsat && user.EmployeeId == vm.LogDetail.LogManagerEmpId) // if low csat, the "then (when log submitted) manager can review too
+					if ( (user.EmployeeId == vm.LogDetail.ManagerEmpId && !vm.LogDetail.IsLowCsat)
+                        || (vm.LogDetail.IsLowCsat && user.EmployeeId == vm.LogDetail.LogManagerEmpId) // if low csat, the "then (when log submitted) manager should review
 						|| user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
 					{
 						readOnly = false;
