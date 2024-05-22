@@ -172,9 +172,8 @@ ALTER TABLE [EC].[DIM_Source] ADD [ISG] BIT
 GO
 
 UPDATE [EC].[DIM_Source]
-SET ISG = 1
- WHERE [CSR] = 1
- GO
+SET ISG = [CSR]
+GO
 
 
 --****************************************************
