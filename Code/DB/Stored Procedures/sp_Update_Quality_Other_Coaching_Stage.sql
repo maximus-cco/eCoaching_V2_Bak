@@ -4,6 +4,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 12/14/2017
@@ -20,8 +21,9 @@ GO
 -- Add trigger and review performance for Bingo upload job - TFS 22443 - 8/2/2021
 -- Updated to support QN Rewards eCoaching logs. TFS 27851 - 03/21/2024
 --  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+-- Modified to replace strange character. PR 28237 - 05/21/2024
 -- =============================================
-CREATE OR ALTER PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
+CREATE  OR ALTER  PROCEDURE [EC].[sp_Update_Quality_Other_Coaching_Stage] 
 @Count INT OUTPUT
 AS
 BEGIN
@@ -122,6 +124,13 @@ EMP_ID NOT IN
 AND Report_Code lIKE 'OTA%' 
 AND [Reject_Reason]is NULL;
  
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
+-- Replace strange character coming in feed.
+
+UPDATE [EC].[Quality_Other_Coaching_Stage]
+SET TextDescription = REPLACE(TextDescription,'â€“', '–')
+WHERE TextDescription LIKE '%â€“%';
+
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
 
 -- Reject BQN logs where an Employee does not have a valid set of QC competencies.
