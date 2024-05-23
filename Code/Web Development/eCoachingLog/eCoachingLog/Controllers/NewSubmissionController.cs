@@ -733,36 +733,31 @@ namespace eCoachingLog.Controllers
                 return false;
             }
 
+            userJobCode = userJobCode.Trim().ToUpper();
+
             // CSR module
             if (moduleId == Constants.MODULE_CSR)
             {
-                return Constants.JOB_CODE_CSR_SUPERVISOR.Equals(userJobCode) 
-                    || Constants.JOB_CODE_CSR_MANAGER.Equals(userJobCode) 
-                    || Constants.JOB_CODE_CSR_SR_MANAGER.Equals(userJobCode);
+
+                return Constants.MASS_SUBMISSION_CSR.Contains(userJobCode);
             }
 
             // Supervisor module
             if (moduleId == Constants.MODULE_SUPERVISOR)
             {
-                // Operation Managers
-                return Constants.JOB_CODE_CSR_MANAGER.Equals(userJobCode) 
-                    || Constants.JOB_CODE_CSR_SR_MANAGER.Equals(userJobCode); 
+                return Constants.MASS_SUBMISSION_SUPERVISOR.Contains(userJobCode);
             }
 
             // Quality module
             if (moduleId == Constants.MODULE_QUALITY)
             {
-                // Quality Leads
-                return Constants.JOB_CODE_QUALITY_SR_SPECIALIST.Equals(userJobCode) 
-                    || Constants.JOB_CODE_QUALITY_SUPERVISOR.Equals(userJobCode)
-                    || Constants.JOB_CODE_PROGRAM_SR_MANAGER.Equals(userJobCode);
+                return Constants.MASS_SUBMISSION_QUALITY.Contains(userJobCode);
             }
 
             // ISG module
             if (moduleId == Constants.MODULE_ISG)
             {
-                return Constants.JOB_CODE_CSR_MANAGER.Equals(userJobCode)
-                    || Constants.JOB_CODE_PROGRAM_SR_MANAGER.Equals(userJobCode);
+                return Constants.MASS_SUBMISSION_ISG.Contains(userJobCode);
             }
 
             // All other modules

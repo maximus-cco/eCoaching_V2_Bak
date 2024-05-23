@@ -78,6 +78,37 @@ namespace eCoachingLog.Utils
         public const string JOB_CODE_QUALITY_SUPERVISOR = "WACQ40";
         public const string JOB_CODE_PROGRAM_SR_MANAGER = "WPPM50";
 
+        // Users with one of these job codes are allowed for mass submission (CSR coaching logs)
+        public static HashSet<string> MASS_SUBMISSION_CSR = new HashSet<string>()
+        {
+            { "WACS40" },
+            { "WACS50" },
+            { "WACS60" }
+        };
+
+        // Users with one of these job codes are allowed for mass submission (ISG coaching logs)
+        public static HashSet<string> MASS_SUBMISSION_ISG = new HashSet<string>()
+        {
+            { "WACS40" },
+            { "WACS50" },
+            { "WPPM50" }
+        };
+
+        // Users with one of these job codes are allowed for mass submission (Supervisor coaching logs)
+        public static HashSet<string> MASS_SUBMISSION_SUPERVISOR = new HashSet<string>()
+        {
+            { "WACS50" },
+            { "WACS60" }
+        };
+
+        // Users with one of these job codes are allowed for mass submission (Quality coaching logs)
+        public static HashSet<string> MASS_SUBMISSION_QUALITY = new HashSet<string>()
+        {
+            { "WACQ13" },
+            { "WACQ40" },
+            { "WPPM50" }
+        };
+
         public const int ALL_STATUSES = -1;
 
 		public const string DIRECT = "Direct";
