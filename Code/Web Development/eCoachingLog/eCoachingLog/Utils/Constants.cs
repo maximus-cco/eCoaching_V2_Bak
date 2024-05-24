@@ -91,10 +91,11 @@ namespace eCoachingLog.Utils
         {
             { "WACS40" },
             { "WACS50" },
-            { "WPPM50" }
+            { "WACS60" }
         };
 
         // Users with one of these job codes are allowed for mass submission (Supervisor coaching logs)
+        // ??????????????
         public static HashSet<string> MASS_SUBMISSION_SUPERVISOR = new HashSet<string>()
         {
             { "WACS50" },
