@@ -163,6 +163,10 @@ UPDATE [EC].[Module_Submission]
 SET ISG = 1
 GO 
 
+UPDATE [EC].[Module_Submission]
+SET  [Quality] = 1
+WHERE [Job_Code] IN ('WPPM50') 
+GO 
 
 --****************************************************
 
