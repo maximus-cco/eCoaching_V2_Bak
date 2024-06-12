@@ -743,7 +743,9 @@ namespace eCoachingLog.Controllers
 			vm.IsShortCallPendingManagerForm = false;	 // Short Call Form      - Manager reviewing
 			vm.IsFollowupPendingSupervisorForm = false;
 
-            if (vm.LogDetail.IsCpath && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+            if (vm.LogDetail.IsCpath
+                    && (user.EmployeeId == vm.LogDetail.SupervisorEmpId || user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+                    && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
             {
                 vm.ShowFollowupCoaching = true;
             }

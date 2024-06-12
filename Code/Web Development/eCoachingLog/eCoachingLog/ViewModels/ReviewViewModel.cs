@@ -180,6 +180,8 @@ namespace eCoachingLog.ViewModels
 
         public string Action { get; set; }
 
+        public bool IsCpath { get; set; }
+
 		public ReviewViewModel()
 		{
 			this.LogDetail = new CoachingLogDetail();
@@ -209,10 +211,10 @@ namespace eCoachingLog.ViewModels
                 if (this.ShowFollowupCoaching && this.IsFollowupCoachingRequired == null)
                 {
                     var isFollowupCoachingRequired = new[] { "IsFollowupCoachingRequired" };
-                    yield return new ValidationResult("Select Yes or No.", isFollowupCoachingRequired);
+                    yield return new ValidationResult("Make a selection.", isFollowupCoachingRequired);
                 }
 
-                if (!this.FollowupDueDate.HasValue)
+                if (this.IsFollowupCoachingRequired.Value && !this.FollowupDueDate.HasValue)
                 {
                     var followupDueDate = new[] { "FollowupDueDate" };
                     yield return new ValidationResult("Provide follow-up due date.", followupDueDate);
@@ -303,7 +305,13 @@ namespace eCoachingLog.ViewModels
 
 			if (this.IsAcknowledgeForm)
 			{
-				if (!this.Acknowledge)
+                if (this.IsCpath)
+                {
+                    var csrPromotionValueSelected = new[] { "CsrPromotionValueSelected" };
+                    yield return new ValidationResult("Make a selection.", csrPromotionValueSelected);
+                }
+
+                if (!this.Acknowledge)
 				{
 					var ack = new[] { "Acknowledge" };
 					yield return new ValidationResult("You must select the checkbox to complete this review.", ack);

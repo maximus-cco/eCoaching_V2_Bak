@@ -41,18 +41,21 @@
     @Html.HiddenFor(m => m.ShowFollowupCoaching)
     @Html.HiddenFor(m => m.LogDetail.FollowupDueDate)
 
-    <div class='form-group mt-3 @(@Model.ShowFollowupCoaching ? "show" : "show")'>
-        <label class="required">Is follow-up coaching required?</label>
-        <div>
-            <label class="radio-inline">
-                @Html.RadioButtonFor(m => m.IsFollowupCoachingRequired, true, new { id = "IsFollowupRequiredYes" } ) Yes
-            </label>
-            <label class="radio-inline ml-3">
-                @Html.RadioButtonFor(m => m.IsFollowupCoachingRequired, false, new { id = "IsFollowupRequiredNo" }) No
-            </label>
-            @Html.ValidationMessageFor(m => m.IsFollowupCoachingRequired)
+    if (@Model.ShowFollowupCoaching)
+    {
+        <div class='form-group mt-3'>
+            <label class="required">Is follow-up coaching required?</label>
+            <div>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(m => m.IsFollowupCoachingRequired, true, new { id = "IsFollowupRequiredYes" }) Yes
+                </label>
+                <label class="radio-inline ml-3">
+                    @Html.RadioButtonFor(m => m.IsFollowupCoachingRequired, false, new { id = "IsFollowupRequiredNo" }) No
+                </label>
+                @Html.ValidationMessageFor(m => m.IsFollowupCoachingRequired)
+            </div>
         </div>
-    </div>
+    }
 
     <div class="mt-3 hide" id="div-followup-deadline">
         <mark>Follow-up due date: <span id="followup-due-date">@Model.LogDetail.FollowupDueDate</span></mark>

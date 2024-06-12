@@ -101,6 +101,13 @@ namespace eCoachingLog.Services
 		{
             var log = review.LogDetail;
 
+            if (log.IsCpath
+                && (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
+                && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+            {
+                return log.AdditionalText;
+            }
+
             if (log.IsQn 
                 && (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
                 && (log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW 
