@@ -31,6 +31,7 @@ namespace eCoachingLog.Models.Review
 		public DateTime? DateReviewed { get; set; }
 		public string ReasonNotCse { get; set; }
 		public string Comment { get; set; }
+        public string CsrPromotionSelected { get; set; }
 
 		public bool IsRegularPendingForm { get; set; }
 		public bool IsResearchPendingForm { get; set; }

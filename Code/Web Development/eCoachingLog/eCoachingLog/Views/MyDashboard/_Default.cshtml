@@ -1,5 +1,5 @@
 ﻿@model eCoachingLog.ViewModels.MyDashboardViewModel
-@{ 
+@{
     var title = Model.User.SiteId == 25 ? "" : " / Non - Quality Now";
 }
 
@@ -66,5 +66,7 @@
 
 @Scripts.Render("~/bundles/scripts/myDashboard")
 @Scripts.Render("~/bundles/scripts/eclChart")
+
+<script src="@Url.Content("~/Scripts/eCoachingLog/dateTimePicker.js")"></script>
 
 

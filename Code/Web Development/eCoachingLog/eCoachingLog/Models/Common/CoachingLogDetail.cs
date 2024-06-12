@@ -56,6 +56,7 @@ namespace eCoachingLog.Models.Common
         public bool IsSurvey { get; set; } // survey from analytic team
         public bool IsOmrAudio { get; set; }
         public bool IsNgdsLoginOutsideShift { get; set; } // NGD ID system log ins outside of the shift
+        public bool IsCpath { get; set; } 
 
         public bool HasEmpAcknowledged { get; set; }
         public bool HasSupAcknowledged { get; set; }

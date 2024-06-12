@@ -153,27 +153,22 @@ namespace eCoachingLog.Repository
 						logDetail.IsOmrException = Convert.ToInt16(dataReader["OMR / Exceptions"]) == 0 ? false : true;
                         logDetail.IsOmrAudio = Convert.ToInt16(dataReader["OMR / AUD"]) == 0 ? false : true;
                         logDetail.IsNgdsLoginOutsideShift = Convert.ToInt16(dataReader["OMR / NGD"]) == 0 ? false : true;
-
                         logDetail.IsBrl = Convert.ToInt16(dataReader["OMR / BRL"]) == 0 ? false : true;
 						logDetail.IsBrn = Convert.ToInt16(dataReader["OMR / BRN"]) == 0 ? false : true;
 						logDetail.IsPbh = Convert.ToInt16(dataReader["OMR / PBH"]) == 0 ? false : true;
 						logDetail.IsIdd = Convert.ToInt16(dataReader["OMR / IDD"]) == 0 ? false : true;
-
 						logDetail.IsCurrentCoachingInitiative = Convert.ToInt16(dataReader["Current Coaching Initiative"]) == 0 ? false : true;
 						logDetail.IsLowCsat = Convert.ToInt16(dataReader["LCS"]) == 0 ? false : true;
 						logDetail.IsCoachingRequired = dataReader["isCoachingRequired"] == DBNull.Value ? false : (bool)dataReader["isCoachingRequired"];
 						logDetail.IsIqs = Convert.ToInt16(dataReader["isIQS"]) == 0 ? false : true;
 						logDetail.HasEmpAcknowledged = dataReader["isCSRAcknowledged"] == DBNull.Value ? false : (bool)dataReader["isCSRAcknowledged"];
 						logDetail.HasSupAcknowledged = Convert.ToInt16(dataReader["isSupAcknowledged"].ToString()) == 0 ? false : true;
-
 						logDetail.IsEtsHnc = Convert.ToInt16(dataReader["ETS / HNC"]) == 0 ? false : true;
 						logDetail.IsEtsIcc = Convert.ToInt16(dataReader["ETS / ICC"]) == 0 ? false : true;
 						logDetail.IsEtsOae = Convert.ToInt16(dataReader["ETS / OAE"]) == 0 ? false : true;
 						logDetail.IsEtsOas = Convert.ToInt16(dataReader["ETS / OAS"]) == 0 ? false : true;
-
 						logDetail.IsTrainingShortDuration = Convert.ToInt16(dataReader["Training / SDR"]) == 0 ? false : true;
 						logDetail.IsTrainingOverdue = Convert.ToInt16(dataReader["Training / ODT"]) == 0 ? false : true;
-
 						logDetail.IsCtc = Convert.ToInt16(dataReader["Quality / CTC"]) == 0 ? false : true;
 						logDetail.IsHigh5Club = Convert.ToInt16(dataReader["Quality / HFC"]) == 0 ? false : true;
 						logDetail.IsKudo = Convert.ToInt16(dataReader["Quality / KUD"]) == 0 ? false : true;
@@ -181,25 +176,20 @@ namespace eCoachingLog.Repository
 						logDetail.IsBqns = Convert.ToInt16(dataReader["Quality / BQNS"]) == 0 ? false : true;
 						logDetail.IsBqm = Convert.ToInt16(dataReader["Quality / BQM"]) == 0 ? false : true;
 						logDetail.IsBqms = Convert.ToInt16(dataReader["Quality / BQMS"]) == 0 ? false : true;
-
 						logDetail.IsAttendance = Convert.ToInt16(dataReader["OTH / SEA"]) == 0 ? false : true;
 						logDetail.IsDtt = Convert.ToInt16(dataReader["OTH / DTT"]) == 0 ? false : true;
 						logDetail.IsOthAps = Convert.ToInt16(dataReader["OTH / APS"]) == 0 ? false : true;
 						logDetail.IsOthApw = Convert.ToInt16(dataReader["OTH / APW"]) == 0 ? false : true;
-
-						logDetail.IsMsr = Convert.ToInt16(dataReader["PSC / MSR"]) == 0 ? false : true;
-						logDetail.IsMsrs = Convert.ToInt16(dataReader["PSC / MSRS"]) == 0 ? false : true;
-
                         logDetail.IsSurvey = Convert.ToInt16(dataReader["OTH / SUR"]) == 0 ? false : true;
-
+                        logDetail.IsCpath = Convert.ToInt16(dataReader["OTH / CPATH"]) == 0 ? false : true;
+                        logDetail.IsMsr = Convert.ToInt16(dataReader["PSC / MSR"]) == 0 ? false : true;
+						logDetail.IsMsrs = Convert.ToInt16(dataReader["PSC / MSRS"]) == 0 ? false : true;
                         logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
 						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
-
 						logDetail.IsQn = Convert.ToInt16(dataReader["isIQSQN"]) == 1 ? true : false;
                         logDetail.IsQnSupervisor = Convert.ToInt16(dataReader["isIQSQNS"]) == 1 ? true : false;
                         logDetail.BatchId = dataReader["strQNBatchId"].ToString();
 						logDetail.StrengthOpportunity = dataReader["strQNStrengthsOpportunities"].ToString();
-
                         logDetail.AdditionalText = dataReader["strStaticText"].ToString();
                         logDetail.AudVerintIds = dataReader["AudVerintIds"].ToString();
 
@@ -416,6 +406,10 @@ namespace eCoachingLog.Repository
 
         public List<WarningReason> GetWarningReasons(int reasonId, string directOrIndirect, int moduleId, string employeeId)
         {
+            logger.Debug($"###############reasonId: {reasonId}");
+            logger.Debug($"directOrIndirect: {directOrIndirect}");
+            logger.Debug($"moduleId: {moduleId}");
+            logger.Debug($"employeeId: {employeeId}");
             List<WarningReason> warningReasons = new List<WarningReason>();
 
             using (SqlConnection connection = new SqlConnection(conn))
@@ -575,6 +569,11 @@ namespace eCoachingLog.Repository
 
 		public List<LogBase> GetLogList(LogFilter logFilter, string userId, int pageSize, int rowStartIndex, string sortBy, string sortDirection, string search)
 		{
+            logger.Debug($"userId={userId}, sourceId={logFilter.SourceId}, siteId={logFilter.SiteId}, employeeId={logFilter.EmployeeId}, supervisorId={logFilter.SupervisorId}" +
+                $"managerId={logFilter.ManagerId}, submitterId={logFilter.SubmitterId}, submitStart={logFilter.SubmitDateFrom}, submitEnd={logFilter.SubmitDateTo}, " +
+                $"valueId={logFilter.ValueId}, statusId={logFilter.StatusId}, sortBy={sortBy}, search={search}, logType={logFilter.LogType}, reasonId={logFilter.ReasonId}, " +
+                $"subReasonId={logFilter.SubReasonId}");
+
 			List<LogBase> logs = new List<LogBase>();
 			using (SqlConnection connection = new SqlConnection(conn))
 			using (SqlCommand command = new SqlCommand("[EC].[sp_Search_For_Dashboards_Details]", connection))

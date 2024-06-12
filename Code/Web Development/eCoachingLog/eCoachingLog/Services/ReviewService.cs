@@ -480,6 +480,10 @@ namespace eCoachingLog.Services
 				if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
 				{
 					nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT;
+                    if (!string.IsNullOrEmpty(review.CsrPromotionSelected))
+                    {
+                        review.Comment += "<br>" + review.CsrPromotionSelected;
+                    }
 				}
 				else if (review.IsFollowupPendingCsrForm)
 				{

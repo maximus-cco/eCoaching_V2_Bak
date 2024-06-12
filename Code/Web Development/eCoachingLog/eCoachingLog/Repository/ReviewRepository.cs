@@ -220,39 +220,42 @@ namespace eCoachingLog.Repository
 		public bool CompleteRegularPendingReview(Review review, string nextStatus, User user)
 		{
 			logger.Debug("Entered CompleteRegularPendingReview ...");
+            logger.Debug("****************followupDueDate=" + review.FollowupDueDate);
 
-			bool success = false;
+            bool success = false;
 
-			using (SqlConnection connection = new SqlConnection(conn))
-			using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending]", connection))
-			{
-				command.CommandType = CommandType.StoredProcedure;
-				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
-				command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
-				command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
-				command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
-				command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", DateTime.Now);
-				command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsCoached);
+            using (SqlConnection connection = new SqlConnection(conn))
+            using (SqlCommand command = new SqlCommand("[EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending]", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
+                command.Parameters.AddWithValueSafe("@nvcFormID", review.LogDetail.LogId);
+                command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
+                command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
+                command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", DateTime.Now);
+                command.Parameters.AddWithValueSafe("@bitisFollowupRequired", review.IsFollowupCoachingRequired);
+                command.Parameters.AddWithValueSafe("@dtmSupFollowupDueDate", review.FollowupDueDate);
+                command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsCoached);
                 //command.Parameters.AddWithValueSafe("@isFollowupCoachingRequired", review.IsFollowupCoachingRequired);
                 //command.Parameters.AddWithValueSafe("@followupDueDate", review.FollowupDueDate);
 
                 try
-				{
-					connection.Open();
-					int rowsUpdated = command.ExecuteNonQuery();
+                {
+                    connection.Open();
+                    int rowsUpdated = command.ExecuteNonQuery();
 
-					if (rowsUpdated == 0)
-					{
-						throw new Exception("Couldn't update log [" + review.LogDetail.LogId + "].");
-					}
+                    if (rowsUpdated == 0)
+                    {
+                        throw new Exception("Couldn't update log [" + review.LogDetail.LogId + "].");
+                    }
 
-					success = true;
-				}
-				catch (Exception ex)
-				{
-					logger.Error("Failed to update log [" + review.LogDetail.LogId + "]: " + ex.Message);
-				}
-			} // end Using 
+                    success = true;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Failed to update log [" + review.LogDetail.LogId + "]: " + ex.Message);
+                }
+            } // end Using 
 			return success;
 		}
 

@@ -28,6 +28,12 @@
 		useCurrent: false
 	});
 
+	$('#coach-date').datetimepicker({
+	    format: 'MM/DD/YYYY',
+	    maxDate: 'now',
+		useCurrent: false
+	});
+
 	$('#ReturnToSiteDate').datetimepicker({
 		format: 'MM/DD/YYYY',
 		minDate: minDate,
@@ -35,7 +41,7 @@
 		useCurrent: false
 	});
 
-	$('body').on('keydown', '#followup-date', function (e) {
+	$('body').on('keydown', '#followup-date, #coach-date', function (e) {
 		e.preventDefault();
 		return false;
 	});

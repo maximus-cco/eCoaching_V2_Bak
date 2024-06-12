@@ -18,7 +18,17 @@ namespace eCoachingLog.Controllers
 	{
 		private static readonly ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		private readonly IReviewService reviewService;
+        private static readonly Dictionary<int, string> CSR_PROMOTION_QUESTIONS = new Dictionary<int, string>
+        {
+            { 1, "I am interested in gaining a promotion and will apply at the earliest opportunity" },
+            { 2, "I am not interested in a promotion because I do not feel ready or qualified" },
+            { 3, "I am not interested in a promotion because I am concerned about limited time off" },
+            { 4, "I am not interested in a promotion because I am concerned about schedule options" },
+            { 5, "I am not interested in a promotion because of a reason not listed in these options" },
+            { 6, "I am interested in gaining a promotion but would like to discuss further with my supervisor" }
+        };
+
+        private readonly IReviewService reviewService;
 
 		public ReviewController(IReviewService reviewService, IEmployeeLogService employeeLogService) : base(employeeLogService)
 		{
@@ -450,8 +460,15 @@ namespace eCoachingLog.Controllers
                     //}
 					// Update database
 					int logIdInSession = (int)Session["reviewLogId"];
-					// Pass logIdInSession to log error if for some reason web form not posted back.
-					success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logIdInSession);
+                    if (vm.LogDetail.IsCpath
+                            && !vm.LogDetail.HasEmpAcknowledged // this is the first round coaching
+                            && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
+                    {
+                        // capture what csr has selected
+                        vm.CsrPromotionTextSelected = CSR_PROMOTION_QUESTIONS[vm.CsrPromotionValueSelected];
+                    }
+                    // Pass logIdInSession to log error if for some reason web form not posted back.
+                    success = this.reviewService.CompleteReview(vm, user, emailTempFileName, logIdInSession);
 				}
 				catch (Exception ex)
 				{
@@ -631,7 +648,16 @@ namespace eCoachingLog.Controllers
 			vm.ShowCommentTextBox = false;
 			vm.ShowCommentDdl = false;
 
-			vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_GENERAL;
+            if (vm.LogDetail.IsCpath 
+                    && user.EmployeeId == vm.LogDetail.EmployeeId 
+                    && !vm.LogDetail.HasEmpAcknowledged // this is the first round coaching, csr has not selected an answer yet
+                    && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
+            {
+                vm.ShowCsrPromotionQuestion = true;
+                vm.CsrPromotionQuestions = new SelectList(CSR_PROMOTION_QUESTIONS.OrderBy(x => x.Key), "Key", "Value");
+            }
+
+            vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_GENERAL;
 			vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_GENERAL;
 
 			// Editable Form, send user to Ack (editable Review) page
@@ -716,6 +742,11 @@ namespace eCoachingLog.Controllers
 			vm.IsShortCallPendingSupervisorForm = false; // Short Call Form      - Supervisor reviewing
 			vm.IsShortCallPendingManagerForm = false;	 // Short Call Form      - Manager reviewing
 			vm.IsFollowupPendingSupervisorForm = false;
+
+            if (vm.LogDetail.IsCpath && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+            {
+                vm.ShowFollowupCoaching = true;
+            }
 
 			// Followup - Pending Supervisor Followup
 			if (IsFollowupPendingSupervisor(vm))

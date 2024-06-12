@@ -203,8 +203,23 @@
 		}
 	});
 
+	$('body').on('click', 'input[type=radio][name=IsFollowupCoachingRequired]', function (e) {
+	    var yes = $(this).val();
+	    if (yes === 'True') {
+	        // reset followup date
+	        $('#followup-date').val('');
+	        $('#followup-date').prop("disabled", false);
+	        $('#div-select-followup-due-date').removeClass('hide');
+	        $('#div-select-followup-due-date').addClass('show');
+	    }
+	    else {
+	        $('#div-select-followup-due-date').removeClass('show');
+	        $('#div-select-followup-due-date').addClass('hide');
+	    }
+	});
+
+    // todo: need to figure out what is this for?
 	$('body').on('click', 'input[type=radio][name=IsFollowupRequired]', function (e) {
-	    //alert($(this).val());
 	    if ($(this).val() === 'True') {
 	        $('#div-followup-deadline').removeClass('hide');
 	        $('#div-followup-deadline').addClass('show');

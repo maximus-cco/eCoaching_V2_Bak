@@ -130,6 +130,10 @@ namespace eCoachingLog.ViewModels
 		public string AckCheckboxText { get; set; }
 		public bool ShowCommentTextBox { get; set; }
 		public bool ShowCommentDdl { get; set; }
+        public bool ShowCsrPromotionQuestion { get; set; }
+        public IEnumerable<SelectListItem> CsrPromotionQuestions { get; set; }
+        public int CsrPromotionValueSelected { get; set; }
+        public string CsrPromotionTextSelected { get; set; }
 
 		public string CommentTextboxLabel { get; set; }
 
@@ -143,6 +147,7 @@ namespace eCoachingLog.ViewModels
 		public bool IsFollowupAcknowledged { get; set; }
 		public bool IsFollowupDue { get; set; }
 		public bool IsFollowupOverDue { get; set; }
+        // read only - stored in db
 		public string FollowupDueDateNoTime
 		{
 			get
@@ -156,7 +161,10 @@ namespace eCoachingLog.ViewModels
 			}
 		}
 
-		public DateTime? ActualFollowupDate { get; set; }
+        // input on page
+        public DateTime? FollowupDueDate { get; set; }
+
+        public DateTime? ActualFollowupDate { get; set; }
 		[AllowHtml]
 		public string FollowupDetails { get; set; } // Input textarea
 		public IEnumerable<SelectListItem> CommentSelectList { get; set; }
@@ -204,7 +212,13 @@ namespace eCoachingLog.ViewModels
                     yield return new ValidationResult("Select Yes or No.", isFollowupCoachingRequired);
                 }
 
-				if (!this.DateCoached.HasValue)
+                if (!this.FollowupDueDate.HasValue)
+                {
+                    var followupDueDate = new[] { "FollowupDueDate" };
+                    yield return new ValidationResult("Provide follow-up due date.", followupDueDate);
+                }
+
+                if (!this.DateCoached.HasValue)
 				{
 					var dateCoached = new[] { "DateCoached" };
 					yield return new ValidationResult("Provide coaching date.", dateCoached);
@@ -419,7 +433,9 @@ namespace eCoachingLog.ViewModels
 				DateFollowup = vm.ActualFollowupDate,
 				DetailsFollowup = vm.FollowupDetails,
 				IsCoaching = !vm.IsWarning,
-                IsFollowupCoachingRequired = vm.IsFollowupCoachingRequired
+                IsFollowupCoachingRequired = vm.IsFollowupCoachingRequired,
+                FollowupDueDate = vm.FollowupDueDate == null ? "" : vm.FollowupDueDate.Value.ToString(),
+                CsrPromotionSelected = vm.CsrPromotionTextSelected
             };
 		}
 

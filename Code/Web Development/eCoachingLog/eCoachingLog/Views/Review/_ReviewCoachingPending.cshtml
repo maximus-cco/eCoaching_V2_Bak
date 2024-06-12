@@ -41,7 +41,7 @@
     @Html.HiddenFor(m => m.ShowFollowupCoaching)
     @Html.HiddenFor(m => m.LogDetail.FollowupDueDate)
 
-    <div class='form-group mt-3 @(@Model.ShowFollowupCoaching ? "show" : "hide")'>
+    <div class='form-group mt-3 @(@Model.ShowFollowupCoaching ? "show" : "show")'>
         <label class="required">Is follow-up coaching required?</label>
         <div>
             <label class="radio-inline">
@@ -58,13 +58,21 @@
         <mark>Follow-up due date: <span id="followup-due-date">@Model.LogDetail.FollowupDueDate</span></mark>
     </div>
 
+    <div class='mt-3 hide' id="div-select-followup-due-date">
+        <label for="followup-date" id="label-followup-date" class="required">Enter follow-up due date:</label>
+        <div class="col-xs-3 input-group">
+            @Html.TextBoxFor(m => m.FollowupDueDate, new { @class = "form-control", @id = "followup-date" })
+            @*<span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>*@
+        </div>
+        @Html.ValidationMessageFor(m => m.FollowupDueDate)
+    </div>
+
     <div class='form-group mt-3' id='div-date-coached'>
         <label for="DateCoached" id="label-date-coached" class="required">Enter the date of coaching:</label>
-        <div class="col-xs-4 input-group date">
-            @Html.TextBoxFor(m => m.DateCoached, new { @class = "form-control" })
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
+        <div class="col-xs-3 input-group">
+            @Html.TextBoxFor(m => m.DateCoached, new { @class = "form-control", @id = "coach-date" })
         </div>
         @Html.ValidationMessageFor(m => m.DateCoached)
     </div>
