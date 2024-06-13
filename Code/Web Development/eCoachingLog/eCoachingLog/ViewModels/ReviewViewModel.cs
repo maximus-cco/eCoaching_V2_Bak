@@ -214,7 +214,7 @@ namespace eCoachingLog.ViewModels
                     yield return new ValidationResult("Make a selection.", isFollowupCoachingRequired);
                 }
 
-                if (this.IsFollowupCoachingRequired.Value && !this.FollowupDueDate.HasValue)
+                if (this.IsFollowupCoachingRequired != null && this.IsFollowupCoachingRequired.Value && !this.FollowupDueDate.HasValue)
                 {
                     var followupDueDate = new[] { "FollowupDueDate" };
                     yield return new ValidationResult("Provide follow-up due date.", followupDueDate);
@@ -305,7 +305,7 @@ namespace eCoachingLog.ViewModels
 
 			if (this.IsAcknowledgeForm)
 			{
-                if (this.IsCpath)
+                if (this.ShowCsrPromotionQuestion && this.CsrPromotionValueSelected < 1)
                 {
                     var csrPromotionValueSelected = new[] { "CsrPromotionValueSelected" };
                     yield return new ValidationResult("Make a selection.", csrPromotionValueSelected);
@@ -443,7 +443,8 @@ namespace eCoachingLog.ViewModels
 				IsCoaching = !vm.IsWarning,
                 IsFollowupCoachingRequired = vm.IsFollowupCoachingRequired,
                 FollowupDueDate = vm.FollowupDueDate == null ? "" : vm.FollowupDueDate.Value.ToString(),
-                CsrPromotionSelected = vm.CsrPromotionTextSelected
+                CsrPromotionSelected = vm.CsrPromotionTextSelected,
+                ShowCsrPromotionQuestion = vm.ShowCsrPromotionQuestion
             };
 		}
 

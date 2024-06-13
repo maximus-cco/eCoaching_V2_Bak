@@ -20,6 +20,7 @@ namespace eCoachingLog.Controllers
 
         private static readonly Dictionary<int, string> CSR_PROMOTION_QUESTIONS = new Dictionary<int, string>
         {
+            { 0, "--- Select ---" },
             { 1, "I am interested in gaining a promotion and will apply at the earliest opportunity" },
             { 2, "I am not interested in a promotion because I do not feel ready or qualified" },
             { 3, "I am not interested in a promotion because I am concerned about limited time off" },
@@ -460,9 +461,7 @@ namespace eCoachingLog.Controllers
                     //}
 					// Update database
 					int logIdInSession = (int)Session["reviewLogId"];
-                    if (vm.LogDetail.IsCpath
-                            && !vm.LogDetail.HasEmpAcknowledged // this is the first round coaching
-                            && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
+                    if (ShowCsrPromotionQuestion(vm, user))
                     {
                         // capture what csr has selected
                         vm.CsrPromotionTextSelected = CSR_PROMOTION_QUESTIONS[vm.CsrPromotionValueSelected];
@@ -648,11 +647,8 @@ namespace eCoachingLog.Controllers
 			vm.ShowCommentTextBox = false;
 			vm.ShowCommentDdl = false;
 
-            if (vm.LogDetail.IsCpath 
-                    && user.EmployeeId == vm.LogDetail.EmployeeId 
-                    && !vm.LogDetail.HasEmpAcknowledged // this is the first round coaching, csr has not selected an answer yet
-                    && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW)
-            {
+            if (ShowCsrPromotionQuestion(vm, user))
+            { 
                 vm.ShowCsrPromotionQuestion = true;
                 vm.CsrPromotionQuestions = new SelectList(CSR_PROMOTION_QUESTIONS.OrderBy(x => x.Key), "Key", "Value");
             }
@@ -731,7 +727,16 @@ namespace eCoachingLog.Controllers
 			return vm;
 		}
 
-		private ReviewViewModel InitReviewForm(ReviewViewModel vm, User user, bool isCoaching )
+        private bool ShowCsrPromotionQuestion(ReviewViewModel vm, User user)
+        {
+            return 
+                vm.LogDetail.IsCpath
+                && user.EmployeeId == vm.LogDetail.EmployeeId
+                && !vm.LogDetail.HasEmpAcknowledged // this is the first round coaching, csr has not selected an answer yet
+                && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW;
+        }
+
+        private ReviewViewModel InitReviewForm(ReviewViewModel vm, User user, bool isCoaching )
 		{
 			vm.IsReviewForm = true;
 			vm.IsAcknowledgeForm = false;

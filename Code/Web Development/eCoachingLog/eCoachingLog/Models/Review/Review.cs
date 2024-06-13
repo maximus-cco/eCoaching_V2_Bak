@@ -57,5 +57,7 @@ namespace eCoachingLog.Models.Review
         public bool? IsFollowupCoachingRequired { get; set; }
         public string FollowupDueDate { get; set; }
 
+        public bool ShowCsrPromotionQuestion { get; set; }
+
     }
 }

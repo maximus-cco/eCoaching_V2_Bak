@@ -56,12 +56,14 @@
 	@Html.HiddenFor(m => m.LogDetail.IsBqms)
     @Html.HiddenFor(m => m.LogDetail.IsQn)
     @Html.HiddenFor(m => m.LogDetail.IsCpath)
+    @Html.HiddenFor(m => m.ShowCsrPromotionQuestion)
 
     if (Model.ShowCsrPromotionQuestion)
     {
         <div class='form-group mt-2'>
             <label for="CsrPromotionValueSelected" class="required">Which of the following best describes your current attitude and outlook toward a future CSR promotion?</label> 
             @Html.DropDownListFor(m => m.CsrPromotionValueSelected, Model.CsrPromotionQuestions, new { @class = "form-control", style = "width: 500px;" })
+            @Html.ValidationMessageFor(m => m.CsrPromotionValueSelected)
         </div>
     }
 
