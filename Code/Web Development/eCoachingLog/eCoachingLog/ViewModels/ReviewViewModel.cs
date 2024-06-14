@@ -182,7 +182,7 @@ namespace eCoachingLog.ViewModels
 
         public bool IsCpath { get; set; }
 
-		public ReviewViewModel()
+        public ReviewViewModel()
 		{
 			this.LogDetail = new CoachingLogDetail();
 			this.WarningLogDetail = new WarningLogDetail();
@@ -444,7 +444,8 @@ namespace eCoachingLog.ViewModels
                 IsFollowupCoachingRequired = vm.IsFollowupCoachingRequired,
                 FollowupDueDate = vm.FollowupDueDate == null ? "" : vm.FollowupDueDate.Value.ToString(),
                 CsrPromotionSelected = vm.CsrPromotionTextSelected,
-                ShowCsrPromotionQuestion = vm.ShowCsrPromotionQuestion
+                ShowCsrPromotionQuestion = vm.ShowCsrPromotionQuestion,
+                EmployeeCoachingComment = vm.LogDetail.Comment
             };
 		}
 

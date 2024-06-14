@@ -12,22 +12,27 @@
 	.donotreply {
         color: red;
 		font-size: 8pt;
+        margin-bottom: 10px;
 	}
+    .comments
+    {
+        margin-top: 4px;
+        margin-bottom: 16px;
+    }
 </style>
 </head>
 
 <body>
-	<p class="donotreply">
-        *** This is an automated email, please do not reply. ***
-	</p>
-	<p>
-		The following eCoaching Log has been completed. Please see the employee's comments below:
-	</p>
-	<p>
-		Form ID: <strong>{formName}</strong><br />
-		Comments: <strong>{comments}</strong>
-	</p>
-	    Thank you,<br />
+	<div class="donotreply">
+        *** This is an automated email. Please do not reply. ***
+	</div>
+	<div>
+		Coaching Log <b>{formName}</b> has been completed. Please see the employee's comments below:
+	</div>
+	<div class="comments">
+        <blockquote>{comments}</blockquote>
+</div>
+	Thank you,<br />
 	<div class="signature">
 		eCoaching Log Team
 	</div>

@@ -14,21 +14,21 @@
 		.donotreply {
             color: red;
 			font-size: 8pt;
+            margin-bottom: 10px;
 		}
 	</style>
 </head>
 <body>
-	<p class="donotreply">
-        *** This is an automated email, please do not reply. ***
-	</p>
-	<p>
+	<div class="donotreply">
+        *** This is an automated email. Please do not reply. ***
+	</div>
+	<div style="margin-bottom: 8px;">
 		{textFromDb}
-	</p>
-	<p>
+	</div>
+	<div style="margin-bottom: 16px;">
 		Please click <a href="{eCoachingUrl}">here</a> to open the coaching application and view the below form ID(s) on My Dashboard page for details.<br />
 		Form ID: <strong>{formName}</strong>
-	</p>
-
+	</div>
 	Thank you,<br />
 	<div class="signature">
 		eCoaching Log Team

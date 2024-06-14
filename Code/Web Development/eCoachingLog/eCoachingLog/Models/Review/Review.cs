@@ -30,7 +30,7 @@ namespace eCoachingLog.Models.Review
 		public bool? IsConfirmedCse { get; set; }
 		public DateTime? DateReviewed { get; set; }
 		public string ReasonNotCse { get; set; }
-		public string Comment { get; set; }
+		public string Comment { get; set; } // passed back from review page
         public string CsrPromotionSelected { get; set; }
 
 		public bool IsRegularPendingForm { get; set; }
@@ -58,6 +58,7 @@ namespace eCoachingLog.Models.Review
         public string FollowupDueDate { get; set; }
 
         public bool ShowCsrPromotionQuestion { get; set; }
+        public string EmployeeCoachingComment { get; set; } // displaying on review page (loaded from db), and now passed back
 
     }
 }

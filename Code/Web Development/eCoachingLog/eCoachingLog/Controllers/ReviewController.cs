@@ -430,7 +430,8 @@ namespace eCoachingLog.Controllers
 
 
         [HttpPost]
-		public ActionResult Save(ReviewViewModel vm)
+        [ValidateInput(false)]
+        public ActionResult Save(ReviewViewModel vm)
 		{
 			logger.Debug("!!!!!!!!!!Entered Save");
 

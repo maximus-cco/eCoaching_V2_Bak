@@ -395,15 +395,24 @@ namespace eCoachingLog.Services
 				if (review.IsFollowupPendingCsrForm)
 				{
 					string nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
-					bool success = reviewRepository.CompleteEmployeeAckFollowup(review, nextStatus, user);
+                    bool success = reviewRepository.CompleteEmployeeAckFollowup(review, nextStatus, user);
 
-                    // Email supervisor and/or manager upon CSR/ISG completes qn log (Pending employee followup review -> Completed)
-                    if (success
-                            && review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW
-                            && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT)
+                    if (success && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT)
                     {
-                        var mailParameter = new MailParameter(review.LogDetail, review.Comment, "Quality Now Follow-up Completed", emailTempFileName, user.EmployeeId);
-                        this.emailService.StoreNotification(mailParameter);
+                        // Email supervisor and/or manager upon CSR/ISG completes qn log (Pending employee followup review -> Completed)
+                        if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW)
+                        {
+                            var mailParameter = new MailParameter(review.LogDetail, review.Comment, "Quality Now Follow-up Completed", emailTempFileName, user.EmployeeId);
+                            this.emailService.StoreNotification(mailParameter);
+                        }
+                        else
+                        {
+                            var employeeCoachingComment = string.IsNullOrEmpty(review.EmployeeCoachingComment) ? "" : review.EmployeeCoachingComment;
+                            // review comment - this is the comment entered by employee on pending employee review page.
+                            var allEmployeeComment = employeeCoachingComment + "<br>" + review.Comment;
+                            var mailParameter = new MailParameter(review.LogDetail, allEmployeeComment, "eCoaching Log Follow-up Completed", emailTempFileName, user.EmployeeId);
+                            this.emailService.StoreNotification(mailParameter);
+                        }
                     }
 
                     return success;
