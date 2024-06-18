@@ -3,7 +3,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- =============================================
 -- Author:              Susmitha Palacherla
 -- Create date:         03/05/2014
@@ -33,7 +32,7 @@ GO
 -- TFS 27634 - To add RES - 01/19/2024
 -- TFS 27638 - To add BRW - 01/19/2024
 -- TFS 27851 - To add QRB and QRM Feeds - 03/21/2024
-
+-- TFS 28262 - To add CPATH - 06/12/2024
 -- =============================================
 CREATE OR ALTER FUNCTION [EC].[fn_intSubCoachReasonIDFromRptCode] (
   @strRptCode NVARCHAR(10)
@@ -95,6 +94,7 @@ BEGIN
 			WHEN N'BRW' THEN 325
 			WHEN N'QRB' THEN 326
 			WHEN N'QRM' THEN 326
+			WHEN N'CPA' THEN 327
         ELSE -1
       END;
     ELSE

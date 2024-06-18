@@ -1,0 +1,93 @@
+/*
+TFS 28262 - CCO Motivate and Increase CSR-Level Promotions
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+1. Add record to [EC].[DIM_Sub_Coaching_Reason]
+2. Add Record to [EC].[Feed_Contacts]
+3. Add record to [EC].[DIM_Feed_List]
+4. Add record to [EC].[Coaching_Log_StaticText]
+
+-- Test
+
+SELECT *  FROM [EC].[DIM_Sub_Coaching_Reason]WHERE [SubCoachingReason] = 'Recognition'
+SELECT * FROM [EC].[Feed_Contacts] WHERE [Category]= 'Generic'
+SELECT * FROM  [EC].[DIM_Feed_List] WHERE [Category]= 'Generic'
+
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+
+--1. Insert record for Sub Coaching Reason
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+           ('Recognition')
+GO
+
+
+--****************************************************
+--2. Insert record in Feed contacts Table
+
+INSERT INTO [EC].[Feed_Contacts]
+           ([Category]
+           ,[ReportCode]
+           ,[ReportDescription]
+           ,[PrimaryPOC]
+           ,[SecondaryPOC])
+     VALUES
+		('Generic', 'CPATH', 'CSR Uptraining Eligibility Feed', 'Sara M Stonecipher', 'Analytics Team')
+GO
+
+--****************************************************
+--3. Insert record in Feed list Table
+
+INSERT INTO [EC].[DIM_Feed_List]
+           ([CategoryID]
+           ,[Category]
+           ,[ReportID]
+           ,[ReportCode]
+           ,[Description]
+		   ,[isActive])
+     VALUES
+ (1, 'Generic',108,'CPATH','CSR Uptraining Eligibility Feed',1 )
+
+GO
+
+
+
+--****************************************************
+
+--4. Insert record to Coaching_Log_StaticText
+
+INSERT INTO [EC].[Coaching_Log_StaticText]
+           ([TextID]
+           ,[TextDescription]
+           ,[Active]
+           ,[CoachingReasonID]
+           ,[SubCoachingReasonID]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+           ,[Training]
+           ,[StartDate]
+           ,[EndDate]
+           ,[isSub]
+		   ,[ISG])
+     VALUES
+	 (104,'<p>According to the current active roster and certification data, this CSR has exceeded 6 months’ tenure in their current role and may be eligible for promotional/uptraining opportunities when new positions become available. As a supervisor, the support, guidance, and encouragement you offer to our CSRs is critical to building our internal candidate pool. Meet with your CSR to discuss their interest in future promotional opportunities, goals, and next steps. Refer to the [Motivational Coaching eLM] for more information, including tips for addressing promotional concerns and setting goals for career advancement.</p>  
+<p>Note: When discussing and planning promotional opportunities with a CSR, be sure to confirm the status of any recently issued written warnings. If the CSR has been issued a written warning within 91 days of apply for a new position, they may be ineligible for promotion until that period has lapsed.</p> ',1,25,327,1,0,0,0,0,20230601,99991231,0,1)
+
+
+--****************************************************

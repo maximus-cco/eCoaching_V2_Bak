@@ -3,7 +3,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create date: 08/31/2017
@@ -17,6 +16,7 @@ GO
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- Updated to support Maximus IDs - TFS 13777 - 05/29/2019
 --  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+-- Modified to suppport Motivate and Increase CSR Level Promotions Feed. TFS 28262 - 06/12/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Generic_Coaching_Stage] 
 @Count INT OUTPUT
@@ -27,19 +27,20 @@ BEGIN
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
 -- Populate Emp ID if LanID provided in File 
-BEGIN
 UPDATE [EC].[Generic_Coaching_Stage]
 SET [CSR_EMPID]=[EC].[fn_nvcGetEmpIdFromLanId] ([CSR_LANID],Getdate()) 
 WHERE [CSR_EMPID] is NULL
-AND [CSR_LANID] IS NOT NULL
+AND [CSR_LANID] IS NOT NULL;
 
-OPTION (MAXDOP 1)
-END
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+-- Delete Empty Rows
+DELETE FROM [EC].[Generic_Coaching_Stage]
+WHERE [Report_ID] IS NULL AND [Report_Code] IS NULL;
+
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
   
 -- Populate Attributes from Employee Table
-BEGIN
 UPDATE [EC].[Generic_Coaching_Stage]
 SET [CSR_LANID] = [EC].[fn_strEmpLanIDFromEmpID]([CSR_EMPID])
     ,[CSR_Site]= EMP.[Emp_Site]
@@ -53,35 +54,22 @@ SET [CSR_LANID] = [EC].[fn_strEmpLanIDFromEmpID]([CSR_EMPID])
     WHEN EMP.[Emp_Job_Code] IN ('WTID13','WTTI02','WTTR12','WTTR13') THEN 'T'
     ELSE 'O' END
 FROM [EC].[Generic_Coaching_Stage] STAGE JOIN [EC].[Employee_Hierarchy]EMP
-ON LTRIM(STAGE.CSR_EMPID) = LTRIM(EMP.Emp_ID)
+ON LTRIM(STAGE.CSR_EMPID) = LTRIM(EMP.Emp_ID);
 
-OPTION (MAXDOP 1)
-END
-
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 -- Reject records not belonging to CSRs and Supervisors
-BEGIN
-EXEC [EC].[sp_InsertInto_Generic_Rejected] 
-END
+EXEC [EC].[sp_InsertInto_Generic_Rejected]; 
 
-WAITFOR DELAY '00:00:00.03' -- Wait for 3 ms
-
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
 
 -- Delete rejected records
-
-BEGIN
 DELETE FROM [EC].[Generic_Coaching_Stage]
 WHERE [Reject_Reason]is not NULL
-SELECT @Count = @@ROWCOUNT
-
-OPTION (MAXDOP 1)
-END
+SELECT @Count = @@ROWCOUNT;
 
 -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];	
-
-
 
 END  -- [EC].[sp_Update_Generic_Coaching_Stage]
 GO

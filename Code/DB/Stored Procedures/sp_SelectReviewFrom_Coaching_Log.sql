@@ -3,8 +3,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -25,6 +23,7 @@ GO
 --  Updated to return Verint ID Strings for Aud feed records. TFS 27135 - 10/2/2023
 -- Changes to suppport NGD feed- TFS 27396  - 11/24/2023
 -- Updated to support QN Rewards eCoaching logs. TFS 27851 - 03/21/2024
+-- Modified to suppport Motivate and Increase CSR Level Promotions Feed. TFS 28262 - 06/12/2024
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -40,13 +39,19 @@ DECLARE
   @nvcSQL3 nvarchar(max)= '',
   @nvcSQL4 nvarchar(1000)= '',
   @nvcEmpID nvarchar(10),
-  @nvcMgrID nvarchar(10);
+  @nvcMgrID nvarchar(10),
+  @cpathtext nvarchar(2000);
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
 SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [CoachingID] = @intLogId);	 
 SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] = @nvcEmpID);
+SET @cpathtext = 'Meet with your supervisor to discuss interest in promotional opportunities. Use the following resources for more information about the various CCO career pathways, to hone your knowledge and professional skills, and to stay informed about available job opportunities:<br>
+            <a href=''''https://maximus365.sharepoint.com/sites/CCO/Resources/CCO_Career_Path/SitePages/Home.aspx''''target=''''_blank''''>CSR Career Path Home</a><br>
+			<a href=''''https://maximus365.sharepoint.com/sites/CCO/Connection/Lists/Jobs/currentpostings.aspx?viewpath=%2Fsites%2FCCO%2FConnection%2FLists%2FJobs%2Fcurrentpostings%2Easpx''''target=''''_blank''''>CCO Jobs Page</a>'
+
+--PRINT @cpathtext;
 
 SET @nvcSQL1 = @nvcSQL1 +  N'
 SELECT cl.CoachingID numID,
@@ -56,8 +61,6 @@ SELECT cl.CoachingID numID,
   sc.CoachingSource	strFormType,
   cl.StatusId strStatusID,
   s.Status strFormStatus,
-  --CASE WHEN cc.WAH_RTS IS NOT NULL THEN NULL ELSE cl.EventDate END EventDate,
-  --CASE WHEN cc.WAH_RTS IS NOT NULL THEN COALESCE(cl.EventDate, cl.CoachingDate)  ELSE  cl.CoachingDate END CoachingDate,
   cl.EventDate,
   cl.CoachingDate,
   cl.SubmitterID strSubmitterID,
@@ -183,6 +186,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   CASE WHEN (cc.ATTAP IS NOT NULL AND cl.strReportCode LIKE ''APW%'') THEN 1 ELSE 0 END "OTH / APW",
   CASE WHEN (cc.ATTAP IS NOT NULL AND cl.strReportCode LIKE ''APS%'') THEN 1 ELSE 0 END "OTH / APS",
   CASE WHEN (cc.AED IS NOT NULL AND cl.strReportCode LIKE ''AED%'') THEN 1 ELSE 0 END "OTH / AED",
+  CASE WHEN (cc.CPATH IS NOT NULL AND cl.strReportCode LIKE ''CPATH%'') THEN 1 ELSE 0 END "OTH / CPATH",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSR2%'') THEN 1 ELSE 0 END "PSC / MSR",
   CASE WHEN (cc.NPN_PSC IS NOT NULL AND cl.strReportCode LIKE ''MSRS%'') THEN 1 ELSE 0 END "PSC / MSRS",
   CASE WHEN (cc.QNB IS NOT NULL AND cl.strReportCode LIKE ''BQN2%'') THEN 1 ELSE 0 END "Quality / BQN",
@@ -192,8 +196,8 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQM2%'') THEN 1 ELSE 0 END "Quality / BQM",
   CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQMS%'') THEN 1 ELSE 0 END "Quality / BQMS",
   CASE WHEN (cc.QOR IS NOT NULL AND cl.strReportCode LIKE ''QR%'') THEN 1 ELSE 0 END "Quality / QOR",
-  cc.WAH_RTS, 
-  cl.Description txtDescription,
+  cc.WAH_RTS,
+  CASE WHEN cl.strReportCode LIKE ''CPATH%'' THEN cl.Description + ''<br>''  + '''+@cpathtext+'''  ELSE cl.Description END txtDescription,
   cl.CoachingNotes txtCoachingNotes,
   cl.isVerified,
   cl.SubmittedDate,
@@ -264,6 +268,7 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 5 AND [clr].[SubCoachingReasonID] = 42) THEN [clr].[Value] ELSE NULL END)	SUR,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 63) THEN [clr].[Value] ELSE NULL END)	WAH_RTS,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 326) THEN [clr].[Value] ELSE NULL END) QOR,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 25 AND [clr].[SubCoachingReasonID] = 327) THEN [clr].[Value] ELSE NULL END) CPATH,
 	[EC].[fn_strCoachingLogStatictext]([ccl].[CoachingID]) strStaticText
   FROM [EC].[Coaching_Log_Reason] clr  WITH (NOLOCK),
     [EC].[DIM_Coaching_Reason] cr,

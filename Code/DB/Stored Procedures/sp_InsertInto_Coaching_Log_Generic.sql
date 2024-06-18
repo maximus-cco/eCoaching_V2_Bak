@@ -3,8 +3,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        4/11/2016
@@ -20,6 +18,7 @@ GO
 -- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
 -- Changes to support Promotions Feed - TFS 27634 - 01/19/2024
 --  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+-- Modified to suppport Motivate and Increase CSR Level Promotions Feed. TFS 28262 - 06/12/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Generic] 
 (@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
@@ -31,12 +30,12 @@ SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRANSACTION
 BEGIN TRY
 
-      DECLARE @dtmDate DATETIME
+      DECLARE @dtmDate DATETIME;
 	  -- Fetches the Date of the Insert
-      SET @dtmDate  = GETDATE()   
+      SET @dtmDate  = GETDATE();   
   
 OPEN SYMMETRIC KEY [CoachingKey]  
-DECRYPTION BY CERTIFICATE [CoachingCert] 
+DECRYPTION BY CERTIFICATE [CoachingCert];
 
      
 -- Inserts records from the Generic_Coaching_Stage table to the Coaching_Log Table
@@ -136,9 +135,7 @@ CASE cs.Program
 	                   
 from [EC].[Generic_Coaching_Stage] cs  join EC.Employee_Hierarchy csr on cs.CSR_EMPID = csr.Emp_ID
 left outer join EC.Coaching_Log cf on cs.Report_ID = cf.numReportID and cs.Report_Code = cf.strReportCode
-where cf.numReportID is Null and cf.strReportCode is null
-
-OPTION (MAXDOP 1)
+where cf.numReportID is Null and cf.strReportCode is null;
 
 SELECT @Count =@@ROWCOUNT
 SET @ReportCode =  (SELECT DISTINCT  LEFT(Report_Code , LEN(Report_Code)-8)  FROM  [EC].[Generic_Coaching_Stage]);
@@ -149,8 +146,8 @@ WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
 UPDATE [EC].[Coaching_Log]
 SET [FormName] = 'eCL-M-'+[FormName] +'-'+ convert(varchar,CoachingID)
-where [FormName] not like 'eCL%'    
-OPTION (MAXDOP 1)
+where [FormName] not like 'eCL%' ;   
+
 
 WAITFOR DELAY '00:00:00:05'  -- Wait for 5 ms
 
@@ -168,6 +165,7 @@ INSERT INTO [EC].[Coaching_Log_Reason]
 		 WHEN cs.[Report_Code] like 'OTH%' THEN cs.CoachingReason_ID	
 		 WHEN cs.[Report_Code] like 'SUR%' THEN 5	
 		 WHEN cs.[Report_Code] like 'RES%' THEN 7	
+		 WHEN cs.[Report_Code] like 'CPATH%' THEN 25	
 		 ELSE 3	
  END [CoachingReasonID],
  
@@ -187,14 +185,13 @@ INSERT INTO [EC].[Coaching_Log_Reason]
     ON cs.[Report_ID] = cf.[numReportID] AND  cs.[Report_Code] = cf.[strReportCode]
     LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr
     ON cf.[CoachingID] = cr.[CoachingID]  
-    WHERE cr.[CoachingID] IS NULL 
- OPTION (MAXDOP 1)   
+    WHERE cr.[CoachingID] IS NULL; 
+
  
   -- Truncate Staging Table
 --Truncate Table [EC].[Generic_Coaching_Stage]
 
-
-CLOSE SYMMETRIC KEY [CoachingKey]   
+CLOSE SYMMETRIC KEY [CoachingKey];   
                   
 				                   
 COMMIT TRANSACTION
