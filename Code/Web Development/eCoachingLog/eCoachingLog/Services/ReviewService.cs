@@ -101,13 +101,6 @@ namespace eCoachingLog.Services
 		{
             var log = review.LogDetail;
 
-            if (log.IsCpath
-                && (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
-                && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
-            {
-                return log.AdditionalText;
-            }
-
             if (log.IsQn 
                 && (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
                 && (log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW 
@@ -117,12 +110,11 @@ namespace eCoachingLog.Services
                 return log.AdditionalText;
             }
 
-            if ((log.IsOmrAudio || log.IsNgdsLoginOutsideShift)
-                && (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
-                && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+            if ((user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
+                && log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW
+                && !String.IsNullOrEmpty(log.AdditionalText))
             {
-                var additionalText = log.AdditionalText == null ? "" : log.AdditionalText.Replace("<p>", "").Replace("</p>","");
-                return additionalText;
+                return log.AdditionalText.Replace("<p>", "").Replace("</p>", "");
             }
 
             if (log.IsSurvey 
