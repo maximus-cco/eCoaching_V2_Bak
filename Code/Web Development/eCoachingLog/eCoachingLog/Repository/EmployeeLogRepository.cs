@@ -184,6 +184,9 @@ namespace eCoachingLog.Repository
                         logDetail.IsCpath = Convert.ToInt16(dataReader["OTH / CPATH"]) == 0 ? false : true;
                         logDetail.IsMsr = Convert.ToInt16(dataReader["PSC / MSR"]) == 0 ? false : true;
 						logDetail.IsMsrs = Convert.ToInt16(dataReader["PSC / MSRS"]) == 0 ? false : true;
+                        logDetail.IsAsrAht = Convert.ToInt16(dataReader["ASR / AHT"]) == 0 ? false : true;
+                        logDetail.IsAsrHold = Convert.ToInt16(dataReader["ASR / Hold"]) == 0 ? false : true;
+                        logDetail.IsAsrTransfer = Convert.ToInt16(dataReader["ASR / Transfer"]) == 0 ? false : true;
                         logDetail.SupervisorEmail = dataReader["strEmpSupEmail"].ToString();
 						logDetail.ManagerEmail = dataReader["strEmpMgrEmail"].ToString();
 						logDetail.IsQn = Convert.ToInt16(dataReader["isIQSQN"]) == 1 ? true : false;

@@ -18,8 +18,12 @@ namespace eCoachingLog.Models.Common
 
         // Review Comments
         public BaseLogDetail LogDetail { get; set; }
+        public string MainReasonNotCoachable { get; set; }
+        public string DetailReasonNotCoachable { get; set; }
         public string Comments { get; set; }
         public string Subject { get; set; }
+        public string To { get; set; }
+        public string Cc { get; set; }
 
         public MailParameter(List<NewSubmissionResult> newSubmissionResult, int moduleId, bool isWarning, bool isCse, int sourceId, string templateFileName, bool saveMailStatus, string userId)
         {
@@ -34,7 +38,8 @@ namespace eCoachingLog.Models.Common
             UserId = userId;
         }
 
-        public MailParameter(BaseLogDetail logDetail, string comments, string subject, string templateFileName, string userId)
+        public MailParameter(BaseLogDetail logDetail, string reasonNotCoachable, string detailReasonNotCoachable, string comments, string subject, string templateFileName, 
+            string userId, string to = null, string cc = null)
         {
             MailSource = "UI-Comments";
             LogDetail = logDetail;
@@ -42,6 +47,10 @@ namespace eCoachingLog.Models.Common
             Subject = subject;
             TemplateFileName = templateFileName;
             UserId = userId;
+            MainReasonNotCoachable = reasonNotCoachable;
+            DetailReasonNotCoachable = detailReasonNotCoachable;
+            To = to;
+            Cc = cc;
         }
     }
 }

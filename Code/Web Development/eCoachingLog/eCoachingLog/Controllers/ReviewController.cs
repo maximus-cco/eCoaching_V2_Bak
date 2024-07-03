@@ -451,6 +451,11 @@ namespace eCoachingLog.Controllers
 				{
 					logId = vm.LogDetail == null ? "logidnull" : vm.LogDetail.LogId.ToString();
 					emailTempFileName = Server.MapPath("~/EmailTemplates/CoachingLogCompleted.html");
+
+                    if (vm.IsResearchPendingForm && !vm.IsCoachingRequired)
+                    {
+                        emailTempFileName = Server.MapPath("~/EmailTemplates/NotCoachable.html");
+                    }
 				}
 
 				try

@@ -317,6 +317,18 @@ namespace eCoachingLog.Services
 			{
 				reportCode = Constants.LOG_REPORT_CODE_OTHDTT;
 			}
+            else if (log.IsAsrAht)
+            {
+                reportCode = Constants.LOG_REPORT_CODE_ASRAHT;
+            } 
+            else if (log.IsAsrHold)
+            {
+                reportCode = Constants.LOG_REPORT_CODE_ASRHOLD;
+            }
+            else if (log.IsAsrTransfer)
+            {
+                reportCode = Constants.LOG_REPORT_CODE_ASRTRANSFER;
+            }
 			else
 			{
 				reportCode = Constants.LOG_REPORT_CODE_OTHER;
@@ -402,7 +414,7 @@ namespace eCoachingLog.Services
                         // Email supervisor and/or manager upon CSR/ISG completes qn log (Pending employee followup review -> Completed)
                         if (review.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_FOLLOWUP_EMPLOYEE_REVIEW)
                         {
-                            var mailParameter = new MailParameter(review.LogDetail, review.Comment, "Quality Now Follow-up Completed", emailTempFileName, user.EmployeeId);
+                            var mailParameter = new MailParameter(review.LogDetail, null, null, review.Comment, "Quality Now Follow-up Completed", emailTempFileName, user.EmployeeId);
                             this.emailService.StoreNotification(mailParameter);
                         }
                         else
@@ -410,7 +422,7 @@ namespace eCoachingLog.Services
                             var employeeCoachingComment = string.IsNullOrEmpty(review.EmployeeCoachingComment) ? "" : review.EmployeeCoachingComment;
                             // review comment - this is the comment entered by employee on pending employee review page.
                             var allEmployeeComment = employeeCoachingComment + "<br>" + review.Comment;
-                            var mailParameter = new MailParameter(review.LogDetail, allEmployeeComment, "eCoaching Log Follow-up Completed", emailTempFileName, user.EmployeeId);
+                            var mailParameter = new MailParameter(review.LogDetail, null, null, allEmployeeComment, "eCoaching Log Follow-up Completed", emailTempFileName, user.EmployeeId);
                             this.emailService.StoreNotification(mailParameter);
                         }
                     }
@@ -423,7 +435,7 @@ namespace eCoachingLog.Services
 
 			if (review.IsResearchPendingForm)
 			{
-				return CompleteResearchPendingReview(review, user);
+				return CompleteResearchPendingReview(review, emailTempFileName, user);
 			}
 
 			if (review.IsCsePendingForm)
@@ -458,7 +470,7 @@ namespace eCoachingLog.Services
 					&& nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.WarningLogDetail.EmployeeId == user.EmployeeId)
 			{
-                var mailParameter = new MailParameter(review.WarningLogDetail, review.Comment, subject, emailTempFileName, user.EmployeeId);
+                var mailParameter = new MailParameter(review.WarningLogDetail, null, null, review.Comment, subject, emailTempFileName, user.EmployeeId);
                 this.emailService.StoreNotification(mailParameter);
             }
 
@@ -555,28 +567,35 @@ namespace eCoachingLog.Services
                     && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.LogDetail.EmployeeId == user.EmployeeId)
 			{
-                var mailParameter = new MailParameter(review.LogDetail, review.Comment, "eCoaching Log Completed", emailTempFileName, user.EmployeeId);
+                var mailParameter = new MailParameter(review.LogDetail, null, null, review.Comment, "eCoaching Log Completed", emailTempFileName, user.EmployeeId);
                 this.emailService.StoreNotification(mailParameter);
 			}
 			return success;
 		}
 
-		private bool CompleteResearchPendingReview(Review review, User user)
+		private bool CompleteResearchPendingReview(Review review, string emailTempFileName, User user)
 		{
 			if (review.LogStatusLevel == 2)
 			{
-				if (review.IsCoachingRequired)
-				{
-					review.DetailReasonCoachable = FormatCoachingNotes(review, user);
-				}
-				else
-				{
-					review.DetailReasonNotCoachable = FormatCoachingNotes(review, user);
-				}
+                if (review.IsCoachingRequired)
+                {
+                    review.DetailReasonCoachable = FormatCoachingNotes(review, user);
+                }
+                else // not coachable
+                {
+                    review.DetailReasonNotCoachable = FormatCoachingNotes(review, user);
+                    if (review.LogDetail.IsAsrAht || review.LogDetail.IsAsrHold || review.LogDetail.IsAsrTransfer)
+                    {
+                        // send manager email for not coachable ASR logs
+                        var mailParameter = new MailParameter(review.LogDetail, review.MainReasonNotCoachable, review.DetailReasonNotCoachable, review.Comment, "ASR Log Not Coachable", emailTempFileName, user.EmployeeId, review.LogDetail.ManagerEmail);
+                        this.emailService.StoreNotification(mailParameter);
+                    }
+                }
 				// Don't save date entered on the page in coaching_log.CoachingDate, it will be with coachingNotes.
 				review.DateCoached = null;
 			}
-			return reviewRepository.CompleteResearchPendingReview(review, GetNextStatus(review, user), user);
+            return true;
+			//return reviewRepository.CompleteResearchPendingReview(review, GetNextStatus(review, user), user);
 		}
 
 		private string FormatCoachingNotes(Review review, User user)

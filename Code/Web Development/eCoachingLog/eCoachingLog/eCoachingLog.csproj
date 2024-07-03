@@ -312,6 +312,7 @@
     <Content Include="EmailTemplates\CoachingLogCompleted.html" />
     <Content Include="EmailTemplates\NewSubmissionCoaching.html" />
     <Content Include="EmailTemplates\NewSubmissionWarning.html" />
+    <Content Include="EmailTemplates\NotCoachable.html" />
     <Content Include="EmailTemplates\WarningLogCompleted.html" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

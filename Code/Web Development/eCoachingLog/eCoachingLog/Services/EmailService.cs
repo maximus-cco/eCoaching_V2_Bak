@@ -150,19 +150,19 @@ namespace eCoachingLog.Services
             {
                 // generate mail
                 var mail = new Mail();
-                if (!string.IsNullOrEmpty(log.SupervisorEmail))
+                mail.To = !string.IsNullOrEmpty(mailParameter.To) ? mailParameter.To : log.SupervisorEmail;
+                mail.Cc = !string.IsNullOrEmpty(mailParameter.Cc) ? mailParameter.To : log.ManagerEmail;
+                if (String.Equals(mail.To, mail.Cc, StringComparison.OrdinalIgnoreCase))
                 {
-                    mail.To = log.SupervisorEmail;
-                }
-                if (!string.IsNullOrEmpty(log.ManagerEmail))
-                {
-                    mail.Cc = log.ManagerEmail;
+                    mail.Cc = null;
                 }
 
                 string bodyText = FileUtil.ReadFile(mailParameter.TemplateFileName);
                 mail.IsBodyHtml = true;
                 mail.Body = bodyText.Replace("{formName}", log.FormName);
                 mail.Body = mail.Body.Replace("{comments}", mailParameter.Comments);
+                mail.Body = mail.Body.Replace("{mainReasonNotCoachable}", mailParameter.MainReasonNotCoachable);
+                mail.Body = mail.Body.Replace("{detailReasonNotCoachable}", mailParameter.DetailReasonNotCoachable);
                 mail.From = from;
                 mail.FromDisplayName = fromDisplayName;
                 mail.Subject = mailParameter.Subject + " (" + log.EmployeeName + ")";

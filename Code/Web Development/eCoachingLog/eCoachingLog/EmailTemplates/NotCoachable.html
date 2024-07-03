@@ -1,0 +1,45 @@
+﻿<html>
+<head>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            font-size: 10pt;
+        }
+
+        .signature {
+            color: rgb(32, 87, 148);
+            font-size: 11pt;
+        }
+
+        .donotreply {
+            color: red;
+            font-size: 8pt;
+            margin-bottom: 10px;
+        }
+
+        .comments.reason {
+            margin-top: 4px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="donotreply">
+        *** This is an automated email. Please do not reply. ***
+    </div>
+    Log <b>{formName}</b> has been marked as not coachable.  
+    <div class="reason">
+        Reason: {mainReasonNotCoachable}
+    </div>
+    <div class="comments">
+        Comments: &quot;{detailReasonNotCoachable}&quot;.
+    </div>
+
+    <br />
+    Thank you,<br />
+    <div class="signature">
+        eCoaching Log Team
+    </div>
+</body>
+</html>

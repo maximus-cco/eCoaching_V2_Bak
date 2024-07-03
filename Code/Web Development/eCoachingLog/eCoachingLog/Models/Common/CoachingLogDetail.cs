@@ -57,6 +57,9 @@ namespace eCoachingLog.Models.Common
         public bool IsOmrAudio { get; set; }
         public bool IsNgdsLoginOutsideShift { get; set; } // NGD ID system log ins outside of the shift
         public bool IsCpath { get; set; } 
+        public bool IsAsrHold { get; set; }
+        public bool IsAsrTransfer { get; set; }
+        public bool IsAsrAht { get; set; }
 
         public bool HasEmpAcknowledged { get; set; }
         public bool HasSupAcknowledged { get; set; }

@@ -5,6 +5,8 @@
 	@Html.HiddenFor(m => m.IsResearchPendingForm)
 	@Html.HiddenFor(m => m.LogStatusLevel)
 	@Html.HiddenFor(m => m.LogDetail.LogId)
+    @Html.HiddenFor(m => m.LogDetail.FormName)
+    @Html.HiddenFor(m => m.LogDetail.EmployeeName)
 	@Html.HiddenFor(m => m.LogDetail.ModuleId)
 	@Html.HiddenFor(m => m.LogDetail.StatusId)
 	@Html.HiddenFor(m => m.LogDetail.IsCurrentCoachingInitiative)
@@ -19,9 +21,13 @@
 	@Html.HiddenFor(m => m.LogDetail.IsTrainingOverdue)
 	@Html.HiddenFor(m => m.LogDetail.IsBrl)
 	@Html.HiddenFor(m => m.LogDetail.IsBrn)
+    @Html.HiddenFor(m => m.LogDetail.IsAsrAht)
+    @Html.HiddenFor(m => m.LogDetail.IsAsrHold)
+    @Html.HiddenFor(m => m.LogDetail.IsAsrTransfer)
 	@Html.HiddenFor(m => m.LogDetail.CoachingNotes)
 	@Html.HiddenFor(m => m.LogDetail.SupervisorEmpId)
 	@Html.HiddenFor(m => m.LogDetail.ReassignedToEmpId)
+    @Html.HiddenFor(m => m.LogDetail.ManagerEmail)
 
 	<div class='form-group mt-2' id='div-date-coached'>
 		<label for="DateCoached" id="label-date-coached" class="required">Date:</label>
