@@ -594,8 +594,8 @@ namespace eCoachingLog.Services
 				// Don't save date entered on the page in coaching_log.CoachingDate, it will be with coachingNotes.
 				review.DateCoached = null;
 			}
-            return true;
-			//return reviewRepository.CompleteResearchPendingReview(review, GetNextStatus(review, user), user);
+
+			return reviewRepository.CompleteResearchPendingReview(review, GetNextStatus(review, user), user);
 		}
 
 		private string FormatCoachingNotes(Review review, User user)
