@@ -16,11 +16,12 @@ Summary
 6. Add records to [EC].[Email_Notifications]
 
 -- Test
-SELECT *  FROM [EC].[DIM_Source] WHERE SubCoachingSource = 'Automated Supervisor Reporting'
-SELECT *  FROM [EC].[DIM_Sub_Coaching_Reason] WHERE [SubCoachingReason] = 'Recognition'
 SELECT * FROM [EC].[Feed_Contacts] WHERE [Category]= 'Outliers'
 SELECT * FROM  [EC].[DIM_Feed_List] WHERE [Category]= 'Outliers'
-SELECT * FROM [EC].[Coaching_Reason_Selection] WHERE CoachingReason = 'Call Efficiency' -- 10 records
+SELECT *  FROM [EC].[DIM_Source] WHERE SubCoachingSource = 'Automated Supervisor Reporting'
+SELECT *  FROM [EC].[DIM_Coaching_Reason] WHERE CoachingReason = 'Call Efficiency'
+SELECT *  FROM [EC].[DIM_Sub_Coaching_Reason] WHERE SubCoachingReason in ('Appropriate use of hold', 'Appropriate use of transfer', 'Call duration')
+SELECT * FROM [EC].[Coaching_Reason_Selection] WHERE CoachingReason = 'Call Efficiency' and SubCoachingReasonID in (230, 328, 329)
 SELECT * FROM [EC].[Email_Notifications]  where SubSource = 'Automated Supervisor Reporting'
 */
 
@@ -45,6 +46,7 @@ INSERT INTO [EC].[DIM_Source]
      VALUES
 	 (138, 'Direct', 'Automated Supervisor Reporting', 1,1, 0,0,0,0,1),
 	 (238, 'Indirect', 'Automated Supervisor Reporting', 1,1, 0,0,0,0,1)
+GO
 
 --****************************************************
 
@@ -112,7 +114,7 @@ INSERT INTO [EC].[Coaching_Reason_Selection]
      VALUES
 (55,'Call Efficiency',328,'Appropriate use of transfer',1,1,1,1,1,1,0,0,0,0,0,0,1),
 (55,'Call Efficiency',329,'Call duration',1,1,1,1,1,1,0,0,0,0,0,0,1)
-
+GO
 
 --****************************************************
 
