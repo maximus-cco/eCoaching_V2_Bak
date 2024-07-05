@@ -17,9 +17,8 @@
             margin-bottom: 10px;
         }
 
-        .comments.reason {
-            margin-top: 4px;
-            margin-bottom: 16px;
+        .comments, .reason {
+            margin-top: 8px;
         }
     </style>
 </head>
@@ -30,12 +29,16 @@
     </div>
     Log <b>{formName}</b> is not coachable.  
     <div class="reason">
-        Reason: {mainReasonNotCoachable}
+        <b>Reason:</b>
+        <br /> 
+        {mainReasonNotCoachable}
     </div>
     <div class="comments">
-        Comments: &quot;{detailReasonNotCoachable}&quot;.
+        <b>Comments:</b>
+        <br />
+        {detailReasonNotCoachable}
     </div>
-
+    <br />
     <br />
     Thank you,<br />
     <div class="signature">
