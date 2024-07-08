@@ -233,8 +233,18 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@nvcReviewSupID", user.EmployeeId);
                 command.Parameters.AddWithValueSafe("@nvcFormStatus", nextStatus);
                 command.Parameters.AddWithValueSafe("@dtmSupReviewedAutoDate", DateTime.Now);
-                command.Parameters.AddWithValueSafe("@bitisFollowupRequired", review.IsFollowupCoachingRequired);
-                command.Parameters.AddWithValueSafe("@dtmSupFollowupDueDate", review.FollowupDueDate);
+                // "Is follow-up required?" on Review page
+                if (review.IsFollowupCoachingRequired.HasValue)
+                {
+                    command.Parameters.AddWithValueSafe("@bitisFollowupRequired", review.IsFollowupCoachingRequired);
+                    command.Parameters.AddWithValueSafe("@dtmSupFollowupDueDate", review.FollowupDueDate);
+                } else
+                {
+                    command.Parameters.AddWithValueSafe("@bitisFollowupRequired", review.LogDetail.IsFollowupRequired);
+                    logger.Debug(review.LogDetail.FollowupDueDate);
+                    command.Parameters.AddWithValueSafe("@dtmSupFollowupDueDate", DateTime.Parse(review.LogDetail.FollowupDueDate.Replace(Constants.TIMEZONE, "")));
+                }
+
                 command.Parameters.AddWithValueSafe("@nvctxtCoachingNotes", review.DetailsCoached);
                 //command.Parameters.AddWithValueSafe("@isFollowupCoachingRequired", review.IsFollowupCoachingRequired);
                 //command.Parameters.AddWithValueSafe("@followupDueDate", review.FollowupDueDate);

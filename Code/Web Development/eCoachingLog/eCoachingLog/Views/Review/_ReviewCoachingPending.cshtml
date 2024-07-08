@@ -39,6 +39,7 @@
 	@Html.HiddenFor(m => m.IsShortCallPendingManagerForm)
 	@Html.HiddenFor(m => m.LogDetail.CoachingNotes)
     @Html.HiddenFor(m => m.ShowFollowupCoaching)
+    @Html.HiddenFor(m => m.LogDetail.IsFollowupRequired)
     @Html.HiddenFor(m => m.LogDetail.FollowupDueDate)
 
     if (@Model.ShowFollowupCoaching)

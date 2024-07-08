@@ -1,25 +1,24 @@
 ﻿<html>
 <head>
-<style>
-	body {
-		font-family: Tahoma, sans-serif;
-		font-size: 10pt;
-	}
-	.signature {
-		color: rgb(32, 87, 148);
-		font-size: 11pt;
-	}
-	.donotreply {
-        color: red;
-		font-size: 8pt;
-        margin-bottom: 10px;
-	}
-    .comments
-    {
-        margin-top: 4px;
-        margin-bottom: 16px;
-    }
-</style>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            font-size: 10pt;
+        }
+        .signature {
+            color: rgb(32, 87, 148);
+            font-size: 11pt;
+        }
+        .donotreply {
+            color: red;
+            font-size: 8pt;
+            margin-bottom: 10px;
+        }
+        .comments {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -27,12 +26,11 @@
         *** This is an automated email. Please do not reply. ***
 	</div>
     Coaching Log <b>{formName}</b> is completed.
-    <div class="comments">
-        Employee Comments:
+    <div class="comments" >
+        <b>Employee Comments:</b>
         <br />
-        &quot;{comments}&quot;.
+        {comments}
     </div>
-
 	Thank you,<br />
 	<div class="signature">
 		eCoaching Log Team
