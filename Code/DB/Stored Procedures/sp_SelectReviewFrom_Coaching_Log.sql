@@ -48,7 +48,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 SET @nvcEmpID = (SELECT [EmpID] From [EC].[Coaching_Log] WHERE [CoachingID] = @intLogId);	 
 SET @nvcMgrID = (SELECT [Mgr_ID] From [EC].[Employee_Hierarchy] WHERE [Emp_ID] = @nvcEmpID);
 SET @cpathtext = 'Meet with your supervisor to discuss interest in promotional opportunities. Use the following resources for more information about the various CCO career pathways, to hone your knowledge and professional skills, and to stay informed about available job opportunities:<br>
-            <a href=''''https://maximus365.sharepoint.com/sites/CCO/Resources/CCO_Career_Path/SitePages/Home.aspx''''target=''''_blank''''>CSR Career Path Home</a><br>
+            <a href=''''https://maximus365.sharepoint.com/sites/CCO/Resources/CCO_Career_Path''''target=''''_blank''''>CSR Career Path Home</a><br>
 			<a href=''''https://maximus365.sharepoint.com/sites/CCO/Connection/Lists/Jobs/currentpostings.aspx?viewpath=%2Fsites%2FCCO%2FConnection%2FLists%2FJobs%2Fcurrentpostings%2Easpx''''target=''''_blank''''>CCO Jobs Page</a>'
 
 --PRINT @cpathtext;
