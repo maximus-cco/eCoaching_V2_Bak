@@ -3,6 +3,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --    ====================================================================
 --    Author:                 Susmitha Palacherla
 --    Create Date:      11/16/12
@@ -13,6 +14,7 @@ GO
 --    TFS 7137 move my dashboard to new architecture - 06/12/2018
 --    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --    Modified to suppport Motivate and Increase CSR Level Promotions Feed. TFS 28262 - 06/12/2024
+--    Modified to make params optional to fix post prod bug. TFS 28262 - 07/11/2024
 --    =====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending]
 (
@@ -20,8 +22,8 @@ CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Supervisor_Pending
   @nvcFormStatus Nvarchar(60),
   @nvcReviewSupID Nvarchar(10),
   @dtmSupReviewedAutoDate datetime,
-  @bitisFollowupRequired bit,
-  @dtmSupFollowupDueDate datetime,
+  @bitisFollowupRequired bit = NULL,
+  @dtmSupFollowupDueDate datetime = NULL,
   @nvctxtCoachingNotes Nvarchar(max) 
 )
 AS
@@ -46,8 +48,8 @@ SET
   StatusID = @intStatusID,
   Review_SupID = @nvcReviewSupID,
   SupReviewedAutoDate = @dtmSupReviewedAutoDate,
-  IsFollowupRequired = @bitisFollowupRequired, 
-  FollowupDueDate = @dtmSupFollowupDueDate,
+  IsFollowupRequired =  CASE WHEN  @bitisFollowupRequired IS NOT NULL THEN @bitisFollowupRequired ELSE IsFollowupRequired END , 
+  FollowupDueDate = CASE WHEN @dtmSupFollowupDueDate IS NOT NULL THEN @dtmSupFollowupDueDate ELSE FollowupDueDate END ,
   CoachingNotes = @nvctxtCoachingNotes,
   ReassignCount = 0
 WHERE CoachingID = @nvcFormID;
