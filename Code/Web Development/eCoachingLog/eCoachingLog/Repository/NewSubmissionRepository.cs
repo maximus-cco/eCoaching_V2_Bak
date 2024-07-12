@@ -133,8 +133,7 @@ namespace eCoachingLog.Repository
                 {
                     count++;
                     command.Parameters.AddWithValueSafe("@intCoachReasonID" + count, cr.ID);
-                    string temp = cr.IsOpportunity.Value ? "Opportunity" : "Reinforcement";
-                    command.Parameters.AddWithValueSafe("@nvcValue" + count, temp);
+                    command.Parameters.AddWithValueSafe("@nvcValue" + count, cr.Type);
                     // Conconcate all sub reason ids using ","
                     command.Parameters.AddWithValueSafe("@nvcSubCoachReasonID" + count, String.Join(",", cr.SubReasonIds));
                 }

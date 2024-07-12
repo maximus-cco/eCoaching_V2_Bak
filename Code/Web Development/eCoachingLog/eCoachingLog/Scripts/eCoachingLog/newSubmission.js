@@ -680,9 +680,9 @@ $(function () {
     }
 
     function validateOpportunity(target) {
-    	var errorElement = target.nextAll('.validation-value').first().find('span[data-valmsg-for="IsOpportunity"]');
+    	var errorElement = target.nextAll('.validation-value').first().find('span[data-valmsg-for="Type"]');
         var errorMessage = 'Please make a selection.'
-        var isValid = target.nextAll('.coaching-values').find('input:radio[name*="IsOpportunity"]').is(':checked');
+        var isValid = target.nextAll('.coaching-values').find('input:radio[name*="Type"]').is(':checked');
         if (!isValid) {
             errorElement.addClass('field-validation-error').removeClass('field-validation-valid').text(errorMessage);
         } else {

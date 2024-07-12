@@ -1,10 +1,11 @@
 ﻿@model eCoachingLog.Models.Common.CoachingReason
 @{
-	Layout = null;
-	var rIndex = ViewData["index"];
-	var reasonId = "CoachingReasons[" + rIndex + "].IsChecked";
-	var valueId = "CoachingReasons[" + rIndex + "].IsOpportunity";
-	var subReasonIds = "CoachingReasons[" + rIndex + "].SubReasonIds";
+    Layout = null;
+    var rIndex = ViewData["index"];
+    var reasonId = "CoachingReasons[" + rIndex + "].IsChecked";
+    // opportunity/reinforcement/research required: 3
+    var type = "CoachingReasons[" + rIndex + "].Type";
+     var subReasonIds = "CoachingReasons[" + rIndex + "].SubReasonIds";
 }
 @Html.CheckBoxFor(m => m.IsChecked, new { @class = "reason-checkbox", @Name = reasonId, id = @rIndex})
 <input type="hidden" name="reasonIndex" class="reasonIndex" value="@rIndex"/>
@@ -18,19 +19,19 @@
 	<div class='col-sm-12 coaching-values'>
 		@if (Model.OpportunityOption)
 		{
-			@Html.RadioButtonFor(m => m.IsOpportunity, "true", new { @class = "value-radio", @Name= valueId }) @:Opportunity&nbsp;&nbsp;
+			@Html.RadioButtonFor(m => m.Type, "Opportunity", new { @class = "value-radio", @Name= type }) @:Opportunity&nbsp;&nbsp;
 		}
 		@if (Model.ReinforcementOption)
 		{
-			@Html.RadioButtonFor(m => m.IsOpportunity, "false", new { @class = "value-radio", @Name = valueId }) @:Reinforcement&nbsp;&nbsp;
+			@Html.RadioButtonFor(m => m.Type, "Reinforcement", new { @class = "value-radio", @Name = type }) @:Reinforcement&nbsp;&nbsp;
 		}
         @if (Model.ResearchOption)
         {
-            @Html.RadioButtonFor(m => m.IsResearchRequired, "false", new { @class = "value-radio", @Name = valueId }) @:Research Required
+            @Html.RadioButtonFor(m => m.Type, "Research Required", new { @class = "value-radio", @Name = type }) @:Research Required
     	}
 	</div>
 	<div class="col-sm-12 validation-value">
-		@Html.ValidationMessageFor(m => m.IsOpportunity, "", new { @class = "field-validation-error" })
+		@Html.ValidationMessageFor(m => m.Type, "", new { @class = "field-validation-error" })
 	</div>
 
 	<!-- sub reasons -->

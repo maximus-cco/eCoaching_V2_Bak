@@ -267,7 +267,7 @@ namespace eCoachingLog.ViewModels
 			{
                 foreach (CoachingReason cr in coachingReasonsSelected)
                 {
-                    if (!cr.IsOpportunity.HasValue || cr.SubReasonIds == null || cr.SubReasonIds.Count() == 0)
+                    if (cr.SubReasonIds == null || cr.SubReasonIds.Count() == 0)
                     {
                         // Reason selected, but opportunity or sub reason not selected
                         var coachingReasons = new[] { "CoachingReasons" };

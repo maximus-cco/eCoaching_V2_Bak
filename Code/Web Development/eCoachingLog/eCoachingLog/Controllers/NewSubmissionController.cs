@@ -659,7 +659,7 @@ namespace eCoachingLog.Controllers
 				{
 					crToChange = reasonsInSession.First(c => c.ID == cr.ID);
 					crToChange.IsChecked = cr.IsChecked;
-					crToChange.IsOpportunity = cr.IsOpportunity;
+					crToChange.Type = cr.Type;
 					crToChange.SubReasonIds = cr.SubReasonIds;
 				}
 				catch (InvalidOperationException ioe)

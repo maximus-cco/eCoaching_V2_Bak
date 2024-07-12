@@ -11,10 +11,10 @@ namespace eCoachingLog.Models.Common
         public String Text { get; set; }
         public bool IsChecked { get; set; }
 
-        public bool? IsOpportunity { get; set; }
+        // opportunity, reinforcement, or research required?
+        public string Type { get; set; }
 		public bool OpportunityOption { get; set; }
 		public bool ReinforcementOption { get; set; }
-        public bool? IsResearchRequired { get; set; }
         public bool ResearchOption { get; set; }
 
 		public List<CoachingSubReason>  SubReasons { get; set; }
