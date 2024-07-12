@@ -80,9 +80,19 @@ namespace eCoachingLog.Services
             return employeeLogRepository.GetWarningReasons(warningTypeId, directOrIndirect, moduleId, employeeId);
         }
 
-        public List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userLanId, string employeeLanId, bool isSpecialResaon, int specialReasonPriority)
+        public List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userLanId, string employeeLanId, bool isSpecialResaon, int specialReasonPriority, int? sourceId)
         {
-            return employeeLogRepository.GetCoachingReasons(directOrIndirect, moduleId, userLanId, employeeLanId, isSpecialResaon, specialReasonPriority);
+            var temp = employeeLogRepository.GetCoachingReasons(directOrIndirect, moduleId, userLanId, employeeLanId, isSpecialResaon, specialReasonPriority);
+
+            foreach (var t in temp)
+            {
+                logger.Debug(t.ID + "/" + t.Text);
+            }
+
+            if (sourceId.HasValue && (sourceId.Value == Constants.SOURCE_DIRECT_ASR || sourceId.Value == Constants.SOURCE_INDIRECT_ASR))
+                return temp.Where(x => x.ID == Constants.REASON_CALL_EFFICIENCY).ToList<CoachingReason>();
+            else
+                return temp;
         }
 
         public List<string> GetValues(int reasonId, string directOrIndirect, int moduleId)
@@ -92,7 +102,16 @@ namespace eCoachingLog.Services
 
         public List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId)
         {
-            return employeeLogRepository.GetCoachingSubReasons(reasonId, moduleId, directOrIndirect, employeeLanId);
+            var temp = employeeLogRepository.GetCoachingSubReasons(reasonId, moduleId, directOrIndirect, employeeLanId);
+            if (reasonId == Constants.REASON_CALL_EFFICIENCY )
+            {
+                return temp.Where(x => x.ID == Constants.SUBREASON_APPROPRIATE_USE_OF_HOLD 
+                                    || x.ID == Constants.SUBREASON_APPROPRIATE_USE_OF_TRANSFER
+                                    || x.ID == Constants.SUBREASON_CALL_DURATION
+                                ).ToList<CoachingSubReason>();
+            }
+
+            return temp;
         }
 
         public List<Behavior> GetBehaviors(int moduleId)

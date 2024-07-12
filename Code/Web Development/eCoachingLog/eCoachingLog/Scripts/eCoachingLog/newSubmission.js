@@ -1,12 +1,29 @@
 ﻿const CLAIMS_VIEW_ID = 73;
+const SOURCE_DIRECT_ASR = 138;
+const SOURCE_INDIRECT_ASR = 238;
+
 $(function () {
+    const claimsViewErrMsg = '"Claims View" is for Medicare only. You selected a non-Medicare Program.';
+
 	var cancelBtnClicked = false;
 	var workAtHomeChecked = false;
 	var showWorkAtHomeBehaviorDiv = false;
 	var pfdChecked = false;
 	var claimsViewChecked = isClaimsViewReasonSelected();
 
-	const claimsViewErrMsg = '"Claims View" is for Medicare only. You selected a non-Medicare Program.';
+	if ($('#SourceId').val() == SOURCE_INDIRECT_ASR || $('#SourceId').val() == SOURCE_DIRECT_ASR)
+	{
+	    DisableCseSelection();
+	}
+
+	function DisableCseSelection()
+	{
+	    // reset CSE to NO and disable CSE question
+	    let radioOption = $("#div-is-cse input:radio[value=false]");
+	    radioOption.prop("checked", true);
+	    // disable cse radio buttons
+	    $(".rbtn-is-cse").prop('disabled', true);
+	}
 
     // https://github.com/istvan-ujjmeszaros/bootstrap-duallistbox/issues/110
 	$(document).on('keyup', ".bootstrap-duallistbox-container .filter", function () {
@@ -85,7 +102,12 @@ $(function () {
         $.ajax({
         	type: 'POST',
         	url: handleCoachingReasonClicked,
-        	data: { isChecked: isChecked, reasonId: reasonId, reasonIndex: reasonIndex },
+        	data: {
+        	    isChecked: isChecked,
+        	    reasonId: reasonId,
+        	    reasonIndex: reasonIndex,
+        	    sourceId: $('#SourceId :selected').val()
+        	},
         	success: function (result) {
         		$('#' + reasonDivId).html(result);
         	}
@@ -280,6 +302,7 @@ $(function () {
     function resetPageBottom(isCoachingByYou, isCse, isWarning) {
         var employeeId = $('#select-employee').val();
         var programId = $('#select-program').val();
+        //let sourceId = $('#SourceId').val();
         $.ajax({
             type: 'POST',
             url: resetPageBottomUrl,
@@ -289,13 +312,14 @@ $(function () {
                 isCoachingByYou: isCoachingByYou,
                 isCse: isCse,
                 isWarning: isWarning,
-                employeeIds: $("#EmployeeIds").val()
+                employeeIds: $("#EmployeeIds").val(),
+                sourceId: -2 // it resets Source dropdown as well
             },
             success: function (result) {
                 $('#div-new-submission-bottom').removeClass('hide');
                 $('#div-new-submission-bottom').addClass('show');
                 $('#div-new-submission-bottom').html(result);
-            }
+             }
         });
     }
 
@@ -364,6 +388,22 @@ $(function () {
         refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
     });
 
+    $('body').on('change', "#SourceId", function () {
+        if ($('#SourceId :selected').val() == SOURCE_DIRECT_ASR || $('#SourceId').val() == SOURCE_INDIRECT_ASR) {
+            DisableCseSelection();
+        } else {
+            // enable cse radio buttons
+            $(".rbtn-is-cse").prop('disabled', false);
+        }
+
+        // reset behavior to editable textarea
+        workAtHomeChecked = false;
+        showWorkAtHomeBehaviorDiv = false;
+        showBehaviorEditable();
+        // reset coaching reasons
+        refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
+    });
+
     $('body').on('change', '#IsCallAssociated', function () {
         var yes = $(this).val();
         if (yes === 'true') {
@@ -409,7 +449,8 @@ $(function () {
             url: loadCoachingReasonsUrl,
             data: {
                 isCoachingByYou: isCoachingByYou,
-                isCse: isCse
+                isCse: isCse,
+                sourceId: $('#SourceId :selected').val()
             },
             success: function (result) {
             	$(".please-wait").slideUp(500);
@@ -651,11 +692,25 @@ $(function () {
     }
 
     function validateSubReasons(target) {
+        console.log($('#AllowMultiSubReason').val());
         var errorMessage = 'Please select at least one sub reason.';
+        if ($('#AllowMultiSubReason').val() === 'False') {
+            errorMessage = 'Please select one sub reason.';
+        }
         var errorElement = target.nextAll('.coaching-subreasons').first().find('span[data-valmsg-for="SubReasonIds"]');
         var $subReasons = target.nextAll('.coaching-subreasons').first();
         var selectedSubReasons = $subReasons.find(':selected').length;
-        var isValid = selectedSubReasons >= 1;
+        var isValid = false;
+        if (selectedSubReasons == 0) {
+            isValid = false;
+        } else {
+            if ($('#AllowMultiSubReason').val() === 'False') {
+                isValid = selectedSubReasons == 1;
+            } else {
+                isValid = selectedSubReasons >= 1;
+            }
+        }
+
         if (!isValid) {
             errorElement.addClass('field-validation-error').removeClass('field-validation-valid').text(errorMessage);
         } else {

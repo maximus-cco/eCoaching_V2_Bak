@@ -1,5 +1,7 @@
-﻿using System;
+﻿using eCoachingLog.Utils;
+using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace eCoachingLog.Models.Common
 {
@@ -12,15 +14,33 @@ namespace eCoachingLog.Models.Common
         public bool? IsOpportunity { get; set; }
 		public bool OpportunityOption { get; set; }
 		public bool ReinforcementOption { get; set; }
+        public bool? IsResearchRequired { get; set; }
+        public bool ResearchOption { get; set; }
 
 		public List<CoachingSubReason>  SubReasons { get; set; }
         public int[] SubReasonIds { get; set; }
 
-		// Help to return form data
-		// See:
-		//_NewSubmissionCoachingReasons.cshtml
-		//_NewSubmissionCoachingReason.cshtml
-		public int Index { get; set; }
+        public bool AllowMultiSubReason
+        {
+            get
+            {
+                return ID != Constants.REASON_CALL_EFFICIENCY;
+            }
+        }
+
+        public IEnumerable<SelectListItem> SubReasonSelectList
+        {
+            get
+            {
+                return new SelectList(SubReasons, "ID", "Text");
+            }
+        }
+
+        // Help to return form data
+        // See:
+        //_NewSubmissionCoachingReasons.cshtml
+        //_NewSubmissionCoachingReason.cshtml
+        public int Index { get; set; }
 
 		public CoachingReason()
         {

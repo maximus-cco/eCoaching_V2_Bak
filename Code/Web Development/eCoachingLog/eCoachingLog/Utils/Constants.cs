@@ -45,7 +45,19 @@ namespace eCoachingLog.Utils
 		public const int PAGE_SURVEY = 30;
 		public const int PAGE_MY_SUBMISSION = 50;
 
-		public const string LOG_SEARCH_TYPE_HISTORICAL = "Historical";
+        // Source
+        public const int SOURCE_DIRECT_ASR = 138;
+        public const int SOURCE_INDIRECT_ASR = 238;
+
+        // Reason
+        public const int REASON_CALL_EFFICIENCY = 55;
+
+        // Sub Reason
+        public const int SUBREASON_APPROPRIATE_USE_OF_HOLD = 230;
+        public const int SUBREASON_APPROPRIATE_USE_OF_TRANSFER = 328;
+        public const int SUBREASON_CALL_DURATION = 329;
+
+        public const string LOG_SEARCH_TYPE_HISTORICAL = "Historical";
 		public const string LOG_SEARCH_TYPE_MY_SUBMITTED = "MySubmitted";
 		public const string LOG_SEARCH_TYPE_MY_PENDING = "MyPending";
 		public const string LOG_SEARCH_TYPE_MY_FOLLOWUP = "MyFollowup";

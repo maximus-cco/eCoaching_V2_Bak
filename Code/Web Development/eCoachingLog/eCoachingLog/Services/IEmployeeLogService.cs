@@ -18,7 +18,7 @@ namespace eCoachingLog.Services
         List<CallType> GetCallTypes(int moduleId);
         List<WarningType> GetWarningTypes(int moduleId, string source, bool specialReason, int reasonPriority, string employeeId, string userId);
         List<WarningReason> GetWarningReasons(int warningTypeId, string directOrIndirect, int moduleId, string employeeId);
-        List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userId, string employeeId, bool isSpecialResaon, int specialReasonPriority);
+        List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userId, string employeeId, bool isSpecialResaon, int specialReasonPriority, int? sourceId);
         List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId);
         List<Behavior> GetBehaviors(int moduleId);
         List<string> GetValues(int reasonId, string directOrIndirect, int moduleId);

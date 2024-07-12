@@ -15,19 +15,19 @@
 @if (Model.IsChecked)
 {
 	<!-- values -->
-	<div class='coaching-values'>
+	<div class='col-sm-12 coaching-values'>
 		@if (Model.OpportunityOption)
 		{
-			<div class="col-sm-6">
-				@Html.RadioButtonFor(m => m.IsOpportunity, "true", new { @class = "opportunity-radio", @Name= valueId }) Opportunity
-			</div>
+			@Html.RadioButtonFor(m => m.IsOpportunity, "true", new { @class = "value-radio", @Name= valueId }) @:Opportunity&nbsp;&nbsp;
 		}
 		@if (Model.ReinforcementOption)
 		{
-			<div class="col-sm-6">
-				@Html.RadioButtonFor(m => m.IsOpportunity, "false", new { @class = "opportunity-radio", @Name = valueId }) Reinforcement
-			</div>
+			@Html.RadioButtonFor(m => m.IsOpportunity, "false", new { @class = "value-radio", @Name = valueId }) @:Reinforcement&nbsp;&nbsp;
 		}
+        @if (Model.ResearchOption)
+        {
+            @Html.RadioButtonFor(m => m.IsResearchRequired, "false", new { @class = "value-radio", @Name = valueId }) @:Research Required
+    	}
 	</div>
 	<div class="col-sm-12 validation-value">
 		@Html.ValidationMessageFor(m => m.IsOpportunity, "", new { @class = "field-validation-error" })
@@ -35,18 +35,55 @@
 
 	<!-- sub reasons -->
 	<div class='col-sm-12 fixed-width wrap-items coaching-subreasons'>
-		@Html.ListBoxFor(m => m.SubReasonIds,
-								new MultiSelectList(Model.SubReasons, "ID", "Text", Model.SubReasonIds),
-								new { @class = "listbox ", @Name = subReasonIds, id = subReasonIds })
+        @Html.HiddenFor(m => m.AllowMultiSubReason)
+        @if (Model.AllowMultiSubReason)
+        {
+            @Html.ListBoxFor(m => m.SubReasonIds,
+                new MultiSelectList(Model.SubReasons, "ID", "Text", Model.SubReasonIds),
+                new { @class = "listbox-multiselect", @Name = subReasonIds, id = subReasonIds })
+        }
+        else
+        {
+            @Html.ListBoxFor(m => m.SubReasonIds,
+                new MultiSelectList(Model.SubReasons, "ID", "Text", Model.SubReasonIds),
+                new { @class = "listbox-singleselect", @Name = subReasonIds, id = subReasonIds })
+            @*@Html.DropDownListFor(m => m.ID, Model.SubReasonSelectList, new { id = "select-subreason", @class = "form-control" })*@
+        }
+
 		@Html.ValidationMessageFor(m => m.SubReasonIds)
 	</div>
 }
 
 <script>
 	$(function () {
-        $('.listbox').multiselect({
+	    $('.listbox-multiselect').multiselect({
             includeSelectAllOption: true,
             buttonWidth: '100%'
-        });
-    })
+	    });
+
+	    $('.listbox-singleselect').multiselect({
+	        includeSelectAllOption: false,
+	        buttonWidth: '100%',
+	        onChange: function (option, checked) {
+	            if ($('.listbox-singleselect option:selected').length == 1) {
+	                // Disable others.
+	                $('.listbox-singleselect option').filter(function () {
+	                    return !$(this).is(':selected');
+	                }).each(function () {
+	                    var chkbox = $('.multiselect-container input[value="' + $(this).val() + '"]');
+	                    chkbox.prop('disabled', true);
+	                    chkbox.parent('li').addClass('disabled');
+	                });
+	            } else {
+	                // Enable all.
+	                $('.listbox-singleselect option').each(function() {
+	                    var chkbox = $('.multiselect-container input[value="' + $(this).val() + '"]');
+	                    chkbox.prop('disabled', false);
+	                    chkbox.parent('li').addClass('disabled');
+	                });
+	            }
+	        }
+	    });
+	})
+
 </script>

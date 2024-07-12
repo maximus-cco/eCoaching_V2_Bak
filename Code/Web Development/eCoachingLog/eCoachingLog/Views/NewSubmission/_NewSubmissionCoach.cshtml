@@ -18,15 +18,23 @@
     </div>
 </div>
 
-<div class='form-group @(@Model.ShowIsCseChoice ? "show" : "hide")'>
+<div id="div-source" class="form-group">
+    <label for="SourceId" class="col-sm-3 control-label required">How was the coaching opportunity identified?</label>
+    <div class="col-sm-3">
+        @Html.DropDownListFor(m => m.SourceId, Model.SourceSelectList, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.SourceId)
+    </div>
+</div>
+
+<div class='form-group @(@Model.ShowIsCseChoice ? "show" : "hide")' id="div-is-cse">
     <label class="col-sm-3 control-label required">Is this a Customer Service Escalation (CSE)?</label>
     <div class="col-sm-4">
         <div class="radio">
             <div class="col-sm-2">
-                @Html.RadioButtonFor(m => m.IsCse, "true") Yes
+                @Html.RadioButtonFor(m => m.IsCse, "true", new { @class = "rbtn-is-cse" }) Yes
             </div>
             <div class="col-sm-2">
-                @Html.RadioButtonFor(m => m.IsCse, "false") No
+                @Html.RadioButtonFor(m => m.IsCse, "false", new { @class = "rbtn-is-cse" }) No
             </div>
         </div>
         @Html.ValidationMessageFor(m => m.IsCse)
@@ -138,14 +146,6 @@
 			@Html.TextBoxFor(m => m.FollowupDueDate, new { @class = "form-control date-no-manual-input-followup-date", @id = "followup-date", @placeholder = "MM/DD/YYYY" })
 		</div>
 		@Html.ValidationMessageFor(m => m.FollowupDueDate)
-	</div>
-</div>
-
-<div id="div-source" class="form-group">
-	<label for="SourceId" class="col-sm-3 control-label required">How was the coaching opportunity identified?</label>
-	<div class="col-sm-3">
-		@Html.DropDownListFor(m => m.SourceId, Model.SourceSelectList, new { @class = "form-control", id = "select-source" })
-		@Html.ValidationMessageFor(model => model.SourceId)
 	</div>
 </div>
 
