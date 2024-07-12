@@ -308,7 +308,7 @@ namespace eCoachingLog.Controllers
 
         [HttpPost]
         public ActionResult ResetPageBottom(//string employeeId, int? programId, 
-            bool isCoachingByYou, bool? isCse, bool? isWarning, string employeeIds)
+            bool isCoachingByYou, bool? isCse, bool? isWarning, string employeeIds, int? sourceId)
         {
             NewSubmissionViewModel vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
             vm.IsCoachingByYou = isCoachingByYou;
@@ -340,7 +340,7 @@ namespace eCoachingLog.Controllers
             }
             else // coaching
             {
-                vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, specialReasonPriority);
+                vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, specialReasonPriority, sourceId);
                 vm.SourceSelectList = GetSources(isCoachingByYou);
                 vm.ShowWarningQuestions = false;
             }
@@ -538,7 +538,7 @@ namespace eCoachingLog.Controllers
             return PartialView("_NewSubmission", vm);
         }
 
-        private List<CoachingReason> GetCoachingReasons(int iModuleId, bool isCoachingByYou, bool isCse, int priority)
+        private List<CoachingReason> GetCoachingReasons(int iModuleId, bool isCoachingByYou, bool isCse, int priority, int? sourceId)
         {
             string directOrIndirect = GetDirectOrIndirect(isCoachingByYou);//"direct";
             int moduleId = ((NewSubmissionViewModel)Session["newSubmissionVM"]).ModuleId;
@@ -552,18 +552,18 @@ namespace eCoachingLog.Controllers
 				directOrIndirect = Constants.INDIRECT;
             }
 
-			List<CoachingReason> reasons = this.empLogService.GetCoachingReasons(directOrIndirect, moduleId, userId, employeeId, isSpecialResaon, specialReasonPriority);
+			List<CoachingReason> reasons = this.empLogService.GetCoachingReasons(directOrIndirect, moduleId, userId, employeeId, isSpecialResaon, specialReasonPriority, sourceId);
 
 			return reasons;
         }
 
         [HttpPost]
-        public ActionResult LoadCoachingReasons(bool? isCoachingByYou, bool? isCse)
+        public ActionResult LoadCoachingReasons(bool? isCoachingByYou, bool? isCse, int sourceId)
         {
             bool coachingByYou = isCoachingByYou.HasValue ? isCoachingByYou.Value : false;
             bool cse = isCse.HasValue ? isCse.Value : false;
             NewSubmissionViewModel vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
-            vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, coachingByYou, cse, 2);
+            vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, coachingByYou, cse, 2, sourceId);
             // Save in session
             vm.IsCoachingByYou = isCoachingByYou;
             vm.IsCse = isCse;
@@ -572,7 +572,7 @@ namespace eCoachingLog.Controllers
         }
 
         [HttpPost]
-        public ActionResult HandleCoachingReasonClicked(bool isChecked, int reasonId, int reasonIndex)
+        public ActionResult HandleCoachingReasonClicked(bool isChecked, int reasonId, int reasonIndex, int sourceId)
         {
             var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
 			CoachingReason thisReason = null;
@@ -601,7 +601,7 @@ namespace eCoachingLog.Controllers
 				{
 					bool isSpecialResaon = vm.IsCse.HasValue && vm.IsCse.Value ? true : false;
 					bool isCoachingByYou = !vm.IsCoachingByYou.HasValue ? false : vm.IsCoachingByYou.Value;
-					vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, 2);
+					vm.CoachingReasons = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, 2, sourceId);
 					thisReason = vm.CoachingReasons.First(cr => cr.ID == reasonId);
 
 					StringBuilder info = new StringBuilder();
@@ -622,6 +622,11 @@ namespace eCoachingLog.Controllers
 			{
 				thisReason.ReinforcementOption = true;
 			}
+
+            if (sourceId == Constants.SOURCE_INDIRECT_ASR )
+            {
+                thisReason.ResearchOption = true;
+            }
 			
 			// _NewSubmissionCoachingReason.cshtml needs it.
 			ViewData["index"] = reasonIndex;
@@ -678,7 +683,7 @@ namespace eCoachingLog.Controllers
 					{
 						bool isSpecialResaon = vm.IsCse.HasValue && vm.IsCse.Value ? true : false;
 						bool isCoachingByYou = !vm.IsCoachingByYou.HasValue ? false : vm.IsCoachingByYou.Value;
-						reasonsInSession = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, 2);
+						reasonsInSession = GetCoachingReasons(vm.ModuleId, isCoachingByYou, isSpecialResaon, 2, vm.SourceId);
 
 						StringBuilder info = new StringBuilder();
 						info.Append("[").Append(userId).Append("]: ")
