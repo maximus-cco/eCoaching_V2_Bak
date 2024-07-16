@@ -384,8 +384,6 @@ $(function () {
 
     $('body').on('change', "#IsCse", function () {
     	// reset behavior to editable textarea
-    	workAtHomeChecked = false;
-    	showWorkAtHomeBehaviorDiv = false;
     	showBehaviorEditable();
 		// reset coaching reasons
         refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
@@ -406,10 +404,11 @@ $(function () {
                 || prevSourceIdSelected == SOURCE_INDIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
             refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
         }
-        // reset behavior to editable textarea
-        workAtHomeChecked = false;
-        showWorkAtHomeBehaviorDiv = false;
-        showBehaviorEditable();
+
+        //  reset behavior to editable textarea
+        if (currentSourceIdSelected == SOURCE_DIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
+            showBehaviorEditable();
+        }
     });
 
     $('body').on('change', '#IsCallAssociated', function () {
