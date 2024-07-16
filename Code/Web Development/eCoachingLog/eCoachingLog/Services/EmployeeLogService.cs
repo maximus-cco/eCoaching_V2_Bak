@@ -33,6 +33,12 @@ namespace eCoachingLog.Services
                 return modules.Where(x => x.Id == Constants.MODULE_CSR || x.Id == Constants.MODULE_SUPERVISOR || x.Id == Constants.MODULE_TRAINING).ToList<Module>();
             }
 
+            // todo: remove
+            var temp = new Module();
+            temp.Id = 8;
+            temp.Name = "Production Planning";
+
+            modules.Add(temp);
             return modules;
         }
 
@@ -70,48 +76,29 @@ namespace eCoachingLog.Services
             return employeeLogRepository.GetCallTypes(moduleId);
         }
 
-        public List<WarningType> GetWarningTypes(int moduleId, string source, bool specialReason, int reasonPriority, string employeeId, string userId)
+        public List<WarningType> GetWarningTypes(int moduleId, string source, bool specialReason, int reasonPriority, string employeeId, string userId, int? sourceId)
         {
-            return employeeLogRepository.GetWarningTypes(moduleId, source, specialReason, reasonPriority, employeeId, userId);
+            return employeeLogRepository.GetWarningTypes(moduleId, source, specialReason, reasonPriority, employeeId, userId, sourceId);
         }
 
-        public List<WarningReason> GetWarningReasons(int warningTypeId, string directOrIndirect, int moduleId, string employeeId)
+        public List<WarningReason> GetWarningReasons(int warningTypeId, string directOrIndirect, int moduleId, string employeeId, int? sourceId)
         {
-            return employeeLogRepository.GetWarningReasons(warningTypeId, directOrIndirect, moduleId, employeeId);
+            return employeeLogRepository.GetWarningReasons(warningTypeId, directOrIndirect, moduleId, employeeId, sourceId);
         }
 
         public List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userLanId, string employeeLanId, bool isSpecialResaon, int specialReasonPriority, int? sourceId)
         {
-            var temp = employeeLogRepository.GetCoachingReasons(directOrIndirect, moduleId, userLanId, employeeLanId, isSpecialResaon, specialReasonPriority);
-
-            foreach (var t in temp)
-            {
-                logger.Debug(t.ID + "/" + t.Text);
-            }
-
-            if (sourceId.HasValue && (sourceId.Value == Constants.SOURCE_DIRECT_ASR || sourceId.Value == Constants.SOURCE_INDIRECT_ASR))
-                return temp.Where(x => x.ID == Constants.REASON_CALL_EFFICIENCY).ToList<CoachingReason>();
-            else
-                return temp;
+            return employeeLogRepository.GetCoachingReasons(directOrIndirect, moduleId, userLanId, employeeLanId, isSpecialResaon, specialReasonPriority, sourceId);
         }
 
-        public List<string> GetValues(int reasonId, string directOrIndirect, int moduleId)
+        public List<string> GetValues(int reasonId, string directOrIndirect, int moduleId, int sourceId)
         {
-            return employeeLogRepository.GetValues(reasonId, directOrIndirect, moduleId);
+            return employeeLogRepository.GetValues(reasonId, directOrIndirect, moduleId, sourceId);
         }
 
-        public List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId)
+        public List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId, int sourceId)
         {
-            var temp = employeeLogRepository.GetCoachingSubReasons(reasonId, moduleId, directOrIndirect, employeeLanId);
-            if (reasonId == Constants.REASON_CALL_EFFICIENCY )
-            {
-                return temp.Where(x => x.ID == Constants.SUBREASON_APPROPRIATE_USE_OF_HOLD 
-                                    || x.ID == Constants.SUBREASON_APPROPRIATE_USE_OF_TRANSFER
-                                    || x.ID == Constants.SUBREASON_CALL_DURATION
-                                ).ToList<CoachingSubReason>();
-            }
-
-            return temp;
+            return employeeLogRepository.GetCoachingSubReasons(reasonId, moduleId, directOrIndirect, employeeLanId, sourceId);
         }
 
         public List<Behavior> GetBehaviors(int moduleId)

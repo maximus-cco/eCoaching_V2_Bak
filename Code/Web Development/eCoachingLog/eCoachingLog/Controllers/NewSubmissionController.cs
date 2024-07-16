@@ -241,7 +241,7 @@ namespace eCoachingLog.Controllers
 
         [HttpPost]
         // For csr module, display dual listbox instead of dropdown for Employee selection, BUT this is for specific users ONLY.
-        public ActionResult HandleSiteChanged(int siteIdSelected, int programIdSelected, string programName)
+        public ActionResult HandleSiteChanged(int siteIdSelected, int? programIdSelected, string programName)
         {
             logger.Debug($"#######siteSelected={siteIdSelected}");
             NewSubmissionViewModel vmInSession = (NewSubmissionViewModel)Session["newSubmissionVM"];
@@ -260,10 +260,14 @@ namespace eCoachingLog.Controllers
             vm.ShowEmployeeDropdown = ShowEmployeeDropdown(vm.ModuleId);
             vm.ShowEmployeeDualListbox = !vm.ShowEmployeeDropdown && ShowEmployeeDualListbox(vm);
 
-            vm.ProgramSelectList = vmInSession.ProgramSelectList;
-            vm.ProgramId = programIdSelected;
-            vm.ProgramName = programName;
-            vm.ShowProgramDropdown = true;
+            if (vm.ModuleId != Constants.MODULE_PRODUCTION_PLANNING)
+            {
+                vm.ProgramSelectList = vmInSession.ProgramSelectList;
+                vm.ProgramId = programIdSelected;
+                vm.ProgramName = programName;
+                vm.ShowProgramDropdown = true;
+            }
+
             vm.CallTypeSelectList = vmInSession.CallTypeSelectList;
 
             return PartialView("_NewSubmission", vm);
@@ -335,7 +339,7 @@ namespace eCoachingLog.Controllers
 
             if (isWarning.HasValue && isWarning.Value) // warning
             {
-                vm.WarningTypeSelectList = GetWarningTypes(isCoachingByYou);
+                vm.WarningTypeSelectList = GetWarningTypes(isCoachingByYou, sourceId);
                 vm.ShowWarningQuestions = true;
             }
             else // coaching
@@ -378,7 +382,7 @@ namespace eCoachingLog.Controllers
             return vm.ModuleId;
         } 
 
-        private IEnumerable<SelectListItem> GetWarningTypes(bool isCoachingByYou)
+        private IEnumerable<SelectListItem> GetWarningTypes(bool isCoachingByYou, int? sourceId)
         {
             string employeeId = GetSelectedEmployee().Id;
 			int moduleId = ((NewSubmissionViewModel)Session["newSubmissionVM"]).ModuleId;
@@ -386,7 +390,7 @@ namespace eCoachingLog.Controllers
             bool specialReason = true;
             int reasonPriority = 1;
             // Warning Type Dropdown
-            List<WarningType> warningTypeList = this.empLogService.GetWarningTypes(moduleId, source, specialReason, reasonPriority, employeeId, GetUserFromSession().EmployeeId);
+            List<WarningType> warningTypeList = this.empLogService.GetWarningTypes(moduleId, source, specialReason, reasonPriority, employeeId, GetUserFromSession().EmployeeId, sourceId);
             warningTypeList.Insert(0, new WarningType { Id = -2, Text = "-- Select a Warning Type --" });
             IEnumerable<SelectListItem> warningTypes = new SelectList(warningTypeList, "Id", "Text");
 
@@ -419,7 +423,7 @@ namespace eCoachingLog.Controllers
             string directOrIndirect = GetDirectOrIndirect(coachingByYou);
             string userLanId = GetUserFromSession().LanId;
             // Warning Reasons Dropdown
-            List<WarningReason> warningReasonList = this.empLogService.GetWarningReasons(warningTypeId, directOrIndirect, vm.ModuleId, vm.Employee.Id);
+            List<WarningReason> warningReasonList = this.empLogService.GetWarningReasons(warningTypeId, directOrIndirect, vm.ModuleId, vm.Employee.Id, null); // NO "how was this identified question on page for warning"
             warningReasonList.Insert(0, new WarningReason { Id = -2, Text = "-- Select a Warning Reason --" });
             IEnumerable<SelectListItem> warningReasonSelectList = new SelectList(warningReasonList, "Id", "Text");
             vm.WarningReasonSelectList = warningReasonSelectList;
@@ -455,7 +459,8 @@ namespace eCoachingLog.Controllers
             if (moduleId == Constants.MODULE_CSR
                     || moduleId == Constants.MODULE_ISG
                     || moduleId == Constants.MODULE_QUALITY
-                    || moduleId == Constants.MODULE_SUPERVISOR)
+                    || moduleId == Constants.MODULE_SUPERVISOR
+                    || moduleId == Constants.MODULE_PRODUCTION_PLANNING)
             {
                 IList<Site> siteList = this.siteService.GetSites(true, GetUserFromSession(), moduleId);
                 siteList.Insert(0, new Site { Id = -2, Name = "-- Select a Site --" });
@@ -508,7 +513,7 @@ namespace eCoachingLog.Controllers
            }
 
             // Program Dropdown
-            if (moduleId != Constants.MODULE_TRAINING)
+            if (moduleId != Constants.MODULE_TRAINING && moduleId != Constants.MODULE_PRODUCTION_PLANNING)
             {
                 IList<Program> programList = this.programService.GetPrograms(moduleId);
                 programList.Insert(0, new Program { Id = -2, Name = "-- Select a Program --" });
@@ -612,8 +617,8 @@ namespace eCoachingLog.Controllers
 			}
 
 			thisReason.IsChecked = isChecked;
-			thisReason.SubReasons = GetSubReasons(reasonId);
-			List<string> values = GetCoachValues(reasonId);
+			thisReason.SubReasons = GetSubReasons(reasonId, sourceId);
+			List<string> values = GetCoachValues(reasonId, sourceId);
 			if (values.Any(s => s.Contains("Opportunity")))
 			{
 				thisReason.OpportunityOption = true;
@@ -622,29 +627,28 @@ namespace eCoachingLog.Controllers
 			{
 				thisReason.ReinforcementOption = true;
 			}
-
-            if (sourceId == Constants.SOURCE_INDIRECT_ASR )
+            if (values.Any(s => s.Contains("Reasearch Required")))
             {
                 thisReason.ResearchOption = true;
             }
-			
+		
 			// _NewSubmissionCoachingReason.cshtml needs it.
 			ViewData["index"] = reasonIndex;
 			return PartialView("_NewSubmissionCoachingReason", thisReason);
 		}
 
-		private List<CoachingSubReason> GetSubReasons(int reasonId)
+		private List<CoachingSubReason> GetSubReasons(int reasonId, int sourceId)
 		{
 			var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
 			string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? "Direct" : "Indirect";
-			return this.empLogService.GetCoachingSubReasons(reasonId, vm.ModuleId, directOrIndirect, GetUserFromSession().EmployeeId);
+			return this.empLogService.GetCoachingSubReasons(reasonId, vm.ModuleId, directOrIndirect, GetUserFromSession().EmployeeId, sourceId);
 		}
 
-		private List<string> GetCoachValues(int reasonId)
+		private List<string> GetCoachValues(int reasonId, int sourceId)
 		{
 			var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
 			string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? "Direct" : "Indirect";
-			return this.empLogService.GetValues(reasonId, directOrIndirect, vm.ModuleId);
+			return this.empLogService.GetValues(reasonId, directOrIndirect, vm.ModuleId, sourceId);
 		}
 
         private List<CoachingReason> SyncCoachReasons(List<CoachingReason> crs)
@@ -703,7 +707,7 @@ namespace eCoachingLog.Controllers
             NewSubmissionViewModel vm = new NewSubmissionViewModel(user.EmployeeId, user.LanId);
             vm.IsSubcontractor = user.IsSubcontractor;
 			vm.ModuleId = moduleId;
-			vm.ShowFollowup = moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_ISG;
+			vm.ShowFollowup = moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_ISG || moduleId == Constants.MODULE_PRODUCTION_PLANNING;
             vm.UserId = user.EmployeeId;
 
             // Module Dropdown
@@ -719,6 +723,7 @@ namespace eCoachingLog.Controllers
         {
             return vm.ModuleId == Constants.MODULE_CSR
                         || vm.ModuleId == Constants.MODULE_ISG
+                        || vm.ModuleId == Constants.MODULE_PRODUCTION_PLANNING
                         || AllowMassSubmission(vm.ModuleId);
         }
 
@@ -727,9 +732,10 @@ namespace eCoachingLog.Controllers
             return moduleId != -2 && !AllowMassSubmission(moduleId);
         }
 
-        //ISG - WACS50, WPPM50
-        //Supervisor - WACS50, WACS60
-        //Quality - WACQ13, WACQ40, and WPPM50
+        // ISG - WACS50, WPPM50
+        // Supervisor - WACS50, WACS60
+        // Quality - WACQ13, WACQ40, and WPPM50
+        // Production Planning - ???
         private bool AllowMassSubmission(int moduleId)
         {
             var userJobCode = GetUserFromSession().JobCode;
@@ -765,6 +771,12 @@ namespace eCoachingLog.Controllers
                 return Constants.MASS_SUBMISSION_ISG.Contains(userJobCode);
             }
 
+            // Production Planning module
+            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
+            {
+                return Constants.MASS_SUBMISSION_PRODUCTION_PLANNING.Contains(userJobCode);
+            }
+
             // All other modules
             return false;
         }
@@ -780,11 +792,12 @@ namespace eCoachingLog.Controllers
                 return false;
             }
 
-            // No mass/team submission for modules OTHER THAN csr, quality, ISG, and supervisor
+            // No mass/team submission for modules OTHER THAN csr, quality, ISG, supervisor, and Production Planning
             if (vm.ModuleId != Constants.MODULE_CSR
                     && vm.ModuleId != Constants.MODULE_ISG
                     && vm.ModuleId != Constants.MODULE_QUALITY
-                    && vm.ModuleId != Constants.MODULE_SUPERVISOR)
+                    && vm.ModuleId != Constants.MODULE_SUPERVISOR
+                    && vm.ModuleId != Constants.MODULE_PRODUCTION_PLANNING)
             {
                 return false;
             }
@@ -797,8 +810,11 @@ namespace eCoachingLog.Controllers
         
         private bool ShowProgramDropdown(NewSubmissionViewModel vm)
         {
-            // Only display program dropdown for non-traning modules
-            return vm.ModuleId > 0 && vm.ModuleId != Constants.MODULE_TRAINING && vm.ModuleId != Constants.MODULE_LSA;
+            // Do not display Program dropdown for Training/LSA/Production Planning
+            return vm.ModuleId > 0 
+                && vm.ModuleId != Constants.MODULE_TRAINING 
+                && vm.ModuleId != Constants.MODULE_LSA
+                && vm.ModuleId != Constants.MODULE_PRODUCTION_PLANNING;
         }
 
         private bool ShowBehaviorDropdown(NewSubmissionViewModel vm)
@@ -822,7 +838,9 @@ namespace eCoachingLog.Controllers
 
 		public bool ShowCallTypeChoice(NewSubmissionViewModel vm)
 		{
-			return vm.ModuleId != Constants.MODULE_LSA;
+            // Do not show Call Type question for LSA/Production Planning
+			return vm.ModuleId != Constants.MODULE_LSA 
+                        && vm.ModuleId != Constants.MODULE_PRODUCTION_PLANNING;
 		}
 
         // Add employee to the unselected employee dual-listbox

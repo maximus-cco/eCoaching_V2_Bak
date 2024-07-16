@@ -5,7 +5,9 @@ const SOURCE_INDIRECT_ASR = 238;
 $(function () {
     const claimsViewErrMsg = '"Claims View" is for Medicare only. You selected a non-Medicare Program.';
 
-	var cancelBtnClicked = false;
+    var prevSourceIdSelected = -2;
+    var currentSourceIdSelected = $('#SourceId').val();
+    var cancelBtnClicked = false;
 	var workAtHomeChecked = false;
 	var showWorkAtHomeBehaviorDiv = false;
 	var pfdChecked = false;
@@ -244,9 +246,10 @@ $(function () {
         // Display Supervisor and Manger names
         DisplayMgtInfo($(this).val());
 
-        if ($('#select-program').val() > 0 || $('#select-behavior').val() > 0
-				// moduleId 4 (LSA): no program dropdown
-				|| ($("#select-log-module").val() == MODULE_LSA && $('#select-employee').val() > 0)) {
+        if ($('#select-program').val() > 0 || $('#select-behavior').val() > 0 // Training has behavior dropdown
+				// LSA and Production Planning do not have program dropdown
+				|| ($("#select-log-module").val() == MODULE_LSA && $('#select-employee').val() > 0)
+                || ($("#select-log-module").val() == MODULE_PRODUCTION_PLANNING && $('#select-employee').val() > 0)) {
             // Reset IsCoachingByYou div
             resetIsCoachingByYou();
             $('#div-new-submission-middle').removeClass('hide');
@@ -389,19 +392,24 @@ $(function () {
     });
 
     $('body').on('change', "#SourceId", function () {
-        if ($('#SourceId :selected').val() == SOURCE_DIRECT_ASR || $('#SourceId').val() == SOURCE_INDIRECT_ASR) {
+        prevSourceIdSelected = currentSourceIdSelected;
+        currentSourceIdSelected = $(this).val();
+        if (currentSourceIdSelected == SOURCE_DIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
             DisableCseSelection();
         } else {
             // enable cse radio buttons
             $(".rbtn-is-cse").prop('disabled', false);
         }
 
+        // reload coaching reasons if source is changed to ASR or changed from ASR
+        if (prevSourceIdSelected == SOURCE_DIRECT_ASR || currentSourceIdSelected == SOURCE_DIRECT_ASR
+                || prevSourceIdSelected == SOURCE_INDIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
+            refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
+        }
         // reset behavior to editable textarea
         workAtHomeChecked = false;
         showWorkAtHomeBehaviorDiv = false;
         showBehaviorEditable();
-        // reset coaching reasons
-        refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
     });
 
     $('body').on('change', '#IsCallAssociated', function () {

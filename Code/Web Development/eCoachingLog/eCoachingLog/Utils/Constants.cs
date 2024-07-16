@@ -107,7 +107,6 @@ namespace eCoachingLog.Utils
         };
 
         // Users with one of these job codes are allowed for mass submission (Supervisor coaching logs)
-        // ??????????????
         public static HashSet<string> MASS_SUBMISSION_SUPERVISOR = new HashSet<string>()
         {
             { "WACS50" },
@@ -120,6 +119,12 @@ namespace eCoachingLog.Utils
             { "WACQ13" },
             { "WACQ40" },
             { "WPPM50" }
+        };
+
+        // Users with one of these job codes are allowed for mass submission (Production Planning coaching logs)
+        public static HashSet<string> MASS_SUBMISSION_PRODUCTION_PLANNING = new HashSet<string>()
+        {
+            { "WCWF50" }
         };
 
         public const int ALL_STATUSES = -1;

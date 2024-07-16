@@ -34,9 +34,10 @@ namespace eCoachingLog.Services
             logger.Debug("@@@@@@@@IsSubmission:" + isSubmission);
 
             var sites = FilterSites(GetSites(), isSubmission, user);
-            // add All Sites for ISG, Quality, and Supervisor logs submission
+            // add All Sites for ISG, Quality, Supervisor, and Production Planning logs submission
             if (isSubmission && !user.IsSubcontractor && // subcontractor user can only see its own site
                         (moduleId == Constants.MODULE_ISG 
+                            || moduleId == Constants.MODULE_PRODUCTION_PLANNING
                             || moduleId == Constants.MODULE_QUALITY
                             || moduleId == Constants.MODULE_SUPERVISOR))
             {

@@ -347,6 +347,12 @@ namespace eCoachingLog.Repository
         {
             var callTypes = new List<CallType>();
 
+            // todo: remove
+            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
+            {
+                moduleId = Constants.MODULE_ISG;
+            }
+
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_CallID_By_Module]", connection))
             {
@@ -372,7 +378,7 @@ namespace eCoachingLog.Repository
             return callTypes;
         }
 
-        public List<WarningType> GetWarningTypes(int moduleId, string source, bool isSpecialReason, int reasonPriority, string employeeId, string userId)
+        public List<WarningType> GetWarningTypes(int moduleId, string source, bool isSpecialReason, int reasonPriority, string employeeId, string userId, int? sourceId)
         {
             List<WarningType> warningTypes = new List<WarningType>();
 
@@ -383,6 +389,7 @@ namespace eCoachingLog.Repository
                 command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
                 command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@strSourcein", source);
+                command.Parameters.AddWithValueSafe("@intSourceIDin", sourceId); // how was it identifed?
                 command.Parameters.AddWithValueSafe("@isSplReason", isSpecialReason);
                 command.Parameters.AddWithValueSafe("@splReasonPrty", reasonPriority);
                 command.Parameters.AddWithValueSafe("@strEmpIDin", employeeId);
@@ -407,7 +414,7 @@ namespace eCoachingLog.Repository
             return warningTypes;
         }
 
-        public List<WarningReason> GetWarningReasons(int reasonId, string directOrIndirect, int moduleId, string employeeId)
+        public List<WarningReason> GetWarningReasons(int reasonId, string directOrIndirect, int moduleId, string employeeId, int? sourceId)
         {
             logger.Debug($"###############reasonId: {reasonId}");
             logger.Debug($"directOrIndirect: {directOrIndirect}");
@@ -424,6 +431,7 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
                 command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@nvcEmpIDin", employeeId);
+                command.Parameters.AddWithValueSafe("@intSourceIDin", sourceId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -443,9 +451,15 @@ namespace eCoachingLog.Repository
             return warningReasons;
         }
 
-        public List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userId, string employeeId, bool isSpecialResaon, int specialReasonPriority)
+        public List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userId, string employeeId, bool isSpecialResaon, int specialReasonPriority, int? sourceId)
         {
             List<CoachingReason> coachingReasons = new List<CoachingReason>();
+
+            // todo: remove
+            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
+            {
+                moduleId = Constants.MODULE_LSA;
+            }
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_CoachingReasons_By_Module]", connection))
@@ -454,6 +468,7 @@ namespace eCoachingLog.Repository
 				command.CommandTimeout = Constants.SQL_COMMAND_TIMEOUT;
 				command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
+                command.Parameters.AddWithValueSafe("@intSourceIDin", sourceId);
                 command.Parameters.AddWithValueSafe("@isSplReason", isSpecialResaon);
                 command.Parameters.AddWithValueSafe("@splReasonPrty", specialReasonPriority);
                 command.Parameters.AddWithValueSafe("@strEmpIDin", employeeId);
@@ -480,7 +495,7 @@ namespace eCoachingLog.Repository
             return coachingReasons;
         }
 
-        public List<string> GetValues(int reasonId, string directOrIndirect, int moduleId)
+        public List<string> GetValues(int reasonId, string directOrIndirect, int moduleId, int sourceId)
         {
             List<string> valueOptions = new List<string>();
 
@@ -492,6 +507,7 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@intReasonIDin", reasonId);
                 command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
+                command.Parameters.AddWithValueSafe("@intSourceIDin", sourceId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())
@@ -509,9 +525,14 @@ namespace eCoachingLog.Repository
             return valueOptions;
         }
 
-        public List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeId)
+        public List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeId, int sourceId)
         {
             List<CoachingSubReason> subReasons = new List<CoachingSubReason>();
+
+            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
+            {
+                moduleId = Constants.MODULE_LSA;
+            }
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SubCoachingReasons_By_Reason]", connection))
@@ -522,6 +543,7 @@ namespace eCoachingLog.Repository
                 command.Parameters.AddWithValueSafe("@intModuleIDin", moduleId);
                 command.Parameters.AddWithValueSafe("@strSourcein", directOrIndirect);
                 command.Parameters.AddWithValueSafe("@nvcEmpIDin", employeeId);
+                command.Parameters.AddWithValueSafe("@intSourceIDin", sourceId);
                 connection.Open();
 
                 using (SqlDataReader dataReader = command.ExecuteReader())

@@ -22,6 +22,12 @@ namespace eCoachingLog.Repository
         {
             var sourceList = new List<LogSource>();
 
+            // todo: remove
+            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
+            {
+                moduleId = Constants.MODULE_LSA;
+            }
+
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Source_By_Module]", connection))
             {

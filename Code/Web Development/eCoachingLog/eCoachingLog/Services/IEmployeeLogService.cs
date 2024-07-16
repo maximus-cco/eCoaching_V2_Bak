@@ -16,12 +16,12 @@ namespace eCoachingLog.Services
         BaseLogDetail GetLogDetail(long logId, bool isCoaching);
         // Get call record id and id format
         List<CallType> GetCallTypes(int moduleId);
-        List<WarningType> GetWarningTypes(int moduleId, string source, bool specialReason, int reasonPriority, string employeeId, string userId);
-        List<WarningReason> GetWarningReasons(int warningTypeId, string directOrIndirect, int moduleId, string employeeId);
+        List<WarningType> GetWarningTypes(int moduleId, string source, bool specialReason, int reasonPriority, string employeeId, string userId, int? sourceId);
+        List<WarningReason> GetWarningReasons(int warningTypeId, string directOrIndirect, int moduleId, string employeeId, int? sourceid);
         List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userId, string employeeId, bool isSpecialResaon, int specialReasonPriority, int? sourceId);
-        List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId);
+        List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId, int sourceId);
         List<Behavior> GetBehaviors(int moduleId);
-        List<string> GetValues(int reasonId, string directOrIndirect, int moduleId);
+        List<string> GetValues(int reasonId, string directOrIndirect, int moduleId, int sourceId);
 		List<LogReason> GetReasonsByLogId(long logId, bool isCoaching, string selectedReasonText, string selectedSubReasonText);
 		IList<LogStatus> GetAllLogStatuses();
         IList<LogStatus> GetQnLogPendingStatuses();

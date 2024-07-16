@@ -19,6 +19,12 @@ namespace eCoachingLog.Repository
         {
             logger.Debug("$$$$$$$$#########moduleId:" + moduleId + ", siteId:" + siteId);
 
+            // todo: remove
+            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
+            {
+                moduleId = Constants.MODULE_ISG;
+            }
+
             var employees = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_Employees_By_Module_And_Site]", connection))

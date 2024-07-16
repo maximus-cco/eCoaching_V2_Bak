@@ -16,12 +16,12 @@ namespace eCoachingLog.Repository
         WarningLogDetail GetWarningDetail(long logId);
 		List<Tuple<string, string, string>> GetReasonsByLogId(long logId, bool isCoaching);
 		List<CallType> GetCallTypes(int moduleId);
-        List<WarningType> GetWarningTypes(int moduleId, string source, bool specialReason, int reasonPriority, string employeeId, string userId);
-        List<WarningReason> GetWarningReasons(int reasonId, string directOrIndirect, int moduleId, string employeeId);
-        List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userId, string employeeId, bool isSpecialResaon, int specialReasonPriority);
-        List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId);
+        List<WarningType> GetWarningTypes(int moduleId, string source, bool specialReason, int reasonPriority, string employeeId, string userId, int? sourceId);
+        List<WarningReason> GetWarningReasons(int reasonId, string directOrIndirect, int moduleId, string employeeId, int? sourceId);
+        List<CoachingReason> GetCoachingReasons(string directOrIndirect, int moduleId, string userId, string employeeId, bool isSpecialResaon, int specialReasonPriority, int? sourceId);
+        List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeLanId, int sourceId);
         List<Behavior> GetBehaviors(int moduleId);
-        List<string> GetValues(int reasonId, string directOrIndirect, int moduleId);
+        List<string> GetValues(int reasonId, string directOrIndirect, int moduleId, int sourceId);
 
 		IList<LogStatus> GetAllLogStatuses();
 		IList<LogSource> GetAllLogSources(string userEmpId);
