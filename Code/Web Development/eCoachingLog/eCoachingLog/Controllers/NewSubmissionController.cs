@@ -631,6 +631,15 @@ namespace eCoachingLog.Controllers
             {
                 thisReason.ResearchOption = true;
             }
+
+            thisReason.AllowMultiSubReason = true;
+            if (sourceId == Constants.SOURCE_DIRECT_ASR || sourceId == Constants.SOURCE_INDIRECT_ASR)
+            {
+                if (reasonId == Constants.REASON_CALL_EFFICIENCY)
+                {
+                    thisReason.AllowMultiSubReason = false;
+                }
+            }
 		
 			// _NewSubmissionCoachingReason.cshtml needs it.
 			ViewData["index"] = reasonIndex;
