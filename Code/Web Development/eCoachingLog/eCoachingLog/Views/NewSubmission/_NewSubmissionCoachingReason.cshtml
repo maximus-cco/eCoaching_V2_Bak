@@ -48,7 +48,6 @@
             @Html.ListBoxFor(m => m.SubReasonIds,
                 new MultiSelectList(Model.SubReasons, "ID", "Text", Model.SubReasonIds),
                 new { @class = "listbox-singleselect", @Name = subReasonIds, id = subReasonIds })
-            @*@Html.DropDownListFor(m => m.ID, Model.SubReasonSelectList, new { id = "select-subreason", @class = "form-control" })*@
         }
 
 		@Html.ValidationMessageFor(m => m.SubReasonIds)

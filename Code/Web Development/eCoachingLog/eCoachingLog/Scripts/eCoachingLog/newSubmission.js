@@ -392,8 +392,6 @@ $(function () {
     $('body').on('change', "#SourceId", function () {
         prevSourceIdSelected = currentSourceIdSelected;
         currentSourceIdSelected = $(this).val();
-        console.log('currentSourceIdSelected=' + currentSourceIdSelected);
-
         if (currentSourceIdSelected == SOURCE_DIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
             DisableCseSelection();
         } else {

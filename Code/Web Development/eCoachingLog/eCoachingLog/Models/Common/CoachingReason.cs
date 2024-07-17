@@ -20,13 +20,7 @@ namespace eCoachingLog.Models.Common
 		public List<CoachingSubReason>  SubReasons { get; set; }
         public int[] SubReasonIds { get; set; }
 
-        public bool AllowMultiSubReason
-        {
-            get
-            {
-                return ID != Constants.REASON_CALL_EFFICIENCY;
-            }
-        }
+        public bool AllowMultiSubReason { get; set; }
 
         public IEnumerable<SelectListItem> SubReasonSelectList
         {
