@@ -72,6 +72,7 @@ namespace eCoachingLog.Services
         // https://docs.microsoft.com/en-us/dotnet/standard/threading/creating-threads-and-passing-data-at-start-time
         public void StoreNotification(MailParameter mailParameter)
         {
+            logger.Debug("########### Entered StoredNotification...");
             Thread thread = new Thread(new ParameterizedThreadStart(Store));
             thread.IsBackground = true;
             // The Start method returns immediately, often before the new thread has actually started. 

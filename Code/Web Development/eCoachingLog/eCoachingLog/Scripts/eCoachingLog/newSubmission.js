@@ -1,6 +1,8 @@
 ﻿const CLAIMS_VIEW_ID = 73;
 const SOURCE_DIRECT_ASR = 138;
 const SOURCE_INDIRECT_ASR = 238;
+const REASON_WFH_RETURN_SITE = 63;
+const REASON_PFD = 64;
 
 $(function () {
     const claimsViewErrMsg = '"Claims View" is for Medicare only. You selected a non-Medicare Program.';
@@ -8,9 +10,8 @@ $(function () {
     var prevSourceIdSelected = -2;
     var currentSourceIdSelected = $('#SourceId').val();
     var cancelBtnClicked = false;
-	var workAtHomeChecked = false;
 	var showWorkAtHomeBehaviorDiv = false;
-	var pfdChecked = false;
+
 	var claimsViewChecked = isClaimsViewReasonSelected();
 
 	if ($('#SourceId').val() == SOURCE_INDIRECT_ASR || $('#SourceId').val() == SOURCE_DIRECT_ASR)
@@ -115,19 +116,20 @@ $(function () {
         	}
         });
 
-		// Work At Home (Return to Site Only)
-        if (reasonId == 63)
-        {
-        	workAtHomeChecked = isChecked;
-        }
+        let wfhReturnSiteChecked = false;
+        let pfdChecked = false;
+        $("input:checkbox[class=reason-checkbox]:checked").each(function () {
+            console.log("Id: " + $(this).attr("id") + " Value: " + $(this).closest('.coaching-reason').find('input:hidden.reason-id').val());
+            let thisReasonId = $(this).closest('.coaching-reason').find('input:hidden.reason-id').val();
+            console.log("Id: " + $(this).attr("id") + " Value: " + thisReasonId);
+            if (thisReasonId == REASON_WFH_RETURN_SITE) { // Work From Home (Return to Site)
+                wfhReturnSiteChecked = true;
+            } else if (thisReasonId == REASON_PFD) { // Performance, Feedback, and Development (PFD)
+                pfdChecked = true;
+            }
+        });
 
-        // Performance, Feedback, and Development (PFD)
-        if (reasonId == 64)
-        {
-            pfdChecked = isChecked;
-        }
-
-        $('#IsWorkAtHomeReturnSite').val(workAtHomeChecked);
+        $('#IsWorkAtHomeReturnSite').val(wfhReturnSiteChecked);
         $('#IsPfd').val(pfdChecked);
 
         // show pfd completed date input
@@ -143,7 +145,7 @@ $(function () {
         }
 
 		// show HR text instead editable textarea (behavior)
-        if (workAtHomeChecked)
+        if (wfhReturnSiteChecked)
         {
         	showBehaviorForWahReturnToSite();
         }
@@ -175,7 +177,7 @@ $(function () {
     	$('#div-wah-behavior').addClass('show');
     	$('#div-none-wah-behavior').removeClass('show');
     	$('#div-none-wah-behavior').addClass('hide');
-    }
+   }
 
     function showBehaviorEditable()
     {
@@ -383,15 +385,15 @@ $(function () {
     });
 
     $('body').on('change', "#IsCse", function () {
-    	// reset behavior to editable textarea
-    	showBehaviorEditable();
 		// reset coaching reasons
-        refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
+    	resetCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
     });
 
     $('body').on('change', "#SourceId", function () {
         prevSourceIdSelected = currentSourceIdSelected;
         currentSourceIdSelected = $(this).val();
+        console.log('currentSourceIdSelected=' + currentSourceIdSelected);
+
         if (currentSourceIdSelected == SOURCE_DIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
             DisableCseSelection();
         } else {
@@ -402,12 +404,7 @@ $(function () {
         // reload coaching reasons if source is changed to ASR or changed from ASR
         if (prevSourceIdSelected == SOURCE_DIRECT_ASR || currentSourceIdSelected == SOURCE_DIRECT_ASR
                 || prevSourceIdSelected == SOURCE_INDIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
-            refreshCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
-        }
-
-        //  reset behavior to editable textarea
-        if (currentSourceIdSelected == SOURCE_DIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
-            showBehaviorEditable();
+            resetCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
         }
     });
 
@@ -448,7 +445,7 @@ $(function () {
         $('#action-plan-remaining').text(textLength + ' remaining');
     });
 
-    function refreshCoachingReasons(isCoachingByYou, isCse) {
+    function resetCoachingReasons(isCoachingByYou, isCse) {
     	$(".please-wait").slideDown(500);
         // ajax call to get coaching reasons
         $.ajax({
@@ -461,7 +458,9 @@ $(function () {
             },
             success: function (result) {
             	$(".please-wait").slideUp(500);
-                $('#coaching-reasons').html(result);
+            	$('#coaching-reasons').html(result);
+
+           	    showBehaviorEditable();
             }
         });
     }

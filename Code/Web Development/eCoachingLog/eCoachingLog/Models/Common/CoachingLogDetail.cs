@@ -60,6 +60,8 @@ namespace eCoachingLog.Models.Common
         public bool IsAsrHold { get; set; }
         public bool IsAsrTransfer { get; set; }
         public bool IsAsrAht { get; set; }
+        public bool IsAsrAcw { get; set; }
+        public bool IsAsrChat { get; set; }
 
         public bool HasEmpAcknowledged { get; set; }
         public bool HasSupAcknowledged { get; set; }

@@ -576,7 +576,8 @@ namespace eCoachingLog.Services
                 else // not coachable
                 {
                     review.DetailReasonNotCoachable = FormatCoachingNotes(review, user);
-                    if (review.LogDetail.IsAsrAht || review.LogDetail.IsAsrHold || review.LogDetail.IsAsrTransfer)
+                    if (review.LogDetail.IsAsrAht || review.LogDetail.IsAsrHold || review.LogDetail.IsAsrTransfer
+                            || review.LogDetail.IsAsrAcw || review.LogDetail.IsAsrChat)
                     {
                         // send manager email for not coachable ASR logs
                         var mailParameter = new MailParameter(review.LogDetail, review.MainReasonNotCoachable, review.DetailReasonNotCoachable, review.Comment, "ASR Log Not Coachable", emailTempFileName, user.EmployeeId, review.LogDetail.ManagerEmail);
