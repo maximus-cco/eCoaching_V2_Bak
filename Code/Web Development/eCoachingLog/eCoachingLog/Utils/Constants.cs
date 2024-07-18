@@ -149,6 +149,8 @@ namespace eCoachingLog.Utils
         public const string LOG_REPORT_CODE_ASRAHT = "ASR/AHT";
         public const string LOG_REPORT_CODE_ASRHOLD = "ASR/HOLD";
         public const string LOG_REPORT_CODE_ASRTRANSFER = "ASR/TRANSFER";
+        public const string LOG_REPORT_CODE_ASRACW = "ASR/ACW";
+        public const string LOG_REPORT_CODE_ASRCHAT = "ASR/CHAT";
 
         public const int MAX_NUMBER_OF_EMPLOYEES_COACHING_PER_SUBMISSION = 100;
         public const int MAX_NUMBER_OF_EMPLOYEES_WARNING_PER_SUBMISSION = 1;

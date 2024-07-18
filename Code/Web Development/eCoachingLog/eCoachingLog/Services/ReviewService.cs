@@ -321,6 +321,14 @@ namespace eCoachingLog.Services
             {
                 reportCode = Constants.LOG_REPORT_CODE_ASRTRANSFER;
             }
+            else if (log.IsAsrAcw)
+            {
+                reportCode = Constants.LOG_REPORT_CODE_ASRACW;
+            }
+            else if (log.IsAsrChat)
+            {
+                reportCode = Constants.LOG_REPORT_CODE_ASRCHAT;
+            }
 			else
 			{
 				reportCode = Constants.LOG_REPORT_CODE_OTHER;

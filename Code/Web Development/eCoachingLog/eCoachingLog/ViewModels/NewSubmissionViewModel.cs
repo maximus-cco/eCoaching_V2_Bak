@@ -276,15 +276,18 @@ namespace eCoachingLog.ViewModels
                 }
             }
 
-			// Validate follow-up entries for CSR/ISG logs only
-			if (this.ModuleId == Constants.MODULE_CSR || this.ModuleId == Constants.MODULE_ISG)
+			// Validate follow-up entries for CSR/ISG/Production Planning logs only
+			if (this.ModuleId == Constants.MODULE_CSR || this.ModuleId == Constants.MODULE_ISG || this.ModuleId == Constants.MODULE_PRODUCTION_PLANNING)
 			{
-				// followup radio button
-				if (!this.IsFollowupRequired.HasValue)
-				{
-					var isFollowupRequired = new[] { "IsFollowupRequired" };
-					yield return new ValidationResult("Please make a selction.", isFollowupRequired);
-				}
+                if (this.SourceId != Constants.SOURCE_INDIRECT_ASR)
+                {
+                    // followup radio button
+                    if (!this.IsFollowupRequired.HasValue)
+                    {
+                        var isFollowupRequired = new[] { "IsFollowupRequired" };
+                        yield return new ValidationResult("Please make a selction.", isFollowupRequired);
+                    }
+                }
 
 				// followup Date
 				if (this.IsFollowupRequired.HasValue && this.IsFollowupRequired.Value)

@@ -19,6 +19,11 @@ $(function () {
 	    DisableCseSelection();
 	}
 
+	if ($('#SourceId').val() == SOURCE_INDIRECT_ASR)
+	{
+	    DisableFollowup();
+	}
+
 	function DisableCseSelection()
 	{
 	    // reset CSE to NO and disable CSE question
@@ -26,6 +31,11 @@ $(function () {
 	    radioOption.prop("checked", true);
 	    // disable cse radio buttons
 	    $(".rbtn-is-cse").prop('disabled', true);
+	}
+
+	function DisableFollowup() {
+	    // disable radio buttons
+	    $(".rbtn-isfollowuprequired").prop('disabled', true);
 	}
 
     // https://github.com/istvan-ujjmeszaros/bootstrap-duallistbox/issues/110
@@ -119,9 +129,7 @@ $(function () {
         let wfhReturnSiteChecked = false;
         let pfdChecked = false;
         $("input:checkbox[class=reason-checkbox]:checked").each(function () {
-            console.log("Id: " + $(this).attr("id") + " Value: " + $(this).closest('.coaching-reason').find('input:hidden.reason-id').val());
             let thisReasonId = $(this).closest('.coaching-reason').find('input:hidden.reason-id').val();
-            console.log("Id: " + $(this).attr("id") + " Value: " + thisReasonId);
             if (thisReasonId == REASON_WFH_RETURN_SITE) { // Work From Home (Return to Site)
                 wfhReturnSiteChecked = true;
             } else if (thisReasonId == REASON_PFD) { // Performance, Feedback, and Development (PFD)
@@ -397,6 +405,14 @@ $(function () {
         } else {
             // enable cse radio buttons
             $(".rbtn-is-cse").prop('disabled', false);
+        }
+
+        if (currentSourceIdSelected == SOURCE_INDIRECT_ASR)
+        {
+            DisableFollowup();
+        } else {
+            // enable followup radio buttons
+            $(".rbtn-isfollowuprequired").prop('disabled', false);
         }
 
         // reload coaching reasons if source is changed to ASR or changed from ASR

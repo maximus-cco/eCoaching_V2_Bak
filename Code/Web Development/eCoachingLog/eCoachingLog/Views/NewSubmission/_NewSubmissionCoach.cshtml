@@ -124,15 +124,15 @@
 	</div>
 </div>
 
-<div class='form-group @(@Model.ShowFollowup ? "show" : "hide")'>
+<div id='div-followup' class='form-group @(@Model.ShowFollowup ? "show" : "hide")'>
 	<label class="col-sm-3 control-label required">Is follow-up required?</label>
 	<div class="col-sm-4">
 		<div class="radio">
 			<div class="col-sm-2">
-				@Html.RadioButtonFor(m => m.IsFollowupRequired, true) Yes
+				@Html.RadioButtonFor(m => m.IsFollowupRequired, true, new { @class = "rbtn-isfollowuprequired" }) Yes
 			</div>
 			<div class="col-sm-2">
-				@Html.RadioButtonFor(m => m.IsFollowupRequired, false) No
+				@Html.RadioButtonFor(m => m.IsFollowupRequired, false, new { @class = "rbtn-isfollowuprequired" }) No
 			</div>
 		</div>
 		@Html.ValidationMessageFor(m => m.IsFollowupRequired)
