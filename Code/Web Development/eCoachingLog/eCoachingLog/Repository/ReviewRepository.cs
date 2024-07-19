@@ -394,12 +394,17 @@ namespace eCoachingLog.Repository
 				command.Parameters.AddWithValueSafe("@bitisCoachingRequired", review.IsCoachingRequired);
 				command.Parameters.AddWithValueSafe("@nvcReviewerNotes", review.DetailReasonCoachable);
 				command.Parameters.AddWithValueSafe("@nvctxtReasonNotCoachable", review.DetailReasonNotCoachable);
+                // "Is follow-up required?" on Review page
+                if (review.IsFollowupCoachingRequired.HasValue)
+                {
+                    command.Parameters.AddWithValueSafe("@bitisFollowupRequired", review.IsFollowupCoachingRequired);
+                    command.Parameters.AddWithValueSafe("@dtmFollowupDueDate", review.FollowupDueDate);
+                }
 
-				try
+                try
 				{
 					connection.Open();
-					int rowsUpdated = command.ExecuteNonQuery();
-
+                    int rowsUpdated = command.ExecuteNonQuery();
 					if (rowsUpdated == 0)
 					{
 						throw new Exception("Couldn't update log [" + review.LogDetail.LogId + "].");

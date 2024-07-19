@@ -761,6 +761,18 @@ namespace eCoachingLog.Controllers
                 vm.ShowFollowupCoaching = true;
             }
 
+            // ASR logs
+            if (vm.LogDetail.IsAsrAcw || vm.LogDetail.IsAsrAht || vm.LogDetail.IsAsrChat || vm.LogDetail.IsAsrHold || vm.LogDetail.IsAsrTransfer)
+            {
+                // Indirect ASR logs Pending Supervisor Review, user is the "Supervior" OR "Reassigned to"
+                if (vm.LogDetail.SourceId == Constants.SOURCE_INDIRECT_ASR
+                        && (user.EmployeeId == vm.LogDetail.SupervisorEmpId || user.EmployeeId == vm.LogDetail.ReassignedToEmpId)
+                        && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+                {
+                    vm.ShowFollowupCoaching = true;
+                }
+            }
+
 			// Followup - Pending Supervisor Followup
 			if (IsFollowupPendingSupervisor(vm))
 			{

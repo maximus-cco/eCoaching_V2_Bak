@@ -338,6 +338,7 @@ function toggleCoachingRequired(coachingRequired) {
     if (coachingRequired === 'true') {
         // show
         $('#div-coachable-detail-reason').removeClass('hide');
+        $('#div-is-followup-required').removeClass('hide');
         // hide
         $('#div-noncoachable-main-reason').removeClass('show');
         $('#div-noncoachable-main-reason').addClass('hide');
@@ -353,6 +354,8 @@ function toggleCoachingRequired(coachingRequired) {
         // hide
         $('#div-coachable-detail-reason').removeClass('show');
         $('#div-coachable-detail-reason').addClass('hide');
+        $('#div-is-followup-required').removeClass('show');
+        $('#div-is-followup-required').addClass('hide');
     }
 }
 

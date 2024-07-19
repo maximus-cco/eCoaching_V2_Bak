@@ -53,36 +53,59 @@
 		@Html.ValidationMessageFor(m => m.IsCoachingRequired)
 	</div>
 
-	<div class='form-group mt-2 hide' id='div-noncoachable-main-reason'>
-		<label for="MainReasonNotCoachable" class="required">What was the main reason this item was not coachable?</label>
-		@Html.DropDownListFor(m => m.MainReasonNotCoachable, Model.MainReasonNotCoachableList, new { @class = "form-control", style = "width: 350px;" })
-		@Html.ValidationMessageFor(m => m.MainReasonNotCoachable)
-	</div>
+    <div class='form-group mt-3  @(@Model.ShowFollowupCoaching ? "show" : "hide")' id="div-is-followup-required">
+        <label class="required">Is follow-up coaching required?</label>
+        <div>
+            <label class="radio-inline">
+                @Html.RadioButtonFor(m => m.IsFollowupCoachingRequired, true, new { id = "IsFollowupRequiredYes" }) Yes
+            </label>
+            <label class="radio-inline ml-3">
+                @Html.RadioButtonFor(m => m.IsFollowupCoachingRequired, false, new { id = "IsFollowupRequiredNo" }) No
+            </label>
+            @Html.ValidationMessageFor(m => m.IsFollowupCoachingRequired)
+        </div>
+    </div>
+    <div class='mt-3 hide' id="div-select-followup-due-date">
+        <label for="followup-date" id="label-followup-date" class="required">Select the date of follow-up:</label>
+        <div class="col-xs-3 input-group">
+            @Html.TextBoxFor(m => m.FollowupDueDate, new { @class = "form-control", @id = "followup-date" })
+            @*<span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>*@
+        </div>
+        @Html.ValidationMessageFor(m => m.FollowupDueDate)
+    </div>
 
-	<div class='form-group mt-2 hide' id='div-noncoachable-detail-reason'>
-		<label for="DetailReasonNotCoachable" class="required">Please provide reason/explanation/justification as to why the item was not coachable:</label>
-		@Html.TextAreaFor(m => m.DetailReasonNotCoachable, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
-		<div class="help-block">
-            <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
-		</div>
-		@Html.ValidationMessageFor(m => m.DetailReasonNotCoachable)
-	</div>
+    <div class='form-group mt-2 hide' id='div-noncoachable-main-reason'>
+        <label for="MainReasonNotCoachable" class="required">What was the main reason this item was not coachable?</label>
+        @Html.DropDownListFor(m => m.MainReasonNotCoachable, Model.MainReasonNotCoachableList, new { @class = "form-control", style = "width: 350px;" })
+        @Html.ValidationMessageFor(m => m.MainReasonNotCoachable)
+    </div>
 
-	<div class='form-group mt-2' id='div-coachable-detail-reason'>
-		@if (Model.IsReviewByManager)
-		{
-			<label for="DetailReasonCoachable" class="required">Please provide reason/explanation/justification as to why the item is coachable for the Supervisor:</label>
-		}
-		else
-		{
-			<label for="DetailReasonCoachable" class="required">Provide the details from the coaching session including action plans developed:</label>
-		}
-		@Html.TextAreaFor(m => m.DetailReasonCoachable, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
-		<div class="help-block">
+    <div class='form-group mt-2 hide' id='div-noncoachable-detail-reason'>
+        <label for="DetailReasonNotCoachable" class="required">Please provide reason/explanation/justification as to why the item was not coachable:</label>
+        @Html.TextAreaFor(m => m.DetailReasonNotCoachable, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
+        <div class="help-block">
             <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
-		</div>
-		@Html.ValidationMessageFor(m => m.DetailReasonCoachable)
-	</div>
+        </div>
+        @Html.ValidationMessageFor(m => m.DetailReasonNotCoachable)
+    </div>
+
+    <div class='form-group mt-2' id='div-coachable-detail-reason'>
+        @if (Model.IsReviewByManager)
+        {
+            <label for="DetailReasonCoachable" class="required">Please provide reason/explanation/justification as to why the item is coachable for the Supervisor:</label>
+        }
+        else
+        {
+            <label for="DetailReasonCoachable" class="required">Provide the details from the coaching session including action plans developed:</label>
+        }
+        @Html.TextAreaFor(m => m.DetailReasonCoachable, new { @class = "form-control remaining", @rows = "5", maxlength = 3000 })
+        <div class="help-block">
+            <span class="pull-right"><span class="remaining-count">3000</span> remaining</span>
+        </div>
+        @Html.ValidationMessageFor(m => m.DetailReasonCoachable)
+    </div>
 }
 
 

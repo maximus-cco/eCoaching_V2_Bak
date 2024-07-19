@@ -648,7 +648,8 @@ namespace eCoachingLog.Services
 
 			string nextStatus = Constants.LOG_STATUS_UNKNOWN_TEXT;
 			int moduleId = review.LogDetail.ModuleId;
-			// Positive (reinforced, met goal) Ack form
+
+			// Positive (reinforced, met goal) Acknowledge
 			if (review.IsAcknowledgeForm && review.IsMoreReviewRequired)
 			{
 				if (review.LogDetail.EmployeeId == user.EmployeeId)
@@ -691,7 +692,7 @@ namespace eCoachingLog.Services
 				return nextStatus;
 			}
 
-			// Research form
+			// Research 
 			if (review.IsResearchPendingForm)
 			{
 				// Coaching not required
@@ -702,27 +703,21 @@ namespace eCoachingLog.Services
 
 				// Coaching is required
 				var log = review.LogDetail;
+                // CSR, ISG, Training
 				if(moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_ISG || moduleId == Constants.MODULE_TRAINING)
 				{
-					//if (log.IsCurrentCoachingInitiative || log.IsOmrException || log.IsLowCsat) // current Pending Manager Review to determine if coaching is required
 					if (log.StatusId == Constants.LOG_STATUS_PENDING_MANAGER_REVIEW)
 					{
 						nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW_TEXT;
 					}
-					// current Pending Supervisor Review to determine if coaching is required
-					//else if (log.IsOmrIae || log.IsOmrIaef || log.IsOmrIat || log.IsEtsOae || log.IsTrainingShortDuration || log.IsTrainingOverdue || log.IsBrl || log.IsBrn)
-					else //if (log.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
+					else 
 					{
 						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 					}
-					//if (user.EmployeeId == log.SupervisorEmpId || user.EmployeeId == log.ReassignedToEmpId)
-					//{
-					//	nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
-					//}
 				}
+                // Supervisor
 				else if (moduleId == Constants.MODULE_SUPERVISOR)
 				{
-					//if (log.IsCurrentCoachingInitiative || log.IsOmrException)
 					if (log.StatusId == Constants.LOG_STATUS_PENDING_SRMANAGER_REVIEW)
 					{
 						nextStatus = Constants.LOG_STATUS_PENDING_MANAGER_REVIEW_TEXT;
@@ -732,9 +727,9 @@ namespace eCoachingLog.Services
 						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 					}
 				}
+                // Quality
 				else if (moduleId == Constants.MODULE_QUALITY)
 				{
-					//if (log.IsCurrentCoachingInitiative || log.IsOmrException)
 					if (log.StatusId == Constants.LOG_STATUS_PENDING_DEPUTYPROGRAMMANAGER_REVIEW)
 					{
 						nextStatus = Constants.LOG_STATUS_PENDING_QUALITYLEAD_REVIEW_TEXT;
@@ -744,7 +739,8 @@ namespace eCoachingLog.Services
 						nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 					}
 				}
-				else // LSA, Program Analyst, Administration, Analytics Reporting, Production Planning
+                // All others
+				else
 				{
 					nextStatus = Constants.LOG_STATUS_PENDING_EMPLOYEE_REVIEW_TEXT;
 				}
@@ -752,7 +748,7 @@ namespace eCoachingLog.Services
 				return nextStatus;
 			}
 
-			// CSE form
+			// CSE 
 			if (review.IsCsePendingForm)
 			{
 				if (moduleId == Constants.MODULE_CSR || moduleId == Constants.MODULE_ISG || moduleId == Constants.MODULE_TRAINING)
@@ -769,7 +765,7 @@ namespace eCoachingLog.Services
 				}
 			}
 
-			// if nextStatus is unknown, then something must be wrong
+			// Should never reach here - nextStatus "Unknown"
 			return nextStatus;
 		}
 

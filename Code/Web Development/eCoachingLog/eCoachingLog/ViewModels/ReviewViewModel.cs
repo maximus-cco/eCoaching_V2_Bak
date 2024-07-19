@@ -190,7 +190,8 @@ namespace eCoachingLog.ViewModels
 			this.EmployeeCommentsDdlList = new List<SelectListItem>();
 			// Default to true
 			this.IsCoachingRequired = true;
-			this.ShortCallList = new List<ShortCall>();
+            this.IsFollowupCoachingRequired = false;
+            this.ShortCallList = new List<ShortCall>();
 		}
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -238,7 +239,13 @@ namespace eCoachingLog.ViewModels
 			// Reasearch
 			if (this.IsResearchPendingForm)
 			{
-				if (!this.DateCoached.HasValue)
+                if (this.IsFollowupCoachingRequired != null && this.IsFollowupCoachingRequired.Value && !this.FollowupDueDate.HasValue)
+                {
+                    var followupDueDate = new[] { "FollowupDueDate" };
+                    yield return new ValidationResult("Provide follow-up due date.", followupDueDate);
+                }
+
+                if (!this.DateCoached.HasValue)
 				{
 					var dateCoached = new[] { "DateCoached" };
 					yield return new ValidationResult("Provide coaching date.", dateCoached);
