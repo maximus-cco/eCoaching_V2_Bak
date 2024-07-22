@@ -13,8 +13,8 @@
   DTS:ObjectName="Outlier_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="363"
-  DTS:VersionGUID="{E49901F8-B134-489D-ABF5-F69E39A11B28}">
+  DTS:VersionBuild="368"
+  DTS:VersionGUID="{ABDA45DE-8971-46B7-90A0-F302F0DB0E2C}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -189,6 +189,172 @@
               DTS:TextQualified="True"
               DTS:ObjectName="CD2"
               DTS:DTSID="{81A52043-0FA2-4376-A33F-43718260060A}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[ASR_File]"
+      DTS:CreationName="FLATFILE"
+      DTS:DTSID="{2ec99bab-1f3c-4282-97b3-70fb9deddfe8}"
+      DTS:ObjectName="ASR_File">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[User::DecryptedOutPath] +@[User::VarFileName]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="1033"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x0022_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\Outliers\Decrypt_out\">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="numReportID"
+              DTS:DTSID="{95EFD432-8788-4EFC-84A0-FE8FDA0F669B}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strReportCode"
+              DTS:DTSID="{4D5E078F-E37E-4EB3-B3A8-DD014C497036}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strFormType"
+              DTS:DTSID="{5FD962B6-D63A-4872-806E-5755E976AAF5}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strSource"
+              DTS:DTSID="{B0622C0B-BFD3-428B-91B2-951D751FE3CD}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strFormStatus"
+              DTS:DTSID="{514B6248-52F6-4210-B525-F268D626580B}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="EventDate"
+              DTS:DTSID="{F99F6414-316E-499F-ACE7-7FA61575D824}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="SubmittedDate"
+              DTS:DTSID="{F0731555-EEA3-41E1-A164-934C9A5C2D1B}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="StartDate"
+              DTS:DTSID="{3163F7AC-0298-40E3-B31E-6ADA147F9DF5}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="60"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strSubmitterName"
+              DTS:DTSID="{B9DACC09-8DE4-4430-B759-EBBAECF877F1}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strSubmitterEmail"
+              DTS:DTSID="{A6D95FA7-6F7C-4A70-813C-2471B01A7FF8}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="30"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strCSR"
+              DTS:DTSID="{CB9A519D-DC0D-4421-923D-05D03866605C}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="60"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strCSRSite"
+              DTS:DTSID="{5AF14BBB-8947-4D9D-A01B-FE8A59413109}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="20"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strCoachReason_ Current_Coaching_Initiatives"
+              DTS:DTSID="{00FECBB6-44E3-4A3A-A427-849992A5F496}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="3000"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="txtDescription"
+              DTS:DTSID="{CB9DEFE4-4C4C-4F5D-928B-3DB0C200892C}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="30"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strProgram"
+              DTS:DTSID="{72D0572C-92F0-41AD-BA3A-B5AEBC658BF9}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="30"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Group"
+              DTS:DTSID="{0EB75C94-DEDA-4624-AF51-76600A2C8444}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -1325,6 +1491,15 @@ eCoaching Log Team.</DTS:VariableValue>
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
+              <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -1443,35 +1618,6 @@ eCoaching Log Team.</DTS:VariableValue>
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_beffbe422c244276a2daecbda870e1c4.Properties.Settings.get_Default():ST_beffbe422c244276a2daecbda870e1c4.Properties.Sett" +
-    "ings")]
-
-namespace ST_beffbe422c244276a2daecbda870e1c4.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -1695,6 +1841,35 @@ namespace ST_beffbe422c244276a2daecbda870e1c4
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_beffbe422c244276a2daecbda870e1c4.Properties.Settings.get_Default():ST_beffbe422c244276a2daecbda870e1c4.Properties.Sett" +
+    "ings")]
+
+namespace ST_beffbe422c244276a2daecbda870e1c4.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
+              <ProjectItem
                 Name="Properties\AssemblyInfo.cs"
                 Encoding="UTF8"><![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -1724,15 +1899,6 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -1931,6 +2097,1704 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           DTS:ObjectName="{89E1A1C1-4257-4E94-BC23-DC1AA87BB50F}"
           DTS:ValueIndex="0"
           DTS:VariableName="User::varFailedFile" />
+      </DTS:ForEachVariableMappings>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Foreach ASR OMR"
+      DTS:CreationName="STOCK:FOREACHLOOP"
+      DTS:Description="Foreach Loop Container"
+      DTS:DTSID="{abfdd98d-9cfd-42a0-b11e-5ea590fdfa79}"
+      DTS:ExecutableType="STOCK:FOREACHLOOP"
+      DTS:LocaleID="-1"
+      DTS:MaxErrorCount="0"
+      DTS:ObjectName="Foreach ASR OMR">
+      <DTS:ForEachEnumerator
+        DTS:CreationName="Microsoft.ForEachFileEnumerator"
+        DTS:DTSID="{8b02b3be-95df-4998-aa58-d16e6f36ab85}"
+        DTS:ObjectName="{99108A07-A6E3-479A-8059-556ED7849ED6}">
+        <DTS:PropertyExpression
+          DTS:Name="Directory">@[User::DecryptedOutPath]</DTS:PropertyExpression>
+        <DTS:ObjectData>
+          <ForEachFileEnumeratorProperties>
+            <FEFEProperty
+              Folder="\\UVAADADSQL50CCO.ad.local\data\coaching\Outliers\Decrypt_out\" />
+            <FEFEProperty
+              FileSpec="eCL_Outlier_Feed_ASR*.csv" />
+            <FEFEProperty
+              FileNameRetrievalType="1" />
+            <FEFEProperty
+              Recurse="0" />
+          </ForEachFileEnumeratorProperties>
+        </DTS:ObjectData>
+      </DTS:ForEachEnumerator>
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Foreach ASR OMR\File System Task"
+          DTS:CreationName="Microsoft.FileSystemTask"
+          DTS:Description="File System Task"
+          DTS:DTSID="{ea135790-ed48-49d7-8435-0657163b7b32}"
+          DTS:ExecutableType="Microsoft.FileSystemTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="File System Task"
+          DTS:TaskContact="File System Task;Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <FileSystemData
+              TaskOperationType="DeleteFile"
+              TaskOverwriteDestFile="True"
+              TaskSourcePath="{A604382A-4753-472E-8F02-6BC574BA4254}"
+              TaskDestinationPath="User::FileBakPath"
+              TaskIsDestinationVariable="True" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach ASR OMR\Load  Staging Table"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{707dae1f-5c0e-4486-9ab9-a773d26f736a}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load  Staging Table"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server v9; (C) 2004 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              BLOBTempStoragePath=""
+              bufferTempStoragePath=""
+              engineThreads="5"
+              version="1">
+              <components>
+                <component
+                  refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion"
+                  componentClassID="Microsoft.DataConvert"
+                  contactInfo="Data Conversion;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Data Conversion"
+                  name="Data Conversion"
+                  usesDispositions="true">
+                  <inputs>
+                    <input
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input]"
+                      name="Data Conversion Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strReportCode]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="strReportCode"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strReportCode]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strFormType]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="strFormType"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strFormType]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strSource]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="strSource"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSource]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strFormStatus]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="strFormStatus"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strFormStatus]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[EventDate]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="EventDate"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[EventDate]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[SubmittedDate]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="SubmittedDate"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[SubmittedDate]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[StartDate]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="StartDate"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[StartDate]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strSubmitterName]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="60"
+                          cachedName="strSubmitterName"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSubmitterName]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strSubmitterEmail]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="strSubmitterEmail"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSubmitterEmail]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strCSR]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="30"
+                          cachedName="strCSR"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCSR]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strCSRSite]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="60"
+                          cachedName="strCSRSite"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCSRSite]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strCoachReason_ Current_Coaching_Initiatives]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="20"
+                          cachedName="strCoachReason_ Current_Coaching_Initiatives"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCoachReason_ Current_Coaching_Initiatives]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[txtDescription]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="3000"
+                          cachedName="txtDescription"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[txtDescription]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[FileName]"
+                          cachedDataType="wstr"
+                          cachedLength="260"
+                          cachedName="FileName"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[FileName]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[strProgram]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="30"
+                          cachedName="strProgram"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strProgram]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input].Columns[Group]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="30"
+                          cachedName="Group"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[Group]" />
+                      </inputColumns>
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output]"
+                      exclusionGroup="1"
+                      name="Data Conversion Output"
+                      synchronousInputId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strReportCode]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="20"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strReportCode]"
+                          name="strReportCode"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strReportCode]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strFormType]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="20"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strFormType]"
+                          name="strFormType"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strFormType]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSource]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="60"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSource]"
+                          name="strSource"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSource]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strFormStatus]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="30"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strFormStatus]"
+                          name="strFormStatus"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strFormStatus]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[EventDate]"
+                          dataType="date"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[EventDate]"
+                          name="EventDate"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[EventDate]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[SubmittedDate]"
+                          dataType="date"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[SubmittedDate]"
+                          name="SubmittedDate"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[SubmittedDate]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[StartDate]"
+                          dataType="date"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[StartDate]"
+                          name="StartDate"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[StartDate]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterName]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="60"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterName]"
+                          name="strSubmitterName"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSubmitterName]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterEmail]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterEmail]"
+                          name="strSubmitterEmail"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSubmitterEmail]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCSR]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="30"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCSR]"
+                          name="strCSR"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCSR]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCSRSite]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="60"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCSRSite]"
+                          name="strCSRSite"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCSRSite]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCoachReason_ Current_Coaching_Initiatives]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="20"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCoachReason_ Current_Coaching_Initiatives]"
+                          name="strCoachReason_ Current_Coaching_Initiatives"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCoachReason_ Current_Coaching_Initiatives]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[txtDescription]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="3000"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[txtDescription]"
+                          name="txtDescription"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[txtDescription]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[FileName]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="260"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[FileName]"
+                          name="FileName"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[FileName]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strProgram]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="30"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strProgram]"
+                          name="strProgram"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strProgram]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Group]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          length="30"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Group]"
+                          name="Copy of Group"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.Int32"
+                              description="Specifies the input column used as the source of data for the conversion."
+                              name="SourceInputColumnLineageID">#{Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[Group]}</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="Data Conversion Error Output"
+                      synchronousInputId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[EC].[Outlier_Coaching_Stage]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">2147483647</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[destnationdb]"
+                      connectionManagerRefId="Package.ConnectionManagers[destnationdb]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[numReportID]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="numReportID"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Report_ID]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[numReportID]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strReportCode]"
+                          cachedDataType="wstr"
+                          cachedLength="20"
+                          cachedName="strReportCode"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Report_Code]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strReportCode]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strFormType]"
+                          cachedDataType="wstr"
+                          cachedLength="20"
+                          cachedName="strFormType"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Form_Type]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strFormType]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strSource]"
+                          cachedDataType="wstr"
+                          cachedLength="60"
+                          cachedName="strSource"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Source]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSource]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strFormStatus]"
+                          cachedDataType="wstr"
+                          cachedLength="30"
+                          cachedName="strFormStatus"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Form_Status]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strFormStatus]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EventDate]"
+                          cachedDataType="date"
+                          cachedName="EventDate"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Event_Date]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[EventDate]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[SubmittedDate]"
+                          cachedDataType="date"
+                          cachedName="SubmittedDate"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitted_Date]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[SubmittedDate]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[StartDate]"
+                          cachedDataType="date"
+                          cachedName="StartDate"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Start_Date]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[StartDate]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strSubmitterName]"
+                          cachedDataType="wstr"
+                          cachedLength="60"
+                          cachedName="strSubmitterName"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Name]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterName]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strSubmitterEmail]"
+                          cachedDataType="wstr"
+                          cachedLength="50"
+                          cachedName="strSubmitterEmail"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Email]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strSubmitterEmail]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strCSR]"
+                          cachedDataType="wstr"
+                          cachedLength="30"
+                          cachedName="strCSR"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CSR_LANID]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCSR]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strCSRSite]"
+                          cachedDataType="wstr"
+                          cachedLength="60"
+                          cachedName="strCSRSite"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CSR_Site]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCSRSite]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[txtDescription]"
+                          cachedDataType="wstr"
+                          cachedLength="3000"
+                          cachedName="txtDescription"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[TextDescription]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[txtDescription]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strCoachReason_ Current_Coaching_Initiatives]"
+                          cachedDataType="wstr"
+                          cachedLength="20"
+                          cachedName="strCoachReason_ Current_Coaching_Initiatives"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CoachReason_Current_Coaching_Initiatives]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strCoachReason_ Current_Coaching_Initiatives]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FileName]"
+                          cachedDataType="wstr"
+                          cachedLength="260"
+                          cachedName="FileName"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FileName]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[FileName]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[strProgram]"
+                          cachedDataType="wstr"
+                          cachedLength="30"
+                          cachedName="strProgram"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Program]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[strProgram]" />
+                        <inputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Copy of Group]"
+                          cachedDataType="wstr"
+                          cachedLength="30"
+                          cachedName="Copy of Group"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ASR_GROUP]"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output].Columns[Copy of Group]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Report_ID]"
+                          dataType="i4"
+                          name="Report_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Report_Code]"
+                          dataType="wstr"
+                          length="20"
+                          name="Report_Code" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Form_Type]"
+                          dataType="wstr"
+                          length="20"
+                          name="Form_Type" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Source]"
+                          dataType="wstr"
+                          length="60"
+                          name="Source" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Form_Status]"
+                          dataType="wstr"
+                          length="30"
+                          name="Form_Status" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Event_Date]"
+                          dataType="dbTimeStamp"
+                          name="Event_Date" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitted_Date]"
+                          dataType="dbTimeStamp"
+                          name="Submitted_Date" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Start_Date]"
+                          dataType="dbTimeStamp"
+                          name="Start_Date" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_LANID]"
+                          dataType="wstr"
+                          length="30"
+                          name="Submitter_LANID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Name]"
+                          dataType="wstr"
+                          length="60"
+                          name="Submitter_Name" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Submitter_Email]"
+                          dataType="wstr"
+                          length="50"
+                          name="Submitter_Email" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CSR_LANID]"
+                          dataType="wstr"
+                          length="30"
+                          name="CSR_LANID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CSR_Site]"
+                          dataType="wstr"
+                          length="60"
+                          name="CSR_Site" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[TextDescription]"
+                          dataType="wstr"
+                          length="3000"
+                          name="TextDescription" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CoachReason_Current_Coaching_Initiatives]"
+                          dataType="wstr"
+                          length="20"
+                          name="CoachReason_Current_Coaching_Initiatives" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FileName]"
+                          dataType="wstr"
+                          length="260"
+                          name="FileName" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CSR_EMPID]"
+                          dataType="wstr"
+                          length="20"
+                          name="CSR_EMPID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Program]"
+                          dataType="wstr"
+                          length="30"
+                          name="Program" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RMgr_ID]"
+                          dataType="wstr"
+                          length="20"
+                          name="RMgr_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CD1]"
+                          dataType="wstr"
+                          length="50"
+                          name="CD1" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CD2]"
+                          dataType="wstr"
+                          length="50"
+                          name="CD2" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Role]"
+                          dataType="wstr"
+                          length="3"
+                          name="Emp_Role" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Reject_Reason]"
+                          dataType="wstr"
+                          length="200"
+                          name="Reject_Reason" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Emp_Active]"
+                          dataType="wstr"
+                          length="1"
+                          name="Emp_Active" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Verint_ID]"
+                          dataType="wstr"
+                          length="600"
+                          name="Verint_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ASR_GROUP]"
+                          dataType="wstr"
+                          length="30"
+                          name="ASR_GROUP" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File"
+                  componentClassID="Microsoft.FlatFileSource"
+                  contactInfo="Flat File Source;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Flat File Source"
+                  localeId="1033"
+                  name="Outlier_File"
+                  usesDispositions="true"
+                  version="1">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      description="Specifies whether zero-length columns are treated as null."
+                      name="RetainNulls">true</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of an output column containing the file name. If no name is specified, no output column containing the file name will be generated."
+                      name="FileNameColumnName">FileName</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Connections[FlatFileConnection]"
+                      connectionManagerID="Package.ConnectionManagers[ASR_File]"
+                      connectionManagerRefId="Package.ConnectionManagers[ASR_File]"
+                      name="FlatFileConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output]"
+                      name="Flat File Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[numReportID]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[numReportID]"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[numReportID]"
+                          name="numReportID"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strReportCode]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strReportCode]"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strReportCode]"
+                          name="strReportCode"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strFormType]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strFormType]"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strFormType]"
+                          name="strFormType"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSource]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strSource]"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSource]"
+                          name="strSource"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strFormStatus]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strFormStatus]"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strFormStatus]"
+                          name="strFormStatus"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[EventDate]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[EventDate]"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[EventDate]"
+                          name="EventDate"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[SubmittedDate]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[SubmittedDate]"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[SubmittedDate]"
+                          name="SubmittedDate"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[StartDate]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[StartDate]"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[StartDate]"
+                          name="StartDate"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSubmitterName]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strSubmitterName]"
+                          length="60"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSubmitterName]"
+                          name="strSubmitterName"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSubmitterEmail]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strSubmitterEmail]"
+                          length="50"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strSubmitterEmail]"
+                          name="strSubmitterEmail"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCSR]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strCSR]"
+                          length="30"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCSR]"
+                          name="strCSR"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCSRSite]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strCSRSite]"
+                          length="60"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCSRSite]"
+                          name="strCSRSite"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCoachReason_ Current_Coaching_Initiatives]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strCoachReason_ Current_Coaching_Initiatives]"
+                          length="20"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strCoachReason_ Current_Coaching_Initiatives]"
+                          name="strCoachReason_ Current_Coaching_Initiatives"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[txtDescription]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[txtDescription]"
+                          length="3000"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[txtDescription]"
+                          name="txtDescription"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[FileName]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[FileName]"
+                          length="260"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[FileName]"
+                          name="FileName"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strProgram]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strProgram]"
+                          length="30"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[strProgram]"
+                          name="strProgram"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[Group]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[Group]"
+                          length="30"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].Columns[Group]"
+                          name="Group"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[numReportID]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="numReportID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strReportCode]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="strReportCode" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strFormType]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="strFormType" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strSource]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="strSource" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strFormStatus]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="strFormStatus" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[EventDate]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="EventDate" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[SubmittedDate]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="SubmittedDate" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[StartDate]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="StartDate" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strSubmitterName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="60"
+                          name="strSubmitterName" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strSubmitterEmail]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="strSubmitterEmail" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strCSR]"
+                          codePage="1252"
+                          dataType="str"
+                          length="30"
+                          name="strCSR" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strCSRSite]"
+                          codePage="1252"
+                          dataType="str"
+                          length="60"
+                          name="strCSRSite" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strCoachReason_ Current_Coaching_Initiatives]"
+                          codePage="1252"
+                          dataType="str"
+                          length="20"
+                          name="strCoachReason_ Current_Coaching_Initiatives" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[txtDescription]"
+                          codePage="1252"
+                          dataType="str"
+                          length="3000"
+                          name="txtDescription" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[FileName]"
+                          dataType="wstr"
+                          length="260"
+                          name="FileName" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[strProgram]"
+                          codePage="1252"
+                          dataType="str"
+                          length="30"
+                          name="strProgram" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output].ExternalColumns[Group]"
+                          codePage="1252"
+                          dataType="str"
+                          length="30"
+                          name="Group" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Error Output]"
+                      isErrorOut="true"
+                      name="Flat File Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                          codePage="1252"
+                          dataType="text"
+                          description="Flat File Source Error Output Column"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                          name="Flat File Source Error Output Column" />
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                        <outputColumn
+                          refId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Error Output].Columns[FileName]"
+                          dataType="wstr"
+                          length="260"
+                          lineageId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Error Output].Columns[FileName]"
+                          name="FileName" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Foreach ASR OMR\Load  Staging Table\Row Count"
+                  componentClassID="Microsoft.RowCount"
+                  contactInfo="Row Count;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Counts the rows in a dataset."
+                  name="Row Count">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable to hold the row count."
+                      name="VariableName">User::StagedCount</property>
+                  </properties>
+                  <inputs>
+                    <input
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\Row Count.Inputs[Row Count Input 1]"
+                      hasSideEffects="true"
+                      name="Row Count Input 1">
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Foreach ASR OMR\Load  Staging Table\Row Count.Outputs[Row Count Output 1]"
+                      name="Row Count Output 1"
+                      synchronousInputId="Package\Foreach ASR OMR\Load  Staging Table\Row Count.Inputs[Row Count Input 1]">
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Foreach ASR OMR\Load  Staging Table.Paths[Data Conversion Output]"
+                  endId="Package\Foreach ASR OMR\Load  Staging Table\Row Count.Inputs[Row Count Input 1]"
+                  name="Data Conversion Output"
+                  startId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Outputs[Data Conversion Output]" />
+                <path
+                  refId="Package\Foreach ASR OMR\Load  Staging Table.Paths[Flat File Source Output]"
+                  endId="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion.Inputs[Data Conversion Input]"
+                  name="Flat File Source Output"
+                  startId="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File.Outputs[Flat File Source Output]" />
+                <path
+                  refId="Package\Foreach ASR OMR\Load  Staging Table.Paths[Row Count Output 1]"
+                  endId="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  name="Row Count Output 1"
+                  startId="Package\Foreach ASR OMR\Load  Staging Table\Row Count.Outputs[Row Count Output 1]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach ASR OMR\Load Coaching_Log"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{a1ae2130-f18f-4811-8b34-d49b304938c2}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load Coaching_Log"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server v9; © 2004 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{FB142FA9-35B1-4DF3-A7FE-C7B35445909C}"
+              SQLTask:SqlStatementSource="Exec [EC].[sp_InsertInto_Coaching_Log_Outlier] @Count=? OUT, @ReportCode=? OUT" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::LoadedCount"
+                SQLTask:ParameterDirection="Output"
+                SQLTask:DataType="3"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::ReportCode"
+                SQLTask:ParameterDirection="Output"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="10" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach ASR OMR\Load File List table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{fe715219-a8ea-4fde-9230-93f9138ab9f8}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Load File List table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{FB142FA9-35B1-4DF3-A7FE-C7B35445909C}"
+              SQLTask:SqlStatementSource="INSERT INTO [EC].[Outlier_FileList]&#xA;           ([File_Name]&#xA;           ,[File_LoadDate]&#xA;           ,[Count_Staged]&#xA;           ,[Count_Loaded]&#xA;           ,[Count_Rejected]&#xA;           ,[Category]&#xA;           ,[Code])&#xA;  VALUES (?,GetDate(), ?, ?,?, 'Outliers', ?)" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::VarFileName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="260" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::StagedCount"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="131"
+                SQLTask:ParameterSize="10" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="2"
+                SQLTask:DtsVariableName="User::LoadedCount"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="131"
+                SQLTask:ParameterSize="10" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="3"
+                SQLTask:DtsVariableName="User::RejectedCount"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="131"
+                SQLTask:ParameterSize="10" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="4"
+                SQLTask:DtsVariableName="User::ReportCode"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="10" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach ASR OMR\Truncate Staging Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{0cc3b9b3-5f96-4f55-8a01-83a1fe9523e3}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Truncate Staging Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server v9; © 2004 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{FB142FA9-35B1-4DF3-A7FE-C7B35445909C}"
+              SQLTask:SqlStatementSource="Truncate Table [EC].[Outlier_Coaching_Stage]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Foreach ASR OMR\Update staging table and reject logs"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{af647ea9-fd63-4adb-8d82-85a8204559e2}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update staging table and reject logs"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{FB142FA9-35B1-4DF3-A7FE-C7B35445909C}"
+              SQLTask:SqlStatementSource="Exec [EC].[sp_Update_Outlier_Coaching_Stage] ? output" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::RejectedCount"
+                SQLTask:ParameterDirection="Output"
+                SQLTask:DataType="3"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{c968d994-d82e-4403-bf95-4315c1be78cd}"
+          DTS:From="Package\Foreach ASR OMR\Load Coaching_Log"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Foreach ASR OMR\Load File List table" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{a1975609-04a2-4525-b80a-1c5e55d32459}"
+          DTS:EvalOp="3"
+          DTS:Expression="FINDSTRING(@[User::VarFileName],&quot;ASR&quot;,1 ) &gt; 0"
+          DTS:From="Package\Foreach ASR OMR\Truncate Staging Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Foreach ASR OMR\Load  Staging Table" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{b4aacdc1-0fe4-4d83-b193-9d8deb87a444}"
+          DTS:From="Package\Foreach ASR OMR\Load File List table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\Foreach ASR OMR\File System Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 4]"
+          DTS:CreationName=""
+          DTS:DTSID="{a7ae79e4-664b-4568-895f-44f2a4313df0}"
+          DTS:From="Package\Foreach ASR OMR\Load  Staging Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 4"
+          DTS:To="Package\Foreach ASR OMR\Update staging table and reject logs" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 7]"
+          DTS:CreationName=""
+          DTS:DTSID="{d64801bc-d8a7-4a18-9d53-be7c31f425af}"
+          DTS:From="Package\Foreach ASR OMR\Update staging table and reject logs"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 7"
+          DTS:To="Package\Foreach ASR OMR\Load Coaching_Log" />
+      </DTS:PrecedenceConstraints>
+      <DTS:EventHandlers>
+        <DTS:EventHandler
+          DTS:refId="Package\Foreach ASR OMR.EventHandlers[OnError]"
+          DTS:CreationName="OnError"
+          DTS:DTSID="{1a6b1cbb-d788-4b0e-bd55-6374471aebc6}"
+          DTS:EventID="0"
+          DTS:EventName="OnError"
+          DTS:LocaleID="-1">
+          <DTS:Variables>
+            <DTS:Variable
+              DTS:CreationName=""
+              DTS:Description="The propagate property of the event"
+              DTS:DTSID="{e223a54a-f2ec-4efc-9b4a-87e6be6cb9f8}"
+              DTS:IncludeInDebugDump="6789"
+              DTS:Namespace="System"
+              DTS:ObjectName="Propagate">
+              <DTS:VariableValue
+                DTS:DataType="11">-1</DTS:VariableValue>
+            </DTS:Variable>
+          </DTS:Variables>
+          <DTS:Executables />
+        </DTS:EventHandler>
+      </DTS:EventHandlers>
+      <DTS:ForEachVariableMappings>
+        <DTS:ForEachVariableMapping
+          DTS:CreationName=""
+          DTS:DTSID="{E59CB825-83AF-4476-9286-C0BF937CBA7D}"
+          DTS:ObjectName="{E59CB825-83AF-4476-9286-C0BF937CBA7D}"
+          DTS:ValueIndex="0"
+          DTS:VariableName="User::VarFileName" />
       </DTS:ForEachVariableMappings>
     </DTS:Executable>
     <DTS:Executable
@@ -10336,7 +12200,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           DTS:CreationName=""
           DTS:DTSID="{98A965AC-576D-4DBE-AF91-4D934F399F5D}"
           DTS:EvalOp="3"
-          DTS:Expression="(FINDSTRING(@[User::VarFileName],&quot;IAE&quot;,1 ) == 0 )&amp;&amp;(FINDSTRING(@[User::VarFileName],&quot;IAT&quot;,1 ) == 0 )&amp;&amp;(FINDSTRING(@[User::VarFileName],&quot;LCS&quot;,1 ) == 0 )&amp;&amp;(FINDSTRING(@[User::VarFileName],&quot;ISQ&quot;,1 ) == 0 )&amp;&amp;(FINDSTRING(@[User::VarFileName],&quot;AUD&quot;,1 ) == 0 )"
+          DTS:Expression="(FINDSTRING(@[User::VarFileName],&quot;IAE&quot;,1 ) == 0 )&amp;&amp;(FINDSTRING(@[User::VarFileName],&quot;IAT&quot;,1 ) == 0 )&amp;&amp;(FINDSTRING(@[User::VarFileName],&quot;LCS&quot;,1 ) == 0 )&amp;&amp;(FINDSTRING(@[User::VarFileName],&quot;ISQ&quot;,1 ) == 0 )&amp;&amp;(FINDSTRING(@[User::VarFileName],&quot;AUD&quot;,1 ) == 0 )&amp;&amp;(FINDSTRING(@[User::VarFileName],&quot;ASR&quot;,1 ) == 0 )"
           DTS:From="Package\Foreach OTHER OMR File\Truncate Staging Table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 1"
@@ -10481,6 +12345,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               VSTAMinorVersion="0"
               Language="CSharp">
               <ProjectItem
+                Name="Properties\Settings.settings"
+                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
+  <Profiles>
+    <Profile Name="(Default)" />
+  </Profiles>
+  <Settings />
+</SettingsFile>]]></ProjectItem>
+              <ProjectItem
                 Name="Properties\Resources.resx"
                 Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <root>
@@ -10599,35 +12472,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 </root>]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.Designer.cs"
-                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
-
-[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties.Settings.get_Default():ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties.Sett" +
-    "ings")]
-
-namespace ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties {
-    
-    
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
-        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-        private static Settings defaultInstance = new Settings();
-        
-        public static Settings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-    }
-}]]></ProjectItem>
               <ProjectItem
                 Name="ScriptMain.cs"
                 Encoding="UTF8"><![CDATA[#region Help:  Introduction to the script task
@@ -10852,6 +12696,35 @@ namespace ST_afb28a42781742a8aa8fe337a9aeeb2c
   </msb:ItemGroup>
 </c:Project>]]></ProjectItem>
               <ProjectItem
+                Name="Properties\Settings.Designer.cs"
+                Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a tool.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+[assembly: global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope="member", Target="ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties.Settings.get_Default():ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties.Sett" +
+    "ings")]
+
+namespace ST_afb28a42781742a8aa8fe337a9aeeb2c.Properties {
+    
+    
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        private static Settings defaultInstance = new Settings();
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+    }
+}]]></ProjectItem>
+              <ProjectItem
                 Name="Properties\AssemblyInfo.cs"
                 Encoding="UTF8"><![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -10881,15 +12754,6 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.0.*")]]]></ProjectItem>
-              <ProjectItem
-                Name="Properties\Settings.settings"
-                Encoding="UTF8"><![CDATA[<?xml version='1.0' encoding='iso-8859-1'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
-</SettingsFile>]]></ProjectItem>
               <ProjectItem
                 Name="Properties\Resources.Designer.cs"
                 Encoding="UTF8"><![CDATA[//------------------------------------------------------------------------------
@@ -11428,8 +13292,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
       DTS:CreationName=""
-      DTS:DTSID="{4BB0C1B5-0380-4398-A677-9B9F2B862988}"
-      DTS:From="Package\Foreach AUD OMR File"
+      DTS:DTSID="{1D45030E-8DD8-45EC-A645-4AFE2DC03790}"
+      DTS:From="Package\Foreach ASR OMR"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 6"
       DTS:To="Package\Foreach OTHER OMR File" />
@@ -11450,6 +13314,14 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:ObjectName="Constraint 8"
       DTS:To="Package\Populate Feed Load History"
       DTS:Value="2" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 9]"
+      DTS:CreationName=""
+      DTS:DTSID="{17FE30B5-83B3-481D-8205-E1AB19FE23B0}"
+      DTS:From="Package\Foreach AUD OMR File"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 9"
+      DTS:To="Package\Foreach ASR OMR" />
   </DTS:PrecedenceConstraints>
   <DTS:EventHandlers>
     <DTS:EventHandler
@@ -11730,9 +13602,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <ContainerLayout
           HeaderHeight="44"
-          IsExpanded="True"
+          IsExpanded="False"
           PanelSize="234,598"
-          Size="234,642"
+          Size="215.6,44"
           Id="Package\Foreach AUD OMR File"
           TopLeft="1257.37693034234,94.0516118195501" />
         <NodeLayout
@@ -12465,7 +14337,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <ContainerLayout
@@ -12524,15 +14398,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Size="230,225.6"
           Id="Package\Foreach xls(x) File"
           TopLeft="1757.93079799618,163.967739413358" />
+        <NodeLayout
+          Size="212,41.6"
+          Id="Package\Populate Feed Load History"
+          TopLeft="1765.96925243852,426.064511175086" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
           TopLeft="280.530770302947,113.419354232367">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="28.6857185637745,290.404935584795"
+              EndConnector="28.6857185637745,290.404935584794"
               Start="0,0"
-              End="21.1857185637745,290.404935584795">
+              End="21.1857185637745,290.404935584794">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
@@ -12543,13 +14421,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     Point2="14.3428592818873,0"
                     Point3="14.3428592818873,4" />
                   <mssgle:LineSegment
-                    End="14.3428592818873,286.404935584795" />
+                    End="14.3428592818873,286.404935584794" />
                   <mssgle:CubicBezierSegment
-                    Point1="14.3428592818873,286.404935584795"
-                    Point2="14.3428592818873,290.404935584795"
-                    Point3="18.3428592818873,290.404935584795" />
+                    Point1="14.3428592818873,286.404935584794"
+                    Point2="14.3428592818873,290.404935584794"
+                    Point3="18.3428592818873,290.404935584794" />
                   <mssgle:LineSegment
-                    End="21.1857185637745,290.404935584795" />
+                    End="21.1857185637745,290.404935584794" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -12622,18 +14500,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="1208.82089577606,415.857305650615">
+          TopLeft="1208.82089577606,416.66299948168">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="48.556034566277,0"
+              EndConnector="48.556034566277,-300.61138766213"
               Start="0,0"
-              End="41.056034566277,0">
+              End="41.056034566277,-300.61138766213">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="41.056034566277,0" />
+                    End="20.2780172831385,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="20.2780172831385,0"
+                    Point2="24.2780172831385,0"
+                    Point3="24.2780172831385,-4" />
+                  <mssgle:LineSegment
+                    End="24.2780172831385,-296.61138766213" />
+                  <mssgle:CubicBezierSegment
+                    Point1="24.2780172831385,-296.61138766213"
+                    Point2="24.2780172831385,-300.61138766213"
+                    Point3="28.2780172831385,-300.61138766213" />
+                  <mssgle:LineSegment
+                    End="41.056034566277,-300.61138766213" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -12715,40 +14605,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 6]"
-          TopLeft="1491.37693034234,415.05161181955">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="35.7626600410499,-11.8079669701651"
-              Start="0,0"
-              End="28.2626600410499,-11.8079669701651">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="13.881330020525,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="13.881330020525,0"
-                    Point2="17.881330020525,0"
-                    Point3="17.881330020525,-4" />
-                  <mssgle:LineSegment
-                    End="17.881330020525,-7.80796697016507" />
-                  <mssgle:CubicBezierSegment
-                    Point1="17.881330020525,-7.80796697016507"
-                    Point2="17.881330020525,-11.8079669701651"
-                    Point3="21.881330020525,-11.8079669701651" />
-                  <mssgle:LineSegment
-                    End="28.2626600410499,-11.8079669701651" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 7]"
           TopLeft="137.4,173.785578952859">
           <EdgeLayout.Curve>
@@ -12782,10 +14638,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="212,41.6"
-          Id="Package\Populate Feed Load History"
-          TopLeft="1765.96925243852,426.064511175086" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 8]"
           TopLeft="1872.93079799618,389.567739413358">
@@ -12822,6 +14674,217 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
+        <NodeLayout
+          Size="164.8,44"
+          Id="Package\Foreach ASR OMR\File System Task"
+          TopLeft="34.3000000000001,499.1" />
+        <NodeLayout
+          Size="175.2,41.6"
+          Id="Package\Foreach ASR OMR\Load  Staging Table"
+          TopLeft="34.5461536204321,101.112903354816" />
+        <NodeLayout
+          Size="144.8,35.2"
+          Id="Package\Foreach ASR OMR\Load Coaching_Log"
+          TopLeft="44.3,308.7" />
+        <NodeLayout
+          Size="134,35.2"
+          Id="Package\Foreach ASR OMR\Load File List table"
+          TopLeft="49.5000000000001,403.9" />
+        <NodeLayout
+          Size="168.8,44"
+          Id="Package\Foreach ASR OMR\Truncate Staging Table"
+          TopLeft="32.3,5.5" />
+        <NodeLayout
+          Size="222,35.2"
+          Id="Package\Foreach ASR OMR\Update staging table and reject logs"
+          TopLeft="5.50000000000003,213.5" />
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint]"
+          TopLeft="116.7,343.9">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60.0000000000001"
+              Start="0,0"
+              End="0,52.5000000000001">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5000000000001" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 1]"
+          TopLeft="119.423076810216,49.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,51.6129033548155"
+              Start="0,0"
+              End="0,44.1129033548155">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,44.1129033548155" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-8,14.0564516774078,16,16"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 2]"
+          TopLeft="116.7,439.1">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60.0000000000001"
+              Start="0,0"
+              End="0,52.5000000000001">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5000000000001" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 4]"
+          TopLeft="119.323076810216,142.712903354815">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,70.7870966451845"
+              Start="0,0"
+              End="0,63.2870966451845">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,63.2870966451845" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 7]"
+          TopLeft="116.7,248.7">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="44"
+          IsExpanded="True"
+          PanelSize="234,598"
+          Size="234,642"
+          Id="Package\Foreach ASR OMR"
+          TopLeft="1257.2769373115,216.80644827802" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 9]"
+          TopLeft="1365.17693034234,138.05161181955">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="9.1000069691604,78.7548364584702"
+              Start="0,0"
+              End="9.1000069691604,71.2548364584702">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,35.3774182292351" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,35.3774182292351"
+                    Point2="0,39.3774182292351"
+                    Point3="4,39.3774182292351" />
+                  <mssgle:LineSegment
+                    End="5.1000069691604,39.3774182292351" />
+                  <mssgle:CubicBezierSegment
+                    Point1="5.1000069691604,39.3774182292351"
+                    Point2="9.1000069691604,39.3774182292351"
+                    Point3="9.1000069691604,43.3774182292351" />
+                  <mssgle:LineSegment
+                    End="9.1000069691604,71.2548364584702" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 6]"
+          TopLeft="1491.2769373115,537.80644827802">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="35.8626530718896,-134.562803428635"
+              Start="0,0"
+              End="28.3626530718896,-134.562803428635">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="13.9313265359448,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="13.9313265359448,0"
+                    Point2="17.9313265359448,0"
+                    Point3="17.9313265359448,-4" />
+                  <mssgle:LineSegment
+                    End="17.9313265359448,-130.562803428635" />
+                  <mssgle:CubicBezierSegment
+                    Point1="17.9313265359448,-130.562803428635"
+                    Point2="17.9313265359448,-134.562803428635"
+                    Point3="21.9313265359448,-134.562803428635" />
+                  <mssgle:LineSegment
+                    End="28.3626530718896,-134.562803428635" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </Package>
@@ -12841,7 +14904,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Foreach AUD OMR File\Load  Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="131.2,42"
           Id="Package\Foreach AUD OMR File\Load  Staging Table\Row Count"
@@ -12877,7 +14940,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -12899,7 +14964,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -12921,7 +14988,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -12944,7 +15013,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Foreach IAE_IAT OMR File\Load  Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="152,42"
           Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table\Flat File Source"
@@ -12980,7 +15049,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -13002,7 +15073,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -13024,7 +15097,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -13047,7 +15122,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Foreach ISQ OMR File\Load  Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="131.2,42"
           Id="Package\Foreach ISQ OMR File\Load  Staging Table\Row Count"
@@ -13083,7 +15158,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -13105,7 +15182,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -13127,7 +15206,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -13150,7 +15231,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Foreach LCS OMR File\Load  Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="131.2,42"
           Id="Package\Foreach LCS OMR File\Load  Staging Table\Row Count"
@@ -13186,7 +15267,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -13208,7 +15291,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -13230,7 +15315,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -13253,23 +15340,23 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     design-time-name="Package\Foreach OTHER OMR File\Load  Staging Table">
     <LayoutInfo>
       <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="131.2,42"
-          Id="Package\Foreach OTHER OMR File\Load  Staging Table\Row Count"
-          TopLeft="25.9,208.7" />
-        <NodeLayout
-          Size="134,42"
-          Id="Package\Foreach OTHER OMR File\Load  Staging Table\Outlier_File"
-          TopLeft="24.7,5.49999999999995" />
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="172,42"
           Id="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination"
           TopLeft="5.50000000000003,310.3" />
         <NodeLayout
+          Size="131.2,42"
+          Id="Package\Foreach OTHER OMR File\Load  Staging Table\Row Count"
+          TopLeft="25.9,208.7" />
+        <NodeLayout
           Size="156.8,42"
           Id="Package\Foreach OTHER OMR File\Load  Staging Table\Data Conversion"
           TopLeft="13.869230797446,107.1" />
+        <NodeLayout
+          Size="134,42"
+          Id="Package\Foreach OTHER OMR File\Load  Staging Table\Outlier_File"
+          TopLeft="24.7,5.49999999999995" />
         <EdgeLayout
           Id="Package\Foreach OTHER OMR File\Load  Staging Table.Paths[Row Count Output 1]"
           TopLeft="91.5,250.7">
@@ -13289,7 +15376,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -13311,11 +15400,118 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Foreach OTHER OMR File\Load  Staging Table.Paths[Data Conversion Output]"
+          TopLeft="91.884615398723,149.1">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,59.6"
+              Start="0,0"
+              End="0,52.1">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.1" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Foreach ASR OMR\Load  Staging Table">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="131.2,42"
+          Id="Package\Foreach ASR OMR\Load  Staging Table\Row Count"
+          TopLeft="25.9,208.7" />
+        <NodeLayout
+          Size="134,42"
+          Id="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File"
+          TopLeft="24.7,5.49999999999995" />
+        <NodeLayout
+          Size="172,42"
+          Id="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination"
+          TopLeft="5.50000000000003,310.3" />
+        <NodeLayout
+          Size="156.8,42"
+          Id="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion"
+          TopLeft="13.869230797446,107.1" />
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR\Load  Staging Table.Paths[Row Count Output 1]"
+          TopLeft="91.5,250.7">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,59.6"
+              Start="0,0"
+              End="0,52.1">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.1" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR\Load  Staging Table.Paths[Flat File Source Output]"
+          TopLeft="91.984615398723,47.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,59.6"
+              Start="0,0"
+              End="0,52.1">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.1" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR\Load  Staging Table.Paths[Data Conversion Output]"
           TopLeft="91.884615398723,149.1">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -13340,7 +15536,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination">
+    design-time-name="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>

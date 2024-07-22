@@ -1,0 +1,139 @@
+/*
+TFS 28298 - Targeted Coaching - Automated Supervisor Reporting 
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+1. Add records to [EC].[DIM_Sub_Coaching_Reason]
+2. Add records to [EC].[Coaching_Reason_Selection]
+3. Add records to [EC].[Coaching_Log_StaticText]
+4. Add records to [EC].[Reasons_By_ReportCode]
+
+
+-- Test
+SELECT *  FROM [EC].[DIM_Sub_Coaching_Reason] WHERE SubCoachingReason in ('Appropriate Use of ACW', 'Chat Duration')
+SELECT * FROM [EC].[Coaching_Reason_Selection] WHERE CoachingReason = 'Call Efficiency' and SubCoachingReasonID in (330, 331)
+SELECT * FROM [EC].[Coaching_Log_StaticText]WHERE [SubCoachingReasonID] in (230, 328, 329, 330, 331) ORDER BY TextID -- 105-109 205-209 added
+SELECT * FROM [EC].[Reasons_By_ReportCode] WHERE [ReportCode] LIKE 'ASR%' -- 5 new for ASR/
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+--1. Insert records for Sub Coaching Reason
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReason])
+     VALUES
+           ('Appropriate use of ACW'),
+		   ('Chat duration')
+GO
+
+
+
+--2. Insert records to Coaching_Reason_Selection
+
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training]
+		   ,[ISG])
+     VALUES
+(55,'Call Efficiency',330,'Appropriate use of ACW',1,1,1,1,1,1,0,0,0,0,0,0,1),
+(55,'Call Efficiency',331,'Chat duration',1,1,1,1,1,1,0,0,0,0,0,0,1)
+GO
+
+
+--3. Add records to [EC].[Coaching_Log_StaticText]
+
+	INSERT INTO [EC].[Coaching_Log_StaticText]
+	           ([TextID]
+	           ,[TextDescription]
+	           ,[Active]
+	           ,[CoachingReasonID]
+	           ,[SubCoachingReasonID]
+	           ,[CSR]
+	           ,[Supervisor]
+	           ,[Quality]
+	           ,[LSA]
+	           ,[Training]
+	           ,[StartDate]
+	           ,[EndDate]
+	           ,[isSub]
+	           ,[ISG])
+	     VALUES
+		 (105, 'Place holder static text for ASR_Hold', 1, 55, 230, 1, 0, 0, 0, 0, 20230601, 99991231, 0, 1),
+		 (106, 'Place holder static text for ASR_Transfer', 1, 55, 328, 1, 0, 0, 0, 0, 20230601, 99991231, 0, 1),
+		 (107, 'Place holder static text for ASR_AHT', 1, 55, 329, 1, 0, 0, 0, 0, 20230601, 99991231, 0, 1),
+                 (108, 'Place holder static text for ASR_ACW', 1, 55, 330, 1, 0, 0, 0, 0, 20230601, 99991231, 0, 1),
+		 (109, 'Place holder static text for ASR_Chat', 1, 55, 331, 1, 0, 0, 0, 0, 20230601, 99991231, 0, 1),
+		 (205, 'Place holder static text for ASR_Hold', 1, 55, 230, 1, 0, 0, 0, 0, 20230601, 99991231, 1, 1),
+		 (206, 'Place holder static text for ASR_Transfer', 1, 55, 328, 1, 0, 0, 0, 0, 20230601, 99991231, 1, 1),
+		 (207, 'Place holder static text for ASR_AHT', 1, 55, 329, 1, 0, 0, 0, 0, 20230601, 99991231, 1, 1),
+	         (208, 'Place holder static text for ASR_ACW', 1, 55, 330, 1, 0, 0, 0, 0, 20230601, 99991231, 1, 1),
+		 (209, 'Place holder static text for ASR_Chat', 1, 55, 331, 1, 0, 0, 0, 0, 20230601, 99991231, 1, 1)
+
+GO
+
+--****************************************************
+
+--4. Insert records to [EC].[Reasons_By_ReportCode]
+
+INSERT INTO [EC].[Reasons_By_ReportCode]
+           ([ReportCode]
+           ,[Reason]
+           ,[DisplayOrder])
+     VALUES
+	 ('ASR/Hold', 'No Longer Employed or on LOA', 501),
+	 ('ASR/Transfer', 'No Longer Employed or on LOA', 501),
+	 ('ASR/AHT', 'No Longer Employed or on LOA', 501),
+	 ('ASR/ACW', 'No Longer Employed or on LOA', 501),
+	 ('ASR/Chat', 'No Longer Employed or on LOA', 501),
+	 ('ASR/Hold', 'System Issues', 502),
+	 ('ASR/Transfer', 'System Issues', 502),
+	 ('ASR/AHT', 'System Issues', 502),
+	 ('ASR/ACW', 'System Issues', 502),
+	 ('ASR/Chat', 'System Issues', 502),
+	 ('ASR/Hold', 'Skilling Issue', 503),
+	 ('ASR/Transfer', 'Skilling Issue', 503),
+	 ('ASR/AHT', 'Skilling Issue', 503),
+	 ('ASR/ACW', 'Skilling Issue', 503),
+	 ('ASR/Chat', 'Skilling Issue', 503),
+	 ('ASR/Hold', 'Multiple Complex Calls', 504),
+	 ('ASR/Transfer', 'Multiple Complex Calls', 504),
+	 ('ASR/AHT', 'Multiple Complex Calls', 504),
+	 ('ASR/ACW', 'Multiple Complex Calls', 504),
+	 ('ASR/Chat', 'Multiple Complex Calls', 504),
+	 ('ASR/Hold', 'Other - Provide Details', 999),
+	 ('ASR/Transfer', 'Other - Provide Details', 999),
+	 ('ASR/AHT', 'Other - Provide Details', 999),
+	 ('ASR/ACW', 'Other - Provide Details', 999),
+	 ('ASR/Chat', 'Other - Provide Details', 999)
+
+GO
+
+--****************************************************
+
+
+
+

@@ -1,27 +1,3 @@
-/*
-sp_Select_CoachingReasons_By_Module(06).sql
-Last Modified Date: 03/18/2022
-Last Modified By: Susmitha Palacherla
-
-Version 06: Updated to support Coaching and SubCoaching Reason changes for LSA Module - TFS 24083 - 03/19/2022
-Version 05: Updated to support changes to warnings workflow. TFS 15803 - 11/21/2019
-Version 04: Modified to support updated requirements to replace ETS with Deltek - TFS 15144 - 08/21/2019
-Version 03: Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
-Version 02: Modified to support Encryption of sensitive data. TFS 7856 - 11/28/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Select_CoachingReasons_By_Module' 
-)
-   DROP PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module]
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -41,9 +17,10 @@ GO
 -- Modified to add Deltek as a Coaching Reason. TFS 15144 - 08/19/2019
 -- Updated to support changes to warnings workflow. TFS 15803 - 11/21/2019
 -- Updated to support Coaching and SubCoaching Reason changes for LSA Module - TFS 24083 - 03/19/2022
+-- Modified to support ASR Logs. TFS 28298 - 07/15/2024
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module] 
-@intModuleIDin INT, @strSourcein nvarchar(30), @isSplReason BIT, @splReasonPrty INT, @strEmpIDin nvarchar(10), @strSubmitterIDin nvarchar(10)
+CREATE OR ALTER  PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module] 
+@intModuleIDin INT, @strSourcein nvarchar(30), @isSplReason BIT, @splReasonPrty INT, @strEmpIDin nvarchar(10), @strSubmitterIDin nvarchar(10), @intSourceIDin int
 
 AS
 BEGIN
@@ -51,13 +28,21 @@ BEGIN
 	
 	@nvcSQL nvarchar(max),
 	@strModulein nvarchar(30),
+	@nvcASRRestrictSQL nvarchar(200),
+	@NewLineChar nvarchar(2),
 	@nvcDirectHierarchy nvarchar(10),
 	@nvcDirectReports nvarchar(10)
 
-OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert] 
-SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
-SET @nvcDirectHierarchy = [EC].[fn_strDirectUserHierarchy] (@strEmpIDin, @strSubmitterIDin)
-SET @nvcDirectReports = [EC].[fn_strDirectReports] (@strSubmitterIDin)
+OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
+SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
+SET @nvcDirectHierarchy = [EC].[fn_strDirectUserHierarchy] (@strEmpIDin, @strSubmitterIDin);
+SET @nvcDirectReports = [EC].[fn_strDirectReports] (@strSubmitterIDin);
+SET @nvcASRRestrictSQL = '';
+SET @NewLineChar = CHAR(13) + CHAR(10);
+
+--If Source is ASR, Return Only 'Call Efficiency'
+IF @intSourceIDin IN (138,238) AND @intModuleIDin in (1,10)
+SET @nvcASRRestrictSQL = @nvcASRRestrictSQL  + 'AND [CoachingReasonID]  = 55';
 
 --print @nvcDirectHierarchy
 	
@@ -78,7 +63,7 @@ ORDER BY x.SortOrder'
 
 Else
 
--- return cse 
+-- return cse for those where direct hierarchy is No
 
 SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [CoachingReason] as CoachingReason from [EC].[Coaching_Reason_Selection]
 Where ' + @strModulein +' = 1 
@@ -92,7 +77,7 @@ ELSE
 
 -- @isSplReason = 0
 
-IF @nvcDirectReports = 'yes'
+IF @nvcDirectReports = 'yes' -- If logged in user has any direct reports
 
 -- return all coaching reasons for module where [splReason] = 0
 
@@ -100,19 +85,21 @@ SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [Coachin
 Where ' + @strModulein +' = 1 and 
 IsActive = 1 
 AND ' + @strSourcein +' = 1
-AND [splReason] = 0
+AND [splReason] = 0' + @NewLineChar +
+ @nvcASRRestrictSQL + ' ' + '
 Order by  [CoachingReason]'
 
 ELSE
 
--- return all coaching reasons for module where [splReason] = 0 Except CoachingReason = 'Deltek'/59
+-- return all coaching reasons for module where [splReason] = 0 Except CoachingReason = Deltek/59 or Timekeeping/70
 
 SET @nvcSQL = 'Select  DISTINCT [CoachingReasonID] as CoachingReasonID, [CoachingReason] as CoachingReason from [EC].[Coaching_Reason_Selection]
 Where ' + @strModulein +' = 1 and 
 IsActive = 1 
 AND ' + @strSourcein +' = 1
 AND [splReason] = 0
-AND [CoachingReasonID] NOT IN (59,70) 
+AND [CoachingReasonID] NOT IN (59,70)' + @NewLineChar +
+@nvcASRRestrictSQL + ' ' + '
 Order by  [CoachingReason]'
 
 --Print @nvcSQL
@@ -120,7 +107,5 @@ Order by  [CoachingReason]'
 EXEC (@nvcSQL)	
 END -- sp_Select_CoachingReasons_By_Module
 GO
-
-
 
 

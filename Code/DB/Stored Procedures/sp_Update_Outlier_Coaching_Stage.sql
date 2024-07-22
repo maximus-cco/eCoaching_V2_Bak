@@ -18,7 +18,8 @@ GO
 -- Updated to support Encryption of sensitive data - TFS 7856 - 11/27/2017
 -- Updated to support Maximus IDs - TFS 13777 - 05/29/2019
 -- Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
---  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+-- Modified to support ASR Feed. TFS 28298 - 06/26/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Outlier_Coaching_Stage] 
 @Count INT OUTPUT
@@ -28,36 +29,25 @@ BEGIN
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
--- Populate LanID for Employee ID coming in file (LCS, IAE and IAT)
+-- Delete Empty Rows
+DELETE FROM [EC].[Outlier_Coaching_Stage]
+WHERE [Report_ID] IS NULL AND [Report_Code] IS NULL;
+
+WAITFOR DELAY '00:00:00.01' -- Wait for 1 ms
+
+-- Populate [CSR_LANID]  where Missing
 UPDATE [EC].[Outlier_Coaching_Stage]
-SET [CSR_LANID]= [EC].[fn_strEmpLanIDFromEmpID]([CSR_EMPID])
-WHERE [CSR_LANID]IS NULL AND NOT ISNULL([CSR_EMPID],' ') like '%.%';
+SET [CSR_LANID] = [CSR_EMPID]
+WHERE [CSR_LANID] IS NULL AND ISNULL([CSR_EMPID],' ') <> ' ';
 
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
---  Populate EmpID and or LanID for files that can
---  have either EmpID or LanID arrive in strCSR
--- (All Other OMR Files)
--- For Files where EmpID sent in strCSR. Copy it to EmpID
+-- Populate [CSR_EMPID] where Missing
 UPDATE [EC].[Outlier_Coaching_Stage]
 SET [CSR_EMPID] = [CSR_LANID]
-WHERE NOT ISNULL([CSR_LANID],' ') like '%.%' AND [CSR_EMPID] IS NULL;
- 
-WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
-  
--- Replace above copied EmpIds with LANIds
-UPDATE [EC].[Outlier_Coaching_Stage]
-SET [CSR_LANID]= [EC].[fn_strEmpLanIDFromEmpID]([CSR_LANID])
-WHERE NOT ISNULL([CSR_LANID],' ') like '%.%';
-     
-WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
+WHERE [CSR_EMPID] IS NULL AND ISNULL([CSR_LANID],' ') <> ' ';
 
- -- Populate EmpID for lanID coming in strCSR (non LCS, IAE, IAT, BRL, BRN)
- UPDATE [EC].[Outlier_Coaching_Stage]
-SET [CSR_EMPID]= [EC].[fn_nvcGetEmpIdFromLanId] ([CSR_LANID],[Submitted_Date])
-WHERE  ISNULL([CSR_LANID],' ') like '%.%' AND [CSR_EMPID] IS NULL;
- 
-WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms  
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
  
 -- Replace unknown Employee Ids with ''
 UPDATE [EC].[Outlier_Coaching_Stage]
@@ -71,7 +61,7 @@ UPDATE [EC].[Outlier_Coaching_Stage]
 SET [Program]= H.[Emp_Program]
 FROM [EC].[Outlier_Coaching_Stage]S JOIN [EC].[Employee_Hierarchy]H
 ON S.[CSR_EMPID]=H.[Emp_ID]
-WHERE (S.Program IS NULL OR S.Program ='');
+WHERE (S.Program IS NULL OR S.Program = '');
        
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
@@ -116,7 +106,7 @@ WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
 -- Delete rejected records
 DELETE FROM [EC].[Outlier_Coaching_Stage]
-WHERE [Reject_Reason]is not NULL;
+WHERE [Reject_Reason] is not NULL;
 SELECT @Count = @@ROWCOUNT;
 
 WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
@@ -127,5 +117,6 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 
 END  -- [EC].[sp_Update_Outlier_Coaching_Stage]
 GO
+
 
 

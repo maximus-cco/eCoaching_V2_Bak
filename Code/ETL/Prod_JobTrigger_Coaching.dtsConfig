@@ -1,0 +1,10 @@
+<?xml version="1.0"?><DTSConfiguration>
+<DTSConfigurationHeading>
+<DTSConfigurationFileInfo GeneratedBy="MAXCORP\236464" GeneratedFromPackageName="Package" GeneratedFromPackageID="{ACA6C6DF-5B60-416D-9202-603340E5739C}" GeneratedDate="7/1/2024 8:56:59 AM"/>
+</DTSConfigurationHeading>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[agentdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoaching</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[agentdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAAPADSQL50CCO.ad.local</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destinationdb].Properties[InitialCatalog]" ValueType="String"><ConfiguredValue>eCoaching</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Connections[destinationdb].Properties[ServerName]" ValueType="String"><ConfiguredValue>UVAAPADSQL50CCO.ad.local</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::VarEnv].Properties[Value]" ValueType="String"><ConfiguredValue>Prod</ConfiguredValue></Configuration>
+<Configuration ConfiguredType="Property" Path="\Package.Variables[User::VarFileDir].Properties[Value]" ValueType="String"><ConfiguredValue>\\UVAAPADSQL50CCO.ad.local\data\coaching\Outliers\Encrypt_Out\</ConfiguredValue></Configuration></DTSConfiguration>

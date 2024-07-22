@@ -16,6 +16,7 @@ GO
 -- Changes to suppport Incentives Data Discrepancy feed - TFS 18154 - 09/15/2020
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+-- Modified to support ASR Feed. TFS 28298 - 06/26/2024
 -- =============================================
 CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Outlier_Rejected]
 AS
@@ -62,7 +63,7 @@ WHEN LEFT(Report_Code,LEN(Report_Code)-8) = 'MSRS'  AND [Emp_Role] <> 'S'
 THEN 'Employee not a Supervisor'
 WHEN LEFT(Report_Code,LEN(Report_Code)-8) = 'IDD'  AND [Emp_Role] NOT IN ('S', 'M', 'QS', 'LS', 'TS')
 THEN 'Employee not a Supervisor or Lead'
-WHEN LEFT(Report_Code,LEN(Report_Code)-8) NOT IN ('BRL', 'BRN', 'MSRS', 'IDD')  AND [Emp_Role] NOT IN ( 'C', 'I')
+WHEN LEFT(Report_Code,LEN(Report_Code)-8) NOT IN ('BRL', 'BRN', 'MSRS', 'IDD', 'ASR')  AND [Emp_Role] NOT IN ( 'C', 'I')
 THEN 'Employee not a CSR OR ISG' 
 ELSE NULL END
 WHERE [Reject_Reason]is NULL;
@@ -108,5 +109,3 @@ INSERT INTO [EC].[Outlier_Coaching_Rejected]
 
 END -- sp_InsertInto_Outlier_Rejected
 GO
-
-

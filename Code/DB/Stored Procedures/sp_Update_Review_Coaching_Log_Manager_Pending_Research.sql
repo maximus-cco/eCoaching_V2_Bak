@@ -19,6 +19,7 @@ GO
 --    TFS 7137 move my dashboard to new architecture - 06/12/2018
 --    Modified to support Quality Now workflow enhancement. TFS 22187 - 08/03/2021
 --    Modified to write non coachable inactivated logs to audit table. TFS 25731 - 11/18/2022
+--    Modified to support ASR Feed. TFS 28298 - 06/26/2024
 --    =====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_Research]
 (
@@ -30,7 +31,9 @@ CREATE OR ALTER PROCEDURE [EC].[sp_Update_Review_Coaching_Log_Manager_Pending_Re
   @dtmReviewManualDate datetime,
   @bitisCoachingRequired bit,
   @nvcReviewerNotes Nvarchar(max),
-  @nvctxtReasonNotCoachable Nvarchar(max)
+  @nvctxtReasonNotCoachable Nvarchar(max),
+  @bitisFollowupRequired bit = NULL,
+  @dtmFollowupDueDate datetime = NULL
 )
 AS
 
@@ -46,11 +49,13 @@ BEGIN TRANSACTION;
 
 BEGIN TRY
 DECLARE 
-@nvcCat Nvarchar (10);
+@nvcCat Nvarchar (10),
+@intSourceID int;
 
-SET @nvcCat = (SELECT RTRIM(LEFT(strReportCode, LEN(strReportCode) - 8)) FROM EC.Coaching_Log WHERE CoachingID = @nvcFormID) 
+SET @nvcCat = (SELECT RTRIM(LEFT(strReportCode, LEN(strReportCode) - 8)) FROM EC.Coaching_Log WHERE CoachingID = @nvcFormID) ;
+SET @intSourceID = (SELECT [SourceID] FROM EC.Coaching_Log WHERE CoachingID = @nvcFormID) ;
 
-IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN', 'IAEF')
+IF (@nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN', 'IAEF', 'ASR')) OR (@intSourceID IN (138, 238))
 BEGIN  
 
   UPDATE EC.Coaching_Log
@@ -60,6 +65,8 @@ BEGIN
     strReasonNotCoachable = @nvcstrReasonNotCoachable,
     isCoachingRequired = @bitisCoachingRequired,
     SupReviewedAutoDate =  @dtmReviewAutoDate,
+	IsFollowupRequired =  CASE WHEN  @bitisFollowupRequired IS NOT NULL THEN @bitisFollowupRequired ELSE IsFollowupRequired END , 
+    FollowupDueDate = CASE WHEN @dtmFollowupDueDate IS NOT NULL THEN @dtmFollowupDueDate ELSE FollowupDueDate END ,
     CoachingDate =  @dtmReviewManualDate,
     CoachingNotes = @nvcReviewerNotes,		   
     txtReasonNotCoachable = @nvctxtReasonNotCoachable,
@@ -70,12 +77,9 @@ BEGIN
   UPDATE EC.Coaching_Log_Reason
   SET 
     Value = (CASE WHEN @bitisCoachingRequired = 'True' THEN 'Opportunity' ELSE 'Not Coachable' END)
-  FROM EC.Coaching_Log cl 
-  INNER JOIN EC.Coaching_Log_Reason clr ON cl.CoachingID = clr.CoachingID
-  WHERE cl.CoachingID = @nvcFormID
-    AND clr.SubCoachingReasonID IN (120, 121, 29, 231, 232, 233, 238, 239);
+  WHERE CoachingID = @nvcFormID;
 
-END -- End IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN')
+END -- End IF @nvcCat IN ('OAE','OAS', 'IAE','IAT', 'SDR','ODT','BRL','BRN', 'ASR') OR ASR Source
 
 ELSE
 BEGIN

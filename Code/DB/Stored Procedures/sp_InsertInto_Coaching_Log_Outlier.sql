@@ -3,9 +3,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
@@ -28,8 +25,9 @@ GO
 -- Changes to suppport NGD feed- TFS 27396  - 11/24/2023
 -- Changes to support Feed Load Dashboard - TFS 27523 - 01/02/2024
 -- Changes to suppport Wellbeing Breaks eCL data Feed- TFS - 27634 - 01/19/2024
+-- Changes to support ASR Feed. TFS 28298 - 06/26/2024
 -- =============================================
-CREATE OR ALTER      PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 (@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
 
 AS
@@ -89,7 +87,7 @@ SELECT DISTINCT LOWER(cs.CSR_EMPID)	[FormName],
         WHEN '' THEN csr.Emp_Program
         ELSE cs.Program  END       [ProgramName],
         CASE WHEN (cs.Report_Code LIKE N'MSR%' OR cs.Report_Code LIKE N'IDD%' OR cs.Report_Code LIKE N'WCP%' OR cs.Report_Code LIKE N'AUD%'
-		OR cs.Report_Code LIKE N'NGD%' OR cs.Report_Code LIKE N'BRW%')
+		OR cs.Report_Code LIKE N'NGD%' OR cs.Report_Code LIKE N'BRW%'OR cs.Report_Code LIKE N'ASR%')
         THEN  [EC].[fn_intSourceIDFromSource](cs.[Form_Type],cs.[Source]) ELSE 212 END [SourceID],                        
         [EC].[fn_strStatusIDFromStatus](cs.Form_Status)[StatusID],
         [EC].[fn_intSiteIDFromEmpID](cs.CSR_EMPID)[SiteID],
@@ -144,14 +142,22 @@ WAITFOR DELAY '00:00:00:02';  -- Wait for 2 ms
            ,[SubCoachingReasonID]
            ,[Value])
     SELECT cf.[CoachingID],
-    CASE 
+    CASE -- Coaching Reason
 		WHEN (cf.strReportCode like 'BRN%' OR cf.strReportCode like 'BRL%' OR cf.strReportCode like 'BRW%') THEN 56 
 		WHEN cf.strReportCode like 'MSR%' THEN 5
 		WHEN cf.strReportCode like 'WCP%' THEN 4
+		WHEN cf.strReportCode like 'ASR%' THEN 55
 		ELSE 9
      END,
-           [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3)),
-           COALESCE(os.[CoachReason_Current_Coaching_Initiatives], N'NA')
+	 CASE -- Sub Coaching Reason
+	 WHEN (cf.strReportCode like 'ASR%' AND os.ASR_Group = 'Hold')  THEN 230
+	 WHEN (cf.strReportCode like 'ASR%' AND os.ASR_Group = 'Transfer')  THEN 328
+	 WHEN (cf.strReportCode like 'ASR%' AND os.ASR_Group = 'AHT')  THEN 329
+	 WHEN (cf.strReportCode like 'ASR%' AND os.ASR_Group = 'ACW')  THEN 330
+	 WHEN (cf.strReportCode like 'ASR%' AND os.ASR_Group = 'Chat')  THEN 331
+     ELSE [EC].[fn_intSubCoachReasonIDFromRptCode](SUBSTRING(cf.strReportCode,1,3))
+	  END,
+    COALESCE(os.[CoachReason_Current_Coaching_Initiatives], N'NA') -- Value
     FROM [EC].[Outlier_Coaching_Stage] os JOIN  [EC].[Coaching_Log] cf      
     ON os.[Report_ID] = cf.[numReportID] AND  os.[Report_Code] = cf.[strReportCode]
     LEFT OUTER JOIN  [EC].[Coaching_Log_Reason] cr

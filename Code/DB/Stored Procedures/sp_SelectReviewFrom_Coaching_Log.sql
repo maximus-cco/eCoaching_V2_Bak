@@ -24,6 +24,7 @@ GO
 -- Changes to suppport NGD feed- TFS 27396  - 11/24/2023
 -- Updated to support QN Rewards eCoaching logs. TFS 27851 - 03/21/2024
 -- Modified to suppport Motivate and Increase CSR Level Promotions Feed. TFS 28262 - 06/12/2024
+-- Changes to support ASR Feed. TFS 28298 - 06/26/2024
 --	=====================================================================
 
 CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
@@ -196,6 +197,11 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQM2%'') THEN 1 ELSE 0 END "Quality / BQM",
   CASE WHEN (cc.QMB IS NOT NULL AND cl.strReportCode LIKE ''BQMS%'') THEN 1 ELSE 0 END "Quality / BQMS",
   CASE WHEN (cc.QOR IS NOT NULL AND cl.strReportCode LIKE ''QR%'') THEN 1 ELSE 0 END "Quality / QOR",
+  CASE WHEN (cc.ASR_HOLD IS NOT NULL ) THEN 1 ELSE 0 END "ASR / Hold",
+  CASE WHEN (cc.ASR_TRANSFER IS NOT NULL ) THEN 1 ELSE 0 END "ASR / Transfer",
+  CASE WHEN (cc.ASR_AHT IS NOT NULL ) THEN 1 ELSE 0 END "ASR / AHT",
+  CASE WHEN (cc.ASR_ACW IS NOT NULL ) THEN 1 ELSE 0 END "ASR / ACW",
+  CASE WHEN (cc.ASR_Chat IS NOT NULL ) THEN 1 ELSE 0 END "ASR / Chat",
   cc.WAH_RTS,
   CASE WHEN cl.strReportCode LIKE ''CPATH%'' THEN cl.Description + ''<br>''  + '''+@cpathtext+'''  ELSE cl.Description END txtDescription,
   cl.CoachingNotes txtCoachingNotes,
@@ -227,7 +233,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   cl.SupFollowupReviewCoachingNotes,
   cl.PFDCompletedDate,
   ''Coaching'' strLogType,
-  cc.strStaticText,
+  CASE WHEN cl.SourceID = 238 AND cl.StrReportCode iS NULL THEN NULL ELSE cc.strStaticText END strStaticText,
  ''Verint ID: '' + REPLACE(av.VerintIds, '' |'', '','') AudVerintIds,
  qor.[CompetencyImage] strQORCompetency
 FROM [EC].[Coaching_Log] cl  WITH (NOLOCK) ';
@@ -269,6 +275,11 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 63) THEN [clr].[Value] ELSE NULL END)	WAH_RTS,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 10 AND [clr].[SubCoachingReasonID] = 326) THEN [clr].[Value] ELSE NULL END) QOR,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 25 AND [clr].[SubCoachingReasonID] = 327) THEN [clr].[Value] ELSE NULL END) CPATH,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 55 AND [clr].[SubCoachingReasonID] = 230) THEN [clr].[Value] ELSE NULL END) ASR_HOLD,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 55 AND [clr].[SubCoachingReasonID] = 328) THEN [clr].[Value] ELSE NULL END) ASR_TRANSFER,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 55 AND [clr].[SubCoachingReasonID] = 329) THEN [clr].[Value] ELSE NULL END) ASR_AHT,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 55 AND [clr].[SubCoachingReasonID] = 330) THEN [clr].[Value] ELSE NULL END) ASR_ACW,
+	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 55 AND [clr].[SubCoachingReasonID] = 331) THEN [clr].[Value] ELSE NULL END) ASR_Chat,
 	[EC].[fn_strCoachingLogStatictext]([ccl].[CoachingID]) strStaticText
   FROM [EC].[Coaching_Log_Reason] clr  WITH (NOLOCK),
     [EC].[DIM_Coaching_Reason] cr,
@@ -313,5 +324,3 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
-
-
