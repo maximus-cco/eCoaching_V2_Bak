@@ -51,6 +51,12 @@ namespace eCoachingLog.Controllers
             vm.LogName = TempData["LogName"] == null ? "" : TempData["LogName"] as string;
             Session["newSubmissionVM"] = vm;
 
+            // Store all subcontract sites in session, will check against it when trying to filter out ASR source for subcontractor log submission
+            if (Session["AllSubcontractorSites"] == null)
+            {
+                Session["AllSubcontractorSites"] = siteService.GetAllSubcontractorSites();
+            }
+
             ViewBag.ValidationError = false;
 
             return View((NewSubmissionViewModel)Session["newSubmissionVM"]);
@@ -61,7 +67,8 @@ namespace eCoachingLog.Controllers
             var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
 			string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? Constants.DIRECT : Constants.INDIRECT;
             int moduleId = vm.ModuleId;
-            List<LogSource> sourceList = newSubmissionService.GetSourceListByModuleId(moduleId, directOrIndirect);
+            var isSubcontractorSite = ((IList<Site>) Session["AllSubcontractorSites"]).Where( x => x.Id == vm.SiteId) != null ? true : false;
+            List<LogSource> sourceList = newSubmissionService.GetSourceListByModuleId(moduleId, directOrIndirect, isSubcontractorSite);
             sourceList.Insert(0, new LogSource { Id = -2, Name = "-- Select a Source --" });
             IEnumerable<SelectListItem> sources = new SelectList(sourceList, "Id", "Name");
             return sources;
@@ -758,7 +765,6 @@ namespace eCoachingLog.Controllers
             // CSR module
             if (moduleId == Constants.MODULE_CSR)
             {
-
                 return Constants.MASS_SUBMISSION_CSR.Contains(userJobCode);
             }
 

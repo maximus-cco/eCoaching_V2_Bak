@@ -24,6 +24,12 @@ namespace eCoachingLog.Services
 			return siteRepository.GetSites();
 		}
 
+        public IList<Site> GetAllSubcontractorSites()
+        {
+            var sites = siteRepository.GetSites(); // sp_Select_Sites: all active unknown sites
+            return sites.Where(x => x.IsSubcontractorSite).ToList<Site>();
+        }
+
         public IList<Site> GetAllSites(bool IsSubmission, User user)
         {
             return FilterSites(GetAllSites(), IsSubmission, user);

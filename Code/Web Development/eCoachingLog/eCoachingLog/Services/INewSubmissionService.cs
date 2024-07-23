@@ -11,7 +11,7 @@ namespace eCoachingLog.Services
         // Save NewSubmission Coaching to database
         IList<NewSubmissionResult> Save(NewSubmission newSubmission, User user);
         // Get source list by module id
-        List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect);
+        List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect, bool isSubcontractorSite);
         MailMetaData GetMailMetaData(int moduleId, int sourceId, bool isCse);
     }
 }

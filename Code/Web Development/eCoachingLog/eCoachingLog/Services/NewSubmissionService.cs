@@ -40,9 +40,16 @@ namespace eCoachingLog.Services
             return newSubmissionRepository.SaveCoachingLog(submission, user);
         }
 
-        public List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect)
+        public List<LogSource> GetSourceListByModuleId(int moduleId, string directOrIndirect, bool isSubcontracorSite)
         {
-            return newSubmissionRepository.GetSourceListByModuleId(moduleId, directOrIndirect);
+            var sourceList = newSubmissionRepository.GetSourceListByModuleId(moduleId, directOrIndirect);
+            // No ASR logs for subcontractor
+            if (isSubcontracorSite)
+            {
+                return sourceList.Where(x => x.Id != Constants.SOURCE_DIRECT_ASR && x.Id != Constants.SOURCE_INDIRECT_ASR).ToList<LogSource>();
+            }
+
+            return sourceList;
         }
 
         public MailMetaData GetMailMetaData(int moduleId, int sourceId, bool isCse)
