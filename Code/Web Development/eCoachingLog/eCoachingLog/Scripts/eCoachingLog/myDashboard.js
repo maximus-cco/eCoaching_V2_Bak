@@ -332,8 +332,9 @@ function resetValidationErrors() {
 
 function toggleCoachingRequired(coachingRequired) {
     $('div:hidden :input').prop("disabled", false);
-
     resetValidationErrors();
+    // Reset follow-up required radio button to NO
+    $("#IsFollowupRequiredNo").prop("checked", true);
 
     if (coachingRequired === 'true') {
         // show
@@ -356,6 +357,8 @@ function toggleCoachingRequired(coachingRequired) {
         $('#div-coachable-detail-reason').addClass('hide');
         $('#div-is-followup-required').removeClass('show');
         $('#div-is-followup-required').addClass('hide');
+        $('#div-select-followup-due-date').removeClass('show');
+        $('#div-select-followup-due-date').addClass('hide');
     }
 }
 
