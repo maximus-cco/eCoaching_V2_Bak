@@ -67,7 +67,15 @@ namespace eCoachingLog.Controllers
             var vm = (NewSubmissionViewModel)Session["newSubmissionVM"];
 			string directOrIndirect = vm.IsCoachingByYou.HasValue && vm.IsCoachingByYou.Value ? Constants.DIRECT : Constants.INDIRECT;
             int moduleId = vm.ModuleId;
-            var isSubcontractorSite = ((IList<Site>) Session["AllSubcontractorSites"]).Where( x => x.Id == vm.SiteId) != null ? true : false;
+            bool isSubcontractorSite = false;
+            foreach (var s in (IList<Site>)Session["AllSubcontractorSites"])
+            {
+                if (s.Id == vm.SiteId)
+                {
+                    isSubcontractorSite = true;
+                    break;
+                }
+            }
             List<LogSource> sourceList = newSubmissionService.GetSourceListByModuleId(moduleId, directOrIndirect, isSubcontractorSite);
             sourceList.Insert(0, new LogSource { Id = -2, Name = "-- Select a Source --" });
             IEnumerable<SelectListItem> sources = new SelectList(sourceList, "Id", "Name");
