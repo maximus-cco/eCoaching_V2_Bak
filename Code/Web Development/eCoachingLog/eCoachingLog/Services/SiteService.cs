@@ -67,6 +67,12 @@ namespace eCoachingLog.Services
                 sites.Insert(0, new Site { Id = allSiteId, Name = "All Sites" });
             }
 
+            // No Production Planning logs for subcontractor
+            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
+            {
+                sites = sites.Where(x => !x.IsSubcontractorSite).ToList<Site>();
+            }
+
             return sites;
         }
 

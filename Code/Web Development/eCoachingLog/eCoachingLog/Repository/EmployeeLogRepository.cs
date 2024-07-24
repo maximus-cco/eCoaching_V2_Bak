@@ -349,12 +349,6 @@ namespace eCoachingLog.Repository
         {
             var callTypes = new List<CallType>();
 
-            // todo: remove
-            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
-            {
-                moduleId = Constants.MODULE_ISG;
-            }
-
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_CallID_By_Module]", connection))
             {
@@ -457,12 +451,6 @@ namespace eCoachingLog.Repository
         {
             List<CoachingReason> coachingReasons = new List<CoachingReason>();
 
-            // todo: remove
-            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
-            {
-                moduleId = Constants.MODULE_LSA;
-            }
-
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_CoachingReasons_By_Module]", connection))
             {
@@ -530,11 +518,6 @@ namespace eCoachingLog.Repository
         public List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeId, int sourceId)
         {
             List<CoachingSubReason> subReasons = new List<CoachingSubReason>();
-
-            if (moduleId == Constants.MODULE_PRODUCTION_PLANNING)
-            {
-                moduleId = Constants.MODULE_LSA;
-            }
 
             using (SqlConnection connection = new SqlConnection(conn))
             using (SqlCommand command = new SqlCommand("[EC].[sp_Select_SubCoachingReasons_By_Reason]", connection))

@@ -207,13 +207,11 @@
 	    var yes = $(this).val();
 	    if (yes === 'True') {
 	        // reset followup date
+	        $('#followup-date').prop('disabled', false);
 	        $('#followup-date').val('');
-	        $('#followup-date').prop("disabled", false);
 	        $('#div-select-followup-due-date').removeClass('hide');
-	        $('#div-select-followup-due-date').addClass('show');
 	    }
 	    else {
-	        $('#div-select-followup-due-date').removeClass('show');
 	        $('#div-select-followup-due-date').addClass('hide');
 	    }
 	});
@@ -341,23 +339,16 @@ function toggleCoachingRequired(coachingRequired) {
         $('#div-coachable-detail-reason').removeClass('hide');
         $('#div-is-followup-required').removeClass('hide');
         // hide
-        $('#div-noncoachable-main-reason').removeClass('show');
         $('#div-noncoachable-main-reason').addClass('hide');
-        $('#div-noncoachable-detail-reason').removeClass('show');
         $('#div-noncoachable-detail-reason').addClass('hide');
     }
     else {
         // show
         $('#div-noncoachable-main-reason').removeClass('hide');
-        $('#div-noncoachable-main-reason').addClass('show');
         $('#div-noncoachable-detail-reason').removeClass('hide');
-        $('#div-noncoachable-detail-reason').addClass('show');
         // hide
-        $('#div-coachable-detail-reason').removeClass('show');
         $('#div-coachable-detail-reason').addClass('hide');
-        $('#div-is-followup-required').removeClass('show');
         $('#div-is-followup-required').addClass('hide');
-        $('#div-select-followup-due-date').removeClass('show');
         $('#div-select-followup-due-date').addClass('hide');
     }
 }

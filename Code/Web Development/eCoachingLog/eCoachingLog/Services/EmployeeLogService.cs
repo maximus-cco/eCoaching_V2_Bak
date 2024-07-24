@@ -33,12 +33,6 @@ namespace eCoachingLog.Services
                 return modules.Where(x => x.Id == Constants.MODULE_CSR || x.Id == Constants.MODULE_SUPERVISOR || x.Id == Constants.MODULE_TRAINING).ToList<Module>();
             }
 
-            // todo: remove
-            var temp = new Module();
-            temp.Id = 8;
-            temp.Name = "Production Planning";
-
-            modules.Add(temp);
             return modules;
         }
 
