@@ -124,7 +124,9 @@ namespace eCoachingLog.Utils
         // Users with one of these job codes are allowed for mass submission (Production Planning coaching logs)
         public static HashSet<string> MASS_SUBMISSION_PRODUCTION_PLANNING = new HashSet<string>()
         {
-            { "WCWF50" }
+            { "WMPR40" },
+            { "WCWF50" },
+            { "WPOP60" }
         };
 
         public const int ALL_STATUSES = -1;
