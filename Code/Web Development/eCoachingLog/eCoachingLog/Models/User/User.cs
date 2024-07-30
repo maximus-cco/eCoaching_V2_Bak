@@ -14,6 +14,7 @@ namespace eCoachingLog.Models.User
         public string SiteName { get; set; }
         public bool IsSubcontractor { get; set; }
         public bool IsCsrRelated { get; set; } // Indicates whether this user is a CSR's/ISG's supervisor, managager, etc.
+        public bool IsProductionPlanningRelated { get; set; } // Indicates whether this user is a Production Planning employee's supervisor, managager, etc.
         public bool IsEcl { get; set; }        // Be able to view all logs on Historical Dashboard
         public bool IsPm { get; set; }         // Be able to view subcontractor logs
         public bool IsPma { get; set; }        // Be able to view subcontractor logs + submit subcontractor logs 

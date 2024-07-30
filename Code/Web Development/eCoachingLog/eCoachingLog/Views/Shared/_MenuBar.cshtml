@@ -23,7 +23,8 @@
                 }
                 else
                 {
-                    if (user.SiteId == 25) // London Peckham: no QN
+                    if (user.SiteId == 25  // London Peckham: no QN
+                            || user.IsProductionPlanningRelated) // Production Planning: no QN
                     {
                         <li>@Html.ActionLink("My Dashboard", "IndexNonQn", "MyDashboard", null, new { id = "mydashboard" })</li>
                     }

@@ -38,6 +38,7 @@ namespace eCoachingLog.Repository
                         user.SiteName = dataReader["Emp_Site"].ToString();
                         user.IsSubcontractor = (dataReader["isSub"] == DBNull.Value) ? false : (bool)dataReader["isSub"];
                         user.IsCsrRelated = (dataReader["CSRRelated"] == DBNull.Value) ? false : (bool)dataReader["CSRRelated"];
+                        user.IsProductionPlanningRelated = (dataReader["isPPRelated"] == DBNull.Value) ? false : (bool)dataReader["isPPRelated"];
                         user.IsEcl = (dataReader["ECLUser"] == DBNull.Value) ? false : (bool)dataReader["ECLUser"];
                         user.IsPm = (dataReader["PMUser"] == DBNull.Value) ? false : (bool)dataReader["PMUser"];
                         user.IsPma = (dataReader["PMAUser"] == DBNull.Value) ? false : (bool)dataReader["PMAUser"];

@@ -517,6 +517,8 @@ namespace eCoachingLog.Repository
 
         public List<CoachingSubReason> GetCoachingSubReasons(int reasonId, int moduleId, string directOrIndirect, string employeeId, int sourceId)
         {
+            logger.Debug("***********SourceId=" + sourceId);
+            logger.Debug("***********ReasonId=" + reasonId);
             List<CoachingSubReason> subReasons = new List<CoachingSubReason>();
 
             using (SqlConnection connection = new SqlConnection(conn))
