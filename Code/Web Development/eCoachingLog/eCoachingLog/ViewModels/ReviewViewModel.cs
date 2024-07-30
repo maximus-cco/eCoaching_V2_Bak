@@ -190,7 +190,6 @@ namespace eCoachingLog.ViewModels
 			this.EmployeeCommentsDdlList = new List<SelectListItem>();
 			// Default to true
 			this.IsCoachingRequired = true;
-            this.IsFollowupCoachingRequired = false;
             this.ShortCallList = new List<ShortCall>();
 		}
 
