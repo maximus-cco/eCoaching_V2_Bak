@@ -770,6 +770,7 @@ namespace eCoachingLog.Controllers
                         && vm.LogDetail.StatusId == Constants.LOG_STATUS_PENDING_SUPERVISOR_REVIEW)
                 {
                     vm.ShowFollowupCoaching = true;
+                    vm.IsFollowupCoachingRequired = false; // Default to follow-up NOT required.
                 }
             }
 
