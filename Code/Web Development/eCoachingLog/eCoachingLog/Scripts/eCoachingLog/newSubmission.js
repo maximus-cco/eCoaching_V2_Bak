@@ -418,6 +418,10 @@ $(function () {
         // reload coaching reasons if source is changed to ASR or changed from ASR
         if (prevSourceIdSelected == SOURCE_DIRECT_ASR || currentSourceIdSelected == SOURCE_DIRECT_ASR
                 || prevSourceIdSelected == SOURCE_INDIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
+            // reset these 2 to false
+            $('#IsWorkAtHomeReturnSite').val(false);
+            $('#IsPfd').val(false);
+
             resetCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
         }
     });
@@ -460,7 +464,7 @@ $(function () {
     });
 
     function resetCoachingReasons(isCoachingByYou, isCse) {
-    	$(".please-wait").slideDown(500);
+        $(".please-wait").slideDown(500);
         // ajax call to get coaching reasons
         $.ajax({
             type: 'POST',
