@@ -15,6 +15,7 @@ GO
 -- Updated to customize sort order for Security and Privacy Coaching Reason. TFS 17066 - 05/06/2020
 -- Updated to support chnages to Work at Home Crs and Sub CRS. TFS 27375- 11/30/2023
 -- Modified to support ASR Logs. TFS 28298 - 07/15/2024
+-- Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Select_SubCoachingReasons_By_Reason] 
 @intReasonIDin INT, @intModuleIDin INT, @strSourcein nvarchar(30), @nvcEmpIDin nvarchar(10), @intSourceIDin int
@@ -27,7 +28,7 @@ BEGIN
 	@NewLineChar nvarchar(2),
 	@nvcSQL nvarchar(max);
 
-SET @strModule = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
+SET @strModule = (SELECT Replace([Module],' ','') FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
 
 SET @nvcASRRestrictSQL = '';
 SET @NewLineChar = CHAR(13) + CHAR(10);
@@ -61,4 +62,5 @@ EXEC (@nvcSQL)
 END -- sp_Select_SubCoachingReasons_By_Reason
 
 GO
+
 

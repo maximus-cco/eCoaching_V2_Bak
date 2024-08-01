@@ -1,0 +1,367 @@
+/*
+
+Modified to Support Production Planning Module. TFS 28361 - 07/25/2024
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+
+TABLE [EC].[DIM_Module]
+TABLE [EC].[DIM_Source]
+TABLE [EC].[CallID_Selection]
+TABLE [EC].[Employee_Selection]
+TABLE [EC].[Module_Submission]
+
+
+TABLE [EC].[DIM_Sub_Coaching_Reason]
+TABLE [EC].[Coaching_Reason_Selection]
+
+TABLE [EC].[Email_Notifications]
+TABLE [EC].[Employee_Hierarchy
+TABLE [EC].[UI_User_Role] 
+
+TABLE [EC].[AT_Module_Access] 
+TABLE [EC].[AT_Reassign_Status_For_Module] 
+TABLE [EC].[AT_Role_Access]
+TABLE [EC].[AT_Role_Module_Link]  
+
+
+
+-------------------------------
+
+
+-- Test
+
+SELECT * FROM [EC].[DIM_Module] WHERE [Module] = 'Production Planning'
+SELECT * FROM [EC].[DIM_Source] WHERE [ProductionPlanning]= 1
+SELECT * FROM [EC].[CallID_Selection]
+SELECT * FROM [EC].[Employee_Selection] WHERE [isProductionPlanning]  = 1
+SELECT * FROM [EC].[Module_Submission] WHERE [ProductionPlanning] = 1
+
+SELECT * FROM [EC].[DIM_Sub_Coaching_Reason] WHERE [SubCoachingReasonID] in (332,333)
+SELECT * FROM [EC].[Coaching_Reason_Selection] WHERE [ProductionPlanning] = 1   ORDER BY CoachingReasonID  -- 24 Coaching  plus 40 Warnings = 64 Total
+SELECT * FROM  [EC].[Email_Notifications] WHERE Module = 'Production Planning' AND [Submission] = 'UI'
+
+
+SELECT *   FROM [EC].[AT_Module_Access] WHERE ModuleID = 8
+SELECT * FROM [EC].[AT_Reassign_Status_For_Module] WHERE ModuleID = 8
+SELECT * FROM [EC].[AT_Role_Module_Link] WHERE ModuleID = 8
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+--1. Activate Production Planning Module
+
+Update [EC].[DIM_Module]
+SET [isActive]= 1
+WHERE [Module] = 'Production Planning'
+GO
+
+------------------------------------------------------
+
+--2. Source Table updates
+
+UPDATE [EC].[DIM_Source]
+SET isActive = 1  WHERE SourceID = 231
+GO
+
+ALTER TABLE [EC].[DIM_Source] ADD [ProductionPlanning] BIT
+GO
+
+UPDATE [EC].[DIM_Source]
+SET [ProductionPlanning] = 1
+WHERE SourceID IN (117, 125, 106, 131, 121, 103, 113, 108, 217, 225, 206, 231, 221, 203, 213, 208)
+GO
+
+
+UPDATE [EC].[DIM_Source]
+SET [ProductionPlanning] = 0
+WHERE [ProductionPlanning] <> 1
+GO
+
+------------------------------------------------------
+
+
+--3. Call ID Selection table
+
+ALTER TABLE [EC].[CallID_Selection] ADD [ProductionPlanning] BIT
+GO
+
+UPDATE [EC].[CallID_Selection]
+SET [ProductionPlanning] = 0
+GO
+
+------------------------------------------------------
+
+
+--4.  Employee Selection table
+
+ALTER TABLE [EC].[Employee_Selection] ADD [isProductionPlanning] BIT
+GO
+
+INSERT INTO [EC].[Employee_Selection]
+           ([Job_Code]
+           ,[Job_Code_Description]
+           ,[isCSR]
+           ,[isSupervisor]
+           ,[isQuality]
+           ,[isLSA]
+           ,[isTraining]
+		   ,[isISG]
+		   ,[isProductionPlanning])
+     VALUES
+           ('WMPL02', 'Planner, Production', 0,0,0,0,0,0,1),
+		   ('WMPL03', 'Sr Planner, Production', 0,0,0,0,0,0,1)
+	GO
+
+
+UPDATE [EC].[Employee_Selection] SET [isProductionPlanning] = 0 WHERE [Job_Code] NOT LIKE 'WMPL0%'
+GO
+
+
+------------------------------------------------------
+
+
+
+--5. Module submission table
+
+ALTER TABLE [EC].[Module_Submission] ADD [ProductionPlanning] BIT
+GO
+
+UPDATE [EC].[Module_Submission]
+SET [ProductionPlanning] = CASE WHEN Job_Code IN ( 'WPOP60', 'WMPR40', 'WCWF50') THEN 1 ELSE 0 END
+GO 
+
+
+INSERT INTO [EC].[Module_Submission]
+           ([Job_Code]
+           ,[Job_Code_Description]
+           ,[CSR]
+           ,[Supervisor]
+           ,[Quality]
+           ,[LSA]
+           ,[Training]
+           ,[ISG]
+	   ,[ProductionPlanning])
+     VALUES
+   	   ('WCWF50', 'Manager, WFM', 1,0,0,0,0,1,1)
+GO 
+
+------------------------------------------------------
+
+--6. Add records to Sub Coaching Reason table
+
+SET IDENTITY_INSERT [EC].[DIM_Sub_Coaching_Reason] ON
+GO
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReasonID],[SubCoachingReason])
+     VALUES
+           (332,'Box'),
+           (333,'Queue Management')
+GO
+
+SET IDENTITY_INSERT [EC].[DIM_Sub_Coaching_Reason] OFF
+GO
+
+
+------------------------------------------------------
+
+-- 7. Coaching Reason Selection Table
+
+ALTER TABLE [EC].[Coaching_Reason_Selection] ADD [ProductionPlanning] BIT
+GO
+
+
+UPDATE [EC].[Coaching_Reason_Selection]
+SET [ProductionPlanning] = 0
+GO
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training]
+		   ,[ISG]
+		   ,[ProductionPlanning])
+     VALUES
+(67,'Shift Watch',332,'Box',1,1,1,1,1,0,0,0,0,0,0,0,0,1),
+(67,'Shift Watch',333,'Queue Management',1,1,1,1,1,0,0,0,0,0,0,0,0,1),
+(60,'Formal Coaching',251,'Deltek',1,1,0,1,0,0,0,0,1,1,0,0,0,1),
+(60,'Formal Coaching',93,'Conduct (including Call Avoidance)',1,1,0,1,0,0,0,0,1,1,0,0,0,1)
+GO
+
+UPDATE [EC].[Coaching_Reason_Selection]
+SET [ProductionPlanning] = 1
+WHERE ([CoachingReasonID] = 3 AND [SubCoachingReasonID] IN (42,243,174)) OR
+([CoachingReasonID] = 32 AND [SubCoachingReasonID] IN (178)) OR
+([CoachingReasonID] = 67 AND [SubCoachingReasonID] IN (113, 332, 333)) OR
+([CoachingReasonID] = 62 AND [SubCoachingReasonID] IN (42)) OR
+([CoachingReasonID] = 63   AND [SubCoachingReasonID] IN (321,322,318,278,279,280)) OR
+([CoachingReasonID] = 59  AND [SubCoachingReasonID] IN (42)) OR
+([CoachingReasonID] = 39  AND [SubCoachingReasonID] IN (42)) OR
+([CoachingReasonID] = 14  AND [SubCoachingReasonID] IN (42, 284)) OR
+([CoachingReasonID] = 50  AND [SubCoachingReasonID] IN (42)) OR
+([CoachingReasonID] = 60 AND [SubCoachingReasonID] IN (95,178,265,253,254,251,255,93,263,262,263))OR
+([CoachingReasonID] = 28 AND [SubCoachingReasonID] IN (95,178,265,253,254,251,255,93,263,262,263)) OR 
+([CoachingReasonID] = 29 AND [SubCoachingReasonID] IN (95,178,265,253,254,251,255,93,263,262,263)) OR 
+([CoachingReasonID] = 30 AND [SubCoachingReasonID] IN (95,178,265,253,254,251,255,93,263,262,263)) OR
+([CoachingReasonID] = 61 AND [SubCoachingReasonID] IN (272, 273,274, 275, 276))
+GO
+
+
+UPDATE [EC].[Coaching_Reason_Selection]
+SET [isActive] = 1
+WHERE [ProductionPlanning] = 1  
+AND [isActive] = 0
+GO
+
+UPDATE [EC].[Coaching_Reason_Selection]
+SET [CSR] = 0, [ISG] = 0
+WHERE coachingreasonid in (62,63) and SubCoachingReasonID in ( 278, 279)
+GO
+------------------------------------------------------
+
+--8. Email Notifications Table
+
+INSERT INTO [EC].[Email_Notifications]
+           ([Module]
+           ,[Submission]
+           ,[Source]
+           ,[SubSource]
+           ,[isCSE]
+           ,[Status]
+           ,[Recipient]
+           ,[Subject]
+           ,[Body]
+           ,[isCCRecipient]
+           ,[CCRecipient])
+     VALUES
+	 ('Production Planning', 'UI', 'Direct', 'BCC Security and Privacy Incident Coaching', 0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.', 0, 'NA'),  
+	 ('Production Planning', 'UI', 'Direct', 'Walk-By', 0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.', 0, 'NA'),
+('Production Planning', 'UI', 'Direct', 'CMS Contractor (NGS, VCS) Reported Issue', 0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.', 0, 'NA'),
+('Production Planning', 'UI', 'Direct', 'CMS Reported Item', 0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.', 0, 'NA'),
+('Production Planning', 'UI', 'Direct', 'Coach the coach', 0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.', 0, 'NA'),
+('Production Planning', 'UI', 'Direct', 'ETS', 0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.', 0, 'NA'),
+('Production Planning', 'UI', 'Direct', 'Manager Coaching', 0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.', 0, 'NA'),
+('Production Planning', 'UI', 'Direct', 'Other', 0, 'Pending Employee Review','Employee','eCL: Pending Employee Review','A new eCoaching Log has been entered on your behalf. Please click on the link below to review and verify the coaching opportunity received on <strong>strDateTime</strong>.', 0, 'NA'),
+('Production Planning', 'UI', 'Indirect', 'Walk-By', 0, 'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong>strPerson</strong> on <strong>strDateTime</strong> that requires your  action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+('Production Planning', 'UI', 'Indirect', 'CMS Contractor (NGS, VCS) Reported Issue', 0, 'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong>strPerson</strong> on <strong>strDateTime</strong> that requires your  action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+('Production Planning', 'UI', 'Indirect', 'CMS Reported Item', 0, 'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong>strPerson</strong> on <strong>strDateTime</strong> that requires your  action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+('Production Planning', 'UI', 'Indirect', 'Coach the coach', 0, 'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong>strPerson</strong> on <strong>strDateTime</strong> that requires your  action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+('Production Planning', 'UI', 'Indirect', 'ETS', 0, 'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong>strPerson</strong> on <strong>strDateTime</strong> that requires your  action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+('Production Planning', 'UI', 'Indirect', 'Manager Coaching', 0, 'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong>strPerson</strong> on <strong>strDateTime</strong> that requires your  action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+('Production Planning', 'UI', 'Indirect', 'Other', 0, 'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong>strPerson</strong> on <strong>strDateTime</strong> that requires your  action. Please click on the link below to review the eCoaching log.', 0, 'NA'),
+('Production Planning', 'UI', 'Indirect', 'BCC Security and Privacy Incident Coaching', 0, 'Pending Supervisor Review','Supervisor','eCL: Pending Supervisor Review','A new eCoaching Log has been entered on behalf of <strong>strPerson</strong> on <strong>strDateTime</strong> that requires your  action. Please click on the link below to review the eCoaching log.', 0, 'NA')
+
+
+------------------------------------------------------
+
+--9. Add PP flag to Employee Table
+
+ALTER TABLE [EC].[Employee_Hierarchy] ADD [isPP] NVARCHAR (1) NOT NULL DEFAULT 'N'
+GO
+
+
+------------------------------------------------------
+
+--10. 
+
+UPDATE [EC].[UI_User_Role]
+SET RoleDescription = 'WACQ0% or WACQ12 or WIHD0% or WTTR1% or WTID% OR WMPL0%'
+WHERE RoleId = 107
+GO
+
+
+
+
+------------------------------------------------------
+
+
+  --11. TABLE [EC].[AT_Module_Access] 
+
+  INSERT INTO [EC].[AT_Module_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[ModuleId]
+           ,[Module]
+           ,[isActive])
+		   VALUES
+('WCWF50', 'Manager, WFM', 08, 'Production Planning', 1),
+('WPOP60', 'Sr Manager, Operations', 08, 'Production Planning', 1)
+
+GO
+
+
+------------------------------------------------------
+
+
+ --12.  TABLE [EC].[AT_Reassign_Status_For_Module] 
+ 
+INSERT INTO [EC].[AT_Reassign_Status_For_Module]
+           ([ModuleId]
+           ,[Module]
+           ,[StatusId]
+           ,[Status]
+           ,[isActive])
+VALUES
+(8, 'Production Planning', 6, 'Pending Supervisor Review', 1),
+(8, 'Production Planning', 10, 'Pending Follow-up', 1)
+
+
+
+------------------------------------------------------------
+
+ -- 13.  TABLE [EC].[AT_Role_Access] 
+
+
+INSERT INTO [EC].[AT_Role_Access]
+           ([JobCode]
+           ,[JobCodeDescription]
+           ,[RoleId]
+           ,[RoleDescription]
+           ,[AddToUser]
+           ,[isActive])
+     VALUES
+('WCWF50', 'Manager, WFM', 102, 'CoachingUser', 1, 1),
+('WPOP60', 'Sr Manager, Operations', 102, 'CoachingUser', 1, 1)
+
+GO
+
+
+------------------------------------------------------------
+
+
+ -- 14.  TABLE [EC].[AT_Role_Module_Link]  
+
+INSERT INTO [EC].[AT_Role_Module_Link]
+           ([RoleId]
+           ,[ModuleId])
+     VALUES
+           (102,8)
+
+GO
+
+
+------------------------------------------------------------
+

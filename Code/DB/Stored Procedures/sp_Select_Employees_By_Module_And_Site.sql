@@ -1,10 +1,8 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	04/15/2018
@@ -14,8 +12,9 @@ GO
 --  Updated to Support Team Submission. TFS 23273 - 06/07/2022
 --  Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 --  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+--  Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 --	=====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site] 
+CREATE OR ALTER  PROCEDURE [EC].[sp_Select_Employees_By_Module_And_Site] 
 @intModuleIDin INT, @intSiteIDin INT = -1, @nvcUserEmpIDin  nvarchar(10)
 
 AS
@@ -34,16 +33,15 @@ DECLARE
 @nvcSQL01 nvarchar(1000),
 @nvcSQL02 nvarchar(1000),
 @nvcSQL03 nvarchar(1000),
-@nvcSQL04 nvarchar(1000)
+@nvcSQL04 nvarchar(1000);
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey]  
 DECRYPTION BY CERTIFICATE [CoachingCert];
 
 SET @NewLineChar = CHAR(13) + CHAR(10);
-SET @nvcModulein = (SELECT Module FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
-SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
-WHERE Emp_ID = @nvcUserEmpIDin);
+SET @nvcModulein = (SELECT Replace([Module],' ','') FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy WHERE Emp_ID = @nvcUserEmpIDin);
 
 SET @conditionalsite = '';
 

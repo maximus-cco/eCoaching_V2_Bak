@@ -3,7 +3,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- =============================================
 -- Author:		   Susmitha Palacherla
 -- Create Date: 07/25/2013
@@ -21,8 +20,9 @@ GO
 -- Update to populate ELS Role records in ACL Table. TFS 24924 - 7/11/2022
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
 -- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+--  Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 -- =============================================
-CREATE OR ALTER   PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Populate_Employee_Hierarchy] 
 AS
 BEGIN
 
@@ -30,33 +30,28 @@ BEGIN
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]; 
 
  --Assigns End_Date to Inactive Records with status change in feed
- 
-	UPDATE [EC].[Employee_Hierarchy] 
+ UPDATE [EC].[Employee_Hierarchy] 
 	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
 	FROM [EC].[Employee_Hierarchy_Stage] S JOIN [EC].[Employee_Hierarchy]H
 	ON H.Emp_ID = S.Emp_ID
 	AND S.Active in ('T', 'D')
 	AND H.END_DATE= '99991231';
-
 	
-   WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+   WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
 -- Assigns End_Date to Inactive Records that stop arriving in feed
-
-	UPDATE [EC].[Employee_Hierarchy] 
+UPDATE [EC].[Employee_Hierarchy] 
 	SET [END_DATE] = CONVERT(nvarchar(10),getdate(),112)
 	,[Active] = 'T'
 	 WHERE END_DATE = '99991231' AND Active = 'A'
 	 AND Emp_ID <> '999999'
 	 AND EMP_ID NOT IN
 	(SELECT Emp_ID FROM [EC].[Employee_Hierarchy_Stage]);
-
-
- WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+	
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
 -- Assigns Open Ended End_Date for Rehire records
-
-	UPDATE [EC].[Employee_Hierarchy] 
+UPDATE [EC].[Employee_Hierarchy] 
 	SET [Active]= S.Active
 	,[Start_Date] = S.Start_Date
 	,[END_DATE] = '99991231'
@@ -65,11 +60,10 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 	AND S.Active not in ('T', 'D')
 	AND H.END_DATE  <> '99991231';
 
- WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
 -- Updates Existing Records
-
-	UPDATE [EC].[Employee_Hierarchy]
+UPDATE [EC].[Employee_Hierarchy]
 	   SET [Emp_Name] = EncryptByKey(Key_GUID('CoachingKey'), Replace(S.[Emp_Name],'''', ''))
 	      ,[Emp_Email] = EncryptByKey(Key_GUID('CoachingKey'), S.[Emp_Email])
 		  ,[Emp_LanID] = EncryptByKey(Key_GUID('CoachingKey'), S.Emp_LanID)
@@ -104,12 +98,10 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
 	 ON H.[Emp_ID] = S.[EMP_ID]
 	 WHERE H.[Emp_ID] is NOT NULL;
 
-
-WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
     
 -- Inserts New Records
-
-	INSERT INTO [EC].[Employee_Hierarchy]
+INSERT INTO [EC].[Employee_Hierarchy]
 			  ([Emp_ID]
 			   ,[Emp_Name]
 			   ,[Emp_Email]
@@ -184,29 +176,35 @@ WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
 						  ON S.Emp_ID = H.Emp_ID
 						  WHERE (H.EMP_ID IS NULL and S.Emp_ID <> '')
 						  AND S.Active NOT IN ('T', 'D');
-					
-
- WAITFOR DELAY '00:00:00.02'; -- Wait for 2 ms
+				
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
 -- Update Employee Status from Aspect
+UPDATE [EC].[Employee_Hierarchy]
+	SET [Active] = 'A'
+	FROM [EC].[Employee_Hierarchy]H JOIN [EC].[EmpID_To_SupID_Stage]S
+	ON H.[Emp_ID] = S.[EMP_ID]
+	WHERE H.[Active] in ('L','P')
+	AND H.End_Date = 99991231
+	AND S.[Emp_Status] IN ('RFT','RPT', 'TPT', 'TFT');
 
-	UPDATE [EC].[Employee_Hierarchy]
-	   SET [Active] = 'A'
-	    FROM [EC].[Employee_Hierarchy]H JOIN [EC].[EmpID_To_SupID_Stage]S
-	 ON H.[Emp_ID] = S.[EMP_ID]
-	 WHERE H.[Active] in ('L','P')
-	  AND H.End_Date = 99991231
-	 AND S.[Emp_Status] IN ('RFT','RPT', 'TPT', 'TFT');
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
- WAITFOR DELAY '00:00:00.02' -- Wait for 2 ms
+ -- Set PP flag for SWP Team members
+UPDATE [EC].[Employee_Hierarchy]
+	SET [isPP] =  'Y' 
+	WHERE (Emp_Job_Code LIKE 'WMPL0%' OR Emp_Job_Code IN ('WMPR40', 'WCWF50'))
+	AND [isPP] =  'N' ;
+
+WAITFOR DELAY '00:00:00.01'; -- Wait for 1 ms
 
  -- Populate SrMgr IDs
 
-              UPDATE [EC].[Employee_Hierarchy]
-              SET [SrMgrLvl1_ID]=	[EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([H].[Emp_ID])		  
-				 ,[SrMgrLvl2_ID]=	[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([H].[Emp_ID])	
-	             ,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
-	FROM [EC].[Employee_Hierarchy]H;
+UPDATE [EC].[Employee_Hierarchy]
+SET [SrMgrLvl1_ID]=	[EC].[fn_strSrMgrLvl1EmpIDFromEmpID]([H].[Emp_ID])		  
+	,[SrMgrLvl2_ID]=	[EC].[fn_strSrMgrLvl2EmpIDFromEmpID]([H].[Emp_ID])	
+	,[SrMgrLvl3_ID]=	[EC].[fn_strSrMgrLvl3EmpIDFromEmpID]([H].[Emp_ID])
+FROM [EC].[Employee_Hierarchy]H;
 
  -- Close Symmetric key
 CLOSE SYMMETRIC KEY [CoachingKey];	 

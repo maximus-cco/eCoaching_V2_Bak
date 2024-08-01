@@ -14,6 +14,7 @@ GO
 --  Removed references to SrMgr Role. TFS 18062 - 08/18/2020
 --  Modified to exclude QN Logs. TFS 22187 - 08/03/2021
 --  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+--  Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count_ByStatus] 
 @nvcEmpID nvarchar(10)
@@ -100,7 +101,7 @@ SET @nvcSQL = ';WITH SelectedStatus AS
                FROM [EC].[Coaching_Log] cl WITH(NOLOCK) JOIN [EC].[Employee_Hierarchy] eh 
 			   ON eh.[EMP_ID] = cl.[EmpID] 
 			   WHERE ((cl.[EmpID] = ''' + @nvcEmpID + '''  AND cl.[StatusID] in (3,4)) 
-			OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND eh.Sup_ID = ''' + @nvcEmpID + ''' AND cl.[StatusID] in (3,5,6,8) 
+			OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND eh.Sup_ID = ''' + @nvcEmpID + ''' AND cl.[StatusID] in (3,5,6,8,10) 
 			  OR (ISNULL([cl].[strReportCode], '' '') NOT LIKE ''LCS%'' AND cl.ReassignCount= 0 AND  eh.Mgr_ID = '''+  @nvcEmpID + ''' AND cl.[StatusID] in (5,7,9))
 			  OR ([cl].[strReportCode] LIKE ''LCS%'' AND [ReassignCount] = 0 AND cl.[MgrID] = ''' + @nvcEmpID + ''' AND [cl].[StatusID]= 5) )
 			  OR (cl.ReassignCount <> 0 AND cl.ReassignedToID = ''' +  @nvcEmpID + ''' AND  cl.[StatusID] in (5,7,9))  

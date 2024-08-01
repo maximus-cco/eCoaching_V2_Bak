@@ -18,8 +18,9 @@ GO
 -- Updated to support changes to warnings workflow. TFS 15803 - 11/21/2019
 -- Updated to support Coaching and SubCoaching Reason changes for LSA Module - TFS 24083 - 03/19/2022
 -- Modified to support ASR Logs. TFS 28298 - 07/15/2024
+--  Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 --	=====================================================================
-CREATE OR ALTER  PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_Select_CoachingReasons_By_Module] 
 @intModuleIDin INT, @strSourcein nvarchar(30), @isSplReason BIT, @splReasonPrty INT, @strEmpIDin nvarchar(10), @strSubmitterIDin nvarchar(10), @intSourceIDin int
 
 AS
@@ -34,7 +35,7 @@ BEGIN
 	@nvcDirectReports nvarchar(10)
 
 OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert];
-SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
+SET @strModulein = (SELECT Replace([Module],' ','') FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
 SET @nvcDirectHierarchy = [EC].[fn_strDirectUserHierarchy] (@strEmpIDin, @strSubmitterIDin);
 SET @nvcDirectReports = [EC].[fn_strDirectReports] (@strSubmitterIDin);
 SET @nvcASRRestrictSQL = '';

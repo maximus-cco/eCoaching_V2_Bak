@@ -11,6 +11,7 @@ GO
 --  and returns the Values associated with the Coaching Reason for that Module. 
 --  Modified during Submissions move to new architecture - TFS 7136 - 04/30/2018
 -- Modified to support ASR Logs. TFS 28298 - 07/15/2024
+-- Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 --	=====================================================================
 CREATE OR ALTER PROCEDURE [EC].[sp_Select_Values_By_Reason] 
 @intReasonIDin INT, @intModuleIDin INT, @strSourcein nvarchar(30), @intSourceIDin int
@@ -24,7 +25,7 @@ BEGIN
 	@NewLineChar nvarchar(2),
 	@nvcSQL nvarchar(max);
 
-SET @strModulein = (SELECT [Module] FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
+SET @strModulein = (SELECT Replace([Module],' ','') FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
 SET @strReasonin = (SELECT [CoachingReason] FROM [EC].[DIM_Coaching_Reason] WHERE [CoachingReasonID] = @intReasonIDin);
 
 SET @nvcASRAddvalueSQL = '';
@@ -35,7 +36,7 @@ IF @intSourceIDin = 238 AND @intModuleIDin in (1,10) AND @intReasonIDin = 55 AND
 SET @nvcASRAddvalueSQL = @nvcASRAddvalueSQL + 'UNION '  + @NewLineChar + ' SELECT ''Reasearch Required'' ';
 
 
-SET @nvcSQL = 'Select CASE WHEN [isOpportunity] = 1 THEN ''Opportunity'' ElSE NULL END as Value from [EC].[Coaching_Reason_Selection]
+SET @nvcSQL = 'SELECT DISTINCT Value FROM (Select CASE WHEN [isOpportunity] = 1 THEN ''Opportunity'' ElSE NULL END as Value from [EC].[Coaching_Reason_Selection]
 Where ' + @strModulein +' = 1 
 and [CoachingReason] = '''+@strReasonin +'''
 and [IsActive] = 1 
@@ -46,10 +47,14 @@ Where ' + @strModulein +' = 1
 and [CoachingReason] = '''+@strReasonin +'''
 and [IsActive] = 1 
 AND ' + @strSourcein +' = 1' + @NewLineChar +
-@nvcASRAddvalueSQL
+@nvcASRAddvalueSQL + @NewLineChar +
+') Combined
+WHERE Value is NOT NULL'
 
 --Print @nvcSQL
 
 EXEC (@nvcSQL)	
 END -- sp_Select_Values_By_Reason
 GO
+
+

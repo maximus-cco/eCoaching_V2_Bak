@@ -18,7 +18,8 @@ GO
 -- Added logic for Manager role for WPSM job codes - TFS 16389 - 01/13/2020
 -- Removed references to SrMgr. TFS 18062 - 08/18/2020
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
--- Modified to Support ISG Alignment Project. TFS  28026 - 05/06/2024
+-- Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+-- Modified to Support Production Planning Module. TFS 28361 - 07/23/2024
 -- =============================================
 
 CREATE OR ALTER FUNCTION [EC].[fn_strGetUserRole] 
@@ -30,10 +31,9 @@ AS
 BEGIN
 	DECLARE 
 	@strEmpJobCode nvarchar(20),
-	@strUserRole nvarchar(20)
+	@strUserRole nvarchar(20);
 	
-SET @strEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
-WHERE Emp_ID = @strEmpID);
+SET @strEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy WHERE Emp_ID = @strEmpID);
 
  SET @strUserRole = 
  (SELECT CASE 
@@ -41,7 +41,7 @@ WHERE Emp_ID = @strEmpID);
  WHEN (@strEmpJobCode = 'WACS05' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 0) THEN 'ISG'
  WHEN (@strEmpJobCode LIKE 'WACS0%' AND [EC].[fn_strCheckIf_ACLRole](@strEmpID, 'ARC') = 1) THEN 'ARC'
  WHEN (@strEmpJobCode LIKE 'WACQ0%' OR @strEmpJobCode LIKE 'WACQ12' OR @strEmpJobCode LIKE 'WIHD0%'
- OR  @strEmpJobCode LIKE 'WTTR1%' OR  @strEmpJobCode LIKE 'WTID%'  ) THEN 'Employee'
+ OR  @strEmpJobCode LIKE 'WTTR1%' OR  @strEmpJobCode LIKE 'WTID%' OR @strEmpJobCode LIKE 'WMPL0%') THEN 'Employee'
  WHEN @strEmpJobCode LIKE 'WH%' THEN 'HR'
  WHEN (@strEmpJobCode LIKE '%40' OR @strEmpJobCode LIKE 'WTTI%' OR @strEmpJobCode LIKE 'WACQ13') THEN 'Supervisor'
  WHEN ((@strEmpJobCode LIKE 'WPPM%' OR @strEmpJobCode LIKE 'WPSM%' OR @strEmpJobCode LIKE 'WEEX%' OR @strEmpJobCode LIKE 'WISO%'
@@ -56,7 +56,5 @@ WHERE Emp_ID = @strEmpID);
  RETURN   @strUserRole
   
 END --fn_strGetUserRole
-
 GO
-
 

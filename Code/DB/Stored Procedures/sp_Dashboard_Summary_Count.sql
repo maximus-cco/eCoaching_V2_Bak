@@ -18,8 +18,9 @@ GO
 --  Modified logic for My Teams Pending dashboard counts. TFS 23868 - 01/05/2022
 --  Modified to Remove Warnings for Sub-contractors. TFS 28080 - 05/01/2024
 --  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
+--  Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 --	=====================================================================
-CREATE OR ALTER   PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Dashboard_Summary_Count] 
 @nvcEmpID nvarchar(10)
 
 AS
@@ -114,7 +115,7 @@ SET @intMyPendingCoaching = (SELECT COUNT(cl.CoachingID)
 				 ON cl.EmpID = eh.Emp_ID
                  WHERE cl.[SourceID] NOT IN (235, 236) AND
 				 ((cl.EmpID = @nvcEmpID  AND StatusID in (3,4))
-			    OR (ISNULL([cl].[strReportCode], ' ') NOT LIKE 'LCS%' AND ISNULL([cl].[strReportCode], ' ') NOT LIKE 'BQ%' AND cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND cl.[StatusID] in (3,5,6,8) 
+			    OR (ISNULL([cl].[strReportCode], ' ') NOT LIKE 'LCS%' AND ISNULL([cl].[strReportCode], ' ') NOT LIKE 'BQ%' AND cl.ReassignCount= 0 AND eh.Sup_ID = @nvcEmpID  AND cl.[StatusID] in (3,5,6,8,10) 
 			     OR (ISNULL([cl].[strReportCode], ' ') NOT LIKE 'LCS%' AND cl.ReassignCount= 0 AND  eh.Mgr_ID =  @nvcEmpID  AND cl.[StatusID] in (5,7,9)) 
 			     OR ([cl].[strReportCode] LIKE 'LCS%' AND [ReassignCount] = 0 AND cl.[MgrID] = @nvcEmpID AND [cl].[StatusID]= 5) )
 			     OR (cl.ReassignCount <> 0 AND cl.ReassignedToID =  @nvcEmpID AND  cl.[StatusID] in (5,7,9))))

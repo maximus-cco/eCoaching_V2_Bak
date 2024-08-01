@@ -1,29 +1,9 @@
-/*
-sp_Select_Employees_By_Module(03).sql
-Last Modified Date: 5/11/2021
-Last Modified By: Susmitha Palacherla
-
-Version 03: Fix ambiguous column reference during employee selection in submission page. TFS 21223 - 5/11/2021
-Version 02: Modified to support Encryption of sensitive data (Open keys and use employee View for emp attributes. TFS 7856 - 10/23/2017
-Version 01: Document Initial Revision - TFS 5223 - 1/18/2017
-
-*/
-
-
-IF EXISTS (
-  SELECT * 
-    FROM INFORMATION_SCHEMA.ROUTINES 
-   WHERE SPECIFIC_SCHEMA = N'EC'
-     AND SPECIFIC_NAME = N'sp_Select_Employees_By_Module' 
-)
-   DROP PROCEDURE [EC].[sp_Select_Employees_By_Module]
-GO
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	7/31/14
@@ -36,8 +16,9 @@ GO
 --  Modified to support Encryption of sensitive data (Open keys and use employee View for emp attributes. TFS 7856 - 10/23/2017
 --  Modified during Submissions move to new architecture - TFS 7136 - 04/10/2018
 --  Fix ambiguous column reference during employee selection in submission page. TFS 21223 - 5/11/2021
+--  Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 --	=====================================================================
-CREATE PROCEDURE [EC].[sp_Select_Employees_By_Module] 
+CREATE OR ALTER PROCEDURE [EC].[sp_Select_Employees_By_Module] 
 
 @intModuleIDin int, @strCSRSitein nvarchar(30)= NULL,
 @strEmpIDin nvarchar(10)
@@ -53,19 +34,15 @@ DECLARE
 @nvcSQL01 nvarchar(1000),
 @nvcSQL02 nvarchar(1000),
 @nvcSQL03 nvarchar(1000),
-@nvcSQL04 nvarchar(1000)
+@nvcSQL04 nvarchar(1000);
 
 -- Open Symmetric key
 OPEN SYMMETRIC KEY [CoachingKey]  
-DECRYPTION BY CERTIFICATE [CoachingCert]
+DECRYPTION BY CERTIFICATE [CoachingCert];
 
+SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy WHERE Emp_ID = @strEmpIDin);
 
-
-
-SET @nvcEmpJobCode = (SELECT Emp_Job_Code From EC.Employee_Hierarchy
-WHERE Emp_ID = @strEmpIDin)
-
-SET @strModulein = (SELECT Module FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin)
+SET @strModulein = (SELECT Replace([Module],' ','') FROM [EC].[DIM_Module] WHERE [ModuleID] = @intModuleIDin);
 
 
 -- General Selection of employees based on Job codes flagged in Employee Selection table.
@@ -119,6 +96,5 @@ EXEC (@nvcSQL)
 CLOSE SYMMETRIC KEY [CoachingKey]  
 END --sp_Select_Employees_By_Module
 GO
-
 
 
