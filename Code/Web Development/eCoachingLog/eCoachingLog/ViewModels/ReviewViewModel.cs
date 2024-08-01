@@ -114,7 +114,7 @@ namespace eCoachingLog.ViewModels
 		public bool IsShortCallPendingManagerForm { get; set; }
 		public bool IsAcknowledgeForm { get; set; }
 		public bool IsFollowupPendingSupervisorForm { get; set; }
-		public bool IsFollowupPendingCsrForm { get; set; } // pending follow-up employee review (csr or isg)
+		public bool IsFollowupPendingEmployeeForm { get; set; } // pending follow-up employee review
 		public bool IsMoreReviewRequired { get; set; }
 		public bool IsAckOverTurnedAppeal { get; set; }
 
@@ -323,7 +323,7 @@ namespace eCoachingLog.ViewModels
 					yield return new ValidationResult("You must select the checkbox to complete this review.", ack);
 				}
 
-				if ((this.IsAckOverTurnedAppeal || this.IsFollowupPendingCsrForm) && string.IsNullOrEmpty(this.Comment))
+				if ((this.IsAckOverTurnedAppeal || this.IsFollowupPendingEmployeeForm) && string.IsNullOrEmpty(this.Comment))
 				{
 					var ack = new[] { "Comment" };
 					yield return new ValidationResult("Provide comment.", ack);
@@ -430,7 +430,7 @@ namespace eCoachingLog.ViewModels
 				IsResearchPendingForm = vm.IsResearchPendingForm,
 				IsCsePendingForm = vm.IsCsePendingForm,
 				IsFollowupPendingSupervisorForm = vm.IsFollowupPendingSupervisorForm,
-				IsFollowupPendingCsrForm = vm.IsFollowupPendingCsrForm,
+                IsFollowupPendingEmployeeForm = vm.IsFollowupPendingEmployeeForm,
 				IsAckOverTurnedAppeal = vm.IsAckOverTurnedAppeal,
 				IsReviewForm = vm.IsReviewForm,
 				IsAcknowledgeForm = vm.IsAcknowledgeForm,

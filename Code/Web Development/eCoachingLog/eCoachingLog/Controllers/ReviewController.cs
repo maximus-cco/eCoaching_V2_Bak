@@ -675,7 +675,7 @@ namespace eCoachingLog.Controllers
 
 			if (IsFollowupPendingCsr(vm))
 			{
-				vm.IsFollowupPendingCsrForm = true;
+				vm.IsFollowupPendingEmployeeForm = true;
 				vm.IsAckOverTurnedAppeal = false;
 				vm.IsMoreReviewRequired = false;
 			}
@@ -686,7 +686,7 @@ namespace eCoachingLog.Controllers
 				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_OVERTURNED_APPEAL;
 				vm.AckCheckboxText = Constants.ACK_CHECKBOX_TEXT_OVERTURNED_APPEAL;
 			}
-			else if (vm.IsFollowupPendingCsrForm)
+			else if (vm.IsFollowupPendingEmployeeForm)
 			{
 				vm.AckCheckboxTitle = Constants.ACK_CHECKBOX_TITLE_FOLLOWUP;
 				vm.AckCheckboxText = Constants.ACK_CHECKBOS_TEXT_FOLLOWUP;

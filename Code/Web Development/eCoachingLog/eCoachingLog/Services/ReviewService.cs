@@ -404,7 +404,7 @@ namespace eCoachingLog.Services
 
 			if (review.IsAcknowledgeForm)
 			{
-				if (review.IsFollowupPendingCsrForm)
+				if (review.IsFollowupPendingEmployeeForm)
 				{
 					string nextStatus = Constants.LOG_STATUS_COMPLETED_TEXT;
                     bool success = reviewRepository.CompleteEmployeeAckFollowup(review, nextStatus, user);
@@ -514,7 +514,7 @@ namespace eCoachingLog.Services
 				{
 					nextStatus = Constants.LOG_STATUS_PENDING_SUPERVISOR_FOLLOWUP_TEXT;
 				}
-				else if (review.IsFollowupPendingCsrForm)
+				else if (review.IsFollowupPendingEmployeeForm)
 				{
 					nextStatus = Constants.COMPLETED;
 				}
@@ -561,9 +561,10 @@ namespace eCoachingLog.Services
 				}
 			}
 
-			// Email CSR/ISG comments to supervisor and/or manager 
+			// Email CSR/ISG comments to supervisor and/or manager
+            // Email Production Planning comments to supervisor and/or manager 
 			if (success 
-					&& (review.LogDetail.ModuleId == Constants.MODULE_CSR || review.LogDetail.ModuleId == Constants.MODULE_ISG)
+					&& (review.LogDetail.ModuleId == Constants.MODULE_CSR || review.LogDetail.ModuleId == Constants.MODULE_ISG || review.LogDetail.ModuleId == Constants.MODULE_PRODUCTION_PLANNING)
                     && nextStatus == Constants.LOG_STATUS_COMPLETED_TEXT
 					&& review.LogDetail.EmployeeId == user.EmployeeId)
 			{
