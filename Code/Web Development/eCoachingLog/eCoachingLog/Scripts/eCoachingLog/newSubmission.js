@@ -152,7 +152,7 @@ $(function () {
             $('#div-pfd-compmlete-date').addClass('hide');
         }
 
-		// show HR text instead editable textarea (behavior)
+		// show HR text instead of editable textarea (behavior)
         if (wfhReturnSiteChecked)
         {
         	showBehaviorForWahReturnToSite();
@@ -418,10 +418,6 @@ $(function () {
         // reload coaching reasons if source is changed to ASR or changed from ASR
         if (prevSourceIdSelected == SOURCE_DIRECT_ASR || currentSourceIdSelected == SOURCE_DIRECT_ASR
                 || prevSourceIdSelected == SOURCE_INDIRECT_ASR || currentSourceIdSelected == SOURCE_INDIRECT_ASR) {
-            // reset these 2 to false
-            $('#IsWorkAtHomeReturnSite').val(false);
-            $('#IsPfd').val(false);
-
             resetCoachingReasons($("input[name='IsCoachingByYou']:checked").val(), $(this).val());
         }
     });
@@ -477,6 +473,9 @@ $(function () {
             success: function (result) {
             	$(".please-wait").slideUp(500);
             	$('#coaching-reasons').html(result);
+                // reset these 2 to false
+                $('#IsWorkAtHomeReturnSite').val(false);
+                $('#IsPfd').val(false);
 
            	    showBehaviorEditable();
             }
