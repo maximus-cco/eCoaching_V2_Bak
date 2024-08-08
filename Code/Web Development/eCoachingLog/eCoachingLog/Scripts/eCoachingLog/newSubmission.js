@@ -715,7 +715,7 @@ $(function () {
     }
 
     function validateSubReasons(target) {
-        console.log($('#AllowMultiSubReason').val());
+        //console.log($('#AllowMultiSubReason').val());
         var errorMessage = 'Please select at least one sub reason.';
         if ($('#AllowMultiSubReason').val() === 'False') {
             errorMessage = 'Please select one sub reason.';

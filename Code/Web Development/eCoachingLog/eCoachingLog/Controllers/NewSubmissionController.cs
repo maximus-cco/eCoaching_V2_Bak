@@ -93,7 +93,7 @@ namespace eCoachingLog.Controllers
                 vm.IsSuccess = false;
                 vm.IsValidationError = true;
                 ViewBag.ClientValidateCoachingReasons = true;
-                ViewBag.ClientValidateEmployee = vm.ModuleId == Constants.MODULE_CSR || vm.ModuleId == Constants.MODULE_ISG;
+                ViewBag.ClientValidateEmployee = AllowMassSubmission(vm.ModuleId);
                 ViewBag.ValidationError = true;
                 return StayOnThisPage(vm);
             }

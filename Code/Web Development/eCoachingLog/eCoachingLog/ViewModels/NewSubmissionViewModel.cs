@@ -267,9 +267,9 @@ namespace eCoachingLog.ViewModels
 			{
                 foreach (CoachingReason cr in coachingReasonsSelected)
                 {
-                    if (cr.SubReasonIds == null || cr.SubReasonIds.Count() == 0)
+                    if (String.IsNullOrWhiteSpace(cr.Type) || cr.SubReasonIds == null || cr.SubReasonIds.Count() == 0)
                     {
-                        // Reason selected, but opportunity or sub reason not selected
+                        // Reason selected, but opportunity/reinforcement/research required or sub reason not selected
                         var coachingReasons = new[] { "CoachingReasons" };
                         yield return new ValidationResult("Please make a selection.");
                     }
