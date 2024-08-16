@@ -18,7 +18,7 @@
 {
 	<div class="mt-2">
 		<strong>Follow-up occurred on </strong>
-		@Html.Raw(WebUtility.HtmlDecode(@Model.LogDetail.FollowupActualDate))
+		@Model.LogDetail.FollowupActualDate)
 		<font color="red"><span class='glyphicon glyphicon-bell'></span></font>
 </div>
 	<div class="mt-2">
@@ -41,7 +41,7 @@
 	</div>
 	<div class="mt-2">
 		<strong>Employee follow-up feedback:</strong><br />
-		@Model.LogDetail.FollowupEmpComments
+		@Html.Raw(WebUtility.HtmlDecode(Model.LogDetail.FollowupEmpComments))
 
 	</div>
 }
