@@ -3,6 +3,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	4/21/2016
@@ -18,8 +19,9 @@ GO
 -- Modified to add ability to search by FormName . TFS 25229 - 08/29/2022
 -- Modified to expand Reassign To Supervisor list. TFS 26216 - 03/20/2023
 -- Modified to support eCoaching Log for Subcontractors - TFS 27527 - 02/01/2024
+--  Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 --	=====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_AT_Select_Logs_Reassign] 
+CREATE OR ALTER  PROCEDURE [EC].[sp_AT_Select_Logs_Reassign] 
 @strTypein nvarchar(10) = NULL,
 @istrOwnerin nvarchar(10) = NULL,
 @intStatusIdin INT = NULL, 
@@ -140,7 +142,7 @@ BEGIN -- Processing for detail search
 
 -- Determine whether to look for sup or manager depending on module and status combo
 -- conditions when a specific status is passed 
-IF ((@intStatusIdin IN (6,8,10,11,12) AND @intModuleIdin IN (1,3,4,5))
+IF ((@intStatusIdin IN (6,8,10,11,12) AND @intModuleIdin IN (1,3,4,5,8,10))
 OR (@intStatusIdin in (5) AND @intModuleIdin = 2))
 
 BEGIN
@@ -148,7 +150,7 @@ SET @strConditionalWhere = @strConditionalWhere + ' WHERE EH.Sup_ID = '''+@istrO
 END
 
 ELSE IF 
-((@intStatusIdin in (5) AND @intModuleIdin IN (1,3,4,5))
+((@intStatusIdin in (5) AND @intModuleIdin IN (1,3,4,5,8,10))
 OR (@intStatusIdin in (7)AND @intModuleIdin = 2))
 
 BEGIN

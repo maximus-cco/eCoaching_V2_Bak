@@ -1,8 +1,10 @@
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 --	====================================================================
 --	Author:			Susmitha Palacherla
@@ -12,8 +14,9 @@ GO
 -- Last Updated By: 
 -- Initial Revision. - TFS 11743 - 08/14/2018
 -- Modified to add Coaching and Sub Coaching Reason filters. TFS 25387 - 09/26/2022
+--  Modified to fix bug found during Production Planning Module Changes. TFS 28361 - 07/24/2024
 --	=====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export_Count] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_SelectFrom_Coaching_Log_Historical_Export_Count] 
 
 @nvcUserIdin nvarchar(10),
 @intSourceIdin int,
@@ -62,7 +65,26 @@ BEGIN
 	SET @where = @where + @NewLineChar + ' AND [eh].[Active] IN (''T'',''D'')'
 END
 
+/*
+-1 All Sites
+-3 Sub Sites
+-4 Maximus Sites
+*/
 
+IF @intSiteIdin NOT IN (-1,-3,-4)
+BEGIN
+	SET @where = @where +  @NewLineChar + ' AND [cl].[SiteID] =   '''+CONVERT(NVARCHAR,@intSiteIdin)+'''';
+END
+
+IF @intSiteIdin = -3
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [veh].[isSub] =   ''Y''' ;
+END
+
+IF @intSiteIdin = -4
+BEGIN
+	SET @where = @where + @NewLineChar + ' AND [veh].[isSub] =   ''N''' ;
+END
 			 
 IF @intSourceIdin  <> -1
 BEGIN
@@ -110,10 +132,10 @@ BEGIN
 	SET @where = @where + @NewLineChar +  ' AND [cl].[SubmitterID] = ''' + @nvcSubmitterIdin  + '''' 
 END
 
-IF @intSiteIdin  <> -1
-BEGIN
-	SET @where = @where + @NewLineChar + ' AND [cl].[SiteID] = ''' + CONVERT(nvarchar, @intSiteIdin) + ''''
-END			 
+--IF @intSiteIdin  <> -1
+--BEGIN
+--	SET @where = @where + @NewLineChar + ' AND [cl].[SiteID] = ''' + CONVERT(nvarchar, @intSiteIdin) + ''''
+--END			 
 
 	 		 
 
