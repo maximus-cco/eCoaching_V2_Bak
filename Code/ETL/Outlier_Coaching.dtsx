@@ -13,8 +13,8 @@
   DTS:ObjectName="Outlier_Coaching"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="368"
-  DTS:VersionGUID="{ABDA45DE-8971-46B7-90A0-F302F0DB0E2C}">
+  DTS:VersionBuild="390"
+  DTS:VersionGUID="{4A686191-C9A7-4AF2-A08E-F4A3602CD500}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -1197,6 +1197,163 @@
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[RenamedFailed_File]"
+      DTS:CreationName="FLATFILE"
+      DTS:DTSID="{04b36cec-d332-4dc1-83e1-2ef270c68e9f}"
+      DTS:ObjectName="RenamedFailed_File">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[User::DecryptedOutPath]+ "Failed_" +@[User::varFailedFile]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="1033"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x0022_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="\\UVAADADSQL50CCO.ad.local\data\coaching\Outliers\Decrypt_out\Failed_">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="numReportID"
+              DTS:DTSID="{61212912-E756-4624-8FC9-2DF1C0ACE969}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strReportCode"
+              DTS:DTSID="{9884883D-E1A3-4D96-B1BE-CF460BD4FBB1}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strFormType"
+              DTS:DTSID="{685D60E2-25AF-482F-B7EB-5EF8049C49A7}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strSource"
+              DTS:DTSID="{31BAE9A5-27B2-4254-940F-A05229813072}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strFormStatus"
+              DTS:DTSID="{281DA697-6D5B-4C6E-848A-087BC5DDE287}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="EventDate"
+              DTS:DTSID="{64C5C412-1E60-4AB9-AEC1-E5EC710AAF9C}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="SubmittedDate"
+              DTS:DTSID="{6FB5B6FC-F8EA-41E6-9D44-8AB07A7562E0}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="StartDate"
+              DTS:DTSID="{12B9994A-6A94-4A50-B5C7-FC46C5C51D6E}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strSubmitterName"
+              DTS:DTSID="{46EE432A-A99D-400F-BF8F-E60563379BA6}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strSubmitterEmail"
+              DTS:DTSID="{D002F60B-94F2-486D-B7F9-EFE2820EDECB}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="30"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strCSR"
+              DTS:DTSID="{E37BBFC4-D0DD-4999-A5B7-17F5CC9ECB93}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="30"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strCSRSite"
+              DTS:DTSID="{D1D89C72-53D5-4772-847A-93F2746DB15E}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="20"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strCoachReason_ Current_Coaching_Initiatives"
+              DTS:DTSID="{491C1DBF-8578-4B90-A075-86FA3A3AC019}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="3000"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="txtDescription"
+              DTS:DTSID="{23B89840-0586-455C-AD95-70E421271CBC}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="30"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="strProgram"
+              DTS:DTSID="{568FC326-C23C-4160-876B-263146398217}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SMTP Connection Manager]"
       DTS:CreationName="SMTP"
       DTS:DTSID="{8BD0DBC2-30C6-43DC-B55D-E807D01A5734}"
@@ -1469,7 +1626,7 @@ eCoaching Log Team.</DTS:VariableValue>
             <FileSystemData
               TaskOperationType="MoveFile"
               TaskOverwriteDestFile="True"
-              TaskSourcePath="{481D50E9-9F82-4907-A546-D4A2DE399242}"
+              TaskSourcePath="{04b36cec-d332-4dc1-83e1-2ef270c68e9f}"
               TaskDestinationPath="User::EncryptInPath"
               TaskIsDestinationVariable="True" />
           </DTS:ObjectData>
@@ -2079,22 +2236,48 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </ScriptProject>
           </DTS:ObjectData>
         </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Encrypt Failed Files\Renamed Failed File"
+          DTS:CreationName="Microsoft.FileSystemTask"
+          DTS:Description="File System Task"
+          DTS:DTSID="{73375249-A1D9-4878-B2EE-0E66FA21700D}"
+          DTS:ExecutableType="Microsoft.FileSystemTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Renamed Failed File"
+          DTS:TaskContact="File System Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <FileSystemData
+              TaskOperationType="RenameFile"
+              TaskSourcePath="{481D50E9-9F82-4907-A546-D4A2DE399242}"
+              TaskDestinationPath="{04b36cec-d332-4dc1-83e1-2ef270c68e9f}" />
+          </DTS:ObjectData>
+        </DTS:Executable>
       </DTS:Executables>
       <DTS:PrecedenceConstraints>
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Encrypt Failed Files.PrecedenceConstraints[Constraint]"
           DTS:CreationName=""
-          DTS:DTSID="{1EF225BF-D90F-4E9A-9C86-0114D95B7980}"
-          DTS:From="Package\Encrypt Failed Files\File System Task"
+          DTS:DTSID="{5BC6A586-A41F-4EAB-9A15-D70741121907}"
+          DTS:From="Package\Encrypt Failed Files\Renamed Failed File"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint"
           DTS:To="Package\Encrypt Failed Files\Pause 10 secs" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Encrypt Failed Files.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{F419C4DF-F533-441F-BA6C-649C35BB1E12}"
+          DTS:From="Package\Encrypt Failed Files\Pause 10 secs"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Encrypt Failed Files\File System Task" />
       </DTS:PrecedenceConstraints>
       <DTS:ForEachVariableMappings>
         <DTS:ForEachVariableMapping
           DTS:CreationName=""
-          DTS:DTSID="{206D9A94-740B-4B89-B699-129549071713}"
-          DTS:ObjectName="{89E1A1C1-4257-4E94-BC23-DC1AA87BB50F}"
+          DTS:DTSID="{6FDCB159-C20D-466B-805C-C9BE14867B7A}"
+          DTS:ObjectName="{6FDCB159-C20D-466B-805C-C9BE14867B7A}"
           DTS:ValueIndex="0"
           DTS:VariableName="User::varFailedFile" />
       </DTS:ForEachVariableMappings>
@@ -3791,8 +3974,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <DTS:ForEachVariableMappings>
         <DTS:ForEachVariableMapping
           DTS:CreationName=""
-          DTS:DTSID="{E59CB825-83AF-4476-9286-C0BF937CBA7D}"
-          DTS:ObjectName="{E59CB825-83AF-4476-9286-C0BF937CBA7D}"
+          DTS:DTSID="{0FD73A6D-AFCC-4255-A156-A7550BD7D206}"
+          DTS:ObjectName="{0FD73A6D-AFCC-4255-A156-A7550BD7D206}"
           DTS:ValueIndex="0"
           DTS:VariableName="User::VarFileName" />
       </DTS:ForEachVariableMappings>
@@ -4671,6 +4854,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           length="600"
                           name="Verint_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach AUD OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ASR_GROUP]"
+                          dataType="wstr"
+                          length="30"
+                          name="ASR_GROUP" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -6972,6 +7160,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           length="600"
                           name="Verint_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach IAE_IAT OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ASR_GROUP]"
+                          dataType="wstr"
+                          length="30"
+                          name="ASR_GROUP" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -8665,6 +8858,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           length="600"
                           name="Verint_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach ISQ OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ASR_GROUP]"
+                          dataType="wstr"
+                          length="30"
+                          name="ASR_GROUP" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -10358,6 +10556,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           length="600"
                           name="Verint_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach LCS OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ASR_GROUP]"
+                          dataType="wstr"
+                          length="30"
+                          name="ASR_GROUP" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -11471,6 +11674,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                           dataType="wstr"
                           length="600"
                           name="Verint_ID" />
+                        <externalMetadataColumn
+                          refId="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ASR_GROUP]"
+                          dataType="wstr"
+                          length="30"
+                          name="ASR_GROUP" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -12256,8 +12464,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <DTS:ForEachVariableMappings>
         <DTS:ForEachVariableMapping
           DTS:CreationName=""
-          DTS:DTSID="{F824BCE7-B5A5-4A7C-A766-000E9E03AB2E}"
-          DTS:ObjectName="{261F015A-6019-42FF-BA08-22528F0703C3}"
+          DTS:DTSID="{41971822-DD42-4855-87FE-8A14E3FCAE53}"
+          DTS:ObjectName="{41971822-DD42-4855-87FE-8A14E3FCAE53}"
           DTS:ValueIndex="0"
           DTS:VariableName="User::VarFileName" />
       </DTS:ForEachVariableMappings>
@@ -13270,7 +13478,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:From="Package\Foreach ISQ OMR File"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 3"
-      DTS:To="Package\Foreach AUD OMR File" />
+      DTS:To="Package\Foreach AUD OMR File"
+      DTS:Value="2" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
       DTS:CreationName=""
@@ -13296,7 +13505,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:From="Package\Foreach ASR OMR"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 6"
-      DTS:To="Package\Foreach OTHER OMR File" />
+      DTS:To="Package\Foreach OTHER OMR File"
+      DTS:Value="2" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
       DTS:CreationName=""
@@ -13321,7 +13531,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       DTS:From="Package\Foreach AUD OMR File"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 9"
-      DTS:To="Package\Foreach ASR OMR" />
+      DTS:To="Package\Foreach ASR OMR"
+      DTS:Value="2" />
   </DTS:PrecedenceConstraints>
   <DTS:EventHandlers>
     <DTS:EventHandler
@@ -13380,7 +13591,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               SendMailTask:SMTPServer="{8BD0DBC2-30C6-43DC-B55D-E807D01A5734}"
               SendMailTask:From="eCoachingDev@maximus.com"
               SendMailTask:To="SusmithaCPalacherla@maximus.com"
-              SendMailTask:CC="LiliHuang@maximus.com"
+              SendMailTask:CC="SusmithaCPalacherla@maximus.com"
               SendMailTask:Subject="Outliers Coaching Load Failed"
               SendMailTask:MessageSourceType="Variable"
               SendMailTask:MessageSource="User::FailMessage" xmlns:SendMailTask="www.microsoft.com/sqlserver/dts/tasks/sendmailtask" />
@@ -13402,44 +13613,211 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="128" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="158.4,41.6"
+          Size="130,41.6"
           Id="Package\Encrypt Failed Files\File System Task"
-          TopLeft="5.50000000000001,5.49999999999995" />
+          TopLeft="65.1153868020642,156.887094445581" />
         <NodeLayout
           Size="146.4,41.6"
           Id="Package\Encrypt Failed Files\Pause 10 secs"
-          TopLeft="11.5,107.1" />
+          TopLeft="61.8846172327126,87.809677716076" />
+        <NodeLayout
+          Size="178.4,41.6"
+          Id="Package\Encrypt Failed Files\Renamed Failed File"
+          TopLeft="51.9230982678891,19.4129007552839" />
         <EdgeLayout
           Id="Package\Encrypt Failed Files.PrecedenceConstraints[Constraint]"
-          TopLeft="84.7,47.1">
+          TopLeft="138.103857750301,61.0129007552839">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,59.9999999999999"
+              EndConnector="0,26.7967769607921"
               Start="0,0"
-              End="0,52.4999999999999">
+              End="0,19.2967769607921">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,52.4999999999999" />
+                    End="0,19.2967769607921" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Encrypt Failed Files.PrecedenceConstraints[Constraint 1]"
+          TopLeft="132.600002017388,129.409677716076">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.477416729505"
+              Start="0,0"
+              End="0,19.977416729505">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.977416729505" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.2"
+          IsExpanded="True"
+          PanelSize="357.6,249.6"
+          Size="357.6,292.8"
+          Id="Package\Encrypt Failed Files"
+          TopLeft="2080.87804256729,97.9810254994819" />
+        <NodeLayout
+          Size="164.8,44"
+          Id="Package\Foreach ASR OMR\File System Task"
+          TopLeft="34.3000000000001,499.1" />
+        <NodeLayout
+          Size="175.2,41.6"
+          Id="Package\Foreach ASR OMR\Load  Staging Table"
+          TopLeft="34.5461536204321,101.112903354816" />
+        <NodeLayout
+          Size="144.8,35.2"
+          Id="Package\Foreach ASR OMR\Load Coaching_Log"
+          TopLeft="44.3,308.7" />
+        <NodeLayout
+          Size="134,35.2"
+          Id="Package\Foreach ASR OMR\Load File List table"
+          TopLeft="49.5000000000001,403.9" />
+        <NodeLayout
+          Size="168.8,44"
+          Id="Package\Foreach ASR OMR\Truncate Staging Table"
+          TopLeft="32.3,5.5" />
+        <NodeLayout
+          Size="222,35.2"
+          Id="Package\Foreach ASR OMR\Update staging table and reject logs"
+          TopLeft="5.50000000000003,213.5" />
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint]"
+          TopLeft="116.7,343.9">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60.0000000000001"
+              Start="0,0"
+              End="0,52.5000000000001">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5000000000001" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 1]"
+          TopLeft="119.423076810216,49.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,51.6129033548155"
+              Start="0,0"
+              End="0,44.1129033548155">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,44.1129033548155" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
+              BoundingBox="-8,14.0564516774078,16,16"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 2]"
+          TopLeft="116.7,439.1">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60.0000000000001"
+              Start="0,0"
+              End="0,52.5000000000001">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5000000000001" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 4]"
+          TopLeft="119.323076810216,142.712903354815">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,70.7870966451845"
+              Start="0,0"
+              End="0,63.2870966451845">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,63.2870966451845" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 7]"
+          TopLeft="116.7,248.7">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
         <ContainerLayout
-          HeaderHeight="43.2"
-          IsExpanded="False"
-          PanelSize="194.4,204"
-          Size="194,43.2"
-          Id="Package\Encrypt Failed Files"
-          TopLeft="1806.38574486317,79.5294128800759" />
+          HeaderHeight="44"
+          IsExpanded="True"
+          PanelSize="234,598"
+          Size="234,642"
+          Id="Package\Foreach ASR OMR"
+          TopLeft="1444.33847993478,109.870966051917" />
         <NodeLayout
           Size="164.8,44"
           Id="Package\Foreach AUD OMR File\File System Task"
@@ -13602,11 +13980,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <ContainerLayout
           HeaderHeight="44"
-          IsExpanded="False"
+          IsExpanded="True"
           PanelSize="234,598"
-          Size="215.6,44"
+          Size="234,642"
           Id="Package\Foreach AUD OMR File"
-          TopLeft="1257.37693034234,94.0516118195501" />
+          TopLeft="1165.06923464882,113.341934103475" />
         <NodeLayout
           Size="164.8,44"
           Id="Package\Foreach IAE_IAT OMR File\File System Task"
@@ -13904,7 +14282,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           PanelSize="234,598"
           Size="234,642"
           Id="Package\Foreach ISQ OMR File"
-          TopLeft="974.820895776063,95.6629994816803" />
+          TopLeft="897.513200632741,106.985579952679" />
         <NodeLayout
           Size="127.2,35.2"
           Id="Package\Foreach LCS OMR File\File System Task"
@@ -14214,7 +14592,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           PanelSize="234,598"
           Size="234,642"
           Id="Package\Foreach OTHER OMR File"
-          TopLeft="1527.13959038339,82.243644849385" />
+          TopLeft="1731.75498250402,88.5339673332735" />
         <NodeLayout
           Size="188.8,41.6"
           Id="Package\Foreach Staged Encrypted File\Backup Encrypted Files"
@@ -14246,9 +14624,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -14270,16 +14646,14 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <ContainerLayout
           HeaderHeight="43.2"
-          IsExpanded="False"
-          PanelSize="218.8,305.6"
-          Size="218.8,43.2"
+          IsExpanded="True"
+          PanelSize="250.8,305.6"
+          Size="250.8,348.8"
           Id="Package\Foreach Staged Encrypted File"
           TopLeft="28,173.785578952859" />
         <NodeLayout
@@ -14388,20 +14762,22 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
+          HeaderHeight="43.2"
+          IsExpanded="False"
           PanelSize="230,182.4"
-          Size="230,225.6"
+          Size="230,43.2"
           Id="Package\Foreach xls(x) File"
-          TopLeft="1757.93079799618,163.967739413358" />
+          TopLeft="2084.43849680748,452.483864007706" />
         <NodeLayout
           Size="212,41.6"
           Id="Package\Populate Feed Load History"
-          TopLeft="1765.96925243852,426.064511175086" />
+          TopLeft="2099.04618773263,548.935477027039" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
           TopLeft="280.530770302947,113.419354232367">
@@ -14444,9 +14820,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="68.318686419878,18.4387096645185"
+              EndConnector="68.318686419878,18.4387096645186"
               Start="0,0"
-              End="60.818686419878,18.4387096645185">
+              End="60.818686419878,18.4387096645186">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
@@ -14457,13 +14833,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
                     Point2="34.159343209939,0"
                     Point3="34.159343209939,4" />
                   <mssgle:LineSegment
-                    End="34.159343209939,14.4387096645185" />
+                    End="34.159343209939,14.4387096645186" />
                   <mssgle:CubicBezierSegment
-                    Point1="34.159343209939,14.4387096645185"
-                    Point2="34.159343209939,18.4387096645185"
-                    Point3="38.159343209939,18.4387096645185" />
+                    Point1="34.159343209939,14.4387096645186"
+                    Point2="34.159343209939,18.4387096645186"
+                    Point3="38.159343209939,18.4387096645186" />
                   <mssgle:LineSegment
-                    End="60.818686419878,18.4387096645185" />
+                    End="60.818686419878,18.4387096645186" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -14476,160 +14852,174 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="845.5351752866,419.46299948168">
+          TopLeft="845.5351752866,425.12428971718">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="129.285720489463,0"
+              EndConnector="51.9780253461413,0"
               Start="0,0"
-              End="121.785720489463,0">
+              End="44.4780253461413,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="121.785720489463,0" />
+                    End="44.4780253461413,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="35.5884071197315,5,50.60890625,11.609375"
+              BoundingBox="-3.06544045192936,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="1208.82089577606,416.66299948168">
+          TopLeft="1131.51320063274,431.163757028077">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="48.556034566277,-300.61138766213"
+              EndConnector="33.5560340160807,0"
               Start="0,0"
-              End="41.056034566277,-300.61138766213">
+              End="26.0560340160807,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="20.2780172831385,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="20.2780172831385,0"
-                    Point2="24.2780172831385,0"
-                    Point3="24.2780172831385,-4" />
-                  <mssgle:LineSegment
-                    End="24.2780172831385,-296.61138766213" />
-                  <mssgle:CubicBezierSegment
-                    Point1="24.2780172831385,-296.61138766213"
-                    Point2="24.2780172831385,-300.61138766213"
-                    Point3="28.2780172831385,-300.61138766213" />
-                  <mssgle:LineSegment
-                    End="41.056034566277,-300.61138766213" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="1761.13959038339,403.243644849385">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="45.24615447978,-302.114231969309"
-              Start="0,0"
-              End="37.74615447978,-302.114231969309">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="18.62307723989,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="18.62307723989,0"
-                    Point2="22.62307723989,0"
-                    Point3="22.62307723989,-4" />
-                  <mssgle:LineSegment
-                    End="22.62307723989,-298.114231969309" />
-                  <mssgle:CubicBezierSegment
-                    Point1="22.62307723989,-298.114231969309"
-                    Point2="22.62307723989,-302.114231969309"
-                    Point3="26.62307723989,-302.114231969309" />
-                  <mssgle:LineSegment
-                    End="37.74615447978,-302.114231969309" />
+                    End="26.0560340160807,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-2.68137588511001,1,50.60890625,11.609375"
+              BoundingBox="-12.2764361169596,5,50.60890625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 4]"
+          TopLeft="1965.75498250402,409.533967333273">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="115.12306006327,-165.152941833792"
+              Start="0,0"
+              End="107.62306006327,-165.152941833792">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="53.5615300316349,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="53.5615300316349,0"
+                    Point2="57.5615300316349,0"
+                    Point3="57.5615300316349,-4" />
+                  <mssgle:LineSegment
+                    End="57.5615300316349,-161.152941833792" />
+                  <mssgle:CubicBezierSegment
+                    Point1="57.5615300316349,-161.152941833792"
+                    Point2="57.5615300316349,-165.152941833792"
+                    Point3="61.5615300316349,-165.152941833792" />
+                  <mssgle:LineSegment
+                    End="107.62306006327,-165.152941833792" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="32.2570769066349,1,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 5]"
-          TopLeft="1903.38574486317,122.729412880076">
+          TopLeft="2259.67804256729,390.781025499482">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-30.4549468669911,41.2383265332818"
+              EndConnector="-60.23954575981,61.7028385082241"
               Start="0,0"
-              End="-30.4549468669911,33.7383265332818">
+              End="-60.23954575981,54.2028385082241">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,16.6191632666409" />
+                    End="0,26.8514192541121" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,16.6191632666409"
-                    Point2="0,20.6191632666409"
-                    Point3="-4,20.6191632666409" />
+                    Point1="0,26.8514192541121"
+                    Point2="0,30.8514192541121"
+                    Point3="-4,30.8514192541121" />
                   <mssgle:LineSegment
-                    End="-26.4549468669911,20.6191632666409" />
+                    End="-56.23954575981,30.8514192541121" />
                   <mssgle:CubicBezierSegment
-                    Point1="-26.4549468669911,20.6191632666409"
-                    Point2="-30.4549468669911,20.6191632666409"
-                    Point3="-30.4549468669911,24.6191632666409" />
+                    Point1="-56.23954575981,30.8514192541121"
+                    Point2="-60.23954575981,30.8514192541121"
+                    Point3="-60.23954575981,34.8514192541121" />
                   <mssgle:LineSegment
-                    End="-30.4549468669911,33.7383265332818" />
+                    End="-60.23954575981,54.2028385082241" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-40.5319265584956,25.6191632666409,50.60890625,11.609375"
+              BoundingBox="-55.424226004905,35.8514192541121,50.60890625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 6]"
+          TopLeft="1678.33847993478,430.870966051917">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="53.4165025692394,-21.3369987186437"
+              Start="0,0"
+              End="45.9165025692394,-21.3369987186437">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="22.7082512846197,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="22.7082512846197,0"
+                    Point2="26.7082512846197,0"
+                    Point3="26.7082512846197,-4" />
+                  <mssgle:LineSegment
+                    End="26.7082512846197,-17.3369987186437" />
+                  <mssgle:CubicBezierSegment
+                    Point1="26.7082512846197,-17.3369987186437"
+                    Point2="26.7082512846197,-21.3369987186437"
+                    Point3="30.7082512846197,-21.3369987186437" />
+                  <mssgle:LineSegment
+                    End="45.9165025692394,-21.3369987186437" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="1.40379815961968,1,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 7]"
-          TopLeft="137.4,173.785578952859">
+          TopLeft="155.565385151474,173.785578952859">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="20.3307703029475,-38.7662247204917"
+              EndConnector="0,-38.7662247204917"
               Start="0,0"
-              End="20.3307703029475,-31.2662247204917">
+              End="0,-31.2662247204917">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,-15.3831123602459" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,-15.3831123602459"
-                    Point2="0,-19.3831123602459"
-                    Point3="4,-19.3831123602459" />
-                  <mssgle:LineSegment
-                    End="16.3307703029475,-19.3831123602459" />
-                  <mssgle:CubicBezierSegment
-                    Point1="16.3307703029475,-19.3831123602459"
-                    Point2="20.3307703029475,-19.3831123602459"
-                    Point3="20.3307703029475,-23.3831123602459" />
-                  <mssgle:LineSegment
-                    End="20.3307703029475,-31.2662247204917" />
+                    End="0,-31.2662247204917" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -14640,249 +15030,50 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 8]"
-          TopLeft="1872.93079799618,389.567739413358">
+          TopLeft="2202.24234227005,495.683864007706">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-22.961545557662,36.4967717617284"
+              EndConnector="0,53.2516130193334"
               Start="0,0"
-              End="-22.961545557662,28.9967717617284">
+              End="0,45.7516130193334">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,14.2483858808642" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,14.2483858808642"
-                    Point2="0,18.2483858808642"
-                    Point3="-4,18.2483858808642" />
-                  <mssgle:LineSegment
-                    End="-18.961545557662,18.2483858808642" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-18.961545557662,18.2483858808642"
-                    Point2="-22.961545557662,18.2483858808642"
-                    Point3="-22.961545557662,22.2483858808642" />
-                  <mssgle:LineSegment
-                    End="-22.961545557662,28.9967717617284" />
+                    End="0,45.7516130193334" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-36.785225903831,23.2483858808642,50.60890625,11.609375"
+              BoundingBox="-25.304453125,17.0711190096667,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="164.8,44"
-          Id="Package\Foreach ASR OMR\File System Task"
-          TopLeft="34.3000000000001,499.1" />
-        <NodeLayout
-          Size="175.2,41.6"
-          Id="Package\Foreach ASR OMR\Load  Staging Table"
-          TopLeft="34.5461536204321,101.112903354816" />
-        <NodeLayout
-          Size="144.8,35.2"
-          Id="Package\Foreach ASR OMR\Load Coaching_Log"
-          TopLeft="44.3,308.7" />
-        <NodeLayout
-          Size="134,35.2"
-          Id="Package\Foreach ASR OMR\Load File List table"
-          TopLeft="49.5000000000001,403.9" />
-        <NodeLayout
-          Size="168.8,44"
-          Id="Package\Foreach ASR OMR\Truncate Staging Table"
-          TopLeft="32.3,5.5" />
-        <NodeLayout
-          Size="222,35.2"
-          Id="Package\Foreach ASR OMR\Update staging table and reject logs"
-          TopLeft="5.50000000000003,213.5" />
-        <EdgeLayout
-          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint]"
-          TopLeft="116.7,343.9">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,60.0000000000001"
-              Start="0,0"
-              End="0,52.5000000000001">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.5000000000001" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 1]"
-          TopLeft="119.423076810216,49.5">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,51.6129033548155"
-              Start="0,0"
-              End="0,44.1129033548155">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,44.1129033548155" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="-8,14.0564516774078,16,16"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 2]"
-          TopLeft="116.7,439.1">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,60.0000000000001"
-              Start="0,0"
-              End="0,52.5000000000001">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.5000000000001" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 4]"
-          TopLeft="119.323076810216,142.712903354815">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,70.7870966451845"
-              Start="0,0"
-              End="0,63.2870966451845">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,63.2870966451845" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Foreach ASR OMR.PrecedenceConstraints[Constraint 7]"
-          TopLeft="116.7,248.7">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,60"
-              Start="0,0"
-              End="0,52.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="44"
-          IsExpanded="True"
-          PanelSize="234,598"
-          Size="234,642"
-          Id="Package\Foreach ASR OMR"
-          TopLeft="1257.2769373115,216.80644827802" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 9]"
-          TopLeft="1365.17693034234,138.05161181955">
+          TopLeft="1399.06923464882,432.606450077696">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="9.1000069691604,78.7548364584702"
+              EndConnector="45.2692452859612,0"
               Start="0,0"
-              End="9.1000069691604,71.2548364584702">
+              End="37.7692452859612,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,35.3774182292351" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,35.3774182292351"
-                    Point2="0,39.3774182292351"
-                    Point3="4,39.3774182292351" />
-                  <mssgle:LineSegment
-                    End="5.1000069691604,39.3774182292351" />
-                  <mssgle:CubicBezierSegment
-                    Point1="5.1000069691604,39.3774182292351"
-                    Point2="9.1000069691604,39.3774182292351"
-                    Point3="9.1000069691604,43.3774182292351" />
-                  <mssgle:LineSegment
-                    End="9.1000069691604,71.2548364584702" />
+                    End="37.7692452859612,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 6]"
-          TopLeft="1491.2769373115,537.80644827802">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="35.8626530718896,-134.562803428635"
-              Start="0,0"
-              End="28.3626530718896,-134.562803428635">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="13.9313265359448,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="13.9313265359448,0"
-                    Point2="17.9313265359448,0"
-                    Point3="17.9313265359448,-4" />
-                  <mssgle:LineSegment
-                    End="17.9313265359448,-130.562803428635" />
-                  <mssgle:CubicBezierSegment
-                    Point1="17.9313265359448,-130.562803428635"
-                    Point2="17.9313265359448,-134.562803428635"
-                    Point3="21.9313265359448,-134.562803428635" />
-                  <mssgle:LineSegment
-                    End="28.3626530718896,-134.562803428635" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="-6.41983048201939,5,50.60890625,11.609375"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -14901,14 +15092,119 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
     </LayoutInfo>
   </DtsEventHandler>
   <TaskHost
-    design-time-name="Package\Foreach AUD OMR File\Load  Staging Table">
+    design-time-name="Package\Foreach ASR OMR\Load  Staging Table">
     <LayoutInfo>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
+          Size="134,42"
+          Id="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File"
+          TopLeft="24.7,5.49999999999995" />
+        <NodeLayout
+          Size="172,42"
+          Id="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination"
+          TopLeft="5.50000000000003,310.3" />
+        <NodeLayout
           Size="131.2,42"
-          Id="Package\Foreach AUD OMR File\Load  Staging Table\Row Count"
+          Id="Package\Foreach ASR OMR\Load  Staging Table\Row Count"
           TopLeft="25.9,208.7" />
+        <NodeLayout
+          Size="156.8,42"
+          Id="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion"
+          TopLeft="13.869230797446,107.1" />
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR\Load  Staging Table.Paths[Row Count Output 1]"
+          TopLeft="91.5,250.7">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,59.6"
+              Start="0,0"
+              End="0,52.1">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.1" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR\Load  Staging Table.Paths[Flat File Source Output]"
+          TopLeft="91.984615398723,47.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,59.6"
+              Start="0,0"
+              End="0,52.1">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.1" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach ASR OMR\Load  Staging Table.Paths[Data Conversion Output]"
+          TopLeft="91.884615398723,149.1">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,59.6"
+              Start="0,0"
+              End="0,52.1">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.1" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Foreach AUD OMR File\Load  Staging Table">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="134,42"
           Id="Package\Foreach AUD OMR File\Load  Staging Table\Outlier_File"
@@ -14917,6 +15213,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Size="172,42"
           Id="Package\Foreach AUD OMR File\Load  Staging Table\OLE DB Destination"
           TopLeft="5.50000000000003,310.3" />
+        <NodeLayout
+          Size="131.2,42"
+          Id="Package\Foreach AUD OMR File\Load  Staging Table\Row Count"
+          TopLeft="25.9,208.7" />
         <NodeLayout
           Size="156.8,42"
           Id="Package\Foreach AUD OMR File\Load  Staging Table\Data Conversion"
@@ -15023,37 +15323,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table\OLE DB Destination"
           TopLeft="5.50000000000003,310.3" />
         <NodeLayout
-          Size="156.8,42"
-          Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table\Data Conversion"
-          TopLeft="13.1,107.1" />
-        <NodeLayout
           Size="131.2,42"
           Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table\Row Count"
           TopLeft="25.9,208.7" />
-        <EdgeLayout
-          Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table.Paths[Flat File Source Output]"
-          TopLeft="91.5,47.1">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,59.9999999999999"
-              Start="0,0"
-              End="0,52.4999999999999">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.4999999999999" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
+        <NodeLayout
+          Size="156.8,42"
+          Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table\Data Conversion"
+          TopLeft="13.1,107.1" />
         <EdgeLayout
           Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table.Paths[Data Conversion Output]"
           TopLeft="91.5,148.7">
@@ -15102,6 +15378,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Foreach IAE_IAT OMR File\Load  Staging Table.Paths[Flat File Source Output]"
+          TopLeft="91.5,47.1">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,59.9999999999999"
+              Start="0,0"
+              End="0,52.4999999999999">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.4999999999999" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
@@ -15124,10 +15424,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="131.2,42"
-          Id="Package\Foreach ISQ OMR File\Load  Staging Table\Row Count"
-          TopLeft="25.9,208.7" />
-        <NodeLayout
           Size="172,42"
           Id="Package\Foreach ISQ OMR File\Load  Staging Table\OLE DB Destination"
           TopLeft="5.50000000000003,310.3" />
@@ -15135,6 +15431,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Size="119.2,42"
           Id="Package\Foreach ISQ OMR File\Load  Staging Table\ISQ_File"
           TopLeft="24.7,5.49999999999995" />
+        <NodeLayout
+          Size="131.2,42"
+          Id="Package\Foreach ISQ OMR File\Load  Staging Table\Row Count"
+          TopLeft="25.9,208.7" />
         <NodeLayout
           Size="156.8,42"
           Id="Package\Foreach ISQ OMR File\Load  Staging Table\Data Conversion"
@@ -15233,10 +15533,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="131.2,42"
-          Id="Package\Foreach LCS OMR File\Load  Staging Table\Row Count"
-          TopLeft="25.9,208.7" />
-        <NodeLayout
           Size="172,42"
           Id="Package\Foreach LCS OMR File\Load  Staging Table\OLE DB Destination"
           TopLeft="5.50000000000003,310.3" />
@@ -15244,6 +15540,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
           Size="119.2,42"
           Id="Package\Foreach LCS OMR File\Load  Staging Table\LCS_File"
           TopLeft="31.9,5.49999999999995" />
+        <NodeLayout
+          Size="131.2,42"
+          Id="Package\Foreach LCS OMR File\Load  Staging Table\Row Count"
+          TopLeft="25.9,208.7" />
         <NodeLayout
           Size="156.8,42"
           Id="Package\Foreach LCS OMR File\Load  Staging Table\Data Conversion"
@@ -15342,13 +15642,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="172,42"
-          Id="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination"
-          TopLeft="5.50000000000003,310.3" />
-        <NodeLayout
           Size="131.2,42"
           Id="Package\Foreach OTHER OMR File\Load  Staging Table\Row Count"
           TopLeft="25.9,208.7" />
+        <NodeLayout
+          Size="172,42"
+          Id="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination"
+          TopLeft="5.50000000000003,310.3" />
         <NodeLayout
           Size="156.8,42"
           Id="Package\Foreach OTHER OMR File\Load  Staging Table\Data Conversion"
@@ -15434,109 +15734,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</BinaryItem>
   </TaskHost>
   <PipelineComponentMetadata
     design-time-name="Package\Foreach OTHER OMR File\Load  Staging Table\OLE DB Destination">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <TaskHost
-    design-time-name="Package\Foreach ASR OMR\Load  Staging Table">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="131.2,42"
-          Id="Package\Foreach ASR OMR\Load  Staging Table\Row Count"
-          TopLeft="25.9,208.7" />
-        <NodeLayout
-          Size="134,42"
-          Id="Package\Foreach ASR OMR\Load  Staging Table\Outlier_File"
-          TopLeft="24.7,5.49999999999995" />
-        <NodeLayout
-          Size="172,42"
-          Id="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination"
-          TopLeft="5.50000000000003,310.3" />
-        <NodeLayout
-          Size="156.8,42"
-          Id="Package\Foreach ASR OMR\Load  Staging Table\Data Conversion"
-          TopLeft="13.869230797446,107.1" />
-        <EdgeLayout
-          Id="Package\Foreach ASR OMR\Load  Staging Table.Paths[Row Count Output 1]"
-          TopLeft="91.5,250.7">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,59.6"
-              Start="0,0"
-              End="0,52.1">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.1" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Foreach ASR OMR\Load  Staging Table.Paths[Flat File Source Output]"
-          TopLeft="91.984615398723,47.5">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,59.6"
-              Start="0,0"
-              End="0,52.1">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.1" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Foreach ASR OMR\Load  Staging Table.Paths[Data Conversion Output]"
-          TopLeft="91.884615398723,149.1">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,59.6"
-              Start="0,0"
-              End="0,52.1">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,52.1" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\Foreach ASR OMR\Load  Staging Table\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>

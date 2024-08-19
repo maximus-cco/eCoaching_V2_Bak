@@ -12,8 +12,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="Package"
   DTS:PackageType="5"
-  DTS:VersionBuild="12"
-  DTS:VersionGUID="{DAAFD1E1-38B6-4377-8D41-78CA9643D1AE}">
+  DTS:VersionBuild="13"
+  DTS:VersionGUID="{9A8DF8F7-74B3-4E20-A7D8-5A5DC8A23294}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -152,9 +152,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Foreach Outlier ASR File Found.PrecedenceConstraints[Constraint]"
           DTS:CreationName=""
-          DTS:DTSID="{E628E98E-26B1-4B89-8C7F-B1F9F94C67BA}"
-          DTS:EvalOp="3"
-          DTS:Expression="FINDSTRING(@[User::VarFileName],&quot;ASR&quot;,1 ) &gt; 0 &amp;&amp;  @[User::VarEnv]==&quot;Prod&quot;"
+          DTS:DTSID="{A7CD354F-D047-4C90-AA77-253DB559C79F}"
           DTS:From="Package\Foreach Outlier ASR File Found\Execute SQL Task"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint"
@@ -181,7 +179,7 @@
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="254.4,41.6"
           Id="Package\Foreach Outlier ASR File Found\Execute SQL Server Agent Job Task"
@@ -196,34 +194,32 @@
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="35.030781490281,43.9419335035825"
+              EndConnector="35.030781490281,43.9419335035821"
               Start="0,0"
-              End="35.030781490281,36.4419335035825">
+              End="35.030781490281,36.4419335035821">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,17.9709667517913" />
+                    End="0,17.9709667517911" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,17.9709667517913"
-                    Point2="0,21.9709667517913"
-                    Point3="4,21.9709667517913" />
+                    Point1="0,17.9709667517911"
+                    Point2="0,21.9709667517911"
+                    Point3="4,21.9709667517911" />
                   <mssgle:LineSegment
-                    End="31.030781490281,21.9709667517913" />
+                    End="31.030781490281,21.9709667517911" />
                   <mssgle:CubicBezierSegment
-                    Point1="31.030781490281,21.9709667517913"
-                    Point2="35.030781490281,21.9709667517913"
-                    Point3="35.030781490281,25.9709667517913" />
+                    Point1="31.030781490281,21.9709667517911"
+                    Point2="35.030781490281,21.9709667517911"
+                    Point3="35.030781490281,25.9709667517911" />
                   <mssgle:LineSegment
-                    End="35.030781490281,36.4419335035825" />
+                    End="35.030781490281,36.4419335035821" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="9.5153907451405,26.9709667517913,16,16"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <ContainerLayout

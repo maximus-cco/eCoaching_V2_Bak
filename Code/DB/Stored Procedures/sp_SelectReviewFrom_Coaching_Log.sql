@@ -3,6 +3,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	08/26/2014
@@ -27,7 +29,7 @@ GO
 -- Changes to support ASR Feed. TFS 28298 - 06/26/2024
 --	=====================================================================
 
-CREATE OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
+CREATE  OR ALTER PROCEDURE [EC].[sp_SelectReviewFrom_Coaching_Log] @intLogId BIGINT
 AS
 
 BEGIN
@@ -233,7 +235,7 @@ SET @nvcSQL2 = @nvcSQL2 + N'
   cl.SupFollowupReviewCoachingNotes,
   cl.PFDCompletedDate,
   ''Coaching'' strLogType,
-  CASE WHEN cl.SourceID = 238 AND cl.StrReportCode iS NULL THEN NULL ELSE cc.strStaticText END strStaticText,
+  cc.strStaticText  strStaticText,
  ''Verint ID: '' + REPLACE(av.VerintIds, '' |'', '','') AudVerintIds,
  qor.[CompetencyImage] strQORCompetency
 FROM [EC].[Coaching_Log] cl  WITH (NOLOCK) ';
@@ -280,14 +282,14 @@ SET @nvcSQL3 = @nvcSQL3 + N' JOIN
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 55 AND [clr].[SubCoachingReasonID] = 329) THEN [clr].[Value] ELSE NULL END) ASR_AHT,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 55 AND [clr].[SubCoachingReasonID] = 330) THEN [clr].[Value] ELSE NULL END) ASR_ACW,
 	MAX(CASE WHEN ([CLR].[CoachingreasonID] = 55 AND [clr].[SubCoachingReasonID] = 331) THEN [clr].[Value] ELSE NULL END) ASR_Chat,
-	[EC].[fn_strCoachingLogStatictext]([ccl].[CoachingID]) strStaticText
+	CASE WHEN ccl.SourceID = 238 AND ccl.StrReportCode iS NULL THEN NULL ELSE [EC].[fn_strCoachingLogStatictext]([ccl].[CoachingID]) END strStaticText
   FROM [EC].[Coaching_Log_Reason] clr  WITH (NOLOCK),
     [EC].[DIM_Coaching_Reason] cr,
 	[EC].[Coaching_Log] ccl  WITH (NOLOCK) 
   WHERE [ccl].[CoachingID] = ''' + CONVERT(NVARCHAR, @intLogId) + '''
     AND [clr].[CoachingReasonID] = [cr].[CoachingReasonID]
     AND [ccl].[CoachingID] = [clr].[CoachingID] 
-  GROUP BY ccl.FormName, ccl.CoachingID
+  GROUP BY ccl.FormName, ccl.CoachingID, ccl.sourceid, ccl.strreportcode
 ) cc ON [cl].[FormName] = [cc].[FormName]
 JOIN [EC].[Employee_Hierarchy] eh  WITH (NOLOCK) ON [cl].[EMPID] = [eh].[Emp_ID] 
 JOIN [EC].[View_Employee_Hierarchy] veh WITH (NOLOCK) ON [veh].[Emp_ID] = [eh].[Emp_ID]
@@ -324,3 +326,5 @@ CLOSE SYMMETRIC KEY [CoachingKey];
 	    
 END --sp_SelectReviewFrom_Coaching_Log
 GO
+
+

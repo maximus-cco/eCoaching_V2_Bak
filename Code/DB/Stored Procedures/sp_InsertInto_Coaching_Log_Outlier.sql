@@ -1,8 +1,15 @@
+USE [eCoachingDev]
+GO
+
+/****** Object:  StoredProcedure [EC].[sp_InsertInto_Coaching_Log_Outlier]    Script Date: 8/12/2024 11:58:15 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
 -- =============================================
 -- Author:		        Susmitha Palacherla
 -- Create date:        03/10/2014
@@ -27,7 +34,7 @@ GO
 -- Changes to suppport Wellbeing Breaks eCL data Feed- TFS - 27634 - 01/19/2024
 -- Changes to support ASR Feed. TFS 28298 - 06/26/2024
 -- =============================================
-CREATE OR ALTER PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
+CREATE OR ALTER       PROCEDURE [EC].[sp_InsertInto_Coaching_Log_Outlier]
 (@Count INT OUTPUT, @ReportCode NVARCHAR(5) OUTPUT)
 
 AS
@@ -102,6 +109,8 @@ SELECT DISTINCT LOWER(cs.CSR_EMPID)	[FormName],
 		 THEN @strLCSPretext + EC.fn_nvcHtmlEncode(cs.TextDescription)
 		 WHEN cs.Report_Code LIKE 'IDD%' 
 		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), CHAR(10), '<br />')	-- Line Feed LF
+		 WHEN cs.Report_Code LIKE 'ASR%' 
+		 THEN REPLACE(EC.fn_nvcHtmlEncode(cs.TextDescription), '*', '<br />')	-- Adding Line Break
 		 WHEN cs.Report_Code LIKE 'IAE%' 
 		 THEN @strIAEPretext + '<br />' + EC.fn_nvcHtmlEncode(cs.TextDescription) + '<br />' + cs.CD1 + '<br />' + cs.CD2
 		 WHEN cs.Report_Code LIKE 'IAT%' 

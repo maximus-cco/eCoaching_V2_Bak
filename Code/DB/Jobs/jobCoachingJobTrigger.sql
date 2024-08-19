@@ -7,16 +7,26 @@ GO
 -------------------------------------------------------------------
 
 -- IMPLEMENTER: Set environment here
-DECLARE @environment nvarchar(5) = N'DEV'  -- DEV, TEST, or PROD
+
+DECLARE @environment nvarchar(5) = 'TEST'  -- DEV, TEST, UAT, or PROD
 
 --=================================================================
--- Do not modify below this section
+
+-- IMPLEMENTER: Do not modify below this section
+
 --=================================================================
-IF ((@@SERVERNAME = 'UVAADADSQL50CCO' AND @environment <> 'DEV')
-        OR (@@SERVERNAME = 'UVAADADSQL52CCO' AND @environment <> 'TEST')
-		OR (@@SERVERNAME = 'UVAADADSQL52CCO' AND @environment <> 'UAT')
-	OR (@@SERVERNAME = 'UVAAPADSQL50CCO' AND @environment <> 'PROD')
-    )
+
+DECLARE @knownServers AS TABLE (
+	 ServerName nvarchar(128)
+	,Environment nvarchar(10)
+)
+INSERT INTO @knownServers VALUES
+ (N'UVAAPADSQL50CCO', N'PROD')
+,(N'UVAADADSQL52CCO', N'UAT') 
+,(N'UVAADADSQL52CCO', N'TEST')
+,(N'UVAADADSQL50CCO', N'DEV')
+
+IF NOT EXISTS (SELECT * FROM @knownServers WHERE ServerName = @@SERVERNAME AND Environment = @environment)
 BEGIN
 	DECLARE @error nvarchar(1000) = CONCAT('Unknown environment [', @environment, '] for current server.');
 	THROW 51000, @error, 1;
@@ -124,18 +134,18 @@ IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 -------------------------------------------------------------------
 SET @jobId = @mainJobId
 DECLARE @isEnabled bit = (SELECT CASE @environment WHEN 'PROD' THEN 1 ELSE 0 END)
-EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'Hourly', 
+EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule @job_id=@jobId, @name=N'15 Minutes', 
 		@enabled= @isEnabled, 
 		@freq_type=4, --Daily
 		@freq_interval=1, -- Every Day
-		@freq_subday_type=8, -- Hourly
-		@freq_subday_interval=1, -- Every hour
+		@freq_subday_type=4, -- Minutes
+		@freq_subday_interval=15, -- Every 15 Minutes
 		@freq_relative_interval=0, 
 		@freq_recurrence_factor=0, 
 		@active_start_date=20240701, -- Jul 01 2024
 		@active_end_date=99991231, -- No end date
-		@active_start_time=080000, -- 08:00 AM server time (ET)
-		@active_end_time=203000 --08:30:00 PM server time (ET)
+		@active_start_time=80000, -- 08:00 AM server time (ET)
+		@active_end_time=200000 --08:00:00 PM server time (ET)
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
 
 -------------------------------------------------------------------
