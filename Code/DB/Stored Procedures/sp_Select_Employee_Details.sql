@@ -3,6 +3,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 --	====================================================================
 --	Author:			Susmitha Palacherla
 --	Create Date:	04/10/2018 
@@ -15,7 +17,7 @@ GO
 --  Modified to Support ISG Alignment Project. TFS 28026 - 05/06/2024
 --  Modified to add the Production Planning Module to eCoaching. TFS 28361 - 07/24/2024
 --	=====================================================================
-CREATE OR ALTER PROCEDURE [EC].[sp_Select_Employee_Details] 
+CREATE OR ALTER    PROCEDURE [EC].[sp_Select_Employee_Details] 
 @nvcEmpLanin nvarchar(30)
 
 AS
@@ -50,7 +52,7 @@ SELECT EH.[Emp_ID]
 				,EH.[Emp_Job_Code] 
 				,CASE WHEN VEH.[isSub] = ''Y'' THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END isSub 
 			    ,UR.[Role]
-				,RA.[NewSubmission]
+				,CASE WHEN EH.[Emp_Job_Code] LIKE ''WMPL0%'' THEN CAST(0 AS BIT) ELSE RA.[NewSubmission] END NewSubmission
 				,RA.[MyDashboard]
 				,RA.[HistoricalDashboard]
 				,[EC].[fn_strCheckIf_ExcelExport](EH.[Emp_ID],UR.[Role]) ExcelExport
