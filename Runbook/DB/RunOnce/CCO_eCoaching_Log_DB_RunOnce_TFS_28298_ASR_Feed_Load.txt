@@ -151,4 +151,10 @@ ADD ASR_GROUP nvarchar(30);
 
 --****************************************************
 
+--6. set Feed as Active in Feed List Table
+
+Update [EC].[DIM_Feed_List]
+set [isActive]= 1
+WHERE [ReportCode] = 'ASR'
+GO
 
