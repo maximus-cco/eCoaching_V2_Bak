@@ -357,11 +357,12 @@ namespace eCoachingLog.Utils
         public const string REVIEW_QUALITY_KUDO_SUPERVISOR = "Click <a href='https://maximus365.sharepoint.com/sites/CCO/Connection/Pages/KudosCentral.aspx' target='_blank'>here</a> " +
 			"to listen to agent kudos.";
         // no text for subcontractor
-        public const string REVIEW_QUALITY_KUDO_SUPERVISOR_SUBCONTRACTOR = ""; 
+        public const string REVIEW_QUALITY_KUDO_SUPERVISOR_SUBCONTRACTOR = "";
 
+        // BRN/BRL
         public const string REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT = "You are receiving this eCL record because an Employee on your team was identified in a Break Outlier Report. " +
-			"Please review the <b><a href='https://maximus365.sharepoint.com/sites/CCO/bi/ReportsCatalog/CSRDashboard/Forms/AllItems.aspx' target='_blank'>ETS Breaks Outlier Report</a>, " +
-			"the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below.";
+           "Please review the <a href='https://app.powerbi.com/reportEmbed?reportId=787ff793-f449-4dc2-a1ee-e319304ddfa9&autoAuth=true&ctid=b699068d-c14b-454b-a0bc-10918cf075d3&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLXVzLW5vcnRoLWNlbnRyYWwtYi1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D' target='_blank'>CSR Dashboard</a>, " +
+           "Break Outliers, <b>the ETS entries</b>, and refer to HCSD-POL-HR-MISC-08 Break Time Policy and Break Policy Reference guide for additional information and provide the details in the record below.";
         public const string REVIEW_OMR_BREAK_TIME_EXCEEDED_TEXT_SUBCONTRACTOR = "";
 
         // Internal CCO Reporting MSR static text
