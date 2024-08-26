@@ -1,0 +1,34 @@
+/*
+TFS 28646 - Update the Help links in eCoaching and Admin Tools
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+1. Update  record in Table [EC].[Coaching_Support_Urls]
+
+
+
+-- Test
+
+SELECT * FROM [EC].[Coaching_Support_Urls]
+GO
+
+
+*/
+
+--****************************************************
+--******************* DETAILS*************************
+--****************************************************
+
+--1. Insert records for Sub Coaching Reason
+
+UPDATE [EC].[Coaching_Support_Urls]
+SET [Value] = 'https://maximus.service-now.com/esc'
+WHERE [ID] = 1
+GO
+
+
