@@ -1,0 +1,163 @@
+/*
+TFS 28628 - LSA Module Updates
+
+Open in an ssms window pointing to eCoaching DB in target environment and run one statement at a time.
+
+Development – UVAADADSQL50CCO - eCoachingDev
+Test - UVAADADSQL52CCO - eCoachingTest
+UAT- UVAADADSQL52CCO - eCoachingUAT
+Production – UVAAPADSQL50CCO  – eCoaching
+
+Summary
+
+1. Add rows to Table [EC].[DIM_Coaching_Reason]
+2. Add rows to Table [EC].[DIM_SubCoaching_Reason]
+3. Updates to [EC].[Coaching_Reason_Selection]
+
+
+*/
+
+-- Details
+--1. Add row to Table [EC].[DIM_Coaching_Reason]
+
+PRINT ('  Starting record insert to DIM_Coaching_Reason...');
+
+SET IDENTITY_INSERT [EC].[DIM_Coaching_Reason] ON
+GO
+
+
+INSERT INTO [EC].[DIM_Coaching_Reason]
+           ([CoachingReason],[CoachingReason])
+     VALUES
+           (74,'Core Expectations'),
+		   (75,'Desktop Special Tasks'), 
+		   (76,'Lead Expectations')
+GO
+
+
+SET IDENTITY_INSERT [EC].[DIM_Coaching_Reason] OFF
+GO
+PRINT (' Insert to DIM_Coaching_Reason Completed...');
+
+
+
+
+--*******************************************************
+
+
+--2. Add record(s) to TABLE [EC].[DIM_SubCoaching_Reason]
+
+PRINT ('  Starting record insert to DIM_SubCoaching_Reason...');
+SET IDENTITY_INSERT [EC].[DIM_Sub_Coaching_Reason] ON
+GO
+
+
+INSERT INTO [EC].[DIM_Sub_Coaching_Reason]
+           ([SubCoachingReasonID], [SubCoachingReason])
+     VALUES
+(334,'DCF Shift Coverage'),
+(335,'Flag Expectations'),
+(336,'Other'),
+(337,'Secure Floor Violations'),
+(338,'Ticket Watch'),
+(339,'Tickets'),
+(340,'Timekeeping'),
+(341,'Training')
+GO
+
+SET IDENTITY_INSERT [EC].[DIM_Sub_Coaching_Reason] OFF
+GO
+     
+PRINT (' Insert to DIM_SubCoaching_Reason Completed...');
+
+
+--*******************************************************
+
+--3.Updates to [EC].[Coaching_Reason_Selection]
+
+
+PRINT ('  Starting updates to Coaching_Reason_Selection...');
+
+
+UPDATE EC.Coaching_Reason_Selection
+SET [LSA] = 0
+WHERE [CoachingReasonID] NOT IN (74,75,76,19,11,61, 28, 29, 30, 60)
+GO
+
+UPDATE EC.Coaching_Reason_Selection
+SET [LSA] = 0
+WHERE [CoachingReasonID] = 19 and [SubCoachingReasonID]<> 336
+GO
+
+
+UPDATE EC.Coaching_Reason_Selection
+SET [LSA] = 0
+WHERE [CoachingReasonID] = 11 and [SubCoachingReasonID]<> 336
+GO
+
+UPDATE EC.Coaching_Reason_Selection
+SET [LSA] = 0
+WHERE [CoachingReasonID] = 61 and [SubCoachingReasonID] NOT IN (336,337)
+GO
+
+
+INSERT INTO [EC].[Coaching_Reason_Selection]
+           ([CoachingReasonID]
+           ,[CoachingReason]
+           ,[SubCoachingReasonID]
+           ,[SubCoachingReason]
+           ,[isActive]
+           ,[Direct]
+           ,[Indirect]
+           ,[isOpportunity]
+           ,[isReinforcement]
+           ,[CSR]
+           ,[Quality]
+           ,[Supervisor]
+           ,[splReason]
+           ,[splReasonPrty]
+           ,[LSA]
+           ,[Training]
+		   ,[ISG]
+		   ,[ProductionPlanning])
+     VALUES
+--Core Expectations
+(74,'Core Expectations',92,'Attendance',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(74,'Core Expectations',334,'DCF Shift Coverage',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(74,'Core Expectations',335,'Flag Expectations',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(74,'Core Expectations',339,'Tickets',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(74,'Core Expectations',340,'Timekeeping',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(74,'Core Expectations',336,'Other',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(74,'Core Expectations',341,'Training',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+--Lead Expectations
+(76,'Lead Expectations',338,'Ticket Watch',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(76,'Lead Expectations',226,'D3 Tasks',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(76,'Lead Expectations',336,'Other',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(76,'Lead Expectations',294,'Status reports',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+--Security & Privacy
+(61,'Security & Privacy',336,'Other',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(61,'Security & Privacy',337,'Secure Floor Violations',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+--Remaining Singles
+(75,'Desktop Special Tasks',336,'Other',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(19,'Professional Conduct',336,'Other',1,1,1,1,1,0,0,0,0,0,1,0,0,0),
+(11,'Recognition',336,'Other',1,1,1,0,1,0,0,0,0,0,1,0,0,0)
+
+GO
+
+Update ec.Coaching_Reason_Selection
+set [LSA]= 0
+where  CoachingReasonID  in (28,29,30,60)
+and [LSA]= 1
+and SubCoachingReasonID not in (259,253,255,254,256,257,155,260,261,178,258,262,263,264,95,265)
+GO
+
+
+PRINT (' Inserts to Coaching_Reason_Selection Completed...');
+
+--*******************************************************
+
+
+
+
+
+
