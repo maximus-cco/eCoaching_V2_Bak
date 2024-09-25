@@ -1,4 +1,7 @@
-DROP PROCEDURE IF EXISTS [EC].[sp_rptWarningSummary]; 
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
 GO
 
 /******************************************************************************* 
@@ -13,8 +16,9 @@ GO
 --  Updated to add CSRComments to the Warnings Review. TFS 16855- 03/23/2020
 --  Updated to Support Report access for Early Life Supervisors. TFS 24924 - 7/11/2022
 --  Added paging. #26819 - 7/19/23 LH
+--  Modified to exclude Sub Sites. TFS 28688 - 09/16/2024
  *******************************************************************************/
-CREATE PROCEDURE [EC].[sp_rptWarningSummary] 
+CREATE OR ALTER   PROCEDURE [EC].[sp_rptWarningSummary] 
 (
 @intModulein int = -1,
 @intStatusin int = -1, 
@@ -158,6 +162,7 @@ OPEN SYMMETRIC KEY [CoachingKey] DECRYPTION BY CERTIFICATE [CoachingCert]
         AND  ([wlr].[SubCoachingReasonID] = (@intSubWarnReasonin)or @intSubWarnReasonin = -1)
         AND ([wl].[EmpID]= (@strEmpin)or @strEmpin = '-1')
 		AND (eh.Hire_Date = (@strHDate) or ISNULL(@strHDatein, '') = ''))
+		AND si.isSub = 0
 		)w
 		ON p.WarningID = w.WarningID
 )
@@ -193,3 +198,5 @@ RETURN @returnCode
 -------------------------------------------------------------------------------------
 
 GO
+
+

@@ -1,10 +1,8 @@
-
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 
 /******************************************************************************* 
@@ -16,12 +14,13 @@ GO
 --  Last Modified By: 
 --  Revision History:
 --  Initial Revision. Report access for Early Worklife Supervisors. TFS 24924 - 7/8/2022
-
+--  Modified to exclude Sub Sites. TFS 28688 - 09/16/2024
  *******************************************************************************/
-CREATE OR ALTER PROCEDURE [EC].[sp_rptSitesByRole] 
+CREATE OR ALTER      PROCEDURE [EC].[sp_rptSitesByRole] 
 (
 @LanID nvarchar(30),
 @intModulein int = 1,
+@isWarning bit,
  ------------------------------------------------------------------------------------
 -- THE FOLLOWING CODE SHOULD NOT BE MODIFIED
    @returnCode int = NULL OUTPUT ,
@@ -70,7 +69,7 @@ OR EC.fn_nvcGetEmpIdFromLanId(CONVERT(nvarchar(30),DecryptByKey([User_LanID])), 
 IF ISNULL(@intELSRowID, '') = ''
 
 
-SELECT SiteID, Site
+SELECT s.SiteID, Site
 FROM  (
 SELECT -1 AS SiteID, 'All' AS Site
 UNION
@@ -78,20 +77,24 @@ SELECT DISTINCT cl.SiteID, cs.City AS Site
 FROM EC.Coaching_Log cl WITH(NOLOCK) INNER JOIN EC.DIM_Site cs
 ON cl.SiteID = cs.SiteID
 WHERE  (cl.ModuleID =(@intModulein) or @intModulein = -1)
-and cs.City <> 'Unknown'
+AND cs.City <> 'Unknown'
 UNION
 SELECT DISTINCT wl.SiteID, cs.City AS Site
 FROM     EC.Warning_Log wl WITH(NOLOCK) INNER JOIN EC.DIM_Site cs
 ON wl.SiteID = cs.SiteID
 WHERE  (wl.ModuleID =(@intModulein) or @intModulein = -1)
-and cs.City <> 'Unknown'
-)AS S
-ORDER BY CASE WHEN SiteID = - 1 THEN 0 ELSE 1 END, Site
+AND cs.City <> 'Unknown'
+)AS S , EC.DIM_Site ds
+WHERE s.SiteID = ds.SiteID
+AND -- Exclude Sub sites when Warnings indicator passed in
+CASE WHEN @isWarning = 1 and ds.isSub = 0 THEN 1
+     WHEN @isWarning = 0 and (ds.isSub = 0 OR ds.isSub = 1) THEN 1
+ELSE 0 END = 1 -- Warnings sites exclusion
+ORDER BY CASE WHEN s.SiteID = - 1 THEN 0 ELSE 1 END, s.Site
 ELSE
 SELECT SiteID, [City] AS Site 
 FROM EC.Employee_Hierarchy eh INNER JOIN EC.DIM_Site s ON eh.Emp_Site = s.City WHERE Emp_ID = @nvcEmpID;
-
-		                    
+		                   
   -- Clode Symmetric Key
   CLOSE SYMMETRIC KEY [CoachingKey];
 	    
@@ -120,7 +123,7 @@ RETURN @returnCode
 -- THE PRECEDING CODE SHOULD NOT BE MODIFIED
 -------------------------------------------------------------------------------------
 
-
 GO
+
 
 

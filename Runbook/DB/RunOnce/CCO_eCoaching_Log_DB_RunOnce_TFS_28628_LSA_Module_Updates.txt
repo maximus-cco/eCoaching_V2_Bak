@@ -27,7 +27,7 @@ GO
 
 
 INSERT INTO [EC].[DIM_Coaching_Reason]
-           ([CoachingReason],[CoachingReason])
+           ([CoachingReasonID],[CoachingReason])
      VALUES
            (74,'Core Expectations'),
 		   (75,'Desktop Special Tasks'), 
@@ -145,12 +145,11 @@ INSERT INTO [EC].[Coaching_Reason_Selection]
 GO
 
 Update ec.Coaching_Reason_Selection
-set [LSA]= 0
-where  CoachingReasonID  in (28,29,30,60)
+set [LSA]= 0 where  CoachingReasonID  in (28,29,30,60)
 and [LSA]= 1
-and SubCoachingReasonID not in (259,253,255,254,256,257,155,260,261,178,258,262,263,264,95,265)
+and SubCoachingReasonID not in (92, 93, 95, 96, 155,178, 251,253,254,255,258,259,260,261,262,263,265)
 GO
-
+ 
 
 PRINT (' Inserts to Coaching_Reason_Selection Completed...');
 
